@@ -17,7 +17,8 @@ export type AppView =
   | 'compare-specialists'
   | 'submit-proposal'
   | 'submit-review'
-  | 'referral';
+  | 'referral'
+  | 'notification-settings';
 
 // ============ User ============
 export interface User {

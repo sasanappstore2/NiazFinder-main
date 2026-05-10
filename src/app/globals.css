@@ -542,6 +542,10 @@
   animation: marquee 30s linear infinite;
 }
 
+.animate-marquee-reverse {
+  animation: marquee 30s linear infinite reverse;
+}
+
 /* Stagger children animation helper */
 .stagger-children > * {
   opacity: 0;
@@ -691,4 +695,153 @@
 .card-tilt:hover {
   transform: perspective(1000px) rotateY(-2deg) rotateX(1deg) translateY(-4px);
   box-shadow: 0 20px 40px oklch(0 0 0 / 0.08), 0 8px 16px oklch(0 0 0 / 0.04);
+}
+
+/* ============ Enhanced Animations (Round 7) ============ */
+
+/* Pulse ring for live indicators */
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+.animate-live-pulse {
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+/* Typewriter cursor blink */
+@keyframes typeCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-type-cursor::after {
+  content: '|';
+  animation: typeCursor 1s step-end infinite;
+  color: oklch(0.51 0.12 165);
+}
+
+/* Gradient text shimmer */
+@keyframes textShimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(0.51 0.12 165) 0%,
+    oklch(0.72 0.19 155) 25%,
+    oklch(0.51 0.12 165) 50%,
+    oklch(0.72 0.19 155) 75%,
+    oklch(0.51 0.12 165) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: textShimmer 3s linear infinite;
+}
+
+/* Soft glow for cards */
+@keyframes softGlow {
+  0%, 100% { box-shadow: 0 0 15px oklch(0.65 0.15 165 / 0.06); }
+  50% { box-shadow: 0 0 30px oklch(0.65 0.15 165 / 0.12); }
+}
+
+.hover-soft-glow:hover {
+  animation: softGlow 2s ease-in-out infinite;
+}
+
+/* Floating animation variants */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-8px) rotate(1deg); }
+  75% { transform: translateY(4px) rotate(-1deg); }
+}
+
+@keyframes float-medium {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float-medium 4s ease-in-out infinite;
+}
+
+/* Underline reveal */
+@keyframes underlineReveal {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.hover-underline-reveal {
+  position: relative;
+}
+
+.hover-underline-reveal::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: 0;
+  height: 2px;
+  width: 0;
+  background: oklch(0.51 0.12 165);
+  transition: width 0.3s ease;
+}
+
+.hover-underline-reveal:hover::after {
+  width: 100%;
+}
+
+/* Glass card enhanced */
+.glass-card {
+  background: oklch(0.98 0.002 120 / 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid oklch(0.51 0.12 165 / 0.08);
+  box-shadow: 0 8px 32px oklch(0 0 0 / 0.04), inset 0 1px 0 oklch(1 0 0 / 0.06);
+}
+
+.dark .glass-card {
+  background: oklch(0.18 0.007 160 / 0.6);
+  border-color: oklch(0.65 0.15 165 / 0.1);
+  box-shadow: 0 8px 32px oklch(0 0 0 / 0.2), inset 0 1px 0 oklch(1 0 0 / 0.06);
+}
+
+/* Progress bar fill animation */
+@keyframes progressFill {
+  from { width: 0%; }
+}
+
+.animate-progress-fill {
+  animation: progressFill 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Scale up entrance */
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.8) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stagger children delay helper (10 items) */
+.stagger-children-10 > *:nth-child(9) { animation-delay: 0.45s; }
+.stagger-children-10 > *:nth-child(10) { animation-delay: 0.5s; }
+
+/* Slide in from right (RTL) */
+@keyframes slideInRTL {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slide-in-rtl {
+  animation: slideInRTL 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
