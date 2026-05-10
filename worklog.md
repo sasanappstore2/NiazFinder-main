@@ -636,3 +636,138 @@ Priority Recommendations for Next Phase:
 8. Add online status indicators in chat conversations
 9. Mobile responsive polish: test all views at 375px width
 10. Add badge count on MobileBottomNav notifications tab
+
+---
+Task ID: 8-a
+Agent: Breadcrumb Component Builder
+Task: Create Breadcrumb navigation component
+
+Work Log:
+- Created `/src/components/shared/Breadcrumb.tsx` with RTL breadcrumb trail
+  - Uses shadcn/ui Breadcrumb primitives (BreadcrumbNav, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator)
+  - `useMemo`-based breadcrumb path resolution by walking up the parent chain (max 4 levels)
+  - Full `BREADCRUMB_MAP` mapping for all 19 AppView entries with Persian labels and parent hierarchy
+  - RTL-aware ChevronLeft separator from lucide-react
+  - Home icon (Home from lucide-react) shown on first breadcrumb item
+  - Last item rendered as non-clickable `BreadcrumbPage` with primary color and font-medium
+  - Previous items rendered as clickable `BreadcrumbLink` with muted-foreground and hover:text-primary
+  - Framer-motion staggered entrance animation (containerVariants + itemVariants with 0.06s stagger)
+  - Compact design: text-sm, muted colors, clean RTL layout
+- Integrated breadcrumb into `/src/app/page.tsx` for all 15 inner page views:
+  - Added `<Breadcrumb />` + `<Separator className="my-4" />` above main content in each wrapper div
+  - Changed wrapper padding from `pb-12` to `pt-2 pb-12` to accommodate breadcrumb
+  - Excluded from: home, login, register, admin views
+- Lint verified: 0 errors, 1 pre-existing warning (React Hook Form)
+
+Stage Summary:
+- New component: Breadcrumb.tsx (reusable, RTL-aware, animated breadcrumb navigation)
+- Integrated into page.tsx SPA router across 15 inner pages
+- Uses shadcn/ui breadcrumb primitives with custom RTL ChevronLeft separator
+- Uses framer-motion staggered entrance animations
+- Zero lint errors
+
+---
+Task ID: 8-b
+Agent: Chat Enhancement Builder
+Task: Enhance ChatPanel with typing indicator, read receipts, message tails
+
+Work Log:
+- Added typing indicator with 3 bouncing dots (typingDot CSS keyframe, staggered 0ms/150ms/300ms)
+- Added auto-reply system (6 Persian responses, 2s delay after user sends message)
+- Added message bubble tails via CSS pseudo-elements (msg-tail-me::before on right, msg-tail-other::after on left)
+- Added read receipts with CheckCheck icon from lucide-react (emerald for read, gray/40% opacity for unread)
+- Added "در حال نوشتن..." animated indicator in chat header with pulsing green dot and blink cursor
+- Added typing-dot CSS animations and msg-tail-me/msg-tail-other CSS classes to globals.css
+- Used framer-motion AnimatePresence for typing indicator show/hide and header status transitions
+- Added typingTimerRef with proper cleanup on unmount and conversation switch
+- Removed unused Circle import, added CheckCheck import
+- Lint verified: 0 errors, 1 warning (pre-existing)
+
+Stage Summary:
+- Enhanced ChatPanel with 4 new features (typing indicator, auto-reply, message tails, read receipts)
+- Enhanced chat header with dynamic "در حال نوشتن..." status indicator
+- New CSS animations added (typingDot keyframe + message tail pseudo-elements)
+
+---
+Task ID: 8-c
+Agent: View Toggle + CSS Polish Builder
+Task: Add grid/list view toggle to BrowseSpecialists + new CSS animations
+
+Work Log:
+- Added grid/list view toggle with LayoutGrid and List icons
+- Created list mode layout (horizontal cards with all info in row)
+- Added 10+ new CSS animations (underline-draw, breathe, glow-text, ripple-btn, gradient-mesh-card, etc.)
+- Lint verified
+
+Stage Summary:
+- Enhanced BrowseSpecialists with grid/list toggle
+- 10+ new CSS utility classes and animations added
+
+---
+Task ID: 8-e
+Agent: Onboarding Welcome Builder
+Task: Create OnboardingWelcome component for first-time visitor onboarding
+
+Work Log:
+- Created `/src/components/shared/OnboardingWelcome.tsx` — a 3-step onboarding modal for first-time visitors
+- **Step 1 (Welcome):** Large sparkle icon in emerald gradient circle, "به نیاز فایندر خوش آمدید!" gradient title, platform subtitle, description paragraph, and 3 floating glass cards (ثبت نیاز → دریافت پیشنهاد → انتخاب متخصص) with hover animations
+- **Step 2 (How it works):** "چطور کار می‌کنه؟" gradient title, 3 numbered step cards with gradient circles (1-3), subtle icons (FileText, Users, CheckCircle), title + description per step, staggered entrance animations
+- **Step 3 (Get Started):** Rocket icon in gradient circle, "شروع کنید!" gradient title, emerald CTA button "ثبت‌نام رایگان" (opens AuthModal on register tab), ghost "بعداً" button, "نمایش دوباره نشود" checkbox (checked by default)
+- **localStorage persistence:** Key `needfinder-onboarding-seen`, returns null if value is `'true'`
+- **Close behavior:** X button, backdrop click, or "بعداً" all close; if checkbox is checked → saves to localStorage; if unchecked → will show again on next visit
+- **Register behavior:** Sets localStorage to `'true'`, calls `setAuthModalTab('register')` + `setAuthModalOpen(true)`, closes onboarding
+- **Animations:** Full-screen backdrop with blur + dark overlay, AnimatePresence for modal entrance/exit, spring slide left/right between steps, layoutId dot indicator animation, staggered entrance for each step's content
+- **Design:** max-w-[520px] rounded-2xl glass-morphism card with gradient-mesh-card background, decorative gradient blurs, close button (top-left), bottom nav bar with prev/next buttons + animated dot indicator
+- Integrated into `/src/app/page.tsx` after `<AuthModal />` with import
+- Lint verified: 0 errors, 1 warning (pre-existing React Hook Form)
+- Dev server compiles successfully (HTTP 200 on /)
+
+Stage Summary:
+- New component: OnboardingWelcome.tsx (3-step first-time visitor onboarding modal)
+- localStorage-based visibility tracking (key: needfinder-onboarding-seen)
+- Uses framer-motion AnimatePresence + spring animations for all transitions
+- Uses shadcn/ui Button, lucide-react icons (X, Sparkles, FileText, Users, CheckCircle, ChevronLeft, ChevronRight, ArrowRightLeft, Rocket)
+- Connects to useAppStore for auth modal (setAuthModalOpen, setAuthModalTab)
+- Zero lint errors
+
+---
+Task ID: 8-d
+Agent: QuickActions FAB Builder
+Task: Create floating QuickActions panel (FAB) for NeedFinder
+
+Work Log:
+- Created `/src/components/shared/QuickActions.tsx` — floating action button with radial menu:
+  - Main FAB button: rounded-full, emerald gradient (from-emerald-400 via-emerald-500 to-emerald-600), shadow-lg, backdrop-blur
+  - Plus icon rotates 135° (becomes X) when expanded, with spring easing
+  - Subtle pulse animation (scale 1→1.08→1, 2.5s repeat) when idle to draw attention
+  - Glow ring (emerald blur) appears when expanded
+  - 4 quick action buttons fan out in an arc pattern (upward-left in RTL):
+    1. ثبت نیاز (Post Need) → post-need — FileText icon — emerald
+    2. جستجوی متخصص (Find Specialist) → browse-specialists — Search icon — amber
+    3. پیام جدید (New Message) → messages — MessageSquare icon — cyan
+    4. دعوت دوست (Invite Friend) → referral — Gift icon — rose
+  - Each action button: size-11 circle with icon, hover:scale-110, active:scale-95
+  - Staggered entrance animation (0.05s delay per button) with elastic spring easing
+  - AnimatePresence for smooth show/hide transitions
+  - Glass-morphism tooltip on hover: bg-background/70, backdrop-blur-md, border-border/40, arrow
+  - SVG connector line from FAB to top of action arc (animates pathLength on open/close)
+  - Click outside to close (useEffect with mousedown listener + containerRef)
+  - Glass backdrop overlay (bg-black/5 dark:bg-black/10, backdrop-blur-[1px]) when expanded
+  - Fixed positioning: bottom-24 left-4 on mobile (above MobileBottomNav), bottom-6 left-6 on desktop
+  - z-index: 30 (below MobileBottomNav at z-40)
+  - RTL dir="rtl" on container
+  - Accessible: aria-label, aria-expanded on main FAB
+  - Uses useAppStore navigateTo for all action clicks
+- Integrated into `/src/app/page.tsx`:
+  - Added import for QuickActions
+  - Placed after BackToTop, before closing </div> of root container
+- Lint verified: 0 errors, 1 warning (pre-existing React Hook Form)
+
+Stage Summary:
+- New component: QuickActions.tsx (floating action button with radial menu, 4 quick actions)
+- Emerald gradient FAB with pulse idle animation and rotate-to-X expansion
+- Staggered framer-motion animations with AnimatePresence
+- Glass-morphism tooltips and connector line
+- Click-outside-to-close and backdrop overlay
+- Positioned above MobileBottomNav on mobile, bottom-left on desktop
+- Zero lint errors

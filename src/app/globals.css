@@ -845,3 +845,180 @@
 .animate-slide-in-rtl {
   animation: slideInRTL 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ============ Enhanced Animations (Round 8) ============ */
+
+/* Smooth underline draw */
+@keyframes underlineDraw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.animate-underline-draw::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(to left, oklch(0.51 0.12 165), oklch(0.65 0.15 155));
+  transform-origin: right;
+  animation: underlineDraw 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Magnetic hover effect */
+.hover-magnetic {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Glow text hover */
+.hover-glow-text {
+  transition: text-shadow 0.3s ease;
+}
+
+.hover-glow-text:hover {
+  text-shadow: 0 0 20px oklch(0.51 0.12 165 / 0.3), 0 0 40px oklch(0.51 0.12 165 / 0.1);
+}
+
+/* Breathing animation */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 0.95; }
+}
+
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+/* Slide reveal from bottom */
+@keyframes slideRevealUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-reveal-up {
+  animation: slideRevealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Staggered fade in (12 items) */
+.stagger-children-12 > *:nth-child(9) { animation-delay: 0.45s; }
+.stagger-children-12 > *:nth-child(10) { animation-delay: 0.5s; }
+.stagger-children-12 > *:nth-child(11) { animation-delay: 0.55s; }
+.stagger-children-12 > *:nth-child(12) { animation-delay: 0.6s; }
+
+/* Number counter animation */
+@keyframes countFade {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-count-fade {
+  animation: countFade 0.5s ease-out forwards;
+}
+
+/* Ripple button effect */
+.ripple-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), oklch(0.51 0.12 165 / 0.15) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.ripple-btn:hover::after {
+  opacity: 1;
+}
+
+/* Gradient mesh card background */
+.gradient-mesh-card {
+  background: 
+    radial-gradient(ellipse at 20% 80%, oklch(0.51 0.12 165 / 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, oklch(0.7 0.15 85 / 0.04) 0%, transparent 50%),
+    oklch(1 0 0);
+}
+
+.dark .gradient-mesh-card {
+  background: 
+    radial-gradient(ellipse at 20% 80%, oklch(0.51 0.12 165 / 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, oklch(0.7 0.15 85 / 0.05) 0%, transparent 50%),
+    oklch(0.18 0.007 160);
+}
+
+/* Smooth border radius transition */
+.border-radius-smooth {
+  transition: border-radius 0.3s ease;
+}
+
+.border-radius-smooth:hover {
+  border-radius: 1rem;
+}
+
+/* Focus ring animation */
+@keyframes focusRing {
+  0% { box-shadow: 0 0 0 0 oklch(0.51 0.12 165 / 0.4); }
+  70% { box-shadow: 0 0 0 6px oklch(0.51 0.12 165 / 0); }
+  100% { box-shadow: 0 0 0 0 oklch(0.51 0.12 165 / 0); }
+}
+
+.animate-focus-ring:focus {
+  animation: focusRing 0.6s ease-out;
+}
+
+/* ============ Chat Enhancements (Task 8-b) ============ */
+
+/* Typing indicator dots */
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+.typing-dot:nth-child(1) { animation: typingDot 1.4s ease-in-out infinite; animation-delay: 0ms; }
+.typing-dot:nth-child(2) { animation: typingDot 1.4s ease-in-out infinite; animation-delay: 150ms; }
+.typing-dot:nth-child(3) { animation: typingDot 1.4s ease-in-out infinite; animation-delay: 300ms; }
+
+/* Message bubble tails */
+.msg-tail-me {
+  position: relative;
+}
+
+/* In RTL: sent messages (me) aligned to start (right), tail on right side */
+.msg-tail-me::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -6px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid oklch(0.51 0.12 165);
+  border-left: 6px solid transparent;
+}
+
+.dark .msg-tail-me::before {
+  border-top-color: oklch(0.65 0.15 165);
+}
+
+/* Received messages (other) aligned to end (left), tail on left side */
+.msg-tail-other {
+  position: relative;
+}
+
+.msg-tail-other::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -6px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid oklch(0.965 0.005 155);
+  border-right: 6px solid transparent;
+}
+
+.dark .msg-tail-other::after {
+  border-top-color: oklch(0.22 0.01 160);
+}

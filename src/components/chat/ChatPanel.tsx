@@ -9,8 +9,8 @@ import {
   Paperclip,
   ArrowRight,
   Plus,
-  Circle,
   MessageCircle,
+  CheckCheck,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
@@ -41,6 +41,17 @@ const getInitials = (name: string) => {
   if (parts.length >= 2) return parts[0][0] + parts[1][0];
   return parts[0].slice(0, 2);
 };
+
+// ─── Auto-replies pool ───────────────────────────────────────────────────────
+
+const AUTO_REPLIES = [
+  'باشه، حتماً بررسی می‌کنم.',
+  'ممنون از اطلاع‌رسانی.',
+  'خیلی عالی، ادامه بدید.',
+  'فهمیدم، ممنون.',
+  'بله، با کمال میل.',
+  'حتماً، در اسرع وقت انجام می‌دم.',
+];
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 
@@ -162,8 +173,10 @@ export function ChatPanel() {
   const [conversationMessages, setConversationMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [showMessages, setShowMessages] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaViewportRef = useRef<HTMLDivElement>(null);
+  const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const selectedConversation = mockConversations.find((c) => c.id === selectedConversationId) ?? null;
 
@@ -179,17 +192,36 @@ export function ChatPanel() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [conversationMessages, scrollToBottom]);
+  }, [conversationMessages, isTyping, scrollToBottom]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimerRef.current) {
+        clearTimeout(typingTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleSelectConversation = (conv: MockConversation) => {
     setSelectedConversationId(conv.id);
     setConversationMessages([...conv.messages]);
     setShowMessages(true);
+    setIsTyping(false);
+    if (typingTimerRef.current) {
+      clearTimeout(typingTimerRef.current);
+      typingTimerRef.current = null;
+    }
   };
 
   const handleBack = () => {
     setShowMessages(false);
     setSelectedConversationId(null);
+    setIsTyping(false);
+    if (typingTimerRef.current) {
+      clearTimeout(typingTimerRef.current);
+      typingTimerRef.current = null;
+    }
   };
 
   const handleSendMessage = () => {
@@ -207,6 +239,40 @@ export function ChatPanel() {
 
     setConversationMessages((prev) => [...prev, msg]);
     setNewMessage('');
+
+    // Show typing indicator and schedule auto-reply
+    setIsTyping(true);
+
+    if (typingTimerRef.current) {
+      clearTimeout(typingTimerRef.current);
+    }
+
+    typingTimerRef.current = setTimeout(() => {
+      setIsTyping(false);
+
+      const randomReply = AUTO_REPLIES[Math.floor(Math.random() * AUTO_REPLIES.length)];
+      const replyMsg: Message = {
+        id: `reply-${Date.now()}`,
+        conversationId: selectedConversationId,
+        senderId: 'other',
+        content: randomReply,
+        type: 'TEXT',
+        isRead: false,
+        createdAt: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
+      };
+
+      setConversationMessages((prev) => [...prev, replyMsg]);
+
+      // Mark the user's message as read after reply
+      setConversationMessages((prev) =>
+        prev.map((m) => {
+          if (m.id === msg.id) {
+            return { ...m, isRead: true };
+          }
+          return m;
+        })
+      );
+    }, 2000);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -369,9 +435,35 @@ export function ChatPanel() {
               </div>
               <div className="flex-1">
                 <h3 className="text-sm font-semibold">{selectedConversation.name}</h3>
-                <p className="text-xs text-muted-foreground">
-                  {selectedConversation.isOnline ? 'آنلاین' : 'آفلاین'}
-                </p>
+                <AnimatePresence mode="wait">
+                  {isTyping ? (
+                    <motion.p
+                      key="typing-status"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400"
+                    >
+                      <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="animate-type-cursor">در حال نوشتن</span>
+                    </motion.p>
+                  ) : (
+                    <motion.p
+                      key="online-status"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.2 }}
+                      className={cn(
+                        'text-xs',
+                        selectedConversation.isOnline ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'
+                      )}
+                    >
+                      {selectedConversation.isOnline ? 'آنلاین' : 'آفلاین'}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
@@ -399,23 +491,55 @@ export function ChatPanel() {
                         className={cn(
                           'max-w-[75%] rounded-2xl px-4 py-2.5',
                           isMe
-                            ? 'rounded-br-md bg-primary text-primary-foreground'
-                            : 'rounded-bl-md bg-muted'
+                            ? 'rounded-br-md bg-primary text-primary-foreground msg-tail-me'
+                            : 'rounded-bl-md bg-muted msg-tail-other'
                         )}
                       >
                         <p className="text-sm leading-7">{msg.content}</p>
-                        <p
+                        <div
                           className={cn(
-                            'mt-1 text-[10px]',
+                            'mt-1 flex items-center gap-1.5 text-[10px]',
                             isMe ? 'text-primary-foreground/60' : 'text-muted-foreground'
                           )}
                         >
-                          {msg.createdAt}
-                        </p>
+                          <span>{msg.createdAt}</span>
+                          {isMe && (
+                            <CheckCheck
+                              className={cn(
+                                'h-3.5 w-3.5',
+                                msg.isRead
+                                  ? 'text-emerald-400'
+                                  : 'text-primary-foreground/40'
+                              )}
+                            />
+                          )}
+                        </div>
                       </div>
                     </motion.div>
                   );
                 })}
+
+                {/* Typing indicator */}
+                <AnimatePresence>
+                  {isTyping && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex justify-end"
+                    >
+                      <div className="max-w-[75%] rounded-2xl rounded-bl-md bg-muted px-5 py-3 msg-tail-other">
+                        <div className="flex items-center gap-1.5">
+                          <span className="typing-dot inline-block h-2 w-2 rounded-full bg-muted-foreground/60" />
+                          <span className="typing-dot inline-block h-2 w-2 rounded-full bg-muted-foreground/60" />
+                          <span className="typing-dot inline-block h-2 w-2 rounded-full bg-muted-foreground/60" />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 <div ref={messagesEndRef} />
               </div>
             </ScrollArea>

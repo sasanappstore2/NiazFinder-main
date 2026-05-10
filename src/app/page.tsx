@@ -10,8 +10,11 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { BackToTop } from '@/components/shared/BackToTop';
+import { QuickActions } from '@/components/shared/QuickActions';
+import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { CookieConsent } from '@/components/shared/CookieConsent';
+import { OnboardingWelcome } from '@/components/shared/OnboardingWelcome';
 import { Separator } from '@/components/ui/separator';
 
 // Pages
@@ -109,37 +112,51 @@ export default function App() {
           {currentView === 'login' && null /* handled by AuthModal */}
           {currentView === 'register' && null /* handled by AuthModal */}
           {currentView === 'post-need' && (
-            <div className="max-w-4xl mx-auto px-4 pb-12">
+            <div className="max-w-4xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <RequestForm />
             </div>
           )}
           {currentView === 'browse-requests' && (
-            <div className="max-w-7xl mx-auto px-4 pb-12">
+            <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <BrowseRequests />
             </div>
           )}
           {currentView === 'request-detail' && (
-            <div className="max-w-5xl mx-auto px-4 pb-12">
+            <div className="max-w-5xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <RequestDetail />
             </div>
           )}
           {currentView === 'submit-proposal' && (
-            <div className="max-w-3xl mx-auto px-4 pb-12">
+            <div className="max-w-3xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <ProposalForm />
             </div>
           )}
           {currentView === 'browse-specialists' && (
-            <div className="max-w-7xl mx-auto px-4 pb-12">
+            <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <BrowseSpecialists />
             </div>
           )}
           {currentView === 'specialist-profile' && (
-            <div className="max-w-6xl mx-auto px-4 pb-12">
+            <div className="max-w-6xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <SpecialistProfile />
             </div>
           )}
           {currentView === 'dashboard' && (
-            <div className="max-w-7xl mx-auto px-4 pb-12">
+            <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <UserDashboard />
             </div>
           )}
@@ -147,42 +164,58 @@ export default function App() {
             <AdminDashboard />
           )}
           {currentView === 'messages' && (
-            <div className="max-w-7xl mx-auto px-4 pb-12" style={{ height: 'calc(100vh - 80px)' }}>
+            <div className="max-w-7xl mx-auto px-4 pt-2 pb-12" style={{ height: 'calc(100vh - 80px)' }}>
+              <Breadcrumb />
+              <Separator className="my-4" />
               <ChatPanel />
             </div>
           )}
           {currentView === 'notifications' && (
-            <div className="max-w-3xl mx-auto px-4 pb-12">
+            <div className="max-w-3xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <NotificationsPanel />
             </div>
           )}
           {currentView === 'profile' && (
-            <div className="max-w-5xl mx-auto px-4 pb-12">
+            <div className="max-w-5xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <UserDashboard />
             </div>
           )}
           {currentView === 'pricing' && (
-            <div className="max-w-6xl mx-auto px-4 pb-12">
+            <div className="max-w-6xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <PricingSection />
             </div>
           )}
           {currentView === 'compare-specialists' && (
-            <div className="max-w-7xl mx-auto px-4 pb-12">
+            <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <CompareSpecialists />
             </div>
           )}
           {currentView === 'submit-review' && (
-            <div className="max-w-4xl mx-auto px-4 pb-12">
+            <div className="max-w-4xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <ReviewForm />
             </div>
           )}
           {currentView === 'referral' && (
-            <div className="max-w-4xl mx-auto px-4 pb-12">
+            <div className="max-w-4xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <ReferralPage />
             </div>
           )}
           {currentView === 'notification-settings' && (
-            <div className="max-w-3xl mx-auto px-4 pb-12">
+            <div className="max-w-3xl mx-auto px-4 pt-2 pb-12">
+              <Breadcrumb />
+              <Separator className="my-4" />
               <NotificationSettings />
             </div>
           )}
@@ -202,6 +235,9 @@ export default function App() {
       {/* Auth Modal */}
       <AuthModal />
 
+      {/* Onboarding Welcome */}
+      <OnboardingWelcome />
+
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav />
 
@@ -210,6 +246,9 @@ export default function App() {
 
       {/* Back to Top Button */}
       <BackToTop />
+
+      {/* Quick Actions FAB */}
+      <QuickActions />
     </div>
     </ErrorBoundary>
   );

@@ -15,6 +15,8 @@ import {
   ChevronDown,
   SlidersHorizontal,
   GitCompareArrows,
+  LayoutGrid,
+  List,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -104,7 +106,7 @@ function SkillLevelDots({ level }: { level: number }) {
   );
 }
 
-// ─── Specialist Card ──────────────────────────────────
+// ─── Specialist Card (Grid Mode) ──────────────────────────
 function SpecialistCard({ specialist, onViewProfile }: { specialist: SpecialistProfile; onViewProfile: () => void }) {
   const { toggleCompareSpecialist, compareSpecialistIds, navigateTo } = useAppStore();
   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
@@ -228,6 +230,112 @@ function SpecialistCard({ specialist, onViewProfile }: { specialist: SpecialistP
   );
 }
 
+// ─── Specialist Card (List Mode) ──────────────────────────
+function SpecialistListCard({ specialist, onViewProfile }: { specialist: SpecialistProfile; onViewProfile: () => void }) {
+  const { toggleCompareSpecialist, compareSpecialistIds, navigateTo } = useAppStore();
+  const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
+  const colorClass = getAvatarColor(specialist.displayName);
+  const isCompared = compareSpecialistIds.includes(specialist.id);
+
+  return (
+    <Card className="group border-border/60 bg-card overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/5 hover:border-emerald-200 dark:hover:border-emerald-800">
+      <CardContent className="p-4">
+        <div className="flex items-center gap-4 sm:gap-6">
+          {/* Avatar on right */}
+          <div className="relative shrink-0">
+            <div className={`size-14 rounded-full flex items-center justify-center text-base font-bold ring-2 ring-primary/20 ${colorClass}`}>
+              {initials}
+            </div>
+            {specialist.online && (
+              <span className="absolute bottom-0 right-0 size-3.5 rounded-full border-2 border-card bg-emerald-500" />
+            )}
+          </div>
+
+          {/* Name + Bio + Skills - center */}
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <h3 className="truncate text-sm font-bold">{specialist.displayName}</h3>
+              {specialist.isVerified && (
+                <BadgeCheck className="size-4 shrink-0 fill-emerald-500 text-white" />
+              )}
+            </div>
+            {specialist.bio && (
+              <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                {specialist.bio}
+              </p>
+            )}
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {specialist.skills.slice(0, 4).map((skill) => (
+                <Badge
+                  key={skill.name}
+                  variant="secondary"
+                  className="rounded-md bg-primary/5 text-[10px] font-medium text-foreground hover:bg-primary/10"
+                >
+                  {skill.name}
+                </Badge>
+              ))}
+              {specialist.skills.length > 4 && (
+                <Badge variant="outline" className="rounded-md text-[10px]">
+                  +{specialist.skills.length - 4}
+                </Badge>
+              )}
+            </div>
+          </div>
+
+          {/* Stats column - hidden on small screens */}
+          <div className="hidden shrink-0 flex-col items-center gap-2 lg:flex">
+            <div className="text-center">
+              <RatingStars rating={specialist.rating} />
+            </div>
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <Briefcase className="size-3" />
+                {specialist.projectCount.toLocaleString('fa-IR')}
+              </span>
+              <span className="flex items-center gap-1">
+                <TrendingUp className="size-3 text-emerald-500" />
+                {specialist.completionRate.toLocaleString('fa-IR')}٪
+              </span>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <MapPin className="size-3" />
+              {specialist.city}
+            </div>
+          </div>
+
+          {/* CTA buttons on left */}
+          <div className="flex shrink-0 items-center gap-2">
+            <BookmarkButton id={specialist.id} type="specialist" size="sm" />
+            <Button
+              onClick={onViewProfile}
+              variant="outline"
+              className="h-9 rounded-lg px-3 text-xs font-medium"
+            >
+              پروفایل
+              <ArrowLeft className="size-3" />
+            </Button>
+            <Button
+              onClick={() => navigateTo('messages')}
+              size="icon"
+              variant="outline"
+              className="h-9 w-9 shrink-0 rounded-lg"
+            >
+              <MessageSquare className="size-3.5" />
+            </Button>
+            <button
+              onClick={(e) => { e.stopPropagation(); toggleCompareSpecialist(specialist.id); }}
+              className={`rounded-lg p-1.5 transition-colors ${isCompared ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+              aria-label="مقایسه"
+            >
+              <GitCompareArrows className="size-3.5" />
+            </button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 // ─── Floating Compare Bar ─────────────────────────────
 function CompareBar() {
   const { compareSpecialistIds, navigateTo, clearCompareList } = useAppStore();
@@ -275,6 +383,7 @@ export function BrowseSpecialists() {
   const [sortBy, setSortBy] = useState('rating');
   const [visibleCount, setVisibleCount] = useState(6);
   const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const activeFilterCount = [
     query,
@@ -358,19 +467,39 @@ export function BrowseSpecialists() {
                 {filteredSpecialists.length.toLocaleString('fa-IR')} متخصص یافت شد
               </p>
             </div>
-            <Button
-              onClick={() => setShowFilters(!showFilters)}
-              variant="outline"
-              className="gap-2 self-start sm:self-auto"
-            >
-              <SlidersHorizontal className="size-4" />
-              فیلترها
-              {activeFilterCount > 0 && (
-                <Badge className="mr-1 size-5 rounded-full p-0 text-[10px] flex items-center justify-center">
-                  {activeFilterCount}
-                </Badge>
-              )}
-            </Button>
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              {/* View toggle */}
+              <div className="flex overflow-hidden rounded-lg border border-border/60">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`flex items-center justify-center p-2 transition-colors ${viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+                  aria-label="نمای شبکه‌ای"
+                >
+                  <LayoutGrid className="size-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`flex items-center justify-center p-2 transition-colors ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+                  aria-label="نمای لیستی"
+                >
+                  <List className="size-4" />
+                </button>
+              </div>
+              {/* Filter button */}
+              <Button
+                onClick={() => setShowFilters(!showFilters)}
+                variant="outline"
+                className="gap-2"
+              >
+                <SlidersHorizontal className="size-4" />
+                فیلترها
+                {activeFilterCount > 0 && (
+                  <Badge className="mr-1 size-5 rounded-full p-0 text-[10px] flex items-center justify-center">
+                    {activeFilterCount}
+                  </Badge>
+                )}
+              </Button>
+            </div>
           </div>
         </motion.div>
 
@@ -537,15 +666,25 @@ export function BrowseSpecialists() {
               variants={container}
               initial="hidden"
               animate="show"
-              key={`${query}-${skillFilter}-${cityFilter}-${sortBy}`}
-              className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+              key={`${query}-${skillFilter}-${cityFilter}-${sortBy}-${viewMode}`}
+              className={viewMode === 'grid'
+                ? 'grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'
+                : 'flex flex-col gap-4'
+              }
             >
               {visibleSpecialists.map((specialist) => (
                 <motion.div key={specialist.id} variants={item}>
-                  <SpecialistCard
-                    specialist={specialist}
-                    onViewProfile={() => navigateTo('specialist-profile', { id: specialist.id })}
-                  />
+                  {viewMode === 'grid' ? (
+                    <SpecialistCard
+                      specialist={specialist}
+                      onViewProfile={() => navigateTo('specialist-profile', { id: specialist.id })}
+                    />
+                  ) : (
+                    <SpecialistListCard
+                      specialist={specialist}
+                      onViewProfile={() => navigateTo('specialist-profile', { id: specialist.id })}
+                    />
+                  )}
                 </motion.div>
               ))}
             </motion.div>
