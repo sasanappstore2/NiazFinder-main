@@ -7,17 +7,21 @@ import { useAppStore } from '@/lib/store';
 // Layout
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { BackToTop } from '@/components/shared/BackToTop';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { CookieConsent } from '@/components/shared/CookieConsent';
 import { Separator } from '@/components/ui/separator';
 
 // Pages
 import { HeroSection } from '@/components/home/HeroSection';
+import TrustPartnersMarquee from '@/components/home/TrustPartnersMarquee';
 import { CategoriesSection } from '@/components/home/CategoriesSection';
 import { HowItWorks } from '@/components/home/HowItWorks';
 import { TopSpecialists } from '@/components/home/TopSpecialists';
 import { FeaturedRequests } from '@/components/home/FeaturedRequests';
+import { ActivityFeed } from '@/components/home/ActivityFeed';
 import { TestimonialsSection } from '@/components/home/TestimonialsSection';
 import { FAQSection } from '@/components/home/FAQSection';
 import { StatsCounter } from '@/components/home/StatsCounter';
@@ -36,6 +40,7 @@ import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
 import { ReferralPage } from '@/components/dashboard/ReferralPage';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { NotificationsPanel } from '@/components/chat/NotificationsPanel';
+import { NotificationSettings } from '@/components/dashboard/NotificationSettings';
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -53,11 +58,13 @@ function HomePage() {
   return (
     <>
       <HeroSection />
+      <TrustPartnersMarquee />
       <StatsCounter />
       <CategoriesSection />
       <HowItWorks />
       <TopSpecialists />
       <FeaturedRequests />
+      <ActivityFeed />
       <PricingSection />
       <CTABanner />
       <TestimonialsSection />
@@ -174,6 +181,11 @@ export default function App() {
               <ReferralPage />
             </div>
           )}
+          {currentView === 'notification-settings' && (
+            <div className="max-w-3xl mx-auto px-4 pb-12">
+              <NotificationSettings />
+            </div>
+          )}
         </motion.main>
       </AnimatePresence>
 
@@ -189,6 +201,12 @@ export default function App() {
 
       {/* Auth Modal */}
       <AuthModal />
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
+
+      {/* Cookie Consent Banner */}
+      <CookieConsent />
 
       {/* Back to Top Button */}
       <BackToTop />

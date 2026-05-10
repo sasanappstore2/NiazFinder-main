@@ -18,6 +18,7 @@ import {
   Send,
   ChevronDown,
   CheckCircle2,
+  Flag,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +26,8 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAppStore } from '@/lib/store';
+import { RequestShare } from '@/components/shared/RequestShare';
+import { ReportUser } from '@/components/shared/ReportUser';
 import {
   MOCK_REQUESTS,
   formatPrice,
@@ -249,6 +252,7 @@ export function RequestDetail() {
 
   const proposals = useMemo(() => generateMockProposals(), []);
   const [proposalSort, setProposalSort] = useState<'newest' | 'price_low' | 'price_high'>('newest');
+  const [reportOpen, setReportOpen] = useState(false);
 
   const sortedProposals = useMemo(() => {
     const sorted = [...proposals];
@@ -303,9 +307,23 @@ export function RequestDetail() {
                   {request.categoryIcon} {request.categoryName}
                 </Badge>
               </div>
-              <h1 className="text-xl font-bold leading-snug sm:text-2xl lg:text-3xl">
-                {request.title}
-              </h1>
+              <div className="flex items-start gap-3">
+                <h1 className="text-xl font-bold leading-snug sm:text-2xl lg:text-3xl flex-1">
+                  {request.title}
+                </h1>
+                <div className="flex items-center gap-1 shrink-0 mt-1">
+                  <RequestShare requestTitle={request.title} requestId={request.id} />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 text-muted-foreground hover:text-destructive"
+                    onClick={() => setReportOpen(true)}
+                    aria-label="گزارش تخلف"
+                  >
+                    <Flag className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
               <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Clock className="size-3.5" />
@@ -484,6 +502,14 @@ export function RequestDetail() {
           </div>
         </div>
       </div>
+
+      {/* Report Dialog */}
+      <ReportUser
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+        targetName={request.title}
+        targetType="request"
+      />
     </div>
   );
 }

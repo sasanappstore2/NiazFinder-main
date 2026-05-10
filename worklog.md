@@ -490,3 +490,149 @@ Priority Recommendations for Next Phase:
 8. Add report/flag user functionality
 9. Add specialist availability calendar/booking UI
 10. Add request sharing (copy link, social share buttons)
+
+---
+Task ID: 7
+Agent: Main Orchestrator (Round 7 - Integration + New Components)
+Task: QA testing, integrate orphaned components, build new features, styling polish
+
+Work Log:
+- Reviewed worklog.md: 6 completed rounds, stable MVP with ~52 files
+- Lint: 0 errors, 1 pre-existing warning (React Hook Form)
+- Dev server compiles and serves HTTP 200 successfully
+
+**Integrated Orphaned Components:**
+1. **TrustPartnersMarquee** - Added to homepage between Hero and StatsCounter (was built but unused)
+   - Two-row marquee with 10 Iranian brand logos (دیجی‌کالا, اسنپ, دیجی‌پی, etc.)
+   - Counter-scrolling rows with fade edges
+   - Fixed: changed from named to default export import
+
+2. **ActivityFeed** - Added to homepage between FeaturedRequests and PricingSection (was built but unused)
+   - 8 real-time activity items (proposals, promotions, project completions, etc.)
+   - Timeline connector design with colored accent dots
+   - Staggered entrance animations
+   - Live indicator badge
+
+3. **NotificationSettings** - Added as new `notification-settings` route in page.tsx
+   - 6 notification categories with toggle switches
+   - Connected via Header user menu (new "تنظیمات اعلان‌ها" item with Settings icon)
+
+**New Components Created (via parallel subagents):**
+4. **MobileBottomNav** (`/src/components/layout/MobileBottomNav.tsx`):
+   - 5 tabs: خانه, نیازها, متخصص‌ها, پیام‌ها, پروفایل
+   - Active state with animated layoutId bubble (emerald)
+   - Unread badge on Messages tab
+   - Auth-gated: tapping پروفایل/پیام‌ها without login opens auth modal
+   - Glass-morphism background (backdrop-blur-xl)
+   - Hidden on lg:, visible only on mobile/tablet (z-40)
+   - iOS safe area padding
+
+5. **CookieConsent** (`/src/components/shared/CookieConsent.tsx`):
+   - GDPR cookie banner positioned above MobileBottomNav
+   - localStorage persistence (key: 'needfinder-cookie-consent')
+   - AnimatePresence slide-up entrance/exit animation
+   - Accept/Reject/Settings buttons with toast notifications
+   - Glass card with decorative gradient blurs
+
+6. **ReportUser** (`/src/components/shared/ReportUser.tsx`):
+   - Dialog with 6 report reasons (RadioGroup)
+   - Optional textarea (500 chars with counter)
+   - Anonymous checkbox (checked by default)
+   - Submit with loading state + success toast + auto-close
+   - Target info card with Badge
+
+7. **RequestShare** (`/src/components/shared/RequestShare.tsx`):
+   - Popover with copy link button (clipboard + toast)
+   - 3 social share buttons: Telegram, WhatsApp, Email
+   - Staggered entrance animations for each button
+   - Platform-specific colors (Telegram: #0088cc, WhatsApp: #25D366)
+
+8. **SpecialistAvailabilityBadge** (`/src/components/specialists/SpecialistAvailabilityBadge.tsx`):
+   - 3 sizes (sm/md/lg) with appropriate dot/text sizing
+   - Online: green pulsing dot + "آنلاین" + optional response time
+   - Offline: gray dot + "آفلاین" + last activity (lg only)
+   - Glass-morphism background for lg variant
+   - Ping animation ring on lg online state
+
+**Enhanced Existing Components:**
+9. **RequestDetail** - Added share + report buttons next to title:
+   - RequestShare popover (Share2 icon button)
+   - Flag button opens ReportUser dialog (request type)
+   - Report dialog closes after successful submission
+
+10. **BrowseSpecialists** - Replaced simple online/offline text with SpecialistAvailabilityBadge:
+    - Shows animated pulse dot + online/offline status + response time
+    - Imported and integrated SpecialistAvailabilityBadge component
+
+11. **Header UserMenu** - Added "تنظیمات اعلان‌ها" (Notification Settings) menu item:
+    - Settings icon, navigates to notification-settings view
+
+**Homepage Sections (now 12):**
+Hero → TrustPartnersMarquee → StatsCounter → Categories → HowItWorks → TopSpecialists → FeaturedRequests → ActivityFeed → PricingSection → CTABanner → Testimonials → FAQ
+
+Stage Summary:
+- 5 new components: MobileBottomNav, CookieConsent, ReportUser, RequestShare, SpecialistAvailabilityBadge
+- 3 integrated orphaned components: TrustPartnersMarquee, ActivityFeed, NotificationSettings
+- 3 enhanced components: RequestDetail (share+report), BrowseSpecialists (availability badge), Header (settings link)
+- Homepage now has 12 sections (was 10)
+- 1 new navigation view: notification-settings
+- New CSS animations (Round 7): live-pulse, type-cursor, text-shimmer, soft-glow, float-slow/medium, underline-reveal, glass-card, progress-fill, scale-up, slide-in-rtl
+- Total: ~57 custom source files
+- Lint: 0 errors, 1 warning (pre-existing)
+
+---
+Current Project Status Assessment:
+- ✅ Phase 1 MVP COMPLETE (7 development rounds)
+- ✅ Homepage with 12 sections (Hero, TrustPartnersMarquee, StatsCounter, Categories, HowItWorks, TopSpecialists, FeaturedRequests, ActivityFeed, PricingSection, CTABanner, Testimonials, FAQ)
+- ✅ Mobile bottom navigation (5 tabs, glass-morphism, unread badge, auth-gated)
+- ✅ Cookie consent banner (GDPR, localStorage persistence, toast notifications)
+- ✅ Auth system (login with real API + fallback, register with zod validation)
+- ✅ Request system (3-step form, browse with filters, detail with proposals, proposal submission, share, report)
+- ✅ Specialist system (browse with filters, full profile, comparison, bookmarking, message button, review form, availability badge)
+- ✅ Pricing page (3 plans, monthly/yearly toggle)
+- ✅ Referral page (invite link, stats, history table, how-it-works, rules)
+- ✅ Notification settings page (6 categories, 22 toggles, enable/disable all)
+- ✅ User Dashboard (requests, proposals, wallet, profile tabs)
+- ✅ Admin Dashboard (stats charts, user management, settings)
+- ✅ Chat Panel (two-panel messaging, send messages)
+- ✅ Notifications Panel (type badges, filter, mark read)
+- ✅ Bookmark system (requests + specialists with animated heart + particle burst + toast notifications)
+- ✅ Compare specialists (side-by-side table, floating bar, max 3)
+- ✅ Review submission form (4 categories, half-stars, pros/cons, recommended toggle, confetti success)
+- ✅ Proposal submission form (price, delivery, cover letter, portfolio)
+- ✅ Wallet history (balance overview, 6 transaction types, filter/search)
+- ✅ Error boundary (graceful crash recovery, retry + home buttons)
+- ✅ Report user functionality (6 reasons, anonymous toggle, textarea, loading state)
+- ✅ Request sharing (copy link, Telegram, WhatsApp, Email)
+- ✅ Specialist availability badges (3 sizes, online/offline, response time)
+- ✅ CTA banner (emerald gradient, trust indicators, staggered animations)
+- ✅ Dark mode toggle (ThemeProvider + ThemeToggle)
+- ✅ Back-to-top button
+- ✅ Loading skeletons (RequestCard, SpecialistCard, DashboardStats)
+- ✅ Search autocomplete with keyboard navigation
+- ✅ Compact footer on all pages + pricing/referral/compare links
+- ✅ Enhanced user menu (6 items: bookmarks, proposals, pricing, referral, compare, notification settings)
+- ✅ 40+ premium CSS animations
+- ✅ 6 API routes (auth, categories, requests, specialists, proposals, notifications)
+- ✅ Database seeded (12 users, 32 categories, 37 skills)
+- ✅ Zero lint errors
+- ✅ Zero avatar 404 errors (all using initials fallback)
+- ✅ ErrorBoundary wrapping entire app for crash recovery
+- ✅ Toast notifications via Sonner (bookmark, compare, review, referral copy, report, cookie)
+
+Unresolved Issues / Risks:
+- Dev server (Turbopack) dies under heavy load in sandbox (memory constraint) - not a code issue
+- agent-browser headless mode cannot reliably test SPA navigation (React state changes don't propagate)
+- Dark mode not testable via agent-browser (needs real browser with localStorage)
+
+Priority Recommendations for Next Phase:
+1. Add WebSocket chat service in mini-services/chat-service for real-time messaging
+2. Connect BrowseRequests/BrowseSpecialists to real API data (replace MOCK_REQUESTS/MOCK_SPECIALISTS)
+3. Add structured data (JSON-LD) for SEO
+4. Performance: lazy load below-fold components, image optimization
+5. Add PWA manifest and service worker
+6. Add specialist availability calendar/booking UI
+7. Add notification preference settings page integration with API
+8. Add online status indicators in chat conversations
+9. Mobile responsive polish: test all views at 375px width
+10. Add badge count on MobileBottomNav notifications tab

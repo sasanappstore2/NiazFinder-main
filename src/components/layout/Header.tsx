@@ -18,6 +18,7 @@ import {
   Gift,
   GitCompareArrows,
   ChevronLeft,
+  Settings,
 } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
@@ -266,6 +267,10 @@ function UserMenu() {
           <DropdownMenuItem onClick={() => navigateTo('compare-specialists')}>
             <GitCompareArrows className="ms-2 size-4" />
             مقایسه متخصص‌ها
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigateTo('notification-settings')}>
+            <Settings className="ms-2 size-4" />
+            تنظیمات اعلان‌ها
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

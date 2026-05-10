@@ -31,6 +31,7 @@ import { useAppStore } from '@/lib/store';
 import { MOCK_SPECIALISTS, CITIES } from '@/lib/constants';
 import type { SpecialistProfile } from '@/lib/types';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
+import { SpecialistAvailabilityBadge } from '@/components/specialists/SpecialistAvailabilityBadge';
 
 // ─── Animation variants ───────────────────────────────
 const container = {
@@ -136,18 +137,12 @@ function SpecialistCard({ specialist, onViewProfile }: { specialist: SpecialistP
               <MapPin className="size-3" />
               {specialist.city}
             </div>
-            <div className="mt-1 flex items-center gap-2">
-              {specialist.online ? (
-                <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
-                  <span className="size-1.5 rounded-full bg-emerald-500" />
-                  آنلاین
-                </span>
-              ) : (
-                <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                  <span className="size-1.5 rounded-full bg-muted-foreground/40" />
-                  آفلاین
-                </span>
-              )}
+            <div className="mt-1">
+              <SpecialistAvailabilityBadge
+                isOnline={specialist.online}
+                responseTime={specialist.responseTime}
+                size="sm"
+              />
             </div>
           </div>
           <div className="flex flex-col items-center gap-1">
