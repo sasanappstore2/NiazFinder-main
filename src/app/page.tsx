@@ -9,6 +9,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { BackToTop } from '@/components/shared/BackToTop';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { Separator } from '@/components/ui/separator';
 
 // Pages
@@ -21,9 +22,11 @@ import { TestimonialsSection } from '@/components/home/TestimonialsSection';
 import { FAQSection } from '@/components/home/FAQSection';
 import { StatsCounter } from '@/components/home/StatsCounter';
 import { PricingSection } from '@/components/home/PricingSection';
+import { CTABanner } from '@/components/home/CTABanner';
 import { RequestForm } from '@/components/requests/RequestForm';
 import { BrowseRequests } from '@/components/requests/BrowseRequests';
 import { RequestDetail } from '@/components/requests/RequestDetail';
+import { ProposalForm } from '@/components/requests/ProposalForm';
 import { BrowseSpecialists } from '@/components/specialists/BrowseSpecialists';
 import { SpecialistProfile } from '@/components/specialists/SpecialistProfile';
 import { CompareSpecialists } from '@/components/specialists/CompareSpecialists';
@@ -54,6 +57,7 @@ function HomePage() {
       <TopSpecialists />
       <FeaturedRequests />
       <PricingSection />
+      <CTABanner />
       <TestimonialsSection />
       <FAQSection />
     </>
@@ -77,6 +81,7 @@ export default function App() {
   const isHome = currentView === 'home';
 
   return (
+    <ErrorBoundary>
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header />
 
@@ -107,6 +112,11 @@ export default function App() {
           {currentView === 'request-detail' && (
             <div className="max-w-5xl mx-auto px-4 pb-12">
               <RequestDetail />
+            </div>
+          )}
+          {currentView === 'submit-proposal' && (
+            <div className="max-w-3xl mx-auto px-4 pb-12">
+              <ProposalForm />
             </div>
           )}
           {currentView === 'browse-specialists' && (
@@ -171,5 +181,6 @@ export default function App() {
       {/* Back to Top Button */}
       <BackToTop />
     </div>
+    </ErrorBoundary>
   );
 }

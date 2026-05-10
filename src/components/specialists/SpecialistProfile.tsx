@@ -23,7 +23,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAppStore } from '@/lib/store';
 import {
@@ -435,21 +434,33 @@ export function SpecialistProfile() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {specialist.skills.map((skill) => (
-                      <div key={skill.name} className="flex items-center gap-4">
-                        <div className="min-w-0 flex-1">
-                          <div className="mb-1.5 flex items-center justify-between gap-2">
+                  <div className="space-y-5">
+                    {specialist.skills.map((skill, index) => {
+                      const percentage = Math.round((skill.level / 5) * 100);
+                      return (
+                        <div key={skill.name}>
+                          {/* Row 1: Skill name (right) + Dots (left) */}
+                          <div className="mb-2 flex items-center justify-between gap-3">
                             <span className="text-sm font-medium">{skill.name}</span>
                             <SkillLevelDots level={skill.level} />
                           </div>
-                          <Progress
-                            value={(skill.level / 5) * 100}
-                            className="h-1.5"
-                          />
+                          {/* Row 2: Animated bar (fills RTL) + Percentage (left) */}
+                          <div className="flex items-center gap-3">
+                            <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-muted/40">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${percentage}%` }}
+                                transition={{ duration: 1, ease: 'easeOut', delay: index * 0.1 }}
+                                className="h-full rounded-full bg-gradient-to-l from-emerald-500 to-teal-400"
+                              />
+                            </div>
+                            <span className="min-w-[2.5rem] text-xs font-bold tabular-nums text-muted-foreground">
+                              {percentage.toLocaleString('fa-IR')}٪
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>

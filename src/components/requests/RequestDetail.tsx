@@ -242,6 +242,7 @@ function InfoCard({ icon: Icon, label, value }: { icon: typeof DollarSign; label
 export function RequestDetail() {
   const viewParams = useAppStore((s) => s.viewParams);
   const goBack = useAppStore((s) => s.goBack);
+  const navigateTo = useAppStore((s) => s.navigateTo);
 
   const requestId = viewParams.id || 'r1';
   const request = MOCK_REQUESTS.find((r) => r.id === requestId) || MOCK_REQUESTS[0];
@@ -473,7 +474,7 @@ export function RequestDetail() {
                   <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
                     پیشنهاد خود را ارسال کنید و شانس خود را برای انجام این پروژه افزایش دهید.
                   </p>
-                  <Button className="w-full gap-2 rounded-xl">
+                  <Button onClick={() => navigateTo('submit-proposal', { id: request.id })} className="w-full gap-2 rounded-xl">
                     <MessageSquare className="size-4" />
                     ارسال پیشنهاد
                   </Button>

@@ -227,9 +227,129 @@ Priority Recommendations for Next Phase:
 2. Connect BrowseRequests/BrowseSpecialists to real API data (replace MOCK_REQUESTS/MOCK_SPECIALISTS)
 3. Add referral system UI (invite link, reward tracking)
 4. Add structured data (JSON-LD) for SEO
-5. Add error boundary component for graceful crash handling
+5. Performance: lazy load below-fold components, image optimization
+6. Add PWA manifest and service worker
+7. Mobile responsive polish: test all views at 375px width
+8. Add rating/review submission form
+9. Add notification preference settings
+
+---
+Task ID: 5
+Agent: Main Orchestrator (Round 5 - Features + Polish)
+Task: QA testing, new features, styling polish
+
+Work Log:
+- Reviewed worklog.md: 4 completed rounds, stable MVP with 46+ files
+- Lint: 0 errors, 1 pre-existing warning (React Hook Form)
+- Dev server compiles and serves HTTP 200 successfully
+- agent-browser QA: Homepage renders correctly (verified in prior rounds)
+
+**New Components Created:**
+1. **ProposalForm** (`/src/components/requests/ProposalForm.tsx`) - Proposal submission form for specialists:
+   - Price input with Persian numeral formatting + تومان suffix
+   - Delivery time (number + unit select)
+   - Cover letter textarea with character counter (color changes near limits)
+   - Portfolio attachment dropdown
+   - Inline validation with AnimatePresence error messages
+   - Submit with loading state, success animation, toast notification, auto-navigate
+   - Shows request context (title, budget range, delivery time hints)
+
+2. **WalletHistory** (`/src/components/dashboard/WalletHistory.tsx`) - Wallet transaction history:
+   - Balance overview card with emerald gradient, glass-morphism decorative circles
+   - Total balance, frozen amount, available balance display
+   - Charge/Withdraw action buttons
+   - 10 mock transactions (DEPOSIT, WITHDRAW, PAYMENT, REFUND, COMMISSION, BONUS)
+   - Filter tabs: All, Deposits, Withdrawals, Payments
+   - Search by description
+   - Color-coded type icons, status badges (green/amber/red)
+   - Staggered entrance animations
+
+3. **CTABanner** (`/home/components/home/CTABanner.tsx`) - Call-to-action section:
+   - Full-width emerald gradient background (edge-to-edge)
+   - Noise texture overlay + geometric dot pattern
+   - 5 decorative blurred circles with slow rotation/pulse animations
+   - Badge, heading, subtitle, 2 CTA buttons (register + browse specialists)
+   - 3 trust indicators (free registration, 24/7 support, secure payment)
+   - whileInView staggered entrance animations
+
+4. **ErrorBoundary** (`/src/components/shared/ErrorBoundary.tsx`) - React error boundary:
+   - Class component with getDerivedStateFromError + componentDidCatch
+   - Beautiful error fallback UI with AlertTriangle icon, retry/home buttons
+   - Dev-only collapsible error details panel
+   - HOC: `withErrorBoundary<P>()` for wrapping any component
+   - RTL layout with framer-motion animations
+
+**Styling Enhancements:**
+5. **SpecialistProfile skills** - Replaced simple Progress bar with animated gradient skill bars:
+   - Each bar fills right-to-left (RTL) with emerald→teal gradient
+   - Staggered width animation on mount (1s duration, 0.1s delay per skill)
+   - Persian percentage label (e.g., "۸۰٪") at bar end
+   - Removed unused Progress import
+
+6. **HowItWorks section** - Enhanced step cards:
+   - Gradient connecting line visible on sm+ screens (was lg only)
+   - Animated decorative elements (Sparkles, circles, dots) near each card
+   - Emerald-gradient number badge on each card
+   - Enhanced hover: lift + emerald glow shadow
+   - text-gradient class applied to key phrase in title
+
+**Integration Updates:**
+7. Added `CTABanner` to homepage between PricingSection and TestimonialsSection (10 sections total now)
+8. Added `ProposalForm` as new `submit-proposal` view in page.tsx
+9. Connected RequestDetail "ارسال پیشنهاد" button to navigate to ProposalForm with request ID
+10. Wrapped entire App with ErrorBoundary for crash recovery
+11. Added `submit-proposal` to AppView union type
+
+Stage Summary:
+- 4 new components: ProposalForm, WalletHistory, CTABanner, ErrorBoundary
+- 2 enhanced existing components: SpecialistProfile (skill bars), HowItWorks (decorations)
+- Homepage now has 10 sections (was 9)
+- 1 new navigation view: submit-proposal
+- Total: ~50 custom source files
+- Lint: 0 errors, 1 warning (pre-existing)
+
+---
+Current Project Status Assessment:
+- ✅ Phase 1 MVP COMPLETE (5 development rounds)
+- ✅ Homepage with 10 sections (Hero, StatsCounter, Categories, HowItWorks, TopSpecialists, FeaturedRequests, PricingSection, CTABanner, Testimonials, FAQ)
+- ✅ Auth system (login with real API + fallback, register with zod validation)
+- ✅ Request system (3-step form, browse with filters, detail with proposals, proposal submission form)
+- ✅ Specialist system (browse with filters, full profile, comparison, bookmarking, message button, animated skill bars)
+- ✅ Pricing page (3 plans, monthly/yearly toggle)
+- ✅ User Dashboard (requests, proposals, wallet, profile tabs)
+- ✅ Admin Dashboard (stats charts, user management, settings)
+- ✅ Chat Panel (two-panel messaging, send messages)
+- ✅ Notifications Panel (type badges, filter, mark read)
+- ✅ Bookmark system (requests + specialists with animated heart + particle burst)
+- ✅ Compare specialists (side-by-side table, floating bar, max 3)
+- ✅ Proposal submission form (price, delivery, cover letter, portfolio)
+- ✅ Wallet history (balance overview, 6 transaction types, filter/search)
+- ✅ Error boundary (graceful crash recovery, retry + home buttons)
+- ✅ CTA banner (emerald gradient, trust indicators, staggered animations)
+- ✅ Dark mode toggle (ThemeProvider + ThemeToggle)
+- ✅ Back-to-top button
+- ✅ Loading skeletons (RequestCard, SpecialistCard, DashboardStats)
+- ✅ Search autocomplete with keyboard navigation
+- ✅ Compact footer on all pages + pricing + compare links
+- ✅ 6 API routes (auth, categories, requests, specialists, proposals, notifications)
+- ✅ Database seeded (12 users, 32 categories, 37 skills)
+- ✅ 20+ premium CSS animations (glow, spotlight, reveal, heartbeat, particle burst, gradient border, marquee, etc.)
+- ✅ Zero lint errors
+- ✅ ErrorBoundary wrapping entire app for crash recovery
+
+Unresolved Issues / Risks:
+- Dev server (Turbopack) dies under heavy load in sandbox (memory constraint) - not a code issue
+- agent-browser headless mode cannot reliably test SPA navigation (React state changes don't propagate)
+- Dark mode not testable via agent-browser (needs real browser with localStorage)
+
+Priority Recommendations for Next Phase:
+1. Add WebSocket chat service in mini-services/chat-service for real-time messaging
+2. Connect BrowseRequests/BrowseSpecialists to real API data (replace MOCK_REQUESTS/MOCK_SPECIALISTS)
+3. Add referral system UI (invite link, reward tracking)
+4. Add structured data (JSON-LD) for SEO
+5. Add rating/review submission form (after project completion)
 6. Performance: lazy load below-fold components, image optimization
 7. Add PWA manifest and service worker
 8. Mobile responsive polish: test all views at 375px width
-9. Add proposal submission form (from specialist to request)
-10. Add wallet transaction history page
+9. Add notification preference settings page
+10. Add report/flag user functionality

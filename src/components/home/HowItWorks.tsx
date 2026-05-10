@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ClipboardList, MessageSquare, Users, CheckCircle, ChevronLeft } from 'lucide-react';
+import { ClipboardList, MessageSquare, Users, CheckCircle, ChevronLeft, Sparkles } from 'lucide-react';
 
 const steps = [
   {
@@ -48,6 +48,33 @@ const chevronVariant = {
   show: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: 'easeOut' as const } },
 };
 
+const sparkleFloat = {
+  animate: (i: number) => ({
+    y: [0, -8, 0],
+    opacity: [0.4, 1, 0.4],
+    scale: [0.8, 1.1, 0.8],
+    transition: {
+      duration: 2.5,
+      repeat: Infinity,
+      delay: i * 0.4,
+      ease: 'easeInOut' as const,
+    },
+  }),
+};
+
+const dotPulse = {
+  animate: (i: number) => ({
+    scale: [1, 1.6, 1],
+    opacity: [0.3, 0.7, 0.3],
+    transition: {
+      duration: 2,
+      repeat: Infinity,
+      delay: i * 0.5,
+      ease: 'easeInOut' as const,
+    },
+  }),
+};
+
 export function HowItWorks() {
   return (
     <section className="relative bg-background py-16 sm:py-20 lg:py-24">
@@ -70,7 +97,7 @@ export function HowItWorks() {
             مرحله ساده
           </div>
           <h2 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
-            چگونه کار می‌کند؟
+            چگونه <span className="text-gradient">کار می‌کند</span>؟
           </h2>
           <p className="mx-auto max-w-xl text-muted-foreground">
             در چهار مرحله ساده، نیاز خود را به بهترین متخصص وصل کنید
@@ -85,8 +112,8 @@ export function HowItWorks() {
           viewport={{ once: true, margin: '-50px' }}
           className="relative"
         >
-          {/* Gradient progress line (desktop) */}
-          <div className="absolute top-[52px] start-[12%] end-[12%] hidden h-1 lg:block">
+          {/* Gradient connecting line (sm+) */}
+          <div className="absolute top-[52px] start-[8%] end-[8%] hidden h-1 sm:block">
             <div className="relative h-full overflow-hidden rounded-full bg-gradient-to-l from-emerald-400 via-teal-400 to-emerald-300 dark:from-emerald-600 dark:via-teal-600 dark:to-emerald-500 opacity-40">
               <motion.div
                 initial={{ scaleX: 0 }}
@@ -109,16 +136,42 @@ export function HowItWorks() {
                     <div className="relative z-10 mb-6">
                       <div className="relative flex size-[88px] items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 via-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25 ring-4 ring-background">
                         <Icon className="size-9 text-white" />
-                        {/* Number badge */}
-                        <span className="absolute -bottom-1 -start-1 z-20 flex size-8 items-center justify-center rounded-full border-[3px] border-background bg-gradient-to-br from-amber-400 to-orange-400 text-xs font-bold text-white shadow-md">
-                          {step.number}
-                        </span>
                       </div>
                     </div>
 
+                    {/* Decorative sparkles near each step */}
+                    <motion.div
+                      custom={i}
+                      variants={sparkleFloat}
+                      animate="animate"
+                      className="pointer-events-none absolute -top-2 end-4 z-0"
+                    >
+                      <Sparkles className="size-4 text-emerald-400/50" />
+                    </motion.div>
+                    <motion.div
+                      custom={i + 2}
+                      variants={sparkleFloat}
+                      animate="animate"
+                      className="pointer-events-none absolute -bottom-4 -start-2 z-0"
+                    >
+                      <div className="size-3 rounded-full bg-teal-400/30" />
+                    </motion.div>
+                    <motion.div
+                      custom={i + 1}
+                      variants={dotPulse}
+                      animate="animate"
+                      className="pointer-events-none absolute top-8 -end-6 z-0"
+                    >
+                      <div className="size-2 rounded-full bg-emerald-400/40" />
+                    </motion.div>
+
                     {/* Card body */}
-                    <div className="group rounded-2xl border border-transparent bg-card/0 p-4 transition-all duration-300 hover:border-border hover:bg-card hover:shadow-lg hover:shadow-emerald-500/5 lg:p-5">
-                      <h3 className="mb-2 text-base font-bold">{step.title}</h3>
+                    <div className="group relative rounded-2xl border border-transparent bg-card/0 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-border hover:bg-card hover:shadow-xl hover:shadow-emerald-500/10 lg:p-5">
+                      {/* Number badge on card */}
+                      <span className="absolute -top-3 start-4 flex size-7 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 text-xs font-bold text-white shadow-md ring-[3px] ring-background">
+                        {step.number}
+                      </span>
+                      <h3 className="mb-2 mt-1 text-base font-bold">{step.title}</h3>
                       <p className="text-sm leading-relaxed text-muted-foreground max-w-[260px]">
                         {step.description}
                       </p>
