@@ -1,0 +1,148 @@
+'use client';
+
+import { useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useAppStore } from '@/lib/store';
+
+// Layout
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
+import { AuthModal } from '@/components/auth/AuthModal';
+
+// Pages
+import { HeroSection } from '@/components/home/HeroSection';
+import { CategoriesSection } from '@/components/home/CategoriesSection';
+import { HowItWorks } from '@/components/home/HowItWorks';
+import { TopSpecialists } from '@/components/home/TopSpecialists';
+import { FeaturedRequests } from '@/components/home/FeaturedRequests';
+import { TestimonialsSection } from '@/components/home/TestimonialsSection';
+import { FAQSection } from '@/components/home/FAQSection';
+import { RequestForm } from '@/components/requests/RequestForm';
+import { BrowseRequests } from '@/components/requests/BrowseRequests';
+import { RequestDetail } from '@/components/requests/RequestDetail';
+import { BrowseSpecialists } from '@/components/specialists/BrowseSpecialists';
+import { SpecialistProfile } from '@/components/specialists/SpecialistProfile';
+import { UserDashboard } from '@/components/dashboard/UserDashboard';
+import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
+import { ChatPanel } from '@/components/chat/ChatPanel';
+import { NotificationsPanel } from '@/components/chat/NotificationsPanel';
+
+const pageVariants = {
+  initial: { opacity: 0, y: 12 },
+  in: { opacity: 1, y: 0 },
+  out: { opacity: 0, y: -12 },
+};
+
+const pageTransition = {
+  type: 'tween',
+  ease: 'easeInOut',
+  duration: 0.25,
+};
+
+function HomePage() {
+  return (
+    <>
+      <HeroSection />
+      <CategoriesSection />
+      <HowItWorks />
+      <TopSpecialists />
+      <FeaturedRequests />
+      <TestimonialsSection />
+      <FAQSection />
+    </>
+  );
+}
+
+export default function App() {
+  const { currentView, isAuthenticated, currentUser } = useAppStore();
+
+  // Keyboard shortcut: Escape to go back
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        useAppStore.getState().goBack();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const isHome = currentView === 'home';
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <Header />
+
+      <AnimatePresence mode="wait">
+        <motion.main
+          key={currentView}
+          initial="initial"
+          animate="in"
+          exit="out"
+          variants={pageVariants}
+          transition={pageTransition}
+          className={`flex-1 ${isHome ? '' : 'pt-6'}`}
+          dir="rtl"
+        >
+          {currentView === 'home' && <HomePage />}
+          {currentView === 'login' && null /* handled by AuthModal */}
+          {currentView === 'register' && null /* handled by AuthModal */}
+          {currentView === 'post-need' && (
+            <div className="max-w-4xl mx-auto px-4 pb-12">
+              <RequestForm />
+            </div>
+          )}
+          {currentView === 'browse-requests' && (
+            <div className="max-w-7xl mx-auto px-4 pb-12">
+              <BrowseRequests />
+            </div>
+          )}
+          {currentView === 'request-detail' && (
+            <div className="max-w-5xl mx-auto px-4 pb-12">
+              <RequestDetail />
+            </div>
+          )}
+          {currentView === 'browse-specialists' && (
+            <div className="max-w-7xl mx-auto px-4 pb-12">
+              <BrowseSpecialists />
+            </div>
+          )}
+          {currentView === 'specialist-profile' && (
+            <div className="max-w-6xl mx-auto px-4 pb-12">
+              <SpecialistProfile />
+            </div>
+          )}
+          {currentView === 'dashboard' && (
+            <div className="max-w-7xl mx-auto px-4 pb-12">
+              <UserDashboard />
+            </div>
+          )}
+          {currentView === 'admin' && (
+            <AdminDashboard />
+          )}
+          {currentView === 'messages' && (
+            <div className="max-w-7xl mx-auto px-4 pb-12" style={{ height: 'calc(100vh - 80px)' }}>
+              <ChatPanel />
+            </div>
+          )}
+          {currentView === 'notifications' && (
+            <div className="max-w-3xl mx-auto px-4 pb-12">
+              <NotificationsPanel />
+            </div>
+          )}
+          {currentView === 'profile' && (
+            <div className="max-w-5xl mx-auto px-4 pb-12">
+              <UserDashboard />
+            </div>
+          )}
+        </motion.main>
+      </AnimatePresence>
+
+      {/* Show footer only on home page */}
+      {isHome && <Footer />}
+
+      {/* Auth Modal */}
+      <AuthModal />
+    </div>
+  );
+}
