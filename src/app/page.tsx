@@ -19,11 +19,14 @@ import { TopSpecialists } from '@/components/home/TopSpecialists';
 import { FeaturedRequests } from '@/components/home/FeaturedRequests';
 import { TestimonialsSection } from '@/components/home/TestimonialsSection';
 import { FAQSection } from '@/components/home/FAQSection';
+import { StatsCounter } from '@/components/home/StatsCounter';
+import { PricingSection } from '@/components/home/PricingSection';
 import { RequestForm } from '@/components/requests/RequestForm';
 import { BrowseRequests } from '@/components/requests/BrowseRequests';
 import { RequestDetail } from '@/components/requests/RequestDetail';
 import { BrowseSpecialists } from '@/components/specialists/BrowseSpecialists';
 import { SpecialistProfile } from '@/components/specialists/SpecialistProfile';
+import { CompareSpecialists } from '@/components/specialists/CompareSpecialists';
 import { UserDashboard } from '@/components/dashboard/UserDashboard';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
 import { ChatPanel } from '@/components/chat/ChatPanel';
@@ -45,10 +48,12 @@ function HomePage() {
   return (
     <>
       <HeroSection />
+      <StatsCounter />
       <CategoriesSection />
       <HowItWorks />
       <TopSpecialists />
       <FeaturedRequests />
+      <PricingSection />
       <TestimonialsSection />
       <FAQSection />
     </>
@@ -135,6 +140,16 @@ export default function App() {
           {currentView === 'profile' && (
             <div className="max-w-5xl mx-auto px-4 pb-12">
               <UserDashboard />
+            </div>
+          )}
+          {currentView === 'pricing' && (
+            <div className="max-w-6xl mx-auto px-4 pb-12">
+              <PricingSection />
+            </div>
+          )}
+          {currentView === 'compare-specialists' && (
+            <div className="max-w-7xl mx-auto px-4 pb-12">
+              <CompareSpecialists />
             </div>
           )}
         </motion.main>

@@ -39,6 +39,19 @@ interface AppState {
   setConversations: (conversations: Conversation[]) => void;
   activeConversationId: string | null;
   setActiveConversationId: (id: string | null) => void;
+
+  // Bookmarks
+  bookmarkedRequests: string[];
+  bookmarkedSpecialists: string[];
+  toggleBookmarkRequest: (id: string) => void;
+  toggleBookmarkSpecialist: (id: string) => void;
+  isRequestBookmarked: (id: string) => boolean;
+  isSpecialistBookmarked: (id: string) => boolean;
+
+  // Compare
+  compareSpecialistIds: string[];
+  toggleCompareSpecialist: (id: string) => void;
+  clearCompareList: () => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -119,4 +132,36 @@ export const useAppStore = create<AppState>((set, get) => ({
   setConversations: (conversations) => set({ conversations }),
   activeConversationId: null,
   setActiveConversationId: (id) => set({ activeConversationId: id }),
+
+  // Bookmarks
+  bookmarkedRequests: [],
+  bookmarkedSpecialists: [],
+  toggleBookmarkRequest: (id) =>
+    set((state) => ({
+      bookmarkedRequests: state.bookmarkedRequests.includes(id)
+        ? state.bookmarkedRequests.filter((rId) => rId !== id)
+        : [...state.bookmarkedRequests, id],
+    })),
+  toggleBookmarkSpecialist: (id) =>
+    set((state) => ({
+      bookmarkedSpecialists: state.bookmarkedSpecialists.includes(id)
+        ? state.bookmarkedSpecialists.filter((sId) => sId !== id)
+        : [...state.bookmarkedSpecialists, id],
+    })),
+  isRequestBookmarked: (id) => get().bookmarkedRequests.includes(id),
+  isSpecialistBookmarked: (id) => get().bookmarkedSpecialists.includes(id),
+
+  // Compare
+  compareSpecialistIds: [],
+  toggleCompareSpecialist: (id) =>
+    set((state) => {
+      if (state.compareSpecialistIds.includes(id)) {
+        return { compareSpecialistIds: state.compareSpecialistIds.filter((sId) => sId !== id) };
+      }
+      if (state.compareSpecialistIds.length >= 3) {
+        return state; // max 3
+      }
+      return { compareSpecialistIds: [...state.compareSpecialistIds, id] };
+    }),
+  clearCompareList: () => set({ compareSpecialistIds: [] }),
 }));

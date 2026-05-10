@@ -45,6 +45,7 @@ const FOOTER_COLUMNS: FooterLinkColumn[] = [
       { label: 'ثبت نیاز', view: 'post-need' },
       { label: 'متخصص‌ها', view: 'browse-specialists' },
       { label: 'نیازها', view: 'browse-requests' },
+      { label: 'تعرفه‌ها', view: 'pricing' },
     ],
   },
   {

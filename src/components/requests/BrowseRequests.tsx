@@ -37,6 +37,7 @@ import {
   getPriorityLabel,
 } from '@/lib/constants';
 import type { ServiceRequest } from '@/lib/types';
+import { BookmarkButton } from '@/components/shared/BookmarkButton';
 
 // ─── Animation variants ───────────────────────────────
 const container = {
@@ -111,7 +112,7 @@ function RequestCard({ request, onClick }: { request: ServiceRequest; onClick: (
       className="group cursor-pointer border-border/60 bg-card overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/5 hover:border-emerald-200 dark:hover:border-emerald-800"
     >
       <CardContent className="p-5">
-        {/* Top: Category + Priority */}
+        {/* Top: Category + Priority + Bookmark */}
         <div className="mb-3 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="text-lg">{request.categoryIcon}</span>
@@ -119,7 +120,10 @@ function RequestCard({ request, onClick }: { request: ServiceRequest; onClick: (
               {request.categoryName}
             </span>
           </div>
-          <PriorityBadge priority={request.priority} />
+          <div className="flex items-center gap-1">
+            <BookmarkButton id={request.id} type="request" size="sm" />
+            <PriorityBadge priority={request.priority} />
+          </div>
         </div>
 
         {/* Title */}

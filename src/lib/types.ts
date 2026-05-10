@@ -12,7 +12,9 @@ export type AppView =
   | 'messages'
   | 'notifications'
   | 'admin'
-  | 'profile';
+  | 'profile'
+  | 'pricing'
+  | 'compare-specialists';
 
 // ============ User ============
 export interface User {
@@ -183,6 +185,19 @@ export interface DashboardStats {
   avgRating: number;
   responseRate: number;
   profileCompletion: number;
+}
+
+// ============ Pricing Plan ============
+export interface PricingPlan {
+  id: string;
+  name: string;
+  description: string;
+  monthlyPrice: number;
+  yearlyPrice: number;
+  features: string[];
+  highlighted?: boolean;
+  badge?: string;
+  icon?: string;
 }
 
 // ============ Search Filters ============

@@ -14,6 +14,7 @@ import {
   X,
   ChevronDown,
   SlidersHorizontal,
+  GitCompareArrows,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -29,6 +30,7 @@ import {
 import { useAppStore } from '@/lib/store';
 import { MOCK_SPECIALISTS, CITIES } from '@/lib/constants';
 import type { SpecialistProfile } from '@/lib/types';
+import { BookmarkButton } from '@/components/shared/BookmarkButton';
 
 // ─── Animation variants ───────────────────────────────
 const container = {
@@ -103,13 +105,15 @@ function SkillLevelDots({ level }: { level: number }) {
 
 // ─── Specialist Card ──────────────────────────────────
 function SpecialistCard({ specialist, onViewProfile }: { specialist: SpecialistProfile; onViewProfile: () => void }) {
+  const { toggleCompareSpecialist, compareSpecialistIds, navigateTo } = useAppStore();
   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
   const colorClass = getAvatarColor(specialist.displayName);
+  const isCompared = compareSpecialistIds.includes(specialist.id);
 
   return (
     <Card className="group border-border/60 bg-card overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/5 hover:border-emerald-200 dark:hover:border-emerald-800">
       <CardContent className="p-6">
-        {/* Top: Avatar + Name */}
+        {/* Top: Avatar + Name + Actions */}
         <div className="mb-4 flex items-start gap-3">
           <div className="relative">
             <div className={`size-14 rounded-full flex items-center justify-center text-base font-bold ring-2 ring-primary/20 ${colorClass}`}>
@@ -145,6 +149,16 @@ function SpecialistCard({ specialist, onViewProfile }: { specialist: SpecialistP
                 </span>
               )}
             </div>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <BookmarkButton id={specialist.id} type="specialist" size="sm" />
+            <button
+              onClick={(e) => { e.stopPropagation(); toggleCompareSpecialist(specialist.id); }}
+              className={`rounded-lg p-1.5 transition-colors ${isCompared ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+              aria-label="مقایسه"
+            >
+              <GitCompareArrows className="size-4" />
+            </button>
           </div>
         </div>
 
@@ -196,16 +210,62 @@ function SpecialistCard({ specialist, onViewProfile }: { specialist: SpecialistP
         </div>
 
         {/* CTA */}
-        <Button
-          onClick={onViewProfile}
-          variant="outline"
-          className="h-10 w-full rounded-xl text-sm font-medium"
-        >
-          مشاهده پروفایل
-          <ArrowLeft className="size-4" />
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={onViewProfile}
+            variant="outline"
+            className="h-10 flex-1 rounded-xl text-sm font-medium"
+          >
+            مشاهده پروفایل
+            <ArrowLeft className="size-4" />
+          </Button>
+          <Button
+            onClick={() => navigateTo('messages')}
+            size="icon"
+            variant="outline"
+            className="h-10 w-10 shrink-0 rounded-xl"
+          >
+            <MessageSquare className="size-4" />
+          </Button>
+        </div>
       </CardContent>
     </Card>
+  );
+}
+
+// ─── Floating Compare Bar ─────────────────────────────
+function CompareBar() {
+  const { compareSpecialistIds, navigateTo, clearCompareList } = useAppStore();
+  const count = compareSpecialistIds.length;
+
+  if (count === 0) return null;
+
+  return (
+    <motion.div
+      initial={{ y: 100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: 100, opacity: 0 }}
+      className="fixed bottom-20 left-1/2 z-40 -translate-x-1/2"
+    >
+      <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card/95 px-5 py-3 shadow-xl backdrop-blur-xl">
+        <GitCompareArrows className="size-5 text-primary" />
+        <span className="text-sm font-medium">
+          {count.toLocaleString('fa-IR')} متخصص انتخاب شده
+        </span>
+        {count >= 2 && (
+          <Button
+            size="sm"
+            onClick={() => navigateTo('compare-specialists')}
+            className="rounded-lg"
+          >
+            مقایسه کنید
+          </Button>
+        )}
+        <Button size="sm" variant="ghost" onClick={clearCompareList} className="text-xs text-muted-foreground">
+          پاک کردن
+        </Button>
+      </div>
+    </motion.div>
   );
 }
 
@@ -512,6 +572,9 @@ export function BrowseSpecialists() {
           </>
         )}
       </div>
+
+      {/* Floating Compare Bar */}
+      <CompareBar />
     </div>
   );
 }

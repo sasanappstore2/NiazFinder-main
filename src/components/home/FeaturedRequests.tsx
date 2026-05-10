@@ -13,6 +13,7 @@ import {
   getPriorityLabel,
 } from '@/lib/constants';
 import type { ServiceRequest } from '@/lib/types';
+import { BookmarkButton } from '@/components/shared/BookmarkButton';
 
 const container = {
   hidden: { opacity: 0 },
@@ -89,7 +90,7 @@ function RequestCard({ request }: { request: ServiceRequest }) {
         <div className={`w-[3px] shrink-0 ${accentColor}`} />
 
         <CardContent className="flex-1 p-5">
-          {/* Top Row: Category + Priority */}
+          {/* Top Row: Category + Priority + Bookmark */}
           <div className="mb-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="text-lg">{request.categoryIcon}</span>
@@ -97,7 +98,10 @@ function RequestCard({ request }: { request: ServiceRequest }) {
                 {request.categoryName}
               </span>
             </div>
-            <PriorityBadge priority={request.priority} />
+            <div className="flex items-center gap-1">
+              <BookmarkButton id={request.id} type="request" size="sm" />
+              <PriorityBadge priority={request.priority} />
+            </div>
           </div>
 
           {/* Title */}
@@ -124,7 +128,7 @@ function RequestCard({ request }: { request: ServiceRequest }) {
             </div>
           </div>
 
-          {/* Bottom Row: Proposals + Time */}
+          {/* Bottom Row: Proposals + Time + User */}
           <div className="flex items-center justify-between border-t border-border/50 pt-3">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <FileText className="size-3.5" />
@@ -132,9 +136,14 @@ function RequestCard({ request }: { request: ServiceRequest }) {
                 {request.proposalCount.toLocaleString('fa-IR')} پیشنهاد
               </span>
             </div>
-            <span className="text-[11px] text-muted-foreground">
-              {getTimeAgo(request.createdAt)}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-muted-foreground">
+                {getTimeAgo(request.createdAt)}
+              </span>
+              <div className="size-6 rounded-full flex items-center justify-center text-[10px] font-bold bg-primary/10 text-primary">
+                {request.user.firstName.charAt(0)}{request.user.lastName.charAt(0)}
+              </div>
+            </div>
           </div>
         </CardContent>
       </div>
