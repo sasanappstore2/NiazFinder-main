@@ -94,7 +94,7 @@ export const PROVINCES = [
 export const MOCK_SPECIALISTS: SpecialistProfile[] = [
   {
     id: 's1', email: 'ali@email.com', firstName: 'علی', lastName: 'محمدی',
-    displayName: 'علی محمدی', avatar: '/avatars/s1.jpg',
+    displayName: 'علی محمدی',
     bio: 'طراح و توسعه‌دهنده وب با بیش از ۸ سال تجربه در ساخت وبسایت‌ها و اپلیکیشن‌های مدرن',
     city: 'تهران', province: 'تهران', role: 'SPECIALIST',
     isVerified: true, isActive: true, online: true,
@@ -109,7 +109,7 @@ export const MOCK_SPECIALISTS: SpecialistProfile[] = [
   },
   {
     id: 's2', email: 'sara@email.com', firstName: 'سارا', lastName: 'احمدی',
-    displayName: 'سارا احمدی', avatar: '/avatars/s2.jpg',
+    displayName: 'سارا احمدی',
     bio: 'طراح گرافیک حرفه‌ای با تخصص در طراحی لوگو و هویت بصری برندها',
     city: 'اصفهان', province: 'اصفهان', role: 'SPECIALIST',
     isVerified: true, isActive: true, online: false,
@@ -123,7 +123,7 @@ export const MOCK_SPECIALISTS: SpecialistProfile[] = [
   },
   {
     id: 's3', email: 'reza@email.com', firstName: 'رضا', lastName: 'کریمی',
-    displayName: 'رضا کریمی', avatar: '/avatars/s3.jpg',
+    displayName: 'رضا کریمی',
     bio: 'متخصص تعمیرات موبایل و لپ‌تاپ با بیش از ۱۰ سال تجربه',
     city: 'شیراز', province: 'فارس', role: 'SPECIALIST',
     isVerified: true, isActive: true, online: true,
@@ -135,7 +135,7 @@ export const MOCK_SPECIALISTS: SpecialistProfile[] = [
   },
   {
     id: 's4', email: 'mina@email.com', firstName: 'مینا', lastName: 'حسینی',
-    displayName: 'مینا حسینی', avatar: '/avatars/s4.jpg',
+    displayName: 'مینا حسینی',
     bio: 'نویسنده و تولیدکننده محتوای حرفه‌ای با تخصص در سئو و بازاریابی محتوایی',
     city: 'تهران', province: 'تهران', role: 'SPECIALIST',
     isVerified: true, isActive: true, online: false,
@@ -149,7 +149,7 @@ export const MOCK_SPECIALISTS: SpecialistProfile[] = [
   },
   {
     id: 's5', email: 'hasan@email.com', firstName: 'حسن', lastName: 'نجفی',
-    displayName: 'حسن نجفی', avatar: '/avatars/s5.jpg',
+    displayName: 'حسن نجفی',
     bio: 'مهندس نرم‌افزار با تخصص در هوش مصنوعی و یادگیری ماشین',
     city: 'تبریز', province: 'آذربایجان شرقی', role: 'SPECIALIST',
     isVerified: true, isActive: true, online: true,
@@ -163,7 +163,7 @@ export const MOCK_SPECIALISTS: SpecialistProfile[] = [
   },
   {
     id: 's6', email: 'fatemeh@email.com', firstName: 'فاطمه', lastName: 'رضایی',
-    displayName: 'فاطمه رضایی', avatar: '/avatars/s6.jpg',
+    displayName: 'فاطمه رضایی',
     bio: 'مشاور حقوقی و وکیل پایه یک دادگستری با تخصص در حقوق تجاری',
     city: 'تهران', province: 'تهران', role: 'SPECIALIST',
     isVerified: true, isActive: true, online: false,
@@ -185,7 +185,7 @@ export const MOCK_REQUESTS: ServiceRequest[] = [
     categoryId: '1', categoryName: 'طراحی و توسعه وب', categoryIcon: '💻',
     priority: 'HIGH', status: 'OPEN', tags: ['فروشگاهی', 'ریسپانسیو', 'درگاه پرداخت'],
     viewCount: 234, proposalCount: 12,
-    user: { id: 'u1', firstName: 'محمد', lastName: 'حسینی', avatar: '/avatars/u1.jpg', city: 'تهران', createdAt: '2024-01-15' },
+    user: { id: 'u1', firstName: 'محمد', lastName: 'حسینی', city: 'تهران', createdAt: '2024-01-15' },
     createdAt: '2024-06-10T10:30:00Z', updatedAt: '2024-06-10T10:30:00Z',
   },
   {
@@ -196,7 +196,7 @@ export const MOCK_REQUESTS: ServiceRequest[] = [
     categoryId: '6', categoryName: 'تعمیرات', categoryIcon: '🔧',
     priority: 'URGENT', status: 'OPEN', tags: ['سامسونگ', 'صفحه نمایش', 'باتری'],
     viewCount: 89, proposalCount: 5,
-    user: { id: 'u2', firstName: 'زهرا', lastName: 'محمدی', avatar: '/avatars/u2.jpg', city: 'شیراز', createdAt: '2024-03-20' },
+    user: { id: 'u2', firstName: 'زهرا', lastName: 'محمدی', city: 'شیراز', createdAt: '2024-03-20' },
     createdAt: '2024-06-11T14:20:00Z', updatedAt: '2024-06-11T14:20:00Z',
   },
   {
@@ -207,7 +207,7 @@ export const MOCK_REQUESTS: ServiceRequest[] = [
     categoryId: '3', categoryName: 'تولید محتوا', categoryIcon: '✍️',
     priority: 'NORMAL', status: 'OPEN', tags: ['وبلاگ', 'سئو', 'فناوری', 'مقاله'],
     viewCount: 156, proposalCount: 8,
-    user: { id: 'u3', firstName: 'امیر', lastName: 'رضایی', avatar: '/avatars/u3.jpg', city: 'تهران', createdAt: '2024-02-10' },
+    user: { id: 'u3', firstName: 'امیر', lastName: 'رضایی', city: 'تهران', createdAt: '2024-02-10' },
     createdAt: '2024-06-09T09:15:00Z', updatedAt: '2024-06-09T09:15:00Z',
   },
   {
@@ -218,7 +218,7 @@ export const MOCK_REQUESTS: ServiceRequest[] = [
     categoryId: '4', categoryName: 'طراحی گرافیک', categoryIcon: '🎨',
     priority: 'NORMAL', status: 'OPEN', tags: ['لوگو', 'هویت بصری', 'فین‌تک'],
     viewCount: 198, proposalCount: 15,
-    user: { id: 'u4', firstName: 'نرگس', lastName: 'کریمی', avatar: '/avatars/u4.jpg', city: 'اصفهان', createdAt: '2024-04-05' },
+    user: { id: 'u4', firstName: 'نرگس', lastName: 'کریمی', city: 'اصفهان', createdAt: '2024-04-05' },
     createdAt: '2024-06-08T16:45:00Z', updatedAt: '2024-06-08T16:45:00Z',
   },
   {
@@ -229,7 +229,7 @@ export const MOCK_REQUESTS: ServiceRequest[] = [
     categoryId: '2', categoryName: 'اپلیکیشن موبایل', categoryIcon: '📱',
     priority: 'HIGH', status: 'OPEN', tags: ['موبایل', 'مدیریت وظایف', 'تیمی'],
     viewCount: 312, proposalCount: 7,
-    user: { id: 'u5', firstName: 'حسین', lastName: 'نوری', avatar: '/avatars/u5.jpg', city: 'تهران', createdAt: '2024-01-20' },
+    user: { id: 'u5', firstName: 'حسین', lastName: 'نوری', city: 'تهران', createdAt: '2024-01-20' },
     createdAt: '2024-06-07T11:00:00Z', updatedAt: '2024-06-07T11:00:00Z',
   },
   {
@@ -240,7 +240,7 @@ export const MOCK_REQUESTS: ServiceRequest[] = [
     categoryId: '5', categoryName: 'خدمات خانگی', categoryIcon: '🏠',
     priority: 'NORMAL', status: 'OPEN', tags: ['نظافت', 'منزل', 'تمیزکاری'],
     viewCount: 67, proposalCount: 20,
-    user: { id: 'u6', firstName: 'لیلا', lastName: 'عباسی', avatar: '/avatars/u6.jpg', city: 'تهران', createdAt: '2024-05-10' },
+    user: { id: 'u6', firstName: 'لیلا', lastName: 'عباسی', city: 'تهران', createdAt: '2024-05-10' },
     createdAt: '2024-06-12T08:30:00Z', updatedAt: '2024-06-12T08:30:00Z',
   },
   {
@@ -251,7 +251,7 @@ export const MOCK_REQUESTS: ServiceRequest[] = [
     categoryId: '7', categoryName: 'مشاوره و آموزش', categoryIcon: '🎓',
     priority: 'NORMAL', status: 'OPEN', tags: ['مهاجرت', 'کانادا', 'Express Entry'],
     viewCount: 145, proposalCount: 6,
-    user: { id: 'u7', firstName: 'پویا', lastName: 'فرهادی', avatar: '/avatars/u7.jpg', city: 'تهران', createdAt: '2024-02-28' },
+    user: { id: 'u7', firstName: 'پویا', lastName: 'فرهادی', city: 'تهران', createdAt: '2024-02-28' },
     createdAt: '2024-06-06T13:20:00Z', updatedAt: '2024-06-06T13:20:00Z',
   },
   {
@@ -262,7 +262,7 @@ export const MOCK_REQUESTS: ServiceRequest[] = [
     categoryId: '8', categoryName: 'هوش مصنوعی', categoryIcon: '🤖',
     priority: 'HIGH', status: 'OPEN', tags: ['چت‌بات', 'هوش مصنوعی', 'پشتیبانی'],
     viewCount: 201, proposalCount: 4,
-    user: { id: 'u8', firstName: 'سمیرا', lastName: 'صادقی', avatar: '/avatars/u8.jpg', city: 'تبریز', createdAt: '2024-03-15' },
+    user: { id: 'u8', firstName: 'سمیرا', lastName: 'صادقی', city: 'تبریز', createdAt: '2024-03-15' },
     createdAt: '2024-06-05T10:00:00Z', updatedAt: '2024-06-05T10:00:00Z',
   },
 ];
@@ -272,37 +272,37 @@ export const MOCK_REVIEWS: Review[] = [
   {
     id: 'rv1', rating: 5,
     comment: 'کار فوق‌العاده‌ای بود! سایت دقیقاً مطابق با سلیقه من طراحی شد و سرعت اجرای پروژه هم عالی بود.',
-    author: { id: 'u1', firstName: 'محمد', lastName: 'حسینی', avatar: '/avatars/u1.jpg' },
+    author: { id: 'u1', firstName: 'محمد', lastName: 'حسینی' },
     createdAt: '2024-05-15T10:00:00Z',
   },
   {
     id: 'rv2', rating: 5,
     comment: 'لوگویی که طراحی شد بسیار حرفه‌ای و خلاقانه بود. کاملاً راضی هستم.',
-    author: { id: 'u4', firstName: 'نرگس', lastName: 'کریمی', avatar: '/avatars/u4.jpg' },
+    author: { id: 'u4', firstName: 'نرگس', lastName: 'کریمی' },
     createdAt: '2024-05-10T14:30:00Z',
   },
   {
     id: 'rv3', rating: 4,
     comment: 'تعمیر گوشی بسیار سریع و با کیفیت انجام شد. قیمت هم منصفانه بود.',
-    author: { id: 'u2', firstName: 'زهرا', lastName: 'محمدی', avatar: '/avatars/u2.jpg' },
+    author: { id: 'u2', firstName: 'زهرا', lastName: 'محمدی' },
     createdAt: '2024-04-28T09:15:00Z',
   },
   {
     id: 'rv4', rating: 5,
     comment: 'مقالاتی که نوشته شد بسیار حرفه‌ای و سئو شده بودند. ترافیک سایت ما خیلی افزایش پیدا کرد.',
-    author: { id: 'u3', firstName: 'امیر', lastName: 'رضایی', avatar: '/avatars/u3.jpg' },
+    author: { id: 'u3', firstName: 'امیر', lastName: 'رضایی' },
     createdAt: '2024-04-20T16:45:00Z',
   },
   {
     id: 'rv5', rating: 4,
     comment: 'مشاوره حقوقی بسیار مفیدی دریافت کردم. آقای رضایی بسیار مسلط و حرفه‌ای هستند.',
-    author: { id: 'u7', firstName: 'پویا', lastName: 'فرهادی', avatar: '/avatars/u7.jpg' },
+    author: { id: 'u7', firstName: 'پویا', lastName: 'فرهادی' },
     createdAt: '2024-04-15T11:20:00Z',
   },
   {
     id: 'rv6', rating: 5,
     comment: 'اپلیکیشنی که ساختند بسیار کاربردی و باکیفیت بود. تیم فنی همیشه در دسترس بودند.',
-    author: { id: 'u5', firstName: 'حسین', lastName: 'نوری', avatar: '/avatars/u5.jpg' },
+    author: { id: 'u5', firstName: 'حسین', lastName: 'نوری' },
     createdAt: '2024-04-10T13:00:00Z',
   },
 ];
@@ -433,7 +433,6 @@ export const TESTIMONIAL_DATA = [
     id: 't1',
     name: 'محمد رضایی',
     role: 'مدیرعامل شرکت فناوری آرمان',
-    avatar: '/avatars/t1.jpg',
     rating: 5,
     comment: 'با نیاز فایندر توانستیم بهترین تیم توسعه را برای پروژه‌مون پیدا کنیم. کیفیت کار و سرعت تحویل فوق‌العاده بود.',
   },
@@ -441,7 +440,6 @@ export const TESTIMONIAL_DATA = [
     id: 't2',
     name: 'زهرا کریمی',
     role: 'طراح گرافیک مستقل',
-    avatar: '/avatars/t2.jpg',
     rating: 5,
     comment: 'از زمانی که عضو نیاز فایندر شدم، درآمد من ۳ برابر شده. سیستم پیشنهاددهی عالی کار میکنه.',
   },
@@ -449,7 +447,6 @@ export const TESTIMONIAL_DATA = [
     id: 't3',
     name: 'امیر حسینی',
     role: 'صاحب استارتاپ نوفا',
-    avatar: '/avatars/t3.jpg',
     rating: 4,
     comment: 'برای طراحی اپلیکیشن موبایل از نیاز فایندر استفاده کردیم. بسیار راضی هستیم و حتماً دوباره استفاده خواهیم کرد.',
   },
@@ -457,7 +454,6 @@ export const TESTIMONIAL_DATA = [
     id: 't4',
     name: 'فاطمه محمدی',
     role: 'مشاور مهاجرت',
-    avatar: '/avatars/t4.jpg',
     rating: 5,
     comment: 'پلتفرم بسیار حرفه‌ای و کاربرپسند. سیستم پرداخت امن خیال من رو راحت کرده.',
   },
@@ -465,7 +461,6 @@ export const TESTIMONIAL_DATA = [
     id: 't5',
     name: 'حسن نوری',
     role: 'برنامه‌نویس فریلنسر',
-    avatar: '/avatars/t5.jpg',
     rating: 5,
     comment: 'نیاز فایندر بهترین پلتفرم ایرانی برای اتصال متخصص‌ها به کارفرمایانه. کاملاً قابل اعتماد.',
   },
@@ -473,7 +468,6 @@ export const TESTIMONIAL_DATA = [
     id: 't6',
     name: 'سارا احمدی',
     role: 'مدیر بازاریابی دیجی‌مارکت',
-    avatar: '/avatars/t6.jpg',
     rating: 4,
     comment: 'تولید محتوا و سئوی سایتمون رو به متخصص‌های نیاز فایندر سپردیم و نتیجه عالی بود.',
   },

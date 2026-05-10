@@ -12,6 +12,12 @@ import {
   LogOut,
   LayoutDashboard,
   X,
+  Bookmark,
+  FileText,
+  CreditCard,
+  Gift,
+  GitCompareArrows,
+  ChevronLeft,
 } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
@@ -240,6 +246,29 @@ function UserMenu() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem onClick={() => navigateTo('browse-requests')}>
+            <Bookmark className="ms-2 size-4" />
+            علاقه‌مندی‌ها
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigateTo('dashboard')}>
+            <FileText className="ms-2 size-4" />
+            پیشنهادها
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigateTo('pricing')}>
+            <CreditCard className="ms-2 size-4" />
+            تعرفه‌ها
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigateTo('referral')}>
+            <Gift className="ms-2 size-4" />
+            دعوت از دوستان
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigateTo('compare-specialists')}>
+            <GitCompareArrows className="ms-2 size-4" />
+            مقایسه متخصص‌ها
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout} variant="destructive">
           <LogOut className="ms-2 size-4" />
           خروج
@@ -296,8 +325,21 @@ function MobileSheetContent() {
           <>
             <MobileNavItem item={{ label: 'داشبورد', view: 'dashboard' }} onSelect={() => {}} />
             <MobileNavItem item={{ label: 'پروفایل', view: 'profile' }} onSelect={() => {}} />
+            <MobileNavItem item={{ label: 'علاقه‌مندی‌ها', view: 'browse-requests' }} onSelect={() => {}} />
+            <MobileNavItem item={{ label: 'پیشنهادها', view: 'dashboard' }} onSelect={() => {}} />
           </>
         )}
+      </div>
+
+      {/* More */}
+      <div className="flex flex-col gap-1 p-4">
+        <p className="mb-2 flex items-center gap-1 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          بیشتر
+          <ChevronLeft className="size-3" />
+        </p>
+        <MobileNavItem item={{ label: 'تعرفه‌ها', view: 'pricing' }} onSelect={() => {}} />
+        <MobileNavItem item={{ label: 'دعوت از دوستان', view: 'referral' }} onSelect={() => {}} />
+        <MobileNavItem item={{ label: 'مقایسه متخصص‌ها', view: 'compare-specialists' }} onSelect={() => {}} />
       </div>
 
       <div className="mt-auto border-t border-border p-4">

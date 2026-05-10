@@ -15,7 +15,9 @@ export type AppView =
   | 'profile'
   | 'pricing'
   | 'compare-specialists'
-  | 'submit-proposal';
+  | 'submit-proposal'
+  | 'submit-review'
+  | 'referral';
 
 // ============ User ============
 export interface User {

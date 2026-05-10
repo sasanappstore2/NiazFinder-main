@@ -27,11 +27,13 @@ import { RequestForm } from '@/components/requests/RequestForm';
 import { BrowseRequests } from '@/components/requests/BrowseRequests';
 import { RequestDetail } from '@/components/requests/RequestDetail';
 import { ProposalForm } from '@/components/requests/ProposalForm';
+import ReviewForm from '@/components/specialists/ReviewForm';
 import { BrowseSpecialists } from '@/components/specialists/BrowseSpecialists';
 import { SpecialistProfile } from '@/components/specialists/SpecialistProfile';
 import { CompareSpecialists } from '@/components/specialists/CompareSpecialists';
 import { UserDashboard } from '@/components/dashboard/UserDashboard';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
+import { ReferralPage } from '@/components/dashboard/ReferralPage';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { NotificationsPanel } from '@/components/chat/NotificationsPanel';
 
@@ -160,6 +162,16 @@ export default function App() {
           {currentView === 'compare-specialists' && (
             <div className="max-w-7xl mx-auto px-4 pb-12">
               <CompareSpecialists />
+            </div>
+          )}
+          {currentView === 'submit-review' && (
+            <div className="max-w-4xl mx-auto px-4 pb-12">
+              <ReviewForm />
+            </div>
+          )}
+          {currentView === 'referral' && (
+            <div className="max-w-4xl mx-auto px-4 pb-12">
+              <ReferralPage />
             </div>
           )}
         </motion.main>

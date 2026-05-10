@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 
@@ -70,6 +71,9 @@ export function BookmarkButton({
       setParticles(generateParticles());
       // Clean up particles after animation completes
       setTimeout(() => setParticles([]), 600);
+      toast.success(type === 'request' ? 'به علاقه‌مندی‌ها اضافه شد' : 'متخصص به لیست ذخیره‌شده اضافه شد');
+    } else {
+      toast.info('از علاقه‌مندی‌ها حذف شد');
     }
   }, [type, id, isBookmarked, toggleBookmarkRequest, toggleBookmarkSpecialist]);
 

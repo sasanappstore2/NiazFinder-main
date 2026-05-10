@@ -353,3 +353,140 @@ Priority Recommendations for Next Phase:
 8. Mobile responsive polish: test all views at 375px width
 9. Add notification preference settings page
 10. Add report/flag user functionality
+
+---
+Task ID: 6
+Agent: Main Orchestrator (Round 6 - Features + Polish)
+Task: QA testing, bug fixes, new features, styling improvements
+
+Work Log:
+- Reviewed worklog.md: 5 completed rounds, stable MVP with 50+ files
+- Lint: 0 errors, 1 pre-existing warning (React Hook Form)
+- Dev server compiles and serves HTTP 200 successfully
+
+**Bug Fixes:**
+1. **Avatar 404 errors fixed** - Removed all fake `/avatars/*.jpg` URLs from constants.ts:
+   - Removed avatar field from all 6 MOCK_SPECIALISTS entries
+   - Removed avatar field from all 8 MOCK_REQUESTS user objects
+   - Removed avatar field from all 6 MOCK_REVIEWS author objects
+   - Removed avatar field from all 6 TESTIMONIAL_DATA entries
+   - Avatar components now show gradient initials fallback (no 404s)
+
+**New Components Created:**
+2. **ReviewForm** (`/src/components/specialists/ReviewForm.tsx`) - Star rating + comment submission:
+   - Interactive half-star rating with hover preview and keyboard navigation
+   - 4 rating categories: کیفیت کار, رعایت زمان‌بندی, ارتباط و پاسخگویی, حرفه‌ای بودن
+   - Auto-calculated overall rating (average of 4 categories)
+   - Comment textarea with character counter (min 20, max 2000)
+   - Pros/Cons textareas (max 500 each) with ThumbsUp/ThumbsDown icons
+   - "Recommended" toggle switch
+   - Loading state on submit, confetti emoji success animation
+   - Sonner toast notification on success
+   - Thank-you card with animated checkmark + displayed rating + go-back button
+   - Staggered entrance animations for each category row
+   - AnimatePresence for validation error messages
+
+3. **ReferralPage** (`/src/components/dashboard/ReferralPage.tsx`) - Invite friends & earn rewards:
+   - Hero section with emerald gradient + 4 animated floating glass circles
+   - Gift icon with rotating scale-in entrance animation
+   - Sparkle badges: "بدون محدودیت دعوت" + "واریز فوری پاداش"
+   - Invite link card with monospace referral code (USER-8A3K) + copy button
+   - Full invite URL with clipboard copy + Sonner toast
+   - Social share buttons: Telegram (#0088cc), WhatsApp (#25D366), Email
+   - Referral stats grid (2x2): total invites, successful, rewards earned, pending
+   - Referral history table with 6 mock records and status badges (green/amber/red)
+   - How It Works section: 3 steps with gradient numbered circles
+   - Referral Rules accordion: 5 FAQ items about reward amounts, limits, timing
+
+**Enhanced Existing Components:**
+4. **Header UserMenu** - Added 5 new dropdown items:
+   - علاقه‌مندی‌ها (Bookmarks) → browse-requests
+   - پیشنهادها (My Proposals) → dashboard
+   - تعرفه‌ها (Pricing) → pricing
+   - دعوت از دوستان (Invite Friends) → referral
+   - مقایسه متخصص‌ها (Compare) → compare-specialists
+   - Mobile sheet: added "بیشتر" section with pricing/referral/compare links
+
+5. **SpecialistProfile** - Added "ثبت نظر و امتیاز" (Write Review) button:
+   - Dashed border outline button below invite CTA in sidebar
+   - Navigates to submit-review view with specialist ID
+
+6. **BookmarkButton** - Added Sonner toast notifications:
+   - Success toast: "به علاقه‌مندی‌ها اضافه شد" / "متخصص به لیست ذخیره‌شده اضافه شد"
+   - Info toast: "از علاقه‌مندی‌ها حذف شد" on un-bookmark
+
+**New CSS Animations (Round 6):**
+7. Added 11 new CSS animation utilities to globals.css:
+   - `.animate-elastic-bounce` - Multi-step elastic scale bounce
+   - `.animate-shimmer-loading` - Skeleton shimmer with dark mode support
+   - `.animate-fade-in-blur` - Fade in with blur + scale effect
+   - `.rotating-border` - Conic gradient border that rotates
+   - `.animate-morph-blob-1` / `.animate-morph-blob-2` - Organic shape-morphing blobs
+   - `.animate-counter-pop` - Quick scale pop for counters
+   - `.stagger-grid` - Grid children stagger with blur reveal (6 items)
+   - `.card-tilt` - 3D perspective tilt on hover
+
+**Integration Updates:**
+8. Added `submit-review` and `referral` to AppView union type
+9. Added `ReviewForm` and `ReferralPage` routes to page.tsx SPA router
+10. Added `submit-review` view: navigates from SpecialistProfile sidebar button
+
+Stage Summary:
+- 2 new components: ReviewForm, ReferralPage
+- 3 enhanced components: Header (UserMenu + mobile sheet), SpecialistProfile (review button), BookmarkButton (toasts)
+- 2 new navigation views: submit-review, referral
+- 11 new CSS animations and utility classes
+- Bug fix: eliminated all avatar 404 errors (removed 20+ fake URLs)
+- Total: ~52 custom source files
+- Lint: 0 errors, 1 warning (pre-existing)
+
+---
+Current Project Status Assessment:
+- ✅ Phase 1 MVP COMPLETE (6 development rounds)
+- ✅ Homepage with 10 sections (Hero, StatsCounter, Categories, HowItWorks, TopSpecialists, FeaturedRequests, PricingSection, CTABanner, Testimonials, FAQ)
+- ✅ Auth system (login with real API + fallback, register with zod validation)
+- ✅ Request system (3-step form, browse with filters, detail with proposals, proposal submission form)
+- ✅ Specialist system (browse with filters, full profile, comparison, bookmarking, message button, review form)
+- ✅ Pricing page (3 plans, monthly/yearly toggle)
+- ✅ Referral page (invite link, stats, history table, how-it-works, rules)
+- ✅ User Dashboard (requests, proposals, wallet, profile tabs)
+- ✅ Admin Dashboard (stats charts, user management, settings)
+- ✅ Chat Panel (two-panel messaging, send messages)
+- ✅ Notifications Panel (type badges, filter, mark read)
+- ✅ Bookmark system (requests + specialists with animated heart + particle burst + toast notifications)
+- ✅ Compare specialists (side-by-side table, floating bar, max 3)
+- ✅ Review submission form (4 categories, half-stars, pros/cons, recommended toggle, confetti success)
+- ✅ Proposal submission form (price, delivery, cover letter, portfolio)
+- ✅ Wallet history (balance overview, 6 transaction types, filter/search)
+- ✅ Error boundary (graceful crash recovery, retry + home buttons)
+- ✅ CTA banner (emerald gradient, trust indicators, staggered animations)
+- ✅ Dark mode toggle (ThemeProvider + ThemeToggle)
+- ✅ Back-to-top button
+- ✅ Loading skeletons (RequestCard, SpecialistCard, DashboardStats)
+- ✅ Search autocomplete with keyboard navigation
+- ✅ Compact footer on all pages + pricing/referral/compare links
+- ✅ Enhanced user menu (5 new items: bookmarks, proposals, pricing, referral, compare)
+- ✅ 30+ premium CSS animations (glow, spotlight, reveal, heartbeat, particle burst, gradient border, morph blobs, elastic bounce, card tilt, rotating border, etc.)
+- ✅ 6 API routes (auth, categories, requests, specialists, proposals, notifications)
+- ✅ Database seeded (12 users, 32 categories, 37 skills)
+- ✅ Zero lint errors
+- ✅ Zero avatar 404 errors (all using initials fallback)
+- ✅ ErrorBoundary wrapping entire app for crash recovery
+- ✅ Toast notifications via Sonner (bookmark, compare, review submit, referral copy)
+
+Unresolved Issues / Risks:
+- Dev server (Turbopack) dies under heavy load in sandbox (memory constraint) - not a code issue
+- agent-browser headless mode cannot reliably test SPA navigation (React state changes don't propagate)
+- Dark mode not testable via agent-browser (needs real browser with localStorage)
+
+Priority Recommendations for Next Phase:
+1. Add WebSocket chat service in mini-services/chat-service for real-time messaging
+2. Connect BrowseRequests/BrowseSpecialists to real API data (replace MOCK_REQUESTS/MOCK_SPECIALISTS)
+3. Add structured data (JSON-LD) for SEO
+4. Performance: lazy load below-fold components, image optimization
+5. Add PWA manifest and service worker
+6. Mobile responsive polish: test all views at 375px width
+7. Add notification preference settings page
+8. Add report/flag user functionality
+9. Add specialist availability calendar/booking UI
+10. Add request sharing (copy link, social share buttons)

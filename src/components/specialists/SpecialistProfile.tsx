@@ -18,6 +18,7 @@ import {
   FolderOpen,
   Quote,
   Package,
+  PenLine,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -635,6 +636,18 @@ export function SpecialistProfile() {
                   </Button>
                 </CardContent>
               </Card>
+            </motion.div>
+
+            {/* Write Review CTA */}
+            <motion.div {...fadeIn} transition={{ delay: 0.35 }}>
+              <Button
+                variant="outline"
+                onClick={() => navigateTo('submit-review', { id: specialist.id })}
+                className="w-full gap-2 rounded-xl border-dashed border-border/60 hover:border-primary/40 hover:bg-primary/5 h-auto py-3"
+              >
+                <PenLine className="size-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-muted-foreground">ثبت نظر و امتیاز</span>
+              </Button>
             </motion.div>
           </div>
         </div>
