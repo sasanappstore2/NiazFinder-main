@@ -9,6 +9,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { BackToTop } from '@/components/shared/BackToTop';
+import { Separator } from '@/components/ui/separator';
 
 // Pages
 import { HeroSection } from '@/components/home/HeroSection';
@@ -55,7 +56,7 @@ function HomePage() {
 }
 
 export default function App() {
-  const { currentView, isAuthenticated, currentUser } = useAppStore();
+  const { currentView } = useAppStore();
 
   // Keyboard shortcut: Escape to go back
   useEffect(() => {
@@ -139,8 +140,15 @@ export default function App() {
         </motion.main>
       </AnimatePresence>
 
-      {/* Show footer only on home page */}
-      {isHome && <Footer />}
+      {/* Footer — always visible; compact with separator on non-home pages */}
+      {isHome ? (
+        <Footer />
+      ) : (
+        <div className="mt-auto">
+          <Separator />
+          <Footer compact />
+        </div>
+      )}
 
       {/* Auth Modal */}
       <AuthModal />

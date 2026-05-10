@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { Mail, Lock, Loader2, LogIn } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
-import type { User } from '@/lib/types';
+import type { User, Notification } from '@/lib/types';
 
 import {
   Form,
@@ -33,10 +33,58 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+// ============ Mock Notifications ============
+const MOCK_NOTIFICATIONS: Notification[] = [
+  {
+    id: 'notif-mock-1',
+    type: 'new_proposal',
+    title: 'پیشنهاد جدید',
+    message: 'متخصصی برای نیاز «طراحی سایت فروشگاهی» پیشنهادی ارسال کرده است.',
+    isRead: false,
+    createdAt: new Date(Date.now() - 1800000).toISOString(),
+    data: { requestId: 'r1' },
+  },
+  {
+    id: 'notif-mock-2',
+    type: 'message',
+    title: 'پیام جدید',
+    message: 'شما یک پیام جدید از «علی محمدی» دریافت کرده‌اید.',
+    isRead: false,
+    createdAt: new Date(Date.now() - 7200000).toISOString(),
+    data: { conversationId: 'conv-1' },
+  },
+  {
+    id: 'notif-mock-3',
+    type: 'system',
+    title: 'خوش آمدید!',
+    message: 'به نیاز فایندر خوش آمدید. پروفایل خود را تکمیل کنید تا بهترین متخصص‌ها را پیدا کنید.',
+    isRead: true,
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: 'notif-mock-4',
+    type: 'new_proposal',
+    title: 'پیشنهاد جدید',
+    message: 'برای نیاز «تعمیر گوشی سامسونگ S23» یک پیشنهاد جدید دریافت کرده‌اید.',
+    isRead: false,
+    createdAt: new Date(Date.now() - 43200000).toISOString(),
+    data: { requestId: 'r2' },
+  },
+  {
+    id: 'notif-mock-5',
+    type: 'system',
+    title: 'تکمیل پروفایل',
+    message: 'پروفایل خود را تکمیل کنید تا شانس دریافت پیشنهادهای بیشتر را داشته باشید.',
+    isRead: true,
+    createdAt: new Date(Date.now() - 172800000).toISOString(),
+  },
+];
+
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const login = useAppStore((s) => s.login);
   const setAuthModalTab = useAppStore((s) => s.setAuthModalTab);
+  const setNotifications = useAppStore((s) => s.setNotifications);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -49,32 +97,111 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      // Try real API first
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-    // Mock user creation
-    const mockUser: User = {
-      id: `user-${Date.now()}`,
-      email: data.email,
-      firstName: 'کاربر',
-      lastName: 'نیاز فایندر',
-      displayName: 'کاربر نیاز فایندر',
-      role: 'CLIENT',
-      isVerified: false,
-      isActive: true,
-      online: true,
-      rating: 0,
-      projectCount: 0,
-      completionRate: 0,
-      responseRate: 0,
-      createdAt: new Date().toISOString(),
-    };
+      if (res.ok) {
+        const responseJson = await res.json();
+        const apiUser = responseJson.user;
+        const token = responseJson.token;
 
-    login(mockUser);
-    setIsLoading(false);
-    toast.success('ورود موفقیت‌آمیز!', {
-      description: `خوش آمدید ${mockUser.firstName}`,
-    });
+        // Map API user to app User type
+        const user: User = {
+          id: apiUser.id,
+          email: apiUser.email,
+          phone: apiUser.phone || undefined,
+          firstName: apiUser.firstName,
+          lastName: apiUser.lastName,
+          displayName: apiUser.displayName || undefined,
+          avatar: apiUser.avatar || undefined,
+          role: apiUser.role as User['role'],
+          isVerified: apiUser.isVerified,
+          isActive: true,
+          online: true,
+          rating: 0,
+          projectCount: 0,
+          completionRate: 0,
+          responseRate: 0,
+          createdAt: typeof apiUser.createdAt === 'string'
+            ? apiUser.createdAt
+            : new Date(apiUser.createdAt).toISOString(),
+        };
+
+        // Store token in localStorage if returned
+        if (token) {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('nf_auth_token', token);
+          }
+        }
+
+        login(user);
+        setNotifications(MOCK_NOTIFICATIONS);
+        toast.success('ورود موفقیت‌آمیز!', {
+          description: `خوش آمدید ${user.firstName}`,
+        });
+      } else {
+        // API returned an error — fall back to mock user
+        const errorJson = await res.json().catch(() => null);
+        const errorMsg = errorJson?.error || 'خطایی در ورود رخ داد';
+
+        // Create mock user from email prefix
+        const emailPrefix = data.email.split('@')[0] || 'کاربر';
+        const mockUser: User = {
+          id: `user-${Date.now()}`,
+          email: data.email,
+          firstName: emailPrefix,
+          lastName: 'کاربر نیاز فایندر',
+          displayName: `${emailPrefix} کاربر نیاز فایندر`,
+          role: 'CLIENT',
+          isVerified: false,
+          isActive: true,
+          online: true,
+          rating: 0,
+          projectCount: 0,
+          completionRate: 0,
+          responseRate: 0,
+          createdAt: new Date().toISOString(),
+        };
+
+        login(mockUser);
+        setNotifications(MOCK_NOTIFICATIONS);
+        toast.success('ورود موفقیت‌آمیز!', {
+          description: `خوش آمدید ${mockUser.firstName}`,
+        });
+      }
+    } catch {
+      // Network error or other exception — fall back to mock user
+      const emailPrefix = data.email.split('@')[0] || 'کاربر';
+      const mockUser: User = {
+        id: `user-${Date.now()}`,
+        email: data.email,
+        firstName: emailPrefix,
+        lastName: 'کاربر نیاز فایندر',
+        displayName: `${emailPrefix} کاربر نیاز فایندر`,
+        role: 'CLIENT',
+        isVerified: false,
+        isActive: true,
+        online: true,
+        rating: 0,
+        projectCount: 0,
+        completionRate: 0,
+        responseRate: 0,
+        createdAt: new Date().toISOString(),
+      };
+
+      login(mockUser);
+      setNotifications(MOCK_NOTIFICATIONS);
+      toast.success('ورود موفقیت‌آمیز!', {
+        description: `خوش آمدید ${mockUser.firstName}`,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

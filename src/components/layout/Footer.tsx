@@ -107,7 +107,11 @@ const fadeInUp = {
 };
 
 // ============ Footer Component ============
-export function Footer() {
+interface FooterProps {
+  compact?: boolean;
+}
+
+export function Footer({ compact = false }: FooterProps) {
   const { navigateTo } = useAppStore();
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -130,6 +134,54 @@ export function Footer() {
 
   const currentYear = new Date().getFullYear();
 
+  // ============ Compact Footer (non-home pages) ============
+  if (compact) {
+    return (
+      <footer className="bg-card/30">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+            {/* Brand */}
+            <div className="flex items-center gap-2">
+              <LocateFixed className="size-4 text-primary" />
+              <span className="text-sm font-bold text-primary">{SITE_NAME}</span>
+            </div>
+
+            {/* Quick links */}
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => handleLinkClick({ label: 'صفحه اصلی', view: 'home' })}
+                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                صفحه اصلی
+              </button>
+              <button
+                onClick={() => handleLinkClick({ label: 'ثبت نیاز', view: 'post-need' })}
+                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                ثبت نیاز
+              </button>
+              <button
+                onClick={() => handleLinkClick({ label: 'متخصص‌ها', view: 'browse-specialists' })}
+                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                متخصص‌ها
+              </button>
+              <a href="#" className="text-xs text-muted-foreground transition-colors hover:text-foreground">
+                تماس با ما
+              </a>
+            </div>
+
+            {/* Copyright */}
+            <p className="text-xs text-muted-foreground">
+              &copy; {currentYear} {SITE_NAME}
+            </p>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
+  // ============ Full Footer (home page) ============
   return (
     <footer className="mt-auto border-t border-border bg-card/50">
       {/* Newsletter Section */}
@@ -172,7 +224,7 @@ export function Footer() {
       </div>
 
       {/* Main Footer */}
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div id="footer-contact" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-12">
           {/* Brand Section */}
           <motion.div

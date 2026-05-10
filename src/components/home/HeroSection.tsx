@@ -1,11 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Plus, ArrowLeft, Sparkles, FileText, Wrench, BookOpen } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Plus, ArrowLeft, Sparkles, FileText, Wrench, BookOpen, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAppStore } from '@/lib/store';
+import { CATEGORIES, MOCK_SPECIALISTS, MOCK_REQUESTS } from '@/lib/constants';
+
+type SuggestionType = 'category' | 'specialist' | 'request';
+
+interface SearchSuggestion {
+  type: SuggestionType;
+  text: string;
+  icon: string;
+  iconComponent: typeof User;
+}
 
 const container = {
   hidden: { opacity: 0 },
@@ -17,7 +27,23 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } },
+};
+
+const dropdownVariants = {
+  hidden: { opacity: 0, y: -8, scale: 0.98 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.2, ease: 'easeOut' as const },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    scale: 0.98,
+    transition: { duration: 0.15, ease: 'easeIn' as const },
+  },
 };
 
 const floatingCards = [
@@ -42,16 +68,133 @@ const trustedBrands = [
   { name: 'زرین‌پال', color: 'bg-amber-100 text-yellow-700 dark:bg-amber-900/30 dark:text-yellow-300' },
 ];
 
+const TYPE_LABELS: Record<SuggestionType, string> = {
+  category: 'دسته‌بندی',
+  specialist: 'متخصص',
+  request: 'نیاز',
+};
+
+const TYPE_BADGE_COLORS: Record<SuggestionType, string> = {
+  category: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
+  specialist: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
+  request: 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300',
+};
+
 export function HeroSection() {
   const navigateTo = useAppStore((s) => s.navigateTo);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const suggestions = useMemo<SearchSuggestion[]>(() => {
+    if (searchQuery.trim().length < 2) return [];
+
+    const q = searchQuery.trim().toLowerCase();
+    const results: SearchSuggestion[] = [];
+
+    // Categories
+    for (const cat of CATEGORIES) {
+      if (cat.name.toLowerCase().includes(q) && cat.icon) {
+        results.push({ type: 'category', text: cat.name, icon: cat.icon, iconComponent: User });
+      }
+      if (cat.children) {
+        for (const child of cat.children) {
+          if (child.name.toLowerCase().includes(q) && child.icon) {
+            results.push({ type: 'category', text: child.name, icon: child.icon, iconComponent: User });
+          }
+        }
+      }
+    }
+
+    // Specialist skills
+    for (const spec of MOCK_SPECIALISTS) {
+      for (const skill of spec.skills) {
+        if (skill.name.toLowerCase().includes(q)) {
+          results.push({
+            type: 'specialist',
+            text: `${skill.name} — ${spec.displayName}`,
+            icon: '👤',
+            iconComponent: User,
+          });
+        }
+      }
+    }
+
+    // Request titles
+    for (const req of MOCK_REQUESTS) {
+      if (req.title.toLowerCase().includes(q)) {
+        results.push({ type: 'request', text: req.title, icon: '📋', iconComponent: FileText });
+      }
+    }
+
+    // Deduplicate by text
+    const seen = new Set<string>();
+    return results.filter((s) => {
+      const key = s.text;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, 6);
+  }, [searchQuery]);
+
+  const handleSelectSuggestion = useCallback((suggestion: SearchSuggestion) => {
+    const queryText = suggestion.text.includes('—') ? suggestion.text.split('—')[0].trim() : suggestion.text;
+    setSearchQuery(queryText);
+    setShowDropdown(false);
+    navigateTo('browse-requests', { query: queryText });
+  }, [navigateTo]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    setShowDropdown(false);
     if (searchQuery.trim()) {
       navigateTo('browse-requests', { query: searchQuery });
     }
   };
+
+  // Click outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Escape key
+  useEffect(() => {
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === 'Escape' && showDropdown) {
+        e.stopPropagation();
+        setShowDropdown(false);
+        inputRef.current?.blur();
+      }
+    }
+    document.addEventListener('keydown', handleEscape, true);
+    return () => document.removeEventListener('keydown', handleEscape, true);
+  }, [showDropdown]);
+
+  // Keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showDropdown || suggestions.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+    } else if (e.key === 'Enter' && activeIndex >= 0) {
+      e.preventDefault();
+      handleSelectSuggestion(suggestions[activeIndex]);
+    }
+  };
+
+  const hasDropdown = showDropdown && suggestions.length > 0;
 
   return (
     <section className="relative overflow-hidden hero-gradient">
@@ -107,25 +250,95 @@ export function HeroSection() {
             onSubmit={handleSearch}
             className="relative mb-8 w-full max-w-xl"
           >
-            {/* Animated gradient border wrapper */}
-            <div className="animate-border-glow rounded-2xl p-[2px]">
-              <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-2 shadow-lg sm:gap-3">
-                <div className="flex flex-1 items-center gap-2 px-3">
-                  <Search className="size-5 text-muted-foreground" />
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="نوع خدمت، تخصص یا نیاز خود را جستجو کنید..."
-                    className="h-10 border-0 bg-transparent shadow-none focus-visible:ring-0"
-                  />
+            <div ref={wrapperRef} className="relative">
+              {/* Animated gradient border wrapper */}
+              <div className="animate-border-glow rounded-2xl p-[2px]">
+                <div className={`flex items-center gap-2 rounded-2xl border bg-card p-2 shadow-lg sm:gap-3 transition-colors ${hasDropdown ? 'border-emerald-300 dark:border-emerald-700' : 'border-border'}`}>
+                  <div className="flex flex-1 items-center gap-2 px-3">
+                    <Search className="size-5 text-muted-foreground" />
+                    <Input
+                      ref={inputRef}
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setShowDropdown(true);
+                        setActiveIndex(-1);
+                      }}
+                      onFocus={() => {
+                        if (searchQuery.trim().length >= 2) setShowDropdown(true);
+                      }}
+                      onKeyDown={handleKeyDown}
+                      placeholder="نوع خدمت، تخصص یا نیاز خود را جستجو کنید..."
+                      className="h-10 border-0 bg-transparent shadow-none focus-visible:ring-0"
+                      autoComplete="off"
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    className="h-10 rounded-xl px-6 bg-emerald-600 hover:bg-emerald-700 text-white"
+                  >
+                    جستجو
+                  </Button>
                 </div>
-                <Button
-                  type="submit"
-                  className="h-10 rounded-xl px-6 bg-emerald-600 hover:bg-emerald-700 text-white"
-                >
-                  جستجو
-                </Button>
               </div>
+
+              {/* Autocomplete Dropdown */}
+              <AnimatePresence>
+                {hasDropdown && (
+                  <motion.div
+                    variants={dropdownVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    className="absolute top-full start-0 end-0 z-50 mt-2 overflow-hidden rounded-xl border border-border/80 bg-card/95 shadow-xl backdrop-blur-md"
+                  >
+                    <ul className="py-2">
+                      {suggestions.map((suggestion, idx) => {
+                        const IconComp = suggestion.iconComponent;
+                        const isActive = idx === activeIndex;
+                        return (
+                          <li key={`${suggestion.type}-${idx}`}>
+                            <button
+                              type="button"
+                              onClick={() => handleSelectSuggestion(suggestion)}
+                              className={`flex w-full items-center gap-3 px-4 py-2.5 text-start transition-colors ${
+                                isActive
+                                  ? 'bg-emerald-50 dark:bg-emerald-900/20'
+                                  : 'hover:bg-muted/50'
+                              }`}
+                            >
+                              {/* Icon */}
+                              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted/80 text-base">
+                                {suggestion.type === 'category'
+                                  ? suggestion.icon
+                                  : <IconComp className="size-4 text-muted-foreground" />
+                                }
+                              </span>
+
+                              {/* Text */}
+                              <span className="flex-1 truncate text-sm font-medium text-foreground">
+                                {suggestion.text}
+                              </span>
+
+                              {/* Type badge */}
+                              <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${TYPE_BADGE_COLORS[suggestion.type]}`}>
+                                {TYPE_LABELS[suggestion.type]}
+                              </span>
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+
+                    {/* Footer hint */}
+                    <div className="border-t border-border/50 bg-muted/30 px-4 py-2">
+                      <p className="text-[11px] text-muted-foreground">
+                        برای انتخاب از کلیدهای بالا/پایین و Enter استفاده کنید
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.form>
 
