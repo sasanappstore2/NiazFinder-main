@@ -8,6 +8,7 @@ import { useAppStore } from '@/lib/store';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { AuthModal } from '@/components/auth/AuthModal';
+import { BackToTop } from '@/components/shared/BackToTop';
 
 // Pages
 import { HeroSection } from '@/components/home/HeroSection';
@@ -143,6 +144,9 @@ export default function App() {
 
       {/* Auth Modal */}
       <AuthModal />
+
+      {/* Back to Top Button */}
+      <BackToTop />
     </div>
   );
 }

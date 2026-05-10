@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { MapPin, Clock, DollarSign, FileText, ArrowLeft, Flame } from 'lucide-react';
+import { MapPin, Clock, DollarSign, FileText, ArrowLeft, Flame, Zap, Loader2, Inbox } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
 import {
   MOCK_REQUESTS,
@@ -11,6 +12,7 @@ import {
   getTimeAgo,
   getPriorityLabel,
 } from '@/lib/constants';
+import type { ServiceRequest } from '@/lib/types';
 
 const container = {
   hidden: { opacity: 0 },
@@ -23,6 +25,13 @@ const container = {
 const item = {
   hidden: { opacity: 0, y: 24 },
   show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+};
+
+const priorityAccentColors: Record<string, string> = {
+  URGENT: 'bg-destructive',
+  HIGH: 'bg-amber-500',
+  NORMAL: 'bg-primary/40',
+  LOW: 'bg-muted-foreground/30',
 };
 
 function PriorityBadge({ priority }: { priority: string }) {
@@ -56,11 +65,89 @@ function PriorityBadge({ priority }: { priority: string }) {
   );
 }
 
-export function FeaturedRequests() {
+function UrgentBanner() {
+  return (
+    <div className="animate-urgent-flash flex items-center gap-1.5 rounded-lg bg-destructive/5 px-2.5 py-1.5">
+      <Zap className="size-3.5 fill-destructive text-destructive" />
+      <span className="text-[11px] font-bold text-destructive">عجله دارید؟</span>
+    </div>
+  );
+}
+
+function RequestCard({ request }: { request: ServiceRequest }) {
   const navigateTo = useAppStore((s) => s.navigateTo);
+  const accentColor = priorityAccentColors[request.priority] || 'bg-primary/40';
+  const isUrgent = request.priority === 'URGENT';
 
   return (
-    <section className="bg-muted/30 py-16 sm:py-20 lg:py-24">
+    <Card
+      onClick={() => navigateTo('request-detail', { id: request.id })}
+      className="group cursor-pointer overflow-hidden border-border/60 bg-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-200 dark:hover:border-emerald-800"
+    >
+      <div className="flex h-full">
+        {/* Left colored accent bar */}
+        <div className={`w-[3px] shrink-0 ${accentColor}`} />
+
+        <CardContent className="flex-1 p-5">
+          {/* Top Row: Category + Priority */}
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">{request.categoryIcon}</span>
+              <span className="text-xs font-medium text-muted-foreground truncate max-w-[140px]">
+                {request.categoryName}
+              </span>
+            </div>
+            <PriorityBadge priority={request.priority} />
+          </div>
+
+          {/* Title */}
+          <h3 className="mb-3 text-sm font-bold leading-snug line-clamp-2 transition-colors duration-300 group-hover:text-emerald-600">
+            {request.title}
+          </h3>
+
+          {/* Urgent Banner */}
+          {isUrgent && <div className="mb-3"><UrgentBanner /></div>}
+
+          {/* Meta Grid */}
+          <div className="mb-4 space-y-2.5">
+            <div className="flex items-center gap-2.5 rounded-lg bg-emerald-500/5 px-2.5 py-1.5">
+              <div className="flex size-6 items-center justify-center rounded-md bg-emerald-500/10">
+                <DollarSign className="size-3.5 text-emerald-600" />
+              </div>
+              <span className="text-xs font-medium text-foreground truncate">
+                {formatBudgetRange(request.budgetMin, request.budgetMax)}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <MapPin className="size-3.5 shrink-0" />
+              <span>{request.city}</span>
+            </div>
+          </div>
+
+          {/* Bottom Row: Proposals + Time */}
+          <div className="flex items-center justify-between border-t border-border/50 pt-3">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <FileText className="size-3.5" />
+              <span>
+                {request.proposalCount.toLocaleString('fa-IR')} پیشنهاد
+              </span>
+            </div>
+            <span className="text-[11px] text-muted-foreground">
+              {getTimeAgo(request.createdAt)}
+            </span>
+          </div>
+        </CardContent>
+      </div>
+    </Card>
+  );
+}
+
+export function FeaturedRequests() {
+  const navigateTo = useAppStore((s) => s.navigateTo);
+  const isLoading = false;
+
+  return (
+    <section className="relative bg-muted/30 py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -78,66 +165,65 @@ export function FeaturedRequests() {
           </p>
         </motion.div>
 
-        {/* Requests Grid */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-50px' }}
-          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {MOCK_REQUESTS.map((request) => (
-            <motion.div key={request.id} variants={item}>
-              <Card
-                onClick={() => navigateTo('request-detail', { id: request.id })}
-                className="group cursor-pointer border-border/60 bg-card overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/5 hover:border-emerald-200 dark:hover:border-emerald-800"
-              >
-                <CardContent className="p-5">
-                  {/* Top Row: Category + Priority */}
-                  <div className="mb-3 flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{request.categoryIcon}</span>
-                      <span className="text-xs font-medium text-muted-foreground truncate max-w-[140px]">
-                        {request.categoryName}
-                      </span>
-                    </div>
-                    <PriorityBadge priority={request.priority} />
-                  </div>
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center gap-4 py-16">
+            <Loader2 className="size-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">در حال بارگذاری نیازها...</p>
+          </div>
+        ) : MOCK_REQUESTS.length === 0 ? (
+          /* Empty State */
+          <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border/60 bg-muted/20 py-16">
+            <div className="flex size-14 items-center justify-center rounded-2xl bg-muted">
+              <Inbox className="size-7 text-muted-foreground" />
+            </div>
+            <div className="text-center">
+              <p className="mb-1 text-sm font-semibold">هنوز نیازی ثبت نشده</p>
+              <p className="text-xs text-muted-foreground">اولین نفری باشید که نیاز خود را ثبت می‌کنید!</p>
+            </div>
+            <Button
+              onClick={() => navigateTo('post-need')}
+              className="mt-2 rounded-xl px-6 bg-emerald-600 hover:bg-emerald-700 text-white"
+            >
+              ثبت نیاز جدید
+            </Button>
+          </div>
+        ) : (
+          /* Requests Grid */
+          <motion.div
+            variants={container}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: '-50px' }}
+            className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {MOCK_REQUESTS.map((request) => (
+              <motion.div key={request.id} variants={item}>
+                <RequestCard request={request} />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
 
-                  {/* Title */}
-                  <h3 className="mb-3 text-sm font-bold leading-snug line-clamp-2 group-hover:text-emerald-600 transition-colors">
-                    {request.title}
-                  </h3>
-
-                  {/* Meta Grid */}
-                  <div className="mb-4 space-y-2">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <DollarSign className="size-3.5 shrink-0 text-emerald-500" />
-                      <span className="truncate">{formatBudgetRange(request.budgetMin, request.budgetMax)}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <MapPin className="size-3.5 shrink-0" />
-                      <span>{request.city}</span>
-                    </div>
-                  </div>
-
-                  {/* Bottom Row: Proposals + Time */}
-                  <div className="flex items-center justify-between border-t border-border/50 pt-3">
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <FileText className="size-3.5" />
-                      <span>
-                        {request.proposalCount.toLocaleString('fa-IR')} پیشنهاد
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-muted-foreground">
-                      {getTimeAgo(request.createdAt)}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* View All Button */}
+        {!isLoading && MOCK_REQUESTS.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            className="mt-10 flex justify-center"
+          >
+            <Button
+              onClick={() => navigateTo('browse-requests')}
+              variant="outline"
+              className="h-11 rounded-xl px-8 transition-all duration-300 hover:shadow-md"
+            >
+              مشاهده همه نیازها
+              <ArrowLeft className="size-4" />
+            </Button>
+          </motion.div>
+        )}
       </div>
     </section>
   );

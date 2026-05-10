@@ -14,6 +14,8 @@ import {
   X,
 } from 'lucide-react';
 
+import { ThemeToggle } from '@/components/shared/ThemeToggle';
+
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 import { SITE_NAME } from '@/lib/constants';
@@ -413,6 +415,11 @@ export function Header() {
           {/* Search Bar - Desktop */}
           <div className="hidden md:block">
             <SearchBar />
+          </div>
+
+          {/* Theme Toggle - Desktop */}
+          <div className="hidden md:flex">
+            <ThemeToggle />
           </div>
 
           {/* Notifications */}
