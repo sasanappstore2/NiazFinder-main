@@ -19,7 +19,7 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const } },
 };
 
 const AVATAR_COLORS = [
@@ -76,7 +76,7 @@ function SpecialistCard({ specialist, index }: { specialist: typeof MOCK_SPECIAL
   const isFeatured = index === 0;
 
   return (
-    <Card className={`group relative overflow-hidden border-border/60 bg-card transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/8 hover:border-primary/40 dark:hover:border-primary/30 ${isFeatured ? 'ring-1 ring-amber-400/30 dark:ring-amber-400/20' : ''}`}>
+    <Card className={`group relative overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/10 hover:border-primary/40 dark:hover:border-primary/30 ${isFeatured ? 'ring-1 ring-amber-400/30 dark:ring-amber-400/20' : ''}`}>
       {/* Featured ribbon */}
       {isFeatured && <FeaturedRibbon />}
 
@@ -84,7 +84,7 @@ function SpecialistCard({ specialist, index }: { specialist: typeof MOCK_SPECIAL
         {/* Top: Avatar + Name */}
         <div className="mb-4 flex items-start gap-3">
           <div className="relative">
-            <Avatar className="size-14 ring-2 ring-primary/20 transition-all duration-300 group-hover:ring-primary/40 group-hover:ring-[3px]">
+            <Avatar className="size-14 ring-2 ring-primary/20 transition-all duration-500 group-hover:ring-primary/40 group-hover:ring-[3px] group-hover:shadow-lg group-hover:shadow-primary/10">
               <AvatarImage src={specialist.avatar} alt={specialist.displayName} />
               <AvatarFallback className={AVATAR_COLORS[index % AVATAR_COLORS.length] + ' text-base font-bold'}>
                 {specialist.firstName.charAt(0)}{specialist.lastName.charAt(0)}
@@ -100,7 +100,7 @@ function SpecialistCard({ specialist, index }: { specialist: typeof MOCK_SPECIAL
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <h3 className="truncate text-sm font-bold transition-colors duration-300 group-hover:text-primary">{specialist.displayName}</h3>
+              <h3 className="truncate text-sm font-bold leading-snug transition-colors duration-300 group-hover:text-primary">{specialist.displayName}</h3>
               {specialist.isVerified && (
                 <BadgeCheck className="size-4 shrink-0 fill-emerald-500 text-white" />
               )}
@@ -134,7 +134,7 @@ function SpecialistCard({ specialist, index }: { specialist: typeof MOCK_SPECIAL
         </div>
 
         {/* Stats */}
-        <div className="mb-5 grid grid-cols-2 gap-3 rounded-xl bg-muted/50 p-3 transition-colors duration-300 group-hover:bg-primary/5">
+        <div className="mb-5 grid grid-cols-2 gap-3 rounded-xl bg-muted/40 p-3 transition-all duration-500 group-hover:bg-primary/5 group-hover:shadow-sm">
           <div className="flex flex-col items-center gap-0.5">
             <Briefcase className="size-4 text-muted-foreground transition-colors duration-300 group-hover:text-primary" />
             <span className="text-xs font-semibold">
@@ -153,7 +153,7 @@ function SpecialistCard({ specialist, index }: { specialist: typeof MOCK_SPECIAL
         <Button
           onClick={() => navigateTo('specialist-profile', { id: specialist.id })}
           variant="outline"
-          className="h-10 w-full rounded-xl text-sm font-medium transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:border-primary"
+          className="h-10 w-full rounded-xl text-sm font-semibold transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-lg hover:shadow-primary/20"
         >
           مشاهده پروفایل
           <ArrowLeft className="size-4" />
@@ -167,7 +167,7 @@ export function TopSpecialists() {
   const navigateTo = useAppStore((s) => s.navigateTo);
 
   return (
-    <section className="relative bg-muted/30 py-16 sm:py-20 lg:py-24">
+    <section className="relative bg-muted/20 py-20 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -177,10 +177,10 @@ export function TopSpecialists() {
           transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
-          <h2 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+          <h2 className="mb-3 text-2xl font-extrabold tracking-tight sm:text-3xl lg:text-4xl">
             متخصص‌های برتر
           </h2>
-          <p className="mx-auto max-w-xl text-muted-foreground">
+          <p className="mx-auto max-w-xl text-muted-foreground/80">
             برترین متخصص‌ها با بیشترین امتیاز و رضایت
           </p>
         </motion.div>
@@ -191,7 +191,7 @@ export function TopSpecialists() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-50px' }}
-          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6"
         >
           {MOCK_SPECIALISTS.map((specialist, i) => (
             <motion.div key={specialist.id} variants={item}>

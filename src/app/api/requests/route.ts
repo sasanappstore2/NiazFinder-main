@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (status && ['OPEN', 'IN_PROGRESS', 'CLOSED', 'COMPLETED', 'CANCELLED'].includes(status)) {
-      where.status = status as Prisma.EnumServiceRequestStatusFilter['equals'];
+      where.status = status as Prisma.EnumRequestStatusFilter['equals'];
     }
 
     if (search) {

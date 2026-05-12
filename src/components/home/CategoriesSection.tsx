@@ -18,7 +18,7 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const } },
 };
 
 function AnimatedNumber({ value }: { value: number }) {
@@ -58,9 +58,9 @@ export function CategoriesSection() {
   const navigateTo = useAppStore((s) => s.navigateTo);
 
   return (
-    <section className="relative bg-background py-16 sm:py-20 lg:py-24 overflow-hidden">
+    <section className="relative bg-background py-20 sm:py-24 lg:py-28 overflow-hidden">
       {/* Subtle mesh gradient background */}
-      <div className="absolute inset-0 mesh-gradient-bg opacity-40 pointer-events-none" />
+      <div className="absolute inset-0 mesh-gradient-bg opacity-30 pointer-events-none" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -71,10 +71,10 @@ export function CategoriesSection() {
           transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
-          <h2 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+          <h2 className="mb-3 text-2xl font-extrabold tracking-tight sm:text-3xl lg:text-4xl">
             دسته‌بندی خدمات
           </h2>
-          <p className="mx-auto max-w-xl text-muted-foreground">
+          <p className="mx-auto max-w-xl text-muted-foreground/80">
             از میان صدها دسته‌بندی، نیاز خود را پیدا کنید
           </p>
         </motion.div>
@@ -91,24 +91,24 @@ export function CategoriesSection() {
             <motion.div key={category.id} variants={item}>
               <Card
                 onClick={() => navigateTo('browse-requests', { categoryId: category.id })}
-                className="group cursor-pointer border-border/60 bg-card py-5 transition-all duration-300 hover:scale-[1.03] hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-primary/50 dark:hover:border-primary/40"
+                className="group cursor-pointer border-border/50 bg-card/80 backdrop-blur-sm py-5 transition-all duration-500 ease-out hover:scale-[1.02] hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-500/8 hover:border-primary/40 dark:hover:border-primary/30"
               >
                 <CardContent className="flex items-start gap-4 p-0 px-6">
                   {/* Icon with bounce on hover */}
                   <motion.div
                     whileHover={{ scale: 1.15, rotate: [0, -5, 5, 0] }}
                     transition={{ duration: 0.4 }}
-                    className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/8 text-2xl transition-colors duration-300 group-hover:bg-primary/15 group-hover:shadow-sm group-hover:shadow-primary/10"
+                    className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/12 to-primary/5 text-2xl shadow-sm transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-primary/20 group-hover:to-primary/10 group-hover:shadow-md group-hover:shadow-primary/10"
                   >
                     {category.icon}
                   </motion.div>
 
                   {/* Info */}
                   <div className="min-w-0 flex-1">
-                    <h3 className="mb-1.5 text-sm font-semibold leading-snug line-clamp-1 transition-colors duration-300 group-hover:text-primary">
+                    <h3 className="mb-1.5 text-sm font-bold leading-snug line-clamp-1 transition-colors duration-300 group-hover:text-primary">
                       {category.name}
                     </h3>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-3 text-xs font-medium text-muted-foreground/80">
                       <span className="inline-flex items-center gap-1">
                         <FileText className="size-3" />
                         <AnimatedNumber value={category.requestCount} /> نیاز فعال
@@ -136,7 +136,7 @@ export function CategoriesSection() {
           <Button
             onClick={() => navigateTo('browse-requests')}
             variant="outline"
-            className="h-11 rounded-xl px-8 transition-all duration-300 hover:shadow-md"
+            className="h-11 rounded-xl border-border/60 bg-card/50 backdrop-blur-sm px-8 transition-all duration-300 hover:shadow-lg hover:bg-card"
           >
             مشاهده همه
             <ArrowLeft className="size-4" />

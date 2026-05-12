@@ -37,7 +37,7 @@ import type { SpecialistProfile as SpecialistProfileType, Portfolio, Review } fr
 // ─── Animation variants ───────────────────────────────
 const fadeIn = {
   initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
 };
 
 const container = {
@@ -47,7 +47,7 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
 };
 
 // ─── Avatar helpers ────────────────────────────────────
@@ -153,7 +153,7 @@ function StatCard({
   suffix?: string;
 }) {
   return (
-    <Card className="border-border/60 bg-white/80 backdrop-blur-sm dark:bg-card/80">
+    <Card className="border-border/40 bg-white/80 backdrop-blur-sm dark:bg-card/80 transition-all duration-200 hover:shadow-md hover:border-emerald-200/40 dark:hover:border-emerald-800/40">
       <CardContent className="flex flex-col items-center gap-1.5 p-4 text-center">
         <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-900/20">
           <Icon className="size-4.5 text-emerald-600 dark:text-emerald-400" />
@@ -171,7 +171,7 @@ function StatCard({
 // ─── Portfolio Card ───────────────────────────────────
 function PortfolioCard({ portfolio, index }: { portfolio: Portfolio; index: number }) {
   return (
-    <Card className="group overflow-hidden border-border/60 bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-800">
+    <Card className="group overflow-hidden border-border/50 bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/[0.06] hover:border-emerald-300/60 dark:hover:border-emerald-700/60">
       {/* Placeholder image */}
       <div className={`aspect-video bg-gradient-to-br ${getGradient(index)} relative flex items-center justify-center`}>
         <div className="flex flex-col items-center gap-1 text-white/80">
@@ -203,7 +203,7 @@ function ReviewCard({ review }: { review: Review }) {
   const colorClass = getAvatarColor(fullName);
 
   return (
-    <Card className="border-border/60 bg-card transition-all duration-200 hover:border-emerald-200 dark:hover:border-emerald-800 hover:shadow-sm">
+    <Card className="border-border/50 bg-card transition-all duration-300 hover:border-emerald-300/60 dark:hover:border-emerald-700/60 hover:shadow-lg hover:shadow-emerald-500/[0.04]">
       <CardContent className="p-5">
         {/* Header */}
         <div className="mb-3 flex items-start justify-between gap-3">
@@ -275,9 +275,9 @@ export function SpecialistProfile() {
   const specialist: SpecialistProfileType =
     MOCK_SPECIALISTS.find((s) => s.id === specialistId) || MOCK_SPECIALISTS[0];
 
-  const initials = getInitials(specialist.displayName);
-  const avatarColor = getAvatarColor(specialist.displayName);
-  const avatarSolid = getAvatarSolid(specialist.displayName);
+  const initials = getInitials(specialist.displayName ?? '');
+  const avatarColor = getAvatarColor(specialist.displayName ?? '');
+  const avatarSolid = getAvatarSolid(specialist.displayName ?? '');
 
   return (
     <div className="min-h-screen bg-muted/20" dir="rtl">
@@ -300,7 +300,7 @@ export function SpecialistProfile() {
         <motion.div
           {...fadeIn}
           transition={{ delay: 0.05 }}
-          className="mb-6 overflow-hidden rounded-2xl border border-border/60"
+          className="mb-6 overflow-hidden rounded-2xl border border-border/50 shadow-lg shadow-black/[0.03]"
         >
           {/* Gradient banner */}
           <div className="relative bg-gradient-to-bl from-emerald-500 via-emerald-600 to-teal-700 px-6 pb-24 pt-8 sm:px-10 sm:pt-10">
@@ -406,7 +406,7 @@ export function SpecialistProfile() {
 
             {/* About */}
             <motion.div {...fadeIn} transition={{ delay: 0.1 }}>
-              <Card className="border-border/60 bg-card">
+              <Card className="border-border/50 bg-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
                     <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
@@ -425,7 +425,7 @@ export function SpecialistProfile() {
 
             {/* Skills */}
             <motion.div {...fadeIn} transition={{ delay: 0.15 }}>
-              <Card className="border-border/60 bg-card">
+              <Card className="border-border/50 bg-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
                     <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
@@ -451,7 +451,7 @@ export function SpecialistProfile() {
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${percentage}%` }}
-                                transition={{ duration: 1, ease: 'easeOut', delay: index * 0.1 }}
+                                transition={{ duration: 1, ease: 'easeOut' as const, delay: index * 0.1 }}
                                 className="h-full rounded-full bg-gradient-to-l from-emerald-500 to-teal-400"
                               />
                             </div>
@@ -470,7 +470,7 @@ export function SpecialistProfile() {
             {/* Portfolio + Reviews Tabs */}
             <motion.div {...fadeIn} transition={{ delay: 0.2 }}>
               <Tabs defaultValue="portfolio" className="w-full">
-                <Card className="border-border/60 bg-card">
+                <Card className="border-border/50 bg-card">
                   <CardHeader className="pb-0">
                     <TabsList className="w-full">
                       <TabsTrigger value="portfolio" className="flex-1 gap-1.5">
@@ -544,7 +544,7 @@ export function SpecialistProfile() {
 
             {/* Quick Info Card */}
             <motion.div {...fadeIn} transition={{ delay: 0.15 }}>
-              <Card className="border-border/60 bg-card">
+              <Card className="border-border/50 bg-card">
                 <CardContent className="p-5">
                   <h3 className="mb-3 text-sm font-bold">اطلاعات سریع</h3>
                   <div className="divide-y divide-border/60">
@@ -583,7 +583,7 @@ export function SpecialistProfile() {
 
             {/* Skills Summary */}
             <motion.div {...fadeIn} transition={{ delay: 0.2 }}>
-              <Card className="border-border/60 bg-card">
+              <Card className="border-border/50 bg-card">
                 <CardContent className="p-5">
                   <h3 className="mb-3 text-sm font-bold">مهارت‌ها</h3>
                   <div className="flex flex-wrap gap-2">
@@ -643,7 +643,7 @@ export function SpecialistProfile() {
               <Button
                 variant="outline"
                 onClick={() => navigateTo('submit-review', { id: specialist.id })}
-                className="w-full gap-2 rounded-xl border-dashed border-border/60 hover:border-primary/40 hover:bg-primary/5 h-auto py-3"
+                className="w-full gap-2 rounded-xl border-dashed border-border/40 hover:border-primary/40 hover:bg-primary/5 h-auto py-3"
               >
                 <PenLine className="size-4 text-muted-foreground" />
                 <span className="text-sm font-medium text-muted-foreground">ثبت نظر و امتیاز</span>

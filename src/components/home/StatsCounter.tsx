@@ -14,7 +14,7 @@ const cardVariants = {
     transition: {
       delay: i * 0.1,
       duration: 0.6,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as const,
     },
   }),
 };
@@ -76,18 +76,18 @@ function StatCard({
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
       whileHover={{ scale: 1.05, y: -4 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
       className="group relative rounded-2xl glass p-6 sm:p-8 text-center
-                 transition-shadow duration-300 cursor-default
-                 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]"
+                 transition-all duration-500 ease-out cursor-default
+                 hover:shadow-[0_8px_40px_rgba(16,185,129,0.15)] hover:-translate-y-1"
     >
       {/* glow ring on hover */}
-      <div className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100
+      <div className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100
                       bg-gradient-to-br from-emerald-500/20 via-transparent to-amber-500/20 blur-sm" />
 
       {/* icon */}
-      <div className="relative mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl
-                      bg-primary/10 text-4xl
+      <div className="relative mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl
+                      bg-gradient-to-br from-primary/15 to-primary/5 text-4xl shadow-lg shadow-primary/5
                       [animation:float_3s_ease-in-out_infinite]
                       [&:hover]:[animation:pulse_1s_ease-in-out_infinite]">
         {/* pulse ring behind icon */}
@@ -96,15 +96,15 @@ function StatCard({
       </div>
 
       {/* number */}
-      <p className="mb-1 text-3xl font-extrabold sm:text-4xl md:text-5xl
+      <p className="mb-2 text-3xl font-extrabold sm:text-4xl md:text-5xl
                      bg-gradient-to-l from-emerald-600 to-emerald-400 bg-clip-text text-transparent
-                     tabular-nums leading-tight">
+                     tabular-nums leading-tight tracking-tight">
         {displayValue}
         <span className="text-2xl sm:text-3xl md:text-4xl">{stat.suffix}</span>
       </p>
 
       {/* label */}
-      <p className="text-sm font-medium text-muted-foreground sm:text-base">
+      <p className="text-sm font-semibold text-muted-foreground/80 sm:text-base">
         {stat.label}
       </p>
     </motion.div>
@@ -138,19 +138,19 @@ export function StatsCounter() {
           transition={{ duration: 0.5, delay: 0 }}
           className="mb-12 text-center sm:mb-16"
         >
-          <h2 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
+          <h2 className="mb-3 text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">
             اعداد و آمار{' '}
             <span className="bg-gradient-to-l from-emerald-600 to-emerald-400 bg-clip-text text-transparent">
               اعتماد
             </span>
           </h2>
-          <p className="mx-auto max-w-xl text-sm text-muted-foreground sm:text-base">
+          <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground/80 sm:text-base">
             آماری که نشان‌دهنده اعتماد هزاران کاربر به پلتفرم نیاز فایندر است
           </p>
         </motion.div>
 
         {/* stats grid */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 lg:gap-7">
           {TRUST_STATS.map((stat, i) => (
             <StatCard key={i} stat={stat} index={i} inView={inView} />
           ))}

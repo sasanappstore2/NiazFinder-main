@@ -46,7 +46,7 @@ const container = {
 };
 const item = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
 };
 
 // ─── Avatar color generator ───────────────────────────
@@ -109,18 +109,18 @@ function RequestCard({ request, onClick }: { request: ServiceRequest; onClick: (
   return (
     <Card
       onClick={onClick}
-      className="group cursor-pointer border-border/60 bg-card overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/5 hover:border-emerald-200 dark:hover:border-emerald-800"
+      className="group cursor-pointer border-border/50 bg-card overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-500/[0.07] hover:border-emerald-300/60 dark:hover:border-emerald-700/60 ring-0 hover:ring-1 hover:ring-emerald-200/40 dark:hover:ring-emerald-800/40"
     >
-      <CardContent className="p-5">
+      <CardContent className="p-5 pb-6">
         {/* Top: Category + Priority + Bookmark */}
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-lg">{request.categoryIcon}</span>
-            <span className="text-xs font-medium text-muted-foreground truncate max-w-[140px]">
+        <div className="mb-3.5 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5">
+            <span className="flex size-8 items-center justify-center rounded-lg bg-muted/60 text-base">{request.categoryIcon}</span>
+            <span className="text-xs font-semibold text-muted-foreground truncate max-w-[140px]">
               {request.categoryName}
             </span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <BookmarkButton id={request.id} type="request" size="sm" />
             <PriorityBadge priority={request.priority} />
           </div>
@@ -137,10 +137,10 @@ function RequestCard({ request, onClick }: { request: ServiceRequest; onClick: (
         </p>
 
         {/* Meta */}
-        <div className="mb-4 space-y-1.5">
+        <div className="mb-4 space-y-2">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <DollarSign className="size-3.5 shrink-0 text-emerald-500" />
-            <span className="truncate">{formatBudgetRange(request.budgetMin, request.budgetMax)}</span>
+            <span className="truncate font-medium">{formatBudgetRange(request.budgetMin, request.budgetMax)}</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <MapPin className="size-3.5 shrink-0" />
@@ -149,14 +149,14 @@ function RequestCard({ request, onClick }: { request: ServiceRequest; onClick: (
         </div>
 
         {/* Bottom: Proposals + Time + User */}
-        <div className="flex items-center justify-between border-t border-border/50 pt-3">
+        <div className="flex items-center justify-between border-t border-border/40 pt-3.5">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <FileText className="size-3.5" />
             <span>{request.proposalCount.toLocaleString('fa-IR')} پیشنهاد</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] text-muted-foreground">{getTimeAgo(request.createdAt)}</span>
-            <div className={`size-6 rounded-full flex items-center justify-center text-[10px] font-bold ${colorClass}`}>
+          <div className="flex items-center gap-2.5">
+            <span className="text-[11px] text-muted-foreground/70">{getTimeAgo(request.createdAt)}</span>
+            <div className={`size-7 rounded-full flex items-center justify-center text-[10px] font-bold ring-2 ring-white dark:ring-card ${colorClass}`}>
               {initials}
             </div>
           </div>
@@ -269,10 +269,10 @@ export function BrowseRequests() {
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-gradient-to-l from-foreground to-foreground/80 bg-clip-text">
                 نیازهای ثبت شده
               </h1>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1.5 text-sm text-muted-foreground">
                 {filteredRequests.length.toLocaleString('fa-IR')} نیاز یافت شد
               </p>
             </div>
@@ -305,7 +305,7 @@ export function BrowseRequests() {
               placeholder="جستجو در عنوان، توضیحات یا تگ‌ها..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="h-11 w-full rounded-xl border-border/60 bg-card pr-10 text-sm shadow-sm"
+              className="h-12 w-full rounded-xl border-border/50 bg-card/80 backdrop-blur-sm pr-10 text-sm shadow-md shadow-black/[0.03] focus-visible:shadow-lg focus-visible:shadow-emerald-500/[0.06] focus-visible:border-emerald-300/50 dark:focus-visible:border-emerald-700/50 transition-shadow"
             />
             {query && (
               <button
@@ -326,9 +326,9 @@ export function BrowseRequests() {
             exit={{ opacity: 0, height: 0 }}
             className="mb-6"
           >
-            <Card className="border-border/60 bg-card shadow-sm">
-              <CardContent className="p-4">
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-lg shadow-black/[0.03]">
+              <CardContent className="p-5">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {/* Category */}
                   <div>
                     <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
@@ -410,7 +410,7 @@ export function BrowseRequests() {
 
                 {activeFilterCount > 0 && (
                   <div className="mt-4 flex justify-start">
-                    <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs text-muted-foreground">
+                    <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs text-muted-foreground hover:text-destructive">
                       <X className="size-3" />
                       حذف همه فیلترها
                     </Button>
@@ -460,11 +460,11 @@ export function BrowseRequests() {
             animate={{ opacity: 1, y: 0 }}
             className="py-20 text-center"
           >
-            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-muted">
-              <Search className="size-8 text-muted-foreground/50" />
+            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-muted/60">
+              <Search className="size-8 text-muted-foreground/40" />
             </div>
-            <h3 className="mb-2 text-lg font-semibold">نتیجه‌ای یافت نشد</h3>
-            <p className="mx-auto max-w-sm text-sm text-muted-foreground">
+            <h3 className="mb-2 text-lg font-semibold text-foreground">نتیجه‌ای یافت نشد</h3>
+            <p className="mx-auto max-w-sm text-sm text-muted-foreground/70">
               لطفاً فیلترهای خود را تغییر دهید یا عبارت جستجو را اصلاح کنید.
             </p>
             <Button variant="outline" className="mt-4" onClick={clearFilters}>

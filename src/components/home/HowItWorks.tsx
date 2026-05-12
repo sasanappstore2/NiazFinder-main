@@ -77,10 +77,11 @@ const dotPulse = {
 
 export function HowItWorks() {
   return (
-    <section className="relative bg-background py-16 sm:py-20 lg:py-24">
+    <section className="relative bg-background py-20 sm:py-24 lg:py-28">
       {/* Subtle background decoration */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-32 start-1/2 size-[500px] -translate-x-1/2 rounded-full bg-emerald-100/30 blur-3xl dark:bg-emerald-900/10" />
+        <div className="absolute -top-32 start-1/2 size-[600px] -translate-x-1/2 rounded-full bg-emerald-100/25 blur-[100px] dark:bg-emerald-900/8" />
+        <div className="absolute -bottom-32 start-1/3 size-[400px] -translate-x-1/2 rounded-full bg-amber-100/20 blur-[80px] dark:bg-amber-900/5" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -92,14 +93,14 @@ export function HowItWorks() {
           transition={{ duration: 0.5 }}
           className="mb-14 text-center"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-sm font-medium text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-emerald-50/80 px-4 py-1.5 text-sm font-semibold text-emerald-700 shadow-sm shadow-emerald-500/5 backdrop-blur-sm dark:border-emerald-800/60 dark:bg-emerald-900/20 dark:text-emerald-300">
             <span className="flex size-6 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">۴</span>
             مرحله ساده
           </div>
-          <h2 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+          <h2 className="mb-3 text-2xl font-extrabold tracking-tight sm:text-3xl lg:text-4xl">
             چگونه <span className="text-gradient">کار می‌کند</span>؟
           </h2>
-          <p className="mx-auto max-w-xl text-muted-foreground">
+          <p className="mx-auto max-w-xl leading-relaxed text-muted-foreground/80">
             در چهار مرحله ساده، نیاز خود را به بهترین متخصص وصل کنید
           </p>
         </motion.div>
@@ -166,13 +167,13 @@ export function HowItWorks() {
                     </motion.div>
 
                     {/* Card body */}
-                    <div className="group relative rounded-2xl border border-transparent bg-card/0 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-border hover:bg-card hover:shadow-xl hover:shadow-emerald-500/10 lg:p-5">
+                    <div className="group relative rounded-2xl border border-transparent bg-card/0 p-4 transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-border/60 hover:bg-card/90 hover:shadow-xl hover:shadow-emerald-500/10 backdrop-blur-sm lg:p-5">
                       {/* Number badge on card */}
-                      <span className="absolute -top-3 start-4 flex size-7 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 text-xs font-bold text-white shadow-md ring-[3px] ring-background">
+                      <span className="absolute -top-3 start-4 flex size-7 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 text-xs font-bold text-white shadow-lg shadow-emerald-500/20 ring-[3px] ring-background">
                         {step.number}
                       </span>
-                      <h3 className="mb-2 mt-1 text-base font-bold">{step.title}</h3>
-                      <p className="text-sm leading-relaxed text-muted-foreground max-w-[260px]">
+                      <h3 className="mb-2 mt-1 text-base font-bold leading-snug">{step.title}</h3>
+                      <p className="text-sm leading-relaxed text-muted-foreground/80 max-w-[260px]">
                         {step.description}
                       </p>
                     </div>

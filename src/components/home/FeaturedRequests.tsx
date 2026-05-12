@@ -25,7 +25,7 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const } },
 };
 
 const priorityAccentColors: Record<string, string> = {
@@ -83,7 +83,7 @@ function RequestCard({ request }: { request: ServiceRequest }) {
   return (
     <Card
       onClick={() => navigateTo('request-detail', { id: request.id })}
-      className="group cursor-pointer overflow-hidden border-border/60 bg-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-200 dark:hover:border-emerald-800"
+      className="group cursor-pointer overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-500/8 hover:border-emerald-200/80 dark:hover:border-emerald-800/60"
     >
       <div className="flex h-full">
         {/* Left colored accent bar */}
@@ -114,8 +114,8 @@ function RequestCard({ request }: { request: ServiceRequest }) {
 
           {/* Meta Grid */}
           <div className="mb-4 space-y-2.5">
-            <div className="flex items-center gap-2.5 rounded-lg bg-emerald-500/5 px-2.5 py-1.5">
-              <div className="flex size-6 items-center justify-center rounded-md bg-emerald-500/10">
+            <div className="flex items-center gap-2.5 rounded-lg bg-emerald-500/[0.06] px-2.5 py-1.5">
+              <div className="flex size-6 items-center justify-center rounded-md bg-emerald-500/10 shadow-sm shadow-emerald-500/5">
                 <DollarSign className="size-3.5 text-emerald-600" />
               </div>
               <span className="text-xs font-medium text-foreground truncate">
@@ -129,7 +129,7 @@ function RequestCard({ request }: { request: ServiceRequest }) {
           </div>
 
           {/* Bottom Row: Proposals + Time + User */}
-          <div className="flex items-center justify-between border-t border-border/50 pt-3">
+          <div className="flex items-center justify-between border-t border-border/40 pt-3">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <FileText className="size-3.5" />
               <span>
@@ -156,7 +156,7 @@ export function FeaturedRequests() {
   const isLoading = false;
 
   return (
-    <section className="relative bg-muted/30 py-16 sm:py-20 lg:py-24">
+    <section className="relative bg-background py-20 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -166,10 +166,10 @@ export function FeaturedRequests() {
           transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
-          <h2 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+          <h2 className="mb-3 text-2xl font-extrabold tracking-tight sm:text-3xl lg:text-4xl">
             آخرین نیازها
           </h2>
-          <p className="mx-auto max-w-xl text-muted-foreground">
+          <p className="mx-auto max-w-xl text-muted-foreground/80">
             جدیدترین نیازهای ثبت شده توسط کاربران
           </p>
         </motion.div>
@@ -226,7 +226,7 @@ export function FeaturedRequests() {
             <Button
               onClick={() => navigateTo('browse-requests')}
               variant="outline"
-              className="h-11 rounded-xl px-8 transition-all duration-300 hover:shadow-md"
+              className="h-11 rounded-xl border-border/60 bg-card/50 backdrop-blur-sm px-8 transition-all duration-300 hover:shadow-lg hover:bg-card"
             >
               مشاهده همه نیازها
               <ArrowLeft className="size-4" />

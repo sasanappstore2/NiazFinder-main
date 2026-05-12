@@ -65,7 +65,7 @@ function RateBar({ value, highlight }: { value: number; highlight: boolean }) {
           className="h-full rounded-full bg-emerald-500"
           initial={{ width: 0 }}
           animate={{ width: `${value}%` }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 0.8, ease: 'easeOut' as const }}
         />
       </div>
       <span
@@ -82,7 +82,7 @@ function RateBar({ value, highlight }: { value: number; highlight: boolean }) {
 // ─── Animation variants ───────────────────────────────
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } },
 };
 
 // ─── Main Component ───────────────────────────────────
@@ -132,7 +132,7 @@ export function CompareSpecialists() {
             className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
           >
             <div>
-              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-gradient-to-l from-foreground to-foreground/80 bg-clip-text">
                 مقایسه متخصص‌ها
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -159,10 +159,10 @@ export function CompareSpecialists() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4 }}
-            className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card py-20 text-center"
+            className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/40 bg-card py-20 text-center shadow-lg shadow-black/[0.03]"
           >
-            <div className="mb-4 flex size-20 items-center justify-center rounded-2xl bg-muted">
-              <Users className="size-10 text-muted-foreground/50" />
+            <div className="mb-4 flex size-20 items-center justify-center rounded-2xl bg-muted/60">
+              <Users className="size-10 text-muted-foreground/40" />
             </div>
             <h3 className="mb-2 text-lg font-semibold">
               حداقل ۲ متخصص برای مقایسه انتخاب کنید
@@ -218,18 +218,18 @@ export function CompareSpecialists() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="overflow-x-auto rounded-2xl border border-border/60 bg-card shadow-sm"
+          className="overflow-x-auto rounded-2xl border border-border/40 bg-card shadow-xl shadow-black/[0.04]"
         >
           <table className="w-full min-w-[640px]">
             {/* ── Column Headers ── */}
             <thead>
-              <tr className="border-b border-border/60">
+              <tr className="border-b border-border/40">
                 {/* Sticky label column */}
                 <th className="sticky right-0 z-10 w-44 min-w-[11rem] bg-muted/60 px-4 py-5 text-right text-xs font-medium text-muted-foreground backdrop-blur-sm sm:w-52 sm:min-w-[13rem]" />
 
                 {specialists.map((specialist) => {
                   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
-                  const colorClass = getAvatarColor(specialist.displayName);
+                  const colorClass = getAvatarColor(specialist.displayName ?? '');
 
                   return (
                     <th

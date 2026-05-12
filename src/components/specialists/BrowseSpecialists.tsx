@@ -42,7 +42,7 @@ const container = {
 };
 const item = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
 };
 
 // ─── Avatar color generator ───────────────────────────
@@ -110,11 +110,11 @@ function SkillLevelDots({ level }: { level: number }) {
 function SpecialistCard({ specialist, onViewProfile }: { specialist: SpecialistProfile; onViewProfile: () => void }) {
   const { toggleCompareSpecialist, compareSpecialistIds, navigateTo } = useAppStore();
   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
-  const colorClass = getAvatarColor(specialist.displayName);
+  const colorClass = getAvatarColor(specialist.displayName ?? '');
   const isCompared = compareSpecialistIds.includes(specialist.id);
 
   return (
-    <Card className="group border-border/60 bg-card overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/5 hover:border-emerald-200 dark:hover:border-emerald-800">
+    <Card className="group border-border/50 bg-card overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-500/[0.07] hover:border-emerald-300/60 dark:hover:border-emerald-700/60 ring-0 hover:ring-1 hover:ring-emerald-200/40 dark:hover:ring-emerald-800/40">
       <CardContent className="p-6">
         {/* Top: Avatar + Name + Actions */}
         <div className="mb-4 flex items-start gap-3">
@@ -189,7 +189,7 @@ function SpecialistCard({ specialist, onViewProfile }: { specialist: SpecialistP
         </div>
 
         {/* Stats grid */}
-        <div className="mb-5 grid grid-cols-2 gap-3 rounded-xl bg-muted/50 p-3">
+        <div className="mb-5 grid grid-cols-2 gap-3 rounded-xl bg-muted/40 p-3.5 ring-1 ring-border/30">
           <div className="flex items-center gap-2">
             <TrendingUp className="size-4 text-emerald-500" />
             <div>
@@ -234,11 +234,11 @@ function SpecialistCard({ specialist, onViewProfile }: { specialist: SpecialistP
 function SpecialistListCard({ specialist, onViewProfile }: { specialist: SpecialistProfile; onViewProfile: () => void }) {
   const { toggleCompareSpecialist, compareSpecialistIds, navigateTo } = useAppStore();
   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
-  const colorClass = getAvatarColor(specialist.displayName);
+  const colorClass = getAvatarColor(specialist.displayName ?? '');
   const isCompared = compareSpecialistIds.includes(specialist.id);
 
   return (
-    <Card className="group border-border/60 bg-card overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/5 hover:border-emerald-200 dark:hover:border-emerald-800">
+    <Card className="group border-border/50 bg-card overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/[0.07] hover:border-emerald-300/60 dark:hover:border-emerald-700/60 ring-0 hover:ring-1 hover:ring-emerald-200/40 dark:hover:ring-emerald-800/40">
       <CardContent className="p-4">
         <div className="flex items-center gap-4 sm:gap-6">
           {/* Avatar on right */}
@@ -350,7 +350,7 @@ function CompareBar() {
       exit={{ y: 100, opacity: 0 }}
       className="fixed bottom-20 left-1/2 z-40 -translate-x-1/2"
     >
-      <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card/95 px-5 py-3 shadow-xl backdrop-blur-xl">
+      <div className="flex items-center gap-3 rounded-2xl border border-border/40 bg-card/95 px-5 py-3 shadow-2xl backdrop-blur-xl ring-1 ring-black/5">
         <GitCompareArrows className="size-5 text-primary" />
         <span className="text-sm font-medium">
           {count.toLocaleString('fa-IR')} متخصص انتخاب شده
@@ -400,7 +400,7 @@ export function BrowseSpecialists() {
       const q = query.trim().toLowerCase();
       results = results.filter(
         (s) =>
-          s.displayName.toLowerCase().includes(q) ||
+          s.displayName?.toLowerCase().includes(q) ||
           s.bio?.toLowerCase().includes(q) ||
           s.skills.some((sk) => sk.name.toLowerCase().includes(q))
       );
@@ -460,7 +460,7 @@ export function BrowseSpecialists() {
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-gradient-to-l from-foreground to-foreground/80 bg-clip-text">
                 متخصص‌ها
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -469,7 +469,7 @@ export function BrowseSpecialists() {
             </div>
             <div className="flex items-center gap-2 self-start sm:self-auto">
               {/* View toggle */}
-              <div className="flex overflow-hidden rounded-lg border border-border/60">
+              <div className="flex overflow-hidden rounded-lg border border-border/40 shadow-sm">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`flex items-center justify-center p-2 transition-colors ${viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`}
@@ -516,7 +516,7 @@ export function BrowseSpecialists() {
               placeholder="جستجوی نام، تخصص یا مهارت..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="h-11 w-full rounded-xl border-border/60 bg-card pr-10 text-sm shadow-sm"
+              className="h-12 w-full rounded-xl border-border/50 bg-card/80 backdrop-blur-sm pr-10 text-sm shadow-md shadow-black/[0.03] focus-visible:shadow-lg focus-visible:shadow-emerald-500/[0.06] focus-visible:border-emerald-300/50 dark:focus-visible:border-emerald-700/50 transition-shadow"
             />
             {query && (
               <button
@@ -537,8 +537,8 @@ export function BrowseSpecialists() {
             exit={{ opacity: 0, height: 0 }}
             className="mb-6"
           >
-            <Card className="border-border/60 bg-card shadow-sm">
-              <CardContent className="p-4">
+            <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-lg shadow-black/[0.03]">
+              <CardContent className="p-5">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   {/* Skill filter */}
                   <div>

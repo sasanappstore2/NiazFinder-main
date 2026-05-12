@@ -29,11 +29,11 @@ export function PricingSection() {
   const [isYearly, setIsYearly] = useState(false);
 
   return (
-    <section className="relative bg-background py-16 sm:py-20 lg:py-24">
+    <section className="relative bg-background py-20 sm:py-24 lg:py-28">
       {/* Subtle background blobs */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 start-0 size-[500px] rounded-full bg-emerald-100/15 blur-3xl dark:bg-emerald-900/10" />
-        <div className="absolute bottom-1/4 end-0 size-[500px] rounded-full bg-amber-100/15 blur-3xl dark:bg-amber-900/10" />
+        <div className="absolute top-1/4 start-0 size-[600px] rounded-full bg-emerald-100/12 blur-[100px] dark:bg-emerald-900/8" />
+        <div className="absolute bottom-1/4 end-0 size-[600px] rounded-full bg-amber-100/12 blur-[100px] dark:bg-amber-900/8" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -45,10 +45,10 @@ export function PricingSection() {
           transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
-          <h2 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+          <h2 className="mb-3 text-2xl font-extrabold tracking-tight sm:text-3xl lg:text-4xl">
             طرح‌های تعرفه‌ای
           </h2>
-          <p className="mx-auto max-w-xl text-muted-foreground">
+          <p className="mx-auto max-w-xl leading-relaxed text-muted-foreground/80">
             پلنی که مناسب نیاز شماست را انتخاب کنید
           </p>
         </motion.div>
@@ -61,10 +61,10 @@ export function PricingSection() {
           transition={{ duration: 0.4, delay: 0.1 }}
           className="mb-12 flex flex-col items-center gap-3"
         >
-          <div className="relative inline-flex items-center rounded-full border border-border/60 bg-muted/50 p-1">
+          <div className="relative inline-flex items-center rounded-full border border-border/50 bg-muted/40 p-1 shadow-sm backdrop-blur-sm">
             {/* Sliding indicator */}
             <div
-              className="absolute top-1 bottom-1 rounded-full bg-primary shadow-sm transition-all duration-300 ease-out"
+              className="absolute top-1 bottom-1 rounded-full bg-primary shadow-lg shadow-primary/20 transition-all duration-300 ease-out"
               style={{
                 width: '50%',
                 insetInlineStart: isYearly ? '50%' : '0',
@@ -73,7 +73,7 @@ export function PricingSection() {
             <button
               type="button"
               onClick={() => setIsYearly(false)}
-              className={`relative z-10 rounded-full px-5 py-2 text-sm font-medium transition-colors duration-300 ${
+              className={`relative z-10 rounded-full px-5 py-2 text-sm font-semibold transition-colors duration-300 ${
                 !isYearly
                   ? 'text-primary-foreground'
                   : 'text-muted-foreground hover:text-foreground'
@@ -84,7 +84,7 @@ export function PricingSection() {
             <button
               type="button"
               onClick={() => setIsYearly(true)}
-              className={`relative z-10 rounded-full px-5 py-2 text-sm font-medium transition-colors duration-300 ${
+              className={`relative z-10 rounded-full px-5 py-2 text-sm font-semibold transition-colors duration-300 ${
                 isYearly
                   ? 'text-primary-foreground'
                   : 'text-muted-foreground hover:text-foreground'
@@ -126,21 +126,21 @@ export function PricingSection() {
             return (
               <motion.div key={plan.id} variants={item}>
                 <Card
-                  className={`group relative flex h-full flex-col overflow-hidden transition-all duration-300 ${
+                  className={`group relative flex h-full flex-col overflow-hidden transition-all duration-500 ease-out ${
                     isHighlighted
-                      ? 'border-primary border-2 shadow-lg hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10 scale-[1.03] lg:scale-105'
-                      : 'border-border/60 hover:-translate-y-2 hover:shadow-xl hover:shadow-emerald-500/8 hover:border-emerald-200 dark:hover:border-emerald-800'
+                      ? 'border-primary border-2 shadow-xl hover:-translate-y-3 hover:shadow-2xl hover:shadow-primary/15 scale-[1.03] lg:scale-105'
+                      : 'border-border/50 bg-card/80 backdrop-blur-sm hover:-translate-y-2 hover:shadow-xl hover:shadow-emerald-500/10 hover:border-emerald-200/80 dark:hover:border-emerald-800/60'
                   }`}
                 >
                   {/* Gradient background for highlighted card */}
                   {isHighlighted && (
-                    <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/3 dark:from-primary/10 dark:via-transparent dark:to-primary/5 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.06] via-transparent to-primary/[0.03] dark:from-primary/10 dark:via-transparent dark:to-primary/5 pointer-events-none" />
                   )}
 
                   {/* Top badge for highlighted / enterprise */}
                   {plan.badge && (
                     <div className="relative flex justify-center pt-0">
-                      <Badge className="absolute -top-3 rounded-full px-4 py-1 text-xs font-bold shadow-sm bg-primary text-primary-foreground">
+                      <Badge className="absolute -top-3 rounded-full px-4 py-1 text-xs font-bold shadow-lg shadow-primary/20 bg-primary text-primary-foreground">
                         {plan.badge}
                       </Badge>
                     </div>
@@ -188,10 +188,10 @@ export function PricingSection() {
                     <Button
                       variant={isHighlighted ? 'default' : 'outline'}
                       size="lg"
-                      className={`w-full mb-6 ${
+                      className={`w-full mb-6 rounded-xl transition-all duration-300 ${
                         isHighlighted
-                          ? 'rounded-lg shadow-md hover:shadow-lg'
-                          : 'rounded-lg'
+                          ? 'shadow-lg hover:shadow-xl hover:shadow-primary/25'
+                          : 'hover:shadow-md'
                       }`}
                     >
                       {isHighlighted ? 'انتخاب این طرح' : 'شروع کنید'}

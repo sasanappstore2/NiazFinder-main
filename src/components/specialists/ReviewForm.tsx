@@ -293,10 +293,10 @@ function SuccessState({
             transition={{ delay: 0.4 }}
             className="text-center space-y-2"
           >
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h3 className="text-2xl font-bold text-foreground">
               با تشکر از شما! 🙏
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
+            <p className="text-muted-foreground text-sm">
               نظر شما با موفقیت ثبت شد و پس از بررسی نمایش داده خواهد شد.
             </p>
           </motion.div>
@@ -306,7 +306,7 @@ function SuccessState({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="flex items-center gap-3 bg-white dark:bg-gray-800 rounded-xl px-6 py-3 shadow-sm border"
+            className="flex items-center gap-3 bg-white dark:bg-gray-800 rounded-xl px-6 py-3 shadow-md border border-border/30"
           >
             <span className="text-4xl font-bold text-emerald-600 dark:text-emerald-400">
               {overallRating.toFixed(1)}
@@ -329,7 +329,7 @@ function SuccessState({
                   />
                 ))}
               </div>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-muted-foreground">
                 امتیاز کلی شما
               </span>
             </div>
@@ -491,14 +491,14 @@ export default function ReviewForm() {
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      <Card className="border-emerald-200/60 dark:border-emerald-900/40 overflow-hidden">
+      <Card className="border-emerald-200/50 dark:border-emerald-900/30 overflow-hidden shadow-xl shadow-emerald-500/[0.04]">
         {/* Header */}
-        <CardHeader className="bg-gradient-to-l from-emerald-50 to-white dark:from-emerald-950/20 dark:to-background pb-4">
-          <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+        <CardHeader className="bg-gradient-to-l from-emerald-50/80 to-white dark:from-emerald-950/15 dark:to-background pb-4">
+          <CardTitle className="text-xl font-extrabold text-foreground flex items-center gap-2">
             <Star className="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="currentColor" />
             ثبت نظر و امتیاز
           </CardTitle>
-          <CardDescription className="text-gray-500 dark:text-gray-400">
+          <CardDescription className="text-muted-foreground">
             تجربه خود را از همکاری با این متخصص به اشتراک بگذارید
           </CardDescription>
         </CardHeader>
@@ -509,7 +509,7 @@ export default function ReviewForm() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="flex items-center gap-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl p-4 border border-emerald-100 dark:border-emerald-900/40"
+            className="flex items-center gap-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl p-4 border border-emerald-100/60 dark:border-emerald-900/30 shadow-sm"
           >
             <div className="flex items-center justify-center w-16 h-16 rounded-xl bg-white dark:bg-gray-800 shadow-sm border">
               <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
@@ -560,7 +560,7 @@ export default function ReviewForm() {
 
           {/* ── Rating Categories ──────────────────────────────────────── */}
           <div className="space-y-4">
-            <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            <Label className="text-sm font-semibold text-foreground">
               امتیازدهی به دسته‌بندی‌ها
             </Label>
 
@@ -592,10 +592,10 @@ export default function ReviewForm() {
                     delay: 0.1 + index * 0.1,
                     ease: 'easeOut',
                   }}
-                  className="flex items-center justify-between gap-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 border border-gray-100 dark:border-gray-700/50 hover:border-emerald-200 dark:hover:border-emerald-800/50 transition-colors"
+            className="flex items-center justify-between gap-4 bg-muted/40 dark:bg-muted/30 rounded-xl p-3.5 border border-border/30 hover:border-emerald-200 dark:hover:border-emerald-800/50 transition-colors"
                 >
                   <div className="flex flex-col gap-0.5 min-w-0">
-                    <span className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
+                    <span className="text-sm font-medium text-foreground truncate">
                       {category.label}
                     </span>
                     <AnimatePresence mode="wait">
@@ -605,7 +605,7 @@ export default function ReviewForm() {
                           initial={{ opacity: 0, y: -5 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: 5 }}
-                          className="text-xs text-gray-500 dark:text-gray-400"
+                          className="text-xs text-muted-foreground"
                         >
                           {label}
                         </motion.span>
@@ -628,7 +628,7 @@ export default function ReviewForm() {
           <div className="space-y-2">
             <Label
               htmlFor="review-comment"
-              className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1.5"
+              className="text-sm font-semibold text-foreground flex items-center gap-1.5"
             >
               <MessageSquare className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               نظر شما
@@ -639,7 +639,7 @@ export default function ReviewForm() {
               placeholder="تجربه خود را از همکاری با این متخصص بنویسید..."
               value={comment}
               onChange={handleCommentChange}
-              className="min-h-[120px] resize-y text-sm leading-7 border-gray-200 dark:border-gray-700 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-400"
+              className="min-h-[120px] resize-y text-sm leading-7 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-400"
               dir="rtl"
             />
 
@@ -660,7 +660,7 @@ export default function ReviewForm() {
                 className={`text-xs mr-auto tabular-nums ${
                   comment.trim().length < 20
                     ? 'text-amber-600 dark:text-amber-400'
-                    : 'text-gray-400 dark:text-gray-500'
+                    : 'text-muted-foreground'
                 }`}
               >
                 {comment.length} / ۲۰۰۰
@@ -682,10 +682,10 @@ export default function ReviewForm() {
                 placeholder="مثلاً: خلاقیت بالا، تحویل به موقع..."
                 value={pros}
                 onChange={handleProsChange}
-                className="min-h-[80px] resize-y text-sm leading-7 border-gray-200 dark:border-gray-700 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-400"
+                className="min-h-[80px] resize-y text-sm leading-7 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-400"
                 dir="rtl"
               />
-              <span className="text-xs text-gray-400 dark:text-gray-500 tabular-nums block text-left" dir="ltr">
+              <span className="text-xs text-muted-foreground tabular-nums block text-left" dir="ltr">
                 {pros.length} / 500
               </span>
             </div>
@@ -700,10 +700,10 @@ export default function ReviewForm() {
                 placeholder="مثلاً: تأخیر در پاسخگویی..."
                 value={cons}
                 onChange={handleConsChange}
-                className="min-h-[80px] resize-y text-sm leading-7 border-gray-200 dark:border-gray-700 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-400"
+                className="min-h-[80px] resize-y text-sm leading-7 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-400"
                 dir="rtl"
               />
-              <span className="text-xs text-gray-400 dark:text-gray-500 tabular-nums block text-left" dir="ltr">
+              <span className="text-xs text-muted-foreground tabular-nums block text-left" dir="ltr">
                 {cons.length} / 500
               </span>
             </div>
@@ -714,16 +714,16 @@ export default function ReviewForm() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-100 dark:border-gray-700/50"
+            className="flex items-center justify-between bg-muted/40 dark:bg-muted/30 rounded-xl p-4 border border-border/30"
           >
             <div className="flex flex-col gap-0.5">
               <Label
                 htmlFor="recommended-switch"
-                className="text-sm font-medium text-gray-800 dark:text-gray-200 cursor-pointer"
+                className="text-sm font-medium text-foreground cursor-pointer"
               >
                 آیا این متخصص را پیشنهاد می‌دهید؟
               </Label>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-muted-foreground">
                 {recommended
                   ? '✅ این متخصص را توصیه می‌کنم'
                   : '❌ این متخصص را توصیه نمی‌کنم'}
@@ -748,7 +748,7 @@ export default function ReviewForm() {
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting || !isFormValid}
-              className="w-full h-12 text-base font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="w-full h-12 text-base font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/25"
             >
               {isSubmitting ? (
                 <>
@@ -768,7 +768,7 @@ export default function ReviewForm() {
             </Button>
 
             {!isFormValid && (
-              <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-2">
+              <p className="text-xs text-muted-foreground text-center mt-2">
                 برای ثبت نظر، لطفاً به تمام دسته‌بندی‌ها امتیاز دهید و حداقل ۲۰ کاراکتر بنویسید.
               </p>
             )}

@@ -1,6 +1,11 @@
 import { PrismaClient } from '@prisma/client';
+import crypto from 'crypto';
 
 const prisma = new PrismaClient();
+
+function simpleHash(password: string): string {
+  return crypto.createHash('sha256').update(password + '_needfinder_salt').digest('hex');
+}
 
 async function main() {
   console.log('🚀 شروع ساخت داده‌های اولیه نیاز فایندر...\n');
@@ -278,7 +283,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'admin@needfinder.ir',
-        password: '123456',
+        password: simpleHash('123456'),
         phone: '09120000001',
         firstName: 'مهدی',
         lastName: 'احمدی',
@@ -296,7 +301,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'support@needfinder.ir',
-        password: '123456',
+        password: simpleHash('123456'),
         phone: '09120000002',
         firstName: 'زهرا',
         lastName: 'محمدی',
@@ -314,7 +319,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'finance@needfinder.ir',
-        password: '123456',
+        password: simpleHash('123456'),
         phone: '09120000003',
         firstName: 'علی',
         lastName: 'حسینی',
@@ -338,7 +343,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'reza@email.com',
-        password: '123456',
+        password: simpleHash('123456'),
         phone: '09121000001',
         firstName: 'رضا',
         lastName: 'کریمی',
@@ -356,7 +361,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'sara@email.com',
-        password: '123456',
+        password: simpleHash('123456'),
         phone: '09131000002',
         firstName: 'سارا',
         lastName: 'موسوی',
@@ -374,7 +379,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'amir@email.com',
-        password: '123456',
+        password: simpleHash('123456'),
         phone: '09141000003',
         firstName: 'امیر',
         lastName: 'نجفی',
@@ -398,7 +403,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'hasan@email.com',
-        password: '123456',
+        password: simpleHash('123456'),
         phone: '09122000001',
         firstName: 'حسن',
         lastName: 'رحیمی',
@@ -416,7 +421,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'mina@email.com',
-        password: '123456',
+        password: simpleHash('123456'),
         phone: '09132000002',
         firstName: 'مینا',
         lastName: 'عباسی',
@@ -434,7 +439,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'saeed@email.com',
-        password: '123456',
+        password: simpleHash('123456'),
         phone: '09142000003',
         firstName: 'سعید',
         lastName: 'اکبری',
@@ -452,7 +457,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'leila@email.com',
-        password: '123456',
+        password: simpleHash('123456'),
         phone: '09152000004',
         firstName: 'لیلا',
         lastName: 'قاسمی',
@@ -470,7 +475,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'mehdi.s@email.com',
-        password: '123456',
+        password: simpleHash('123456'),
         phone: '09162000005',
         firstName: 'مهدی',
         lastName: 'صادقی',
@@ -488,7 +493,7 @@ async function main() {
     prisma.user.create({
       data: {
         email: 'fatemeh@email.com',
-        password: '123456',
+        password: simpleHash('123456'),
         phone: '09172000006',
         firstName: 'فاطمه',
         lastName: 'جعفری',

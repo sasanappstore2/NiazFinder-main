@@ -99,11 +99,11 @@ export function CTABanner() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
-        className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-4 py-20 text-center sm:px-6 sm:py-24 lg:px-8 lg:py-28"
+        className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-4 py-24 text-center sm:px-6 sm:py-28 lg:px-8 lg:py-32"
       >
         {/* Badge */}
         <motion.div variants={childVariants}>
-          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm">
+          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-black/5 backdrop-blur-md">
             <Sparkles className="size-4" />
             همین الان شروع کنید
           </span>
@@ -120,7 +120,7 @@ export function CTABanner() {
         {/* Subtitle */}
         <motion.p
           variants={childVariants}
-          className="mb-10 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg"
+          className="mb-10 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg"
         >
           ثبت‌نام رایگان است و در کمتر از ۲ دقیقه انجام می‌شود. هزاران متخصص منتظر شما
           هستند.
@@ -136,7 +136,7 @@ export function CTABanner() {
             <Button
               onClick={handleRegister}
               size="lg"
-              className="group relative h-13 overflow-hidden rounded-xl bg-white px-8 text-base font-bold text-emerald-700 shadow-lg shadow-black/10 transition-colors duration-200 hover:bg-white/90"
+              className="group relative h-13 overflow-hidden rounded-xl bg-white px-8 text-base font-bold text-emerald-700 shadow-xl shadow-black/10 transition-all duration-300 hover:bg-white/95 hover:shadow-2xl hover:shadow-black/15 hover:-translate-y-0.5"
             >
               <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-emerald-100 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
               <span className="relative z-10">ثبت‌نام رایگان</span>
@@ -150,7 +150,7 @@ export function CTABanner() {
               onClick={handleBrowseSpecialists}
               size="lg"
               variant="outline"
-              className="group h-13 rounded-xl border-2 border-white/30 bg-transparent px-8 text-base font-bold text-white backdrop-blur-sm transition-all duration-200 hover:border-white/60 hover:bg-white/10"
+              className="group h-13 rounded-xl border-2 border-white/30 bg-white/5 px-8 text-base font-bold text-white backdrop-blur-md transition-all duration-300 hover:border-white/60 hover:bg-white/15 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/10"
             >
               <Users className="ml-2 size-5 transition-transform duration-300 group-hover:scale-110" />
               مشاهده متخصص‌ها
@@ -166,7 +166,7 @@ export function CTABanner() {
           {trustItems.map((item, i) => (
             <div
               key={i}
-              className="flex items-center gap-1.5 text-sm text-white/80"
+              className="flex items-center gap-1.5 text-sm font-medium text-white/80"
             >
               {item.icon}
               <span>{item.label}</span>

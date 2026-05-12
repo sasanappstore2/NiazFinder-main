@@ -57,11 +57,19 @@ export async function GET() {
 
     const buildTree = (category: typeof categories[number]): CategoryTreeItem => {
       const childCategories = (category.children || []).map((child) => {
-        const childWithCount = {
-          ...child,
-          requestCount: subCountMap.get(child.id) || 0,
+        const childRequestCount = subCountMap.get(child.id) || 0;
+        return {
+          id: child.id,
+          name: child.name,
+          slug: child.slug,
+          description: child.description,
+          icon: child.icon,
+          image: child.image,
+          parentId: child.parentId,
+          order: child.order,
+          requestCount: childRequestCount,
+          children: [],
         };
-        return buildTree(childWithCount);
       });
 
       return {
@@ -73,7 +81,7 @@ export async function GET() {
         image: category.image,
         parentId: category.parentId,
         order: category.order,
-        requestCount: category.requests.length,
+        requestCount: category.requests?.length || 0,
         children: childCategories,
       };
     };

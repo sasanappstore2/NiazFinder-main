@@ -56,14 +56,14 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring', stiffness: 300, damping: 24 },
+    transition: { type: 'spring' as const, stiffness: 300, damping: 24 },
   },
 };
 
 const cardHover = {
-  scale: 1.01,
-  boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
-  transition: { duration: 0.2 },
+  scale: 1.008,
+  boxShadow: '0 10px 40px rgba(16,185,129,0.08), 0 4px 12px rgba(0,0,0,0.04)',
+  transition: { duration: 0.25, ease: 'easeOut' as const },
 };
 
 // ============ MOCK DATA ============
@@ -438,8 +438,8 @@ export function UserDashboard() {
           transition={{ duration: 0.5 }}
           className="text-center space-y-6 p-8"
         >
-          <div className="w-20 h-20 mx-auto rounded-full bg-muted flex items-center justify-center">
-            <UserIcon className="w-10 h-10 text-muted-foreground" />
+          <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/40 dark:to-emerald-900/30 flex items-center justify-center shadow-sm">
+            <UserIcon className="w-10 h-10 text-emerald-500" />
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-bold text-foreground">
@@ -484,7 +484,7 @@ export function UserDashboard() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="relative overflow-hidden rounded-2xl bg-gradient-to-l from-emerald-600 via-teal-600 to-emerald-700 p-6 sm:p-8 text-white"
+          className="relative overflow-hidden rounded-2xl bg-gradient-to-l from-emerald-600 via-teal-600 to-emerald-700 p-6 sm:p-8 text-white shadow-xl shadow-emerald-600/20"
         >
           {/* Background decoration */}
           <div className="absolute inset-0 opacity-10">
@@ -530,10 +530,11 @@ export function UserDashboard() {
         >
           {/* Active Needs */}
           <motion.div variants={itemVariants} whileHover={cardHover}>
-            <Card className="relative overflow-hidden border-0 shadow-md">
-              <div className="absolute inset-0 bg-gradient-to-bl from-emerald-500 to-emerald-600 opacity-90" />
+            <Card className="relative overflow-hidden border-0 shadow-lg shadow-emerald-500/10 rounded-2xl">
+              <div className="absolute inset-0 bg-gradient-to-bl from-emerald-500 to-emerald-600" />
+              <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-white/10" />
               <CardContent className="relative p-5 sm:p-6 flex items-center gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                   <ClipboardList className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                 </div>
                 <div className="min-w-0">
@@ -546,10 +547,11 @@ export function UserDashboard() {
 
           {/* Received Proposals */}
           <motion.div variants={itemVariants} whileHover={cardHover}>
-            <Card className="relative overflow-hidden border-0 shadow-md">
-              <div className="absolute inset-0 bg-gradient-to-bl from-amber-500 to-amber-600 opacity-90" />
+            <Card className="relative overflow-hidden border-0 shadow-lg shadow-amber-500/10 rounded-2xl">
+              <div className="absolute inset-0 bg-gradient-to-bl from-amber-500 to-amber-600" />
+              <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-white/10" />
               <CardContent className="relative p-5 sm:p-6 flex items-center gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                   <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                 </div>
                 <div className="min-w-0">
@@ -562,10 +564,11 @@ export function UserDashboard() {
 
           {/* Completed Projects */}
           <motion.div variants={itemVariants} whileHover={cardHover}>
-            <Card className="relative overflow-hidden border-0 shadow-md">
-              <div className="absolute inset-0 bg-gradient-to-bl from-cyan-500 to-cyan-600 opacity-90" />
+            <Card className="relative overflow-hidden border-0 shadow-lg shadow-cyan-500/10 rounded-2xl">
+              <div className="absolute inset-0 bg-gradient-to-bl from-cyan-500 to-cyan-600" />
+              <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-white/10" />
               <CardContent className="relative p-5 sm:p-6 flex items-center gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                   <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                 </div>
                 <div className="min-w-0">
@@ -578,10 +581,11 @@ export function UserDashboard() {
 
           {/* Rating */}
           <motion.div variants={itemVariants} whileHover={cardHover}>
-            <Card className="relative overflow-hidden border-0 shadow-md">
-              <div className="absolute inset-0 bg-gradient-to-bl from-rose-500 to-rose-600 opacity-90" />
+            <Card className="relative overflow-hidden border-0 shadow-lg shadow-rose-500/10 rounded-2xl">
+              <div className="absolute inset-0 bg-gradient-to-bl from-rose-500 to-rose-600" />
+              <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-white/10" />
               <CardContent className="relative p-5 sm:p-6 flex items-center gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                   <Star className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                 </div>
                 <div className="min-w-0">
@@ -600,31 +604,31 @@ export function UserDashboard() {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <Tabs value={activeTab} onValueChange={setActiveTab} dir="rtl" className="w-full">
-            <TabsList className="w-full h-auto flex flex-wrap gap-1 bg-muted/60 p-1.5 rounded-xl mb-6">
+            <TabsList className="w-full h-auto flex flex-wrap gap-1 bg-muted/60 p-1.5 rounded-xl mb-6 shadow-sm border border-border/40 backdrop-blur-sm">
               <TabsTrigger
                 value="requests"
-                className="flex-1 min-w-[100px] data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg py-2.5 text-xs sm:text-sm"
+                className="flex-1 min-w-[100px] data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-200"
               >
                 <ClipboardList className="w-4 h-4 ml-1.5" />
                 نیازهای من
               </TabsTrigger>
               <TabsTrigger
                 value="proposals"
-                className="flex-1 min-w-[100px] data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg py-2.5 text-xs sm:text-sm"
+                className="flex-1 min-w-[100px] data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-200"
               >
                 <MessageSquare className="w-4 h-4 ml-1.5" />
                 پیشنهادها
               </TabsTrigger>
               <TabsTrigger
                 value="wallet"
-                className="flex-1 min-w-[100px] data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg py-2.5 text-xs sm:text-sm"
+                className="flex-1 min-w-[100px] data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-200"
               >
                 <Wallet className="w-4 h-4 ml-1.5" />
                 کیف پول
               </TabsTrigger>
               <TabsTrigger
                 value="profile"
-                className="flex-1 min-w-[100px] data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg py-2.5 text-xs sm:text-sm"
+                className="flex-1 min-w-[100px] data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-200"
               >
                 <UserIcon className="w-4 h-4 ml-1.5" />
                 پروفایل
@@ -661,7 +665,7 @@ export function UserDashboard() {
                 className="space-y-4"
               >
                 {filteredRequests.length === 0 ? (
-                  <Card className="py-12">
+                  <Card className="py-12 border-dashed border-2 border-border/60 rounded-2xl">
                     <CardContent className="text-center text-muted-foreground">
                       <ClipboardList className="w-12 h-12 mx-auto mb-3 opacity-40" />
                       <p className="text-sm">نیازی با این فیلتر یافت نشد</p>
@@ -670,7 +674,7 @@ export function UserDashboard() {
                 ) : (
                   filteredRequests.map((request) => (
                     <motion.div key={request.id} variants={itemVariants} whileHover={cardHover}>
-                      <Card className="hover:border-primary/30 transition-colors">
+                      <Card className="hover:border-emerald-300/50 dark:hover:border-emerald-700/50 transition-all duration-200 hover:shadow-md hover:shadow-emerald-500/5">
                         <CardContent className="p-4 sm:p-6">
                           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                             <div className="flex-1 min-w-0 space-y-3">
@@ -749,7 +753,7 @@ export function UserDashboard() {
 
                   return (
                     <motion.div key={proposal.id} variants={itemVariants} whileHover={cardHover}>
-                      <Card className="hover:border-primary/30 transition-colors">
+                      <Card className="hover:border-emerald-300/50 dark:hover:border-emerald-700/50 transition-all duration-200 hover:shadow-md hover:shadow-emerald-500/5">
                         <CardContent className="p-4 sm:p-6">
                           <div className="flex flex-col gap-4">
                             {/* Top Row: Specialist Info */}
@@ -849,8 +853,10 @@ export function UserDashboard() {
               >
                 {/* Wallet Balance Card */}
                 <motion.div variants={itemVariants}>
-                  <Card className="relative overflow-hidden border-0 shadow-md">
-                    <div className="absolute inset-0 bg-gradient-to-bl from-violet-600 via-purple-600 to-indigo-700" />
+                  <Card className="relative overflow-hidden border-0 shadow-xl shadow-emerald-500/15 rounded-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-bl from-emerald-600 via-teal-600 to-emerald-700" />
+                    <div className="pointer-events-none absolute -top-12 -right-12 h-40 w-40 rounded-full bg-white/10" />
+                    <div className="pointer-events-none absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-white/5" />
                     <CardContent className="relative p-6 sm:p-8">
                       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div className="space-y-2">
@@ -877,7 +883,7 @@ export function UserDashboard() {
 
                 {/* Transaction History */}
                 <motion.div variants={itemVariants}>
-                  <Card>
+                  <Card className="shadow-md border-border/50 hover:shadow-lg transition-shadow duration-300">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-lg">
                         <FileText className="w-5 h-5" />
@@ -957,7 +963,7 @@ export function UserDashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
               >
-                <Card>
+                <Card className="shadow-md border-border/50">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
                       <UserIcon className="w-5 h-5" />
@@ -1101,7 +1107,7 @@ export function UserDashboard() {
                         <Button
                           onClick={handleProfileSave}
                           size="lg"
-                          className="gap-2 px-8"
+                          className="gap-2 px-8 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20 transition-all duration-200"
                         >
                           <Save className="w-4 h-4" />
                           ذخیره تغییرات

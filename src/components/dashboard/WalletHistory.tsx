@@ -66,15 +66,15 @@ const TRANSACTION_TYPE_CONFIG: Record<
   REFUND: {
     label: 'بازگشت وجه',
     icon: Plus,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50 dark:bg-blue-950/40',
+    color: 'text-teal-600 dark:text-teal-400',
+    bgColor: 'bg-teal-50 dark:bg-teal-950/40',
     isIncome: true,
   },
   COMMISSION: {
     label: 'کمیسیون',
     icon: Percent,
-    color: 'text-violet-600',
-    bgColor: 'bg-violet-50 dark:bg-violet-950/40',
+    color: 'text-amber-600 dark:text-amber-400',
+    bgColor: 'bg-amber-50 dark:bg-amber-950/40',
     isIncome: false,
   },
   BONUS: {
@@ -118,12 +118,12 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' as const } },
 };
 
 const balanceCardVariants = {
   hidden: { opacity: 0, scale: 0.95, y: 20 },
-  visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+  visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } },
 };
 
 // ============ Component ============
@@ -235,7 +235,7 @@ export function WalletHistory() {
         animate="visible"
         className="rounded-2xl"
       >
-        <Card className="rounded-2xl">
+        <Card className="rounded-2xl shadow-lg shadow-emerald-500/5 border border-border/50">
           <CardHeader className="pb-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle className="text-xl font-bold">تاریخچه تراکنش‌ها</CardTitle>
@@ -246,7 +246,7 @@ export function WalletHistory() {
                   placeholder="جستجو در تراکنش‌ها..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="rounded-xl border-border/60 pr-9 focus-visible:ring-emerald-500/30"
+                  className="rounded-xl border-border/60 pr-9 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-300 transition-all"
                 />
               </div>
             </div>
@@ -305,8 +305,8 @@ function TransactionList({
         transition={{ duration: 0.3 }}
         className="flex flex-col items-center justify-center gap-4 py-16 text-center"
       >
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
-          <AlertCircle className="h-8 w-8 text-muted-foreground" />
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 shadow-sm">
+          <AlertCircle className="h-8 w-8 text-emerald-500" />
         </div>
         <div>
           <p className="text-base font-semibold text-foreground">تراکنشی یافت نشد</p>
@@ -356,8 +356,8 @@ function TransactionRow({
     <motion.div
       variants={itemVariants}
       className={cn(
-        'group flex items-center gap-3 sm:gap-4 rounded-xl px-3 py-3.5 sm:px-4 transition-colors',
-        'hover:bg-muted/60',
+        'group flex items-center gap-3 sm:gap-4 rounded-xl px-3 py-3.5 sm:px-4 transition-all duration-200',
+        'hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20',
         index % 2 === 0 ? 'bg-transparent' : 'bg-muted/20'
       )}
     >

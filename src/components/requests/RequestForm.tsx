@@ -70,20 +70,20 @@ const stepOneSchema = z.object({
 
 const stepTwoSchema = z.object({
   budgetType: z.enum(['FIXED', 'HOURLY', 'NEGOTIABLE'], {
-    required_error: 'لطفاً نوع بودجه را انتخاب کنید',
+    error: 'لطفاً نوع بودجه را انتخاب کنید',
   }),
   budgetMin: z.coerce
-    .number({ invalid_type_error: 'مقدار عددی وارد کنید' })
+    .number({ error: 'مقدار عددی وارد کنید' })
     .min(0, 'حداقل بودجه نمی‌تواند منفی باشد')
     .optional()
     .or(z.literal('')),
   budgetMax: z.coerce
-    .number({ invalid_type_error: 'مقدار عددی وارد کنید' })
+    .number({ error: 'مقدار عددی وارد کنید' })
     .min(0, 'حداکثر بودجه نمی‌تواند منفی باشد')
     .optional()
     .or(z.literal('')),
   deliveryTime: z.coerce
-    .number({ invalid_type_error: 'مقدار عددی وارد کنید' })
+    .number({ error: 'مقدار عددی وارد کنید' })
     .min(1, 'زمان تحویل باید حداقل ۱ باشد')
     .optional()
     .or(z.literal('')),
@@ -94,7 +94,7 @@ const stepThreeSchema = z.object({
   city: z.string().optional(),
   province: z.string().optional(),
   priority: z.enum(['LOW', 'NORMAL', 'HIGH', 'URGENT'], {
-    required_error: 'لطفاً اولویت را انتخاب کنید',
+    error: 'لطفاً اولویت را انتخاب کنید',
   }),
   tags: z.string().optional(),
 });
@@ -181,7 +181,8 @@ export function RequestForm() {
   const navigateTo = useAppStore((s) => s.navigateTo);
 
   const form = useForm<RequestFormData>({
-    resolver: zodResolver(requestSchema),
+     
+    resolver: zodResolver(requestSchema) as any,
     defaultValues: {
       title: '',
       categoryId: '',
@@ -304,9 +305,11 @@ export function RequestForm() {
 
   if (!isAuthenticated) {
     return (
-      <Card className="w-full max-w-2xl mx-auto">
+      <Card className="w-full max-w-2xl mx-auto border-border/50 shadow-lg">
         <CardContent className="p-8 text-center">
-          <AlertTriangle className="size-12 text-amber-500 mx-auto mb-4" />
+          <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-amber-50 dark:bg-amber-900/20">
+            <AlertTriangle className="size-8 text-amber-500" />
+          </div>
           <h3 className="text-lg font-bold mb-2">نیاز به ورود</h3>
           <p className="text-muted-foreground">
             برای ثبت نیاز جدید ابتدا وارد حساب کاربری خود شوید.
@@ -319,8 +322,8 @@ export function RequestForm() {
   return (
     <div className="w-full max-w-3xl mx-auto space-y-6">
       {/* Step Progress Indicator */}
-      <Card className="border-none shadow-sm bg-muted/30">
-        <CardContent className="p-4 sm:p-6">
+      <Card className="border-none shadow-md shadow-black/[0.03] bg-gradient-to-b from-muted/40 to-muted/20">
+        <CardContent className="p-5 sm:p-6">
           <div className="flex items-center justify-between relative">
             {/* Progress Line */}
             <div className="absolute top-6 right-6 left-6 h-0.5 bg-border hidden sm:block">
@@ -388,8 +391,8 @@ export function RequestForm() {
       </Card>
 
       {/* Form Content */}
-      <Card>
-        <CardContent className="p-4 sm:p-6">
+      <Card className="border-border/50 shadow-lg shadow-black/[0.03]">
+        <CardContent className="p-5 sm:p-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <AnimatePresence mode="wait" custom={direction}>
@@ -406,7 +409,7 @@ export function RequestForm() {
                     className="space-y-5"
                   >
                     <div className="mb-2">
-                      <h3 className="text-lg font-bold flex items-center gap-2">
+                      <h3 className="text-lg font-extrabold flex items-center gap-2">
                         <Briefcase className="size-5 text-primary" />
                         اطلاعات اصلی نیاز
                       </h3>
@@ -564,7 +567,7 @@ export function RequestForm() {
                     className="space-y-5"
                   >
                     <div className="mb-2">
-                      <h3 className="text-lg font-bold flex items-center gap-2">
+                      <h3 className="text-lg font-extrabold flex items-center gap-2">
                         <DollarSign className="size-5 text-primary" />
                         بودجه و زمان تحویل
                       </h3>
@@ -735,7 +738,7 @@ export function RequestForm() {
                     className="space-y-5"
                   >
                     <div className="mb-2">
-                      <h3 className="text-lg font-bold flex items-center gap-2">
+                      <h3 className="text-lg font-extrabold flex items-center gap-2">
                         <MapPin className="size-5 text-primary" />
                         مکان و اطلاعات تکمیلی
                       </h3>

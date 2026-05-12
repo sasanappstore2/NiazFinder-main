@@ -153,7 +153,7 @@ const cardVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: 'easeOut' },
+    transition: { duration: 0.4, ease: 'easeOut' as const },
   },
 };
 
@@ -162,7 +162,7 @@ const headerVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: 'easeOut' },
+    transition: { duration: 0.5, ease: 'easeOut' as const },
   },
 };
 
@@ -226,7 +226,7 @@ export function NotificationSettings() {
       <motion.div variants={headerVariants} initial="hidden" animate="visible">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/40">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/40 shadow-sm">
               <Settings2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
@@ -310,7 +310,7 @@ export function NotificationSettings() {
 
           return (
             <motion.div key={category.id} variants={cardVariants}>
-              <Card className="overflow-hidden rounded-2xl transition-shadow hover:shadow-md">
+              <Card className="overflow-hidden rounded-2xl border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/5">
                 {/* Category Header */}
                 <CardHeader className="pb-0">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -358,10 +358,10 @@ export function NotificationSettings() {
                       <div key={item.id}>
                         <div
                           className={cn(
-                            'flex items-center justify-between gap-4 rounded-xl px-3 py-3 transition-colors',
+                            'flex items-center justify-between gap-4 rounded-xl px-3 py-3 transition-all duration-200',
                             settings[item.id]
-                              ? 'bg-emerald-50/50 dark:bg-emerald-950/20'
-                              : 'bg-transparent hover:bg-muted/40'
+                              ? 'bg-emerald-50/60 dark:bg-emerald-950/20'
+                              : 'bg-transparent hover:bg-emerald-50/30 dark:hover:bg-emerald-950/10'
                           )}
                         >
                           {/* Label & Description */}
@@ -399,7 +399,7 @@ export function NotificationSettings() {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.7, ease: 'easeOut' }}
+        transition={{ duration: 0.4, delay: 0.7, ease: 'easeOut' as const }}
       >
         <Button
           onClick={handleSave}

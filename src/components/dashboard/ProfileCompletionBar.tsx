@@ -174,10 +174,11 @@ export function ProfileCompletionBar() {
       <Card
         className="
           relative overflow-hidden
-          border-white/40 dark:border-white/10
-          bg-white/70 dark:bg-card/70
+          border border-border/50
+          bg-white/80 dark:bg-card/80
           backdrop-blur-xl
-          shadow-lg shadow-emerald-500/5
+          shadow-xl shadow-emerald-500/5
+          transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/10
         "
       >
         {/* Subtle gradient accent at top */}
@@ -190,7 +191,7 @@ export function ProfileCompletionBar() {
 
         <CardHeader className="pb-0">
           <CardTitle className="flex items-center gap-2 text-base font-bold">
-            <UserCheck className="size-5 text-emerald-500" />
+            <UserCheck className="size-5 text-emerald-600 dark:text-emerald-400" />
             تکمیل پروفایل
           </CardTitle>
         </CardHeader>
@@ -256,7 +257,7 @@ export function ProfileCompletionBar() {
             {completionItems.map((item, index) => (
               <motion.li
                 key={item.id}
-                className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/50"
+                className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 transition-all duration-200 hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{
@@ -289,7 +290,7 @@ export function ProfileCompletionBar() {
                 {!item.completed && (
                   <button
                     onClick={handleNavigate}
-                    className="shrink-0 text-xs font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors"
+                    className="shrink-0 text-xs font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors px-2 py-0.5 rounded-md hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
                   >
                     تکمیل کنید
                   </button>
@@ -306,7 +307,7 @@ export function ProfileCompletionBar() {
           >
             <Button
               onClick={handleNavigate}
-              className="w-full bg-gradient-to-l from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/20 hover:from-emerald-600 hover:to-teal-600 transition-all"
+              className="w-full bg-gradient-to-l from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-600 hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-200"
               size="lg"
             >
               تکمیل پروفایل

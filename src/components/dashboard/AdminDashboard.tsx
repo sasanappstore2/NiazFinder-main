@@ -135,8 +135,8 @@ const STAT_CARDS: StatCard[] = [
     title: 'درآمد ماهانه',
     value: '۱۲۵,۰۰۰,۰۰۰ تومان',
     icon: DollarSign,
-    color: 'text-violet-600',
-    bgColor: 'bg-violet-50',
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-50',
     change: '+۲۳.۱٪',
     changeType: 'up',
   },
@@ -249,8 +249,8 @@ function StatCardsSection() {
       animate="animate"
     >
       {STAT_CARDS.map((stat) => (
-        <motion.div key={stat.title} variants={fadeInUp}>
-          <Card className="overflow-hidden border-0 py-0 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <motion.div key={stat.title} variants={fadeInUp} whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}>
+          <Card className="overflow-hidden border border-border/50 py-0 shadow-sm hover:shadow-lg hover:border-border transition-all duration-300">
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div className="flex-1 space-y-2">
@@ -262,7 +262,7 @@ function StatCardsSection() {
                     <span className="text-muted-foreground">نسبت به ماه قبل</span>
                   </div>
                 </div>
-                <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.bgColor}`}>
+                <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.bgColor} shadow-sm`}>
                   <stat.icon className={`h-6 w-6 ${stat.color}`} />
                 </div>
               </div>
@@ -286,7 +286,7 @@ function ChartsSection() {
     >
       {/* Line Chart - Requests */}
       <motion.div variants={fadeInUp}>
-        <Card className="border-0 py-0 shadow-sm">
+        <Card className="border border-border/50 py-0 shadow-sm hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold">آمار ثبت نیازها</CardTitle>
             <CardDescription>آخرین ۷ روز</CardDescription>
@@ -325,7 +325,7 @@ function ChartsSection() {
 
       {/* Bar Chart - Signups */}
       <motion.div variants={fadeInUp}>
-        <Card className="border-0 py-0 shadow-sm">
+        <Card className="border border-border/50 py-0 shadow-sm hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold">ثبت‌نام کاربران</CardTitle>
             <CardDescription>آخرین ۶ ماه</CardDescription>
@@ -368,14 +368,14 @@ function ChartsSection() {
 function ActivityTableSection() {
   return (
     <motion.div {...fadeInUp} initial="initial" animate="animate">
-      <Card className="border-0 py-0 shadow-sm">
+      <Card className="border border-border/50 py-0 shadow-sm">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-base font-semibold">فعالیت‌های اخیر</CardTitle>
               <CardDescription>آخرین فعالیت‌های پلتفرم</CardDescription>
             </div>
-            <Button variant="outline" size="sm" className="text-xs">
+            <Button variant="outline" size="sm" className="text-xs hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-colors">
               مشاهده همه
               <Eye className="ms-1 h-3.5 w-3.5" />
             </Button>
@@ -432,7 +432,7 @@ function QuickActionsSection() {
 
   return (
     <motion.div {...fadeInUp} initial="initial" animate="animate">
-      <Card className="border-0 py-0 shadow-sm">
+      <Card className="border border-border/50 py-0 shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold">دسترسی سریع</CardTitle>
           <CardDescription>عملیات‌های پرکاربرد مدیریت</CardDescription>
@@ -443,7 +443,7 @@ function QuickActionsSection() {
               <Button
                 key={action.label}
                 variant="outline"
-                className="gap-2 text-sm"
+                className="gap-2 text-sm hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-colors"
               >
                 <action.icon className="h-4 w-4" />
                 {action.label}
@@ -513,7 +513,7 @@ function UsersView() {
 
       {/* Search & Filter Bar */}
       <motion.div variants={fadeInUp}>
-        <Card className="border-0 py-0 shadow-sm">
+        <Card className="border border-border/50 py-0 shadow-sm">
           <CardContent className="p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <div className="relative flex-1">
@@ -525,7 +525,7 @@ function UsersView() {
                     setSearchQuery(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="ps-9"
+                  className="ps-9 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-300 transition-all"
                 />
               </div>
               <div className="flex gap-2">
@@ -535,7 +535,7 @@ function UsersView() {
                     setRoleFilter(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="rounded-lg border border-border/60 bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300 transition-all"
                 >
                   <option value="all">همه نقش‌ها</option>
                   <option value="مشتری">مشتری</option>
@@ -547,7 +547,7 @@ function UsersView() {
                     setStatusFilter(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="rounded-lg border border-border/60 bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-300 transition-all"
                 >
                   <option value="all">همه وضعیت‌ها</option>
                   <option value="active">فعال</option>
@@ -562,11 +562,11 @@ function UsersView() {
 
       {/* Users Table */}
       <motion.div variants={fadeInUp}>
-        <Card className="border-0 py-0 shadow-sm">
+        <Card className="border border-border/50 py-0 shadow-sm">
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow className="hover:bg-transparent">
+                <TableRow className="hover:bg-transparent bg-muted/30">
                   <TableHead className="text-start text-xs font-medium text-muted-foreground">کاربر</TableHead>
                   <TableHead className="text-start text-xs font-medium text-muted-foreground">ایمیل</TableHead>
                   <TableHead className="text-start text-xs font-medium text-muted-foreground">نقش</TableHead>
@@ -604,7 +604,7 @@ function UsersView() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className={statusCfg.className}>
+                          <Badge variant="outline" className={`text-xs px-2.5 py-0.5 font-medium ${statusCfg.className}`}>
                             {statusCfg.label}
                           </Badge>
                         </TableCell>
@@ -637,7 +637,7 @@ function UsersView() {
             size="sm"
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((p) => p - 1)}
-            className="gap-1"
+            className="gap-1 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-colors"
           >
             <ChevronRight className="h-4 w-4" />
             قبلی
@@ -679,8 +679,8 @@ function PlaceholderView({ title, description }: { title: string; description: s
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
-        <FileText className="h-8 w-8 text-muted-foreground" />
+      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 shadow-sm">
+        <FileText className="h-8 w-8 text-emerald-500" />
       </div>
       <h2 className="text-xl font-semibold">{title}</h2>
       <p className="text-sm text-muted-foreground">{description}</p>
@@ -723,7 +723,7 @@ function SettingsView() {
 
       {/* General Settings */}
       <motion.div variants={fadeInUp}>
-        <Card className="border-0 py-0 shadow-sm">
+        <Card className="border border-border/50 py-0 shadow-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold">تنظیمات عمومی</CardTitle>
             <CardDescription>اطلاعات پایه پلتفرم</CardDescription>
@@ -777,7 +777,7 @@ function SettingsView() {
 
       {/* Commission Settings */}
       <motion.div variants={fadeInUp}>
-        <Card className="border-0 py-0 shadow-sm">
+        <Card className="border border-border/50 py-0 shadow-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold">تنظیمات مالی</CardTitle>
             <CardDescription>نرخ کارمزد و تنظیمات پرداخت</CardDescription>
@@ -791,7 +791,7 @@ function SettingsView() {
                   value={commissionRate}
                   onChange={(e) => setCommissionRate(e.target.value)}
                   placeholder="۱۵"
-                  className="max-w-32"
+                  className="max-w-32 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-300 transition-all"
                 />
                 <span className="text-sm text-muted-foreground">درصد</span>
               </div>
@@ -805,7 +805,7 @@ function SettingsView() {
 
       {/* Feature Toggles */}
       <motion.div variants={fadeInUp}>
-        <Card className="border-0 py-0 shadow-sm">
+        <Card className="border border-border/50 py-0 shadow-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold">تنظیمات ویژگی‌ها</CardTitle>
             <CardDescription>فعال و غیرفعال کردن امکانات پلتفرم</CardDescription>
@@ -848,7 +848,7 @@ function SettingsView() {
 
       {/* Save Button */}
       <motion.div variants={fadeInUp} className="flex justify-end">
-        <Button onClick={handleSave} disabled={isSaving} className="gap-2 min-w-32">
+        <Button onClick={handleSave} disabled={isSaving} className="gap-2 min-w-32 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20 transition-all duration-200">
           {isSaving ? (
             <>
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
@@ -932,8 +932,8 @@ function Sidebar({ activeSection, onSectionChange, isOpen, onClose }: SidebarPro
                   }}
                   className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+                      : 'text-muted-foreground hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-400'
                   }`}
                 >
                   <item.icon className="h-4.5 w-4.5" />
@@ -974,14 +974,14 @@ function UnauthorizedView() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-50">
-          <ShieldCheck className="h-10 w-10 text-red-500" />
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-950/40 shadow-sm">
+          <ShieldCheck className="h-10 w-10 text-rose-500" />
         </div>
         <h2 className="text-2xl font-bold">دسترسی غیرمجاز</h2>
         <p className="max-w-sm text-muted-foreground">
           شما دسترسی لازم برای مشاهده این بخش را ندارید. لطفاً با حساب کاربری مدیر وارد شوید.
         </p>
-        <Button variant="outline" className="mt-2">
+        <Button variant="outline" className="mt-2 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-colors">
           بازگشت به صفحه اصلی
         </Button>
       </motion.div>

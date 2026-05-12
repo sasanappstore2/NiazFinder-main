@@ -72,7 +72,7 @@ const pulseVariants = {
     transition: {
       duration: 2.5,
       repeat: Infinity,
-      ease: 'easeInOut',
+      ease: 'easeInOut' as const,
     },
   },
   expanded: {

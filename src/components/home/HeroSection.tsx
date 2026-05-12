@@ -205,11 +205,11 @@ export function HeroSection() {
       <div className="absolute inset-0 mesh-gradient-bg opacity-60" />
 
       {/* Decorative blobs */}
-      <div className="absolute -top-40 -left-40 size-96 rounded-full bg-emerald-400/10 blur-3xl" />
-      <div className="absolute -bottom-40 -right-40 size-96 rounded-full bg-amber-400/10 blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] rounded-full bg-primary/5 blur-3xl" />
+      <div className="absolute -top-40 -left-40 size-[500px] rounded-full bg-emerald-400/15 blur-[100px] animate-pulse" />
+      <div className="absolute -bottom-40 -right-40 size-[500px] rounded-full bg-amber-400/12 blur-[100px] animate-pulse" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[700px] rounded-full bg-primary/[0.07] blur-[120px]" />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
+      <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-36">
         <motion.div
           variants={container}
           initial="hidden"
@@ -218,7 +218,7 @@ export function HeroSection() {
         >
           {/* Badge */}
           <motion.div variants={item}>
-            <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
+            <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/[0.08] px-5 py-2 text-sm font-semibold text-primary shadow-lg shadow-primary/5 backdrop-blur-sm">
               <Sparkles className="size-4" />
               پلتفرم هوشمند اتصال نیاز به متخصص
             </span>
@@ -227,7 +227,7 @@ export function HeroSection() {
           {/* Heading */}
           <motion.h1
             variants={item}
-            className="mb-6 max-w-4xl text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl md:text-5xl lg:text-6xl"
+            className="mb-6 max-w-4xl text-3xl font-extrabold leading-[1.15] tracking-tight sm:text-4xl md:text-5xl lg:text-6xl"
           >
             نیازت رو ثبت کن،
             <br />
@@ -239,7 +239,7 @@ export function HeroSection() {
           {/* Subheading */}
           <motion.p
             variants={item}
-            className="mb-10 max-w-2xl text-base text-muted-foreground sm:text-lg"
+            className="mb-10 max-w-2xl text-base leading-relaxed text-muted-foreground/90 sm:text-lg sm:leading-relaxed"
           >
             پلتفرم هوشمند اتصال نیاز به متخصص. هزاران متخصص آماده خدمت‌رسانی به شما هستند.
           </motion.p>
@@ -253,7 +253,7 @@ export function HeroSection() {
             <div ref={wrapperRef} className="relative">
               {/* Animated gradient border wrapper */}
               <div className="animate-border-glow rounded-2xl p-[2px]">
-                <div className={`flex items-center gap-2 rounded-2xl border bg-card p-2 shadow-lg sm:gap-3 transition-colors ${hasDropdown ? 'border-emerald-300 dark:border-emerald-700' : 'border-border'}`}>
+                <div className={`flex items-center gap-2 rounded-2xl border bg-card/90 backdrop-blur-xl p-2.5 shadow-xl shadow-black/[0.06] sm:gap-3 transition-all duration-300 ${hasDropdown ? 'border-emerald-300 dark:border-emerald-700 shadow-emerald-500/10' : 'border-border/80 hover:shadow-emerald-500/5'}`}>
                   <div className="flex flex-1 items-center gap-2 px-3">
                     <Search className="size-5 text-muted-foreground" />
                     <Input
@@ -275,7 +275,7 @@ export function HeroSection() {
                   </div>
                   <Button
                     type="submit"
-                    className="h-10 rounded-xl px-6 bg-emerald-600 hover:bg-emerald-700 text-white"
+                    className="h-10 rounded-xl px-6 bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20 transition-all duration-200 hover:shadow-lg hover:shadow-emerald-600/30"
                   >
                     جستجو
                   </Button>
@@ -290,7 +290,7 @@ export function HeroSection() {
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    className="absolute top-full start-0 end-0 z-50 mt-2 overflow-hidden rounded-xl border border-border/80 bg-card/95 shadow-xl backdrop-blur-md"
+                    className="absolute top-full start-0 end-0 z-50 mt-2 overflow-hidden rounded-xl border border-border/70 bg-card/95 shadow-2xl shadow-black/10 backdrop-blur-xl"
                   >
                     <ul className="py-2">
                       {suggestions.map((suggestion, idx) => {
@@ -346,7 +346,7 @@ export function HeroSection() {
           <motion.div variants={item} className="flex flex-wrap items-center justify-center gap-4">
             <Button
               onClick={() => navigateTo('post-need')}
-              className="group relative h-12 overflow-hidden rounded-xl px-8 text-base font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-600/30"
+              className="group relative h-12 overflow-hidden rounded-xl px-8 text-base font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xl shadow-emerald-600/20 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-600/30 hover:-translate-y-0.5 active:translate-y-0"
             >
               <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
               <Plus className="size-5 relative z-10" />
@@ -355,7 +355,7 @@ export function HeroSection() {
             <Button
               onClick={() => navigateTo('browse-specialists')}
               variant="outline"
-              className="group relative h-12 overflow-hidden rounded-xl px-8 text-base font-semibold transition-all duration-300 hover:shadow-md"
+              className="group relative h-12 overflow-hidden rounded-xl border-border/60 bg-card/50 backdrop-blur-sm px-8 text-base font-semibold transition-all duration-300 hover:shadow-lg hover:bg-card hover:-translate-y-0.5 active:translate-y-0"
             >
               <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-primary/5 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
               <span className="relative z-10">جستجوی متخصص</span>
@@ -373,8 +373,8 @@ export function HeroSection() {
           >
             {stats.map((stat, i) => (
               <div key={i} className="flex flex-col items-center gap-1.5">
-                <span className="text-2xl font-bold text-foreground sm:text-3xl">{stat.value}</span>
-                <span className="text-sm text-muted-foreground">{stat.label}</span>
+                <span className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">{stat.value}</span>
+                <span className="text-sm font-medium text-muted-foreground/80">{stat.label}</span>
               </div>
             ))}
           </motion.div>
@@ -387,7 +387,7 @@ export function HeroSection() {
             variants={item}
             className="mt-14 hidden w-full max-w-4xl lg:block"
           >
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-4 gap-5">
               {floatingCards.map((card, i) => (
                 <motion.div
                   key={i}
@@ -396,12 +396,12 @@ export function HeroSection() {
                   transition={{ duration: 0.6, delay: card.delay + 0.5, ease: 'easeOut' }}
                   className={`cursor-pointer ${card.bobClass}`}
                 >
-                  <div className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-4 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10 hover:border-primary/30 hover:bg-card">
-                    <div className="mb-3 flex size-10 items-center justify-center rounded-xl bg-primary/10 transition-transform duration-300 group-hover:scale-110">
+                  <div className="rounded-2xl border border-border/40 bg-card/60 backdrop-blur-md p-5 shadow-lg shadow-black/[0.04] transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/10 hover:border-primary/25 hover:bg-card/90">
+                    <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 transition-all duration-300 hover:scale-110 hover:shadow-md hover:shadow-primary/10">
                       {card.icon}
                     </div>
-                    <p className="mb-1 text-sm font-semibold">{card.title}</p>
-                    <p className="text-xs text-muted-foreground">{card.budget}</p>
+                    <p className="mb-1 text-sm font-bold leading-snug">{card.title}</p>
+                    <p className="text-xs font-medium text-muted-foreground/80">{card.budget}</p>
                   </div>
                 </motion.div>
               ))}
@@ -415,7 +415,7 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 1.5 }}
             className="mt-16 w-full"
           >
-            <p className="mb-6 text-xs font-medium tracking-wider text-muted-foreground/60 uppercase">
+            <p className="mb-6 text-xs font-semibold tracking-[0.15em] text-muted-foreground/50 uppercase">
               مورد اعتماد برندهای برتر
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
@@ -425,7 +425,7 @@ export function HeroSection() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.4, delay: 1.7 + i * 0.1 }}
-                  className={`flex size-14 items-center justify-center rounded-2xl ${brand.color} text-[10px] font-bold shadow-sm transition-all duration-300 hover:scale-110 hover:shadow-md`}
+                  className={`flex size-14 items-center justify-center rounded-2xl ${brand.color} text-[10px] font-bold shadow-sm backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-black/5`}
                 >
                   {brand.name}
                 </motion.div>

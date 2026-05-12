@@ -232,7 +232,7 @@ export function ProposalForm() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
           >
-            <Card className="overflow-hidden rounded-2xl border-border/60">
+            <Card className="overflow-hidden rounded-2xl border-border/50 shadow-lg shadow-black/[0.04]">
               {/* Gradient accent bar */}
               <div className="h-1.5 bg-gradient-to-l from-emerald-400 via-teal-500 to-emerald-600" />
 
@@ -240,11 +240,11 @@ export function ProposalForm() {
               <CardHeader className="pb-4 pt-6 px-6">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-lg shrink-0">
+                    <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-b from-emerald-100 to-emerald-50 dark:from-emerald-900/40 dark:to-emerald-900/20 text-lg shrink-0 shadow-sm">
                       {request.categoryIcon || '📋'}
                     </div>
                     <div className="min-w-0">
-                      <CardTitle className="text-base leading-relaxed line-clamp-2">
+                      <CardTitle className="text-base leading-relaxed line-clamp-2 font-bold">
                         {request.title}
                       </CardTitle>
                       <p className="mt-1 text-xs text-muted-foreground">
@@ -268,9 +268,8 @@ export function ProposalForm() {
 
               {/* ── Form Body ── */}
               <CardContent className="p-6 space-y-6">
-                {/* === Price Section === */}
-                <div className="space-y-2">
-                  <Label htmlFor="price" className="text-sm font-medium flex items-center gap-2">
+                <div className="space-y-3">
+                  <Label htmlFor="price" className="text-sm font-semibold flex items-center gap-2">
                     <DollarSign className="size-4 text-emerald-500" />
                     قیمت پیشنهادی
                     <span className="text-destructive">*</span>
@@ -341,7 +340,7 @@ export function ProposalForm() {
 
                 {/* === Delivery Time Section === */}
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium flex items-center gap-2">
+                  <Label className="text-sm font-semibold flex items-center gap-2">
                     <Clock className="size-4 text-amber-500" />
                     زمان تحویل
                     <span className="text-destructive">*</span>
@@ -415,7 +414,7 @@ export function ProposalForm() {
 
                 {/* === Cover Letter Section === */}
                 <div className="space-y-2">
-                  <Label htmlFor="message" className="text-sm font-medium flex items-center gap-2">
+                  <Label htmlFor="message" className="text-sm font-semibold flex items-center gap-2">
                     <FileText className="size-4 text-primary" />
                     پیام پیشنهاد (نامه پوششی)
                     <span className="text-destructive">*</span>
@@ -482,7 +481,7 @@ export function ProposalForm() {
                 {/* === Portfolio Attachment Section === */}
                 {portfolioItems.length > 0 && (
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium flex items-center gap-2">
+                    <Label className="text-sm font-semibold flex items-center gap-2">
                       📁 پیوست نمونه کار (اختیاری)
                     </Label>
 
@@ -536,7 +535,7 @@ export function ProposalForm() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="w-full h-12 text-base gap-2 rounded-xl font-semibold transition-all"
+                    className="w-full h-12 text-base gap-2 rounded-xl font-semibold transition-all shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/25"
                     size="lg"
                   >
                     {isSubmitting ? (

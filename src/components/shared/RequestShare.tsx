@@ -78,7 +78,7 @@ export function RequestShare({ requestTitle, requestId }: RequestShareProps) {
   };
 
   return (
-    <Popover dir="rtl">
+    <Popover>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"

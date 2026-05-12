@@ -179,7 +179,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: 'easeOut' },
+    transition: { duration: 0.4, ease: 'easeOut' as const },
   },
 };
 
@@ -189,7 +189,7 @@ const heroVariants = {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { duration: 0.5, ease: 'easeOut' },
+    transition: { duration: 0.5, ease: 'easeOut' as const },
   },
 };
 
@@ -201,7 +201,7 @@ const floatingCircleVariants = {
     transition: {
       duration: 5 + i * 0.8,
       repeat: Infinity,
-      ease: 'easeInOut',
+      ease: 'easeInOut' as const,
     },
   }),
 };
@@ -264,7 +264,7 @@ export function ReferralPage() {
               <motion.div
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
-                transition={{ duration: 0.6, ease: 'backOut', delay: 0.2 }}
+                transition={{ duration: 0.6, ease: 'backOut' as const, delay: 0.2 }}
                 className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm sm:h-20 sm:w-20"
               >
                 <Gift className="h-8 w-8 text-white sm:h-10 sm:w-10" />
@@ -303,7 +303,7 @@ export function ReferralPage() {
         animate="visible"
         transition={{ delay: 0.15 }}
       >
-        <Card className="rounded-2xl shadow-md">
+        <Card className="rounded-2xl shadow-lg shadow-emerald-500/5 border border-border/50">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-xl font-bold">
               <Link2 className="h-5 w-5 text-emerald-600" />
@@ -415,7 +415,7 @@ export function ReferralPage() {
           const Icon = stat.icon;
           return (
             <motion.div key={stat.id} variants={itemVariants}>
-              <Card className="group relative overflow-hidden rounded-2xl shadow-md transition-shadow hover:shadow-lg">
+              <Card className="group relative overflow-hidden rounded-2xl shadow-lg shadow-emerald-500/5 border border-border/50 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/10">
                 {/* Subtle gradient background */}
                 <div className={cn('absolute inset-0 bg-gradient-to-br opacity-[0.06] dark:opacity-[0.1]', stat.gradient)} />
 
@@ -456,7 +456,7 @@ export function ReferralPage() {
         initial="hidden"
         animate="visible"
       >
-        <Card className="rounded-2xl shadow-md">
+        <Card className="rounded-2xl shadow-lg shadow-emerald-500/5 border border-border/50">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-xl font-bold">
               <Clock className="h-5 w-5 text-emerald-600" />
@@ -482,7 +482,7 @@ export function ReferralPage() {
                       initial="hidden"
                       animate="visible"
                       transition={{ delay: index * 0.05 }}
-                      className="border-b transition-colors last:border-b-0 hover:bg-muted/40"
+                      className="border-b transition-colors last:border-b-0 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20"
                     >
                       <TableCell className="py-3.5 pr-4 font-medium text-foreground">
                         {record.name}
@@ -525,7 +525,7 @@ export function ReferralPage() {
         initial="hidden"
         animate="visible"
       >
-        <Card className="rounded-2xl shadow-md">
+        <Card className="rounded-2xl shadow-lg shadow-emerald-500/5 border border-border/50">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-xl font-bold">
               <Sparkles className="h-5 w-5 text-emerald-600" />
@@ -548,7 +548,7 @@ export function ReferralPage() {
                     )}
 
                     {/* Number circle */}
-                    <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/25">
+                    <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/30">
                       <span className="text-xl font-extrabold text-white">
                         {step.number}
                       </span>
@@ -582,7 +582,7 @@ export function ReferralPage() {
         initial="hidden"
         animate="visible"
       >
-        <Card className="rounded-2xl shadow-md">
+        <Card className="rounded-2xl shadow-lg shadow-emerald-500/5 border border-border/50">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-xl font-bold">
               <ChevronDown className="h-5 w-5 text-emerald-600" />
@@ -597,7 +597,7 @@ export function ReferralPage() {
                   value={`rule-${index}`}
                   className="border-border/50"
                 >
-                  <AccordionTrigger className="text-sm font-semibold text-foreground hover:text-emerald-600 hover:no-underline">
+                  <AccordionTrigger className="text-sm font-semibold text-foreground hover:text-emerald-600 hover:no-underline transition-colors">
                     {rule.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-sm leading-relaxed text-muted-foreground pr-2">

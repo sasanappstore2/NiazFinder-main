@@ -43,7 +43,7 @@ import type { Proposal } from '@/lib/types';
 // ─── Animation ────────────────────────────────────────
 const fadeIn = {
   initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
 };
 
 // ─── Avatar color generator ───────────────────────────
@@ -160,12 +160,12 @@ function ProposalCard({ proposal, onSelect }: { proposal: Proposal; onSelect: ()
   const avatarBg = getAvatarBg(fullName);
 
   return (
-    <Card className="border-border/60 bg-card transition-all duration-200 hover:border-emerald-200 dark:hover:border-emerald-800 hover:shadow-sm">
-      <CardContent className="p-5">
+    <Card className="border-border/50 bg-card transition-all duration-300 hover:border-emerald-300/60 dark:hover:border-emerald-700/60 hover:shadow-lg hover:shadow-emerald-500/[0.04]">
+      <CardContent className="p-5 pb-6">
         {/* Header */}
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className={`size-11 rounded-full flex items-center justify-center text-sm font-bold ${avatarBg}`}>
+            <div className={`size-11 rounded-full flex items-center justify-center text-sm font-bold ring-2 ring-white dark:ring-card shadow-sm ${avatarBg}`}>
               {initials}
             </div>
             <div>
@@ -192,7 +192,7 @@ function ProposalCard({ proposal, onSelect }: { proposal: Proposal; onSelect: ()
         </p>
 
         {/* Stats row */}
-        <div className="mb-4 flex items-center gap-4 rounded-xl bg-muted/50 p-3">
+        <div className="mb-4 flex items-center gap-4 rounded-xl bg-muted/40 p-3.5 ring-1 ring-border/30">
           <div className="flex items-center gap-1.5">
             <DollarSign className="size-4 text-emerald-500" />
             <span className="text-sm font-semibold">{formatPrice(proposal.price)}</span>
@@ -212,7 +212,7 @@ function ProposalCard({ proposal, onSelect }: { proposal: Proposal; onSelect: ()
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pt-1">
           <span className="text-xs text-muted-foreground">
             {proposal.user.projectCount.toLocaleString('fa-IR')} پروژه انجام شده
           </span>
@@ -229,9 +229,9 @@ function ProposalCard({ proposal, onSelect }: { proposal: Proposal; onSelect: ()
 // ─── Info Card ────────────────────────────────────────
 function InfoCard({ icon: Icon, label, value }: { icon: typeof DollarSign; label: string; value: string }) {
   return (
-    <Card className="border-border/60 bg-card">
-      <CardContent className="flex flex-col items-center gap-2 p-4 text-center">
-        <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-900/20">
+    <Card className="border-border/40 bg-card/80 backdrop-blur-sm transition-all duration-200 hover:border-emerald-200/50 dark:hover:border-emerald-800/50 hover:shadow-md">
+      <CardContent className="flex flex-col items-center gap-2.5 p-4 text-center">
+        <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-b from-emerald-50 to-emerald-100/50 dark:from-emerald-900/30 dark:to-emerald-900/10">
           <Icon className="size-5 text-emerald-600 dark:text-emerald-400" />
         </div>
         <span className="text-[11px] text-muted-foreground">{label}</span>
@@ -369,7 +369,7 @@ export function RequestDetail() {
           <div className="lg:col-span-2 space-y-6">
             {/* Description */}
             <motion.div {...fadeIn} transition={{ delay: 0.15 }}>
-              <Card className="border-border/60 bg-card">
+              <Card className="border-border/50 bg-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base">توضیحات</CardTitle>
                 </CardHeader>
@@ -384,8 +384,8 @@ export function RequestDetail() {
             {/* Tags */}
             {request.tags.length > 0 && (
               <motion.div {...fadeIn} transition={{ delay: 0.2 }}>
-                <Card className="border-border/60 bg-card">
-                  <CardContent className="p-4">
+                <Card className="border-border/50 bg-card">
+                  <CardContent className="p-5">
                     <h3 className="mb-3 text-sm font-semibold">تگ‌ها</h3>
                     <div className="flex flex-wrap gap-2">
                       {request.tags.map((tag) => (
@@ -405,7 +405,7 @@ export function RequestDetail() {
 
             {/* Budget type note */}
             <motion.div {...fadeIn} transition={{ delay: 0.22 }}>
-              <div className="flex items-center gap-2 rounded-xl bg-muted/50 p-3 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 rounded-xl bg-muted/40 p-3.5 text-sm text-muted-foreground ring-1 ring-border/30">
                 <DollarSign className="size-4 text-emerald-500" />
                 <span>
                   نوع بودجه:{' '}
@@ -418,7 +418,7 @@ export function RequestDetail() {
 
             {/* Proposals Section */}
             <motion.div {...fadeIn} transition={{ delay: 0.25 }}>
-              <Card className="border-border/60 bg-card">
+              <Card className="border-border/50 bg-card">
                 <CardHeader className="pb-3">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <CardTitle className="text-base">
@@ -458,11 +458,11 @@ export function RequestDetail() {
           <div className="space-y-6">
             {/* Author info */}
             <motion.div {...fadeIn} transition={{ delay: 0.2 }}>
-              <Card className="border-border/60 bg-card">
+              <Card className="border-border/50 bg-card">
                 <CardContent className="p-5">
                   <h3 className="mb-4 text-sm font-semibold">اطلاعات کاربر</h3>
                   <div className="flex items-center gap-3">
-                    <div className={`size-14 rounded-full flex items-center justify-center text-base font-bold ${authorAvatarBg}`}>
+                    <div className={`size-14 rounded-full flex items-center justify-center text-base font-bold ring-2 ring-white dark:ring-card shadow-sm ${authorAvatarBg}`}>
                       {authorInitials}
                     </div>
                     <div>
@@ -483,9 +483,9 @@ export function RequestDetail() {
 
             {/* CTA: Submit Proposal */}
             <motion.div {...fadeIn} transition={{ delay: 0.3 }}>
-              <Card className="border-emerald-200 bg-gradient-to-b from-emerald-50 to-white dark:border-emerald-800 dark:from-emerald-950/40 dark:to-card">
+              <Card className="border-emerald-200/60 bg-gradient-to-b from-emerald-50/80 to-white dark:border-emerald-800/60 dark:from-emerald-950/30 dark:to-card shadow-lg shadow-emerald-500/[0.04]">
                 <CardContent className="p-5 text-center">
-                  <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900/30">
+                  <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-gradient-to-b from-emerald-100 to-emerald-50 dark:from-emerald-900/40 dark:to-emerald-900/20">
                     <Send className="size-6 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <h3 className="mb-2 text-sm font-bold">متخصص هستید؟</h3>

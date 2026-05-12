@@ -63,10 +63,10 @@ const registerSchema = z
       .min(8, 'رمز عبور باید حداقل ۸ کاراکتر باشد'),
     confirmPassword: z.string().min(1, 'تأیید رمز عبور الزامی است'),
     role: z.enum(['CLIENT', 'SPECIALIST'], {
-      required_error: 'لطفاً نقش خود را انتخاب کنید',
+      error: 'لطفاً نقش خود را انتخاب کنید',
     }),
     acceptTerms: z.literal(true, {
-      errorMap: () => ({ message: 'پذیرش قوانین و مقررات الزامی است' }),
+      error: 'پذیرش قوانین و مقررات الزامی است',
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -315,7 +315,7 @@ export function RegisterForm() {
               <FormItem className="flex flex-row items-start gap-3 space-y-0">
                 <FormControl>
                   <Checkbox
-                    checked={field.value}
+                    checked={field.value as boolean}
                     onCheckedChange={field.onChange}
                     className="mt-0.5"
                   />

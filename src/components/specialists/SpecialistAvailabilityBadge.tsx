@@ -45,7 +45,7 @@ const containerVariants = {
     scale: 1,
     transition: {
       duration: 0.4,
-      ease: 'easeOut',
+      ease: 'easeOut' as const,
     },
   },
 };
@@ -125,7 +125,6 @@ export function SpecialistAvailabilityBadge({
             className={cn(
               config.text,
               'text-muted-foreground',
-              size === 'sm' && 'hidden',
             )}
           >
             · {responseTime}
