@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, lazy, Suspense, ComponentType } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 
-// Layout Components
+// Core Layout Components - kept static (small footprint)
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
@@ -17,33 +17,36 @@ import { CookieConsent } from '@/components/shared/CookieConsent';
 import { OnboardingWelcome } from '@/components/shared/OnboardingWelcome';
 import { Separator } from '@/components/ui/separator';
 
-// Pages
-import { HeroSection } from '@/components/home/HeroSection';
-import TrustPartnersMarquee from '@/components/home/TrustPartnersMarquee';
-import { CategoriesSection } from '@/components/home/CategoriesSection';
-import { HowItWorks } from '@/components/home/HowItWorks';
-import { TopSpecialists } from '@/components/home/TopSpecialists';
-import { FeaturedRequests } from '@/components/home/FeaturedRequests';
-import { ActivityFeed } from '@/components/home/ActivityFeed';
-import { TestimonialsSection } from '@/components/home/TestimonialsSection';
-import { FAQSection } from '@/components/home/FAQSection';
-import { StatsCounter } from '@/components/home/StatsCounter';
-import { PricingSection } from '@/components/home/PricingSection';
-import { CTABanner } from '@/components/home/CTABanner';
-import { RequestForm } from '@/components/requests/RequestForm';
-import { BrowseRequests } from '@/components/requests/BrowseRequests';
-import { RequestDetail } from '@/components/requests/RequestDetail';
-import { ProposalForm } from '@/components/requests/ProposalForm';
-import ReviewForm from '@/components/specialists/ReviewForm';
-import { BrowseSpecialists } from '@/components/specialists/BrowseSpecialists';
-import { SpecialistProfile } from '@/components/specialists/SpecialistProfile';
-import { CompareSpecialists } from '@/components/specialists/CompareSpecialists';
-import { UserDashboard } from '@/components/dashboard/UserDashboard';
-import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
-import { ReferralPage } from '@/components/dashboard/ReferralPage';
-import { ChatPanel } from '@/components/chat/ChatPanel';
-import { NotificationsPanel } from '@/components/chat/NotificationsPanel';
-import { NotificationSettings } from '@/components/dashboard/NotificationSettings';
+// Lazy loaded view components - only loaded when needed
+const HomePage = lazy(() => import('@/components/views/HomePage'));
+const RequestFormPage = lazy(() => import('@/components/views/RequestFormPage'));
+const BrowseRequestsPage = lazy(() => import('@/components/views/BrowseRequestsPage'));
+const RequestDetailPage = lazy(() => import('@/components/views/RequestDetailPage'));
+const ProposalFormPage = lazy(() => import('@/components/views/ProposalFormPage'));
+const BrowseSpecialistsPage = lazy(() => import('@/components/views/BrowseSpecialistsPage'));
+const SpecialistProfilePage = lazy(() => import('@/components/views/SpecialistProfilePage'));
+const DashboardPage = lazy(() => import('@/components/views/DashboardPage'));
+const AdminPage = lazy(() => import('@/components/views/AdminPage'));
+const MessagesPage = lazy(() => import('@/components/views/MessagesPage'));
+const NotificationsPage = lazy(() => import('@/components/views/NotificationsPage'));
+const ProfilePage = lazy(() => import('@/components/views/ProfilePage'));
+const PricingPage = lazy(() => import('@/components/views/PricingPage'));
+const ComparePage = lazy(() => import('@/components/views/ComparePage'));
+const ReviewFormPage = lazy(() => import('@/components/views/ReviewFormPage'));
+const ReferralPage = lazy(() => import('@/components/views/ReferralPage'));
+const NotificationSettingsPage = lazy(() => import('@/components/views/NotificationSettingsPage'));
+
+// Loading skeleton
+function ViewSkeleton() {
+  return (
+    <div className="animate-pulse space-y-4 p-4 max-w-5xl mx-auto" dir="rtl">
+      <div className="h-4 bg-muted/40 rounded w-1/3" />
+      <div className="h-px bg-muted/30" />
+      <div className="h-64 bg-muted/30 rounded-xl" />
+      <div className="h-48 bg-muted/30 rounded-xl" />
+    </div>
+  );
+}
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -56,25 +59,6 @@ const pageTransition = {
   ease: 'easeInOut' as const,
   duration: 0.25,
 };
-
-function HomePage() {
-  return (
-    <>
-      <HeroSection />
-      <TrustPartnersMarquee />
-      <StatsCounter />
-      <CategoriesSection />
-      <HowItWorks />
-      <TopSpecialists />
-      <FeaturedRequests />
-      <ActivityFeed />
-      <PricingSection />
-      <CTABanner />
-      <TestimonialsSection />
-      <FAQSection />
-    </>
-  );
-}
 
 export default function App() {
   const { currentView } = useAppStore();
@@ -92,109 +76,51 @@ export default function App() {
 
   const isHome = currentView === 'home';
 
-  const renderContent = useCallback(() => {
+  const renderContent = useCallback((): ComponentType | null => {
     switch (currentView) {
       case 'login':
       case 'register':
         return null;
       case 'home':
-        return <HomePage />;
+        return HomePage;
       case 'post-need':
-        return (
-          <div className="max-w-4xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><RequestForm />
-          </div>
-        );
+        return RequestFormPage;
       case 'browse-requests':
-        return (
-          <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><BrowseRequests />
-          </div>
-        );
+        return BrowseRequestsPage;
       case 'request-detail':
-        return (
-          <div className="max-w-5xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><RequestDetail />
-          </div>
-        );
+        return RequestDetailPage;
       case 'submit-proposal':
-        return (
-          <div className="max-w-3xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><ProposalForm />
-          </div>
-        );
+        return ProposalFormPage;
       case 'browse-specialists':
-        return (
-          <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><BrowseSpecialists />
-          </div>
-        );
+        return BrowseSpecialistsPage;
       case 'specialist-profile':
-        return (
-          <div className="max-w-6xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><SpecialistProfile />
-          </div>
-        );
+        return SpecialistProfilePage;
       case 'dashboard':
-        return (
-          <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><UserDashboard />
-          </div>
-        );
+        return DashboardPage;
       case 'admin':
-        return <AdminDashboard />;
+        return AdminPage;
       case 'messages':
-        return (
-          <div className="max-w-7xl mx-auto px-4 pt-2 pb-12" style={{ height: 'calc(100vh - 80px)' }}>
-            <Breadcrumb /><Separator className="my-4" /><ChatPanel />
-          </div>
-        );
+        return MessagesPage;
       case 'notifications':
-        return (
-          <div className="max-w-3xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><NotificationsPanel />
-          </div>
-        );
+        return NotificationsPage;
       case 'profile':
-        return (
-          <div className="max-w-5xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><UserDashboard />
-          </div>
-        );
+        return ProfilePage;
       case 'pricing':
-        return (
-          <div className="max-w-6xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><PricingSection />
-          </div>
-        );
+        return PricingPage;
       case 'compare-specialists':
-        return (
-          <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><CompareSpecialists />
-          </div>
-        );
+        return ComparePage;
       case 'submit-review':
-        return (
-          <div className="max-w-4xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><ReviewForm />
-          </div>
-        );
+        return ReviewFormPage;
       case 'referral':
-        return (
-          <div className="max-w-4xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><ReferralPage />
-          </div>
-        );
+        return ReferralPage;
       case 'notification-settings':
-        return (
-          <div className="max-w-3xl mx-auto px-4 pt-2 pb-12">
-            <Breadcrumb /><Separator className="my-4" /><NotificationSettings />
-          </div>
-        );
+        return NotificationSettingsPage;
       default:
         return null;
     }
   }, [currentView]);
+
+  const ViewComponent = renderContent();
 
   return (
     <ErrorBoundary>
@@ -212,7 +138,11 @@ export default function App() {
           className={`flex-1 ${isHome ? '' : 'pt-6'}`}
           dir="rtl"
         >
-          {renderContent()}
+          {ViewComponent ? (
+            <Suspense fallback={<ViewSkeleton />}>
+              <ViewComponent />
+            </Suspense>
+          ) : null}
         </motion.main>
       </AnimatePresence>
 
