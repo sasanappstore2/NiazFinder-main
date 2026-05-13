@@ -64,3 +64,28 @@ Stage Summary:
 - Production server on port 4000 via XTransformPort=4000: STABLE (10/10 requests)
 - Default route (port 81): shows Z logo placeholder (infrastructure limitation)
 - To fully fix: need to update /app/Caddyfile default port from 3000 to 4000
+
+---
+Task ID: 4
+Agent: main
+Task: Fix homepage not rendering - only Z logo visible (continued from context restoration)
+
+Work Log:
+- Diagnosed that React.lazy() in page.tsx was causing SSR failure and server crashes
+- The lazy-loaded components couldn't be rendered during server-side rendering
+- React Compiler ESLint error: "Cannot create components during render" for <ViewComponent /> pattern
+- The Caddy gateway was returning a 502 Bad Gateway placeholder (Z logo) when Next.js crashed
+- Fixed page.tsx by replacing React.lazy() with direct static imports for all 17 view components
+- Moved component mapping (VIEW_MAP) to a static constant outside render function
+- Removed Suspense boundaries since components are now statically imported
+- Kept AnimatePresence/motion for page transitions
+- Discovered that background processes need `setsid` to survive across Bash tool invocations
+- Established proper startup sequence: proxy3000.cjs (port 3000) → Next.js (port 4000) via setsid
+- Verified full content rendering through Caddy: 59 "نیاز", 54 "متخصص", 25 "ثبت", 5 "جستجو"
+
+Stage Summary:
+- Root cause: React.lazy() components cannot render during SSR, causing silent failures and server crashes
+- Fix: Direct imports + static VIEW_MAP constant (no component creation during render)
+- Server startup command: `setsid bash -c 'node proxy3000.cjs & npx next dev -p 4000 &'`
+- All homepage sections now render correctly: HeroSection, CategoriesSection, HowItWorks, TopSpecialists, FeaturedRequests, ActivityFeed, PricingSection, CTABanner, TestimonialsSection, FAQSection, StatsCounter, TrustPartnersMarquee
+- Full proxy chain verified: Preview Panel → Caddy (81) → proxy (3000) → Next.js (4000)
