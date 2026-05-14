@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
 import { Star, MapPin, ArrowLeft, BadgeCheck, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
@@ -9,6 +10,28 @@ const FEATURED_SPECIALTIES = [
   'طراحی وب', 'برنامه‌نویسی', 'تولید محتوا', 'عکاسی',
   'نقشه‌کشی', 'مشاوره کسب‌وکار', 'دیجیتال مارکتینگ', 'گرافیک',
 ];
+
+const AVATAR_GRADIENTS = [
+  'from-emerald-400 to-teal-500',
+  'from-amber-400 to-orange-500',
+  'from-sky-400 to-blue-500',
+  'from-rose-400 to-pink-500',
+  'from-violet-400 to-purple-500',
+  'from-teal-400 to-cyan-500',
+];
+
+interface SpecialistItem {
+  id: string;
+  displayName: string | null;
+  firstName: string;
+  lastName: string;
+  city: string | null;
+  rating: number;
+  projectCount: number;
+  completionRate: number;
+  isVerified: boolean;
+  skills: { id: string; name: string; level: number }[];
+}
 
 const FALLBACK_BUSINESSES = [
   {
@@ -79,8 +102,67 @@ const FALLBACK_BUSINESSES = [
   },
 ];
 
+function SkeletonCard() {
+  return (
+    <div className="flex items-start gap-4 rounded-2xl border p-4 sm:p-5 bg-card/50 border-border/40 animate-pulse">
+      <div className="size-12 sm:size-14 rounded-2xl bg-muted/60 shrink-0" />
+      <div className="min-w-0 flex-1 space-y-2">
+        <div className="h-4 w-3/4 rounded bg-muted/60" />
+        <div className="h-3 w-1/2 rounded bg-muted/40" />
+        <div className="flex items-center gap-2">
+          <div className="h-3 w-20 rounded bg-muted/40" />
+          <div className="h-3 w-10 rounded bg-muted/40" />
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="h-3 w-14 rounded bg-muted/30" />
+          <div className="h-3 w-16 rounded bg-muted/30" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function FeaturedBusinesses() {
   const navigateTo = useAppStore((s) => s.navigateTo);
+  const [specialists, setSpecialists] = useState<SpecialistItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const fetchSpecialists = useCallback(async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await fetch('/api/specialists?limit=6&sort=rating');
+      if (!res.ok) throw new Error('API error');
+      const json = await res.json();
+      if (json.data && json.data.length > 0) {
+        setSpecialists(json.data);
+      }
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSpecialists();
+  }, [fetchSpecialists]);
+
+  // Determine which data to display: API data or fallback
+  const displayData = specialists.length > 0
+    ? specialists.map((spec, idx) => ({
+        id: spec.id,
+        name: spec.displayName || `${spec.firstName} ${spec.lastName}`,
+        specialty: spec.skills.length > 0 ? spec.skills[0].name : 'متخصص خدمات',
+        city: spec.city || 'نامشخص',
+        rating: spec.rating,
+        reviewCount: 0,
+        projectCount: spec.projectCount,
+        avatarColor: AVATAR_GRADIENTS[idx % AVATAR_GRADIENTS.length],
+        verified: spec.isVerified,
+      }))
+    : FALLBACK_BUSINESSES;
 
   return (
     <section
@@ -136,86 +218,98 @@ export function FeaturedBusinesses() {
 
         {/* Business Cards Grid */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {FALLBACK_BUSINESSES.map((business) => {
-            const initials = business.name
-              .split(' ')
-              .map((w) => w.charAt(0))
-              .slice(0, 2)
-              .join('');
+          {loading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={`skeleton-${i}`} />
+            ))
+          ) : (
+            displayData.map((business) => {
+              const initials = business.name
+                .split(' ')
+                .map((w) => w.charAt(0))
+                .slice(0, 2)
+                .join('');
 
-            return (
-              <div
-                key={business.id}
-                onClick={() => navigateTo('specialist-profile')}
-                role="button"
-                tabIndex={0}
-                className={cn(
-                  'group relative flex items-start gap-4 rounded-2xl border p-4 sm:p-5',
-                  'bg-card/50 backdrop-blur-sm',
-                  'border-border/40 dark:border-border/20',
-                  'transition-all duration-300 cursor-pointer',
-                  'hover:bg-card/80 hover:shadow-lg hover:shadow-black/[0.04] dark:hover:shadow-black/20',
-                  'hover:-translate-y-[2px] hover:border-primary/20',
-                  'active:scale-[0.99]'
-                )}
-              >
-                {/* Avatar */}
-                <div className="relative shrink-0">
-                  <div
-                    className={cn(
-                      'flex size-12 sm:size-14 items-center justify-center rounded-2xl text-sm font-bold text-white shadow-md',
-                      'bg-gradient-to-br',
-                      business.avatarColor,
-                      'ring-2 ring-white/50 dark:ring-card/50',
-                      'transition-transform duration-300 group-hover:scale-105'
-                    )}
-                  >
-                    {initials}
-                  </div>
-                  {business.verified && (
-                    <div className="absolute -bottom-0.5 -end-0.5 flex size-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm">
-                      <BadgeCheck className="size-3" strokeWidth={3} />
-                    </div>
+              return (
+                <div
+                  key={business.id}
+                  onClick={() => navigateTo('specialist-profile', { id: business.id })}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      navigateTo('specialist-profile', { id: business.id });
+                    }
+                  }}
+                  className={cn(
+                    'group relative flex items-start gap-4 rounded-2xl border p-4 sm:p-5',
+                    'bg-card/50 backdrop-blur-sm',
+                    'border-border/40 dark:border-border/20',
+                    'transition-all duration-300 cursor-pointer',
+                    'hover:bg-card/80 hover:shadow-lg hover:shadow-black/[0.04] dark:hover:shadow-black/20',
+                    'hover:-translate-y-[2px] hover:border-primary/20',
+                    'active:scale-[0.99]'
                   )}
-                </div>
-
-                {/* Content */}
-                <div className="min-w-0 flex-1">
-                  {/* Name + verified */}
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <h3 className="truncate text-sm font-bold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                      {business.name}
-                    </h3>
+                >
+                  {/* Avatar */}
+                  <div className="relative shrink-0">
+                    <div
+                      className={cn(
+                        'flex size-12 sm:size-14 items-center justify-center rounded-2xl text-sm font-bold text-white shadow-md',
+                        'bg-gradient-to-br',
+                        business.avatarColor,
+                        'ring-2 ring-white/50 dark:ring-card/50',
+                        'transition-transform duration-300 group-hover:scale-105'
+                      )}
+                    >
+                      {initials}
+                    </div>
                     {business.verified && (
-                      <BadgeCheck className="shrink-0 size-4 text-emerald-500" />
+                      <div className="absolute -bottom-0.5 -end-0.5 flex size-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm">
+                        <BadgeCheck className="size-3" strokeWidth={3} />
+                      </div>
                     )}
                   </div>
 
-                  {/* Specialty */}
-                  <p className="text-xs text-muted-foreground mb-2 truncate">
-                    {business.specialty}
-                  </p>
+                  {/* Content */}
+                  <div className="min-w-0 flex-1">
+                    {/* Name + verified */}
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <h3 className="truncate text-sm font-bold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                        {business.name}
+                      </h3>
+                      {business.verified && (
+                        <BadgeCheck className="shrink-0 size-4 text-emerald-500" />
+                      )}
+                    </div>
 
-                  {/* Rating */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <StarRating rating={business.rating} size="sm" showValue reviewCount={business.reviewCount} />
-                  </div>
+                    {/* Specialty */}
+                    <p className="text-xs text-muted-foreground mb-2 truncate">
+                      {business.specialty}
+                    </p>
 
-                  {/* Meta row */}
-                  <div className="flex items-center gap-3 text-[11px] text-muted-foreground/70">
-                    <span className="inline-flex items-center gap-1">
-                      <MapPin className="size-3" />
-                      {business.city}
-                    </span>
-                    <span className="inline-flex items-center gap-1">
-                      <Star className="size-3" />
-                      {business.projectCount.toLocaleString('fa-IR')} پروژه
-                    </span>
+                    {/* Rating */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <StarRating rating={business.rating} size="sm" showValue reviewCount={business.reviewCount} />
+                    </div>
+
+                    {/* Meta row */}
+                    <div className="flex items-center gap-3 text-[11px] text-muted-foreground/70">
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="size-3" />
+                        {business.city}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <Star className="size-3" />
+                        {business.projectCount.toLocaleString('fa-IR')} پروژه
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
     </section>

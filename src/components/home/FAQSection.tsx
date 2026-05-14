@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -7,8 +8,9 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { HelpCircle, MessageCircle, ChevronLeft } from 'lucide-react';
+import { HelpCircle, MessageCircle, ChevronDown } from 'lucide-react';
 import { FAQ_DATA } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 
 export function FAQSection() {
   const scrollToContact = () => {
@@ -16,8 +18,11 @@ export function FAQSection() {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  // Track which items are open for animation
+  const [openItems, setOpenItems] = useState<Set<string>>(new Set());
+
   return (
-    <section id="faq" className="section-padding bg-muted/30" aria-label="سوالات متداول" itemScope itemType="https://schema.org/FAQPage">
+    <section id="faq" className="section-padding faq-pattern-bg bg-muted/30" aria-label="سوالات متداول" itemScope itemType="https://schema.org/FAQPage">
       <div className="container-default mx-auto px-5 md:px-8">
         {/* Header */}
         <div className="mb-12 text-center">
@@ -30,34 +35,53 @@ export function FAQSection() {
         </div>
 
         {/* Accordion */}
-        <Accordion type="single" collapsible className="w-full space-y-3">
-          {FAQ_DATA.map((faq, i) => (
-            <AccordionItem
-              key={i}
-              value={`faq-${i}`}
-              className="rounded-2xl border border-border/60 px-2 transition-colors duration-200 hover:border-border data-[state=open]:border-emerald-200 data-[state=open]:bg-card data-[state=open]:shadow-lg data-[state=open]:shadow-emerald-500/5 dark:data-[state=open]:border-emerald-800"
-              itemScope
-              itemType="https://schema.org/Question"
-            >
-              <AccordionTrigger className="text-start text-sm font-semibold leading-relaxed hover:no-underline sm:text-[15px] px-3 py-4">
-                <span className="flex items-center gap-3" itemProp="name">
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-emerald-500 text-xs font-bold text-white shadow-sm" aria-hidden="true">
-                    {i + 1}
+        <Accordion
+          type="single"
+          collapsible
+          className="w-full space-y-3"
+          onValueChange={(value) => {
+            setOpenItems(new Set(value ? [value] : []));
+          }}
+        >
+          {FAQ_DATA.map((faq, i) => {
+            const itemValue = `faq-${i}`;
+            const isOpen = openItems.has(itemValue);
+            return (
+              <AccordionItem
+                key={i}
+                value={itemValue}
+                className={cn(
+                  'faq-glass-item faq-expanded-line rounded-2xl px-2 transition-all duration-300',
+                  isOpen && 'shadow-lg shadow-emerald-500/5 dark:shadow-black/10',
+                )}
+                itemScope
+                itemType="https://schema.org/Question"
+              >
+                <AccordionTrigger className="text-start text-sm font-semibold leading-relaxed hover:no-underline sm:text-[15px] px-3 py-4">
+                  <span className="flex items-center gap-3" itemProp="name">
+                    <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-emerald-500 text-xs font-bold text-white shadow-sm" aria-hidden="true">
+                      {i + 1}
+                    </span>
+                    {faq.question}
                   </span>
-                  {faq.question}
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="text-start text-sm leading-[1.8] text-muted-foreground px-3 pb-5 sm:text-[15px]" itemScope itemType="https://schema.org/Answer">
-                <span itemProp="text">
-                  {faq.answer}
-                </span>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
+                </AccordionTrigger>
+                <AccordionContent className="px-3 pb-5 sm:text-[15px]" itemScope itemType="https://schema.org/Answer">
+                  <div className={cn(
+                    'faq-answer-content text-start text-sm leading-[1.8] text-muted-foreground',
+                    isOpen && 'faq-answer-open',
+                  )}>
+                    <span itemProp="text">
+                      {faq.answer}
+                    </span>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
         </Accordion>
 
         {/* CTA Card */}
-        <div className="mt-10 overflow-hidden rounded-2xl border border-border/60 bg-card p-6 text-center shadow-sm sm:p-8">
+        <div className="mt-10 overflow-hidden rounded-2xl border border-emerald-200/40 dark:border-emerald-800/40 bg-white/40 dark:bg-card/40 backdrop-blur-md p-6 text-center shadow-sm sm:p-8">
           <div className="mb-3 inline-flex size-12 items-center justify-center rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/20" aria-hidden="true">
             <MessageCircle className="size-6 text-white" />
           </div>
@@ -73,7 +97,7 @@ export function FAQSection() {
           >
             <MessageCircle className="size-4" aria-hidden="true" />
             تماس با ما
-            <ChevronLeft className="size-4" aria-hidden="true" />
+            <ChevronDown className="size-4 rotate-[-90deg]" aria-hidden="true" />
           </Button>
         </div>
       </div>

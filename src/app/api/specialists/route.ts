@@ -107,14 +107,11 @@ export async function GET(request: NextRequest) {
               },
             },
           },
-          givenReviews: {
+          reviews: {
             select: { rating: true },
           },
           sentProposals: {
             where: { status: 'ACCEPTED' },
-            select: { id: true },
-          },
-          reviews: {
             select: { id: true },
           },
           _count: {
@@ -131,7 +128,7 @@ export async function GET(request: NextRequest) {
 
     // Map and compute rating/project data
     const mappedSpecialists: SpecialistListItem[] = users.map((user) => {
-      const reviewRatings = user.givenReviews.map((r) => r.rating);
+      const reviewRatings = user.reviews.map((r) => r.rating);
       const avgRating = reviewRatings.length > 0
         ? reviewRatings.reduce((sum, r) => sum + r, 0) / reviewRatings.length
         : 0;

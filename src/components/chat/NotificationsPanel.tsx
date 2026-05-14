@@ -11,6 +11,9 @@ import {
   CheckCircle,
   CheckCheck,
   ShieldAlert,
+  ArrowLeft,
+  Settings,
+  Wallet,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
@@ -34,7 +37,7 @@ const getNotificationIcon = (type: string) => {
     case 'review':
       return Star;
     case 'payment':
-      return CreditCard;
+      return Wallet;
     case 'request_accepted':
       return CheckCircle;
     case 'system':
@@ -63,6 +66,38 @@ const getNotificationIconColor = (type: string) => {
   }
 };
 
+const getNotificationTypeLabel = (type: string) => {
+  switch (type) {
+    case 'new_proposal': return 'پیشنهاد';
+    case 'message': return 'پیام';
+    case 'review': return 'نظر';
+    case 'payment': return 'پرداخت';
+    case 'request_accepted': return 'پروژه';
+    case 'warning': return 'تذکر';
+    case 'system': return 'سیستم';
+    default: return '';
+  }
+};
+
+// ─── Persian relative time helper ──────────────────────────────────────────
+
+function persianTimeAgo(dateStr: string): string {
+  const now = Date.now();
+  const then = new Date(dateStr).getTime();
+  const diffMs = now - then;
+  const seconds = Math.floor(diffMs / 1000);
+  if (seconds < 60) return 'لحظاتی پیش';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} دقیقه پیش`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} ساعت پیش`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days} روز پیش`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months} ماه پیش`;
+  return `${Math.floor(months / 12)} سال پیش`;
+}
+
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 
 const mockNotifications: Notification[] = [
@@ -72,7 +107,7 @@ const mockNotifications: Notification[] = [
     title: 'پیشنهاد جدید',
     message: 'علی محمدی پیشنهادی برای پروژه شما ارسال کرد',
     isRead: false,
-    createdAt: '۵ دقیقه پیش',
+    createdAt: new Date(Date.now() - 5 * 60000).toISOString(),
   },
   {
     id: 'notif-2',
@@ -80,7 +115,7 @@ const mockNotifications: Notification[] = [
     title: 'پیام جدید',
     message: 'سارا احمدی پیامی برای شما ارسال کرد',
     isRead: false,
-    createdAt: '۱۵ دقیقه پیش',
+    createdAt: new Date(Date.now() - 15 * 60000).toISOString(),
   },
   {
     id: 'notif-3',
@@ -88,7 +123,7 @@ const mockNotifications: Notification[] = [
     title: 'نظر جدید',
     message: 'رضا کریمی به پروژه شما امتیاز ۵ داد',
     isRead: true,
-    createdAt: '۱ ساعت پیش',
+    createdAt: new Date(Date.now() - 3600000).toISOString(),
   },
   {
     id: 'notif-4',
@@ -96,7 +131,7 @@ const mockNotifications: Notification[] = [
     title: 'پرداخت موفق',
     message: 'پرداخت ۵,۰۰۰,۰۰۰ تومان با موفقیت انجام شد',
     isRead: false,
-    createdAt: '۲ ساعت پیش',
+    createdAt: new Date(Date.now() - 2 * 3600000).toISOString(),
   },
   {
     id: 'notif-5',
@@ -104,7 +139,7 @@ const mockNotifications: Notification[] = [
     title: 'پروژه پذیرفته شد',
     message: 'پیشنهاد شما برای پروژه طراحی سایت پذیرفته شد',
     isRead: true,
-    createdAt: '۳ ساعت پیش',
+    createdAt: new Date(Date.now() - 3 * 3600000).toISOString(),
   },
   {
     id: 'notif-6',
@@ -112,7 +147,7 @@ const mockNotifications: Notification[] = [
     title: 'سیستم',
     message: 'خوش آمدید! حساب شما با موفقیت ایجاد شد',
     isRead: true,
-    createdAt: '۱ روز پیش',
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
   },
   {
     id: 'notif-7',
@@ -120,7 +155,7 @@ const mockNotifications: Notification[] = [
     title: 'پیشنهاد جدید',
     message: 'مینا حسینی پیشنهادی برای پروژه شما ارسال کرد',
     isRead: false,
-    createdAt: '۱ روز پیش',
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
   },
   {
     id: 'notif-8',
@@ -128,7 +163,7 @@ const mockNotifications: Notification[] = [
     title: 'پیام جدید',
     message: 'حسن نجفی پیامی برای شما ارسال کرد',
     isRead: false,
-    createdAt: '۲ روز پیش',
+    createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
   },
   {
     id: 'notif-9',
@@ -136,7 +171,7 @@ const mockNotifications: Notification[] = [
     title: 'تذکر',
     message: 'لطفاً پروفایل خود را تکمیل کنید',
     isRead: false,
-    createdAt: '۳ روز پیش',
+    createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
   },
   {
     id: 'notif-10',
@@ -144,14 +179,14 @@ const mockNotifications: Notification[] = [
     title: 'پرداخت',
     message: 'تسویه حساب ۲,۰۰۰,۰۰۰ تومان انجام شد',
     isRead: true,
-    createdAt: '۱ هفته پیش',
+    createdAt: new Date(Date.now() - 7 * 86400000).toISOString(),
   },
 ];
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function NotificationsPanel() {
-  const { isAuthenticated, setAuthModalOpen, markNotificationRead, markAllNotificationsRead } =
+  const { isAuthenticated, setAuthModalOpen, markNotificationRead, markAllNotificationsRead, unreadNotificationCount, markAllNotificationsReadAPI, fetchNotifications } =
     useAppStore();
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
 
@@ -163,6 +198,17 @@ export function NotificationsPanel() {
       : notifications.filter((n) => !n.isRead);
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  const handleMarkAllRead = () => {
+    markAllNotificationsRead();
+    // Try API call if available
+    if (markAllNotificationsReadAPI) {
+      markAllNotificationsReadAPI();
+    }
+    if (fetchNotifications) {
+      fetchNotifications();
+    }
+  };
 
   // ─── Auth Guard ──────────────────────────────────────────────────────────
   if (!isAuthenticated) {
@@ -197,18 +243,20 @@ export function NotificationsPanel() {
             <Badge className="rounded-full px-2 text-xs">{unreadCount} جدید</Badge>
           )}
         </div>
-        {unreadCount > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={markAllNotificationsRead}
-            className="h-11 gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-            title="خواندن همه اعلان‌ها"
-          >
-            <CheckCheck className="h-4 w-4" />
-            خواندن همه
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          {unreadCount > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleMarkAllRead}
+              className="h-11 gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+              title="خواندن همه اعلان‌ها"
+            >
+              <CheckCheck className="h-4 w-4" />
+              خواندن همه
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Filter Tabs */}
@@ -244,6 +292,7 @@ export function NotificationsPanel() {
             {filteredNotifications.map((notification) => {
               const IconComponent = getNotificationIcon(notification.type);
               const iconColorClass = getNotificationIconColor(notification.type);
+              const typeLabel = getNotificationTypeLabel(notification.type);
 
               return (
                 <div
@@ -262,28 +311,46 @@ export function NotificationsPanel() {
                   role="listitem"
                   aria-label={`${notification.title}: ${notification.message}${!notification.isRead ? '، خوانده نشده' : ''}`}
                 >
-                  {/* Icon */}
-                  <div
-                    className={cn(
-                      'flex h-11 w-11 shrink-0 items-center justify-center rounded-full',
-                      iconColorClass
+                  {/* Icon with type badge */}
+                  <div className="relative">
+                    <div
+                      className={cn(
+                        'flex h-11 w-11 shrink-0 items-center justify-center rounded-full',
+                        iconColorClass
+                      )}
+                    >
+                      <IconComponent className="h-5 w-5" />
+                    </div>
+                    {!notification.isRead && (
+                      <span className="absolute -top-0.5 -end-0.5 flex size-3">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                        <span className="relative inline-flex size-3 rounded-full bg-primary" />
+                      </span>
                     )}
-                  >
-                    <IconComponent className="h-5 w-5" />
                   </div>
 
                   {/* Content */}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
-                      <h4 className="text-sm font-semibold leading-relaxed">
-                        {notification.title}
-                      </h4>
-                      <span className="shrink-0 text-[11px] text-muted-foreground leading-relaxed">
-                        {notification.createdAt}
-                      </span>
+                      <div className="min-w-0 flex items-center gap-2">
+                        <h4 className="text-sm font-semibold leading-relaxed truncate">
+                          {notification.title}
+                        </h4>
+                        {typeLabel && (
+                          <span className={cn(
+                            'shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-semibold',
+                            iconColorClass,
+                          )}>
+                            {typeLabel}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <p className="mt-0.5 text-sm text-muted-foreground leading-relaxed">
                       {notification.message}
+                    </p>
+                    <p className="mt-1.5 text-[11px] text-muted-foreground/60">
+                      {persianTimeAgo(notification.createdAt)}
                     </p>
                   </div>
 
@@ -310,6 +377,25 @@ export function NotificationsPanel() {
           </div>
         )}
       </ScrollArea>
+
+      {/* Footer: View All + Settings */}
+      <div className="flex items-center justify-between border-t px-5 py-3">
+        <button
+          type="button"
+          className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          مشاهده همه
+          <ArrowLeft className="size-3.5" />
+        </button>
+        <button
+          type="button"
+          className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Settings className="size-3.5" />
+          تنظیمات
+        </button>
+      </div>
+
       <noscript>
         <div className="sr-only">
           <h1>اعلان‌ها - نیاز فایندر</h1>

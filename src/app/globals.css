@@ -1099,3 +1099,215 @@
 .back-to-top-progress circle {
   transition: stroke-dashoffset 0.15s ease;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   TASK 1A: Testimonial Carousel
+   ══════════════════════════════════════════════════════════════ */
+@keyframes testimonialScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.testimonial-track {
+  animation: testimonialScroll 40s linear infinite;
+}
+.testimonial-carousel-container:hover .testimonial-track {
+  animation-play-state: paused;
+}
+
+/* Testimonial card gradient border on hover */
+.testimonial-card-hover-border {
+  position: relative;
+}
+.testimonial-card-hover-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, transparent 0%, transparent 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: background 0.4s ease;
+  z-index: 1;
+}
+.testimonial-card-hover-border:hover::before {
+  background: linear-gradient(135deg, oklch(0.51 0.12 165 / 0.5), oklch(0.72 0.19 155 / 0.3), oklch(0.51 0.12 130 / 0.5), oklch(0.72 0.19 155 / 0.2));
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TASK 1B: FAQ Section Glassmorphism
+   ══════════════════════════════════════════════════════════════ */
+.faq-pattern-bg {
+  background-image:
+    radial-gradient(oklch(0.51 0.12 165 / 0.06) 1px, transparent 1px),
+    radial-gradient(oklch(0.51 0.12 165 / 0.04) 1px, transparent 1px);
+  background-size: 24px 24px, 16px 16px;
+  background-position: 0 0, 12px 12px;
+}
+.dark .faq-pattern-bg {
+  background-image:
+    radial-gradient(oklch(0.65 0.15 165 / 0.08) 1px, transparent 1px),
+    radial-gradient(oklch(0.65 0.15 165 / 0.05) 1px, transparent 1px);
+}
+
+.faq-glass-item {
+  background: oklch(0.98 0.002 120 / 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid oklch(0.51 0.12 165 / 0.08);
+  transition: all 0.3s ease;
+}
+.dark .faq-glass-item {
+  background: oklch(0.18 0.007 160 / 0.6);
+  border-color: oklch(0.65 0.15 165 / 0.1);
+}
+.faq-glass-item:hover {
+  border-color: oklch(0.51 0.12 165 / 0.2);
+  box-shadow: 0 4px 16px oklch(0.51 0.12 165 / 0.06);
+}
+.dark .faq-glass-item:hover {
+  border-color: oklch(0.65 0.15 165 / 0.25);
+  box-shadow: 0 4px 16px oklch(0 0 0 / 0.2);
+}
+
+/* FAQ expanded gradient left line */
+.faq-expanded-line {
+  position: relative;
+}
+.faq-expanded-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: linear-gradient(to bottom, oklch(0.51 0.12 165), oklch(0.72 0.19 155), oklch(0.51 0.12 130));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.faq-expanded-line[data-state="open"]::after {
+  opacity: 1;
+}
+
+/* FAQ answer entry animation */
+.faq-answer-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  opacity: 0;
+}
+.faq-answer-content.faq-answer-open {
+  max-height: 500px;
+  opacity: 1;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TASK 1C: Mobile Bottom Nav Glassmorphism
+   ══════════════════════════════════════════════════════════════ */
+.mobile-nav-glass {
+  background: oklch(0.98 0.002 120 / 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+.dark .mobile-nav-glass {
+  background: oklch(0.14 0.005 160 / 0.8);
+}
+
+.mobile-nav-gradient-top {
+  position: relative;
+}
+.mobile-nav-gradient-top::before {
+  content: '';
+  position: absolute;
+  inset-x: 16px;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.51 0.12 165 / 0.15) 15%,
+    oklch(0.72 0.19 155 / 0.4) 50%,
+    oklch(0.51 0.12 165 / 0.15) 85%,
+    transparent 100%
+  );
+  border-radius: 0 0 4px 4px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TASK 1D: Header Enhancements
+   ══════════════════════════════════════════════════════════════ */
+.header-glass {
+  background: oklch(0.99 0.001 120 / 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  transition: all 0.3s ease;
+}
+.dark .header-glass {
+  background: oklch(0.14 0.005 160 / 0.85);
+}
+.header-transparent {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.header-emerald-bottom-line {
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.51 0.12 165 / 0.2) 20%,
+    oklch(0.72 0.19 155 / 0.6) 50%,
+    oklch(0.51 0.12 165 / 0.2) 80%,
+    transparent 100%
+  );
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+.header-scrolled .header-emerald-bottom-line {
+  opacity: 1;
+}
+
+.search-glow-focus {
+  transition: all 0.25s ease;
+}
+.search-glow-focus:focus-within {
+  box-shadow: 0 0 0 3px oklch(0.51 0.12 165 / 0.15), 0 0 20px oklch(0.51 0.12 165 / 0.08);
+  border-color: oklch(0.51 0.12 165 / 0.4) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TASK 1E: Request Card Description Expand
+   ══════════════════════════════════════════════════════════════ */
+.desc-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.desc-expand-transition {
+  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TASK 2D: Notification Badge Enhancements
+   ══════════════════════════════════════════════════════════════ */
+.notification-badge-glow {
+  box-shadow: 0 0 0 2px oklch(0.99 0.001 120), 0 0 0 3px oklch(0.577 0.245 27.325);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-track {
+    animation: none !important;
+  }
+  .faq-answer-content {
+    transition: none !important;
+  }
+  .desc-expand-transition {
+    transition: none !important;
+  }
+}

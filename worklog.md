@@ -1540,3 +1540,160 @@ Stage Summary:
 3. **Implement specialist profile page** — reviews, portfolio, skills
 4. **Add more seed data** — create 50+ realistic Persian requests
 5. **Performance audit** — Lighthouse, bundle analysis
+
+---
+Task ID: 150204-round2
+Agent: Main + 2 full-stack-developer sub-agents
+Task: QA, data enrichment, API fixes, styling improvements, new features
+
+Work Log:
+
+**1. QA Testing (agent-browser)**
+- Server restarted on port 3000
+- Homepage fully functional: 12 request cards, all 10 sections rendering
+- No runtime errors, no console errors
+- Featured Businesses showing real data from API
+- All navigation, forms, and interactive elements working
+
+**2. Data Enrichment (seed-extra.ts)**
+- Created /home/z/my-project/prisma/seed-extra.ts
+- Added 35 realistic Persian service requests across 8 categories
+  - Cities: تهران, اصفهان, شیراز, تبریز, مشهد, کرج, اهواز, کرمانشاه, قم, رشت
+  - Budgets: 500,000 to 100,000,000 تومان
+  - Priorities: NORMAL (60%), HIGH (25%), URGENT (10%), LOW (5%)
+  - Realistic Persian titles and descriptions
+- Added 22 specialist/business users with Persian names, bios, skills
+- Added 79 reviews linking specialists to computed ratings (4.0-5.0)
+- Added 22 wallets and ~50 user-skill connections
+- **Final totals: 122 requests (19 OPEN), 28 specialists, 81 reviews**
+
+**3. API Bug Fix — Specialists Rating**
+- File: /home/z/my-project/src/app/api/specialists/route.ts
+- Bug: Computed ratings from `givenReviews` (reviews specialist wrote) instead of `reviews` (reviews written about specialist)
+- Fix: Changed Prisma include and computation to use correct `reviews` relation
+- Impact: Featured Businesses now shows correct specialist ratings
+
+**4. FeaturedBusinesses.tsx — Wired to Real API**
+- Replaced hardcoded data with live API fetch from `/api/specialists?limit=6&sort=rating`
+- Added SpecialistItem interface mapping API fields
+- Added loading skeletons with pulse animation
+- Added error state with fallback to static data
+- Avatar gradients computed from index
+- Specialty display from skills[0].name
+- Added keyboard navigation for accessibility
+
+**5. Styling Improvements**
+
+**5a. HomepageTestimonials.tsx**
+- Horizontal auto-scrolling carousel (CSS translateX, 40s loop)
+- Gradient border on hover
+- Verified customer badge (ShieldCheck icon)
+- Shadow increase on hover
+- Carousel pauses on hover
+- Respects prefers-reduced-motion
+
+**5b. FAQSection.tsx**
+- Glassmorphism styling on accordion items (backdrop-blur, semi-transparent)
+- Emerald gradient line on expanded items
+- Smooth max-height + opacity transition for answer content
+- Subtle dot pattern background
+
+**5c. MobileBottomNav.tsx**
+- Glassmorphism background (backdrop-blur-xl)
+- Gradient top border
+- Improved badge styling with ring
+
+**5d. Header.tsx**
+- Enhanced glassmorphism (backdrop-blur-xl + saturate)
+- Emerald gradient bottom line (fades in on scroll)
+- Search glow effect on focus
+- Scroll-based opacity transition (transparent → solid)
+
+**5e. NeedsHomepage.tsx Request Cards**
+- Show more/less toggle for descriptions > 100 chars
+- Line-clamp-2 when collapsed
+- "بیشتر..." / "کمتر..." toggle buttons
+
+**6. New Features**
+
+**6a. RequestDetail.tsx — Proposal Submission**
+- Full proposal form: textarea (50 char min), budget, delivery time
+- Loading state on submit
+- Persian validation messages
+- Proposal list with specialist cards
+- "Accept Proposal" button for request owner
+- Glassmorphism styling
+
+**6b. LoginForm.tsx — Enhanced Login**
+- Remember me checkbox (localStorage persistence)
+- Forgot password link (shows toast)
+- Social login buttons (Google, GitHub) — visual only with toast
+- Password visibility toggle (Eye/EyeOff icons)
+- Improved glassmorphism styling
+
+**6c. NeedsHomepage.tsx — Search Enhancement**
+- Debounced search from API (300ms)
+- Search suggestions dropdown
+- Recent searches from localStorage (max 5, clearable)
+- Clear search button (X icon)
+- Real-time result count
+
+**6d. NotificationsPanel.tsx — Enhanced Notifications**
+- "Mark all as read" button with API call
+- Different notification type icons (FileText, MessageSquare, Star, Wallet, etc.)
+- Type badge labels (پیشنهاد, پیام, نظر, پرداخت, پروژه, تذکر, سیستم)
+- Persian time ago helper
+- View all + Settings links
+
+**7. CSS Additions**
+- New animation classes: testimonial-track, testimonial-card-hover-border, faq-glass-item, faq-expanded-line, faq-answer-content, faq-pattern-bg, mobile-nav-glass, mobile-nav-gradient-top, header-glass, header-emerald-bottom-line, search-glow-focus
+- All animations respect prefers-reduced-motion
+
+Stage Summary:
+- 19 OPEN requests now showing (up from 6) with diverse Persian content
+- 28 specialists with computed ratings from 81 reviews
+- FeaturedBusinesses now uses real API data (not hardcoded)
+- Specialists API rating bug fixed (correct relation used)
+- 5 styling improvements across major components
+- 4 new features (proposal form, login enhancements, search, notifications)
+- Lint: 0 errors, 2 pre-existing warnings (third-party library incompatibilities)
+- Screenshots saved: qa-current.png, qa-final-rich-data.png, qa-scrolled-sections.png
+
+## Current Project Status Assessment
+- **Server**: Compiles clean, runs on port 3000
+- **Database**: 122 total requests (19 OPEN), 28 specialists, 81 reviews
+- **APIs**: 16+ routes functional, specialists rating bug fixed
+- **Lint**: 0 errors, 2 warnings (pre-existing)
+- **Homepage**: Rich content with 12 cards per page, 10 sections, all interactive
+- **Featured Businesses**: Live API data with real specialist names/ratings
+- **UX**: Search with suggestions, scroll progress, glassmorphism throughout
+
+## Completed Modifications
+1. Seed data: 35 requests + 22 specialists + 79 reviews
+2. API fix: specialists rating computation
+3. FeaturedBusinesses: static → live API
+4. Testimonials: carousel with auto-scroll
+5. FAQ: glassmorphism + animations
+6. Mobile nav: glassmorphism + gradient border
+7. Header: scroll-based glassmorphism + search glow
+8. Request cards: description expand/collapse
+9. Request detail: proposal submission form
+10. Login: social buttons, password toggle, remember me
+11. Search: suggestions, recent searches, clear button
+12. Notifications: type icons, mark all read, time ago
+
+## Unresolved Issues / Risks
+1. Sandbox kills dev server between tool calls (infrastructure, not fixable)
+2. agent-browser eval timing: some DOM queries fail due to hydration delay (cosmetic)
+3. Social login buttons are visual only (no OAuth integration yet)
+4. No WebSocket real-time updates (still using 15s polling)
+
+## Priority Recommendations for Next Phase
+1. Implement real OAuth social login (Google, GitHub)
+2. Add WebSocket real-time for notifications and chat
+3. Create request creation flow (full form with category selection, budget, etc.)
+4. Add specialist detail page with portfolio gallery
+5. Implement messaging/chat system between users
+6. Add image upload for requests and portfolios
+7. Performance audit: code splitting with React.lazy
+8. Add dark mode persistence and smooth transition

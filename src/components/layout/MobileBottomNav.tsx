@@ -86,9 +86,12 @@ export function MobileBottomNav() {
       aria-label="ناوبری پایین صفحه"
     >
       <div className="mx-auto max-w-lg">
-        <div className="relative flex items-center justify-around gap-1 rounded-t-2xl border border-b-0 border-border/30 bg-background/80 px-1 pt-1 pb-[max(8px,env(safe-area-inset-bottom))] backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:bg-background/60">
-          {/* Gradient top border accent */}
-          <div className="gradient-line absolute inset-x-3 top-0" />
+        <div className={cn(
+          'mobile-nav-glass mobile-nav-gradient-top',
+          'relative flex items-center justify-around gap-1 rounded-t-2xl',
+          'px-1 pt-1 pb-[max(8px,env(safe-area-inset-bottom))]',
+          'shadow-[0_-4px_20px_rgba(0,0,0,0.05)]',
+        )}>
           {TABS.map((tab) => {
             const isActive = currentView === tab.view;
             const Icon = tab.icon;
@@ -106,7 +109,7 @@ export function MobileBottomNav() {
                   'min-h-[44px] touch-ripple',
                   isActive
                     ? 'text-primary bg-primary/10 scale-[1.04]'
-                    : 'text-muted-foreground hover:bg-primary/5 hover:text-foreground active:scale-95 active:bg-accent/50'
+                    : 'text-muted-foreground hover:bg-primary/5 hover:text-foreground active:scale-95 active:bg-accent/50',
                 )}
                 aria-label={tab.title}
                 aria-current={isActive ? 'page' : undefined}
@@ -118,17 +121,6 @@ export function MobileBottomNav() {
                     isActive
                       ? 'w-6 h-[3px] bg-primary shadow-[0_0_8px_oklch(0.51_0.12_165/0.5)] scale-100 opacity-100'
                       : 'w-1.5 h-1.5 scale-0 opacity-0'
-                  )}
-                  aria-hidden="true"
-                />
-
-                {/* Active bottom indicator */}
-                <span
-                  className={cn(
-                    'absolute inset-x-2 bottom-0 rounded-full transition-all duration-300 ease-out',
-                    isActive
-                      ? 'h-[3px] bg-primary shadow-[0_0_8px_oklch(0.51_0.12_165/0.4)]'
-                      : 'h-0 bg-transparent'
                   )}
                   aria-hidden="true"
                 />
@@ -147,7 +139,15 @@ export function MobileBottomNav() {
                   {/* Unread badge for messages */}
                   {showBadge && (
                     <span
-                      className="animate-notification-pulse absolute -top-1.5 -left-1.5 flex size-4 min-w-[16px] items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-orange-500 px-0.5 text-[9px] font-bold leading-none text-white shadow-sm shadow-red-500/30"
+                      className={cn(
+                        'animate-notification-pulse absolute -top-1.5 -left-1.5',
+                        'flex size-5 min-w-[20px] items-center justify-center',
+                        'rounded-full px-0.5',
+                        'bg-gradient-to-br from-red-500 to-orange-500',
+                        'text-[9px] font-bold leading-none text-white',
+                        'shadow-sm shadow-red-500/30',
+                        'ring-2 ring-background',
+                      )}
                       aria-label={`${unreadMessages} پیام خوانده نشده`}
                     >
                       {unreadMessages > 99 ? '99+' : unreadMessages}

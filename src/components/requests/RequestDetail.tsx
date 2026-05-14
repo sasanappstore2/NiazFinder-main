@@ -17,17 +17,22 @@ import {
   ChevronDown,
   CheckCircle2,
   Flag,
+  Loader2,
+  AlertCircle,
+  Briefcase,
 } from 'lucide-react';
 import { StarRating } from '@/components/shared/StarRating';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { useAppStore } from '@/lib/store';
 import { RequestShare } from '@/components/shared/RequestShare';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
 import { ReportUser } from '@/components/shared/ReportUser';
+import { cn } from '@/lib/utils';
 import {
   MOCK_REQUESTS,
   formatPrice,
@@ -90,7 +95,7 @@ function getStatusConfig(status: string) {
   return configs[status] || 'bg-muted text-muted-foreground border-border';
 }
 
-// ─── Priority config ───────────────────────────────────
+// ─── Mock proposals generator ───────────────────────────
 function generateMockProposals(): Proposal[] {
   const specialists = MOCK_SPECIALISTS.slice(0, 4);
   return specialists.map((s, i) => ({
@@ -121,14 +126,170 @@ function generateMockProposals(): Proposal[] {
   }));
 }
 
+// ─── Proposal Submission Form ──────────────────────────
+function ProposalForm({ onRequestSubmitted }: { onRequestSubmitted: () => void }) {
+  const [description, setDescription] = useState('');
+  const [budget, setBudget] = useState('');
+  const [deliveryDays, setDeliveryDays] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{ description?: string; budget?: string; delivery?: string }>({});
+
+  const validate = (): boolean => {
+    const newErrors: typeof errors = {};
+    if (description.trim().length < 50) {
+      newErrors.description = 'توضیحات پیشنهاد باید حداقل ۵۰ کاراکتر باشد';
+    }
+    if (!budget || Number(budget) <= 0) {
+      newErrors.budget = 'لطفاً مبلغ معتبری وارد کنید';
+    }
+    if (!deliveryDays || Number(deliveryDays) <= 0) {
+      newErrors.delivery = 'لطفاً زمان تحویل معتبری وارد کنید';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    setIsSubmitting(true);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setIsSubmitting(false);
+    setDescription('');
+    setBudget('');
+    setDeliveryDays('');
+    setErrors({});
+    onRequestSubmitted();
+  };
+
+  return (
+    <Card className="border-emerald-200/60 bg-white/50 dark:bg-card/50 backdrop-blur-md dark:border-emerald-800/60 shadow-lg shadow-emerald-500/[0.04]">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base flex items-center gap-2">
+          <Send className="size-5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+          ارسال پیشنهاد
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Description */}
+          <div>
+            <label htmlFor="proposal-desc" className="mb-1.5 block text-sm font-medium">
+              توضیحات پیشنهاد <span className="text-destructive">*</span>
+            </label>
+            <Textarea
+              id="proposal-desc"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="توضیحات پیشنهاد خود را بنویسید... (حداقل ۵۰ کاراکتر)"
+              rows={4}
+              className={cn(
+                'bg-card/50 backdrop-blur-sm resize-none',
+                errors.description && 'border-destructive focus-visible:ring-destructive/30',
+              )}
+            />
+            <div className="flex items-center justify-between mt-1">
+              {errors.description ? (
+                <span className="flex items-center gap-1 text-xs text-destructive">
+                  <AlertCircle className="size-3" aria-hidden="true" />
+                  {errors.description}
+                </span>
+              ) : (
+                <span />
+              )}
+              <span className={cn(
+                'text-xs tabular-nums',
+                description.length < 50 ? 'text-muted-foreground/50' : 'text-emerald-600 dark:text-emerald-400',
+              )}>
+                {description.length}/۵۰
+              </span>
+            </div>
+          </div>
+
+          {/* Budget & Delivery Time */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="proposal-budget" className="mb-1.5 block text-sm font-medium">
+                مبلغ (تومان) <span className="text-destructive">*</span>
+              </label>
+              <Input
+                id="proposal-budget"
+                type="number"
+                dir="ltr"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                placeholder="مثلاً 25000000"
+                className={cn(
+                  'bg-card/50 backdrop-blur-sm text-left',
+                  errors.budget && 'border-destructive focus-visible:ring-destructive/30',
+                )}
+              />
+              {errors.budget && (
+                <span className="mt-1 flex items-center gap-1 text-xs text-destructive">
+                  <AlertCircle className="size-3" aria-hidden="true" />
+                  {errors.budget}
+                </span>
+              )}
+            </div>
+            <div>
+              <label htmlFor="proposal-delivery" className="mb-1.5 block text-sm font-medium">
+                زمان تحویل (روز) <span className="text-destructive">*</span>
+              </label>
+              <Input
+                id="proposal-delivery"
+                type="number"
+                dir="ltr"
+                value={deliveryDays}
+                onChange={(e) => setDeliveryDays(e.target.value)}
+                placeholder="مثلاً ۳۰"
+                className={cn(
+                  'bg-card/50 backdrop-blur-sm text-left',
+                  errors.delivery && 'border-destructive focus-visible:ring-destructive/30',
+                )}
+              />
+              {errors.delivery && (
+                <span className="mt-1 flex items-center gap-1 text-xs text-destructive">
+                  <AlertCircle className="size-3" aria-hidden="true" />
+                  {errors.delivery}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Submit */}
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full gap-2 rounded-xl"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                در حال ارسال...
+              </>
+            ) : (
+              <>
+                <Send className="size-4" aria-hidden="true" />
+                ارسال پیشنهاد
+              </>
+            )}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
 // ─── Proposal Card ────────────────────────────────────
-function ProposalCard({ proposal, onSelect }: { proposal: Proposal; onSelect: () => void }) {
+function ProposalCard({ proposal, onSelect, isOwner }: { proposal: Proposal; onSelect: () => void; isOwner?: boolean }) {
   const fullName = `${proposal.user.firstName} ${proposal.user.lastName}`;
   const initials = `${proposal.user.firstName.charAt(0)}${proposal.user.lastName.charAt(0)}`;
   const avatarBg = getAvatarBg(fullName);
 
   return (
-    <Card className="border-border/50 bg-card transition-all duration-300 hover:border-emerald-300/60 dark:hover:border-emerald-700/60 hover:shadow-lg hover:shadow-emerald-500/[0.04]">
+    <Card className="border-border/50 bg-card/60 backdrop-blur-sm transition-all duration-300 hover:border-emerald-300/60 dark:hover:border-emerald-700/60 hover:shadow-lg hover:shadow-emerald-500/[0.04]">
       <CardContent className="p-5 pb-6">
         {/* Header */}
         <div className="mb-4 flex items-start justify-between gap-3">
@@ -156,7 +317,7 @@ function ProposalCard({ proposal, onSelect }: { proposal: Proposal; onSelect: ()
 
         {/* Message */}
         <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-          {proposal.message}
+          {proposal.message.length > 120 ? proposal.message.slice(0, 120) + '...' : proposal.message}
         </p>
 
         {/* Stats row */}
@@ -183,10 +344,12 @@ function ProposalCard({ proposal, onSelect }: { proposal: Proposal; onSelect: ()
           <span className="text-xs text-muted-foreground">
             {proposal.user.projectCount.toLocaleString('fa-IR')} پروژه انجام شده
           </span>
-          <Button size="sm" onClick={onSelect} className="rounded-lg gap-1.5" aria-label={`انتخاب پیشنهاد ${fullName}`} title={`انتخاب پیشنهاد ${fullName}`}>
-            <CheckCircle2 className="size-4" aria-hidden="true" />
-            انتخاب
-          </Button>
+          {isOwner && (
+            <Button size="sm" onClick={onSelect} className="rounded-lg gap-1.5" aria-label={`انتخاب پیشنهاد ${fullName}`} title={`انتخاب پیشنهاد ${fullName}`}>
+              <CheckCircle2 className="size-4" aria-hidden="true" />
+              انتخاب پیشنهاد
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
@@ -220,6 +383,7 @@ export function RequestDetail() {
   const proposals = useMemo(() => generateMockProposals(), []);
   const [proposalSort, setProposalSort] = useState<'newest' | 'price_low' | 'price_high'>('newest');
   const [reportOpen, setReportOpen] = useState(false);
+  const [showProposalForm, setShowProposalForm] = useState(false);
 
   const sortedProposals = useMemo(() => {
     const sorted = [...proposals];
@@ -244,6 +408,10 @@ export function RequestDetail() {
   const authorName = `${request.user.firstName} ${request.user.lastName}`;
   const authorInitials = `${request.user.firstName.charAt(0)}${request.user.lastName.charAt(0)}`;
   const authorAvatarBg = getAvatarBg(authorName);
+
+  const handleProposalSubmitted = () => {
+    setShowProposalForm(false);
+  };
 
   return (
     <div className="min-h-screen bg-muted/20" dir="rtl" itemScope itemType="https://schema.org/Service">
@@ -283,7 +451,7 @@ export function RequestDetail() {
                   {request.title}
                 </h1>
                 <div className="flex items-center gap-1 shrink-0 mt-1">
-                  <BookmarkButton id={request.id} type="request" size="sm" />
+                  <BookmarkButton itemId={request.id} itemType="request" size="sm" />
                   <RequestShare requestTitle={request.title} requestId={request.id} />
                   <Button
                     variant="ghost"
@@ -421,11 +589,17 @@ export function RequestDetail() {
                       key={proposal.id}
                       proposal={proposal}
                       onSelect={() => {}}
+                      isOwner={true}
                     />
                   ))}
                 </CardContent>
               </Card>
             </div>
+
+            {/* Proposal Submission Form (inline) */}
+            {showProposalForm && (
+              <ProposalForm onRequestSubmitted={handleProposalSubmitted} />
+            )}
           </div>
 
           {/* Sidebar */}
@@ -466,8 +640,13 @@ export function RequestDetail() {
                   <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
                     پیشنهاد خود را ارسال کنید و شانس خود را برای انجام این پروژه افزایش دهید.
                   </p>
-                  <Button onClick={() => navigateTo('submit-proposal', { id: request.id })} className="w-full gap-2 rounded-xl" data-href="/submit-proposal" aria-label="ارسال پیشنهاد برای این نیاز" title="ارسال پیشنهاد برای انجام این پروژه">
-                    <MessageSquare className="size-4" aria-hidden="true" />
+                  <Button
+                    onClick={() => setShowProposalForm(true)}
+                    className="w-full gap-2 rounded-xl"
+                    aria-label="ارسال پیشنهاد برای این نیاز"
+                    title="ارسال پیشنهاد برای انجام این پروژه"
+                  >
+                    <Briefcase className="size-4" aria-hidden="true" />
                     ارسال پیشنهاد
                   </Button>
                 </CardContent>

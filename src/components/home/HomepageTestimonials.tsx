@@ -1,6 +1,6 @@
 'use client';
 
-import { Quote } from 'lucide-react';
+import { Quote, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { StarRating } from '@/components/shared/StarRating';
 
@@ -55,13 +55,14 @@ const TESTIMONIALS = [
   },
 ];
 
-
-
 export function HomepageTestimonials() {
+  // Duplicate testimonials for infinite scroll illusion
+  const allTestimonials = [...TESTIMONIALS, ...TESTIMONIALS];
+
   return (
     <section
       dir="rtl"
-      className="section-padding bg-background"
+      className="section-padding bg-background overflow-hidden"
       aria-label="نظرات کاربران"
       itemScope
       itemType="https://schema.org/ItemList"
@@ -79,31 +80,46 @@ export function HomepageTestimonials() {
             تجربه واقعی کاربران نیاز فایندر
           </p>
         </div>
+      </div>
 
-        {/* Testimonials Grid */}
-        <div className="stagger-children grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {TESTIMONIALS.map((t) => {
+      {/* Auto-scrolling Carousel */}
+      <div className="testimonial-carousel-container group relative">
+        {/* Fade edges */}
+        <div className="testimonial-fade-edge-start pointer-events-none absolute inset-y-0 start-0 z-10 w-24 bg-gradient-to-l from-transparent to-background" aria-hidden="true" />
+        <div className="testimonial-fade-edge-end pointer-events-none absolute inset-y-0 end-0 z-10 w-24 bg-gradient-to-r from-transparent to-background" aria-hidden="true" />
+
+        <div className="testimonial-track flex gap-5 w-max">
+          {allTestimonials.map((t, i) => {
             const initials = `${t.name.charAt(0)}${t.name.split(' ')[1]?.charAt(0) || ''}`;
             return (
               <div
-                key={t.id}
+                key={`${t.id}-${i}`}
                 className={cn(
-                  'group relative rounded-2xl border p-5',
+                  'group/card relative w-[340px] shrink-0 rounded-2xl p-5',
                   'bg-white/60 dark:bg-card/50 backdrop-blur-md',
-                  'border-border/40 dark:border-border/20',
+                  'border border-border/40 dark:border-border/20',
                   'shadow-sm shadow-black/[0.03] dark:shadow-black/10',
                   'transition-all duration-300',
-                  'hover:shadow-md hover:shadow-emerald-900/[0.06] dark:hover:shadow-black/20',
+                  'hover:shadow-xl hover:shadow-emerald-900/[0.08] dark:hover:shadow-black/20',
                   'hover:-translate-y-1 hover:bg-white/80 dark:hover:bg-card/70',
+                  'testimonial-card-hover-border',
                 )}
                 itemScope
                 itemType="https://schema.org/Review"
               >
                 {/* Quote icon — decorative */}
                 <Quote
-                  className="absolute top-4 start-4 size-8 text-emerald-200/60 dark:text-emerald-800/40 group-hover:text-emerald-300/80 dark:group-hover:text-emerald-700/50 transition-colors duration-300"
+                  className="absolute top-4 start-4 size-8 text-emerald-200/60 dark:text-emerald-800/40 group-hover/card:text-emerald-300/80 dark:group-hover/card:text-emerald-700/50 transition-colors duration-300"
                   aria-hidden="true"
                 />
+
+                {/* Verified Customer Badge */}
+                <div className="mb-3 flex items-center gap-1.5">
+                  <ShieldCheck className="size-4 text-emerald-500" aria-hidden="true" />
+                  <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                    مشتری تأیید شده
+                  </span>
+                </div>
 
                 {/* Rating */}
                 <div className="mb-4 flex items-center gap-2">
