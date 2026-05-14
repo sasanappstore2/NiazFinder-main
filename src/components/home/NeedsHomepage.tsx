@@ -18,8 +18,8 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { AnimatePresence, motion } from 'framer-motion';
 import { QuickViewPopover, useQuickView } from '@/components/shared/QuickView';
 import { HomepageHowItWorks } from '@/components/home/HomepageHowItWorks';
-import { HomepageTestimonials } from '@/components/home/HomepageTestimonials';
 import { FeaturedBusinesses } from '@/components/home/FeaturedBusinesses';
+import { HomepageTestimonials } from '@/components/home/HomepageTestimonials';
 import { HomepageFAQ } from '@/components/home/HomepageFAQ';
 import { AnimatedCounter } from '@/components/shared/AnimatedCounter';
 
@@ -457,7 +457,7 @@ function EmptyState() {
 async function fetchRequestsAPI(params: Record<string, string>): Promise<ServiceRequest[]> {
   try {
     const query = '?' + new URLSearchParams(params).toString();
-    const res = await fetch(`/api/requests${query}`, { cache: 'no-store' });
+    const res = await fetch(`/api/requests${query}`);
     if (!res.ok) return [];
     const json = await res.json();
     const raw = json.data || json.requests || [];
@@ -492,7 +492,8 @@ async function fetchRequestsAPI(params: Record<string, string>): Promise<Service
       createdAt: String(r.createdAt),
       updatedAt: String(r.updatedAt),
     }));
-  } catch {
+  } catch (err) {
+    console.error('[NeedsHomepage] fetchRequestsAPI error:', err);
     return [];
   }
 }
@@ -880,6 +881,9 @@ export function NeedsHomepage() {
         )}
       </div>
 
+      {/* ═══ Featured Businesses Section ═══ */}
+      <FeaturedBusinesses />
+
       {/* ═══ How It Works Section ═══ */}
       <HomepageHowItWorks />
 
@@ -910,9 +914,6 @@ export function NeedsHomepage() {
           </Button>
         </div>
       </section>
-
-      {/* ═══ Featured Businesses Section ═══ */}
-      <FeaturedBusinesses />
 
       {/* ═══ FAQ Section ═══ */}
       <HomepageFAQ />

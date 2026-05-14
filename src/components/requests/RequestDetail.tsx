@@ -26,6 +26,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAppStore } from '@/lib/store';
 import { RequestShare } from '@/components/shared/RequestShare';
+import { BookmarkButton } from '@/components/shared/BookmarkButton';
 import { ReportUser } from '@/components/shared/ReportUser';
 import {
   MOCK_REQUESTS,
@@ -282,6 +283,7 @@ export function RequestDetail() {
                   {request.title}
                 </h1>
                 <div className="flex items-center gap-1 shrink-0 mt-1">
+                  <BookmarkButton id={request.id} type="request" size="sm" />
                   <RequestShare requestTitle={request.title} requestId={request.id} />
                   <Button
                     variant="ghost"

@@ -304,7 +304,7 @@ export function Footer({ compact = false }: FooterProps) {
         </div>
       </div>
 
-      {/* Decorative gradient arc */
+      {/* Decorative gradient arc */}
       <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-emerald-50/40 to-transparent dark:from-emerald-950/20 pointer-events-none" aria-hidden="true" />
 
       {/* Main Footer */}

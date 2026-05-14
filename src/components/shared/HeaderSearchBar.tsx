@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { Search, X, TrendingUp, Clock, FolderOpen } from 'lucide-react';
+import { Search, X, TrendingUp, Clock, FolderOpen, ArrowUpDown, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 import type { LucideIcon } from 'lucide-react';
@@ -71,6 +72,34 @@ function addRecentSearch(query: string) {
   }
 }
 
+function clearRecentSearch(term: string) {
+  if (typeof window === 'undefined') return;
+  try {
+    const searches = getRecentSearches().filter((s) => s !== term);
+    localStorage.setItem('needfinder_recent_searches', JSON.stringify(searches));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+function clearAllRecentSearches() {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem('needfinder_recent_searches');
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+// ============ Flat list for keyboard navigation ============
+interface FlatItem {
+  type: 'recent' | 'category' | 'request' | 'popular';
+  id: string;
+  title: string;
+  data?: APISuggestion;
+  term?: string;
+}
+
 // ============ Header Search Bar Component ============
 export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
   const [query, setQuery] = useState('');
@@ -78,9 +107,50 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
   const [apiSuggestions, setApiSuggestions] = useState<APISuggestion[]>([]);
   const [apiCategories, setApiCategories] = useState<APISuggestion[]>([]);
   const [isApiLoading, setIsApiLoading] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const navigateTo = useAppStore((s) => s.navigateTo);
+
+  // Build flat navigation list
+  const flatItems: FlatItem[] = (() => {
+    const items: FlatItem[] = [];
+    const hasQuery = query.trim().length > 0;
+
+    if (!hasQuery) {
+      // Recent searches
+      recentSearches.forEach((term) => {
+        items.push({ type: 'recent', id: `recent-${term}`, title: term, term });
+      });
+    }
+
+    if (hasQuery) {
+      // Category suggestions
+      const catSuggestions = apiSuggestions.filter(s => s.type === 'category' || s.type === 'subcategory');
+      catSuggestions.slice(0, 4).forEach(s => {
+        items.push({ type: 'category', id: s.id, title: s.title, data: s });
+      });
+    }
+
+    if (hasQuery) {
+      // Request suggestions
+      const reqSuggestions = apiSuggestions.filter(s => s.type === 'request');
+      reqSuggestions.slice(0, 4).forEach(s => {
+        items.push({ type: 'request', id: s.id, title: s.title, data: s });
+      });
+    }
+
+    if (!hasQuery) {
+      // Popular categories
+      apiCategories.slice(0, 8).forEach(cat => {
+        items.push({ type: 'popular', id: cat.id, title: cat.title, data: cat });
+      });
+    }
+
+    return items;
+  })();
 
   // Fetch suggestions from API
   const fetchSuggestions = useCallback(async (q: string) => {
@@ -95,7 +165,6 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
       setApiSuggestions(json.suggestions || []);
       setApiCategories(json.categories || []);
     } catch {
-      // Fallback to demo data
       setApiSuggestions([]);
     } finally {
       setIsApiLoading(false);
@@ -116,26 +185,34 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
   // Fetch popular categories on mount
   useEffect(() => {
     fetchSuggestions('');
+     
   }, []);
+
+  // Refresh recent searches from localStorage when dropdown opens
+  useEffect(() => {
+    if (isExpanded) {
+      setRecentSearches(getRecentSearches());
+      setFocusedIndex(-1);
+    }
+  }, [isExpanded, query]);
 
   // Close on click outside
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsExpanded(false);
+        setFocusedIndex(-1);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const recentSearches = getRecentSearches();
-
   const showDropdown = isExpanded;
-  const hasQuery = query.trim().length > 0;
 
   const handleSelectSuggestion = (suggestion: APISuggestion) => {
     addRecentSearch(suggestion.title);
+    setRecentSearches(getRecentSearches());
     if (suggestion.type === 'category' || suggestion.type === 'subcategory') {
       navigateTo('browse-requests', { categoryId: suggestion.id.replace('cat-', '').replace('subcat-', '') });
     } else if (suggestion.type === 'request') {
@@ -151,40 +228,111 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
     setIsExpanded(false);
   };
 
+  const handleRecentClear = (e: React.MouseEvent, term: string) => {
+    e.stopPropagation();
+    clearRecentSearch(term);
+    setRecentSearches(getRecentSearches());
+  };
+
+  const handleClearAll = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    clearAllRecentSearches();
+    setRecentSearches([]);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && query.trim()) {
-      addRecentSearch(query.trim());
-      navigateTo('browse-requests', { search: query.trim() });
-      setIsExpanded(false);
+    if (!showDropdown) {
+      if (e.key === 'Enter' && query.trim()) {
+        addRecentSearch(query.trim());
+        navigateTo('browse-requests', { search: query.trim() });
+        setIsExpanded(false);
+      }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        setIsExpanded(true);
+        setRecentSearches(getRecentSearches());
+        return;
+      }
+      if (e.key === 'Escape') {
+        setIsExpanded(false);
+      }
+      return;
     }
-    if (e.key === 'Escape') {
-      setIsExpanded(false);
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusedIndex((prev) =>
+          prev < flatItems.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusedIndex((prev) =>
+          prev > 0 ? prev - 1 : flatItems.length - 1
+        );
+        break;
+      case 'Enter': {
+        e.preventDefault();
+        if (focusedIndex >= 0 && focusedIndex < flatItems.length) {
+          const item = flatItems[focusedIndex];
+          if (item.type === 'recent' && item.term) {
+            handleRecentClick(item.term);
+          } else if (item.data) {
+            handleSelectSuggestion(item.data);
+          } else if (item.type === 'popular' && item.data) {
+            handleSelectSuggestion(item.data);
+          }
+        } else if (query.trim()) {
+          addRecentSearch(query.trim());
+          navigateTo('browse-requests', { search: query.trim() });
+          setIsExpanded(false);
+        }
+        break;
+      }
+      case 'Escape':
+        setIsExpanded(false);
+        setFocusedIndex(-1);
+        inputRef.current?.blur();
+        break;
     }
   };
+
+  // Scroll focused item into view
+  useEffect(() => {
+    if (focusedIndex < 0) return;
+    const el = containerRef.current?.querySelector(`[data-index="${focusedIndex}"]`);
+    el?.scrollIntoView({ block: 'nearest' });
+  }, [focusedIndex]);
 
   return (
     <div ref={containerRef} className="relative w-full max-w-xl" dir="rtl">
       {/* Search input */}
       <div className="relative flex-1">
         <Input
+          ref={inputRef}
           type="text"
           placeholder="جستجو در خدمات و نیازها..."
           className={cn(
-            'h-10 w-full rounded-xl border-border/60 bg-muted/50 pe-10 ps-4 text-sm backdrop-blur-sm transition-all duration-300 ease-out',
-            'focus-visible:bg-background focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:shadow-[0_0_0_3px_oklch(0.51_0.12_165/0.08),0_0_20px_oklch(0.51_0.12_165/0.1)]',
+            'h-10 w-full rounded-xl border-border/60 bg-muted/50 pe-10 ps-4 text-sm backdrop-blur-sm transition-all duration-200',
+            'focus-visible:bg-background focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:shadow-[0_0_12px_oklch(0.51_0.12_165/0.15)]',
             showDropdown && 'rounded-b-none border-b-0'
           )}
           onChange={(e) => {
             setQuery(e.target.value);
             setIsExpanded(true);
+            setFocusedIndex(-1);
           }}
-          onFocus={() => setIsExpanded(true)}
+          onFocus={() => {
+            setIsExpanded(true);
+            setRecentSearches(getRecentSearches());
+          }}
           onKeyDown={handleKeyDown}
           value={query}
           role="combobox"
           aria-expanded={showDropdown}
           aria-label="جستجو"
           aria-autocomplete="list"
+          aria-activedescendant={focusedIndex >= 0 ? `search-option-${focusedIndex}` : undefined}
         />
         {query ? (
           <button
@@ -192,6 +340,8 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
             onClick={() => {
               setQuery('');
               setIsExpanded(true);
+              setFocusedIndex(-1);
+              inputRef.current?.focus();
             }}
             className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             aria-label="پاک کردن جستجو"
@@ -205,87 +355,101 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
 
       {/* Search Dropdown */}
       {showDropdown && (
-        <div className="absolute start-0 end-0 top-full z-[var(--z-dropdown,100)] mt-0 overflow-hidden rounded-b-xl border border-t-0 border-border/60 bg-background shadow-[0_16px_48px_-8px_rgba(0,0,0,0.12)] backdrop-blur-xl ring-1 ring-primary/5">
+        <div
+          className="absolute start-0 end-0 top-full z-[var(--z-dropdown,100)] mt-0 overflow-hidden rounded-b-xl border border-t-0 border-border/60 bg-background shadow-[0_16px_48px_-8px_rgba(0,0,0,0.12)] backdrop-blur-xl ring-1 ring-primary/5"
+          role="listbox"
+          aria-label="نتایج جستجو"
+        >
           <ScrollArea className="max-h-[340px]">
             <div className="p-2">
-              {hasQuery ? (
+              {query.trim().length > 0 ? (
                 <>
-                  {/* API Suggestions */}
+                  {/* API Suggestions with keyboard nav */}
                   {isApiLoading ? (
                     <div className="py-6 flex items-center justify-center gap-2">
                       <div className="size-4 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
                       <span className="text-sm text-muted-foreground">در حال جستجو...</span>
                     </div>
-                  ) : apiSuggestions.length > 0 ? (
+                  ) : flatItems.length > 0 ? (
                     <>
                       {/* Category Suggestions */}
-                      {apiSuggestions.filter(s => s.type === 'category' || s.type === 'subcategory').length > 0 && (
+                      {flatItems.filter(i => i.type === 'category').length > 0 && (
                         <div className="mb-2">
                           <p className="mb-1.5 px-3 pt-1 flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
                             <FolderOpen className="size-3" />
                             دسته‌بندی‌ها
                           </p>
-                          {apiSuggestions
-                            .filter(s => s.type === 'category' || s.type === 'subcategory')
-                            .slice(0, 4)
-                            .map((item) => {
-                              const Icon = getCategoryIcon(item.icon);
-                              return (
-                                <button
-                                  key={item.id}
-                                  type="button"
-                                  onClick={() => handleSelectSuggestion(item)}
-                                  className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-start transition-colors duration-100 hover:bg-accent/60"
-                                >
-                                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                                    <Icon className="size-4 text-primary" />
-                                  </div>
-                                  <div className="min-w-0 flex-1">
-                                    <p className="truncate text-sm font-medium text-foreground">{item.title}</p>
-                                    {item.description && (
-                                      <p className="mt-0.5 text-[11px] text-muted-foreground">{item.description}</p>
-                                    )}
-                                  </div>
-                                </button>
-                              );
-                            })}
+                          {flatItems.filter(i => i.type === 'category').map((item, idx) => {
+                            const globalIdx = flatItems.indexOf(item);
+                            const Icon = getCategoryIcon(item.data?.icon);
+                            return (
+                              <button
+                                key={item.id}
+                                id={`search-option-${globalIdx}`}
+                                data-index={globalIdx}
+                                type="button"
+                                onClick={() => handleSelectSuggestion(item.data!)}
+                                onMouseEnter={() => setFocusedIndex(globalIdx)}
+                                className={cn(
+                                  'w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-start transition-colors duration-100',
+                                  focusedIndex === globalIdx ? 'bg-primary/10 text-foreground' : 'hover:bg-accent/60'
+                                )}
+                              >
+                                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                                  <Icon className="size-4 text-primary" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="truncate text-sm font-medium text-foreground">{item.title}</p>
+                                  {item.data?.description && (
+                                    <p className="mt-0.5 text-[11px] text-muted-foreground">{item.data.description}</p>
+                                  )}
+                                </div>
+                              </button>
+                            );
+                          })}
                         </div>
                       )}
 
                       {/* Request Suggestions */}
-                      {apiSuggestions.filter(s => s.type === 'request').length > 0 && (
+                      {flatItems.filter(i => i.type === 'request').length > 0 && (
                         <div>
                           <p className="mb-1.5 px-3 pt-2 flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground border-t border-border/30">
                             <Search className="size-3" />
                             نیازها
                           </p>
-                          {apiSuggestions
-                            .filter(s => s.type === 'request')
-                            .slice(0, 4)
-                            .map((item) => (
+                          {flatItems.filter(i => i.type === 'request').map((item) => {
+                            const globalIdx = flatItems.indexOf(item);
+                            return (
                               <button
                                 key={item.id}
+                                id={`search-option-${globalIdx}`}
+                                data-index={globalIdx}
                                 type="button"
-                                onClick={() => handleSelectSuggestion(item)}
-                                className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-start transition-colors duration-100 hover:bg-accent/60"
+                                onClick={() => handleSelectSuggestion(item.data!)}
+                                onMouseEnter={() => setFocusedIndex(globalIdx)}
+                                className={cn(
+                                  'w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-start transition-colors duration-100',
+                                  focusedIndex === globalIdx ? 'bg-primary/10 text-foreground' : 'hover:bg-accent/60'
+                                )}
                               >
                                 <div className="min-w-0 flex-1">
                                   <p className="truncate text-sm font-medium text-foreground">{item.title}</p>
-                                  {item.description && (
-                                    <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground">{item.description}</p>
+                                  {item.data?.description && (
+                                    <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground">{item.data.description}</p>
                                   )}
                                 </div>
-                                {item.category && (
+                                {item.data?.category && (
                                   <span className="shrink-0 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                                    {item.category}
+                                    {item.data.category}
                                   </span>
                                 )}
                               </button>
-                            ))}
+                            );
+                          })}
                         </div>
                       )}
 
-                      {apiSuggestions.length === 0 && (
+                      {flatItems.length === 0 && (
                         <div className="py-8 text-center">
                           <Search className="mx-auto mb-3 size-8 text-muted-foreground/40" />
                           <p className="text-sm font-medium text-muted-foreground">
@@ -314,21 +478,52 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
                   {/* Recent Searches */}
                   {recentSearches.length > 0 && (
                     <div className="mb-2">
-                      <p className="mb-1.5 px-3 pt-1 flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
-                        <Clock className="size-3" />
-                        جستجوهای اخیر
-                      </p>
-                      {recentSearches.map((term) => (
+                      <div className="mb-1.5 px-3 pt-1 flex items-center justify-between">
+                        <p className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
+                          <Clock className="size-3" />
+                          جستجوهای اخیر
+                        </p>
                         <button
-                          key={term}
                           type="button"
-                          onClick={() => handleRecentClick(term)}
-                          className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-start transition-colors duration-100 hover:bg-accent/60"
+                          onClick={handleClearAll}
+                          className="text-[10px] text-muted-foreground/60 hover:text-destructive transition-colors"
+                          aria-label="پاک کردن همه جستجوهای اخیر"
                         >
-                          <Clock className="size-3.5 text-muted-foreground/50 shrink-0" />
-                          <span className="text-sm text-foreground">{term}</span>
+                          پاک کردن همه
                         </button>
-                      ))}
+                      </div>
+                      {recentSearches.map((term) => {
+                        const globalIdx = flatItems.findIndex(i => i.type === 'recent' && i.term === term);
+                        return (
+                          <div
+                            key={term}
+                            id={`search-option-${globalIdx}`}
+                            data-index={globalIdx}
+                            onMouseEnter={() => setFocusedIndex(globalIdx)}
+                            className={cn(
+                              'flex items-center gap-2 rounded-lg px-3 py-2 text-start transition-colors duration-100',
+                              focusedIndex === globalIdx ? 'bg-primary/10' : 'hover:bg-accent/60'
+                            )}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleRecentClick(term)}
+                              className="flex flex-1 items-center gap-3 min-w-0"
+                            >
+                              <Clock className="size-3.5 text-muted-foreground/50 shrink-0" />
+                              <span className="text-sm text-foreground truncate">{term}</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => handleRecentClear(e, term)}
+                              className="shrink-0 rounded-md p-1 text-muted-foreground/40 hover:text-destructive transition-colors"
+                              aria-label={`حذف جستجوی «${term}»`}
+                            >
+                              <X className="size-3" />
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
 
@@ -342,12 +537,21 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
                       <div className="flex flex-wrap gap-1.5 px-2">
                         {apiCategories.slice(0, 8).map((cat) => {
                           const Icon = getCategoryIcon(cat.icon);
+                          const globalIdx = flatItems.findIndex(i => i.type === 'popular' && i.id === cat.id);
                           return (
                             <button
                               key={cat.id}
+                              id={`search-option-${globalIdx}`}
+                              data-index={globalIdx}
                               type="button"
                               onClick={() => handleSelectSuggestion(cat)}
-                              className="inline-flex items-center gap-1.5 rounded-lg border border-border/50 bg-muted/40 px-3 py-1.5 text-[12px] font-medium text-muted-foreground transition-all duration-150 hover:bg-primary/10 hover:border-primary/20 hover:text-primary"
+                              onMouseEnter={() => setFocusedIndex(globalIdx)}
+                              className={cn(
+                                'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[12px] font-medium transition-all duration-150',
+                                focusedIndex === globalIdx
+                                  ? 'bg-primary/10 border-primary/30 text-primary'
+                                  : 'border-border/50 bg-muted/40 text-muted-foreground hover:bg-primary/10 hover:border-primary/20 hover:text-primary'
+                              )}
                             >
                               <Icon className="size-3.5" />
                               {cat.title}
@@ -361,6 +565,24 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
               )}
             </div>
           </ScrollArea>
+
+          {/* Keyboard hint */}
+          {flatItems.length > 0 && (
+            <div className="flex items-center gap-3 border-t border-border/30 px-3 py-2 text-[10px] text-muted-foreground/50">
+              <span className="flex items-center gap-1">
+                <kbd className="rounded border border-border/50 bg-muted/60 px-1.5 py-0.5 font-mono text-[9px]">↑↓</kbd>
+                <span>ناوبری</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <kbd className="rounded border border-border/50 bg-muted/60 px-1.5 py-0.5 font-mono text-[9px]">↵</kbd>
+                <span>انتخاب</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <kbd className="rounded border border-border/50 bg-muted/60 px-1.5 py-0.5 font-mono text-[9px]">Esc</kbd>
+                <span>بستن</span>
+              </span>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -1,120 +1,79 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Heart } from 'lucide-react';
-import { toast } from 'sonner';
+import { Heart, Bookmark } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 
-type BookmarkType = 'request' | 'specialist';
-type BookmarkSize = 'sm' | 'md' | 'lg';
-
 interface BookmarkButtonProps {
-  id: string;
-  type: BookmarkType;
-  size?: BookmarkSize;
+  itemId: string;
+  itemType?: 'request' | 'specialist';
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
+  showLabel?: boolean;
 }
 
-const sizeConfig = {
-  sm: { icon: 16, padding: 'p-1' },
-  md: { icon: 20, padding: 'p-1.5' },
-  lg: { icon: 24, padding: 'p-2' },
-} as const;
+const SIZE_MAP = {
+  sm: { icon: 'size-4', ring: 'ring-[1.5px]', padding: 'p-1.5' },
+  md: { icon: 'size-5', ring: 'ring-2', padding: 'p-2' },
+  lg: { icon: 'size-6', ring: 'ring-2', padding: 'p-2.5' },
+};
 
 export function BookmarkButton({
-  id,
-  type,
+  itemId,
+  itemType = 'request',
   size = 'md',
   className,
+  showLabel = false,
 }: BookmarkButtonProps) {
-  const toggleBookmarkRequest = useAppStore((s) => s.toggleBookmarkRequest);
-  const toggleBookmarkSpecialist = useAppStore((s) => s.toggleBookmarkSpecialist);
-  const isRequestBookmarked = useAppStore((s) => s.isRequestBookmarked);
-  const isSpecialistBookmarked = useAppStore((s) => s.isSpecialistBookmarked);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [animating, setAnimating] = useState(false);
+  const sizeConfig = SIZE_MAP[size];
 
-  const [particles, setParticles] = useState<
-    Array<{
-      id: string;
-      angle: number;
-      distance: number;
-      size: number;
-    }>
-  >([]);
-
-  const isBookmarked =
-    type === 'request' ? isRequestBookmarked(id) : isSpecialistBookmarked(id);
-
-  const { icon, padding } = sizeConfig[size];
-
-  const handleClick = useCallback(() => {
-    if (type === 'request') {
-      toggleBookmarkRequest(id);
-    } else {
-      toggleBookmarkSpecialist(id);
-    }
-
-    // Spawn burst particles only when bookmarking (was previously unbookmarked)
-    if (!isBookmarked) {
-      const count = Math.floor(Math.random() * 3) + 4;
-      const newParticles = Array.from({ length: count }, (_, i) => ({
-        id: `${Date.now()}-${i}`,
-        angle: (360 / count) * i + (Math.random() * 30 - 15),
-        distance: 18 + Math.random() * 14,
-        size: 3 + Math.random() * 3,
-      }));
-      setParticles(newParticles);
-      // Clean up particles after animation completes
-      setTimeout(() => setParticles([]), 600);
-      toast.success(type === 'request' ? 'به علاقه‌مندی‌ها اضافه شد' : 'کسب‌وکار به لیست ذخیره‌شده اضافه شد');
-    } else {
-      toast.info('از علاقه‌مندی‌ها حذف شد');
-    }
-  }, [type, id, isBookmarked, toggleBookmarkRequest, toggleBookmarkSpecialist]);
+  const toggleBookmark = useCallback(() => {
+    setBookmarked((prev) => !prev);
+    setAnimating(true);
+    setTimeout(() => setAnimating(false), 600);
+  }, []);
 
   return (
     <button
       type="button"
-      onClick={handleClick}
-      aria-label={isBookmarked ? 'حذف از نشان‌شده‌ها' : 'افزودن به نشان‌شده‌ها'}
-      aria-pressed={isBookmarked}
+      onClick={toggleBookmark}
       className={cn(
-        'relative inline-flex items-center justify-center rounded-full transition-all duration-150 ease active:scale-90',
-        padding,
-        isBookmarked
-          ? 'text-rose-500 hover:text-rose-600'
-          : 'text-muted-foreground hover:text-rose-400',
-        className,
+        'relative inline-flex items-center justify-center rounded-full transition-all duration-300',
+        sizeConfig.padding,
+        sizeConfig.ring,
+        bookmarked
+          ? 'bg-rose-50 text-rose-500 ring-rose-200/60 dark:bg-rose-950/30 dark:text-rose-400 dark:ring-rose-800/40'
+          : 'bg-muted/50 text-muted-foreground/50 ring-transparent hover:bg-muted hover:text-muted-foreground hover:ring-border/50',
+        animating && 'scale-125',
+        className
       )}
+      aria-label={bookmarked ? 'حذف از علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی‌ها'}
+      aria-pressed={bookmarked}
     >
       {/* Heart icon */}
-      <span>
-        <Heart
-          size={icon}
-          fill={isBookmarked ? 'currentColor' : 'none'}
-          strokeWidth={isBookmarked ? 0 : 2}
-        />
-      </span>
+      <Heart
+        className={cn(
+          sizeConfig.icon,
+          'transition-all duration-300',
+          bookmarked && 'fill-current drop-shadow-[0_1px_3px_rgba(244,63,94,0.3)]',
+          animating && 'animate-[heartBeat_0.6s_ease-in-out]'
+        )}
+      />
 
-      {/* Burst particles */}
-      {particles.map((particle) => {
-        const rad = (particle.angle * Math.PI) / 180;
-        const tx = Math.cos(rad) * particle.distance;
-        const ty = Math.sin(rad) * particle.distance;
+      {/* Ripple effect on bookmark */}
+      {animating && (
+        <span className="absolute inset-0 animate-ping rounded-full bg-rose-400/20" />
+      )}
 
-        return (
-          <span
-            key={particle.id}
-            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-500 animate-[burstParticle_0.5s_ease-out_forwards]"
-            style={{
-              width: particle.size,
-              height: particle.size,
-              '--particle-tx': `${tx}px`,
-              '--particle-ty': `${ty}px`,
-            } as React.CSSProperties}
-          />
-        );
-      })}
+      {/* Label */}
+      {showLabel && (
+        <span className="ms-1.5 text-xs font-medium">
+          {bookmarked ? 'ذخیره شد' : 'ذخیره'}
+        </span>
+      )}
     </button>
   );
 }

@@ -17,8 +17,11 @@ import {
   Quote,
   Package,
   PenLine,
+  Star,
 } from 'lucide-react';
 import { StarRating } from '@/components/shared/StarRating';
+import { BookmarkButton } from '@/components/shared/BookmarkButton';
+import { ShareButton } from '@/components/shared/ShareButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -297,7 +300,8 @@ export function SpecialistProfile() {
               </div>
 
               {/* Action buttons */}
-              <div className="flex gap-3 sm:mb-1">
+              <div className="flex items-center gap-2 sm:gap-3 sm:mb-1">
+                <BookmarkButton id={specialist.id} type="specialist" size="md" />
                 <Button className="gap-2 rounded-xl px-5" data-href="/messages" aria-label={`ارسال پیام به ${specialist.displayName}`} title={`ارسال پیام به ${specialist.displayName}`}>
                   <MessageCircle className="size-4" aria-hidden="true" />
                   ارسال پیام
@@ -306,6 +310,12 @@ export function SpecialistProfile() {
                   <UserPlus className="size-4" aria-hidden="true" />
                   دعوت به پروژه
                 </Button>
+                <ShareButton
+                  title={specialist.displayName}
+                  description={`پروفایل کسب‌وکار ${specialist.displayName} در نیاز فایندر`}
+                  url={`https://needfinder.ir/specialists/${specialist.id}`}
+                  label="اشتراک‌گذاری پروفایل"
+                />
               </div>
             </div>
 

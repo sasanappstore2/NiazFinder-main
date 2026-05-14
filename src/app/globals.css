@@ -560,6 +560,25 @@
 }
 .animate-count-fade-in { animation: countFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
+/* ── Bookmark Burst Particle ── */
+@keyframes burstParticle {
+  0% {
+    transform: translate(-50%, -50%) translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) translate(var(--particle-tx, 0), var(--particle-ty, 0)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* ── Heart Pulse Animation ── */
+@keyframes heartPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
 /* ── Animated Gradient Line (header) ── */
 @keyframes gradientSlide {
   0% { background-position: 200% center; }
