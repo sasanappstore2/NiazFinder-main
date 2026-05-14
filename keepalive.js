@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { spawn } = require('child_process');
 const fs = require('fs');
+const path = require('path');
 const logFile = '/home/z/my-project/dev.log';
 
 function startServer() {
   const log = fs.openSync(logFile, 'a');
-  const server = spawn('npx', ['next', 'dev', '--port', '3000'], {
+  // Use direct binary path to avoid npx port override
+  const nextBin = path.join('/home/z/my-project/node_modules/.bin/next');
+  const server = spawn(nextBin, ['dev', '--port', '3000'], {
     cwd: '/home/z/my-project',
     stdio: ['ignore', log, log],
     detached: true,
+    env: { ...process.env, PORT: '3000' },
   });
   
   server.unref();

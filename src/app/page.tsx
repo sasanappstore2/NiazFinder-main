@@ -10,6 +10,7 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { BackToTop } from '@/components/shared/BackToTop';
+import { FloatingCTA } from '@/components/shared/FloatingCTA';
 import { QuickActions } from '@/components/shared/QuickActions';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
@@ -240,6 +241,9 @@ export default function App() {
 
       {/* Quick Actions FAB */}
       <QuickActions />
+
+      {/* Floating Contact CTA */}
+      {isHome && <FloatingCTA />}
     </div>
     </ErrorBoundary>
   );

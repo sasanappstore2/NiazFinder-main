@@ -32,6 +32,8 @@ import { QuickViewPopover, useQuickView } from '@/components/shared/QuickView';
 import { HomepageHowItWorks } from '@/components/home/HomepageHowItWorks';
 import { HomepageTestimonials } from '@/components/home/HomepageTestimonials';
 import { FeaturedBusinesses } from '@/components/home/FeaturedBusinesses';
+import { HomepageFAQ } from '@/components/home/HomepageFAQ';
+import { AnimatedCounter } from '@/components/shared/AnimatedCounter';
 import {
   X,
   ArrowUpDown,
@@ -677,8 +679,8 @@ export function NeedsHomepage() {
                   <span className="text-xl md:text-2xl mb-0.5" aria-hidden="true">
                     {stat.icon}
                   </span>
-                  <span className="text-lg md:text-xl font-extrabold text-white tabular-nums">
-                    {stat.value.toLocaleString('fa-IR')}{stat.suffix}
+                  <span className="text-lg md:text-xl font-extrabold text-white">
+                    <AnimatedCounter target={stat.value} suffix={stat.suffix} locale="fa-IR" duration={1800} />
                   </span>
                   <span className="text-[11px] md:text-xs font-medium text-emerald-100/70">
                     {stat.label}
@@ -898,6 +900,9 @@ export function NeedsHomepage() {
 
       {/* ═══ Featured Businesses Section ═══ */}
       <FeaturedBusinesses />
+
+      {/* ═══ FAQ Section ═══ */}
+      <HomepageFAQ />
 
       {/* ═══ Testimonials Section ═══ */}
       <HomepageTestimonials />

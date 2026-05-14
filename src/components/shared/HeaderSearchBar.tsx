@@ -116,7 +116,6 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
   // Fetch popular categories on mount
   useEffect(() => {
     fetchSuggestions('');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Close on click outside
