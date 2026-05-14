@@ -57,12 +57,12 @@ export function HomepageHowItWorks() {
 
         {/* Steps Grid */}
         <div className="stagger-children relative">
-          {/* Connecting dotted line — desktop only */}
+          {/* Connecting animated gradient line — desktop only */}
           <div
-            className="absolute top-[52px] start-[12.5%] end-[12.5%] hidden md:block z-0"
+            className="absolute top-[52px] start-[12.5%] end-[12.5%] hidden md:block z-0 step-connector-animated animate"
             aria-hidden="true"
           >
-            <div className="w-full h-0 border-t-2 border-dashed border-emerald-300/50 dark:border-emerald-700/40" />
+            <div className="w-full h-[2px]" />
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-4 md:gap-6 lg:gap-8">

@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react';
 import {
   Search,
   MapPin,
-  Star,
   BadgeCheck,
   ArrowLeft,
   Briefcase,
@@ -17,6 +16,7 @@ import {
   LayoutGrid,
   List,
 } from 'lucide-react';
+import { StarRating } from '@/components/shared/StarRating';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -56,29 +56,7 @@ const SORT_OPTIONS = [
   { value: 'newest', label: 'جدیدترین عضو' },
 ];
 
-// ─── Rating stars ─────────────────────────────────────
-function RatingStars({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-0.5" aria-label={`امتیاز ${rating.toLocaleString('fa-IR')} از ۵`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          className={`size-3.5 ${
-            i < Math.floor(rating)
-              ? 'fill-amber-400 text-amber-400'
-              : i < rating
-                ? 'fill-amber-400/50 text-amber-400'
-                : 'fill-muted text-muted'
-          }`}
-          aria-hidden="true"
-        />
-      ))}
-      <span className="mr-1 text-xs font-medium text-muted-foreground">
-        {rating.toLocaleString('fa-IR')}
-      </span>
-    </div>
-  );
-}
+
 
 // ─── Skill level dots ─────────────────────────────────
 function SkillLevelDots({ level }: { level: number }) {
@@ -150,7 +128,7 @@ function SpecialistCard({ specialist, onViewProfile }: { specialist: SpecialistP
 
         {/* Rating + Projects */}
         <div className="mb-4 flex items-center justify-between">
-          <RatingStars rating={specialist.rating} />
+          <StarRating rating={specialist.rating} size="sm" showValue />
           <span className="text-xs text-muted-foreground">
             {specialist.projectCount.toLocaleString('fa-IR')} پروژه
           </span>
@@ -276,7 +254,7 @@ function SpecialistListCard({ specialist, onViewProfile }: { specialist: Special
           {/* Stats column - hidden on small screens */}
           <div className="hidden shrink-0 flex-col items-center gap-2 lg:flex">
             <div className="text-center">
-              <RatingStars rating={specialist.rating} />
+              <StarRating rating={specialist.rating} size="xs" showValue />
             </div>
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">

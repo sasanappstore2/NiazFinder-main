@@ -102,11 +102,11 @@ export function MobileBottomNav() {
                 title={tab.title}
                 onClick={() => handleTabClick(tab)}
                 className={cn(
-                  'relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-2 text-[11px] font-medium transition-all duration-200',
-                  'min-h-[44px]',
+                  'relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-2 text-[11px] font-medium transition-all duration-300 ease-out',
+                  'min-h-[44px] touch-ripple',
                   isActive
-                    ? 'text-primary bg-primary/8'
-                    : 'text-muted-foreground hover:bg-primary/5 hover:text-foreground active:bg-accent/50'
+                    ? 'text-primary bg-primary/10 scale-[1.04]'
+                    : 'text-muted-foreground hover:bg-primary/5 hover:text-foreground active:scale-95 active:bg-accent/50'
                 )}
                 aria-label={tab.title}
                 aria-current={isActive ? 'page' : undefined}
@@ -114,8 +114,10 @@ export function MobileBottomNav() {
                 {/* Active dot indicator above icon */}
                 <span
                   className={cn(
-                    'absolute top-0 left-1/2 -translate-x-1/2 size-1.5 rounded-full transition-all duration-200',
-                    isActive ? 'bg-primary shadow-[0_0_6px_oklch(0.51_0.12_165/0.5)] scale-100 opacity-100' : 'scale-0 opacity-0'
+                    'absolute top-0 left-1/2 -translate-x-1/2 rounded-full transition-all duration-300 ease-out',
+                    isActive
+                      ? 'w-6 h-[3px] bg-primary shadow-[0_0_8px_oklch(0.51_0.12_165/0.5)] scale-100 opacity-100'
+                      : 'w-1.5 h-1.5 scale-0 opacity-0'
                   )}
                   aria-hidden="true"
                 />
@@ -123,19 +125,21 @@ export function MobileBottomNav() {
                 {/* Active bottom indicator */}
                 <span
                   className={cn(
-                    'absolute inset-x-2 bottom-0 h-[2.5px] rounded-full transition-all duration-200',
-                    isActive ? 'bg-primary shadow-[0_0_6px_oklch(0.51_0.12_165/0.4)]' : 'bg-transparent'
+                    'absolute inset-x-2 bottom-0 rounded-full transition-all duration-300 ease-out',
+                    isActive
+                      ? 'h-[3px] bg-primary shadow-[0_0_8px_oklch(0.51_0.12_165/0.4)]'
+                      : 'h-0 bg-transparent'
                   )}
                   aria-hidden="true"
                 />
 
                 {/* Icon */}
-                <div className="relative">
+                <div className="relative transition-transform duration-300 ease-out">
                   <Icon
                     className={cn(
-                      'size-[20px] transition-all duration-200',
-                      isActive && 'size-[22px] text-primary',
-                      !isActive && 'hover:scale-105'
+                      'transition-all duration-300 ease-out',
+                      isActive ? 'size-[22px] text-primary drop-shadow-[0_1px_2px_oklch(0.51_0.12_165/0.3)]' : 'size-[20px]',
+                      !isActive && 'hover:scale-110'
                     )}
                     strokeWidth={isActive ? 2.5 : 1.8}
                   />

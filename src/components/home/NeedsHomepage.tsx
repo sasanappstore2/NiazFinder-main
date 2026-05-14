@@ -1,25 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
-  Search,
-  FileSearch,
-  MapPin,
-  DollarSign,
-  Flame,
-  Clock,
-  ChevronDown,
-  Loader2,
-  Sparkles,
-  Zap,
-  ArrowUpRight,
+  Search, FileSearch, MapPin, DollarSign, Flame, Clock, ChevronDown, Loader2, Sparkles, Zap, ArrowUpRight, X, ArrowUpDown, LayoutGrid, Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
 import {
-  formatBudgetRange,
-  getTimeAgo,
-  TRUST_STATS,
+  formatBudgetRange, getTimeAgo, TRUST_STATS,
 } from '@/lib/constants';
 import { ALL_CATEGORIES } from '@/components/layout/CategoryMegaMenu';
 import type { ServiceRequest } from '@/lib/types';
@@ -34,12 +22,6 @@ import { HomepageTestimonials } from '@/components/home/HomepageTestimonials';
 import { FeaturedBusinesses } from '@/components/home/FeaturedBusinesses';
 import { HomepageFAQ } from '@/components/home/HomepageFAQ';
 import { AnimatedCounter } from '@/components/shared/AnimatedCounter';
-import {
-  X,
-  ArrowUpDown,
-  LayoutGrid,
-  Plus,
-} from 'lucide-react';
 
 
 // ─── Fibonacci Design Tokens ───────────────────────────
@@ -182,11 +164,11 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
         className={cn(
           'group relative flex cursor-pointer overflow-hidden rounded-2xl border',
           'bg-card/70 backdrop-blur-sm',
-          'transition-all duration-300 ease-out',
+          'transition-all duration-300 cubic-bezier(0.16, 1, 0.3, 1)',
           // Hover effects
           'hover:bg-card/95 hover:backdrop-blur-md',
           'hover:shadow-lg hover:shadow-black/[0.04] dark:hover:shadow-black/[0.2]',
-          'hover:-translate-y-[1px] hover:scale-[1.005]',
+          'hover:-translate-y-[2px] hover:scale-[1.008]',
           // Priority glow + category border glow
           priorityConfig.glowClass,
           // Category color hover glow
@@ -471,12 +453,52 @@ function EmptyState() {
   );
 }
 
+// ─── API fetch helper (direct, bypasses Zustand for reliability) ──
+async function fetchRequestsAPI(params: Record<string, string>): Promise<ServiceRequest[]> {
+  try {
+    const query = '?' + new URLSearchParams(params).toString();
+    const res = await fetch(`/api/requests${query}`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    const json = await res.json();
+    const raw = json.data || json.requests || [];
+    return (raw as any[]).map((r: any) => ({
+      id: r.id,
+      title: r.title,
+      slug: r.slug,
+      description: r.description,
+      budgetMin: r.budgetMin ?? undefined,
+      budgetMax: r.budgetMax ?? undefined,
+      budgetType: r.budgetType,
+      deliveryTime: r.deliveryTime ?? undefined,
+      deliveryUnit: r.deliveryUnit,
+      city: r.city ?? undefined,
+      province: r.province ?? undefined,
+      categoryId: r.categoryId,
+      categoryName: r.categoryName,
+      categoryIcon: r.categoryIcon ?? undefined,
+      priority: r.priority,
+      status: r.status,
+      tags: r.tags ?? [],
+      viewCount: r.viewCount,
+      proposalCount: r.proposalCount,
+      user: {
+        id: r.user.id,
+        firstName: r.user.firstName,
+        lastName: r.user.lastName,
+        avatar: r.user.avatar ?? undefined,
+        city: r.user.city ?? undefined,
+        createdAt: String(r.user.createdAt),
+      },
+      createdAt: String(r.createdAt),
+      updatedAt: String(r.updatedAt),
+    }));
+  } catch {
+    return [];
+  }
+}
+
 // ─── Main Component ───────────────────────────────────
 export function NeedsHomepage() {
-  const fetchRequests = useAppStore((s) => s.fetchRequests);
-  const storeRequests = useAppStore((s) => s.requests);
-  const isLoading = useAppStore((s) => s.isLoading);
-
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -490,29 +512,19 @@ export function NeedsHomepage() {
   const categoryScrollRef = useRef<HTMLDivElement>(null);
   const { quickView, showQuickView, closeQuickView } = useQuickView();
 
-  // Initial fetch
-  const loadRequests = useCallback(async (pageNum: number) => {
-    const params: Record<string, string> = { limit: '12', page: String(pageNum), status: 'OPEN' };
-    try {
-      await fetchRequests(params);
-      const requests = useAppStore.getState().requests;
-      // Infer pagination: if we got fewer than the limit, there are no more pages
-      setTotalPages(requests.length < 12 ? pageNum : pageNum + 1);
-      lastFetchTimeRef.current = Date.now();
-      return requests;
-    } catch {
-      return [];
-    }
-  }, [fetchRequests]);
-
-  // Initial load
+  // Initial fetch (direct API call)
   useEffect(() => {
+    let cancelled = false;
     setInitialLoading(true);
-    loadRequests(page).then((reqs) => {
+    fetchRequestsAPI({ limit: '12', page: String(page), status: 'OPEN' }).then((reqs) => {
+      if (cancelled) return;
       setLocalRequests(reqs);
+      setTotalPages(reqs.length < 12 ? page : page + 1);
       setInitialLoading(false);
+      lastFetchTimeRef.current = Date.now();
     });
-  }, [page, loadRequests]);
+    return () => { cancelled = true; };
+  }, [page]);
 
   // Polling for new requests
   useEffect(() => {
@@ -520,26 +532,11 @@ export function NeedsHomepage() {
 
     const interval = setInterval(async () => {
       try {
-        const params: Record<string, string> = {
-          limit: '5',
-          page: '1',
-          status: 'OPEN',
-          sort: 'newest',
-        };
-        const response = await fetch(
-          `/api/requests?${new URLSearchParams(params).toString()}`,
-          { cache: 'no-store' }
-        );
-        const data = await response.json();
-        const latestRequests: ServiceRequest[] = data.requests || [];
-
+        const latestRequests = await fetchRequestsAPI({ limit: '5', page: '1', status: 'OPEN' });
         if (latestRequests.length > 0) {
           setLocalRequests((prev) => {
             const existingIds = new Set(prev.map((r) => r.id));
-            const trulyNew = latestRequests.filter(
-              (r) => !existingIds.has(r.id)
-            );
-
+            const trulyNew = latestRequests.filter((r) => !existingIds.has(r.id));
             if (trulyNew.length === 0) return prev;
 
             // Mark new IDs
@@ -560,7 +557,6 @@ export function NeedsHomepage() {
             // Add new items to the top
             return [...trulyNew, ...prev].slice(0, 60);
           });
-
           lastFetchTimeRef.current = Date.now();
         }
       } catch {
@@ -571,8 +567,8 @@ export function NeedsHomepage() {
     return () => clearInterval(interval);
   }, [initialLoading]);
 
-  // Filter and sort: use localRequests if populated, fallback to store
-  const baseRequests = localRequests.length > 0 ? localRequests : storeRequests;
+  // Filter and sort: use localRequests directly
+  const baseRequests = localRequests;
   const displayRequests = baseRequests
     .filter((r) => {
       // Search filter (debounced)
@@ -606,17 +602,34 @@ export function NeedsHomepage() {
 
   const navigateTo = useAppStore((s) => s.navigateTo);
 
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const loadMore = async () => {
+    const nextPage = page + 1;
+    setLoadingMore(true);
+    const moreReqs = await fetchRequestsAPI({ limit: '12', page: String(nextPage), status: 'OPEN' });
+    if (moreReqs.length > 0) {
+      setLocalRequests((prev) => [...prev, ...moreReqs]);
+      setPage(nextPage);
+      setTotalPages(moreReqs.length < 12 ? nextPage : nextPage + 1);
+    }
+    setLoadingMore(false);
+  };
+
   const hasMore = page < totalPages;
 
   return (
     <div className="min-h-screen bg-background" dir="rtl">
       {/* ═══ Hero Banner Section ═══ */}
-      <section className="relative overflow-hidden bg-gradient-to-bl from-emerald-600 via-emerald-700 to-emerald-900">
-        {/* Decorative blobs */}
+      <section className="relative overflow-hidden bg-gradient-to-bl from-emerald-600 via-emerald-700 to-teal-900">
+        {/* Animated particle dots pattern */}
+        <div className="hero-particles" aria-hidden="true" />
+        {/* Decorative blobs with improved gradients */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -start-20 h-72 w-72 rounded-full bg-emerald-400/20 blur-3xl" />
-          <div className="absolute top-10 -end-16 h-56 w-56 rounded-full bg-teal-300/15 blur-3xl" />
+          <div className="absolute -top-20 -start-20 h-72 w-72 rounded-full bg-emerald-400/20 blur-3xl animate-subtle-float" />
+          <div className="absolute top-10 -end-16 h-56 w-56 rounded-full bg-teal-300/15 blur-3xl" style={{ animationDelay: '2s' }} />
           <div className="absolute bottom-0 start-1/3 h-48 w-48 rounded-full bg-emerald-500/10 blur-2xl" />
+          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-teal-400/5 blur-3xl" />
         </div>
 
         <div className="relative container-default mx-auto px-5 md:px-8 pt-12 pb-14 md:pt-20 md:pb-20">
@@ -668,12 +681,12 @@ export function NeedsHomepage() {
               </Button>
             </div>
 
-            {/* Stats Row */}
+            {/* Stats Row with improved glow hover */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               {TRUST_STATS.map((stat, i) => (
                 <div
                   key={stat.label}
-                  className="animate-count-fade-in flex flex-col items-center gap-1 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 px-4 py-3 md:py-4 transition-all duration-200 hover:bg-white/15"
+                  className="animate-count-fade-in stat-card-glow flex flex-col items-center gap-1 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 px-4 py-3 md:py-4"
                   style={{ animationDelay: `${0.3 + i * 0.1}s`, animationFillMode: 'backwards' }}
                 >
                   <span className="text-xl md:text-2xl mb-0.5" aria-hidden="true">
@@ -704,10 +717,10 @@ export function NeedsHomepage() {
               onClick={() => setSelectedCategory(null)}
               className={cn(
                 'inline-flex items-center gap-1.5 shrink-0 rounded-xl px-4 py-2 text-xs font-semibold',
-                'border transition-all duration-200',
+                'border transition-all duration-300 ease-out',
                 !selectedCategory
-                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20'
-                  : 'bg-card/60 text-muted-foreground border-border/40 hover:bg-card hover:border-border/60 hover:text-foreground',
+                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/25 scale-[1.02]'
+                  : 'bg-card/60 text-muted-foreground border-border/40 hover:bg-card hover:border-border/60 hover:text-foreground hover:shadow-sm',
               )}
             >
               <LayoutGrid className="size-3.5" aria-hidden="true" />
@@ -726,10 +739,10 @@ export function NeedsHomepage() {
                   }
                   className={cn(
                     'inline-flex items-center gap-1.5 shrink-0 rounded-xl px-4 py-2 text-xs font-semibold',
-                    'border transition-all duration-200',
+                    'border transition-all duration-300 ease-out',
                     isActive
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20'
-                      : 'bg-card/60 text-muted-foreground border-border/40 hover:bg-card hover:border-border/60 hover:text-foreground',
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/25 scale-[1.02] chip-active-pulse'
+                      : 'bg-card/60 text-muted-foreground border-border/40 hover:bg-card hover:border-border/60 hover:text-foreground hover:shadow-sm',
                   )}
                 >
                   <Icon className="size-3.5" aria-hidden="true" />
@@ -837,12 +850,12 @@ export function NeedsHomepage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  onClick={() => setPage((p) => p + 1)}
-                  disabled={isLoading}
+                  onClick={loadMore}
+                  disabled={loadingMore}
                   className="rounded-2xl px-10 font-medium transition-all duration-200 hover:shadow-md"
                   title="نمایش نیازهای بیشتر"
                 >
-                  {isLoading ? (
+                  {loadingMore ? (
                     <>
                       <Loader2 className="size-4 animate-spin" aria-hidden="true" />
                       در حال بارگذاری...

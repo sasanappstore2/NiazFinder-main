@@ -740,15 +740,15 @@ export function Header() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-[var(--z-header)] w-full transition-all duration-200',
+        'sticky top-0 z-[var(--z-header)] w-full transition-all duration-300 ease-out',
         isScrolled
-          ? 'bg-background/85 shadow-sm backdrop-blur-xl'
+          ? 'bg-background/90 shadow-md shadow-black/[0.04] dark:shadow-black/[0.15] backdrop-blur-xl -translate-y-px'
           : 'bg-background'
       )}
       role="banner"
     >
-      {/* Gradient bottom border */}
-      <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-l from-transparent via-primary/30 to-transparent opacity-60" />
+      {/* Animated gradient bottom border */}
+      <div className="absolute inset-x-0 bottom-0 animated-gradient-line opacity-60" />
       <div className="container-default border-b border-border/40">
         <div className="flex h-[52px] items-center justify-between gap-4">
           {/* Right: Logo */}
@@ -767,7 +767,7 @@ export function Header() {
           </button>
 
           {/* Center: Location Selector + Search Bar */}
-          <div className="hidden lg:flex flex-1 max-w-[580px] items-center gap-2">
+          <div className="hidden lg:flex flex-1 max-w-[580px] items-center gap-2 transition-all duration-300">
             <LocationSelector />
             <div className="flex-1">
               <HeaderSearchBar data={DEMO_SEARCH_DATA} />

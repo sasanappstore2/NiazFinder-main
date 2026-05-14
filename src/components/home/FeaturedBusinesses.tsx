@@ -1,9 +1,10 @@
 'use client';
 
-import { Star, MapPin, Briefcase, ArrowLeft, Award, Shield, Clock } from 'lucide-react';
+import { MapPin, Briefcase, ArrowLeft, Award, Shield, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 import { useEffect, useState } from 'react';
+import { StarRating } from '@/components/shared/StarRating';
 
 const FEATURED_SKILLS = [
   'طراحی وب', 'اپلیکیشن موبایل', 'تولید محتوا', 'سئو',
@@ -92,24 +93,9 @@ const FEATURED_BUSINESSES = [
   },
 ];
 
-function StarRating({ rating }: { rating: number }) {
+function BusinessStarRating({ rating }: { rating: number }) {
   return (
-    <div className="flex items-center gap-0.5" aria-label={`امتیاز ${rating} از ۵`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          className={cn(
-            'size-3.5',
-            i < Math.floor(rating)
-              ? 'fill-amber-400 text-amber-400'
-              : i < rating
-                ? 'fill-amber-400/50 text-amber-400'
-                : 'fill-muted/20 text-muted/30',
-          )}
-          aria-hidden="true"
-        />
-      ))}
-    </div>
+    <StarRating rating={rating} size="xs" />
   );
 }
 
@@ -208,7 +194,7 @@ export function FeaturedBusinesses() {
                   {/* Rating + City + Projects */}
                   <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5">
                     <div className="flex items-center gap-1.5">
-                      <StarRating rating={biz.rating} />
+                      <BusinessStarRating rating={biz.rating} />
                       <span className="text-xs font-bold tabular-nums text-foreground">{biz.rating}</span>
                     </div>
                     <span className="flex items-center gap-1 text-[11px] text-muted-foreground">

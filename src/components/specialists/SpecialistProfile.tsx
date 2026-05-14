@@ -3,7 +3,6 @@
 import {
   ArrowRight,
   MapPin,
-  Star,
   BadgeCheck,
   MessageCircle,
   UserPlus,
@@ -19,6 +18,7 @@ import {
   Package,
   PenLine,
 } from 'lucide-react';
+import { StarRating } from '@/components/shared/StarRating';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -82,31 +82,7 @@ function getGradient(index: number) {
   return PORTFOLIO_GRADIENTS[index % PORTFOLIO_GRADIENTS.length];
 }
 
-// ─── Rating stars ─────────────────────────────────────
-function RatingStars({ rating, showNumber = false }: { rating: number; showNumber?: boolean }) {
-  return (
-    <div className="flex items-center gap-0.5" aria-label={`امتیاز ${rating.toLocaleString('fa-IR')} از ۵`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          className={`size-4 ${
-            i < Math.floor(rating)
-              ? 'fill-amber-400 text-amber-400'
-              : i < rating
-                ? 'fill-amber-400/50 text-amber-400'
-                : 'fill-muted text-muted'
-          }`}
-          aria-hidden="true"
-        />
-      ))}
-      {showNumber && (
-        <span className="mr-2 text-2xl font-extrabold tracking-tight">
-          {rating.toLocaleString('fa-IR')}
-        </span>
-      )}
-    </div>
-  );
-}
+
 
 // ─── Skill level dots ─────────────────────────────────
 function SkillLevelDots({ level }: { level: number }) {
@@ -198,18 +174,7 @@ function ReviewCard({ review }: { review: Review }) {
               <span className="text-[11px] text-muted-foreground">{getTimeAgo(review.createdAt)}</span>
             </div>
           </div>
-          <div className="flex items-center gap-0.5" aria-label={`امتیاز ${review.rating} از ۵`} aria-hidden="true">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={`size-3.5 ${
-                  i < review.rating
-                    ? 'fill-amber-400 text-amber-400'
-                    : 'fill-muted text-muted'
-                }`}
-              />
-            ))}
-          </div>
+          <StarRating rating={review.rating} size="xs" />
         </div>
         {review.comment && (
           <div className="relative rounded-xl bg-muted/40 p-4">
@@ -346,10 +311,7 @@ export function SpecialistProfile() {
 
             {/* Rating */}
             <div className="mb-5 flex items-center gap-3">
-              <RatingStars rating={specialist.rating} showNumber />
-              <span className="text-xs text-muted-foreground">
-                ({specialist.completedProjects.toLocaleString('fa-IR')} نظر)
-              </span>
+              <StarRating rating={specialist.rating} size="lg" showValue reviewCount={specialist.completedProjects} itemProp="aggregateRating" />
             </div>
 
             {/* Stats row */}

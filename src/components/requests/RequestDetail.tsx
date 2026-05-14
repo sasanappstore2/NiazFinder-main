@@ -11,7 +11,6 @@ import {
   Calendar,
   User,
   BadgeCheck,
-  Star,
   Timer,
   MessageSquare,
   Send,
@@ -19,6 +18,7 @@ import {
   CheckCircle2,
   Flag,
 } from 'lucide-react';
+import { StarRating } from '@/components/shared/StarRating';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -89,34 +89,7 @@ function getStatusConfig(status: string) {
   return configs[status] || 'bg-muted text-muted-foreground border-border';
 }
 
-// ─── Rating stars ─────────────────────────────────────
-function RatingStars({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md' }) {
-  const iconSize = size === 'md' ? 'size-4' : 'size-3.5';
-  return (
-    <div className="flex items-center gap-0.5" aria-label={`امتیاز ${rating.toLocaleString('fa-IR')} از ۵`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          className={`${iconSize} ${
-            i < Math.floor(rating)
-              ? 'fill-amber-400 text-amber-400'
-              : i < rating
-                ? 'fill-amber-400/50 text-amber-400'
-                : 'fill-muted text-muted'
-          }`}
-          aria-hidden="true"
-        />
-      ))}
-      {size === 'sm' && (
-        <span className="mr-1 text-xs font-medium text-muted-foreground">
-          {rating.toLocaleString('fa-IR')}
-        </span>
-      )}
-    </div>
-  );
-}
-
-// ─── Mock Proposals ───────────────────────────────────
+// ─── Priority config ───────────────────────────────────
 function generateMockProposals(): Proposal[] {
   const specialists = MOCK_SPECIALISTS.slice(0, 4);
   return specialists.map((s, i) => ({
@@ -200,8 +173,7 @@ function ProposalCard({ proposal, onSelect }: { proposal: Proposal; onSelect: ()
           </div>
           <Separator orientation="vertical" className="h-4" />
           <div className="flex items-center gap-1.5">
-            <Star className="size-4 fill-amber-400 text-amber-400" aria-hidden="true" />
-            <span className="text-sm font-medium">{proposal.user.rating.toLocaleString('fa-IR')}</span>
+            <StarRating rating={proposal.user.rating} size="xs" showValue />
           </div>
         </div>
 

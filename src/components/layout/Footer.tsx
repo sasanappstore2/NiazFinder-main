@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   LocateFixed,
   Mail,
@@ -11,6 +11,8 @@ import {
   Twitter,
   Linkedin,
   ExternalLink,
+  ArrowUp,
+  Sparkles,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -129,6 +131,16 @@ export function Footer({ compact = false }: FooterProps) {
   const { navigateTo } = useAppStore();
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  // Back to top visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, link: FooterLinkItem) => {
     e.preventDefault();
@@ -231,7 +243,7 @@ export function Footer({ compact = false }: FooterProps) {
 
   // ============ Full Footer (home page) ============
   return (
-    <footer id="footer" className="mt-auto bg-card/50" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
+    <footer id="footer" className="mt-auto bg-card/50 footer-wave" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
       {/* Gradient top decoration line */}
       <div className="gradient-line" />
       {/* Newsletter Section */}
@@ -240,10 +252,13 @@ export function Footer({ compact = false }: FooterProps) {
           <div className="gradient-border rounded-xl p-6 md:p-8">
             <div className="flex flex-col items-center gap-4 text-center md:flex-row md:justify-between md:text-start">
               <div className="max-w-md">
-                <h3 className="text-lg font-bold text-foreground">
-                  از آخرین خدمات و تخفیف‌ها باخبر شوید
-                </h3>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
+                  <Sparkles className="size-4 text-emerald-500" aria-hidden="true" />
+                  <h3 className="text-lg font-bold text-foreground">
+                    از آخرین خدمات و تخفیف‌ها باخبر شوید
+                  </h3>
+                </div>
+                <p className="text-sm text-muted-foreground">
                   ایمیل خود را وارد کنید تا از جدیدترین اخبار و فرصت‌های ویژه
                   مطلع شوید.
                 </p>
@@ -268,7 +283,7 @@ export function Footer({ compact = false }: FooterProps) {
                   size="default"
                   className={cn(
                     'h-[40px] px-5 transition-all duration-200 hover:shadow-[0_0_12px_oklch(0.51_0.12_165/0.25)]',
-                    isSubscribed && 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-[0_0_12px_oklch(0.51_0.12_165/0.3)]'
+                    isSubscribed && 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-[0_0_12px_oklch(0.51_0.12_165/0.3)] newsletter-success'
                   )}
                 >
                   {isSubscribed ? (
@@ -288,6 +303,9 @@ export function Footer({ compact = false }: FooterProps) {
           </div>
         </div>
       </div>
+
+      {/* Decorative gradient arc */
+      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-emerald-50/40 to-transparent dark:from-emerald-950/20 pointer-events-none" aria-hidden="true" />
 
       {/* Main Footer */}
       <div id="footer-contact" className="container-default py-12">
@@ -385,6 +403,20 @@ export function Footer({ compact = false }: FooterProps) {
           ))}
         </div>
       </div>
+
+      {/* Back to Top Button (home page only) */}
+      <button
+        type="button"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className={cn(
+          'back-to-top-btn',
+          showBackToTop && 'visible',
+        )}
+        aria-label="بازگشت به بالای صفحه"
+        title="بازگشت به بالای صفحه"
+      >
+        <ArrowUp className="size-5" />
+      </button>
 
       {/* Bottom Bar */}
       <Separator />

@@ -1,7 +1,8 @@
 'use client';
 
-import { Star, Quote } from 'lucide-react';
+import { Quote } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { StarRating } from '@/components/shared/StarRating';
 
 const TESTIMONIALS = [
   {
@@ -54,32 +55,7 @@ const TESTIMONIALS = [
   },
 ];
 
-function RatingStars({ rating }: { rating: number }) {
-  return (
-    <div
-      className="flex items-center gap-0.5"
-      aria-label={`امتیاز ${rating} از ۵`}
-      itemProp="reviewRating"
-      itemScope
-      itemType="https://schema.org/Rating"
-    >
-      <meta itemProp="ratingValue" content={String(rating)} />
-      <meta itemProp="bestRating" content="5" />
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          className={cn(
-            'size-4',
-            i < rating
-              ? 'fill-amber-400 text-amber-400'
-              : 'fill-muted/30 text-muted/40',
-          )}
-          aria-hidden="true"
-        />
-      ))}
-    </div>
-  );
-}
+
 
 export function HomepageTestimonials() {
   return (
@@ -131,7 +107,7 @@ export function HomepageTestimonials() {
 
                 {/* Rating */}
                 <div className="mb-4 flex items-center gap-2">
-                  <RatingStars rating={t.rating} />
+                  <StarRating rating={t.rating} size="sm" itemProp="reviewRating" />
                 </div>
 
                 {/* Comment */}

@@ -170,8 +170,8 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
           type="text"
           placeholder="جستجو در خدمات و نیازها..."
           className={cn(
-            'h-10 w-full rounded-xl border-border/60 bg-muted/50 pe-10 ps-4 text-sm backdrop-blur-sm transition-all duration-200',
-            'focus-visible:bg-background focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:shadow-[0_0_12px_oklch(0.51_0.12_165/0.15)]',
+            'h-10 w-full rounded-xl border-border/60 bg-muted/50 pe-10 ps-4 text-sm backdrop-blur-sm transition-all duration-300 ease-out',
+            'focus-visible:bg-background focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:shadow-[0_0_0_3px_oklch(0.51_0.12_165/0.08),0_0_20px_oklch(0.51_0.12_165/0.1)]',
             showDropdown && 'rounded-b-none border-b-0'
           )}
           onChange={(e) => {
