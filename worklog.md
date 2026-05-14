@@ -883,3 +883,99 @@ Stage Summary:
 - Footer, CategoryBar, and MobileBottomNav are hidden when chat view is active
 - Body overflow is prevented via useEffect to ensure no browser-level scrolling
 - All changes are backwards compatible - other views remain unaffected
+---
+Task ID: fix-500-and-enhance-homepage
+Agent: Main + full-stack-developer subagent
+Task: Fix critical 500 error and enhance homepage with hero, category filters, and search
+
+Work Log:
+
+**1. Critical Bug Fix - HTTP 500 Error:**
+- User reported: "Only Z logo appears, nothing else in preview"
+- Diagnosed via dev.log: NeedsHomepage.tsx had duplicate function definitions
+  - `getCategoryAppearance` defined locally (line 110) AND imported from @/lib/category-appearance (line 30)
+  - `getAvatarColor` defined locally (line 137) AND imported from @/lib/category-appearance (line 30)
+  - Also had duplicate CATEGORY_APPEARANCE, AVATAR_COLORS, DEFAULT_APPEARANCE, ICON_MAP constants
+  - Also had duplicate lucide-react imports (second import block with aliases)
+- Root cause: Previous session created @/lib/category-appearance.ts with shared utilities, but local copies were not removed from NeedsHomepage.tsx
+- Fix applied:
+  - Removed second lucide-react import block (24 lines)
+  - Removed local ICON_MAP, getCategoryIcon, renderCategoryIcon (19 lines)
+  - Removed local CATEGORY_APPEARANCE, DEFAULT_APPEARANCE (25 lines)
+  - Removed local getCategoryAppearance function (4 lines)
+  - Removed local AVATAR_COLORS, getAvatarColor function (14 lines)
+  - Updated import to: `import { getCategoryAppearance, getAvatarColor, CATEGORY_APPEARANCE as SHARED_CATEGORY_APPEARANCE } from "@/lib/category-appearance"`
+  - Updated CATEGORY_APPEARANCE reference to SHARED_CATEGORY_APPEARANCE in RequestCard
+- Cleared .next cache for clean rebuild
+- Server now returns HTTP 200, site renders correctly
+
+**2. Homepage Enhancement - Hero Banner + Category Filters + Search:**
+- Added Hero Banner Section:
+  - Emerald gradient background (from-emerald-600 via-emerald-700 to-emerald-900)
+  - Decorative blur blobs for depth
+  - Title: "نیاز خود را ثبت کنید، بهترین کسب‌وکارها را پیدا کنید"
+  - Subtitle: "پلتفرم هوشمند اتصال نیاز به کسب‌وکار در سراسر ایران"
+  - Functional search input with clear button (filters requests by title + description)
+  - "ثبت نیاز رایگان" CTA button (navigates to post-need)
+  - Stats row: 4 TRUST_STATS items in 2x2/4-col grid with glassmorphism cards
+- Added Category Filter Chips:
+  - Sticky horizontal scrollable bar below header
+  - "همه" (All) chip + 10 top-level categories from ALL_CATEGORIES
+  - Active chip: emerald background with shadow
+  - Click toggles category filter
+  - Filters requests by categoryId.startsWith(selectedCategory)
+- Added Active Filters Bar:
+  - Result count display: "X نیاز یافت شد" (Persian numerals)
+  - Clear filter pills for active category and search query
+  - Sort dropdown: جدیدترین, بالاترین بودجه, کمترین بودجه
+- All filtering/sorting is client-side on loaded requests
+
+**3. QA Verification:**
+- agent-browser snapshot confirmed all elements rendering:
+  - Header with logo, city selector, search, dark mode, notifications, messages, login/register
+  - Category bar with mega menu trigger
+  - Hero section with h1 title, search input, CTA button
+  - Category filter chips: همه, املاک, وسایل نقلیه, لوازم الکترونیکی, etc.
+  - Sort dropdown with 3 options
+  - 6 request cards with proper articles
+  - Newsletter section
+  - Footer with full navigation
+  - Cookie consent, Quick Actions, Back to top
+- 0 errors in rendered page (error elements count = 0)
+- Lint: 0 new errors (3 pre-existing in keepalive.js)
+
+Stage Summary:
+- Fixed critical 500 error that prevented entire site from rendering
+- Enhanced homepage from plain card list to full-featured marketplace landing page
+- Hero section, category filters, search, sort all fully functional
+- All styling follows emerald green glassmorphism theme
+- File modified: src/components/home/NeedsHomepage.tsx
+- No other files modified
+- Screenshot saved: /home/z/my-project/download/qa-enhanced-homepage.png
+
+---
+Current Project Status:
+- Site is healthy and fully rendering
+- All 16 API routes functional
+- Homepage has hero banner + category filters + search + sort
+- Fibonacci-designed cards with category color accent strips
+- 3-column mega menu with 10 categories
+- Location selector in header (31 provinces, 170+ cities)
+- Admin login: admin@needfinder.ir / 123456
+- Lint: 0 new errors (3 pre-existing in keepalive.js, 3 warnings)
+
+Unresolved Issues / Risks:
+- Sandbox kills background dev server between tool calls (use keepalive.js)
+- itemscope/itemtype/itemprop React warnings (cosmetic, not functional)
+- Cross-origin preview warning (allowedDevOrigins already set to wildcard)
+
+Priority Recommendations for Next Phase:
+1. Enhance mobile experience (responsive hero, card touch interactions)
+2. Add "How It Works" section to homepage (trust building)
+3. Implement real-time notifications via WebSocket
+4. Add dark mode toggle animation and theme persistence
+5. Create "Featured Businesses" section below cards
+6. Add testimonials/social proof section
+7. Implement request detail page with proposal submission
+8. Add image upload support for requests and portfolios
+

@@ -18,13 +18,21 @@ import { useAppStore } from '@/lib/store';
 import {
   formatBudgetRange,
   getTimeAgo,
+  TRUST_STATS,
 } from '@/lib/constants';
+import { ALL_CATEGORIES } from '@/components/layout/CategoryMegaMenu';
 import type { ServiceRequest } from '@/lib/types';
 import { getCategoryColor } from '@/components/layout/CategoryMegaMenu';
 import { getCategoryAppearance, getAvatarColor, CATEGORY_APPEARANCE as SHARED_CATEGORY_APPEARANCE } from '@/lib/category-appearance';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { QuickViewPopover, useQuickView } from '@/components/shared/QuickView';
+import {
+  X,
+  ArrowUpDown,
+  LayoutGrid,
+  Plus,
+} from 'lucide-react';
 
 
 // ─── Fibonacci Design Tokens ───────────────────────────
@@ -355,6 +363,18 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
   );
 }
 
+// ─── Top-Level Categories (first 10) ─────────────────
+const TOP_CATEGORIES = ALL_CATEGORIES.slice(0, 10);
+
+// ─── Sort Options ─────────────────────────
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'جدیدترین' },
+  { value: 'budget-high', label: 'بالاترین بودجه' },
+  { value: 'budget-low', label: 'کمترین بودجه' },
+] as const;
+
+type SortOption = (typeof SORT_OPTIONS)[number]['value'];
+
 // ─── Polling interval (15 seconds) ─────────────────────
 const POLL_INTERVAL = 15_000;
 
@@ -391,7 +411,11 @@ export function NeedsHomepage() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [localRequests, setLocalRequests] = useState<ServiceRequest[]>([]);
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<SortOption>('newest');
   const lastFetchTimeRef = useRef<number>(Date.now());
+  const categoryScrollRef = useRef<HTMLDivElement>(null);
   const { quickView, showQuickView, closeQuickView } = useQuickView();
 
   // Initial fetch
@@ -475,14 +499,232 @@ export function NeedsHomepage() {
     return () => clearInterval(interval);
   }, [initialLoading]);
 
-  // Display list: use localRequests if populated, fallback to store
-  const displayRequests = localRequests.length > 0 ? localRequests : storeRequests;
+  // Filter and sort: use localRequests if populated, fallback to store
+  const baseRequests = localRequests.length > 0 ? localRequests : storeRequests;
+  const displayRequests = baseRequests
+    .filter((r) => {
+      // Search filter
+      if (searchQuery.trim()) {
+        const q = searchQuery.trim().toLowerCase();
+        return (
+          r.title.toLowerCase().includes(q) ||
+          r.description.toLowerCase().includes(q)
+        );
+      }
+      return true;
+    })
+    .filter((r) => {
+      // Category filter
+      if (!selectedCategory) return true;
+      return r.categoryId.startsWith(selectedCategory);
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'budget-high':
+          return (b.budgetMax ?? 0) - (a.budgetMax ?? 0);
+        case 'budget-low':
+          return (a.budgetMin ?? Infinity) - (b.budgetMin ?? Infinity);
+        case 'newest':
+        default:
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+      }
+    });
+
+  const navigateTo = useAppStore((s) => s.navigateTo);
 
   const hasMore = page < totalPages;
 
   return (
     <div className="min-h-screen bg-background" dir="rtl">
-      <div className="container-default mx-auto px-5 md:px-8 pt-6 pb-12">
+      {/* ═══ Hero Banner Section ═══ */}
+      <section className="relative overflow-hidden bg-gradient-to-bl from-emerald-600 via-emerald-700 to-emerald-900">
+        {/* Decorative blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -start-20 h-72 w-72 rounded-full bg-emerald-400/20 blur-3xl" />
+          <div className="absolute top-10 -end-16 h-56 w-56 rounded-full bg-teal-300/15 blur-3xl" />
+          <div className="absolute bottom-0 start-1/3 h-48 w-48 rounded-full bg-emerald-500/10 blur-2xl" />
+        </div>
+
+        <div className="relative container-default mx-auto px-5 md:px-8 pt-12 pb-14 md:pt-20 md:pb-20">
+          <div className="mx-auto max-w-3xl text-center">
+            {/* Title */}
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-snug tracking-tight text-white mb-3 md:mb-4">
+              نیاز خود را ثبت کنید، بهترین کسب‌وکارها را پیدا کنید
+            </h1>
+            <p className="text-sm sm:text-base md:text-lg text-emerald-100/80 leading-relaxed mb-8 md:mb-10">
+              پلتفرم هوشمند اتصال نیاز به کسب‌وکار در سراسر ایران
+            </p>
+
+            {/* Search + CTA */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 mb-10 md:mb-14">
+              <div className="relative w-full sm:flex-1">
+                <Search
+                  className="absolute start-4 top-1/2 -translate-y-1/2 size-5 text-emerald-400/70"
+                  aria-hidden="true"
+                />
+                <input
+                  type="text"
+                  placeholder="جستجوی نیاز... (مثلاً: طراحی سایت، سقف خانه)"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={cn(
+                    'w-full rounded-2xl border-0 py-3.5 pe-4 ps-12 text-sm text-white placeholder:text-emerald-200/50',
+                    'bg-white/15 backdrop-blur-md',
+                    'ring-1 ring-inset ring-white/20',
+                    'focus:outline-none focus:ring-2 focus:ring-emerald-300/60',
+                    'transition-all duration-200',
+                  )}
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute end-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-emerald-200/60 hover:text-white hover:bg-white/10 transition-colors"
+                    aria-label="پاک کردن جستجو"
+                  >
+                    <X className="size-4" />
+                  </button>
+                )}
+              </div>
+              <Button
+                onClick={() => navigateTo('post-need')}
+                className="w-full sm:w-auto rounded-2xl px-8 py-3.5 text-sm font-bold bg-white text-emerald-700 hover:bg-emerald-50 shadow-lg shadow-emerald-900/30 transition-all duration-200 hover:shadow-xl hover:shadow-emerald-900/40"
+              >
+                <Plus className="size-4 me-2" aria-hidden="true" />
+                ثبت نیاز رایگان
+              </Button>
+            </div>
+
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+              {TRUST_STATS.map((stat) => (
+                <div
+                  key={stat.label}
+                  className="flex flex-col items-center gap-1 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 px-4 py-3 md:py-4 transition-all duration-200 hover:bg-white/15"
+                >
+                  <span className="text-xl md:text-2xl mb-0.5" aria-hidden="true">
+                    {stat.icon}
+                  </span>
+                  <span className="text-lg md:text-xl font-extrabold text-white tabular-nums">
+                    {stat.value.toLocaleString('fa-IR')}{stat.suffix}
+                  </span>
+                  <span className="text-[11px] md:text-xs font-medium text-emerald-100/70">
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ Category Filter Chips ═══ */}
+      <section className="sticky top-0 z-30 bg-background/80 backdrop-blur-lg border-b border-border/30">
+        <div
+          ref={categoryScrollRef}
+          className="container-default mx-auto px-5 md:px-8 py-3"
+        >
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
+            {/* All chip */}
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className={cn(
+                'inline-flex items-center gap-1.5 shrink-0 rounded-xl px-4 py-2 text-xs font-semibold',
+                'border transition-all duration-200',
+                !selectedCategory
+                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20'
+                  : 'bg-card/60 text-muted-foreground border-border/40 hover:bg-card hover:border-border/60 hover:text-foreground',
+              )}
+            >
+              <LayoutGrid className="size-3.5" aria-hidden="true" />
+              همه
+            </button>
+
+            {/* Category chips */}
+            {TOP_CATEGORIES.map((cat) => {
+              const Icon = cat.icon;
+              const isActive = selectedCategory === cat.value;
+              return (
+                <button
+                  key={cat.value}
+                  onClick={() =>
+                    setSelectedCategory(isActive ? null : cat.value)
+                  }
+                  className={cn(
+                    'inline-flex items-center gap-1.5 shrink-0 rounded-xl px-4 py-2 text-xs font-semibold',
+                    'border transition-all duration-200',
+                    isActive
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20'
+                      : 'bg-card/60 text-muted-foreground border-border/40 hover:bg-card hover:border-border/60 hover:text-foreground',
+                  )}
+                >
+                  <Icon className="size-3.5" aria-hidden="true" />
+                  {cat.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ Active Filters Bar ═══ */}
+      <div className="container-default mx-auto px-5 md:px-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 py-4">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-muted-foreground">
+              <span className="font-bold text-foreground tabular-nums">
+                {displayRequests.length.toLocaleString('fa-IR')}
+              </span>{' '}
+              نیاز یافت شد
+            </span>
+            {selectedCategory && (
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:ring-emerald-800/40 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 transition-colors"
+              >
+                <X className="size-3" aria-hidden="true" />
+                حذف فیلتر
+              </button>
+            )}
+            {searchQuery.trim() && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:ring-emerald-800/40 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 transition-colors"
+              >
+                <X className="size-3" aria-hidden="true" />
+                جستجو: &laquo;{searchQuery.trim()}&raquo;
+              </button>
+            )}
+          </div>
+
+          {/* Sort Dropdown */}
+          <div className="flex items-center gap-2">
+            <ArrowUpDown className="size-3.5 text-muted-foreground" aria-hidden="true" />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className={cn(
+                'rounded-xl border px-3 py-1.5 text-xs font-medium appearance-none pe-7 cursor-pointer',
+                'bg-card/50 backdrop-blur-sm border-border/40 text-foreground',
+                'focus:outline-none focus:ring-2 focus:ring-emerald-500/30',
+                'transition-all duration-200',
+                'bg-[url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%236b7280%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E")] bg-no-repeat bg-[position:left_8px_center]',
+              )}
+              style={{ direction: 'rtl' }}
+            >
+              {SORT_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ Request Cards ═══ */}
+      <div className="container-default mx-auto px-5 md:px-8 pb-12">
         {/* Results */}
         {initialLoading ? (
           <div className="flex flex-col gap-3" itemscope itemtype="https://schema.org/ItemList">
