@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const { spawn } = require('child_process');
 const fs = require('fs');
 const logFile = '/home/z/my-project/dev.log';

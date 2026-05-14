@@ -31,6 +31,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { QuickViewPopover, useQuickView } from '@/components/shared/QuickView';
 import { HomepageHowItWorks } from '@/components/home/HomepageHowItWorks';
 import { HomepageTestimonials } from '@/components/home/HomepageTestimonials';
+import { FeaturedBusinesses } from '@/components/home/FeaturedBusinesses';
 import {
   X,
   ArrowUpDown,
@@ -894,6 +895,9 @@ export function NeedsHomepage() {
           </Button>
         </div>
       </section>
+
+      {/* ═══ Featured Businesses Section ═══ */}
+      <FeaturedBusinesses />
 
       {/* ═══ Testimonials Section ═══ */}
       <HomepageTestimonials />
