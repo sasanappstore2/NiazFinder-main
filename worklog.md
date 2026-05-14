@@ -979,3 +979,84 @@ Priority Recommendations for Next Phase:
 7. Implement request detail page with proposal submission
 8. Add image upload support for requests and portfolios
 
+
+---
+Task ID: qa-fix-enhance
+Agent: Main + 4 parallel sub-agents
+Task: Comprehensive QA, bug fixes, dead code cleanup, and feature enhancements
+
+## Current Project Status Assessment
+- **Backend**: 16 API routes fully functional (all tested with curl - 200 OK)
+- **Frontend**: SPA architecture with Zustand store, all views rendering
+- **Build**: Compiles with 0 new errors (3 pre-existing warnings in unrelated files)
+- **Server stability**: Process gets killed by sandbox between tool calls; keepalive.js maintains it during active sessions
+- **Previous session issues**: Chat page scrolling was fixed; all navigation working
+
+## QA Results (API Testing)
+- Homepage: HTTP 200 ✅
+- Categories API: 8 items ✅
+- Requests API: HTTP 200 ✅
+- Specialists API: HTTP 200 ✅
+- Auth Login: Token returned ✅
+- Dashboard API: HTTP 200 ✅ (with auth)
+- Conversations API: HTTP 200 ✅
+- Wallet API: HTTP 200 ✅
+- Reviews API: HTTP 200 ✅
+
+## Bug Fixes Applied
+
+### 1. Double Fetch in NeedsHomepage.tsx (MEDIUM)
+- **Problem**: `loadRequests` fired two identical requests to `/api/requests` (Zustand store + raw fetch)
+- **Fix**: Removed raw fetch, using only Zustand store action; reading data from `useAppStore.getState().requests`
+
+### 2. Category Filter Mismatch in NeedsHomepage.tsx (MEDIUM)
+- **Problem**: Filter used `categoryId.startsWith(selectedCategory)` where categoryId='1' and selectedCategory='real-estate' — never matched
+- **Fix**: Added `CATEGORY_NAME_TO_PARENT_VALUE` Map that maps Persian category names to parent slugs; filter now uses `r.categoryName`
+
+### 3. Unused scrollAreaViewportRef in ChatPanel.tsx (LOW)
+- **Problem**: Ref passed to ScrollArea which doesn't forward refs — always null
+- **Fix**: Removed unused ref declaration and prop
+
+### 4. TOAST_REMOVE_DELAY Too Long (LOW)
+- **Problem**: `1000000`ms (~16.7 minutes) — dismissed toasts stayed in memory
+- **Fix**: Changed to `5000` (5 seconds)
+
+### 5. Dead Code Cleanup (~78KB removed)
+- Deleted `src/components/layout/LocationSelector.tsx` (612 lines, never imported)
+- Deleted `src/app/page.tsx.bak` (backup file)
+- Deleted entire `src/lib/store/` directory (8 files — modular refactoring that was never wired up; all consumers use `store.ts`)
+
+## Feature Enhancements
+
+### 1. Notification Dropdown Panel (Header.tsx)
+- Popover-based dropdown on bell icon click
+- Shows last 5 notifications with type-based icons (message→MessageSquare, like→Heart, etc.)
+- Unread indicator (green dot), mark-all-read button
+- Relative time display (Persian: "لحظاتی پیش", "5 دقیقه پیش")
+- "مشاهده همه" (View All) footer link
+- Emerald glassmorphism styling, max-h-[400px] with scroll
+
+### 2. Chat Reply-to + Emoji Picker (ChatPanel.tsx)
+- **Reply**: Hover button on desktop, right-click context menu; reply indicator bar above input; sent messages show "در پاسخ به: ..." quote
+- **Emoji**: 24 emoji grid in Popover (Smile button next to Paperclip); cursor-aware insertion at selection point
+- Mobile responsive: hover reply hidden on mobile, emoji always visible
+
+### 3. Enhanced Homepage UX (NeedsHomepage.tsx)
+- **Empty state**: Glassmorphism icon with floating animation, friendly Persian text, "ثبت نیاز رایگان" CTA
+- **Debounced search**: 300ms debounce via existing useDebounce hook
+- **Animated result count**: Framer Motion spring animation on count change
+
+## Unresolved Issues & Risks
+1. **Sandbox process kills**: Dev server process gets killed between tool calls. keepalive.js helps but browser automation (agent-browser) is unreliable.
+2. **Monolithic SPA page.tsx**: All views in one client component — 41 imports. Consider lazy loading with React.lazy for non-critical views.
+3. **Store.ts is very large (~978 lines)**: Consider extracting helper functions for duplicate request/user mapping code (3x duplication identified).
+4. **No real-time updates**: Chat and notifications use polling. Consider WebSocket for real-time.
+5. **CategoryBar component imports ALL_CATEGORIES**: Could be optimized with memoization.
+
+## Priority Recommendations for Next Phase
+1. Add WebSocket support for real-time chat messages
+2. Implement lazy loading / code splitting for SPA views
+3. Add request detail page with full proposal system
+4. Add specialist profile page with reviews and portfolio
+5. Implement real file upload in chat
+6. Add dark mode toggle persistence

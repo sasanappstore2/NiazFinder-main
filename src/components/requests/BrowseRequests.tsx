@@ -529,13 +529,13 @@ export function BrowseRequests() {
           <>
             <div
               className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
-              itemscope
-              itemtype="https://schema.org/ItemList"
+              itemScope
+              itemType="https://schema.org/ItemList"
             >
-              <meta itemprop="numberOfItems" content={String(totalCount)} />
-              <meta itemprop="name" content="نیازهای ثبت شده در نیاز فایندر" />
+              <meta itemProp="numberOfItems" content={String(totalCount)} />
+              <meta itemProp="name" content="نیازهای ثبت شده در نیاز فایندر" />
               {requests.map((request) => (
-                <div key={request.id} itemprop="itemListElement">
+                <div key={request.id} itemProp="itemListElement">
                   <RequestCard
                     request={request}
                     onClick={() => navigateTo('request-detail', { id: request.id })}
@@ -574,7 +574,7 @@ export function BrowseRequests() {
         )}
       </div>
       <noscript>
-        <div className="sr-only" itemscope itemtype="https://schema.org/ItemList">
+        <div className="sr-only" itemScope itemType="https://schema.org/ItemList">
           <h1>نیازهای ثبت شده در نیاز فایندر</h1>
           <p>فهرست نیازهای خدمات ثبت شده توسط کاربران. شامل نیازهای طراحی وب، برنامه‌نویسی، تعمیرات، تولید محتوا، طراحی گرافیک و خدمات خانگی.</p>
         </div>

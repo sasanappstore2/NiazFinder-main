@@ -645,13 +645,13 @@ export function BrowseSpecialists() {
                 ? 'grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'
                 : 'flex flex-col gap-4'
               }
-              itemscope
-              itemtype="https://schema.org/ItemList"
+              itemScope
+              itemType="https://schema.org/ItemList"
             >
-              <meta itemprop="numberOfItems" content={String(filteredSpecialists.length)} />
-              <meta itemprop="name" content="فهرست کسب‌وکارها در نیاز فایندر" />
+              <meta itemProp="numberOfItems" content={String(filteredSpecialists.length)} />
+              <meta itemProp="name" content="فهرست کسب‌وکارها در نیاز فایندر" />
               {visibleSpecialists.map((specialist) => (
-                <div key={specialist.id} itemprop="itemListElement">
+                <div key={specialist.id} itemProp="itemListElement">
                   {viewMode === 'grid' ? (
                     <SpecialistCard
                       specialist={specialist}
@@ -691,7 +691,7 @@ export function BrowseSpecialists() {
       <CompareBar />
 
       <noscript>
-        <div className="sr-only" itemscope itemtype="https://schema.org/ItemList">
+        <div className="sr-only" itemScope itemType="https://schema.org/ItemList">
           <h1>فهرست کسب‌وکارها در نیاز فایندر</h1>
           <p>فهرست کسب‌وکارهای خدمات ثبت شده در پلتفرم. شامل کسب‌وکارهای طراحی وب، برنامه‌نویسی، تعمیرات، تولید محتوا، طراحی گرافیک و خدمات خانگی.</p>
         </div>

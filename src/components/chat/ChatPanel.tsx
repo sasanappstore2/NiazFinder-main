@@ -10,6 +10,9 @@ import {
   Plus,
   MessageCircle,
   CheckCheck,
+  Reply,
+  Smile,
+  X,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
@@ -19,6 +22,11 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import type { Message } from '@/lib/types';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '@/components/ui/popover';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -40,6 +48,25 @@ const getInitials = (name: string) => {
   if (parts.length >= 2) return parts[0][0] + parts[1][0];
   return parts[0].slice(0, 2);
 };
+
+// ─── Reply & Emoji types ────────────────────────────────────────────────────
+
+interface ReplyInfo {
+  messageId: string;
+  senderName: string;
+  content: string;
+}
+
+interface ExtendedMessage extends Message {
+  replyTo?: ReplyInfo;
+}
+
+const QUICK_EMOJIS = [
+  '❤️', '😊', '👍', '😂', '🎉', '😮',
+  '😢', '😡', '👏', '🙏', '💪', '✨',
+  '🎯', '💯', '🔥', '⭐', '🌟', '👌',
+  '🤝', '📌', '🔔', '✅', '❌', '💯',
+];
 
 // ─── Auto-replies pool ───────────────────────────────────────────────────────
 
@@ -169,13 +196,16 @@ export function ChatPanel() {
   const { isAuthenticated, setAuthModalOpen } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-  const [conversationMessages, setConversationMessages] = useState<Message[]>([]);
+  const [conversationMessages, setConversationMessages] = useState<ExtendedMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [showMessages, setShowMessages] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [replyTo, setReplyTo] = useState<ReplyInfo | null>(null);
+  const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; msg: ExtendedMessage } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const scrollAreaViewportRef = useRef<HTMLDivElement>(null);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const selectedConversation = mockConversations.find((c) => c.id === selectedConversationId) ?? null;
 
@@ -204,9 +234,10 @@ export function ChatPanel() {
 
   const handleSelectConversation = (conv: MockConversation) => {
     setSelectedConversationId(conv.id);
-    setConversationMessages([...conv.messages]);
+    setConversationMessages([...conv.messages] as ExtendedMessage[]);
     setShowMessages(true);
     setIsTyping(false);
+    setReplyTo(null);
     if (typingTimerRef.current) {
       clearTimeout(typingTimerRef.current);
       typingTimerRef.current = null;
@@ -217,6 +248,7 @@ export function ChatPanel() {
     setShowMessages(false);
     setSelectedConversationId(null);
     setIsTyping(false);
+    setReplyTo(null);
     if (typingTimerRef.current) {
       clearTimeout(typingTimerRef.current);
       typingTimerRef.current = null;
@@ -226,7 +258,7 @@ export function ChatPanel() {
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedConversationId) return;
 
-    const msg: Message = {
+    const msg: ExtendedMessage = {
       id: `msg-${Date.now()}`,
       conversationId: selectedConversationId,
       senderId: 'me',
@@ -234,10 +266,13 @@ export function ChatPanel() {
       type: 'TEXT',
       isRead: false,
       createdAt: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
+      ...(replyTo ? { replyTo: { ...replyTo } } : {}),
     };
 
     setConversationMessages((prev) => [...prev, msg]);
     setNewMessage('');
+    setReplyTo(null);
+    inputRef.current?.focus();
 
     // Show typing indicator and schedule auto-reply
     setIsTyping(true);
@@ -250,7 +285,7 @@ export function ChatPanel() {
       setIsTyping(false);
 
       const randomReply = AUTO_REPLIES[Math.floor(Math.random() * AUTO_REPLIES.length)];
-      const replyMsg: Message = {
+      const replyMsg: ExtendedMessage = {
         id: `reply-${Date.now()}`,
         conversationId: selectedConversationId,
         senderId: 'other',
@@ -280,6 +315,48 @@ export function ChatPanel() {
       handleSendMessage();
     }
   };
+
+  // ─── Emoji helper ─────────────────────────────────────────────────────────
+  const insertEmoji = useCallback((emoji: string) => {
+    const input = inputRef.current;
+    if (!input) return;
+    const start = input.selectionStart ?? newMessage.length;
+    const end = input.selectionEnd ?? newMessage.length;
+    const updated = newMessage.slice(0, start) + emoji + newMessage.slice(end);
+    setNewMessage(updated);
+    // Restore cursor after the inserted emoji
+    requestAnimationFrame(() => {
+      input.focus();
+      const newPos = start + emoji.length;
+      input.setSelectionRange(newPos, newPos);
+    });
+  }, [newMessage]);
+
+  // ─── Reply helper ────────────────────────────────────────────────────────
+  const startReply = useCallback((msg: ExtendedMessage) => {
+    const isMe = msg.senderId === 'me';
+    setReplyTo({
+      messageId: msg.id,
+      senderName: isMe ? 'شما' : (selectedConversation?.name ?? 'ناشناس'),
+      content: msg.content,
+    });
+    setContextMenu(null);
+    inputRef.current?.focus();
+  }, [selectedConversation?.name]);
+
+  const handleMessageContextMenu = useCallback((e: React.MouseEvent, msg: ExtendedMessage) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY, msg });
+    setHoveredMsgId(msg.id);
+  }, []);
+
+  // Close context menu on outside click
+  useEffect(() => {
+    if (!contextMenu) return;
+    const close = () => setContextMenu(null);
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, [contextMenu]);
 
   // ─── Auth Guard ──────────────────────────────────────────────────────────
   if (!isAuthenticated) {
@@ -459,7 +536,7 @@ export function ChatPanel() {
             </div>
 
             {/* Messages */}
-            <ScrollArea className="min-h-0 flex-1 px-4 py-3" ref={scrollAreaViewportRef}>
+            <ScrollArea className="min-h-0 flex-1 px-4 py-3">
               <div className="space-y-3" role="log" aria-label="پیام‌ها" aria-live="polite">
                 {/* System message */}
                 <div className="flex justify-center py-2">
@@ -470,19 +547,65 @@ export function ChatPanel() {
 
                 {conversationMessages.map((msg) => {
                   const isMe = msg.senderId === 'me';
+                  const isHovered = hoveredMsgId === msg.id;
                   return (
                     <div
                       key={msg.id}
-                      className={cn('flex', isMe ? 'justify-start' : 'justify-end')}
+                      className={cn('group relative flex', isMe ? 'justify-start' : 'justify-end')}
+                      onMouseEnter={() => setHoveredMsgId(msg.id)}
+                      onMouseLeave={() => { setHoveredMsgId(null); }}
+                      onContextMenu={(e) => handleMessageContextMenu(e, msg)}
                     >
+                      {/* Reply button on hover (desktop) */}
+                      <button
+                        type="button"
+                        onClick={() => startReply(msg)}
+                        className={cn(
+                          'absolute top-1 z-10 flex h-7 w-7 items-center justify-center rounded-full',
+                          'bg-background/80 border border-border/60 shadow-sm backdrop-blur-sm',
+                          'text-muted-foreground hover:text-primary hover:bg-primary/10',
+                          'transition-all duration-150',
+                          isMe ? 'left-0 -translate-x-full ml-1' : 'right-0 translate-x-full mr-1',
+                          isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none',
+                          'max-md:hidden'
+                        )}
+                        aria-label="پاسخ به این پیام"
+                        title="پاسخ"
+                      >
+                        <Reply className="h-3.5 w-3.5" />
+                      </button>
                       <div
                         className={cn(
-                          'max-w-[75%] rounded-2xl px-4 py-2.5',
+                          'relative max-w-[75%] rounded-2xl px-4 py-2.5',
                           isMe
                             ? 'rounded-br-md bg-primary text-primary-foreground'
                             : 'rounded-bl-md bg-muted'
                         )}
                       >
+                        {/* Reply quote */}
+                        {msg.replyTo && (
+                          <div
+                            className={cn(
+                              'mb-1.5 rounded-md border-s-2 ps-2 pe-2 pt-1 pb-1 text-xs',
+                              isMe
+                                ? 'border-s-primary-foreground/40 bg-primary-foreground/10'
+                                : 'border-s-muted-foreground/30 bg-muted-foreground/5'
+                            )}
+                          >
+                            <span className={cn(
+                              'font-semibold',
+                              isMe ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                            )}>
+                              در پاسخ به: {msg.replyTo.senderName}
+                            </span>
+                            <p className={cn(
+                              'mt-0.5 truncate',
+                              isMe ? 'text-primary-foreground/60' : 'text-muted-foreground'
+                            )}>
+                              {msg.replyTo.content.length > 60 ? msg.replyTo.content.slice(0, 60) + '...' : msg.replyTo.content}
+                            </p>
+                          </div>
+                        )}
                         <p className="text-sm leading-7">{msg.content}</p>
                         <div
                           className={cn(
@@ -507,6 +630,23 @@ export function ChatPanel() {
                   );
                 })}
 
+                {/* Context menu for reply (right-click / long-press) */}
+                {contextMenu && (
+                  <div
+                    className="fixed z-50 rounded-lg border bg-popover p-1 shadow-lg backdrop-blur-sm"
+                    style={{ top: contextMenu.y, left: contextMenu.x }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => startReply(contextMenu.msg)}
+                      className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors"
+                    >
+                      <Reply className="h-4 w-4" />
+                      <span>پاسخ</span>
+                    </button>
+                  </div>
+                )}
+
                 {/* Typing indicator */}
                 {isTyping && (
                   <div className="flex justify-end">
@@ -526,6 +666,31 @@ export function ChatPanel() {
 
             {/* Input Area */}
             <Separator />
+
+            {/* Reply indicator bar */}
+            {replyTo && (
+              <div className="flex items-center gap-2 border-b bg-muted/30 px-4 py-2">
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-muted-foreground">
+                    در پاسخ به: {replyTo.senderName}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground/70">
+                    {replyTo.content.length > 50 ? replyTo.content.slice(0, 50) + '...' : replyTo.content}
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
+                  onClick={() => setReplyTo(null)}
+                  aria-label="لغو پاسخ"
+                  title="لغو پاسخ"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
             <div className="flex items-center gap-2 p-3">
               <Button
                 variant="ghost"
@@ -536,7 +701,44 @@ export function ChatPanel() {
               >
                 <Paperclip className="h-5 w-5" />
               </Button>
+
+              {/* Emoji picker */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11 shrink-0 text-muted-foreground hover:text-amber-500"
+                    aria-label="درج ایموجی"
+                    title="درج ایموجی"
+                  >
+                    <Smile className="h-5 w-5" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-auto p-2"
+                  side="top"
+                  align="center"
+                  sideOffset={8}
+                >
+                  <div className="grid grid-cols-6 gap-1">
+                    {QUICK_EMOJIS.map((emoji) => (
+                      <button
+                        key={emoji}
+                        type="button"
+                        onClick={() => insertEmoji(emoji)}
+                        className="flex h-9 w-9 items-center justify-center rounded-md text-xl hover:bg-accent transition-colors"
+                        aria-label={emoji}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+
               <Input
+                ref={inputRef}
                 placeholder="پیام خود را بنویسید..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}

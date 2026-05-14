@@ -261,8 +261,8 @@ export function SpecialistProfile() {
   const avatarSolid = getAvatarSolid(specialist.displayName ?? '');
 
   return (
-    <div className="min-h-screen bg-muted/20" dir="rtl" itemscope itemtype="https://schema.org/Person">
-      <meta itemprop="name" content={specialist.displayName} />
+    <div className="min-h-screen bg-muted/20" dir="rtl" itemScope itemType="https://schema.org/Person">
+      <meta itemProp="name" content={specialist.displayName} />
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
 
         {/* ── Back Button ──────────────────── */}
@@ -295,7 +295,7 @@ export function SpecialistProfile() {
             <div className="-mt-16 mb-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex items-end gap-4">
                 <div className="relative">
-                  <div className={`size-28 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white shadow-lg ring-4 ring-card ${avatarSolid}`} aria-hidden="true" itemprop="image">
+                  <div className={`size-28 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white shadow-lg ring-4 ring-card ${avatarSolid}`} aria-hidden="true" itemProp="image">
                     {initials}
                   </div>
                   {specialist.online && (
@@ -304,7 +304,7 @@ export function SpecialistProfile() {
                 </div>
                 <div className="mb-1">
                   <div className="flex items-center gap-2">
-                    <h1 className="text-xl font-extrabold sm:text-2xl" itemprop="name">
+                    <h1 className="text-xl font-extrabold sm:text-2xl" itemProp="name">
                       {specialist.displayName}
                     </h1>
                     {specialist.isVerified && (
@@ -314,7 +314,7 @@ export function SpecialistProfile() {
                   <div className="mt-1.5 flex items-center gap-3 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <MapPin className="size-3.5" aria-hidden="true" />
-                      <span itemprop="address">{specialist.city}</span>
+                      <span itemProp="address">{specialist.city}</span>
                     </span>
                     {specialist.online ? (
                       <span className="flex items-center gap-1 font-medium text-emerald-600 dark:text-emerald-400">
@@ -393,7 +393,7 @@ export function SpecialistProfile() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="leading-8 text-sm text-muted-foreground" itemprop="description">
+                  <p className="leading-8 text-sm text-muted-foreground" itemProp="description">
                     {specialist.bio}
                   </p>
                 </CardContent>

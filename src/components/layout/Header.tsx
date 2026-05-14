@@ -16,6 +16,13 @@ import {
   GitCompareArrows,
   ChevronLeft,
   Settings,
+  Check,
+  Heart,
+  Star,
+  UserPlus,
+  Clock,
+  BellOff,
+  ArrowLeft,
 } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
@@ -50,6 +57,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '@/components/ui/popover';
 
 // ============ View → SEO path mapping ============
 const VIEW_HREF: Record<AppView, string> = {
@@ -141,32 +153,200 @@ function MobileNavItem({
   );
 }
 
-// ============ Notifications Button ============
+// ============ Notification Type → Icon mapping ============
+function getNotificationIcon(type: string) {
+  const lower = type.toLowerCase();
+  if (lower.includes('message') || lower.includes('chat')) return MessageSquare;
+  if (lower.includes('like') || lower.includes('heart') || lower.includes('fav')) return Heart;
+  if (lower.includes('star') || lower.includes('review') || lower.includes('rating')) return Star;
+  if (lower.includes('follow') || lower.includes('user')) return UserPlus;
+  if (lower.includes('check') || lower.includes('approv') || lower.includes('verif')) return Check;
+  return Bell;
+}
+
+// ============ Relative time helper ============
+function timeAgo(dateStr: string): string {
+  const now = Date.now();
+  const then = new Date(dateStr).getTime();
+  const diffMs = now - then;
+  const seconds = Math.floor(diffMs / 1000);
+  if (seconds < 60) return 'لحظاتی پیش';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} دقیقه پیش`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} ساعت پیش`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days} روز پیش`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months} ماه پیش`;
+  return `${Math.floor(months / 12)} سال پیش`;
+}
+
+// ============ Notifications Button (with Dropdown) ============
 function NotificationsButton() {
-  const { unreadNotificationCount, navigateTo } = useAppStore();
+  const { notifications, unreadNotificationCount, fetchNotifications, markNotificationReadAPI, markAllNotificationsReadAPI, navigateTo } = useAppStore();
+  const [open, setOpen] = useState(false);
+
+  const recentNotifications = notifications.slice(0, 5);
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (nextOpen) {
+      fetchNotifications();
+    }
+  };
+
+  const handleNotificationClick = (id: string, isRead: boolean) => {
+    if (!isRead) {
+      markNotificationReadAPI(id);
+    }
+    setOpen(false);
+    navigateTo('notifications');
+  };
+
+  const handleMarkAllRead = () => {
+    markAllNotificationsReadAPI();
+  };
+
+  const handleViewAll = () => {
+    setOpen(false);
+    navigateTo('notifications');
+  };
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={() => navigateTo('notifications')}
-      className="relative size-9 text-muted-foreground hover:text-foreground"
-      aria-label={`اعلان‌ها${unreadNotificationCount > 0 ? ` (${unreadNotificationCount} خوانده نشده)` : ''}`}
-      title={VIEW_TITLE['notifications']}
-      data-href={VIEW_HREF['notifications']}
-    >
-      <Bell className="size-[16px]" />
-      {unreadNotificationCount > 0 && (
-        <span
-          className={cn(
-            "absolute -top-1 -end-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-[10px] font-bold text-white",
-            "animate-notification-pulse"
-          )}
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative size-9 text-muted-foreground hover:text-foreground"
+          aria-label={`اعلان‌ها${unreadNotificationCount > 0 ? ` (${unreadNotificationCount} خوانده نشده)` : ''}`}
+          title={VIEW_TITLE['notifications']}
         >
-          {unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}
-        </span>
-      )}
-    </Button>
+          <Bell className="size-[16px]" />
+          {unreadNotificationCount > 0 && (
+            <span
+              className={cn(
+                "absolute -top-1 -end-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-[10px] font-bold text-white",
+                "animate-notification-pulse"
+              )}
+            >
+              {unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}
+            </span>
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="end"
+        sideOffset={8}
+        className={cn(
+          'w-80 p-0 rtl:',
+          'border-emerald-500/20 bg-emerald-950/80 backdrop-blur-xl dark:bg-emerald-950/90',
+          'shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
+        )}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-emerald-500/15 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <Bell className="size-4 text-emerald-400" />
+            <h3 className="text-sm font-semibold text-emerald-100">اعلان‌ها</h3>
+          </div>
+          {unreadNotificationCount > 0 && (
+            <button
+              type="button"
+              onClick={handleMarkAllRead}
+              className="text-xs text-emerald-400/70 transition-colors hover:text-emerald-300"
+            >
+              خواندن همه
+            </button>
+          )}
+        </div>
+
+        {/* Notification list */}
+        <div className="max-h-[400px] overflow-y-auto">
+          {recentNotifications.length === 0 ? (
+            /* Empty state */
+            <div className="flex flex-col items-center justify-center gap-2 px-4 py-10">
+              <BellOff className="size-8 text-emerald-500/30" />
+              <p className="text-sm text-emerald-400/50">بدون اعلان</p>
+            </div>
+          ) : (
+            <ul className="divide-y divide-emerald-500/10">
+              {recentNotifications.map((notif) => {
+                const Icon = getNotificationIcon(notif.type);
+                return (
+                  <li key={notif.id}>
+                    <button
+                      type="button"
+                      onClick={() => handleNotificationClick(notif.id, notif.isRead)}
+                      className={cn(
+                        'flex w-full items-start gap-3 px-4 py-3 text-right transition-colors duration-150',
+                        notif.isRead
+                          ? 'opacity-60 hover:bg-emerald-500/5'
+                          : 'bg-emerald-500/8 hover:bg-emerald-500/12'
+                      )}
+                    >
+                      {/* Unread indicator */}
+                      {!notif.isRead && (
+                        <span className="mt-1.5 size-2 shrink-0 rounded-full bg-emerald-400" />
+                      )}
+                      {notif.isRead && <span className="w-2 shrink-0" />}
+
+                      {/* Icon */}
+                      <span
+                        className={cn(
+                          'mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full',
+                          notif.isRead
+                            ? 'bg-emerald-500/10 text-emerald-500/40'
+                            : 'bg-emerald-500/20 text-emerald-400'
+                        )}
+                      >
+                        <Icon className="size-4" />
+                      </span>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <p className={cn(
+                          'truncate text-sm leading-snug',
+                          notif.isRead ? 'text-emerald-200/60' : 'text-emerald-100 font-medium'
+                        )}>
+                          {notif.title}
+                        </p>
+                        {notif.message && (
+                          <p className="mt-0.5 truncate text-xs text-emerald-300/40">
+                            {notif.message}
+                          </p>
+                        )}
+                        <div className="mt-1 flex items-center gap-1 text-[11px] text-emerald-400/40">
+                          <Clock className="size-3" />
+                          <span>{timeAgo(notif.createdAt)}</span>
+                        </div>
+                      </div>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+
+        {/* View All footer */}
+        {notifications.length > 0 && (
+          <div className="border-t border-emerald-500/15 px-4 py-2.5">
+            <button
+              type="button"
+              onClick={handleViewAll}
+              className="flex w-full items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium text-emerald-400 transition-colors hover:bg-emerald-500/10 hover:text-emerald-300"
+              data-href={VIEW_HREF['notifications']}
+              title={VIEW_TITLE['notifications']}
+            >
+              مشاهده همه
+              <ArrowLeft className="size-3" />
+            </button>
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }
 

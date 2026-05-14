@@ -86,7 +86,9 @@ export function MobileBottomNav() {
       aria-label="ناوبری پایین صفحه"
     >
       <div className="mx-auto max-w-lg">
-        <div className="flex items-center justify-around gap-1 rounded-t-2xl border border-b-0 border-border/30 bg-background/70 px-1 pt-1 pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl shadow-[0_-4px_24px_rgba(0,0,0,0.06)] dark:bg-background/60">
+        <div className="relative flex items-center justify-around gap-1 rounded-t-2xl border border-b-0 border-border/30 bg-background/80 px-1 pt-1 pb-[max(8px,env(safe-area-inset-bottom))] backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:bg-background/60">
+          {/* Gradient top border accent */}
+          <div className="gradient-line absolute inset-x-3 top-0" />
           {TABS.map((tab) => {
             const isActive = currentView === tab.view;
             const Icon = tab.icon;
@@ -104,11 +106,20 @@ export function MobileBottomNav() {
                   'min-h-[44px]',
                   isActive
                     ? 'text-primary bg-primary/8'
-                    : 'text-muted-foreground active:text-foreground active:bg-accent/50'
+                    : 'text-muted-foreground hover:bg-primary/5 hover:text-foreground active:bg-accent/50'
                 )}
                 aria-label={tab.title}
                 aria-current={isActive ? 'page' : undefined}
               >
+                {/* Active dot indicator above icon */}
+                <span
+                  className={cn(
+                    'absolute top-0 left-1/2 -translate-x-1/2 size-1.5 rounded-full transition-all duration-200',
+                    isActive ? 'bg-primary shadow-[0_0_6px_oklch(0.51_0.12_165/0.5)] scale-100 opacity-100' : 'scale-0 opacity-0'
+                  )}
+                  aria-hidden="true"
+                />
+
                 {/* Active bottom indicator */}
                 <span
                   className={cn(
@@ -123,7 +134,8 @@ export function MobileBottomNav() {
                   <Icon
                     className={cn(
                       'size-[20px] transition-all duration-200',
-                      isActive && 'text-primary scale-110'
+                      isActive && 'size-[22px] text-primary',
+                      !isActive && 'hover:scale-105'
                     )}
                     strokeWidth={isActive ? 2.5 : 1.8}
                   />
@@ -131,7 +143,7 @@ export function MobileBottomNav() {
                   {/* Unread badge for messages */}
                   {showBadge && (
                     <span
-                      className="absolute -top-1.5 -left-1.5 flex size-4 min-w-[16px] items-center justify-center rounded-full bg-destructive px-0.5 text-[9px] font-bold leading-none text-white shadow-sm"
+                      className="animate-notification-pulse absolute -top-1.5 -left-1.5 flex size-4 min-w-[16px] items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-orange-500 px-0.5 text-[9px] font-bold leading-none text-white shadow-sm shadow-red-500/30"
                       aria-label={`${unreadMessages} پیام خوانده نشده`}
                     >
                       {unreadMessages > 99 ? '99+' : unreadMessages}
@@ -142,8 +154,8 @@ export function MobileBottomNav() {
                 {/* Label */}
                 <span
                   className={cn(
-                    'transition-colors duration-150',
-                    isActive && 'font-semibold'
+                    'transition-all duration-150',
+                    isActive && 'font-bold'
                   )}
                 >
                   {tab.label}

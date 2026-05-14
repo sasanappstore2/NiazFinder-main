@@ -273,9 +273,9 @@ export function RequestDetail() {
   const authorAvatarBg = getAvatarBg(authorName);
 
   return (
-    <div className="min-h-screen bg-muted/20" dir="rtl" itemscope itemtype="https://schema.org/Service">
-      <meta itemprop="name" content={request.title} />
-      <meta itemprop="description" content={request.description} />
+    <div className="min-h-screen bg-muted/20" dir="rtl" itemScope itemType="https://schema.org/Service">
+      <meta itemProp="name" content={request.title} />
+      <meta itemProp="description" content={request.description} />
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Back + Title Header */}
         <div className="mb-6">
@@ -306,7 +306,7 @@ export function RequestDetail() {
                 </Badge>
               </div>
               <div className="flex items-start gap-3">
-                <h1 className="text-xl font-bold leading-snug sm:text-2xl lg:text-3xl flex-1" itemprop="name">
+                <h1 className="text-xl font-bold leading-snug sm:text-2xl lg:text-3xl flex-1" itemProp="name">
                   {request.title}
                 </h1>
                 <div className="flex items-center gap-1 shrink-0 mt-1">
@@ -338,7 +338,7 @@ export function RequestDetail() {
         </div>
 
         {/* Info Cards Row */}
-        <div className="mb-6" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+        <div className="mb-6" itemProp="offers" itemScope itemType="https://schema.org/Offer">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <InfoCard
               icon={DollarSign}
@@ -373,7 +373,7 @@ export function RequestDetail() {
                   <CardTitle className="text-base">توضیحات</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="leading-8 text-sm text-muted-foreground whitespace-pre-line" itemprop="description">
+                  <p className="leading-8 text-sm text-muted-foreground whitespace-pre-line" itemProp="description">
                     {request.description}
                   </p>
                 </CardContent>

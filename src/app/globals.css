@@ -376,3 +376,186 @@
   border-right: 6px solid transparent;
 }
 .dark .msg-tail-other::after { border-top-color: oklch(0.22 0.01 160); }
+
+/* ── Scrollbar None (utility class) ── */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Emerald Glow Effects ── */
+@keyframes emeraldGlow {
+  0%, 100% { box-shadow: 0 0 20px oklch(0.51 0.12 165 / 0.15), 0 0 60px oklch(0.51 0.12 165 / 0.05); }
+  50% { box-shadow: 0 0 30px oklch(0.51 0.12 165 / 0.25), 0 0 80px oklch(0.51 0.12 165 / 0.1); }
+}
+.animate-emerald-glow { animation: emeraldGlow 3s ease-in-out infinite; }
+
+@keyframes subtleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+.animate-subtle-float { animation: subtleFloat 4s ease-in-out infinite; }
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in { animation: scaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-down { animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-count-up { animation: countUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* ── Stagger Animation Children ── */
+.stagger-children > * {
+  opacity: 0;
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(9) { animation-delay: 0.45s; }
+.stagger-children > *:nth-child(10) { animation-delay: 0.5s; }
+
+/* ── Glassmorphism Button ── */
+.btn-glass {
+  background: oklch(0.98 0.002 120 / 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid oklch(0.51 0.12 165 / 0.12);
+  transition: all 200ms ease;
+}
+.btn-glass:hover {
+  background: oklch(0.98 0.002 120 / 0.85);
+  border-color: oklch(0.51 0.12 165 / 0.25);
+  box-shadow: 0 4px 16px oklch(0.51 0.12 165 / 0.12);
+  transform: translateY(-1px);
+}
+.dark .btn-glass {
+  background: oklch(0.22 0.01 160 / 0.5);
+  border-color: oklch(0.65 0.15 165 / 0.15);
+}
+.dark .btn-glass:hover {
+  background: oklch(0.22 0.01 160 / 0.7);
+  border-color: oklch(0.65 0.15 165 / 0.3);
+  box-shadow: 0 4px 16px oklch(0.65 0.15 165 / 0.15);
+}
+
+/* ── Emerald Gradient Border ── */
+.gradient-border {
+  position: relative;
+  border: none !important;
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, oklch(0.51 0.12 165 / 0.3), oklch(0.65 0.15 155 / 0.1), oklch(0.51 0.12 130 / 0.3));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ── Shimmer Effect ── */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.shimmer-text {
+  background: linear-gradient(90deg, oklch(0.51 0.12 165) 0%, oklch(0.72 0.19 155) 25%, oklch(0.65 0.18 130) 50%, oklch(0.72 0.19 155) 75%, oklch(0.51 0.12 165) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ── Dot Grid Pattern ── */
+.dot-grid {
+  background-image: radial-gradient(oklch(0.51 0.12 165 / 0.12) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.dark .dot-grid {
+  background-image: radial-gradient(oklch(0.65 0.15 165 / 0.08) 1px, transparent 1px);
+}
+
+/* ── Noise Texture Overlay ── */
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Card Hover Tilt (perspective) ── */
+.perspective-hover {
+  transition: transform 0.3s ease;
+  transform-style: preserve-3d;
+}
+.perspective-hover:hover {
+  transform: perspective(800px) rotateX(1deg) rotateY(-1deg) translateY(-2px);
+}
+
+/* ── Smooth Page Transition ── */
+.page-transition-enter {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* ── Badge Variants ── */
+.badge-emerald {
+  background: oklch(0.95 0.03 155);
+  color: oklch(0.35 0.08 160);
+  border: 1px solid oklch(0.85 0.05 155 / 0.5);
+}
+.dark .badge-emerald {
+  background: oklch(0.22 0.02 160 / 0.5);
+  color: oklch(0.72 0.19 155);
+  border-color: oklch(0.51 0.12 165 / 0.2);
+}
+
+/* ── Footer Newsletter Input ── */
+.newsletter-input {
+  background: oklch(0.96 0.005 155 / 0.5);
+  border: 1px solid oklch(0.51 0.12 165 / 0.15);
+  backdrop-filter: blur(8px);
+  transition: all 200ms ease;
+}
+.newsletter-input:focus {
+  background: oklch(0.99 0.002 120 / 0.8);
+  border-color: oklch(0.51 0.12 165 / 0.35);
+  box-shadow: 0 0 0 3px oklch(0.51 0.12 165 / 0.08);
+  outline: none;
+}
+.dark .newsletter-input {
+  background: oklch(0.18 0.007 160 / 0.5);
+  border-color: oklch(0.65 0.15 165 / 0.15);
+}
+.dark .newsletter-input:focus {
+  background: oklch(0.2 0.01 160 / 0.7);
+  border-color: oklch(0.65 0.15 165 / 0.35);
+  box-shadow: 0 0 0 3px oklch(0.65 0.15 165 / 0.1);
+}
+
+/* ── Animated Counter (for stats) ── */
+@keyframes countFadeIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-count-fade-in { animation: countFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }

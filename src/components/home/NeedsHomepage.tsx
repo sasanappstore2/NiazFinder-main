@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Search,
+  FileSearch,
   MapPin,
   DollarSign,
   Flame,
@@ -25,8 +26,11 @@ import type { ServiceRequest } from '@/lib/types';
 import { getCategoryColor } from '@/components/layout/CategoryMegaMenu';
 import { getCategoryAppearance, getAvatarColor, CATEGORY_APPEARANCE as SHARED_CATEGORY_APPEARANCE } from '@/lib/category-appearance';
 import { cn } from '@/lib/utils';
+import { useDebounce } from '@/hooks/use-debounce';
 import { AnimatePresence, motion } from 'framer-motion';
 import { QuickViewPopover, useQuickView } from '@/components/shared/QuickView';
+import { HomepageHowItWorks } from '@/components/home/HomepageHowItWorks';
+import { HomepageTestimonials } from '@/components/home/HomepageTestimonials';
 import {
   X,
   ArrowUpDown,
@@ -366,6 +370,20 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
 // ─── Top-Level Categories (first 10) ─────────────────
 const TOP_CATEGORIES = ALL_CATEGORIES.slice(0, 10);
 
+// ─── Category name → top-level parent value lookup ─────
+// Maps every category/subcategory name to its top-level parent slug
+// so we can match API categoryName (Persian) against selectedCategory (slug)
+const CATEGORY_NAME_TO_PARENT_VALUE = new Map<string, string>();
+(function buildCategoryNameMap(categories: typeof ALL_CATEGORIES, topParentValue?: string) {
+  for (const cat of categories) {
+    const parentValue = topParentValue || cat.value;
+    CATEGORY_NAME_TO_PARENT_VALUE.set(cat.name, parentValue);
+    if (cat.subCategories) {
+      buildCategoryNameMap(cat.subCategories, parentValue);
+    }
+  }
+})(ALL_CATEGORIES);
+
 // ─── Sort Options ─────────────────────────
 const SORT_OPTIONS = [
   { value: 'newest', label: 'جدیدترین' },
@@ -380,22 +398,72 @@ const POLL_INTERVAL = 15_000;
 
 // ─── Empty State ───────────────────────────
 function EmptyState() {
+  const navigateTo = useAppStore((s) => s.navigateTo);
   return (
-    <div className="flex flex-col items-center justify-center py-24">
-      <div className="relative mb-6">
-        <div className="mx-auto flex size-20 items-center justify-center rounded-3xl bg-gradient-to-br from-muted/80 to-muted/40">
-          <Search className="size-9 text-muted-foreground/30" aria-hidden="true" />
+    <div className="flex flex-col items-center justify-center py-20 sm:py-28">
+      {/* Floating Icon with Glassmorphism */}
+      <motion.div
+        animate={{
+          y: [0, -10, 0],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+        className="relative mb-8"
+      >
+        {/* Glassmorphism container */}
+        <div className="relative flex items-center justify-center">
+          {/* Gradient background blob */}
+          <div className="absolute -inset-4 rounded-[32px] bg-gradient-to-br from-emerald-400/20 via-teal-400/10 to-cyan-400/20 blur-xl dark:from-emerald-500/10 dark:via-teal-500/5 dark:to-cyan-500/10" />
+          {/* Glass card */}
+          <div
+            className="relative flex items-center justify-center rounded-3xl border border-white/30 dark:border-white/10"
+            style={{
+              width: 96,
+              height: 96,
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 100%)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+            }}
+          >
+            <div className="flex items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 p-4 shadow-lg shadow-emerald-500/20">
+              <FileSearch className="size-10 text-white" aria-hidden="true" strokeWidth={1.5} />
+            </div>
+          </div>
+          {/* Sparkle badge */}
+          <div className="absolute -bottom-1.5 -end-1.5 flex size-9 items-center justify-center rounded-xl border border-white/40 dark:border-white/15 bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-orange-500/25">
+            <Sparkles className="size-4 text-white" aria-hidden="true" />
+          </div>
         </div>
-        <div className="absolute -bottom-1 -end-1 size-7 rounded-xl bg-emerald-100 flex items-center justify-center dark:bg-emerald-900/30">
-          <Sparkles className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-        </div>
-      </div>
-      <h2 className="mb-2 text-lg font-bold text-foreground/80">نیازی یافت نشد</h2>
-      <p className="mx-auto max-w-xs text-sm text-muted-foreground/60 leading-relaxed text-center">
-        در حال حاضر نیازی ثبت نشده است.
-        <br />
-        اولین نفر باشید که نیاز خود را ثبت می‌کند!
+      </motion.div>
+
+      {/* Text content */}
+      <h2 className="mb-2 text-xl font-extrabold text-foreground/90">
+        هنوز نیازی ثبت نشده است
+      </h2>
+      <p className="mx-auto max-w-xs text-sm text-muted-foreground/70 leading-relaxed text-center mb-8">
+        اولین نفر باشید که نیاز خود را ثبت کنید!
       </p>
+
+      {/* CTA Button */}
+      <motion.button
+        whileHover={{ scale: 1.04, y: -1 }}
+        whileTap={{ scale: 0.97 }}
+        onClick={() => navigateTo('post-need')}
+        className={cn(
+          'inline-flex items-center gap-2 rounded-2xl px-8 py-3.5 text-sm font-bold text-white',
+          'bg-gradient-to-l from-emerald-500 via-emerald-600 to-teal-600',
+          'shadow-lg shadow-emerald-600/25 hover:shadow-xl hover:shadow-emerald-600/35',
+          'ring-1 ring-white/20 ring-inset',
+          'transition-shadow duration-300',
+        )}
+      >
+        <Plus className="size-4" aria-hidden="true" />
+        ثبت نیاز رایگان
+      </motion.button>
     </div>
   );
 }
@@ -412,6 +480,7 @@ export function NeedsHomepage() {
   const [localRequests, setLocalRequests] = useState<ServiceRequest[]>([]);
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const lastFetchTimeRef = useRef<number>(Date.now());
@@ -423,11 +492,11 @@ export function NeedsHomepage() {
     const params: Record<string, string> = { limit: '12', page: String(pageNum), status: 'OPEN' };
     try {
       await fetchRequests(params);
-      const response = await fetch(`/api/requests?${new URLSearchParams(params).toString()}`);
-      const data = await response.json();
-      setTotalPages(data.pagination?.totalPages || 1);
+      const requests = useAppStore.getState().requests;
+      // Infer pagination: if we got fewer than the limit, there are no more pages
+      setTotalPages(requests.length < 12 ? pageNum : pageNum + 1);
       lastFetchTimeRef.current = Date.now();
-      return data.requests || [];
+      return requests;
     } catch {
       return [];
     }
@@ -503,9 +572,9 @@ export function NeedsHomepage() {
   const baseRequests = localRequests.length > 0 ? localRequests : storeRequests;
   const displayRequests = baseRequests
     .filter((r) => {
-      // Search filter
-      if (searchQuery.trim()) {
-        const q = searchQuery.trim().toLowerCase();
+      // Search filter (debounced)
+      if (debouncedSearchQuery.trim()) {
+        const q = debouncedSearchQuery.trim().toLowerCase();
         return (
           r.title.toLowerCase().includes(q) ||
           r.description.toLowerCase().includes(q)
@@ -514,9 +583,9 @@ export function NeedsHomepage() {
       return true;
     })
     .filter((r) => {
-      // Category filter
+      // Category filter — match categoryName against selected category slug
       if (!selectedCategory) return true;
-      return r.categoryId.startsWith(selectedCategory);
+      return CATEGORY_NAME_TO_PARENT_VALUE.get(r.categoryName) === selectedCategory;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -598,10 +667,11 @@ export function NeedsHomepage() {
 
             {/* Stats Row */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-              {TRUST_STATS.map((stat) => (
+              {TRUST_STATS.map((stat, i) => (
                 <div
                   key={stat.label}
-                  className="flex flex-col items-center gap-1 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 px-4 py-3 md:py-4 transition-all duration-200 hover:bg-white/15"
+                  className="animate-count-fade-in flex flex-col items-center gap-1 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 px-4 py-3 md:py-4 transition-all duration-200 hover:bg-white/15"
+                  style={{ animationDelay: `${0.3 + i * 0.1}s`, animationFillMode: 'backwards' }}
                 >
                   <span className="text-xl md:text-2xl mb-0.5" aria-hidden="true">
                     {stat.icon}
@@ -673,9 +743,15 @@ export function NeedsHomepage() {
         <div className="flex flex-wrap items-center justify-between gap-3 py-4">
           <div className="flex items-center gap-3">
             <span className="text-sm font-medium text-muted-foreground">
-              <span className="font-bold text-foreground tabular-nums">
+              <motion.span
+                key={displayRequests.length}
+                initial={{ opacity: 0.5, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                className="inline-block font-bold text-foreground tabular-nums"
+              >
                 {displayRequests.length.toLocaleString('fa-IR')}
-              </span>{' '}
+              </motion.span>{' '}
               نیاز یافت شد
             </span>
             {selectedCategory && (
@@ -727,7 +803,7 @@ export function NeedsHomepage() {
       <div className="container-default mx-auto px-5 md:px-8 pb-12">
         {/* Results */}
         {initialLoading ? (
-          <div className="flex flex-col gap-3" itemscope itemtype="https://schema.org/ItemList">
+          <div className="flex flex-col gap-3" itemScope itemType="https://schema.org/ItemList">
             {Array.from({ length: 6 }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}
@@ -738,14 +814,14 @@ export function NeedsHomepage() {
           <>
             <div
               className="flex flex-col gap-3"
-              itemscope
-              itemtype="https://schema.org/ItemList"
+              itemScope
+              itemType="https://schema.org/ItemList"
             >
-              <meta itemprop="numberOfItems" content={String(displayRequests.length)} />
-              <meta itemprop="name" content="نیازهای ثبت شده در نیاز فایندر" />
+              <meta itemProp="numberOfItems" content={String(displayRequests.length)} />
+              <meta itemProp="name" content="نیازهای ثبت شده در نیاز فایندر" />
               <AnimatePresence initial={false}>
                 {displayRequests.map((request) => (
-                  <div key={request.id} itemprop="itemListElement">
+                  <div key={request.id} itemProp="itemListElement">
                     <RequestCard request={request} isNew={newIds.has(request.id)} onQuickView={showQuickView} />
                   </div>
                 ))}
@@ -788,6 +864,40 @@ export function NeedsHomepage() {
         )}
       </div>
 
+      {/* ═══ How It Works Section ═══ */}
+      <HomepageHowItWorks />
+
+      {/* ═══ CTA Banner Section ═══ */}
+      <section
+        dir="rtl"
+        className="relative overflow-hidden bg-gradient-to-l from-emerald-600 via-emerald-700 to-teal-800"
+        aria-label="شروع کنید"
+      >
+        {/* Decorative blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-10 -start-10 h-48 w-48 rounded-full bg-emerald-400/20 blur-2xl" />
+          <div className="absolute -bottom-10 -end-10 h-56 w-56 rounded-full bg-teal-400/15 blur-2xl" />
+        </div>
+        <div className="relative container-default mx-auto flex max-w-3xl flex-col items-center px-5 md:px-8 py-16 md:py-24 text-center">
+          <h2 className="mb-4 text-2xl md:text-3xl font-extrabold leading-snug tracking-tight text-white">
+            همین الان شروع کنید
+          </h2>
+          <p className="mb-8 max-w-lg text-sm md:text-base leading-relaxed text-emerald-100/75">
+            ثبت‌نام رایگان است و در کمتر از ۲ دقیقه انجام می‌شود. هزاران کسب‌وکار منتظر نیاز شما هستند.
+          </p>
+          <Button
+            onClick={() => navigateTo('post-need')}
+            className="h-12 rounded-xl bg-white px-8 text-base font-bold text-emerald-700 shadow-xl transition-all duration-200 hover:bg-white/95 hover:shadow-2xl"
+          >
+            <Plus className="size-5 me-2" aria-hidden="true" />
+            ثبت نیاز رایگان
+          </Button>
+        </div>
+      </section>
+
+      {/* ═══ Testimonials Section ═══ */}
+      <HomepageTestimonials />
+
       {/* Quick View Popover */}
       {quickView && (
         <QuickViewPopover
@@ -798,7 +908,7 @@ export function NeedsHomepage() {
       )}
 
       <noscript>
-        <div className="sr-only" itemscope itemtype="https://schema.org/ItemList">
+        <div className="sr-only" itemScope itemType="https://schema.org/ItemList">
           <h1>نیازهای ثبت شده در نیاز فایندر</h1>
           <p>فهرست نیازهای خدمات ثبت شده توسط کاربران.</p>
         </div>

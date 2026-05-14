@@ -91,8 +91,8 @@ export function Breadcrumb() {
   return (
     <BreadcrumbNav
       dir="rtl"
-      itemscope
-      itemtype="https://schema.org/BreadcrumbList"
+      itemScope
+      itemType="https://schema.org/BreadcrumbList"
     >
       <BreadcrumbList className="flex flex-wrap items-center gap-1.5 text-sm sm:gap-2">
         {crumbs.map((crumb, index) => {
@@ -102,24 +102,24 @@ export function Breadcrumb() {
             <span key={crumb.view} className="contents">
               <BreadcrumbItem
                 className="inline-flex items-center gap-1.5"
-                itemprop="itemListElement"
-                itemscope
-                itemtype="https://schema.org/ListItem"
+                itemProp="itemListElement"
+                itemScope
+                itemType="https://schema.org/ListItem"
               >
                 {crumb.isLast ? (
                   <BreadcrumbPage className="text-primary font-medium">
-                    <span itemprop="name">{crumb.label}</span>
-                    <meta itemprop="position" content={String(crumb.position)} />
+                    <span itemProp="name">{crumb.label}</span>
+                    <meta itemProp="position" content={String(crumb.position)} />
                   </BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink
                     className="text-muted-foreground hover:text-primary transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
                     onClick={() => navigateTo(crumb.view)}
                     data-href={crumb.href}
-                    itemprop="item"
+                    itemProp="item"
                     href={crumb.href}
                   >
-                    <span itemprop="name">
+                    <span itemProp="name">
                       {crumb.view === 'home' ? (
                         <span className="flex items-center gap-1.5">
                           <Home className="size-4" />
@@ -129,7 +129,7 @@ export function Breadcrumb() {
                         crumb.label
                       )}
                     </span>
-                    <meta itemprop="position" content={String(crumb.position)} />
+                    <meta itemProp="position" content={String(crumb.position)} />
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
