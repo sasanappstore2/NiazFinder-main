@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   X,
   Sparkles,
@@ -14,6 +13,7 @@ import {
   Rocket,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 
 const ONBOARDING_STORAGE_KEY = 'needfinder-onboarding-seen';
@@ -25,80 +25,49 @@ function StepWelcome() {
   const cards = [
     { icon: FileText, label: 'ثبت نیاز', color: 'from-emerald-500 to-teal-500' },
     { icon: ArrowRightLeft, label: 'دریافت پیشنهاد', color: 'from-amber-500 to-orange-500' },
-    { icon: CheckCircle, label: 'انتخاب متخصص', color: 'from-violet-500 to-purple-500' },
+    { icon: CheckCircle, label: 'انتخاب کسب‌وکار', color: 'from-violet-500 to-purple-500' },
   ];
 
   return (
-    <motion.div
-      key="step-1"
-      initial={{ opacity: 0, x: 60 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -60 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className="space-y-6 text-center"
-    >
+    <div className="space-y-6 text-center">
       {/* Large Sparkle Icon */}
-      <motion.div
-        initial={{ scale: 0, rotate: -30 }}
-        animate={{ scale: 1, rotate: 0 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
-        className="mx-auto flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25"
-      >
+      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25">
         <Sparkles className="size-10 text-white" />
-      </motion.div>
+      </div>
 
       {/* Title */}
       <div className="space-y-2">
-        <motion.h2
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="text-2xl font-extrabold text-gradient sm:text-3xl"
-        >
+        <h2 className="text-2xl font-extrabold text-gradient sm:text-3xl">
           به نیاز فایندر خوش آمدید!
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="text-base font-semibold text-emerald-600 dark:text-emerald-400 sm:text-lg"
-        >
-          پلتفرم هوشمند اتصال نیاز به متخصص
-        </motion.p>
+        </h2>
+        <p className="text-base font-semibold text-emerald-600 dark:text-emerald-400 sm:text-lg">
+          پلتفرم هوشمند اتصال نیاز به کسب‌وکار
+        </p>
       </div>
 
       {/* Description */}
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.35 }}
-        className="mx-auto max-w-sm text-sm leading-7 text-muted-foreground sm:text-base"
-      >
-        با نیاز فایندر، به‌راحتی نیاز خود را ثبت کنید و از بین هزاران متخصص، بهترین را
+      <p className="mx-auto max-w-sm text-sm leading-7 text-muted-foreground sm:text-base">
+        با نیاز فایندر، به‌راحتی نیاز خود را ثبت کنید و از بین هزاران کسب‌وکار، بهترین را
         انتخاب نمایید.
-      </motion.p>
+      </p>
 
-      {/* Floating glass cards illustration */}
+      {/* Glass cards illustration */}
       <div className="flex items-center justify-center gap-3 pt-2">
-        {cards.map((card, i) => (
-          <motion.div
+        {cards.map((card) => (
+          <div
             key={card.label}
-            initial={{ opacity: 0, y: 24, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 280, damping: 24, delay: 0.4 + i * 0.12 }}
-            whileHover={{ y: -4, scale: 1.05 }}
-            className="flex flex-col items-center gap-2 rounded-xl border border-border/40 bg-background/60 px-4 py-5 backdrop-blur-md sm:px-6"
+            className="flex flex-col items-center gap-2 rounded-xl border border-border/40 bg-background/60 px-4 py-5 backdrop-blur-md transition-transform duration-150 ease-in-out hover:-translate-y-1 sm:px-6"
           >
             <div
-              className={`flex size-10 items-center justify-center rounded-lg bg-gradient-to-br ${card.color} shadow-sm`}
+              className={`flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${card.color} shadow-sm`}
             >
               <card.icon className="size-5 text-white" />
             </div>
             <span className="text-xs font-medium text-foreground">{card.label}</span>
-          </motion.div>
+          </div>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -118,7 +87,7 @@ function StepHowItWorks() {
       num: 2,
       icon: Users,
       title: 'پیشنهادها را مقایسه کنید',
-      desc: 'متخصص‌ها به شما پیشنهاد می‌دهند',
+      desc: 'کسب‌وکارها به شما پیشنهاد می‌دهند',
       color: 'from-amber-500 to-orange-500',
     },
     {
@@ -131,44 +100,29 @@ function StepHowItWorks() {
   ];
 
   return (
-    <motion.div
-      key="step-2"
-      initial={{ opacity: 0, x: 60 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -60 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className="space-y-6 text-center"
-    >
+    <div className="space-y-6 text-center">
       {/* Title */}
-      <motion.h2
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
-        className="text-2xl font-extrabold text-gradient sm:text-3xl"
-      >
+      <h2 className="text-2xl font-extrabold text-gradient sm:text-3xl">
         چطور کار می‌کنه؟
-      </motion.h2>
+      </h2>
 
       {/* Steps */}
       <div className="space-y-4 pt-1">
-        {steps.map((step, i) => (
-          <motion.div
+        {steps.map((step) => (
+          <div
             key={step.num}
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 24, delay: 0.2 + i * 0.12 }}
             className="flex items-center gap-4 rounded-xl border border-border/40 bg-background/50 p-4 text-right backdrop-blur-sm"
           >
             {/* Gradient numbered circle */}
             <div
-              className={`flex size-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${step.color} text-lg font-bold text-white shadow-md`}
+              className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${step.color} text-lg font-bold text-white shadow-md`}
             >
               {step.num}
             </div>
 
             {/* Icon */}
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted/80">
-              <step.icon className="size-4.5 text-muted-foreground" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted/80">
+              <step.icon className="size-[18px] text-muted-foreground" />
             </div>
 
             {/* Text */}
@@ -176,10 +130,10 @@ function StepHowItWorks() {
               <p className="text-sm font-bold text-foreground">{step.title}</p>
               <p className="text-xs leading-5 text-muted-foreground">{step.desc}</p>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -203,50 +157,23 @@ function StepGetStarted({
   };
 
   return (
-    <motion.div
-      key="step-3"
-      initial={{ opacity: 0, x: 60 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -60 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className="space-y-6 text-center"
-    >
+    <div className="space-y-6 text-center">
       {/* Rocket icon */}
-      <motion.div
-        initial={{ scale: 0, rotate: 30 }}
-        animate={{ scale: 1, rotate: 0 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
-        className="mx-auto flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25"
-      >
+      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25">
         <Rocket className="size-10 text-white" />
-      </motion.div>
+      </div>
 
       {/* Title */}
-      <motion.h2
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="text-2xl font-extrabold text-gradient sm:text-3xl"
-      >
+      <h2 className="text-2xl font-extrabold text-gradient sm:text-3xl">
         شروع کنید!
-      </motion.h2>
+      </h2>
 
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="mx-auto max-w-xs text-sm leading-7 text-muted-foreground sm:text-base"
-      >
-        همین الان ثبت‌نام کنید و از خدمات هزاران متخصص بهره‌مند شوید.
-      </motion.p>
+      <p className="mx-auto max-w-xs text-sm leading-7 text-muted-foreground sm:text-base">
+        همین الان ثبت‌نام کنید و از خدمات هزاران کسب‌وکار بهره‌مند شوید.
+      </p>
 
       {/* CTA Buttons */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.35 }}
-        className="flex flex-col gap-3 pt-1 sm:flex-row sm:justify-center"
-      >
+      <div className="flex flex-col gap-3 pt-1 sm:flex-row sm:justify-center">
         <Button
           onClick={handleRegister}
           className="w-full bg-emerald-600 text-white hover:bg-emerald-700 sm:w-auto"
@@ -258,15 +185,10 @@ function StepGetStarted({
         <Button variant="ghost" className="w-full sm:w-auto" size="lg">
           بعداً
         </Button>
-      </motion.div>
+      </div>
 
       {/* Checkbox */}
-      <motion.label
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.45 }}
-        className="flex cursor-pointer items-center justify-center gap-2 pt-1"
-      >
+      <label className="flex cursor-pointer items-center justify-center gap-2 pt-1">
         <input
           type="checkbox"
           checked={dontShowAgain}
@@ -276,8 +198,8 @@ function StepGetStarted({
         <span className="text-xs text-muted-foreground sm:text-sm">
           نمایش دوباره نشود
         </span>
-      </motion.label>
-    </motion.div>
+      </label>
+    </div>
   );
 }
 
@@ -286,25 +208,27 @@ function StepGetStarted({
 // ──────────────────────────────────────────────
 function DotsIndicator({ current, total, onDotClick }: { current: number; total: number; onDotClick: (i: number) => void }) {
   return (
-    <div className="flex items-center justify-center gap-2 pt-2">
+    <div className="flex items-center justify-center gap-2 pt-2" role="tablist" aria-label="مراحل راهنمای شروع">
       {Array.from({ length: total }).map((_, i) => (
         <button
           key={i}
           onClick={() => onDotClick(i)}
+          role="tab"
+          aria-selected={i === current}
           aria-label={`مرحله ${i + 1}`}
-          className="relative flex size-2.5 items-center justify-center"
-        >
-          {i === current && (
-            <motion.span
-              layoutId="onboarding-dot"
-              className="absolute inset-0 rounded-full bg-emerald-500"
-              transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-            />
+          className={cn(
+            'relative flex h-[10px] w-[10px] items-center justify-center rounded-full transition-all duration-150 ease-in-out',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-1',
+            i === current
+              ? 'bg-emerald-500 scale-125'
+              : 'bg-muted-foreground/30 hover:bg-muted-foreground/50',
           )}
+        >
           <span
-            className={`block size-2 rounded-full transition-colors ${
-              i === current ? 'bg-transparent' : 'bg-muted-foreground/30'
-            }`}
+            className={cn(
+              'block h-2 w-2 rounded-full transition-colors duration-150',
+              i === current ? 'bg-transparent' : 'bg-muted-foreground/30',
+            )}
           />
         </button>
       ))}
@@ -319,6 +243,8 @@ export function OnboardingWelcome() {
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState(0);
   const [dontShowAgain, setDontShowAgain] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const prevStepRef = useRef(0);
 
   const totalSteps = 3;
 
@@ -326,9 +252,8 @@ export function OnboardingWelcome() {
     try {
       const seen = localStorage.getItem(ONBOARDING_STORAGE_KEY);
       if (seen === 'true') {
-        return; // Already seen — do nothing, component stays null
+        return; // Already seen — do nothing
       }
-      // Show after a short delay so the page renders first
       const timer = setTimeout(() => setIsVisible(true), 800);
       return () => clearTimeout(timer);
     } catch {
@@ -349,112 +274,141 @@ export function OnboardingWelcome() {
   }, [dontShowAgain]);
 
   const goNext = useCallback(() => {
-    if (step < totalSteps - 1) {
-      setStep((s) => s + 1);
+    if (step < totalSteps - 1 && !isTransitioning) {
+      prevStepRef.current = step;
+      setIsTransitioning(true);
+      // Small delay for fade-out before changing step
+      setTimeout(() => {
+        setStep((s) => s + 1);
+        setIsTransitioning(false);
+      }, 100);
     }
-  }, [step]);
+  }, [step, isTransitioning]);
 
   const goPrev = useCallback(() => {
-    if (step > 0) {
-      setStep((s) => s - 1);
+    if (step > 0 && !isTransitioning) {
+      prevStepRef.current = step;
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setStep((s) => s - 1);
+        setIsTransitioning(false);
+      }, 100);
     }
-  }, [step]);
+  }, [step, isTransitioning]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isVisible) return;
+      if (e.key === 'Escape') {
+        handleClose();
+      } else if (e.key === 'ArrowLeft') {
+        goNext();
+      } else if (e.key === 'ArrowRight') {
+        goPrev();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isVisible, handleClose, goNext, goPrev]);
 
   if (!isVisible) return null;
 
   return (
-    <AnimatePresence>
-      {/* Full-screen backdrop */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        dir="rtl"
+    <div
+      className="fixed inset-0 z-[var(--z-onboarding)] flex items-center justify-center p-4 transition-opacity duration-150 ease-in-out"
+      dir="rtl"
+      role="dialog"
+      aria-modal="true"
+      aria-label="راهنمای شروع کار با نیاز فایندر"
+    >
+      {/* Dark overlay + blur */}
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={handleClose}
+        aria-hidden="true"
+      />
+
+      {/* Modal card */}
+      <div
+        className="gradient-mesh-card relative z-10 w-full max-w-[520px] overflow-hidden rounded-2xl border border-border/40 bg-background/80 shadow-[0_16px_70px_rgba(0,0,0,0.18)] backdrop-blur-xl"
       >
-        {/* Dark overlay + blur */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        {/* Decorative gradient blurs */}
+        <div className="pointer-events-none absolute -top-24 -left-24 size-48 rounded-full bg-emerald-500/8 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -right-24 size-48 rounded-full bg-teal-500/6 blur-3xl" />
+
+        {/* Close button */}
+        <button
           onClick={handleClose}
+          className="absolute left-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground/60 transition-colors duration-150 hover:bg-muted/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           aria-label="بستن"
-        />
-
-        {/* Modal card */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.92, y: 20 }}
-          transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-          className="gradient-mesh-card relative z-10 w-full max-w-[520px] overflow-hidden rounded-2xl border border-border/40 bg-background/80 shadow-[0_16px_70px_rgba(0,0,0,0.18)] backdrop-blur-xl"
         >
-          {/* Decorative gradient blurs */}
-          <div className="pointer-events-none absolute -top-24 -left-24 size-48 rounded-full bg-emerald-500/8 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 -right-24 size-48 rounded-full bg-teal-500/6 blur-3xl" />
+          <X className="size-4" />
+        </button>
 
-          {/* Close button */}
-          <button
-            onClick={handleClose}
-            className="absolute left-3 top-3 z-20 rounded-full p-1.5 text-muted-foreground/60 transition-colors hover:bg-muted/80 hover:text-foreground"
-            aria-label="بستن"
-          >
-            <X className="size-4" />
-          </button>
+        {/* Content area with CSS fade transition */}
+        <div
+          className="relative px-6 pb-4 pt-8 sm:px-8 sm:pt-10"
+          style={{
+            opacity: isTransitioning ? 0 : 1,
+            transition: 'opacity 100ms ease-in-out',
+          }}
+        >
+          {step === 0 && <StepWelcome />}
+          {step === 1 && <StepHowItWorks />}
+          {step === 2 && (
+            <StepGetStarted
+              dontShowAgain={dontShowAgain}
+              setDontShowAgain={setDontShowAgain}
+            />
+          )}
+        </div>
 
-          {/* Content area */}
-          <div className="relative px-6 pb-4 pt-8 sm:px-8 sm:pt-10">
-            <AnimatePresence mode="wait">
-              {step === 0 && <StepWelcome />}
-              {step === 1 && <StepHowItWorks />}
-              {step === 2 && (
-                <StepGetStarted
-                  dontShowAgain={dontShowAgain}
-                  setDontShowAgain={setDontShowAgain}
-                />
-              )}
-            </AnimatePresence>
-          </div>
+        {/* Bottom navigation: prev / dots / next */}
+        <div className="flex items-center justify-between border-t border-border/30 px-6 py-4 sm:px-8">
+          {/* Prev button */}
+          {step > 0 ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={goPrev}
+              className="gap-1 text-muted-foreground"
+            >
+              <ChevronRight className="size-4" />
+              قبلی
+            </Button>
+          ) : (
+            <div className="w-16" />
+          )}
 
-          {/* Bottom navigation: prev / dots / next */}
-          <div className="flex items-center justify-between border-t border-border/30 px-6 py-4 sm:px-8">
-            {/* Prev button */}
-            {step > 0 ? (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={goPrev}
-                className="gap-1 text-muted-foreground"
-              >
-                <ChevronRight className="size-4" />
-                قبلی
-              </Button>
-            ) : (
-              <div className="w-16" /> // Spacer for alignment
-            )}
+          {/* Dots */}
+          <DotsIndicator current={step} total={totalSteps} onDotClick={(i) => {
+            if (i !== step && !isTransitioning) {
+              prevStepRef.current = step;
+              setIsTransitioning(true);
+              setTimeout(() => {
+                setStep(i);
+                setIsTransitioning(false);
+              }, 100);
+            }
+          }} />
 
-            {/* Dots */}
-            <DotsIndicator current={step} total={totalSteps} onDotClick={setStep} />
-
-            {/* Next button */}
-            {step < totalSteps - 1 ? (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={goNext}
-                className="gap-1 text-muted-foreground"
-              >
-                بعدی
-                <ChevronLeft className="size-4" />
-              </Button>
-            ) : (
-              <div className="w-16" /> // Spacer for alignment
-            )}
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+          {/* Next button */}
+          {step < totalSteps - 1 ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={goNext}
+              className="gap-1 text-muted-foreground"
+            >
+              بعدی
+              <ChevronLeft className="size-4" />
+            </Button>
+          ) : (
+            <div className="w-16" />
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,213 +1,90 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { ClipboardList, MessageSquare, Users, CheckCircle, ChevronLeft, Sparkles } from 'lucide-react';
+import { ClipboardList, MessageSquare, Users, ChevronLeft } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
-const steps = [
+const steps: { number: string; icon: LucideIcon; title: string; description: string }[] = [
   {
     number: '۱',
     icon: ClipboardList,
-    title: 'نیاز خود را ثبت کنید',
-    description: 'نیاز خود را به صورت دقیق و با جزئیات کامل ثبت کنید تا متخصص‌ها بتوانند بهترین پیشنهاد را ارائه دهند.',
+    title: 'ثبت نیاز',
+    description: 'نیاز خود را به صورت دقیق و با جزئیات کامل ثبت کنید تا کسب‌وکارها بتوانند بهترین پیشنهاد را ارائه دهند.',
   },
   {
     number: '۲',
     icon: MessageSquare,
-    title: 'پیشنهادها را دریافت کنید',
-    description: 'متخصص‌های متعدد پیشنهادهای خود را با قیمت و زمان تحویل مشخص ارسال می‌کنند.',
+    title: 'دریافت پیشنهاد',
+    description: 'کسب‌وکارهای متعدد پیشنهادهای خود را با قیمت و زمان تحویل مشخص ارسال می‌کنند.',
   },
   {
     number: '۳',
     icon: Users,
-    title: 'بهترین را انتخاب کنید',
-    description: 'با مقایسه پروفایل‌ها، امتیازها و نظرات، بهترین متخصص را برای نیاز خود انتخاب کنید.',
-  },
-  {
-    number: '۴',
-    icon: CheckCircle,
-    title: 'کار خود را تحویل بگیرید',
-    description: 'پس از انجام کار و رضایت شما، مبلغ به متخصص پرداخت می‌شود.',
+    title: 'انتخاب کسب‌وکار',
+    description: 'با مقایسه پروفایل‌ها، امتیازها و نظرات، بهترین کسب‌وکار را برای نیاز خود انتخاب کنید.',
   },
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.2 },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: 'easeOut' as const } },
-};
-
-const chevronVariant = {
-  hidden: { opacity: 0, scale: 0 },
-  show: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: 'easeOut' as const } },
-};
-
-const sparkleFloat = {
-  animate: (i: number) => ({
-    y: [0, -8, 0],
-    opacity: [0.4, 1, 0.4],
-    scale: [0.8, 1.1, 0.8],
-    transition: {
-      duration: 2.5,
-      repeat: Infinity,
-      delay: i * 0.4,
-      ease: 'easeInOut' as const,
-    },
-  }),
-};
-
-const dotPulse = {
-  animate: (i: number) => ({
-    scale: [1, 1.6, 1],
-    opacity: [0.3, 0.7, 0.3],
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      delay: i * 0.5,
-      ease: 'easeInOut' as const,
-    },
-  }),
-};
-
 export function HowItWorks() {
   return (
-    <section className="relative bg-background py-20 sm:py-24 lg:py-28">
-      {/* Subtle background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-32 start-1/2 size-[600px] -translate-x-1/2 rounded-full bg-emerald-100/25 blur-[100px] dark:bg-emerald-900/8" />
-        <div className="absolute -bottom-32 start-1/3 size-[400px] -translate-x-1/2 rounded-full bg-amber-100/20 blur-[80px] dark:bg-amber-900/5" />
-      </div>
-
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="how-it-works" className="section-padding bg-background" aria-label="مراحل کار" itemScope itemType="https://schema.org/HowTo">
+      <div className="container-default mx-auto px-5 md:px-8">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mb-14 text-center"
-        >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-emerald-50/80 px-4 py-1.5 text-sm font-semibold text-emerald-700 shadow-sm shadow-emerald-500/5 backdrop-blur-sm dark:border-emerald-800/60 dark:bg-emerald-900/20 dark:text-emerald-300">
-            <span className="flex size-6 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">۴</span>
+        <div className="mb-14 text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-sm font-semibold text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
+            <span className="flex size-6 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white" aria-hidden="true">۳</span>
             مرحله ساده
           </div>
-          <h2 className="mb-3 text-2xl font-extrabold tracking-tight sm:text-3xl lg:text-4xl">
+          <h2 className="mb-3 text-2xl md:text-4xl font-extrabold tracking-tight" itemProp="name">
             چگونه <span className="text-gradient">کار می‌کند</span>؟
           </h2>
-          <p className="mx-auto max-w-xl leading-relaxed text-muted-foreground/80">
-            در چهار مرحله ساده، نیاز خود را به بهترین متخصص وصل کنید
+          <p className="mx-auto max-w-xl text-sm md:text-base text-muted-foreground" itemProp="description">
+            در سه مرحله ساده، نیاز خود را به بهترین کسب‌وکار وصل کنید
           </p>
-        </motion.div>
+        </div>
 
         {/* Steps */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-50px' }}
-          className="relative"
-        >
-          {/* Gradient connecting line (sm+) */}
-          <div className="absolute top-[52px] start-[8%] end-[8%] hidden h-1 sm:block">
-            <div className="relative h-full overflow-hidden rounded-full bg-gradient-to-l from-emerald-400 via-teal-400 to-emerald-300 dark:from-emerald-600 dark:via-teal-600 dark:to-emerald-500 opacity-40">
-              <motion.div
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.5, delay: 0.3, ease: 'easeInOut' }}
-                className="absolute inset-0 origin-start bg-gradient-to-l from-emerald-500 via-teal-500 to-emerald-400 dark:from-emerald-500 dark:via-teal-500 dark:to-emerald-400"
-                style={{ transformOrigin: 'right' }}
-              />
-            </div>
-          </div>
+        <div className="relative">
+          {/* Connecting line — desktop only */}
+          <div className="absolute top-12 start-[16%] end-[16%] hidden h-px bg-border md:block" aria-hidden="true" />
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-12">
             {steps.map((step, i) => {
               const Icon = step.icon;
               return (
-                <motion.div key={i} variants={item} className="relative">
-                  <div className="relative flex flex-col items-center text-center">
-                    {/* Step Circle */}
-                    <div className="relative z-10 mb-6">
-                      <div className="relative flex size-[88px] items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 via-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25 ring-4 ring-background">
-                        <Icon className="size-9 text-white" />
-                      </div>
-                    </div>
-
-                    {/* Decorative sparkles near each step */}
-                    <motion.div
-                      custom={i}
-                      variants={sparkleFloat}
-                      animate="animate"
-                      className="pointer-events-none absolute -top-2 end-4 z-0"
-                    >
-                      <Sparkles className="size-4 text-emerald-400/50" />
-                    </motion.div>
-                    <motion.div
-                      custom={i + 2}
-                      variants={sparkleFloat}
-                      animate="animate"
-                      className="pointer-events-none absolute -bottom-4 -start-2 z-0"
-                    >
-                      <div className="size-3 rounded-full bg-teal-400/30" />
-                    </motion.div>
-                    <motion.div
-                      custom={i + 1}
-                      variants={dotPulse}
-                      animate="animate"
-                      className="pointer-events-none absolute top-8 -end-6 z-0"
-                    >
-                      <div className="size-2 rounded-full bg-emerald-400/40" />
-                    </motion.div>
-
-                    {/* Card body */}
-                    <div className="group relative rounded-2xl border border-transparent bg-card/0 p-4 transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-border/60 hover:bg-card/90 hover:shadow-xl hover:shadow-emerald-500/10 backdrop-blur-sm lg:p-5">
-                      {/* Number badge on card */}
-                      <span className="absolute -top-3 start-4 flex size-7 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 text-xs font-bold text-white shadow-lg shadow-emerald-500/20 ring-[3px] ring-background">
-                        {step.number}
-                      </span>
-                      <h3 className="mb-2 mt-1 text-base font-bold leading-snug">{step.title}</h3>
-                      <p className="text-sm leading-relaxed text-muted-foreground/80 max-w-[260px]">
-                        {step.description}
-                      </p>
-                    </div>
-
-                    {/* Arrow between steps (mobile + tablet) */}
-                    {i < steps.length - 1 && (
-                      <motion.div
-                        variants={chevronVariant}
-                        className="mt-2 lg:hidden"
-                      >
-                        <div className="flex items-center justify-center">
-                          <ChevronLeft className="size-6 text-emerald-400" />
-                        </div>
-                      </motion.div>
-                    )}
+                <div key={i} className="relative flex flex-col items-center text-center" itemScope itemType="https://schema.org/HowToStep">
+                  {/* Circle */}
+                  <div className="relative z-10 mb-6 flex size-[88px] items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25 ring-4 ring-background">
+                    <Icon className="size-9 text-white" aria-hidden="true" loading="lazy" />
                   </div>
 
-                  {/* Chevron arrow between steps (desktop) */}
+                  {/* Card */}
+                  <div className="rounded-2xl border border-border/50 bg-card p-5 w-full hover-lift transition-all 150ms ease">
+                    <span className="absolute -top-3 start-4 flex size-7 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white shadow-md ring-[3px] ring-background" itemProp="position">
+                      {step.number}
+                    </span>
+                    <h3 className="mb-2 mt-1 text-base font-bold leading-snug" itemProp="name">{step.title}</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground" itemProp="text">{step.description}</p>
+                  </div>
+
+                  {/* Arrow between steps — mobile only */}
                   {i < steps.length - 1 && (
-                    <motion.div
-                      variants={chevronVariant}
-                      className="absolute top-[42px] -start-5 z-20 hidden lg:flex"
-                    >
-                      <div className="flex size-8 items-center justify-center rounded-full bg-background shadow-sm ring-1 ring-border">
-                        <ChevronLeft className="size-4 text-emerald-500" />
-                      </div>
-                    </motion.div>
+                    <div className="mt-4 flex items-center justify-center md:hidden" aria-hidden="true">
+                      <ChevronLeft className="size-6 text-emerald-400" />
+                    </div>
                   )}
-                </motion.div>
+                </div>
               );
             })}
           </div>
-        </motion.div>
+        </div>
       </div>
+
+      <noscript>
+        <div className="sr-only">
+          <h2>چگونه کار می‌کند؟</h2>
+          <p>در سه مرحله ساده: مرحله ۱ - ثبت نیاز، مرحله ۲ - دریافت پیشنهاد از کسب‌وکارها، مرحله ۳ - انتخاب بهترین کسب‌وکار.</p>
+        </div>
+      </noscript>
     </section>
   );
 }

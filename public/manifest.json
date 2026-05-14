@@ -1,0 +1,23 @@
+{
+  "name": "نیاز فایندر",
+  "short_name": "نیاز فایندر",
+  "description": "پلتفرم هوشمند اتصال نیاز به متخصص",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#059669",
+  "orientation": "portrait-primary",
+  "dir": "rtl",
+  "lang": "fa",
+  "categories": ["business", "lifestyle"],
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}

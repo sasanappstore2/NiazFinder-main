@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
 import {
   ArrowRight,
   MapPin,
@@ -39,12 +38,6 @@ import {
   MOCK_SPECIALISTS,
 } from '@/lib/constants';
 import type { Proposal } from '@/lib/types';
-
-// ─── Animation ────────────────────────────────────────
-const fadeIn = {
-  initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
-};
 
 // ─── Avatar color generator ───────────────────────────
 const AVATAR_COLORS = [
@@ -100,7 +93,7 @@ function getStatusConfig(status: string) {
 function RatingStars({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md' }) {
   const iconSize = size === 'md' ? 'size-4' : 'size-3.5';
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex items-center gap-0.5" aria-label={`امتیاز ${rating.toLocaleString('fa-IR')} از ۵`}>
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
@@ -111,6 +104,7 @@ function RatingStars({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'm
                 ? 'fill-amber-400/50 text-amber-400'
                 : 'fill-muted text-muted'
           }`}
+          aria-hidden="true"
         />
       ))}
       {size === 'sm' && (
@@ -133,7 +127,7 @@ function generateMockProposals(): Proposal[] {
     message: [
       'با سلام. من بیش از ۸ سال تجربه در توسعه وب دارم و می‌توانم این پروژه را با بالاترین کیفیت و در زمان مقرر تحویل دهم.',
       'سلام. من می‌توانم این کار را با بهترین کیفیت و قیمت مناسب انجام دهم. نمونه کارهای مشابه را در پروفایلم ببینید.',
-      'با عرض سلام. من متخصص توسعه وب هستم و قبلاً پروژه‌های مشابهی را با موفقیت انجام داده‌ام. آماده همکاری هستم.',
+      'با عرض سلام. من کسب‌وکار توسعه وب هستم و قبلاً پروژه‌های مشابهی را با موفقیت انجام داده‌ام. آماده همکاری هستم.',
       'سلام وقت بخیر. من با توجه به تجربه‌ای که دارم می‌توانم پروژه شما را به بهترین شکل انجام دهم.',
     ][i],
     status: (['PENDING', 'PENDING', 'PENDING', 'PENDING'] as const)[i],
@@ -165,18 +159,18 @@ function ProposalCard({ proposal, onSelect }: { proposal: Proposal; onSelect: ()
         {/* Header */}
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className={`size-11 rounded-full flex items-center justify-center text-sm font-bold ring-2 ring-white dark:ring-card shadow-sm ${avatarBg}`}>
+            <div className={`size-11 rounded-full flex items-center justify-center text-sm font-bold ring-2 ring-white dark:ring-card shadow-sm ${avatarBg}`} aria-hidden="true">
               {initials}
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h4 className="text-sm font-bold">{fullName}</h4>
+                <h3 className="text-sm font-bold">{fullName}</h3>
                 {proposal.user.isVerified && (
-                  <BadgeCheck className="size-4 fill-emerald-500 text-white" />
+                  <BadgeCheck className="size-4 fill-emerald-500 text-white" aria-label="تأیید شده" />
                 )}
               </div>
               <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
-                <MapPin className="size-3" />
+                <MapPin className="size-3" aria-hidden="true" />
                 {proposal.user.city}
               </div>
             </div>
@@ -194,19 +188,19 @@ function ProposalCard({ proposal, onSelect }: { proposal: Proposal; onSelect: ()
         {/* Stats row */}
         <div className="mb-4 flex items-center gap-4 rounded-xl bg-muted/40 p-3.5 ring-1 ring-border/30">
           <div className="flex items-center gap-1.5">
-            <DollarSign className="size-4 text-emerald-500" />
+            <DollarSign className="size-4 text-emerald-500" aria-hidden="true" />
             <span className="text-sm font-semibold">{formatPrice(proposal.price)}</span>
           </div>
           <Separator orientation="vertical" className="h-4" />
           <div className="flex items-center gap-1.5">
-            <Timer className="size-4 text-muted-foreground" />
+            <Timer className="size-4 text-muted-foreground" aria-hidden="true" />
             <span className="text-sm text-muted-foreground">
               {proposal.deliveryTime} روز
             </span>
           </div>
           <Separator orientation="vertical" className="h-4" />
           <div className="flex items-center gap-1.5">
-            <Star className="size-4 fill-amber-400 text-amber-400" />
+            <Star className="size-4 fill-amber-400 text-amber-400" aria-hidden="true" />
             <span className="text-sm font-medium">{proposal.user.rating.toLocaleString('fa-IR')}</span>
           </div>
         </div>
@@ -216,8 +210,8 @@ function ProposalCard({ proposal, onSelect }: { proposal: Proposal; onSelect: ()
           <span className="text-xs text-muted-foreground">
             {proposal.user.projectCount.toLocaleString('fa-IR')} پروژه انجام شده
           </span>
-          <Button size="sm" onClick={onSelect} className="rounded-lg gap-1.5">
-            <CheckCircle2 className="size-4" />
+          <Button size="sm" onClick={onSelect} className="rounded-lg gap-1.5" aria-label={`انتخاب پیشنهاد ${fullName}`} title={`انتخاب پیشنهاد ${fullName}`}>
+            <CheckCircle2 className="size-4" aria-hidden="true" />
             انتخاب
           </Button>
         </div>
@@ -231,7 +225,7 @@ function InfoCard({ icon: Icon, label, value }: { icon: typeof DollarSign; label
   return (
     <Card className="border-border/40 bg-card/80 backdrop-blur-sm transition-all duration-200 hover:border-emerald-200/50 dark:hover:border-emerald-800/50 hover:shadow-md">
       <CardContent className="flex flex-col items-center gap-2.5 p-4 text-center">
-        <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-b from-emerald-50 to-emerald-100/50 dark:from-emerald-900/30 dark:to-emerald-900/10">
+        <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-b from-emerald-50 to-emerald-100/50 dark:from-emerald-900/30 dark:to-emerald-900/10" aria-hidden="true">
           <Icon className="size-5 text-emerald-600 dark:text-emerald-400" />
         </div>
         <span className="text-[11px] text-muted-foreground">{label}</span>
@@ -279,17 +273,21 @@ export function RequestDetail() {
   const authorAvatarBg = getAvatarBg(authorName);
 
   return (
-    <div className="min-h-screen bg-muted/20" dir="rtl">
+    <div className="min-h-screen bg-muted/20" dir="rtl" itemscope itemtype="https://schema.org/Service">
+      <meta itemprop="name" content={request.title} />
+      <meta itemprop="description" content={request.description} />
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Back + Title Header */}
-        <motion.div {...fadeIn} className="mb-6">
+        <div className="mb-6">
           <Button
             variant="ghost"
             size="sm"
             onClick={goBack}
             className="mb-4 gap-2 text-sm text-muted-foreground"
+            data-href="/requests"
+            aria-label="بازگشت به فهرست نیازها"
           >
-            <ArrowRight className="size-4" />
+            <ArrowRight className="size-4" aria-hidden="true" />
             بازگشت
           </Button>
 
@@ -300,7 +298,7 @@ export function RequestDetail() {
                   {getStatusLabel(request.status)}
                 </Badge>
                 <Badge variant="outline" className={`rounded-lg text-[11px] font-medium ${priorityConfig.className}`}>
-                  <PriorityIcon className="size-3" />
+                  <PriorityIcon className="size-3" aria-hidden="true" />
                   {getPriorityLabel(request.priority)}
                 </Badge>
                 <Badge variant="secondary" className="rounded-lg text-[11px]">
@@ -308,7 +306,7 @@ export function RequestDetail() {
                 </Badge>
               </div>
               <div className="flex items-start gap-3">
-                <h1 className="text-xl font-bold leading-snug sm:text-2xl lg:text-3xl flex-1">
+                <h1 className="text-xl font-bold leading-snug sm:text-2xl lg:text-3xl flex-1" itemprop="name">
                   {request.title}
                 </h1>
                 <div className="flex items-center gap-1 shrink-0 mt-1">
@@ -319,27 +317,28 @@ export function RequestDetail() {
                     className="h-9 w-9 text-muted-foreground hover:text-destructive"
                     onClick={() => setReportOpen(true)}
                     aria-label="گزارش تخلف"
+                    title="گزارش تخلف این نیاز"
                   >
-                    <Flag className="h-4 w-4" />
+                    <Flag className="h-4 w-4" aria-hidden="true" />
                   </Button>
                 </div>
               </div>
               <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  <Clock className="size-3.5" />
+                  <Clock className="size-3.5" aria-hidden="true" />
                   {getTimeAgo(request.createdAt)}
                 </span>
                 <span className="flex items-center gap-1">
-                  <FileText className="size-3.5" />
+                  <FileText className="size-3.5" aria-hidden="true" />
                   {request.viewCount.toLocaleString('fa-IR')} بازدید
                 </span>
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Info Cards Row */}
-        <motion.div {...fadeIn} transition={{ delay: 0.1 }} className="mb-6">
+        <div className="mb-6" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <InfoCard
               icon={DollarSign}
@@ -362,31 +361,31 @@ export function RequestDetail() {
               value={`${request.proposalCount.toLocaleString('fa-IR')} پیشنهاد`}
             />
           </div>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Description */}
-            <motion.div {...fadeIn} transition={{ delay: 0.15 }}>
+            <div>
               <Card className="border-border/50 bg-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base">توضیحات</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="leading-8 text-sm text-muted-foreground whitespace-pre-line">
+                  <p className="leading-8 text-sm text-muted-foreground whitespace-pre-line" itemprop="description">
                     {request.description}
                   </p>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
 
             {/* Tags */}
             {request.tags.length > 0 && (
-              <motion.div {...fadeIn} transition={{ delay: 0.2 }}>
+              <div>
                 <Card className="border-border/50 bg-card">
                   <CardContent className="p-5">
-                    <h3 className="mb-3 text-sm font-semibold">تگ‌ها</h3>
+                    <h2 className="mb-3 text-sm font-semibold">تگ‌ها</h2>
                     <div className="flex flex-wrap gap-2">
                       {request.tags.map((tag) => (
                         <Badge
@@ -400,13 +399,13 @@ export function RequestDetail() {
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             )}
 
             {/* Budget type note */}
-            <motion.div {...fadeIn} transition={{ delay: 0.22 }}>
+            <div>
               <div className="flex items-center gap-2 rounded-xl bg-muted/40 p-3.5 text-sm text-muted-foreground ring-1 ring-border/30">
-                <DollarSign className="size-4 text-emerald-500" />
+                <DollarSign className="size-4 text-emerald-500" aria-hidden="true" />
                 <span>
                   نوع بودجه:{' '}
                   <span className="font-medium text-foreground">
@@ -414,10 +413,10 @@ export function RequestDetail() {
                   </span>
                 </span>
               </div>
-            </motion.div>
+            </div>
 
             {/* Proposals Section */}
-            <motion.div {...fadeIn} transition={{ delay: 0.25 }}>
+            <div>
               <Card className="border-border/50 bg-card">
                 <CardHeader className="pb-3">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -428,8 +427,9 @@ export function RequestDetail() {
                       </Badge>
                     </CardTitle>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">مرتب‌سازی:</span>
+                      <label htmlFor="proposal-sort" className="text-xs text-muted-foreground">مرتب‌سازی:</label>
                       <select
+                        id="proposal-sort"
                         value={proposalSort}
                         onChange={(e) => setProposalSort(e.target.value as typeof proposalSort)}
                         className="rounded-lg border border-border bg-muted/50 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-ring/20"
@@ -451,54 +451,54 @@ export function RequestDetail() {
                   ))}
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Author info */}
-            <motion.div {...fadeIn} transition={{ delay: 0.2 }}>
+            <div>
               <Card className="border-border/50 bg-card">
                 <CardContent className="p-5">
-                  <h3 className="mb-4 text-sm font-semibold">اطلاعات کاربر</h3>
+                  <h2 className="mb-4 text-sm font-semibold">اطلاعات کاربر</h2>
                   <div className="flex items-center gap-3">
-                    <div className={`size-14 rounded-full flex items-center justify-center text-base font-bold ring-2 ring-white dark:ring-card shadow-sm ${authorAvatarBg}`}>
+                    <div className={`size-14 rounded-full flex items-center justify-center text-base font-bold ring-2 ring-white dark:ring-card shadow-sm ${authorAvatarBg}`} aria-hidden="true">
                       {authorInitials}
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold">{authorName}</h4>
+                      <h3 className="text-sm font-bold">{authorName}</h3>
                       <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                        <MapPin className="size-3" />
+                        <MapPin className="size-3" aria-hidden="true" />
                         {request.user.city}
                       </div>
                       <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                        <Calendar className="size-3" />
+                        <Calendar className="size-3" aria-hidden="true" />
                         عضویت از {new Date(request.user.createdAt).toLocaleDateString('fa-IR')}
                       </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
 
             {/* CTA: Submit Proposal */}
-            <motion.div {...fadeIn} transition={{ delay: 0.3 }}>
+            <div>
               <Card className="border-emerald-200/60 bg-gradient-to-b from-emerald-50/80 to-white dark:border-emerald-800/60 dark:from-emerald-950/30 dark:to-card shadow-lg shadow-emerald-500/[0.04]">
                 <CardContent className="p-5 text-center">
-                  <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-gradient-to-b from-emerald-100 to-emerald-50 dark:from-emerald-900/40 dark:to-emerald-900/20">
+                  <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-gradient-to-b from-emerald-100 to-emerald-50 dark:from-emerald-900/40 dark:to-emerald-900/20" aria-hidden="true">
                     <Send className="size-6 text-emerald-600 dark:text-emerald-400" />
                   </div>
-                  <h3 className="mb-2 text-sm font-bold">متخصص هستید؟</h3>
+                  <h2 className="mb-2 text-sm font-bold">کسب‌وکار هستید؟</h2>
                   <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
                     پیشنهاد خود را ارسال کنید و شانس خود را برای انجام این پروژه افزایش دهید.
                   </p>
-                  <Button onClick={() => navigateTo('submit-proposal', { id: request.id })} className="w-full gap-2 rounded-xl">
-                    <MessageSquare className="size-4" />
+                  <Button onClick={() => navigateTo('submit-proposal', { id: request.id })} className="w-full gap-2 rounded-xl" data-href="/submit-proposal" aria-label="ارسال پیشنهاد برای این نیاز" title="ارسال پیشنهاد برای انجام این پروژه">
+                    <MessageSquare className="size-4" aria-hidden="true" />
                     ارسال پیشنهاد
                   </Button>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
@@ -510,6 +510,13 @@ export function RequestDetail() {
         targetName={request.title}
         targetType="request"
       />
+
+      <noscript>
+        <div className="sr-only">
+          <h1>جزئیات نیاز - نیاز فایندر</h1>
+          <p>صفحه جزئیات نیاز شامل عنوان، توضیحات، بودجه، شهر، زمان تحویل، تگ‌ها و پیشنهادهای دریافتی کسب‌وکارها.</p>
+        </div>
+      </noscript>
     </div>
   );
 }

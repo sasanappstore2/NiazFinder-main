@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import {
   ArrowRight,
   MapPin,
@@ -33,22 +32,6 @@ import {
   getTimeAgo,
 } from '@/lib/constants';
 import type { SpecialistProfile as SpecialistProfileType, Portfolio, Review } from '@/lib/types';
-
-// ─── Animation variants ───────────────────────────────
-const fadeIn = {
-  initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
-};
-
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.06 } },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
-};
 
 // ─── Avatar helpers ────────────────────────────────────
 const AVATAR_COLORS = [
@@ -102,7 +85,7 @@ function getGradient(index: number) {
 // ─── Rating stars ─────────────────────────────────────
 function RatingStars({ rating, showNumber = false }: { rating: number; showNumber?: boolean }) {
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex items-center gap-0.5" aria-label={`امتیاز ${rating.toLocaleString('fa-IR')} از ۵`}>
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
@@ -113,6 +96,7 @@ function RatingStars({ rating, showNumber = false }: { rating: number; showNumbe
                 ? 'fill-amber-400/50 text-amber-400'
                 : 'fill-muted text-muted'
           }`}
+          aria-hidden="true"
         />
       ))}
       {showNumber && (
@@ -127,7 +111,7 @@ function RatingStars({ rating, showNumber = false }: { rating: number; showNumbe
 // ─── Skill level dots ─────────────────────────────────
 function SkillLevelDots({ level }: { level: number }) {
   return (
-    <div className="flex gap-0.5">
+    <div className="flex gap-0.5" aria-hidden="true">
       {Array.from({ length: 5 }).map((_, i) => (
         <div
           key={i}
@@ -155,7 +139,7 @@ function StatCard({
   return (
     <Card className="border-border/40 bg-white/80 backdrop-blur-sm dark:bg-card/80 transition-all duration-200 hover:shadow-md hover:border-emerald-200/40 dark:hover:border-emerald-800/40">
       <CardContent className="flex flex-col items-center gap-1.5 p-4 text-center">
-        <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-900/20">
+        <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-900/20" aria-hidden="true">
           <Icon className="size-4.5 text-emerald-600 dark:text-emerald-400" />
         </div>
         <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
@@ -172,8 +156,7 @@ function StatCard({
 function PortfolioCard({ portfolio, index }: { portfolio: Portfolio; index: number }) {
   return (
     <Card className="group overflow-hidden border-border/50 bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/[0.06] hover:border-emerald-300/60 dark:hover:border-emerald-700/60">
-      {/* Placeholder image */}
-      <div className={`aspect-video bg-gradient-to-br ${getGradient(index)} relative flex items-center justify-center`}>
+      <div className={`aspect-video bg-gradient-to-br ${getGradient(index)} relative flex items-center justify-center`} aria-hidden="true">
         <div className="flex flex-col items-center gap-1 text-white/80">
           <FolderOpen className="size-8" />
           <span className="text-xs font-medium">{portfolio.title}</span>
@@ -185,7 +168,7 @@ function PortfolioCard({ portfolio, index }: { portfolio: Portfolio; index: numb
         )}
       </div>
       <CardContent className="p-4">
-        <h4 className="mb-1 text-sm font-bold truncate">{portfolio.title}</h4>
+        <h3 className="mb-1 text-sm font-bold truncate">{portfolio.title}</h3>
         {portfolio.description && (
           <p className="text-xs leading-relaxed text-muted-foreground line-clamp-2">
             {portfolio.description}
@@ -205,10 +188,9 @@ function ReviewCard({ review }: { review: Review }) {
   return (
     <Card className="border-border/50 bg-card transition-all duration-300 hover:border-emerald-300/60 dark:hover:border-emerald-700/60 hover:shadow-lg hover:shadow-emerald-500/[0.04]">
       <CardContent className="p-5">
-        {/* Header */}
         <div className="mb-3 flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className={`size-10 rounded-full flex items-center justify-center text-sm font-bold ${colorClass}`}>
+            <div className={`size-10 rounded-full flex items-center justify-center text-sm font-bold ${colorClass}`} aria-hidden="true">
               {initials}
             </div>
             <div>
@@ -216,7 +198,7 @@ function ReviewCard({ review }: { review: Review }) {
               <span className="text-[11px] text-muted-foreground">{getTimeAgo(review.createdAt)}</span>
             </div>
           </div>
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-0.5" aria-label={`امتیاز ${review.rating} از ۵`} aria-hidden="true">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
@@ -229,10 +211,9 @@ function ReviewCard({ review }: { review: Review }) {
             ))}
           </div>
         </div>
-        {/* Comment */}
         {review.comment && (
           <div className="relative rounded-xl bg-muted/40 p-4">
-            <Quote className="absolute top-3 right-3 size-4 text-muted-foreground/30" />
+            <Quote className="absolute top-3 right-3 size-4 text-muted-foreground/30" aria-hidden="true" />
             <p className="pr-5 text-sm leading-7 text-muted-foreground">{review.comment}</p>
           </div>
         )}
@@ -255,7 +236,7 @@ function SidebarRow({
 }) {
   return (
     <div className="flex items-center gap-3 py-3">
-      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted/60">
+      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted/60" aria-hidden="true">
         <Icon className={`size-4 ${iconColor}`} />
       </div>
       <div className="min-w-0">
@@ -280,31 +261,29 @@ export function SpecialistProfile() {
   const avatarSolid = getAvatarSolid(specialist.displayName ?? '');
 
   return (
-    <div className="min-h-screen bg-muted/20" dir="rtl">
+    <div className="min-h-screen bg-muted/20" dir="rtl" itemscope itemtype="https://schema.org/Person">
+      <meta itemprop="name" content={specialist.displayName} />
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
 
-        {/* ── Back Button ──────────────────────────── */}
-        <motion.div {...fadeIn} className="mb-6">
+        {/* ── Back Button ──────────────────── */}
+        <div className="mb-6">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigateTo('browse-specialists')}
             className="gap-2 text-sm text-muted-foreground"
+            data-href="/specialists"
+            aria-label="بازگشت به لیست کسب‌وکارها"
           >
-            <ArrowRight className="size-4" />
-            بازگشت به متخصص‌ها
+            <ArrowRight className="size-4" aria-hidden="true" />
+            بازگشت به کسب‌وکارها
           </Button>
-        </motion.div>
+        </div>
 
         {/* ── Profile Header Card ──────────────────── */}
-        <motion.div
-          {...fadeIn}
-          transition={{ delay: 0.05 }}
-          className="mb-6 overflow-hidden rounded-2xl border border-border/50 shadow-lg shadow-black/[0.03]"
-        >
+        <div className="mb-6 overflow-hidden rounded-2xl border border-border/50 shadow-lg shadow-black/[0.03]">
           {/* Gradient banner */}
-          <div className="relative bg-gradient-to-bl from-emerald-500 via-emerald-600 to-teal-700 px-6 pb-24 pt-8 sm:px-10 sm:pt-10">
-            {/* Decorative circles */}
+          <div className="relative bg-gradient-to-bl from-emerald-500 via-emerald-600 to-teal-700 px-6 pb-24 pt-8 sm:px-10 sm:pt-10" aria-hidden="true">
             <div className="pointer-events-none absolute -left-10 -top-10 size-40 rounded-full bg-white/5" />
             <div className="pointer-events-none absolute bottom-0 left-1/3 size-60 rounded-full bg-white/5" />
             <div className="pointer-events-none absolute -right-8 bottom-4 size-32 rounded-full bg-white/5" />
@@ -315,38 +294,36 @@ export function SpecialistProfile() {
             {/* Avatar positioned on the gradient */}
             <div className="-mt-16 mb-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex items-end gap-4">
-                {/* Avatar */}
                 <div className="relative">
-                  <div className={`size-28 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white shadow-lg ring-4 ring-card ${avatarSolid}`}>
+                  <div className={`size-28 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white shadow-lg ring-4 ring-card ${avatarSolid}`} aria-hidden="true" itemprop="image">
                     {initials}
                   </div>
-                  {/* Online indicator */}
                   {specialist.online && (
-                    <span className="absolute -bottom-1 -left-1 size-5 rounded-full border-3 border-card bg-emerald-500 shadow-sm" />
+                    <span className="absolute -bottom-1 -left-1 size-5 rounded-full border-3 border-card bg-emerald-500 shadow-sm" aria-label="آنلاین" />
                   )}
                 </div>
                 <div className="mb-1">
                   <div className="flex items-center gap-2">
-                    <h1 className="text-xl font-extrabold sm:text-2xl">
+                    <h1 className="text-xl font-extrabold sm:text-2xl" itemprop="name">
                       {specialist.displayName}
                     </h1>
                     {specialist.isVerified && (
-                      <BadgeCheck className="size-6 fill-emerald-500 text-white" />
+                      <BadgeCheck className="size-6 fill-emerald-500 text-white" aria-label="احراز هویت شده" />
                     )}
                   </div>
                   <div className="mt-1.5 flex items-center gap-3 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1">
-                      <MapPin className="size-3.5" />
-                      {specialist.city}
+                      <MapPin className="size-3.5" aria-hidden="true" />
+                      <span itemprop="address">{specialist.city}</span>
                     </span>
                     {specialist.online ? (
                       <span className="flex items-center gap-1 font-medium text-emerald-600 dark:text-emerald-400">
-                        <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="size-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
                         آنلاین
                       </span>
                     ) : (
                       <span className="flex items-center gap-1 text-muted-foreground">
-                        <span className="size-2 rounded-full bg-muted-foreground/40" />
+                        <span className="size-2 rounded-full bg-muted-foreground/40" aria-hidden="true" />
                         آفلاین
                       </span>
                     )}
@@ -356,12 +333,12 @@ export function SpecialistProfile() {
 
               {/* Action buttons */}
               <div className="flex gap-3 sm:mb-1">
-                <Button className="gap-2 rounded-xl px-5">
-                  <MessageCircle className="size-4" />
+                <Button className="gap-2 rounded-xl px-5" data-href="/messages" aria-label={`ارسال پیام به ${specialist.displayName}`} title={`ارسال پیام به ${specialist.displayName}`}>
+                  <MessageCircle className="size-4" aria-hidden="true" />
                   ارسال پیام
                 </Button>
-                <Button variant="outline" className="gap-2 rounded-xl px-5 border-emerald-300 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-950/30">
-                  <UserPlus className="size-4" />
+                <Button variant="outline" className="gap-2 rounded-xl px-5 border-emerald-300 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-950/30" aria-label={`دعوت ${specialist.displayName} به پروژه`} title="دعوت کسب‌وکار به پروژه جدید">
+                  <UserPlus className="size-4" aria-hidden="true" />
                   دعوت به پروژه
                 </Button>
               </div>
@@ -396,7 +373,7 @@ export function SpecialistProfile() {
               />
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* ── Main Content (2-column) ──────────────── */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -405,30 +382,30 @@ export function SpecialistProfile() {
           <div className="lg:col-span-2 space-y-6">
 
             {/* About */}
-            <motion.div {...fadeIn} transition={{ delay: 0.1 }}>
+            <div>
               <Card className="border-border/50 bg-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+                    <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-900/20" aria-hidden="true">
                       <UserPlus className="size-3.5 text-emerald-600 dark:text-emerald-400" />
                     </div>
-                    درباره متخصص
+                    درباره کسب‌وکار
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="leading-8 text-sm text-muted-foreground">
+                  <p className="leading-8 text-sm text-muted-foreground" itemprop="description">
                     {specialist.bio}
                   </p>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
 
             {/* Skills */}
-            <motion.div {...fadeIn} transition={{ delay: 0.15 }}>
+            <div>
               <Card className="border-border/50 bg-card">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+                    <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-900/20" aria-hidden="true">
                       <Zap className="size-3.5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     مهارت‌ها
@@ -440,19 +417,15 @@ export function SpecialistProfile() {
                       const percentage = Math.round((skill.level / 5) * 100);
                       return (
                         <div key={skill.name}>
-                          {/* Row 1: Skill name (right) + Dots (left) */}
                           <div className="mb-2 flex items-center justify-between gap-3">
                             <span className="text-sm font-medium">{skill.name}</span>
                             <SkillLevelDots level={skill.level} />
                           </div>
-                          {/* Row 2: Animated bar (fills RTL) + Percentage (left) */}
                           <div className="flex items-center gap-3">
-                            <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-muted/40">
-                              <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${percentage}%` }}
-                                transition={{ duration: 1, ease: 'easeOut' as const, delay: index * 0.1 }}
-                                className="h-full rounded-full bg-gradient-to-l from-emerald-500 to-teal-400"
+                            <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-muted/40" aria-hidden="true">
+                              <div
+                                className="h-full rounded-full bg-gradient-to-l from-emerald-500 to-teal-400 transition-all duration-1000 ease-out"
+                                style={{ width: `${percentage}%`, transitionDelay: `${index * 100}ms` }}
                               />
                             </div>
                             <span className="min-w-[2.5rem] text-xs font-bold tabular-nums text-muted-foreground">
@@ -465,23 +438,23 @@ export function SpecialistProfile() {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
 
             {/* Portfolio + Reviews Tabs */}
-            <motion.div {...fadeIn} transition={{ delay: 0.2 }}>
+            <div>
               <Tabs defaultValue="portfolio" className="w-full">
                 <Card className="border-border/50 bg-card">
                   <CardHeader className="pb-0">
                     <TabsList className="w-full">
                       <TabsTrigger value="portfolio" className="flex-1 gap-1.5">
-                        <Package className="size-3.5" />
+                        <Package className="size-3.5" aria-hidden="true" />
                         نمونه کارها
                         <Badge variant="secondary" className="rounded-md px-1.5 text-[10px]">
                           {specialist.portfolios.length.toLocaleString('fa-IR')}
                         </Badge>
                       </TabsTrigger>
                       <TabsTrigger value="reviews" className="flex-1 gap-1.5">
-                        <Star className="size-3.5" />
+                        <Star className="size-3.5" aria-hidden="true" />
                         نظرات
                         <Badge variant="secondary" className="rounded-md px-1.5 text-[10px]">
                           {MOCK_REVIEWS.length.toLocaleString('fa-IR')}
@@ -490,63 +463,47 @@ export function SpecialistProfile() {
                     </TabsList>
                   </CardHeader>
                   <CardContent className="pt-4">
-                    {/* Portfolio Tab */}
                     <TabsContent value="portfolio">
                       {specialist.portfolios.length > 0 ? (
-                        <motion.div
-                          variants={container}
-                          initial="hidden"
-                          animate="show"
-                          className="grid grid-cols-1 gap-4 sm:grid-cols-2"
-                        >
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                           {specialist.portfolios.map((portfolio, i) => (
-                            <motion.div key={portfolio.id} variants={item}>
-                              <PortfolioCard portfolio={portfolio} index={i} />
-                            </motion.div>
+                            <PortfolioCard key={portfolio.id} portfolio={portfolio} index={i} />
                           ))}
-                        </motion.div>
+                        </div>
                       ) : (
                         <div className="py-16 text-center">
-                          <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-muted">
+                          <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-muted" aria-hidden="true">
                             <FolderOpen className="size-8 text-muted-foreground/40" />
                           </div>
                           <h3 className="mb-2 text-sm font-semibold">نمونه کاری ثبت نشده</h3>
                           <p className="text-xs text-muted-foreground">
-                            این متخصص هنوز نمونه کاری اضافه نکرده است.
+                            این کسب‌وکار هنوز نمونه کاری اضافه نکرده است.
                           </p>
                         </div>
                       )}
                     </TabsContent>
 
-                    {/* Reviews Tab */}
                     <TabsContent value="reviews">
-                      <motion.div
-                        variants={container}
-                        initial="hidden"
-                        animate="show"
-                        className="space-y-4"
-                      >
+                      <div className="space-y-4">
                         {MOCK_REVIEWS.map((review) => (
-                          <motion.div key={review.id} variants={item}>
-                            <ReviewCard review={review} />
-                          </motion.div>
+                          <ReviewCard key={review.id} review={review} />
                         ))}
-                      </motion.div>
+                      </div>
                     </TabsContent>
                   </CardContent>
                 </Card>
               </Tabs>
-            </motion.div>
+            </div>
           </div>
 
           {/* ── Left Column (Sidebar) ───────────────── */}
           <div className="space-y-6">
 
             {/* Quick Info Card */}
-            <motion.div {...fadeIn} transition={{ delay: 0.15 }}>
+            <div>
               <Card className="border-border/50 bg-card">
                 <CardContent className="p-5">
-                  <h3 className="mb-3 text-sm font-bold">اطلاعات سریع</h3>
+                  <h2 className="mb-3 text-sm font-bold">اطلاعات سریع</h2>
                   <div className="divide-y divide-border/60">
                     <SidebarRow
                       icon={CalendarDays}
@@ -579,13 +536,13 @@ export function SpecialistProfile() {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
 
             {/* Skills Summary */}
-            <motion.div {...fadeIn} transition={{ delay: 0.2 }}>
+            <div>
               <Card className="border-border/50 bg-card">
                 <CardContent className="p-5">
-                  <h3 className="mb-3 text-sm font-bold">مهارت‌ها</h3>
+                  <h2 className="mb-3 text-sm font-bold">مهارت‌ها</h2>
                   <div className="flex flex-wrap gap-2">
                     {specialist.skills.map((skill) => (
                       <Badge
@@ -600,58 +557,67 @@ export function SpecialistProfile() {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
 
             {/* Verified badge card */}
             {specialist.isVerified && (
-              <motion.div {...fadeIn} transition={{ delay: 0.25 }}>
+              <div>
                 <Card className="border-emerald-200 bg-gradient-to-b from-emerald-50 to-white dark:border-emerald-800 dark:from-emerald-950/40 dark:to-card">
                   <CardContent className="p-5 text-center">
-                    <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900/30">
+                    <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900/30" aria-hidden="true">
                       <BadgeCheck className="size-6 text-emerald-600 dark:text-emerald-400" />
                     </div>
-                    <h3 className="mb-1 text-sm font-bold">احراز هویت شده</h3>
+                    <h2 className="mb-1 text-sm font-bold">احراز هویت شده</h2>
                     <p className="text-xs leading-relaxed text-muted-foreground">
-                      هویت و مدارک این متخصص توسط تیم نیاز فایندر تأیید شده است.
+                      هویت و مدارک این کسب‌وکار توسط تیم نیاز فایندر تأیید شده است.
                     </p>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             )}
 
             {/* Invite CTA */}
-            <motion.div {...fadeIn} transition={{ delay: 0.3 }}>
+            <div>
               <Card className="overflow-hidden border-emerald-200 bg-gradient-to-b from-emerald-50 to-white dark:border-emerald-800 dark:from-emerald-950/40 dark:to-card">
                 <CardContent className="p-5 text-center">
-                  <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900/30">
+                  <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900/30" aria-hidden="true">
                     <UserPlus className="size-6 text-emerald-600 dark:text-emerald-400" />
                   </div>
-                  <h3 className="mb-2 text-sm font-bold">پروژه‌ای دارید؟</h3>
+                  <h2 className="mb-2 text-sm font-bold">پروژه‌ای دارید؟</h2>
                   <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
-                    همین الان این متخصص را به پروژه خود دعوت کنید و کار خود را شروع کنید.
+                    همین الان این کسب‌وکار را به پروژه خود دعوت کنید و کار خود را شروع کنید.
                   </p>
-                  <Button className="w-full gap-2 rounded-xl">
-                    <UserPlus className="size-4" />
+                  <Button className="w-full gap-2 rounded-xl" data-href={`/specialists/${specialist.id}/invite`} aria-label="دعوت کسب‌وکار به پروژه" title="دعوت این کسب‌وکار به پروژه شما">
+                    <UserPlus className="size-4" aria-hidden="true" />
                     دعوت به پروژه
                   </Button>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
 
             {/* Write Review CTA */}
-            <motion.div {...fadeIn} transition={{ delay: 0.35 }}>
+            <div>
               <Button
                 variant="outline"
                 onClick={() => navigateTo('submit-review', { id: specialist.id })}
                 className="w-full gap-2 rounded-xl border-dashed border-border/40 hover:border-primary/40 hover:bg-primary/5 h-auto py-3"
+                data-href={`/specialists/${specialist.id}/review`}
+                aria-label={`ثبت نظر برای ${specialist.displayName}`}
+                title="ثبت نظر و امتیاز برای این کسب‌وکار"
               >
-                <PenLine className="size-4 text-muted-foreground" />
+                <PenLine className="size-4 text-muted-foreground" aria-hidden="true" />
                 <span className="text-sm font-medium text-muted-foreground">ثبت نظر و امتیاز</span>
               </Button>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
+      <noscript>
+        <div className="sr-only">
+          <h1>پروفایل کسب‌وکار - نیاز فایندر</h1>
+          <p>صفحه پروفایل کسب‌وکار شامل اطلاعات شخصی، مهارت‌ها، نمونه کارها، نظرات و امتیازات کسب‌وکار.</p>
+        </div>
+      </noscript>
     </div>
   );
 }

@@ -1,0 +1,136 @@
+'use client';
+
+import { useState } from 'react';
+import {
+  LayoutGrid,
+  ChevronDown,
+  ChevronLeft,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useAppStore } from '@/lib/store';
+import {
+  CategorySelector,
+  ALL_CATEGORIES,
+  getCategoryIcon,
+} from '@/components/layout/CategoryMegaMenu';
+import type { MegaMenuCategory } from '@/components/layout/CategoryMegaMenu';
+import { Button } from '@/components/ui/button';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '@/components/ui/popover';
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+} from '@/components/ui/sheet';
+
+// ============ Desktop Category Bar ============
+function DesktopCategoryBar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigateTo = useAppStore((s) => s.navigateTo);
+
+  const handleSelect = (category: MegaMenuCategory) => {
+    navigateTo('browse-requests', { categoryId: category.value });
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="hidden lg:block">
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            className={cn(
+              'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150',
+              isOpen
+                ? 'bg-primary/10 text-primary'
+                : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+            )}
+            aria-expanded={isOpen}
+            aria-haspopup="true"
+          >
+            <LayoutGrid className="size-4" />
+            <span>همه دسته‌بندی‌ها</span>
+            <ChevronDown
+              className={cn(
+                'size-3.5 transition-transform duration-200',
+                isOpen && 'rotate-180'
+              )}
+            />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          className="w-[840px] p-0 overflow-hidden"
+          dir="rtl"
+          align="start"
+          sideOffset={4}
+        >
+          <CategorySelector
+            isDesktop={true}
+            nestedCategories={ALL_CATEGORIES}
+            onSelect={handleSelect}
+            onClose={() => setIsOpen(false)}
+            getIcon={getCategoryIcon}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
+// ============ Mobile Category Bar ============
+function MobileCategoryBar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigateTo = useAppStore((s) => s.navigateTo);
+
+  const handleSelect = (category: MegaMenuCategory) => {
+    navigateTo('browse-requests', { categoryId: category.value });
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="lg:hidden">
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetTrigger asChild>
+          <button
+            type="button"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors duration-150"
+          >
+            <LayoutGrid className="size-4" />
+            <span>همه دسته‌بندی‌ها</span>
+            <ChevronLeft className="size-3.5" />
+          </button>
+        </SheetTrigger>
+        <SheetContent side="right" className="w-[340px] p-0 sm:w-[400px]">
+          <CategorySelector
+            isDesktop={false}
+            nestedCategories={ALL_CATEGORIES}
+            onSelect={handleSelect}
+            onClose={() => setIsOpen(false)}
+            getIcon={getCategoryIcon}
+          />
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
+}
+
+// ============ CategoryBar (Sub-Header) ============
+export function CategoryBar() {
+  return (
+    <div
+      className="sticky top-[52px] z-40 w-full border-b border-border/50 bg-background/95 backdrop-blur-lg"
+      role="toolbar"
+      aria-label="نوار دسته‌بندی‌ها"
+    >
+      <div className="container-default">
+        <div className="flex h-11 items-center gap-2 overflow-x-auto scrollbar-none">
+          <DesktopCategoryBar />
+          <MobileCategoryBar />
+        </div>
+      </div>
+    </div>
+  );
+}

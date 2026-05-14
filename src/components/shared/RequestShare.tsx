@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -41,26 +40,6 @@ const socialButtons = [
       `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`,
   },
 ] as const;
-
-const buttonVariants = {
-  hidden: { opacity: 0, y: 12, scale: 0.9 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      delay: i * 0.08,
-      duration: 0.35,
-      ease: 'easeOut' as const,
-    },
-  }),
-  exit: {
-    opacity: 0,
-    y: 8,
-    scale: 0.95,
-    transition: { duration: 0.2 },
-  },
-};
 
 export function RequestShare({ requestTitle, requestId }: RequestShareProps) {
   const [copied, setCopied] = useState(false);
@@ -106,73 +85,57 @@ export function RequestShare({ requestTitle, requestId }: RequestShareProps) {
         </div>
 
         <div className="border-t border-border/50 px-4 pb-4 pt-3 space-y-3">
-          <AnimatePresence mode="wait">
-            {/* Copy Link Button */}
-            <motion.div
-              key="copy"
-              custom={0}
-              variants={buttonVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
+          {/* Copy Link Button */}
+          <div>
+            <Button
+              onClick={handleCopyLink}
+              variant="outline"
+              className="w-full justify-start gap-3 rounded-xl border-emerald-200 bg-emerald-50/50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-950/50"
             >
-              <Button
-                onClick={handleCopyLink}
-                variant="outline"
-                className="w-full justify-start gap-3 rounded-xl border-emerald-200 bg-emerald-50/50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-950/50"
-              >
-                {copied ? (
-                  <Check className="h-4 w-4 shrink-0" />
-                ) : (
-                  <Link2 className="h-4 w-4 shrink-0" />
-                )}
-                <span className="text-sm font-medium">
-                  {copied ? 'کپی شد!' : 'کپی لینک'}
-                </span>
-              </Button>
-            </motion.div>
+              {copied ? (
+                <Check className="h-4 w-4 shrink-0" />
+              ) : (
+                <Link2 className="h-4 w-4 shrink-0" />
+              )}
+              <span className="text-sm font-medium">
+                {copied ? 'کپی شد!' : 'کپی لینک'}
+              </span>
+            </Button>
+          </div>
 
-            {/* Social Share Buttons */}
-            {socialButtons.map((social, index) => {
-              const Icon = social.icon;
-              const shareUrl = social.getUrl(url, requestTitle);
+          {/* Social Share Buttons */}
+          {socialButtons.map((social) => {
+            const Icon = social.icon;
+            const shareUrl = social.getUrl(url, requestTitle);
 
-              return (
-                <motion.div
-                  key={social.key}
-                  custom={index + 1}
-                  variants={buttonVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
+            return (
+              <div key={social.key}>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full justify-start gap-3 rounded-xl hover:bg-accent"
+                  style={
+                    social.color
+                      ? {
+                          borderColor: social.color + '40',
+                          color: social.color,
+                        }
+                      : undefined
+                  }
                 >
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="w-full justify-start gap-3 rounded-xl hover:bg-accent"
-                    style={
-                      social.color
-                        ? {
-                            borderColor: social.color + '40',
-                            color: social.color,
-                          }
-                        : undefined
-                    }
+                  <a
+                    href={shareUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full items-center gap-3 text-sm font-medium"
                   >
-                    <a
-                      href={shareUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex w-full items-center gap-3 text-sm font-medium"
-                    >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      <span>{social.label}</span>
-                    </a>
-                  </Button>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
+                    <Icon className="h-4 w-4 shrink-0" />
+                    <span>{social.label}</span>
+                  </a>
+                </Button>
+              </div>
+            );
+          })}
         </div>
       </PopoverContent>
     </Popover>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo } from 'react';
-import { motion } from 'framer-motion';
 import {
   ShieldCheck,
   Star,
@@ -61,11 +60,9 @@ function RateBar({ value, highlight }: { value: number; highlight: boolean }) {
   return (
     <div className="flex items-center gap-2">
       <div className="h-2 w-20 overflow-hidden rounded-full bg-muted sm:w-28">
-        <motion.div
-          className="h-full rounded-full bg-emerald-500"
-          initial={{ width: 0 }}
-          animate={{ width: `${value}%` }}
-          transition={{ duration: 0.8, ease: 'easeOut' as const }}
+        <div
+          className="h-full rounded-full bg-emerald-500 transition-all duration-800 ease-out"
+          style={{ width: `${value}%` }}
         />
       </div>
       <span
@@ -78,12 +75,6 @@ function RateBar({ value, highlight }: { value: number; highlight: boolean }) {
     </div>
   );
 }
-
-// ─── Animation variants ───────────────────────────────
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } },
-};
 
 // ─── Main Component ───────────────────────────────────
 export function CompareSpecialists() {
@@ -126,18 +117,14 @@ export function CompareSpecialists() {
       <div className="min-h-screen bg-muted/20" dir="rtl">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           {/* Header */}
-          <motion.div
-            initial={fadeInUp.hidden}
-            animate={fadeInUp.visible}
-            className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-          >
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-gradient-to-l from-foreground to-foreground/80 bg-clip-text">
-                مقایسه متخصص‌ها
-              </h2>
+              <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-gradient-to-l from-foreground to-foreground/80 bg-clip-text">
+                مقایسه کسب‌وکارها
+              </h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 {count > 0
-                  ? `${count} متخصص انتخاب شده — حداقل ۲ متخصص برای مقایسه لازم است`
+                  ? `${count} کسب‌وکار انتخاب شده — حداقل ۲ کسب‌وکار برای مقایسه لازم است`
                   : 'لیست مقایسه خالی است'}
               </p>
             </div>
@@ -147,38 +134,36 @@ export function CompareSpecialists() {
                 size="sm"
                 onClick={clearCompareList}
                 className="gap-2 self-start sm:self-auto"
+                title="پاک کردن لیست مقایسه"
               >
                 <Trash2 className="size-4" />
                 پاک کردن لیست
               </Button>
             )}
-          </motion.div>
+          </div>
 
           {/* Empty state */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/40 bg-card py-20 text-center shadow-lg shadow-black/[0.03]"
-          >
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/40 bg-card py-20 text-center shadow-lg shadow-black/[0.03]">
             <div className="mb-4 flex size-20 items-center justify-center rounded-2xl bg-muted/60">
               <Users className="size-10 text-muted-foreground/40" />
             </div>
             <h3 className="mb-2 text-lg font-semibold">
-              حداقل ۲ متخصص برای مقایسه انتخاب کنید
+              حداقل ۲ کسب‌وکار برای مقایسه انتخاب کنید
             </h3>
             <p className="mb-6 max-w-sm text-sm text-muted-foreground">
-              از صفحه متخصص‌ها، با کلیک روی دکمه مقایسه می‌توانید متخصص‌ها را به
+              از صفحه کسب‌وکارها، با کلیک روی دکمه مقایسه می‌توانید کسب‌وکارها را به
               لیست اضافه کنید.
             </p>
             <Button
               onClick={() => navigateTo('browse-specialists')}
               className="gap-2"
+              data-href="/browse-specialists"
+              title="مشاهده فهرست کسب‌وکارها"
             >
               <ArrowRight className="size-4" />
-              مشاهده متخصص‌ها
+              مشاهده کسب‌وکارها
             </Button>
-          </motion.div>
+          </div>
         </div>
       </div>
     );
@@ -189,17 +174,13 @@ export function CompareSpecialists() {
     <div className="min-h-screen bg-muted/20" dir="rtl">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <motion.div
-          initial={fadeInUp.hidden}
-          animate={fadeInUp.visible}
-          className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-        >
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              مقایسه متخصص‌ها
-            </h2>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              مقایسه کسب‌وکارها
+            </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              مقایسه {count} متخصص انتخاب شده
+              مقایسه {count} کسب‌وکار انتخاب شده
             </p>
           </div>
           <Button
@@ -207,19 +188,15 @@ export function CompareSpecialists() {
             size="sm"
             onClick={clearCompareList}
             className="gap-2 self-start sm:self-auto"
+            title="پاک کردن لیست مقایسه"
           >
             <Trash2 className="size-4" />
             پاک کردن لیست
           </Button>
-        </motion.div>
+        </div>
 
         {/* Table wrapper — horizontal scroll on mobile */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="overflow-x-auto rounded-2xl border border-border/40 bg-card shadow-xl shadow-black/[0.04]"
-        >
+        <div className="overflow-x-auto rounded-2xl border border-border/40 bg-card shadow-xl shadow-black/[0.04]">
           <table className="w-full min-w-[640px]">
             {/* ── Column Headers ── */}
             <thead>
@@ -239,7 +216,7 @@ export function CompareSpecialists() {
                     >
                       <div className="flex flex-col items-center gap-3">
                         <div className="relative">
-                          <Avatar className="size-16">
+                          <Avatar className="size-16" loading="lazy">
                             <AvatarFallback
                               className={`text-base font-bold ${colorClass}`}
                             >
@@ -265,7 +242,7 @@ export function CompareSpecialists() {
                               .toggleCompareSpecialist(specialist.id)
                           }
                           className="flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-                          title="حذف از مقایسه"
+                          aria-label={`حذف ${specialist.displayName} از مقایسه`}
                         >
                           <Trash2 className="size-3.5" />
                         </button>
@@ -477,6 +454,8 @@ export function CompareSpecialists() {
                         variant="outline"
                         className="h-9 gap-1.5 rounded-lg text-xs"
                         onClick={() => navigateTo('messages', { id: s.id })}
+                        data-href="/messages"
+                        title="ارسال پیام به کسب‌وکار"
                       >
                         <MessageSquare className="size-3.5" />
                         ارسال پیام
@@ -487,6 +466,8 @@ export function CompareSpecialists() {
                         onClick={() =>
                           navigateTo('specialist-profile', { id: s.id })
                         }
+                        data-href={`/specialists/${s.id}`}
+                        title="مشاهده پروفایل کسب‌وکار"
                       >
                         <Eye className="size-3.5" />
                         مشاهده پروفایل
@@ -498,8 +479,14 @@ export function CompareSpecialists() {
               </tr>
             </tbody>
           </table>
-        </motion.div>
+        </div>
       </div>
+      <noscript>
+        <div className="sr-only">
+          <h1>مقایسه کسب‌وکارها - نیاز فایندر</h1>
+          <p>صفحه مقایسه کسب‌وکارها برای بررسی و مقایسه مهارت‌ها، امتیازات، نرخ تکمیل و قیمت کسب‌وکارهای مختلف.</p>
+        </div>
+      </noscript>
     </div>
   );
 }

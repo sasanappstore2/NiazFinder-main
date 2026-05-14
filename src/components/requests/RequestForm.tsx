@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft,
   ChevronRight,
@@ -142,37 +141,11 @@ const STEPS = [
   },
 ];
 
-// ============ Animation Variants ============
-
-const stepVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? 80 : -80,
-    opacity: 0,
-    filter: 'blur(4px)',
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-    filter: 'blur(0px)',
-  },
-  exit: (direction: number) => ({
-    x: direction > 0 ? -80 : 80,
-    opacity: 0,
-    filter: 'blur(4px)',
-  }),
-};
-
-const stepTransition = {
-  type: 'tween' as const,
-  ease: 'easeInOut' as const,
-  duration: 0.3,
-};
-
 // ============ Component ============
 
 export function RequestForm() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [direction, setDirection] = useState(1);
+  const [direction] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tagInput, setTagInput] = useState('');
 
@@ -280,13 +253,11 @@ export function RequestForm() {
   const handleNext = async () => {
     const isValid = await validateStep();
     if (isValid) {
-      setDirection(1);
       setCurrentStep((prev) => Math.min(prev + 1, 3));
     }
   };
 
   const handlePrev = () => {
-    setDirection(-1);
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
@@ -298,7 +269,7 @@ export function RequestForm() {
 
     setIsSubmitting(false);
     toast.success('نیاز شما با موفقیت ثبت شد!', {
-      description: 'متخصص‌ها به زودی پیشنهاد خود را ارسال می‌کنند.',
+      description: 'کسب‌وکارها به زودی پیشنهاد خود را ارسال می‌کنند.',
     });
     navigateTo('browse-requests');
   };
@@ -308,9 +279,9 @@ export function RequestForm() {
       <Card className="w-full max-w-2xl mx-auto border-border/50 shadow-lg">
         <CardContent className="p-8 text-center">
           <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-amber-50 dark:bg-amber-900/20">
-            <AlertTriangle className="size-8 text-amber-500" />
+            <AlertTriangle className="size-8 text-amber-500" aria-hidden="true" />
           </div>
-          <h3 className="text-lg font-bold mb-2">نیاز به ورود</h3>
+          <h1 className="text-lg font-bold mb-2">نیاز به ورود</h1>
           <p className="text-muted-foreground">
             برای ثبت نیاز جدید ابتدا وارد حساب کاربری خود شوید.
           </p>
@@ -321,23 +292,26 @@ export function RequestForm() {
 
   return (
     <div className="w-full max-w-3xl mx-auto space-y-6">
+      {/* Page Heading */}
+      <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+        ثبت نیاز جدید
+      </h1>
+
       {/* Step Progress Indicator */}
       <Card className="border-none shadow-md shadow-black/[0.03] bg-gradient-to-b from-muted/40 to-muted/20">
         <CardContent className="p-5 sm:p-6">
-          <div className="flex items-center justify-between relative">
+          <div className="flex items-center justify-between relative" role="navigation" aria-label="مراحل ثبت نیاز">
             {/* Progress Line */}
-            <div className="absolute top-6 right-6 left-6 h-0.5 bg-border hidden sm:block">
-              <motion.div
-                className="h-full bg-primary"
-                initial={{ width: '0%' }}
-                animate={{
+            <div className="absolute top-6 right-6 left-6 h-0.5 bg-border hidden sm:block" aria-hidden="true">
+              <div
+                className="h-full bg-primary transition-all duration-400 ease-in-out"
+                style={{
                   width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%`,
                 }}
-                transition={{ duration: 0.4, ease: 'easeInOut' }}
               />
             </div>
 
-            {STEPS.map((step, index) => {
+            {STEPS.map((step) => {
               const Icon = step.icon;
               const isActive = currentStep === step.id;
               const isCompleted = currentStep > step.id;
@@ -349,10 +323,14 @@ export function RequestForm() {
                   onClick={() => {
                     if (step.id < currentStep) handlePrev();
                   }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`مرحله ${step.id}: ${step.title}${isCompleted ? ' (تکمیل شده)' : isActive ? ' (فعال)' : ''}`}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && step.id < currentStep) handlePrev(); }}
                 >
-                  <motion.div
+                  <div
                     className={`
-                      size-12 rounded-full flex items-center justify-center border-2 transition-colors
+                      size-12 rounded-full flex items-center justify-center border-2 transition-all duration-150 ease
                       ${isCompleted
                         ? 'bg-primary border-primary text-primary-foreground'
                         : isActive
@@ -360,15 +338,14 @@ export function RequestForm() {
                           : 'bg-background border-border text-muted-foreground'
                       }
                     `}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    aria-hidden="true"
                   >
                     {isCompleted ? (
                       <Check className="size-5" />
                     ) : (
                       <Icon className="size-5" />
                     )}
-                  </motion.div>
+                  </div>
                   <div className="text-center">
                     <p
                       className={`text-xs sm:text-sm font-medium ${
@@ -395,83 +372,107 @@ export function RequestForm() {
         <CardContent className="p-5 sm:p-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              <AnimatePresence mode="wait" custom={direction}>
-                {/* ========== Step 1: Basic Info ========== */}
-                {currentStep === 1 && (
-                  <motion.div
-                    key="step-1"
-                    custom={direction}
-                    variants={stepVariants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    transition={stepTransition}
-                    className="space-y-5"
-                  >
-                    <div className="mb-2">
-                      <h3 className="text-lg font-extrabold flex items-center gap-2">
-                        <Briefcase className="size-5 text-primary" />
-                        اطلاعات اصلی نیاز
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        عنوان واضح و توضیحات کامل به دریافت پیشنهادهای بهتر کمک می‌کند.
-                      </p>
-                    </div>
+              {/* ========== Step 1: Basic Info ========== */}
+              {currentStep === 1 && (
+                <div className="space-y-5">
+                  <div className="mb-2">
+                    <h2 className="text-lg font-extrabold flex items-center gap-2">
+                      <Briefcase className="size-5 text-primary" aria-hidden="true" />
+                      اطلاعات اصلی نیاز
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      عنوان واضح و توضیحات کامل به دریافت پیشنهادهای بهتر کمک می‌کند.
+                    </p>
+                  </div>
 
-                    <Separator />
+                  <Separator />
 
-                    {/* Title */}
-                    <FormField
-                      control={form.control}
-                      name="title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            عنوان نیاز <span className="text-destructive">*</span>
-                          </FormLabel>
+                  {/* Title */}
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          عنوان نیاز <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="مثال: طراحی سایت فروشگاهی آنلاین"
+                            className="text-base"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          عنوانی واضح و خلاصه که نیاز شما را نشان دهد (حداقل ۱۰ کاراکتر)
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Category */}
+                  <FormField
+                    control={form.control}
+                    name="categoryId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          دسته‌بندی <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          dir="rtl"
+                        >
                           <FormControl>
-                            <Input
-                              placeholder="مثال: طراحی سایت فروشگاهی آنلاین"
-                              className="text-base"
-                              {...field}
-                            />
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="دسته‌بندی مورد نظر را انتخاب کنید" />
+                            </SelectTrigger>
                           </FormControl>
-                          <FormDescription>
-                            عنوانی واضح و خلاصه که نیاز شما را نشان دهد (حداقل ۱۰ کاراکتر)
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                          <SelectContent className="max-h-64">
+                            {CATEGORIES.map((category) => (
+                              <SelectItem
+                                key={category.id}
+                                value={category.id}
+                              >
+                                <span className="flex items-center gap-2">
+                                  <span>{category.icon}</span>
+                                  <span>{category.name}</span>
+                                </span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                    {/* Category */}
+                  {/* Subcategory */}
+                  {subcategories.length > 0 && (
                     <FormField
                       control={form.control}
-                      name="categoryId"
+                      name="subcategoryId"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            دسته‌بندی <span className="text-destructive">*</span>
-                          </FormLabel>
+                          <FormLabel>زیردسته‌بندی</FormLabel>
                           <Select
-                            value={field.value}
+                            value={field.value || ''}
                             onValueChange={field.onChange}
                             dir="rtl"
                           >
                             <FormControl>
                               <SelectTrigger className="w-full">
-                                <SelectValue placeholder="دسته‌بندی مورد نظر را انتخاب کنید" />
+                                <SelectValue placeholder="زیردسته‌بندی را انتخاب کنید (اختیاری)" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent className="max-h-64">
-                              {CATEGORIES.map((category) => (
-                                <SelectItem
-                                  key={category.id}
-                                  value={category.id}
-                                >
+                              {subcategories.map((sub) => (
+                                <SelectItem key={sub.id} value={sub.id}>
                                   <span className="flex items-center gap-2">
-                                    <span>{category.icon}</span>
-                                    <span>{category.name}</span>
+                                    <span>{sub.icon}</span>
+                                    <span>{sub.name}</span>
                                   </span>
                                 </SelectItem>
                               ))}
@@ -481,436 +482,386 @@ export function RequestForm() {
                         </FormItem>
                       )}
                     />
+                  )}
 
-                    {/* Subcategory */}
-                    {subcategories.length > 0 && (
-                      <FormField
-                        control={form.control}
-                        name="subcategoryId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>زیردسته‌بندی</FormLabel>
-                            <Select
-                              value={field.value || ''}
-                              onValueChange={field.onChange}
-                              dir="rtl"
-                            >
-                              <FormControl>
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="زیردسته‌بندی را انتخاب کنید (اختیاری)" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent className="max-h-64">
-                                {subcategories.map((sub) => (
-                                  <SelectItem key={sub.id} value={sub.id}>
-                                    <span className="flex items-center gap-2">
-                                      <span>{sub.icon}</span>
-                                      <span>{sub.name}</span>
-                                    </span>
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    )}
-
-                    {/* Description */}
-                    <FormField
-                      control={form.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            توضیحات <span className="text-destructive">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="جزئیات نیاز خود را شرح دهید... (حداقل ۵۰ کاراکتر)"
-                              className="min-h-[140px] resize-y text-base leading-7"
-                              {...field}
-                            />
-                          </FormControl>
-                          <div className="flex items-center justify-between">
-                            <FormDescription>
-                              توضیحات کامل، پیشنهادهای دقیق‌تری دریافت می‌کنید
-                            </FormDescription>
-                            <span
-                              className={`text-xs ${
-                                (field.value?.length || 0) >= 50
-                                  ? 'text-green-600'
-                                  : 'text-muted-foreground'
-                              }`}
-                            >
-                              {field.value?.length || 0} / ۵۰
-                            </span>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </motion.div>
-                )}
-
-                {/* ========== Step 2: Budget & Timeline ========== */}
-                {currentStep === 2 && (
-                  <motion.div
-                    key="step-2"
-                    custom={direction}
-                    variants={stepVariants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    transition={stepTransition}
-                    className="space-y-5"
-                  >
-                    <div className="mb-2">
-                      <h3 className="text-lg font-extrabold flex items-center gap-2">
-                        <DollarSign className="size-5 text-primary" />
-                        بودجه و زمان تحویل
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        مشخص کردن بودجه و زمان تحویل به متخصص‌ها در ارسال پیشنهاد کمک می‌کند.
-                      </p>
-                    </div>
-
-                    <Separator />
-
-                    {/* Budget Type */}
-                    <FormField
-                      control={form.control}
-                      name="budgetType"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            نوع بودجه <span className="text-destructive">*</span>
-                          </FormLabel>
-                          <Select
-                            value={field.value}
-                            onValueChange={field.onChange}
-                            dir="rtl"
-                          >
-                            <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="FIXED">ثابت</SelectItem>
-                              <SelectItem value="HOURLY">ساعتی</SelectItem>
-                              <SelectItem value="NEGOTIABLE">توافقی</SelectItem>
-                            </SelectContent>
-                          </Select>
+                  {/* Description */}
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          توضیحات <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="جزئیات نیاز خود را شرح دهید... (حداقل ۵۰ کاراکتر)"
+                            className="min-h-[140px] resize-y text-base leading-7"
+                            {...field}
+                          />
+                        </FormControl>
+                        <div className="flex items-center justify-between">
                           <FormDescription>
-                            {field.value === 'FIXED' && 'مبلغ مشخص برای کل پروژه'}
-                            {field.value === 'HOURLY' && 'هزینه بر اساس ساعت کار'}
-                            {field.value === 'NEGOTIABLE' && 'قیمت پس از مذاکره تعیین می‌شود'}
+                            توضیحات کامل، پیشنهادهای دقیق‌تری دریافت می‌کنید
                           </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Budget Range */}
-                    {watchedBudgetType !== 'NEGOTIABLE' && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {/* Min Budget */}
-                        <FormField
-                          control={form.control}
-                          name="budgetMin"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>حداقل بودجه (تومان)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  placeholder="مثلاً ۵,۰۰۰,۰۰۰"
-                                  min={0}
-                                  dir="ltr"
-                                  className="text-left"
-                                  value={field.value ?? ''}
-                                  onChange={field.onChange}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {/* Max Budget */}
-                        <FormField
-                          control={form.control}
-                          name="budgetMax"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>حداکثر بودجه (تومان)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  placeholder="مثلاً ۱۰,۰۰۰,۰۰۰"
-                                  min={0}
-                                  dir="ltr"
-                                  className="text-left"
-                                  value={field.value ?? ''}
-                                  onChange={field.onChange}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    )}
-
-                    <Separator />
-
-                    {/* Delivery Time */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Time Value */}
-                      <FormField
-                        control={form.control}
-                        name="deliveryTime"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>زمان تحویل</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <Clock className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                                <Input
-                                  type="number"
-                                  placeholder="مثلاً ۱۴"
-                                  min={1}
-                                  dir="ltr"
-                                  className="pr-10 text-left"
-                                  value={field.value ?? ''}
-                                  onChange={field.onChange}
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      {/* Time Unit */}
-                      <FormField
-                        control={form.control}
-                        name="deliveryUnit"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>واحد زمان</FormLabel>
-                            <Select
-                              value={field.value}
-                              onValueChange={field.onChange}
-                              dir="rtl"
-                            >
-                              <FormControl>
-                                <SelectTrigger className="w-full">
-                                  <SelectValue />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="day">روز</SelectItem>
-                                <SelectItem value="week">هفته</SelectItem>
-                                <SelectItem value="month">ماه</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* ========== Step 3: Location & Additional ========== */}
-                {currentStep === 3 && (
-                  <motion.div
-                    key="step-3"
-                    custom={direction}
-                    variants={stepVariants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    transition={stepTransition}
-                    className="space-y-5"
-                  >
-                    <div className="mb-2">
-                      <h3 className="text-lg font-extrabold flex items-center gap-2">
-                        <MapPin className="size-5 text-primary" />
-                        مکان و اطلاعات تکمیلی
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        اطلاعات تکمیلی به پیدا کردن متخصص مناسب‌تر کمک می‌کند.
-                      </p>
-                    </div>
-
-                    <Separator />
-
-                    {/* Province & City */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Province */}
-                      <FormField
-                        control={form.control}
-                        name="province"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>استان</FormLabel>
-                            <Select
-                              value={field.value || ''}
-                              onValueChange={field.onChange}
-                              dir="rtl"
-                            >
-                              <FormControl>
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="استان را انتخاب کنید" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent className="max-h-64">
-                                {PROVINCES.map((province) => (
-                                  <SelectItem key={province} value={province}>
-                                    {province}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      {/* City */}
-                      <FormField
-                        control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>شهر</FormLabel>
-                            <Select
-                              value={field.value || ''}
-                              onValueChange={field.onChange}
-                              dir="rtl"
-                            >
-                              <FormControl>
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="شهر را انتخاب کنید" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent className="max-h-64">
-                                {CITIES.map((city) => (
-                                  <SelectItem key={city} value={city}>
-                                    {city}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    {/* Priority */}
-                    <FormField
-                      control={form.control}
-                      name="priority"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            اولویت <span className="text-destructive">*</span>
-                          </FormLabel>
-                          <Select
-                            value={field.value}
-                            onValueChange={field.onChange}
-                            dir="rtl"
+                          <span
+                            className={`text-xs ${
+                              (field.value?.length || 0) >= 50
+                                ? 'text-green-600'
+                                : 'text-muted-foreground'
+                            }`}
                           >
-                            <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="LOW">
-                                <span className="flex items-center gap-2">
-                                  <span className="size-2 rounded-full bg-green-500" />
-                                  کم
-                                </span>
-                              </SelectItem>
-                              <SelectItem value="NORMAL">
-                                <span className="flex items-center gap-2">
-                                  <span className="size-2 rounded-full bg-blue-500" />
-                                  عادی
-                                </span>
-                              </SelectItem>
-                              <SelectItem value="HIGH">
-                                <span className="flex items-center gap-2">
-                                  <span className="size-2 rounded-full bg-amber-500" />
-                                  زیاد
-                                </span>
-                              </SelectItem>
-                              <SelectItem value="URGENT">
-                                <span className="flex items-center gap-2">
-                                  <span className="size-2 rounded-full bg-red-500" />
-                                  فوری
-                                </span>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                            {field.value?.length || 0} / ۵۰
+                          </span>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
 
-                    {/* Tags */}
+              {/* ========== Step 2: Budget & Timeline ========== */}
+              {currentStep === 2 && (
+                <div className="space-y-5">
+                  <div className="mb-2">
+                    <h2 className="text-lg font-extrabold flex items-center gap-2">
+                      <DollarSign className="size-5 text-primary" aria-hidden="true" />
+                      بودجه و زمان تحویل
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      مشخص کردن بودجه و زمان تحویل به کسب‌وکارها در ارسال پیشنهاد کمک می‌کند.
+                    </p>
+                  </div>
+
+                  <Separator />
+
+                  {/* Budget Type */}
+                  <FormField
+                    control={form.control}
+                    name="budgetType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          نوع بودجه <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          dir="rtl"
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="FIXED">ثابت</SelectItem>
+                            <SelectItem value="HOURLY">ساعتی</SelectItem>
+                            <SelectItem value="NEGOTIABLE">توافقی</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          {field.value === 'FIXED' && 'مبلغ مشخص برای کل پروژه'}
+                          {field.value === 'HOURLY' && 'هزینه بر اساس ساعت کار'}
+                          {field.value === 'NEGOTIABLE' && 'قیمت پس از مذاکره تعیین می‌شود'}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Budget Range */}
+                  {watchedBudgetType !== 'NEGOTIABLE' && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Min Budget */}
+                      <FormField
+                        control={form.control}
+                        name="budgetMin"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>حداقل بودجه (تومان)</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="مثلاً ۵,۰۰۰,۰۰۰"
+                                min={0}
+                                dir="ltr"
+                                className="text-left"
+                                value={field.value ?? ''}
+                                onChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Max Budget */}
+                      <FormField
+                        control={form.control}
+                        name="budgetMax"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>حداکثر بودجه (تومان)</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="مثلاً ۱۰,۰۰۰,۰۰۰"
+                                min={0}
+                                dir="ltr"
+                                className="text-left"
+                                value={field.value ?? ''}
+                                onChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  )}
+
+                  <Separator />
+
+                  {/* Delivery Time */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Time Value */}
                     <FormField
                       control={form.control}
-                      name="tags"
+                      name="deliveryTime"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            <span className="flex items-center gap-2">
-                              <Tag className="size-4" />
-                              تگ‌ها
-                            </span>
-                          </FormLabel>
+                          <FormLabel>زمان تحویل</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="تگ‌ها را با کاما جدا کنید (مثال: وردپرس، فروشگاهی، ریسپانسیو)"
-                              value={tagInput}
-                              onChange={(e) => handleTagInputChange(e.target.value)}
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            تگ‌ها به پیدا شدن نیاز شما توسط متخصص‌ها کمک می‌کنند
-                          </FormDescription>
-                          <FormMessage />
-
-                          {/* Tag Badges */}
-                          {tagList.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-2">
-                              {tagList.map((tag, index) => (
-                                <Badge
-                                  key={`${tag}-${index}`}
-                                  variant="secondary"
-                                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm cursor-pointer hover:bg-destructive/10 hover:text-destructive transition-colors"
-                                  onClick={() => removeTag(tag)}
-                                >
-                                  {tag}
-                                  <span className="size-3.5 flex items-center justify-center rounded-full bg-muted-foreground/20 text-[10px]">
-                                    ×
-                                  </span>
-                                </Badge>
-                              ))}
+                            <div className="relative">
+                              <Clock className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" aria-hidden="true" />
+                              <Input
+                                type="number"
+                                placeholder="مثلاً ۱۴"
+                                min={1}
+                                dir="ltr"
+                                className="pr-10 text-left"
+                                value={field.value ?? ''}
+                                onChange={field.onChange}
+                              />
                             </div>
-                          )}
+                          </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+
+                    {/* Time Unit */}
+                    <FormField
+                      control={form.control}
+                      name="deliveryUnit"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>واحد زمان</FormLabel>
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            dir="rtl"
+                          >
+                            <FormControl>
+                              <SelectTrigger className="w-full">
+                                <SelectValue />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="day">روز</SelectItem>
+                              <SelectItem value="week">هفته</SelectItem>
+                              <SelectItem value="month">ماه</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* ========== Step 3: Location & Additional ========== */}
+              {currentStep === 3 && (
+                <div className="space-y-5">
+                  <div className="mb-2">
+                    <h2 className="text-lg font-extrabold flex items-center gap-2">
+                      <MapPin className="size-5 text-primary" aria-hidden="true" />
+                      مکان و اطلاعات تکمیلی
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      اطلاعات تکمیلی به پیدا کردن کسب‌وکار مناسب‌تر کمک می‌کند.
+                    </p>
+                  </div>
+
+                  <Separator />
+
+                  {/* Province & City */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Province */}
+                    <FormField
+                      control={form.control}
+                      name="province"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>استان</FormLabel>
+                          <Select
+                            value={field.value || ''}
+                            onValueChange={field.onChange}
+                            dir="rtl"
+                          >
+                            <FormControl>
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="استان را انتخاب کنید" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="max-h-64">
+                              {PROVINCES.map((province) => (
+                                <SelectItem key={province} value={province}>
+                                  {province}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* City */}
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>شهر</FormLabel>
+                          <Select
+                            value={field.value || ''}
+                            onValueChange={field.onChange}
+                            dir="rtl"
+                          >
+                            <FormControl>
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="شهر را انتخاب کنید" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="max-h-64">
+                              {CITIES.map((city) => (
+                                <SelectItem key={city} value={city}>
+                                  {city}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Priority */}
+                  <FormField
+                    control={form.control}
+                    name="priority"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          اولویت <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          dir="rtl"
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="LOW">
+                              <span className="flex items-center gap-2">
+                                <span className="size-2 rounded-full bg-green-500" />
+                                کم
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="NORMAL">
+                              <span className="flex items-center gap-2">
+                                <span className="size-2 rounded-full bg-blue-500" />
+                                عادی
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="HIGH">
+                              <span className="flex items-center gap-2">
+                                <span className="size-2 rounded-full bg-amber-500" />
+                                زیاد
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="URGENT">
+                              <span className="flex items-center gap-2">
+                                <span className="size-2 rounded-full bg-red-500" />
+                                فوری
+                              </span>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Tags */}
+                  <FormField
+                    control={form.control}
+                    name="tags"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          <span className="flex items-center gap-2">
+                            <Tag className="size-4" aria-hidden="true" />
+                            تگ‌ها
+                          </span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="تگ‌ها را با کاما جدا کنید (مثال: وردپرس، فروشگاهی، ریسپانسیو)"
+                            value={tagInput}
+                            onChange={(e) => handleTagInputChange(e.target.value)}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          تگ‌ها به پیدا شدن نیاز شما توسط کسب‌وکارها کمک می‌کنند
+                        </FormDescription>
+                        <FormMessage />
+
+                        {/* Tag Badges */}
+                        {tagList.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {tagList.map((tag, index) => (
+                              <Badge
+                                key={`${tag}-${index}`}
+                                variant="secondary"
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-sm cursor-pointer hover:bg-destructive/10 hover:text-destructive transition-colors"
+                                onClick={() => removeTag(tag)}
+                                role="button"
+                                aria-label={`حذف تگ ${tag}`}
+                                title={`حذف تگ ${tag}`}
+                              >
+                                {tag}
+                                <span className="size-3.5 flex items-center justify-center rounded-full bg-muted-foreground/20 text-[10px]" aria-hidden="true">
+                                  ×
+                                </span>
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
 
               {/* Navigation Buttons */}
               <Separator className="my-6" />
@@ -921,8 +872,11 @@ export function RequestForm() {
                     variant="outline"
                     onClick={handlePrev}
                     className="flex items-center gap-2"
+                    data-href={currentStep === 2 ? '/requests/new/step/1' : '/requests/new/step/2'}
+                    aria-label="مرحله قبل"
+                    title="بازگشت به مرحله قبل"
                   >
-                    <ChevronRight className="size-4" />
+                    <ChevronRight className="size-4" aria-hidden="true" />
                     مرحله قبل
                   </Button>
                 ) : (
@@ -934,15 +888,20 @@ export function RequestForm() {
                     type="button"
                     onClick={handleNext}
                     className="flex items-center gap-2"
+                    aria-label="مرحله بعد"
+                    title="رفتن به مرحله بعد"
                   >
                     مرحله بعد
-                    <ChevronLeft className="size-4" />
+                    <ChevronLeft className="size-4" aria-hidden="true" />
                   </Button>
                 ) : (
                   <Button
                     type="submit"
                     className="flex items-center gap-2 min-w-[140px]"
                     disabled={isSubmitting}
+                    aria-label="ثبت نیاز"
+                    data-href="/post-need"
+                    title="ثبت نیاز جدید در پلتفرم"
                   >
                     {isSubmitting ? (
                       <>
@@ -951,7 +910,7 @@ export function RequestForm() {
                       </>
                     ) : (
                       <>
-                        <Send className="size-4" />
+                        <Send className="size-4" aria-hidden="true" />
                         ثبت نیاز
                       </>
                     )}
@@ -962,6 +921,13 @@ export function RequestForm() {
           </Form>
         </CardContent>
       </Card>
+
+      <noscript>
+        <div className="sr-only">
+          <h1>ثبت نیاز جدید - نیاز فایندر</h1>
+          <p>فرم ثبت نیاز شامل سه مرحله: اطلاعات اصلی (عنوان، دسته‌بندی، توضیحات)، بودجه و زمان تحویل، و مکان و اطلاعات تکمیلی.</p>
+        </div>
+      </noscript>
     </div>
   );
 }

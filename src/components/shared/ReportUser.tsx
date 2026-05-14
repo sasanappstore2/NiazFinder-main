@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { AlertTriangle, Flag, Send, Loader2 } from 'lucide-react';
 import {
   Dialog,
@@ -97,11 +96,7 @@ export function ReportUser({ open, onOpenChange, targetName, targetType }: Repor
         className="max-w-md sm:max-w-lg"
         dir="rtl"
       >
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25, ease: 'easeOut' }}
-        >
+        <div>
           {/* Header */}
           <DialogHeader className="gap-3 text-right">
             <div className="flex items-center gap-3">
@@ -140,12 +135,9 @@ export function ReportUser({ open, onOpenChange, targetName, targetType }: Repor
               className="grid gap-2"
               dir="rtl"
             >
-              {REPORT_REASONS.map((reason, index) => (
-                <motion.label
+              {REPORT_REASONS.map((reason) => (
+                <label
                   key={reason.id}
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05, duration: 0.2 }}
                   htmlFor={`report-reason-${reason.id}`}
                   className={cn(
                     'flex cursor-pointer items-center gap-3 rounded-lg border px-3.5 py-2.5 text-sm transition-all',
@@ -160,7 +152,7 @@ export function ReportUser({ open, onOpenChange, targetName, targetType }: Repor
                     className="shrink-0"
                   />
                   <span>{reason.label}</span>
-                </motion.label>
+                </label>
               ))}
             </RadioGroup>
           </div>
@@ -235,7 +227,7 @@ export function ReportUser({ open, onOpenChange, targetName, targetType }: Repor
               انصراف
             </Button>
           </DialogFooter>
-        </motion.div>
+        </div>
       </DialogContent>
     </Dialog>
   );

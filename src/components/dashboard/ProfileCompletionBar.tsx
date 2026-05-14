@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
@@ -102,23 +101,17 @@ function CircularProgress({
           cy={radius}
           className="text-emerald-100 dark:text-emerald-950/50"
         />
-        {/* Animated progress circle */}
-        <motion.circle
+        {/* Progress circle */}
+        <circle
           strokeWidth={strokeWidth}
           stroke="url(#emeraldGradient)"
           fill="transparent"
           strokeLinecap="round"
           strokeDasharray={`${circumference} ${circumference}`}
+          strokeDashoffset={strokeDashoffset}
           cx={radius}
           cy={radius}
           r={normalizedRadius}
-          initial={{ strokeDashoffset: circumference }}
-          animate={{ strokeDashoffset }}
-          transition={{
-            duration: 1.4,
-            ease: [0.4, 0, 0.2, 1],
-            delay: 0.3,
-          }}
         />
         <defs>
           <linearGradient
@@ -135,11 +128,8 @@ function CircularProgress({
         </defs>
       </svg>
       {/* Percentage text in the center */}
-      <motion.div
+      <div
         className="absolute inset-0 flex flex-col items-center justify-center"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, delay: 0.8 }}
       >
         <span className="text-2xl font-extrabold tabular-nums text-emerald-600 dark:text-emerald-400">
           {toPersianDigits(percentage)}
@@ -147,7 +137,7 @@ function CircularProgress({
         <span className="text-[10px] font-medium text-muted-foreground mt-0.5">
           درصد
         </span>
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -166,11 +156,7 @@ export function ProfileCompletionBar() {
   }, [navigateTo]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
-    >
+    <div>
       <Card
         className="
           relative overflow-hidden
@@ -222,49 +208,28 @@ export function ProfileCompletionBar() {
             </div>
           </div>
 
-          {/* Animated Progress Bar */}
+          {/* Progress Bar */}
           <div className="space-y-1.5">
             <div className="relative h-3 w-full overflow-hidden rounded-full bg-emerald-100 dark:bg-emerald-950/40">
-              <motion.div
-                className="absolute inset-y-0 right-0 rounded-full bg-gradient-to-l from-emerald-500 via-emerald-600 to-teal-500"
-                initial={{ width: '0%' }}
-                animate={{ width: `${percentage}%` }}
-                transition={{
-                  duration: 1.4,
-                  ease: [0.4, 0, 0.2, 1],
-                  delay: 0.3,
-                }}
+              <div
+                className="absolute inset-y-0 right-0 rounded-full bg-gradient-to-l from-emerald-500 via-emerald-600 to-teal-500 transition-all duration-1000 ease-out"
+                style={{ width: `${percentage}%` }}
               >
                 {/* Shimmer effect */}
-                <motion.div
-                  className="absolute inset-0 rounded-full bg-gradient-to-l from-white/30 via-transparent to-white/10"
-                  initial={{ x: '100%' }}
-                  animate={{ x: '-200%' }}
-                  transition={{
-                    duration: 2,
-                    ease: 'easeInOut',
-                    delay: 1.8,
-                    repeat: Infinity,
-                    repeatDelay: 3,
-                  }}
+                <div
+                  className="absolute inset-0 rounded-full bg-gradient-to-l from-white/30 via-transparent to-white/10 animate-[shimmer_2s_ease-in-out_infinite]"
+                  style={{ animationDelay: '1.8s', animationDuration: '2s' }}
                 />
-              </motion.div>
+              </div>
             </div>
           </div>
 
           {/* Checklist */}
           <ul className="space-y-1">
-            {completionItems.map((item, index) => (
-              <motion.li
+            {completionItems.map((item) => (
+              <li
                 key={item.id}
                 className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 transition-all duration-200 hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{
-                  duration: 0.35,
-                  delay: 0.5 + index * 0.07,
-                  ease: 'easeOut',
-                }}
               >
                 <div className="flex items-center gap-2.5">
                   {item.completed ? (
@@ -295,16 +260,12 @@ export function ProfileCompletionBar() {
                     تکمیل کنید
                   </button>
                 )}
-              </motion.li>
+              </li>
             ))}
           </ul>
 
           {/* CTA Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 1.1 }}
-          >
+          <div>
             <Button
               onClick={handleNavigate}
               className="w-full bg-gradient-to-l from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-600 hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-200"
@@ -313,9 +274,9 @@ export function ProfileCompletionBar() {
               تکمیل پروفایل
               <ArrowLeft className="size-4" />
             </Button>
-          </motion.div>
+          </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   );
 }

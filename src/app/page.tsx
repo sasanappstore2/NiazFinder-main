@@ -1,77 +1,54 @@
 'use client';
 
-import { useEffect, useCallback, type ComponentType } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
 
-// Layout Components
+// Layout
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { BackToTop } from '@/components/shared/BackToTop';
 import { QuickActions } from '@/components/shared/QuickActions';
+import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { CookieConsent } from '@/components/shared/CookieConsent';
 import { OnboardingWelcome } from '@/components/shared/OnboardingWelcome';
 import { Separator } from '@/components/ui/separator';
 
-// View components - direct imports
-import HomePage from '@/components/views/HomePage';
-import RequestFormPage from '@/components/views/RequestFormPage';
-import BrowseRequestsPage from '@/components/views/BrowseRequestsPage';
-import RequestDetailPage from '@/components/views/RequestDetailPage';
-import ProposalFormPage from '@/components/views/ProposalFormPage';
-import BrowseSpecialistsPage from '@/components/views/BrowseSpecialistsPage';
-import SpecialistProfilePage from '@/components/views/SpecialistProfilePage';
-import DashboardPage from '@/components/views/DashboardPage';
-import AdminPage from '@/components/views/AdminPage';
-import MessagesPage from '@/components/views/MessagesPage';
-import NotificationsPage from '@/components/views/NotificationsPage';
-import ProfilePage from '@/components/views/ProfilePage';
-import PricingPage from '@/components/views/PricingPage';
-import ComparePage from '@/components/views/ComparePage';
-import ReviewFormPage from '@/components/views/ReviewFormPage';
-import ReferralPage from '@/components/views/ReferralPage';
-import NotificationSettingsPage from '@/components/views/NotificationSettingsPage';
+// Homepage
+import { NeedsHomepage } from '@/components/home/NeedsHomepage';
+import { CategoryBar } from '@/components/layout/CategoryBar';
 
-// Static view map — avoids creating components during render
-const VIEW_MAP: Record<string, ComponentType> = {
-  home: HomePage,
-  'post-need': RequestFormPage,
-  'browse-requests': BrowseRequestsPage,
-  'request-detail': RequestDetailPage,
-  'submit-proposal': ProposalFormPage,
-  'browse-specialists': BrowseSpecialistsPage,
-  'specialist-profile': SpecialistProfilePage,
-  dashboard: DashboardPage,
-  admin: AdminPage,
-  messages: MessagesPage,
-  notifications: NotificationsPage,
-  profile: ProfilePage,
-  pricing: PricingPage,
-  'compare-specialists': ComparePage,
-  'submit-review': ReviewFormPage,
-  referral: ReferralPage,
-  'notification-settings': NotificationSettingsPage,
-};
+// Pages
+import { PricingSection } from '@/components/home/PricingSection';
+import { RequestForm } from '@/components/requests/RequestForm';
+import { BrowseRequests } from '@/components/requests/BrowseRequests';
+import { RequestDetail } from '@/components/requests/RequestDetail';
+import { ProposalForm } from '@/components/requests/ProposalForm';
+import ReviewForm from '@/components/specialists/ReviewForm';
+import { BrowseSpecialists } from '@/components/specialists/BrowseSpecialists';
+import { SpecialistProfile } from '@/components/specialists/SpecialistProfile';
+import { CompareSpecialists } from '@/components/specialists/CompareSpecialists';
+import { UserDashboard } from '@/components/dashboard/UserDashboard';
+import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
+import { ReferralPage } from '@/components/dashboard/ReferralPage';
+import { ChatPanel } from '@/components/chat/ChatPanel';
+import { NotificationsPanel } from '@/components/chat/NotificationsPanel';
+import { NotificationSettings } from '@/components/dashboard/NotificationSettings';
 
-const pageVariants = {
-  initial: { opacity: 0, y: 12 },
-  in: { opacity: 1, y: 0 },
-  out: { opacity: 0, y: -12 },
-};
-
-const pageTransition = {
-  type: 'tween' as const,
-  ease: 'easeInOut' as const,
-  duration: 0.25,
-};
+function HomePage() {
+  return (
+    <>
+      <NeedsHomepage />
+    </>
+  );
+}
 
 export default function App() {
   const { currentView } = useAppStore();
 
-  // Escape key to go back
+  // Keyboard shortcut: Escape to go back
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -83,44 +60,162 @@ export default function App() {
   }, []);
 
   const isHome = currentView === 'home';
-  const ViewComponent = VIEW_MAP[currentView] || null;
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen flex flex-col bg-background text-foreground">
-        <Header />
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <Header />
+      <CategoryBar />
 
-        <AnimatePresence mode="wait">
-          <motion.main
-            key={currentView}
-            initial="initial"
-            animate="in"
-            exit="out"
-            variants={pageVariants}
-            transition={pageTransition}
-            className={`flex-1 ${isHome ? '' : 'pt-6'}`}
-            dir="rtl"
-          >
-            {ViewComponent && <ViewComponent />}
-          </motion.main>
-        </AnimatePresence>
-
-        {isHome ? (
-          <Footer />
-        ) : (
-          <div className="mt-auto">
-            <Separator />
-            <Footer compact />
+      <main
+        id="main-content"
+        key={currentView}
+        role="main"
+        tabIndex={-1}
+        className={`flex-1 opacity-100 transition-opacity duration-150 ease-in ${isHome ? '' : 'pt-6'}`}
+        dir="rtl"
+      >
+        {currentView === 'home' && <HomePage />}
+        {currentView === 'login' && null /* handled by AuthModal */}
+        {currentView === 'register' && null /* handled by AuthModal */}
+        {currentView === 'post-need' && (
+          <div className="max-w-4xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <RequestForm />
           </div>
         )}
+        {currentView === 'browse-requests' && (
+          <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <BrowseRequests />
+          </div>
+        )}
+        {currentView === 'request-detail' && (
+          <div className="max-w-5xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <RequestDetail />
+          </div>
+        )}
+        {currentView === 'submit-proposal' && (
+          <div className="max-w-3xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <ProposalForm />
+          </div>
+        )}
+        {currentView === 'browse-specialists' && (
+          <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <BrowseSpecialists />
+          </div>
+        )}
+        {currentView === 'specialist-profile' && (
+          <div className="max-w-6xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <SpecialistProfile />
+          </div>
+        )}
+        {currentView === 'dashboard' && (
+          <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <UserDashboard />
+          </div>
+        )}
+        {currentView === 'admin' && (
+          <AdminDashboard />
+        )}
+        {currentView === 'messages' && (
+          <div className="max-w-7xl mx-auto px-4 pt-2 pb-12" style={{ height: 'calc(100vh - 80px)' }}>
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <ChatPanel />
+          </div>
+        )}
+        {currentView === 'notifications' && (
+          <div className="max-w-3xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <NotificationsPanel />
+          </div>
+        )}
+        {currentView === 'profile' && (
+          <div className="max-w-5xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <UserDashboard />
+          </div>
+        )}
+        {currentView === 'pricing' && (
+          <div className="max-w-6xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <PricingSection />
+          </div>
+        )}
+        {currentView === 'compare-specialists' && (
+          <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <CompareSpecialists />
+          </div>
+        )}
+        {currentView === 'submit-review' && (
+          <div className="max-w-4xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <ReviewForm />
+          </div>
+        )}
+        {currentView === 'referral' && (
+          <div className="max-w-4xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <ReferralPage />
+          </div>
+        )}
+        {currentView === 'notification-settings' && (
+          <div className="max-w-3xl mx-auto px-4 pt-2 pb-12">
+            <Breadcrumb />
+            <Separator className="my-4" />
+            <NotificationSettings />
+          </div>
+        )}
+      </main>
 
-        <AuthModal />
-        <OnboardingWelcome />
-        <MobileBottomNav />
-        <CookieConsent />
-        <BackToTop />
-        <QuickActions />
-      </div>
+      {/* Footer — always visible; compact with separator on non-home pages */}
+      {isHome ? (
+        <Footer />
+      ) : (
+        <div className="mt-auto">
+          <Separator />
+          <Footer compact />
+        </div>
+      )}
+
+      {/* Auth Modal */}
+      <AuthModal />
+
+      {/* Onboarding Welcome */}
+      <OnboardingWelcome />
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
+
+      {/* Cookie Consent Banner */}
+      <CookieConsent />
+
+      {/* Back to Top Button */}
+      <BackToTop />
+
+      {/* Quick Actions FAB */}
+      <QuickActions />
+    </div>
     </ErrorBoundary>
   );
 }

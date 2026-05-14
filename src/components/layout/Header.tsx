@@ -1,17 +1,14 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   LocateFixed,
-  Search,
   Bell,
   MessageSquare,
   Menu,
   User,
   LogOut,
   LayoutDashboard,
-  X,
   Bookmark,
   FileText,
   CreditCard,
@@ -22,6 +19,9 @@ import {
 } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
+import { HeaderSearchBar, DEMO_SEARCH_DATA } from '@/components/shared/HeaderSearchBar';
+import { LocationSelector } from '@/components/shared/LocationSelector';
+import { MobileLocationSelector } from '@/components/shared/MobileLocationSelector';
 
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
@@ -51,6 +51,52 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 
+// ============ View → SEO path mapping ============
+const VIEW_HREF: Record<AppView, string> = {
+  'home': '/',
+  'login': '/login',
+  'register': '/register',
+  'post-need': '/post-need',
+  'browse-requests': '/browse-requests',
+  'request-detail': '/request-detail',
+  'browse-specialists': '/browse-specialists',
+  'specialist-profile': '/specialist-profile',
+  'dashboard': '/dashboard',
+  'messages': '/messages',
+  'notifications': '/notifications',
+  'admin': '/admin',
+  'profile': '/profile',
+  'pricing': '/pricing',
+  'compare-specialists': '/compare-specialists',
+  'submit-proposal': '/submit-proposal',
+  'submit-review': '/submit-review',
+  'referral': '/referral',
+  'notification-settings': '/notification-settings',
+};
+
+// ============ View → Descriptive title mapping ============
+const VIEW_TITLE: Record<AppView, string> = {
+  'home': 'صفحه اصلی - نیاز فایندر',
+  'login': 'ورود به حساب کاربری',
+  'register': 'ثبت‌نام در نیاز فایندر',
+  'post-need': 'ثبت نیاز جدید',
+  'browse-requests': 'مشاهده نیازهای ثبت شده',
+  'request-detail': 'جزئیات نیاز',
+  'browse-specialists': 'مرور و جستجوی کسب‌وکارها',
+  'specialist-profile': 'پروفایل کسب‌وکار',
+  'dashboard': 'داشبورد کاربری',
+  'messages': 'پیام‌ها و مکاتبات',
+  'notifications': 'اعلان‌ها و اطلاع‌رسانی',
+  'admin': 'پنل مدیریت',
+  'profile': 'پروفایل من',
+  'pricing': 'تعرفه‌ها و طرح‌های اشتراک',
+  'compare-specialists': 'مقایسه کسب‌وکارها',
+  'submit-proposal': 'ارسال پیشنهاد',
+  'submit-review': 'ثبت نظر و امتیاز',
+  'referral': 'دعوت از دوستان',
+  'notification-settings': 'تنظیمات اعلان‌ها',
+};
+
 // ============ Navigation Items ============
 interface NavItem {
   label: string;
@@ -60,23 +106,31 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: 'صفحه اصلی', view: 'home' },
   { label: 'ثبت نیاز', view: 'post-need' },
-  { label: 'متخصص‌ها', view: 'browse-specialists' },
-  { label: 'نیازها', view: 'browse-requests' },
+  { label: 'کسب‌وکارها', view: 'browse-specialists' },
 ];
 
 // ============ Mobile Nav Item ============
-function MobileNavItem({ item, onSelect }: { item: NavItem; onSelect: () => void }) {
+function MobileNavItem({
+  item,
+  onSelect,
+}: {
+  item: NavItem;
+  onSelect: () => void;
+}) {
   const { currentView, navigateTo } = useAppStore();
   const isActive = currentView === item.view;
 
   return (
     <button
+      type="button"
+      data-href={VIEW_HREF[item.view]}
+      title={VIEW_TITLE[item.view]}
       onClick={() => {
         navigateTo(item.view);
         onSelect();
       }}
       className={cn(
-        'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+        'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150',
         isActive
           ? 'bg-primary/10 text-primary'
           : 'text-muted-foreground hover:bg-accent hover:text-foreground'
@@ -84,49 +138,6 @@ function MobileNavItem({ item, onSelect }: { item: NavItem; onSelect: () => void
     >
       <span className="text-base">{item.label}</span>
     </button>
-  );
-}
-
-// ============ Search Bar ============
-function SearchBar() {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [query, setQuery] = useState('');
-
-  return (
-    <div className="relative flex items-center">
-      <AnimatePresence>
-        {isExpanded && (
-          <motion.div
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 240, opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="overflow-hidden"
-          >
-            <Input
-              type="text"
-              placeholder="جستجو در خدمات..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="h-9 w-full rounded-lg border-0 bg-muted/80 ps-4 pe-10 text-sm backdrop-blur-sm focus-visible:bg-muted"
-              autoFocus
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => {
-          setIsExpanded((prev) => !prev);
-          if (isExpanded) setQuery('');
-        }}
-        className="size-9 text-muted-foreground hover:text-foreground"
-        aria-label={isExpanded ? 'بستن جستجو' : 'جستجو'}
-      >
-        {isExpanded ? <X className="size-4" /> : <Search className="size-4" />}
-      </Button>
-    </div>
   );
 }
 
@@ -140,9 +151,11 @@ function NotificationsButton() {
       size="icon"
       onClick={() => navigateTo('notifications')}
       className="relative size-9 text-muted-foreground hover:text-foreground"
-      aria-label="اعلان‌ها"
+      aria-label={`اعلان‌ها${unreadNotificationCount > 0 ? ` (${unreadNotificationCount} خوانده نشده)` : ''}`}
+      title={VIEW_TITLE['notifications']}
+      data-href={VIEW_HREF['notifications']}
     >
-      <Bell className="size-4" />
+      <Bell className="size-[16px]" />
       {unreadNotificationCount > 0 && (
         <Badge className="absolute -top-1 -end-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-[10px] font-bold text-white">
           {unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}
@@ -154,7 +167,8 @@ function NotificationsButton() {
 
 // ============ Messages Button ============
 function MessagesButton() {
-  const { navigateTo } = useAppStore();
+  const { navigateTo, conversations } = useAppStore();
+  const unreadCount = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
 
   return (
     <Button
@@ -162,9 +176,16 @@ function MessagesButton() {
       size="icon"
       onClick={() => navigateTo('messages')}
       className="relative size-9 text-muted-foreground hover:text-foreground"
-      aria-label="پیام‌ها"
+      aria-label={`پیام‌ها${unreadCount > 0 ? ` (${unreadCount} خوانده نشده)` : ''}`}
+      title={VIEW_TITLE['messages']}
+      data-href={VIEW_HREF['messages']}
     >
-      <MessageSquare className="size-4" />
+      <MessageSquare className="size-[16px]" />
+      {unreadCount > 0 && (
+        <Badge className="absolute -top-1 -end-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-[10px] font-bold text-white">
+          {unreadCount > 99 ? '99+' : unreadCount}
+        </Badge>
+      )}
     </Button>
   );
 }
@@ -189,14 +210,18 @@ function GuestActions() {
         variant="ghost"
         size="sm"
         onClick={handleLogin}
-        className="text-sm font-medium text-muted-foreground hover:text-foreground"
+        className="h-[36px] text-sm font-medium text-muted-foreground hover:text-foreground"
+        title={VIEW_TITLE['login']}
+        data-href={VIEW_HREF['login']}
       >
         ورود
       </Button>
       <Button
         size="sm"
         onClick={handleRegister}
-        className="text-sm font-medium"
+        className="h-[36px] text-sm font-medium"
+        title={VIEW_TITLE['register']}
+        data-href={VIEW_HREF['register']}
       >
         ثبت‌نام
       </Button>
@@ -210,14 +235,26 @@ function UserMenu() {
 
   if (!currentUser) return null;
 
-  const initials = currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0);
+  const initials =
+    currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative size-9 rounded-full p-0">
+        <Button
+          variant="ghost"
+          className="relative size-9 rounded-full p-0"
+          aria-label="منوی کاربری"
+          title="منوی کاربری"
+        >
           <Avatar className="size-8 border-2 border-primary/20">
-            <AvatarImage src={currentUser.avatar} alt={currentUser.displayName || `${currentUser.firstName} ${currentUser.lastName}`} />
+            <AvatarImage
+              src={currentUser.avatar}
+              alt={
+                currentUser.displayName ||
+                `${currentUser.firstName} ${currentUser.lastName}`
+              }
+            />
             <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
               {initials}
             </AvatarFallback>
@@ -228,7 +265,8 @@ function UserMenu() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium leading-none">
-              {currentUser.displayName || `${currentUser.firstName} ${currentUser.lastName}`}
+              {currentUser.displayName ||
+                `${currentUser.firstName} ${currentUser.lastName}`}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
               {currentUser.email}
@@ -237,44 +275,76 @@ function UserMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => navigateTo('profile')}>
+          <DropdownMenuItem
+            onClick={() => navigateTo('profile')}
+            data-href={VIEW_HREF['profile']}
+            title={VIEW_TITLE['profile']}
+          >
             <User className="ms-2 size-4" />
             پروفایل
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigateTo('dashboard')}>
+          <DropdownMenuItem
+            onClick={() => navigateTo('dashboard')}
+            data-href={VIEW_HREF['dashboard']}
+            title={VIEW_TITLE['dashboard']}
+          >
             <LayoutDashboard className="ms-2 size-4" />
             داشبورد
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => navigateTo('browse-requests')}>
+          <DropdownMenuItem
+            onClick={() => navigateTo('browse-requests')}
+            data-href="/bookmarks"
+            title="علاقه‌مندی‌ها و نیازهای ذخیره شده"
+          >
             <Bookmark className="ms-2 size-4" />
             علاقه‌مندی‌ها
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigateTo('dashboard')}>
+          <DropdownMenuItem
+            onClick={() => navigateTo('dashboard')}
+            data-href="/proposals"
+            title="پیشنهادهای ارسالی من"
+          >
             <FileText className="ms-2 size-4" />
             پیشنهادها
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigateTo('pricing')}>
+          <DropdownMenuItem
+            onClick={() => navigateTo('pricing')}
+            data-href={VIEW_HREF['pricing']}
+            title={VIEW_TITLE['pricing']}
+          >
             <CreditCard className="ms-2 size-4" />
             تعرفه‌ها
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigateTo('referral')}>
+          <DropdownMenuItem
+            onClick={() => navigateTo('referral')}
+            data-href={VIEW_HREF['referral']}
+            title={VIEW_TITLE['referral']}
+          >
             <Gift className="ms-2 size-4" />
             دعوت از دوستان
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigateTo('compare-specialists')}>
+          <DropdownMenuItem
+            onClick={() => navigateTo('compare-specialists')}
+            data-href={VIEW_HREF['compare-specialists']}
+            title={VIEW_TITLE['compare-specialists']}
+          >
             <GitCompareArrows className="ms-2 size-4" />
-            مقایسه متخصص‌ها
+            مقایسه کسب‌وکارها
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigateTo('notification-settings')}>
+          <DropdownMenuItem
+            onClick={() => navigateTo('notification-settings')}
+            data-href={VIEW_HREF['notification-settings']}
+            title={VIEW_TITLE['notification-settings']}
+          >
             <Settings className="ms-2 size-4" />
             تنظیمات اعلان‌ها
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout} variant="destructive">
+        <DropdownMenuItem onClick={logout} variant="destructive" title="خروج از حساب کاربری">
           <LogOut className="ms-2 size-4" />
           خروج
         </DropdownMenuItem>
@@ -285,7 +355,14 @@ function UserMenu() {
 
 // ============ Mobile Sheet Content ============
 function MobileSheetContent() {
-  const { isAuthenticated, currentUser, logout, setAuthModalOpen, setAuthModalTab } = useAppStore();
+  const {
+    isAuthenticated,
+    currentUser,
+    logout,
+    setAuthModalOpen,
+    setAuthModalTab,
+    setMobileMenuOpen,
+  } = useAppStore();
 
   const handleLogin = () => {
     setAuthModalTab('login');
@@ -308,14 +385,28 @@ function MobileSheetContent() {
       </SheetHeader>
 
       {/* Navigation */}
-      <nav className="flex flex-col gap-1 p-4">
+      <nav className="flex flex-col gap-1 p-4" aria-label="منوی موبایل">
         <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           منو
         </p>
         {NAV_ITEMS.map((item) => (
-          <MobileNavItem key={item.view} item={item} onSelect={() => {}} />
+          <MobileNavItem
+            key={item.view}
+            item={item}
+            onSelect={() => {}}
+          />
         ))}
       </nav>
+
+      <Separator />
+
+      {/* Location Selector */}
+      <div className="flex flex-col gap-1 px-4 pt-4">
+        <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          مکان
+        </p>
+        <MobileLocationSelector />
+      </div>
 
       <Separator />
 
@@ -324,14 +415,32 @@ function MobileSheetContent() {
         <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           دسترسی سریع
         </p>
-        <MobileNavItem item={{ label: 'اعلان‌ها', view: 'notifications' }} onSelect={() => {}} />
-        <MobileNavItem item={{ label: 'پیام‌ها', view: 'messages' }} onSelect={() => {}} />
+        <MobileNavItem
+          item={{ label: 'اعلان‌ها', view: 'notifications' }}
+          onSelect={() => {}}
+        />
+        <MobileNavItem
+          item={{ label: 'پیام‌ها', view: 'messages' }}
+          onSelect={() => {}}
+        />
         {isAuthenticated && (
           <>
-            <MobileNavItem item={{ label: 'داشبورد', view: 'dashboard' }} onSelect={() => {}} />
-            <MobileNavItem item={{ label: 'پروفایل', view: 'profile' }} onSelect={() => {}} />
-            <MobileNavItem item={{ label: 'علاقه‌مندی‌ها', view: 'browse-requests' }} onSelect={() => {}} />
-            <MobileNavItem item={{ label: 'پیشنهادها', view: 'dashboard' }} onSelect={() => {}} />
+            <MobileNavItem
+              item={{ label: 'داشبورد', view: 'dashboard' }}
+              onSelect={() => {}}
+            />
+            <MobileNavItem
+              item={{ label: 'پروفایل', view: 'profile' }}
+              onSelect={() => {}}
+            />
+            <MobileNavItem
+              item={{ label: 'علاقه‌مندی‌ها', view: 'browse-requests' }}
+              onSelect={() => {}}
+            />
+            <MobileNavItem
+              item={{ label: 'پیشنهادها', view: 'dashboard' }}
+              onSelect={() => {}}
+            />
           </>
         )}
       </div>
@@ -342,34 +451,68 @@ function MobileSheetContent() {
           بیشتر
           <ChevronLeft className="size-3" />
         </p>
-        <MobileNavItem item={{ label: 'تعرفه‌ها', view: 'pricing' }} onSelect={() => {}} />
-        <MobileNavItem item={{ label: 'دعوت از دوستان', view: 'referral' }} onSelect={() => {}} />
-        <MobileNavItem item={{ label: 'مقایسه متخصص‌ها', view: 'compare-specialists' }} onSelect={() => {}} />
+        <MobileNavItem
+          item={{ label: 'تعرفه‌ها', view: 'pricing' }}
+          onSelect={() => {}}
+        />
+        <MobileNavItem
+          item={{ label: 'دعوت از دوستان', view: 'referral' }}
+          onSelect={() => {}}
+        />
+        <MobileNavItem
+          item={{ label: 'مقایسه کسب‌وکارها', view: 'compare-specialists' }}
+          onSelect={() => {}}
+        />
       </div>
 
+      {/* Bottom: User / Auth */}
       <div className="mt-auto border-t border-border p-4">
         {isAuthenticated && currentUser ? (
           <div className="flex items-center gap-3">
             <Avatar className="size-10 border-2 border-primary/20">
               <AvatarImage src={currentUser.avatar} />
               <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
-                {currentUser.firstName.charAt(0)}{currentUser.lastName.charAt(0)}
+                {currentUser.firstName.charAt(0)}
+                {currentUser.lastName.charAt(0)}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <p className="text-sm font-medium">{currentUser.displayName || `${currentUser.firstName} ${currentUser.lastName}`}</p>
-              <p className="text-xs text-muted-foreground">{currentUser.email}</p>
+              <p className="text-sm font-medium">
+                {currentUser.displayName ||
+                  `${currentUser.firstName} ${currentUser.lastName}`}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {currentUser.email}
+              </p>
             </div>
-            <Button variant="ghost" size="icon" onClick={logout} className="text-muted-foreground hover:text-destructive">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={logout}
+              className="text-muted-foreground hover:text-destructive"
+              aria-label="خروج از حساب"
+              title="خروج از حساب کاربری"
+            >
               <LogOut className="size-4" />
             </Button>
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            <Button variant="outline" className="w-full" onClick={handleLogin}>
+            <Button
+              variant="outline"
+              className="w-full h-[40px]"
+              onClick={handleLogin}
+              title={VIEW_TITLE['login']}
+              data-href={VIEW_HREF['login']}
+            >
               ورود
             </Button>
-            <Button className="w-full" onClick={handleRegister}>
+            <Button
+              className="w-full h-[40px]"
+              onClick={handleRegister}
+              title={VIEW_TITLE['register']}
+              data-href={VIEW_HREF['register']}
+            >
               ثبت‌نام
             </Button>
           </div>
@@ -379,7 +522,7 @@ function MobileSheetContent() {
   );
 }
 
-// ============ Auth Section ============
+// ============ Auth Section (Desktop) ============
 function AuthSection() {
   const { isAuthenticated } = useAppStore();
 
@@ -393,7 +536,12 @@ function AuthSection() {
 // ============ Header Component ============
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const { currentView, navigateTo, mobileMenuOpen, setMobileMenuOpen } = useAppStore();
+  const {
+    currentView,
+    navigateTo,
+    mobileMenuOpen,
+    setMobileMenuOpen,
+  } = useAppStore();
 
   const handleScroll = useCallback(() => {
     setIsScrolled(window.scrollY > 10);
@@ -405,97 +553,76 @@ export function Header() {
   }, [handleScroll]);
 
   return (
-    <motion.header
-      initial={{ y: -10, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
+    <header
       className={cn(
-        'sticky top-0 z-50 w-full border-b transition-all duration-300',
+        'sticky top-0 z-[var(--z-header)] w-full border-b transition-all duration-150',
         isScrolled
           ? 'border-border/50 bg-background/80 shadow-sm backdrop-blur-xl'
           : 'border-transparent bg-background'
       )}
+      role="banner"
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        {/* Right: Logo */}
-        <button
-          onClick={() => navigateTo('home')}
-          className="flex shrink-0 items-center gap-2 transition-opacity hover:opacity-80"
-          aria-label={SITE_NAME}
-        >
-          <LocateFixed className="size-6 text-primary" />
-          <span className="text-lg font-bold tracking-tight text-primary sm:text-xl">
-            {SITE_NAME}
-          </span>
-        </button>
+      <div className="container-default">
+        <div className="flex h-[52px] items-center justify-between gap-4">
+          {/* Right: Logo */}
+          <button
+            type="button"
+            data-href="/"
+            title="نیاز فایندر - صفحه اصلی"
+            onClick={() => navigateTo('home')}
+            className="flex shrink-0 items-center gap-2 transition-colors duration-150 hover:opacity-80"
+            aria-label={SITE_NAME}
+          >
+            <LocateFixed className="size-[24px] text-primary" />
+            <span className="text-lg font-bold tracking-tight text-primary sm:text-xl">
+              {SITE_NAME}
+            </span>
+          </button>
 
-        {/* Center: Desktop Navigation */}
-        <nav className="hidden items-center gap-1 lg:flex">
-          {NAV_ITEMS.map((item) => {
-            const isActive = currentView === item.view;
-            return (
-              <button
-                key={item.view}
-                onClick={() => navigateTo(item.view)}
-                className={cn(
-                  'relative rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                  isActive
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:bg-accent hover:text-foreground'
-                )}
-              >
-                {item.label}
-                {isActive && (
-                  <motion.div
-                    layoutId="header-active-nav"
-                    className="absolute inset-x-1 -bottom-[9px] h-0.5 rounded-full bg-primary"
-                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-                  />
-                )}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* Left: Actions */}
-        <div className="flex items-center gap-1 sm:gap-2">
-          {/* Search Bar - Desktop */}
-          <div className="hidden md:block">
-            <SearchBar />
+          {/* Center: Location Selector + Search Bar */}
+          <div className="hidden lg:flex flex-1 max-w-[580px] items-center gap-2">
+            <LocationSelector />
+            <div className="flex-1">
+              <HeaderSearchBar data={DEMO_SEARCH_DATA} />
+            </div>
           </div>
 
-          {/* Theme Toggle - Desktop */}
-          <div className="hidden md:flex">
-            <ThemeToggle />
+          {/* Left: Actions */}
+          <div className="flex items-center gap-1 sm:gap-2">
+            {/* Theme Toggle — hidden on very small mobile, shown on sm+ */}
+            <div className="hidden sm:flex">
+              <ThemeToggle />
+            </div>
+
+            {/* Notifications */}
+            <NotificationsButton />
+
+            {/* Messages */}
+            <MessagesButton />
+
+            {/* Auth / User — desktop only */}
+            <AuthSection />
+
+            {/* Mobile Menu */}
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-9 text-muted-foreground hover:text-foreground lg:hidden"
+                  aria-label="باز کردن منو"
+                  title="باز کردن منوی موبایل"
+                >
+                  <Menu className="size-[20px]" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] p-0 sm:w-[360px]">
+                <MobileSheetContent />
+              </SheetContent>
+            </Sheet>
           </div>
-
-          {/* Notifications */}
-          <NotificationsButton />
-
-          {/* Messages */}
-          <MessagesButton />
-
-          {/* Auth / User */}
-          <AuthSection />
-
-          {/* Mobile Menu */}
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-9 text-muted-foreground hover:text-foreground lg:hidden"
-                aria-label="منو"
-              >
-                <Menu className="size-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] p-0 sm:w-[360px]">
-              <MobileSheetContent />
-            </SheetContent>
-          </Sheet>
         </div>
       </div>
-    </motion.header>
+    </header>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageSquare,
   Search,
@@ -285,12 +284,8 @@ export function ChatPanel() {
   // ─── Auth Guard ──────────────────────────────────────────────────────────
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center p-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center gap-4 text-center"
-        >
+      <div className="flex h-full min-h-[400px] items-center justify-center p-6">
+        <div className="flex flex-col items-center gap-4 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
             <MessageSquare className="h-8 w-8 text-primary" />
           </div>
@@ -300,28 +295,30 @@ export function ChatPanel() {
               برای مشاهده پیام‌های خود، ابتدا وارد حساب کاربری شوید
             </p>
           </div>
-          <Button onClick={() => setAuthModalOpen(true)} className="mt-2">
+          <Button onClick={() => setAuthModalOpen(true)} className="mt-2" data-href="/dashboard" title="ورود به حساب کاربری">
             ورود به حساب کاربری
           </Button>
-        </motion.div>
+        </div>
       </div>
     );
   }
 
   // ─── Render ──────────────────────────────────────────────────────────────
   return (
-    <div className="flex h-[calc(100vh-120px)] overflow-hidden rounded-xl border bg-background shadow-sm">
-      {/* ── Conversation List (always visible on desktop, hidden on mobile when in messages) ── */}
+    <div className="flex h-full overflow-hidden rounded-xl border bg-background shadow-sm">
+      {/* ── Conversation List ── */}
       <div
         className={cn(
           'flex w-full flex-col border-l md:w-[380px] md:border-l',
           showMessages ? 'hidden md:flex' : 'flex'
         )}
+        role="navigation"
+        aria-label="لیست مکالمات"
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b p-4">
+        <div className="flex items-center justify-between border-b px-4 py-3">
           <h2 className="text-lg font-bold">پیام‌ها</h2>
-          <Button variant="ghost" size="icon" className="h-9 w-9">
+          <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="مکالمه جدید" title="ایجاد مکالمه جدید">
             <Plus className="h-5 w-5" />
           </Button>
         </div>
@@ -334,27 +331,27 @@ export function ChatPanel() {
               placeholder="جستجوی مکالمه..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pr-9"
+              className="h-11 pr-9"
+              aria-label="جستجوی مکالمه"
             />
           </div>
         </div>
 
         {/* Conversation List */}
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1" role="list" aria-label="مکالمات">
           <div className="space-y-0.5 p-2">
-            {filteredConversations.map((conv, index) => (
-              <motion.button
+            {filteredConversations.map((conv) => (
+              <button
                 key={conv.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
                 onClick={() => handleSelectConversation(conv)}
                 className={cn(
-                  'flex w-full items-start gap-3 rounded-lg p-3 text-right transition-colors',
+                  'flex w-full items-start gap-3 rounded-lg p-3 text-right transition-all duration-150',
                   selectedConversationId === conv.id
                     ? 'bg-primary/5 border border-primary/20'
-                    : 'hover:bg-muted/50'
+                    : 'hover:bg-muted/50 border border-transparent'
                 )}
+                role="listitem"
+                aria-label={`مکالمه با ${conv.name}${conv.unreadCount > 0 ? `، ${conv.unreadCount} پیام خوانده نشده` : ''}`}
               >
                 {/* Avatar */}
                 <div className="relative shrink-0">
@@ -388,7 +385,7 @@ export function ChatPanel() {
                     )}
                   </div>
                 </div>
-              </motion.button>
+              </button>
             ))}
 
             {filteredConversations.length === 0 && (
@@ -415,8 +412,10 @@ export function ChatPanel() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 md:hidden"
+                className="h-11 w-11 md:hidden"
                 onClick={handleBack}
+                aria-label="بازگشت به لیست مکالمات"
+                title="بازگشت به لیست مکالمات"
               >
                 <ArrowRight className="h-5 w-5" />
               </Button>
@@ -435,41 +434,33 @@ export function ChatPanel() {
               </div>
               <div className="flex-1">
                 <h3 className="text-sm font-semibold">{selectedConversation.name}</h3>
-                <AnimatePresence mode="wait">
-                  {isTyping ? (
-                    <motion.p
-                      key="typing-status"
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -4 }}
-                      transition={{ duration: 0.2 }}
-                      className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400"
-                    >
-                      <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="animate-type-cursor">در حال نوشتن</span>
-                    </motion.p>
-                  ) : (
-                    <motion.p
-                      key="online-status"
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -4 }}
-                      transition={{ duration: 0.2 }}
-                      className={cn(
-                        'text-xs',
-                        selectedConversation.isOnline ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'
-                      )}
-                    >
-                      {selectedConversation.isOnline ? 'آنلاین' : 'آفلاین'}
-                    </motion.p>
+                <p
+                  className={cn(
+                    'text-xs transition-all duration-150',
+                    isTyping
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : selectedConversation.isOnline
+                        ? 'text-emerald-600 dark:text-emerald-400'
+                        : 'text-muted-foreground'
                   )}
-                </AnimatePresence>
+                >
+                  {isTyping ? (
+                    <span className="flex items-center gap-1.5">
+                      <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      در حال نوشتن
+                    </span>
+                  ) : selectedConversation.isOnline ? (
+                    'آنلاین'
+                  ) : (
+                    'آفلاین'
+                  )}
+                </p>
               </div>
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 px-4 py-3">
-              <div className="space-y-3">
+            <ScrollArea className="flex-1 px-4 py-3" ref={scrollAreaViewportRef}>
+              <div className="space-y-3" role="log" aria-label="پیام‌ها" aria-live="polite">
                 {/* System message */}
                 <div className="flex justify-center py-2">
                   <span className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
@@ -480,19 +471,16 @@ export function ChatPanel() {
                 {conversationMessages.map((msg) => {
                   const isMe = msg.senderId === 'me';
                   return (
-                    <motion.div
+                    <div
                       key={msg.id}
-                      initial={{ opacity: 0, y: 8, scale: 0.97 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ duration: 0.2 }}
                       className={cn('flex', isMe ? 'justify-start' : 'justify-end')}
                     >
                       <div
                         className={cn(
                           'max-w-[75%] rounded-2xl px-4 py-2.5',
                           isMe
-                            ? 'rounded-br-md bg-primary text-primary-foreground msg-tail-me'
-                            : 'rounded-bl-md bg-muted msg-tail-other'
+                            ? 'rounded-br-md bg-primary text-primary-foreground'
+                            : 'rounded-bl-md bg-muted'
                         )}
                       >
                         <p className="text-sm leading-7">{msg.content}</p>
@@ -515,30 +503,22 @@ export function ChatPanel() {
                           )}
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   );
                 })}
 
                 {/* Typing indicator */}
-                <AnimatePresence>
-                  {isTyping && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.97 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -8, scale: 0.97 }}
-                      transition={{ duration: 0.2 }}
-                      className="flex justify-end"
-                    >
-                      <div className="max-w-[75%] rounded-2xl rounded-bl-md bg-muted px-5 py-3 msg-tail-other">
-                        <div className="flex items-center gap-1.5">
-                          <span className="typing-dot inline-block h-2 w-2 rounded-full bg-muted-foreground/60" />
-                          <span className="typing-dot inline-block h-2 w-2 rounded-full bg-muted-foreground/60" />
-                          <span className="typing-dot inline-block h-2 w-2 rounded-full bg-muted-foreground/60" />
-                        </div>
+                {isTyping && (
+                  <div className="flex justify-end">
+                    <div className="max-w-[75%] rounded-2xl rounded-bl-md bg-muted px-5 py-3">
+                      <div className="flex items-center gap-1.5">
+                        <span className="typing-dot inline-block h-2 w-2 rounded-full bg-muted-foreground/60" />
+                        <span className="typing-dot inline-block h-2 w-2 rounded-full bg-muted-foreground/60" />
+                        <span className="typing-dot inline-block h-2 w-2 rounded-full bg-muted-foreground/60" />
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    </div>
+                  </div>
+                )}
 
                 <div ref={messagesEndRef} />
               </div>
@@ -547,7 +527,13 @@ export function ChatPanel() {
             {/* Input Area */}
             <Separator />
             <div className="flex items-center gap-2 p-3">
-              <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0 text-muted-foreground">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-11 w-11 shrink-0 text-muted-foreground"
+                aria-label="پیوست فایل"
+                title="پیوست فایل به پیام"
+              >
                 <Paperclip className="h-5 w-5" />
               </Button>
               <Input
@@ -555,13 +541,16 @@ export function ChatPanel() {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="flex-1"
+                className="flex-1 h-11"
+                aria-label="متن پیام"
               />
               <Button
                 size="icon"
-                className="h-10 w-10 shrink-0"
+                className="h-11 w-11 shrink-0"
                 onClick={handleSendMessage}
                 disabled={!newMessage.trim()}
+                aria-label="ارسال پیام"
+                title="ارسال پیام"
               >
                 <SendHorizontal className="h-5 w-5" />
               </Button>
@@ -570,15 +559,9 @@ export function ChatPanel() {
         ) : (
           /* Empty State */
           <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-muted">
-                <MessageCircle className="h-10 w-10 text-muted-foreground" />
-              </div>
-            </motion.div>
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-muted">
+              <MessageCircle className="h-10 w-10 text-muted-foreground" />
+            </div>
             <div>
               <h3 className="text-base font-semibold">یک مکالمه را انتخاب کنید</h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -588,6 +571,12 @@ export function ChatPanel() {
           </div>
         )}
       </div>
+      <noscript>
+        <div className="sr-only">
+          <h1>پیام‌ها - نیاز فایندر</h1>
+          <p>بخش پیام‌ها برای مدیریت مکالمات بین کاربران و کسب‌وکارها در پلتفرم نیاز فایندر.</p>
+        </div>
+      </noscript>
     </div>
   );
 }

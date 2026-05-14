@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
@@ -37,19 +36,6 @@ const sizeConfig: Record<
   },
 };
 
-const containerVariants = {
-  hidden: { opacity: 0, y: 8, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.4,
-      ease: 'easeOut' as const,
-    },
-  },
-};
-
 export function SpecialistAvailabilityBadge({
   isOnline,
   responseTime,
@@ -61,10 +47,7 @@ export function SpecialistAvailabilityBadge({
   const isLarge = size === 'lg';
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+    <div
       className="inline-flex"
       dir="rtl"
     >
@@ -145,6 +128,6 @@ export function SpecialistAvailabilityBadge({
           </span>
         )}
       </Badge>
-    </motion.div>
+    </div>
   );
 }

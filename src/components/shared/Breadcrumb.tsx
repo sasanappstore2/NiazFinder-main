@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { ChevronLeft, Home } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import type { AppView } from '@/lib/types';
@@ -14,6 +13,29 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 
+// ── View → SEO path mapping ────────────────────────────────────────────
+const VIEW_HREF: Record<AppView, string> = {
+  'home': '/',
+  'login': '/login',
+  'register': '/register',
+  'post-need': '/post-need',
+  'browse-requests': '/browse-requests',
+  'request-detail': '/request-detail',
+  'browse-specialists': '/browse-specialists',
+  'specialist-profile': '/specialist-profile',
+  'dashboard': '/dashboard',
+  'messages': '/messages',
+  'notifications': '/notifications',
+  'admin': '/admin',
+  'profile': '/profile',
+  'pricing': '/pricing',
+  'compare-specialists': '/compare-specialists',
+  'submit-proposal': '/submit-proposal',
+  'submit-review': '/submit-review',
+  'referral': '/referral',
+  'notification-settings': '/notification-settings',
+};
+
 // ── Breadcrumb mapping for each AppView ──────────────────────────────────
 const BREADCRUMB_MAP: Record<AppView, { label: string; parent?: AppView }> = {
   'home': { label: 'صفحه اصلی' },
@@ -23,10 +45,10 @@ const BREADCRUMB_MAP: Record<AppView, { label: string; parent?: AppView }> = {
   'browse-requests': { label: 'نیازهای ثبت شده', parent: 'home' },
   'request-detail': { label: 'جزئیات نیاز', parent: 'browse-requests' },
   'submit-proposal': { label: 'ارسال پیشنهاد', parent: 'browse-requests' },
-  'browse-specialists': { label: 'متخصص‌ها', parent: 'home' },
-  'specialist-profile': { label: 'پروفایل متخصص', parent: 'browse-specialists' },
+  'browse-specialists': { label: 'کسب‌وکارها', parent: 'home' },
+  'specialist-profile': { label: 'پروفایل کسب‌وکار', parent: 'browse-specialists' },
   'submit-review': { label: 'ثبت نظر', parent: 'browse-specialists' },
-  'compare-specialists': { label: 'مقایسه متخصص‌ها', parent: 'browse-specialists' },
+  'compare-specialists': { label: 'مقایسه کسب‌وکارها', parent: 'browse-specialists' },
   'dashboard': { label: 'داشبورد', parent: 'home' },
   'admin': { label: 'پنل مدیریت', parent: 'home' },
   'profile': { label: 'پروفایل من', parent: 'home' },
@@ -35,27 +57,6 @@ const BREADCRUMB_MAP: Record<AppView, { label: string; parent?: AppView }> = {
   'pricing': { label: 'تعرفه‌ها', parent: 'home' },
   'referral': { label: 'دعوت از دوستان', parent: 'home' },
   'notification-settings': { label: 'تنظیمات اعلان‌ها', parent: 'dashboard' },
-};
-
-// ── Stagger animation variants ───────────────────────────────────────────
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.06,
-      delayChildren: 0.05,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, x: -8 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { type: 'tween' as const, ease: 'easeOut' as const, duration: 0.25 },
-  },
 };
 
 // ── Breadcrumb Component ─────────────────────────────────────────────────
@@ -73,78 +74,76 @@ export function Breadcrumb() {
       view = BREADCRUMB_MAP[view]?.parent;
     }
 
-    return path.map((v) => ({
+    // Prepend home if not already present
+    if (path.length > 0 && path[0] !== 'home') {
+      path.unshift('home');
+    }
+
+    return path.map((v, index) => ({
       view: v,
       label: BREADCRUMB_MAP[v].label,
+      href: VIEW_HREF[v],
+      position: index + 1,
       isLast: v === currentView,
     }));
   }, [currentView]);
 
   return (
-    <BreadcrumbNav dir="rtl">
-      <motion.ol
-        className="flex flex-wrap items-center gap-1.5 text-sm sm:gap-2"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Home icon link (always first) */}
-        {crumbs[0]?.view !== 'home' && (
-          <>
-            <motion.li variants={itemVariants} className="inline-flex items-center gap-1.5">
-              <BreadcrumbLink
-                className="text-muted-foreground hover:text-primary transition-colors cursor-pointer"
-                onClick={() => navigateTo('home')}
-              >
-                <Home className="h-4 w-4" />
-              </BreadcrumbLink>
-            </motion.li>
-            <motion.li variants={itemVariants} role="presentation" aria-hidden="true">
-              <BreadcrumbSeparator>
-                <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground/60" />
-              </BreadcrumbSeparator>
-            </motion.li>
-          </>
-        )}
-
+    <BreadcrumbNav
+      dir="rtl"
+      itemscope
+      itemtype="https://schema.org/BreadcrumbList"
+    >
+      <BreadcrumbList className="flex flex-wrap items-center gap-1.5 text-sm sm:gap-2">
         {crumbs.map((crumb, index) => {
-          const isLast = crumb.isLast;
           const showSeparator = index < crumbs.length - 1;
 
           return (
             <span key={crumb.view} className="contents">
-              <motion.li variants={itemVariants} className="inline-flex items-center gap-1.5">
-                {isLast ? (
+              <BreadcrumbItem
+                className="inline-flex items-center gap-1.5"
+                itemprop="itemListElement"
+                itemscope
+                itemtype="https://schema.org/ListItem"
+              >
+                {crumb.isLast ? (
                   <BreadcrumbPage className="text-primary font-medium">
-                    {crumb.label}
+                    <span itemprop="name">{crumb.label}</span>
+                    <meta itemprop="position" content={String(crumb.position)} />
                   </BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink
-                    className="text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                    className="text-muted-foreground hover:text-primary transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
                     onClick={() => navigateTo(crumb.view)}
+                    data-href={crumb.href}
+                    itemprop="item"
+                    href={crumb.href}
                   >
-                    {crumb.view === 'home' ? (
-                      <span className="flex items-center gap-1.5">
-                        <Home className="h-4 w-4" />
-                        {crumb.label}
-                      </span>
-                    ) : (
-                      crumb.label
-                    )}
+                    <span itemprop="name">
+                      {crumb.view === 'home' ? (
+                        <span className="flex items-center gap-1.5">
+                          <Home className="size-4" />
+                          {crumb.label}
+                        </span>
+                      ) : (
+                        crumb.label
+                      )}
+                    </span>
+                    <meta itemprop="position" content={String(crumb.position)} />
                   </BreadcrumbLink>
                 )}
-              </motion.li>
+              </BreadcrumbItem>
               {showSeparator && (
-                <motion.li variants={itemVariants} role="presentation" aria-hidden="true">
+                <BreadcrumbItem role="presentation" aria-hidden="true">
                   <BreadcrumbSeparator>
-                    <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground/60" />
+                    <ChevronLeft className="size-3.5 text-muted-foreground/60" />
                   </BreadcrumbSeparator>
-                </motion.li>
+                </BreadcrumbItem>
               )}
             </span>
           );
         })}
-      </motion.ol>
+      </BreadcrumbList>
     </BreadcrumbNav>
   );
 }

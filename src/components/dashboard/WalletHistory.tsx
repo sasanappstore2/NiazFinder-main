@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -107,25 +106,6 @@ const FILTER_MAP: Record<FilterTab, Transaction['type'][]> = {
   PAYMENTS: ['PAYMENT', 'COMMISSION'],
 };
 
-// ============ Animation Variants ============
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.06 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' as const } },
-};
-
-const balanceCardVariants = {
-  hidden: { opacity: 0, scale: 0.95, y: 20 },
-  visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } },
-};
-
 // ============ Component ============
 export function WalletHistory() {
   const [activeTab, setActiveTab] = useState<FilterTab>('ALL');
@@ -153,7 +133,7 @@ export function WalletHistory() {
   return (
     <div className="space-y-6" dir="rtl">
       {/* ============ Balance Overview Card ============ */}
-      <motion.div variants={balanceCardVariants} initial="hidden" animate="visible">
+      <div>
         <Card className="relative overflow-hidden rounded-2xl border-0 shadow-lg">
           {/* Emerald gradient background */}
           <div className="absolute inset-0 bg-gradient-to-bl from-emerald-500 via-emerald-600 to-teal-700" />
@@ -226,15 +206,10 @@ export function WalletHistory() {
             </div>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
 
       {/* ============ Transaction History ============ */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="rounded-2xl"
-      >
+      <div className="rounded-2xl">
         <Card className="rounded-2xl shadow-lg shadow-emerald-500/5 border border-border/50">
           <CardHeader className="pb-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -286,7 +261,7 @@ export function WalletHistory() {
             </Tabs>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -299,10 +274,7 @@ function TransactionList({
 }) {
   if (transactions.length === 0) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+      <div
         className="flex flex-col items-center justify-center gap-4 py-16 text-center"
       >
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 shadow-sm">
@@ -314,21 +286,16 @@ function TransactionList({
             تراکنشی با فیلتر انتخابی شما پیدا نشد. فیلتر یا عبارت جستجو را تغییر دهید.
           </p>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="space-y-1"
-    >
+    <div className="space-y-1">
       {transactions.map((tx, index) => (
         <TransactionRow key={tx.id} transaction={tx} index={index} />
       ))}
-    </motion.div>
+    </div>
   );
 }
 
@@ -353,8 +320,7 @@ function TransactionRow({
       : 'text-rose-600 dark:text-rose-400';
 
   return (
-    <motion.div
-      variants={itemVariants}
+    <div
       className={cn(
         'group flex items-center gap-3 sm:gap-4 rounded-xl px-3 py-3.5 sm:px-4 transition-all duration-200',
         'hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20',
@@ -387,7 +353,7 @@ function TransactionRow({
         </span>
         <span className="text-xs text-muted-foreground">{getTimeAgo(transaction.createdAt)}</span>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

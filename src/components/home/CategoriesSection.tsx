@@ -1,148 +1,134 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { ArrowLeft, Users, FileText } from 'lucide-react';
+import { useEffect } from 'react';
+import { ArrowLeft, FileText, Users, Globe, Palette, Smartphone, Monitor, Pen, BookOpen, Home, Wrench, GraduationCap, Bot, Briefcase, Heart, Code, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAppStore } from '@/lib/store';
-import { CATEGORIES } from '@/lib/constants';
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08 },
-  },
+// Category icon mapping
+const ICON_MAP: Record<string, LucideIcon> = {
+  Globe, Palette, Smartphone, Monitor, Pen, BookOpen, Home, Wrench, GraduationCap, Bot,
+  Briefcase, Heart, Code, Layout: Monitor, Server: Monitor, Layers: Smartphone,
+  Apple: Smartphone, FileCode: Code, Paintbrush: Palette, PencilRuler: Pen,
+  Laptop: Monitor, Hammer: Wrench, School: GraduationCap, BotIcon: Bot,
+  MessageCircle: Bot, Shield: Briefcase, Scale: Briefcase,
 };
-
-const item = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const } },
-};
-
-function AnimatedNumber({ value }: { value: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true });
-  const [displayed, setDisplayed] = useState(0);
-
-  useEffect(() => {
-    if (!isInView) return;
-    const duration = 1200;
-    const startTime = performance.now();
-    const startVal = 0;
-    const endVal = value;
-
-    const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      // easeOutExpo
-      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      setDisplayed(Math.round(startVal + (endVal - startVal) * eased));
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }, [isInView, value]);
-
-  return (
-    <span ref={ref}>
-      {displayed.toLocaleString('fa-IR')}
-    </span>
-  );
-}
 
 export function CategoriesSection() {
   const navigateTo = useAppStore((s) => s.navigateTo);
+  const categories = useAppStore((s) => s.categories);
+  const fetchCategories = useAppStore((s) => s.fetchCategories);
+
+  useEffect(() => {
+    if (categories.length === 0) {
+      fetchCategories();
+    }
+  }, [categories.length, fetchCategories]);
 
   return (
-    <section className="relative bg-background py-20 sm:py-24 lg:py-28 overflow-hidden">
-      {/* Subtle mesh gradient background */}
-      <div className="absolute inset-0 mesh-gradient-bg opacity-30 pointer-events-none" />
-
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="categories" className="section-padding bg-background" aria-label="دسته‌بندی خدمات" itemScope itemType="https://schema.org/ItemList">
+      <div className="container-default mx-auto px-5 md:px-8">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mb-12 text-center"
-        >
-          <h2 className="mb-3 text-2xl font-extrabold tracking-tight sm:text-3xl lg:text-4xl">
-            دسته‌بندی خدمات
-          </h2>
-          <p className="mx-auto max-w-xl text-muted-foreground/80">
-            از میان صدها دسته‌بندی، نیاز خود را پیدا کنید
-          </p>
-        </motion.div>
+        <div className="mb-12 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="mb-3 text-2xl md:text-4xl font-extrabold tracking-tight" itemProp="name">دسته‌بندی خدمات</h2>
+            <p className="text-sm md:text-base text-muted-foreground" itemProp="description">از میان صدها دسته‌بندی، نیاز خود را پیدا کنید</p>
+          </div>
+          <Button
+            onClick={() => navigateTo('browse-requests')}
+            variant="outline"
+            className="hidden sm:inline-flex h-10 rounded-xl border-border/60 px-6 shrink-0 transition-all 150ms ease"
+            data-href="/browse-requests"
+            title="مشاهده همه دسته‌بندی‌های خدمات"
+          >
+            مشاهده همه
+            <ArrowLeft className="size-4" aria-hidden="true" />
+          </Button>
+        </div>
 
-        {/* Categories Grid */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-50px' }}
-          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-        >
-          {CATEGORIES.map((category) => (
-            <motion.div key={category.id} variants={item}>
-              <Card
-                onClick={() => navigateTo('browse-requests', { categoryId: category.id })}
-                className="group cursor-pointer border-border/50 bg-card/80 backdrop-blur-sm py-5 transition-all duration-500 ease-out hover:scale-[1.02] hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-500/8 hover:border-primary/40 dark:hover:border-primary/30"
-              >
+        {/* Grid */}
+        {categories.length === 0 ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" aria-label="در حال بارگذاری دسته‌بندی‌ها" role="status">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Card key={i} className="border-border/50 bg-card/80 py-5">
                 <CardContent className="flex items-start gap-4 p-0 px-6">
-                  {/* Icon with bounce on hover */}
-                  <motion.div
-                    whileHover={{ scale: 1.15, rotate: [0, -5, 5, 0] }}
-                    transition={{ duration: 0.4 }}
-                    className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/12 to-primary/5 text-2xl shadow-sm transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-primary/20 group-hover:to-primary/10 group-hover:shadow-md group-hover:shadow-primary/10"
-                  >
-                    {category.icon}
-                  </motion.div>
-
-                  {/* Info */}
-                  <div className="min-w-0 flex-1">
-                    <h3 className="mb-1.5 text-sm font-bold leading-snug line-clamp-1 transition-colors duration-300 group-hover:text-primary">
-                      {category.name}
-                    </h3>
-                    <div className="flex items-center gap-3 text-xs font-medium text-muted-foreground/80">
-                      <span className="inline-flex items-center gap-1">
-                        <FileText className="size-3" />
-                        <AnimatedNumber value={category.requestCount} /> نیاز فعال
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Users className="size-3" />
-                        <AnimatedNumber value={category.specialistCount} /> متخصص
-                      </span>
+                  <Skeleton className="size-12 shrink-0 rounded-xl" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-28 rounded" />
+                    <div className="flex gap-3">
+                      <Skeleton className="h-3 w-16 rounded" />
+                      <Skeleton className="h-3 w-14 rounded" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {categories.map((category) => {
+              const IconComponent = ICON_MAP[category.icon || ''] || Globe;
+              return (
+                <Card
+                  key={category.id}
+                  onClick={() => navigateTo('browse-requests', { categoryId: category.id })}
+                  className="group cursor-pointer border-border/50 bg-card/80 py-5 hover-lift transition-all 150ms ease"
+                  data-href={`/browse-requests?categoryId=${category.id}`}
+                  title={`${category.name} - ${category.requestCount.toLocaleString('fa-IR')} نیاز فعال`}
+                  itemScope
+                  itemType="https://schema.org/ListItem"
+                >
+                  <CardContent className="flex items-start gap-4 p-0 px-6">
+                    <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary" aria-hidden="true">
+                      <IconComponent className="size-6" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="mb-1.5 text-sm font-bold leading-snug line-clamp-1 group-hover:text-primary transition-colors 150ms ease" itemProp="name">
+                        {category.name}
+                      </h3>
+                      <div className="flex items-center gap-3 text-xs font-medium text-muted-foreground">
+                        <span className="inline-flex items-center gap-1">
+                          <FileText className="size-3" aria-hidden="true" />
+                          {category.requestCount.toLocaleString('fa-IR')} نیاز فعال
+                        </span>
+                        {category.specialistCount > 0 && (
+                          <span className="inline-flex items-center gap-1">
+                            <Users className="size-3" aria-hidden="true" />
+                            {category.specialistCount.toLocaleString('fa-IR')} کسب‌وکار
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
 
-        {/* View All Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="mt-10 flex justify-center"
-        >
+        {/* Mobile View All */}
+        <div className="mt-8 flex justify-center sm:hidden">
           <Button
             onClick={() => navigateTo('browse-requests')}
             variant="outline"
-            className="h-11 rounded-xl border-border/60 bg-card/50 backdrop-blur-sm px-8 transition-all duration-300 hover:shadow-lg hover:bg-card"
+            className="h-10 rounded-xl border-border/60 px-6"
+            data-href="/browse-requests"
+            title="مشاهده همه دسته‌بندی‌های خدمات"
           >
             مشاهده همه
-            <ArrowLeft className="size-4" />
+            <ArrowLeft className="size-4" aria-hidden="true" />
           </Button>
-        </motion.div>
+        </div>
       </div>
+
+      <noscript>
+        <div className="sr-only">
+          <h2>دسته‌بندی خدمات</h2>
+          <p>از میان صدها دسته‌بندی شامل کامپیوتر و فناوری اطلاعات، طراحی گرافیک، بازاریابی دیجیتال، آموزش و مشاوره، حقوقی و مالی، ساختمان و عمران، سلامت و زیبایی، خودرو و حمل‌ونقل، نیاز خود را پیدا کنید.</p>
+        </div>
+      </noscript>
     </section>
   );
 }

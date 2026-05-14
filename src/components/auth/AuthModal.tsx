@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useCallback, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -14,51 +13,44 @@ import { useAppStore } from '@/lib/store';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
 
-const tabVariants = {
-  hidden: { opacity: 0, x: 20, filter: 'blur(4px)' },
-  visible: { opacity: 1, x: 0, filter: 'blur(0px)' },
-  exit: { opacity: 0, x: -20, filter: 'blur(4px)' },
-};
-
-const tabTransition = {
-  type: 'tween' as const,
-  ease: 'easeInOut' as const,
-  duration: 0.25,
-};
-
 export function AuthModal() {
   const authModalOpen = useAppStore((s) => s.authModalOpen);
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
   const authModalTab = useAppStore((s) => s.authModalTab);
   const setAuthModalTab = useAppStore((s) => s.setAuthModalTab);
 
+  const [visibleTab, setVisibleTab] = useState<'login' | 'register'>('login');
+
   const handleOpenChange = useCallback(
     (open: boolean) => {
       if (!open) {
         setAuthModalOpen(false);
+      } else {
+        // Reset to login when opening
+        setAuthModalTab('login');
+        setVisibleTab('login');
       }
     },
-    [setAuthModalOpen],
+    [setAuthModalOpen, setAuthModalTab],
   );
 
-  // Reset tab to login when modal opens
-  useEffect(() => {
-    if (authModalOpen) {
-      setAuthModalTab('login');
-    }
-  }, [authModalOpen, setAuthModalTab]);
+  const handleTabChange = useCallback((val: string) => {
+    const newTab = val as 'login' | 'register';
+    setAuthModalTab(newTab);
+    setVisibleTab(newTab);
+  }, [setAuthModalTab]);
 
   return (
     <Dialog open={authModalOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[480px] p-0 gap-0 overflow-hidden">
         <DialogHeader className="p-6 pb-0">
           <DialogTitle className="text-right text-xl font-bold">
-            {authModalTab === 'login'
+            {visibleTab === 'login'
               ? 'ورود به حساب کاربری'
               : 'ثبت‌نام'}
           </DialogTitle>
           <DialogDescription className="text-right">
-            {authModalTab === 'login'
+            {visibleTab === 'login'
               ? 'برای دسترسی به تمام امکانات وارد شوید'
               : 'حساب کاربری جدید ایجاد کنید'}
           </DialogDescription>
@@ -66,7 +58,7 @@ export function AuthModal() {
 
         <Tabs
           value={authModalTab}
-          onValueChange={(val) => setAuthModalTab(val as 'login' | 'register')}
+          onValueChange={handleTabChange}
           dir="rtl"
           className="w-full"
         >
@@ -87,29 +79,24 @@ export function AuthModal() {
             </TabsList>
           </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={authModalTab}
-              variants={tabVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={tabTransition}
-            >
-              <TabsContent value="login" className="mt-0">
-                <div className="p-6 pt-4">
-                  <LoginForm />
-                </div>
-              </TabsContent>
-              <TabsContent value="register" className="mt-0">
-                <div className="p-6 pt-4">
-                  <RegisterForm />
-                </div>
-              </TabsContent>
-            </motion.div>
-          </AnimatePresence>
+          <TabsContent value="login" className="mt-0">
+            <div className="p-6 pt-4">
+              <LoginForm />
+            </div>
+          </TabsContent>
+          <TabsContent value="register" className="mt-0">
+            <div className="p-6 pt-4">
+              <RegisterForm />
+            </div>
+          </TabsContent>
         </Tabs>
       </DialogContent>
+      <noscript>
+        <div className="sr-only">
+          <h1>ورود و ثبت‌نام - نیاز فایندر</h1>
+          <p>فرم ورود و ثبت‌نام کاربران در پلتفرم نیاز فایندر برای دسترسی به تمام امکانات پلتفرم.</p>
+        </div>
+      </noscript>
     </Dialog>
   );
 }

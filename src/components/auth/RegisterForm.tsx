@@ -294,12 +294,12 @@ export function RegisterForm() {
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="CLIENT">کاربر عادی</SelectItem>
-                    <SelectItem value="SPECIALIST">متخصص</SelectItem>
+                    <SelectItem value="SPECIALIST">کسب‌وکار</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription>
                   {field.value === 'SPECIALIST'
-                    ? 'به عنوان متخصص می‌توانید پروژه دریافت کنید'
+                    ? 'به عنوان کسب‌وکار می‌توانید پروژه دریافت کنید'
                     : 'به عنوان کاربر عادی می‌توانید نیاز ثبت کنید'}
                 </FormDescription>
                 <FormMessage />

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, useMemo, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Star,
   Send,
@@ -67,8 +66,6 @@ const RATING_LABELS: Record<number, string> = {
   4.5: 'عالی',
   5: 'عالی',
 };
-
-const CONFETTI_EMOJIS = ['🎉', '⭐', '✨', '🎊', '💫', '🌟', '👏', '🥳'];
 
 // ─── Star Rating Sub-component ───────────────────────────────────────────────
 
@@ -208,48 +205,6 @@ function InteractiveStarRating({
   );
 }
 
-// ─── Confetti Animation ──────────────────────────────────────────────────────
-
-function ConfettiEffect() {
-  const particles = useMemo(
-    () =>
-      Array.from({ length: 16 }, (_, i) => ({
-        id: i,
-        emoji: CONFETTI_EMOJIS[i % CONFETTI_EMOJIS.length],
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        delay: i * 0.08,
-      })),
-    []
-  );
-
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {particles.map((p) => (
-        <motion.span
-          key={p.id}
-          className="absolute text-xl select-none"
-          style={{ left: `${p.x}%`, top: `-5%` }}
-          initial={{ y: -20, opacity: 1, scale: 0.5, rotate: 0 }}
-          animate={{
-            y: [0, p.y * 4],
-            opacity: [1, 1, 0],
-            scale: [0.5, 1.2, 0.8],
-            rotate: [0, 180 + p.id * 30],
-          }}
-          transition={{
-            duration: 2.5,
-            delay: p.delay,
-            ease: 'easeOut',
-          }}
-        >
-          {p.emoji}
-        </motion.span>
-      ))}
-    </div>
-  );
-}
-
 // ─── Success State ───────────────────────────────────────────────────────────
 
 function SuccessState({
@@ -260,54 +215,28 @@ function SuccessState({
   onGoBack: () => void;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="relative"
-    >
-      <ConfettiEffect />
-
+    <div className="relative">
       <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-950/20 dark:to-background">
         <CardContent className="flex flex-col items-center justify-center py-12 px-6 gap-6">
           {/* Animated checkmark */}
-          <motion.div
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{
-              type: 'spring',
-              stiffness: 200,
-              damping: 15,
-              delay: 0.2,
-            }}
-          >
+          <div>
             <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
               <CheckCircle2 className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
             </div>
-          </motion.div>
+          </div>
 
           {/* Thank you text */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-center space-y-2"
-          >
+          <div className="text-center space-y-2">
             <h3 className="text-2xl font-bold text-foreground">
               با تشکر از شما! 🙏
             </h3>
             <p className="text-muted-foreground text-sm">
               نظر شما با موفقیت ثبت شد و پس از بررسی نمایش داده خواهد شد.
             </p>
-          </motion.div>
+          </div>
 
           {/* Rating display */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="flex items-center gap-3 bg-white dark:bg-gray-800 rounded-xl px-6 py-3 shadow-md border border-border/30"
-          >
+          <div className="flex items-center gap-3 bg-white dark:bg-gray-800 rounded-xl px-6 py-3 shadow-md border border-border/30">
             <span className="text-4xl font-bold text-emerald-600 dark:text-emerald-400">
               {overallRating.toFixed(1)}
             </span>
@@ -333,28 +262,31 @@ function SuccessState({
                 امتیاز کلی شما
               </span>
             </div>
-          </motion.div>
+          </div>
 
           {/* Go back button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-          >
+          <div>
             <Button
-              onClick={onGoBack}
+              onClick={handleGoBack}
               className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-8 h-11 rounded-xl"
+              data-href="/specialist-profile"
+              title="بازگشت به پروفایل کسب‌وکار"
             >
               <ChevronLeft className="w-4 h-4" />
               بازگشت
             </Button>
-          </motion.div>
+          </div>
         </CardContent>
       </Card>
-    </motion.div>
+      <noscript>
+        <div className="sr-only">
+          <h1>ثبت نظر و امتیاز - نیاز فایندر</h1>
+          <p>فرم ثبت نظر و امتیاز شامل ارزیابی کیفیت کار، رعایت زمان‌بندی، ارتباط و پاسخگویی و حرفه‌ای بودن کسب‌وکار.</p>
+        </div>
+      </noscript>
+    </div>
   );
 }
-
 // ─── Main Review Form ────────────────────────────────────────────────────────
 
 export default function ReviewForm() {
@@ -499,18 +431,13 @@ export default function ReviewForm() {
             ثبت نظر و امتیاز
           </CardTitle>
           <CardDescription className="text-muted-foreground">
-            تجربه خود را از همکاری با این متخصص به اشتراک بگذارید
+            تجربه خود را از همکاری با این کسب‌وکار به اشتراک بگذارید
           </CardDescription>
         </CardHeader>
 
         <CardContent className="pt-6 space-y-6">
           {/* ── Overall Rating Display ─────────────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center gap-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl p-4 border border-emerald-100/60 dark:border-emerald-900/30 shadow-sm"
-          >
+          <div className="flex items-center gap-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl p-4 border border-emerald-100/60 dark:border-emerald-900/30 shadow-sm">
             <div className="flex items-center justify-center w-16 h-16 rounded-xl bg-white dark:bg-gray-800 shadow-sm border">
               <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
                 {overallRating > 0 ? overallRating.toFixed(1) : '—'}
@@ -519,14 +446,7 @@ export default function ReviewForm() {
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-1" dir="ltr">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <motion.div
-                    key={star}
-                    initial={false}
-                    animate={{
-                      scale: overallRating >= star ? [1, 1.2, 1] : 1,
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
+                  <div key={star}>
                     {overallRating >= star ? (
                       <Star
                         size={20}
@@ -549,14 +469,14 @@ export default function ReviewForm() {
                         strokeWidth={1.5}
                       />
                     )}
-                  </motion.div>
+                  </div>
                 ))}
               </div>
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 {overallLabel || 'امتیاز کلی (میانگین دسته‌بندی‌ها)'}
               </span>
             </div>
-          </motion.div>
+          </div>
 
           {/* ── Rating Categories ──────────────────────────────────────── */}
           <div className="space-y-4">
@@ -564,60 +484,38 @@ export default function ReviewForm() {
               امتیازدهی به دسته‌بندی‌ها
             </Label>
 
-            <AnimatePresence mode="wait">
-              {errors['ratings'] && (
-                <motion.p
-                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                  animate={{ opacity: 1, height: 'auto', marginTop: 8 }}
-                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                  className="text-sm text-red-500 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2"
-                >
-                  ⚠️ {errors['ratings']}
-                </motion.p>
-              )}
-            </AnimatePresence>
+            {errors['ratings'] && (
+              <p className="text-sm text-red-500 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">
+                ⚠️ {errors['ratings']}
+              </p>
+            )}
 
-            {CATEGORIES.map((category, index) => {
+            {CATEGORIES.map((category) => {
               const currentRating = ratings[category.key];
               const label =
                 RATING_LABELS[Math.round(currentRating * 2) / 2] ?? '';
 
               return (
-                <motion.div
+                <div
                   key={category.key}
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{
-                    duration: 0.35,
-                    delay: 0.1 + index * 0.1,
-                    ease: 'easeOut',
-                  }}
-            className="flex items-center justify-between gap-4 bg-muted/40 dark:bg-muted/30 rounded-xl p-3.5 border border-border/30 hover:border-emerald-200 dark:hover:border-emerald-800/50 transition-colors"
+                  className="flex items-center justify-between gap-4 bg-muted/40 dark:bg-muted/30 rounded-xl p-3.5 border border-border/30 hover:border-emerald-200 dark:hover:border-emerald-800/50 transition-colors"
                 >
                   <div className="flex flex-col gap-0.5 min-w-0">
                     <span className="text-sm font-medium text-foreground truncate">
                       {category.label}
                     </span>
-                    <AnimatePresence mode="wait">
-                      {label && (
-                        <motion.span
-                          key={label}
-                          initial={{ opacity: 0, y: -5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 5 }}
-                          className="text-xs text-muted-foreground"
-                        >
-                          {label}
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
+                    {label && (
+                      <span className="text-xs text-muted-foreground">
+                        {label}
+                      </span>
+                    )}
                   </div>
                   <InteractiveStarRating
                     value={currentRating}
                     onChange={(val) => handleRatingChange(category.key, val)}
                     size={24}
                   />
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -636,7 +534,7 @@ export default function ReviewForm() {
 
             <Textarea
               id="review-comment"
-              placeholder="تجربه خود را از همکاری با این متخصص بنویسید..."
+              placeholder="تجربه خود را از همکاری با این کسب‌وکار بنویسید..."
               value={comment}
               onChange={handleCommentChange}
               className="min-h-[120px] resize-y text-sm leading-7 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-400"
@@ -644,18 +542,11 @@ export default function ReviewForm() {
             />
 
             <div className="flex items-center justify-between">
-              <AnimatePresence mode="wait">
-                {errors['comment'] && (
-                  <motion.p
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="text-sm text-red-500"
-                  >
-                    ⚠️ {errors['comment']}
-                  </motion.p>
-                )}
-              </AnimatePresence>
+              {errors['comment'] && (
+                <p className="text-sm text-red-500">
+                  ⚠️ {errors['comment']}
+                </p>
+              )}
               <span
                 className={`text-xs mr-auto tabular-nums ${
                   comment.trim().length < 20
@@ -710,23 +601,18 @@ export default function ReviewForm() {
           </div>
 
           {/* ── Recommended Toggle ─────────────────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="flex items-center justify-between bg-muted/40 dark:bg-muted/30 rounded-xl p-4 border border-border/30"
-          >
+          <div className="flex items-center justify-between bg-muted/40 dark:bg-muted/30 rounded-xl p-4 border border-border/30">
             <div className="flex flex-col gap-0.5">
               <Label
                 htmlFor="recommended-switch"
                 className="text-sm font-medium text-foreground cursor-pointer"
               >
-                آیا این متخصص را پیشنهاد می‌دهید؟
+                آیا این کسب‌وکار را پیشنهاد می‌دهید؟
               </Label>
               <span className="text-xs text-muted-foreground">
                 {recommended
-                  ? '✅ این متخصص را توصیه می‌کنم'
-                  : '❌ این متخصص را توصیه نمی‌کنم'}
+                  ? '✅ این کسب‌وکار را توصیه می‌کنم'
+                  : '❌ این کسب‌وکار را توصیه نمی‌کنم'}
               </span>
             </div>
             <Switch
@@ -735,28 +621,21 @@ export default function ReviewForm() {
               onCheckedChange={setRecommended}
               className="data-[state=checked]:bg-emerald-600"
             />
-          </motion.div>
+          </div>
 
           <Separator className="bg-emerald-100 dark:bg-emerald-900/40" />
 
           {/* ── Submit Button ──────────────────────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-          >
+          <div>
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting || !isFormValid}
               className="w-full h-12 text-base font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/25"
+              title="ثبت نظر و امتیاز"
             >
               {isSubmitting ? (
                 <>
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                    className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                  />
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   <span>در حال ثبت نظر...</span>
                 </>
               ) : (
@@ -772,9 +651,15 @@ export default function ReviewForm() {
                 برای ثبت نظر، لطفاً به تمام دسته‌بندی‌ها امتیاز دهید و حداقل ۲۰ کاراکتر بنویسید.
               </p>
             )}
-          </motion.div>
+          </div>
         </CardContent>
       </Card>
+      <noscript>
+        <div className="sr-only">
+          <h1>فرم ثبت نظر - نیاز فایندر</h1>
+          <p>برای ثبت نظر، ابتدا به تمام دسته‌بندی‌ها امتیاز دهید و نظر خود را بنویسید.</p>
+        </div>
+      </noscript>
     </div>
   );
 }

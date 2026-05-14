@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const http = require('http');
 const TARGET_PORT = parseInt(process.env.TARGET_PORT || '4000', 10);
 const LISTEN_PORT = parseInt(process.env.LISTEN_PORT || '3000', 10);

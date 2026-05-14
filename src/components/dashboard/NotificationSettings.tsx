@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -139,276 +138,175 @@ const NOTIFICATION_CATEGORIES: NotificationCategory[] = [
   },
 ];
 
-// ============ Animation Variants ============
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: 'easeOut' as const },
-  },
-};
-
-const headerVariants = {
-  hidden: { opacity: 0, y: -16 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: 'easeOut' as const },
-  },
-};
-
 // ============ Component ============
 export function NotificationSettings() {
-  // Build initial state from default values
   const initialState = (): Record<string, boolean> => {
     const state: Record<string, boolean> = {};
     NOTIFICATION_CATEGORIES.forEach((category) => {
-      category.items.forEach((item) => {
-        state[item.id] = item.defaultEnabled;
-      });
+      category.items.forEach((item) => { state[item.id] = item.defaultEnabled; });
     });
     return state;
   };
 
   const [settings, setSettings] = useState<Record<string, boolean>>(initialState);
 
-  // Toggle a single setting
   const handleToggle = useCallback((itemId: string) => {
     setSettings((prev) => ({ ...prev, [itemId]: !prev[itemId] }));
     toast.success('تنظیمات ذخیره شد');
   }, []);
 
-  // Enable all
   const handleEnableAll = useCallback(() => {
     const allEnabled: Record<string, boolean> = {};
     NOTIFICATION_CATEGORIES.forEach((category) => {
-      category.items.forEach((item) => {
-        allEnabled[item.id] = true;
-      });
+      category.items.forEach((item) => { allEnabled[item.id] = true; });
     });
     setSettings(allEnabled);
     toast.success('همه اعلان‌ها فعال شدند');
   }, []);
 
-  // Disable all
   const handleDisableAll = useCallback(() => {
     const allDisabled: Record<string, boolean> = {};
     NOTIFICATION_CATEGORIES.forEach((category) => {
-      category.items.forEach((item) => {
-        allDisabled[item.id] = false;
-      });
+      category.items.forEach((item) => { allDisabled[item.id] = false; });
     });
     setSettings(allDisabled);
     toast.success('همه اعلان‌ها غیرفعال شدند');
   }, []);
 
-  // Save settings
   const handleSave = useCallback(() => {
     toast.success('تنظیمات اعلان‌ها با موفقیت ذخیره شد');
   }, []);
 
-  // Count stats
   const totalItems = NOTIFICATION_CATEGORIES.reduce((sum, cat) => sum + cat.items.length, 0);
   const enabledCount = Object.values(settings).filter(Boolean).length;
 
   return (
     <div className="space-y-6" dir="rtl">
       {/* ============ Page Header ============ */}
-      <motion.div variants={headerVariants} initial="hidden" animate="visible">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/40 shadow-sm">
-              <Settings2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-foreground sm:text-2xl">
-                تنظیمات اعلان‌ها
-              </h2>
-              <p className="mt-0.5 text-sm text-muted-foreground">
-                مدیریت نحوه دریافت اعلان‌ها و نوتیفیکیشن‌ها در پلتفرم نیاز فایندر
-              </p>
-            </div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/40 shadow-sm">
+            <Settings2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
           </div>
-
-          {/* Stats Badge */}
-          <Badge
-            variant="outline"
-            className={cn(
-              'h-fit gap-1.5 px-3 py-1.5 text-sm font-medium',
-              enabledCount === totalItems
-                ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
-                : enabledCount > 0
-                  ? 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-300'
-                  : 'border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-700 dark:bg-rose-950/50 dark:text-rose-300'
-            )}
-          >
-            {enabledCount === totalItems ? (
-              <Check className="h-4 w-4" />
-            ) : enabledCount === 0 ? (
-              <X className="h-4 w-4" />
-            ) : (
-              <Bell className="h-4 w-4" />
-            )}
-            <span>
-              {enabledCount.toLocaleString('fa-IR')} از {totalItems.toLocaleString('fa-IR')} فعال
-            </span>
-          </Badge>
+          <div>
+            <h2 className="text-xl font-bold text-foreground sm:text-2xl">تنظیمات اعلان‌ها</h2>
+            <p className="mt-0.5 text-sm text-muted-foreground">مدیریت نحوه دریافت اعلان‌ها و نوتیفیکیشن‌ها در پلتفرم نیاز فایندر</p>
+          </div>
         </div>
-      </motion.div>
+        <Badge
+          variant="outline"
+          className={cn(
+            'h-fit gap-1.5 px-3 py-1.5 text-sm font-medium',
+            enabledCount === totalItems
+              ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
+              : enabledCount > 0
+                ? 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-300'
+                : 'border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-700 dark:bg-rose-950/50 dark:text-rose-300'
+          )}
+        >
+          {enabledCount === totalItems ? <Check className="h-4 w-4" /> : enabledCount === 0 ? <X className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
+          <span>{enabledCount.toLocaleString('fa-IR')} از {totalItems.toLocaleString('fa-IR')} فعال</span>
+        </Badge>
+      </div>
 
       {/* ============ Bulk Actions ============ */}
-      <motion.div
-        variants={headerVariants}
-        initial="hidden"
-        animate="visible"
-        transition={{ delay: 0.1 }}
-      >
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleEnableAll}
-            className="gap-2 rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-950/50 dark:hover:text-emerald-300"
-          >
-            <Check className="h-4 w-4" />
-            همه را فعال کن
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDisableAll}
-            className="gap-2 rounded-xl border-rose-200 text-rose-700 hover:bg-rose-50 hover:text-rose-800 dark:border-rose-800 dark:text-rose-400 dark:hover:bg-rose-950/50 dark:hover:text-rose-300"
-          >
-            <X className="h-4 w-4" />
-            همه را غیرفعال کن
-          </Button>
-        </div>
-      </motion.div>
+      <div className="flex items-center gap-3">
+        <Button variant="outline" size="sm" onClick={handleEnableAll} className="gap-2 rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-950/50 dark:hover:text-emerald-300 transition-all duration-150" title="فعال کردن همه اعلان‌ها">
+          <Check className="h-4 w-4" />همه را فعال کن
+        </Button>
+        <Button variant="outline" size="sm" onClick={handleDisableAll} className="gap-2 rounded-xl border-rose-200 text-rose-700 hover:bg-rose-50 hover:text-rose-800 dark:border-rose-800 dark:text-rose-400 dark:hover:bg-rose-950/50 dark:hover:text-rose-300 transition-all duration-150" title="غیرفعال کردن همه اعلان‌ها">
+          <X className="h-4 w-4" />همه را غیرفعال کن
+        </Button>
+      </div>
 
       <Separator />
 
       {/* ============ Notification Category Cards ============ */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="grid gap-5"
-      >
+      <div className="grid gap-5">
         {NOTIFICATION_CATEGORIES.map((category) => {
           const CategoryIcon = category.icon;
           const categoryEnabledCount = category.items.filter((item) => settings[item.id]).length;
           const allEnabled = categoryEnabledCount === category.items.length;
 
           return (
-            <motion.div key={category.id} variants={cardVariants}>
-              <Card className="overflow-hidden rounded-2xl border border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/5">
-                {/* Category Header */}
-                <CardHeader className="pb-0">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={cn(
-                          'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-transform',
-                          category.bgColor
-                        )}
-                      >
-                        <CategoryIcon className={cn('h-5 w-5', category.color)} />
-                      </div>
-                      <div>
-                        <CardTitle className="text-base font-bold">{category.title}</CardTitle>
-                        <p className="mt-0.5 text-xs text-muted-foreground">
-                          {category.description}
-                        </p>
-                      </div>
+            <Card key={category.id} className="overflow-hidden rounded-2xl border border-border/50 transition-all duration-150 hover:shadow-lg hover:shadow-emerald-500/5">
+              <CardHeader className="pb-0">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={cn('flex h-11 w-11 shrink-0 items-center justify-center rounded-xl', category.bgColor)}>
+                      <CategoryIcon className={cn('h-5 w-5', category.color)} />
                     </div>
-
-                    {/* Category Status Badge */}
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        'h-fit gap-1 px-2 py-0.5 text-xs font-medium',
-                        allEnabled
-                          ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
-                          : categoryEnabledCount > 0
-                            ? 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-300'
-                            : 'border-muted bg-muted text-muted-foreground'
-                      )}
-                    >
-                      {categoryEnabledCount.toLocaleString('fa-IR')} از{' '}
-                      {category.items.length.toLocaleString('fa-IR')}
-                    </Badge>
+                    <div>
+                      <CardTitle className="text-base font-bold">{category.title}</CardTitle>
+                      <p className="mt-0.5 text-xs text-muted-foreground">{category.description}</p>
+                    </div>
                   </div>
-                </CardHeader>
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      'h-fit gap-1 px-2 py-0.5 text-xs font-medium',
+                      allEnabled
+                        ? 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
+                        : categoryEnabledCount > 0
+                          ? 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-300'
+                          : 'border-muted bg-muted text-muted-foreground'
+                    )}
+                  >
+                    {categoryEnabledCount.toLocaleString('fa-IR')} از {category.items.length.toLocaleString('fa-IR')}
+                  </Badge>
+                </div>
+              </CardHeader>
 
-                <Separator className="mx-6 mt-4" />
+              <Separator className="mx-6 mt-4" />
 
-                {/* Toggle List */}
-                <CardContent className="pt-4 pb-2">
-                  <div className="space-y-1">
-                    {category.items.map((item, index) => (
-                      <div key={item.id}>
-                        <div
-                          className={cn(
-                            'flex items-center justify-between gap-4 rounded-xl px-3 py-3 transition-all duration-200',
-                            settings[item.id]
-                              ? 'bg-emerald-50/60 dark:bg-emerald-950/20'
-                              : 'bg-transparent hover:bg-emerald-50/30 dark:hover:bg-emerald-950/10'
-                          )}
-                        >
-                          {/* Label & Description */}
-                          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                            <span className="text-sm font-semibold text-foreground">
-                              {item.label}
-                            </span>
-                            <span className="text-xs leading-relaxed text-muted-foreground">
-                              {item.description}
-                            </span>
-                          </div>
-
-                          {/* Switch */}
-                          <Switch
-                            checked={settings[item.id]}
-                            onCheckedChange={() => handleToggle(item.id)}
-                            className="shrink-0 data-[state=checked]:bg-emerald-600 dark:data-[state=checked]:bg-emerald-500"
-                            dir="ltr"
-                          />
+              <CardContent className="pt-4 pb-2">
+                <div className="space-y-1">
+                  {category.items.map((item, index) => (
+                    <div key={item.id}>
+                      <div className={cn(
+                        'flex items-center justify-between gap-4 rounded-xl px-3 py-3 transition-all duration-150',
+                        settings[item.id]
+                          ? 'bg-emerald-50/60 dark:bg-emerald-950/20'
+                          : 'bg-transparent hover:bg-emerald-50/30 dark:hover:bg-emerald-950/10'
+                      )}>
+                        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                          <span className="text-sm font-semibold text-foreground">{item.label}</span>
+                          <span className="text-xs leading-relaxed text-muted-foreground">{item.description}</span>
                         </div>
-                        {index < category.items.length - 1 && (
-                          <Separator className="mx-3 my-0.5 opacity-50" />
-                        )}
+                        <Switch
+                          checked={settings[item.id]}
+                          onCheckedChange={() => handleToggle(item.id)}
+                          className="shrink-0 data-[state=checked]:bg-emerald-600 dark:data-[state=checked]:bg-emerald-500"
+                          dir="ltr"
+                          aria-label={item.label}
+                        />
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+                      {index < category.items.length - 1 && <Separator className="mx-3 my-0.5 opacity-50" />}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           );
         })}
-      </motion.div>
+      </div>
 
       {/* ============ Save Button ============ */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.7, ease: 'easeOut' as const }}
-      >
+      <div>
         <Button
           onClick={handleSave}
-          className="w-full gap-2 rounded-xl bg-emerald-600 py-6 text-base font-bold text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 active:scale-[0.98] transition-all dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:shadow-emerald-600/10"
+          className="w-full gap-2 rounded-xl bg-emerald-600 py-6 text-base font-bold text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 active:scale-[0.98] transition-all duration-150 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:shadow-emerald-600/10"
+          title="ذخیره تنظیمات اعلان‌ها"
         >
-          <Check className="h-5 w-5" />
-          ذخیره تنظیمات
+          <Check className="h-5 w-5" />ذخیره تنظیمات
         </Button>
-      </motion.div>
+      </div>
+      <noscript>
+        <div className="sr-only">
+          <h1>تنظیمات اعلان‌ها - نیاز فایندر</h1>
+          <p>مدیریت نحوه دریافت اعلان‌ها و نوتیفیکیشن‌ها شامل پیشنهادها، پیام‌ها، پروژه‌ها، مالی، حساب کاربری و بازاریابی.</p>
+        </div>
+      </noscript>
     </div>
   );
 }
