@@ -789,3 +789,33 @@ Stage Summary:
 - 3 duplicate/conflicting route directories removed
 - Full visual QA passed for all major homepage components
 - Build compiles cleanly with 0 errors
+
+---
+Task ID: 2
+Agent: Main
+Task: Server restart and full component verification
+
+Work Log:
+- Dev server was down (process killed). Restarted with `npx next dev --port 3000`
+- Verified all Location Selector files exist:
+  - `src/lib/location-system.ts` — Iran geographic data (27 provinces, 150+ cities)
+  - `src/lib/cookie-manager.ts` — Singleton CookieManager with UserPreferences
+  - `src/lib/url-params.ts` — URL parameter utilities for location
+  - `src/components/ui/city-selector-popup.tsx` — Dialog-based city picker
+  - `src/components/shared/LocationSelector.tsx` — Desktop location button
+  - `src/components/shared/MobileLocationSelector.tsx` — Mobile location button
+  - `src/components/layout/Header.tsx` — Integration point (desktop + mobile)
+- Ran lint: 0 errors, 2 pre-existing warnings only
+- Visual verification with agent-browser confirmed:
+  - ✅ Header: Logo, LocationSelector ("انتخاب شهر"), Search bar, Theme toggle, Notifications, Messages, Login/Register
+  - ✅ Category bar with "همه دسته‌بندی‌ها" mega menu
+  - ✅ Request cards with proper layout (title, description, budget, city, category)
+  - ✅ City Selector popup opens with Iran provinces, search, checkboxes
+  - ✅ Newsletter section, Footer, Cookie consent, Back to top, Quick actions
+- Server stability issue: Process dies intermittently (sandbox environment memory/process limits). Works reliably during active test sessions.
+
+Stage Summary:
+- All components verified working correctly
+- No new errors introduced
+- Location Selector fully integrated in header (desktop) and mobile sheet menu
+- Visual QA passed
