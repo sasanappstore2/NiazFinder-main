@@ -811,3 +811,291 @@
 .step-connector-animated.animate {
   animation: drawLine 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ── Card Shimmer on Hover ── */
+@keyframes cardShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.card-shimmer-overlay {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+.card-shimmer-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.08) 60%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  transition: none;
+}
+.group:hover .card-shimmer-overlay::before {
+  animation: cardShimmer 0.7s ease-out forwards;
+}
+.dark .card-shimmer-overlay::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 40%,
+    rgba(255, 255, 255, 0.07) 50%,
+    rgba(255, 255, 255, 0.03) 60%,
+    transparent 100%
+  );
+}
+
+/* ── Urgent Priority Badge Pulse ── */
+@keyframes urgentBadgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.577 0.245 27.325 / 0.35); }
+  50% { box-shadow: 0 0 0 5px oklch(0.577 0.245 27.325 / 0); }
+}
+.urgent-badge-pulse {
+  animation: urgentBadgePulse 2s ease-in-out infinite;
+}
+
+/* ── Card Staggered Fade In ── */
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.card-stagger > * {
+  opacity: 0;
+  animation: cardFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.card-stagger > *:nth-child(1) { animation-delay: 0.03s; }
+.card-stagger > *:nth-child(2) { animation-delay: 0.06s; }
+.card-stagger > *:nth-child(3) { animation-delay: 0.09s; }
+.card-stagger > *:nth-child(4) { animation-delay: 0.12s; }
+.card-stagger > *:nth-child(5) { animation-delay: 0.15s; }
+.card-stagger > *:nth-child(6) { animation-delay: 0.18s; }
+.card-stagger > *:nth-child(7) { animation-delay: 0.21s; }
+.card-stagger > *:nth-child(8) { animation-delay: 0.24s; }
+.card-stagger > *:nth-child(9) { animation-delay: 0.27s; }
+.card-stagger > *:nth-child(10) { animation-delay: 0.30s; }
+.card-stagger > *:nth-child(11) { animation-delay: 0.33s; }
+.card-stagger > *:nth-child(12) { animation-delay: 0.36s; }
+
+/* ── Budget Pill Gradient ── */
+.budget-pill-gradient {
+  background: linear-gradient(135deg, oklch(0.95 0.03 155 / 0.9) 0%, oklch(0.93 0.04 165 / 0.7) 100%);
+}
+.dark .budget-pill-gradient {
+  background: linear-gradient(135deg, oklch(0.22 0.02 160 / 0.6) 0%, oklch(0.25 0.03 165 / 0.4) 100%);
+}
+
+/* ── CTA Banner Animated Gradient ── */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.cta-gradient-animate {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease-in-out infinite;
+}
+
+/* ── Floating Decorative Shapes ── */
+@keyframes floatShape1 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.15; }
+  33% { transform: translate(12px, -18px) rotate(120deg); opacity: 0.25; }
+  66% { transform: translate(-8px, -10px) rotate(240deg); opacity: 0.2; }
+}
+@keyframes floatShape2 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.1; }
+  33% { transform: translate(-15px, -12px) rotate(-120deg); opacity: 0.2; }
+  66% { transform: translate(10px, -20px) rotate(-240deg); opacity: 0.15; }
+}
+@keyframes floatShape3 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.12; }
+  50% { transform: translate(8px, -14px) scale(1.1); opacity: 0.22; }
+}
+.float-shape-1 { animation: floatShape1 12s ease-in-out infinite; }
+.float-shape-2 { animation: floatShape2 15s ease-in-out infinite; }
+.float-shape-3 { animation: floatShape3 10s ease-in-out infinite; }
+.float-shape-4 { animation: floatShape2 18s ease-in-out infinite reverse; }
+
+@media (prefers-reduced-motion: reduce) {
+  .float-shape-1, .float-shape-2, .float-shape-3, .float-shape-4 {
+    animation: none !important;
+    opacity: 0.12 !important;
+  }
+  .cta-gradient-animate {
+    animation: none !important;
+  }
+}
+
+/* ── Gradient Border Button ── */
+.btn-gradient-border {
+  position: relative;
+  background: white;
+  z-index: 0;
+}
+.btn-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #10b981, #059669, #14b8a6, #10b981);
+  background-size: 300% 300%;
+  animation: gradientShift 4s ease-in-out infinite;
+  z-index: -1;
+}
+.btn-gradient-border::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: white;
+  z-index: -1;
+}
+
+/* ── Icon Bounce on Hover ── */
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
+  60% { transform: translateY(-3px); }
+}
+.icon-bounce-hover:hover .icon-bounce-target {
+  animation: iconBounce 0.5s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .icon-bounce-hover:hover .icon-bounce-target {
+    animation: none !important;
+  }
+}
+
+/* ── Connecting Dots Pattern ── */
+.step-connector-dots {
+  background-image: radial-gradient(circle, oklch(0.51 0.12 165 / 0.3) 3px, transparent 3px);
+  background-size: 12px 100%;
+  background-repeat: repeat-x;
+}
+.dark .step-connector-dots {
+  background-image: radial-gradient(circle, oklch(0.65 0.15 165 / 0.25) 3px, transparent 3px);
+}
+
+/* ── Footer Glassmorphism ── */
+.footer-glass {
+  background: oklch(0.97 0.003 155 / 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.dark .footer-glass {
+  background: oklch(0.16 0.007 160 / 0.7);
+}
+
+/* ── Link Underline Animation ── */
+.link-underline-animated {
+  position: relative;
+}
+.link-underline-animated::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: 0;
+  width: 0;
+  height: 1px;
+  background: oklch(0.51 0.12 165);
+  transition: width 0.3s ease-out;
+}
+.link-underline-animated:hover::after {
+  width: 100%;
+}
+.dark .link-underline-animated::after {
+  background: oklch(0.65 0.15 165);
+}
+
+/* ── Newsletter Input Gradient Border ── */
+.newsletter-input-gradient {
+  position: relative;
+  background: oklch(0.96 0.005 155 / 0.5);
+  border: none;
+  padding: 1px;
+}
+.newsletter-input-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, oklch(0.51 0.12 165 / 0.2), oklch(0.65 0.18 130 / 0.1), oklch(0.51 0.12 165 / 0.2));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.newsletter-input-gradient:focus-within::before {
+  background: linear-gradient(135deg, oklch(0.51 0.12 165 / 0.5), oklch(0.65 0.18 130 / 0.3), oklch(0.51 0.12 165 / 0.5));
+}
+.dark .newsletter-input-gradient {
+  background: oklch(0.18 0.007 160 / 0.5);
+}
+.dark .newsletter-input-gradient::before {
+  background: linear-gradient(135deg, oklch(0.65 0.15 165 / 0.2), oklch(0.6 0.18 130 / 0.1), oklch(0.65 0.15 165 / 0.2));
+}
+.dark .newsletter-input-gradient:focus-within::before {
+  background: linear-gradient(135deg, oklch(0.65 0.15 165 / 0.5), oklch(0.6 0.18 130 / 0.3), oklch(0.65 0.15 165 / 0.5));
+}
+
+/* ── Category Chip Selected Dot ── */
+.chip-selected-dot {
+  position: relative;
+}
+.chip-selected-dot::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.chip-selected-dot-active::after {
+  transform: translateX(-50%) scale(1);
+}
+
+/* ── Scroll Progress Bar (pure CSS + JS) ── */
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: calc(var(--z-header) + 1);
+  transform-origin: right;
+  transition: opacity 0.3s ease;
+}
+.scroll-progress-bar-inner {
+  height: 100%;
+  background: linear-gradient(to left, #34d399, #10b981, #059669, #14b8a6);
+  border-radius: 0 2px 2px 0;
+  transition: none;
+}
+
+/* ── Back to Top Progress Circle ── */
+.back-to-top-progress {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom, 8px) + 24px);
+  left: 24px;
+  z-index: var(--z-sticky);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.back-to-top-progress circle {
+  transition: stroke-dashoffset 0.15s ease;
+}

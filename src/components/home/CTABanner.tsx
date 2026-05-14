@@ -21,7 +21,16 @@ export function CTABanner() {
   };
 
   return (
-    <section id="cta" className="relative w-full overflow-hidden bg-gradient-to-l from-emerald-600 via-emerald-700 to-teal-800" aria-label="فراخوان به اقدام" itemScope itemType="https://schema.org/WPAdBlock">
+    <section id="cta" className="relative w-full overflow-hidden bg-gradient-to-bl from-emerald-600 via-emerald-700 to-teal-800 cta-gradient-animate" aria-label="فراخوان به اقدام" itemScope itemType="https://schema.org/WPAdBlock">
+      {/* Floating decorative shapes */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="float-shape-1 absolute top-[10%] start-[8%] size-16 rounded-2xl border border-white/10 bg-white/5 rotate-12" />
+        <div className="float-shape-2 absolute top-[20%] end-[12%] size-12 rounded-full border border-white/10 bg-white/5" />
+        <div className="float-shape-3 absolute bottom-[15%] start-[15%] size-20 rounded-xl border border-white/10 bg-white/5 -rotate-6" />
+        <div className="float-shape-4 absolute bottom-[25%] end-[8%] size-14 rounded-full border border-white/10 bg-white/5" />
+        <div className="float-shape-2 absolute top-[50%] start-[45%] size-8 rounded-lg border border-white/8 bg-white/3" />
+      </div>
+
       <div className="container-default mx-auto flex max-w-4xl flex-col items-center px-5 md:px-8 py-20 md:py-32 text-center">
         <h2 className="mb-5 max-w-2xl text-2xl md:text-4xl font-extrabold leading-snug tracking-tight text-white" itemProp="headline">
           آماده‌اید بهترین کسب‌وکارها را پیدا کنید؟
@@ -35,7 +44,7 @@ export function CTABanner() {
           <Button
             onClick={handleRegister}
             size="lg"
-            className="h-12 rounded-xl bg-white px-8 text-base font-bold text-emerald-700 shadow-xl transition-all 150ms ease hover:bg-white/95"
+            className="h-12 rounded-xl px-8 text-base font-bold text-emerald-700 shadow-xl transition-all 150ms ease hover:bg-white/95 btn-gradient-border"
             data-href="/register"
             title="ثبت‌نام رایگان در نیاز فایندر - تنها در ۲ دقیقه"
           >
@@ -46,7 +55,7 @@ export function CTABanner() {
             onClick={() => navigateTo('browse-specialists')}
             size="lg"
             variant="outline"
-            className="h-12 rounded-xl border-2 border-white/30 bg-white/5 px-8 text-base font-bold text-white transition-all 150ms ease hover:border-white/60 hover:bg-white/15"
+            className="h-12 rounded-xl border-2 border-white/25 bg-white/5 px-8 text-base font-bold text-white backdrop-blur-sm transition-all duration-300 ease hover:border-white/50 hover:bg-white/15 hover:shadow-lg hover:shadow-white/5"
             data-href="/browse-specialists"
             title="مشاهده لیست کسب‌وکارها برتر و تخصص‌های آن‌ها"
           >

@@ -96,6 +96,25 @@ function PriorityBadge({ priority }: { priority: string }) {
   );
 }
 
+// ─── Urgent Priority Badge (with pulse) ───────────────────
+function UrgentPriorityBadge({ priority }: { priority: string }) {
+  const config = PRIORITY_CONFIG[priority] || PRIORITY_CONFIG.NORMAL;
+  const Icon = config.icon;
+  const isUrgent = priority === 'URGENT';
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-semibold tabular-nums tracking-tight',
+        config.badgeClass,
+        isUrgent && 'urgent-badge-pulse',
+      )}
+    >
+      <Icon className="size-3" aria-hidden="true" />
+      {config.label}
+    </span>
+  );
+}
+
 // ─── Skeleton Card ───────────────────────────
 function SkeletonCard() {
   return (
@@ -199,6 +218,9 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
           </div>
         )}
 
+        {/* ── Shimmer overlay on hover ── */}
+        <div className="card-shimmer-overlay rounded-2xl" />
+
         {/* ── New shimmer overlay ── */}
         {isNew && (
           <motion.div
@@ -272,7 +294,7 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
                 {request.title}
               </h2>
 
-              <PriorityBadge priority={request.priority} />
+              <UrgentPriorityBadge priority={request.priority} />
             </div>
 
             {/* ── Description ── */}
@@ -287,7 +309,7 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
                 className={cn(
                   'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5',
                   'text-[11px] font-semibold tabular-nums',
-                  'bg-emerald-50/80 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400',
+                  'budget-pill-gradient text-emerald-700 dark:text-emerald-400',
                   'ring-1 ring-emerald-200/40 dark:ring-emerald-800/30',
                   'transition-all duration-200 group-hover:ring-emerald-300/60 dark:group-hover:ring-emerald-700/50',
                 )}
@@ -719,9 +741,10 @@ export function NeedsHomepage() {
               className={cn(
                 'inline-flex items-center gap-1.5 shrink-0 rounded-xl px-4 py-2 text-xs font-semibold',
                 'border transition-all duration-300 ease-out',
+                'chip-selected-dot',
                 !selectedCategory
-                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/25 scale-[1.02]'
-                  : 'bg-card/60 text-muted-foreground border-border/40 hover:bg-card hover:border-border/60 hover:text-foreground hover:shadow-sm',
+                  ? 'bg-gradient-to-l from-emerald-500 to-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/25 scale-[1.02] chip-active-pulse chip-selected-dot-active'
+                  : 'bg-card/60 text-muted-foreground border-border/40 hover:bg-card hover:border-border/60 hover:text-foreground hover:shadow-sm hover:scale-[1.02]',
               )}
             >
               <LayoutGrid className="size-3.5" aria-hidden="true" />
@@ -741,9 +764,10 @@ export function NeedsHomepage() {
                   className={cn(
                     'inline-flex items-center gap-1.5 shrink-0 rounded-xl px-4 py-2 text-xs font-semibold',
                     'border transition-all duration-300 ease-out',
+                    'chip-selected-dot',
                     isActive
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/25 scale-[1.02] chip-active-pulse'
-                      : 'bg-card/60 text-muted-foreground border-border/40 hover:bg-card hover:border-border/60 hover:text-foreground hover:shadow-sm',
+                      ? 'bg-gradient-to-l from-emerald-500 to-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/25 scale-[1.02] chip-active-pulse chip-selected-dot-active'
+                      : 'bg-card/60 text-muted-foreground border-border/40 hover:bg-card hover:border-border/60 hover:text-foreground hover:shadow-sm hover:scale-[1.02]',
                   )}
                 >
                   <Icon className="size-3.5" aria-hidden="true" />
@@ -830,7 +854,7 @@ export function NeedsHomepage() {
         ) : (
           <>
             <div
-              className="flex flex-col gap-3"
+              className="flex flex-col gap-3 card-stagger"
               itemScope
               itemType="https://schema.org/ItemList"
             >

@@ -65,6 +65,12 @@ export function HomepageHowItWorks() {
             <div className="w-full h-[2px]" />
           </div>
 
+          {/* Connecting dots — desktop only */}
+          <div
+            className="absolute top-[52px] start-[12.5%] end-[12.5%] hidden md:block z-0 h-[2px] step-connector-dots"
+            aria-hidden="true"
+          />
+
           <div className="grid grid-cols-1 gap-8 md:grid-cols-4 md:gap-6 lg:gap-8">
             {STEPS.map((step, i) => {
               const Icon = step.icon;
@@ -82,7 +88,8 @@ export function HomepageHowItWorks() {
                       'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600',
                       'shadow-lg shadow-emerald-500/25',
                       'ring-4 ring-emerald-50 dark:ring-emerald-950/30',
-                      'transition-transform duration-300 hover:scale-105',
+                      'transition-transform duration-300 hover:scale-110',
+                      'icon-bounce-hover',
                     )}
                   >
                     <span
@@ -92,7 +99,7 @@ export function HomepageHowItWorks() {
                     >
                       {step.number}
                     </span>
-                    <Icon className="size-9 text-white" aria-hidden="true" />
+                    <Icon className="size-9 text-white icon-bounce-target" aria-hidden="true" />
                   </div>
 
                   {/* Glassmorphism card */}
@@ -103,7 +110,7 @@ export function HomepageHowItWorks() {
                       'border-emerald-200/40 dark:border-emerald-800/30',
                       'shadow-sm shadow-emerald-900/5 dark:shadow-black/10',
                       'transition-all duration-300 hover:shadow-md hover:shadow-emerald-900/10 dark:hover:shadow-black/20',
-                      'hover:-translate-y-1 hover:bg-white/80 dark:hover:bg-card/70',
+                      'hover:-translate-y-1.5 hover:bg-white/80 dark:hover:bg-card/70 hover:scale-[1.02]',
                     )}
                   >
                     <h3
@@ -126,7 +133,11 @@ export function HomepageHowItWorks() {
                       className="mt-5 flex items-center justify-center md:hidden"
                       aria-hidden="true"
                     >
-                      <ChevronLeft className="size-6 text-emerald-400 dark:text-emerald-600" />
+                      <div className="flex items-center gap-1">
+                        <div className="size-1 rounded-full bg-emerald-300 dark:bg-emerald-700" />
+                        <ChevronLeft className="size-5 text-emerald-400 dark:text-emerald-600" />
+                        <div className="size-1 rounded-full bg-emerald-300 dark:bg-emerald-700" />
+                      </div>
                     </div>
                   )}
                 </div>

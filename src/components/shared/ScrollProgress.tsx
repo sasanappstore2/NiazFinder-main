@@ -1,37 +1,53 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion, useScroll, useSpring } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 
-// ============ Scroll Progress Indicator ============
+// ============ Scroll Progress Indicator (pure CSS + JS) ============
 export function ScrollProgress() {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 200,
-    damping: 50,
-    restDelta: 0.001,
-  });
-
-  const [isVisible, setIsVisible] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>(0);
+  const tickingRef = useRef(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsVisible(window.scrollY > 100);
+    function onScroll() {
+      if (tickingRef.current) return;
+      tickingRef.current = true;
+
+      rafRef.current = requestAnimationFrame(() => {
+        const bar = barRef.current;
+        if (!bar) {
+          tickingRef.current = false;
+          return;
+        }
+
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
+        const widthPercent = progress * 100;
+
+        bar.style.width = `${widthPercent}%`;
+        bar.style.opacity = scrollTop > 100 ? '1' : '0';
+        tickingRef.current = false;
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener('scroll', onScroll);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <motion.div
-      className="fixed top-0 inset-x-0 z-[calc(var(--z-header)+1)] h-[3px] origin-right"
-      style={{ scaleX }}
+    <div
+      className="scroll-progress-bar"
       aria-hidden="true"
+      role="progressbar"
+      aria-valuenow={0}
+      aria-valuemin={0}
+      aria-valuemax={100}
     >
-      <div
-        className="h-full bg-gradient-to-l from-emerald-400 via-emerald-500 to-teal-500 opacity-90 transition-opacity duration-300"
-        style={{ opacity: isVisible ? 1 : 0 }}
-      />
-    </motion.div>
+      <div ref={barRef} className="scroll-progress-bar-inner" style={{ width: '0%' }} />
+    </div>
   );
 }

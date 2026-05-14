@@ -13,6 +13,9 @@ import {
   ExternalLink,
   ArrowUp,
   Sparkles,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -131,6 +134,8 @@ export function Footer({ compact = false }: FooterProps) {
   const { navigateTo } = useAppStore();
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [subscribeError, setSubscribeError] = useState('');
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   // Back to top visibility
@@ -150,13 +155,38 @@ export function Footer({ compact = false }: FooterProps) {
     }
   };
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim()) {
+    setSubscribeError('');
+    if (!email.trim()) return;
+    if (!isValidEmail(email)) {
+      setSubscribeError('لطفاً ایمیل معتبر وارد کنید');
+      return;
+    }
+    // Check localStorage for duplicates
+    try {
+      const stored = JSON.parse(localStorage.getItem('nf_newsletters') || '[]');
+      if ((stored as string[]).includes(email.trim().toLowerCase())) {
+        setSubscribeError('این ایمیل قبلاً ثبت شده است');
+        return;
+      }
+    } catch {}
+    // Simulate loading
+    setIsSubscribing(true);
+    await new Promise((r) => setTimeout(r, 800));
+    try {
+      const stored: string[] = JSON.parse(localStorage.getItem('nf_newsletters') || '[]');
+      stored.push(email.trim().toLowerCase());
+      localStorage.setItem('nf_newsletters', JSON.stringify(stored));
       setIsSubscribed(true);
       setEmail('');
-      setTimeout(() => setIsSubscribed(false), 3000);
+      setTimeout(() => setIsSubscribed(false), 4000);
+    } catch {
+      setSubscribeError('خطا در ثبت ایمیل. لطفاً دوباره تلاش کنید');
     }
+    setIsSubscribing(false);
   };
 
   const currentYear = new Date().getFullYear();
@@ -243,13 +273,13 @@ export function Footer({ compact = false }: FooterProps) {
 
   // ============ Full Footer (home page) ============
   return (
-    <footer id="footer" className="mt-auto bg-card/50 footer-wave" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
+    <footer id="footer" className="mt-auto footer-glass footer-wave" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
       {/* Gradient top decoration line */}
       <div className="gradient-line" />
       {/* Newsletter Section */}
-      <div className="border-b border-border bg-muted/30">
+      <div className="border-b border-border/30">
         <div className="container-default py-10">
-          <div className="gradient-border rounded-xl p-6 md:p-8">
+          <div className="rounded-xl p-6 md:p-8 bg-muted/30">
             <div className="flex flex-col items-center gap-4 text-center md:flex-row md:justify-between md:text-start">
               <div className="max-w-md">
                 <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
@@ -265,39 +295,62 @@ export function Footer({ compact = false }: FooterProps) {
               </div>
               <form
                 onSubmit={handleSubscribe}
-                className="flex w-full max-w-sm gap-2"
+                className="flex flex-col gap-2 w-full max-w-sm"
                 aria-label="عضویت در خبرنامه"
               >
-                <input
-                  type="email"
-                  placeholder="ایمیل شما..."
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="newsletter-input h-[40px] w-full flex-1 rounded-lg px-3 text-sm"
-                  dir="ltr"
-                  aria-label="آدرس ایمیل"
-                  required
-                />
-                <Button
-                  type="submit"
-                  size="default"
-                  className={cn(
-                    'h-[40px] px-5 transition-all duration-200 hover:shadow-[0_0_12px_oklch(0.51_0.12_165/0.25)]',
-                    isSubscribed && 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-[0_0_12px_oklch(0.51_0.12_165/0.3)] newsletter-success'
-                  )}
-                >
-                  {isSubscribed ? (
-                    <span className="flex items-center gap-2">
-                      <Check className="size-4" />
-                      ثبت شد
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <Mail className="size-4" />
-                      عضویت
-                    </span>
-                  )}
-                </Button>
+                <div className="flex gap-2">
+                  <div className="newsletter-input-gradient rounded-lg flex-1">
+                    <input
+                      type="email"
+                      placeholder="ایمیل شما..."
+                      value={email}
+                      onChange={(e) => { setEmail(e.target.value); setSubscribeError(''); }}
+                      className="newsletter-input h-[40px] w-full rounded-lg px-3 text-sm"
+                      dir="ltr"
+                      aria-label="آدرس ایمیل"
+                      required
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    size="default"
+                    disabled={isSubscribing}
+                    className={cn(
+                      'h-[40px] px-5 transition-all duration-200 hover:shadow-[0_0_12px_oklch(0.51_0.12_165/0.25)]',
+                      isSubscribed && 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-[0_0_12px_oklch(0.51_0.12_165/0.3)] newsletter-success',
+                      isSubscribing && 'opacity-80 pointer-events-none',
+                    )}
+                  >
+                    {isSubscribing ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="size-4 animate-spin" />
+                        <span className="sr-only">در حال ثبت...</span>
+                      </span>
+                    ) : isSubscribed ? (
+                      <span className="flex items-center gap-2">
+                        <CheckCircle2 className="size-4" />
+                        عضویت موفق
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        <Mail className="size-4" />
+                        عضویت
+                      </span>
+                    )}
+                  </Button>
+                </div>
+                {subscribeError && (
+                  <div className="flex items-center gap-1.5 text-[11px] text-red-500 dark:text-red-400">
+                    <AlertCircle className="size-3 shrink-0" />
+                    {subscribeError}
+                  </div>
+                )}
+                {isSubscribed && (
+                  <div className="flex items-center gap-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 animate-fade-in-up">
+                    <CheckCircle2 className="size-3 shrink-0" />
+                    عضویت شما با موفقیت انجام شد!
+                  </div>
+                )}
               </form>
             </div>
           </div>
@@ -373,7 +426,7 @@ export function Footer({ compact = false }: FooterProps) {
                         data-href={VIEW_HREF[link.view]}
                         title={link.title}
                         onClick={(e) => handleLinkClick(e, link)}
-                        className="flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 hover:text-primary"
+                        className="flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 hover:text-primary link-underline-animated"
                       >
                         {link.label}
                       </a>
@@ -382,7 +435,7 @@ export function Footer({ compact = false }: FooterProps) {
                         href={link.href ?? '#'}
                         data-href={link.href ?? '#'}
                         title={link.title}
-                        className="flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 hover:text-primary"
+                        className="flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 hover:text-primary link-underline-animated"
                         target={
                           (link.href ?? '').startsWith('http') ? '_blank' : undefined
                         }
