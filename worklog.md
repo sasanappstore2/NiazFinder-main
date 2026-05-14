@@ -849,3 +849,37 @@ Stage Summary:
 - All components verified rendering correctly
 - No code errors found in any components
 - Project is fully functional when server is running
+---
+Task ID: 1
+Agent: Main Agent
+Task: Fix chat page scrolling - make it a single-page without scroll, only messages/contacts scroll
+
+Work Log:
+- Analyzed project structure to find all chat-related components
+- Identified root cause: page layout includes Header (52px) + CategoryBar (44px) + Footer + MobileBottomNav, causing total overflow beyond viewport when chat is active
+- Modified `src/app/page.tsx`:
+  - Added `cn` utility import
+  - Added `isChatView` flag when `currentView === 'messages'`
+  - Root container: `h-screen overflow-hidden` on chat view instead of `min-h-screen`
+  - Hide CategoryBar on chat view
+  - Main content: `flex flex-col overflow-hidden` on chat view, removed `pt-6`
+  - Chat wrapper: `<div className="flex-1 overflow-hidden">` (removed Breadcrumb, Separator, fixed height)
+  - Hide Footer entirely on chat view
+  - Hide MobileBottomNav on chat view
+  - Added `useEffect` to set `document.body.style.overflow = 'hidden'` when chat is active
+- Modified `src/components/chat/ChatPanel.tsx`:
+  - Root div: added `min-h-0` to flex container (prevents flex items from expanding beyond container)
+  - Conversation list: added `min-h-0 overflow-hidden` 
+  - Message area: added `min-h-0 overflow-hidden`
+  - ScrollArea components: added `min-h-0` class for proper flex shrinking
+- Modified `src/components/ui/scroll-area.tsx`:
+  - Added `overflow-hidden` to ScrollArea root class for proper height calculation in flex layouts
+- Modified `src/components/views/MessagesPage.tsx`:
+  - Simplified wrapper to `flex h-full min-h-0 overflow-hidden`
+
+Stage Summary:
+- Chat page is now a fixed single-page layout that fills the viewport without any page-level scrolling
+- Only the conversation list and message areas have internal scrolling via ScrollArea
+- Footer, CategoryBar, and MobileBottomNav are hidden when chat view is active
+- Body overflow is prevented via useEffect to ensure no browser-level scrolling
+- All changes are backwards compatible - other views remain unaffected

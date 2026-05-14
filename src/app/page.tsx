@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
+import { cn } from '@/lib/utils';
 
 // Layout
 import { Header } from '@/components/layout/Header';
@@ -14,6 +15,7 @@ import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { CookieConsent } from '@/components/shared/CookieConsent';
 import { OnboardingWelcome } from '@/components/shared/OnboardingWelcome';
+import { ScrollProgress } from '@/components/shared/ScrollProgress';
 import { Separator } from '@/components/ui/separator';
 
 // Homepage
@@ -48,6 +50,21 @@ function HomePage() {
 export default function App() {
   const { currentView } = useAppStore();
 
+  const isHome = currentView === 'home';
+  const isChatView = currentView === 'messages';
+
+  // Prevent body scroll when chat view is active
+  useEffect(() => {
+    if (isChatView) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isChatView]);
+
   // Keyboard shortcut: Escape to go back
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -59,20 +76,28 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const isHome = currentView === 'home';
-
   return (
     <ErrorBoundary>
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className={cn(
+      'flex flex-col bg-background text-foreground',
+      isChatView
+        ? 'h-screen overflow-hidden'
+        : 'min-h-screen'
+    )}>
+      <ScrollProgress />
       <Header />
-      <CategoryBar />
+      {!isChatView && <CategoryBar />}
 
       <main
         id="main-content"
         key={currentView}
         role="main"
         tabIndex={-1}
-        className={`flex-1 opacity-100 transition-opacity duration-150 ease-in ${isHome ? '' : 'pt-6'}`}
+        className={cn(
+          'flex-1 opacity-100 transition-opacity duration-150 ease-in',
+          isChatView ? 'flex flex-col overflow-hidden' : '',
+          !isHome && !isChatView ? 'pt-6' : ''
+        )}
         dir="rtl"
       >
         {currentView === 'home' && <HomePage />}
@@ -131,9 +156,7 @@ export default function App() {
           <AdminDashboard />
         )}
         {currentView === 'messages' && (
-          <div className="max-w-7xl mx-auto px-4 pt-2 pb-12" style={{ height: 'calc(100vh - 80px)' }}>
-            <Breadcrumb />
-            <Separator className="my-4" />
+          <div className="flex-1 overflow-hidden">
             <ChatPanel />
           </div>
         )}
@@ -188,14 +211,16 @@ export default function App() {
         )}
       </main>
 
-      {/* Footer — always visible; compact with separator on non-home pages */}
-      {isHome ? (
-        <Footer />
-      ) : (
-        <div className="mt-auto">
-          <Separator />
-          <Footer compact />
-        </div>
+      {/* Footer — hidden on chat view; compact on non-home pages */}
+      {!isChatView && (
+        isHome ? (
+          <Footer />
+        ) : (
+          <div className="mt-auto">
+            <Separator />
+            <Footer compact />
+          </div>
+        )
       )}
 
       {/* Auth Modal */}
@@ -204,8 +229,8 @@ export default function App() {
       {/* Onboarding Welcome */}
       <OnboardingWelcome />
 
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNav />
+      {/* Mobile Bottom Navigation — hidden on chat view */}
+      {!isChatView && <MobileBottomNav />}
 
       {/* Cookie Consent Banner */}
       <CookieConsent />

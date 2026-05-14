@@ -86,7 +86,7 @@ export function MobileBottomNav() {
       aria-label="ناوبری پایین صفحه"
     >
       <div className="mx-auto max-w-lg">
-        <div className="flex items-center justify-around gap-1 rounded-t-2xl border border-b-0 border-border/40 bg-background/80 px-1 pt-1 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+        <div className="flex items-center justify-around gap-1 rounded-t-2xl border border-b-0 border-border/30 bg-background/70 px-1 pt-1 pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl shadow-[0_-4px_24px_rgba(0,0,0,0.06)] dark:bg-background/60">
           {TABS.map((tab) => {
             const isActive = currentView === tab.view;
             const Icon = tab.icon;
@@ -100,11 +100,11 @@ export function MobileBottomNav() {
                 title={tab.title}
                 onClick={() => handleTabClick(tab)}
                 className={cn(
-                  'relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-2 text-[11px] font-medium transition-colors duration-150',
+                  'relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-2 text-[11px] font-medium transition-all duration-200',
                   'min-h-[44px]',
                   isActive
-                    ? 'text-primary'
-                    : 'text-muted-foreground active:text-foreground'
+                    ? 'text-primary bg-primary/8'
+                    : 'text-muted-foreground active:text-foreground active:bg-accent/50'
                 )}
                 aria-label={tab.title}
                 aria-current={isActive ? 'page' : undefined}
@@ -112,8 +112,8 @@ export function MobileBottomNav() {
                 {/* Active bottom indicator */}
                 <span
                   className={cn(
-                    'absolute inset-x-2 bottom-0 h-[2px] rounded-full transition-colors duration-150',
-                    isActive ? 'bg-primary' : 'bg-transparent'
+                    'absolute inset-x-2 bottom-0 h-[2.5px] rounded-full transition-all duration-200',
+                    isActive ? 'bg-primary shadow-[0_0_6px_oklch(0.51_0.12_165/0.4)]' : 'bg-transparent'
                   )}
                   aria-hidden="true"
                 />
@@ -122,10 +122,10 @@ export function MobileBottomNav() {
                 <div className="relative">
                   <Icon
                     className={cn(
-                      'size-[20px] transition-colors duration-150',
-                      isActive && 'text-primary'
+                      'size-[20px] transition-all duration-200',
+                      isActive && 'text-primary scale-110'
                     )}
-                    strokeWidth={isActive ? 2.5 : 2}
+                    strokeWidth={isActive ? 2.5 : 1.8}
                   />
 
                   {/* Unread badge for messages */}

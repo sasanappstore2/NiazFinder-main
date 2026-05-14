@@ -305,11 +305,11 @@ export function ChatPanel() {
 
   // ─── Render ──────────────────────────────────────────────────────────────
   return (
-    <div className="flex h-full overflow-hidden rounded-xl border bg-background shadow-sm">
+    <div className="flex h-full min-h-0 overflow-hidden rounded-xl border bg-background shadow-sm">
       {/* ── Conversation List ── */}
       <div
         className={cn(
-          'flex w-full flex-col border-l md:w-[380px] md:border-l',
+          'flex w-full min-h-0 flex-col overflow-hidden border-l md:w-[380px] md:border-l',
           showMessages ? 'hidden md:flex' : 'flex'
         )}
         role="navigation"
@@ -338,7 +338,7 @@ export function ChatPanel() {
         </div>
 
         {/* Conversation List */}
-        <ScrollArea className="flex-1" role="list" aria-label="مکالمات">
+        <ScrollArea className="min-h-0 flex-1" role="list" aria-label="مکالمات">
           <div className="space-y-0.5 p-2">
             {filteredConversations.map((conv) => (
               <button
@@ -401,7 +401,7 @@ export function ChatPanel() {
       {/* ── Message Area ── */}
       <div
         className={cn(
-          'flex flex-1 flex-col',
+          'flex min-h-0 flex-1 flex-col overflow-hidden',
           !showMessages ? 'hidden md:flex' : 'flex'
         )}
       >
@@ -459,7 +459,7 @@ export function ChatPanel() {
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 px-4 py-3" ref={scrollAreaViewportRef}>
+            <ScrollArea className="min-h-0 flex-1 px-4 py-3" ref={scrollAreaViewportRef}>
               <div className="space-y-3" role="log" aria-label="پیام‌ها" aria-live="polite">
                 {/* System message */}
                 <div className="flex justify-center py-2">

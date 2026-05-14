@@ -43,10 +43,11 @@ function DesktopCategoryBar() {
           <button
             type="button"
             className={cn(
-              'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150',
+              'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200',
+              'border border-transparent',
               isOpen
-                ? 'bg-primary/10 text-primary'
-                : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                ? 'bg-primary/10 text-primary border-primary/20 shadow-[0_0_8px_oklch(0.51_0.12_165/0.1)]'
+                : 'text-muted-foreground hover:bg-accent hover:text-foreground hover:border-border/50'
             )}
             aria-expanded={isOpen}
             aria-haspopup="true"
@@ -96,7 +97,7 @@ function MobileCategoryBar() {
         <SheetTrigger asChild>
           <button
             type="button"
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors duration-150"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground hover:border-border/50 border border-transparent transition-all duration-200"
           >
             <LayoutGrid className="size-4" />
             <span>همه دسته‌بندی‌ها</span>
@@ -121,10 +122,12 @@ function MobileCategoryBar() {
 export function CategoryBar() {
   return (
     <div
-      className="sticky top-[52px] z-40 w-full border-b border-border/50 bg-background/95 backdrop-blur-lg"
+      className="sticky top-[52px] z-40 w-full border-b border-border/30 bg-background/95 backdrop-blur-xl"
       role="toolbar"
       aria-label="نوار دسته‌بندی‌ها"
     >
+      {/* Gradient bottom line */}
+      <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-l from-transparent via-primary/15 to-transparent" />
       <div className="container-default">
         <div className="flex h-11 items-center gap-2 overflow-x-auto scrollbar-none">
           <DesktopCategoryBar />

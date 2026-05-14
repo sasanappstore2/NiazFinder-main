@@ -174,7 +174,7 @@ export function Footer({ compact = false }: FooterProps) {
                 data-href={VIEW_HREF['home']}
                 title="صفحه اصلی"
                 onClick={(e) => handleLinkClick(e, FOOTER_COLUMNS[0].links[0])}
-                className="text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground"
+                className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
               >
                 صفحه اصلی
               </a>
@@ -184,7 +184,7 @@ export function Footer({ compact = false }: FooterProps) {
                 data-href={VIEW_HREF['post-need']}
                 title="ثبت نیاز"
                 onClick={(e) => handleLinkClick(e, FOOTER_COLUMNS[0].links[1])}
-                className="text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground"
+                className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
               >
                 ثبت نیاز
               </a>
@@ -194,7 +194,7 @@ export function Footer({ compact = false }: FooterProps) {
                 data-href={VIEW_HREF['browse-specialists']}
                 title="کسب‌وکارها"
                 onClick={(e) => handleLinkClick(e, FOOTER_COLUMNS[0].links[2])}
-                className="text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground"
+                className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
               >
                 کسب‌وکارها
               </a>
@@ -202,7 +202,7 @@ export function Footer({ compact = false }: FooterProps) {
                 href="#contact"
                 data-href="#contact"
                 title="تماس با ما"
-                className="text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground"
+                className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
               >
                 تماس با ما
               </a>
@@ -233,7 +233,9 @@ export function Footer({ compact = false }: FooterProps) {
 
   // ============ Full Footer (home page) ============
   return (
-    <footer id="footer" className="mt-auto border-t border-border bg-card/50" role="contentinfo" itemscope itemtype="https://schema.org/WPFooter">
+    <footer id="footer" className="mt-auto bg-card/50" role="contentinfo" itemscope itemtype="https://schema.org/WPFooter">
+      {/* Gradient top border */}
+      <div className="h-[2px] bg-gradient-to-l from-transparent via-primary/25 to-transparent" />
       {/* Newsletter Section */}
       <div className="border-b border-border bg-muted/30">
         <div className="container-default py-10">
@@ -314,7 +316,7 @@ export function Footer({ compact = false }: FooterProps) {
                   rel="noopener noreferrer"
                   aria-label={social.label}
                   title={social.title}
-                  className="flex size-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors duration-150 hover:border-primary/30 hover:bg-primary/10 hover:text-primary"
+                  className="flex size-9 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-all duration-200 hover:border-primary/30 hover:bg-primary/10 hover:text-primary hover:shadow-[0_0_8px_oklch(0.51_0.12_165/0.12)]"
                 >
                   <social.icon className="size-4" />
                 </a>
@@ -328,7 +330,7 @@ export function Footer({ compact = false }: FooterProps) {
                   key={contact.label}
                   href={contact.href}
                   title={contact.title}
-                  className="flex items-center gap-2.5 text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground"
+                  className="flex items-center gap-2.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-primary"
                 >
                   <contact.icon className="size-4 shrink-0 text-primary/70" />
                   <span>{contact.value}</span>
@@ -353,7 +355,7 @@ export function Footer({ compact = false }: FooterProps) {
                         data-href={VIEW_HREF[link.view]}
                         title={link.title}
                         onClick={(e) => handleLinkClick(e, link)}
-                        className="flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 hover:text-primary"
+                        className="flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-4"
                       >
                         {link.label}
                       </a>
@@ -362,7 +364,7 @@ export function Footer({ compact = false }: FooterProps) {
                         href={link.href ?? '#'}
                         data-href={link.href ?? '#'}
                         title={link.title}
-                        className="flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 hover:text-primary"
+                        className="flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-4"
                         target={
                           (link.href ?? '').startsWith('http') ? '_blank' : undefined
                         }
@@ -396,7 +398,7 @@ export function Footer({ compact = false }: FooterProps) {
               href="/terms"
               data-href="/terms"
               title="قوانین و مقررات استفاده از نیاز فایندر"
-              className="text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground"
+              className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
             >
               قوانین استفاده
             </a>
@@ -407,7 +409,7 @@ export function Footer({ compact = false }: FooterProps) {
               href="/privacy"
               data-href="/privacy"
               title="سیاست حریم خصوصی نیاز فایندر"
-              className="text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground"
+              className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
             >
               حریم خصوصی
             </a>

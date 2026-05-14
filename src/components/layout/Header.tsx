@@ -157,9 +157,14 @@ function NotificationsButton() {
     >
       <Bell className="size-[16px]" />
       {unreadNotificationCount > 0 && (
-        <Badge className="absolute -top-1 -end-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-[10px] font-bold text-white">
+        <span
+          className={cn(
+            "absolute -top-1 -end-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-[10px] font-bold text-white",
+            "animate-notification-pulse"
+          )}
+        >
           {unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}
-        </Badge>
+        </span>
       )}
     </Button>
   );
@@ -555,14 +560,16 @@ export function Header() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-[var(--z-header)] w-full border-b transition-all duration-150',
+        'sticky top-0 z-[var(--z-header)] w-full transition-all duration-200',
         isScrolled
-          ? 'border-border/50 bg-background/80 shadow-sm backdrop-blur-xl'
-          : 'border-transparent bg-background'
+          ? 'bg-background/85 shadow-sm backdrop-blur-xl'
+          : 'bg-background'
       )}
       role="banner"
     >
-      <div className="container-default">
+      {/* Gradient bottom border */}
+      <div className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-l from-transparent via-primary/30 to-transparent opacity-60" />
+      <div className="container-default border-b border-border/40">
         <div className="flex h-[52px] items-center justify-between gap-4">
           {/* Right: Logo */}
           <button

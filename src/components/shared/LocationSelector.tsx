@@ -64,10 +64,11 @@ export function LocationSelector() {
         size="sm"
         onClick={() => setIsOpen(true)}
         className={cn(
-          'hidden sm:inline-flex h-9 px-3 gap-1.5 text-sm font-normal shrink-0',
+          'hidden sm:inline-flex h-9 px-3 gap-1.5 text-sm font-normal shrink-0 rounded-lg',
+          'border border-border/40 transition-all duration-200',
           selectedCities.length > 0
-            ? 'bg-primary/10 text-primary hover:bg-primary/15'
-            : 'text-muted-foreground hover:text-foreground'
+            ? 'bg-primary/8 text-primary border-primary/20 hover:bg-primary/15 hover:border-primary/30 shadow-[0_0_8px_oklch(0.51_0.12_165/0.08)]'
+            : 'bg-muted/40 text-muted-foreground hover:bg-muted/60 hover:text-foreground hover:border-border/60'
         )}
         title="انتخاب شهر"
       >

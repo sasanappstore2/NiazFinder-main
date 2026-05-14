@@ -12,12 +12,6 @@ import {
   Sparkles,
   Zap,
   ArrowUpRight,
-  Car,
-  Laptop,
-  Armchair,
-  Shirt,
-  Dices,
-  Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
@@ -27,88 +21,11 @@ import {
 } from '@/lib/constants';
 import type { ServiceRequest } from '@/lib/types';
 import { getCategoryColor } from '@/components/layout/CategoryMegaMenu';
+import { getCategoryAppearance, getAvatarColor, CATEGORY_APPEARANCE as SHARED_CATEGORY_APPEARANCE } from '@/lib/category-appearance';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  Globe,
-  Palette,
-  Smartphone,
-  Monitor,
-  Pen,
-  BookOpen,
-  Home,
-  Wrench,
-  GraduationCap,
-  Bot,
-  Briefcase,
-  Scale,
-  Heart,
-  Star,
-  Server,
-  Car as CarIcon,
-  Laptop as LaptopIcon,
-  Armchair as ArmchairIcon,
-  Shirt as ShirtIcon,
-  Dices as DicesIcon,
-  Users as UsersIcon,
-  type LucideIcon,
-} from 'lucide-react';
+import { QuickViewPopover, useQuickView } from '@/components/shared/QuickView';
 
-// ─── Icon Mapping (DB stores Lucide icon name strings) ───────────────────
-const ICON_MAP: Record<string, LucideIcon> = {
-  Globe, Palette, Smartphone, Monitor, Pen, BookOpen, Home, Wrench,
-  GraduationCap, Bot, Briefcase, Scale, Heart, Star, Server,
-  Car: CarIcon, Laptop: LaptopIcon, Armchair: ArmchairIcon, Shirt: ShirtIcon,
-  Dices: DicesIcon, Users: UsersIcon,
-  Layout: Monitor, Layers: Smartphone, Apple: Smartphone,
-  Sparkles: Star, Megaphone: Pen, Brush: Palette,
-  Code: Monitor, Database: Server, Shield: Scale, Stethoscope: Heart,
-};
-
-function getCategoryIcon(iconName?: string | null): LucideIcon {
-  if (!iconName) return Globe;
-  return ICON_MAP[iconName] || Globe;
-}
-
-function renderCategoryIcon(iconName?: string | null, size = 20) {
-  const Icon = getCategoryIcon(iconName);
-  return <Icon className="size-5" style={{ width: size, height: size }} />;
-}
-
-// ─── Category Appearance (name → icon + color) ───────────────────
-// Maps Persian category names to their proper Lucide icon + psychology color.
-// This ensures DB-backed requests (which store categoryId/name) always
-// display the correct visual identity regardless of mega-menu slug matching.
-const CATEGORY_APPEARANCE: Record<string, { icon: LucideIcon; color: string }> = {
-  // Mega menu categories
-  'املاک':               { icon: Home,      color: '#3b82f6' },
-  'وسایل نقلیه':         { icon: CarIcon,    color: '#ef4444' },
-  'لوازم الکترونیکی':    { icon: LaptopIcon, color: '#06b6d4' },
-  'لوازم خانگی':         { icon: ArmchairIcon,color: '#f97316' },
-  'خدمات':               { icon: Wrench,     color: '#8b5cf6' },
-  'وسایل شخصی':         { icon: ShirtIcon,  color: '#ec4899' },
-  'سرگرمی':              { icon: DicesIcon,  color: '#eab308' },
-  'سرگرمی و فراغت':     { icon: DicesIcon,  color: '#eab308' },
-  'اجتماعی':             { icon: UsersIcon,  color: '#10b981' },
-  'استخدام':             { icon: Briefcase,  color: '#6366f1' },
-  'استخدام و کاریابی':  { icon: Briefcase,  color: '#6366f1' },
-  // Legacy / DB categories
-  'طراحی و توسعه وب':    { icon: Monitor,    color: '#06b6d4' },
-  'اپلیکیشن موبایل':    { icon: Smartphone, color: '#3b82f6' },
-  'تولید محتوا':        { icon: Pen,        color: '#f97316' },
-  'طراحی گرافیک':       { icon: Palette,    color: '#ec4899' },
-  'خدمات خانگی':        { icon: Home,       color: '#f97316' },
-  'تعمیرات':            { icon: Wrench,     color: '#8b5cf6' },
-  'مشاوره و آموزش':     { icon: GraduationCap,color: '#8b5cf6' },
-  'هوش مصنوعی':         { icon: Bot,        color: '#6366f1' },
-};
-
-const DEFAULT_APPEARANCE = { icon: Globe as LucideIcon, color: '#6b7280' };
-
-function getCategoryAppearance(categoryName?: string | null) {
-  if (!categoryName) return DEFAULT_APPEARANCE;
-  return CATEGORY_APPEARANCE[categoryName] || DEFAULT_APPEARANCE;
-}
 
 // ─── Fibonacci Design Tokens ───────────────────────────
 // Based on Fibonacci sequence: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89
@@ -121,21 +38,6 @@ const FIB = {
   iconSize: { sm: 14, md: 18, lg: 24, xl: 32 },
   accent: 4, // Left accent strip width
 };
-
-// ─── Avatar color generator ───────────────────────────
-const AVATAR_COLORS = [
-  'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
-  'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
-  'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300',
-  'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
-  'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300',
-  'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
-];
-
-function getAvatarColor(name: string) {
-  const hash = name.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
-}
 
 // ─── Priority Configuration ───────────────────────────
 const PRIORITY_CONFIG: Record<string, {
@@ -228,7 +130,7 @@ function SkeletonCard() {
 }
 
 // ─── Request Card (Fibonacci Golden Ratio Design) ─────────────
-function RequestCard({ request, isNew }: { request: ServiceRequest; isNew?: boolean }) {
+function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest; isNew?: boolean; onQuickView?: (req: ServiceRequest, e: React.MouseEvent) => void }) {
   const navigateTo = useAppStore((s) => s.navigateTo);
   const fullName = `${request.user.firstName} ${request.user.lastName}`;
   const initials = `${request.user.firstName.charAt(0)}${request.user.lastName.charAt(0)}`;
@@ -239,7 +141,7 @@ function RequestCard({ request, isNew }: { request: ServiceRequest; isNew?: bool
   const categoryColor = catAppearance.color;
   // Fallback to mega-menu slug-based color if categoryName didn't match
   const megaMenuColor = getCategoryColor(request.categoryId);
-  const resolvedColor = CATEGORY_APPEARANCE[request.categoryName ?? ''] ? categoryColor : megaMenuColor;
+  const resolvedColor = SHARED_CATEGORY_APPEARANCE[request.categoryName ?? ''] ? categoryColor : megaMenuColor;
   const priorityConfig = PRIORITY_CONFIG[request.priority] || PRIORITY_CONFIG.NORMAL;
   const isUrgent = request.priority === 'URGENT';
 
@@ -258,7 +160,10 @@ function RequestCard({ request, isNew }: { request: ServiceRequest; isNew?: bool
       <div
         role="article"
         data-href={`/requests/${request.id}`}
-        onClick={() => navigateTo('request-detail', { id: request.id })}
+        onClick={(e) => {
+          navigateTo('request-detail', { id: request.id });
+          onQuickView?.(request, e);
+        }}
         className={cn(
           'group relative flex cursor-pointer overflow-hidden rounded-2xl border',
           'bg-card/70 backdrop-blur-sm',
@@ -266,9 +171,11 @@ function RequestCard({ request, isNew }: { request: ServiceRequest; isNew?: bool
           // Hover effects
           'hover:bg-card/95 hover:backdrop-blur-md',
           'hover:shadow-lg hover:shadow-black/[0.04] dark:hover:shadow-black/[0.2]',
-          'hover:-translate-y-[1px]',
-          // Priority glow
+          'hover:-translate-y-[1px] hover:scale-[1.005]',
+          // Priority glow + category border glow
           priorityConfig.glowClass,
+          // Category color hover glow
+          `hover:shadow-[0_0_0_1px_${resolvedColor}18,0_0_16px_${resolvedColor}0d]`,
           // New item glow
           isNew && 'shadow-md shadow-emerald-500/[0.10] dark:shadow-emerald-400/[0.08]',
           isNew ? 'border-emerald-300/50 dark:border-emerald-700/40' : 'border-border/40 hover:border-border/60',
@@ -276,12 +183,12 @@ function RequestCard({ request, isNew }: { request: ServiceRequest; isNew?: bool
         )}
         title={`${request.title} - ${request.categoryName} - ${request.city || 'بدون شهر'}`}
       >
-        {/* ── Right Accent Strip (Category Color) ── */}
+        {/* ── Right Accent Strip (Vibrant Category Gradient) ── */}
         <div
-          className="shrink-0 transition-all duration-300 group-hover:w-[5px]"
+          className="shrink-0 transition-all duration-300 group-hover:w-[6px]"
           style={{
             width: '4px',
-            background: resolvedColor,
+            background: `linear-gradient(to bottom, ${resolvedColor}, ${resolvedColor}cc)`,
           }}
         />
 
@@ -345,7 +252,7 @@ function RequestCard({ request, isNew }: { request: ServiceRequest; isNew?: bool
 
               {/* Mobile category pill */}
               <span
-                className="inline-flex items-center gap-1.5 rounded-lg px-2 py-0.5 text-[10px] font-semibold sm:hidden shrink-0 ring-1"
+                className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[10px] font-semibold sm:hidden shrink-0 ring-1"
                 style={{
                   backgroundColor: `${resolvedColor}12`,
                   color: resolvedColor,
@@ -358,8 +265,8 @@ function RequestCard({ request, isNew }: { request: ServiceRequest; isNew?: bool
 
               <h2
                 className={cn(
-                  'flex-1 min-w-0 truncate font-bold leading-snug transition-colors duration-200',
-                  'text-[15px] sm:text-[17px]',
+                  'flex-1 min-w-0 truncate font-extrabold leading-snug transition-colors duration-200',
+                  'text-[15px] sm:text-[17px] tracking-tight',
                   isUrgent
                     ? 'text-foreground group-hover:text-red-600 dark:group-hover:text-red-400'
                     : 'text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
@@ -372,7 +279,7 @@ function RequestCard({ request, isNew }: { request: ServiceRequest; isNew?: bool
             </div>
 
             {/* ── Description ── */}
-            <p className="text-[13px] sm:text-sm text-muted-foreground/80 leading-relaxed line-clamp-1">
+            <p className="text-[13px] sm:text-sm text-muted-foreground/80 leading-relaxed line-clamp-2">
               {request.description}
             </p>
 
@@ -485,6 +392,7 @@ export function NeedsHomepage() {
   const [localRequests, setLocalRequests] = useState<ServiceRequest[]>([]);
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
   const lastFetchTimeRef = useRef<number>(Date.now());
+  const { quickView, showQuickView, closeQuickView } = useQuickView();
 
   // Initial fetch
   const loadRequests = useCallback(async (pageNum: number) => {
@@ -596,7 +504,7 @@ export function NeedsHomepage() {
               <AnimatePresence initial={false}>
                 {displayRequests.map((request) => (
                   <div key={request.id} itemprop="itemListElement">
-                    <RequestCard request={request} isNew={newIds.has(request.id)} />
+                    <RequestCard request={request} isNew={newIds.has(request.id)} onQuickView={showQuickView} />
                   </div>
                 ))}
               </AnimatePresence>
@@ -637,6 +545,15 @@ export function NeedsHomepage() {
           </>
         )}
       </div>
+
+      {/* Quick View Popover */}
+      {quickView && (
+        <QuickViewPopover
+          request={quickView.request}
+          anchorRect={quickView.anchorRect}
+          onClose={closeQuickView}
+        />
+      )}
 
       <noscript>
         <div className="sr-only" itemscope itemtype="https://schema.org/ItemList">

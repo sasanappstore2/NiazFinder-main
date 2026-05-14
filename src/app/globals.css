@@ -236,6 +236,20 @@
   border-radius: 4px;
 }
 
+/* ── Notification Badge Pulse ── */
+@keyframes notificationPulse {
+  0% { box-shadow: 0 0 0 0 oklch(0.577 0.245 27.325 / 0.6); }
+  50% { box-shadow: 0 0 0 4px oklch(0.577 0.245 27.325 / 0.2); }
+  70% { box-shadow: 0 0 0 6px oklch(0.577 0.245 27.325 / 0); }
+  100% { box-shadow: 0 0 0 0 oklch(0.577 0.245 27.325 / 0); }
+}
+.animate-notification-pulse {
+  animation: notificationPulse 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+.animate-notification-pulse:hover {
+  animation: none;
+}
+
 /* ── Hover Transition (150ms ease) ── */
 .hover-lift {
   transition: transform 150ms ease, box-shadow 150ms ease;
