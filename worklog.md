@@ -2359,3 +2359,69 @@ Stage Summary:
 - All API routes return 200 with real data
 - Zero runtime errors in browser console
 - Site is fully functional and visible in preview
+
+---
+Task ID: sms-auth-system
+Agent: Main + 3 parallel subagents
+Task: Replace email/password auth with SMS OTP; add username system; add chat user search
+
+Work Log:
+- Updated Prisma schema: added `username String? @unique` to User model, pushed to DB
+- Updated TypeScript User type: added `username?: string` field
+- Updated `/api/auth/verify` to include username in response user object
+- Created `/api/users/search` API endpoint:
+  - GET with `?q=` query param (min 2 chars)
+  - Searches by: username (exact/prefix/contains), displayName, firstName, lastName
+  - Supports @username prefix (stripped before search)
+  - Returns max 20 results, ordered by online/verified/created
+  - Excludes self, inactive, and banned users
+  - Auth required
+- Updated `/api/users/me` PUT handler:
+  - Added username field support
+  - Validates username: 3-30 chars, letters+numbers+underscore, must start with letter
+  - Checks uniqueness before saving
+  - Normalizes to lowercase with spaces→underscores
+- Redesigned AuthModal (single phone+OTP flow, no tabs):
+  - Step 1: Phone number input (Iranian regex validation)
+  - Step 2: 4-digit OTP boxes with auto-focus, paste support, 120s countdown
+  - Step 3: Welcome screen for new users
+  - Dev mode hint showing test code "1234"
+- Created PhoneOtpForm.tsx component:
+  - Emerald green theme, RTL Persian
+  - 52px OTP digit boxes with emerald focus/fill styling
+  - Countdown timer with MM:SS format
+  - Resend button after expiry
+  - Loading states with Loader2 spinner
+- Deleted RegisterForm.tsx (no longer needed)
+- Updated Zustand store:
+  - Added `loginWithPhone(phone, code)` action
+  - Updated `login()` to accept optional token parameter
+  - Added username to user mapping in loginAPI, registerAPI, fetchCurrentUser, updateProfileAPI, loginWithPhone
+- Updated ChatPanel with user search:
+  - "+" button toggles new chat user search mode
+  - Debounced search (300ms) calling /api/users/search
+  - Results show avatar, displayName, @username, online status, verified badge
+  - Click result → POST /api/conversations to create/find conversation
+  - Fallback to mock conversation if API fails
+- Updated UserDashboard with username editing:
+  - @ prefix visual on username input
+  - Real-time validation with error messages
+  - Username shown below greeting in profile header
+  - "نام کاربری تعیین نشده" shown when no username set
+
+**API Verification:**
+- POST /api/auth/otp {"phone":"09123456789"} → 200 ✅ (demoCode: 1234)
+- POST /api/auth/verify {"phone":"09123456789","code":"1234"} → 200 ✅ (user + token + isNewUser)
+- PUT /api/users/me {"username":"sasan_rashidi",...} → 200 ✅
+- GET /api/users/search?q=@sasan_rashidi → 200, found 1 ✅
+- GET /api/users/search?q=ساسان رشیدی → 200, found 1 ✅
+- GET /api/users/search?q=sasan → 200, found 1 ✅
+
+Stage Summary:
+- Complete SMS OTP auth system replacing email/password
+- Single unified login/register flow
+- Test code "1234" for all phone numbers
+- Username system with validation and uniqueness check
+- User search in chat by @username and Persian display name
+- Profile editing with username field
+- 0 lint errors, 5 pre-existing warnings

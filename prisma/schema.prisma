@@ -14,6 +14,7 @@ model User {
   email         String    @unique
   password      String?
   phone         String?   @unique
+  username      String?   @unique
   firstName     String    @default("")
   lastName      String    @default("")
   displayName   String?

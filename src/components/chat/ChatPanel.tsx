@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import {
   MessageSquare,
   Search,
@@ -13,6 +13,9 @@ import {
   Reply,
   Smile,
   X,
+  BadgeCheck,
+  Loader2,
+  Users,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
@@ -59,6 +62,19 @@ interface ReplyInfo {
 
 interface ExtendedMessage extends Message {
   replyTo?: ReplyInfo;
+}
+
+// ─── User search result type ──────────────────────────────────────────────────
+
+interface SearchedUser {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  displayName?: string;
+  username?: string;
+  avatar?: string;
+  isVerified?: boolean;
+  online?: boolean;
 }
 
 const QUICK_EMOJIS = [
@@ -193,7 +209,7 @@ const mockConversations: MockConversation[] = [
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function ChatPanel() {
-  const { isAuthenticated, setAuthModalOpen } = useAppStore();
+  const { isAuthenticated, setAuthModalOpen, authToken } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [conversationMessages, setConversationMessages] = useState<ExtendedMessage[]>([]);
@@ -207,11 +223,175 @@ export function ChatPanel() {
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // ── New Chat / User Search state ────────────────────────────────────────
+  const [showNewChat, setShowNewChat] = useState(false);
+  const [userSearchQuery, setUserSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchedUser[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isCreatingConversation, setIsCreatingConversation] = useState(false);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const userSearchInputRef = useRef<HTMLInputElement>(null);
+
   const selectedConversation = mockConversations.find((c) => c.id === selectedConversationId) ?? null;
 
-  const filteredConversations = mockConversations.filter((c) =>
-    c.name.includes(searchQuery) || c.lastMessage.includes(searchQuery)
+  const filteredConversations = useMemo(
+    () =>
+      mockConversations.filter((c) =>
+        c.name.includes(searchQuery) || c.lastMessage.includes(searchQuery)
+      ),
+    [searchQuery]
   );
+
+  // ── Debounced user search ──────────────────────────────────────────────
+  useEffect(() => {
+    if (!showNewChat) return;
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    const trimmedQuery = userSearchQuery.trim();
+
+    if (!trimmedQuery) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+
+    debounceTimerRef.current = setTimeout(async () => {
+      try {
+        const token = authToken;
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const res = await fetch(
+          `/api/users/search?q=${encodeURIComponent(trimmedQuery)}`,
+          { headers }
+        );
+
+        if (!res.ok) {
+          setSearchResults([]);
+          return;
+        }
+
+        const data = await res.json();
+        const users: SearchedUser[] = (data.data ?? data.users ?? []).map((u: any) => ({
+          id: u.id,
+          firstName: u.firstName,
+          lastName: u.lastName,
+          displayName: u.displayName,
+          username: u.username,
+          avatar: u.avatar,
+          isVerified: u.isVerified,
+          online: u.online,
+        }));
+        setSearchResults(users);
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [userSearchQuery, showNewChat, authToken]);
+
+  // Focus user search input when toggling
+  useEffect(() => {
+    if (showNewChat) {
+      // Small delay to ensure the input is rendered
+      requestAnimationFrame(() => {
+        userSearchInputRef.current?.focus();
+      });
+    }
+  }, [showNewChat]);
+
+  // ── Create / select conversation from search result ─────────────────────
+  const handleSelectSearchUser = useCallback(
+    async (user: SearchedUser) => {
+      if (isCreatingConversation) return;
+      setIsCreatingConversation(true);
+
+      try {
+        const token = authToken;
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const res = await fetch('/api/conversations', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ otherUserId: user.id }),
+        });
+
+        if (!res.ok) {
+          // If conversation creation fails, create a mock-like entry
+          handleSelectConversation({
+            id: `conv-new-${user.id}`,
+            name: (user.displayName ?? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim()) || 'کاربر',
+            lastMessage: '',
+            timeAgo: 'الان',
+            unreadCount: 0,
+            isOnline: user.online ?? false,
+            messages: [],
+          });
+          setShowNewChat(false);
+          setUserSearchQuery('');
+          return;
+        }
+
+        const data = await res.json();
+        const conversation = data.conversation ?? data;
+        const otherUser = conversation.otherUser ?? user;
+        const convName =
+          (otherUser.displayName ??
+          `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim()) ||
+          'کاربر';
+
+        handleSelectConversation({
+          id: conversation.id,
+          name: convName,
+          lastMessage: '',
+          timeAgo: 'الان',
+          unreadCount: 0,
+          isOnline: otherUser.online ?? user.online ?? false,
+          messages: [],
+        });
+        setShowNewChat(false);
+        setUserSearchQuery('');
+      } catch {
+        // Fallback: just open a blank conversation
+        handleSelectConversation({
+          id: `conv-new-${user.id}`,
+          name: (user.displayName ?? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim()) || 'کاربر',
+          lastMessage: '',
+          timeAgo: 'الان',
+          unreadCount: 0,
+          isOnline: user.online ?? false,
+          messages: [],
+        });
+        setShowNewChat(false);
+        setUserSearchQuery('');
+      } finally {
+        setIsCreatingConversation(false);
+      }
+    },
+    [authToken, isCreatingConversation]
+  );
+
+  // ── Toggle new chat panel ───────────────────────────────────────────────
+  const handleToggleNewChat = useCallback(() => {
+    setShowNewChat((prev) => !prev);
+    if (showNewChat) {
+      setUserSearchQuery('');
+      setSearchResults([]);
+    }
+  }, [showNewChat]);
 
   const scrollToBottom = useCallback(() => {
     if (messagesEndRef.current) {
@@ -223,11 +403,14 @@ export function ChatPanel() {
     scrollToBottom();
   }, [conversationMessages, isTyping, scrollToBottom]);
 
-  // Cleanup timer on unmount
+  // Cleanup timers on unmount
   useEffect(() => {
     return () => {
       if (typingTimerRef.current) {
         clearTimeout(typingTimerRef.current);
+      }
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
       }
     };
   }, []);
@@ -395,84 +578,200 @@ export function ChatPanel() {
         {/* Header */}
         <div className="flex items-center justify-between border-b px-4 py-3">
           <h2 className="text-lg font-bold">پیام‌ها</h2>
-          <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="مکالمه جدید" title="ایجاد مکالمه جدید">
-            <Plus className="h-5 w-5" />
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn('h-11 w-11', showNewChat && 'text-primary bg-primary/10 hover:bg-primary/15')}
+            aria-label={showNewChat ? 'بازگشت به مکالمات' : 'مکالمه جدید'}
+            title={showNewChat ? 'بازگشت به لیست مکالمات' : 'جستجوی کاربر و مکالمه جدید'}
+            onClick={handleToggleNewChat}
+          >
+            {showNewChat ? <X className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
           </Button>
         </div>
 
-        {/* Search */}
+        {/* Search — toggle between conversation filter and user search */}
         <div className="p-3">
           <div className="relative">
             <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="جستجوی مکالمه..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-11 pr-9"
-              aria-label="جستجوی مکالمه"
-            />
+            {showNewChat ? (
+              <Input
+                ref={userSearchInputRef}
+                placeholder="جستجوی کاربر (نام، نام کاربری...)"
+                value={userSearchQuery}
+                onChange={(e) => setUserSearchQuery(e.target.value)}
+                className="h-11 pr-9"
+                aria-label="جستجوی کاربر"
+              />
+            ) : (
+              <Input
+                placeholder="جستجوی مکالمه..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-11 pr-9"
+                aria-label="جستجوی مکالمه"
+              />
+            )}
           </div>
         </div>
 
-        {/* Conversation List */}
-        <ScrollArea className="min-h-0 flex-1" role="list" aria-label="مکالمات">
-          <div className="space-y-0.5 p-2">
-            {filteredConversations.map((conv) => (
-              <button
-                key={conv.id}
-                onClick={() => handleSelectConversation(conv)}
-                className={cn(
-                  'flex w-full items-start gap-3 rounded-lg p-3 text-right transition-all duration-150',
-                  selectedConversationId === conv.id
-                    ? 'bg-primary/5 border border-primary/20'
-                    : 'hover:bg-muted/50 border border-transparent'
-                )}
-                role="listitem"
-                aria-label={`مکالمه با ${conv.name}${conv.unreadCount > 0 ? `، ${conv.unreadCount} پیام خوانده نشده` : ''}`}
-              >
-                {/* Avatar */}
-                <div className="relative shrink-0">
-                  <div
-                    className={cn(
-                      'flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white',
-                      getAvatarColor(conv.name)
-                    )}
-                  >
-                    {getInitials(conv.name)}
-                  </div>
-                  {conv.isOnline && (
-                    <span className="absolute bottom-0 left-0 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500" />
+        {/* Content area: conversation list or user search results */}
+        {showNewChat ? (
+          /* ── User Search Results ── */
+          <ScrollArea className="min-h-0 flex-1" role="list" aria-label="نتایج جستجوی کاربر">
+            <div className="space-y-0.5 p-2">
+              {/* Loading indicator */}
+              {isSearching && (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                  <span className="mr-2 text-sm text-muted-foreground">در حال جستجو...</span>
+                </div>
+              )}
+
+              {/* Empty search state — prompt */}
+              {!isSearching && userSearchQuery.trim() === '' && (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Users className="mb-3 h-10 w-10 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground">نام یا نام کاربری کاربر را جستجو کنید</p>
+                </div>
+              )}
+
+              {/* No results */}
+              {!isSearching && userSearchQuery.trim() !== '' && searchResults.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Search className="mb-3 h-10 w-10 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground">کاربری یافت نشد</p>
+                </div>
+              )}
+
+              {/* Search results */}
+              {!isSearching &&
+                searchResults.map((user) => {
+                  const name =
+                    (user.displayName ??
+                    `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim()) ||
+                    'کاربر';
+                  const avatarColor = getAvatarColor(name);
+                  const initials = getInitials(name);
+
+                  return (
+                    <button
+                      key={user.id}
+                      onClick={() => handleSelectSearchUser(user)}
+                      disabled={isCreatingConversation}
+                      className={cn(
+                        'flex w-full items-center gap-3 rounded-lg p-3 text-right transition-all duration-150',
+                        'hover:bg-muted/50 border border-transparent',
+                        'disabled:opacity-60 disabled:cursor-wait'
+                      )}
+                      role="listitem"
+                      aria-label={`شروع مکالمه با ${name}`}
+                    >
+                      {/* Avatar */}
+                      <div className="relative shrink-0">
+                        <div
+                          className={cn(
+                            'flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white',
+                            avatarColor
+                          )}
+                        >
+                          {initials}
+                        </div>
+                        {user.online && (
+                          <span className="absolute bottom-0 left-0 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500" />
+                        )}
+                      </div>
+
+                      {/* Info */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="truncate text-sm font-semibold">{name}</span>
+                          {user.isVerified && (
+                            <BadgeCheck className="h-4 w-4 shrink-0 text-emerald-500" />
+                          )}
+                        </div>
+                        {user.username && (
+                          <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                            @{user.username}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Online badge */}
+                      {user.online && (
+                        <Badge
+                          variant="outline"
+                          className="shrink-0 border-emerald-300 text-emerald-600 dark:text-emerald-400 text-xs"
+                        >
+                          آنلاین
+                        </Badge>
+                      )}
+                    </button>
+                  );
+                })}
+            </div>
+          </ScrollArea>
+        ) : (
+          /* ── Conversation List ── */
+          <ScrollArea className="min-h-0 flex-1" role="list" aria-label="مکالمات">
+            <div className="space-y-0.5 p-2">
+              {filteredConversations.map((conv) => (
+                <button
+                  key={conv.id}
+                  onClick={() => handleSelectConversation(conv)}
+                  className={cn(
+                    'flex w-full items-start gap-3 rounded-lg p-3 text-right transition-all duration-150',
+                    selectedConversationId === conv.id
+                      ? 'bg-primary/5 border border-primary/20'
+                      : 'hover:bg-muted/50 border border-transparent'
                   )}
-                </div>
-
-                {/* Content */}
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="truncate text-sm font-semibold">{conv.name}</span>
-                    <span className="shrink-0 text-xs text-muted-foreground">{conv.timeAgo}</span>
-                  </div>
-                  <div className="mt-1 flex items-center justify-between gap-2">
-                    <p className="truncate text-sm text-muted-foreground" style={{ maxWidth: '200px' }}>
-                      {conv.lastMessage.length > 40 ? conv.lastMessage.slice(0, 40) + '...' : conv.lastMessage}
-                    </p>
-                    {conv.unreadCount > 0 && (
-                      <Badge className="shrink-0 h-5 min-w-5 flex items-center justify-center rounded-full px-1.5 text-xs">
-                        {conv.unreadCount}
-                      </Badge>
+                  role="listitem"
+                  aria-label={`مکالمه با ${conv.name}${conv.unreadCount > 0 ? `، ${conv.unreadCount} پیام خوانده نشده` : ''}`}
+                >
+                  {/* Avatar */}
+                  <div className="relative shrink-0">
+                    <div
+                      className={cn(
+                        'flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white',
+                        getAvatarColor(conv.name)
+                      )}
+                    >
+                      {getInitials(conv.name)}
+                    </div>
+                    {conv.isOnline && (
+                      <span className="absolute bottom-0 left-0 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500" />
                     )}
                   </div>
-                </div>
-              </button>
-            ))}
 
-            {filteredConversations.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <Search className="mb-3 h-10 w-10 text-muted-foreground/40" />
-                <p className="text-sm text-muted-foreground">مکالمه‌ای یافت نشد</p>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
+                  {/* Content */}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="truncate text-sm font-semibold">{conv.name}</span>
+                      <span className="shrink-0 text-xs text-muted-foreground">{conv.timeAgo}</span>
+                    </div>
+                    <div className="mt-1 flex items-center justify-between gap-2">
+                      <p className="truncate text-sm text-muted-foreground" style={{ maxWidth: '200px' }}>
+                        {conv.lastMessage.length > 40 ? conv.lastMessage.slice(0, 40) + '...' : conv.lastMessage}
+                      </p>
+                      {conv.unreadCount > 0 && (
+                        <Badge className="shrink-0 h-5 min-w-5 flex items-center justify-center rounded-full px-1.5 text-xs">
+                          {conv.unreadCount}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              ))}
+
+              {filteredConversations.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Search className="mb-3 h-10 w-10 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground">مکالمه‌ای یافت نشد</p>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+        )}
       </div>
 
       {/* ── Message Area ── */}

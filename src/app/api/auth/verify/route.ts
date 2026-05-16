@@ -123,6 +123,7 @@ export async function POST(request: NextRequest) {
     const responseUser: User = {
       id: user.id,
       phone: user.phone ?? undefined,
+      username: user.username ?? undefined,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,

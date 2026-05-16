@@ -68,6 +68,7 @@ export async function GET(request: NextRequest) {
       id: fullUser.id,
       email: fullUser.email,
       phone: fullUser.phone,
+      username: fullUser.username,
       firstName: fullUser.firstName,
       lastName: fullUser.lastName,
       displayName: fullUser.displayName,
@@ -130,7 +131,31 @@ export async function PUT(request: NextRequest) {
       province,
       phone,
       avatar,
+      username,
     } = body;
+
+    // Validate username if provided
+    if (username !== undefined && username !== null && username !== '') {
+      const normalizedUsername = username.trim().toLowerCase().replace(/\s+/g, '_');
+      // Username must be 3-30 chars, alphanumeric + underscore, start with letter
+      const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{2,29}$/;
+      if (!usernameRegex.test(normalizedUsername)) {
+        return NextResponse.json(
+          { error: 'نام کاربری باید ۳ تا ۳۰ کاراکتر باشد، فقط شامل حروف انگلیسی، عدد و خط تیره (_) و با حرف شروع شود' },
+          { status: 400 }
+        );
+      }
+      // Check uniqueness
+      const existing = await db.user.findFirst({
+        where: { username: normalizedUsername, id: { not: user.id } },
+      });
+      if (existing) {
+        return NextResponse.json(
+          { error: 'این نام کاربری قبلاً استفاده شده است' },
+          { status: 409 }
+        );
+      }
+    }
 
     const updatedUser = await db.user.update({
       where: { id: user.id },
@@ -143,6 +168,9 @@ export async function PUT(request: NextRequest) {
         ...(province !== undefined && { province: province?.trim() || null }),
         ...(phone !== undefined && { phone: phone?.trim() || null }),
         ...(avatar !== undefined && { avatar: avatar?.trim() || null }),
+        ...(username !== undefined && {
+          username: username === null || username === '' ? null : username.trim().toLowerCase().replace(/\s+/g, '_'),
+        }),
       },
     });
 
@@ -150,6 +178,7 @@ export async function PUT(request: NextRequest) {
       id: updatedUser.id,
       email: updatedUser.email,
       phone: updatedUser.phone,
+      username: updatedUser.username,
       firstName: updatedUser.firstName,
       lastName: updatedUser.lastName,
       displayName: updatedUser.displayName,

@@ -55,7 +55,7 @@ interface AppState {
   // Auth (local)
   currentUser: User | null;
   isAuthenticated: boolean;
-  login: (user: User) => void;
+  login: (user: User, token?: string) => void;
   logout: () => void;
   updateProfile: (data: Partial<User>) => void;
 
@@ -67,6 +67,7 @@ interface AppState {
   clearError: () => void;
   initializeFromStorage: () => Promise<void>;
   loginAPI: (email: string, password: string) => Promise<boolean>;
+  loginWithPhone: (phone: string, code: string) => Promise<{ success: boolean; isNewUser: boolean; error: string | null }>;
   registerAPI: (data: { email: string; password: string; firstName: string; lastName: string; phone?: string; role?: string }) => Promise<boolean>;
   logoutAPI: () => Promise<void>;
   fetchCurrentUser: () => Promise<void>;
@@ -194,7 +195,16 @@ export const useAppStore = create<AppState>((set, get) => ({
   // ===========================
   currentUser: null,
   isAuthenticated: false,
-  login: (user) => set({ currentUser: user, isAuthenticated: true, authModalOpen: false }),
+  login: (user, token) => {
+    if (token) {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(TOKEN_KEY, token);
+      }
+      set({ currentUser: user, isAuthenticated: true, authModalOpen: false, authToken: token });
+    } else {
+      set({ currentUser: user, isAuthenticated: true, authModalOpen: false });
+    }
+  },
   logout: () => {
     set({
       currentUser: null,
@@ -246,6 +256,76 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
   },
 
+  loginWithPhone: async (phone: string, code: string) => {
+    try {
+      // Step 1: Request OTP (may be rate-limited if already sent recently)
+      try {
+        await fetch('/api/auth/otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone }),
+        });
+      } catch {
+        // Ignore OTP send errors — user may have already requested
+      }
+
+      // Step 2: Verify OTP
+      const res = await fetch('/api/auth/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, code }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        return { success: false, isNewUser: false, error: errorData.error || 'خطا در تأیید کد' };
+      }
+
+      const data = await res.json();
+      const apiUser = data.user;
+      const token = data.token;
+      const isNewUser = data.isNewUser;
+
+      // Map API user to local User shape
+      const mappedUser: User = {
+        id: apiUser.id,
+        email: apiUser.email,
+        phone: apiUser.phone ?? undefined,
+        username: apiUser.username ?? undefined,
+        firstName: apiUser.firstName,
+        lastName: apiUser.lastName,
+        displayName: apiUser.displayName ?? undefined,
+        avatar: apiUser.avatar ?? undefined,
+        bio: apiUser.bio ?? undefined,
+        city: apiUser.city ?? undefined,
+        province: apiUser.province ?? undefined,
+        role: apiUser.role,
+        isVerified: apiUser.isVerified,
+        isActive: true,
+        online: true,
+        rating: apiUser.rating ?? 0,
+        projectCount: apiUser.projectCount ?? 0,
+        completionRate: apiUser.completionRate ?? 0,
+        responseRate: apiUser.responseRate ?? 0,
+        createdAt: typeof apiUser.createdAt === 'string' ? apiUser.createdAt : new Date(apiUser.createdAt).toISOString(),
+      };
+
+      // Store token and login
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(TOKEN_KEY, token);
+      }
+      set({ authToken: token, currentUser: mappedUser, isAuthenticated: true, authModalOpen: false });
+
+      // Fire-and-forget background fetches
+      get().fetchNotifications().catch(() => {});
+      get().fetchConversations().catch(() => {});
+
+      return { success: true, isNewUser, error: null };
+    } catch {
+      return { success: false, isNewUser: false, error: 'خطای شبکه. لطفاً اتصال اینترنت خود را بررسی کنید.' };
+    }
+  },
+
   loginAPI: async (email: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
@@ -270,6 +350,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         id: user.id,
         email: user.email,
         phone: user.phone ?? undefined,
+        username: user.username ?? undefined,
         firstName: user.firstName,
         lastName: user.lastName,
         displayName: user.displayName ?? undefined,
@@ -322,6 +403,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         id: user.id,
         email: user.email,
         phone: user.phone ?? undefined,
+        username: user.username ?? undefined,
         firstName: user.firstName,
         lastName: user.lastName,
         displayName: user.displayName ?? undefined,
@@ -369,6 +451,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         id: user.id,
         email: user.email,
         phone: user.phone ?? undefined,
+        username: user.username ?? undefined,
         firstName: user.firstName,
         lastName: user.lastName,
         displayName: user.displayName ?? undefined,
@@ -414,6 +497,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             firstName: user.firstName ?? currentUser.firstName,
             lastName: user.lastName ?? currentUser.lastName,
             displayName: user.displayName ?? currentUser.displayName,
+            username: user.username !== undefined ? (user.username || undefined) : currentUser.username,
             bio: user.bio ?? currentUser.bio,
             city: user.city ?? currentUser.city,
             province: user.province ?? currentUser.province,
