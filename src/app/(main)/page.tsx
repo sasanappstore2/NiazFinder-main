@@ -1,6 +1,5 @@
 'use client';
 
-import { HeroSection } from '@/components/home/HeroSection';
 import TrustPartnersMarquee from '@/components/home/TrustPartnersMarquee';
 import { StatsCounter } from '@/components/home/StatsCounter';
 import { CategoriesSection } from '@/components/home/CategoriesSection';
@@ -16,7 +15,6 @@ import { FAQSection } from '@/components/home/FAQSection';
 export default function HomePage() {
   return (
     <>
-      <HeroSection />
       <TrustPartnersMarquee />
       <StatsCounter />
       <CategoriesSection />
