@@ -1739,3 +1739,44 @@ Stage Summary:
 - Mobile: "همه دسته‌بندی‌ها" opens full-height Sheet with hierarchical slide navigation
 - Category icons are color-coded using getCategoryColor() from CategoryMegaMenu
 - Homepage flow: Header (with categories) → Hero Banner → Request Cards
+
+---
+Task ID: ark-ui-user-menu
+Agent: Main
+Task: Replace user icon button with Ark UI menu and add city selector next to it in header
+
+Work Log:
+- Installed @ark-ui/react v5.36.2 dependency
+- Created /src/components/ui/ark-user-menu.tsx — Full Ark UI Menu based user menu component
+  - Uses Menu.Root, Menu.Trigger, Portal, Menu.Positioner, Menu.Content, Menu.Item, Menu.Separator from @ark-ui/react
+  - RTL direction (dir="rtl") on menu content
+  - Emerald theme with glassmorphism backdrop-blur styling
+  - Trigger shows: avatar + name (logged in) or user icon + "ورود / ثبت‌نام" (guest)
+  - Badge count for unread notifications + messages
+  - User info header with avatar, name, email
+  - Auth section: login/register buttons for guests
+  - Navigation items: پروفایل, داشبورد, علاقه‌مندی‌ها, پیشنهادها
+  - Notifications preview (3 recent) with time ago
+  - Messages with unread count
+  - Quick links: تعرفه‌ها, دعوت از دوستان, مقایسه کسب‌وکارها, تنظیمات اعلان‌ها
+  - ThemeToggle (dark/light mode)
+  - Contact info (email, phone)
+  - Logout button (red destructive style)
+- Created /src/components/ui/menu-1.tsx — Ark UI basic menu reference component
+- Created /src/components/ui/demo.tsx — Ark UI user menu reference component (user-provided)
+- Updated /src/components/layout/Header.tsx:
+  - Replaced DesktopUnifiedDropdown (Radix DropdownMenu based) with ArkUserMenu (Ark UI based)
+  - Removed 296 lines of DesktopUnifiedDropdown function
+  - Added LocationSelector + ArkUserMenu in AuthSection (flex items-center gap-1.5)
+  - City selector now appears next to the user menu button in the desktop header
+  - Cleaned up unused imports: Input, SheetClose, MapPin, LayoutDashboard, Bookmark, FileText, CreditCard, Gift, GitCompareArrows, Settings, DropdownMenu, CitySelectorPopup, cookieManager, City type
+- Lint: 0 errors, 2 pre-existing warnings (unrelated React Hook Form / TanStack Virtual)
+- Dev server compiled successfully (215ms)
+
+Stage Summary:
+- User icon button replaced with Ark UI Menu component (polished RTL design)
+- City selector (LocationSelector) placed next to user menu in header
+- Header desktop layout: Logo | Search | [City Selector] [User Menu] | Mobile Menu
+- All existing functionality preserved: notifications, messages, theme toggle, contact, profile, dashboard
+- Glassmorphism styling with backdrop-blur, emerald accent colors
+- Cron job 153549 created for webDevReview every 15 minutes
