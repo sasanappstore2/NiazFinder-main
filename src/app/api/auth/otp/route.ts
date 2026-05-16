@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { minutesFromNow } from '@/lib/auth';
+import { findExistingOtp, createOtp } from '@/lib/otp-store';
 
 const iranianPhoneRegex = /^09[0-9]{9}$/;
 const DEMO_OTP_CODE = '1234';
@@ -28,7 +27,6 @@ export async function POST(request: NextRequest) {
     const attempt = otpAttempts.get(phone);
     if (attempt) {
       if (now - attempt.lastAttempt > ATTEMPT_WINDOW) {
-        // Reset window
         attempt.count = 1;
         attempt.lastAttempt = now;
       } else if (attempt.count >= MAX_ATTEMPTS) {
@@ -45,17 +43,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if there's a valid unexpired OTP for this phone
-    const existingOtp = await db.otpCode.findFirst({
-      where: {
-        phone,
-        verified: false,
-        expiresAt: { gt: new Date() },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const existingOtp = findExistingOtp(phone);
 
     if (existingOtp) {
-      // Don't allow re-requesting within 60 seconds
       const timeSinceLastOtp = Date.now() - existingOtp.createdAt.getTime();
       if (timeSinceLastOtp < 60 * 1000) {
         const remainingSeconds = Math.ceil((60 * 1000 - timeSinceLastOtp) / 1000);
@@ -67,25 +57,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate and store OTP code
-    // In demo mode, always use 1234
     const otpCode = DEMO_OTP_CODE;
-
-    await db.otpCode.create({
-      data: {
-        phone,
-        code: otpCode,
-        type: 'auth',
-        expiresAt: minutesFromNow(2),
-      },
-    });
-
-    // In production, you would send the OTP via SMS here:
-    // await sendSms(phone, `کد تایید نیاز فایندر: ${otpCode}`);
+    createOtp(phone, otpCode, 'auth');
 
     return NextResponse.json(
       {
         message: 'کد تایید ارسال شد',
-        // In demo mode, return the code so frontend can show it
         ...(process.env.NODE_ENV !== 'production' ? { demoCode: otpCode } : {}),
       },
       { status: 200 }

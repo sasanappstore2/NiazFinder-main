@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 
 // GET /api/admin/stats - platform statistics
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const authUser = await getAuthUser(new Request(''));
+    const authUser = await getAuthUser(request);
     if (!authUser || (authUser.role !== 'ADMIN' && authUser.role !== 'SUPER_ADMIN')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }

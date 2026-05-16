@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { generateToken, daysFromNow } from '@/lib/auth';
 import type { User } from '@/lib/types';
+import { findValidOtp, markOtpVerified } from '@/lib/otp-store';
 
 // ============ TYPES ============
 
@@ -30,16 +31,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find valid unexpired OTP
-    const otpRecord = await db.otpCode.findFirst({
-      where: {
-        phone,
-        code,
-        verified: false,
-        expiresAt: { gt: new Date() },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    // Find valid unexpired OTP from in-memory store
+    const otpRecord = findValidOtp(phone, code);
 
     if (!otpRecord) {
       return NextResponse.json(
@@ -49,10 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Mark OTP as verified
-    await db.otpCode.update({
-      where: { id: otpRecord.id },
-      data: { verified: true },
-    });
+    markOtpVerified(phone, code);
 
     // Check if user exists with this phone
     let user = await db.user.findUnique({
@@ -72,7 +62,8 @@ export async function POST(request: NextRequest) {
         const newUser = await tx.user.create({
           data: {
             phone,
-            role: isAdmin ? 'ADMIN' : 'CLIENT',
+            email: `${phone}@needfinder.local`,
+            role: isAdmin ? 'ADMIN' : ('CLIENT' as const),
             isVerified: true,
             phoneVerified: true,
           },
@@ -131,16 +122,15 @@ export async function POST(request: NextRequest) {
     // Build response
     const responseUser: User = {
       id: user.id,
-      phone: user.phone,
-      email: user.email || undefined,
-      username: user.username || undefined,
+      phone: user.phone ?? undefined,
+      email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      displayName: user.displayName || undefined,
-      avatar: user.avatar || undefined,
-      bio: user.bio || undefined,
-      city: user.city || undefined,
-      province: user.province || undefined,
+      displayName: user.displayName ?? undefined,
+      avatar: user.avatar ?? undefined,
+      bio: user.bio ?? undefined,
+      city: user.city ?? undefined,
+      province: user.province ?? undefined,
       role: user.role as User['role'],
       isVerified: user.isVerified,
       isActive: user.isActive,

@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       where: { isActive: true, parentId: null },
       orderBy: { order: 'asc' },
       take: 8,
-      select: { id: true, name: true, slug: true, icon: true, requestCount: true },
+      select: { id: true, name: true, slug: true, icon: true, _count: { select: { requests: true } } },
     });
 
     // Map categories to a flat format with request count
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       id: `cat-${c.id}`,
       type: 'category' as const,
       title: c.name,
-      description: `${c.requestCount || 0} نیاز ثبت شده`,
+      description: `${c._count.requests} نیاز ثبت شده`,
       icon: c.icon,
       slug: c.slug,
     }));
@@ -73,13 +73,13 @@ export async function GET(request: NextRequest) {
           where: whereCategories,
           orderBy: { order: 'asc' },
           take: 5,
-          select: { id: true, name: true, slug: true, icon: true, requestCount: true },
+          select: { id: true, name: true, slug: true, icon: true, _count: { select: { requests: true } } },
         }),
         db.category.findMany({
           where: whereSubcategories,
           orderBy: { order: 'asc' },
           take: 5,
-          select: { id: true, name: true, slug: true, icon: true, requestCount: true, parent: { select: { name: true } } },
+          select: { id: true, name: true, slug: true, icon: true, parent: { select: { name: true } } },
         }),
       ]);
 
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
         id: `cat-${c.id}`,
         type: 'category' as const,
         title: c.name,
-        description: `${c.requestCount || 0} نیاز ثبت شده`,
+        description: `${c._count.requests} نیاز ثبت شده`,
         icon: c.icon,
         slug: c.slug,
       }));
