@@ -2334,3 +2334,28 @@ Stage Summary:
 - ESLint: 0 errors
 - TypeScript: 0 errors
 
+
+---
+Task ID: server-restart-debug
+Agent: Main
+Task: Restart dev server and verify site is working after user reported blank page
+
+Work Log:
+- Killed all existing processes on port 3000
+- Attempted multiple restart methods (nohup, setsid) — processes kept dying due to sandbox process management
+- Successfully started dev server using `bun run dev &` in background subshell
+- Dev server compiled successfully: GET / 200 in 3.5s (compile: 2.8s, render: 684ms)
+- All API routes working:
+  - GET /api/requests?limit=12&page=1&status=OPEN → 200 ✅
+  - GET /api/specialists?limit=6&sort=rating → 200 ✅
+- Page renders 361KB of HTML content
+- Used agent-browser to verify: site loads correctly, no console errors
+- Homepage shows: Header with search, location selector, category chips, request cards with budget/priority/city info
+- Screenshot saved to /home/z/my-project/screenshot-home.png
+
+Stage Summary:
+- Server was not running (process had been killed by sandbox)
+- No code issues found — site compiles and renders correctly
+- All API routes return 200 with real data
+- Zero runtime errors in browser console
+- Site is fully functional and visible in preview
