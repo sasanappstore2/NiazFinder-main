@@ -21,7 +21,6 @@ import { Separator } from '@/components/ui/separator';
 
 // Homepage
 import { NeedsHomepage } from '@/components/home/NeedsHomepage';
-import { CategoryBar } from '@/components/layout/CategoryBar';
 
 // Pages
 import { PricingSection } from '@/components/home/PricingSection';
@@ -87,7 +86,6 @@ export default function App() {
     )}>
       <ScrollProgress />
       <Header />
-      {!isChatView && <CategoryBar />}
 
       <main
         id="main-content"
