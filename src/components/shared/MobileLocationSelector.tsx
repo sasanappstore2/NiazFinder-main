@@ -38,7 +38,7 @@ export function MobileLocationSelector() {
   };
 
   const getDisplayText = () => {
-    if (selectedCities.length === 0) return 'انتخاب شهر';
+    if (selectedCities.length === 0) return 'تمام ایران';
     if (selectedCities.length === 1) return selectedCities[0].name;
     return `${selectedCities.length} شهر انتخاب شده`;
   };
