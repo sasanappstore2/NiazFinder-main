@@ -159,6 +159,7 @@ export default function RootLayout({
           <script
             key={index}
             type="application/ld+json"
+            suppressHydrationWarning
             dangerouslySetInnerHTML={{
               __html: JSON.stringify(schema),
             }}
@@ -168,6 +169,7 @@ export default function RootLayout({
         {/* Additional structured data references */}
         <script
           type="application/ld+json"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",

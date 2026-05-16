@@ -26,6 +26,7 @@ export function JsonLdScript() {
         <script
           key={index}
           type="application/ld+json"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: json }}
         />
       ))}
