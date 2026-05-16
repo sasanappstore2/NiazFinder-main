@@ -1843,3 +1843,22 @@ Stage Summary:
 - Responsive: works on both mobile and desktop
 - 0 lint errors, 2 pre-existing warnings
 - Dev server compiles successfully
+---
+Task ID: remove-floating-circles
+Agent: Main
+Task: Remove two green floating circles (+ button and call button) from left side of page
+
+Work Log:
+- Identified two floating action buttons on the left side of the page:
+  1. QuickActions (green + FAB button) at fixed bottom-24 left-4
+  2. FloatingCTA (green phone/call button) at fixed bottom-20 end-4
+- Removed both <QuickActions /> and <FloatingCTA /> from src/app/page.tsx
+- Removed their import statements from page.tsx
+- Cleaned up extra empty lines left after removal
+- Verified dev server compiles successfully with 0 errors
+
+Stage Summary:
+- Two green floating circles completely removed from the page
+- Clean compilation, no errors
+- User also reported these were on the left side (سمت چپ) of the page
+
