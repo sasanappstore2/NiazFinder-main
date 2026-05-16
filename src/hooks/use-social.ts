@@ -1,7 +1,26 @@
 import { useQuery, useMutation, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { apiClient as apiFetch } from '@/lib/api-client';
 import type { Post, PostComment, LikeResponse } from '@/lib/types';
 import { toast } from 'sonner';
+
+// Simple fetch wrapper for social API calls (local Next.js API routes)
+async function apiFetch<T = any>(url: string, options?: { method?: string; body?: any; params?: Record<string, any> }): Promise<T> {
+  let fullUrl = url;
+  if (options?.params) {
+    const qs = new URLSearchParams(
+      Object.entries(options.params)
+        .filter(([, v]) => v !== undefined && v !== '')
+        .map(([k, v]) => [k, String(v)])
+    ).toString();
+    fullUrl = `${url}${qs ? `?${qs}` : ''}`;
+  }
+  const res = await fetch(fullUrl, {
+    method: options?.method || 'GET',
+    headers: { 'Content-Type': 'application/json' },
+    body: options?.body ? JSON.stringify(options.body) : undefined,
+  });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
 
 // ============ Response Types ============
 
