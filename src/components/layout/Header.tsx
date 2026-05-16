@@ -26,12 +26,15 @@ import {
   ArrowLeft,
   LayoutGrid,
   Phone,
+  MapPin,
 } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { HeaderSearchBar, DEMO_SEARCH_DATA } from '@/components/shared/HeaderSearchBar';
-import { LocationSelector } from '@/components/shared/LocationSelector';
 import { MobileLocationSelector } from '@/components/shared/MobileLocationSelector';
+import { CitySelectorPopup } from '@/components/ui/city-selector-popup';
+import { cookieManager } from '@/lib/cookie-manager';
+import type { City } from '@/lib/location-system';
 
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
@@ -423,7 +426,7 @@ function GuestActions() {
   );
 }
 
-// ============ Desktop Unified Dropdown (Profile + Notifications + Theme + Contact) ============
+// ============ Desktop Unified Dropdown (Profile + Notifications + Theme + Contact + Location) ============
 function DesktopUnifiedDropdown() {
   const {
     isAuthenticated,
@@ -437,295 +440,288 @@ function DesktopUnifiedDropdown() {
     fetchNotifications,
     conversations,
   } = useAppStore();
-  const [open, setOpen] = useState(false);
 
+  // Location state
+  const [locOpen, setLocOpen] = useState(false);
+  const [selectedCities, setSelectedCities] = useState<City[]>([]);
+
+  // Init location from cookies
+  useEffect(() => {
+    const prefs = cookieManager.getPreferences();
+    if (prefs.location.selectedCities.length > 0) {
+      setSelectedCities(prefs.location.selectedCities);
+    }
+  }, []);
+
+  const handleCityChange = (cities: City[]) => {
+    setSelectedCities(cities);
+    cookieManager.updateLocation(cities);
+  };
+
+  const [open, setOpen] = useState(false);
   const unreadMsgCount = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
   const recentNotifications = notifications.slice(0, 3);
   const totalBadges = unreadNotificationCount + unreadMsgCount;
+
+  const locationLabel = selectedCities.length === 0
+    ? 'انتخاب شهر'
+    : selectedCities.length === 1
+      ? selectedCities[0].name
+      : `${selectedCities.length} شهر`;
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (nextOpen) fetchNotifications();
   };
 
-  const handleLogin = () => {
-    setAuthModalTab('login');
-    setAuthModalOpen(true);
-    setOpen(false);
-  };
-
-  const handleRegister = () => {
-    setAuthModalTab('register');
-    setAuthModalOpen(true);
-    setOpen(false);
-  };
-
-  const handleLogout = () => {
-    logout();
-    setOpen(false);
-  };
-
   const initials = currentUser
     ? currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0)
     : '';
 
+  const nav = (view: AppView) => { navigateTo(view); setOpen(false); };
+
   return (
-    <DropdownMenu open={open} onOpenChange={handleOpenChange}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className={cn(
-            'relative size-9 rounded-full p-0',
-            'text-muted-foreground hover:text-foreground'
-          )}
-          aria-label="منوی کاربری"
-          title="منوی کاربری"
-        >
-          {isAuthenticated && currentUser ? (
-            <Avatar className="size-8 border-2 border-primary/20">
-              <AvatarImage
-                src={currentUser.avatar}
-                alt={currentUser.displayName || `${currentUser.firstName} ${currentUser.lastName}`}
-              />
-              <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-          ) : (
-            <User className="size-[18px]" />
-          )}
-          {totalBadges > 0 && (
-            <span
-              className={cn(
-                'absolute -top-0.5 -end-0.5 flex size-4.5 items-center justify-center rounded-full bg-destructive p-0',
-                'text-[9px] font-bold text-white animate-notification-pulse'
-              )}
-              style={{ minWidth: 18, height: 18 }}
-            >
-              {totalBadges > 99 ? '99+' : totalBadges}
-            </span>
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent
-        align="end"
-        sideOffset={8}
-        className={cn(
-          'w-72 p-0 overflow-hidden',
-          'max-h-[80vh] overflow-y-auto'
-        )}
-      >
-        {/* ── User Info / Auth ── */}
-        {isAuthenticated && currentUser ? (
-          <>
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex items-center gap-3">
-                <Avatar className="size-10 border-2 border-primary/20">
-                  <AvatarImage src={currentUser.avatar} />
-                  <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium leading-none truncate">
-                    {currentUser.displayName || `${currentUser.firstName} ${currentUser.lastName}`}
-                  </p>
-                  <p className="mt-1 text-xs leading-none text-muted-foreground truncate">
-                    {currentUser.email}
-                  </p>
-                </div>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-
-            {/* Profile & Dashboard */}
-            <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => { navigateTo('profile'); setOpen(false); }}>
-                <User className="ms-2 size-4" />
-                پروفایل
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { navigateTo('dashboard'); setOpen(false); }}>
-                <LayoutDashboard className="ms-2 size-4" />
-                داشبورد
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { navigateTo('browse-requests'); setOpen(false); }}>
-                <Bookmark className="ms-2 size-4" />
-                علاقه‌مندی‌ها
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { navigateTo('dashboard'); setOpen(false); }}>
-                <FileText className="ms-2 size-4" />
-                پیشنهادها
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </>
-        ) : (
-          <>
-            <DropdownMenuLabel className="font-normal text-center py-3">
-              <p className="text-sm text-muted-foreground">برای دسترسی کامل وارد شوید</p>
-            </DropdownMenuLabel>
-            <div className="flex flex-col gap-1.5 px-2 pb-1">
-              <Button
-                variant="outline"
-                className="w-full h-9 text-sm"
-                onClick={handleLogin}
-              >
-                ورود
-              </Button>
-              <Button
-                className="w-full h-9 text-sm"
-                onClick={handleRegister}
-              >
-                ثبت‌نام
-              </Button>
-            </div>
-          </>
-        )}
-
-        <DropdownMenuSeparator />
-
-        {/* ── Notifications ── */}
-        <DropdownMenuGroup>
-          <div className="flex items-center justify-between px-2 pt-1.5 pb-1">
-            <button
-              type="button"
-              onClick={() => { navigateTo('notifications'); setOpen(false); }}
-              className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
-            >
-              <Bell className="size-4" />
-              اعلان‌ها
-            </button>
-            {unreadNotificationCount > 0 && (
-              <span className="flex items-center justify-center size-5 rounded-full bg-destructive/10 text-destructive text-[10px] font-bold">
-                {unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}
+    <>
+      <DropdownMenu open={open} onOpenChange={handleOpenChange}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="relative size-9 rounded-full p-0 text-muted-foreground hover:text-foreground"
+            aria-label="منوی کاربری"
+          >
+            {isAuthenticated && currentUser ? (
+              <Avatar className="size-8 border-2 border-primary/20">
+                <AvatarImage src={currentUser.avatar} />
+                <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">{initials}</AvatarFallback>
+              </Avatar>
+            ) : (
+              <User className="size-[18px]" />
+            )}
+            {totalBadges > 0 && (
+              <span className="absolute -top-0.5 -end-0.5 flex size-[18px] items-center justify-center rounded-full bg-destructive text-[9px] font-bold text-white animate-notification-pulse">
+                {totalBadges > 99 ? '99+' : totalBadges}
               </span>
             )}
+          </Button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent
+          align="end"
+          sideOffset={8}
+          dir="rtl"
+          className="w-[280px] p-0 max-h-[85vh] overflow-y-auto"
+        >
+          {/* ── Location ── */}
+          <div className="px-2 pt-2 pb-1">
+            <button
+              type="button"
+              onClick={() => { setOpen(false); setLocOpen(true); }}
+              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-right transition-colors hover:bg-accent"
+            >
+              <span className={cn(
+                'flex size-8 shrink-0 items-center justify-center rounded-full',
+                selectedCities.length > 0 ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+              )}>
+                <MapPin className="size-4" />
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-medium leading-tight">{locationLabel}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">تغییر شهر</p>
+              </div>
+              <ChevronLeft className="size-3.5 text-muted-foreground/50" />
+            </button>
+          </div>
+
+          <DropdownMenuSeparator />
+
+          {/* ── User Info / Auth ── */}
+          {isAuthenticated && currentUser ? (
+            <>
+              <div className="px-2 py-2">
+                <div className="flex items-center gap-2.5">
+                  <Avatar className="size-9 border-2 border-primary/15">
+                    <AvatarImage src={currentUser.avatar} />
+                    <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">{initials}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-medium leading-tight truncate">
+                      {currentUser.displayName || `${currentUser.firstName} ${currentUser.lastName}`}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground truncate mt-0.5">{currentUser.email}</p>
+                  </div>
+                </div>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem onClick={() => nav('profile')}>
+                  <User className="size-4" />
+                  پروفایل
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => nav('dashboard')}>
+                  <LayoutDashboard className="size-4" />
+                  داشبورد
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => nav('browse-requests')}>
+                  <Bookmark className="size-4" />
+                  علاقه‌مندی‌ها
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => nav('dashboard')}>
+                  <FileText className="size-4" />
+                  پیشنهادها
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </>
+          ) : (
+            <div className="flex flex-col gap-1.5 px-2 py-2">
+              <p className="text-[11px] text-muted-foreground text-center pb-0.5">برای دسترسی کامل وارد شوید</p>
+              <Button variant="outline" className="w-full h-8 text-xs" onClick={() => { setAuthModalTab('login'); setAuthModalOpen(true); setOpen(false); }}>ورود</Button>
+              <Button className="w-full h-8 text-xs" onClick={() => { setAuthModalTab('register'); setAuthModalOpen(true); setOpen(false); }}>ثبت‌نام</Button>
+            </div>
+          )}
+
+          <DropdownMenuSeparator />
+
+          {/* ── Notifications ── */}
+          <div className="px-2 pt-1">
+            <button
+              type="button"
+              onClick={() => nav('notifications')}
+              className="flex w-full items-center justify-between py-1"
+            >
+              <span className="flex items-center gap-2 text-[13px] font-medium">
+                <Bell className="size-4 text-muted-foreground" />
+                اعلان‌ها
+              </span>
+              {unreadNotificationCount > 0 && (
+                <span className="size-5 rounded-full bg-destructive/10 text-destructive text-[10px] font-bold flex items-center justify-center">
+                  {unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}
+                </span>
+              )}
+            </button>
           </div>
           {recentNotifications.length > 0 ? (
-            <div className="space-y-0.5 px-1 pb-1.5">
+            <div className="space-y-0.5 px-2 pb-1.5">
               {recentNotifications.map((notif) => {
                 const Icon = getNotificationIcon(notif.type);
                 return (
                   <button
                     key={notif.id}
                     type="button"
-                    onClick={() => { navigateTo('notifications'); setOpen(false); }}
+                    onClick={() => nav('notifications')}
                     className={cn(
-                      'flex w-full items-start gap-2.5 rounded-md px-2 py-2 text-right transition-colors',
-                      notif.isRead ? 'hover:bg-accent/50' : 'bg-primary/5 hover:bg-primary/10'
+                      'flex w-full items-start gap-2 rounded-md px-2 py-1.5 text-right transition-colors',
+                      notif.isRead ? 'hover:bg-accent/50' : 'bg-primary/5'
                     )}
                   >
                     <span className={cn(
-                      'flex size-7 shrink-0 items-center justify-center rounded-full mt-0.5',
+                      'flex size-6 shrink-0 items-center justify-center rounded-full mt-0.5',
                       notif.isRead ? 'bg-muted text-muted-foreground' : 'bg-primary/15 text-primary'
                     )}>
-                      <Icon className="size-3.5" />
+                      <Icon className="size-3" />
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className={cn(
-                        'truncate text-xs leading-snug',
-                        notif.isRead ? 'text-muted-foreground' : 'font-medium text-foreground'
-                      )}>
+                      <p className={cn('truncate text-[11px] leading-snug', notif.isRead ? 'text-muted-foreground' : 'font-medium')}>
                         {notif.title}
                       </p>
-                      <p className="mt-0.5 text-[10px] text-muted-foreground/60">
-                        {timeAgo(notif.createdAt)}
-                      </p>
+                      <p className="text-[10px] text-muted-foreground/50 mt-px">{timeAgo(notif.createdAt)}</p>
                     </div>
-                    {!notif.isRead && <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />}
                   </button>
                 );
               })}
               <button
                 type="button"
-                onClick={() => { navigateTo('notifications'); setOpen(false); }}
-                className="flex w-full items-center justify-center gap-1 py-1.5 text-[11px] font-medium text-primary hover:underline"
+                onClick={() => nav('notifications')}
+                className="flex w-full items-center justify-center py-1 text-[10px] font-medium text-primary hover:underline"
               >
-                مشاهده همه اعلان‌ها
-                <ArrowLeft className="size-3" />
+                مشاهده همه <ArrowLeft className="size-2.5 ms-1" />
               </button>
             </div>
           ) : (
-            <div className="flex flex-col items-center gap-1 py-3 text-muted-foreground/40">
-              <BellOff className="size-5" />
-              <p className="text-[11px]">اعلان جدیدی ندارید</p>
+            <div className="flex items-center justify-center gap-1.5 py-2.5 text-muted-foreground/30">
+              <BellOff className="size-4" />
+              <p className="text-[11px]">بدون اعلان جدید</p>
             </div>
           )}
-        </DropdownMenuGroup>
 
-        <DropdownMenuSeparator />
+          <DropdownMenuSeparator />
 
-        {/* ── Messages ── */}
-        <DropdownMenuItem onClick={() => { navigateTo('messages'); setOpen(false); }}>
-          <MessageSquare className="ms-2 size-4" />
-          پیام‌ها
-          {unreadMsgCount > 0 && (
-            <span className="ms-auto flex items-center justify-center size-5 rounded-full bg-destructive/10 text-destructive text-[10px] font-bold">
-              {unreadMsgCount > 99 ? '99+' : unreadMsgCount}
-            </span>
-          )}
-        </DropdownMenuItem>
-
-        <DropdownMenuSeparator />
-
-        {/* ── More Links ── */}
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => { navigateTo('pricing'); setOpen(false); }}>
-            <CreditCard className="ms-2 size-4" />
-            تعرفه‌ها
+          {/* ── Messages ── */}
+          <DropdownMenuItem onClick={() => nav('messages')}>
+            <MessageSquare className="size-4" />
+            پیام‌ها
+            {unreadMsgCount > 0 && (
+              <span className="me-auto size-5 rounded-full bg-destructive/10 text-destructive text-[10px] font-bold flex items-center justify-center">
+                {unreadMsgCount > 99 ? '99+' : unreadMsgCount}
+              </span>
+            )}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { navigateTo('referral'); setOpen(false); }}>
-            <Gift className="ms-2 size-4" />
-            دعوت از دوستان
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { navigateTo('compare-specialists'); setOpen(false); }}>
-            <GitCompareArrows className="ms-2 size-4" />
-            مقایسه کسب‌وکارها
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { navigateTo('notification-settings'); setOpen(false); }}>
-            <Settings className="ms-2 size-4" />
-            تنظیمات اعلان‌ها
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
 
-        <DropdownMenuSeparator />
+          <DropdownMenuSeparator />
 
-        {/* ── Theme Toggle ── */}
-        <div className="px-2 py-1.5">
-          <ThemeToggle />
-        </div>
+          {/* ── Quick Links ── */}
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={() => nav('pricing')}>
+              <CreditCard className="size-4" />
+              تعرفه‌ها
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => nav('referral')}>
+              <Gift className="size-4" />
+              دعوت از دوستان
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => nav('compare-specialists')}>
+              <GitCompareArrows className="size-4" />
+              مقایسه کسب‌وکارها
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => nav('notification-settings')}>
+              <Settings className="size-4" />
+              تنظیمات اعلان‌ها
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
 
-        <DropdownMenuSeparator />
+          <DropdownMenuSeparator />
 
-        {/* ── Contact ── */}
-        <DropdownMenuGroup>
-          <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">
-            تماس با ما
-          </DropdownMenuLabel>
-          <div className="px-2 pb-2 space-y-1.5">
-            <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
-              <MessageSquare className="size-3.5 shrink-0 text-primary/60" />
-              <span dir="ltr">support@needfinder.ir</span>
+          {/* ── Theme ── */}
+          <div className="px-2 py-1.5">
+            <ThemeToggle />
+          </div>
+
+          <DropdownMenuSeparator />
+
+          {/* ── Contact ── */}
+          <div className="px-2 py-1.5 space-y-1">
+            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+              <MessageSquare className="size-3.5 shrink-0 text-primary/50" />
+              <span dir="ltr" className="truncate">support@needfinder.ir</span>
             </div>
-            <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
-              <Phone className="size-3.5 shrink-0 text-primary/60" />
+            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+              <Phone className="size-3.5 shrink-0 text-primary/50" />
               <span dir="ltr">021-1234-5678</span>
             </div>
           </div>
-        </DropdownMenuGroup>
 
-        {/* ── Logout ── */}
-        {isAuthenticated && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} variant="destructive">
-              <LogOut className="ms-2 size-4" />
-              خروج
-            </DropdownMenuItem>
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+          {/* ── Logout ── */}
+          {isAuthenticated && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => { logout(); setOpen(false); }} variant="destructive">
+                <LogOut className="size-4" />
+                خروج
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* City Selector Dialog */}
+      <CitySelectorPopup
+        open={locOpen}
+        onOpenChange={setLocOpen}
+        selectedCities={selectedCities}
+        onSelectionChange={handleCityChange}
+        title="انتخاب شهر"
+        description="شهرهای مورد نظر خود را انتخاب کنید"
+      />
+    </>
   );
 }
 
@@ -1158,9 +1154,8 @@ export function Header() {
             </span>
           </button>
 
-          {/* Center: Location Selector + Search Bar */}
-          <div className="hidden lg:flex flex-1 max-w-[580px] items-center gap-2 transition-all duration-300">
-            <LocationSelector />
+          {/* Center: Search Bar */}
+          <div className="hidden lg:flex flex-1 max-w-[600px] items-center">
             <div className="flex-1 search-glow-focus rounded-xl">
               <HeaderSearchBar data={DEMO_SEARCH_DATA} />
             </div>
