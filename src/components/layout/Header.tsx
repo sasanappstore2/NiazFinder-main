@@ -423,125 +423,307 @@ function GuestActions() {
   );
 }
 
-// ============ User Menu (Authenticated) ============
-function UserMenu() {
-  const { currentUser, navigateTo, logout } = useAppStore();
+// ============ Desktop Unified Dropdown (Profile + Notifications + Theme + Contact) ============
+function DesktopUnifiedDropdown() {
+  const {
+    isAuthenticated,
+    currentUser,
+    navigateTo,
+    logout,
+    setAuthModalOpen,
+    setAuthModalTab,
+    notifications,
+    unreadNotificationCount,
+    fetchNotifications,
+    conversations,
+  } = useAppStore();
+  const [open, setOpen] = useState(false);
 
-  if (!currentUser) return null;
+  const unreadMsgCount = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
+  const recentNotifications = notifications.slice(0, 3);
+  const totalBadges = unreadNotificationCount + unreadMsgCount;
 
-  const initials =
-    currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0);
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (nextOpen) fetchNotifications();
+  };
+
+  const handleLogin = () => {
+    setAuthModalTab('login');
+    setAuthModalOpen(true);
+    setOpen(false);
+  };
+
+  const handleRegister = () => {
+    setAuthModalTab('register');
+    setAuthModalOpen(true);
+    setOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setOpen(false);
+  };
+
+  const initials = currentUser
+    ? currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0)
+    : '';
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="relative size-9 rounded-full p-0"
+          className={cn(
+            'relative size-9 rounded-full p-0',
+            'text-muted-foreground hover:text-foreground'
+          )}
           aria-label="منوی کاربری"
           title="منوی کاربری"
         >
-          <Avatar className="size-8 border-2 border-primary/20">
-            <AvatarImage
-              src={currentUser.avatar}
-              alt={
-                currentUser.displayName ||
-                `${currentUser.firstName} ${currentUser.lastName}`
-              }
-            />
-            <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          {isAuthenticated && currentUser ? (
+            <Avatar className="size-8 border-2 border-primary/20">
+              <AvatarImage
+                src={currentUser.avatar}
+                alt={currentUser.displayName || `${currentUser.firstName} ${currentUser.lastName}`}
+              />
+              <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          ) : (
+            <User className="size-[18px]" />
+          )}
+          {totalBadges > 0 && (
+            <span
+              className={cn(
+                'absolute -top-0.5 -end-0.5 flex size-4.5 items-center justify-center rounded-full bg-destructive p-0',
+                'text-[9px] font-bold text-white animate-notification-pulse'
+              )}
+              style={{ minWidth: 18, height: 18 }}
+            >
+              {totalBadges > 99 ? '99+' : totalBadges}
+            </span>
+          )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col gap-1">
-            <p className="text-sm font-medium leading-none">
-              {currentUser.displayName ||
-                `${currentUser.firstName} ${currentUser.lastName}`}
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {currentUser.email}
-            </p>
+
+      <DropdownMenuContent
+        align="end"
+        sideOffset={8}
+        className={cn(
+          'w-72 p-0 overflow-hidden',
+          'max-h-[80vh] overflow-y-auto'
+        )}
+      >
+        {/* ── User Info / Auth ── */}
+        {isAuthenticated && currentUser ? (
+          <>
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex items-center gap-3">
+                <Avatar className="size-10 border-2 border-primary/20">
+                  <AvatarImage src={currentUser.avatar} />
+                  <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium leading-none truncate">
+                    {currentUser.displayName || `${currentUser.firstName} ${currentUser.lastName}`}
+                  </p>
+                  <p className="mt-1 text-xs leading-none text-muted-foreground truncate">
+                    {currentUser.email}
+                  </p>
+                </div>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+
+            {/* Profile & Dashboard */}
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => { navigateTo('profile'); setOpen(false); }}>
+                <User className="ms-2 size-4" />
+                پروفایل
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { navigateTo('dashboard'); setOpen(false); }}>
+                <LayoutDashboard className="ms-2 size-4" />
+                داشبورد
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { navigateTo('browse-requests'); setOpen(false); }}>
+                <Bookmark className="ms-2 size-4" />
+                علاقه‌مندی‌ها
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { navigateTo('dashboard'); setOpen(false); }}>
+                <FileText className="ms-2 size-4" />
+                پیشنهادها
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </>
+        ) : (
+          <>
+            <DropdownMenuLabel className="font-normal text-center py-3">
+              <p className="text-sm text-muted-foreground">برای دسترسی کامل وارد شوید</p>
+            </DropdownMenuLabel>
+            <div className="flex flex-col gap-1.5 px-2 pb-1">
+              <Button
+                variant="outline"
+                className="w-full h-9 text-sm"
+                onClick={handleLogin}
+              >
+                ورود
+              </Button>
+              <Button
+                className="w-full h-9 text-sm"
+                onClick={handleRegister}
+              >
+                ثبت‌نام
+              </Button>
+            </div>
+          </>
+        )}
+
+        <DropdownMenuSeparator />
+
+        {/* ── Notifications ── */}
+        <DropdownMenuGroup>
+          <div className="flex items-center justify-between px-2 pt-1.5 pb-1">
+            <button
+              type="button"
+              onClick={() => { navigateTo('notifications'); setOpen(false); }}
+              className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+            >
+              <Bell className="size-4" />
+              اعلان‌ها
+            </button>
+            {unreadNotificationCount > 0 && (
+              <span className="flex items-center justify-center size-5 rounded-full bg-destructive/10 text-destructive text-[10px] font-bold">
+                {unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}
+              </span>
+            )}
           </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => navigateTo('profile')}
-            data-href={VIEW_HREF['profile']}
-            title={VIEW_TITLE['profile']}
-          >
-            <User className="ms-2 size-4" />
-            پروفایل
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => navigateTo('dashboard')}
-            data-href={VIEW_HREF['dashboard']}
-            title={VIEW_TITLE['dashboard']}
-          >
-            <LayoutDashboard className="ms-2 size-4" />
-            داشبورد
-          </DropdownMenuItem>
+          {recentNotifications.length > 0 ? (
+            <div className="space-y-0.5 px-1 pb-1.5">
+              {recentNotifications.map((notif) => {
+                const Icon = getNotificationIcon(notif.type);
+                return (
+                  <button
+                    key={notif.id}
+                    type="button"
+                    onClick={() => { navigateTo('notifications'); setOpen(false); }}
+                    className={cn(
+                      'flex w-full items-start gap-2.5 rounded-md px-2 py-2 text-right transition-colors',
+                      notif.isRead ? 'hover:bg-accent/50' : 'bg-primary/5 hover:bg-primary/10'
+                    )}
+                  >
+                    <span className={cn(
+                      'flex size-7 shrink-0 items-center justify-center rounded-full mt-0.5',
+                      notif.isRead ? 'bg-muted text-muted-foreground' : 'bg-primary/15 text-primary'
+                    )}>
+                      <Icon className="size-3.5" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className={cn(
+                        'truncate text-xs leading-snug',
+                        notif.isRead ? 'text-muted-foreground' : 'font-medium text-foreground'
+                      )}>
+                        {notif.title}
+                      </p>
+                      <p className="mt-0.5 text-[10px] text-muted-foreground/60">
+                        {timeAgo(notif.createdAt)}
+                      </p>
+                    </div>
+                    {!notif.isRead && <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />}
+                  </button>
+                );
+              })}
+              <button
+                type="button"
+                onClick={() => { navigateTo('notifications'); setOpen(false); }}
+                className="flex w-full items-center justify-center gap-1 py-1.5 text-[11px] font-medium text-primary hover:underline"
+              >
+                مشاهده همه اعلان‌ها
+                <ArrowLeft className="size-3" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-1 py-3 text-muted-foreground/40">
+              <BellOff className="size-5" />
+              <p className="text-[11px]">اعلان جدیدی ندارید</p>
+            </div>
+          )}
         </DropdownMenuGroup>
+
         <DropdownMenuSeparator />
+
+        {/* ── Messages ── */}
+        <DropdownMenuItem onClick={() => { navigateTo('messages'); setOpen(false); }}>
+          <MessageSquare className="ms-2 size-4" />
+          پیام‌ها
+          {unreadMsgCount > 0 && (
+            <span className="ms-auto flex items-center justify-center size-5 rounded-full bg-destructive/10 text-destructive text-[10px] font-bold">
+              {unreadMsgCount > 99 ? '99+' : unreadMsgCount}
+            </span>
+          )}
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        {/* ── More Links ── */}
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => navigateTo('browse-requests')}
-            data-href="/bookmarks"
-            title="علاقه‌مندی‌ها و نیازهای ذخیره شده"
-          >
-            <Bookmark className="ms-2 size-4" />
-            علاقه‌مندی‌ها
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => navigateTo('dashboard')}
-            data-href="/proposals"
-            title="پیشنهادهای ارسالی من"
-          >
-            <FileText className="ms-2 size-4" />
-            پیشنهادها
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => navigateTo('pricing')}
-            data-href={VIEW_HREF['pricing']}
-            title={VIEW_TITLE['pricing']}
-          >
+          <DropdownMenuItem onClick={() => { navigateTo('pricing'); setOpen(false); }}>
             <CreditCard className="ms-2 size-4" />
             تعرفه‌ها
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => navigateTo('referral')}
-            data-href={VIEW_HREF['referral']}
-            title={VIEW_TITLE['referral']}
-          >
+          <DropdownMenuItem onClick={() => { navigateTo('referral'); setOpen(false); }}>
             <Gift className="ms-2 size-4" />
             دعوت از دوستان
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => navigateTo('compare-specialists')}
-            data-href={VIEW_HREF['compare-specialists']}
-            title={VIEW_TITLE['compare-specialists']}
-          >
+          <DropdownMenuItem onClick={() => { navigateTo('compare-specialists'); setOpen(false); }}>
             <GitCompareArrows className="ms-2 size-4" />
             مقایسه کسب‌وکارها
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => navigateTo('notification-settings')}
-            data-href={VIEW_HREF['notification-settings']}
-            title={VIEW_TITLE['notification-settings']}
-          >
+          <DropdownMenuItem onClick={() => { navigateTo('notification-settings'); setOpen(false); }}>
             <Settings className="ms-2 size-4" />
             تنظیمات اعلان‌ها
           </DropdownMenuItem>
         </DropdownMenuGroup>
+
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout} variant="destructive" title="خروج از حساب کاربری">
-          <LogOut className="ms-2 size-4" />
-          خروج
-        </DropdownMenuItem>
+
+        {/* ── Theme Toggle ── */}
+        <div className="px-2 py-1.5">
+          <ThemeToggle />
+        </div>
+
+        <DropdownMenuSeparator />
+
+        {/* ── Contact ── */}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">
+            تماس با ما
+          </DropdownMenuLabel>
+          <div className="px-2 pb-2 space-y-1.5">
+            <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
+              <MessageSquare className="size-3.5 shrink-0 text-primary/60" />
+              <span dir="ltr">support@needfinder.ir</span>
+            </div>
+            <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
+              <Phone className="size-3.5 shrink-0 text-primary/60" />
+              <span dir="ltr">021-1234-5678</span>
+            </div>
+          </div>
+        </DropdownMenuGroup>
+
+        {/* ── Logout ── */}
+        {isAuthenticated && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout} variant="destructive">
+              <LogOut className="ms-2 size-4" />
+              خروج
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -829,11 +1011,9 @@ function MobileSheetContent() {
 
 // ============ Auth Section (Desktop) ============
 function AuthSection() {
-  const { isAuthenticated } = useAppStore();
-
   return (
     <div className="hidden sm:block">
-      {isAuthenticated ? <UserMenu /> : <GuestActions />}
+      <DesktopUnifiedDropdown />
     </div>
   );
 }
@@ -988,18 +1168,7 @@ export function Header() {
 
           {/* Left: Actions */}
           <div className="flex items-center gap-1 sm:gap-2">
-            {/* Theme Toggle — hidden on very small mobile, shown on sm+ */}
-            <div className="hidden sm:flex">
-              <ThemeToggle />
-            </div>
-
-            {/* Notifications */}
-            <NotificationsButton />
-
-            {/* Messages */}
-            <MessagesButton />
-
-            {/* Auth / User — desktop only */}
+            {/* Unified Dropdown (Profile, Notifications, Theme, Contact, Messages) */}
             <AuthSection />
 
             {/* Mobile Menu */}
