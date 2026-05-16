@@ -39,7 +39,6 @@ import {
   CategorySelector,
   ALL_CATEGORIES,
   getCategoryIcon,
-  getCategoryColor,
 } from '@/components/layout/CategoryMegaMenu';
 import type { MegaMenuCategory } from '@/components/layout/CategoryMegaMenu';
 import type { AppView } from '@/lib/types';
@@ -912,38 +911,9 @@ export function Header() {
         </div>
 
         {/* ═══ Second Row: Category Mega Menu ═══ */}
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-2">
-          {/* Mega menu trigger */}
+        <div className="flex items-center gap-2 py-2">
           <HeaderCategoryMenuDesktop />
           <HeaderCategoryMenuMobile />
-
-          {/* Divider */}
-          <div className="hidden sm:block h-5 w-px bg-border/30 shrink-0" />
-
-          {/* Category icon buttons */}
-          <div className="flex items-center gap-1">
-            {ALL_CATEGORIES.map((cat) => {
-              const Icon = cat.icon;
-              const color = getCategoryColor(cat.value);
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => navigateTo('browse-requests', { categoryId: cat.value })}
-                  className="group flex flex-col items-center gap-0.5 rounded-lg px-2.5 py-1.5 shrink-0 transition-all duration-200 hover:bg-accent"
-                  title={cat.name}
-                >
-                  <Icon
-                    className="size-4 transition-transform duration-200 group-hover:scale-110"
-                    style={{ color }}
-                  />
-                  <span className="text-[10px] font-medium text-muted-foreground group-hover:text-foreground whitespace-nowrap transition-colors">
-                    {cat.name}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
         </div>
       </div>
     </header>
