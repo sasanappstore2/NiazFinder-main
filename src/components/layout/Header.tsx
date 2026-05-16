@@ -39,6 +39,7 @@ import {
   CategorySelector,
   ALL_CATEGORIES,
   getCategoryIcon,
+  getCategoryColor,
 } from '@/components/layout/CategoryMegaMenu';
 import type { MegaMenuCategory } from '@/components/layout/CategoryMegaMenu';
 import type { AppView } from '@/lib/types';
