@@ -194,7 +194,7 @@ export function Footer({ compact = false }: FooterProps) {
   // ============ Compact Footer (non-home pages) ============
   if (compact) {
     return (
-      <footer id="footer" className="bg-card/30" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
+      <footer id="footer" className="bg-card/30 pb-20" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
         <div className="container-default py-4">
           <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
             {/* Brand */}
@@ -273,7 +273,7 @@ export function Footer({ compact = false }: FooterProps) {
 
   // ============ Full Footer (home page) ============
   return (
-    <footer id="footer" className="mt-auto footer-glass footer-wave" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
+    <footer id="footer" className="mt-auto pb-20 footer-glass footer-wave" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
       {/* Gradient top decoration line */}
       <div className="gradient-line" />
       {/* Newsletter Section */}

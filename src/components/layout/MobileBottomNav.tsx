@@ -81,12 +81,12 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-[var(--z-mobile-nav)] lg:hidden"
+      className="fixed bottom-0 inset-x-0 z-[var(--z-mobile-nav)]"
       dir="rtl"
       role="navigation"
       aria-label="ناوبری پایین صفحه"
     >
-      <div className="mx-auto max-w-lg">
+      <div className="mx-auto max-w-7xl">
         <div className={cn(
           'mobile-nav-glass mobile-nav-gradient-top',
           'relative flex items-center justify-around gap-1 rounded-t-2xl',

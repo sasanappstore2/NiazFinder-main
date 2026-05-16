@@ -226,7 +226,7 @@ export default function App() {
       {/* Onboarding Welcome */}
       <OnboardingWelcome />
 
-      {/* Mobile Bottom Navigation — hidden on chat view */}
+      {/* Bottom Navigation — hidden on chat view */}
       {!isChatView && <MobileBottomNav />}
 
       {/* Cookie Consent Banner */}
