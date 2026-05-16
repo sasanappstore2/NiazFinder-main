@@ -51,7 +51,6 @@ export function MobileBottomNav() {
     navigateTo,
     isAuthenticated,
     setAuthModalOpen,
-    setAuthModalTab,
     conversations,
   } = useAppStore();
 
@@ -64,14 +63,12 @@ export function MobileBottomNav() {
   const handleTabClick = (tab: TabItem) => {
     // If profile tab and not authenticated, open auth modal
     if (tab.view === 'dashboard' && !isAuthenticated) {
-      setAuthModalTab('login');
       setAuthModalOpen(true);
       return;
     }
 
     // If messages tab and not authenticated, open auth modal
     if (tab.view === 'messages' && !isAuthenticated) {
-      setAuthModalTab('login');
       setAuthModalOpen(true);
       return;
     }

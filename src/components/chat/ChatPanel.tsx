@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   MessageSquare,
   Search,
@@ -16,6 +16,7 @@ import {
   BadgeCheck,
   Loader2,
   Users,
+  Phone,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import type { Message } from '@/lib/types';
 import {
   Popover,
   PopoverTrigger,
@@ -52,17 +52,32 @@ const getInitials = (name: string) => {
   return parts[0].slice(0, 2);
 };
 
-// ─── Reply & Emoji types ────────────────────────────────────────────────────
+const formatTime = (dateStr: string) => {
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+  } catch {
+    return '';
+  }
+};
 
-interface ReplyInfo {
-  messageId: string;
-  senderName: string;
-  content: string;
-}
-
-interface ExtendedMessage extends Message {
-  replyTo?: ReplyInfo;
-}
+const formatTimeAgo = (dateStr: string) => {
+  try {
+    const d = new Date(dateStr);
+    const now = new Date();
+    const diff = now.getTime() - d.getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'الان';
+    if (mins < 60) return `${mins} دقیقه پیش`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours} ساعت پیش`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days} روز پیش`;
+    return d.toLocaleDateString('fa-IR');
+  } catch {
+    return '';
+  }
+};
 
 // ─── User search result type ──────────────────────────────────────────────────
 
@@ -75,6 +90,9 @@ interface SearchedUser {
   avatar?: string;
   isVerified?: boolean;
   online?: boolean;
+  city?: string;
+  bio?: string;
+  role?: string;
 }
 
 const QUICK_EMOJIS = [
@@ -84,143 +102,32 @@ const QUICK_EMOJIS = [
   '🤝', '📌', '🔔', '✅', '❌', '💯',
 ];
 
-// ─── Auto-replies pool ───────────────────────────────────────────────────────
-
-const AUTO_REPLIES = [
-  'باشه، حتماً بررسی می‌کنم.',
-  'ممنون از اطلاع‌رسانی.',
-  'خیلی عالی، ادامه بدید.',
-  'فهمیدم، ممنون.',
-  'بله، با کمال میل.',
-  'حتماً، در اسرع وقت انجام می‌دم.',
-];
-
-// ─── Mock Data ───────────────────────────────────────────────────────────────
-
-interface MockConversation {
-  id: string;
-  name: string;
-  lastMessage: string;
-  timeAgo: string;
-  unreadCount: number;
-  isOnline: boolean;
-  messages: Message[];
-}
-
-const mockConversations: MockConversation[] = [
-  {
-    id: 'conv-1',
-    name: 'علی محمدی',
-    lastMessage: 'سلام، من پروژه رو بررسی کردم و آماده شروع هستم',
-    timeAgo: '۵ دقیقه پیش',
-    unreadCount: 2,
-    isOnline: true,
-    messages: [
-      { id: 'm1', conversationId: 'conv-1', senderId: 'other', content: 'سلام، وقت بخیر', type: 'TEXT', isRead: true, createdAt: '10:00' },
-      { id: 'm2', conversationId: 'conv-1', senderId: 'me', content: 'سلام، وقت شما هم بخیر', type: 'TEXT', isRead: true, createdAt: '10:01' },
-      { id: 'm3', conversationId: 'conv-1', senderId: 'other', content: 'من می‌تونم این پروژه رو انجام بدم', type: 'TEXT', isRead: true, createdAt: '10:05' },
-      { id: 'm4', conversationId: 'conv-1', senderId: 'me', content: 'قیمت پیشنهادی شما چقدره؟', type: 'TEXT', isRead: true, createdAt: '10:10' },
-      { id: 'm5', conversationId: 'conv-1', senderId: 'other', content: 'برای این پروژه حدود ۵ میلیون تومان پیشنهاد می‌دم', type: 'TEXT', isRead: true, createdAt: '10:15' },
-      { id: 'm6', conversationId: 'conv-1', senderId: 'me', content: 'زمان تحویل چقدره؟', type: 'TEXT', isRead: true, createdAt: '10:20' },
-      { id: 'm7', conversationId: 'conv-1', senderId: 'other', content: 'حدود ۱۰ روز کاری', type: 'TEXT', isRead: false, createdAt: '10:25' },
-      { id: 'm8', conversationId: 'conv-1', senderId: 'other', content: 'سلام، من پروژه رو بررسی کردم و آماده شروع هستم', type: 'TEXT', isRead: false, createdAt: '10:30' },
-    ],
-  },
-  {
-    id: 'conv-2',
-    name: 'سارا احمدی',
-    lastMessage: 'فایل‌های پروژه رو براتون فرستادم',
-    timeAgo: '۳۰ دقیقه پیش',
-    unreadCount: 1,
-    isOnline: true,
-    messages: [
-      { id: 'm1', conversationId: 'conv-2', senderId: 'me', content: 'سلام خانم احمدی، وضعیت پروژه چطوره؟', type: 'TEXT', isRead: true, createdAt: '09:30' },
-      { id: 'm2', conversationId: 'conv-2', senderId: 'other', content: 'سلام، پروژه در حال انجام هست', type: 'TEXT', isRead: true, createdAt: '09:35' },
-      { id: 'm3', conversationId: 'conv-2', senderId: 'me', content: 'عالی، کی آماده‌ست تحویل بدید؟', type: 'TEXT', isRead: true, createdAt: '09:40' },
-      { id: 'm4', conversationId: 'conv-2', senderId: 'other', content: 'فایل‌های پروژه رو براتون فرستادم', type: 'TEXT', isRead: false, createdAt: '09:45' },
-      { id: 'm5', conversationId: 'conv-2', senderId: 'other', content: 'لطفاً بررسی کنید و نظرتون رو بدید', type: 'TEXT', isRead: false, createdAt: '09:46' },
-      { id: 'm6', conversationId: 'conv-2', senderId: 'me', content: 'ممنون، حتماً بررسی می‌کنم', type: 'TEXT', isRead: true, createdAt: '09:50' },
-    ],
-  },
-  {
-    id: 'conv-3',
-    name: 'رضا کریمی',
-    lastMessage: 'ممنون از همکاری خوبتون',
-    timeAgo: '۲ ساعت پیش',
-    unreadCount: 0,
-    isOnline: false,
-    messages: [
-      { id: 'm1', conversationId: 'conv-3', senderId: 'other', content: 'سلام، آیا پروژه طراحی لوگو رو انجام می‌دید؟', type: 'TEXT', isRead: true, createdAt: '08:00' },
-      { id: 'm2', conversationId: 'conv-3', senderId: 'me', content: 'بله، با کمال میل', type: 'TEXT', isRead: true, createdAt: '08:10' },
-      { id: 'm3', conversationId: 'conv-3', senderId: 'other', content: 'قیمتش چقدر میشه؟', type: 'TEXT', isRead: true, createdAt: '08:15' },
-      { id: 'm4', conversationId: 'conv-3', senderId: 'me', content: 'حدود ۲ میلیون تومان', type: 'TEXT', isRead: true, createdAt: '08:20' },
-      { id: 'm5', conversationId: 'conv-3', senderId: 'other', content: 'خوبه، شروع می‌کنیم', type: 'TEXT', isRead: true, createdAt: '08:25' },
-      { id: 'm6', conversationId: 'conv-3', senderId: 'other', content: 'ممنون از همکاری خوبتون', type: 'TEXT', isRead: true, createdAt: '08:30' },
-    ],
-  },
-  {
-    id: 'conv-4',
-    name: 'مینا حسینی',
-    lastMessage: 'آیا امکان تغییر جزئیات پروژه وجود داره؟',
-    timeAgo: '۱ روز پیش',
-    unreadCount: 3,
-    isOnline: false,
-    messages: [
-      { id: 'm1', conversationId: 'conv-4', senderId: 'other', content: 'سلام، من در مورد پروژه سوال داشتم', type: 'TEXT', isRead: true, createdAt: '14:00' },
-      { id: 'm2', conversationId: 'conv-4', senderId: 'me', content: 'بفرمایید، در خدمتم', type: 'TEXT', isRead: true, createdAt: '14:05' },
-      { id: 'm3', conversationId: 'conv-4', senderId: 'other', content: 'آیا امکان تغییر جزئیات پروژه وجود داره؟', type: 'TEXT', isRead: false, createdAt: '14:10' },
-      { id: 'm4', conversationId: 'conv-4', senderId: 'other', content: 'می‌خوام رنگ‌بندی رو تغییر بدم', type: 'TEXT', isRead: false, createdAt: '14:11' },
-      { id: 'm5', conversationId: 'conv-4', senderId: 'other', content: 'و فونت‌ها هم عوض بشه', type: 'TEXT', isRead: false, createdAt: '14:12' },
-      { id: 'm6', conversationId: 'conv-4', senderId: 'me', content: 'البته، بفرمایید چه تغییراتی مد نظرتون هست', type: 'TEXT', isRead: true, createdAt: '14:20' },
-      { id: 'm7', conversationId: 'conv-4', senderId: 'me', content: 'هزینه اضافی نداره', type: 'TEXT', isRead: true, createdAt: '14:22' },
-    ],
-  },
-  {
-    id: 'conv-5',
-    name: 'حسن نجفی',
-    lastMessage: 'پروژه با موفقیت تحویل داده شد',
-    timeAgo: '۳ روز پیش',
-    unreadCount: 0,
-    isOnline: true,
-    messages: [
-      { id: 'm1', conversationId: 'conv-5', senderId: 'me', content: 'سلام آقای نجفی، پروژه آماده‌ست', type: 'TEXT', isRead: true, createdAt: '11:00' },
-      { id: 'm2', conversationId: 'conv-5', senderId: 'other', content: 'عالی، بررسی می‌کنم', type: 'TEXT', isRead: true, createdAt: '11:30' },
-      { id: 'm3', conversationId: 'conv-5', senderId: 'other', content: 'خیلی خوب شده، ممنون', type: 'TEXT', isRead: true, createdAt: '12:00' },
-      { id: 'm4', conversationId: 'conv-5', senderId: 'me', content: 'خواهش می‌کنم، خوشحالم که راضی هستید', type: 'TEXT', isRead: true, createdAt: '12:05' },
-      { id: 'm5', conversationId: 'conv-5', senderId: 'other', content: 'پروژه با موفقیت تحویل داده شد', type: 'TEXT', isRead: true, createdAt: '12:10' },
-    ],
-  },
-  {
-    id: 'conv-6',
-    name: 'فاطمه رضایی',
-    lastMessage: 'برای مشاوره رایگان تماس بگیرید',
-    timeAgo: '۱ هفته پیش',
-    unreadCount: 0,
-    isOnline: false,
-    messages: [
-      { id: 'm1', conversationId: 'conv-6', senderId: 'other', content: 'سلام، من نیاز به مشاوره دارم', type: 'TEXT', isRead: true, createdAt: '16:00' },
-      { id: 'm2', conversationId: 'conv-6', senderId: 'me', content: 'سلام، در چه زمینه‌ای نیاز به مشاوره دارید؟', type: 'TEXT', isRead: true, createdAt: '16:10' },
-      { id: 'm3', conversationId: 'conv-6', senderId: 'other', content: 'در زمینه طراحی وب‌سایت', type: 'TEXT', isRead: true, createdAt: '16:15' },
-      { id: 'm4', conversationId: 'conv-6', senderId: 'me', content: 'برای مشاوره رایگان تماس بگیرید', type: 'TEXT', isRead: true, createdAt: '16:20' },
-    ],
-  },
-];
-
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function ChatPanel() {
-  const { isAuthenticated, setAuthModalOpen, authToken } = useAppStore();
+  const {
+    isAuthenticated,
+    setAuthModalOpen,
+    currentUser,
+    conversations,
+    messages,
+    activeConversationId,
+    isLoading,
+    authToken,
+    fetchConversations,
+    fetchConversationMessages,
+    sendMessage,
+    setActiveConversationId,
+    addOrUpdateConversation,
+  } = useAppStore();
+
+  // ── Local state ────────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-  const [conversationMessages, setConversationMessages] = useState<ExtendedMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [showMessages, setShowMessages] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const [replyTo, setReplyTo] = useState<ReplyInfo | null>(null);
+  const [replyTo, setReplyTo] = useState<{ messageId: string; senderName: string; content: string } | null>(null);
   const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null);
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; msg: ExtendedMessage } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // ── New Chat / User Search state ────────────────────────────────────────
@@ -229,18 +136,42 @@ export function ChatPanel() {
   const [searchResults, setSearchResults] = useState<SearchedUser[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const userSearchInputRef = useRef<HTMLInputElement>(null);
 
-  const selectedConversation = mockConversations.find((c) => c.id === selectedConversationId) ?? null;
+  // ── Derived state ───────────────────────────────────────────────────────
+  const selectedConversation = conversations.find((c) => c.id === activeConversationId) ?? null;
+  const otherUser = selectedConversation?.otherUser;
 
-  const filteredConversations = useMemo(
-    () =>
-      mockConversations.filter((c) =>
-        c.name.includes(searchQuery) || c.lastMessage.includes(searchQuery)
-      ),
-    [searchQuery]
-  );
+  const filteredConversations = searchQuery.trim()
+    ? conversations.filter((c) => {
+        const name = `${c.otherUser?.firstName ?? ''} ${c.otherUser?.lastName ?? ''}`.trim();
+        return name.includes(searchQuery) || (c.lastMessage?.includes(searchQuery) ?? false);
+      })
+    : conversations;
+
+  // ── Fetch conversations on mount ───────────────────────────────────────
+  useEffect(() => {
+    if (isAuthenticated && authToken) {
+      fetchConversations();
+    }
+  }, [isAuthenticated, authToken, fetchConversations]);
+
+  // ── Fetch messages when conversation changes ───────────────────────────
+  useEffect(() => {
+    if (activeConversationId && authToken) {
+      fetchConversationMessages(activeConversationId);
+      setShowMessages(true);
+    }
+  }, [activeConversationId, authToken, fetchConversationMessages]);
+
+  // ── Scroll to bottom on new messages ───────────────────────────────────
+  useEffect(() => {
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages.length]);
 
   // ── Debounced user search ──────────────────────────────────────────────
   useEffect(() => {
@@ -286,6 +217,9 @@ export function ChatPanel() {
           avatar: u.avatar,
           isVerified: u.isVerified,
           online: u.online,
+          city: u.city,
+          bio: u.bio,
+          role: u.role,
         }));
         setSearchResults(users);
       } catch {
@@ -302,15 +236,31 @@ export function ChatPanel() {
     };
   }, [userSearchQuery, showNewChat, authToken]);
 
-  // Focus user search input when toggling
+  // ── Focus user search input when toggling ──────────────────────────────
   useEffect(() => {
     if (showNewChat) {
-      // Small delay to ensure the input is rendered
       requestAnimationFrame(() => {
         userSearchInputRef.current?.focus();
       });
     }
   }, [showNewChat]);
+
+  // ── Cleanup on unmount ─────────────────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
+  // ── Select conversation ────────────────────────────────────────────────
+  const handleSelectConversation = useCallback((convId: string) => {
+    setActiveConversationId(convId);
+    setShowMessages(true);
+    setReplyTo(null);
+    inputRef.current?.focus();
+  }, [setActiveConversationId]);
 
   // ── Create / select conversation from search result ─────────────────────
   const handleSelectSearchUser = useCallback(
@@ -323,65 +273,48 @@ export function ChatPanel() {
         const headers: Record<string, string> = { 'Content-Type': 'application/json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const res = await fetch('/api/conversations', {
+        const res = await fetch('/api/chat', {
           method: 'POST',
           headers,
           body: JSON.stringify({ otherUserId: user.id }),
         });
 
         if (!res.ok) {
-          // If conversation creation fails, create a mock-like entry
-          handleSelectConversation({
-            id: `conv-new-${user.id}`,
-            name: (user.displayName ?? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim()) || 'کاربر',
-            lastMessage: '',
-            timeAgo: 'الان',
-            unreadCount: 0,
-            isOnline: user.online ?? false,
-            messages: [],
-          });
-          setShowNewChat(false);
-          setUserSearchQuery('');
-          return;
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || 'خطا در ایجاد گفتگو');
         }
 
         const data = await res.json();
         const conversation = data.conversation ?? data;
-        const otherUser = conversation.otherUser ?? user;
-        const convName =
-          (otherUser.displayName ??
-          `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim()) ||
-          'کاربر';
 
-        handleSelectConversation({
+        // Add to store
+        addOrUpdateConversation({
           id: conversation.id,
-          name: convName,
-          lastMessage: '',
-          timeAgo: 'الان',
-          unreadCount: 0,
-          isOnline: otherUser.online ?? user.online ?? false,
-          messages: [],
+          requestId: conversation.requestId,
+          lastMessage: conversation.lastMessage,
+          lastMessageAt: conversation.lastMessageAt ? String(conversation.lastMessageAt) : undefined,
+          unreadCount: conversation.unreadCount ?? 0,
+          otherUser: {
+            id: user.id,
+            firstName: user.firstName ?? '',
+            lastName: user.lastName ?? '',
+            avatar: user.avatar ?? null,
+            online: user.online ?? false,
+          },
         });
+
+        // Select it
+        handleSelectConversation(conversation.id);
         setShowNewChat(false);
         setUserSearchQuery('');
-      } catch {
-        // Fallback: just open a blank conversation
-        handleSelectConversation({
-          id: `conv-new-${user.id}`,
-          name: (user.displayName ?? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim()) || 'کاربر',
-          lastMessage: '',
-          timeAgo: 'الان',
-          unreadCount: 0,
-          isOnline: user.online ?? false,
-          messages: [],
-        });
-        setShowNewChat(false);
-        setUserSearchQuery('');
+        setSearchResults([]);
+      } catch (err: any) {
+        console.error('Error creating conversation:', err);
       } finally {
         setIsCreatingConversation(false);
       }
     },
-    [authToken, isCreatingConversation]
+    [authToken, isCreatingConversation, addOrUpdateConversation, handleSelectConversation]
   );
 
   // ── Toggle new chat panel ───────────────────────────────────────────────
@@ -393,104 +326,30 @@ export function ChatPanel() {
     }
   }, [showNewChat]);
 
-  const scrollToBottom = useCallback(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, []);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [conversationMessages, isTyping, scrollToBottom]);
-
-  // Cleanup timers on unmount
-  useEffect(() => {
-    return () => {
-      if (typingTimerRef.current) {
-        clearTimeout(typingTimerRef.current);
-      }
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, []);
-
-  const handleSelectConversation = (conv: MockConversation) => {
-    setSelectedConversationId(conv.id);
-    setConversationMessages([...conv.messages] as ExtendedMessage[]);
-    setShowMessages(true);
-    setIsTyping(false);
-    setReplyTo(null);
-    if (typingTimerRef.current) {
-      clearTimeout(typingTimerRef.current);
-      typingTimerRef.current = null;
-    }
-  };
-
-  const handleBack = () => {
+  // ── Back to conversation list ──────────────────────────────────────────
+  const handleBack = useCallback(() => {
     setShowMessages(false);
-    setSelectedConversationId(null);
-    setIsTyping(false);
+    setActiveConversationId(null);
     setReplyTo(null);
-    if (typingTimerRef.current) {
-      clearTimeout(typingTimerRef.current);
-      typingTimerRef.current = null;
-    }
-  };
+  }, [setActiveConversationId]);
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim() || !selectedConversationId) return;
+  // ── Send message ───────────────────────────────────────────────────────
+  const handleSendMessage = useCallback(async () => {
+    if (!newMessage.trim() || !activeConversationId || isSendingMessage) return;
 
-    const msg: ExtendedMessage = {
-      id: `msg-${Date.now()}`,
-      conversationId: selectedConversationId,
-      senderId: 'me',
-      content: newMessage.trim(),
-      type: 'TEXT',
-      isRead: false,
-      createdAt: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
-      ...(replyTo ? { replyTo: { ...replyTo } } : {}),
-    };
-
-    setConversationMessages((prev) => [...prev, msg]);
+    setIsSendingMessage(true);
     setNewMessage('');
     setReplyTo(null);
-    inputRef.current?.focus();
 
-    // Show typing indicator and schedule auto-reply
-    setIsTyping(true);
-
-    if (typingTimerRef.current) {
-      clearTimeout(typingTimerRef.current);
+    const success = await sendMessage(activeConversationId, newMessage.trim());
+    if (!success) {
+      // Restore the message if send failed
+      setNewMessage(newMessage.trim());
     }
 
-    typingTimerRef.current = setTimeout(() => {
-      setIsTyping(false);
-
-      const randomReply = AUTO_REPLIES[Math.floor(Math.random() * AUTO_REPLIES.length)];
-      const replyMsg: ExtendedMessage = {
-        id: `reply-${Date.now()}`,
-        conversationId: selectedConversationId,
-        senderId: 'other',
-        content: randomReply,
-        type: 'TEXT',
-        isRead: false,
-        createdAt: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
-      };
-
-      setConversationMessages((prev) => [...prev, replyMsg]);
-
-      // Mark the user's message as read after reply
-      setConversationMessages((prev) =>
-        prev.map((m) => {
-          if (m.id === msg.id) {
-            return { ...m, isRead: true };
-          }
-          return m;
-        })
-      );
-    }, 2000);
-  };
+    setIsSendingMessage(false);
+    inputRef.current?.focus();
+  }, [newMessage, activeConversationId, isSendingMessage, sendMessage]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -507,7 +366,6 @@ export function ChatPanel() {
     const end = input.selectionEnd ?? newMessage.length;
     const updated = newMessage.slice(0, start) + emoji + newMessage.slice(end);
     setNewMessage(updated);
-    // Restore cursor after the inserted emoji
     requestAnimationFrame(() => {
       input.focus();
       const newPos = start + emoji.length;
@@ -516,30 +374,15 @@ export function ChatPanel() {
   }, [newMessage]);
 
   // ─── Reply helper ────────────────────────────────────────────────────────
-  const startReply = useCallback((msg: ExtendedMessage) => {
-    const isMe = msg.senderId === 'me';
+  const startReply = useCallback((msg: any) => {
+    const isMe = msg.senderId === currentUser?.id;
     setReplyTo({
       messageId: msg.id,
-      senderName: isMe ? 'شما' : (selectedConversation?.name ?? 'ناشناس'),
+      senderName: isMe ? 'شما' : (otherUser ? `${otherUser.firstName} ${otherUser.lastName}`.trim() : 'ناشناس'),
       content: msg.content,
     });
-    setContextMenu(null);
     inputRef.current?.focus();
-  }, [selectedConversation?.name]);
-
-  const handleMessageContextMenu = useCallback((e: React.MouseEvent, msg: ExtendedMessage) => {
-    e.preventDefault();
-    setContextMenu({ x: e.clientX, y: e.clientY, msg });
-    setHoveredMsgId(msg.id);
-  }, []);
-
-  // Close context menu on outside click
-  useEffect(() => {
-    if (!contextMenu) return;
-    const close = () => setContextMenu(null);
-    document.addEventListener('click', close);
-    return () => document.removeEventListener('click', close);
-  }, [contextMenu]);
+  }, [currentUser?.id, otherUser]);
 
   // ─── Auth Guard ──────────────────────────────────────────────────────────
   if (!isAuthenticated) {
@@ -552,11 +395,11 @@ export function ChatPanel() {
           <div className="space-y-2">
             <h3 className="text-lg font-semibold">دسترسی به پیام‌ها</h3>
             <p className="text-sm text-muted-foreground">
-              برای مشاهده پیام‌های خود، ابتدا وارد حساب کاربری شوید
+              برای مشاهده و ارسال پیام، ابتدا وارد حساب کاربری شوید
             </p>
           </div>
-          <Button onClick={() => setAuthModalOpen(true)} className="mt-2" data-href="/dashboard" title="ورود به حساب کاربری">
-            ورود به حساب کاربری
+          <Button onClick={() => setAuthModalOpen(true)} className="mt-2">
+            ورود / ثبت‌نام
           </Button>
         </div>
       </div>
@@ -578,29 +421,34 @@ export function ChatPanel() {
         {/* Header */}
         <div className="flex items-center justify-between border-b px-4 py-3">
           <h2 className="text-lg font-bold">پیام‌ها</h2>
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn('h-11 w-11', showNewChat && 'text-primary bg-primary/10 hover:bg-primary/15')}
-            aria-label={showNewChat ? 'بازگشت به مکالمات' : 'مکالمه جدید'}
-            title={showNewChat ? 'بازگشت به لیست مکالمات' : 'جستجوی کاربر و مکالمه جدید'}
-            onClick={handleToggleNewChat}
-          >
-            {showNewChat ? <X className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                'h-9 w-9',
+                showNewChat && 'text-primary bg-primary/10 hover:bg-primary/15'
+              )}
+              aria-label={showNewChat ? 'بازگشت به مکالمات' : 'مکالمه جدید'}
+              title={showNewChat ? 'بازگشت به لیست مکالمات' : 'جستجوی کاربر و مکالمه جدید'}
+              onClick={handleToggleNewChat}
+            >
+              {showNewChat ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
 
-        {/* Search — toggle between conversation filter and user search */}
+        {/* Search */}
         <div className="p-3">
           <div className="relative">
             <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             {showNewChat ? (
               <Input
                 ref={userSearchInputRef}
-                placeholder="جستجوی کاربر (نام، نام کاربری...)"
+                placeholder="جستجوی کاربر (نام، آیدی، شماره...)"
                 value={userSearchQuery}
                 onChange={(e) => setUserSearchQuery(e.target.value)}
-                className="h-11 pr-9"
+                className="h-10 pr-9 text-sm"
                 aria-label="جستجوی کاربر"
               />
             ) : (
@@ -608,19 +456,18 @@ export function ChatPanel() {
                 placeholder="جستجوی مکالمه..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-11 pr-9"
+                className="h-10 pr-9 text-sm"
                 aria-label="جستجوی مکالمه"
               />
             )}
           </div>
         </div>
 
-        {/* Content area: conversation list or user search results */}
+        {/* Content area */}
         {showNewChat ? (
           /* ── User Search Results ── */
           <ScrollArea className="min-h-0 flex-1" role="list" aria-label="نتایج جستجوی کاربر">
             <div className="space-y-0.5 p-2">
-              {/* Loading indicator */}
               {isSearching && (
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
@@ -628,15 +475,16 @@ export function ChatPanel() {
                 </div>
               )}
 
-              {/* Empty search state — prompt */}
               {!isSearching && userSearchQuery.trim() === '' && (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <Users className="mb-3 h-10 w-10 text-muted-foreground/40" />
-                  <p className="text-sm text-muted-foreground">نام یا نام کاربری کاربر را جستجو کنید</p>
+                  <p className="text-sm text-muted-foreground">نام، آیدی یا شماره کاربر را جستجو کنید</p>
+                  <p className="text-xs text-muted-foreground/60 mt-1">
+                    مثال: @sasan_rashidi یا ساسان رشیدی
+                  </p>
                 </div>
               )}
 
-              {/* No results */}
               {!isSearching && userSearchQuery.trim() !== '' && searchResults.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <Search className="mb-3 h-10 w-10 text-muted-foreground/40" />
@@ -644,7 +492,6 @@ export function ChatPanel() {
                 </div>
               )}
 
-              {/* Search results */}
               {!isSearching &&
                 searchResults.map((user) => {
                   const name =
@@ -667,44 +514,52 @@ export function ChatPanel() {
                       role="listitem"
                       aria-label={`شروع مکالمه با ${name}`}
                     >
-                      {/* Avatar */}
                       <div className="relative shrink-0">
                         <div
                           className={cn(
-                            'flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white',
+                            'flex h-11 w-11 items-center justify-center rounded-full text-sm font-bold text-white',
                             avatarColor
                           )}
                         >
                           {initials}
                         </div>
                         {user.online && (
-                          <span className="absolute bottom-0 left-0 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500" />
+                          <span className="absolute bottom-0 left-0 h-3 w-3 rounded-full border-2 border-background bg-emerald-500" />
                         )}
                       </div>
 
-                      {/* Info */}
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
                           <span className="truncate text-sm font-semibold">{name}</span>
                           {user.isVerified && (
-                            <BadgeCheck className="h-4 w-4 shrink-0 text-emerald-500" />
+                            <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
                           )}
                         </div>
-                        {user.username && (
-                          <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                            @{user.username}
-                          </p>
-                        )}
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          {user.username && (
+                            <p className="truncate text-xs text-muted-foreground">
+                              @{user.username}
+                            </p>
+                          )}
+                          {user.role && user.role !== 'CLIENT' && (
+                            <Badge variant="secondary" className="text-[10px] px-1 py-0 h-3.5">
+                              {user.role === 'SPECIALIST' ? 'کسب‌وکار' : user.role === 'ADMIN' ? 'مدیر' : user.role}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
 
-                      {/* Online badge */}
-                      {user.online && (
-                        <Badge
-                          variant="outline"
-                          className="shrink-0 border-emerald-300 text-emerald-600 dark:text-emerald-400 text-xs"
-                        >
-                          آنلاین
-                        </Badge>
+                      {isCreatingConversation ? (
+                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground shrink-0" />
+                      ) : (
+                        user.online && (
+                          <Badge
+                            variant="outline"
+                            className="shrink-0 border-emerald-300 text-emerald-600 dark:text-emerald-400 text-[10px] px-1.5 py-0 h-5"
+                          >
+                            آنلاین
+                          </Badge>
+                        )
                       )}
                     </button>
                   );
@@ -714,62 +569,88 @@ export function ChatPanel() {
         ) : (
           /* ── Conversation List ── */
           <ScrollArea className="min-h-0 flex-1" role="list" aria-label="مکالمات">
-            <div className="space-y-0.5 p-2">
-              {filteredConversations.map((conv) => (
-                <button
-                  key={conv.id}
-                  onClick={() => handleSelectConversation(conv)}
-                  className={cn(
-                    'flex w-full items-start gap-3 rounded-lg p-3 text-right transition-all duration-150',
-                    selectedConversationId === conv.id
-                      ? 'bg-primary/5 border border-primary/20'
-                      : 'hover:bg-muted/50 border border-transparent'
-                  )}
-                  role="listitem"
-                  aria-label={`مکالمه با ${conv.name}${conv.unreadCount > 0 ? `، ${conv.unreadCount} پیام خوانده نشده` : ''}`}
-                >
-                  {/* Avatar */}
-                  <div className="relative shrink-0">
-                    <div
+            {isLoading && conversations.length === 0 ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : filteredConversations.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center px-4">
+                <MessageCircle className="mb-3 h-10 w-10 text-muted-foreground/40" />
+                <p className="text-sm text-muted-foreground">
+                  {searchQuery ? 'مکالمه‌ای یافت نشد' : 'هنوز مکالمه‌ای ندارید'}
+                </p>
+                {!searchQuery && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-3"
+                    onClick={handleToggleNewChat}
+                  >
+                    <Plus className="h-4 w-4 ml-1" />
+                    شروع گفتگوی جدید
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-0.5 p-2">
+                {filteredConversations.map((conv) => {
+                  const convName = `${conv.otherUser?.firstName ?? ''} ${conv.otherUser?.lastName ?? ''}`.trim() || 'کاربر';
+                  const isSelected = conv.id === activeConversationId;
+
+                  return (
+                    <button
+                      key={conv.id}
+                      onClick={() => handleSelectConversation(conv.id)}
                       className={cn(
-                        'flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white',
-                        getAvatarColor(conv.name)
+                        'flex w-full items-start gap-3 rounded-lg p-3 text-right transition-all duration-150',
+                        isSelected
+                          ? 'bg-primary/5 border border-primary/20'
+                          : 'hover:bg-muted/50 border border-transparent'
                       )}
+                      role="listitem"
+                      aria-label={`مکالمه با ${convName}${conv.unreadCount > 0 ? `، ${conv.unreadCount} پیام خوانده نشده` : ''}`}
                     >
-                      {getInitials(conv.name)}
-                    </div>
-                    {conv.isOnline && (
-                      <span className="absolute bottom-0 left-0 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500" />
-                    )}
-                  </div>
+                      {/* Avatar */}
+                      <div className="relative shrink-0">
+                        <div
+                          className={cn(
+                            'flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white',
+                            getAvatarColor(convName)
+                          )}
+                        >
+                          {getInitials(convName)}
+                        </div>
+                        {conv.otherUser?.online && (
+                          <span className="absolute bottom-0 left-0 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500" />
+                        )}
+                      </div>
 
-                  {/* Content */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="truncate text-sm font-semibold">{conv.name}</span>
-                      <span className="shrink-0 text-xs text-muted-foreground">{conv.timeAgo}</span>
-                    </div>
-                    <div className="mt-1 flex items-center justify-between gap-2">
-                      <p className="truncate text-sm text-muted-foreground" style={{ maxWidth: '200px' }}>
-                        {conv.lastMessage.length > 40 ? conv.lastMessage.slice(0, 40) + '...' : conv.lastMessage}
-                      </p>
-                      {conv.unreadCount > 0 && (
-                        <Badge className="shrink-0 h-5 min-w-5 flex items-center justify-center rounded-full px-1.5 text-xs">
-                          {conv.unreadCount}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </button>
-              ))}
-
-              {filteredConversations.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Search className="mb-3 h-10 w-10 text-muted-foreground/40" />
-                  <p className="text-sm text-muted-foreground">مکالمه‌ای یافت نشد</p>
-                </div>
-              )}
-            </div>
+                      {/* Content */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="truncate text-sm font-semibold">{convName}</span>
+                          <span className="shrink-0 text-xs text-muted-foreground">
+                            {conv.lastMessageAt ? formatTimeAgo(conv.lastMessageAt) : ''}
+                          </span>
+                        </div>
+                        <div className="mt-1 flex items-center justify-between gap-2">
+                          <p className="truncate text-sm text-muted-foreground" style={{ maxWidth: '200px' }}>
+                            {conv.lastMessage
+                              ? (conv.lastMessage.length > 40 ? conv.lastMessage.slice(0, 40) + '...' : conv.lastMessage)
+                              : 'شروع گفتگو...'}
+                          </p>
+                          {conv.unreadCount > 0 && (
+                            <Badge className="shrink-0 h-5 min-w-5 flex items-center justify-center rounded-full px-1.5 text-xs">
+                              {conv.unreadCount}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </ScrollArea>
         )}
       </div>
@@ -788,50 +669,59 @@ export function ChatPanel() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-11 w-11 md:hidden"
+                className="h-9 w-9 md:hidden"
                 onClick={handleBack}
-                aria-label="بازگشت به لیست مکالمات"
-                title="بازگشت به لیست مکالمات"
+                aria-label="بازگشت"
               >
-                <ArrowRight className="h-5 w-5" />
+                <ArrowRight className="h-4 w-4" />
               </Button>
               <div className="relative">
-                <div
-                  className={cn(
-                    'flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white',
-                    getAvatarColor(selectedConversation.name)
-                  )}
-                >
-                  {getInitials(selectedConversation.name)}
-                </div>
-                {selectedConversation.isOnline && (
+                {otherUser?.avatar ? (
+                  <div
+                    className="h-10 w-10 rounded-full bg-cover bg-center"
+                    style={{ backgroundImage: `url(${otherUser.avatar})` }}
+                  />
+                ) : (
+                  <div
+                    className={cn(
+                      'flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white',
+                      getAvatarColor(
+                        `${otherUser?.firstName ?? ''} ${otherUser?.lastName ?? ''}`.trim() || 'کاربر'
+                      )
+                    )}
+                  >
+                    {getInitials(`${otherUser?.firstName ?? ''} ${otherUser?.lastName ?? ''}`.trim() || 'کاربر')}
+                  </div>
+                )}
+                {otherUser?.online && (
                   <span className="absolute bottom-0 left-0 h-3 w-3 rounded-full border-2 border-background bg-emerald-500" />
                 )}
               </div>
-              <div className="flex-1">
-                <h3 className="text-sm font-semibold">{selectedConversation.name}</h3>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-semibold truncate">
+                  {`${otherUser?.firstName ?? ''} ${otherUser?.lastName ?? ''}`.trim() || 'کاربر'}
+                </h3>
                 <p
                   className={cn(
-                    'text-xs transition-all duration-150',
-                    isTyping
+                    'text-xs',
+                    otherUser?.online
                       ? 'text-emerald-600 dark:text-emerald-400'
-                      : selectedConversation.isOnline
-                        ? 'text-emerald-600 dark:text-emerald-400'
-                        : 'text-muted-foreground'
+                      : 'text-muted-foreground'
                   )}
                 >
-                  {isTyping ? (
-                    <span className="flex items-center gap-1.5">
-                      <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                      در حال نوشتن
-                    </span>
-                  ) : selectedConversation.isOnline ? (
-                    'آنلاین'
-                  ) : (
-                    'آفلاین'
-                  )}
+                  {otherUser?.online ? 'آنلاین' : 'آفلاین'}
                 </p>
               </div>
+              {/* Call button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9"
+                aria-label="تماس"
+                title="تماس صوتی"
+              >
+                <Phone className="h-4 w-4" />
+              </Button>
             </div>
 
             {/* Messages */}
@@ -844,240 +734,196 @@ export function ChatPanel() {
                   </span>
                 </div>
 
-                {conversationMessages.map((msg) => {
-                  const isMe = msg.senderId === 'me';
-                  const isHovered = hoveredMsgId === msg.id;
-                  return (
-                    <div
-                      key={msg.id}
-                      className={cn('group relative flex', isMe ? 'justify-start' : 'justify-end')}
-                      onMouseEnter={() => setHoveredMsgId(msg.id)}
-                      onMouseLeave={() => { setHoveredMsgId(null); }}
-                      onContextMenu={(e) => handleMessageContextMenu(e, msg)}
-                    >
-                      {/* Reply button on hover (desktop) */}
-                      <button
-                        type="button"
-                        onClick={() => startReply(msg)}
-                        className={cn(
-                          'absolute top-1 z-10 flex h-7 w-7 items-center justify-center rounded-full',
-                          'bg-background/80 border border-border/60 shadow-sm backdrop-blur-sm',
-                          'text-muted-foreground hover:text-primary hover:bg-primary/10',
-                          'transition-all duration-150',
-                          isMe ? 'left-0 -translate-x-full ml-1' : 'right-0 translate-x-full mr-1',
-                          isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none',
-                          'max-md:hidden'
-                        )}
-                        aria-label="پاسخ به این پیام"
-                        title="پاسخ"
-                      >
-                        <Reply className="h-3.5 w-3.5" />
-                      </button>
+                {isLoading && messages.length === 0 ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : messages.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <MessageSquare className="mb-3 h-10 w-10 text-muted-foreground/40" />
+                    <p className="text-sm text-muted-foreground">
+                      هنوز پیامی ارسال نشده
+                    </p>
+                    <p className="text-xs text-muted-foreground/60 mt-1">
+                      اولین پیام خود را ارسال کنید!
+                    </p>
+                  </div>
+                ) : (
+                  messages.map((msg) => {
+                    const isMe = msg.senderId === currentUser?.id;
+                    const isHovered = hoveredMsgId === msg.id;
+                    return (
                       <div
+                        key={msg.id}
                         className={cn(
-                          'relative max-w-[75%] rounded-2xl px-4 py-2.5',
-                          isMe
-                            ? 'rounded-br-md bg-primary text-primary-foreground'
-                            : 'rounded-bl-md bg-muted'
+                          'group relative flex',
+                          isMe ? 'justify-start' : 'justify-end'
                         )}
+                        onMouseEnter={() => setHoveredMsgId(msg.id)}
+                        onMouseLeave={() => setHoveredMsgId(null)}
                       >
-                        {/* Reply quote */}
-                        {msg.replyTo && (
-                          <div
-                            className={cn(
-                              'mb-1.5 rounded-md border-s-2 ps-2 pe-2 pt-1 pb-1 text-xs',
-                              isMe
-                                ? 'border-s-primary-foreground/40 bg-primary-foreground/10'
-                                : 'border-s-muted-foreground/30 bg-muted-foreground/5'
-                            )}
-                          >
-                            <span className={cn(
-                              'font-semibold',
-                              isMe ? 'text-primary-foreground/80' : 'text-muted-foreground'
-                            )}>
-                              در پاسخ به: {msg.replyTo.senderName}
-                            </span>
-                            <p className={cn(
-                              'mt-0.5 truncate',
-                              isMe ? 'text-primary-foreground/60' : 'text-muted-foreground'
-                            )}>
-                              {msg.replyTo.content.length > 60 ? msg.replyTo.content.slice(0, 60) + '...' : msg.replyTo.content}
-                            </p>
-                          </div>
-                        )}
-                        <p className="text-sm leading-7">{msg.content}</p>
+                        {/* Reply button on hover (desktop) */}
+                        <button
+                          type="button"
+                          onClick={() => startReply(msg)}
+                          className={cn(
+                            'absolute top-1 z-10 flex h-7 w-7 items-center justify-center rounded-full',
+                            'bg-background/80 border border-border/60 shadow-sm backdrop-blur-sm',
+                            'text-muted-foreground hover:text-primary hover:bg-primary/10',
+                            'transition-all duration-150',
+                            isMe ? 'left-0 -translate-x-full ml-1' : 'right-0 translate-x-full mr-1',
+                            isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none',
+                            'max-md:hidden'
+                          )}
+                          aria-label="پاسخ"
+                          title="پاسخ به این پیام"
+                        >
+                          <Reply className="h-3.5 w-3.5" />
+                        </button>
                         <div
                           className={cn(
-                            'mt-1 flex items-center gap-1.5 text-[10px]',
-                            isMe ? 'text-primary-foreground/60' : 'text-muted-foreground'
+                            'relative max-w-[75%] rounded-2xl px-4 py-2.5',
+                            isMe
+                              ? 'rounded-br-md bg-primary text-primary-foreground'
+                              : 'rounded-bl-md bg-muted'
                           )}
                         >
-                          <span>{msg.createdAt}</span>
-                          {isMe && (
-                            <CheckCheck
-                              className={cn(
-                                'h-3.5 w-3.5',
-                                msg.isRead
-                                  ? 'text-emerald-400'
-                                  : 'text-primary-foreground/40'
-                              )}
-                            />
+                          {/* Reply quote */}
+                          {replyTo && replyTo.messageId === msg.id && (
+                            <div className="sr-only">در حال پاسخ به این پیام</div>
                           )}
+                          <p className="text-sm leading-7">{msg.content}</p>
+                          <div
+                            className={cn(
+                              'mt-1 flex items-center gap-1.5 text-[10px]',
+                              isMe ? 'text-primary-foreground/60' : 'text-muted-foreground'
+                            )}
+                          >
+                            <span>{formatTime(msg.createdAt)}</span>
+                            {isMe && (
+                              <CheckCheck
+                                className={cn(
+                                  'h-3.5 w-3.5',
+                                  msg.isRead
+                                    ? 'text-emerald-400'
+                                    : 'text-primary-foreground/40'
+                                )}
+                              />
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-
-                {/* Context menu for reply (right-click / long-press) */}
-                {contextMenu && (
-                  <div
-                    className="fixed z-50 rounded-lg border bg-popover p-1 shadow-lg backdrop-blur-sm"
-                    style={{ top: contextMenu.y, left: contextMenu.x }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => startReply(contextMenu.msg)}
-                      className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors"
-                    >
-                      <Reply className="h-4 w-4" />
-                      <span>پاسخ</span>
-                    </button>
-                  </div>
-                )}
-
-                {/* Typing indicator */}
-                {isTyping && (
-                  <div className="flex justify-end">
-                    <div className="max-w-[75%] rounded-2xl rounded-bl-md bg-muted px-5 py-3">
-                      <div className="flex items-center gap-1.5">
-                        <span className="typing-dot inline-block h-2 w-2 rounded-full bg-muted-foreground/60" />
-                        <span className="typing-dot inline-block h-2 w-2 rounded-full bg-muted-foreground/60" />
-                        <span className="typing-dot inline-block h-2 w-2 rounded-full bg-muted-foreground/60" />
-                      </div>
-                    </div>
-                  </div>
+                    );
+                  })
                 )}
 
                 <div ref={messagesEndRef} />
               </div>
             </ScrollArea>
 
-            {/* Input Area */}
-            <Separator />
-
-            {/* Reply indicator bar */}
+            {/* Reply indicator */}
             {replyTo && (
-              <div className="flex items-center gap-2 border-b bg-muted/30 px-4 py-2">
+              <div className="flex items-center gap-2 border-t px-4 py-2 bg-muted/30">
+                <Reply className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-muted-foreground">
-                    در پاسخ به: {replyTo.senderName}
+                  <p className="text-xs font-medium text-muted-foreground">
+                    پاسخ به {replyTo.senderName}
                   </p>
-                  <p className="truncate text-xs text-muted-foreground/70">
-                    {replyTo.content.length > 50 ? replyTo.content.slice(0, 50) + '...' : replyTo.content}
+                  <p className="text-xs text-muted-foreground/60 truncate">
+                    {replyTo.content}
                   </p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
+                <button
                   onClick={() => setReplyTo(null)}
-                  aria-label="لغو پاسخ"
-                  title="لغو پاسخ"
+                  className="shrink-0 h-6 w-6 flex items-center justify-center rounded-full hover:bg-muted"
                 >
-                  <X className="h-4 w-4" />
-                </Button>
+                  <X className="h-3 w-3 text-muted-foreground" />
+                </button>
               </div>
             )}
 
-            <div className="flex items-center gap-2 p-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-11 w-11 shrink-0 text-muted-foreground"
-                aria-label="پیوست فایل"
-                title="پیوست فایل به پیام"
-              >
-                <Paperclip className="h-5 w-5" />
-              </Button>
+            {/* Message Input */}
+            <div className="border-t px-4 py-3">
+              <div className="flex items-center gap-2">
+                {/* Emoji picker */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" aria-label="ایموجی">
+                      <Smile className="h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 p-2" side="top">
+                    <div className="grid grid-cols-6 gap-1">
+                      {QUICK_EMOJIS.map((emoji) => (
+                        <button
+                          key={emoji}
+                          type="button"
+                          onClick={() => insertEmoji(emoji)}
+                          className="h-9 w-9 flex items-center justify-center rounded-md hover:bg-muted text-lg transition-colors"
+                        >
+                          {emoji}
+                        </button>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
 
-              {/* Emoji picker */}
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-11 w-11 shrink-0 text-muted-foreground hover:text-amber-500"
-                    aria-label="درج ایموجی"
-                    title="درج ایموجی"
-                  >
-                    <Smile className="h-5 w-5" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-auto p-2"
-                  side="top"
-                  align="center"
-                  sideOffset={8}
+                <Input
+                  ref={inputRef}
+                  placeholder="پیام خود را بنویسید..."
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="h-10 text-sm flex-1"
+                  disabled={isSendingMessage}
+                />
+
+                {/* Attach */}
+                <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" aria-label="فایل">
+                  <Paperclip className="h-4 w-4" />
+                </Button>
+
+                {/* Send */}
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={!newMessage.trim() || isSendingMessage}
+                  className="h-9 w-9 shrink-0 bg-emerald-600 hover:bg-emerald-700 p-0"
+                  aria-label="ارسال پیام"
                 >
-                  <div className="grid grid-cols-6 gap-1">
-                    {QUICK_EMOJIS.map((emoji) => (
-                      <button
-                        key={emoji}
-                        type="button"
-                        onClick={() => insertEmoji(emoji)}
-                        className="flex h-9 w-9 items-center justify-center rounded-md text-xl hover:bg-accent transition-colors"
-                        aria-label={emoji}
-                      >
-                        {emoji}
-                      </button>
-                    ))}
-                  </div>
-                </PopoverContent>
-              </Popover>
-
-              <Input
-                ref={inputRef}
-                placeholder="پیام خود را بنویسید..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="flex-1 h-11"
-                aria-label="متن پیام"
-              />
-              <Button
-                size="icon"
-                className="h-11 w-11 shrink-0"
-                onClick={handleSendMessage}
-                disabled={!newMessage.trim()}
-                aria-label="ارسال پیام"
-                title="ارسال پیام"
-              >
-                <SendHorizontal className="h-5 w-5" />
-              </Button>
+                  {isSendingMessage ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <SendHorizontal className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
             </div>
           </>
         ) : (
-          /* Empty State */
-          <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-muted">
-              <MessageCircle className="h-10 w-10 text-muted-foreground" />
-            </div>
-            <div>
-              <h3 className="text-base font-semibold">یک مکالمه را انتخاب کنید</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                برای شروع گفتگو، یکی از مکالمات را انتخاب کنید
-              </p>
+          /* Empty state — no conversation selected */
+          <div className="flex h-full items-center justify-center p-6">
+            <div className="flex flex-col items-center gap-4 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                <MessageSquare className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">یک گفتگو انتخاب کنید</h3>
+                <p className="text-sm text-muted-foreground max-w-[250px]">
+                  از لیست سمت راست یک مکالمه را انتخاب کنید یا گفتگوی جدید شروع کنید
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                onClick={handleToggleNewChat}
+                className="mt-2"
+              >
+                <Plus className="h-4 w-4 ml-1" />
+                گفتگوی جدید
+              </Button>
             </div>
           </div>
         )}
       </div>
-      <noscript>
-        <div className="sr-only">
-          <h1>پیام‌ها - نیاز فایندر</h1>
-          <p>بخش پیام‌ها برای مدیریت مکالمات بین کاربران و کسب‌وکارها در پلتفرم نیاز فایندر.</p>
-        </div>
-      </noscript>
     </div>
   );
 }

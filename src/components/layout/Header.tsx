@@ -318,38 +318,21 @@ function MessagesButton() {
 
 // ============ Auth Buttons (Guest) ============
 function GuestActions() {
-  const { setAuthModalOpen, setAuthModalTab } = useAppStore();
+  const { setAuthModalOpen } = useAppStore();
 
-  const handleLogin = () => {
-    setAuthModalTab('login');
-    setAuthModalOpen(true);
-  };
-
-  const handleRegister = () => {
-    setAuthModalTab('register');
+  const handleAuth = () => {
     setAuthModalOpen(true);
   };
 
   return (
     <div className="flex items-center gap-2">
       <Button
-        variant="ghost"
         size="sm"
-        onClick={handleLogin}
-        className="h-[36px] text-sm font-medium text-muted-foreground hover:text-foreground"
-        title={VIEW_TITLE['login']}
-        data-href={VIEW_HREF['login']}
+        onClick={handleAuth}
+        className="h-[36px] text-sm font-medium gap-1.5"
+        title="ورود و ثبت‌نام در نیاز فایندر"
       >
-        ورود
-      </Button>
-      <Button
-        size="sm"
-        onClick={handleRegister}
-        className="h-[36px] text-sm font-medium"
-        title={VIEW_TITLE['register']}
-        data-href={VIEW_HREF['register']}
-      >
-        ثبت‌نام
+        ورود / ثبت‌نام
       </Button>
     </div>
   );

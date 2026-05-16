@@ -1,14 +1,71 @@
 # Need Finder - Worklog
 
 ---
-Task ID: 1
+Task ID: social-chat-overhaul
 Agent: Main
-Task: Site restart and verification after crash report
+Task: Make chat system work with real API + social network features
 
 Work Log:
-- Diagnosed issue: dev server process was killed (sandbox process management)
-- Server was not listening on port 3000
-- Restarted dev server with `node_modules/.bin/next dev -p 3000` directly
+
+**Problem: Chat was using mock data and couldn't send real messages**
+
+1. Fixed Zustand store (src/lib/store.ts):
+   - Fixed `fetchConversations`: changed endpoint from `/api/conversations` to `/api/chat`
+   - Fixed `fetchConversationMessages`: changed endpoint from `/api/conversations/${id}/messages` to `/api/chat/${id}`
+   - Fixed `sendMessage`: changed endpoint from `/api/messages` to `/api/chat/${conversationId}`
+   - Added `addOrUpdateConversation` method to store interface and implementation
+   - Fixed `sendMessage` to also update conversation's lastMessage in local state
+
+2. Rewrote ChatPanel.tsx (src/components/chat/ChatPanel.tsx):
+   - Removed all hardcoded mock conversations data (200+ lines of mock data)
+   - Now uses real API via Zustand store: fetchConversations, fetchConversationMessages, sendMessage
+   - Fetches conversations on mount when authenticated
+   - Fetches messages when conversation is selected
+   - User search uses `/api/users/search?q=` API endpoint
+   - Creating conversation uses `/api/chat` POST API endpoint
+   - Real-time message display with proper sender identification (msg.senderId === currentUser.id)
+   - Empty states for: no conversations, no messages, not authenticated
+   - Loading states with Loader2 spinners
+
+3. Merged login/register buttons (src/components/layout/Header.tsx):
+   - Changed `GuestActions` from two buttons (ورود + ثبت‌نام) to single button (ورود / ثبت‌نام)
+   - Both buttons now just open the AuthModal which has the unified OTP flow
+   - Removed unused `setAuthModalTab` from GuestActions
+
+4. Fixed MobileBottomNav.tsx:
+   - Removed unused `setAuthModalTab` import and usage
+   - Simplified auth prompts to just `setAuthModalOpen(true)`
+
+5. Fixed users API (src/app/api/users/route.ts):
+   - Removed non-existent Prisma fields: `coverImage`, `website`
+   - Removed non-existent relations: `followers`, `following`, `posts` (from `_count`)
+   - Created shared USER_SELECT and USER_PUBLIC_SELECT constants
+   - Simplified response mapping (removed followerCount, followingCount, postCount)
+   - Fixed 500 error on `/api/users?limit=5`
+
+6. Fixed NewConversationDialog.tsx:
+   - Added missing `useEffect` import from React
+
+**Testing Results:**
+- POST /api/auth/otp → 200 ✅
+- POST /api/auth/verify → 200 ✅ (returns token, user, isNewUser)
+- POST /api/chat (create conversation) → 200 ✅
+- POST /api/chat/:id (send message) → 200 ✅
+- GET /api/chat/:id (get messages) → 200 ✅
+- GET /api/chat (list conversations) → 200 ✅
+- GET /api/users?limit=5 → 200 ✅ (was 500 before fix)
+- Full chat flow tested: create 2 users, create conversation, send message, get messages ✅
+- ESLint: 0 errors, 5 warnings (all pre-existing)
+- TypeScript: 0 errors in src/
+
+Stage Summary:
+- Chat system now uses real API data instead of mock conversations
+- Users can search for other users by name, username, phone, etc.
+- Users can create new conversations and send real messages
+- Login/register merged into single button
+- OTP system with code 1234 works for all users (demo mode)
+- People can have accounts and chat even without posting needs or businesses
+
 - Verified all endpoints:
   - Homepage: HTTP 200 ✅
   - /api/categories: 8 categories with children ✅

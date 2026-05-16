@@ -99,6 +99,7 @@ interface AppState {
   // Chat (local)
   conversations: Conversation[];
   setConversations: (conversations: Conversation[]) => void;
+  addOrUpdateConversation: (conv: Partial<Conversation> & { id: string }) => void;
   activeConversationId: string | null;
   setActiveConversationId: (id: string | null) => void;
 
@@ -612,6 +613,21 @@ export const useAppStore = create<AppState>((set, get) => ({
   // ===========================
   conversations: [],
   setConversations: (conversations) => set({ conversations }),
+  addOrUpdateConversation: (conv) => {
+    set((state) => {
+      const exists = state.conversations.find((c) => c.id === conv.id);
+      if (exists) {
+        return {
+          conversations: state.conversations.map((c) =>
+            c.id === conv.id ? { ...c, ...conv } : c
+          ),
+        };
+      }
+      return {
+        conversations: [conv as Conversation, ...state.conversations],
+      };
+    });
+  },
   activeConversationId: null,
   setActiveConversationId: (id) => set({ activeConversationId: id }),
 
@@ -622,8 +638,8 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   fetchConversations: async () => {
     try {
-      const res = await apiFetch<{ data: any[] }>('/api/conversations');
-      const mapped: Conversation[] = res.data.map((c: any) => ({
+      const res = await apiFetch<{ conversations: any[] }>('/api/chat');
+      const mapped: Conversation[] = res.conversations.map((c: any) => ({
         id: c.id,
         requestId: c.requestId,
         otherUser: c.otherUser,
@@ -640,16 +656,16 @@ export const useAppStore = create<AppState>((set, get) => ({
   fetchConversationMessages: async (id: string) => {
     set({ isLoading: true });
     try {
-      const res = await apiFetch<{ data: any[] }>(`/api/conversations/${id}/messages`);
+      const res = await apiFetch<{ data: any[]; pagination: any }>(`/api/chat/${id}`);
       const mapped: Message[] = res.data.map((m: any) => ({
         id: m.id,
         conversationId: m.conversationId,
         senderId: m.senderId,
         content: m.content,
         type: m.type ?? 'TEXT',
+        attachmentUrls: m.attachmentUrls ?? [],
         isRead: m.isRead,
         createdAt: String(m.createdAt),
-        sender: m.sender,
       }));
       set({ messages: mapped });
       return mapped;
@@ -661,32 +677,40 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   sendMessage: async (conversationId: string, content: string, type = 'TEXT') => {
-    set({ isLoading: true, error: null });
     try {
-      const res = await apiFetch<{ message: any }>('/api/messages', {
+      const res = await apiFetch<{ message: string; messageData: any }>(`/api/chat/${conversationId}`, {
         method: 'POST',
-        body: JSON.stringify({ conversationId, content, type }),
+        body: JSON.stringify({ content, type }),
       });
 
-      const msg = res.message;
+      const msg = res.messageData;
       const newMessage: Message = {
         id: msg.id,
         conversationId: msg.conversationId,
         senderId: msg.senderId,
         content: msg.content,
         type: msg.type ?? 'TEXT',
+        attachmentUrls: msg.attachmentUrls ?? [],
         isRead: msg.isRead,
         createdAt: String(msg.createdAt),
-        sender: msg.sender,
       };
 
+      // Add message to local state
       set((state) => ({ messages: [...state.messages, newMessage] }));
+
+      // Update conversation's last message
+      set((state) => ({
+        conversations: state.conversations.map((c) =>
+          c.id === conversationId
+            ? { ...c, lastMessage: msg.content, lastMessageAt: String(msg.createdAt) }
+            : c
+        ),
+      }));
+
       return true;
     } catch (err: any) {
       set({ error: err.message || 'خطا در ارسال پیام' });
       return false;
-    } finally {
-      set({ isLoading: false });
     }
   },
 
