@@ -1715,3 +1715,27 @@ Stage Summary:
 - CategoryBar.tsx file still exists but is no longer imported/used on the homepage
 - The category filter chips and active filters bar (result count, search filter badge, category filter badge, sort dropdown) were removed
 - Dev server compiling and running successfully
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Add category mega menu as second row in header with icons and full features
+
+Work Log:
+- Added `HeaderCategoryMenuDesktop` component with Popover + full 3-column `CategorySelector` (840px wide)
+- Added `HeaderCategoryMenuMobile` component with Sheet + hierarchical slide `CategorySelector`
+- Added second row in `Header.tsx` with:
+  - "همه دسته‌بندی‌ها" trigger button (Popover desktop / Sheet mobile)
+  - Vertical divider
+  - Scrollable category icon buttons (all 9 top-level categories with color-coded icons and labels)
+- Each category icon navigates to `browse-requests` with the category ID
+- Removed duplicate category chips from `NeedsHomepage.tsx` (now in header)
+- Cleaned up imports (merged lucide-react, removed duplicate Sheet imports)
+- Lint: 0 errors, dev server compiling successfully
+
+Stage Summary:
+- Header now has two rows: Row 1 (logo, search, actions) + Row 2 (category mega menu with icons)
+- Desktop: "همه دسته‌بندی‌ها" opens 840px 3-column Popover mega menu
+- Mobile: "همه دسته‌بندی‌ها" opens full-height Sheet with hierarchical slide navigation
+- Category icons are color-coded using getCategoryColor() from CategoryMegaMenu
+- Homepage flow: Header (with categories) → Hero Banner → Request Cards

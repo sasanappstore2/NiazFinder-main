@@ -15,6 +15,7 @@ import {
   Gift,
   GitCompareArrows,
   ChevronLeft,
+  ChevronDown,
   Settings,
   Check,
   Heart,
@@ -23,6 +24,7 @@ import {
   Clock,
   BellOff,
   ArrowLeft,
+  LayoutGrid,
 } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
@@ -33,6 +35,12 @@ import { MobileLocationSelector } from '@/components/shared/MobileLocationSelect
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 import { SITE_NAME } from '@/lib/constants';
+import {
+  CategorySelector,
+  ALL_CATEGORIES,
+  getCategoryIcon,
+} from '@/components/layout/CategoryMegaMenu';
+import type { MegaMenuCategory } from '@/components/layout/CategoryMegaMenu';
 import type { AppView } from '@/lib/types';
 
 import { Button } from '@/components/ui/button';
@@ -718,6 +726,95 @@ function AuthSection() {
   );
 }
 
+// ============ Category Mega Menu in Header (Desktop) ============
+function HeaderCategoryMenuDesktop() {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigateTo = useAppStore((s) => s.navigateTo);
+
+  const handleSelect = (category: MegaMenuCategory) => {
+    navigateTo('browse-requests', { categoryId: category.value });
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="hidden lg:flex items-center gap-1">
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            className={cn(
+              'flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200',
+              'border border-transparent',
+              isOpen
+                ? 'bg-primary/10 text-primary border-primary/20'
+                : 'text-muted-foreground hover:bg-accent hover:text-foreground hover:border-border/50'
+            )}
+            aria-expanded={isOpen}
+            aria-haspopup="true"
+          >
+            <LayoutGrid className="size-4" />
+            <span>همه دسته‌بندی‌ها</span>
+            <ChevronDown
+              className={cn('size-3 transition-transform duration-200', isOpen && 'rotate-180')}
+            />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          className="w-[840px] p-0 overflow-hidden"
+          dir="rtl"
+          align="start"
+          sideOffset={4}
+        >
+          <CategorySelector
+            isDesktop={true}
+            nestedCategories={ALL_CATEGORIES}
+            onSelect={handleSelect}
+            onClose={() => setIsOpen(false)}
+            getIcon={getCategoryIcon}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
+// ============ Category Mega Menu in Header (Mobile) ============
+function HeaderCategoryMenuMobile() {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigateTo = useAppStore((s) => s.navigateTo);
+
+  const handleSelect = (category: MegaMenuCategory) => {
+    navigateTo('browse-requests', { categoryId: category.value });
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="lg:hidden">
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetTrigger asChild>
+          <button
+            type="button"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-accent hover:text-foreground border border-transparent transition-all duration-200"
+          >
+            <LayoutGrid className="size-4" />
+            <span>همه دسته‌بندی‌ها</span>
+            <ChevronLeft className="size-3" />
+          </button>
+        </SheetTrigger>
+        <SheetContent side="right" className="w-[340px] p-0 sm:w-[400px]">
+          <CategorySelector
+            isDesktop={false}
+            nestedCategories={ALL_CATEGORIES}
+            onSelect={handleSelect}
+            onClose={() => setIsOpen(false)}
+            getIcon={getCategoryIcon}
+          />
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
+}
+
 // ============ Header Component ============
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -810,6 +907,41 @@ export function Header() {
                 <MobileSheetContent />
               </SheetContent>
             </Sheet>
+          </div>
+        </div>
+
+        {/* ═══ Second Row: Category Mega Menu ═══ */}
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-2">
+          {/* Mega menu trigger */}
+          <HeaderCategoryMenuDesktop />
+          <HeaderCategoryMenuMobile />
+
+          {/* Divider */}
+          <div className="hidden sm:block h-5 w-px bg-border/30 shrink-0" />
+
+          {/* Category icon buttons */}
+          <div className="flex items-center gap-1">
+            {ALL_CATEGORIES.map((cat) => {
+              const Icon = cat.icon;
+              const color = getCategoryColor(cat.value);
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => navigateTo('browse-requests', { categoryId: cat.value })}
+                  className="group flex flex-col items-center gap-0.5 rounded-lg px-2.5 py-1.5 shrink-0 transition-all duration-200 hover:bg-accent"
+                  title={cat.name}
+                >
+                  <Icon
+                    className="size-4 transition-transform duration-200 group-hover:scale-110"
+                    style={{ color }}
+                  />
+                  <span className="text-[10px] font-medium text-muted-foreground group-hover:text-foreground whitespace-nowrap transition-colors">
+                    {cat.name}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

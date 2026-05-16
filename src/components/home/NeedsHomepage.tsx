@@ -883,47 +883,6 @@ export function NeedsHomepage() {
         </div>
       </section>
 
-      {/* ═══ Category Chips ═══ */}
-      <div className="border-b border-border/20">
-        <div className="container-default mx-auto px-5 md:px-8 py-3">
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
-            <button
-              onClick={() => setSelectedCategory(null)}
-              className={cn(
-                'inline-flex items-center gap-1.5 shrink-0 rounded-xl px-4 py-2 text-xs font-semibold',
-                'border transition-all duration-200',
-                !selectedCategory
-                  ? 'bg-gradient-to-l from-emerald-500 to-emerald-600 text-white border-emerald-600 shadow-sm'
-                  : 'bg-card/60 text-muted-foreground border-border/30 hover:bg-card hover:border-border/50 hover:text-foreground',
-              )}
-            >
-              <LayoutGrid className="size-3.5" aria-hidden="true" />
-              همه
-            </button>
-            {TOP_CATEGORIES.map((cat) => {
-              const Icon = cat.icon;
-              const isActive = selectedCategory === cat.value;
-              return (
-                <button
-                  key={cat.value}
-                  onClick={() => setSelectedCategory(isActive ? null : cat.value)}
-                  className={cn(
-                    'inline-flex items-center gap-1.5 shrink-0 rounded-xl px-4 py-2 text-xs font-semibold',
-                    'border transition-all duration-200',
-                    isActive
-                      ? 'bg-gradient-to-l from-emerald-500 to-emerald-600 text-white border-emerald-600 shadow-sm'
-                      : 'bg-card/60 text-muted-foreground border-border/30 hover:bg-card hover:border-border/50 hover:text-foreground',
-                  )}
-                >
-                  <Icon className="size-3.5" aria-hidden="true" />
-                  {cat.name}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
       {/* ═══ Request Cards ═══ */}
       <div className="container-default mx-auto px-5 md:px-8 py-6 pb-12">
         {/* Results */}
