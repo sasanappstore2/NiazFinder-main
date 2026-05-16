@@ -43,7 +43,7 @@ export function LocationSelector() {
   };
 
   const getLocationDisplayText = () => {
-    if (selectedCities.length === 0) return 'انتخاب شهر';
+    if (selectedCities.length === 0) return 'شهر';
     if (selectedCities.length === 1) return selectedCities[0].name;
     return `${selectedCities.length} شهر`;
   };
@@ -51,7 +51,7 @@ export function LocationSelector() {
   // Don't render until initialized to prevent hydration mismatch
   if (!isInitialized) {
     return (
-      <div className="hidden sm:flex h-9 w-[130px] items-center justify-center">
+      <div className="flex h-9 w-auto min-w-[100px] items-center justify-center">
         <div className="h-4 w-full rounded-md bg-muted animate-pulse" />
       </div>
     );
@@ -59,6 +59,7 @@ export function LocationSelector() {
 
   return (
     <>
+      {/* Desktop version */}
       <Button
         variant="ghost"
         size="sm"
@@ -87,13 +88,39 @@ export function LocationSelector() {
         <ChevronDown className="h-3 w-3 opacity-50" />
       </Button>
 
+      {/* Mobile version */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setIsOpen(true)}
+        className={cn(
+          'sm:hidden h-9 px-2.5 gap-1.5 text-sm font-normal shrink-0 rounded-lg',
+          'border border-border/40 transition-all duration-200',
+          selectedCities.length > 0
+            ? 'bg-primary/8 text-primary border-primary/20'
+            : 'bg-muted/40 text-muted-foreground hover:bg-muted/60'
+        )}
+        title="انتخاب شهر"
+      >
+        <MapPin className="h-4 w-4 shrink-0" />
+        <span className="truncate max-w-[60px] text-xs">
+          {getLocationDisplayText()}
+        </span>
+        {selectedCities.length > 0 && (
+          <Badge
+            variant="secondary"
+            className="h-4 min-w-[16px] px-1 text-[9px] font-bold tabular-nums"
+          >
+            {selectedCities.length}
+          </Badge>
+        )}
+      </Button>
+
       <CitySelectorPopup
         open={isOpen}
         onOpenChange={setIsOpen}
         selectedCities={selectedCities}
         onSelectionChange={handleSelectionChange}
-        title="انتخاب شهر"
-        description="شهرهای مورد نظر خود را انتخاب کنید"
       />
     </>
   );

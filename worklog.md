@@ -1803,3 +1803,43 @@ Stage Summary:
 - No hamburger menu on mobile or desktop
 - Search bar visible on all screen sizes
 - File reduced from ~885 lines to ~530 lines
+
+---
+Task ID: location-popup-optimization
+Agent: Main
+Task: Optimize city selector popup — comprehensive Iran data + advanced UI
+
+Work Log:
+- Analyzed current location-system.ts: 28 provinces, ~170 cities, missing Khuzestan, Semnan, Kurdistan
+- Completely rewrote /src/lib/location-system.ts with:
+  - All 31 provinces of Iran (added: خوزستان, سمنان, کردستان)
+  - ~500+ cities across all provinces (expanded from ~170 to comprehensive coverage)
+  - All major Iranian islands in Hormozgan (17 islands): کیش, قشم, هرمز, هنگام, لاوان, لارک, هندورابی, ابوموسی, تنب بزرگ, تنب کوچک, سیری, فارور, بنی‌فارور
+  - isIsland and isPopular flags on City type
+  - POPULAR_CITY_IDS set and ISLANDS array exports
+  - New helper: searchCities (returns {city, provinceName}), getIslands(), getProvinceById(), getCityById()
+- Completely rewrote /src/components/ui/city-selector-popup.tsx:
+  - 3-tab navigation: محبوب‌ها (Popular), استان‌ها (Provinces), جزایر (Islands)
+  - Auto-switch to search tab when typing in search bar
+  - Province accordion with expand/collapse and partial selection indicators
+  - Popular cities quick-select grid (3 columns)
+  - Islands grid with wave icon (2 columns, blue theme)
+  - Real-time search results with province name and "select all results" button
+  - Selected cities as removable chips in header
+  - Select All / Clear All / Confirm with count badge
+  - Emerald glassmorphism theme with RTL layout
+- Updated /src/components/shared/LocationSelector.tsx:
+  - Now renders on both mobile (sm:hidden) and desktop (hidden sm:inline-flex)
+  - Mobile version: compact with smaller text and badge
+  - Desktop version: full with max-w truncation
+  - Cookie persistence via CookieManager
+  - Hydration-safe skeleton loading state
+
+Stage Summary:
+- 3 files modified: location-system.ts, city-selector-popup.tsx, LocationSelector.tsx
+- All 31 provinces of Iran now included with comprehensive city lists
+- 17 Iranian islands included
+- Advanced popup UI with tabs, search, chips, accordion provinces
+- Responsive: works on both mobile and desktop
+- 0 lint errors, 2 pre-existing warnings
+- Dev server compiles successfully
