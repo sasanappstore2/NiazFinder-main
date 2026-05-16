@@ -1780,3 +1780,26 @@ Stage Summary:
 - All existing functionality preserved: notifications, messages, theme toggle, contact, profile, dashboard
 - Glassmorphism styling with backdrop-blur, emerald accent colors
 - Cron job 153549 created for webDevReview every 15 minutes
+
+---
+Task ID: header-mobile-search-remove-hamburger
+Agent: Main
+Task: Show search bar on mobile and remove hamburger menu entirely
+
+Work Log:
+- Changed search bar visibility from `hidden lg:flex` to `flex` — now visible on all screen sizes
+- Removed hamburger menu button (Sheet with Menu icon) from header's left actions area
+- Removed entire `MobileSheetContent` function (~280 lines of dead code)
+- Removed unused imports: ThemeToggle, Avatar/AvatarFallback/AvatarImage, Separator, MobileLocationSelector, Menu (lucide), LogOut (lucide), Phone (lucide)
+- Removed `mobileMenuOpen`/`setMobileMenuOpen` from Header component state
+- Changed AuthSection from `hidden sm:flex` to `flex` so user menu is visible on all screens
+- City selector (LocationSelector) has `hidden sm:inline-flex` so it auto-hides on very small screens
+- ArkUserMenu trigger has `hidden md:inline-block` text labels so only icon shows on small screens
+- Lint: 0 errors, 2 pre-existing warnings
+- Dev server compiled successfully (235ms)
+
+Stage Summary:
+- Header layout (all screens): [Logo] [Search Bar] [📍City Selector(sm+)] [👤User Menu]
+- No hamburger menu on mobile or desktop
+- Search bar visible on all screen sizes
+- File reduced from ~885 lines to ~530 lines

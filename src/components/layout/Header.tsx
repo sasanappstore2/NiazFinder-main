@@ -5,9 +5,7 @@ import {
   LocateFixed,
   Bell,
   MessageSquare,
-  Menu,
   User,
-  LogOut,
   ChevronLeft,
   ChevronDown,
   Check,
@@ -18,12 +16,9 @@ import {
   BellOff,
   ArrowLeft,
   LayoutGrid,
-  Phone,
 } from 'lucide-react';
 
-import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { HeaderSearchBar, DEMO_SEARCH_DATA } from '@/components/shared/HeaderSearchBar';
-import { MobileLocationSelector } from '@/components/shared/MobileLocationSelector';
 import { LocationSelector } from '@/components/shared/LocationSelector';
 import { ArkUserMenu } from '@/components/ui/ark-user-menu';
 
@@ -44,11 +39,7 @@ import {
   Sheet,
   SheetTrigger,
   SheetContent,
-  SheetHeader,
-  SheetTitle,
 } from '@/components/ui/sheet';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
 import {
   Popover,
   PopoverTrigger,
@@ -101,49 +92,7 @@ const VIEW_TITLE: Record<AppView, string> = {
   'notification-settings': 'تنظیمات اعلان‌ها',
 };
 
-// ============ Navigation Items ============
-interface NavItem {
-  label: string;
-  view: AppView;
-}
 
-const NAV_ITEMS: NavItem[] = [
-  { label: 'صفحه اصلی', view: 'home' },
-  { label: 'ثبت نیاز', view: 'post-need' },
-  { label: 'کسب‌وکارها', view: 'browse-specialists' },
-];
-
-// ============ Mobile Nav Item ============
-function MobileNavItem({
-  item,
-  onSelect,
-}: {
-  item: NavItem;
-  onSelect: () => void;
-}) {
-  const { currentView, navigateTo } = useAppStore();
-  const isActive = currentView === item.view;
-
-  return (
-    <button
-      type="button"
-      data-href={VIEW_HREF[item.view]}
-      title={VIEW_TITLE[item.view]}
-      onClick={() => {
-        navigateTo(item.view);
-        onSelect();
-      }}
-      className={cn(
-        'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150',
-        isActive
-          ? 'bg-primary/10 text-primary'
-          : 'text-muted-foreground hover:bg-accent hover:text-foreground'
-      )}
-    >
-      <span className="text-base">{item.label}</span>
-    </button>
-  );
-}
 
 // ============ Notification Type → Icon mapping ============
 function getNotificationIcon(type: string) {
@@ -406,293 +355,10 @@ function GuestActions() {
   );
 }
 
-// ============ Desktop Unified Dropdown (replaced by Ark UI) ============
-// Now using ArkUserMenu component from /components/ui/ark-user-menu.tsx
-
-// ============ Mobile Sheet Content ============
-function MobileSheetContent() {
-  const {
-    isAuthenticated,
-    currentUser,
-    logout,
-    setAuthModalOpen,
-    setAuthModalTab,
-    setMobileMenuOpen,
-    notifications,
-    unreadNotificationCount,
-    fetchNotifications,
-  } = useAppStore();
-  const navigateTo = useAppStore((s) => s.navigateTo);
-
-  const handleLogin = () => {
-    setAuthModalTab('login');
-    setAuthModalOpen(true);
-    setMobileMenuOpen(false);
-  };
-
-  const handleRegister = () => {
-    setAuthModalTab('register');
-    setAuthModalOpen(true);
-    setMobileMenuOpen(false);
-  };
-
-  const handleNavigate = (view: AppView, params?: Record<string, string>) => {
-    navigateTo(view, params);
-    setMobileMenuOpen(false);
-  };
-
-  const handleLogout = () => {
-    logout();
-    setMobileMenuOpen(false);
-  };
-
-  const recentNotifications = notifications.slice(0, 4);
-
-  return (
-    <div className="flex h-full flex-col">
-      {/* Header with Logo + Theme Toggle */}
-      <SheetHeader className="border-b border-border pb-4">
-        <div className="flex items-center justify-between">
-          <SheetTitle className="flex items-center gap-2 text-right">
-            <span className="text-lg font-bold text-primary">{SITE_NAME}</span>
-            <LocateFixed className="size-5 text-primary" />
-          </SheetTitle>
-          <ThemeToggle />
-        </div>
-      </SheetHeader>
-
-      {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto">
-        {/* Navigation */}
-        <nav className="flex flex-col gap-1 p-4" aria-label="منوی موبایل">
-          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            منو
-          </p>
-          {NAV_ITEMS.map((item) => (
-            <MobileNavItem
-              key={item.view}
-              item={item}
-              onSelect={() => handleNavigate(item.view)}
-            />
-          ))}
-        </nav>
-
-        <Separator />
-
-        {/* Notifications Preview */}
-        <div className="px-4 pt-4">
-          <button
-            type="button"
-            onClick={() => handleNavigate('notifications')}
-            className="flex w-full items-center justify-between mb-3"
-          >
-            <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              اعلان‌ها
-            </p>
-            {unreadNotificationCount > 0 && (
-              <span className="flex items-center gap-1 text-xs text-primary font-medium">
-                <span>{unreadNotificationCount} جدید</span>
-                <ArrowLeft className="size-3" />
-              </span>
-            )}
-          </button>
-          {recentNotifications.length > 0 ? (
-            <div className="space-y-1">
-              {recentNotifications.map((notif) => {
-                const Icon = getNotificationIcon(notif.type);
-                return (
-                  <button
-                    key={notif.id}
-                    type="button"
-                    onClick={() => handleNavigate('notifications')}
-                    className={cn(
-                      'flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-right transition-colors',
-                      notif.isRead
-                        ? 'hover:bg-accent/50'
-                        : 'bg-primary/5 hover:bg-primary/10'
-                    )}
-                  >
-                    <span className={cn(
-                      'flex size-8 shrink-0 items-center justify-center rounded-full',
-                      notif.isRead
-                        ? 'bg-muted text-muted-foreground'
-                        : 'bg-primary/15 text-primary'
-                    )}>
-                      <Icon className="size-4" />
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className={cn(
-                        'truncate text-sm leading-snug',
-                        notif.isRead ? 'text-muted-foreground' : 'font-medium text-foreground'
-                      )}>
-                        {notif.title}
-                      </p>
-                      <p className="mt-0.5 text-[11px] text-muted-foreground/70">
-                        {timeAgo(notif.createdAt)}
-                      </p>
-                    </div>
-                    {!notif.isRead && (
-                      <span className="mt-2 size-2 shrink-0 rounded-full bg-primary" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center gap-1.5 py-6 text-muted-foreground/50">
-              <BellOff className="size-6" />
-              <p className="text-xs">اعلان جدیدی ندارید</p>
-            </div>
-          )}
-        </div>
-
-        <Separator className="mt-4" />
-
-        {/* Location Selector */}
-        <div className="flex flex-col gap-1 px-4 pt-4">
-          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            مکان
-          </p>
-          <MobileLocationSelector />
-        </div>
-
-        <Separator />
-
-        {/* Quick Actions */}
-        <div className="flex flex-col gap-1 p-4">
-          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            دسترسی سریع
-          </p>
-          <MobileNavItem
-            item={{ label: 'پیام‌ها', view: 'messages' }}
-            onSelect={() => handleNavigate('messages')}
-          />
-          {isAuthenticated && (
-            <>
-              <MobileNavItem
-                item={{ label: 'داشبورد', view: 'dashboard' }}
-                onSelect={() => handleNavigate('dashboard')}
-              />
-              <MobileNavItem
-                item={{ label: 'پروفایل', view: 'profile' }}
-                onSelect={() => handleNavigate('profile')}
-              />
-              <MobileNavItem
-                item={{ label: 'علاقه‌مندی‌ها', view: 'browse-requests' }}
-                onSelect={() => handleNavigate('browse-requests')}
-              />
-              <MobileNavItem
-                item={{ label: 'پیشنهادها', view: 'dashboard' }}
-                onSelect={() => handleNavigate('dashboard')}
-              />
-            </>
-          )}
-        </div>
-
-        {/* More */}
-        <div className="flex flex-col gap-1 px-4 pb-4">
-          <p className="mb-2 flex items-center gap-1 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            بیشتر
-            <ChevronLeft className="size-3" />
-          </p>
-          <MobileNavItem
-            item={{ label: 'تعرفه‌ها', view: 'pricing' }}
-            onSelect={() => handleNavigate('pricing')}
-          />
-          <MobileNavItem
-            item={{ label: 'دعوت از دوستان', view: 'referral' }}
-            onSelect={() => handleNavigate('referral')}
-          />
-          <MobileNavItem
-            item={{ label: 'مقایسه کسب‌وکارها', view: 'compare-specialists' }}
-            onSelect={() => handleNavigate('compare-specialists')}
-          />
-        </div>
-
-        {/* Contact */}
-        <Separator />
-        <div className="px-4 py-4">
-          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            تماس با ما
-          </p>
-          <div className="space-y-2 px-3">
-            <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
-              <MessageSquare className="size-4 shrink-0 text-primary/70" />
-              <span dir="ltr">support@needfinder.ir</span>
-            </div>
-            <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
-              <Phone className="size-4 shrink-0 text-primary/70" />
-              <span dir="ltr">021-1234-5678</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom: User / Auth */}
-      <div className="border-t border-border p-4">
-        {isAuthenticated && currentUser ? (
-          <div className="flex items-center gap-3">
-            <Avatar className="size-10 border-2 border-primary/20">
-              <AvatarImage src={currentUser.avatar} />
-              <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
-                {currentUser.firstName.charAt(0)}
-                {currentUser.lastName.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-            <button
-              type="button"
-              onClick={() => handleNavigate('profile')}
-              className="flex-1 text-right"
-            >
-              <p className="text-sm font-medium">
-                {currentUser.displayName ||
-                  `${currentUser.firstName} ${currentUser.lastName}`}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {currentUser.email}
-              </p>
-            </button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleLogout}
-              className="text-muted-foreground hover:text-destructive"
-              aria-label="خروج از حساب"
-              title="خروج از حساب کاربری"
-            >
-              <LogOut className="size-4" />
-            </Button>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            <Button
-              variant="outline"
-              className="w-full h-[40px]"
-              onClick={handleLogin}
-              title={VIEW_TITLE['login']}
-              data-href={VIEW_HREF['login']}
-            >
-              ورود
-            </Button>
-            <Button
-              className="w-full h-[40px]"
-              onClick={handleRegister}
-              title={VIEW_TITLE['register']}
-              data-href={VIEW_HREF['register']}
-            >
-              ثبت‌نام
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ============ Auth Section (Desktop) ============
+// ============ Auth Section (City Selector + User Menu) ============
 function AuthSection() {
   return (
-    <div className="hidden sm:flex items-center gap-1.5">
+    <div className="flex items-center gap-1.5">
       {/* City Selector — next to user menu */}
       <LocationSelector />
       {/* Ark UI User Menu */}
@@ -796,8 +462,6 @@ export function Header() {
   const {
     currentView,
     navigateTo,
-    mobileMenuOpen,
-    setMobileMenuOpen,
   } = useAppStore();
 
   const handleScroll = useCallback(() => {
@@ -841,35 +505,16 @@ export function Header() {
             </span>
           </button>
 
-          {/* Center: Search Bar */}
-          <div className="hidden lg:flex flex-1 max-w-[600px] items-center">
+          {/* Center: Search Bar (visible on all screens) */}
+          <div className="flex flex-1 max-w-[600px] items-center">
             <div className="flex-1 search-glow-focus rounded-xl">
               <HeaderSearchBar data={DEMO_SEARCH_DATA} />
             </div>
           </div>
 
           {/* Left: Actions */}
-          <div className="flex items-center gap-1 sm:gap-2">
-            {/* Unified Dropdown (Profile, Notifications, Theme, Contact, Messages) */}
+          <div className="flex items-center gap-1.5">
             <AuthSection />
-
-            {/* Mobile Menu */}
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-9 text-muted-foreground hover:text-foreground lg:hidden"
-                  aria-label="باز کردن منو"
-                  title="باز کردن منوی موبایل"
-                >
-                  <Menu className="size-[20px]" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] p-0 sm:w-[360px]">
-                <MobileSheetContent />
-              </SheetContent>
-            </Sheet>
           </div>
         </div>
 
