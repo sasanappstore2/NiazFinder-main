@@ -1862,3 +1862,220 @@ Stage Summary:
 - Clean compilation, no errors
 - User also reported these were on the left side (سمت چپ) of the page
 
+
+---
+Task ID: comprehensive-audit
+Agent: Main + 4 parallel sub-agents
+Task: دیباگ جامع، نکته‌سنجی و گزارش کامل تمام بخش‌های سایت
+
+Work Log:
+- 4 بررسی موازی انجام شد: کد، API، بصری، ریسپانسیو/امنیت/دسترسی‌پذیری
+- bun run lint: 0 errors, 2 warnings (React Hook Form, TanStack Virtual)
+- TypeScript: تمام فایل‌های src/ بدون خطا
+- 47 API endpoint تست شد — 20 موفق، 19 ارور مورد انتظار (401)، 7 ارور سرور، 1 باگ
+- بررسی بصری و ریسپانسیو: ناوبری پایین صفحه در تمام سایزها فعال، RTL صحیح
+- بررسی امنیت: 3 مشکل بحرانی پیدا شد
+
+Stage Summary:
+- 33 مشکل کدی یافت شد (6 بحرانی، 8 بالا، 12 متوسط، 7 پایین)
+- 7 API endpoint شکسته وجود دارد
+- 3 مشکل امنیتی بحرانی
+- جزئیات کامل در گزارش زیر
+
+---
+# 📋 گزارش جامع دیباگ و نکته‌سنجی سایت نیاز فایندر
+
+## 📊 خلاصه کلی
+
+| معیار | تعداد |
+|--------|-------|
+| کل مشکلات کدی | 33 |
+| بحرانی (CRITICAL) | 6 |
+| بالا (HIGH) | 8 |
+| متوسط (MEDIUM) | 12 |
+| پایین (LOW) | 7 |
+| API endpoint شکسته | 7 |
+| مشکلات امنیتی | 3 |
+| خطاهای Lint | 0 |
+| خطاهای TypeScript | 0 |
+
+---
+
+## 🔴 مشکلات بحرانی (CRITICAL)
+
+### 1. هش رمز عبور ناامن
+- **فایل:** `src/app/api/auth/route.ts` خطوط 35-37
+- **مشکل:** رمزهای عبور با SHA-256 و نمک سخت‌شده `_needfinder_salt` هش می‌شوند. این روش در برابر GPU cracking کاملاً آسیب‌پذیر است.
+- **راه‌حل:** استفاده از `bcrypt` یا `argon2id`
+
+### 2. فرم ورود — هر رمزی قبول می‌شود (MOCK)
+- **فایل:** `src/components/auth/LoginForm.tsx` خطوط 186-243
+- **مشکل:** وقتی API خطا برمی‌گرداند، کد به جای نمایش خطا، یک کاربر Mock ایجاد و ورود موفق نشان می‌دهد. هر ایمیل/رمزی کار می‌کند!
+- **راه‌حل:** حذف fallback به mock user، نمایش خطای واقعی
+
+### 3. فرم ثبت‌نام — هرگز API صدا نمی‌زند
+- **فایل:** `src/components/auth/RegisterForm.tsx` خطوط 98-127
+- **مشکل:** ثبت‌نام فقط `setTimeout` می‌کند و کاربر Mock ایجاد می‌کند. هیچ داده‌ای در دیتابیس ذخیره نمی‌شود.
+- **راه‌حل:** فراخوانی واقعی POST `/api/auth`
+
+### 4. فرم ثبت نیاز — هرگز API صدا نمی‌زند
+- **فایل:** `src/components/requests/RequestForm.tsx` خطوط 264-275
+- **مشکل:** ارسال نیاز فقط setTimeout است و داده‌ها هرگز ذخیره نمی‌شوند.
+- **راه‌حل:** استفاده از `useAppStore.getState().createRequest(data)`
+
+### 5. چت کاملاً Mock است
+- **فایل:** `src/components/chat/ChatPanel.tsx` خطوط 94-191
+- **مشکل:** تمام مکالمات و پیام‌ها سخت‌کد شده. Zustand store متدهای واقعی دارد اما ChatPanel استفاده نمی‌کند.
+- **راه‌حل:** اتصال به API واقعی
+
+### 6. داشبورد کاملاً Mock است
+- **فایل:** `src/components/dashboard/UserDashboard.tsx` خطوط 45-261
+- **مشکل:** تمام داده‌ها Mock هستند. متدهای API در store وجود دارند اما استفاده نمی‌شوند.
+- **راه‌حل:** اتصال به API واقعی
+
+---
+
+## 🟠 مشکلات بالا (HIGH)
+
+### 7. Hydration mismatch در Store
+- **فایل:** `src/lib/store.ts` خط 215
+- **مشکل:** `localStorage` در سطح ماژول صدا زده می‌شود. در SSR همیشه null برمی‌گردد.
+- **راه‌حل:** بارگذاری در useEffect
+
+### 8. نام کلید توکن متفاوت است
+- **فایل:** `store.ts` از `needfinder_auth_token` استفاده می‌کند اما `LoginForm.tsx` از `nf_auth_token`
+- **مشکل:** بعد از ورود، تمام APIهای احراز هویت شده شکست می‌خورند
+- **راه‌حل:** یکسان‌سازی کلید
+
+### 9. مسیریابی SPA به جای Next.js Router
+- **فایل:** `src/app/page.tsx`
+- **مشکل:** کل سایت در یک صفحه `/` با Zustand currentView اجرا می‌شود. URL هیچوقت تغییر نمی‌کند. SEO کاملاً شکسته، مرورگر Back/Forward کار نمی‌کند.
+
+### 10. getAuthUser هر درخواست دیتابیس آپدیت می‌کند
+- **فایل:** `src/lib/auth.ts` خطوط 64-67
+- **مشکل:** `lastSeenAt` در هر فراخوانی آپدیت می‌شود. بار اضافی روی دیتابیس.
+- **راه‌حل:** Debounce/Throttle
+
+### 11. viewCount بدون محدودیت افزایش می‌یابد
+- **فایل:** `src/app/api/requests/[id]/route.ts` خطوط 14-18
+- **مشکل:** هر GET viewCount را افزایش می‌دهد — حتی ربات‌ها
+- **راه‌حل:** محدودیت IP یا session-based dedup
+
+### 12. VIEW_HREF در 3+ فایل تکرار شده
+- **فایل‌ها:** Header.tsx, Footer.tsx, MobileBottomNav.tsx
+- **مشکل:** نگهداری دشوار — هر تغییر باید در همه فایل‌ها اعمال شود
+
+### 13. دو MegaMenuCategory متفاوت
+- **فایل‌ها:** MegaMenu.tsx و CategoryMegaMenu.tsx
+- **مشکل:** دو interface متفاوت با نام یکسان
+
+### 14. صفحات (main) route group غیرقابل دسترسی
+- **فایل:** `src/app/(main)/page.tsx`
+- **مشکل:** به دلیل SPA view-state، این صفحات هرگز اجرا نمی‌شوند
+
+---
+
+## 🟡 API Endpoint های شکسته
+
+| Endpoint | وضعیت | علت |
+|----------|--------|------|
+| `GET /api/search` | 500 | `db.category` undefined |
+| `POST /api/auth/otp` | 500 | مدل OTP در Prisma وجود ندارد |
+| `POST /api/auth/verify` | 500 | مدل verify در Prisma وجود ندارد |
+| `GET /api/admin/stats` | 500 | `new Request('')` بدون Authorization |
+| `GET /api/calls` | 500 | مدل callHistory در Prisma وجود ندارد |
+| `GET /api/requests?limit=abc` | 500 | parseInt(NaN) مدیریت نشده |
+| `GET /api/requests/invalid-id` | 500 | update() قبل از null check اجرا می‌شود |
+
+---
+
+## 🔐 مشکلات امنیتی
+
+### 1. Admin Stats Authentication شکسته
+- **فایل:** `src/app/api/admin/stats/route.ts` خط 8
+- `getAuthUser(new Request(''))` — درخواست خالی بدون Authorization
+- **تأثیر:** صفحه آمار ادمین همیشه 403 برمی‌گرداند
+
+### 2. نشت اطلاعات شخصی (PII) بدون احراز هویت
+- **فایل:** `src/app/api/specialists/[id]/route.ts` و `route.ts`
+- ایمیل و شماره تلفن کسب‌وکارها بدون نیاز به ورود قابل دسترسی است
+- **تأثیر:** نقض حریم خصوصی
+
+### 3. خطاهای زبان ناهماهنگ
+- برخی endpointها خطای فارسی و برخی انگلیسی برمی‌گردانند
+
+---
+
+## ✅ بخش‌های سالم و قابل قبول
+
+### کامپوننت‌ها
+| بخش | وضعیت | توضیح |
+|------|--------|-------|
+| Header | ✅ سالم | لوگو، جستجو، LocationSelector، منوی کاربر، MegaMenu |
+| Footer | ✅ سالم | فول و compact، pb-20 برای ناوبری پایین |
+| MobileBottomNav | ✅ سالم | در تمام سایزها نمایش داده می‌شود، FAB ثبت نیاز |
+| NeedsHomepage | ✅ سالم | لیست نیازها با API واقعی، فیلتر دسته‌بندی، جستجو |
+| LocationSelector | ✅ سالم | دسکتاپ و موبایل، "تمام ایران" به عنوان پیش‌فرض |
+| CategoryMegaMenu | ✅ سالم | 3 ستونی دسکتاپ، آکاردئونی موبایل |
+| Auth Modal | ✅ سالم | ورود/ثبت‌نام با مودال |
+| Onboarding | ✅ سالم | خوش‌آمدگویی اولیه |
+| ScrollProgress | ✅ سالم | نوار پیشرفت اسکرول |
+| CookieConsent | ✅ سالم | بنر کوکی |
+| BackToTop | ✅ سالم | دکمه بازگشت به بالا |
+
+### API Endpoint های سالم
+| Endpoint | عملکرد |
+|----------|--------|
+| `GET /api/categories` | ✅ 200 — درخت دسته‌بندی‌ها |
+| `GET /api/requests` | ✅ 200 — لیست صفحه‌بندی شده |
+| `POST /api/requests` | ✅ 201 — ایجاد نیاز (نیاز به auth) |
+| `GET /api/requests/[id]` | ✅ 200 — جزئیات نیاز |
+| `GET /api/specialists` | ✅ 200 — لیست کسب‌وکارها |
+| `GET /api/specialists/[id]` | ✅ 200 — پروفایل کسب‌وکار |
+| `POST /api/auth` (login) | ✅ 200 — ورود با توکن |
+| `POST /api/auth` (register) | ✅ 201 — ثبت‌نام |
+| `GET /api/reviews` | ✅ 200 — نظرات |
+| `GET /api/dashboard` | ✅ 200 — آمار داشبورد |
+| `GET /api/wallet` | ✅ 200 — کیف پول |
+| `GET /api/conversations` | ✅ 200 — مکالمات |
+| `GET /api/notifications` | ✅ 200 — اعلان‌ها |
+| `GET /api/users/me` | ✅ 200 — پروفایل کاربر |
+
+### ریسپانسیو
+- ✅ MobileBottomNav در تمام سایزها نمایش داده می‌شود (lg:hidden حذف شد)
+- ✅ Header: لوگو، جستجو، منوی کاربر ریسپانسیو
+- ✅ Footer: grid ریسپانسیو
+- ✅ کارت‌ها: flex single-column (نه grid مشکل‌دار)
+- ✅ Touch targets حداقل 44px
+
+### دسترسی‌پذیری (Accessibility)
+- ✅ Skip-to-content link
+- ✅ RTL فارسی (`lang="fa" dir="rtl"`)
+- ✅ ARIA attributes در 65+ فایل
+- ✅ prefers-reduced-motion پشتیبانی
+- ✅ Focus-visible ring styles
+- ✅ بدون alert/confirm/prompt (toast/dialog استفاده شده)
+- ⚠️ چند مشکل heading hierarchy نیاز به اصلاح دارد
+
+---
+
+## 📈 پیشنهاد اولویت‌بندی تعمیرات
+
+### فوری (امروز)
+1. ✅ حذف Mock fallback در LoginForm — امنیت ورود
+2. ✅ اتصال RegisterForm به API واقعی
+3. ✅ اتصال RequestForm به API واقعی
+4. ✅ یکسان‌سازی کلید توکن auth
+
+### کوتاه‌مدت (این هفته)
+5. اتصال ChatPanel به API واقعی
+6. اتصال Dashboard به API واقعی
+7. رفع 7 API endpoint شکسته
+8. رفع مشکلات امنیتی (PII exposure, admin auth)
+
+### میان‌مدت (هفته آینده)
+9. مهاجرت به Next.js Router (از SPA view-state)
+10. جایگزینی SHA-256 با bcrypt
+11. بهبود heading hierarchy
+14. یکسان‌سازی خطاهای فارسی/انگلیسی
+
