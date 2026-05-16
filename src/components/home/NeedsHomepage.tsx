@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import {
-  Search, FileSearch, MapPin, DollarSign, Flame, Clock, ChevronDown, Loader2, Sparkles, Zap, ArrowUpRight, X, ArrowUpDown, LayoutGrid, Plus,
+  FileSearch, MapPin, DollarSign, Flame, Clock, ChevronDown, Loader2, Sparkles, Zap, ArrowUpRight, Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
 import {
-  formatBudgetRange, getTimeAgo, TRUST_STATS,
+  formatBudgetRange, getTimeAgo,
 } from '@/lib/constants';
 import { ALL_CATEGORIES } from '@/components/layout/CategoryMegaMenu';
 import type { ServiceRequest } from '@/lib/types';
@@ -21,7 +21,7 @@ import { HomepageHowItWorks } from '@/components/home/HomepageHowItWorks';
 import { FeaturedBusinesses } from '@/components/home/FeaturedBusinesses';
 import { HomepageTestimonials } from '@/components/home/HomepageTestimonials';
 import { HomepageFAQ } from '@/components/home/HomepageFAQ';
-import { AnimatedCounter } from '@/components/shared/AnimatedCounter';
+
 
 
 // ─── Fibonacci Design Tokens ───────────────────────────
@@ -549,79 +549,18 @@ export function NeedsHomepage() {
   const [localRequests, setLocalRequests] = useState<ServiceRequest[]>([]);
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const lastFetchTimeRef = useRef<number>(Date.now());
   const categoryScrollRef = useRef<HTMLDivElement>(null);
-  const searchContainerRef = useRef<HTMLDivElement>(null);
+
   const { quickView, showQuickView, closeQuickView } = useQuickView();
 
-  // Recent searches from localStorage
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('nf_hero_recent_searches');
-      if (stored) setRecentSearches(JSON.parse(stored));
-    } catch { /* ignore */ }
-  }, []);
 
-  const addRecentSearch = (term: string) => {
-    if (term.trim().length < 2) return;
-    try {
-      const updated = [term.trim(), ...recentSearches.filter(s => s !== term.trim())].slice(0, 5);
-      setRecentSearches(updated);
-      localStorage.setItem('nf_hero_recent_searches', JSON.stringify(updated));
-    } catch { /* ignore */ }
-  };
 
-  const clearRecentSearch = (term: string) => {
-    try {
-      const updated = recentSearches.filter(s => s !== term);
-      setRecentSearches(updated);
-      localStorage.setItem('nf_hero_recent_searches', JSON.stringify(updated));
-    } catch { /* ignore */ }
-  };
-
-  // Generate suggestions from local requests
-  useEffect(() => {
-    if (debouncedSearchQuery.trim().length < 2) {
-      setSearchSuggestions([]);
-      return;
-    }
-    const q = debouncedSearchQuery.trim().toLowerCase();
-    const titles = localRequests
-      .filter(r => r.title.toLowerCase().includes(q) || r.description.toLowerCase().includes(q))
-      .map(r => r.title)
-      .slice(0, 5);
-    setSearchSuggestions(titles);
-  }, [debouncedSearchQuery, localRequests]);
-
-  // Show suggestions dropdown
-  useEffect(() => {
-    setShowSuggestions(searchQuery.trim().length >= 2 && searchSuggestions.length > 0);
-  }, [searchQuery, searchSuggestions]);
-
-  // Close suggestions on click outside
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
-        setShowSuggestions(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
-
-  const handleSearchSubmit = () => {
-    if (searchQuery.trim()) {
-      addRecentSearch(searchQuery.trim());
-      setShowSuggestions(false);
-    }
-  };
 
   // Initial fetch (direct API call)
   useEffect(() => {
@@ -731,158 +670,6 @@ export function NeedsHomepage() {
 
   return (
     <div className="min-h-screen bg-background" dir="rtl">
-      {/* ═══ Hero Banner Section ═══ */}
-      <section className="relative overflow-hidden bg-gradient-to-bl from-emerald-600 via-emerald-700 to-teal-900">
-        {/* Animated particle dots pattern */}
-        <div className="hero-particles" aria-hidden="true" />
-        {/* Decorative blobs with improved gradients */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -start-20 h-72 w-72 rounded-full bg-emerald-400/20 blur-3xl animate-subtle-float" />
-          <div className="absolute top-10 -end-16 h-56 w-56 rounded-full bg-teal-300/15 blur-3xl" style={{ animationDelay: '2s' }} />
-          <div className="absolute bottom-0 start-1/3 h-48 w-48 rounded-full bg-emerald-500/10 blur-2xl" />
-          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-teal-400/5 blur-3xl" />
-        </div>
-
-        <div className="relative container-default mx-auto px-5 md:px-8 pt-12 pb-14 md:pt-20 md:pb-20">
-          <div className="mx-auto max-w-3xl text-center">
-            {/* Title */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-snug tracking-tight text-white mb-3 md:mb-4">
-              نیاز خود را ثبت کنید، بهترین کسب‌وکارها را پیدا کنید
-            </h1>
-            <p className="text-sm sm:text-base md:text-lg text-emerald-100/80 leading-relaxed mb-8 md:mb-10">
-              پلتفرم هوشمند اتصال نیاز به کسب‌وکار در سراسر ایران
-            </p>
-
-            {/* Search + CTA */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 mb-10 md:mb-14">
-              <div className="relative w-full sm:flex-1" ref={searchContainerRef}>
-                <Search
-                  className="absolute start-4 top-1/2 -translate-y-1/2 size-5 text-emerald-400/70"
-                  aria-hidden="true"
-                />
-                <input
-                  type="text"
-                  placeholder="جستجوی نیاز... (مثلاً: طراحی سایت، سقف خانه)"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => {
-                    if (searchQuery.trim().length >= 2) setShowSuggestions(true);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleSearchSubmit();
-                  }}
-                  className={cn(
-                    'w-full rounded-2xl border-0 py-3.5 pe-4 ps-12 text-sm text-white placeholder:text-emerald-200/50',
-                    'bg-white/15 backdrop-blur-md',
-                    'ring-1 ring-inset ring-white/20',
-                    'focus:outline-none focus:ring-2 focus:ring-emerald-300/60',
-                    'transition-all duration-200',
-                  )}
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => { setSearchQuery(''); setShowSuggestions(false); }}
-                    className="absolute end-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-emerald-200/60 hover:text-white hover:bg-white/10 transition-colors"
-                    aria-label="پاک کردن جستجو"
-                  >
-                    <X className="size-4" />
-                  </button>
-                )}
-
-                {/* Suggestions Dropdown */}
-                {showSuggestions && (
-                  <div className="absolute start-0 end-0 top-full z-50 mt-2 overflow-hidden rounded-xl border border-white/20 bg-emerald-900/95 backdrop-blur-xl shadow-xl">
-                    {/* Search suggestions */}
-                    {searchSuggestions.length > 0 && (
-                      <div className="px-2 py-1.5">
-                        {searchSuggestions.map((suggestion) => (
-                          <button
-                            key={suggestion}
-                            type="button"
-                            onClick={() => {
-                              setSearchQuery(suggestion);
-                              setShowSuggestions(false);
-                              addRecentSearch(suggestion);
-                            }}
-                            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm text-white/90 hover:bg-white/10 transition-colors"
-                          >
-                            <Search className="size-3.5 text-emerald-300/60 shrink-0" />
-                            <span className="truncate">{suggestion}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Recent Searches */}
-                    {recentSearches.length > 0 && (
-                      <div className="border-t border-white/10 px-3 py-2">
-                        <p className="mb-1.5 px-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-300/50">
-                          جستجوهای اخیر
-                        </p>
-                        {recentSearches.map((term) => (
-                          <div key={term} className="flex items-center gap-2 rounded-lg px-1 py-1.5 hover:bg-white/10 transition-colors">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setSearchQuery(term);
-                                setShowSuggestions(false);
-                              }}
-                              className="flex flex-1 items-center gap-2 text-start text-sm text-white/80"
-                            >
-                              <Clock className="size-3.5 text-emerald-300/40 shrink-0" />
-                              <span className="truncate">{term}</span>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                clearRecentSearch(term);
-                              }}
-                              className="shrink-0 rounded p-0.5 text-emerald-300/40 hover:text-white transition-colors"
-                              aria-label={`حذف «${term}»`}
-                            >
-                              <X className="size-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-              <Button
-                onClick={() => navigateTo('post-need')}
-                className="w-full sm:w-auto rounded-2xl px-8 py-3.5 text-sm font-bold bg-white text-emerald-700 hover:bg-emerald-50 shadow-lg shadow-emerald-900/30 transition-all duration-200 hover:shadow-xl hover:shadow-emerald-900/40"
-              >
-                <Plus className="size-4 me-2" aria-hidden="true" />
-                ثبت نیاز رایگان
-              </Button>
-            </div>
-
-            {/* Stats Row with improved glow hover */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-              {TRUST_STATS.map((stat, i) => (
-                <div
-                  key={stat.label}
-                  className="animate-count-fade-in stat-card-glow flex flex-col items-center gap-1 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 px-4 py-3 md:py-4"
-                  style={{ animationDelay: `${0.3 + i * 0.1}s`, animationFillMode: 'backwards' }}
-                >
-                  <span className="text-xl md:text-2xl mb-0.5" aria-hidden="true">
-                    {stat.icon}
-                  </span>
-                  <span className="text-lg md:text-xl font-extrabold text-white">
-                    <AnimatedCounter target={stat.value} suffix={stat.suffix} locale="fa-IR" duration={1800} />
-                  </span>
-                  <span className="text-[11px] md:text-xs font-medium text-emerald-100/70">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ═══ Request Cards ═══ */}
       <div className="container-default mx-auto px-5 md:px-8 py-6 pb-12">
         {/* Results */}
