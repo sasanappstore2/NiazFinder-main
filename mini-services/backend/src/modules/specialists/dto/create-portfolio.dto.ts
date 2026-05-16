@@ -1,6 +1,5 @@
-import { IsNotEmpty, IsOptional, IsString, IsArray, IsUrl, IsDateString, IsInt, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsArray, IsUrl, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 
 export class CreatePortfolioDto {
   @ApiProperty({ description: 'عنوان نمونه‌کار' })
@@ -14,35 +13,19 @@ export class CreatePortfolioDto {
   @IsString()
   description?: string;
 
-  @ApiPropertyOptional({ description: 'لینک تصاویر', type: [String] })
+  @ApiPropertyOptional({ description: 'آدرس تصویر' })
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  imageUrls?: string[];
-
-  @ApiPropertyOptional({ description: 'لینک ویدیو' })
-  @IsOptional()
-  @IsUrl({}, { message: 'لینک ویدیو نامعتبر است' })
-  videoUrl?: string;
+  @IsUrl({}, { message: 'آدرس تصویر نامعتبر است' })
+  imageUrl?: string;
 
   @ApiPropertyOptional({ description: 'لینک پروژه' })
   @IsOptional()
   @IsUrl({}, { message: 'لینک پروژه نامعتبر است' })
   projectUrl?: string;
 
-  @ApiPropertyOptional({ description: 'نام مشتری' })
+  @ApiPropertyOptional({ description: 'تکنولوژی‌های استفاده شده', type: [String] })
   @IsOptional()
-  @IsString()
-  clientName?: string;
-
-  @ApiPropertyOptional({ description: 'تاریخ تکمیل' })
-  @IsOptional()
-  @IsDateString()
-  completedAt?: string;
-
-  @ApiPropertyOptional({ description: 'ترتیب نمایش' })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  order?: number;
+  @IsArray()
+  @IsString({ each: true })
+  technologies?: string[];
 }

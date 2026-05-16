@@ -7,11 +7,13 @@ import {
   UseGuards,
   Headers,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiHeader } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
@@ -24,23 +26,49 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ summary: 'ثبت‌نام کاربر جدید' })
   async register(@Body() dto: RegisterDto) {
-    const { user, token } = await this.authService.register(dto);
+    const result = await this.authService.register(dto);
     return {
       message: 'ثبت‌نام با موفقیت انجام شد',
-      user,
-      token,
+      ...result,
     };
   }
 
   @Post('login')
   @ApiOperation({ summary: 'ورود به حساب کاربری' })
   async login(@Body() dto: LoginDto) {
-    const { user, token } = await this.authService.login(dto);
+    const result = await this.authService.login(dto);
     return {
       message: 'ورود با موفقیت انجام شد',
-      user,
-      token,
+      ...result,
     };
+  }
+
+  @Post('refresh')
+  @ApiOperation({ summary: 'تمدید توکن با ریفرش توکن' })
+  async refreshToken(@Body() dto: RefreshTokenDto) {
+    const result = await this.authService.refreshToken(dto.refreshToken);
+    return {
+      message: 'توکن با موفقیت تمدید شد',
+      ...result,
+    };
+  }
+
+  @Post('verify-email')
+  @ApiOperation({ summary: 'تأیید ایمیل با توکن' })
+  async verifyEmail(@Body() body: { token: string }) {
+    return this.authService.verifyEmail(body.token);
+  }
+
+  @Post('forgot-password')
+  @ApiOperation({ summary: 'درخواست بازنشانی رمز عبور' })
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.requestPasswordReset(dto.email);
+  }
+
+  @Post('reset-password')
+  @ApiOperation({ summary: 'بازنشانی رمز عبور با توکن' })
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto.token, dto.newPassword);
   }
 
   @Post('logout')
@@ -65,21 +93,6 @@ export class AuthController {
     return this.authService.getProfile(user.id);
   }
 
-  @Put('profile')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'ویرایش پروفایل کاربر' })
-  async updateProfile(
-    @CurrentUser() user: any,
-    @Body() dto: UpdateProfileDto,
-  ) {
-    const updatedUser = await this.authService.updateProfile(user.id, dto);
-    return {
-      message: 'پروفایل با موفقیت به‌روزرسانی شد',
-      user: updatedUser,
-    };
-  }
-
   @Put('change-password')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -89,17 +102,5 @@ export class AuthController {
     @Body() dto: ChangePasswordDto,
   ) {
     return this.authService.changePassword(user.id, dto);
-  }
-
-  @Post('refresh-token')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'تمدید توکن احراز هویت' })
-  async refreshToken(@CurrentUser() user: any) {
-    const { token } = await this.authService.refreshToken(user.id);
-    return {
-      message: 'توکن با موفقیت تمدید شد',
-      token,
-    };
   }
 }

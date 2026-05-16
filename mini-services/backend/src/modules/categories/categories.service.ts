@@ -1,72 +1,80 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, In, Not } from 'typeorm';
+import { Category } from '../../entities/category.entity';
+import { Proposal } from '../../entities/proposal.entity';
+import { Request } from '../../entities/request.entity';
+import { User } from '../../entities/user.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import * as slugify from 'slugify';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(Category)
+    private readonly categoryRepo: Repository<Category>,
+    @InjectRepository(Proposal)
+    private readonly proposalRepo: Repository<Proposal>,
+    @InjectRepository(Request)
+    private readonly requestRepo: Repository<Request>,
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+  ) {}
 
   /**
    * دریافت تمام دسته‌بندی‌های اصلی با درخت زیردسته‌ها
    */
   async findAll() {
-    const categories = await this.prisma.category.findMany({
-      where: {
-        parentId: null,
-        isActive: true,
-      },
-      include: {
-        children: {
-          where: { isActive: true },
-          include: {
-            children: {
-              where: { isActive: true },
-              include: {
-                _count: {
-                  select: { requests: true },
-                },
-              },
-            },
-            _count: {
-              select: { requests: true },
-            },
-          },
-          orderBy: { order: 'asc' },
-        },
-        _count: {
-          select: { requests: true },
-        },
-      },
-      orderBy: { order: 'asc' },
+    const categories = await this.categoryRepo.find({
+      where: { parentId: null as any, isActive: true },
+      relations: ['children', 'children.children'],
+      order: { order: 'ASC' },
     });
 
-    // Attach specialist counts
     const result = await Promise.all(
       categories.map(async (cat) => {
         const specialistCount = await this.countSpecialists(cat.id);
         const childrenWithStats = await Promise.all(
-          cat.children.map(async (child) => {
-            const childSpecialistCount = await this.countSpecialists(child.id);
-            const grandchildrenWithStats = await Promise.all(
-              child.children.map(async (grandchild) => ({
-                ...grandchild,
-                specialistCount: await this.countSpecialists(grandchild.id),
-              })),
-            );
-            return {
-              ...child,
-              requestCount: child._count.requests,
-              specialistCount: childSpecialistCount,
-              children: grandchildrenWithStats,
-            };
-          }),
+          (cat.children || [])
+            .filter((c) => c.isActive)
+            .map(async (child) => {
+              const childSpecialistCount = await this.countSpecialists(child.id);
+              const requestCount = await this.requestRepo.count({
+                where: { categoryId: child.id, deletedAt: null as any },
+              });
+              const grandchildren = (child.children || [])
+                .filter((gc) => gc.isActive)
+                .map((gc) => ({
+                  ...gc,
+                  children: undefined,
+                  parent: undefined,
+                  requestCount: 0,
+                  specialistCount: 0,
+                }));
+
+              return {
+                ...child,
+                children: undefined,
+                parent: undefined,
+                requestCount,
+                specialistCount: childSpecialistCount,
+                subCategories: grandchildren,
+              };
+            }),
         );
+
+        const requestCount = await this.requestRepo.count({
+          where: { categoryId: cat.id, deletedAt: null as any },
+        });
+
         return {
           ...cat,
-          requestCount: cat._count.requests,
+          children: undefined,
+          parent: undefined,
+          requestCount,
           specialistCount,
-          children: childrenWithStats,
+          subCategories: childrenWithStats,
         };
       }),
     );
@@ -75,32 +83,54 @@ export class CategoriesService {
   }
 
   /**
+   * دریافت دسته‌بندی‌های محبوب (بیشترین درخواست) - 8 تای اول
+   */
+  async findPopular() {
+    const categories = await this.categoryRepo.find({
+      where: { parentId: null as any, isActive: true },
+      relations: ['children'],
+      order: { order: 'ASC' },
+    });
+
+    const categoriesWithCounts = await Promise.all(
+      categories.map(async (cat) => {
+        const catRequestCount = await this.requestRepo.count({
+          where: { categoryId: cat.id, deletedAt: null as any },
+        });
+
+        const childIds = (cat.children || []).filter((c) => c.isActive).map((c) => c.id);
+        let childRequests = 0;
+        if (childIds.length > 0) {
+          childRequests = await this.requestRepo.count({
+            where: { categoryId: In(childIds), deletedAt: null as any },
+          });
+        }
+
+        return {
+          id: cat.id,
+          name: cat.name,
+          slug: cat.slug,
+          description: cat.description,
+          icon: cat.icon,
+          image: cat.image,
+          requestCount: catRequestCount + childRequests,
+          specialistCount: await this.countSpecialists(cat.id),
+        };
+      }),
+    );
+
+    categoriesWithCounts.sort((a, b) => b.requestCount - a.requestCount);
+
+    return { categories: categoriesWithCounts.slice(0, 8) };
+  }
+
+  /**
    * دریافت دسته‌بندی با شناسه
    */
-  async findOne(id: string) {
-    const category = await this.prisma.category.findUnique({
+  async findById(id: string) {
+    const category = await this.categoryRepo.findOne({
       where: { id },
-      include: {
-        children: {
-          where: { isActive: true },
-          include: {
-            _count: {
-              select: { requests: true },
-            },
-          },
-          orderBy: { order: 'asc' },
-        },
-        parent: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        _count: {
-          select: { requests: true },
-        },
-      },
+      relations: ['parent', 'children'],
     });
 
     if (!category) {
@@ -108,91 +138,104 @@ export class CategoriesService {
     }
 
     const specialistCount = await this.countSpecialists(id);
+    const requestCount = await this.requestRepo.count({
+      where: { categoryId: id, deletedAt: null as any },
+    });
+
     const childrenWithStats = await Promise.all(
-      category.children.map(async (child) => ({
-        ...child,
-        requestCount: child._count.requests,
-        specialistCount: await this.countSpecialists(child.id),
-      })),
+      (category.children || [])
+        .filter((c) => c.isActive)
+        .map(async (child) => {
+          const childRequestCount = await this.requestRepo.count({
+            where: { categoryId: child.id, deletedAt: null as any },
+          });
+          return {
+            ...child,
+            children: undefined,
+            parent: undefined,
+            requestCount: childRequestCount,
+            specialistCount: await this.countSpecialists(child.id),
+          };
+        }),
     );
 
     return {
       ...category,
-      requestCount: category._count.requests,
+      children: undefined,
+      parent: category.parent ? { id: category.parent.id, name: category.parent.name, slug: category.parent.slug } : null,
+      requestCount,
       specialistCount,
-      children: childrenWithStats,
+      subCategories: childrenWithStats,
     };
   }
 
   /**
-   * دریافت زیردسته‌های یک دسته‌بندی
+   * دریافت زیردسته‌های مستقیم یک دسته‌بندی
    */
-  async getSubcategories(parentId: string) {
-    const parent = await this.prisma.category.findUnique({
-      where: { id: parentId },
-    });
+  async findChildren(parentId: string) {
+    const parent = await this.categoryRepo.findOne({ where: { id: parentId } });
 
     if (!parent) {
       throw new NotFoundException('دسته‌بندی والد یافت نشد');
     }
 
-    const subcategories = await this.prisma.category.findMany({
-      where: {
-        parentId,
-        isActive: true,
-      },
-      include: {
-        _count: {
-          select: { requests: true },
-        },
-      },
-      orderBy: { order: 'asc' },
+    const children = await this.categoryRepo.find({
+      where: { parentId, isActive: true },
+      order: { order: 'ASC' },
     });
 
     const result = await Promise.all(
-      subcategories.map(async (sub) => ({
-        ...sub,
-        requestCount: sub._count.requests,
-        specialistCount: await this.countSpecialists(sub.id),
-      })),
+      children.map(async (child) => {
+        const requestCount = await this.requestRepo.count({
+          where: { categoryId: child.id, deletedAt: null as any },
+        });
+        return {
+          ...child,
+          children: undefined,
+          parent: undefined,
+          requestCount,
+          specialistCount: await this.countSpecialists(child.id),
+        };
+      }),
     );
 
-    return { parent: { id: parent.id, name: parent.name, slug: parent.slug }, subcategories: result };
+    return {
+      parent: { id: parent.id, name: parent.name, slug: parent.slug },
+      subcategories: result,
+    };
   }
 
   /**
    * ایجاد دسته‌بندی جدید (مدیر)
    */
   async create(dto: CreateCategoryDto) {
-    // Check slug uniqueness
-    const existing = await this.prisma.category.findUnique({
-      where: { slug: dto.slug },
-    });
+    const slug = slugify(dto.name, { lower: true, strict: true });
 
+    const existing = await this.categoryRepo.findOne({ where: { slug } });
     if (existing) {
       throw new ConflictException('اسلاگ دسته‌بندی تکراری است');
     }
 
-    // Validate parent exists
     if (dto.parentId) {
-      const parent = await this.prisma.category.findUnique({
-        where: { id: dto.parentId },
-      });
+      const parent = await this.categoryRepo.findOne({ where: { id: dto.parentId } });
       if (!parent) {
         throw new NotFoundException('دسته‌بندی والد یافت نشد');
       }
     }
 
-    const category = await this.prisma.category.create({
-      data: {
-        name: dto.name,
-        slug: dto.slug,
-        description: dto.description,
-        icon: dto.icon,
-        parentId: dto.parentId || null,
-        order: dto.order || 0,
-      },
-    });
+    const categoryData: Partial<Category> = {
+      name: dto.name,
+      slug,
+      order: dto.order || 0,
+    };
+    if (dto.description) categoryData.description = dto.description;
+    if (dto.icon) categoryData.icon = dto.icon;
+    if (dto.image) categoryData.image = dto.image;
+    if (dto.parentId) categoryData.parentId = dto.parentId;
+
+    const category = this.categoryRepo.create(categoryData);
+
+    await this.categoryRepo.save(category);
 
     return { category, message: 'دسته‌بندی با موفقیت ایجاد شد' };
   }
@@ -201,57 +244,49 @@ export class CategoriesService {
    * بروزرسانی دسته‌بندی (مدیر)
    */
   async update(id: string, dto: UpdateCategoryDto) {
-    await this.ensureCategoryExists(id);
+    const category = await this.categoryRepo.findOne({ where: { id } });
+    if (!category) {
+      throw new NotFoundException('دسته‌بندی یافت نشد');
+    }
 
-    // Check slug uniqueness if provided
-    if (dto.slug) {
-      const existing = await this.prisma.category.findFirst({
-        where: { slug: dto.slug, NOT: { id } },
+    if (dto.name) {
+      const newSlug = slugify(dto.name, { lower: true, strict: true });
+      const existing = await this.categoryRepo.findOne({
+        where: { slug: newSlug, id: Not(id) } as any,
       });
-      if (existing) {
+      if (existing && newSlug !== category.slug) {
         throw new ConflictException('اسلاگ دسته‌بندی تکراری است');
       }
+      category.name = dto.name;
+      category.slug = newSlug;
     }
 
-    // Validate parent exists if provided
-    if (dto.parentId) {
-      if (dto.parentId === id) {
-        throw new BadRequestException('دسته‌بندی نمی‌تواند والد خود باشد');
-      }
-      const parent = await this.prisma.category.findUnique({
-        where: { id: dto.parentId },
-      });
-      if (!parent) {
-        throw new NotFoundException('دسته‌بندی والد یافت نشد');
-      }
-    }
+    if (dto.description !== undefined) category.description = dto.description;
+    if (dto.icon !== undefined) category.icon = dto.icon;
+    if (dto.image !== undefined) category.image = dto.image;
+    if (dto.order !== undefined) category.order = dto.order;
+    if (dto.isActive !== undefined) category.isActive = dto.isActive;
 
-    const updateData: Record<string, any> = {};
-    if (dto.name !== undefined) updateData.name = dto.name;
-    if (dto.slug !== undefined) updateData.slug = dto.slug;
-    if (dto.description !== undefined) updateData.description = dto.description;
-    if (dto.icon !== undefined) updateData.icon = dto.icon;
-    if (dto.parentId !== undefined) updateData.parentId = dto.parentId || null;
-    if (dto.order !== undefined) updateData.order = dto.order;
-    if (dto.isActive !== undefined) updateData.isActive = dto.isActive;
-
-    const category = await this.prisma.category.update({
-      where: { id },
-      data: updateData,
-    });
+    await this.categoryRepo.save(category);
 
     return { category, message: 'دسته‌بندی با موفقیت بروزرسانی شد' };
   }
 
   /**
-   * حذف دسته‌بندی (غیرفعال‌سازی) (مدیر)
+   * حذف دسته‌بندی (غیرفعال‌سازی نرم) (مدیر)
    */
   async delete(id: string) {
-    await this.ensureCategoryExists(id);
+    const category = await this.categoryRepo.findOne({
+      where: { id },
+      relations: ['children'],
+    });
 
-    // Check for existing requests
-    const requestCount = await this.prisma.serviceRequest.count({
-      where: { categoryId: id },
+    if (!category) {
+      throw new NotFoundException('دسته‌بندی یافت نشد');
+    }
+
+    const requestCount = await this.requestRepo.count({
+      where: { categoryId: id, deletedAt: null as any },
     });
 
     if (requestCount > 0) {
@@ -260,149 +295,45 @@ export class CategoriesService {
       );
     }
 
-    // Check for active children
-    const childrenCount = await this.prisma.category.count({
-      where: { parentId: id, isActive: true },
-    });
-
-    if (childrenCount > 0) {
+    const activeChildren = (category.children || []).filter((c) => c.isActive);
+    if (activeChildren.length > 0) {
       throw new BadRequestException(
         'ابتدا زیردسته‌های فعال این دسته‌بندی را حذف یا غیرفعال کنید',
       );
     }
 
-    const category = await this.prisma.category.update({
-      where: { id },
-      data: { isActive: false },
-    });
+    category.isActive = false;
+    await this.categoryRepo.save(category);
 
     return { category, message: 'دسته‌بندی با موفقیت غیرفعال شد' };
   }
 
   /**
-   * دسته‌بندی‌های محبوب (بر اساس تعداد درخواست)
+   * افزایش شمارنده درخواست‌ها هنگام ایجاد درخواست جدید
    */
-  async getPopular() {
-    const categories = await this.prisma.category.findMany({
-      where: {
-        parentId: null,
-        isActive: true,
-      },
-      include: {
-        _count: {
-          select: { requests: true },
-        },
-        children: {
-          where: { isActive: true },
-          include: {
-            _count: {
-              select: { requests: true },
-            },
-          },
-        },
-      },
-      orderBy: { order: 'asc' },
-    });
-
-    // Calculate total requests including children
-    const categoriesWithCounts = await Promise.all(
-      categories.map(async (cat) => {
-        const childRequests = cat.children.reduce((sum, c) => sum + c._count.requests, 0);
-        const totalRequests = cat._count.requests + childRequests;
-        return {
-          id: cat.id,
-          name: cat.name,
-          slug: cat.slug,
-          description: cat.description,
-          icon: cat.icon,
-          requestCount: totalRequests,
-          specialistCount: await this.countSpecialists(cat.id),
-        };
-      }),
-    );
-
-    // Sort by request count descending
-    categoriesWithCounts.sort((a, b) => b.requestCount - a.requestCount);
-
-    return { categories: categoriesWithCounts.slice(0, 8) };
-  }
-
-  /**
-   * جستجوی دسته‌بندی‌ها
-   */
-  async search(query: string) {
-    if (!query || query.trim().length === 0) {
-      return { categories: [], message: 'عبارت جستجو نمی‌تواند خالی باشد' };
-    }
-
-    const categories = await this.prisma.category.findMany({
-      where: {
-        isActive: true,
-        OR: [
-          { name: { contains: query.trim() } },
-          { description: { contains: query.trim() } },
-        ],
-      },
-      include: {
-        parent: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        _count: {
-          select: { requests: true },
-        },
-      },
-      take: 20,
-    });
-
-    return {
-      categories: categories.map((cat) => ({
-        ...cat,
-        requestCount: cat._count.requests,
-      })),
-    };
+  async incrementRequestCount(categoryId: string) {
+    await this.categoryRepo.increment({ id: categoryId }, 'requestCount', 1);
   }
 
   // ========== Helper Methods ==========
 
-  private async ensureCategoryExists(id: string) {
-    const category = await this.prisma.category.findUnique({
-      where: { id },
-    });
-
-    if (!category) {
-      throw new NotFoundException('دسته‌بندی یافت نشد');
-    }
-
-    return category;
-  }
-
   private async countSpecialists(categoryId: string): Promise<number> {
-    // Get all request IDs under this category (including subcategories)
-    const subcategories = await this.prisma.category.findMany({
+    const subcategories = await this.categoryRepo.find({
       where: { parentId: categoryId },
       select: { id: true },
     });
-
     const categoryIds = [categoryId, ...subcategories.map((c) => c.id)];
 
-    // Count distinct specialists who have sent proposals in this category
-    const specialists = await this.prisma.proposal.groupBy({
-      by: ['userId'],
-      where: {
-        request: {
-          categoryId: { in: categoryIds },
-        },
-        user: {
-          role: 'SPECIALIST',
-          isActive: true,
-        },
-      },
-    });
+    const result = await this.proposalRepo
+      .createQueryBuilder('proposal')
+      .leftJoin('proposal.request', 'request')
+      .leftJoin('proposal.specialist', 'specialist')
+      .select('DISTINCT proposal.specialistId', 'id')
+      .where('request.categoryId IN (:...categoryIds)', { categoryIds })
+      .andWhere('specialist.role = :role', { role: 'SPECIALIST' })
+      .andWhere('specialist.isActive = :isActive', { isActive: true })
+      .getRawMany();
 
-    return specialists.length;
+    return result.length;
   }
 }

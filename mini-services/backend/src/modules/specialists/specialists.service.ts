@@ -3,143 +3,155 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, Like, Not, In } from 'typeorm';
+import { User, UserRole } from '../../entities/user.entity';
+import { Portfolio } from '../../entities/portfolio.entity';
+import { Review } from '../../entities/review.entity';
+import { Proposal, ProposalStatus } from '../../entities/proposal.entity';
+import { Skill } from '../../entities/skill.entity';
+import { UserSkill } from '../../entities/user-skill.entity';
 import { UpdateSpecialistProfileDto } from './dto/update-specialist-profile.dto';
 import { UpdateSkillsDto } from './dto/update-skills.dto';
 import { CreatePortfolioDto } from './dto/create-portfolio.dto';
 import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
 import { QuerySpecialistsDto } from './dto/query-specialists.dto';
-import { createSlug } from '../../common/utils';
-import { Prisma } from '@prisma/client';
+import * as slugify from 'slugify';
 
 @Injectable()
 export class SpecialistsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+    @InjectRepository(Portfolio)
+    private readonly portfolioRepo: Repository<Portfolio>,
+    @InjectRepository(Review)
+    private readonly reviewRepo: Repository<Review>,
+    @InjectRepository(Proposal)
+    private readonly proposalRepo: Repository<Proposal>,
+    @InjectRepository(Skill)
+    private readonly skillRepo: Repository<Skill>,
+    @InjectRepository(UserSkill)
+    private readonly userSkillRepo: Repository<UserSkill>,
 
+  ) {}
+
+  /**
+   * لیست متخصص‌ها با فیلتر و صفحه‌بندی
+   */
   async findAll(query: QuerySpecialistsDto) {
-    const { city, skill, search, sort = 'newest', page = 1, limit = 20 } = query;
-    const skip = (page - 1) * limit;
+    const {
+      categoryId,
+      city,
+      province,
+      minRating,
+      search,
+      sort = 'newest',
+      page = 1,
+      limit = 20,
+    } = query;
 
-    const where: Prisma.UserWhereInput = {
-      role: 'SPECIALIST',
-      isActive: true,
-      isBanned: false,
-    };
+    const qb = this.userRepo
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.skills', 'userSkill')
+      .leftJoinAndSelect('userSkill.skill', 'skill')
+      .leftJoin(
+        'user.reviews',
+        'review',
+        'review.isPublished = :isPublished',
+        { isPublished: true },
+      )
+      .where('user.role = :role', { role: UserRole.SPECIALIST })
+      .andWhere('user.isActive = :isActive', { isActive: true });
 
     if (city) {
-      where.city = city;
+      qb.andWhere('user.city = :city', { city });
     }
-
+    if (province) {
+      qb.andWhere('user.province = :province', { province });
+    }
     if (search) {
-      where.OR = [
-        { firstName: { contains: search } },
-        { lastName: { contains: search } },
-        { displayName: { contains: search } },
-        { bio: { contains: search } },
-      ];
+      qb.andWhere(
+        '(user.firstName ILIKE :search OR user.lastName ILIKE :search OR user.displayName ILIKE :search OR user.bio ILIKE :search OR skill.name ILIKE :search)',
+        { search: `%${search}%` },
+      );
+    }
+    if (categoryId) {
+      qb.andWhere('skill.categoryId = :categoryId', { categoryId });
     }
 
-    if (skill) {
-      where.skills = {
-        some: {
-          skill: {
-            name: { contains: skill },
-            isActive: true,
-          },
-        },
-      };
-    }
+    // Fetch and filter by minRating in-memory after getting results
+    const skip = (page - 1) * limit;
+    qb.skip(skip).take(limit * 2); // Fetch extra to filter by rating
+    qb.orderBy('user.createdAt', 'DESC');
+    qb.addOrderBy('user.isVerified', 'DESC');
 
-    let orderBy: Prisma.UserOrderByWithRelationInput = { createdAt: 'desc' };
-    if (sort === 'rating') {
-      orderBy = { createdAt: 'desc' }; // We'll sort in-memory or use a different approach
-    } else if (sort === 'most_projects') {
-      orderBy = { createdAt: 'desc' };
-    }
+    const [users, total] = await qb.getManyAndCount();
 
-    const [users, total] = await Promise.all([
-      this.prisma.user.findMany({
-        where,
-        orderBy,
-        skip,
-        take: limit,
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          displayName: true,
-          avatar: true,
-          bio: true,
-          city: true,
-          province: true,
-          isVerified: true,
-          createdAt: true,
-          skills: {
-            include: {
-              skill: {
-                select: { id: true, name: true, icon: true },
-              },
-            },
-          },
-          _count: {
-            select: {
-              reviews: { where: { isPublished: true } },
-              portfolios: { where: { isPublished: true } },
-              sentProposals: { where: { status: 'ACCEPTED' } },
-            },
-          },
-          reviews: {
-            where: { isPublished: true },
-            select: { rating: true },
-          },
-        },
+    // Build specialist profiles with computed stats
+    let specialists = await Promise.all(
+      users.map(async (user) => {
+        const avgRating = await this.getUserAvgRating(user.id);
+        const completedProjects = await this.proposalRepo.count({
+          where: { specialistId: user.id, status: ProposalStatus.ACCEPTED },
+        });
+        const portfoliosCount = await this.portfolioRepo.count({
+          where: { userId: user.id, isPublished: true } as any,
+        });
+        const totalReviews = await this.reviewRepo.count({
+          where: { targetUserId: user.id } as any,
+        });
+
+        return {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          displayName: user.displayName,
+          avatar: user.avatar,
+          bio: user.bio,
+          city: user.city,
+          province: user.province,
+          isVerified: user.isVerified,
+          createdAt: user.createdAt,
+          skills: ((user.skills as any[]) || []).map((us: any) => ({
+            id: us.skillId,
+            name: us.skill?.name || '',
+            level: us.level,
+            icon: us.skill?.icon,
+          })),
+          avgRating,
+          totalReviews,
+          completedProjects,
+          portfoliosCount,
+        };
       }),
-      this.prisma.user.count({ where }),
-    ]);
+    );
 
-    // Compute avg rating for each specialist
-    let specialists = users.map((user) => {
-      const reviews = user.reviews || [];
-      const avgRating =
-        reviews.length > 0
-          ? Number((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1))
-          : 0;
+    // Filter by minRating
+    if (minRating !== undefined && minRating > 0) {
+      specialists = specialists.filter((s) => s.avgRating >= minRating);
+    }
 
-      const completedProjects = user._count.sentProposals;
-
-      return {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        displayName: user.displayName,
-        avatar: user.avatar,
-        bio: user.bio,
-        city: user.city,
-        province: user.province,
-        isVerified: user.isVerified,
-        createdAt: user.createdAt,
-        skills: user.skills.map((us) => ({
-          id: us.skillId,
-          name: us.skill.name,
-          level: us.level,
-          icon: us.skill.icon,
-        })),
-        avgRating,
-        totalReviews: user._count.reviews,
-        completedProjects,
-        portfoliosCount: user._count.portfolios,
-      };
-    });
-
-    // Sort by rating or most_projects if needed
-    if (sort === 'rating') {
-      specialists.sort((a, b) => b.avgRating - a.avgRating);
-    } else if (sort === 'most_projects') {
-      specialists.sort((a, b) => b.completedProjects - a.completedProjects);
+    // Sort
+    switch (sort) {
+      case 'rating':
+        specialists.sort((a, b) => b.avgRating - a.avgRating);
+        break;
+      case 'experience':
+        specialists.sort((a, b) => b.completedProjects - a.completedProjects);
+        break;
+      case 'price':
+        // Sort by project count as proxy for pricing tier
+        specialists.sort((a, b) => b.completedProjects - a.completedProjects);
+        break;
+      case 'newest':
+      default:
+        specialists.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        break;
     }
 
     return {
-      data: specialists,
+      data: specialists.slice(0, limit),
       pagination: {
         page,
         limit,
@@ -149,269 +161,160 @@ export class SpecialistsService {
     };
   }
 
-  async findOne(id: string) {
-    const user = await this.prisma.user.findUnique({
+  /**
+   * پروفایل کامل متخصص
+   */
+  async findById(id: string) {
+    const user = await this.userRepo.findOne({
       where: { id },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        displayName: true,
-        avatar: true,
-        bio: true,
-        city: true,
-        province: true,
-        address: true,
-        role: true,
-        isVerified: true,
-        createdAt: true,
-        skills: {
-          include: {
-            skill: {
-              select: { id: true, name: true, slug: true, icon: true, description: true },
-            },
-          },
-          orderBy: { level: 'desc' },
-        },
-        portfolios: {
-          where: { isPublished: true },
-          orderBy: { order: 'asc' },
-        },
-        reviews: {
-          where: { isPublished: true },
-          include: {
-            author: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                avatar: true,
-              },
-            },
-            request: {
-              select: { id: true, title: true },
-            },
-          },
-          orderBy: { createdAt: 'desc' },
-        },
-        _count: {
-          select: {
-            sentProposals: { where: { status: 'ACCEPTED' } },
-            reviews: { where: { isPublished: true } },
-            portfolios: { where: { isPublished: true } },
-          },
-        },
-      },
+      relations: ['skills', 'skills.skill'] as any,
     });
 
-    if (!user || user.role !== 'SPECIALIST') {
-      throw new NotFoundException('متخصص مورد نظر یافت نشد');
+    if (!user || user.role !== UserRole.SPECIALIST) {
+      throw new NotFoundException('کسب‌وکار مورد نظر یافت نشد');
     }
 
-    const {
-      _count,
-      reviews: userReviews,
-      ...restUser
-    } = user as any;
-
-    const reviews = userReviews || [];
-    const avgRating =
-      reviews.length > 0
-        ? Number((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1))
-        : 0;
-
-    // Compute response time: avg time between request creation and first proposal
-    const proposals = await this.prisma.proposal.findMany({
-      where: { userId: id },
-      select: { createdAt: true, request: { select: { createdAt: true } } },
-      orderBy: { createdAt: 'asc' },
+    const portfolios = await this.portfolioRepo.find({
+      where: { userId: id, isPublished: true } as any,
+      order: { order: 'ASC' } as any,
     });
 
-    let avgResponseTime: number | null = null;
-    if (proposals.length > 0) {
-      const responseTimes = proposals.map((p) => {
-        return new Date(p.createdAt).getTime() - new Date(p.request.createdAt).getTime();
-      });
-      const avgMs = responseTimes.reduce((s, t) => s + t, 0) / responseTimes.length;
-      avgResponseTime = Number((avgMs / (1000 * 60 * 60)).toFixed(1)); // hours
-    }
-
-    // Completion rate
-    const totalProposals = await this.prisma.proposal.count({
-      where: { userId: id },
+    const reviews = await this.reviewRepo.find({
+      where: { targetUserId: id } as any,
+      relations: ['author'],
+      order: { createdAt: 'DESC' },
     });
-    const acceptedProposals = _count?.sentProposals || 0;
+
+    const avgRating = await this.getUserAvgRating(id);
+    const completedProjects = await this.proposalRepo.count({
+      where: { specialistId: id, status: ProposalStatus.ACCEPTED },
+    });
+    const totalProposals = await this.proposalRepo.count({
+      where: { specialistId: id },
+    });
+
     const completionRate =
       totalProposals > 0
-        ? Number(((acceptedProposals / totalProposals) * 100).toFixed(1))
+        ? Number(((completedProjects / totalProposals) * 100).toFixed(1))
         : 0;
 
-    // Compute detailed quality/timing/communication ratings
-    const detailedRatings = reviews.length > 0 ? {
-      avgQuality: reviews.filter((r) => r.qualityRating).length > 0
-        ? Number((reviews.filter((r) => r.qualityRating).reduce((s, r) => s + (r.qualityRating || 0), 0) / reviews.filter((r) => r.qualityRating).length).toFixed(1))
-        : 0,
-      avgTiming: reviews.filter((r) => r.timingRating).length > 0
-        ? Number((reviews.filter((r) => r.timingRating).reduce((s, r) => s + (r.timingRating || 0), 0) / reviews.filter((r) => r.timingRating).length).toFixed(1))
-        : 0,
-      avgCommunication: reviews.filter((r) => r.communicationRating).length > 0
-        ? Number((reviews.filter((r) => r.communicationRating).reduce((s, r) => s + (r.communicationRating || 0), 0) / reviews.filter((r) => r.communicationRating).length).toFixed(1))
-        : 0,
-    } : null;
+    // Detailed ratings
+    const detailedRatings = reviews.length > 0
+      ? {
+          avgQuality: this.calcAvg(reviews.map((r: any) => r.qualityRating)),
+          avgTiming: this.calcAvg(reviews.map((r: any) => r.timingRating)),
+          avgCommunication: this.calcAvg(reviews.map((r: any) => r.communicationRating)),
+        }
+      : null;
 
     return {
-      ...restUser,
-      reviews,
+      ...user,
+      skills: ((user.skills as any[]) || []).map((us: any) => ({
+        id: us.id,
+        skillId: us.skillId,
+        skillName: us.skill?.name || '',
+        skillSlug: us.skill?.slug || '',
+        level: us.level,
+        experience: us.experience,
+      })),
+      portfolios,
+      reviews: reviews.map((r: any) => ({
+        ...r,
+        author: r.author
+          ? { id: r.author.id, firstName: r.author.firstName, lastName: r.author.lastName, avatar: r.author.avatar }
+          : null,
+      })),
       avgRating,
       totalReviews: reviews.length,
-      completedProjects: acceptedProposals,
+      completedProjects,
       completionRate,
-      avgResponseTime,
       detailedRatings,
       stats: {
         totalProposals,
-        acceptedProposals,
-        portfolios: _count?.portfolios || 0,
+        acceptedProposals: completedProjects,
+        portfolios: portfolios.length,
       },
     };
   }
 
-  async updateProfile(userId: string, dto: UpdateSpecialistProfileDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true },
-    });
+  /**
+   * بروزرسانی پروفایل متخصص
+   */
+  async updateProfile(specialistId: string, dto: UpdateSpecialistProfileDto) {
+    const user = await this.userRepo.findOne({ where: { id: specialistId } });
 
-    if (!user || user.role !== 'SPECIALIST') {
-      throw new BadRequestException('فقط متخصص‌ها می‌توانند پروفایل خود را بروزرسانی کنند');
+    if (!user || user.role !== UserRole.SPECIALIST) {
+      throw new BadRequestException('فقط کسب‌وکارها می‌توانند پروفایل خود را بروزرسانی کنند');
     }
 
-    const updatedUser = await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        displayName: dto.displayName,
-        bio: dto.bio,
-        city: dto.city,
-        province: dto.province,
-        address: dto.address,
-      },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        displayName: true,
-        avatar: true,
-        bio: true,
-        city: true,
-        province: true,
-        address: true,
-        isVerified: true,
-      },
-    });
+    if (dto.displayName !== undefined) user.displayName = dto.displayName;
+    if (dto.bio !== undefined) user.bio = dto.bio;
+    if (dto.city !== undefined) user.city = dto.city;
+    if (dto.province !== undefined) user.province = dto.province;
+
+    await this.userRepo.save(user);
+
+    // Handle skills update if provided
+    if (dto.skills) {
+      await this.replaceSkills(specialistId, dto.skills.map((name) => ({ name, level: 3 })));
+    }
+
+    const updated = await this.userRepo.findOne({ where: { id: specialistId } });
 
     return {
       message: 'پروفایل با موفقیت بروزرسانی شد',
-      data: updatedUser,
+      data: updated,
     };
   }
 
-  async updateSkills(userId: string, dto: UpdateSkillsDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true },
-    });
+  /**
+   * بروزرسانی مهارت‌ها
+   */
+  async updateSkills(specialistId: string, dto: UpdateSkillsDto) {
+    const user = await this.userRepo.findOne({ where: { id: specialistId } });
 
-    if (!user || user.role !== 'SPECIALIST') {
-      throw new BadRequestException('فقط متخصص‌ها می‌توانند مهارت‌های خود را بروزرسانی کنند');
+    if (!user || user.role !== UserRole.SPECIALIST) {
+      throw new BadRequestException('فقط کسب‌وکارها می‌توانند مهارت‌های خود را بروزرسانی کنند');
     }
 
-    const result = await this.prisma.$transaction(async (tx) => {
-      // Delete existing skills
-      await tx.userSkill.deleteMany({
-        where: { userId },
-      });
+    await this.replaceSkills(specialistId, dto.skills);
 
-      // Create new skills
-      const skills: any[] = [];
-      for (const item of dto.skills) {
-        let skillId = item.skillId;
-
-        if (!skillId && item.skillName) {
-          // Find or create skill
-          const slug = createSlug(item.skillName);
-          const existingSkill = await tx.skill.findUnique({
-            where: { slug },
-          });
-
-          if (existingSkill) {
-            skillId = existingSkill.id;
-          } else {
-            const newSkill = await tx.skill.create({
-              data: {
-                name: item.skillName,
-                slug,
-              },
-            });
-            skillId = newSkill.id;
-          }
-        }
-
-        if (skillId) {
-          const userSkill = await tx.userSkill.create({
-            data: {
-              userId,
-              skillId,
-              level: item.level,
-              experience: item.experience,
-            },
-            include: {
-              skill: {
-                select: { id: true, name: true, slug: true, icon: true },
-              },
-            },
-          });
-          skills.push(userSkill);
-        }
-      }
-
-      return skills;
+    const userSkills = await this.userSkillRepo.find({
+      where: { userId: specialistId },
+      relations: ['skill'],
+      order: { level: 'DESC' } as any,
     });
 
     return {
       message: 'مهارت‌ها با موفقیت بروزرسانی شد',
-      data: result.map((us) => ({
+      data: userSkills.map((us: any) => ({
         id: us.id,
         skillId: us.skillId,
-        skillName: us.skill.name,
+        skillName: us.skill?.name || '',
         level: us.level,
-        experience: us.experience,
       })),
     };
   }
 
-  async addPortfolio(userId: string, dto: CreatePortfolioDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true },
-    });
+  /**
+   * افزودن نمونه‌کار
+   */
+  async addPortfolio(specialistId: string, dto: CreatePortfolioDto) {
+    const user = await this.userRepo.findOne({ where: { id: specialistId } });
 
-    if (!user || user.role !== 'SPECIALIST') {
-      throw new BadRequestException('فقط متخصص‌ها می‌توانند نمونه‌کار اضافه کنند');
+    if (!user || user.role !== UserRole.SPECIALIST) {
+      throw new BadRequestException('فقط کسب‌وکارها می‌توانند نمونه‌کار اضافه کنند');
     }
 
-    const portfolio = await this.prisma.portfolio.create({
-      data: {
-        userId,
-        title: dto.title,
-        description: dto.description,
-        imageUrls: dto.imageUrls ? JSON.stringify(dto.imageUrls) : '[]',
-        videoUrl: dto.videoUrl,
-        projectUrl: dto.projectUrl,
-        clientName: dto.clientName,
-        completedAt: dto.completedAt ? new Date(dto.completedAt) : null,
-        order: dto.order || 0,
-      },
-    });
+    const portfolio = this.portfolioRepo.create({
+      userId: specialistId,
+      title: dto.title,
+      description: dto.description,
+      imageUrls: dto.imageUrl ? JSON.stringify([dto.imageUrl]) : '[]',
+      projectUrl: dto.projectUrl,
+    } as any);
+
+    await this.portfolioRepo.save(portfolio);
 
     return {
       message: 'نمونه‌کار با موفقیت اضافه شد',
@@ -419,12 +322,15 @@ export class SpecialistsService {
     };
   }
 
+  /**
+   * بروزرسانی نمونه‌کار
+   */
   async updatePortfolio(
-    userId: string,
+    specialistId: string,
     portfolioId: string,
     dto: UpdatePortfolioDto,
   ) {
-    const portfolio = await this.prisma.portfolio.findUnique({
+    const portfolio = await this.portfolioRepo.findOne({
       where: { id: portfolioId },
     });
 
@@ -432,36 +338,28 @@ export class SpecialistsService {
       throw new NotFoundException('نمونه‌کار مورد نظر یافت نشد');
     }
 
-    if (portfolio.userId !== userId) {
+    if (portfolio.userId !== specialistId) {
       throw new BadRequestException('شما فقط می‌توانید نمونه‌کارهای خود را ویرایش کنید');
     }
 
-    const updateData: Prisma.PortfolioUpdateInput = {};
+    if (dto.title !== undefined) portfolio.title = dto.title;
+    if (dto.description !== undefined) portfolio.description = dto.description;
+    if (dto.imageUrl !== undefined) portfolio.imageUrls = JSON.stringify([dto.imageUrl]) as any;
+    if (dto.projectUrl !== undefined) portfolio.projectUrl = dto.projectUrl;
 
-    if (dto.title !== undefined) updateData.title = dto.title;
-    if (dto.description !== undefined) updateData.description = dto.description;
-    if (dto.imageUrls !== undefined) updateData.imageUrls = JSON.stringify(dto.imageUrls);
-    if (dto.videoUrl !== undefined) updateData.videoUrl = dto.videoUrl;
-    if (dto.projectUrl !== undefined) updateData.projectUrl = dto.projectUrl;
-    if (dto.clientName !== undefined) updateData.clientName = dto.clientName;
-    if (dto.completedAt !== undefined)
-      updateData.completedAt = dto.completedAt ? new Date(dto.completedAt) : null;
-    if (dto.order !== undefined) updateData.order = dto.order;
-    if (dto.isPublished !== undefined) updateData.isPublished = dto.isPublished;
-
-    const updatedPortfolio = await this.prisma.portfolio.update({
-      where: { id: portfolioId },
-      data: updateData,
-    });
+    await this.portfolioRepo.save(portfolio);
 
     return {
       message: 'نمونه‌کار با موفقیت بروزرسانی شد',
-      data: updatedPortfolio,
+      data: portfolio,
     };
   }
 
-  async deletePortfolio(userId: string, portfolioId: string) {
-    const portfolio = await this.prisma.portfolio.findUnique({
+  /**
+   * حذف نمونه‌کار
+   */
+  async deletePortfolio(specialistId: string, portfolioId: string) {
+    const portfolio = await this.portfolioRepo.findOne({
       where: { id: portfolioId },
     });
 
@@ -469,131 +367,177 @@ export class SpecialistsService {
       throw new NotFoundException('نمونه‌کار مورد نظر یافت نشد');
     }
 
-    if (portfolio.userId !== userId) {
+    if (portfolio.userId !== specialistId) {
       throw new BadRequestException('شما فقط می‌توانید نمونه‌کارهای خود را حذف کنید');
     }
 
-    await this.prisma.portfolio.delete({
-      where: { id: portfolioId },
-    });
+    await this.portfolioRepo.remove(portfolio);
 
-    return {
-      message: 'نمونه‌کار با موفقیت حذف شد',
-    };
+    return { message: 'نمونه‌کار با موفقیت حذف شد' };
   }
 
-  async getPortfolios(userId: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true },
-    });
-
-    if (!user || user.role !== 'SPECIALIST') {
-      throw new NotFoundException('متخصص مورد نظر یافت نشد');
-    }
-
-    const portfolios = await this.prisma.portfolio.findMany({
-      where: { userId, isPublished: true },
-      orderBy: { order: 'asc' },
-    });
-
-    return {
-      data: portfolios.map((p) => ({
-        ...p,
-        imageUrls: JSON.parse(p.imageUrls || '[]'),
-      })),
-    };
-  }
-
-  async getSkills(userId: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true },
-    });
-
-    if (!user || user.role !== 'SPECIALIST') {
-      throw new NotFoundException('متخصص مورد نظر یافت نشد');
-    }
-
-    const userSkills = await this.prisma.userSkill.findMany({
-      where: { userId },
-      include: {
-        skill: {
-          select: { id: true, name: true, slug: true, icon: true, description: true },
-        },
+  /**
+   * متخصص‌های برتر (بر اساس امتیاز)
+   */
+  async getTopSpecialists(limit: number = 10) {
+    const users = await this.userRepo.find({
+      where: {
+        role: UserRole.SPECIALIST,
+        isActive: true,
+        isVerified: true,
       },
-      orderBy: { level: 'desc' },
+      relations: ['skills', 'skills.skill'] as any,
+      order: { createdAt: 'DESC' },
+      take: limit * 3, // Fetch extra for filtering
     });
 
-    return {
-      data: userSkills.map((us) => ({
-        id: us.id,
-        skillId: us.skillId,
-        skillName: us.skill.name,
-        skillSlug: us.skill.slug,
-        skillIcon: us.skill.icon,
-        level: us.level,
-        experience: us.experience,
-        createdAt: us.createdAt,
-      })),
-    };
+    const specialistsWithRating = await Promise.all(
+      users.map(async (user) => {
+        const avgRating = await this.getUserAvgRating(user.id);
+        const completedProjects = await this.proposalRepo.count({
+          where: { specialistId: user.id, status: ProposalStatus.ACCEPTED },
+        });
+        const totalReviews = await this.reviewRepo.count({
+          where: { targetUserId: user.id } as any,
+        });
+
+        return {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          displayName: user.displayName,
+          avatar: user.avatar,
+          bio: user.bio,
+          city: user.city,
+          province: user.province,
+          isVerified: user.isVerified,
+          skills: ((user.skills as any[]) || []).map((us: any) => ({
+            id: us.skillId,
+            name: us.skill?.name || '',
+            level: us.level,
+          })),
+          avgRating,
+          totalReviews,
+          completedProjects,
+        };
+      }),
+    );
+
+    // Sort by rating (descending) then by completed projects
+    specialistsWithRating.sort((a, b) => {
+      if (b.avgRating !== a.avgRating) return b.avgRating - a.avgRating;
+      return b.completedProjects - a.completedProjects;
+    });
+
+    return specialistsWithRating.slice(0, limit);
   }
 
-  async toggleVerification(adminId: string, userId: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true, isVerified: true, firstName: true, lastName: true },
-    });
+  /**
+   * جستجوی متخصص‌ها
+   */
+  async search(query: string, filters: {
+    city?: string;
+    province?: string;
+    minRating?: number;
+    categoryId?: string;
+  } = {}) {
+    const qb = this.userRepo
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.skills', 'userSkill')
+      .leftJoinAndSelect('userSkill.skill', 'skill')
+      .where('user.role = :role', { role: UserRole.SPECIALIST })
+      .andWhere('user.isActive = :isActive', { isActive: true })
+      .andWhere(
+        '(user.firstName ILIKE :query OR user.lastName ILIKE :query OR user.displayName ILIKE :query OR user.bio ILIKE :search OR skill.name ILIKE :search)',
+        { query: `%${query}%`, search: `%${query}%` },
+      );
 
-    if (!user || user.role !== 'SPECIALIST') {
-      throw new NotFoundException('متخصص مورد نظر یافت نشد');
+    if (filters.city) {
+      qb.andWhere('user.city = :city', { city: filters.city });
+    }
+    if (filters.province) {
+      qb.andWhere('user.province = :province', { province: filters.province });
+    }
+    if (filters.categoryId) {
+      qb.andWhere('skill.categoryId = :categoryId', { categoryId: filters.categoryId });
     }
 
-    const newStatus = !user.isVerified;
+    qb.orderBy('user.isVerified', 'DESC').addOrderBy('user.createdAt', 'DESC').take(20);
 
-    const [updatedUser] = await this.prisma.$transaction([
-      this.prisma.user.update({
-        where: { id: userId },
-        data: { isVerified: newStatus },
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          isVerified: true,
-        },
-      }),
-      this.prisma.adminLog.create({
-        data: {
-          adminId,
-          action: newStatus ? 'VERIFY_SPECIALIST' : 'UNVERIFY_SPECIALIST',
-          target: `User:${userId}`,
-          details: JSON.stringify({
-            userId,
-            action: newStatus ? 'verify' : 'unverify',
-            specialistName: `${user.firstName} ${user.lastName}`,
-          }),
-        },
-      }),
-    ]);
+    const users = await qb.getMany();
 
-    // Notify the specialist
-    await this.prisma.notification.create({
-      data: {
+    const results = await Promise.all(
+      users.map(async (user) => {
+        const avgRating = await this.getUserAvgRating(user.id);
+        if (filters.minRating && avgRating < filters.minRating) return null;
+
+        return {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          displayName: user.displayName,
+          avatar: user.avatar,
+          bio: user.bio,
+          city: user.city,
+          province: user.province,
+          isVerified: user.isVerified,
+          avgRating,
+          skills: ((user.skills as any[]) || []).map((us: any) => ({
+            name: us.skill?.name || '',
+            level: us.level,
+          })),
+        };
+      }),
+    );
+
+    return results.filter(Boolean);
+  }
+
+  // ========== Private Helpers ==========
+
+  private async getUserAvgRating(userId: string): Promise<number> {
+    const reviews = await this.reviewRepo.find({
+      where: { targetUserId: userId } as any,
+      select: { rating: true },
+    });
+
+    if (reviews.length === 0) return 0;
+    return Number(
+      (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1),
+    );
+  }
+
+  private calcAvg(values: (number | null | undefined)[]): number {
+    const filtered = values.filter((v): v is number => v !== null && v !== undefined);
+    if (filtered.length === 0) return 0;
+    return Number((filtered.reduce((s, v) => s + v, 0) / filtered.length).toFixed(1));
+  }
+
+  private async replaceSkills(
+    userId: string,
+    skills: { name: string; level: number }[],
+  ): Promise<void> {
+    // Delete existing skills
+    await this.userSkillRepo.delete({ userId });
+
+    // Create new skills
+    for (const item of skills) {
+      const slug = slugify(item.name, { lower: true, strict: true });
+      let skill = await this.skillRepo.findOne({ where: { slug } as any });
+
+      if (!skill) {
+        skill = this.skillRepo.create({ name: item.name, slug });
+        await this.skillRepo.save(skill as any);
+      }
+
+      if (!skill) continue;
+
+      const userSkill = this.userSkillRepo.create({
         userId,
-        type: 'VERIFICATION',
-        title: newStatus ? 'تایید هویت' : 'لغو تایید هویت',
-        message: newStatus
-          ? 'حساب کاربری شما به عنوان متخصص تایید شد'
-          : 'تایید هویت حساب کاربری شما لغو شد',
-        data: JSON.stringify({ verified: newStatus }),
-      },
-    });
-
-    return {
-      message: newStatus
-        ? 'متخصص با موفقیت تایید شد'
-        : 'تایید هویت متخصص لغو شد',
-      data: updatedUser,
-    };
+        skillId: skill.id,
+        level: item.level,
+      });
+      await this.userSkillRepo.save(userSkill);
+    }
   }
 }

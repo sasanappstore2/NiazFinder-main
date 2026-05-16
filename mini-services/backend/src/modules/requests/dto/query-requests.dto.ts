@@ -1,20 +1,22 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsIn, IsInt, Max } from 'class-validator';
+import { IsOptional, IsString, IsInt, Min, Max, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class QueryRequestsDto {
   @ApiPropertyOptional({ description: 'شماره صفحه', default: 1 })
   @IsOptional()
   @IsInt()
+  @Min(1)
   @Type(() => Number)
   page?: number = 1;
 
-  @ApiPropertyOptional({ description: 'تعداد در هر صفحه', default: 10, maximum: 50 })
+  @ApiPropertyOptional({ description: 'تعداد در هر صفحه', default: 12, maximum: 50 })
   @IsOptional()
   @IsInt()
+  @Min(1)
   @Max(50, { message: 'حداکثر ۵۰ مورد در هر صفحه قابل نمایش است' })
   @Type(() => Number)
-  limit?: number = 10;
+  limit?: number = 12;
 
   @ApiPropertyOptional({ description: 'شناسه دسته‌بندی' })
   @IsOptional()
@@ -33,7 +35,7 @@ export class QueryRequestsDto {
 
   @ApiPropertyOptional({
     description: 'وضعیت',
-    enum: ['OPEN', 'IN_PROGRESS', 'CLOSED', 'COMPLETED', 'CANCELLED'],
+    enum: ['OPEN', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'EXPIRED'],
   })
   @IsOptional()
   @IsString()

@@ -5,7 +5,6 @@ import {
   Put,
   Delete,
   Param,
-  Query,
   Body,
   UseGuards,
 } from '@nestjs/common';
@@ -22,32 +21,32 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'دریافت درخت دسته‌بندی‌ها' })
+  @ApiOperation({ summary: 'دریافت درخت دسته‌بندی‌ها (عمومی)' })
   @ApiResponse({ status: 200, description: 'درخت دسته‌بندی‌ها' })
   async findAll() {
     return this.categoriesService.findAll();
   }
 
   @Get('popular')
-  @ApiOperation({ summary: 'دسته‌بندی‌های محبوب' })
-  @ApiResponse({ status: 200, description: 'لیست دسته‌بندی‌های محبوب' })
-  async getPopular() {
-    return this.categoriesService.getPopular();
-  }
-
-  @Get('search')
-  @ApiOperation({ summary: 'جستجوی دسته‌بندی‌ها' })
-  @ApiResponse({ status: 200, description: 'نتایج جستجو' })
-  async searchCategories(@Query('q') q: string) {
-    return this.categoriesService.search(q);
+  @ApiOperation({ summary: 'دسته‌بندی‌های محبوب (عمومی)' })
+  @ApiResponse({ status: 200, description: 'لیست 8 دسته‌بندی محبوب' })
+  async findPopular() {
+    return this.categoriesService.findPopular();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'جزئیات دسته‌بندی' })
+  @ApiOperation({ summary: 'جزئیات دسته‌بندی (عمومی)' })
   @ApiResponse({ status: 200, description: 'اطلاعات دسته‌بندی با زیردسته‌ها' })
   @ApiResponse({ status: 404, description: 'دسته‌بندی یافت نشد' })
-  async findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(id);
+  async findById(@Param('id') id: string) {
+    return this.categoriesService.findById(id);
+  }
+
+  @Get(':id/children')
+  @ApiOperation({ summary: 'زیردسته‌های دسته‌بندی (عمومی)' })
+  @ApiResponse({ status: 200, description: 'لیست زیردسته‌ها' })
+  async findChildren(@Param('id') id: string) {
+    return this.categoriesService.findChildren(id);
   }
 
   @Post()
@@ -78,7 +77,7 @@ export class CategoriesController {
   @UseGuards(JwtAuthGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'حذف دسته‌بندی (مدیر)' })
+  @ApiOperation({ summary: 'حذف دسته‌بندی (مدیر - غیرفعال‌سازی نرم)' })
   @ApiResponse({ status: 200, description: 'دسته‌بندی غیرفعال شد' })
   @ApiResponse({ status: 403, description: 'دسترسی غیرمجاز' })
   @ApiResponse({ status: 404, description: 'دسته‌بندی یافت نشد' })

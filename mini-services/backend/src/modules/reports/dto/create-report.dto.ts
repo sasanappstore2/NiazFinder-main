@@ -2,10 +2,13 @@ import { IsNotEmpty, IsOptional, IsString, IsIn, MaxLength, IsBoolean } from 'cl
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateReportDto {
-  @ApiProperty({ description: 'نوع هدف گزارش', enum: ['user', 'request', 'proposal', 'review'] })
+  @ApiProperty({
+    description: 'نوع هدف گزارش',
+    enum: ['USER', 'REQUEST', 'PROPOSAL'],
+  })
   @IsNotEmpty()
-  @IsIn(['user', 'request', 'proposal', 'review'])
-  targetType: 'user' | 'request' | 'proposal' | 'review';
+  @IsIn(['USER', 'REQUEST', 'PROPOSAL'])
+  type: 'USER' | 'REQUEST' | 'PROPOSAL';
 
   @ApiProperty({ description: 'شناسه هدف گزارش' })
   @IsNotEmpty()

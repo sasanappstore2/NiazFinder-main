@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ChargeDto } from './dto/charge.dto';
 import { WithdrawDto } from './dto/withdraw.dto';
@@ -6,8 +6,13 @@ import { QueryTransactionsDto } from './dto/query-transactions.dto';
 
 @Injectable()
 export class WalletService {
+  private readonly logger = new Logger(WalletService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   * Get or create wallet for user
+   */
   async getWallet(userId: string) {
     let wallet = await this.prisma.wallet.findUnique({
       where: { userId },
@@ -15,13 +20,29 @@ export class WalletService {
 
     if (!wallet) {
       wallet = await this.prisma.wallet.create({
-        data: { userId },
+        data: { userId, balance: 0, frozen: 0 },
       });
     }
 
     return wallet;
   }
 
+  /**
+   * Get wallet with balance, frozen, available (balance - frozen)
+   */
+  async getBalance(userId: string) {
+    const wallet = await this.getWallet(userId);
+
+    return {
+      balance: wallet.balance,
+      frozen: wallet.frozen,
+      available: wallet.balance - wallet.frozen,
+    };
+  }
+
+  /**
+   * Get paginated transaction history
+   */
   async getTransactions(userId: string, query: QueryTransactionsDto) {
     const page = query.page || 1;
     const limit = query.limit || 10;
@@ -56,11 +77,13 @@ export class WalletService {
     };
   }
 
-  async charge(userId: string, dto: ChargeDto) {
+  /**
+   * Deposit funds - create COMPLETED DEPOSIT transaction, increment balance
+   */
+  async deposit(userId: string, dto: ChargeDto) {
     const wallet = await this.getWallet(userId);
 
-    // Simulate payment: create DEPOSIT transaction with COMPLETED status
-    const transaction = await this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       const newTx = await tx.transaction.create({
         data: {
           walletId: wallet.id,
@@ -80,13 +103,33 @@ export class WalletService {
       return { transaction: newTx, wallet: updatedWallet };
     });
 
+    // Notify user
+    await this.prisma.notification.create({
+      data: {
+        userId,
+        type: 'WALLET_DEPOSIT',
+        title: 'شارژ کیف پول',
+        message: `مبلغ ${dto.amount.toLocaleString('fa-IR')} ریال به کیف پول شما اضافه شد`,
+        data: JSON.stringify({
+          transactionId: result.transaction.id,
+          amount: dto.amount,
+        }),
+      },
+    });
+
+    this.logger.log(`Deposit: ${dto.amount} for user ${userId}`);
+
     return {
       message: 'کیف پول شما با موفقیت شارژ شد',
-      transaction: transaction.transaction,
-      wallet: transaction.wallet,
+      transaction: result.transaction,
+      wallet: result.wallet,
     };
   }
 
+  /**
+   * Withdraw funds - validate sufficient balance, create PENDING WITHDRAW,
+   * deduct from balance + add to frozen
+   */
   async withdraw(userId: string, dto: WithdrawDto) {
     const wallet = await this.getWallet(userId);
 
@@ -98,7 +141,11 @@ export class WalletService {
       );
     }
 
-    // Create WITHDRAW transaction with PENDING status (requires admin approval)
+    if (dto.amount < 50000) {
+      throw new BadRequestException('حداقل مبلغ برداشت ۵۰,۰۰۰ ریال است');
+    }
+
+    // Create WITHDRAW transaction with PENDING status
     const result = await this.prisma.$transaction(async (tx) => {
       const newTx = await tx.transaction.create({
         data: {
@@ -108,6 +155,10 @@ export class WalletService {
           amount: dto.amount,
           description: dto.description || 'برداشت از کیف پول',
           status: 'PENDING',
+          metadata: JSON.stringify({
+            bankAccountNumber: dto.bankAccountNumber,
+            bankName: dto.bankName,
+          }),
         },
       });
 
@@ -123,6 +174,22 @@ export class WalletService {
       return { transaction: newTx, wallet: updatedWallet };
     });
 
+    // Notify user
+    await this.prisma.notification.create({
+      data: {
+        userId,
+        type: 'WALLET_WITHDRAW',
+        title: 'درخواست برداشت',
+        message: `درخواست برداشت ${dto.amount.toLocaleString('fa-IR')} ریال ثبت شد و پس از تأیید مدیریت پرداخت خواهد شد`,
+        data: JSON.stringify({
+          transactionId: result.transaction.id,
+          amount: dto.amount,
+        }),
+      },
+    });
+
+    this.logger.log(`Withdraw request: ${dto.amount} for user ${userId}`);
+
     return {
       message: 'درخواست برداشت شما با موفقیت ثبت شد و پس از تأیید مدیریت پرداخت خواهد شد',
       transaction: result.transaction,
@@ -130,11 +197,15 @@ export class WalletService {
     };
   }
 
+  /**
+   * Transfer between wallets (for project payment)
+   */
   async transfer(
     fromUserId: string,
     toUserId: string,
     amount: number,
     description?: string,
+    requestId?: string,
   ) {
     // Validate recipient exists
     const toUser = await this.prisma.user.findUnique({
@@ -164,7 +235,7 @@ export class WalletService {
 
     // Execute transfer in a transaction
     const result = await this.prisma.$transaction(async (tx) => {
-      // Create ESCROW_HOLD for sender
+      // Create PAYMENT for sender
       const senderTx = await tx.transaction.create({
         data: {
           walletId: senderWallet.id,
@@ -172,12 +243,12 @@ export class WalletService {
           type: 'PAYMENT',
           amount,
           description: description || `پرداخت به کاربر ${toUserId}`,
-          referenceId: toUserId,
+          referenceId: requestId || toUserId,
           status: 'COMPLETED',
         },
       });
 
-      // Create ESCROW_RELEASE for receiver
+      // Create PAYMENT for receiver
       const receiverTx = await tx.transaction.create({
         data: {
           walletId: receiverWallet.id,
@@ -185,7 +256,7 @@ export class WalletService {
           type: 'PAYMENT',
           amount,
           description: description || `دریافت از کاربر ${fromUserId}`,
-          referenceId: fromUserId,
+          referenceId: requestId || fromUserId,
           status: 'COMPLETED',
         },
       });
@@ -209,19 +280,374 @@ export class WalletService {
       };
     });
 
+    // Notify both users
+    await Promise.all([
+      this.prisma.notification.create({
+        data: {
+          userId: fromUserId,
+          type: 'WALLET_PAYMENT',
+          title: 'پرداخت موفق',
+          message: `مبلغ ${amount.toLocaleString('fa-IR')} ریال با موفقیت پرداخت شد`,
+          data: JSON.stringify({
+            transactionId: result.senderTransaction.id,
+            amount,
+            toUserId,
+            requestId,
+          }),
+        },
+      }),
+      this.prisma.notification.create({
+        data: {
+          userId: toUserId,
+          type: 'WALLET_RECEIVE',
+          title: 'دریافت وجه',
+          message: `مبلغ ${amount.toLocaleString('fa-IR')} ریال به کیف پول شما واریز شد`,
+          data: JSON.stringify({
+            transactionId: result.receiverTransaction.id,
+            amount,
+            fromUserId,
+            requestId,
+          }),
+        },
+      }),
+    ]);
+
+    this.logger.log(`Transfer: ${amount} from ${fromUserId} to ${toUserId}`);
+
     return {
       message: 'انتقال وجه با موفقیت انجام شد',
       ...result,
     };
   }
 
-  async getBalance(userId: string) {
+  /**
+   * Freeze amount for escrow
+   */
+  async freeze(userId: string, amount: number) {
     const wallet = await this.getWallet(userId);
+
+    const availableBalance = wallet.balance - wallet.frozen;
+
+    if (availableBalance < amount) {
+      throw new BadRequestException(
+        `موجودی قابل فریز کافی نیست. موجودی فعلی: ${this.formatAmount(availableBalance)} ریال`,
+      );
+    }
+
+    const result = await this.prisma.$transaction(async (tx) => {
+      const transaction = await tx.transaction.create({
+        data: {
+          walletId: wallet.id,
+          userId,
+          type: 'ESCROW_HOLD',
+          amount,
+          description: 'فریز مبلغ برای امانی',
+          status: 'COMPLETED',
+        },
+      });
+
+      const updatedWallet = await tx.wallet.update({
+        where: { id: wallet.id },
+        data: { frozen: { increment: amount } },
+      });
+
+      return { transaction, wallet: updatedWallet };
+    });
+
+    this.logger.log(`Freeze: ${amount} for user ${userId}`);
+
+    return result;
+  }
+
+  /**
+   * Unfreeze after project completion
+   */
+  async unfreeze(userId: string, amount: number) {
+    const wallet = await this.getWallet(userId);
+
+    if (wallet.frozen < amount) {
+      throw new BadRequestException('مبلغ فریز شده کافی نیست');
+    }
+
+    const result = await this.prisma.$transaction(async (tx) => {
+      const transaction = await tx.transaction.create({
+        data: {
+          walletId: wallet.id,
+          userId,
+          type: 'ESCROW_RELEASE',
+          amount,
+          description: 'آزادسازی مبلغ امانی',
+          status: 'COMPLETED',
+        },
+      });
+
+      const updatedWallet = await tx.wallet.update({
+        where: { id: wallet.id },
+        data: { frozen: { decrement: amount } },
+      });
+
+      return { transaction, wallet: updatedWallet };
+    });
+
+    this.logger.log(`Unfreeze: ${amount} for user ${userId}`);
+
+    return result;
+  }
+
+  /**
+   * Process withdrawal - Admin approve/reject
+   */
+  async processWithdrawal(transactionId: string, adminId: string, approve: boolean) {
+    const transaction = await this.prisma.transaction.findUnique({
+      where: { id: transactionId },
+      include: {
+        wallet: {
+          select: { id: true, userId: true, frozen: true },
+        },
+      },
+    });
+
+    if (!transaction) {
+      throw new NotFoundException('تراکنش مورد نظر یافت نشد');
+    }
+
+    if (transaction.type !== 'WITHDRAW') {
+      throw new BadRequestException('این تراکنش مربوط به برداشت نیست');
+    }
+
+    if (transaction.status !== 'PENDING') {
+      throw new BadRequestException('این درخواست برداشت قبلاً پردازش شده است');
+    }
+
+    if (approve) {
+      // Approve: unfreeze the amount (already deducted from balance)
+      const result = await this.prisma.$transaction(async (tx) => {
+        const updatedTx = await tx.transaction.update({
+          where: { id: transactionId },
+          data: { status: 'COMPLETED' },
+        });
+
+        const updatedWallet = await tx.wallet.update({
+          where: { id: transaction.wallet.id },
+          data: { frozen: { decrement: transaction.amount } },
+        });
+
+        // Create admin log
+        await tx.adminLog.create({
+          data: {
+            adminId,
+            action: 'APPROVE_WITHDRAW',
+            target: `Transaction:${transactionId}`,
+            details: JSON.stringify({
+              transactionId,
+              userId: transaction.wallet.userId,
+              amount: transaction.amount,
+            }),
+          },
+        });
+
+        return { transaction: updatedTx, wallet: updatedWallet };
+      });
+
+      // Notify user
+      await this.prisma.notification.create({
+        data: {
+          userId: transaction.wallet.userId,
+          type: 'WALLET_WITHDRAW_APPROVED',
+          title: 'تأیید برداشت',
+          message: `درخواست برداشت ${transaction.amount.toLocaleString('fa-IR')} ریال تأیید شد`,
+          data: JSON.stringify({ transactionId, amount: transaction.amount }),
+        },
+      });
+
+      this.logger.log(`Withdraw approved: ${transactionId} by admin ${adminId}`);
+
+      return {
+        message: 'درخواست برداشت تأیید شد',
+        transaction: result.transaction,
+        wallet: result.wallet,
+      };
+    } else {
+      // Reject: return the amount to balance and unfreeze
+      const result = await this.prisma.$transaction(async (tx) => {
+        const updatedTx = await tx.transaction.update({
+          where: { id: transactionId },
+          data: { status: 'FAILED' },
+        });
+
+        const updatedWallet = await tx.wallet.update({
+          where: { id: transaction.wallet.id },
+          data: {
+            balance: { increment: transaction.amount },
+            frozen: { decrement: transaction.amount },
+          },
+        });
+
+        // Create admin log
+        await tx.adminLog.create({
+          data: {
+            adminId,
+            action: 'REJECT_WITHDRAW',
+            target: `Transaction:${transactionId}`,
+            details: JSON.stringify({
+              transactionId,
+              userId: transaction.wallet.userId,
+              amount: transaction.amount,
+            }),
+          },
+        });
+
+        return { transaction: updatedTx, wallet: updatedWallet };
+      });
+
+      // Notify user
+      await this.prisma.notification.create({
+        data: {
+          userId: transaction.wallet.userId,
+          type: 'WALLET_WITHDRAW_REJECTED',
+          title: 'رد درخواست برداشت',
+          message: 'درخواست برداشت شما رد شد و مبلغ به کیف پول شما بازگشت',
+          data: JSON.stringify({ transactionId, amount: transaction.amount }),
+        },
+      });
+
+      this.logger.log(`Withdraw rejected: ${transactionId} by admin ${adminId}`);
+
+      return {
+        message: 'درخواست برداشت رد شد و مبلغ به کیف پول بازگشت',
+        transaction: result.transaction,
+        wallet: result.wallet,
+      };
+    }
+  }
+
+  /**
+   * Get pending withdrawals (admin only)
+   */
+  async getPendingWithdrawals(query: { page?: number; limit?: number }) {
+    const page = query.page || 1;
+    const limit = query.limit || 20;
+    const skip = (page - 1) * limit;
+
+    const where = {
+      type: 'WITHDRAW',
+      status: 'PENDING',
+    };
+
+    const [transactions, total] = await Promise.all([
+      this.prisma.transaction.findMany({
+        where,
+        include: {
+          wallet: {
+            select: { userId: true },
+          },
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              displayName: true,
+              avatar: true,
+              phone: true,
+            },
+          },
+        },
+        orderBy: { createdAt: 'asc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.transaction.count({ where }),
+    ]);
+
+    const totalPendingAmount = await this.prisma.transaction.aggregate({
+      where,
+      _sum: { amount: true },
+    });
+
+    return {
+      transactions,
+      total,
+      totalPendingAmount: totalPendingAmount._sum.amount || 0,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  /**
+   * Get wallet statistics
+   */
+  async getWalletStats(userId: string) {
+    const wallet = await this.getWallet(userId);
+
+    const [
+      depositResult,
+      withdrawResult,
+      paymentSentResult,
+      paymentReceivedResult,
+      bonusResult,
+      thisMonthResult,
+    ] = await Promise.all([
+      this.prisma.transaction.aggregate({
+        where: { userId, type: 'DEPOSIT', status: 'COMPLETED' },
+        _sum: { amount: true },
+        _count: true,
+      }),
+      this.prisma.transaction.aggregate({
+        where: { userId, type: 'WITHDRAW', status: 'COMPLETED' },
+        _sum: { amount: true },
+        _count: true,
+      }),
+      this.prisma.transaction.aggregate({
+        where: { userId, type: 'PAYMENT', status: 'COMPLETED' },
+        _sum: { amount: true },
+        _count: true,
+      }),
+      // Payments received - need to calculate from PAYMENT type where user received
+      this.prisma.transaction.aggregate({
+        where: {
+          wallet: { userId },
+          type: 'PAYMENT',
+          status: 'COMPLETED',
+        },
+        _sum: { amount: true },
+        _count: true,
+      }),
+      this.prisma.transaction.aggregate({
+        where: { userId, type: 'BONUS', status: 'COMPLETED' },
+        _sum: { amount: true },
+        _count: true,
+      }),
+      // This month transactions
+      this.prisma.transaction.aggregate({
+        where: {
+          userId,
+          createdAt: {
+            gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          },
+          status: 'COMPLETED',
+        },
+        _sum: { amount: true },
+        _count: true,
+      }),
+    ]);
 
     return {
       balance: wallet.balance,
       frozen: wallet.frozen,
       available: wallet.balance - wallet.frozen,
+      totalDeposits: depositResult._sum.amount || 0,
+      depositCount: depositResult._count,
+      totalWithdrawals: withdrawResult._sum.amount || 0,
+      withdrawalCount: withdrawResult._count,
+      totalPaymentsSent: paymentSentResult._sum.amount || 0,
+      paymentSentCount: paymentSentResult._count,
+      totalPaymentsReceived: paymentReceivedResult._sum.amount || 0,
+      paymentReceivedCount: paymentReceivedResult._count,
+      totalBonuses: bonusResult._sum.amount || 0,
+      bonusCount: bonusResult._count,
+      thisMonthTotal: thisMonthResult._sum.amount || 0,
+      thisMonthCount: thisMonthResult._count,
     };
   }
 

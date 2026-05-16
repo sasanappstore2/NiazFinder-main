@@ -2,210 +2,151 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { generateReferralCode } from '../../common/utils';
 
 @Injectable()
 export class ReferralsService {
+  private readonly logger = new Logger(ReferralsService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
-  async getMyReferralInfo(userId: string) {
-    // Find or create referral code for user
-    let referral = await this.prisma.referral.findFirst({
+  /**
+   * Generate unique referral code for a user
+   */
+  async generateReferralCode(userId: string) {
+    // Check if user already has a referral code
+    const existingReferral = await this.prisma.referral.findFirst({
       where: { referrerId: userId },
+      select: { code: true },
     });
 
-    let code = referral?.code;
-
-    if (!code) {
-      // Generate a unique referral code
-      let unique = false;
-      while (!unique) {
-        code = generateReferralCode();
-        const existing = await this.prisma.referral.findFirst({
-          where: { code },
-        });
-        if (!existing) {
-          unique = true;
-        }
-      }
+    if (existingReferral) {
+      return { code: existingReferral.code };
     }
 
-    // Get referral stats
-    const totalInvites = await this.prisma.referral.count({
-      where: { referrerId: userId },
+    // Generate unique code
+    let code: string = '';
+    let unique = false;
+    let attempts = 0;
+
+    while (!unique && attempts < 100) {
+      code = generateReferralCode();
+      const existing = await this.prisma.referral.findFirst({
+        where: { code },
+      });
+      if (!existing) {
+        unique = true;
+      }
+      attempts++;
+    }
+
+    if (!unique || !code) {
+      throw new BadRequestException('خطا در تولید کد دعوت. لطفاً دوباره تلاش کنید');
+    }
+
+    // Create a referral record (self-reference) to store the code
+    await this.prisma.referral.create({
+      data: {
+        referrerId: userId,
+        referredId: userId, // self-reference to store code
+        code,
+        reward: 0,
+        isClaimed: true, // Don't count self-references
+      },
     });
 
+    this.logger.log(`Referral code generated: ${code} for user ${userId}`);
+
+    return { code };
+  }
+
+  /**
+   * Get my referral info - code, stats (total referred, completed, earned)
+   */
+  async getMyReferralInfo(userId: string) {
+    // Find or generate referral code
+    let referralRecord = await this.prisma.referral.findFirst({
+      where: { referrerId: userId },
+      select: { code: true },
+    });
+
+    let code: string;
+
+    if (!referralRecord) {
+      // Auto-generate code
+      const result = await this.generateReferralCode(userId);
+      code = result.code;
+    } else {
+      code = referralRecord.code;
+    }
+
+    // Get all referrals (excluding self-references)
     const referrals = await this.prisma.referral.findMany({
-      where: { referrerId: userId },
-      select: { isClaimed: true, reward: true },
+      where: {
+        referrerId: userId,
+        referredId: { not: userId }, // Exclude self-reference
+      },
+      select: {
+        id: true,
+        referredId: true,
+        reward: true,
+        isClaimed: true,
+        createdAt: true,
+        referred: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+            isVerified: true,
+            createdAt: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
     });
 
-    const successfulInvites = referrals.filter((r) => r.reward > 0).length;
-    const totalRewards = referrals.reduce((sum, r) => sum + r.reward, 0);
+    const totalReferred = referrals.length;
+    const completedReferrals = referrals.filter((r) => r.reward > 0).length;
+    const totalEarned = referrals.reduce((sum, r) => sum + r.reward, 0);
     const claimedRewards = referrals
       .filter((r) => r.isClaimed)
       .reduce((sum, r) => sum + r.reward, 0);
-    const pendingRewards = totalRewards - claimedRewards;
+    const pendingRewards = totalEarned - claimedRewards;
+
+    // Referral link
+    const referralLink = `${process.env.FRONTEND_URL || 'https://needfinder.ir'}/ref/${code}`;
 
     return {
       code,
+      referralLink,
       stats: {
-        totalInvites,
-        successfulInvites,
-        totalRewards,
-        pendingRewards,
+        totalReferred,
+        completedReferrals,
+        totalEarned,
         claimedRewards,
+        pendingRewards,
       },
     };
   }
 
-  async getMyReferrals(
-    userId: string,
-    query: { page?: number; limit?: number },
-  ) {
-    const page = query.page || 1;
-    const limit = query.limit || 20;
-    const skip = (page - 1) * limit;
-
-    const where = { referrerId: userId };
-
-    const [referrals, total] = await Promise.all([
-      this.prisma.referral.findMany({
-        where,
-        orderBy: { createdAt: 'desc' },
-        skip,
-        take: limit,
-        include: {
-          referred: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              avatar: true,
-              createdAt: true,
-              role: true,
-              isVerified: true,
-            },
-          },
-        },
-      }),
-      this.prisma.referral.count({ where }),
-    ]);
-
-    return {
-      data: referrals.map((r) => ({
-        id: r.id,
-        code: r.code,
-        reward: r.reward,
-        isClaimed: r.isClaimed,
-        referredUser: r.referred,
-        createdAt: r.createdAt,
-      })),
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
-  }
-
-  async claimReward(userId: string, referralId: string) {
-    const referral = await this.prisma.referral.findUnique({
-      where: { id: referralId },
-    });
-
-    if (!referral) {
-      throw new NotFoundException('رکورد دعوت مورد نظر یافت نشد');
-    }
-
-    if (referral.referrerId !== userId) {
-      throw new BadRequestException('این دعوت متعلق به شما نیست');
-    }
-
-    if (referral.isClaimed) {
-      throw new BadRequestException('پاداش این دعوت قبلاً دریافت شده است');
-    }
-
-    if (referral.reward <= 0) {
-      throw new BadRequestException('پاداشی برای این دعوت تعیین نشده است');
-    }
-
-    // Get or create wallet
-    let wallet = await this.prisma.wallet.findUnique({
-      where: { userId },
-    });
-
-    if (!wallet) {
-      wallet = await this.prisma.wallet.create({
-        data: { userId, balance: 0, frozen: 0 },
-      });
-    }
-
-    // Use transaction to claim reward
-    const result = await this.prisma.$transaction(async (tx) => {
-      const [updatedReferral, updatedWallet, transaction] = await Promise.all([
-        tx.referral.update({
-          where: { id: referralId },
-          data: { isClaimed: true },
-        }),
-        tx.wallet.update({
-          where: { id: wallet.id },
-          data: { balance: { increment: referral.reward } },
-        }),
-        tx.transaction.create({
-          data: {
-            walletId: wallet.id,
-            userId,
-            type: 'BONUS',
-            amount: referral.reward,
-            description: `پاداش دعوت از دوستان - کد ${referral.code}`,
-            referenceId: referralId,
-            status: 'COMPLETED',
-          },
-        }),
-      ]);
-
-      return { referral: updatedReferral, wallet: updatedWallet, transaction };
-    });
-
-    // Create notification
-    await this.prisma.notification.create({
-      data: {
-        userId,
-        type: 'REFERRAL_REWARD',
-        title: 'پاداش دعوت',
-        message: `پاداش ${referral.reward.toLocaleString('fa-IR')} تومان بابت دعوت از دوستان به کیف پول شما اضافه شد`,
-        data: JSON.stringify({
-          referralId,
-          reward: referral.reward,
-        }),
-      },
-    });
-
-    return {
-      message: 'پاداش با موفقیت به کیف پول شما اضافه شد',
-      data: {
-        reward: referral.reward,
-        walletBalance: result.wallet.balance,
-      },
-    };
-  }
-
-  async applyReferralCode(userId: string, code: string) {
+  /**
+   * Apply referral code on registration
+   */
+  async applyReferral(userId: string, code: string) {
     // Check if user already used a referral
-    const existingReferral = await this.prisma.referral.findUnique({
-      where: { referredId: userId },
+    const existingReferral = await this.prisma.referral.findFirst({
+      where: { referredId: userId, id: { not: userId } },
     });
 
     if (existingReferral) {
       throw new BadRequestException('شما قبلاً از یک کد دعوت استفاده کرده‌اید');
     }
 
-    // Find the referral by code - find a referral record with this code to identify referrer
-    // The referrer's code is stored in their referral records
+    // Find the referral code
     const referrerRecord = await this.prisma.referral.findFirst({
       where: { code },
     });
@@ -219,6 +160,16 @@ export class ReferralsService {
     // Cannot refer yourself
     if (referrerId === userId) {
       throw new BadRequestException('شما نمی‌توانید از کد دعوت خود استفاده کنید');
+    }
+
+    // Check referrer is active
+    const referrer = await this.prisma.user.findUnique({
+      where: { id: referrerId },
+      select: { id: true, isActive: true, isBanned: true },
+    });
+
+    if (!referrer || !referrer.isActive || referrer.isBanned) {
+      throw new BadRequestException('کد دعوت مربوط به کاربر فعال نیست');
     }
 
     // Create referral record
@@ -235,18 +186,26 @@ export class ReferralsService {
     });
 
     // Notify the referrer
+    const referredUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { firstName: true, lastName: true },
+    });
+
     await this.prisma.notification.create({
       data: {
         userId: referrerId,
         type: 'NEW_REFERRAL',
         title: 'دعوت جدید',
-        message: `یک نفر با کد دعوت شما ثبت‌نام کرد. پاداش ${reward.toLocaleString('fa-IR')} تومان برای شما ثبت شد`,
+        message: `${referredUser?.firstName || ''} ${referredUser?.lastName || ''} با کد دعوت شما ثبت‌نام کرد. پاداش ${reward.toLocaleString('fa-IR')} تومان ثبت شد`,
         data: JSON.stringify({
           referralId: referral.id,
           reward,
+          referredUserId: userId,
         }),
       },
     });
+
+    this.logger.log(`Referral applied: ${code} by user ${userId}`);
 
     return {
       message: 'کد دعوت با موفقیت اعمال شد',
@@ -257,34 +216,195 @@ export class ReferralsService {
     };
   }
 
-  async getTopReferrers() {
+  /**
+   * Referral analytics for user
+   */
+  async getReferralStats(userId: string) {
+    const referrals = await this.prisma.referral.findMany({
+      where: {
+        referrerId: userId,
+        referredId: { not: userId },
+      },
+      select: {
+        id: true,
+        referredId: true,
+        reward: true,
+        isClaimed: true,
+        createdAt: true,
+        referred: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+            isVerified: true,
+            role: true,
+            createdAt: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Monthly breakdown
+    const now = new Date();
+    const monthlyBreakdown: { month: string; count: number; reward: number }[] = [];
+
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const nextMonth = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+
+      const monthReferrals = referrals.filter((r) => {
+        const created = new Date(r.createdAt);
+        return created >= date && created < nextMonth;
+      });
+
+      const persianMonths = [
+        'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+        'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند',
+      ];
+
+      monthlyBreakdown.push({
+        month: `${persianMonths[date.getMonth()]} ${date.getFullYear().toString().slice(2)}`,
+        count: monthReferrals.length,
+        reward: monthReferrals.reduce((sum, r) => sum + r.reward, 0),
+      });
+    }
+
+    // Conversion rate: how many referred users completed first project
+    const referredIds = referrals.map((r) => r.referredId);
+    let completedProjectsCount = 0;
+    if (referredIds.length > 0) {
+      completedProjectsCount = await this.prisma.serviceRequest.count({
+        where: {
+          userId: { in: referredIds },
+          status: 'COMPLETED',
+        },
+      });
+    }
+
+    return {
+      totalReferred: referrals.length,
+      totalEarned: referrals.reduce((sum, r) => sum + r.reward, 0),
+      claimedRewards: referrals.filter((r) => r.isClaimed).reduce((sum, r) => sum + r.reward, 0),
+      pendingRewards: referrals.filter((r) => !r.isClaimed).reduce((sum, r) => sum + r.reward, 0),
+      completedReferrals: referrals.filter((r) => r.reward > 0).length,
+      conversionRate: referredIds.length > 0
+        ? Math.round((completedProjectsCount / referredIds.length) * 100)
+        : 0,
+      monthlyBreakdown,
+      referrals: referrals.slice(0, 20), // Last 20
+    };
+  }
+
+  /**
+   * Process referral reward when referred user completes first project
+   */
+  async processReward(referralId: string) {
+    const referral = await this.prisma.referral.findUnique({
+      where: { id: referralId },
+      include: {
+        referrer: { select: { id: true, isActive: true, isBanned: true } },
+        referred: { select: { id: true } },
+      },
+    });
+
+    if (!referral) {
+      throw new NotFoundException('رکورد دعوت مورد نظر یافت نشد');
+    }
+
+    if (referral.reward > 0) {
+      throw new BadRequestException('پاداش این دعوت قبلاً تعیین شده است');
+    }
+
+    if (referral.referredId === referral.referrerId) {
+      throw new BadRequestException('رکورد دعوت نامعتبر است');
+    }
+
+    if (!referral.referrer.isActive || referral.referrer.isBanned) {
+      throw new BadRequestException('کاربر دعوت‌کننده فعال نیست');
+    }
+
+    const reward = 10000;
+
+    const result = await this.prisma.$transaction(async (tx) => {
+      const updatedReferral = await tx.referral.update({
+        where: { id: referralId },
+        data: { reward },
+      });
+
+      // Create notification for referrer
+      await tx.notification.create({
+        data: {
+          userId: referral.referrerId,
+          type: 'REFERRAL_REWARD',
+          title: 'پاداش دعوت آماده دریافت',
+          message: `پاداش ${reward.toLocaleString('fa-IR')} تومان بابت تکمیل اولین پروژه کاربر دعوت شده آماده دریافت است`,
+          data: JSON.stringify({
+            referralId,
+            reward,
+          }),
+        },
+      });
+
+      return { referral: updatedReferral };
+    });
+
+    this.logger.log(`Referral reward processed: ${referralId}, reward: ${reward}`);
+
+    return {
+      message: 'پاداش دعوت با موفقیت پردازش شد',
+      data: result,
+    };
+  }
+
+  /**
+   * Get top referrers leaderboard
+   */
+  async getLeaderboard() {
     const referrers = await this.prisma.referral.groupBy({
       by: ['referrerId'],
+      where: {
+        referredId: { not: undefined }, // Exclude self-references
+        reward: { gt: 0 },
+      },
       _count: { id: true },
       _sum: { reward: true },
       orderBy: { _count: { id: 'desc' } },
-      take: 10,
+      take: 20,
     });
 
     const referrerIds = referrers.map((r) => r.referrerId);
 
-    const users = await this.prisma.user.findMany({
-      where: { id: { in: referrerIds } },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        avatar: true,
-        isVerified: true,
-        role: true,
-      },
-    });
+    const users = referrerIds.length > 0
+      ? await this.prisma.user.findMany({
+          where: { id: { in: referrerIds } },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            displayName: true,
+            avatar: true,
+            isVerified: true,
+            role: true,
+          },
+        })
+      : [];
 
     return referrers.map((r, index) => {
       const user = users.find((u) => u.id === r.referrerId);
       return {
         rank: index + 1,
-        user,
+        user: user
+          ? {
+              id: user.id,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              displayName: user.displayName,
+              avatar: user.avatar,
+              isVerified: user.isVerified,
+            }
+          : null,
         totalReferrals: r._count.id,
         totalRewards: r._sum.reward || 0,
       };

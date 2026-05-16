@@ -2,16 +2,17 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
+  Put,
+  Delete,
   Body,
   Param,
   Query,
   UseGuards,
-  BadRequestException,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ProposalsService } from './proposals.service';
 import { CreateProposalDto } from './dto/create-proposal.dto';
+import { UpdateProposalStatusDto } from './dto/update-proposal-status.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
@@ -20,36 +21,13 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 export class ProposalsController {
   constructor(private readonly proposalsService: ProposalsService) {}
 
-  @Get()
-  @ApiQuery({ name: 'requestId', required: true, description: 'شناسه درخواست' })
-  @ApiOperation({ summary: 'لیست پیشنهادهای یک درخواست (عمومی)' })
-  async findByRequest(@Query('requestId') requestId: string) {
-    if (!requestId) {
-      throw new BadRequestException('شناسه درخواست الزامی است');
-    }
-    return this.proposalsService.findByRequest(requestId);
-  }
-
-  @Get('my')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'پیشنهادهای من' })
-  async getMyProposals(@CurrentUser('id') userId: string) {
-    return this.proposalsService.findByUser(userId);
-  }
-
-  @Get('stats')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'آمار پیشنهادهای من' })
-  async getMyStats(@CurrentUser('id') userId: string) {
-    return this.proposalsService.getStats(userId);
-  }
-
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'ارسال پیشنهاد جدید' })
+  @ApiOperation({ summary: 'ارسال پیشنهاد جدید (محافظت شده)' })
+  @ApiResponse({ status: 201, description: 'پیشنهاد ایجاد شد' })
+  @ApiResponse({ status: 401, description: 'نیاز به ورود' })
+  @ApiResponse({ status: 400, description: 'درخواست بسته است یا قبلاً پیشنهاد ارسال شده' })
   async create(
     @CurrentUser('id') userId: string,
     @Body() dto: CreateProposalDto,
@@ -57,32 +35,45 @@ export class ProposalsController {
     return this.proposalsService.create(userId, dto);
   }
 
-  @Patch(':id/accept')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'قبول پیشنهاد' })
-  async accept(
-    @Param('id') id: string,
-    @CurrentUser('id') userId: string,
-  ) {
-    return this.proposalsService.accept(id, userId);
+  @Get('request/:requestId')
+  @ApiOperation({ summary: 'پیشنهادهای یک درخواست (محافظت شده)' })
+  @ApiResponse({ status: 200, description: 'لیست پیشنهادها' })
+  @ApiResponse({ status: 404, description: 'درخواست یافت نشد' })
+  async findByRequest(@Param('requestId') requestId: string) {
+    return this.proposalsService.findByRequest(requestId);
   }
 
-  @Patch(':id/reject')
+  @Get('my')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'رد پیشنهاد' })
-  async reject(
-    @Param('id') id: string,
-    @CurrentUser('id') userId: string,
-  ) {
-    return this.proposalsService.reject(id, userId);
+  @ApiOperation({ summary: 'پیشنهادهای من (محافظت شده)' })
+  @ApiResponse({ status: 401, description: 'نیاز به ورود' })
+  async getMyProposals(@CurrentUser('id') userId: string) {
+    return this.proposalsService.findBySpecialist(userId);
   }
 
-  @Patch(':id/withdraw')
+  @Put(':id/status')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'پس‌گرفتن پیشنهاد' })
+  @ApiOperation({ summary: 'تغییر وضعیت پیشنهاد (محافظت شده)' })
+  @ApiResponse({ status: 200, description: 'وضعیت تغییر کرد' })
+  @ApiResponse({ status: 401, description: 'نیاز به ورود' })
+  @ApiResponse({ status: 403, description: 'دسترسی غیرمجاز' })
+  async updateStatus(
+    @Param('id') id: string,
+    @CurrentUser('id') userId: string,
+    @Body() dto: UpdateProposalStatusDto,
+  ) {
+    return this.proposalsService.updateStatus(id, userId, dto);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'پس‌گرفتن پیشنهاد (محافظت شده)' })
+  @ApiResponse({ status: 200, description: 'پیشنهاد پس گرفته شد' })
+  @ApiResponse({ status: 401, description: 'نیاز به ورود' })
+  @ApiResponse({ status: 403, description: 'دسترسی غیرمجاز' })
   async withdraw(
     @Param('id') id: string,
     @CurrentUser('id') userId: string,

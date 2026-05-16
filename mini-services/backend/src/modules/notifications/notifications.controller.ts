@@ -15,6 +15,7 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
+import { QueryNotificationsDto } from './dto/query-notifications.dto';
 
 @ApiTags('Notifications')
 @ApiBearerAuth()
@@ -24,15 +25,16 @@ export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'لیست اعلان‌ها', description: 'دریافت لیست اعلان‌های کاربر با صفحه‌بندی' })
+  @ApiOperation({ summary: 'لیست اعلان‌ها', description: 'دریافت لیست اعلان‌های کاربر با صفحه‌بندی و فیلتر' })
   @ApiQuery({ name: 'page', required: false, description: 'شماره صفحه', type: Number })
   @ApiQuery({ name: 'limit', required: false, description: 'تعداد آیتم در هر صفحه', type: Number })
+  @ApiQuery({ name: 'type', required: false, description: 'فیلتر نوع اعلان' })
+  @ApiQuery({ name: 'isRead', required: false, description: 'فیلتر وضعیت خواندن (true/false)' })
   async findAll(
     @CurrentUser() user: any,
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
+    @Query() query: QueryNotificationsDto,
   ) {
-    return this.notificationsService.findAll(user.id, { page: Number(page), limit: Number(limit) });
+    return this.notificationsService.findAll(user.id, query);
   }
 
   @Get('unread-count')

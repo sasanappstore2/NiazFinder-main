@@ -8,10 +8,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'خطای سرور رخ داده است';
     let errors: string[] | undefined;
+    let error: string | undefined;
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
@@ -22,6 +24,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       } else if (typeof exceptionResponse === 'object') {
         const resp = exceptionResponse as Record<string, unknown>;
         message = (resp.message as string) || message;
+        error = (resp.error as string) || undefined;
         if (Array.isArray(resp.message)) {
           message = resp.message[0];
           errors = resp.message as string[];
@@ -32,12 +35,24 @@ export class AllExceptionsFilter implements ExceptionFilter {
       this.logger.error(`Unhandled exception: ${exception.message}`, exception.stack);
     }
 
+    // Log 5xx errors with full stack
+    if (status >= 500) {
+      this.logger.error(
+        `${status} ${message} - ${request?.method} ${request?.url}`,
+        exception instanceof Error ? exception.stack : undefined,
+      );
+    } else {
+      this.logger.warn(`${status} ${message} - ${request?.method} ${request?.url}`);
+    }
+
     response.status(status).json({
       success: false,
       statusCode: status,
       message,
+      error,
       errors,
       timestamp: new Date().toISOString(),
+      path: request?.url,
     });
   }
 }

@@ -31,6 +31,8 @@ model User {
   phoneVerified Boolean   @default(false)
   lastSeenAt    DateTime?
   online        Boolean   @default(false)
+  averageRating Float    @default(0)
+  reviewCount   Int      @default(0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -51,6 +53,7 @@ model User {
   reportsCreated     Report[]          @relation("ReportReporter")
   referralsGiven     Referral[]        @relation("Referrer")
   referral           Referral?
+  bookmarks          Bookmark[]
 
   @@index([role])
   @@index([city])
@@ -279,6 +282,8 @@ model Review {
   comment       String?
   response      String?
   isPublished   Boolean  @default(true)
+  proposalId    String?
+  respondedAt   DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -318,6 +323,7 @@ model Transaction {
   amount        Int
   description   String?
   referenceId   String?
+  metadata      String?
   status        String          @default("PENDING")
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -378,6 +384,7 @@ model Report {
   isAnonymous Boolean     @default(false)
   status      String      @default("PENDING")
   resolvedBy  String?
+  resolution  String?
   resolvedAt  DateTime?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -424,4 +431,21 @@ model Coupon {
   @@index([code])
   @@index([isActive])
   @@index([expiresAt])
+}
+
+// ============ BOOKMARKS ============
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  targetId  String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type, targetId])
+  @@index([userId])
+  @@index([type])
+  @@index([targetId])
 }

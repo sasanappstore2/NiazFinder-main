@@ -1,218 +1,456 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { SearchParams } from './search.interface';
 
 @Injectable()
 export class SearchService {
+  private readonly logger = new Logger(SearchService.name);
+
+  // In-memory cache for popular searches (simulating Redis)
+  private popularSearchesCache: Map<string, number> = new Map();
+  private suggestionsCache: Map<string, { data: any; expiresAt: number }> = new Map();
+  private readonly CACHE_TTL_SUGGESTIONS = 30 * 60 * 1000; // 30 min
+  private readonly CACHE_TTL_POPULAR = 60 * 60 * 1000; // 1 hour
+
   constructor(private readonly prisma: PrismaService) {}
 
-  async search(query: string, type?: string) {
+  /**
+   * Unified search across requests, specialists, categories
+   */
+  async search(params: SearchParams) {
+    const {
+      query,
+      type = 'all',
+      city,
+      province,
+      categoryId,
+      minBudget,
+      maxBudget,
+      minRating,
+      sort = 'relevance',
+      page = 1,
+      limit = 10,
+    } = params;
+
     const normalizedQuery = query.trim().toLowerCase();
-    const searchType = type || 'all';
+    const skip = (page - 1) * limit;
 
-    let requests: any[] = [];
-    let specialists: any[] = [];
-    let categories: any[] = [];
-
-    let requestsCount = 0;
-    let specialistsCount = 0;
-    let categoriesCount = 0;
-
-    // Search Requests (title, description)
-    if (searchType === 'all' || searchType === 'requests') {
-      const requestWhere: any = {
-        AND: [
-          { status: { in: ['OPEN', 'IN_PROGRESS'] } },
-          {
-            OR: [
-              { title: { contains: normalizedQuery } },
-              { description: { contains: normalizedQuery } },
-            ],
-          },
-        ],
-      };
-
-      [requests, requestsCount] = await Promise.all([
-        this.prisma.serviceRequest.findMany({
-          where: requestWhere,
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            description: true,
-            budgetMin: true,
-            budgetMax: true,
-            budgetType: true,
-            status: true,
-            city: true,
-            province: true,
-            createdAt: true,
-            category: {
-              select: { id: true, name: true, slug: true },
-            },
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                displayName: true,
-                avatar: true,
-                isVerified: true,
-              },
-            },
-          },
-          orderBy: { createdAt: 'desc' },
-          take: 10,
-        }),
-        this.prisma.serviceRequest.count({ where: requestWhere }),
-      ]);
+    // Track search query for analytics
+    if (normalizedQuery.length >= 2) {
+      this.trackSearch(normalizedQuery);
     }
 
-    // Search Specialists (firstName, lastName, bio, skills)
-    if (searchType === 'all' || searchType === 'specialists') {
-      const specialistWhere: any = {
-        AND: [
-          { role: 'SPECIALIST' },
-          { isActive: true },
-          { isBanned: false },
-          {
-            OR: [
-              { firstName: { contains: normalizedQuery } },
-              { lastName: { contains: normalizedQuery } },
-              { bio: { contains: normalizedQuery } },
-              {
-                skills: {
-                  some: {
-                    skill: {
-                      OR: [
-                        { name: { contains: normalizedQuery } },
-                        { description: { contains: normalizedQuery } },
-                      ],
-                    },
-                  },
-                },
-              },
-            ],
-          },
-        ],
-      };
+    const results: any = {};
 
-      [specialists, specialistsCount] = await Promise.all([
-        this.prisma.user.findMany({
-          where: specialistWhere,
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            displayName: true,
-            avatar: true,
-            bio: true,
-            city: true,
-            province: true,
-            isVerified: true,
-            createdAt: true,
-            skills: {
-              select: {
-                level: true,
-                experience: true,
-                skill: {
-                  select: { id: true, name: true, slug: true },
-                },
-              },
-              take: 5,
-            },
-            _count: {
-              select: {
-                reviews: true,
-                portfolios: true,
-              },
-            },
-          },
-          orderBy: { createdAt: 'desc' },
-          take: 10,
-        }),
-        this.prisma.user.count({ where: specialistWhere }),
-      ]);
-
-      // Attach average rating to specialists
-      const specialistIds = specialists.map((s) => s.id);
-      if (specialistIds.length > 0) {
-        const ratings = await this.prisma.review.groupBy({
-          by: ['userId'],
-          where: { userId: { in: specialistIds }, isPublished: true },
-          _avg: { rating: true },
-        });
-
-        const ratingMap = new Map<string, number>();
-        ratings.forEach((r) => {
-          if (r._avg.rating) {
-            ratingMap.set(r.userId, Math.round(r._avg.rating * 10) / 10);
-          }
-        });
-
-        specialists = specialists.map((s) => ({
-          ...s,
-          averageRating: ratingMap.get(s.id) || 0,
-        }));
-      }
+    // Search Requests
+    if (type === 'all' || type === 'requests') {
+      results.requests = await this.searchRequests({
+        query: normalizedQuery,
+        city,
+        province,
+        categoryId,
+        minBudget,
+        maxBudget,
+        sort,
+        skip,
+        limit,
+      });
     }
 
-    // Search Categories (name, description)
-    if (searchType === 'all' || searchType === 'categories') {
-      const categoryWhere: any = {
-        AND: [
-          { isActive: true },
-          {
-            OR: [
-              { name: { contains: normalizedQuery } },
-              { description: { contains: normalizedQuery } },
-            ],
-          },
-        ],
-      };
-
-      [categories, categoriesCount] = await Promise.all([
-        this.prisma.category.findMany({
-          where: categoryWhere,
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            description: true,
-            icon: true,
-            image: true,
-            order: true,
-            _count: {
-              select: {
-                requests: true,
-                skills: true,
-                children: true,
-              },
-            },
-          },
-          orderBy: { order: 'asc' },
-          take: 10,
-        }),
-        this.prisma.category.count({ where: categoryWhere }),
-      ]);
+    // Search Specialists
+    if (type === 'all' || type === 'specialists') {
+      results.specialists = await this.searchSpecialists({
+        query: normalizedQuery,
+        city,
+        province,
+        categoryId,
+        minRating,
+        sort,
+        skip,
+        limit,
+      });
     }
 
     return {
       query,
-      type: searchType,
-      results: {
-        requests: {
-          items: requests,
-          total: requestsCount,
-        },
-        specialists: {
-          items: specialists,
-          total: specialistsCount,
-        },
-        categories: {
-          items: categories,
-          total: categoriesCount,
-        },
-      },
+      type,
+      results,
     };
+  }
+
+  /**
+   * Auto-complete suggestions
+   */
+  async getSuggestions(query: string) {
+    if (!query || query.trim().length < 1) {
+      return { suggestions: [] };
+    }
+
+    const normalizedQuery = query.trim().toLowerCase();
+    const cacheKey = `suggestions:${normalizedQuery}`;
+
+    // Check cache
+    const cached = this.suggestionsCache.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      return { suggestions: cached.data };
+    }
+
+    const suggestions: any[] = [];
+
+    // Search categories
+    const categories = await this.prisma.category.findMany({
+      where: {
+        isActive: true,
+        name: { contains: normalizedQuery },
+      },
+      select: { id: true, name: true, slug: true, icon: true },
+      take: 3,
+      orderBy: { order: 'asc' },
+    });
+
+    suggestions.push(
+      ...categories.map((c) => ({
+        type: 'category',
+        text: c.name,
+        slug: c.slug,
+        icon: c.icon,
+      })),
+    );
+
+    // Search cities
+    const cities = await this.prisma.user.groupBy({
+      by: ['city'],
+      where: {
+        city: { contains: normalizedQuery, not: null },
+        isActive: true,
+        isBanned: false,
+      },
+      _count: { id: true },
+      take: 3,
+      orderBy: { _count: { id: 'desc' } },
+    });
+
+    suggestions.push(
+      ...cities.map((c) => ({
+        type: 'city',
+        text: c.city,
+        count: c._count.id,
+      })),
+    );
+
+    // Popular searches that match
+    const popularMatches = Array.from(this.popularSearchesCache.entries())
+      .filter(([key]) => key.includes(normalizedQuery))
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2);
+
+    suggestions.push(
+      ...popularMatches.map(([key, count]) => ({
+        type: 'popular_search',
+        text: key,
+        count,
+      })),
+    );
+
+    // Limit to top 5
+    const limited = suggestions.slice(0, 5);
+
+    // Cache result
+    this.suggestionsCache.set(cacheKey, {
+      data: limited,
+      expiresAt: Date.now() + this.CACHE_TTL_SUGGESTIONS,
+    });
+
+    return { suggestions: limited };
+  }
+
+  /**
+   * Get most popular search terms
+   */
+  async getPopularSearches() {
+    const entries = Array.from(this.popularSearchesCache.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 20);
+
+    return {
+      popularSearches: entries.map(([query, count]) => ({
+        query,
+        count,
+      })),
+    };
+  }
+
+  /**
+   * Search requests with filters
+   */
+  private async searchRequests(options: {
+    query: string;
+    city?: string;
+    province?: string;
+    categoryId?: string;
+    minBudget?: number;
+    maxBudget?: number;
+    sort: string;
+    skip: number;
+    limit: number;
+  }) {
+    const { query, city, province, categoryId, minBudget, maxBudget, sort, skip, limit } = options;
+
+    const where: any = {
+      AND: [
+        { status: { in: ['OPEN', 'IN_PROGRESS'] } },
+      ],
+    };
+
+    // Text search
+    if (query) {
+      where.AND.push({
+        OR: [
+          { title: { contains: query } },
+          { description: { contains: query } },
+          { tags: { has: query } },
+        ],
+      });
+    }
+
+    // Filters
+    if (city) {
+      where.AND.push({ city });
+    }
+    if (province) {
+      where.AND.push({ province });
+    }
+    if (categoryId) {
+      where.AND.push({ categoryId });
+    }
+    if (minBudget !== undefined) {
+      where.AND.push({ budgetMin: { gte: minBudget } });
+    }
+    if (maxBudget !== undefined) {
+      where.AND.push({ budgetMax: { lte: maxBudget } });
+    }
+
+    // Sort
+    let orderBy: any = { createdAt: 'desc' };
+    if (sort === 'price_low') {
+      orderBy = { budgetMin: 'asc' };
+    } else if (sort === 'price_high') {
+      orderBy = { budgetMax: 'desc' };
+    } else if (sort === 'newest') {
+      orderBy = { createdAt: 'desc' };
+    } else if (sort === 'relevance' && query) {
+      // For relevance, just use newest as a fallback
+      orderBy = { createdAt: 'desc' };
+    }
+
+    const [requests, total] = await Promise.all([
+      this.prisma.serviceRequest.findMany({
+        where,
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          description: true,
+          budgetMin: true,
+          budgetMax: true,
+          budgetType: true,
+          status: true,
+          city: true,
+          province: true,
+          isFeatured: true,
+          createdAt: true,
+          category: {
+            select: { id: true, name: true, slug: true, icon: true },
+          },
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              displayName: true,
+              avatar: true,
+              isVerified: true,
+            },
+          },
+          _count: {
+            select: { proposals: true },
+          },
+        },
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      this.prisma.serviceRequest.count({ where }),
+    ]);
+
+    return {
+      items: requests,
+      total,
+      page: Math.floor(skip / limit) + 1,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  /**
+   * Search specialists with filters
+   */
+  private async searchSpecialists(options: {
+    query: string;
+    city?: string;
+    province?: string;
+    categoryId?: string;
+    minRating?: number;
+    sort: string;
+    skip: number;
+    limit: number;
+  }) {
+    const { query, city, province, categoryId, minRating, sort, skip, limit } = options;
+
+    const where: any = {
+      AND: [
+        { role: 'SPECIALIST' },
+        { isActive: true },
+        { isBanned: false },
+      ],
+    };
+
+    // Text search
+    if (query) {
+      where.AND.push({
+        OR: [
+          { firstName: { contains: query } },
+          { lastName: { contains: query } },
+          { displayName: { contains: query } },
+          { bio: { contains: query } },
+          {
+            skills: {
+              some: {
+                skill: {
+                  OR: [
+                    { name: { contains: query } },
+                    { description: { contains: query } },
+                  ],
+                },
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    // Filters
+    if (city) {
+      where.AND.push({ city });
+    }
+    if (province) {
+      where.AND.push({ province });
+    }
+    if (minRating !== undefined) {
+      where.AND.push({ averageRating: { gte: minRating } });
+    }
+
+    // Category filter via skills
+    if (categoryId) {
+      where.AND.push({
+        skills: {
+          some: {
+            skill: { categoryId },
+          },
+        },
+      });
+    }
+
+    // Sort
+    let orderBy: any = { createdAt: 'desc' };
+    if (sort === 'rating') {
+      orderBy = { averageRating: 'desc' };
+    } else if (sort === 'newest') {
+      orderBy = { createdAt: 'desc' };
+    }
+
+    const [specialists, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          displayName: true,
+          avatar: true,
+          bio: true,
+          city: true,
+          province: true,
+          isVerified: true,
+          averageRating: true,
+          reviewCount: true,
+          createdAt: true,
+          skills: {
+            select: {
+              level: true,
+              experience: true,
+              skill: {
+                select: { id: true, name: true, slug: true, categoryId: true },
+              },
+            },
+            take: 5,
+          },
+          _count: {
+            select: {
+              reviews: true,
+              portfolios: true,
+            },
+          },
+        },
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      this.prisma.user.count({ where }),
+    ]);
+
+    // Attach computed average rating to specialists
+    const specialistIds = specialists.map((s) => s.id);
+    if (specialistIds.length > 0) {
+      const ratings = await this.prisma.review.groupBy({
+        by: ['userId'],
+        where: { userId: { in: specialistIds }, isPublished: true },
+        _avg: { rating: true },
+      });
+
+      const ratingMap = new Map<string, number>();
+      ratings.forEach((r) => {
+        if (r._avg.rating) {
+          ratingMap.set(r.userId, Math.round(r._avg.rating * 10) / 10);
+        }
+      });
+
+      specialists.forEach((s) => {
+        (s as any).computedRating = ratingMap.get(s.id) || s.averageRating || 0;
+      });
+    }
+
+    return {
+      items: specialists,
+      total,
+      page: Math.floor(skip / limit) + 1,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  /**
+   * Track search query for analytics (in-memory, simulating Redis)
+   */
+  private trackSearch(query: string) {
+    const count = this.popularSearchesCache.get(query) || 0;
+    this.popularSearchesCache.set(query, count + 1);
+
+    // Prevent memory leak - limit cache size
+    if (this.popularSearchesCache.size > 1000) {
+      const entries = Array.from(this.popularSearchesCache.entries())
+        .sort((a, b) => b[1] - a[1]);
+      this.popularSearchesCache = new Map(entries.slice(0, 500));
+    }
   }
 }

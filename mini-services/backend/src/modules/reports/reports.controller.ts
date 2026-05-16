@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
+  Put,
   Param,
   Query,
   Body,
@@ -17,14 +17,14 @@ import { CreateReportDto } from './dto/create-report.dto';
 import { ResolveReportDto } from './dto/resolve-report.dto';
 
 @ApiTags('Reports')
-@ApiBearerAuth()
 @Controller('reports')
-@UseGuards(JwtAuthGuard)
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'ایجاد گزارش', description: 'ایجاد گزارش جدید برای هدف مشخص' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'ایجاد گزارش (محافظت شده)' })
   async create(
     @CurrentUser() user: any,
     @Body() dto: CreateReportDto,
@@ -33,12 +33,14 @@ export class ReportsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'لیست گزارش‌ها', description: 'دریافت لیست تمام گزارش‌ها (فقط مدیران)' })
+  @UseGuards(JwtAuthGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'لیست گزارش‌ها (فقط مدیران)' })
   @ApiQuery({ name: 'status', required: false, description: 'فیلتر وضعیت', enum: ['PENDING', 'REVIEWING', 'RESOLVED', 'DISMISSED'] })
-  @ApiQuery({ name: 'targetType', required: false, description: 'فیلتر نوع هدف', enum: ['user', 'request', 'proposal', 'review'] })
+  @ApiQuery({ name: 'targetType', required: false, description: 'فیلتر نوع هدف', enum: ['user', 'request', 'proposal'] })
   @ApiQuery({ name: 'page', required: false, description: 'شماره صفحه', type: Number })
   @ApiQuery({ name: 'limit', required: false, description: 'تعداد آیتم در هر صفحه', type: Number })
-  @Roles('ADMIN', 'SUPER_ADMIN')
   async findAll(
     @Query('status') status?: string,
     @Query('targetType') targetType?: string,
@@ -53,22 +55,39 @@ export class ReportsController {
     });
   }
 
-  @Get('stats')
-  @ApiOperation({ summary: 'آمار گزارش‌ها', description: 'دریافت آمار گزارش‌ها بر اساس وضعیت و نوع هدف (فقط مدیران)' })
+  @Put(':id/resolve')
+  @UseGuards(JwtAuthGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  async getStats() {
-    return this.reportsService.getStats();
-  }
-
-  @Patch(':id/resolve')
-  @ApiOperation({ summary: 'بررسی گزارش', description: 'بررسی و حل یا رد گزارش (فقط مدیران)' })
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'بررسی و حل گزارش (فقط مدیران)' })
   @ApiParam({ name: 'id', description: 'شناسه گزارش' })
-  @Roles('ADMIN', 'SUPER_ADMIN')
   async resolve(
     @CurrentUser() user: any,
     @Param('id') id: string,
     @Body() dto: ResolveReportDto,
   ) {
     return this.reportsService.resolve(user.id, id, dto);
+  }
+
+  @Get('target/:type/:targetId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'گزارش‌های مربوط به یک موجودیت' })
+  @ApiParam({ name: 'type', description: 'نوع هدف (user, request, proposal)' })
+  @ApiParam({ name: 'targetId', description: 'شناسه هدف' })
+  async getByTarget(
+    @Param('type') type: string,
+    @Param('targetId') targetId: string,
+  ) {
+    return this.reportsService.getByTarget(type, targetId);
+  }
+
+  @Get('stats')
+  @UseGuards(JwtAuthGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'آمار گزارش‌ها (فقط مدیران)' })
+  async getStats() {
+    return this.reportsService.getStats();
   }
 }

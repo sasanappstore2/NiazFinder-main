@@ -1,470 +1,489 @@
 /**
- * API Client - کلاینت یکپارچه برای درخواست‌های API
- * شامل مدیریت توکن، خطایاب، اعلان‌ها و کش
+ * API Client — Bridge to the NestJS backend (port 4000)
+ *
+ * All requests are proxied through Caddy via the XTransformPort query parameter.
+ * The NestJS backend already prefixes its routes with `/api`, so the path
+ * arguments below start with `/auth/…`, `/requests/…`, etc.
+ *
+ * ── Usage ──────────────────────────────────────────────────────────────────
+ *   import { authApi, requestsApi } from '@/lib/api-client';
+ *
+ *   const { accessToken, user } = await authApi.login(email, password);
+ *   const { data, total }     = await requestsApi.list({ page: 1, limit: 12 });
+ * ───────────────────────────────────────────────────────────────────────────
  */
 
-import type { User } from '@/lib/types';
+// ---------------------------------------------------------------------------
+// Base URL helpers
+// ---------------------------------------------------------------------------
 
-// ============ ثابت‌های API ============
-export const API_BASE = '/api';
-export const API_TIMEOUT = 30000; // ۳۰ ثانیه
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
-// کلید ذخیره‌سازی توکن
-const TOKEN_KEY = 'nf_auth_token';
-
-// ============ انواع درخواست و پاسخ ============
-
-// پارامترهای درخواست سفارشی
-export interface ApiRequestOptions extends Omit<RequestInit, 'body'> {
-  /** بدنه درخواست - به صورت خودکار به JSON تبدیل می‌شود */
-  body?: unknown;
-  /** پارامترهای کوئری استرینگ */
-  params?: Record<string, string | number | boolean | undefined>;
-  /** نمایش خطا با toast */
-  showError?: boolean;
-  /** پیام سفارشی خطا */
-  errorMessage?: string;
-  /** لغو درخواست در صورت خروج از صفحه */
-  abortOnUnmount?: boolean;
-  /** تایم‌اوت سفارشی (میلی‌ثانیه) */
-  timeout?: number;
+/** Build a full URL that Caddy can proxy to the NestJS backend on port 4000. */
+function getApiUrl(path: string): string {
+  return `${API_BASE}/api${path}?XTransformPort=4000`;
 }
 
-// پاسخ استاندارد API
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  data: T;
-  message?: string;
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
+// ---------------------------------------------------------------------------
+// Token storage (mirrors the key used in store.ts for consistency)
+// ---------------------------------------------------------------------------
 
-// خطای API
-export interface ApiError {
-  success: false;
-  message: string;
-  code?: string;
-  status: number;
-  errors?: Record<string, string[]>;
-}
+const TOKEN_KEY = 'needfinder_auth_token';
 
-// ============ توابع کمکی ============
-
-/**
- * ساخت URL کامل با پارامترهای کوئری
- */
-function buildUrl(path: string, params?: Record<string, string | number | boolean | undefined>): string {
-  const url = new URL(`${API_BASE}${path}`, window.location.origin);
-
-  if (params) {
-    for (const [key, value] of Object.entries(params)) {
-      if (value !== undefined && value !== null && value !== '') {
-        url.searchParams.set(key, String(value));
-      }
-    }
-  }
-
-  return url.toString();
-}
-
-/**
- * دریافت توکن احراز هویت از localStorage
- */
-export function getAuthToken(): string | null {
+function getStoredToken(): string | null {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem(TOKEN_KEY);
 }
 
-/**
- * تنظیم توکن احراز هویت در localStorage
- */
-export function setAuthToken(token: string): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(TOKEN_KEY, token);
-}
-
-/**
- * حذف توکن احراز هویت از localStorage
- */
-export function clearAuthToken(): void {
+function clearStoredToken(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(TOKEN_KEY);
 }
 
+// ---------------------------------------------------------------------------
+// Core HTTP helpers
+// ---------------------------------------------------------------------------
+
 /**
- * مدیریت خطای API - نمایش اعلان و لاگ
+ * Generic API error class — carries the HTTP status and parsed server message.
  */
-function handleApiError(error: unknown, customMessage?: string): ApiError {
-  if (error instanceof Response) {
-    // خطای HTTP
-    const apiError: ApiError = {
-      success: false,
-      message: customMessage || `خطای سرور (${error.status})`,
-      status: error.status,
-    };
+export class ApiClientError extends Error {
+  status: number;
+  code?: string;
+  errors?: Record<string, string[]>;
 
-    if (error.status === 401) {
-      apiError.message = customMessage || 'لطفاً دوباره وارد شوید';
-      // پاک‌سازی توکن نامعتبر
-      clearAuthToken();
-    } else if (error.status === 403) {
-      apiError.message = customMessage || 'شما دسترسی به این بخش را ندارید';
-    } else if (error.status === 404) {
-      apiError.message = customMessage || 'مورد مورد نظر یافت نشد';
-    } else if (error.status === 429) {
-      apiError.message = customMessage || 'تعداد درخواست‌ها بیش از حد مجاز است. لطفاً کمی صبر کنید.';
-    } else if (error.status >= 500) {
-      apiError.message = customMessage || 'خطای سرور رخ داده است. لطفاً دوباره تلاش کنید.';
-    }
-
-    return apiError;
+  constructor(message: string, status: number, code?: string, errors?: Record<string, string[]>) {
+    super(message);
+    this.name = 'ApiClientError';
+    this.status = status;
+    this.code = code;
+    this.errors = errors;
   }
-
-  if (error instanceof Error) {
-    // خطای شبکه یا سایر خطاها
-    if (error.name === 'AbortError') {
-      return {
-        success: false,
-        message: 'درخواست لغو شد',
-        status: 0,
-      };
-    }
-    if (error.name === 'TimeoutError') {
-      return {
-        success: false,
-        message: 'زمان درخواست به پایان رسید. لطفاً دوباره تلاش کنید.',
-        status: 0,
-      };
-    }
-    return {
-      success: false,
-      message: customMessage || error.message || 'خطای ناشناخته رخ داده است',
-      status: 0,
-    };
-  }
-
-  return {
-    success: false,
-    message: customMessage || 'خطای ناشناخته رخ داده است',
-    status: 0,
-  };
 }
 
-// ============ تابع اصلی درخواست ============
-
 /**
- * ارسال درخواست API با مدیریت خودکار توکن، خطا و تایم‌اوت
- *
- * @param path - مسیر API (مثلاً '/requests')
- * @param options - تنظیمات درخواست
- * @returns پاسخ API با نوع مشخص
- *
- * @example
- * ```ts
- * // GET
- * const { data } = await apiClient.get<ServiceRequest[]>('/requests', {
- *   params: { page: 1, limit: 10 },
- * });
- *
- * // POST
- * const { data } = await apiClient.post<ServiceRequest>('/requests', {
- *   body: { title: 'طراحی سایت', description: '...' },
- * });
- * ```
+ * Build headers for a request.
+ * If a token is supplied it takes precedence; otherwise we fall back to the
+ * stored token (convenient for callers that don't want to pass it explicitly).
  */
-export async function apiClient<T = unknown>(
-  path: string,
-  options: ApiRequestOptions = {}
-): Promise<ApiResponse<T>> {
-  const {
-    body,
-    params,
-    showError = false,
-    errorMessage,
-    timeout = API_TIMEOUT,
-    headers: customHeaders,
-    ...fetchOptions
-  } = options;
-
-  // ساخت URL با پارامترهای کوئری
-  const url = buildUrl(path, params);
-
-  // آماده‌سازی هدرها
+function buildHeaders(token?: string, extra?: Record<string, string>): Record<string, string> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    ...(customHeaders as Record<string, string>),
+    ...extra,
   };
-
-  // تزریق توکن احراز هویت
-  const token = getAuthToken();
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+  const resolvedToken = token ?? getStoredToken();
+  if (resolvedToken) {
+    headers['Authorization'] = `Bearer ${resolvedToken}`;
   }
+  return headers;
+}
 
-  // ساخت AbortController برای تایم‌اوت
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
+/**
+ * Process a non‑OK response — attempt to parse the NestJS error body and
+ * throw an `ApiClientError`. On 401 responses the stored token is cleared.
+ */
+async function handleErrorResponse(response: Response): Promise<never> {
+  const status = response.status;
 
+  // Try to parse a structured error body from NestJS
+  let body: any = {};
   try {
-    const response = await fetch(url, {
-      ...fetchOptions,
-      headers,
-      signal: controller.signal,
-      body: body ? JSON.stringify(body) : undefined,
-    });
-
-    // بررسی وضعیت پاسخ
-    if (!response.ok) {
-      const apiError = handleApiError(response, errorMessage);
-      if (showError) {
-        showToast(apiError.message);
-      }
-      throw apiError;
-    }
-
-    // تجزیه پاسخ JSON
-    const data = await response.json();
-
-    return {
-      success: true,
-      data: data as T,
-      ...(data.message && { message: data.message }),
-      ...(data.pagination && { pagination: data.pagination }),
-    };
-  } catch (error) {
-    // اگر خطا قبلاً throw شده، آن را مجدداً پرتاب کن
-    if (error && typeof error === 'object' && 'success' in error) {
-      throw error;
-    }
-
-    const apiError = handleApiError(error, errorMessage);
-    if (showError) {
-      showToast(apiError.message);
-    }
-    throw apiError;
-  } finally {
-    clearTimeout(timeoutId);
+    body = await response.json();
+  } catch {
+    // Non‑JSON body — continue with defaults
   }
+
+  const message =
+    body?.message ??
+    body?.error ??
+    (typeof body === 'string' ? body : null) ??
+    `Request failed with status ${status}`;
+
+  // On 401 — clear any stored token so the app can redirect to login
+  if (status === 401) {
+    clearStoredToken();
+  }
+
+  throw new ApiClientError(
+    Array.isArray(message) ? message[0] : message,
+    status,
+    body?.code,
+    body?.errors,
+  );
 }
 
-// ============ متدهای میان‌بر ============
+// ---------------------------------------------------------------------------
+// Generic request functions
+// ---------------------------------------------------------------------------
 
 /**
- * درخواست GET
- */
-export async function apiGet<T = unknown>(
-  path: string,
-  params?: Record<string, string | number | boolean | undefined>,
-  options?: Omit<ApiRequestOptions, 'body' | 'params'>
-): Promise<ApiResponse<T>> {
-  return apiClient<T>(path, { ...options, params, method: 'GET' });
-}
-
-/**
- * درخواست POST
- */
-export async function apiPost<T = unknown>(
-  path: string,
-  body?: unknown,
-  options?: Omit<ApiRequestOptions, 'body'>
-): Promise<ApiResponse<T>> {
-  return apiClient<T>(path, { ...options, body, method: 'POST' });
-}
-
-/**
- * درخواست PUT
- */
-export async function apiPut<T = unknown>(
-  path: string,
-  body?: unknown,
-  options?: Omit<ApiRequestOptions, 'body'>
-): Promise<ApiResponse<T>> {
-  return apiClient<T>(path, { ...options, body, method: 'PUT' });
-}
-
-/**
- * درخواست PATCH
- */
-export async function apiPatch<T = unknown>(
-  path: string,
-  body?: unknown,
-  options?: Omit<ApiRequestOptions, 'body'>
-): Promise<ApiResponse<T>> {
-  return apiClient<T>(path, { ...options, body, method: 'PATCH' });
-}
-
-/**
- * درخواست DELETE
- */
-export async function apiDelete<T = unknown>(
-  path: string,
-  options?: Omit<ApiRequestOptions, 'body'>
-): Promise<ApiResponse<T>> {
-  return apiClient<T>(path, { ...options, method: 'DELETE' });
-}
-
-// ============ ثابت‌های اندپوینت ============
-
-export const API_ENDPOINTS = {
-  // احراز هویت
-  auth: {
-    login: '/auth',
-    register: '/auth/register',
-    logout: '/auth/logout',
-    me: '/auth/me',
-    refreshToken: '/auth/refresh',
-  },
-  // درخواست‌ها
-  requests: {
-    list: '/requests',
-    detail: (slug: string) => `/requests/${slug}`,
-    create: '/requests',
-    update: (slug: string) => `/requests/${slug}`,
-    delete: (slug: string) => `/requests/${slug}`,
-  },
-  // پیشنهادها
-  proposals: {
-    list: (slug: string) => `/requests/${slug}/proposals`,
-    create: (slug: string) => `/requests/${slug}/proposals`,
-    update: (id: string) => `/proposals/${id}`,
-    accept: (id: string) => `/proposals/${id}/accept`,
-    reject: (id: string) => `/proposals/${id}/reject`,
-  },
-  // متخصص‌ها
-  specialists: {
-    list: '/specialists',
-    detail: (id: string) => `/specialists/${id}`,
-    reviews: (id: string) => `/specialists/${id}/reviews`,
-    createReview: (id: string) => `/specialists/${id}/reviews`,
-  },
-  // دسته‌بندی‌ها
-  categories: {
-    list: '/categories',
-    tree: '/categories/tree',
-  },
-  // چت
-  chat: {
-    conversations: '/chat/conversations',
-    messages: (conversationId: string) => `/chat/conversations/${conversationId}/messages`,
-    send: (conversationId: string) => `/chat/conversations/${conversationId}/messages`,
-    markRead: (conversationId: string) => `/chat/conversations/${conversationId}/read`,
-  },
-  // اعلان‌ها
-  notifications: {
-    list: '/notifications',
-    markRead: (id: string) => `/notifications/${id}/read`,
-    markAllRead: '/notifications/read-all',
-    preferences: '/notifications/preferences',
-    updatePreferences: '/notifications/preferences',
-  },
-  // کاربر
-  user: {
-    profile: '/user/profile',
-    updateProfile: '/user/profile',
-    settings: '/user/settings',
-    wallet: '/user/wallet',
-    transactions: '/user/transactions',
-    referral: '/user/referral',
-  },
-} as const;
-
-// ============ کلیدهای کش TanStack Query ============
-
-/**
- * ساخت کلید کش منحصر به فرد برای TanStack Query
- * فرمت: ['entity', 'action', ...params]
+ * Send an authenticated / unauthenticated GET request.
  *
- * @example
- * queryKey('requests', 'list', { page: 1 })
- * // => ['requests', 'list', 'page=1']
+ * @param path   API path **without** the `/api` prefix, e.g. `/auth/me`
+ * @param token  Optional Bearer token (falls back to stored token)
  */
-export function buildQueryKey(
-  entity: string,
-  action: string,
-  params?: Record<string, unknown>
-): string[] {
-  const key: string[] = [entity, action];
+export async function apiGet<T = any>(path: string, token?: string): Promise<T> {
+  const url = getApiUrl(path);
+  const headers = buildHeaders(token);
 
-  if (params) {
-    const paramStr = Object.entries(params)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([k, v]) => `${k}=${v}`)
-      .join('&');
-    if (paramStr) {
-      key.push(paramStr);
-    }
+  const response = await fetch(url, { method: 'GET', headers });
+
+  if (!response.ok) {
+    await handleErrorResponse(response);
   }
 
-  return key;
-}
-
-// کلیدهای کش رایج
-export const QUERY_KEYS = {
-  requests: {
-    all: () => buildQueryKey('requests', 'list'),
-    list: (params?: Record<string, unknown>) => buildQueryKey('requests', 'list', params),
-    detail: (slug: string) => buildQueryKey('requests', 'detail', { slug }),
-    proposals: (slug: string) => buildQueryKey('proposals', 'list', { slug }),
-  },
-  specialists: {
-    all: () => buildQueryKey('specialists', 'list'),
-    list: (params?: Record<string, unknown>) => buildQueryKey('specialists', 'list', params),
-    detail: (id: string) => buildQueryKey('specialists', 'detail', { id }),
-    reviews: (id: string) => buildQueryKey('reviews', 'list', { specialistId: id }),
-  },
-  categories: {
-    all: () => buildQueryKey('categories', 'list'),
-    tree: () => buildQueryKey('categories', 'tree'),
-  },
-  chat: {
-    conversations: () => buildQueryKey('chat', 'conversations'),
-    messages: (id: string) => buildQueryKey('chat', 'messages', { conversationId: id }),
-  },
-  notifications: {
-    all: () => buildQueryKey('notifications', 'list'),
-    preferences: () => buildQueryKey('notifications', 'preferences'),
-  },
-  user: {
-    profile: () => buildQueryKey('user', 'profile'),
-    wallet: () => buildQueryKey('user', 'wallet'),
-    transactions: () => buildQueryKey('user', 'transactions'),
-    referral: () => buildQueryKey('user', 'referral'),
-  },
-} as const;
-
-// ============ Toast اعلان ============
-
-// نشانگر فعال بودن toast
-let toastAvailable = false;
-
-/**
- * ثبت این که toast سیستم موجود است
- * این تابع توسط کامپوننت Toaster فراخوانی می‌شود
- */
-export function markToastAvailable(): void {
-  toastAvailable = true;
+  return response.json() as Promise<T>;
 }
 
 /**
- * نمایش اعلان toast
- * از sonner استفاده می‌کند در صورت وجود، در غیر این صورت از alert
+ * Send a POST request.
+ *
+ * @param path   API path **without** the `/api` prefix
+ * @param body   Request body (will be JSON‑serialized)
+ * @param token  Optional Bearer token
  */
-function showToast(message: string): void {
-  if (toastAvailable && typeof window !== 'undefined') {
-    // فراخوانی داینامیک sonner toast
-    try {
-      import('sonner').then(({ toast }) => {
-        toast.error(message);
-      }).catch(() => {
-        // fallback
-      });
-    } catch {
-      // در صورت خطا در import، ساکت می‌مانیم
-    }
+export async function apiPost<T = any>(path: string, body?: any, token?: string): Promise<T> {
+  const url = getApiUrl(path);
+  const headers = buildHeaders(token);
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+
+  if (!response.ok) {
+    await handleErrorResponse(response);
   }
+
+  // Some endpoints (e.g. 204 No Content) may not return a body
+  const text = await response.text();
+  return text ? (JSON.parse(text) as T) : (undefined as unknown as T);
 }
+
+/**
+ * Send a PUT request.
+ */
+export async function apiPut<T = any>(path: string, body?: any, token?: string): Promise<T> {
+  const url = getApiUrl(path);
+  const headers = buildHeaders(token);
+
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+
+  if (!response.ok) {
+    await handleErrorResponse(response);
+  }
+
+  const text = await response.text();
+  return text ? (JSON.parse(text) as T) : (undefined as unknown as T);
+}
+
+/**
+ * Send a PATCH request.
+ */
+export async function apiPatch<T = any>(path: string, body?: any, token?: string): Promise<T> {
+  const url = getApiUrl(path);
+  const headers = buildHeaders(token);
+
+  const response = await fetch(url, {
+    method: 'PATCH',
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+
+  if (!response.ok) {
+    await handleErrorResponse(response);
+  }
+
+  const text = await response.text();
+  return text ? (JSON.parse(text) as T) : (undefined as unknown as T);
+}
+
+/**
+ * Send a DELETE request.
+ */
+export async function apiDelete<T = any>(path: string, token?: string): Promise<T> {
+  const url = getApiUrl(path);
+  const headers = buildHeaders(token);
+
+  const response = await fetch(url, { method: 'DELETE', headers });
+
+  if (!response.ok) {
+    await handleErrorResponse(response);
+  }
+
+  const text = await response.text();
+  return text ? (JSON.parse(text) as T) : (undefined as unknown as T);
+}
+
+// ---------------------------------------------------------------------------
+// Domain‑specific API objects
+// ---------------------------------------------------------------------------
+
+// ---- Auth ----
+
+interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+  user: any;
+}
+
+export const authApi = {
+  login: (email: string, password: string) =>
+    apiPost<AuthTokens>('/auth/login', { email, password }),
+
+  register: (data: { firstName: string; lastName: string; email: string; password: string; [key: string]: any }) =>
+    apiPost<AuthTokens>('/auth/register', data),
+
+  refresh: (refreshToken: string) =>
+    apiPost<{ accessToken: string }>('/auth/refresh', { refreshToken }),
+
+  me: (token: string) =>
+    apiGet<any>('/auth/me', token),
+};
+
+// ---- Requests ----
+
+interface RequestsListParams {
+  page?: number;
+  limit?: number;
+  categoryId?: string;
+  city?: string;
+  status?: string;
+  search?: string;
+  sort?: string;
+}
+
+export const requestsApi = {
+  list: (params?: RequestsListParams) => {
+    const query = params ? `?${new URLSearchParams(
+      Object.entries(params)
+        .filter(([, v]) => v !== undefined && v !== '')
+        .map(([k, v]) => [k, String(v)]),
+    ).toString()}` : '';
+    return apiGet<any>(`/requests${query}`);
+  },
+
+  getById: (id: string) =>
+    apiGet<any>(`/requests/${id}`),
+
+  create: (data: Record<string, any>, token: string) =>
+    apiPost<any>('/requests', data, token),
+
+  update: (id: string, data: Record<string, any>, token: string) =>
+    apiPut<any>(`/requests/${id}`, data, token),
+
+  delete: (id: string, token: string) =>
+    apiDelete<any>(`/requests/${id}`, token),
+};
+
+// ---- Proposals ----
+
+export const proposalsApi = {
+  list: (requestId: string, params?: Record<string, string>) => {
+    const query = params ? `&${new URLSearchParams(params).toString()}` : '';
+    return apiGet<any>(`/proposals?requestId=${requestId}${query}`);
+  },
+
+  create: (data: { requestId: string; price: number; deliveryTime?: number; deliveryUnit?: string; message: string }, token: string) =>
+    apiPost<any>('/proposals', data, token),
+
+  updateStatus: (id: string, status: string, token: string) =>
+    apiPatch<any>(`/proposals/${id}`, { status }, token),
+};
+
+// ---- Specialists ----
+
+interface SpecialistsListParams {
+  page?: number;
+  limit?: number;
+  sort?: string;
+  categoryId?: string;
+  city?: string;
+  search?: string;
+  minRating?: number;
+}
+
+export const specialistsApi = {
+  list: (params?: SpecialistsListParams) => {
+    const query = params ? `?${new URLSearchParams(
+      Object.entries(params)
+        .filter(([, v]) => v !== undefined && v !== '')
+        .map(([k, v]) => [k, String(v)]),
+    ).toString()}` : '';
+    return apiGet<any>(`/specialists${query}`);
+  },
+
+  getById: (id: string) =>
+    apiGet<any>(`/specialists/${id}`),
+
+  reviews: (id: string, params?: Record<string, string>) => {
+    const query = params ? `?${new URLSearchParams(params).toString()}` : '';
+    return apiGet<any>(`/specialists/${id}/reviews${query}`);
+  },
+};
+
+// ---- Categories ----
+
+export const categoriesApi = {
+  list: () =>
+    apiGet<any>('/categories'),
+
+  popular: () =>
+    apiGet<any>('/categories/popular'),
+};
+
+// ---- Chat ----
+
+export const chatApi = {
+  conversations: (token: string) =>
+    apiGet<any>('/chat/conversations', token),
+
+  createConversation: (data: { requestId: string; specialistId?: string }, token: string) =>
+    apiPost<any>('/chat/conversations', data, token),
+
+  messages: (conversationId: string, token: string, params?: { page?: number; limit?: number }) => {
+    const query = params ? `?${new URLSearchParams(
+      Object.entries(params)
+        .filter(([, v]) => v !== undefined && v !== '')
+        .map(([k, v]) => [k, String(v)]),
+    ).toString()}` : '';
+    return apiGet<any>(`/chat/conversations/${conversationId}/messages${query}`, token);
+  },
+
+  sendMessage: (conversationId: string, data: { content: string; type?: string }, token: string) =>
+    apiPost<any>(`/chat/conversations/${conversationId}/messages`, data, token),
+
+  markRead: (conversationId: string, token: string) =>
+    apiPut<any>(`/chat/conversations/${conversationId}/read`, {}, token),
+};
+
+// ---- Notifications ----
+
+export const notificationsApi = {
+  list: (token: string, params?: { page?: number; limit?: number }) => {
+    const query = params ? `?${new URLSearchParams(
+      Object.entries(params)
+        .filter(([, v]) => v !== undefined && v !== '')
+        .map(([k, v]) => [k, String(v)]),
+    ).toString()}` : '';
+    return apiGet<any>(`/notifications${query}`, token);
+  },
+
+  unreadCount: (token: string) =>
+    apiGet<{ count: number }>('/notifications/unread-count', token),
+
+  markRead: (id: string, token: string) =>
+    apiPut<any>(`/notifications/${id}/read`, {}, token),
+
+  markAllRead: (token: string) =>
+    apiPut<any>('/notifications/read-all', {}, token),
+
+  preferences: (token: string) =>
+    apiGet<any>('/notifications/preferences', token),
+
+  updatePreferences: (data: Record<string, any>, token: string) =>
+    apiPut<any>('/notifications/preferences', data, token),
+};
+
+// ---- Wallet ----
+
+export const walletApi = {
+  balance: (token: string) =>
+    apiGet<any>('/wallet', token),
+
+  transactions: (token: string, params?: { page?: number; limit?: number; type?: string }) => {
+    const query = params ? `?${new URLSearchParams(
+      Object.entries(params)
+        .filter(([, v]) => v !== undefined && v !== '')
+        .map(([k, v]) => [k, String(v)]),
+    ).toString()}` : '';
+    return apiGet<any>(`/wallet/transactions${query}`, token);
+  },
+
+  deposit: (data: { amount: number; gateway?: string }, token: string) =>
+    apiPost<any>('/wallet/deposit', data, token),
+
+  withdraw: (data: { amount: string; destination: string }, token: string) =>
+    apiPost<any>('/wallet/withdraw', data, token),
+};
+
+// ---- Dashboard ----
+
+export const dashboardApi = {
+  stats: (token: string) =>
+    apiGet<any>('/dashboard', token),
+};
+
+// ---- Bookmarks ----
+
+export const bookmarksApi = {
+  list: (token: string) =>
+    apiGet<any>('/bookmarks', token),
+
+  toggle: (data: { type: string; targetId: string }, token: string) =>
+    apiPost<any>('/bookmarks/toggle', data, token),
+
+  check: (type: string, targetId: string, token: string) =>
+    apiGet<{ isBookmarked: boolean }>(`/bookmarks/check/${type}/${targetId}`, token),
+};
+
+// ---- Search ----
+
+export const searchApi = {
+  search: (params: { q: string; page?: number; limit?: number; type?: string; categoryId?: string; city?: string }) =>
+    apiGet<any>(`/search?${new URLSearchParams(
+      Object.entries(params)
+        .filter(([, v]) => v !== undefined && v !== '')
+        .map(([k, v]) => [k, String(v)]),
+    ).toString()}`),
+
+  suggestions: (query: string) =>
+    apiGet<any>(`/search/suggestions?q=${encodeURIComponent(query)}`),
+
+  popular: () =>
+    apiGet<any>('/search/popular'),
+};
+
+// ---- Reviews ----
+
+export const reviewsApi = {
+  create: (data: { targetUserId: string; proposalId: string; rating: number; comment: string }, token: string) =>
+    apiPost<any>('/reviews', data, token),
+
+  list: (specialistId: string, params?: { page?: number; limit?: number }) => {
+    const query = params ? `?${new URLSearchParams(
+      Object.entries(params)
+        .filter(([, v]) => v !== undefined && v !== '')
+        .map(([k, v]) => [k, String(v)]),
+    ).toString()}` : '';
+    return apiGet<any>(`/reviews/${specialistId}${query}`);
+  },
+};
+
+// ---- Profile ----
+
+export const profileApi = {
+  get: (token: string) =>
+    apiGet<any>('/profile', token),
+
+  update: (data: Record<string, any>, token: string) =>
+    apiPut<any>('/profile', data, token),
+
+  uploadAvatar: (formData: FormData, token: string) => {
+    const url = getApiUrl('/profile/avatar');
+    return fetch(url, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    }).then(async (res) => {
+      if (!res.ok) await handleErrorResponse(res);
+      return res.json();
+    });
+  },
+};

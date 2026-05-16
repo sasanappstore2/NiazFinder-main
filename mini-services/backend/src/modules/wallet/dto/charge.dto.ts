@@ -1,4 +1,4 @@
-import { IsInt, Min, IsOptional, MaxLength } from 'class-validator';
+import { IsInt, Min, IsOptional, MaxLength, IsString, IsNotEmpty } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class ChargeDto {

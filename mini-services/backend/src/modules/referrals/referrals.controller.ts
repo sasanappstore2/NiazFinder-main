@@ -7,7 +7,7 @@ import {
   Body,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { ReferralsService } from './referrals.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -18,55 +18,49 @@ import { ApplyReferralDto } from './dto/apply-referral.dto';
 export class ReferralsController {
   constructor(private readonly referralsService: ReferralsService) {}
 
-  @Get()
+  @Get('my')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'اطلاعات دعوت من و آمار' })
-  async getMyReferralInfo(@CurrentUser('id') userId: string) {
-    return this.referralsService.getMyReferralInfo(userId);
+  @ApiOperation({ summary: 'اطلاعات دعوت من و آمار (محافظت شده)' })
+  async getMyReferralInfo(@CurrentUser() user: any) {
+    return this.referralsService.getMyReferralInfo(user.id);
   }
 
-  @Get('list')
+  @Get('stats')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'لیست افراد دعوت شده' })
-  async getMyReferrals(
-    @CurrentUser('id') userId: string,
-    @Query() query: { page?: string; limit?: string },
-  ) {
-    return this.referralsService.getMyReferrals(userId, {
-      page: query.page ? parseInt(query.page, 10) : 1,
-      limit: query.limit ? parseInt(query.limit, 10) : 20,
-    });
+  @ApiOperation({ summary: 'تحلیل آماری دعوت‌ها (محافظت شده)' })
+  async getReferralStats(@CurrentUser() user: any) {
+    return this.referralsService.getReferralStats(user.id);
   }
 
-  @Post(':id/claim')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'دریافت پاداش دعوت' })
-  async claimReward(
-    @CurrentUser('id') userId: string,
-    @Param('id') referralId: string,
-  ) {
-    return this.referralsService.claimReward(userId, referralId);
+  @Get('leaderboard')
+  @ApiOperation({ summary: 'جدول برترین دعوت‌کنندگان (عمومی)' })
+  async getLeaderboard() {
+    return this.referralsService.getLeaderboard();
   }
 
   @Post('apply')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'اعمال کد دعوت' })
+  @ApiOperation({ summary: 'اعمال کد دعوت (محافظت شده)' })
   async applyReferralCode(
-    @CurrentUser('id') userId: string,
+    @CurrentUser() user: any,
     @Body() dto: ApplyReferralDto,
   ) {
-    return this.referralsService.applyReferralCode(userId, dto.code);
+    return this.referralsService.applyReferral(user.id, dto.code);
   }
 
-  @Get('leaderboard')
+  @Post(':id/claim')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'جدول برترین دعوت‌کنندگان' })
-  async getTopReferrers() {
-    return this.referralsService.getTopReferrers();
+  @ApiOperation({ summary: 'دریافت پاداش دعوت (محافظت شده)' })
+  @ApiParam({ name: 'id', description: 'شناسه رکورد دعوت' })
+  async claimReward(
+    @CurrentUser() user: any,
+    @Param('id') referralId: string,
+  ) {
+    // Claim reward uses wallet integration - delegate to referrals service
+    return this.referralsService.processReward(referralId);
   }
 }

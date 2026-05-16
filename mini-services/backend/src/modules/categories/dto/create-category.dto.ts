@@ -1,26 +1,27 @@
-import { IsNotEmpty, IsOptional, IsString, IsInt } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsInt, IsUrl } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class CreateCategoryDto {
-  @ApiProperty({ description: 'نام دسته‌بندی' })
+  @ApiProperty({ description: 'نام دسته‌بندی', example: 'طراحی وب‌سایت' })
   @IsNotEmpty({ message: 'نام دسته‌بندی الزامی است' })
   @IsString()
   name: string;
-
-  @ApiProperty({ description: 'اسلاگ دسته‌بندی' })
-  @IsNotEmpty({ message: 'اسلاگ دسته‌بندی الزامی است' })
-  @IsString()
-  slug: string;
 
   @ApiPropertyOptional({ description: 'توضیحات دسته‌بندی' })
   @IsOptional()
   @IsString()
   description?: string;
 
-  @ApiPropertyOptional({ description: 'آیکون دسته‌بندی' })
+  @ApiPropertyOptional({ description: 'آیکون دسته‌بندی', example: 'Globe' })
   @IsOptional()
   @IsString()
   icon?: string;
+
+  @ApiPropertyOptional({ description: 'تصویر دسته‌بندی (URL)' })
+  @IsOptional()
+  @IsUrl({}, { message: 'آدرس تصویر نامعتبر است' })
+  image?: string;
 
   @ApiPropertyOptional({ description: 'شناسه دسته‌بندی والد' })
   @IsOptional()
@@ -30,5 +31,6 @@ export class CreateCategoryDto {
   @ApiPropertyOptional({ description: 'ترتیب نمایش', default: 0 })
   @IsOptional()
   @IsInt()
+  @Type(() => Number)
   order?: number;
 }

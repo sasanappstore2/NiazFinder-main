@@ -1,4 +1,4 @@
-import { IsOptional, IsInt, Min, Max } from 'class-validator';
+import { IsOptional, IsInt, Min, Max, IsDateString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -10,11 +10,16 @@ export class QueryMessagesDto {
   @Min(1)
   page: number = 1;
 
-  @ApiPropertyOptional({ description: 'تعداد پیام در هر صفحه', default: 30, maximum: 100 })
+  @ApiPropertyOptional({ description: 'تعداد پیام در هر صفحه', default: 50, maximum: 200 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  @Max(100)
-  limit: number = 30;
+  @Max(200)
+  limit: number = 50;
+
+  @ApiPropertyOptional({ description: 'تاریخ مبدأ برای صفحه‌بندی مبتنی بر کرسر (ISO date)', example: '2024-01-01T00:00:00.000Z' })
+  @IsOptional()
+  @IsDateString()
+  before?: string;
 }

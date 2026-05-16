@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsInt, Min, Max, IsIn } from 'class-validator';
+import { IsOptional, IsString, IsInt, Min, Max, IsIn, IsDateString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -13,10 +13,10 @@ export class QueryAdminUsersDto {
   @IsIn(['active', 'inactive', 'banned'])
   status?: string;
 
-  @ApiPropertyOptional({ description: 'شهر' })
+  @ApiPropertyOptional({ description: 'احراز هویت شده' })
   @IsOptional()
-  @IsString()
-  city?: string;
+  @IsIn(['true', 'false'])
+  isVerified?: string;
 
   @ApiPropertyOptional({ description: 'جستجو' })
   @IsOptional()
@@ -25,8 +25,8 @@ export class QueryAdminUsersDto {
 
   @ApiPropertyOptional({ description: 'مرتب‌سازی' })
   @IsOptional()
-  @IsIn(['newest', 'oldest', 'name'])
-  sort?: string;
+  @IsIn(['newest', 'oldest', 'name', 'rating'])
+  sortBy?: string;
 
   @ApiPropertyOptional({ description: 'شماره صفحه', default: 1 })
   @IsOptional()

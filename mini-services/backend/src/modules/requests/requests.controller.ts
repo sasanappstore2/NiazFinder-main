@@ -3,15 +3,14 @@ import {
   Get,
   Post,
   Put,
-  Patch,
   Delete,
   Body,
   Param,
   Query,
   UseGuards,
-  ParseIntPipe,
+  Headers,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiHeader } from '@nestjs/swagger';
 import { RequestsService } from './requests.service';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
@@ -25,32 +24,17 @@ export class RequestsController {
   constructor(private readonly requestsService: RequestsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'لیست درخواست‌ها (عمومی)' })
+  @ApiOperation({ summary: 'لیست درخواست‌ها (عمومی، صفحه‌بندی شده، قابل فیلتر)' })
   async findAll(@Query() query: QueryRequestsDto) {
     return this.requestsService.findAll(query);
-  }
-
-  @Get('featured')
-  @ApiOperation({ summary: 'درخواست‌های ویژه' })
-  async getFeatured() {
-    return this.requestsService.getFeatured();
-  }
-
-  @Get('my')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'درخواست‌های من' })
-  async getMyRequests(
-    @CurrentUser('id') userId: string,
-    @Query() query: QueryRequestsDto,
-  ) {
-    return this.requestsService.getByUser(userId, query);
   }
 
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'ایجاد درخواست جدید' })
+  @ApiResponse({ status: 201, description: 'درخواست ایجاد شد' })
+  @ApiResponse({ status: 401, description: 'نیاز به ورود' })
   async create(
     @CurrentUser('id') userId: string,
     @Body() dto: CreateRequestDto,
@@ -58,16 +42,43 @@ export class RequestsController {
     return this.requestsService.create(userId, dto);
   }
 
+  @Get('my')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'درخواست‌های من (محافظت شده)' })
+  @ApiResponse({ status: 401, description: 'نیاز به ورود' })
+  async getMyRequests(
+    @CurrentUser('id') userId: string,
+    @Query() query: QueryRequestsDto,
+  ) {
+    return this.requestsService.findByUser(userId, query);
+  }
+
+  @Get('stats')
+  @ApiOperation({ summary: 'آمار کلی درخواست‌ها (عمومی)' })
+  async getStats() {
+    return this.requestsService.getStats();
+  }
+
   @Get(':id')
-  @ApiOperation({ summary: 'جزئیات درخواست' })
-  async findOne(@Param('id') id: string) {
-    return this.requestsService.findOne(id);
+  @ApiOperation({ summary: 'جزئیات درخواست (عمومی)' })
+  @ApiHeader({ name: 'x-session-id', required: false, description: 'شناسه سشن برای محدودیت بازدید' })
+  @ApiResponse({ status: 200, description: 'جزئیات درخواست' })
+  @ApiResponse({ status: 404, description: 'درخواست یافت نشد' })
+  async findOne(
+    @Param('id') id: string,
+    @Headers('x-session-id') sessionId?: string,
+  ) {
+    return this.requestsService.findById(id, sessionId);
   }
 
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'ویرایش درخواست' })
+  @ApiOperation({ summary: 'ویرایش درخواست (صاحب یا مدیر)' })
+  @ApiResponse({ status: 401, description: 'نیاز به ورود' })
+  @ApiResponse({ status: 403, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 404, description: 'درخواست یافت نشد' })
   async update(
     @Param('id') id: string,
     @CurrentUser('id') userId: string,
@@ -76,22 +87,13 @@ export class RequestsController {
     return this.requestsService.update(id, userId, dto);
   }
 
-  @Patch(':id/status')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'تغییر وضعیت درخواست' })
-  async changeStatus(
-    @Param('id') id: string,
-    @CurrentUser('id') userId: string,
-    @Body('status') status: string,
-  ) {
-    return this.requestsService.changeStatus(id, userId, status);
-  }
-
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'حذف درخواست' })
+  @ApiOperation({ summary: 'حذف درخواست (صاحب یا مدیر - حذف نرم)' })
+  @ApiResponse({ status: 401, description: 'نیاز به ورود' })
+  @ApiResponse({ status: 403, description: 'دسترسی غیرمجاز' })
+  @ApiResponse({ status: 404, description: 'درخواست یافت نشد' })
   async remove(
     @Param('id') id: string,
     @CurrentUser('id') userId: string,

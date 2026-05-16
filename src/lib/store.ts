@@ -1,3 +1,17 @@
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * MIGRATION NOTE
+ * ─────────────────────────────────────────────────────────────────────────────
+ * The local `apiFetch` helper below targets the old Next.js API routes.
+ * New code should prefer the NestJS‑backend bridge at `@/lib/api-client.ts`
+ * which routes all requests through Caddy → port 4000.
+ *
+ * Gradually replace each `apiFetch('/api/…')` call with the corresponding
+ * function from api‑client (e.g. `authApi.login`, `requestsApi.list`, etc.)
+ * while keeping the same local‑state mutations in this store.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
 import { create } from 'zustand';
 import type {
   AppView,
@@ -12,7 +26,7 @@ import type {
   DashboardStats,
 } from './types';
 
-// ============ API Helper ============
+// ============ API Helper (legacy — see migration note above) ============
 
 async function apiFetch<T = any>(endpoint: string, options?: RequestInit): Promise<T> {
   const token = useAppStore.getState().authToken;

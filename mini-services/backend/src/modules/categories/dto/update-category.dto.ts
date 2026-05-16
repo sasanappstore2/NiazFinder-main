@@ -1,5 +1,6 @@
-import { IsOptional, IsString, IsInt, IsBoolean, IsNotEmpty } from 'class-validator';
+import { IsOptional, IsString, IsInt, IsBoolean, IsNotEmpty, IsUrl } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class UpdateCategoryDto {
   @ApiPropertyOptional({ description: 'نام دسته‌بندی' })
@@ -7,12 +8,6 @@ export class UpdateCategoryDto {
   @IsNotEmpty({ message: 'نام دسته‌بندی نمی‌تواند خالی باشد' })
   @IsString()
   name?: string;
-
-  @ApiPropertyOptional({ description: 'اسلاگ دسته‌بندی' })
-  @IsOptional()
-  @IsNotEmpty({ message: 'اسلاگ دسته‌بندی نمی‌تواند خالی باشد' })
-  @IsString()
-  slug?: string;
 
   @ApiPropertyOptional({ description: 'توضیحات دسته‌بندی' })
   @IsOptional()
@@ -24,14 +19,15 @@ export class UpdateCategoryDto {
   @IsString()
   icon?: string;
 
-  @ApiPropertyOptional({ description: 'شناسه دسته‌بندی والد' })
+  @ApiPropertyOptional({ description: 'تصویر دسته‌بندی (URL)' })
   @IsOptional()
-  @IsString()
-  parentId?: string;
+  @IsUrl({}, { message: 'آدرس تصویر نامعتبر است' })
+  image?: string;
 
   @ApiPropertyOptional({ description: 'ترتیب نمایش' })
   @IsOptional()
   @IsInt()
+  @Type(() => Number)
   order?: number;
 
   @ApiPropertyOptional({ description: 'وضعیت فعال' })

@@ -10,7 +10,7 @@ export class QuerySpecialistsDto {
   @Min(1)
   page?: number = 1;
 
-  @ApiPropertyOptional({ description: 'تعداد در هر صفحه', default: 20 })
+  @ApiPropertyOptional({ description: 'تعداد در هر صفحه', default: 20, maximum: 100 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
@@ -18,23 +18,35 @@ export class QuerySpecialistsDto {
   @Max(100)
   limit?: number = 20;
 
+  @ApiPropertyOptional({ description: 'شناسه دسته‌بندی' })
+  @IsOptional()
+  @IsString()
+  categoryId?: string;
+
   @ApiPropertyOptional({ description: 'شهر' })
   @IsOptional()
   @IsString()
   city?: string;
 
-  @ApiPropertyOptional({ description: 'مهارت' })
+  @ApiPropertyOptional({ description: 'استان' })
   @IsOptional()
   @IsString()
-  skill?: string;
+  province?: string;
 
-  @ApiPropertyOptional({ description: 'جستجو' })
+  @ApiPropertyOptional({ description: 'حداقل امتیاز', minimum: 0, maximum: 5 })
+  @IsOptional()
+  @Type(() => Number)
+  @Min(0)
+  @Max(5)
+  minRating?: number;
+
+  @ApiPropertyOptional({ description: 'مرتب‌سازی', enum: ['rating', 'experience', 'newest', 'price'] })
+  @IsOptional()
+  @IsIn(['rating', 'experience', 'newest', 'price'])
+  sort?: string = 'newest';
+
+  @ApiPropertyOptional({ description: 'جستجو در نام، بیو و مهارت‌ها' })
   @IsOptional()
   @IsString()
   search?: string;
-
-  @ApiPropertyOptional({ description: 'مرتب‌سازی', enum: ['rating', 'newest', 'most_projects'] })
-  @IsOptional()
-  @IsIn(['rating', 'newest', 'most_projects'])
-  sort?: string = 'newest';
 }

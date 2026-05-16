@@ -5,9 +5,11 @@ import {
   IsString,
   IsInt,
   Min,
+  Max,
   IsIn,
   IsArray,
   MinLength,
+  MaxLength,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -16,15 +18,17 @@ export class CreateRequestDto {
   @IsNotEmpty({ message: 'عنوان درخواست الزامی است' })
   @IsString()
   @MinLength(5, { message: 'عنوان باید حداقل ۵ کاراکتر باشد' })
+  @MaxLength(200, { message: 'عنوان نباید بیشتر از ۲۰۰ کاراکتر باشد' })
   title: string;
 
   @ApiProperty({ description: 'توضیحات درخواست', example: 'نیاز به طراحی یک وب‌سایت فروشگاهی با قابلیت پرداخت آنلاین' })
   @IsNotEmpty({ message: 'توضیحات درخواست الزامی است' })
   @IsString()
   @MinLength(20, { message: 'توضیحات باید حداقل ۲۰ کاراکتر باشد' })
+  @MaxLength(5000, { message: 'توضیحات نباید بیشتر از ۵۰۰۰ کاراکتر باشد' })
   description: string;
 
-  @ApiProperty({ description: 'شناسه دسته‌بندی' })
+  @ApiProperty({ description: 'شناسه دسته‌بندی', example: 'clx123abc' })
   @IsNotEmpty({ message: 'دسته‌بندی الزامی است' })
   @IsString()
   categoryId: string;
@@ -55,10 +59,10 @@ export class CreateRequestDto {
   @Type(() => Number)
   deliveryTime?: number;
 
-  @ApiPropertyOptional({ description: 'واحد زمان تحویل', enum: ['day', 'week', 'month'] })
+  @ApiPropertyOptional({ description: 'واحد زمان تحویل', enum: ['day', 'hour', 'month'] })
   @IsOptional()
-  @IsIn(['day', 'week', 'month'], { message: 'واحد زمان تحویل نامعتبر است' })
-  deliveryUnit?: 'day' | 'week' | 'month';
+  @IsIn(['day', 'hour', 'month'], { message: 'واحد زمان تحویل نامعتبر است' })
+  deliveryUnit?: 'day' | 'hour' | 'month';
 
   @ApiPropertyOptional({ description: 'شهر' })
   @IsOptional()
@@ -70,7 +74,7 @@ export class CreateRequestDto {
   @IsString()
   province?: string;
 
-  @ApiPropertyOptional({ description: 'اولویت', enum: ['LOW', 'NORMAL', 'HIGH', 'URGENT'] })
+  @ApiPropertyOptional({ description: 'اولویت', enum: ['LOW', 'NORMAL', 'HIGH', 'URGENT'], default: 'NORMAL' })
   @IsOptional()
   @IsIn(['LOW', 'NORMAL', 'HIGH', 'URGENT'], { message: 'اولویت نامعتبر است' })
   priority?: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
@@ -79,5 +83,6 @@ export class CreateRequestDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true, message: 'هر برچسب باید رشته باشد' })
+  @MaxLength(10, { each: true, message: 'حداکثر ۱۰ برچسب مجاز است' })
   tags?: string[];
 }

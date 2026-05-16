@@ -3,27 +3,16 @@ import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 class SkillItemDto {
-  @ApiPropertyOptional({ description: 'شناسه مهارت' })
-  @IsOptional()
+  @ApiProperty({ description: 'نام مهارت' })
   @IsString()
-  skillId?: string;
-
-  @ApiPropertyOptional({ description: 'نام مهارت' })
-  @IsOptional()
-  @IsString()
-  skillName?: string;
+  @MaxLength(100)
+  name: string;
 
   @ApiProperty({ description: 'سطح مهارت (۱ تا ۵)' })
   @IsInt()
   @Min(1)
   @Max(5)
   level: number;
-
-  @ApiPropertyOptional({ description: 'تجربه', maxLength: 500 })
-  @IsOptional()
-  @IsString()
-  @MaxLength(500)
-  experience?: string;
 }
 
 export class UpdateSkillsDto {

@@ -7,16 +7,24 @@ import {
   MinLength,
   MaxLength,
   IsBoolean,
+  IsString,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateReviewDto {
   @ApiProperty({ description: 'شناسه کاربری مورد نظر برای بررسی' })
   @IsNotEmpty({ message: 'شناسه کاربری الزامی است' })
-  userId: string;
+  @IsString()
+  targetUserId: string;
+
+  @ApiProperty({ description: 'شناسه پیشنهاد' })
+  @IsNotEmpty({ message: 'شناسه پیشنهاد الزامی است' })
+  @IsString()
+  proposalId: string;
 
   @ApiProperty({ description: 'شناسه درخواست خدمت' })
   @IsNotEmpty({ message: 'شناسه درخواست الزامی است' })
+  @IsString()
   requestId: string;
 
   @ApiProperty({ description: 'امتیاز کلی (۱ تا ۵)', minimum: 1, maximum: 5 })
@@ -24,6 +32,16 @@ export class CreateReviewDto {
   @Min(1, { message: 'حداقل امتیاز ۱ است' })
   @Max(5, { message: 'حداکثر امتیاز ۵ است' })
   rating: number;
+
+  @ApiPropertyOptional({
+    description: 'متن نظر',
+    minLength: 10,
+    maxLength: 2000,
+  })
+  @IsOptional()
+  @MinLength(10, { message: 'نظر باید حداقل ۱۰ کاراکتر باشد' })
+  @MaxLength(2000, { message: 'نظر نمی‌تواند بیشتر از ۲۰۰۰ کاراکتر باشد' })
+  comment?: string;
 
   @ApiPropertyOptional({ description: 'امتیاز کیفیت کار (۱ تا ۵)', minimum: 1, maximum: 5 })
   @IsOptional()
@@ -52,16 +70,6 @@ export class CreateReviewDto {
   @Min(1)
   @Max(5)
   professionalismRating?: number;
-
-  @ApiPropertyOptional({
-    description: 'متن نظر',
-    minLength: 20,
-    maxLength: 2000,
-  })
-  @IsOptional()
-  @MinLength(20, { message: 'نظر باید حداقل ۲۰ کاراکتر باشد' })
-  @MaxLength(2000, { message: 'نظر نمی‌تواند بیشتر از ۲۰۰۰ کاراکتر باشد' })
-  comment?: string;
 
   @ApiPropertyOptional({ description: 'نقاط قوت', maxLength: 500 })
   @IsOptional()
