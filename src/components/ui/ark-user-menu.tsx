@@ -183,7 +183,7 @@ export function ArkUserMenu() {
 
       <Portal>
         <Menu.Positioner
-          sideOffset={8}
+          gutter={8}
           align="end"
           className="z-[100]"
         >
