@@ -25,6 +25,7 @@ import {
   BellOff,
   ArrowLeft,
   LayoutGrid,
+  Phone,
 } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
@@ -555,111 +556,218 @@ function MobileSheetContent() {
     setAuthModalOpen,
     setAuthModalTab,
     setMobileMenuOpen,
+    notifications,
+    unreadNotificationCount,
+    fetchNotifications,
   } = useAppStore();
+  const navigateTo = useAppStore((s) => s.navigateTo);
 
   const handleLogin = () => {
     setAuthModalTab('login');
     setAuthModalOpen(true);
+    setMobileMenuOpen(false);
   };
 
   const handleRegister = () => {
     setAuthModalTab('register');
     setAuthModalOpen(true);
+    setMobileMenuOpen(false);
   };
+
+  const handleNavigate = (view: AppView, params?: Record<string, string>) => {
+    navigateTo(view, params);
+    setMobileMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setMobileMenuOpen(false);
+  };
+
+  const recentNotifications = notifications.slice(0, 4);
 
   return (
     <div className="flex h-full flex-col">
-      {/* Logo */}
+      {/* Header with Logo + Theme Toggle */}
       <SheetHeader className="border-b border-border pb-4">
-        <SheetTitle className="flex items-center gap-2 text-right">
-          <span className="text-lg font-bold text-primary">{SITE_NAME}</span>
-          <LocateFixed className="size-5 text-primary" />
-        </SheetTitle>
+        <div className="flex items-center justify-between">
+          <SheetTitle className="flex items-center gap-2 text-right">
+            <span className="text-lg font-bold text-primary">{SITE_NAME}</span>
+            <LocateFixed className="size-5 text-primary" />
+          </SheetTitle>
+          <ThemeToggle />
+        </div>
       </SheetHeader>
 
-      {/* Navigation */}
-      <nav className="flex flex-col gap-1 p-4" aria-label="منوی موبایل">
-        <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          منو
-        </p>
-        {NAV_ITEMS.map((item) => (
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto">
+        {/* Navigation */}
+        <nav className="flex flex-col gap-1 p-4" aria-label="منوی موبایل">
+          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            منو
+          </p>
+          {NAV_ITEMS.map((item) => (
+            <MobileNavItem
+              key={item.view}
+              item={item}
+              onSelect={() => handleNavigate(item.view)}
+            />
+          ))}
+        </nav>
+
+        <Separator />
+
+        {/* Notifications Preview */}
+        <div className="px-4 pt-4">
+          <button
+            type="button"
+            onClick={() => handleNavigate('notifications')}
+            className="flex w-full items-center justify-between mb-3"
+          >
+            <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              اعلان‌ها
+            </p>
+            {unreadNotificationCount > 0 && (
+              <span className="flex items-center gap-1 text-xs text-primary font-medium">
+                <span>{unreadNotificationCount} جدید</span>
+                <ArrowLeft className="size-3" />
+              </span>
+            )}
+          </button>
+          {recentNotifications.length > 0 ? (
+            <div className="space-y-1">
+              {recentNotifications.map((notif) => {
+                const Icon = getNotificationIcon(notif.type);
+                return (
+                  <button
+                    key={notif.id}
+                    type="button"
+                    onClick={() => handleNavigate('notifications')}
+                    className={cn(
+                      'flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-right transition-colors',
+                      notif.isRead
+                        ? 'hover:bg-accent/50'
+                        : 'bg-primary/5 hover:bg-primary/10'
+                    )}
+                  >
+                    <span className={cn(
+                      'flex size-8 shrink-0 items-center justify-center rounded-full',
+                      notif.isRead
+                        ? 'bg-muted text-muted-foreground'
+                        : 'bg-primary/15 text-primary'
+                    )}>
+                      <Icon className="size-4" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className={cn(
+                        'truncate text-sm leading-snug',
+                        notif.isRead ? 'text-muted-foreground' : 'font-medium text-foreground'
+                      )}>
+                        {notif.title}
+                      </p>
+                      <p className="mt-0.5 text-[11px] text-muted-foreground/70">
+                        {timeAgo(notif.createdAt)}
+                      </p>
+                    </div>
+                    {!notif.isRead && (
+                      <span className="mt-2 size-2 shrink-0 rounded-full bg-primary" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center gap-1.5 py-6 text-muted-foreground/50">
+              <BellOff className="size-6" />
+              <p className="text-xs">اعلان جدیدی ندارید</p>
+            </div>
+          )}
+        </div>
+
+        <Separator className="mt-4" />
+
+        {/* Location Selector */}
+        <div className="flex flex-col gap-1 px-4 pt-4">
+          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            مکان
+          </p>
+          <MobileLocationSelector />
+        </div>
+
+        <Separator />
+
+        {/* Quick Actions */}
+        <div className="flex flex-col gap-1 p-4">
+          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            دسترسی سریع
+          </p>
           <MobileNavItem
-            key={item.view}
-            item={item}
-            onSelect={() => {}}
+            item={{ label: 'پیام‌ها', view: 'messages' }}
+            onSelect={() => handleNavigate('messages')}
           />
-        ))}
-      </nav>
+          {isAuthenticated && (
+            <>
+              <MobileNavItem
+                item={{ label: 'داشبورد', view: 'dashboard' }}
+                onSelect={() => handleNavigate('dashboard')}
+              />
+              <MobileNavItem
+                item={{ label: 'پروفایل', view: 'profile' }}
+                onSelect={() => handleNavigate('profile')}
+              />
+              <MobileNavItem
+                item={{ label: 'علاقه‌مندی‌ها', view: 'browse-requests' }}
+                onSelect={() => handleNavigate('browse-requests')}
+              />
+              <MobileNavItem
+                item={{ label: 'پیشنهادها', view: 'dashboard' }}
+                onSelect={() => handleNavigate('dashboard')}
+              />
+            </>
+          )}
+        </div>
 
-      <Separator />
+        {/* More */}
+        <div className="flex flex-col gap-1 px-4 pb-4">
+          <p className="mb-2 flex items-center gap-1 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            بیشتر
+            <ChevronLeft className="size-3" />
+          </p>
+          <MobileNavItem
+            item={{ label: 'تعرفه‌ها', view: 'pricing' }}
+            onSelect={() => handleNavigate('pricing')}
+          />
+          <MobileNavItem
+            item={{ label: 'دعوت از دوستان', view: 'referral' }}
+            onSelect={() => handleNavigate('referral')}
+          />
+          <MobileNavItem
+            item={{ label: 'مقایسه کسب‌وکارها', view: 'compare-specialists' }}
+            onSelect={() => handleNavigate('compare-specialists')}
+          />
+        </div>
 
-      {/* Location Selector */}
-      <div className="flex flex-col gap-1 px-4 pt-4">
-        <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          مکان
-        </p>
-        <MobileLocationSelector />
-      </div>
-
-      <Separator />
-
-      {/* Quick Actions */}
-      <div className="flex flex-col gap-1 p-4">
-        <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          دسترسی سریع
-        </p>
-        <MobileNavItem
-          item={{ label: 'اعلان‌ها', view: 'notifications' }}
-          onSelect={() => {}}
-        />
-        <MobileNavItem
-          item={{ label: 'پیام‌ها', view: 'messages' }}
-          onSelect={() => {}}
-        />
-        {isAuthenticated && (
-          <>
-            <MobileNavItem
-              item={{ label: 'داشبورد', view: 'dashboard' }}
-              onSelect={() => {}}
-            />
-            <MobileNavItem
-              item={{ label: 'پروفایل', view: 'profile' }}
-              onSelect={() => {}}
-            />
-            <MobileNavItem
-              item={{ label: 'علاقه‌مندی‌ها', view: 'browse-requests' }}
-              onSelect={() => {}}
-            />
-            <MobileNavItem
-              item={{ label: 'پیشنهادها', view: 'dashboard' }}
-              onSelect={() => {}}
-            />
-          </>
-        )}
-      </div>
-
-      {/* More */}
-      <div className="flex flex-col gap-1 p-4">
-        <p className="mb-2 flex items-center gap-1 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          بیشتر
-          <ChevronLeft className="size-3" />
-        </p>
-        <MobileNavItem
-          item={{ label: 'تعرفه‌ها', view: 'pricing' }}
-          onSelect={() => {}}
-        />
-        <MobileNavItem
-          item={{ label: 'دعوت از دوستان', view: 'referral' }}
-          onSelect={() => {}}
-        />
-        <MobileNavItem
-          item={{ label: 'مقایسه کسب‌وکارها', view: 'compare-specialists' }}
-          onSelect={() => {}}
-        />
+        {/* Contact */}
+        <Separator />
+        <div className="px-4 py-4">
+          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            تماس با ما
+          </p>
+          <div className="space-y-2 px-3">
+            <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
+              <MessageSquare className="size-4 shrink-0 text-primary/70" />
+              <span dir="ltr">support@needfinder.ir</span>
+            </div>
+            <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
+              <Phone className="size-4 shrink-0 text-primary/70" />
+              <span dir="ltr">021-1234-5678</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Bottom: User / Auth */}
-      <div className="mt-auto border-t border-border p-4">
+      <div className="border-t border-border p-4">
         {isAuthenticated && currentUser ? (
           <div className="flex items-center gap-3">
             <Avatar className="size-10 border-2 border-primary/20">
@@ -669,7 +777,11 @@ function MobileSheetContent() {
                 {currentUser.lastName.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1">
+            <button
+              type="button"
+              onClick={() => handleNavigate('profile')}
+              className="flex-1 text-right"
+            >
               <p className="text-sm font-medium">
                 {currentUser.displayName ||
                   `${currentUser.firstName} ${currentUser.lastName}`}
@@ -677,11 +789,11 @@ function MobileSheetContent() {
               <p className="text-xs text-muted-foreground">
                 {currentUser.email}
               </p>
-            </div>
+            </button>
             <Button
               variant="ghost"
               size="icon"
-              onClick={logout}
+              onClick={handleLogout}
               className="text-muted-foreground hover:text-destructive"
               aria-label="خروج از حساب"
               title="خروج از حساب کاربری"
