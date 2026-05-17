@@ -7,7 +7,10 @@ const dataSourceProvider: Provider = {
   provide: 'DATA_SOURCE',
   useFactory: () => {
     try {
-      return new DataSource({});
+      return new DataSource({
+        type: 'sqlite',
+        database: ':memory:',
+      });
     } catch {
       return null;
     }

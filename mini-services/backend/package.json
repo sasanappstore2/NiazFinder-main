@@ -40,10 +40,12 @@
     "slugify": "^1.6.6",
     "socket.io": "^4.8.1",
     "sqlite3": "^6.0.1",
+    "@prisma/client": "^6.11.1",
     "typeorm": "^0.3.20",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "prisma": "^6.11.1",
     "@types/node": "^22.9.0",
     "@types/passport-jwt": "^4.0.1",
     "@types/bcrypt": "^5.0.2",
