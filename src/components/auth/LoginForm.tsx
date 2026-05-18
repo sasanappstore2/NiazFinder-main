@@ -171,14 +171,7 @@ export function LoginForm() {
             : new Date(apiUser.createdAt).toISOString(),
         };
 
-        // Store token in localStorage if returned
-        if (token) {
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('nf_auth_token', token);
-          }
-        }
-
-        login(user);
+        login(user, token);
         setNotifications(MOCK_NOTIFICATIONS);
         toast.success('ورود موفقیت‌آمیز!', {
           description: `خوش آمدید ${user.firstName}`,

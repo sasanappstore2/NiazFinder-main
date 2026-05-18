@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { isAllowedSuperAdmin, isSuperAdminPhone } from '@/lib/super-admin';
 
 // PATCH /api/admin/users/[id] - admin update user
 export async function PATCH(
@@ -23,7 +24,25 @@ export async function PATCH(
     }
 
     const updateData: Record<string, unknown> = {};
-    if (role) updateData.role = role;
+    if (role) {
+      if (role === 'SUPER_ADMIN') {
+        if (!isAllowedSuperAdmin(authUser) || !isSuperAdminPhone(target.phone)) {
+          return NextResponse.json(
+            { error: 'فقط مالک شماره سوپرادمین می‌تواند نقش SUPER_ADMIN داشته باشد' },
+            { status: 403 }
+          );
+        }
+      }
+
+      if (target.role === 'SUPER_ADMIN' && role !== 'SUPER_ADMIN' && !isAllowedSuperAdmin(authUser)) {
+        return NextResponse.json(
+          { error: 'تنها سوپرادمین اصلی مجاز به تغییر نقش سوپرادمین است' },
+          { status: 403 }
+        );
+      }
+
+      updateData.role = role;
+    }
     if (typeof isActive === 'boolean') updateData.isActive = isActive;
     if (typeof isBanned === 'boolean') {
       updateData.isBanned = isBanned;
@@ -65,6 +84,13 @@ export async function DELETE(
     const target = await db.user.findFirst({ where: { id: targetId } });
     if (!target) {
       return NextResponse.json({ error: 'کاربر یافت نشد' }, { status: 404 });
+    }
+
+    if (target.role === 'SUPER_ADMIN' && !isAllowedSuperAdmin(authUser)) {
+      return NextResponse.json(
+        { error: 'تنها سوپرادمین اصلی مجاز به حذف حساب سوپرادمین است' },
+        { status: 403 }
+      );
     }
 
     await db.user.delete({ where: { id: targetId } });

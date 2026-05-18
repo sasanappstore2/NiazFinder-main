@@ -20,6 +20,7 @@ import {
   ArrowLeft,
   Phone,
   Mail,
+  Crown,
   Moon,
   Sun,
 } from "lucide-react";
@@ -31,6 +32,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import type { AppView } from "@/lib/types";
+import { SUPER_ADMIN_PHONE, isSuperAdminPhone } from "@/lib/super-admin";
 
 // ============ Shared helpers ============
 function getNotificationIcon(type: string) {
@@ -119,6 +121,11 @@ export function ArkUserMenu() {
   const handleLogout = () => {
     logout();
     setMenuOpen(false);
+  };
+
+  const openSuperAdmin = () => {
+    setMenuOpen(false);
+    window.location.href = "/super-admin";
   };
 
   // Display name for trigger
@@ -258,6 +265,16 @@ export function ArkUserMenu() {
                   <LayoutDashboard className="size-4 text-muted-foreground" />
                   داشبورد
                 </Menu.Item>
+                {currentUser?.role === "SUPER_ADMIN" && isSuperAdminPhone(currentUser.phone) && (
+                  <Menu.Item
+                    value="super-admin"
+                    className={cn(menuItemBase, menuItemDefault)}
+                    onClick={openSuperAdmin}
+                  >
+                    <Crown className="size-4 text-emerald-600" />
+                    سوپرادمین
+                  </Menu.Item>
+                )}
                 <Menu.Item
                   value="bookmarks"
                   className={cn(menuItemBase, menuItemDefault)}

@@ -40,9 +40,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAppStore } from '@/lib/store';
-import { CITIES, formatBudgetRange, getTimeAgo, getPriorityLabel } from '@/lib/constants';
+import { formatBudgetRange, getTimeAgo, getPriorityLabel } from '@/lib/constants';
 import type { ServiceRequest, Category } from '@/lib/types';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
+import { useManagedLocations } from '@/lib/use-managed-locations';
 
 // ─── Category icon mapping ──────────────────────────────
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -209,6 +210,7 @@ export function BrowseRequests() {
   const navigateTo = useAppStore((s) => s.navigateTo);
   const categories = useAppStore((s) => s.categories);
   const fetchCategories = useAppStore((s) => s.fetchCategories);
+  const { cityNames } = useManagedLocations();
 
   // Filters state
   const [query, setQuery] = useState('');
@@ -441,7 +443,7 @@ export function BrowseRequests() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">همه شهرها</SelectItem>
-                        {CITIES.map((city) => (
+                        {cityNames.map((city) => (
                           <SelectItem key={city} value={city}>
                             {city}
                           </SelectItem>

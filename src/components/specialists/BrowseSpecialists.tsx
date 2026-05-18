@@ -29,10 +29,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAppStore } from '@/lib/store';
-import { MOCK_SPECIALISTS, CITIES } from '@/lib/constants';
+import { MOCK_SPECIALISTS } from '@/lib/constants';
 import type { SpecialistProfile } from '@/lib/types';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
 import { SpecialistAvailabilityBadge } from '@/components/specialists/SpecialistAvailabilityBadge';
+import { useManagedLocations } from '@/lib/use-managed-locations';
 
 // ─── Avatar color generator ───────────────────────────
 const AVATAR_COLORS = [
@@ -343,6 +344,7 @@ function CompareBar() {
 // ─── Main Component ───────────────────────────────────
 export function BrowseSpecialists() {
   const navigateTo = useAppStore((s) => s.navigateTo);
+  const { cityNames } = useManagedLocations();
 
   // Filters state
   const [query, setQuery] = useState('');
@@ -537,7 +539,7 @@ export function BrowseSpecialists() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">همه شهرها</SelectItem>
-                        {CITIES.map((city) => (
+                        {cityNames.map((city) => (
                           <SelectItem key={city} value={city}>
                             {city}
                           </SelectItem>

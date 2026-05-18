@@ -17,11 +17,8 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import {
-  type City,
-  getIranProvinces,
-  searchCities,
-} from '@/lib/location-system';
+import { type City } from '@/lib/location-system';
+import { useManagedLocations } from '@/lib/use-managed-locations';
 
 interface CitySelectorPopupProps {
   open: boolean;
@@ -78,8 +75,7 @@ export function CitySelectorPopup({
   const [expandedProvince, setExpandedProvince] = React.useState<string | null>(null);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
-
-  const provinces = React.useMemo(() => getIranProvinces(), []);
+  const { provinces, searchCities } = useManagedLocations();
 
   // Sync temp selection
   React.useEffect(() => {

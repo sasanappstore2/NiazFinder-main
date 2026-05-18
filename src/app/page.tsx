@@ -46,10 +46,15 @@ function HomePage() {
 }
 
 export default function App() {
-  const { currentView } = useAppStore();
+  const { currentView, initializeFromStorage } = useAppStore();
 
   const isHome = currentView === 'home';
   const isChatView = currentView === 'messages';
+
+  // Prevent body scroll when chat view is active
+  useEffect(() => {
+    initializeFromStorage().catch(() => {});
+  }, [initializeFromStorage]);
 
   // Prevent body scroll when chat view is active
   useEffect(() => {

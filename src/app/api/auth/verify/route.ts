@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { generateToken, daysFromNow } from '@/lib/auth';
+import { isSuperAdminPhone } from '@/lib/super-admin';
 import type { User } from '@/lib/types';
 import { findValidOtp, markOtpVerified } from '@/lib/otp-store';
 
@@ -44,6 +45,8 @@ export async function POST(request: NextRequest) {
     // Mark OTP as verified
     markOtpVerified(phone, code);
 
+    const shouldBeSuperAdmin = isSuperAdminPhone(phone);
+
     // Check if user exists with this phone
     let user = await db.user.findUnique({
       where: { phone },
@@ -55,15 +58,12 @@ export async function POST(request: NextRequest) {
       // Auto-create new user
       isNewUser = true;
 
-      // Admin special case
-      const isAdmin = phone === '09374333028';
-
       user = await db.$transaction(async (tx) => {
         const newUser = await tx.user.create({
           data: {
             phone,
             email: `${phone}@needfinder.local`,
-            role: isAdmin ? 'ADMIN' : ('CLIENT' as const),
+            role: shouldBeSuperAdmin ? 'SUPER_ADMIN' : ('CLIENT' as const),
             isVerified: true,
             phoneVerified: true,
           },
@@ -93,11 +93,12 @@ export async function POST(request: NextRequest) {
       }
 
       // Mark phone as verified
-      await db.user.update({
+      user = await db.user.update({
         where: { id: user.id },
         data: {
           phoneVerified: true,
           isVerified: true,
+          ...(shouldBeSuperAdmin ? { role: 'SUPER_ADMIN' } : {}),
         },
       });
     }

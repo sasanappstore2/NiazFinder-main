@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useEffect, type ReactNode } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
@@ -13,6 +13,7 @@ import { OnboardingWelcome } from '@/components/shared/OnboardingWelcome';
 import { VoiceCallOverlay } from '@/components/chat/VoiceCallOverlay';
 import ErrorBoundary from '@/components/shared/ErrorBoundary';
 import { Separator } from '@/components/ui/separator';
+import { useAppStore } from '@/lib/store';
 
 function PageLoadingFallback() {
   return (
@@ -25,9 +26,14 @@ function PageLoadingFallback() {
   );
 }
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+export default function MainLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const initializeFromStorage = useAppStore((state) => state.initializeFromStorage);
   const isHome = pathname === '/';
+
+  useEffect(() => {
+    initializeFromStorage().catch(() => {});
+  }, [initializeFromStorage]);
 
   return (
     <ErrorBoundary>

@@ -21,7 +21,6 @@ import {
 } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
-import { CATEGORIES, CITIES, PROVINCES } from '@/lib/constants';
 
 import {
   Form,
@@ -51,6 +50,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useManagedLocations } from '@/lib/use-managed-locations';
 
 // ============ Schema ============
 
@@ -152,6 +152,9 @@ export function RequestForm() {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
   const navigateTo = useAppStore((s) => s.navigateTo);
+  const categories = useAppStore((s) => s.categories);
+  const fetchCategories = useAppStore((s) => s.fetchCategories);
+  const { provinceNames, cityNames } = useManagedLocations();
 
   const form = useForm<RequestFormData>({
      
@@ -187,11 +190,17 @@ export function RequestForm() {
     }
   }, [isAuthenticated, setAuthModalOpen]);
 
+  useEffect(() => {
+    if (categories.length === 0) {
+      fetchCategories().catch(() => {});
+    }
+  }, [categories.length, fetchCategories]);
+
   // Get subcategories based on selected category
   const subcategories = useMemo(() => {
-    const category = CATEGORIES.find((c) => c.id === watchedCategoryId);
+    const category = categories.find((c) => c.id === watchedCategoryId);
     return category?.children || [];
-  }, [watchedCategoryId]);
+  }, [categories, watchedCategoryId]);
 
   // Reset subcategory when category changes
   useEffect(() => {
@@ -431,7 +440,7 @@ export function RequestForm() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="max-h-64">
-                            {CATEGORIES.map((category) => (
+                            {categories.map((category) => (
                               <SelectItem
                                 key={category.id}
                                 value={category.id}
@@ -718,7 +727,7 @@ export function RequestForm() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent className="max-h-64">
-                              {PROVINCES.map((province) => (
+                              {provinceNames.map((province) => (
                                 <SelectItem key={province} value={province}>
                                   {province}
                                 </SelectItem>
@@ -748,7 +757,7 @@ export function RequestForm() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent className="max-h-64">
-                              {CITIES.map((city) => (
+                              {cityNames.map((city) => (
                                 <SelectItem key={city} value={city}>
                                   {city}
                                 </SelectItem>

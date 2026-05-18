@@ -161,6 +161,7 @@ interface AppState {
 // ============ Token storage key ============
 
 const TOKEN_KEY = 'needfinder_auth_token';
+const LEGACY_TOKEN_KEY = 'nf_auth_token';
 
 // ============ Create Store ============
 
@@ -200,6 +201,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     if (token) {
       if (typeof window !== 'undefined') {
         localStorage.setItem(TOKEN_KEY, token);
+        localStorage.setItem(LEGACY_TOKEN_KEY, token);
       }
       set({ currentUser: user, isAuthenticated: true, authModalOpen: false, authToken: token });
     } else {
@@ -225,6 +227,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     });
     if (typeof window !== 'undefined') {
       localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(LEGACY_TOKEN_KEY);
     }
   },
   updateProfile: (data) => {
@@ -237,14 +240,14 @@ export const useAppStore = create<AppState>((set, get) => ({
   // ===========================
   // Auth (API)
   // ===========================
-  authToken: typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null,
+  authToken: typeof window !== 'undefined' ? (localStorage.getItem(TOKEN_KEY) || localStorage.getItem(LEGACY_TOKEN_KEY)) : null,
   isLoading: false,
   error: null,
   setError: (error) => set({ error }),
   clearError: () => set({ error: null }),
 
   initializeFromStorage: async () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null;
+    const token = typeof window !== 'undefined' ? (localStorage.getItem(TOKEN_KEY) || localStorage.getItem(LEGACY_TOKEN_KEY)) : null;
     if (token) {
       set({ authToken: token });
       try {
@@ -252,6 +255,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       } catch {
         // Token is invalid — clear it
         localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(LEGACY_TOKEN_KEY);
         set({ authToken: null, isAuthenticated: false, currentUser: null });
       }
     }
@@ -314,6 +318,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       // Store token and login
       if (typeof window !== 'undefined') {
         localStorage.setItem(TOKEN_KEY, token);
+        localStorage.setItem(LEGACY_TOKEN_KEY, token);
       }
       set({ authToken: token, currentUser: mappedUser, isAuthenticated: true, authModalOpen: false });
 
@@ -344,6 +349,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
       // Store token
       localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(LEGACY_TOKEN_KEY, token);
       set({ authToken: token });
 
       // Map API user to local User shape
@@ -398,6 +404,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       const user = res.user;
 
       localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(LEGACY_TOKEN_KEY, token);
       set({ authToken: token });
 
       const mappedUser: User = {
@@ -445,7 +452,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   fetchCurrentUser: async () => {
     set({ isLoading: true });
     try {
-      const res = await apiFetch<{ user: any }>('/api/auth/me');
+      const res = await apiFetch<{ user: any }>('/api/users/me');
       const user = res.user;
 
       const mappedUser: User = {
@@ -475,6 +482,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     } catch {
       // Token is probably invalid
       localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(LEGACY_TOKEN_KEY);
       set({ authToken: null, isAuthenticated: false, currentUser: null });
     } finally {
       set({ isLoading: false });
