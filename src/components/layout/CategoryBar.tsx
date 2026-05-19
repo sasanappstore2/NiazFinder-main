@@ -42,6 +42,10 @@ function DesktopCategoryBar() {
         <PopoverTrigger asChild>
           <button
             type="button"
+            onClick={(event) => {
+              event.preventDefault();
+              setIsOpen((open) => !open);
+            }}
             className={cn(
               'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200',
               'border border-transparent',

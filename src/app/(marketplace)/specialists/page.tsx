@@ -3,5 +3,5 @@
 import { BrowseSpecialists } from '@/components/specialists/BrowseSpecialists';
 
 export default function SpecialistsPage() {
-  return <BrowseSpecialists />;
+  return <BrowseSpecialists basePath="/specialists" />;
 }

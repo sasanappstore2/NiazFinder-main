@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Search,
   SlidersHorizontal,
@@ -10,7 +11,6 @@ import {
   Flame,
   Clock,
   X,
-  ChevronDown,
   Inbox,
   Globe,
   Palette,
@@ -25,6 +25,7 @@ import {
   Briefcase,
   Heart,
   Code,
+  Copy,
   type LucideIcon,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -44,6 +45,15 @@ import { formatBudgetRange, getTimeAgo, getPriorityLabel } from '@/lib/constants
 import type { ServiceRequest, Category } from '@/lib/types';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
 import { useManagedLocations } from '@/lib/use-managed-locations';
+import {
+  buildUrlWithQuery,
+  findCategoryByRouteValue,
+  flattenCategories,
+  getCategoryRouteValue,
+  readPositivePage,
+  readQueryValue,
+  replaceBrowserUrl,
+} from '@/lib/filter-routing';
 
 // ─── Category icon mapping ──────────────────────────────
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -66,6 +76,27 @@ const SORT_OPTIONS = [
   { value: 'budget_high', label: 'بودجه: زیاد به کم' },
   { value: 'most_proposals', label: 'بیشترین پیشنهاد' },
 ];
+
+const REQUEST_FILTER_DEFAULTS = {
+  q: '',
+  category: 'all',
+  province: 'all',
+  city: 'all',
+  sort: 'newest',
+  page: 1,
+};
+
+function readRequestFilters(search: string) {
+  const params = new URLSearchParams(search);
+  return {
+    query: readQueryValue(params, ['q', 'search']),
+    category: readQueryValue(params, ['category', 'categoryId'], 'all') || 'all',
+    province: readQueryValue(params, ['province'], 'all') || 'all',
+    city: readQueryValue(params, ['city'], 'all') || 'all',
+    sort: readQueryValue(params, ['sort'], 'newest') || 'newest',
+    page: readPositivePage(params, 1),
+  };
+}
 
 // ─── Avatar color generator ───────────────────────────
 const AVATAR_COLORS = [
@@ -134,7 +165,19 @@ function RequestCardSkeleton() {
 }
 
 // ─── Request Card ─────────────────────────────────────
-function RequestCard({ request, onClick, dataHref }: { request: ServiceRequest; onClick: () => void; dataHref?: string }) {
+function RequestCard({
+  request,
+  onClick,
+  dataHref,
+  categoryHref,
+  cityHref,
+}: {
+  request: ServiceRequest;
+  onClick: () => void;
+  dataHref?: string;
+  categoryHref?: string;
+  cityHref?: string;
+}) {
   const fullName = `${request.user.firstName} ${request.user.lastName}`;
   const initials = `${request.user.firstName.charAt(0)}${request.user.lastName.charAt(0)}`;
   const colorClass = getAvatarColor(fullName);
@@ -153,20 +196,34 @@ function RequestCard({ request, onClick, dataHref }: { request: ServiceRequest; 
             <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary" aria-hidden="true">
               {renderCategoryIcon(request.categoryIcon)}
             </span>
-            <span className="text-xs font-semibold text-muted-foreground truncate max-w-[140px]">
-              {request.categoryName}
-            </span>
+            {categoryHref ? (
+              <Link
+                href={categoryHref}
+                onClick={(event) => event.stopPropagation()}
+                className="max-w-[140px] truncate text-xs font-semibold text-muted-foreground hover:text-emerald-600"
+              >
+                {request.categoryName}
+              </Link>
+            ) : (
+              <span className="text-xs font-semibold text-muted-foreground truncate max-w-[140px]">
+                {request.categoryName}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-1.5">
-            <BookmarkButton id={request.id} type="request" size="sm" />
+            <BookmarkButton itemId={request.id} itemType="request" size="sm" />
             <PriorityBadge priority={request.priority} />
           </div>
         </div>
 
         {/* Title */}
-        <h2 className="mb-2 text-sm font-bold leading-snug line-clamp-2 group-hover:text-emerald-600 transition-colors">
+        <Link
+          href={dataHref || `/request/${request.id}`}
+          onClick={(event) => event.stopPropagation()}
+          className="mb-2 block text-sm font-bold leading-snug line-clamp-2 transition-colors group-hover:text-emerald-600"
+        >
           {request.title}
-        </h2>
+        </Link>
 
         {/* Description */}
         <p className="mb-3 text-xs text-muted-foreground leading-relaxed line-clamp-2">
@@ -182,7 +239,17 @@ function RequestCard({ request, onClick, dataHref }: { request: ServiceRequest; 
           {request.city && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <MapPin className="size-3.5 shrink-0" aria-hidden="true" />
-              <span>{request.city}</span>
+              {cityHref ? (
+                <Link
+                  href={cityHref}
+                  onClick={(event) => event.stopPropagation()}
+                  className="hover:text-emerald-600"
+                >
+                  {request.city}
+                </Link>
+              ) : (
+                <span>{request.city}</span>
+              )}
             </div>
           )}
         </div>
@@ -206,18 +273,20 @@ function RequestCard({ request, onClick, dataHref }: { request: ServiceRequest; 
 }
 
 // ─── Main Component ───────────────────────────────────
-export function BrowseRequests() {
+export function BrowseRequests({ basePath = '/browse-requests' }: { basePath?: string } = {}) {
   const navigateTo = useAppStore((s) => s.navigateTo);
   const categories = useAppStore((s) => s.categories);
   const fetchCategories = useAppStore((s) => s.fetchCategories);
-  const { cityNames } = useManagedLocations();
+  const { provinces, cities } = useManagedLocations();
 
   // Filters state
   const [query, setQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [provinceFilter, setProvinceFilter] = useState('all');
   const [cityFilter, setCityFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
   const [showFilters, setShowFilters] = useState(false);
+  const [isUrlReady, setIsUrlReady] = useState(false);
 
   // Data state
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
@@ -229,10 +298,41 @@ export function BrowseRequests() {
   const [totalPages, setTotalPages] = useState(1);
 
   const PAGE_LIMIT = 9;
+  const currentPathname = basePath;
+  const flatCategories = useMemo(() => flattenCategories(categories), [categories]);
+  const selectedCategory = useMemo(
+    () => findCategoryByRouteValue(flatCategories, categoryFilter),
+    [categoryFilter, flatCategories]
+  );
+  const selectedProvince = useMemo(
+    () => provinces.find((province) => province.name === provinceFilter || province.id === provinceFilter),
+    [provinceFilter, provinces]
+  );
+  const filteredCities = useMemo(
+    () => (selectedProvince ? selectedProvince.cities : cities),
+    [cities, selectedProvince]
+  );
+  const cityLinkItems = useMemo(
+    () => provinces.flatMap((province) => province.cities.map((city) => ({ city, province }))),
+    [provinces]
+  );
+  const currentShareUrl = buildUrlWithQuery(
+    currentPathname,
+    {
+      q: query,
+      category: categoryFilter,
+      province: provinceFilter,
+      city: cityFilter,
+      sort: sortBy,
+      page: currentPage,
+    },
+    REQUEST_FILTER_DEFAULTS
+  );
 
   const activeFilterCount = [
     query,
     categoryFilter !== 'all' ? categoryFilter : '',
+    provinceFilter !== 'all' ? provinceFilter : '',
     cityFilter !== 'all' ? cityFilter : '',
   ].filter(Boolean).length;
 
@@ -242,6 +342,46 @@ export function BrowseRequests() {
       fetchCategories();
     }
   }, [categories.length, fetchCategories]);
+
+  const applyFiltersFromUrl = useCallback((search: string) => {
+    const nextFilters = readRequestFilters(search);
+    setQuery(nextFilters.query);
+    setCategoryFilter(nextFilters.category);
+    setProvinceFilter(nextFilters.province);
+    setCityFilter(nextFilters.city);
+    setSortBy(nextFilters.sort);
+    setCurrentPage(nextFilters.page);
+    setShowFilters(Boolean(nextFilters.query || nextFilters.category !== 'all' || nextFilters.province !== 'all' || nextFilters.city !== 'all'));
+    setIsUrlReady(true);
+  }, []);
+
+  useEffect(() => {
+    queueMicrotask(() => applyFiltersFromUrl(window.location.search));
+
+    const handlePopState = () => {
+      applyFiltersFromUrl(window.location.search);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [applyFiltersFromUrl]);
+
+  useEffect(() => {
+    if (!isUrlReady) return;
+
+    replaceBrowserUrl(
+      currentPathname,
+      {
+        q: query,
+        category: categoryFilter,
+        province: provinceFilter,
+        city: cityFilter,
+        sort: sortBy,
+        page: currentPage,
+      },
+      REQUEST_FILTER_DEFAULTS
+    );
+  }, [categoryFilter, cityFilter, currentPage, currentPathname, isUrlReady, provinceFilter, query, sortBy]);
 
   // Fetch requests from API
   const fetchRequests = useCallback(
@@ -258,7 +398,8 @@ export function BrowseRequests() {
         params.set('limit', String(PAGE_LIMIT));
         params.set('status', 'OPEN');
         if (query.trim()) params.set('search', query.trim());
-        if (categoryFilter !== 'all') params.set('categoryId', categoryFilter);
+        if (categoryFilter !== 'all') params.set('category', categoryFilter);
+        if (provinceFilter !== 'all') params.set('province', provinceFilter);
         if (cityFilter !== 'all') params.set('city', cityFilter);
         if (sortBy) params.set('sort', sortBy);
 
@@ -317,35 +458,37 @@ export function BrowseRequests() {
         setLoadingMore(false);
       }
     },
-    [query, categoryFilter, cityFilter, sortBy]
+    [query, categoryFilter, provinceFilter, cityFilter, sortBy]
   );
 
-  // Re-fetch when filters change (excluding search query debounce)
+  // Re-fetch when URL-backed filters change
   useEffect(() => {
-    fetchRequests(1);
-  }, [categoryFilter, cityFilter, sortBy, fetchRequests]);
+    if (!isUrlReady) return;
 
-  // Search debounce
-  useEffect(() => {
     const timer = setTimeout(() => {
-      fetchRequests(1);
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [query, fetchRequests]);
+      fetchRequests(currentPage);
+    }, 350);
 
-  // Load more handler
-  const handleLoadMore = () => {
-    if (currentPage < totalPages) {
-      fetchRequests(currentPage + 1, true);
-    }
+    return () => clearTimeout(timer);
+  }, [currentPage, fetchRequests, isUrlReady]);
+
+  const setPage = (page: number) => {
+    setCurrentPage(Math.min(Math.max(1, page), Math.max(totalPages, 1)));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const clearFilters = () => {
     setQuery('');
     setCategoryFilter('all');
+    setProvinceFilter('all');
     setCityFilter('all');
     setSortBy('newest');
     setCurrentPage(1);
+  };
+
+  const copyCurrentLink = async () => {
+    const absoluteUrl = `${window.location.origin}${currentShareUrl}`;
+    await navigator.clipboard?.writeText(absoluteUrl);
   };
 
   return (
@@ -364,21 +507,33 @@ export function BrowseRequests() {
                   : 'در حال جستجو...'}
               </p>
             </div>
-            <Button
-              onClick={() => setShowFilters(!showFilters)}
-              variant="outline"
-              className="gap-2 self-start sm:self-auto"
-              aria-label="نمایش فیلترها"
-              title="نمایش و مخفی کردن فیلترهای جستجوی نیازها"
-            >
-              <SlidersHorizontal className="size-4" aria-hidden="true" />
-              فیلترها
-              {activeFilterCount > 0 && (
-                <Badge className="mr-1 size-5 rounded-full p-0 text-[10px] flex items-center justify-center">
-                  {activeFilterCount}
-                </Badge>
-              )}
-            </Button>
+            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+              <Button
+                onClick={copyCurrentLink}
+                variant="outline"
+                className="gap-2"
+                aria-label="کپی لینک همین فیلترها"
+                title="کپی لینک قابل اشتراک همین فیلترها"
+              >
+                <Copy className="size-4" aria-hidden="true" />
+                کپی لینک
+              </Button>
+              <Button
+                onClick={() => setShowFilters(!showFilters)}
+                variant="outline"
+                className="gap-2"
+                aria-label="نمایش فیلترها"
+                title="نمایش و مخفی کردن فیلترهای جستجوی نیازها"
+              >
+                <SlidersHorizontal className="size-4" aria-hidden="true" />
+                فیلترها
+                {activeFilterCount > 0 && (
+                  <Badge className="mr-1 size-5 rounded-full p-0 text-[10px] flex items-center justify-center">
+                    {activeFilterCount}
+                  </Badge>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -389,13 +544,19 @@ export function BrowseRequests() {
             <Input
               placeholder="جستجو در عنوان، توضیحات یا تگ‌ها..."
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setCurrentPage(1);
+              }}
               aria-label="جستجو در نیازها"
               className="h-12 w-full rounded-xl border-border/50 bg-card/80 backdrop-blur-sm pr-10 text-sm shadow-md shadow-black/[0.03] focus-visible:shadow-lg focus-visible:shadow-emerald-500/[0.06] focus-visible:border-emerald-300/50 dark:focus-visible:border-emerald-700/50 transition-shadow"
             />
             {query && (
               <button
-                onClick={() => setQuery('')}
+                onClick={() => {
+                  setQuery('');
+                  setCurrentPage(1);
+                }}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 aria-label="پاک کردن جستجو"
                 title="پاک کردن عبارت جستجو"
@@ -411,21 +572,54 @@ export function BrowseRequests() {
           <div className="mb-6">
             <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-lg shadow-black/[0.03]">
               <CardContent className="p-5">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {/* Category */}
                   <div>
                     <label className="mb-1.5 block text-xs font-medium text-muted-foreground" htmlFor="filter-category">
                       دسته‌بندی
                     </label>
-                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <Select
+                      value={categoryFilter}
+                      onValueChange={(value) => {
+                        setCategoryFilter(value);
+                        setCurrentPage(1);
+                      }}
+                    >
                       <SelectTrigger className="w-full rounded-lg" id="filter-category">
                         <SelectValue placeholder="همه دسته‌بندی‌ها" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">همه دسته‌بندی‌ها</SelectItem>
-                        {categories.map((cat) => (
-                          <SelectItem key={cat.id} value={cat.id}>
-                            {cat.name}
+                        {flatCategories.map((cat) => (
+                          <SelectItem key={cat.id} value={getCategoryRouteValue(cat)}>
+                            {cat.level ? `— ${cat.name}` : cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Province */}
+                  <div>
+                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground" htmlFor="filter-province">
+                      استان
+                    </label>
+                    <Select
+                      value={provinceFilter}
+                      onValueChange={(value) => {
+                        setProvinceFilter(value);
+                        setCityFilter('all');
+                        setCurrentPage(1);
+                      }}
+                    >
+                      <SelectTrigger className="w-full rounded-lg" id="filter-province">
+                        <SelectValue placeholder="همه استان‌ها" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">همه استان‌ها</SelectItem>
+                        {provinces.map((province) => (
+                          <SelectItem key={province.id} value={province.name}>
+                            {province.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -437,15 +631,21 @@ export function BrowseRequests() {
                     <label className="mb-1.5 block text-xs font-medium text-muted-foreground" htmlFor="filter-city">
                       شهر
                     </label>
-                    <Select value={cityFilter} onValueChange={setCityFilter}>
+                    <Select
+                      value={cityFilter}
+                      onValueChange={(value) => {
+                        setCityFilter(value);
+                        setCurrentPage(1);
+                      }}
+                    >
                       <SelectTrigger className="w-full rounded-lg" id="filter-city">
                         <SelectValue placeholder="همه شهرها" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">همه شهرها</SelectItem>
-                        {cityNames.map((city) => (
-                          <SelectItem key={city} value={city}>
-                            {city}
+                        {filteredCities.map((city) => (
+                          <SelectItem key={city.id} value={city.name}>
+                            {city.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -457,7 +657,13 @@ export function BrowseRequests() {
                     <label className="mb-1.5 block text-xs font-medium text-muted-foreground" htmlFor="filter-sort">
                       مرتب‌سازی
                     </label>
-                    <Select value={sortBy} onValueChange={setSortBy}>
+                    <Select
+                      value={sortBy}
+                      onValueChange={(value) => {
+                        setSortBy(value);
+                        setCurrentPage(1);
+                      }}
+                    >
                       <SelectTrigger className="w-full rounded-lg" id="filter-sort">
                         <SelectValue />
                       </SelectTrigger>
@@ -480,6 +686,51 @@ export function BrowseRequests() {
                     </Button>
                   </div>
                 )}
+
+                <div className="mt-5 grid gap-4 border-t border-border/50 pt-5 lg:grid-cols-3">
+                  <div>
+                    <h3 className="mb-2 text-xs font-black text-muted-foreground">لینک دسته‌بندی‌ها</h3>
+                    <div className="flex max-h-40 flex-wrap gap-2 overflow-y-auto rounded-lg border border-border/50 bg-muted/20 p-2">
+                      {flatCategories.map((cat) => (
+                        <Link
+                          key={cat.id}
+                          href={buildUrlWithQuery(currentPathname, { category: getCategoryRouteValue(cat) })}
+                          className="rounded-full border bg-background px-2 py-1 text-[11px] hover:border-emerald-400 hover:text-emerald-600"
+                        >
+                          {cat.level ? `زیر‌دسته: ${cat.name}` : cat.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="mb-2 text-xs font-black text-muted-foreground">لینک استان‌ها</h3>
+                    <div className="flex max-h-40 flex-wrap gap-2 overflow-y-auto rounded-lg border border-border/50 bg-muted/20 p-2">
+                      {provinces.map((province) => (
+                        <Link
+                          key={province.id}
+                          href={buildUrlWithQuery(currentPathname, { province: province.name })}
+                          className="rounded-full border bg-background px-2 py-1 text-[11px] hover:border-emerald-400 hover:text-emerald-600"
+                        >
+                          {`استان ${province.name}`}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="mb-2 text-xs font-black text-muted-foreground">لینک شهرها</h3>
+                    <div className="flex max-h-40 flex-wrap gap-2 overflow-y-auto rounded-lg border border-border/50 bg-muted/20 p-2">
+                      {cityLinkItems.map(({ city, province }) => (
+                        <Link
+                          key={`${province.id}-${city.id}`}
+                          href={buildUrlWithQuery(currentPathname, { province: province.name, city: city.name })}
+                          className="rounded-full border bg-background px-2 py-1 text-[11px] hover:border-emerald-400 hover:text-emerald-600"
+                        >
+                          {`${city.name}، ${province.name}`}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -488,17 +739,30 @@ export function BrowseRequests() {
         {/* Active filter chips when filters panel is closed */}
         {!showFilters && activeFilterCount > 0 && (
           <div className="mb-4 flex flex-wrap gap-2" role="list" aria-label="فیلترهای فعال">
+            {query && (
+              <Badge variant="secondary" className="gap-1.5 rounded-lg pl-1.5" role="listitem">
+                {query}
+                <button onClick={() => { setQuery(''); setCurrentPage(1); }} aria-label="حذف فیلتر جستجو" title="حذف فیلتر جستجو"><X className="size-3" aria-hidden="true" /></button>
+              </Badge>
+            )}
             {categoryFilter !== 'all' && (
               <Badge variant="secondary" className="gap-1.5 rounded-lg pl-1.5" role="listitem">
-                {categories.find((c) => c.id === categoryFilter)?.name}
-                <button onClick={() => setCategoryFilter('all')} aria-label="حذف فیلتر دسته‌بندی" title="حذف فیلتر دسته‌بندی"><X className="size-3" aria-hidden="true" /></button>
+                {selectedCategory?.name || categoryFilter}
+                <button onClick={() => { setCategoryFilter('all'); setCurrentPage(1); }} aria-label="حذف فیلتر دسته‌بندی" title="حذف فیلتر دسته‌بندی"><X className="size-3" aria-hidden="true" /></button>
+              </Badge>
+            )}
+            {provinceFilter !== 'all' && (
+              <Badge variant="secondary" className="gap-1.5 rounded-lg pl-1.5" role="listitem">
+                <MapPin className="size-3" aria-hidden="true" />
+                {selectedProvince?.name || provinceFilter}
+                <button onClick={() => { setProvinceFilter('all'); setCityFilter('all'); setCurrentPage(1); }} aria-label="حذف فیلتر استان" title="حذف فیلتر استان"><X className="size-3" aria-hidden="true" /></button>
               </Badge>
             )}
             {cityFilter !== 'all' && (
               <Badge variant="secondary" className="gap-1.5 rounded-lg pl-1.5" role="listitem">
                 <MapPin className="size-3" aria-hidden="true" />
                 {cityFilter}
-                <button onClick={() => setCityFilter('all')} aria-label="حذف فیلتر شهر" title="حذف فیلتر شهر"><X className="size-3" aria-hidden="true" /></button>
+                <button onClick={() => { setCityFilter('all'); setCurrentPage(1); }} aria-label="حذف فیلتر شهر" title="حذف فیلتر شهر"><X className="size-3" aria-hidden="true" /></button>
               </Badge>
             )}
             <Button variant="ghost" size="sm" onClick={clearFilters} className="h-6 text-xs text-muted-foreground" title="حذف همه فیلترهای فعال">
@@ -536,39 +800,52 @@ export function BrowseRequests() {
             >
               <meta itemProp="numberOfItems" content={String(totalCount)} />
               <meta itemProp="name" content="نیازهای ثبت شده در نیاز فایندر" />
-              {requests.map((request) => (
-                <div key={request.id} itemProp="itemListElement">
-                  <RequestCard
-                    request={request}
-                    onClick={() => navigateTo('request-detail', { id: request.id })}
-                    dataHref={`/requests/${request.id}`}
-                  />
-                </div>
-              ))}
+              {requests.map((request) => {
+                const requestCategory = flatCategories.find((category) => category.id === request.categoryId);
+                const categoryHref = requestCategory
+                  ? buildUrlWithQuery(currentPathname, { category: getCategoryRouteValue(requestCategory) })
+                  : buildUrlWithQuery(currentPathname, { category: request.categoryId });
+                const cityHref = request.city
+                  ? buildUrlWithQuery(currentPathname, { province: request.province, city: request.city })
+                  : undefined;
+
+                return (
+                  <div key={request.id} itemProp="itemListElement">
+                    <RequestCard
+                      request={request}
+                      onClick={() => navigateTo('request-detail', { id: request.id })}
+                      dataHref={`/request/${request.id}`}
+                      categoryHref={categoryHref}
+                      cityHref={cityHref}
+                    />
+                  </div>
+                );
+              })}
             </div>
 
-            {/* Loading more skeleton */}
-            {loadingMore && (
-              <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <RequestCardSkeleton key={`more-${i}`} />
-                ))}
-              </div>
-            )}
-
-            {/* Load more */}
-            {currentPage < totalPages && !loadingMore && (
-              <div className="mt-8 flex justify-center">
+            {/* Standard pagination */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-3" aria-label="صفحه‌بندی نیازها">
                 <Button
                   variant="outline"
-                  size="lg"
-                  onClick={handleLoadMore}
-                  className="rounded-xl px-8 gap-2"
-                  data-href="/browse-requests"
-                  title="نمایش نیازهای بیشتر"
+                  onClick={() => setPage(currentPage - 1)}
+                  disabled={currentPage <= 1 || isLoading || loadingMore}
+                  className="rounded-xl"
+                  title="صفحه قبلی"
                 >
-                  نمایش بیشتر
-                  <ChevronDown className="size-4" aria-hidden="true" />
+                  صفحه قبلی
+                </Button>
+                <Badge variant="secondary" className="rounded-xl px-4 py-2">
+                  صفحه {currentPage.toLocaleString('fa-IR')} از {totalPages.toLocaleString('fa-IR')}
+                </Badge>
+                <Button
+                  variant="outline"
+                  onClick={() => setPage(currentPage + 1)}
+                  disabled={currentPage >= totalPages || isLoading || loadingMore}
+                  className="rounded-xl"
+                  title="صفحه بعدی"
+                >
+                  صفحه بعدی
                 </Button>
               </div>
             )}

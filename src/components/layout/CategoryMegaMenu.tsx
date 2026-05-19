@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChevronLeft,
@@ -93,6 +94,11 @@ export interface MegaMenuCategory {
   parent?: string | null;
   subCategories?: MegaMenuCategory[];
   specificFields?: FormFieldDefinition[];
+}
+
+export function getCategoryBrowseHref(category: MegaMenuCategory, pathname = '/browse-requests') {
+  const params = new URLSearchParams({ category: category.value });
+  return `${pathname}?${params.toString()}`;
 }
 
 // ============ Categories data ============
@@ -427,11 +433,13 @@ function DesktopView({
   onClose,
   onSelect,
   getIcon,
+  getHref = getCategoryBrowseHref,
 }: {
   nestedCategories: MegaMenuCategory[];
   onClose: () => void;
   onSelect: (category: MegaMenuCategory) => void;
   getIcon: (slug: string) => React.ElementType;
+  getHref?: (category: MegaMenuCategory) => string;
 }) {
   const [activeCol1, setActiveCol1] = React.useState<MegaMenuCategory | null>(null);
   const [activeCol2, setActiveCol2] = React.useState<MegaMenuCategory | null>(null);
@@ -457,17 +465,16 @@ function DesktopView({
     const Icon = getIcon(category.value) || Dot;
 
     return (
-      <div
-        role="button"
-        tabIndex={0}
+      <Link
+        href={getHref(category)}
         onClick={() => onClick(category)}
         onMouseEnter={onHover}
-        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick(category)}
         className={cn(
-          'flex w-full items-center justify-between h-10 px-3 rounded-md cursor-pointer transition-colors duration-100',
+          'flex w-full items-center justify-between h-10 px-3 rounded-md cursor-pointer transition-colors duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
           isActive ? 'bg-primary/10 font-semibold text-primary' : 'hover:bg-muted/50 text-foreground'
         )}
         dir="rtl"
+        title={`مشاهده آگهی‌های ${category.name}`}
       >
         <div className="flex items-center gap-3 overflow-hidden">
           <span className="truncate text-sm">{category.name}</span>
@@ -476,7 +483,7 @@ function DesktopView({
           <Icon className="w-5 h-5" style={{ color: getCategoryColor(category.value) }} />
           {hasSub && <ChevronLeft className="h-4 w-4 text-muted-foreground" />}
         </div>
-      </div>
+      </Link>
     );
   };
 
@@ -512,16 +519,15 @@ function DesktopView({
               className="h-full"
             >
               <ScrollArea className="h-full">
-                <div
-                  role="button"
-                  tabIndex={0}
+                <Link
+                  href={getHref(effectiveCol1)}
                   onClick={() => handleItemClick(effectiveCol1)}
-                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleItemClick(effectiveCol1)}
-                  className="flex w-full items-center h-10 px-3 font-semibold rounded-md cursor-pointer hover:bg-muted/50 text-sm"
+                  className="flex w-full items-center h-10 px-3 font-semibold rounded-md cursor-pointer hover:bg-muted/50 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   dir="rtl"
+                  title={`مشاهده همه موارد ${effectiveCol1.name}`}
                 >
                   همه موارد {effectiveCol1.name}
-                </div>
+                </Link>
                 <Separator className="my-1" />
                 {col2Categories.map(cat => (
                   <MenuItem
@@ -550,16 +556,15 @@ function DesktopView({
               className="h-full"
             >
               <ScrollArea className="h-full">
-                <div
-                  role="button"
-                  tabIndex={0}
+                <Link
+                  href={getHref(activeCol2)}
                   onClick={() => handleItemClick(activeCol2)}
-                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleItemClick(activeCol2)}
-                  className="flex w-full items-center h-10 px-3 font-semibold rounded-md cursor-pointer hover:bg-muted/50 text-sm"
+                  className="flex w-full items-center h-10 px-3 font-semibold rounded-md cursor-pointer hover:bg-muted/50 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   dir="rtl"
+                  title={`مشاهده همه موارد ${activeCol2.name}`}
                 >
                   همه موارد {activeCol2.name}
-                </div>
+                </Link>
                 <Separator className="my-1" />
                 {col3Categories.map(cat => (
                   <MenuItem
@@ -586,11 +591,13 @@ function MobileView({
   onClose,
   onSelect,
   getIcon,
+  getHref = getCategoryBrowseHref,
 }: {
   nestedCategories: MegaMenuCategory[];
   onClose: () => void;
   onSelect: (category: MegaMenuCategory) => void;
   getIcon: (slug: string) => React.ElementType;
+  getHref?: (category: MegaMenuCategory) => string;
 }) {
   const [history, setHistory] = React.useState<MegaMenuCategory[][]>([nestedCategories]);
   const [direction, setDirection] = React.useState(1);
@@ -612,14 +619,16 @@ function MobileView({
   const parentCategory = findParentCategory(history);
   const parentCategoryName = parentCategory ? parentCategory.name : 'همه دسته‌بندی‌ها';
 
-  const handleSelect = (category: MegaMenuCategory) => {
+  const openSubCategories = (category: MegaMenuCategory) => {
     if (category.subCategories && category.subCategories.length > 0) {
       setDirection(1);
       setHistory(prev => [...prev, category.subCategories!]);
-    } else {
-      onSelect(category);
-      onClose();
     }
+  };
+
+  const handleLinkClick = (category: MegaMenuCategory) => {
+    onSelect(category);
+    onClose();
   };
 
   const handleBack = () => {
@@ -632,10 +641,7 @@ function MobileView({
   };
 
   const handleSelectAll = () => {
-    if (parentCategory) {
-      onSelect(parentCategory);
-      onClose();
-    }
+    if (parentCategory) handleLinkClick(parentCategory);
   };
 
   const slideVariants = {
@@ -681,17 +687,16 @@ function MobileView({
           >
             <ScrollArea className="h-full">
               <div className="p-2 space-y-1">
-                {history.length > 1 && (
+                {history.length > 1 && parentCategory && (
                   <>
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      className="flex w-full items-center text-right h-12 px-3 text-base rounded-md cursor-pointer hover:bg-muted/50 font-semibold text-primary"
+                    <Link
+                      href={getHref(parentCategory)}
+                      className="flex w-full items-center text-right h-12 px-3 text-base rounded-md cursor-pointer hover:bg-muted/50 font-semibold text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                       onClick={handleSelectAll}
-                      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleSelectAll()}
+                      title={`مشاهده همه موارد ${parentCategoryName}`}
                     >
                       همه موارد {parentCategoryName}
-                    </div>
+                    </Link>
                     <Separator />
                   </>
                 )}
@@ -702,20 +707,29 @@ function MobileView({
                   return (
                     <div
                       key={cat.id}
-                      role="button"
-                      tabIndex={0}
-                      className="flex w-full items-center justify-between h-12 px-3 text-base rounded-md cursor-pointer hover:bg-muted/50 transition-colors duration-100"
-                      onClick={() => handleSelect(cat)}
-                      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleSelect(cat)}
+                      className="flex w-full items-center justify-between gap-2 rounded-md hover:bg-muted/50 transition-colors duration-100"
                       dir="rtl"
                     >
-                      <div className="flex items-center gap-3 overflow-hidden">
+                      <Link
+                        href={getHref(cat)}
+                        onClick={() => handleLinkClick(cat)}
+                        className="flex h-12 min-w-0 flex-1 items-center gap-3 px-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                        title={`مشاهده آگهی‌های ${cat.name}`}
+                      >
                         <span className="truncate">{cat.name}</span>
-                      </div>
-                      <div className="flex items-center gap-3 flex-shrink-0">
                         <Icon className="w-5 h-5" style={{ color: categoryColor }} />
-                        {hasSub && <ChevronLeft className="h-5 w-5 text-muted-foreground" />}
-                      </div>
+                      </Link>
+                      {hasSub && (
+                        <button
+                          type="button"
+                          onClick={() => openSubCategories(cat)}
+                          className="ml-2 flex size-10 flex-shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          aria-label={`نمایش زیر‌دسته‌های ${cat.name}`}
+                          title={`نمایش زیر‌دسته‌های ${cat.name}`}
+                        >
+                          <ChevronLeft className="h-5 w-5" />
+                        </button>
+                      )}
                     </div>
                   );
                 })}
@@ -735,6 +749,7 @@ interface CategorySelectorProps {
   onClose: () => void;
   onSelect: (category: MegaMenuCategory) => void;
   getIcon: (slug: string) => React.ElementType;
+  getHref?: (category: MegaMenuCategory) => string;
 }
 
 export function CategorySelector({
@@ -743,11 +758,12 @@ export function CategorySelector({
   onSelect,
   onClose,
   getIcon,
+  getHref,
 }: CategorySelectorProps) {
   if (isDesktop) {
-    return <DesktopView nestedCategories={nestedCategories} onSelect={onSelect} onClose={onClose} getIcon={getIcon} />;
+    return <DesktopView nestedCategories={nestedCategories} onSelect={onSelect} onClose={onClose} getIcon={getIcon} getHref={getHref} />;
   }
-  return <MobileView nestedCategories={nestedCategories} onSelect={onSelect} onClose={onClose} getIcon={getIcon} />;
+  return <MobileView nestedCategories={nestedCategories} onSelect={onSelect} onClose={onClose} getIcon={getIcon} getHref={getHref} />;
 }
 
 // ============ Header Trigger Buttons ============

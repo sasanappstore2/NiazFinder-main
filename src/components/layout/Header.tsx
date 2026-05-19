@@ -366,6 +366,10 @@ function HeaderCategoryMenuDesktop() {
         <PopoverTrigger asChild>
           <button
             type="button"
+            onClick={(event) => {
+              event.preventDefault();
+              setIsOpen((open) => !open);
+            }}
             className={cn(
               'flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200',
               'border border-transparent',

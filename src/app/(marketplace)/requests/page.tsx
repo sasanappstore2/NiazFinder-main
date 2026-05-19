@@ -3,5 +3,5 @@
 import { BrowseRequests } from '@/components/requests/BrowseRequests';
 
 export default function RequestsPage() {
-  return <BrowseRequests />;
+  return <BrowseRequests basePath="/requests" />;
 }

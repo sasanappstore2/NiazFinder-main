@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
 
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '10', 10)));
+    const province = searchParams.get('province') || undefined;
     const city = searchParams.get('city') || undefined;
     const skill = searchParams.get('skill') || undefined;
     const sort = searchParams.get('sort') || 'rating';
@@ -48,6 +49,10 @@ export async function GET(request: NextRequest) {
       isActive: true,
       isBanned: false,
     };
+
+    if (province) {
+      where.province = { contains: province };
+    }
 
     if (city) {
       where.city = { contains: city };

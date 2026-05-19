@@ -60,7 +60,8 @@ export async function GET(request: NextRequest) {
 
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '10', 10)));
-    const categoryId = searchParams.get('categoryId') || undefined;
+    const categoryFilter = searchParams.get('category') || searchParams.get('categoryId') || undefined;
+    const province = searchParams.get('province') || undefined;
     const city = searchParams.get('city') || undefined;
     const status = searchParams.get('status') || undefined;
     const sort = searchParams.get('sort') || 'newest';
@@ -68,9 +69,36 @@ export async function GET(request: NextRequest) {
 
     // Build where clause
     const where: Prisma.ServiceRequestWhereInput = {};
+    const andFilters: Prisma.ServiceRequestWhereInput[] = [];
 
-    if (categoryId) {
-      where.categoryId = categoryId;
+    if (categoryFilter) {
+      const category = await db.category.findFirst({
+        where: {
+          OR: [
+            { id: categoryFilter },
+            { slug: categoryFilter },
+          ],
+        },
+        include: {
+          children: { select: { id: true } },
+        },
+      });
+
+      if (category) {
+        const categoryIds = [category.id, ...category.children.map((child) => child.id)];
+        andFilters.push({
+          OR: [
+            { categoryId: { in: categoryIds } },
+            { subcategoryId: { in: categoryIds } },
+          ],
+        });
+      } else {
+        where.categoryId = categoryFilter;
+      }
+    }
+
+    if (province) {
+      where.province = { contains: province };
     }
 
     if (city) {
@@ -82,10 +110,16 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      where.OR = [
-        { title: { contains: search } },
-        { description: { contains: search } },
-      ];
+      andFilters.push({
+        OR: [
+          { title: { contains: search } },
+          { description: { contains: search } },
+        ],
+      });
+    }
+
+    if (andFilters.length) {
+      where.AND = andFilters;
     }
 
     // Build orderBy
