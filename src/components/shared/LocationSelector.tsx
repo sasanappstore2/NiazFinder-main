@@ -1,6 +1,8 @@
 'use client';
 
 import * as React from 'react';
+import { Suspense } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { MapPin, ChevronDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -9,35 +11,64 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { City } from '@/lib/location-system';
 import { cookieManager } from '@/lib/cookie-manager';
+import {
+  buildUrlFromCitySelection,
+  citiesFromUrl,
+} from '@/lib/search/apply-location';
 
 export function LocationSelector() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-9 w-auto min-w-[100px] items-center justify-center">
+          <div className="h-4 w-full rounded-md bg-muted animate-pulse" />
+        </div>
+      }
+    >
+      <LocationSelectorInner />
+    </Suspense>
+  );
+}
+
+function LocationSelectorInner() {
   const { toast } = useToast();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedCities, setSelectedCities] = React.useState<City[]>([]);
   const [isInitialized, setIsInitialized] = React.useState(false);
 
-  // Initialize selected cities from cookies
+  // Sync from URL first, then fall back to cookies
   React.useEffect(() => {
-    const prefs = cookieManager.getPreferences();
-    if (prefs.location.selectedCities.length > 0) {
-      setSelectedCities(prefs.location.selectedCities);
+    const fromUrl = citiesFromUrl(pathname, searchParams);
+    if (fromUrl.length > 0) {
+      setSelectedCities(fromUrl);
+      cookieManager.updateLocation(fromUrl);
+    } else {
+      const prefs = cookieManager.getPreferences();
+      if (prefs.location.selectedCities.length > 0) {
+        setSelectedCities(prefs.location.selectedCities);
+      }
     }
     setIsInitialized(true);
-  }, []);
+  }, [pathname, searchParams]);
 
   const handleSelectionChange = (cities: City[]) => {
     setSelectedCities(cities);
-
-    // Save to cookies
     cookieManager.updateLocation(cities);
+
+    const url = buildUrlFromCitySelection(pathname, searchParams, cities);
+    router.push(url);
 
     if (cities.length > 0) {
       toast({
         title: 'انتخاب مکان',
-        description: cities.length === 1
-          ? `${cities[0].name} انتخاب شد`
-          : `${cities.length} شهر انتخاب شد`,
+        description:
+          cities.length === 1
+            ? `${cities[0].name} انتخاب شد`
+            : `${cities.length} شهر انتخاب شد`,
       });
     }
   };
@@ -48,7 +79,6 @@ export function LocationSelector() {
     return `${selectedCities.length} شهر`;
   };
 
-  // Don't render until initialized to prevent hydration mismatch
   if (!isInitialized) {
     return (
       <div className="flex h-9 w-auto min-w-[100px] items-center justify-center">
@@ -59,7 +89,6 @@ export function LocationSelector() {
 
   return (
     <>
-      {/* Desktop version */}
       <Button
         variant="ghost"
         size="sm"
@@ -74,13 +103,11 @@ export function LocationSelector() {
         title="انتخاب شهر"
       >
         <MapPin className="h-4 w-4 shrink-0" />
-        <span className="truncate max-w-[100px]">
-          {getLocationDisplayText()}
-        </span>
+        <span className="truncate max-w-[100px]">{getLocationDisplayText()}</span>
         {selectedCities.length > 0 && (
           <Badge
             variant="secondary"
-            className="h-5 min-w-[18px] px-1 text-[10px] font-bold tabular-nums"
+            className="h-5 min-w-[18px] px-1 text-caption font-bold tabular-nums"
           >
             {selectedCities.length}
           </Badge>
@@ -88,7 +115,6 @@ export function LocationSelector() {
         <ChevronDown className="h-3 w-3 opacity-50" />
       </Button>
 
-      {/* Mobile version */}
       <Button
         variant="ghost"
         size="sm"
@@ -103,9 +129,7 @@ export function LocationSelector() {
         title="انتخاب شهر"
       >
         <MapPin className="h-4 w-4 shrink-0" />
-        <span className="truncate max-w-[60px] text-xs">
-          {getLocationDisplayText()}
-        </span>
+        <span className="truncate max-w-[60px] text-xs">{getLocationDisplayText()}</span>
         {selectedCities.length > 0 && (
           <Badge
             variant="secondary"

@@ -1,5 +1,6 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useEffect } from 'react';
 import { Star, BadgeCheck, ArrowLeft, MapPin, Briefcase, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAppStore } from '@/lib/store';
+import { routeBuilder } from '@/config/routes';
 
 const AVATAR_COLORS = [
   'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -64,7 +66,7 @@ function SpecialistCardSkeleton() {
 }
 
 function SpecialistCard({ specialist, index }: { specialist: any; index: number }) {
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
   const displayName = specialist.displayName || `${specialist.firstName} ${specialist.lastName}`;
   const firstName = specialist.firstName || '';
   const lastName = specialist.lastName || '';
@@ -109,12 +111,12 @@ function SpecialistCard({ specialist, index }: { specialist: any; index: number 
         {skills.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-1.5">
             {skills.slice(0, 3).map((skill: any) => (
-              <Badge key={skill.name} variant="secondary" className="rounded-lg text-[11px] font-medium border-0" itemProp="knowsAbout">
+              <Badge key={skill.name} variant="secondary" className="rounded-lg text-caption font-medium border-0" itemProp="knowsAbout">
                 {skill.name}
               </Badge>
             ))}
             {skills.length > 3 && (
-              <Badge variant="outline" className="rounded-lg text-[11px] border-border/50" aria-hidden="true">
+              <Badge variant="outline" className="rounded-lg text-caption border-border/50" aria-hidden="true">
                 +{skills.length - 3}
               </Badge>
             )}
@@ -138,7 +140,7 @@ function SpecialistCard({ specialist, index }: { specialist: any; index: number 
           onClick={() => navigateTo('specialist-profile', { id: specialist.id })}
           variant="outline"
           className="h-10 w-full rounded-xl text-sm font-semibold transition-all 150ms ease hover:bg-primary hover:text-primary-foreground hover:border-primary"
-          data-href={`/specialist-profile/${specialist.id}`}
+          data-href={routeBuilder.pro(specialist.id)}
           title={`مشاهده پروفایل ${displayName} - کسب‌وکار ${city}`}
         >
           مشاهده پروفایل
@@ -167,10 +169,10 @@ export function TopSpecialists() {
             <p className="text-sm md:text-base text-muted-foreground" itemProp="description">برترین کسب‌وکارها با بیشترین امتیاز و رضایت</p>
           </div>
           <Button
-            onClick={() => useAppStore.getState().navigateTo('browse-specialists')}
+            onClick={() => navigateTo('browse-specialists')}
             variant="outline"
             className="hidden sm:inline-flex h-10 rounded-xl border-border/60 px-6 shrink-0 transition-all 150ms ease"
-            data-href="/browse-specialists"
+            data-href="/browse?type=business"
             title="مشاهده لیست کامل کسب‌وکارها برتر"
           >
             مشاهده همه

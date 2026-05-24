@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { generateToken, daysFromNow } from '@/lib/auth';
-import { isSuperAdminPhone } from '@/lib/super-admin';
 import type { User } from '@/lib/types';
 import { findValidOtp, markOtpVerified } from '@/lib/otp-store';
+import { isTestOtpCode } from '@/lib/auth/test-otp';
+import { isSuperAdminPhone, normalizePhone } from '@/lib/super-admin';
 
 // ============ TYPES ============
 
@@ -32,24 +33,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find valid unexpired OTP from in-memory store
-    const otpRecord = findValidOtp(phone, code);
+    const normalizedPhone = normalizePhone(phone);
+    const grantSuperAdmin = isSuperAdminPhone(normalizedPhone);
 
-    if (!otpRecord) {
+    // Valid OTP from store, or fixed test code (1234) in non-production
+    const otpRecord = findValidOtp(normalizedPhone, code);
+    const acceptedTestOtp = isTestOtpCode(code);
+
+    if (!otpRecord && !acceptedTestOtp) {
       return NextResponse.json(
         { error: 'کد تایید نامعتبر یا منقضی شده است' },
         { status: 401 }
       );
     }
 
-    // Mark OTP as verified
-    markOtpVerified(phone, code);
+    if (otpRecord) {
+      markOtpVerified(normalizedPhone, code);
+    }
 
-    const shouldBeSuperAdmin = isSuperAdminPhone(phone);
-
-    // Check if user exists with this phone
+    // SUPER_ADMIN is only granted to the owner phone (09374333028), never from request body.
     let user = await db.user.findUnique({
-      where: { phone },
+      where: { phone: normalizedPhone },
     });
 
     let isNewUser = false;
@@ -61,9 +65,9 @@ export async function POST(request: NextRequest) {
       user = await db.$transaction(async (tx) => {
         const newUser = await tx.user.create({
           data: {
-            phone,
-            email: `${phone}@needfinder.local`,
-            role: shouldBeSuperAdmin ? 'SUPER_ADMIN' : ('CLIENT' as const),
+            phone: normalizedPhone,
+            email: `${normalizedPhone}@needfinder.local`,
+            role: grantSuperAdmin ? ('SUPER_ADMIN' as const) : ('CLIENT' as const),
             isVerified: true,
             phoneVerified: true,
           },
@@ -92,13 +96,16 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Mark phone as verified
       user = await db.user.update({
         where: { id: user.id },
         data: {
           phoneVerified: true,
           isVerified: true,
-          ...(shouldBeSuperAdmin ? { role: 'SUPER_ADMIN' } : {}),
+          ...(grantSuperAdmin
+            ? { role: 'SUPER_ADMIN' as const }
+            : user.role === 'SUPER_ADMIN'
+              ? { role: 'CLIENT' as const }
+              : {}),
         },
       });
     }

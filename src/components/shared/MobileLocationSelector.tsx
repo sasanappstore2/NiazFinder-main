@@ -1,38 +1,56 @@
 'use client';
 
 import * as React from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { MapPin, ChevronLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { CitySelectorPopup } from '@/components/ui/city-selector-popup';
 import { cn } from '@/lib/utils';
 import type { City } from '@/lib/location-system';
 import { cookieManager } from '@/lib/cookie-manager';
+import {
+  buildUrlFromCitySelection,
+  citiesFromUrl,
+} from '@/lib/search/apply-location';
 
 export function MobileLocationSelector() {
   const { toast } = useToast();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedCities, setSelectedCities] = React.useState<City[]>([]);
   const [isInitialized, setIsInitialized] = React.useState(false);
 
   React.useEffect(() => {
-    const prefs = cookieManager.getPreferences();
-    if (prefs.location.selectedCities.length > 0) {
-      setSelectedCities(prefs.location.selectedCities);
+    const fromUrl = citiesFromUrl(pathname, searchParams);
+    if (fromUrl.length > 0) {
+      setSelectedCities(fromUrl);
+      cookieManager.updateLocation(fromUrl);
+    } else {
+      const prefs = cookieManager.getPreferences();
+      if (prefs.location.selectedCities.length > 0) {
+        setSelectedCities(prefs.location.selectedCities);
+      }
     }
     setIsInitialized(true);
-  }, []);
+  }, [pathname, searchParams]);
 
   const handleSelectionChange = (cities: City[]) => {
     setSelectedCities(cities);
     cookieManager.updateLocation(cities);
 
+    const url = buildUrlFromCitySelection(pathname, searchParams, cities);
+    router.push(url);
+
     if (cities.length > 0) {
       toast({
         title: 'انتخاب مکان',
-        description: cities.length === 1
-          ? `${cities[0].name} انتخاب شد`
-          : `${cities.length} شهر انتخاب شد`,
+        description:
+          cities.length === 1
+            ? `${cities[0].name} انتخاب شد`
+            : `${cities.length} شهر انتخاب شد`,
       });
     }
   };
@@ -67,8 +85,6 @@ export function MobileLocationSelector() {
         onOpenChange={setIsOpen}
         selectedCities={selectedCities}
         onSelectionChange={handleSelectionChange}
-        title="انتخاب شهر"
-        description="شهرهای مورد نظر خود را انتخاب کنید"
       />
     </>
   );

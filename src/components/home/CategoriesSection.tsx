@@ -1,5 +1,6 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useEffect } from 'react';
 import { ArrowLeft, FileText, Users, Globe, Palette, Smartphone, Monitor, Pen, BookOpen, Home, Wrench, GraduationCap, Bot, Briefcase, Heart, Code, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
 };
 
 export function CategoriesSection() {
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
   const categories = useAppStore((s) => s.categories);
   const fetchCategories = useAppStore((s) => s.fetchCategories);
 
@@ -40,7 +41,7 @@ export function CategoriesSection() {
             onClick={() => navigateTo('browse-requests')}
             variant="outline"
             className="hidden sm:inline-flex h-10 rounded-xl border-border/60 px-6 shrink-0 transition-all 150ms ease"
-            data-href="/browse-requests"
+            data-href="/browse?type=need"
             title="مشاهده همه دسته‌بندی‌های خدمات"
           >
             مشاهده همه
@@ -75,7 +76,7 @@ export function CategoriesSection() {
                   key={category.id}
                   onClick={() => navigateTo('browse-requests', { categoryId: category.id })}
                   className="group cursor-pointer border-border/50 bg-card/80 py-5 hover-lift transition-all 150ms ease"
-                  data-href={`/browse-requests?categoryId=${category.id}`}
+                  data-href={`/need?categoryId=${category.id}`}
                   title={`${category.name} - ${category.requestCount.toLocaleString('fa-IR')} نیاز فعال`}
                   itemScope
                   itemType="https://schema.org/ListItem"
@@ -114,7 +115,7 @@ export function CategoriesSection() {
             onClick={() => navigateTo('browse-requests')}
             variant="outline"
             className="h-10 rounded-xl border-border/60 px-6"
-            data-href="/browse-requests"
+            data-href="/browse?type=need"
             title="مشاهده همه دسته‌بندی‌های خدمات"
           >
             مشاهده همه

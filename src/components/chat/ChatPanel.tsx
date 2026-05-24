@@ -104,7 +104,7 @@ const QUICK_EMOJIS = [
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export function ChatPanel() {
+export function ChatPanel({ conversationId: initialConversationId }: { conversationId?: string } = {}) {
   const {
     isAuthenticated,
     setAuthModalOpen,
@@ -125,6 +125,13 @@ export function ChatPanel() {
   const [searchQuery, setSearchQuery] = useState('');
   const [newMessage, setNewMessage] = useState('');
   const [showMessages, setShowMessages] = useState(false);
+
+  useEffect(() => {
+    if (initialConversationId) {
+      setActiveConversationId(initialConversationId);
+      setShowMessages(true);
+    }
+  }, [initialConversationId, setActiveConversationId]);
   const [replyTo, setReplyTo] = useState<{ messageId: string; senderName: string; content: string } | null>(null);
   const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -393,8 +400,8 @@ export function ChatPanel() {
             <MessageSquare className="h-8 w-8 text-primary" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">دسترسی به پیام‌ها</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="text-h3 font-semibold">دسترسی به پیام‌ها</h3>
+            <p className="text-body-sm text-muted-foreground">
               برای مشاهده و ارسال پیام، ابتدا وارد حساب کاربری شوید
             </p>
           </div>
@@ -420,7 +427,7 @@ export function ChatPanel() {
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b px-4 py-3">
-          <h2 className="text-lg font-bold">پیام‌ها</h2>
+          <h2 className="text-h2 font-bold">پیام‌ها</h2>
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
@@ -542,7 +549,7 @@ export function ChatPanel() {
                             </p>
                           )}
                           {user.role && user.role !== 'CLIENT' && (
-                            <Badge variant="secondary" className="text-[10px] px-1 py-0 h-3.5">
+                            <Badge variant="secondary" className="text-caption px-1 py-0 h-3.5">
                               {user.role === 'SPECIALIST' ? 'کسب‌وکار' : user.role === 'ADMIN' ? 'مدیر' : user.role}
                             </Badge>
                           )}
@@ -555,7 +562,7 @@ export function ChatPanel() {
                         user.online && (
                           <Badge
                             variant="outline"
-                            className="shrink-0 border-emerald-300 text-emerald-600 dark:text-emerald-400 text-[10px] px-1.5 py-0 h-5"
+                            className="shrink-0 border-emerald-300 text-emerald-600 dark:text-emerald-400 text-caption px-1.5 py-0 h-5"
                           >
                             آنلاین
                           </Badge>
@@ -795,7 +802,7 @@ export function ChatPanel() {
                           <p className="text-sm leading-7">{msg.content}</p>
                           <div
                             className={cn(
-                              'mt-1 flex items-center gap-1.5 text-[10px]',
+                              'mt-1 flex items-center gap-1.5 text-caption',
                               isMe ? 'text-primary-foreground/60' : 'text-muted-foreground'
                             )}
                           >

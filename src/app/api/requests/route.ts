@@ -18,6 +18,10 @@ interface CreateRequestBody {
   province?: string;
   priority?: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
   tags?: string[];
+  intentType?: string;
+  dynamicAnswers?: Record<string, unknown>;
+  aiExtractedData?: Record<string, unknown>;
+  source?: string;
 }
 
 interface RequestListItem {
@@ -101,7 +105,20 @@ export async function GET(request: NextRequest) {
       where.province = { contains: province };
     }
 
-    if (city) {
+    const citiesParam = searchParams.get('cities');
+    if (citiesParam) {
+      const cityNames = citiesParam
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
+      if (cityNames.length === 1) {
+        where.city = { contains: cityNames[0] };
+      } else if (cityNames.length > 1) {
+        andFilters.push({
+          OR: cityNames.map((name) => ({ city: { contains: name } })),
+        });
+      }
+    } else if (city) {
       where.city = { contains: city };
     }
 
@@ -241,6 +258,10 @@ export async function POST(request: NextRequest) {
       province,
       priority,
       tags,
+      intentType,
+      dynamicAnswers,
+      aiExtractedData,
+      source,
     } = body;
 
     // Validate required fields
@@ -288,6 +309,10 @@ export async function POST(request: NextRequest) {
         categoryId,
         priority: priority || 'NORMAL',
         tags: JSON.stringify(tags || []),
+        intentType: intentType?.trim() || null,
+        dynamicAnswers: JSON.stringify(dynamicAnswers ?? {}),
+        aiExtractedData: JSON.stringify(aiExtractedData ?? {}),
+        source: source?.trim() || 'form',
         userId: user.id,
       },
       include: {

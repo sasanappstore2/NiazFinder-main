@@ -1,5 +1,6 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useEffect } from 'react';
 import { MapPin, Clock, DollarSign, FileText, ArrowLeft, Flame, Globe, Palette, Smartphone, Monitor, Pen, BookOpen, Home, Wrench, GraduationCap, Bot, Briefcase, Heart, Code, type LucideIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,6 +11,7 @@ import { useAppStore } from '@/lib/store';
 import { formatBudgetRange, getTimeAgo, getPriorityLabel } from '@/lib/constants';
 import type { ServiceRequest } from '@/lib/types';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
+import { routeBuilder } from '@/config/routes';
 
 // Category icon mapping
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -38,7 +40,7 @@ function PriorityBadge({ priority }: { priority: string }) {
   const config = priorityConfig[priority] || priorityConfig.NORMAL;
   const Icon = config.icon;
   return (
-    <Badge variant="outline" className={`rounded-lg text-[11px] font-medium ${config.className}`}>
+    <Badge variant="outline" className={`rounded-lg text-caption font-medium ${config.className}`}>
       <Icon className="size-3" aria-hidden="true" />
       {getPriorityLabel(priority)}
     </Badge>
@@ -74,14 +76,14 @@ function RequestCardSkeleton() {
 }
 
 function RequestCard({ request }: { request: ServiceRequest }) {
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
   const IconComponent = ICON_MAP[request.categoryIcon || ''] || Globe;
 
   return (
     <Card
       onClick={() => navigateTo('request-detail', { id: request.id })}
       className="group cursor-pointer overflow-hidden border-border/50 bg-card/80 hover-lift transition-all 150ms ease"
-      data-href={`/request-detail/${request.id}`}
+      data-href={routeBuilder.listing(request.id, request.title)}
       title={`${request.title} - ${request.categoryName} - ${request.city}`}
       itemScope
       itemType="https://schema.org/Offer"
@@ -131,8 +133,8 @@ function RequestCard({ request }: { request: ServiceRequest }) {
               <span>{request.proposalCount.toLocaleString('fa-IR')} پیشنهاد</span>
             </div>
             <div className="flex items-center gap-2">
-              <time className="text-[11px] text-muted-foreground" dateTime={request.createdAt} itemProp="datePosted">{getTimeAgo(request.createdAt)}</time>
-              <div className="size-6 rounded-full flex items-center justify-center text-[10px] font-bold bg-primary/10 text-primary" aria-hidden="true">
+              <time className="text-caption text-muted-foreground" dateTime={request.createdAt} itemProp="datePosted">{getTimeAgo(request.createdAt)}</time>
+              <div className="size-6 rounded-full flex items-center justify-center text-caption font-bold bg-primary/10 text-primary" aria-hidden="true">
                 {request.user.firstName.charAt(0)}{request.user.lastName.charAt(0)}
               </div>
             </div>
@@ -161,10 +163,10 @@ export function FeaturedRequests() {
             <p className="text-sm md:text-base text-muted-foreground" itemProp="description">جدیدترین نیازهای ثبت شده توسط کاربران</p>
           </div>
           <Button
-            onClick={() => useAppStore.getState().navigateTo('browse-requests')}
+            onClick={() => navigateTo('browse-requests')}
             variant="outline"
             className="hidden sm:inline-flex h-10 rounded-xl border-border/60 px-6 shrink-0 transition-all 150ms ease"
-            data-href="/browse-requests"
+            data-href="/browse?type=need"
             title="مشاهده لیست کامل نیازهای ثبت شده"
           >
             مشاهده همه نیازها
@@ -188,10 +190,10 @@ export function FeaturedRequests() {
 
         <div className="mt-8 flex justify-center sm:hidden">
           <Button
-            onClick={() => useAppStore.getState().navigateTo('browse-requests')}
+            onClick={() => navigateTo('browse-requests')}
             variant="outline"
             className="h-10 rounded-xl border-border/60 px-6"
-            data-href="/browse-requests"
+            data-href="/browse?type=need"
             title="مشاهده لیست کامل نیازهای ثبت شده"
           >
             مشاهده همه نیازها

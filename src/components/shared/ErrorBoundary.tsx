@@ -34,11 +34,31 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     };
   }
 
+  /**
+   * Next.js routes redirect/notFound/forbidden via thrown errors with a
+   * `digest` field starting with "NEXT_". Those MUST bubble up to the
+   * framework's own boundaries (RedirectErrorBoundary, HTTPAccessFallback)
+   * so that the navigation actually happens. Re-throwing here is the
+   * documented escape hatch.
+   */
+  private static isNextInternalError(error: unknown): boolean {
+    if (!error || typeof error !== 'object') return false;
+    const digest = (error as { digest?: unknown }).digest;
+    return typeof digest === 'string' && digest.startsWith('NEXT_');
+  }
+
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+    if (ErrorBoundary.isNextInternalError(error)) {
+      // Re-throw so the framework can handle navigation control flow.
+      throw error;
+    }
     return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    if (ErrorBoundary.isNextInternalError(error)) {
+      throw error;
+    }
     this.setState({ errorInfo });
     console.error('[ErrorBoundary] Caught error:', error, errorInfo);
   }
@@ -53,8 +73,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   };
 
   private handleGoHome = () => {
-    const store = useAppStore.getState();
-    store.navigateTo('home');
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+    }
     this.setState({
       hasError: false,
       error: null,
@@ -151,12 +172,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                             {error.name}: {error.message}
                           </p>
                           {errorInfo?.componentStack && (
-                            <pre className="text-[11px] text-muted-foreground font-mono whitespace-pre-wrap break-words max-h-48 overflow-y-auto leading-relaxed">
+                            <pre className="text-caption text-muted-foreground font-mono whitespace-pre-wrap break-words max-h-48 overflow-y-auto leading-relaxed">
                               {errorInfo.componentStack}
                             </pre>
                           )}
                           {error.stack && (
-                            <pre className="text-[11px] text-muted-foreground font-mono whitespace-pre-wrap break-words max-h-48 overflow-y-auto mt-2 leading-relaxed">
+                            <pre className="text-caption text-muted-foreground font-mono whitespace-pre-wrap break-words max-h-48 overflow-y-auto mt-2 leading-relaxed">
                               {error.stack}
                             </pre>
                           )}

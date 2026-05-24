@@ -1,5 +1,6 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useState, useEffect } from 'react';
 import {
   LocateFixed,
@@ -22,32 +23,10 @@ import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
 import type { AppView } from '@/lib/types';
+import { legacyViewToPath, routeBuilder } from '@/config/routes';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-
-// ============ View → SEO path mapping ============
-const VIEW_HREF: Record<AppView, string> = {
-  'home': '/',
-  'login': '/login',
-  'register': '/register',
-  'post-need': '/post-need',
-  'browse-requests': '/browse-requests',
-  'request-detail': '/request-detail',
-  'browse-specialists': '/browse-specialists',
-  'specialist-profile': '/specialist-profile',
-  'dashboard': '/dashboard',
-  'messages': '/messages',
-  'notifications': '/notifications',
-  'admin': '/admin',
-  'profile': '/profile',
-  'pricing': '/pricing',
-  'compare-specialists': '/compare-specialists',
-  'submit-proposal': '/submit-proposal',
-  'submit-review': '/submit-review',
-  'referral': '/referral',
-  'notification-settings': '/notification-settings',
-};
 
 // ============ Footer Link ============
 interface FooterLinkItem {
@@ -131,7 +110,7 @@ interface FooterProps {
 }
 
 export function Footer({ compact = false }: FooterProps) {
-  const { navigateTo } = useAppStore();
+  const { navigateTo } = useNavigate();
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isSubscribing, setIsSubscribing] = useState(false);
@@ -209,9 +188,9 @@ export function Footer({ compact = false }: FooterProps) {
             {/* Quick links */}
             <nav className="flex items-center gap-4" aria-label="پاورقی" role="navigation">
               <a
-                href={VIEW_HREF['home']}
+                href={routeBuilder.home()}
                 data-view="home"
-                data-href={VIEW_HREF['home']}
+                data-href={routeBuilder.home()}
                 title="صفحه اصلی"
                 onClick={(e) => handleLinkClick(e, FOOTER_COLUMNS[0].links[0])}
                 className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
@@ -219,9 +198,9 @@ export function Footer({ compact = false }: FooterProps) {
                 صفحه اصلی
               </a>
               <a
-                href={VIEW_HREF['post-need']}
+                href={routeBuilder.needNew()}
                 data-view="post-need"
-                data-href={VIEW_HREF['post-need']}
+                data-href={routeBuilder.needNew()}
                 title="ثبت نیاز"
                 onClick={(e) => handleLinkClick(e, FOOTER_COLUMNS[0].links[1])}
                 className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
@@ -229,9 +208,9 @@ export function Footer({ compact = false }: FooterProps) {
                 ثبت نیاز
               </a>
               <a
-                href={VIEW_HREF['browse-specialists']}
+                href={routeBuilder.browseAll({ type: 'business' })}
                 data-view="browse-specialists"
-                data-href={VIEW_HREF['browse-specialists']}
+                data-href={routeBuilder.browseAll({ type: 'business' })}
                 title="کسب‌وکارها"
                 onClick={(e) => handleLinkClick(e, FOOTER_COLUMNS[0].links[2])}
                 className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
@@ -260,8 +239,8 @@ export function Footer({ compact = false }: FooterProps) {
           <div className="container-default py-3">
             <nav className="flex flex-wrap items-center justify-center gap-4 text-xs" aria-label="لینک‌های پایین صفحه">
               <a href="/" title="صفحه اصلی">صفحه اصلی</a>
-              <a href="/post-need" title="ثبت نیاز">ثبت نیاز</a>
-              <a href="/browse-specialists" title="کسب‌وکارها">کسب‌وکارها</a>
+              <a href="/post" title="ثبت نیاز">ثبت نیاز</a>
+              <a href="/browse?type=business" title="کسب‌وکارها">کسب‌وکارها</a>
               <a href="/pricing" title="تعرفه‌ها">تعرفه‌ها</a>
               <a href="#contact" title="تماس با ما">تماس با ما</a>
             </nav>
@@ -340,13 +319,13 @@ export function Footer({ compact = false }: FooterProps) {
                   </Button>
                 </div>
                 {subscribeError && (
-                  <div className="flex items-center gap-1.5 text-[11px] text-red-500 dark:text-red-400">
+                  <div className="flex items-center gap-1.5 text-caption text-red-500 dark:text-red-400">
                     <AlertCircle className="size-3 shrink-0" />
                     {subscribeError}
                   </div>
                 )}
                 {isSubscribed && (
-                  <div className="flex items-center gap-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 animate-fade-in-up">
+                  <div className="flex items-center gap-1.5 text-caption text-emerald-600 dark:text-emerald-400 animate-fade-in-up">
                     <CheckCircle2 className="size-3 shrink-0" />
                     عضویت شما با موفقیت انجام شد!
                   </div>
@@ -421,9 +400,9 @@ export function Footer({ compact = false }: FooterProps) {
                   <li key={link.label} className="transition-all duration-150 hover:border-s-2 hover:border-primary hover:ps-3">
                     {link.view ? (
                       <a
-                        href={VIEW_HREF[link.view]}
+                        href={legacyViewToPath(link.view)}
                         data-view={link.view}
-                        data-href={VIEW_HREF[link.view]}
+                        data-href={legacyViewToPath(link.view)}
                         title={link.title}
                         onClick={(e) => handleLinkClick(e, link)}
                         className="flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 hover:text-primary link-underline-animated"
@@ -517,18 +496,18 @@ export function Footer({ compact = false }: FooterProps) {
               <h4 className="mb-3 text-sm font-semibold">دسترسی سریع</h4>
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <li><a href="/" title="صفحه اصلی نیاز فایندر">صفحه اصلی</a></li>
-                <li><a href="/post-need" title="ثبت نیاز جدید">ثبت نیاز</a></li>
-                <li><a href="/browse-specialists" title="کسب‌وکارها حرفه‌ای">کسب‌وکارها</a></li>
+                <li><a href="/post" title="ثبت نیاز جدید">ثبت نیاز</a></li>
+                <li><a href="/browse?type=business" title="کسب‌وکارها حرفه‌ای">کسب‌وکارها</a></li>
                 <li><a href="/pricing" title="تعرفه‌ها و طرح‌های اشتراک">تعرفه‌ها</a></li>
               </ul>
             </nav>
             <nav aria-label="دسته‌بندی‌ها">
               <h4 className="mb-3 text-sm font-semibold">دسته‌بندی‌ها</h4>
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-                <li><a href="/browse-specialists" title="طراحی وب‌سایت">طراحی وب</a></li>
-                <li><a href="/browse-specialists" title="اپلیکیشن موبایل">اپلیکیشن موبایل</a></li>
-                <li><a href="/browse-specialists" title="تولید محتوا">تولید محتوا</a></li>
-                <li><a href="/browse-specialists" title="خدمات خانگی">خدمات خانگی</a></li>
+                <li><a href="/browse?type=business" title="طراحی وب‌سایت">طراحی وب</a></li>
+                <li><a href="/browse?type=business" title="اپلیکیشن موبایل">اپلیکیشن موبایل</a></li>
+                <li><a href="/browse?type=business" title="تولید محتوا">تولید محتوا</a></li>
+                <li><a href="/browse?type=business" title="خدمات خانگی">خدمات خانگی</a></li>
               </ul>
             </nav>
             <nav aria-label="پشتیبانی">

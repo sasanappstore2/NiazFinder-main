@@ -1,5 +1,6 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useState, useEffect, useRef } from 'react';
 import {
   FileSearch, MapPin, DollarSign, Flame, Clock, ChevronDown, Loader2, Sparkles, Zap, ArrowUpRight, Plus,
@@ -9,9 +10,8 @@ import { useAppStore } from '@/lib/store';
 import {
   formatBudgetRange, getTimeAgo,
 } from '@/lib/constants';
-import { ALL_CATEGORIES } from '@/components/layout/CategoryMegaMenu';
 import type { ServiceRequest } from '@/lib/types';
-import { getCategoryColor } from '@/components/layout/CategoryMegaMenu';
+import { ALL_CATEGORIES, getCategoryColor } from '@/data/categories';
 import { getCategoryAppearance, getAvatarColor, CATEGORY_APPEARANCE as SHARED_CATEGORY_APPEARANCE } from '@/lib/category-appearance';
 import { cn } from '@/lib/utils';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -21,6 +21,8 @@ import { HomepageHowItWorks } from '@/components/home/HomepageHowItWorks';
 import { FeaturedBusinesses } from '@/components/home/FeaturedBusinesses';
 import { HomepageTestimonials } from '@/components/home/HomepageTestimonials';
 import { HomepageFAQ } from '@/components/home/HomepageFAQ';
+import { routeBuilder } from '@/config/routes';
+import { NeedHeroInput } from '@/components/need-intake';
 
 
 
@@ -86,7 +88,7 @@ function PriorityBadge({ priority }: { priority: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-semibold tabular-nums tracking-tight',
+        'inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-caption font-semibold tabular-nums tracking-tight',
         config.badgeClass
       )}
     >
@@ -104,7 +106,7 @@ function UrgentPriorityBadge({ priority }: { priority: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-semibold tabular-nums tracking-tight',
+        'inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-caption font-semibold tabular-nums tracking-tight',
         config.badgeClass,
         isUrgent && 'urgent-badge-pulse',
       )}
@@ -147,7 +149,7 @@ function SkeletonCard() {
 
 // ─── Request Card (Fibonacci Golden Ratio Design) ─────────────
 function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest; isNew?: boolean; onQuickView?: (req: ServiceRequest, e: React.MouseEvent) => void }) {
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
   const [expanded, setExpanded] = useState(false);
   const fullName = `${request.user.firstName} ${request.user.lastName}`;
   const initials = `${request.user.firstName.charAt(0)}${request.user.lastName.charAt(0)}`;
@@ -182,9 +184,9 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
     >
       <div
         role="article"
-        data-href={`/requests/${request.id}`}
+        data-href={routeBuilder.listing(request.id, request.title)}
         onClick={(e) => {
-          navigateTo('request-detail', { id: request.id });
+          navigateTo('request-detail', { id: request.id, title: request.title });
           onQuickView?.(request, e);
         }}
         className={cn(
@@ -269,7 +271,7 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.15 }}
-                  className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:ring-emerald-800/40 shrink-0"
+                  className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2 py-0.5 text-caption font-bold text-emerald-700 ring-1 ring-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-400 dark:ring-emerald-800/40 shrink-0"
                 >
                   <Sparkles className="size-3" />
                   جدید
@@ -278,7 +280,7 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
 
               {/* Mobile category pill */}
               <span
-                className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[10px] font-semibold sm:hidden shrink-0 ring-1"
+                className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-caption font-semibold sm:hidden shrink-0 ring-1"
                 style={{
                   backgroundColor: `${resolvedColor}12`,
                   color: resolvedColor,
@@ -316,7 +318,7 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
                 <button
                   type="button"
                   onClick={handleToggleDesc}
-                  className="mt-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                  className="mt-1 text-caption font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
                 >
                   {expanded ? 'کمتر...' : 'بیشتر...'}
                 </button>
@@ -329,7 +331,7 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
               <span
                 className={cn(
                   'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5',
-                  'text-[11px] font-semibold tabular-nums',
+                  'text-caption font-semibold tabular-nums',
                   'budget-pill-gradient text-emerald-700 dark:text-emerald-400',
                   'ring-1 ring-emerald-200/40 dark:ring-emerald-800/30',
                   'transition-all duration-200 group-hover:ring-emerald-300/60 dark:group-hover:ring-emerald-700/50',
@@ -341,7 +343,7 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
 
               {/* City Pill */}
               {request.city && (
-                <span className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground bg-muted/40 ring-1 ring-border/20">
+                <span className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-caption font-medium text-muted-foreground bg-muted/40 ring-1 ring-border/20">
                   <MapPin className="size-3.5 shrink-0" aria-hidden="true" />
                   {request.city}
                 </span>
@@ -349,7 +351,7 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
 
               {/* Category pill (desktop) */}
               <span
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium ring-1"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-caption font-medium ring-1"
                 style={{
                   backgroundColor: `${resolvedColor}0A`,
                   color: resolvedColor,
@@ -375,9 +377,9 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
               style={{ width: 36, height: 36 }}
               title={fullName}
             >
-              <span className="text-[11px] font-bold">{initials}</span>
+              <span className="text-caption font-bold">{initials}</span>
             </div>
-            <span className="text-[11px] font-medium text-muted-foreground/60">
+            <span className="text-caption font-medium text-muted-foreground/60">
               {isNew ? 'همین الان' : getTimeAgo(request.createdAt)}
             </span>
           </div>
@@ -426,7 +428,7 @@ const POLL_INTERVAL = 15_000;
 
 // ─── Empty State ───────────────────────────
 function EmptyState() {
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
   return (
     <div className="flex flex-col items-center justify-center py-20 sm:py-28">
       {/* Floating Icon with Glassmorphism */}
@@ -650,7 +652,7 @@ export function NeedsHomepage() {
       }
     });
 
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
 
   const [loadingMore, setLoadingMore] = useState(false);
 
@@ -670,6 +672,9 @@ export function NeedsHomepage() {
 
   return (
     <div className="min-h-screen bg-background" dir="rtl">
+      <div className="container-default mx-auto px-5 md:px-8 pt-6 pb-4">
+        <NeedHeroInput />
+      </div>
       {/* ═══ Request Cards ═══ */}
       <div className="container-default mx-auto px-5 md:px-8 py-6 pb-12">
         {/* Results */}

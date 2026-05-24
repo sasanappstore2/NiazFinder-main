@@ -1,5 +1,6 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useState } from 'react';
 import {
   LayoutGrid,
@@ -29,7 +30,7 @@ import {
 // ============ Desktop Category Bar ============
 function DesktopCategoryBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
 
   const handleSelect = (category: MegaMenuCategory) => {
     navigateTo('browse-requests', { categoryId: category.value });
@@ -47,7 +48,7 @@ function DesktopCategoryBar() {
               setIsOpen((open) => !open);
             }}
             className={cn(
-              'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200',
+              'flex items-center gap-2 rounded-lg px-4 py-2 text-label font-medium transition-all duration-200',
               'border border-transparent',
               isOpen
                 ? 'bg-primary/10 text-primary border-primary/20 shadow-[0_0_8px_oklch(0.51_0.12_165/0.1)]'
@@ -88,7 +89,7 @@ function DesktopCategoryBar() {
 // ============ Mobile Category Bar ============
 function MobileCategoryBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
 
   const handleSelect = (category: MegaMenuCategory) => {
     navigateTo('browse-requests', { categoryId: category.value });
@@ -101,7 +102,7 @@ function MobileCategoryBar() {
         <SheetTrigger asChild>
           <button
             type="button"
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground hover:border-border/50 border border-transparent transition-all duration-200"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-label font-medium text-muted-foreground hover:bg-accent hover:text-foreground hover:border-border/50 border border-transparent transition-all duration-200"
           >
             <LayoutGrid className="size-4" />
             <span>همه دسته‌بندی‌ها</span>

@@ -1120,7 +1120,7 @@ function GoalsPanel({ goals }: { goals: AnalyticsGoal[] }) {
                   style={{ width: `${Math.min(100, Math.max(0, goal.percent))}%`, backgroundColor: goal.color }}
                 />
               </div>
-              <div className="flex justify-between text-[11px] text-muted-foreground">
+              <div className="flex justify-between text-caption text-muted-foreground">
                 <span>{formatNumber(goal.value)}</span>
                 <span>هدف: {formatNumber(goal.target)}</span>
               </div>
@@ -1154,10 +1154,10 @@ function ActivityPanel({ activities }: { activities: AnalyticsActivity[] }) {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="truncate text-sm font-black">{item.title}</h3>
-                  <span className="text-[11px] text-muted-foreground">{formatShortDate(item.createdAt)}</span>
+                  <span className="text-caption text-muted-foreground">{formatShortDate(item.createdAt)}</span>
                 </div>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">{item.description}</p>
-                <p className="mt-1 text-[11px] text-muted-foreground">{item.meta}</p>
+                <p className="mt-1 text-caption text-muted-foreground">{item.meta}</p>
               </div>
             </div>
           ))}
@@ -1486,7 +1486,7 @@ function MessagesHubPage({
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <h3 className="truncate text-sm font-black">{item.title}</h3>
-                      <span className="text-[11px] text-muted-foreground">{formatShortDate(item.createdAt)}</span>
+                      <span className="text-caption text-muted-foreground">{formatShortDate(item.createdAt)}</span>
                     </div>
                     <p className="mt-1 text-xs leading-6 text-muted-foreground">{item.message}</p>
                     <div className="mt-2 flex items-center gap-2">
@@ -1707,7 +1707,7 @@ function WorkflowBoardPage({
                     <Badge variant="outline" className={toneMap[card.tone]}>{card.badge}</Badge>
                     <h3 className="mt-3 text-sm font-black">{card.title}</h3>
                     <p className="mt-2 line-clamp-3 text-xs leading-6 text-muted-foreground">{card.text}</p>
-                    <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
+                    <div className="mt-3 flex items-center justify-between text-caption text-muted-foreground">
                       <span>قابل اقدام</span>
                       <ArrowUpRight className="size-3.5 transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5" />
                     </div>
@@ -1799,7 +1799,7 @@ function CalendarHubPage({
                     <Badge variant="secondary">{formatShortDate(event.date)}</Badge>
                   </div>
                   <p className="mt-2 text-xs leading-6 text-muted-foreground">{event.description}</p>
-                  <p className="mt-2 text-[11px] text-muted-foreground">شاخص مرتبط: {formatNumber(event.count)}</p>
+                  <p className="mt-2 text-caption text-muted-foreground">شاخص مرتبط: {formatNumber(event.count)}</p>
                 </div>
               ))}
             </div>
@@ -2137,7 +2137,7 @@ export function SuperAdminDashboard() {
         { title: 'نظرات', value: overview?.totalReviews, caption: 'بازخوردهای ثبت‌شده', icon: ShieldCheck, tone: 'amber' },
       ],
       actions: [
-        { label: 'رفتن به نیازهای عمومی', description: 'مشاهده بازار سمت کاربر برای کنترل تجربه', icon: ArrowUpRight, onClick: () => window.location.assign('/browse-requests'), primary: true },
+        { label: 'رفتن به نیازهای عمومی', description: 'مشاهده بازار سمت کاربر برای کنترل تجربه', icon: ArrowUpRight, onClick: () => window.location.assign('/browse?type=need'), primary: true },
         { label: 'تنظیم دسته‌بندی‌ها', description: 'اصلاح مسیرهای ثبت نیاز و سرویس‌ها', icon: FolderTree, onClick: () => setSection('categories') },
         { label: 'تحلیل بازار', description: 'نمایش روندها و ظرفیت عملیاتی', icon: BarChart3, onClick: () => setSection('analytics') },
       ],
@@ -2225,7 +2225,7 @@ export function SuperAdminDashboard() {
         { title: 'دسته‌های فعال', value: overview?.totalCategories, caption: 'مسیرهای ثبت نیاز', icon: FolderTree, tone: 'amber' },
       ],
       actions: [
-        { label: 'مشاهده نیازها', description: 'باز کردن صفحه عمومی نیازها برای کنترل سمت کاربر', icon: ArrowUpRight, onClick: () => window.location.assign('/browse-requests'), primary: true },
+        { label: 'مشاهده نیازها', description: 'باز کردن صفحه عمومی نیازها برای کنترل سمت کاربر', icon: ArrowUpRight, onClick: () => window.location.assign('/browse?type=need'), primary: true },
         { label: 'اصلاح مسیر ثبت نیاز', description: 'رفتن به مدیریت دسته‌بندی‌ها', icon: FolderTree, onClick: () => setSection('categories') },
         { label: 'کنترل شهرها', description: 'اطمینان از پوشش صحیح جغرافیا', icon: MapPinned, onClick: () => setSection('locations') },
       ],
@@ -2432,7 +2432,7 @@ export function SuperAdminDashboard() {
             <nav aria-label="ناوبری سوپرادمین" className="flex-1 space-y-5 overflow-y-auto p-3">
               {navGroups.map((group) => (
                 <div key={group.label} className="space-y-1">
-                  <div className="px-3 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className="px-3 py-2 text-caption font-black uppercase tracking-[0.18em] text-muted-foreground">
                     {group.label}
                   </div>
                   {group.items.map((item) => {
@@ -2710,7 +2710,7 @@ export function SuperAdminDashboard() {
                                 <span className="truncate">{child.name}</span>
                                 {!child.isActive && <Badge variant="secondary">غیرفعال</Badge>}
                               </div>
-                              <p className="mt-1 text-[11px] text-muted-foreground" dir="ltr">{child.slug}</p>
+                              <p className="mt-1 text-caption text-muted-foreground" dir="ltr">{child.slug}</p>
                             </div>
                             <div className="flex shrink-0 gap-1">
                               <IconAction icon={Edit3} label="ویرایش زیردسته" onClick={() => editCategory(child)} />
@@ -2852,7 +2852,7 @@ export function SuperAdminDashboard() {
                                 {!city.isActive && <Badge variant="secondary">غیرفعال</Badge>}
                                 {city.isPopular && <Badge variant="outline">محبوب</Badge>}
                               </div>
-                              <p className="mt-1 text-[11px] text-muted-foreground" dir="ltr">{city.id}</p>
+                              <p className="mt-1 text-caption text-muted-foreground" dir="ltr">{city.id}</p>
                               {city.neighborhoods.length > 0 && (
                                 <p className="mt-2 text-xs text-muted-foreground">{formatNumber(city.neighborhoods.length)} محله</p>
                               )}
@@ -2869,7 +2869,7 @@ export function SuperAdminDashboard() {
                                   key={`${province.id}-${city.id}-${cityIndex}-${neighborhood.id}-${neighborhoodIndex}`}
                                   type="button"
                                   onClick={() => editLocation('neighborhood', neighborhood)}
-                                  className="rounded-full border bg-muted/40 px-2 py-1 text-[11px] hover:bg-muted"
+                                  className="rounded-full border bg-muted/40 px-2 py-1 text-caption hover:bg-muted"
                                 >
                                   {neighborhood.name}
                                 </button>

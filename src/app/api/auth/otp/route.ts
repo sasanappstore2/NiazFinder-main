@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { findExistingOtp, createOtp } from '@/lib/otp-store';
+import { isTestOtpMode, TEST_OTP_CODE } from '@/lib/auth/test-otp';
 
 const iranianPhoneRegex = /^09[0-9]{9}$/;
-const DEMO_OTP_CODE = '1234';
+
+/** Cryptographically-random 6-digit OTP (zero-padded). */
+function generateOtpCode(): string {
+  return String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
+}
 
 // Rate limiting: store attempts in memory (per phone)
 const otpAttempts = new Map<string, { count: number; lastAttempt: number }>();
@@ -56,14 +62,14 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Generate and store OTP code
-    const otpCode = DEMO_OTP_CODE;
+    // Dev/staging: fixed 1234 (matches UI). Production: random 6-digit code.
+    const otpCode = isTestOtpMode() ? TEST_OTP_CODE : generateOtpCode();
     createOtp(phone, otpCode, 'auth');
 
     return NextResponse.json(
       {
         message: 'کد تایید ارسال شد',
-        ...(process.env.NODE_ENV !== 'production' ? { demoCode: otpCode } : {}),
+        ...(isTestOtpMode() ? { demoCode: TEST_OTP_CODE } : {}),
       },
       { status: 200 }
     );

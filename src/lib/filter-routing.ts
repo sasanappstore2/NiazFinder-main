@@ -1,4 +1,5 @@
 import type { Category } from '@/lib/types';
+import { serializeFilters, type BrowseFilters } from '@/lib/filters/parser';
 
 type QueryValue = string | number | boolean | null | undefined;
 
@@ -59,6 +60,42 @@ export function replaceBrowserUrl(
   if (typeof window === 'undefined') return;
 
   const nextUrl = buildUrlWithQuery(pathname, values, defaults);
+  const currentUrl = `${window.location.pathname}${window.location.search}`;
+
+  if (currentUrl !== nextUrl) {
+    window.history.replaceState(null, '', nextUrl);
+  }
+}
+
+/** Build browse URL merging legacy panel filters with canonical ?cities= / ?type= params. */
+export function buildBrowseUrl(
+  pathname: string,
+  values: Record<string, QueryValue>,
+  defaults: Record<string, QueryValue> = {},
+  preservedFilters?: Partial<BrowseFilters>
+) {
+  const params = serializeFilters(preservedFilters);
+
+  for (const [key, rawValue] of Object.entries(values)) {
+    const value = cleanQueryValue(rawValue);
+    const defaultValue = cleanQueryValue(defaults[key]);
+    if (!value || value === defaultValue || value === 'all') continue;
+    params.set(key, value);
+  }
+
+  const query = params.toString();
+  return query ? `${pathname}?${query}` : pathname;
+}
+
+export function replaceBrowseUrl(
+  pathname: string,
+  values: Record<string, QueryValue>,
+  defaults: Record<string, QueryValue> = {},
+  preservedFilters?: Partial<BrowseFilters>
+) {
+  if (typeof window === 'undefined') return;
+
+  const nextUrl = buildBrowseUrl(pathname, values, defaults, preservedFilters);
   const currentUrl = `${window.location.pathname}${window.location.search}`;
 
   if (currentUrl !== nextUrl) {

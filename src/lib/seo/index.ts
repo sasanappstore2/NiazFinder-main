@@ -331,7 +331,7 @@ export const SEO_ROUTES: SEORoute[] = [
     section: 'صفحه اصلی',
   },
   {
-    path: '/browse-requests',
+    path: '/s/iran?type=need',
     title: 'نیازهای ثبت شده - نیاز فایندر',
     description: 'مشاهده و جستجوی آخرین نیازهای ثبت شده توسط کارفرمایان. از طراحی وب تا خدمات خانگی، بهترین فرصت‌های کاری را پیدا کنید.',
     priority: 0.9,
@@ -339,7 +339,7 @@ export const SEO_ROUTES: SEORoute[] = [
     section: 'نیازها',
   },
   {
-    path: '/browse-specialists',
+    path: '/s/iran?type=business',
     title: 'کسب‌وکارها و فریلنسرها - نیاز فایندر',
     description: 'جستجو و مقایسه کسب‌وکارها حرفه‌ای در بیش از ۵۰ تخصص. پروفایل، امتیاز، نمونه کار و قیمت کسب‌وکارها برتر ایران.',
     priority: 0.9,
@@ -347,7 +347,7 @@ export const SEO_ROUTES: SEORoute[] = [
     section: 'کسب‌وکارها',
   },
   {
-    path: '/post-need',
+    path: '/post',
     title: 'ثبت نیاز رایگان - نیاز فایندر',
     description: 'نیاز خود را رایگان ثبت کنید و در کمتر از ۲۴ ساعت پیشنهاد از بهترین کسب‌وکارها دریافت کنید. طراحی وب، برنامه‌نویسی، خدمات خانگی و بیشتر.',
     priority: 0.8,
@@ -363,7 +363,7 @@ export const SEO_ROUTES: SEORoute[] = [
     section: 'تعرفه‌ها',
   },
   {
-    path: '/compare-specialists',
+    path: '/compare',
     title: 'مقایسه کسب‌وکارها - نیاز فایندر',
     description: 'کسب‌وکارها مختلف را در یک نگاه مقایسه کنید. قیمت، امتیاز، سرعت تحویل و نمونه کارها را بررسی کنید.',
     priority: 0.6,
@@ -437,12 +437,12 @@ export interface InternalLink {
 }
 
 export const INTERNAL_LINKS: InternalLink[] = [
-  { label: 'ثبت نیاز رایگان', href: '/post-need', title: 'نیاز خود را رایگان ثبت کنید', section: 'hero' },
-  { label: 'جستجوی کسب‌وکار', href: '/browse-specialists', title: 'کسب‌وکارها حرفه‌ای را پیدا کنید', section: 'hero' },
-  { label: 'مشاهده همه نیازها', href: '/browse-requests', title: 'تمام نیازهای ثبت شده', section: 'featured-requests' },
-  { label: 'مشاهده همه کسب‌وکارها', href: '/browse-specialists', title: 'تمام کسب‌وکارها', section: 'top-specialists' },
+  { label: 'ثبت نیاز رایگان', href: '/post', title: 'نیاز خود را رایگان ثبت کنید', section: 'hero' },
+  { label: 'جستجوی کسب‌وکار', href: '/s/iran?type=business', title: 'کسب‌وکارها حرفه‌ای را پیدا کنید', section: 'hero' },
+  { label: 'مشاهده همه نیازها', href: '/s/iran?type=need', title: 'تمام نیازهای ثبت شده', section: 'featured-requests' },
+  { label: 'مشاهده همه کسب‌وکارها', href: '/s/iran?type=business', title: 'تمام کسب‌وکارها', section: 'top-specialists' },
   { label: 'تعرفه‌ها', href: '/pricing', title: 'طرح‌های اشتراک و قیمت‌ها', section: 'pricing' },
-  { label: 'مقایسه کسب‌وکارها', href: '/compare-specialists', title: 'مقایسه کسب‌وکارها مختلف', section: 'compare' },
+  { label: 'مقایسه کسب‌وکارها', href: '/compare', title: 'مقایسه کسب‌وکارها مختلف', section: 'compare' },
   { label: 'دعوت از دوستان', href: '/referral', title: 'دعوت از دوستان و دریافت پاداش', section: 'referral' },
   { label: 'سوالات متداول', href: '/#faq', title: 'پاسخ سوالات رایج', section: 'faq' },
   { label: 'تماس با ما', href: '/#contact', title: 'اطلاعات تماس', section: 'contact' },

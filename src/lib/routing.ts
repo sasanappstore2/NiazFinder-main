@@ -1,17 +1,29 @@
 /**
- * Route definitions for the application.
- * Maps old SPA view names to new Next.js App Router URLs.
+ * @deprecated Migration shim — use `@/config/routes` (`routeBuilder`) instead.
+ *
+ * Kept temporarily so legacy callers (`buildUrl`, `ROUTE_MAP`) keep compiling.
+ * Internally everything now resolves to canonical `/browse`, `/n/{id}`, `/b/{id}`.
  */
+export {
+  routeBuilder,
+  LEGACY_VIEW_PATHS,
+  legacyViewToPath,
+  ROUTES,
+  buildRoute,
+  type RouteKey,
+} from '@/config/routes';
 
-// Route map for backward compatibility
+import { routeBuilder } from '@/config/routes';
+
+/** @deprecated */
 export const ROUTE_MAP = {
   home: '/',
   'social-feed': '/social-feed',
   discover: '/discover',
-  'browse-requests': '/browse-requests',
-  'browse-specialists': '/browse-specialists',
-  'post-need': '/post-need',
-  messages: '/messages',
+  'browse-requests': '/browse?type=need',
+  'browse-specialists': '/browse?type=business',
+  'post-need': '/post',
+  messages: '/chat',
   notifications: '/notifications',
   dashboard: '/dashboard',
   profile: '/dashboard',
@@ -21,24 +33,30 @@ export const ROUTE_MAP = {
   'edit-profile': '/edit-profile',
   'create-post': '/create-post',
   'post-detail': '/post/[id]',
-  'request-detail': '/request/[id]',
-  'specialist-profile': '/specialist/[id]',
-  'submit-proposal': '/request/[id]',
+  'request-detail': '/n/[id]',
+  'specialist-profile': '/b/[id]',
+  'submit-proposal': '/n/[id]/propose',
   'submit-review': '/submit-review',
-  'compare-specialists': '/compare-specialists',
+  'compare-specialists': '/compare',
   pricing: '/pricing',
   referral: '/referral',
   'notification-settings': '/notification-settings',
   search: '/search',
 } as const;
 
-export type RouteKey = keyof typeof ROUTE_MAP;
+export type LegacyRouteKey = keyof typeof ROUTE_MAP;
 
-/**
- * Build a URL from a route key and optional params
- */
-export function buildUrl(route: RouteKey, params?: Record<string, string>): string {
-  let url = ROUTE_MAP[route];
+/** @deprecated Use routeBuilder */
+export function buildUrl(route: LegacyRouteKey, params?: Record<string, string>): string {
+  if (route === 'request-detail' && params?.id) return routeBuilder.need(params.id);
+  if (route === 'specialist-profile' && params?.id) return routeBuilder.business(params.id);
+  if (route === 'browse-requests') {
+    return routeBuilder.browseAll({ type: 'need', q: params?.search });
+  }
+  if (route === 'browse-specialists') {
+    return routeBuilder.browseAll({ type: 'business', q: params?.search });
+  }
+  let url: string = ROUTE_MAP[route];
   if (params) {
     for (const [key, value] of Object.entries(params)) {
       url = url.replace(`[${key}]`, encodeURIComponent(value));

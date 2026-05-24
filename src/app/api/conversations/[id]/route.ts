@@ -217,7 +217,7 @@ export async function POST(
     };
 
     return NextResponse.json(
-      { message: 'پیام با موفقیت ارسال شد', message: result },
+      { message: 'پیام با موفقیت ارسال شد', data: result },
       { status: 201 }
     );
   } catch (error) {

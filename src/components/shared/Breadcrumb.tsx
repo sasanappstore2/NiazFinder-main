@@ -1,9 +1,12 @@
 'use client';
 
 import { useMemo } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ChevronLeft, Home } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
-import type { AppView } from '@/lib/types';
+import { routeBuilder } from '@/config/routes';
+import { resolveSearchSegments } from '@/lib/search/resolve-segments';
+
 import {
   Breadcrumb as BreadcrumbNav,
   BreadcrumbList,
@@ -13,123 +16,183 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 
-// ── View → SEO path mapping ────────────────────────────────────────────
-const VIEW_HREF: Record<AppView, string> = {
-  'home': '/',
-  'login': '/login',
-  'register': '/register',
-  'post-need': '/post-need',
-  'browse-requests': '/browse-requests',
-  'request-detail': '/request-detail',
-  'browse-specialists': '/browse-specialists',
-  'specialist-profile': '/specialist-profile',
-  'dashboard': '/dashboard',
-  'messages': '/messages',
-  'notifications': '/notifications',
-  'admin': '/admin',
-  'profile': '/profile',
-  'pricing': '/pricing',
-  'compare-specialists': '/compare-specialists',
-  'submit-proposal': '/submit-proposal',
-  'submit-review': '/submit-review',
-  'referral': '/referral',
-  'notification-settings': '/notification-settings',
-};
+interface Crumb {
+  label: string;
+  href: string;
+}
 
-// ── Breadcrumb mapping for each AppView ──────────────────────────────────
-const BREADCRUMB_MAP: Record<AppView, { label: string; parent?: AppView }> = {
-  'home': { label: 'صفحه اصلی' },
-  'login': { label: 'ورود', parent: 'home' },
-  'register': { label: 'ثبت‌نام', parent: 'home' },
-  'post-need': { label: 'ثبت نیاز', parent: 'home' },
-  'browse-requests': { label: 'نیازهای ثبت شده', parent: 'home' },
-  'request-detail': { label: 'جزئیات نیاز', parent: 'browse-requests' },
-  'submit-proposal': { label: 'ارسال پیشنهاد', parent: 'browse-requests' },
-  'browse-specialists': { label: 'کسب‌وکارها', parent: 'home' },
-  'specialist-profile': { label: 'پروفایل کسب‌وکار', parent: 'browse-specialists' },
-  'submit-review': { label: 'ثبت نظر', parent: 'browse-specialists' },
-  'compare-specialists': { label: 'مقایسه کسب‌وکارها', parent: 'browse-specialists' },
-  'dashboard': { label: 'داشبورد', parent: 'home' },
-  'admin': { label: 'پنل مدیریت', parent: 'home' },
-  'profile': { label: 'پروفایل من', parent: 'home' },
-  'messages': { label: 'پیام‌ها', parent: 'home' },
-  'notifications': { label: 'اعلان‌ها', parent: 'home' },
-  'pricing': { label: 'تعرفه‌ها', parent: 'home' },
-  'referral': { label: 'دعوت از دوستان', parent: 'home' },
-  'notification-settings': { label: 'تنظیمات اعلان‌ها', parent: 'dashboard' },
-};
+/**
+ * Build breadcrumbs for a `/s/{location}/{...segments}` URL.
+ *
+ * Examples:
+ *   /s/iran             → خانه › جستجو
+ *   /s/iran/real-estate → خانه › جستجو › املاک
+ *   /s/mashhad          → خانه › جستجو › مشهد
+ *   /s/mashhad/real-estate/buy-residential → خانه › جستجو › مشهد › املاک › فروش مسکونی
+ */
+function searchCrumbs(pathname: string, home: Crumb): Crumb[] {
+  // Strip /s/ prefix and split
+  const parts = pathname.replace(/^\/s\/?/, '').split('/').filter(Boolean);
+  const [rawLocation, ...rawSegments] = parts;
 
-// ── Breadcrumb Component ─────────────────────────────────────────────────
+  if (!rawLocation) {
+    return [home, { label: 'جستجو', href: routeBuilder.search() }];
+  }
+
+  const ctx = resolveSearchSegments(rawLocation, rawSegments);
+  const root: Crumb = { label: 'جستجو', href: routeBuilder.search() };
+
+  if (ctx.kind === 'invalid-location') return [home, root];
+
+  const locSlug = ctx.location.kind === 'country' ? 'iran' : ctx.location.city.slug;
+  const locLabel = ctx.location.kind === 'country' ? 'سراسر ایران' : ctx.location.city.title;
+  const locCrumb: Crumb = {
+    label: locLabel,
+    href: routeBuilder.search({ location: locSlug }),
+  };
+
+  if (ctx.kind === 'all') {
+    return [home, root, locCrumb];
+  }
+
+  if (ctx.kind === 'category') {
+    return [
+      home,
+      root,
+      locCrumb,
+      {
+        label: ctx.category.title,
+        href: routeBuilder.search({ location: locSlug, category: ctx.category.slug }),
+      },
+    ];
+  }
+
+  if (ctx.kind === 'parent-child') {
+    return [
+      home,
+      root,
+      locCrumb,
+      {
+        label: ctx.parent.title,
+        href: routeBuilder.search({ location: locSlug, category: ctx.parent.slug }),
+      },
+      {
+        label: ctx.category.title,
+        href: routeBuilder.search({
+          location: locSlug,
+          parentCategory: ctx.parent.slug,
+          category: ctx.category.slug,
+        }),
+      },
+    ];
+  }
+
+  // invalid-segments → drop back to location root
+  return [home, root, locCrumb];
+}
+
+function crumbsForPath(pathname: string): Crumb[] {
+  const home: Crumb = { label: 'صفحه اصلی', href: routeBuilder.home() };
+
+  if (pathname === '/') return [home];
+
+  // Canonical search/browse path
+  if (pathname === '/s' || pathname.startsWith('/s/')) {
+    return searchCrumbs(pathname, home);
+  }
+
+  // Legacy /browse — should be redirected by the page handler, but if a
+  // partially-cached page lingers, render a sane breadcrumb.
+  if (pathname === '/browse' || pathname.startsWith('/browse/')) {
+    return [home, { label: 'جستجو', href: routeBuilder.search() }];
+  }
+
+  if (pathname.startsWith('/v/')) {
+    return [
+      home,
+      { label: 'جستجو', href: routeBuilder.search({ filters: { type: 'need' } }) },
+      { label: 'جزئیات آگهی', href: pathname },
+    ];
+  }
+  if (pathname.startsWith('/pro/')) {
+    return [
+      home,
+      { label: 'جستجو', href: routeBuilder.search({ filters: { type: 'business' } }) },
+      { label: 'پروفایل کسب‌وکار', href: pathname },
+    ];
+  }
+  // Legacy /n/ and /b/ (redirect handlers; breadcrumb for cached pages)
+  if (pathname.startsWith('/n/')) {
+    return [
+      home,
+      { label: 'جستجو', href: routeBuilder.search({ filters: { type: 'need' } }) },
+      { label: 'جزئیات نیاز', href: pathname },
+    ];
+  }
+  if (pathname.startsWith('/b/')) {
+    return [
+      home,
+      { label: 'جستجو', href: routeBuilder.search({ filters: { type: 'business' } }) },
+      { label: 'پروفایل کسب‌وکار', href: pathname },
+    ];
+  }
+  if (pathname === '/post')          return [home, { label: 'ثبت نیاز', href: routeBuilder.needNew() }];
+  if (pathname === '/dashboard')     return [home, { label: 'داشبورد', href: routeBuilder.dashboard() }];
+  if (pathname === '/chat' || pathname.startsWith('/chat/'))
+                                     return [home, { label: 'پیام‌ها', href: routeBuilder.chat() }];
+  if (pathname === '/notifications') return [home, { label: 'اعلان‌ها', href: routeBuilder.notifications() }];
+  if (pathname === '/help')          return [home, { label: 'پشتیبانی', href: routeBuilder.help() }];
+  if (pathname === '/pricing')       return [home, { label: 'تعرفه‌ها', href: routeBuilder.pricing() }];
+  if (pathname === '/login')         return [home, { label: 'ورود', href: routeBuilder.login() }];
+  if (pathname === '/register')      return [home, { label: 'ثبت‌نام', href: routeBuilder.register() }];
+  if (pathname === '/compare')       return [home, { label: 'مقایسه', href: routeBuilder.compare() }];
+
+  return [home, { label: 'صفحه', href: pathname }];
+}
+
 export function Breadcrumb() {
-  const { currentView, navigateTo } = useAppStore();
-
-  // Build the breadcrumb path by walking up the parent chain
-  const crumbs = useMemo(() => {
-    const path: AppView[] = [];
-    let view: AppView | undefined = currentView;
-
-    // Walk up to 4 levels deep to prevent infinite loops
-    while (view && path.length < 4) {
-      path.unshift(view);
-      view = BREADCRUMB_MAP[view]?.parent;
-    }
-
-    // Prepend home if not already present
-    if (path.length > 0 && path[0] !== 'home') {
-      path.unshift('home');
-    }
-
-    return path.map((v, index) => ({
-      view: v,
-      label: BREADCRUMB_MAP[v].label,
-      href: VIEW_HREF[v],
-      position: index + 1,
-      isLast: v === currentView,
-    }));
-  }, [currentView]);
+  const pathname = usePathname();
+  const crumbs = useMemo(() => crumbsForPath(pathname), [pathname]);
 
   return (
-    <BreadcrumbNav
-      dir="rtl"
-      itemScope
-      itemType="https://schema.org/BreadcrumbList"
-    >
+    <BreadcrumbNav dir="rtl" itemScope itemType="https://schema.org/BreadcrumbList">
       <BreadcrumbList className="flex flex-wrap items-center gap-1.5 text-sm sm:gap-2">
         {crumbs.map((crumb, index) => {
+          const isLast = index === crumbs.length - 1;
           const showSeparator = index < crumbs.length - 1;
 
           return (
-            <span key={crumb.view} className="contents">
+            <span key={`${crumb.href}-${index}`} className="contents">
               <BreadcrumbItem
                 className="inline-flex items-center gap-1.5"
                 itemProp="itemListElement"
                 itemScope
                 itemType="https://schema.org/ListItem"
               >
-                {crumb.isLast ? (
+                {isLast ? (
                   <BreadcrumbPage className="text-primary font-medium">
                     <span itemProp="name">{crumb.label}</span>
-                    <meta itemProp="position" content={String(crumb.position)} />
+                    <meta itemProp="position" content={String(index + 1)} />
                   </BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink
-                    className="text-muted-foreground hover:text-primary transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
-                    onClick={() => navigateTo(crumb.view)}
-                    data-href={crumb.href}
+                    asChild
+                    className="text-muted-foreground hover:text-primary transition-colors duration-150"
                     itemProp="item"
-                    href={crumb.href}
                   >
-                    <span itemProp="name">
-                      {crumb.view === 'home' ? (
-                        <span className="flex items-center gap-1.5">
-                          <Home className="size-4" />
-                          {crumb.label}
-                        </span>
-                      ) : (
-                        crumb.label
-                      )}
-                    </span>
-                    <meta itemProp="position" content={String(crumb.position)} />
+                    <Link href={crumb.href}>
+                      <span itemProp="name">
+                        {index === 0 ? (
+                          <span className="flex items-center gap-1.5">
+                            <Home className="size-4" />
+                            {crumb.label}
+                          </span>
+                        ) : (
+                          crumb.label
+                        )}
+                      </span>
+                      <meta itemProp="position" content={String(index + 1)} />
+                    </Link>
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>

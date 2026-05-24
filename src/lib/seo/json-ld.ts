@@ -1,5 +1,6 @@
 import { SITE_NAME, SITE_URL } from '@/lib/constants';
 import type { ServiceRequest, SpecialistProfile, Review } from '@/lib/types';
+import { routeBuilder } from '@/config/routes';
 
 /**
  * ساختار داده‌های JSON-LD
@@ -285,7 +286,7 @@ export function createSpecialistSchema(specialist: SpecialistProfile): Professio
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
     name: `${specialist.firstName} ${specialist.lastName}`,
-    url: `${SITE_URL}/specialists/${specialist.id}`,
+    url: `${SITE_URL}${routeBuilder.pro(specialist.id)}`,
     description: specialist.bio || '',
     ...(specialist.avatar && { image: specialist.avatar }),
     ...(specialist.city && {

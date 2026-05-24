@@ -1,5 +1,6 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useState } from 'react';
 import { Search, Plus, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,7 @@ const stats = [
 ];
 
 export function HeroSection() {
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (e: React.FormEvent) => {
@@ -30,19 +31,19 @@ export function HeroSection() {
       <div className="relative container-default mx-auto px-5 md:px-8 py-20 md:py-32">
         <div className="flex flex-col items-center text-center">
           {/* Badge */}
-          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-5 py-2 text-sm font-semibold text-primary" itemProp="about">
+          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-5 py-2 text-label font-semibold text-primary" itemProp="about">
             پلتفرم هوشمند اتصال نیاز به کسب‌وکار
           </span>
 
           {/* Heading */}
-          <h1 className="mb-6 max-w-4xl text-2.5rem font-extrabold leading-[1.15] tracking-tight sm:text-4xl md:text-5xl lg:text-6xl" itemProp="headline">
+          <h1 className="mb-6 max-w-4xl text-display tracking-tight" itemProp="headline">
             نیازت رو ثبت کن،
             <br />
             <span className="text-gradient">بهترین کسب‌وکار رو پیدا کن</span>
           </h1>
 
           {/* Subheading */}
-          <p className="mb-10 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg" itemProp="description">
+          <p className="mb-10 max-w-2xl text-body leading-relaxed text-muted-foreground sm:text-lg sm:leading-relaxed" itemProp="description">
             پلتفرم هوشمند اتصال نیاز به کسب‌وکار. هزاران کسب‌وکار آماده خدمت‌رسانی به شما هستند.
           </p>
 
@@ -64,7 +65,7 @@ export function HeroSection() {
               <Button
                 type="submit"
                 className="h-10 rounded-xl px-6 bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition-all 150ms ease"
-                data-href="/browse-requests"
+                data-href="/browse?type=need"
                 title="جستجوی خدمات و کسب‌وکارها"
               >
                 جستجو
@@ -77,7 +78,7 @@ export function HeroSection() {
             <Button
               onClick={() => navigateTo('post-need')}
               className="h-12 rounded-xl px-8 text-base font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20 transition-all 150ms ease"
-              data-href="/post-need"
+              data-href="/post"
               title="ثبت نیاز رایگان - نیاز خود را به کسب‌وکارها معرفی کنید"
             >
               <Plus className="size-5" aria-hidden="true" />
@@ -87,7 +88,7 @@ export function HeroSection() {
               onClick={() => navigateTo('browse-specialists')}
               variant="outline"
               className="h-12 rounded-xl border-border/60 bg-card/50 px-8 text-base font-semibold transition-all 150ms ease"
-              data-href="/browse-specialists"
+              data-href="/browse?type=business"
               title="جستجوی کسب‌وکارها - مشاهده پروفایل کسب‌وکارها برتر"
             >
               <span>جستجوی کسب‌وکار</span>
