@@ -8,7 +8,6 @@ export {
   legacyViewToPath,
   LEGACY_VIEW_PATHS,
   type RouteKey,
-  type BrowseQuery,
 } from '@/config/routes';
 
 import { routeBuilder } from '@/config/routes';

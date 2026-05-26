@@ -13,7 +13,7 @@ export function ProfileSkeleton({ className }: ProfileSkeletonProps) {
       <div className="relative h-48 sm:h-56 md:h-64">
         <Skeleton className="absolute inset-0 rounded-none" />
         {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
       </div>
 
       {/* Profile info section (overlapping avatar) */}
@@ -94,7 +94,7 @@ export function ProfileSkeleton({ className }: ProfileSkeletonProps) {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="space-y-2">
-                <Skeleton className="aspect-[4/3] w-full rounded-xl" />
+                <Skeleton className="aspect-4/3 w-full rounded-xl" />
                 <Skeleton className="h-4 w-3/4 rounded" />
                 <Skeleton className="h-3 w-1/2 rounded" />
               </div>
@@ -113,7 +113,7 @@ export function ProfileSkeleton({ className }: ProfileSkeletonProps) {
                   <Skeleton className="h-3.5 w-20 rounded" />
                   <div className="flex gap-1">
                     {Array.from({ length: 5 }).map((_, j) => (
-                      <Skeleton key={j} className="size-3 rounded-sm bg-primary/10" />
+                      <Skeleton key={j} className="size-3 rounded-xs bg-primary/10" />
                     ))}
                   </div>
                 </div>

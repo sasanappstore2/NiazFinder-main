@@ -6,5 +6,6 @@ export * from './need-card';
 export * from './business-card';
 export * from './business-profile';
 export * from './need-intake';
+export * from './typing-analysis';
 export * from './filters';
 export * from './category';

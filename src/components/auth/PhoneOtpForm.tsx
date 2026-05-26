@@ -462,7 +462,7 @@ export function PhoneOtpForm() {
                   otpDigits[index]
                     ? 'border-emerald-500 bg-emerald-50/50 text-emerald-700'
                     : 'border-input hover:border-emerald-300',
-                  'focus:border-emerald-500 focus:outline-none',
+                  'focus:border-emerald-500 focus:outline-hidden',
                 )}
               />
             ))}

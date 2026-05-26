@@ -1,10 +1,10 @@
 import { db } from '@/lib/db';
 import type { NeedMatchContext } from '@/contracts/need-match';
-import type { QualifiedLead } from './llm-qualify-outreach';
+import type { QualifiedLead } from './qualified-lead';
 import { getPlatformAiUserId } from '@/lib/platform-ai/user';
 import { ensureBusinessProfile } from '@/lib/business/ensure-profile';
 import { ensureConversation, createSystemMessage } from '@/lib/chat/create-system-messages';
-import { generateOutreachCopy } from './llm-outreach-copy';
+import { generateOutreachCopy } from './outreach-copy-templates';
 import { buildNeedCardSnapshot } from './build-need-card-snapshot';
 import { isUnderDailyCap } from './daily-cap';
 
@@ -110,7 +110,7 @@ export async function sendLeadToBusiness(params: {
   }
 
   const platformAiId = await getPlatformAiUserId();
-  const copy = await generateOutreachCopy(need, business);
+  const copy = generateOutreachCopy(need, business);
   const snapshot = await buildNeedCardSnapshot(requestId, need, business.matchReasonFa);
 
   if (!snapshot) {

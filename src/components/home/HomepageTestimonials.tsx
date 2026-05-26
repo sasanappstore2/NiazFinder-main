@@ -85,8 +85,8 @@ export function HomepageTestimonials() {
       {/* Auto-scrolling Carousel */}
       <div className="testimonial-carousel-container group relative">
         {/* Fade edges */}
-        <div className="testimonial-fade-edge-start pointer-events-none absolute inset-y-0 start-0 z-10 w-24 bg-gradient-to-l from-transparent to-background" aria-hidden="true" />
-        <div className="testimonial-fade-edge-end pointer-events-none absolute inset-y-0 end-0 z-10 w-24 bg-gradient-to-r from-transparent to-background" aria-hidden="true" />
+        <div className="testimonial-fade-edge-start pointer-events-none absolute inset-y-0 inset-s-0 z-10 w-24 bg-linear-to-l from-transparent to-background" aria-hidden="true" />
+        <div className="testimonial-fade-edge-end pointer-events-none absolute inset-y-0 inset-e-0 z-10 w-24 bg-linear-to-r from-transparent to-background" aria-hidden="true" />
 
         <div className="testimonial-track flex gap-5 w-max">
           {allTestimonials.map((t, i) => {
@@ -98,9 +98,9 @@ export function HomepageTestimonials() {
                   'group/card relative w-[340px] shrink-0 rounded-2xl p-5',
                   'bg-white/60 dark:bg-card/50 backdrop-blur-md',
                   'border border-border/40 dark:border-border/20',
-                  'shadow-sm shadow-black/[0.03] dark:shadow-black/10',
+                  'shadow-sm shadow-black/3 dark:shadow-black/10',
                   'transition-all duration-300',
-                  'hover:shadow-xl hover:shadow-emerald-900/[0.08] dark:hover:shadow-black/20',
+                  'hover:shadow-xl hover:shadow-emerald-900/8 dark:hover:shadow-black/20',
                   'hover:-translate-y-1 hover:bg-white/80 dark:hover:bg-card/70',
                   'testimonial-card-hover-border',
                 )}
@@ -109,7 +109,7 @@ export function HomepageTestimonials() {
               >
                 {/* Quote icon — decorative */}
                 <Quote
-                  className="absolute top-4 start-4 size-8 text-emerald-200/60 dark:text-emerald-800/40 group-hover/card:text-emerald-300/80 dark:group-hover/card:text-emerald-700/50 transition-colors duration-300"
+                  className="absolute top-4 inset-s-4 size-8 text-emerald-200/60 dark:text-emerald-800/40 group-hover/card:text-emerald-300/80 dark:group-hover/card:text-emerald-700/50 transition-colors duration-300"
                   aria-hidden="true"
                 />
 

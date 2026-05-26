@@ -28,12 +28,12 @@ export function NeedHeroInput() {
 
   return (
     <section
-      className="relative overflow-hidden rounded-3xl border border-primary/15 bg-gradient-to-b from-primary/5 via-card to-card p-6 sm:p-8 shadow-sm"
-      aria-label="ثبت نیاز هوشمند"
+      className="relative overflow-hidden rounded-3xl border border-primary/15 bg-linear-to-b from-primary/5 via-card to-card p-6 sm:p-8 shadow-sm"
+      aria-label="ثبت سریع نیاز"
     >
       <div className="mb-4 flex items-center gap-2 text-primary">
         <Sparkles className="size-5" />
-        <span className="text-sm font-semibold">ثبت نیاز با هوش مصنوعی</span>
+        <span className="text-sm font-semibold">ثبت سریع نیاز</span>
       </div>
 
       <h1 className="mb-2 text-2xl font-extrabold tracking-tight sm:text-3xl">

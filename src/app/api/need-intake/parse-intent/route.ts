@@ -1,14 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
-import { parseIntentWithAi } from '@/lib/need-intake/llm-parse-intent';
-import { isNeedIntakeAiEnabled } from '@/lib/ai/env';
-import { getIntentDefinition } from '@/config/need-intents';
-import { guessVerticalFromText } from '@/lib/need-intake/prompts';
-import type { FieldOption, ParseIntentResponse } from '@/contracts/need-intake';
+import {
+  buildParseAssistantMessage,
+  buildParseSuggestedChips,
+  shouldSkipClarifying,
+} from '@/lib/need-intake/parse-assistant';
+import { guessVerticalFromText } from '@/lib/need-intake/parse-vertical';
+import {
+  parseFromText,
+  withProcessingDelay,
+} from '@/lib/need-intake/internal-orchestrator';
+import type { ParseIntentResponse } from '@/contracts/need-intake';
 import {
   checkNeedIntakeRateLimit,
   rateLimitKeyFromRequest,
 } from '@/lib/need-intake/rate-limit';
+import { classifyVertical } from '@/lib/need-intake/vertical-classifier';
 
 export async function POST(request: NextRequest) {
   const rateKey = rateLimitKeyFromRequest(request);
@@ -29,53 +35,30 @@ export async function POST(request: NextRequest) {
     }
 
     const started = Date.now();
-    const { parsed, source, llmRaw, cacheHit, latencyMs } = isNeedIntakeAiEnabled()
-      ? await parseIntentWithAi(text)
-      : {
-          parsed: parseIntentFromText(text),
-          source: 'rules' as const,
-          cacheHit: false,
-          latencyMs: Date.now() - started,
-        };
+    const parsed = await withProcessingDelay(() => parseFromText(text));
+    const latencyMs = Date.now() - started;
 
-    const def = getIntentDefinition(parsed.intentType);
+    const classification = classifyVertical(text);
     const vertical = guessVerticalFromText(text);
+    const skipClarify = shouldSkipClarifying(parsed, classification);
 
-    const suggestedChips: FieldOption[] = [
-      { value: 'confirm', label: `بله، ${def.labelFa}` },
-      { value: 'change', label: 'نه، اصلاح می‌کنم' },
-    ];
+    const assistantMessage = buildParseAssistantMessage(parsed, text);
+    const suggestedChips = buildParseSuggestedChips(parsed, {}, text);
 
-    const assistantMessage =
-      parsed.confidence >= 0.75
-        ? `نیازتان را فهمیدم (${def.labelFa}). چند سؤال کوتاه می‌پرسم؛ بعد می‌توانید بیشتر با من گفتگو کنید.`
-        : `فکر می‌کنم منظورتان «${def.labelFa}» است. درست است؟`;
-
-    const response: ParseIntentResponse & {
-      meta?: {
-        source: string;
-        aiEnabled: boolean;
-        vertical?: string;
-        cacheHit?: boolean;
-        latencyMs?: number;
-      };
-      debug?: { llmRaw?: unknown };
-    } = {
+    const response: ParseIntentResponse = {
       parsed,
       suggestedChips,
       assistantMessage,
       meta: {
-        source,
-        aiEnabled: isNeedIntakeAiEnabled(),
+        source: 'rules',
+        engine: 'internal',
         vertical,
-        cacheHit: cacheHit ?? false,
-        latencyMs: latencyMs ?? Date.now() - started,
+        verticalScore: classification.score,
+        verticalCertainty: classification.certainty,
+        skipClarifying: skipClarify,
+        latencyMs,
       },
     };
-
-    if (process.env.NODE_ENV !== 'production' && llmRaw) {
-      response.debug = { llmRaw };
-    }
 
     return NextResponse.json(response);
   } catch (error) {

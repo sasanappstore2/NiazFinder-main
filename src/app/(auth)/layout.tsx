@@ -13,7 +13,7 @@ export default function AuthLayout({
   return (
     <div
       dir="rtl"
-      className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emerald-50 via-background to-emerald-50 dark:from-emerald-950/20 dark:via-background dark:to-emerald-950/20"
+      className="min-h-screen flex items-center justify-center p-4 bg-linear-to-br from-emerald-50 via-background to-emerald-50 dark:from-emerald-950/20 dark:via-background dark:to-emerald-950/20"
     >
       {/* Decorative background blobs */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">

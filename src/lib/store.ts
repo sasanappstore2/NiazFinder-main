@@ -856,6 +856,8 @@ export const useAppStore = create<AppState>((set, get) => ({
         categoryIcon: r.categoryIcon ?? r.subcategory?.icon ?? r.category?.icon ?? undefined,
         priority: r.priority,
         status: r.status,
+        moderationStatus: r.moderationStatus,
+        rejectionReason: r.rejectionReason,
         tags: r.tags ?? [],
         viewCount: r.viewCount,
         proposalCount: r.proposalCount,

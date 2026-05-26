@@ -22,6 +22,7 @@ export interface ApiRequestRow {
 
 export interface ApiSpecialistRow {
   id: string;
+  slug?: string;
   displayName?: string;
   firstName?: string;
   lastName?: string;
@@ -33,7 +34,7 @@ export interface ApiSpecialistRow {
   projectCount?: number;
   completionRate?: number;
   responseRate?: number;
-  skills?: string[];
+  skills?: Array<string | { id?: string; name: string; level?: number }>;
   isVerified?: boolean;
   online?: boolean;
 }

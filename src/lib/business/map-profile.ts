@@ -8,6 +8,7 @@ import type {
   OfferCtaType,
   PortfolioMediaType,
   BusinessStatus,
+  ProfileLayoutConfig,
 } from '@/contracts/business-profile';
 import type {
   BusinessProfile,
@@ -93,7 +94,11 @@ export function mapProfileToBusiness(
   const categories = parseJsonArray<string>(profile.categorySlugs);
   const tags = parseJsonArray<string>(profile.tags);
   const badges = parseJsonArray<string>(profile.badges);
-  const extensions = parseJsonObject<BusinessExtension>(profile.extensions, {});
+  const extensionsRaw = parseJsonObject<Record<string, unknown>>(profile.extensions, {});
+  const layoutConfig = (extensionsRaw._layout as ProfileLayoutConfig | undefined) ?? undefined;
+  const { _layout: _omit, ...extRest } = extensionsRaw;
+  const extensions =
+    Object.keys(extRest).length > 0 ? (extRest as BusinessExtension) : undefined;
   const aiRaw = parseJsonObject<Partial<AiAssistantConfig>>(profile.aiAssistantConfig, {
     systemPrompt: '',
     dynamicQuestions: [],
@@ -101,10 +106,9 @@ export function mapProfileToBusiness(
 
   const city = profile.city ?? '';
   const cat = primaryCategory ?? categories[0] ?? 'services';
-  const seoPath =
-    city && cat && profile.slug
-      ? routeBuilder.businessSeo(citySlug ?? cityToSlug(city), cat, profile.slug)
-      : routeBuilder.pro(profile.userId);
+  const seoPath = profile.slug
+    ? routeBuilder.businessProfile(profile.slug)
+    : routeBuilder.pro(profile.userId);
 
   const business: Business = {
     id: profile.userId,
@@ -163,7 +167,8 @@ export function mapProfileToBusiness(
       conversions: profile.conversionCount,
       saves: profile.saveCount,
     },
-    extensions: Object.keys(extensions).length > 0 ? extensions : undefined,
+    extensions: extensions ? { ...extensions, ...(layoutConfig ? { _layout: layoutConfig } : {}) } : layoutConfig ? { _layout: layoutConfig } : undefined,
+    layoutConfig,
   };
 
   return business;

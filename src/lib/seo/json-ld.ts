@@ -34,7 +34,12 @@ interface WebSiteSchema {
   inLanguage: string;
   potentialAction: {
     '@type': 'SearchAction';
-    target: string;
+    target:
+      | string
+      | {
+          '@type': 'EntryPoint';
+          urlTemplate: string;
+        };
     'query-input': string;
   };
 }
@@ -116,8 +121,8 @@ interface ProfessionalServiceSchema {
         '@type': 'Service';
         name: string;
       };
-    };
-  }[];
+    }[];
+  };
 }
 
 // رابط اسکیمای سوالات متداول
@@ -394,6 +399,6 @@ export function createReviewSchema(review: Review): ReviewSchema {
 /**
  * تبدیل شیء JSON-LD به رشته JSON برای استفاده در تگ script
  */
-export function schemaToJsonLd<T extends Record<string, unknown>>(schema: T): string {
+export function schemaToJsonLd(schema: object): string {
   return JSON.stringify(schema);
 }

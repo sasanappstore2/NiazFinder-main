@@ -20,6 +20,8 @@ interface ShareButtonProps {
   url?: string;
   title?: string;
   description?: string;
+  /** Optional accessible label override */
+  label?: string;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
@@ -61,6 +63,7 @@ export function ShareButton({
   url = '',
   title = '',
   description = '',
+  label,
   size = 'md',
   className,
 }: ShareButtonProps) {
@@ -149,7 +152,7 @@ export function ShareButton({
             sizeConfig.trigger,
             className
           )}
-          aria-label="اشتراک‌گذاری"
+          aria-label={label ?? 'اشتراک‌گذاری'}
         >
           <Share2 className={sizeConfig.icon} />
         </button>

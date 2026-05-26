@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { mv } from '@/lib/motion-variants';
 import {
   Image,
   FileText,
@@ -248,12 +249,12 @@ export function FileUploadPreview({ onSend, onCancel }: FileUploadPreviewProps) 
       <AnimatePresence mode="wait">
         <motion.div
           key="file-upload-preview"
-          variants={containerVariants}
+          variants={mv(containerVariants)}
           initial="hidden"
           animate="visible"
           exit="exit"
           dir="rtl"
-          className="mx-auto w-full max-w-3xl rounded-xl border border-border/50 bg-card p-3 shadow-lg backdrop-blur-sm"
+          className="mx-auto w-full max-w-3xl rounded-xl border border-border/50 bg-card p-3 shadow-lg backdrop-blur-xs"
         >
           {/* ─── Header: file count + total size + add more ─── */}
           <div className="mb-2 flex items-center justify-between">
@@ -286,7 +287,7 @@ export function FileUploadPreview({ onSend, onCancel }: FileUploadPreviewProps) 
                 {visibleImages.map((item) => (
                   <motion.div
                     key={item.id}
-                    variants={itemVariants}
+                    variants={mv(itemVariants)}
                     initial="hidden"
                     animate="visible"
                     exit="exit"
@@ -301,10 +302,10 @@ export function FileUploadPreview({ onSend, onCancel }: FileUploadPreviewProps) 
                     />
 
                     {/* Overlay on hover */}
-                    <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                    <div className="absolute inset-0 flex items-end bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
 
                     {/* File size badge */}
-                    <div className="absolute bottom-1 right-1 rounded-md bg-black/50 px-1.5 py-0.5 text-caption text-white/90 backdrop-blur-sm">
+                    <div className="absolute bottom-1 right-1 rounded-md bg-black/50 px-1.5 py-0.5 text-caption text-white/90 backdrop-blur-xs">
                       {toPersianDigits(formatFileSize(item.file.size))}
                     </div>
 
@@ -313,7 +314,7 @@ export function FileUploadPreview({ onSend, onCancel }: FileUploadPreviewProps) 
                       whileHover={{ scale: 1.15 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={() => removeFile(item.id)}
-                      className="absolute left-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/50 text-white/90 backdrop-blur-sm transition-colors hover:bg-destructive"
+                      className="absolute left-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/50 text-white/90 backdrop-blur-xs transition-colors hover:bg-destructive"
                       aria-label="حذف فایل"
                     >
                       <X className="h-3 w-3" />
@@ -325,7 +326,7 @@ export function FileUploadPreview({ onSend, onCancel }: FileUploadPreviewProps) 
                 {extraImageCount > 0 && (
                   <motion.div
                     key="more-indicator"
-                    variants={itemVariants}
+                    variants={mv(itemVariants)}
                     initial="hidden"
                     animate="visible"
                     exit="exit"
@@ -336,7 +337,7 @@ export function FileUploadPreview({ onSend, onCancel }: FileUploadPreviewProps) 
                       <img
                         src={visibleImages[visibleImages.length - 1].preview}
                         alt=""
-                        className="h-full w-full object-cover blur-sm opacity-40"
+                        className="h-full w-full object-cover blur-xs opacity-40"
                       />
                     )}
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white">
@@ -364,7 +365,7 @@ export function FileUploadPreview({ onSend, onCancel }: FileUploadPreviewProps) 
                   return (
                     <motion.div
                       key={item.id}
-                      variants={itemVariants}
+                      variants={mv(itemVariants)}
                       initial="hidden"
                       animate="visible"
                       exit="exit"
@@ -416,7 +417,7 @@ export function FileUploadPreview({ onSend, onCancel }: FileUploadPreviewProps) 
               onChange={(e) => setCaption(e.target.value)}
               placeholder="افزودن توضیحات (اختیاری)..."
               dir="rtl"
-              className="w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/60 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/20"
+              className="w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/60 focus:border-primary/40 focus:outline-hidden focus:ring-1 focus:ring-primary/20"
               maxLength={500}
             />
             <div className="mt-0.5 text-left text-caption text-muted-foreground/50">

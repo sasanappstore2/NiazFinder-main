@@ -135,7 +135,7 @@ function IncomingCallView({
 
   return (
     <motion.div
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 bg-black/60 backdrop-blur-xl sm:gap-8"
+      className="fixed inset-0 z-100 flex flex-col items-center justify-center gap-6 bg-black/60 backdrop-blur-xl sm:gap-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -155,7 +155,7 @@ function IncomingCallView({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Badge className="gap-1.5 rounded-full border-emerald-500/30 bg-emerald-500/15 px-4 py-1.5 text-sm text-emerald-300 backdrop-blur-sm">
+          <Badge className="gap-1.5 rounded-full border-emerald-500/30 bg-emerald-500/15 px-4 py-1.5 text-sm text-emerald-300 backdrop-blur-xs">
             <PhoneIncoming className="h-3.5 w-3.5" />
             تماس ورودی
           </Badge>
@@ -270,7 +270,7 @@ function ActiveCallBar({
 
   return (
     <motion.div
-      className="fixed inset-x-0 top-0 z-[100] flex items-center justify-center px-4 pt-4"
+      className="fixed inset-x-0 top-0 z-100 flex items-center justify-center px-4 pt-4"
       initial={{ opacity: 0, y: -80 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -80 }}
@@ -372,7 +372,7 @@ function CallEndedView({
 
   return (
     <motion.div
-      className="fixed inset-x-0 top-0 z-[100] flex items-center justify-center px-4 pt-4"
+      className="fixed inset-x-0 top-0 z-100 flex items-center justify-center px-4 pt-4"
       initial={{ opacity: 0, y: -60 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -60 }}

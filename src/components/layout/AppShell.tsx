@@ -7,11 +7,11 @@ import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { BackToTop } from '@/components/shared/BackToTop';
-import { QuickActions } from '@/components/shared/QuickActions';
 import { CookieConsent } from '@/components/shared/CookieConsent';
 import { OnboardingWelcome } from '@/components/shared/OnboardingWelcome';
 import { VoiceCallOverlay } from '@/components/chat/VoiceCallOverlay';
 import ErrorBoundary from '@/components/shared/ErrorBoundary';
+import { QueryProvider } from '@/components/providers/QueryProvider';
 import { Separator } from '@/components/ui/separator';
 import { useAppStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
@@ -46,54 +46,54 @@ export function AppShell({ children, minimalChrome = false }: AppShellProps) {
   }, [initializeFromStorage]);
 
   return (
-    <ErrorBoundary>
-      <div
-        className={cn(
-          'flex flex-col bg-background text-foreground',
-          effectiveMinimal ? 'h-dvh max-h-dvh overflow-hidden' : 'min-h-screen'
-        )}
-      >
-        <Header compact={effectiveMinimal} />
-        <main
+    <QueryProvider>
+      <ErrorBoundary>
+        <div
           className={cn(
-            'flex min-h-0 flex-col',
-            effectiveMinimal ? 'flex-1 overflow-hidden' : 'flex-1',
-            !effectiveMinimal && !isHome && 'pt-6',
-            !effectiveMinimal && 'has-mobile-nav'
+            'flex flex-col bg-background text-foreground',
+            effectiveMinimal ? 'h-dvh max-h-dvh overflow-hidden' : 'min-h-screen'
           )}
-          dir="rtl"
-          id="main-content"
-          role="main"
         >
-          {children}
-        </main>
-        {!effectiveMinimal && (
-          isHome ? (
-            <Footer />
-          ) : (
-            <div className="mt-auto">
-              <Separator />
-              <Footer compact />
-            </div>
-          )
-        )}
-        <AuthModal />
-        <OnboardingWelcome />
-        {!effectiveMinimal && (
-          <Suspense fallback={null}>
-            <MobileBottomNav />
-          </Suspense>
-        )}
-        <CookieConsent />
-        {!effectiveMinimal && <BackToTop />}
-        {!effectiveMinimal && <QuickActions />}
-        <VoiceCallOverlay
-          isOpen={voiceCallOpen}
-          onClose={hangupVoiceCall}
-          targetUser={voiceCallTarget}
-          callType={voiceCallType}
-        />
-      </div>
-    </ErrorBoundary>
+          <Header compact={effectiveMinimal} />
+          <main
+            className={cn(
+              'flex min-h-0 flex-col',
+              effectiveMinimal ? 'flex-1 overflow-hidden' : 'flex-1',
+              !effectiveMinimal && !isHome && 'pt-4 sm:pt-6',
+              !effectiveMinimal && 'has-mobile-nav lg:pb-0'
+            )}
+            dir="rtl"
+            id="main-content"
+            role="main"
+          >
+            {children}
+          </main>
+          {!effectiveMinimal &&
+            (isHome ? (
+              <Footer />
+            ) : (
+              <div className="mt-auto">
+                <Separator />
+                <Footer compact />
+              </div>
+            ))}
+          <AuthModal />
+          <OnboardingWelcome />
+          {!effectiveMinimal && (
+            <Suspense fallback={null}>
+              <MobileBottomNav />
+            </Suspense>
+          )}
+          <CookieConsent />
+          {!effectiveMinimal && <BackToTop />}
+          <VoiceCallOverlay
+            isOpen={voiceCallOpen}
+            onClose={hangupVoiceCall}
+            targetUser={voiceCallTarget}
+            callType={voiceCallType}
+          />
+        </div>
+      </ErrorBoundary>
+    </QueryProvider>
   );
 }

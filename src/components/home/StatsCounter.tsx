@@ -31,7 +31,7 @@ function StatCard({ stat, inView }: { stat: typeof TRUST_STATS[number]; inView: 
 
   return (
     <div className="glass-card text-center p-5 md:p-8 hover-lift cursor-default" itemScope itemType="https://schema.org/QuantitativeValue">
-      <span className="text-4xl mb-4 block" aria-hidden="true" loading="lazy">{stat.icon}</span>
+      <span className="text-4xl mb-4 block" aria-hidden="true">{stat.icon}</span>
       <p className="mb-2 text-3xl md:text-4xl font-extrabold tabular-nums text-gradient" itemProp="value">
         {count.toLocaleString('fa-IR')}
         <span className="text-xl md:text-2xl">{stat.suffix}</span>

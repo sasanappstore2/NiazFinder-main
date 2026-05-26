@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { budgetToJson } from '@/lib/budget';
 
 // ============ TYPES ============
 
@@ -76,8 +77,8 @@ export async function GET(request: NextRequest) {
         id: r.id,
         title: r.title,
         slug: r.slug,
-        budgetMin: r.budgetMin,
-        budgetMax: r.budgetMax,
+        budgetMin: budgetToJson(r.budgetMin),
+        budgetMax: budgetToJson(r.budgetMax),
         budgetType: r.budgetType,
         status: r.status,
         city: r.city,

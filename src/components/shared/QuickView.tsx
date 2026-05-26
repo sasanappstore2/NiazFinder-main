@@ -76,7 +76,7 @@ export function QuickViewPopover({ request, anchorRect, onClose }: QuickViewProp
     <div
       ref={popoverRef}
       className={cn(
-        'fixed z-[var(--z-dropdown,100)] w-[400px] rounded-2xl p-5',
+        'fixed z-(--z-dropdown,100) w-[400px] rounded-2xl p-5',
         'animate-scale-in',
         // Glassmorphism
         'bg-white/80 dark:bg-card/80 backdrop-blur-xl',
@@ -92,7 +92,7 @@ export function QuickViewPopover({ request, anchorRect, onClose }: QuickViewProp
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute top-3 end-3 flex size-7 items-center justify-center rounded-full bg-muted/60 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        className="absolute top-3 inset-e-3 flex size-7 items-center justify-center rounded-full bg-muted/60 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         aria-label="بستن"
       >
         <X className="size-3.5" />

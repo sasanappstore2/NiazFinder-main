@@ -256,7 +256,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       const payload = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET || 'needfinder-jwt-secret-key-2024',
+        secret: process.env.JWT_SECRET || 'needfinder-jwt-secret-2024-production-key',
       });
 
       // Verify token exists in DB

@@ -18,7 +18,7 @@ export default function Error({ error, reset }: ErrorPageProps) {
   return (
     <div
       dir="rtl"
-      className="flex min-h-screen items-center justify-center bg-gradient-to-br from-emerald-50 via-background to-emerald-50 dark:from-emerald-950/20 dark:via-background dark:to-emerald-950/20 p-4"
+      className="flex min-h-screen items-center justify-center bg-linear-to-br from-emerald-50 via-background to-emerald-50 dark:from-emerald-950/20 dark:via-background dark:to-emerald-950/20 p-4"
     >
       {/* Decorative background */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">

@@ -36,7 +36,7 @@ const partners: Partner[] = [
 function Badge({ partner }: { partner: Partner }) {
   const Icon = partner.icon;
   return (
-    <div className="flex shrink-0 items-center gap-2 rounded-full border border-border/50 bg-muted/30 px-5 py-2.5 backdrop-blur-sm" itemProp="sponsor" itemScope itemType="https://schema.org/Organization">
+    <div className="flex shrink-0 items-center gap-2 rounded-full border border-border/50 bg-muted/30 px-5 py-2.5 backdrop-blur-xs" itemProp="sponsor" itemScope itemType="https://schema.org/Organization">
       <Icon className={`h-4 w-4 ${partner.color}`} aria-hidden="true" />
       <span className="text-sm font-medium text-foreground/80 whitespace-nowrap" itemProp="name">{partner.name}</span>
     </div>
@@ -47,8 +47,8 @@ function MarqueeRow({ partners, reverse = false }: { partners: Partner[]; revers
   return (
     <div className="relative w-full overflow-hidden">
       {/* Gradient fade edges */}
-      <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-background to-transparent" aria-hidden="true" />
-      <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-background to-transparent" aria-hidden="true" />
+      <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-linear-to-l from-background to-transparent" aria-hidden="true" />
+      <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-linear-to-r from-background to-transparent" aria-hidden="true" />
 
       <div className={`flex w-max gap-4 ${reverse ? 'animate-marquee-reverse' : 'animate-marquee'}`} dir="rtl" role="list">
         {[...partners, ...partners, ...partners, ...partners].map((p, i) => (
@@ -62,7 +62,7 @@ function MarqueeRow({ partners, reverse = false }: { partners: Partner[]; revers
 export default function TrustPartnersMarquee() {
   return (
     <section dir="rtl" className="relative w-full bg-muted/30 py-12 md:py-16" aria-label="شرکای مورد اعتماد" itemScope itemType="https://schema.org/ItemList">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="page-container">
         <span className="mb-8 text-center text-sm font-medium text-muted-foreground block" role="heading" aria-level={3}>
           مورد اعتماد بیش از ۵,۰۰۰ کسب‌وکار
         </span>

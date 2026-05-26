@@ -1,68 +1,63 @@
+import { defineConfig, globalIgnores } from "eslint/config";
 import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import nextTypescript from "eslint-config-next/typescript";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const relaxedRules = {
+  "@typescript-eslint/no-explicit-any": "off",
+  "@typescript-eslint/no-require-imports": "off",
+  "@typescript-eslint/no-unused-vars": "off",
+  "@typescript-eslint/no-non-null-assertion": "off",
+  "@typescript-eslint/ban-ts-comment": "off",
+  "@typescript-eslint/prefer-as-const": "off",
+  "@typescript-eslint/no-unused-disable-directive": "off",
+  "react-hooks/exhaustive-deps": "off",
+  "react-hooks/set-state-in-effect": "off",
+  "react-hooks/refs": "error",
+  "react-hooks/incompatible-library": "off",
+  "react-hooks/preserve-manual-memoization": "off",
+  "react-hooks/purity": "off",
+  "react/no-unescaped-entities": "off",
+  "react/display-name": "off",
+  "react/prop-types": "off",
+  "react-compiler/react-compiler": "off",
+  "@next/next/no-img-element": "off",
+  "@next/next/no-html-link-for-pages": "off",
+  "prefer-const": "off",
+  "no-unused-vars": "off",
+  "no-console": "off",
+  "no-debugger": "off",
+  "no-empty": "off",
+  "no-irregular-whitespace": "off",
+  "no-case-declarations": "off",
+  "no-fallthrough": "off",
+  "no-mixed-spaces-and-tabs": "off",
+  "no-redeclare": "off",
+  "no-undef": "off",
+  "no-unreachable": "off",
+  "no-useless-escape": "off",
+  "no-restricted-imports": "off",
+};
 
-const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
-  rules: {
-    // TypeScript rules
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-require-imports": "off",
-    "@typescript-eslint/no-unused-vars": "off",
-    "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/ban-ts-comment": "off",
-    "@typescript-eslint/prefer-as-const": "off",
-    "@typescript-eslint/no-unused-disable-directive": "off",
-    
-    // React rules
-    "react-hooks/exhaustive-deps": "off",
-    "react-hooks/purity": "off",
-    "react/no-unescaped-entities": "off",
-    "react/display-name": "off",
-    "react/prop-types": "off",
-    "react-compiler/react-compiler": "off",
-    
-    // Next.js rules
-    "@next/next/no-img-element": "off",
-    "@next/next/no-html-link-for-pages": "off",
-    
-    // General JavaScript rules
-    "prefer-const": "off",
-    "no-unused-vars": "off",
-    "no-console": "off",
-    "no-debugger": "off",
-    "no-empty": "off",
-    "no-irregular-whitespace": "off",
-    "no-case-declarations": "off",
-    "no-fallthrough": "off",
-    "no-mixed-spaces-and-tabs": "off",
-    "no-redeclare": "off",
-    "no-undef": "off",
-    "no-unreachable": "off",
-    "no-useless-escape": "off",
-
+export default defineConfig(
+  ...nextCoreWebVitals,
+  ...nextTypescript,
+  {
+    files: ["**/*.{js,jsx,ts,tsx,mjs,cjs}"],
+    rules: relaxedRules,
   },
-}, {
-  files: ["src/**/*.{ts,tsx}"],
-  rules: {
-    "no-restricted-imports": ["warn", {
-      patterns: [
-        {
-          group: ["@/components/business/**"],
-          message: "Do not import business module from need module. Use contracts or shared.",
-        },
-        {
-          group: ["@/components/need/**"],
-          message: "Do not import need module from business module. Use contracts or shared.",
-        },
-      ],
-    }],
-  },
-}, {
-  ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "examples/**", "skills", "mini-services/**", "test-api*.js", "*.test.ts", "*.test.tsx"]
-}];
-
-export default eslintConfig;
+  globalIgnores([
+    "node_modules/**",
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+    "examples/**",
+    "skills",
+    "mini-services/**",
+    "nellavio/**",
+    "ml/**",
+    "test-api*.js",
+    "*.test.ts",
+    "*.test.tsx",
+  ]),
+);

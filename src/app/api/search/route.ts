@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
     if (q.length >= 1) {
       const whereRequests: Prisma.ServiceRequestWhereInput = {
         status: 'OPEN',
+        moderationStatus: 'APPROVED',
         OR: [
           { title: { contains: q } },
           { description: { contains: q } },

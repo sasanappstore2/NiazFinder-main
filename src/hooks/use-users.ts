@@ -117,7 +117,7 @@ export function useFollow(userId: string) {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(userId) });
     },
     onSuccess: (data) => {
-      toast.success(data.message);
+      if (data.message) toast.success(data.message);
     },
   });
 }

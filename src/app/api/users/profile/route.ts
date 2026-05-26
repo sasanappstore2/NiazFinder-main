@@ -48,6 +48,9 @@ interface ProfileResponse {
     experience: string | null;
   }[];
   portfolioCount: number;
+  followerCount: number;
+  followingCount: number;
+  postCount: number;
 }
 
 // ============ GET handler ============

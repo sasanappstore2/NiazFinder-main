@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { normalizeText, fuzzySearch } from '@/lib/persian-normalize';
+import type { UserRole } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 
 // Common select fields for User model
 const USER_SELECT = {
@@ -60,12 +62,12 @@ export async function GET(request: NextRequest) {
     if (q && q.trim().length > 0) {
       const trimmedQ = q.trim();
 
-      const whereClause: Record<string, unknown> = { isActive: true, isBanned: false };
+      const whereClause: Prisma.UserWhereInput = { isActive: true, isBanned: false };
       if (role) {
         if (role.includes(',')) {
-          whereClause.role = { in: role.split(',') };
+          whereClause.role = { in: role.split(',') as UserRole[] };
         } else {
-          whereClause.role = role;
+          whereClause.role = role as UserRole;
         }
       }
 
@@ -75,14 +77,19 @@ export async function GET(request: NextRequest) {
         take: 100,
       });
 
-      const results = fuzzySearch(allUsers, trimmedQ, [
-        (u) => u.username || '',
-        (u) => u.displayName || '',
-        (u) => `${u.firstName} ${u.lastName}`,
-        (u) => u.email,
-        (u) => u.bio || '',
-        (u) => u.city || '',
-      ], 1, 0.3);
+      const results = fuzzySearch(
+        allUsers,
+        trimmedQ,
+        (u) => [
+          u.username || '',
+          u.displayName || '',
+          `${u.firstName} ${u.lastName}`,
+          u.bio || '',
+          u.city || '',
+        ],
+        1,
+        0.3
+      );
 
       const sliced = results.slice(0, limit);
 
@@ -103,7 +110,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const where: Record<string, unknown> = { isActive: true };
+    const where: Prisma.UserWhereInput = { isActive: true };
 
     if (authUser.role === 'ADMIN' || authUser.role === 'SUPER_ADMIN') {
       delete where.isActive;
@@ -111,9 +118,9 @@ export async function GET(request: NextRequest) {
 
     if (role) {
       if (role.includes(',')) {
-        where.role = { in: role.split(',') };
+        where.role = { in: role.split(',') as UserRole[] };
       } else {
-        where.role = role;
+        where.role = role as UserRole;
       }
     }
     if (status === 'banned') where.isBanned = true;
@@ -158,7 +165,11 @@ export async function GET(request: NextRequest) {
         const allUsers = await db.user.findMany({
           where: {
             ...(authUser.role === 'ADMIN' || authUser.role === 'SUPER_ADMIN' ? {} : { isActive: true }),
-            ...(role ? (role.includes(',') ? { role: { in: role.split(',') } } : { role }) : {}),
+            ...(role
+              ? role.includes(',')
+                ? { role: { in: role.split(',') as UserRole[] } }
+                : { role: role as UserRole }
+              : {}),
             ...(status === 'banned' ? { isBanned: true } : status === 'inactive' ? { isActive: false } : {}),
           },
           select: USER_SELECT,

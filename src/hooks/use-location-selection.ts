@@ -6,17 +6,34 @@ import { useToast } from '@/hooks/use-toast';
 import type { City } from '@/lib/location-system';
 import { cookieManager } from '@/lib/cookie-manager';
 import {
-  buildUrlFromCitySelection,
-  citiesFromUrl,
-} from '@/lib/search/apply-location';
+  buildUrlFromLocationScope,
+  persistScopeToCookie,
+  scopeFromCookie,
+  scopeFromUrl,
+  scopeIsActive,
+  scopeLabel,
+  selectionToScope,
+  scopeToCookieSelection,
+  type LocationSelection,
+} from '@/lib/search/location-scope';
 import { COUNTRY_SLUG } from '@/config/locations';
+import { routeBuilder } from '@/config/routes';
+import { isBusinessProfilePath } from '@/lib/search/browse-path';
 import { useAutoLocationCity } from '@/hooks/use-auto-location-city';
 import { locationCityIdToSlug } from '@/lib/search/city-slugs';
+import { useManagedLocations } from '@/lib/use-managed-locations';
 
 function shouldRedirectAfterAutoDetect(pathname: string, preservePathOnHome: boolean): boolean {
   if (preservePathOnHome && pathname === '/') return false;
   if (pathname === '/') return true;
-  if (pathname === `/s/${COUNTRY_SLUG}` || pathname === '/s/iran') return true;
+  if (
+    pathname === `/n/${COUNTRY_SLUG}` ||
+    pathname === '/n/iran' ||
+    pathname === `/s/${COUNTRY_SLUG}` ||
+    pathname === '/s/iran'
+  ) {
+    return true;
+  }
   return false;
 }
 
@@ -31,37 +48,45 @@ export function useLocationSelection(options: UseLocationSelectionOptions = {}) 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { provinces } = useManagedLocations();
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedCities, setSelectedCities] = React.useState<City[]>([]);
+  const [selectedProvinceIds, setSelectedProvinceIds] = React.useState<string[]>([]);
   const [isInitialized, setIsInitialized] = React.useState(false);
 
-  const urlCities = React.useMemo(
-    () => citiesFromUrl(pathname, searchParams),
-    [pathname, searchParams]
-  );
-
   const skipGeoAuto =
-    urlCities.length > 0 || cookieManager.hasSavedLocation();
+    scopeIsActive(scopeFromUrl(pathname, searchParams)) || cookieManager.hasSavedLocation();
 
   const applySelection = React.useCallback(
-    (cities: City[], opts?: { silent?: boolean; fromGeo?: boolean }) => {
-      setSelectedCities(cities);
-      cookieManager.updateLocation(cities);
+    (selection: LocationSelection, opts?: { silent?: boolean; fromGeo?: boolean }) => {
+      const scope = selectionToScope(selection);
+      setSelectedCities(selection.cities);
+      setSelectedProvinceIds(selection.provinceIds);
+      persistScopeToCookie(scope);
 
       const stayOnHome = preservePathOnHome && pathname === '/';
-      if (!stayOnHome) {
-        const url = buildUrlFromCitySelection(pathname, searchParams, cities);
-        router.push(url);
+      const onProfilePage = isBusinessProfilePath(pathname);
+      if (!stayOnHome && !onProfilePage) {
+        const url = buildUrlFromLocationScope(pathname, searchParams, scope);
+        const navigate =
+          pathname.startsWith('/n/') ||
+          pathname.startsWith('/b/') ||
+          pathname.startsWith('/s/')
+            ? router.replace
+            : router.push;
+        navigate(url);
       }
 
-      if (!opts?.silent && cities.length > 0) {
+      if (!opts?.silent && (selection.cities.length > 0 || selection.provinceIds.length > 0)) {
         toast({
           title: opts?.fromGeo ? 'شهر شما' : 'انتخاب مکان',
-          description:
-            cities.length === 1
-              ? `${cities[0].name} انتخاب شد`
-              : `${cities.length} شهر انتخاب شد`,
+          description: scopeLabel(scope),
+        });
+      } else if (!opts?.silent && selection.cities.length === 0 && selection.provinceIds.length === 0) {
+        toast({
+          title: 'انتخاب مکان',
+          description: 'تمام ایران',
         });
       }
     },
@@ -69,8 +94,8 @@ export function useLocationSelection(options: UseLocationSelectionOptions = {}) 
   );
 
   const handleSelectionChange = React.useCallback(
-    (cities: City[]) => {
-      applySelection(cities);
+    (selection: LocationSelection) => {
+      applySelection(selection);
     },
     [applySelection]
   );
@@ -79,10 +104,12 @@ export function useLocationSelection(options: UseLocationSelectionOptions = {}) 
     (city: City) => {
       if (shouldRedirectAfterAutoDetect(pathname, preservePathOnHome)) {
         const slug = locationCityIdToSlug(city.id);
+        const selection = { cities: [city], provinceIds: [] };
         setSelectedCities([city]);
-        cookieManager.updateLocation([city]);
+        setSelectedProvinceIds([]);
+        persistScopeToCookie(selectionToScope(selection));
         cookieManager.markGeoDetected(slug);
-        router.push(`/s/${slug}`);
+        router.push(routeBuilder.search({ market: 'need', location: slug }));
         toast({
           title: 'شهر شما',
           description: `${city.name} انتخاب شد`,
@@ -91,7 +118,7 @@ export function useLocationSelection(options: UseLocationSelectionOptions = {}) 
       }
       const slug = locationCityIdToSlug(city.id);
       cookieManager.markGeoDetected(slug);
-      applySelection([city], { fromGeo: true });
+      applySelection({ cities: [city], provinceIds: [] }, { fromGeo: true });
     },
     [applySelection, pathname, router, toast, preservePathOnHome]
   );
@@ -102,28 +129,33 @@ export function useLocationSelection(options: UseLocationSelectionOptions = {}) 
   });
 
   React.useEffect(() => {
-    if (urlCities.length > 0) {
-      setSelectedCities(urlCities);
-      cookieManager.updateLocation(urlCities);
+    const urlScope = scopeFromUrl(pathname, searchParams);
+    if (scopeIsActive(urlScope)) {
+      const sel = scopeToCookieSelection(urlScope);
+      setSelectedCities(sel.cities);
+      setSelectedProvinceIds(sel.provinceIds);
+      persistScopeToCookie(urlScope);
     } else {
-      const prefs = cookieManager.getPreferences();
-      if (prefs.location.selectedCities.length > 0) {
-        setSelectedCities(prefs.location.selectedCities);
-      }
+      const cookieScope = scopeFromCookie();
+      const sel = scopeToCookieSelection(cookieScope);
+      setSelectedCities(sel.cities);
+      setSelectedProvinceIds(sel.provinceIds);
     }
     setIsInitialized(true);
-  }, [urlCities]);
+  }, [pathname, searchParams]);
 
   const getLocationDisplayText = () => {
-    if (selectedCities.length === 0) return 'تمام ایران';
-    if (selectedCities.length === 1) return selectedCities[0].name;
-    return `${selectedCities.length} شهر`;
+    return scopeLabel(
+      selectionToScope({ cities: selectedCities, provinceIds: selectedProvinceIds })
+    );
   };
 
   return {
     isOpen,
     setIsOpen,
     selectedCities,
+    selectedProvinceIds,
+    provinces,
     isInitialized,
     getLocationDisplayText,
     handleSelectionChange,

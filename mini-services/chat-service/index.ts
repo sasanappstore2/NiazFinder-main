@@ -90,7 +90,15 @@ function authenticateSocket(socket: AuthenticatedSocket, next: (err?: Error) => 
 
 // ─── Socket.io Server ────────────────────────────────────────────────────
 
-const httpServer = createServer();
+const httpServer = createServer((req, res) => {
+  if (req.url === '/health' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ ok: true, service: 'chat-service', port: PORT }));
+    return;
+  }
+  res.writeHead(404, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ error: 'Not found' }));
+});
 
 const io = new Server(httpServer, {
   path: '/',

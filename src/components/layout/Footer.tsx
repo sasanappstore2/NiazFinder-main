@@ -173,8 +173,8 @@ export function Footer({ compact = false }: FooterProps) {
   // ============ Compact Footer (non-home pages) ============
   if (compact) {
     return (
-      <footer id="footer" className="bg-card/30 pb-[var(--mobile-nav-offset)]" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
-        <div className="container-default py-4">
+      <footer id="footer" className="bg-card/30 pb-(--mobile-nav-offset)" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
+        <div className="page-container py-4">
           <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
             {/* Brand */}
             <div className="flex items-center gap-2" itemScope itemType="https://schema.org/Organization">
@@ -236,7 +236,7 @@ export function Footer({ compact = false }: FooterProps) {
 
         {/* Noscript fallback for crawlers */}
         <noscript>
-          <div className="container-default py-3">
+          <div className="page-container py-3">
             <nav className="flex flex-wrap items-center justify-center gap-4 text-xs" aria-label="لینک‌های پایین صفحه">
               <a href="/" title="صفحه اصلی">صفحه اصلی</a>
               <a href="/post" title="ثبت نیاز">ثبت نیاز</a>
@@ -252,12 +252,12 @@ export function Footer({ compact = false }: FooterProps) {
 
   // ============ Full Footer (home page) ============
   return (
-    <footer id="footer" className="mt-auto pb-[var(--mobile-nav-offset)] footer-glass footer-wave" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
+    <footer id="footer" className="mt-auto pb-(--mobile-nav-offset) footer-glass footer-wave" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
       {/* Gradient top decoration line */}
       <div className="gradient-line" />
       {/* Newsletter Section */}
       <div className="border-b border-border/30">
-        <div className="container-default py-10">
+        <div className="page-container py-10">
           <div className="rounded-xl p-6 md:p-8 bg-muted/30">
             <div className="flex flex-col items-center gap-4 text-center md:flex-row md:justify-between md:text-start">
               <div className="max-w-md">
@@ -337,10 +337,10 @@ export function Footer({ compact = false }: FooterProps) {
       </div>
 
       {/* Decorative gradient arc */}
-      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-emerald-50/40 to-transparent dark:from-emerald-950/20 pointer-events-none" aria-hidden="true" />
+      <div className="absolute inset-x-0 top-0 h-24 bg-linear-to-b from-emerald-50/40 to-transparent dark:from-emerald-950/20 pointer-events-none" aria-hidden="true" />
 
       {/* Main Footer */}
-      <div id="footer-contact" className="container-default py-12">
+      <div id="footer-contact" className="page-container py-12">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand Section */}
           <div id="contact" className="sm:col-span-2 lg:col-span-1" itemScope itemType="https://schema.org/Organization">
@@ -366,7 +366,7 @@ export function Footer({ compact = false }: FooterProps) {
                   rel="noopener noreferrer"
                   aria-label={social.label}
                   title={social.title}
-                  className="flex size-9 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-all duration-200 hover:scale-110 hover:border-primary/30 hover:bg-gradient-to-br hover:from-primary/15 hover:to-emerald-500/10 hover:text-primary hover:shadow-[0_0_12px_oklch(0.51_0.12_165/0.15)] hover:ring-2 hover:ring-primary/20"
+                  className="flex size-9 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-all duration-200 hover:scale-110 hover:border-primary/30 hover:bg-linear-to-br hover:from-primary/15 hover:to-emerald-500/10 hover:text-primary hover:shadow-[0_0_12px_oklch(0.51_0.12_165/0.15)] hover:ring-2 hover:ring-primary/20"
                 >
                   <social.icon className="size-4" />
                 </a>
@@ -452,7 +452,7 @@ export function Footer({ compact = false }: FooterProps) {
 
       {/* Bottom Bar */}
       <Separator />
-      <div className="container-default py-5">
+      <div className="page-container py-5">
         <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground/70">
             <span className="inline-block size-1.5 rotate-45 rounded-[1px] bg-primary/60" aria-hidden="true" />
@@ -484,7 +484,7 @@ export function Footer({ compact = false }: FooterProps) {
 
       {/* Noscript fallback for crawlers */}
       <noscript>
-        <div className="container-default border-t border-border py-6">
+        <div className="page-container border-t border-border py-6">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div>
               <h4 className="mb-3 text-sm font-semibold">نیاز فایندر</h4>

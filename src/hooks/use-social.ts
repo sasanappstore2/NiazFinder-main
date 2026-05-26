@@ -159,8 +159,8 @@ export function useLikePost(postId: string) {
                     ...post,
                     isLiked: !post.isLiked,
                     likeCount: post.isLiked
-                      ? post.likeCount - 1
-                      : post.likeCount + 1,
+                      ? (post.likeCount ?? 0) - 1
+                      : (post.likeCount ?? 0) + 1,
                   }
                 : post
             ),

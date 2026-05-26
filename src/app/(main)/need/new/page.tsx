@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { PageContainer } from '@/components/layout/PageContainer';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { NeedIntakePanel } from '@/components/need-intake';
@@ -11,12 +12,12 @@ function NeedIntakeContent() {
   const seed = searchParams.get('seed') ?? '';
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pt-2 pb-12">
+    <PageContainer width="narrow">
       <Breadcrumb />
       <Separator className="my-4" />
       <h1 className="text-xl font-bold mb-4">ثبت نیاز جدید</h1>
       <NeedIntakePanel key={seed || 'empty'} initialSeed={seed} />
-    </div>
+    </PageContainer>
   );
 }
 

@@ -1,5 +1,3 @@
-import type { Prisma } from '@prisma/client';
-
 // ============ Cursor Encoding / Decoding ============
 
 /**
@@ -47,7 +45,7 @@ export function decodeCursor(cursor: string): { date: Date; id: string } {
 export function buildWhereClause(
   cursor?: string,
   fieldName: string = 'createdAt'
-): Prisma.MaybeUndefined<Prisma.StringNullableFilter> | undefined {
+): Record<string, unknown> | undefined {
   if (!cursor) return undefined;
 
   let decoded: { date: Date; id: string };
@@ -67,7 +65,7 @@ export function buildWhereClause(
         [fieldName]: { lt: decoded.date.toISOString() },
       },
     ],
-  } as unknown as Prisma.MaybeUndefined<Prisma.StringNullableFilter>;
+  };
 }
 
 /**

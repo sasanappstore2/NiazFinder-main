@@ -500,7 +500,142 @@
               "isPopular": true,
               "isActive": true,
               "order": 1,
-              "neighborhoods": []
+              "neighborhoods": [
+                {
+                  "id": "abadgaran",
+                  "name": "آبادگران",
+                  "nameEn": "abadgaran",
+                  "areas": [
+                    "بهارستان",
+                    "ارغوان",
+                    "رضاشهر",
+                    "نماز ۲۷"
+                  ],
+                  "isActive": true,
+                  "order": 1
+                },
+                {
+                  "id": "abkooh",
+                  "name": "آبکوه",
+                  "nameEn": "abkooh",
+                  "areas": [
+                    "عطار",
+                    "کلاهدوز",
+                    "سناباد",
+                    "فلسطین",
+                    "راهنمایی"
+                  ],
+                  "isActive": true,
+                  "order": 2
+                },
+                {
+                  "id": "highrise-apartments",
+                  "name": "آپارتمان‌های مرتفع",
+                  "nameEn": "highrise-apartments",
+                  "areas": [
+                    "بوعلی",
+                    "فردوسی"
+                  ],
+                  "isActive": true,
+                  "order": 3
+                },
+                {
+                  "id": "azadshahr",
+                  "name": "آزادشهر",
+                  "nameEn": "azadshahr",
+                  "areas": [
+                    "مدرس",
+                    "فرهنگ",
+                    "بیهقی",
+                    "آزادی",
+                    "میرزا کوچک خان",
+                    "سید رضی",
+                    "وکیل آباد"
+                  ],
+                  "isActive": true,
+                  "order": 4
+                },
+                {
+                  "id": "tabarsi",
+                  "name": "طبرسی",
+                  "nameEn": "tabarsi",
+                  "isActive": true,
+                  "order": 5
+                },
+                {
+                  "id": "khamenei",
+                  "name": "آیت‌الله خامنه‌ای",
+                  "nameEn": "khamenei",
+                  "isActive": true,
+                  "order": 6
+                },
+                {
+                  "id": "kashani",
+                  "name": "آیت‌الله کاشانی",
+                  "nameEn": "kashani",
+                  "areas": [
+                    "هاشمی نژاد بیست و چهار",
+                    "کاشانی چهل و هفت",
+                    "شهید کامیاب چهل و شش",
+                    "هاشمی نژاد",
+                    "کاشانی سی و هشتم"
+                  ],
+                  "isActive": true,
+                  "order": 7
+                },
+                {
+                  "id": "abrghan",
+                  "name": "ابرغن",
+                  "nameEn": "abrghan",
+                  "areas": [
+                    "امرغان"
+                  ],
+                  "isActive": true,
+                  "order": 8
+                },
+                {
+                  "id": "abouzar",
+                  "name": "ابوذر",
+                  "nameEn": "abouzar",
+                  "areas": [
+                    "میثم",
+                    "طبرسی"
+                  ],
+                  "isActive": true,
+                  "order": 9
+                },
+                {
+                  "id": "ahmadabad",
+                  "name": "احمدآباد",
+                  "nameEn": "ahmadabad",
+                  "areas": [
+                    "ناصر خسرو",
+                    "بخارایی",
+                    "پاستور",
+                    "ابوذر",
+                    "حکیم نظامی",
+                    "بهشتی",
+                    "راهنمایی",
+                    "فلسطین"
+                  ],
+                  "isActive": true,
+                  "order": 10
+                },
+                {
+                  "id": "adib-nishaburi",
+                  "name": "ادیب نیشابوری (شهرک غرب)",
+                  "nameEn": "adib-nishaburi",
+                  "areas": [
+                    "ادیب بیست و نه",
+                    "امامیه شصت و پنج",
+                    "ادیب سی و دو",
+                    "حجاب شصت و پنج",
+                    "دکترحسابی پنجاه و سه"
+                  ],
+                  "isActive": true,
+                  "order": 11
+                }
+              ]
             },
             {
               "id": "nishapur",
@@ -3522,5 +3657,5 @@
       ]
     }
   ],
-  "updatedAt": "2026-05-18T08:42:04.131Z"
+  "updatedAt": "2026-05-26T08:32:57.684Z"
 }

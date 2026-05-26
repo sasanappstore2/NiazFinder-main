@@ -17,8 +17,8 @@ export interface MatchedBusinessItem {
 }
 
 export interface MatchedBusinessesMeta {
-  source: 'rules' | 'hybrid' | 'llm';
-  aiEnabled: boolean;
+  source: 'rules';
+  engine?: 'internal';
   candidateCount: number;
 }
 

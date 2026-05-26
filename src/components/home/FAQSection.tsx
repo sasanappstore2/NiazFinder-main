@@ -97,7 +97,7 @@ export function FAQSection() {
           >
             <MessageCircle className="size-4" aria-hidden="true" />
             تماس با ما
-            <ChevronDown className="size-4 rotate-[-90deg]" aria-hidden="true" />
+            <ChevronDown className="size-4 -rotate-90" aria-hidden="true" />
           </Button>
         </div>
       </div>

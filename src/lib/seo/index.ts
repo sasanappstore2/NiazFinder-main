@@ -331,7 +331,7 @@ export const SEO_ROUTES: SEORoute[] = [
     section: 'صفحه اصلی',
   },
   {
-    path: '/s/iran?type=need',
+    path: '/n/iran',
     title: 'نیازهای ثبت شده - نیاز فایندر',
     description: 'مشاهده و جستجوی آخرین نیازهای ثبت شده توسط کارفرمایان. از طراحی وب تا خدمات خانگی، بهترین فرصت‌های کاری را پیدا کنید.',
     priority: 0.9,
@@ -339,7 +339,7 @@ export const SEO_ROUTES: SEORoute[] = [
     section: 'نیازها',
   },
   {
-    path: '/s/iran?type=business',
+    path: '/b/iran',
     title: 'کسب‌وکارها و فریلنسرها - نیاز فایندر',
     description: 'جستجو و مقایسه کسب‌وکارها حرفه‌ای در بیش از ۵۰ تخصص. پروفایل، امتیاز، نمونه کار و قیمت کسب‌وکارها برتر ایران.',
     priority: 0.9,
@@ -438,9 +438,9 @@ export interface InternalLink {
 
 export const INTERNAL_LINKS: InternalLink[] = [
   { label: 'ثبت نیاز رایگان', href: '/post', title: 'نیاز خود را رایگان ثبت کنید', section: 'hero' },
-  { label: 'جستجوی کسب‌وکار', href: '/s/iran?type=business', title: 'کسب‌وکارها حرفه‌ای را پیدا کنید', section: 'hero' },
-  { label: 'مشاهده همه نیازها', href: '/s/iran?type=need', title: 'تمام نیازهای ثبت شده', section: 'featured-requests' },
-  { label: 'مشاهده همه کسب‌وکارها', href: '/s/iran?type=business', title: 'تمام کسب‌وکارها', section: 'top-specialists' },
+  { label: 'جستجوی کسب‌وکار', href: '/b/iran', title: 'کسب‌وکارها حرفه‌ای را پیدا کنید', section: 'hero' },
+  { label: 'مشاهده همه نیازها', href: '/n/iran', title: 'تمام نیازهای ثبت شده', section: 'featured-requests' },
+  { label: 'مشاهده همه کسب‌وکارها', href: '/b/iran', title: 'تمام کسب‌وکارها', section: 'top-specialists' },
   { label: 'تعرفه‌ها', href: '/pricing', title: 'طرح‌های اشتراک و قیمت‌ها', section: 'pricing' },
   { label: 'مقایسه کسب‌وکارها', href: '/compare', title: 'مقایسه کسب‌وکارها مختلف', section: 'compare' },
   { label: 'دعوت از دوستان', href: '/referral', title: 'دعوت از دوستان و دریافت پاداش', section: 'referral' },

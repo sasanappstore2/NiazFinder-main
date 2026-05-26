@@ -2,46 +2,14 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { countries as defaultCountries } from '@/lib/location-system';
 
-export interface ManagedNeighborhood {
-  id: string;
-  name: string;
-  nameEn?: string;
-  isActive: boolean;
-  order: number;
-}
-
-export interface ManagedCity {
-  id: string;
-  name: string;
-  nameEn: string;
-  isIsland?: boolean;
-  isPopular?: boolean;
-  isActive: boolean;
-  order: number;
-  neighborhoods: ManagedNeighborhood[];
-}
-
-export interface ManagedProvince {
-  id: string;
-  name: string;
-  nameEn: string;
-  isActive: boolean;
-  order: number;
-  cities: ManagedCity[];
-}
-
-export interface ManagedCountry {
-  id: string;
-  name: string;
-  nameEn: string;
-  isActive: boolean;
-  provinces: ManagedProvince[];
-}
-
-export interface ManagedLocationData {
-  countries: ManagedCountry[];
-  updatedAt: string;
-}
+export type {
+  ManagedNeighborhood,
+  ManagedCity,
+  ManagedProvince,
+  ManagedCountry,
+  ManagedLocationData,
+} from '@/lib/locations/managed-types';
+import type { ManagedLocationData } from '@/lib/locations/managed-types';
 
 const locationFilePath = path.join(process.cwd(), 'src', 'data', 'admin-locations.json');
 
@@ -115,12 +83,26 @@ export function createDefaultManagedLocations(): ManagedLocationData {
   };
 }
 
+let locationDataCache: ManagedLocationData | null = null;
+let locationDataCacheAt = 0;
+const LOCATION_CACHE_TTL_MS = 60_000;
+
 export async function readManagedLocationData(): Promise<ManagedLocationData> {
+  const now = Date.now();
+  if (locationDataCache && now - locationDataCacheAt < LOCATION_CACHE_TTL_MS) {
+    return locationDataCache;
+  }
+
   try {
     const raw = await fs.readFile(locationFilePath, 'utf8');
-    return JSON.parse(raw) as ManagedLocationData;
+    locationDataCache = JSON.parse(raw) as ManagedLocationData;
+    locationDataCacheAt = now;
+    return locationDataCache;
   } catch {
-    return createDefaultManagedLocations();
+    const fallback = createDefaultManagedLocations();
+    locationDataCache = fallback;
+    locationDataCacheAt = now;
+    return fallback;
   }
 }
 
@@ -132,13 +114,27 @@ export async function writeManagedLocationData(data: ManagedLocationData): Promi
 
   await fs.mkdir(path.dirname(locationFilePath), { recursive: true });
   await fs.writeFile(locationFilePath, JSON.stringify(nextData, null, 2), 'utf8');
+  locationDataCache = nextData;
+  locationDataCacheAt = Date.now();
   return nextData;
 }
 
-export function getLocationStats(data: ManagedLocationData) {
+export async function getLocationStats(data: ManagedLocationData) {
   const provinces = data.countries.flatMap((country) => country.provinces);
   const cities = provinces.flatMap((province) => province.cities);
-  const neighborhoods = cities.flatMap((city) => city.neighborhoods);
+
+  let catalogNeighborhoods = 0;
+  let catalogActive = 0;
+  try {
+    const { readManifest } = await import('@/lib/neighborhoods/catalog');
+    const manifest = await readManifest();
+    catalogNeighborhoods = manifest.totalNeighborhoods;
+    catalogActive = manifest.totalNeighborhoods;
+  } catch {
+    const embedded = cities.flatMap((city) => city.neighborhoods);
+    catalogNeighborhoods = embedded.length;
+    catalogActive = embedded.filter((n) => n.isActive).length;
+  }
 
   return {
     countries: data.countries.length,
@@ -146,8 +142,8 @@ export function getLocationStats(data: ManagedLocationData) {
     activeProvinces: provinces.filter((province) => province.isActive).length,
     cities: cities.length,
     activeCities: cities.filter((city) => city.isActive).length,
-    neighborhoods: neighborhoods.length,
-    activeNeighborhoods: neighborhoods.filter((neighborhood) => neighborhood.isActive).length,
+    neighborhoods: catalogNeighborhoods,
+    activeNeighborhoods: catalogActive,
   };
 }
 
@@ -160,7 +156,10 @@ function dedupeCitiesById<T extends { id: string }>(cities: T[]): T[] {
   });
 }
 
-export function getPublicLocationData(data: ManagedLocationData): ManagedLocationData {
+export function getPublicLocationData(
+  data: ManagedLocationData,
+  neighborhoodCounts: Record<string, number> = {}
+): ManagedLocationData {
   return {
     ...data,
     countries: data.countries
@@ -176,13 +175,50 @@ export function getPublicLocationData(data: ManagedLocationData): ManagedLocatio
               province.cities
                 .filter((city) => city.isActive)
                 .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, 'fa'))
-            ).map((city) => ({
-              ...city,
-              neighborhoods: city.neighborhoods
-                .filter((neighborhood) => neighborhood.isActive)
-                .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, 'fa')),
-            })),
+            ).map((city) => {
+              const count = neighborhoodCounts[city.id] ?? 0;
+              return {
+                ...city,
+                neighborhoods: [],
+                hasNeighborhoods: count > 0,
+                neighborhoodCount: count > 0 ? count : undefined,
+              };
+            }),
           })),
       })),
   };
+}
+
+/** Attach catalog neighborhoods for super-admin views. */
+export async function enrichWithCatalogNeighborhoods(
+  data: ManagedLocationData
+): Promise<ManagedLocationData> {
+  const { loadCityNeighborhoods } = await import('@/lib/neighborhoods/catalog');
+  const next = JSON.parse(JSON.stringify(data)) as ManagedLocationData;
+
+  const cityRefs: { city: (typeof next.countries)[0]['provinces'][0]['cities'][0] }[] = [];
+  for (const country of next.countries) {
+    for (const province of country.provinces) {
+      for (const city of province.cities) {
+        cityRefs.push({ city });
+      }
+    }
+  }
+
+  const CONCURRENCY = 8;
+  for (let i = 0; i < cityRefs.length; i += CONCURRENCY) {
+    const batch = cityRefs.slice(i, i + CONCURRENCY);
+    await Promise.all(
+      batch.map(async ({ city }) => {
+        const fromCatalog = await loadCityNeighborhoods(city.id);
+        if (fromCatalog.length > 0) {
+          city.neighborhoods = fromCatalog;
+          city.hasNeighborhoods = true;
+          city.neighborhoodCount = fromCatalog.length;
+        }
+      })
+    );
+  }
+
+  return next;
 }

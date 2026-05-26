@@ -31,7 +31,7 @@ export function useRouteGuard(
       if (redirectTo === 'login') {
         setAuthModalTab('login');
         setAuthModalOpen(true);
-      } else if (redirectTo !== 'login') {
+      } else {
         navigateTo(redirectTo as AppView);
       }
       return;
@@ -65,7 +65,7 @@ export function useViewGuard(
       if (redirectTo === 'login') {
         setAuthModalTab('login');
         setAuthModalOpen(true);
-      } else if (redirectTo !== 'login') {
+      } else {
         navigateTo(redirectTo as AppView);
       }
       return;

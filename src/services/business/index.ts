@@ -19,6 +19,7 @@ export function mapApiSpecialistToProfile(row: ApiSpecialistRow & {
 
   return {
     id: row.id,
+    profileSlug: row.slug,
     email: row.email ?? '',
     firstName,
     lastName,
@@ -36,12 +37,23 @@ export function mapApiSpecialistToProfile(row: ApiSpecialistRow & {
     completionRate: row.completionRate ?? 0,
     responseRate: row.responseRate ?? 0,
     createdAt: row.createdAt ?? new Date().toISOString(),
-    skills: (row.skills ?? []).map((s) => ({ name: s.name, level: s.level })),
+    skills: (row.skills ?? []).map((s) =>
+      typeof s === 'string'
+        ? { name: s, level: 0 }
+        : { name: s.name, level: s.level ?? 0 }
+    ),
     portfolios: [],
     memberSince: row.createdAt ?? new Date().toISOString(),
     responseTime: 'زیر ۲۴ ساعت',
     completedProjects: row.projectCount ?? 0,
   };
+}
+
+function normalizeSkillNames(
+  skills?: ApiSpecialistRow['skills']
+): string[] | undefined {
+  if (!skills?.length) return undefined;
+  return skills.map((s) => (typeof s === 'string' ? s : s.name));
 }
 
 export function mapApiSpecialistToBusinessCard(row: ApiSpecialistRow): BusinessCardData {
@@ -59,7 +71,7 @@ export function mapApiSpecialistToBusinessCard(row: ApiSpecialistRow): BusinessC
     projectCount: row.projectCount,
     completionRate: row.completionRate,
     responseRate: row.responseRate,
-    skills: row.skills,
+    skills: normalizeSkillNames(row.skills),
     isVerified: row.isVerified,
     online: row.online,
   };

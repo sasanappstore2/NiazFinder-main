@@ -1,4 +1,5 @@
 import { db } from '@/lib/db';
+import { budgetToJson } from '@/lib/budget';
 import type { NeedMatchContext } from '@/contracts/need-match';
 
 function parseJsonArray(raw: string): string[] {
@@ -47,8 +48,8 @@ export async function buildNeedMatchContextFromRequest(
     categorySlug,
     categoryName,
     tags: parseJsonArray(r.tags),
-    budgetMin: r.budgetMin,
-    budgetMax: r.budgetMax,
+    budgetMin: budgetToJson(r.budgetMin),
+    budgetMax: budgetToJson(r.budgetMax),
     dynamicAnswers: parseJsonObject(r.dynamicAnswers),
   };
 }

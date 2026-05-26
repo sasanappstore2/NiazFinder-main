@@ -4,13 +4,21 @@ import {
   readManagedLocationData,
   writeManagedLocationData,
   getLocationStats,
+  enrichWithCatalogNeighborhoods,
   type ManagedLocationData,
   type ManagedProvince,
   type ManagedCity,
   type ManagedNeighborhood,
 } from '@/lib/admin-locations';
-import { getAuthUser } from '@/lib/auth';
-import { isAllowedSuperAdmin } from '@/lib/super-admin';
+import {
+  loadCityNeighborhoods,
+  saveCityCatalog,
+  managedToCatalogNeighborhood,
+  rebuildManifestFromCatalog,
+  listCatalogCityIds,
+} from '@/lib/neighborhoods/catalog';
+import { requirePermission } from '@/lib/rbac/authz';
+import { logAdminAction } from '@/lib/audit/admin-audit';
 
 export const runtime = 'nodejs';
 
@@ -28,11 +36,7 @@ interface LocationPayload {
   isPopular?: boolean;
   isIsland?: boolean;
   order?: number;
-}
-
-async function requireSuperAdmin(request: NextRequest) {
-  const authUser = await getAuthUser(request);
-  return isAllowedSuperAdmin(authUser);
+  areas?: string[];
 }
 
 function cloneData(data: ManagedLocationData): ManagedLocationData {
@@ -59,6 +63,33 @@ function findCity(data: ManagedLocationData, cityId?: string) {
   return null;
 }
 
+async function findNeighborhoodCityId(
+  neighborhoodId: string
+): Promise<{ cityId: string; neighborhoods: ManagedNeighborhood[] } | null> {
+  const cityIds = await listCatalogCityIds();
+  for (const cityId of cityIds) {
+    const neighborhoods = await loadCityNeighborhoods(cityId);
+    if (neighborhoods.some((n) => n.id === neighborhoodId)) {
+      return { cityId, neighborhoods };
+    }
+  }
+  return null;
+}
+
+async function persistCityNeighborhoods(
+  cityId: string,
+  cityName: string,
+  neighborhoods: ManagedNeighborhood[],
+  source: 'divar' | 'manual' = 'manual'
+) {
+  await saveCityCatalog(cityId, {
+    cityName,
+    source,
+    neighborhoods: neighborhoods.map(managedToCatalogNeighborhood),
+  });
+  await rebuildManifestFromCatalog();
+}
+
 function applyCommonFields(
   item: ManagedProvince | ManagedCity | ManagedNeighborhood,
   body: LocationPayload
@@ -71,21 +102,24 @@ function applyCommonFields(
   if (body.nameEn !== undefined) item.nameEn = body.nameEn.trim();
   if (typeof body.isActive === 'boolean') item.isActive = body.isActive;
   if (body.order !== undefined) item.order = Number(body.order) || 0;
+  if (body.areas !== undefined && 'areas' in item) {
+    const neighborhood = item as ManagedNeighborhood;
+    neighborhood.areas = body.areas
+      .map((a) => a.trim())
+      .filter(Boolean);
+    if (neighborhood.areas.length === 0) delete neighborhood.areas;
+  }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    if (!(await requireSuperAdmin(request))) {
-      return NextResponse.json(
-        { error: 'این بخش فقط برای سوپرادمین اصلی فعال است' },
-        { status: 403 }
-      );
-    }
+    const authz = await requirePermission(request, 'geo:locations:read');
+    if (!authz.ok) return authz.response;
 
-    const data = await readManagedLocationData();
+    const data = await enrichWithCatalogNeighborhoods(await readManagedLocationData());
     return NextResponse.json({
       ...data,
-      stats: getLocationStats(data),
+      stats: await getLocationStats(data),
     });
   } catch (error) {
     console.error('Super admin locations GET error:', error);
@@ -98,12 +132,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    if (!(await requireSuperAdmin(request))) {
-      return NextResponse.json(
-        { error: 'این بخش فقط برای سوپرادمین اصلی فعال است' },
-        { status: 403 }
-      );
-    }
+    const authz = await requirePermission(request, 'geo:locations:write');
+    if (!authz.ok) return authz.response;
 
     const body: LocationPayload = await request.json();
     const name = body.name?.trim();
@@ -159,17 +189,33 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'شهر یافت نشد' }, { status: 404 });
       }
 
-      city.neighborhoods.push({
+      const areas = body.areas?.map((a) => a.trim()).filter(Boolean);
+      const existing = await loadCityNeighborhoods(city.id);
+      const entry: ManagedNeighborhood = {
         id,
         name,
         nameEn: body.nameEn?.trim() || id,
+        ...(areas?.length ? { areas } : {}),
         isActive: typeof body.isActive === 'boolean' ? body.isActive : true,
-        order: body.order ?? city.neighborhoods.length + 1,
-      });
+        order: body.order ?? existing.length + 1,
+      };
+      await persistCityNeighborhoods(city.id, city.name, [...existing, entry]);
     }
 
-    const nextData = await writeManagedLocationData(data);
-    return NextResponse.json({ ...nextData, stats: getLocationStats(nextData) }, { status: 201 });
+    const nextData = await enrichWithCatalogNeighborhoods(
+      await writeManagedLocationData(data)
+    );
+
+    await logAdminAction(request, authz.user.id, 'geo.location.create', 'ManagedLocation', id, {
+      type: body.type,
+      name,
+      parent: { countryId: body.countryId, provinceId: body.provinceId, cityId: body.cityId },
+    });
+
+    return NextResponse.json(
+      { ...nextData, stats: await getLocationStats(nextData) },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Super admin locations POST error:', error);
     const message = error instanceof Error ? error.message : 'خطای سرور رخ داده است';
@@ -179,12 +225,8 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    if (!(await requireSuperAdmin(request))) {
-      return NextResponse.json(
-        { error: 'این بخش فقط برای سوپرادمین اصلی فعال است' },
-        { status: 403 }
-      );
-    }
+    const authz = await requirePermission(request, 'geo:locations:write');
+    if (!authz.ok) return authz.response;
 
     const body: LocationPayload = await request.json();
     if (!body.type || !body.id) {
@@ -196,16 +238,14 @@ export async function PATCH(request: NextRequest) {
 
     if (body.type === 'province') item = findProvince(data, body.id);
     if (body.type === 'city') item = findCity(data, body.id);
+    let neighborhoodCity: { cityId: string; cityName: string } | null = null;
+
     if (body.type === 'neighborhood') {
-      for (const country of data.countries) {
-        for (const province of country.provinces) {
-          for (const city of province.cities) {
-            item = city.neighborhoods.find((neighborhood) => neighborhood.id === body.id) || null;
-            if (item) break;
-          }
-          if (item) break;
-        }
-        if (item) break;
+      const found = await findNeighborhoodCityId(body.id);
+      if (found) {
+        item = found.neighborhoods.find((n) => n.id === body.id) ?? null;
+        const city = findCity(data, found.cityId);
+        if (city) neighborhoodCity = { cityId: found.cityId, cityName: city.name };
       }
     }
 
@@ -220,8 +260,23 @@ export async function PATCH(request: NextRequest) {
       if (typeof body.isIsland === 'boolean') city.isIsland = body.isIsland;
     }
 
-    const nextData = await writeManagedLocationData(data);
-    return NextResponse.json({ ...nextData, stats: getLocationStats(nextData) });
+    if (body.type === 'neighborhood' && neighborhoodCity) {
+      const list = await loadCityNeighborhoods(neighborhoodCity.cityId);
+      await persistCityNeighborhoods(
+        neighborhoodCity.cityId,
+        neighborhoodCity.cityName,
+        list
+      );
+    }
+
+    const nextData = await enrichWithCatalogNeighborhoods(await writeManagedLocationData(data));
+
+    await logAdminAction(request, authz.user.id, 'geo.location.update', 'ManagedLocation', body.id, {
+      type: body.type,
+      updates: body,
+    });
+
+    return NextResponse.json({ ...nextData, stats: await getLocationStats(nextData) });
   } catch (error) {
     console.error('Super admin locations PATCH error:', error);
     const message = error instanceof Error ? error.message : 'خطای سرور رخ داده است';
@@ -231,12 +286,8 @@ export async function PATCH(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    if (!(await requireSuperAdmin(request))) {
-      return NextResponse.json(
-        { error: 'این بخش فقط برای سوپرادمین اصلی فعال است' },
-        { status: 403 }
-      );
-    }
+    const authz = await requirePermission(request, 'geo:locations:write');
+    if (!authz.ok) return authz.response;
 
     const body: LocationPayload = await request.json();
     if (!body.type || !body.id) {
@@ -260,19 +311,25 @@ export async function DELETE(request: NextRequest) {
     }
 
     if (body.type === 'neighborhood') {
-      for (const country of data.countries) {
-        for (const province of country.provinces) {
-          for (const city of province.cities) {
-            city.neighborhoods = city.neighborhoods.filter(
-              (neighborhood) => neighborhood.id !== body.id
-            );
-          }
-        }
+      const found = await findNeighborhoodCityId(body.id);
+      if (found) {
+        const city = findCity(data, found.cityId);
+        const nextList = found.neighborhoods.filter((n) => n.id !== body.id);
+        await persistCityNeighborhoods(
+          found.cityId,
+          city?.name ?? found.cityId,
+          nextList
+        );
       }
     }
 
-    const nextData = await writeManagedLocationData(data);
-    return NextResponse.json({ ...nextData, stats: getLocationStats(nextData) });
+    const nextData = await enrichWithCatalogNeighborhoods(await writeManagedLocationData(data));
+
+    await logAdminAction(request, authz.user.id, 'geo.location.delete', 'ManagedLocation', body.id, {
+      type: body.type,
+    });
+
+    return NextResponse.json({ ...nextData, stats: await getLocationStats(nextData) });
   } catch (error) {
     console.error('Super admin locations DELETE error:', error);
     return NextResponse.json(

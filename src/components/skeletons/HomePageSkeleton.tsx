@@ -21,7 +21,7 @@ export function HomePageSkeleton({ className }: HomePageSkeletonProps) {
             {/* Title */}
             <Skeleton className="h-10 sm:h-12 w-72 sm:w-96 rounded-lg" />
             {/* Subtitle */}
-            <Skeleton className="h-5 sm:h-6 w-80 sm:w-[28rem] rounded" />
+            <Skeleton className="h-5 sm:h-6 w-80 sm:w-md rounded" />
             {/* Search bar */}
             <Skeleton className="h-12 sm:h-14 w-full max-w-xl rounded-2xl" />
             {/* CTA buttons */}
@@ -41,8 +41,8 @@ export function HomePageSkeleton({ className }: HomePageSkeletonProps) {
           </div>
         </div>
         {/* Decorative blobs */}
-        <div className="absolute top-20 start-10 size-40 rounded-full bg-primary/5 animate-morph-blob-1" />
-        <div className="absolute bottom-10 end-10 size-56 rounded-full bg-primary/5 animate-morph-blob-2" />
+        <div className="absolute top-20 inset-s-10 size-40 rounded-full bg-primary/5 animate-morph-blob-1" />
+        <div className="absolute bottom-10 inset-e-10 size-56 rounded-full bg-primary/5 animate-morph-blob-2" />
       </section>
 
       {/* ===== Stats Counter Skeleton (4 animated counters) ===== */}
@@ -102,7 +102,7 @@ export function HomePageSkeleton({ className }: HomePageSkeletonProps) {
                 </div>
                 {/* Connector arrow (hidden on last) */}
                 {i < 2 && (
-                  <Skeleton className="hidden md:block absolute -start-3 top-1/2 -translate-y-1/2 size-6 rotate-180 bg-primary/5 rounded-full" />
+                  <Skeleton className="hidden md:block absolute -inset-s-3 top-1/2 -translate-y-1/2 size-6 rotate-180 bg-primary/5 rounded-full" />
                 )}
               </div>
             ))}

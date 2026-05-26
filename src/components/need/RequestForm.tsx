@@ -153,7 +153,7 @@ export function RequestForm() {
 
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
-  const { navigateTo } = useNavigate();
+  const { navigateTo, push } = useNavigate();
   const categories = useAppStore((s) => s.categories);
   const fetchCategories = useAppStore((s) => s.fetchCategories);
   const createRequest = useAppStore((s) => s.createRequest);
@@ -314,7 +314,7 @@ export function RequestForm() {
         description: 'کسب‌وکارها به زودی پیشنهاد خود را ارسال می‌کنند.',
       });
       if (created) {
-        navigateTo(routeBuilder.listing(created.id, created.title));
+        push(routeBuilder.listing(created.id, created.title));
       } else {
         navigateTo('browse-requests');
       }
@@ -347,7 +347,7 @@ export function RequestForm() {
       </h1>
 
       {/* Step Progress Indicator */}
-      <Card className="border-none shadow-md shadow-black/[0.03] bg-gradient-to-b from-muted/40 to-muted/20">
+      <Card className="border-none shadow-md shadow-black/3 bg-linear-to-b from-muted/40 to-muted/20">
         <CardContent className="p-5 sm:p-6">
           <div className="flex items-center justify-between relative" role="navigation" aria-label="مراحل ثبت نیاز">
             {/* Progress Line */}
@@ -417,7 +417,7 @@ export function RequestForm() {
       </Card>
 
       {/* Form Content */}
-      <Card className="border-border/50 shadow-lg shadow-black/[0.03]">
+      <Card className="border-border/50 shadow-lg shadow-black/3">
         <CardContent className="p-5 sm:p-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

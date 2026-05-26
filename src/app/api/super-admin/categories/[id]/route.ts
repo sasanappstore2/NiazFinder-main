@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { createSlug, getAuthUser } from '@/lib/auth';
-import { isAllowedSuperAdmin } from '@/lib/super-admin';
+import { createSlug } from '@/lib/auth';
+import { requirePermission } from '@/lib/rbac/authz';
+import { logAdminAction } from '@/lib/audit/admin-audit';
 
 interface CategoryPayload {
   name?: string;
@@ -12,11 +13,6 @@ interface CategoryPayload {
   parentId?: string | null;
   order?: number;
   isActive?: boolean;
-}
-
-async function requireSuperAdmin(request: NextRequest) {
-  const authUser = await getAuthUser(request);
-  return isAllowedSuperAdmin(authUser);
 }
 
 async function makeUniqueSlug(baseValue: string, excludeId: string) {
@@ -37,12 +33,8 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    if (!(await requireSuperAdmin(request))) {
-      return NextResponse.json(
-        { error: 'این بخش فقط برای سوپرادمین اصلی فعال است' },
-        { status: 403 }
-      );
-    }
+    const authz = await requirePermission(request, 'taxonomy:categories:write');
+    if (!authz.ok) return authz.response;
 
     const { id } = await params;
     const body: CategoryPayload = await request.json();
@@ -98,6 +90,11 @@ export async function PATCH(
       data,
     });
 
+    await logAdminAction(request, authz.user.id, 'category.update', 'Category', category.id, {
+      before: { id: existing.id, name: existing.name, slug: existing.slug, isActive: existing.isActive, parentId: existing.parentId },
+      after: { id: category.id, name: category.name, slug: category.slug, isActive: category.isActive, parentId: category.parentId },
+    });
+
     return NextResponse.json({ category });
   } catch (error) {
     console.error('Super admin category PATCH error:', error);
@@ -113,12 +110,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    if (!(await requireSuperAdmin(request))) {
-      return NextResponse.json(
-        { error: 'این بخش فقط برای سوپرادمین اصلی فعال است' },
-        { status: 403 }
-      );
-    }
+    const authz = await requirePermission(request, 'taxonomy:categories:write');
+    if (!authz.ok) return authz.response;
 
     const { id } = await params;
     const existing = await db.category.findUnique({
@@ -141,6 +134,11 @@ export async function DELETE(
         data: { isActive: false },
       });
 
+      await logAdminAction(request, authz.user.id, 'category.deactivate', 'Category', category.id, {
+        reason: 'has_dependencies',
+        counts: existing._count,
+      });
+
       return NextResponse.json({
         category,
         mode: 'deactivated',
@@ -149,6 +147,10 @@ export async function DELETE(
     }
 
     await db.category.delete({ where: { id } });
+
+    await logAdminAction(request, authz.user.id, 'category.delete', 'Category', id, {
+      mode: 'deleted',
+    });
 
     return NextResponse.json({ success: true, mode: 'deleted' });
   } catch (error) {

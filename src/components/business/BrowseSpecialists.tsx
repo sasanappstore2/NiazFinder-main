@@ -4,6 +4,7 @@ import { useNavigate } from '@/hooks/navigation/use-navigate';
 import Link from 'next/link';
 import { mapApiSpecialistToProfile } from '@/services/business';
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   Search,
   MapPin,
@@ -13,7 +14,6 @@ import {
   TrendingUp,
   MessageSquare,
   X,
-  SlidersHorizontal,
   GitCompareArrows,
   LayoutGrid,
   List,
@@ -24,28 +24,29 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useAppStore } from '@/lib/store';
 import type { SpecialistProfile } from '@/lib/types';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
 import { SpecialistAvailabilityBadge } from '@/components/business/SpecialistAvailabilityBadge';
 import { routeBuilder } from '@/config/routes';
+
+function specialistProfileHref(
+  specialist: SpecialistProfile,
+  fromPathname: string
+): string {
+  if (specialist.profileSlug) {
+    return routeBuilder.businessProfile(specialist.profileSlug, { from: fromPathname });
+  }
+  return routeBuilder.pro(specialist.id);
+}
 import { useStartChat } from '@/hooks/use-start-chat';
-import { useManagedLocations } from '@/lib/use-managed-locations';
-import {
-  buildUrlWithQuery,
-  readPositivePage,
-  readQueryValue,
-  replaceBrowseUrl,
-} from '@/lib/filter-routing';
-import type { BrowseFilters } from '@/lib/filters/parser';
+import { replaceBrowseUrl } from '@/lib/filter-routing';
+import { serializeFilters, type BrowseFilters } from '@/lib/filters/parser';
+import { mapSortToBusinessApi } from '@/lib/browse/sort-map';
 import { slugsToPersianNames } from '@/lib/search/city-slugs';
+import { useBrowsePageHeading } from '@/hooks/use-browse-page-heading';
+import { useCityNeighborhoods } from '@/hooks/use-city-neighborhoods';
+import { neighborhoodSearchTokens } from '@/lib/neighborhoods';
 
 // ─── Avatar color generator ───────────────────────────
 const AVATAR_COLORS = [
@@ -62,13 +63,6 @@ function getAvatarColor(name: string) {
   return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 }
 
-// ─── Sort options ─────────────────────────────────────
-const SORT_OPTIONS = [
-  { value: 'rating', label: 'بالاترین امتیاز' },
-  { value: 'projects', label: 'بیشترین پروژه' },
-  { value: 'newest', label: 'جدیدترین عضو' },
-];
-
 const SPECIALIST_FILTER_DEFAULTS = {
   q: '',
   skill: '',
@@ -80,23 +74,6 @@ const SPECIALIST_FILTER_DEFAULTS = {
 };
 
 const SPECIALISTS_PAGE_LIMIT = 6;
-
-function readSpecialistFilters(search: string) {
-  const params = new URLSearchParams(search);
-  const view = readQueryValue(params, ['view'], 'grid');
-
-  return {
-    query: readQueryValue(params, ['q', 'search']),
-    skill: readQueryValue(params, ['skill']),
-    province: readQueryValue(params, ['province'], 'all') || 'all',
-    city: readQueryValue(params, ['city'], 'all') || 'all',
-    sort: readQueryValue(params, ['sort'], 'rating') || 'rating',
-    view: view === 'list' ? 'list' as const : 'grid' as const,
-    page: readPositivePage(params, 1),
-  };
-}
-
-
 
 // ─── Skill level dots ─────────────────────────────────
 function SkillLevelDots({ level }: { level: number }) {
@@ -115,16 +92,22 @@ function SkillLevelDots({ level }: { level: number }) {
 }
 
 // ─── Specialist Card (Grid Mode) ──────────────────────────
-function SpecialistCard({ specialist }: { specialist: SpecialistProfile }) {
+function SpecialistCard({
+  specialist,
+  fromPathname,
+}: {
+  specialist: SpecialistProfile;
+  fromPathname: string;
+}) {
   const { toggleCompareSpecialist, compareSpecialistIds} = useAppStore();
   const { openChat } = useStartChat();
-  const profileHref = routeBuilder.pro(specialist.id);
+  const profileHref = specialistProfileHref(specialist, fromPathname);
   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
   const colorClass = getAvatarColor(specialist.displayName ?? '');
   const isCompared = compareSpecialistIds.includes(specialist.id);
 
   return (
-    <Card className="group border-border/50 bg-card overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-500/[0.07] hover:border-emerald-300/60 dark:hover:border-emerald-700/60 ring-0 hover:ring-1 hover:ring-emerald-200/40 dark:hover:ring-emerald-800/40" data-href={routeBuilder.pro(specialist.id)}>
+    <Card className="group border-border/50 bg-card overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-500/[0.07] hover:border-emerald-300/60 dark:hover:border-emerald-700/60 ring-0 hover:ring-1 hover:ring-emerald-200/40 dark:hover:ring-emerald-800/40" data-href={profileHref}>
       <CardContent className="p-6">
         {/* Top: Avatar + Name + Actions */}
         <div className="mb-4 flex items-start gap-3">
@@ -249,16 +232,22 @@ function SpecialistCard({ specialist }: { specialist: SpecialistProfile }) {
 }
 
 // ─── Specialist Card (List Mode) ──────────────────────────
-function SpecialistListCard({ specialist }: { specialist: SpecialistProfile }) {
+function SpecialistListCard({
+  specialist,
+  fromPathname,
+}: {
+  specialist: SpecialistProfile;
+  fromPathname: string;
+}) {
   const { toggleCompareSpecialist, compareSpecialistIds} = useAppStore();
   const { openChat } = useStartChat();
-  const profileHref = routeBuilder.pro(specialist.id);
+  const profileHref = specialistProfileHref(specialist, fromPathname);
   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
   const colorClass = getAvatarColor(specialist.displayName ?? '');
   const isCompared = compareSpecialistIds.includes(specialist.id);
 
   return (
-    <Card className="group border-border/50 bg-card overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/[0.07] hover:border-emerald-300/60 dark:hover:border-emerald-700/60 ring-0 hover:ring-1 hover:ring-emerald-200/40 dark:hover:ring-emerald-800/40" data-href={routeBuilder.pro(specialist.id)}>
+    <Card className="group border-border/50 bg-card overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/[0.07] hover:border-emerald-300/60 dark:hover:border-emerald-700/60 ring-0 hover:ring-1 hover:ring-emerald-200/40 dark:hover:ring-emerald-800/40" data-href={profileHref}>
       <CardContent className="p-4">
         <div className="flex items-center gap-4 sm:gap-6">
           {/* Avatar on right */}
@@ -371,7 +360,11 @@ function CompareBar() {
   if (count === 0) return null;
 
   return (
-    <div className="fixed bottom-20 left-1/2 z-40 -translate-x-1/2" role="status" aria-label={`${count} کسب‌وکار برای مقایسه انتخاب شده`}>
+    <div
+      className="fixed left-1/2 z-40 -translate-x-1/2 bottom-[calc(var(--mobile-nav-offset)+0.5rem)] lg:bottom-6"
+      role="status"
+      aria-label={`${count} کسب‌وکار برای مقایسه انتخاب شده`}
+    >
       <div className="flex items-center gap-3 rounded-2xl border border-border/40 bg-card/95 px-5 py-3 shadow-2xl backdrop-blur-xl ring-1 ring-black/5">
         <GitCompareArrows className="size-5 text-primary" aria-hidden="true" />
         <span className="text-sm font-medium">
@@ -405,156 +398,98 @@ interface BrowseSpecialistsProps {
 }
 
 export function BrowseSpecialists({
-  basePath = '/browse?type=business',
+  basePath = '/b/iran',
+  categorySlug,
   citySlugs = [],
   urlFilters,
 }: BrowseSpecialistsProps = {}) {
   const { navigateTo } = useNavigate();
-  const { provinces, cities } = useManagedLocations();
+  const pathname = usePathname();
 
-  // Filters state
-  const [query, setQuery] = useState('');
-  const [skillFilter, setSkillFilter] = useState('');
-  const [provinceFilter, setProvinceFilter] = useState('all');
-  const [cityFilter, setCityFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('rating');
+  const [query, setQuery] = useState(urlFilters?.q ?? '');
   const [currentPage, setCurrentPage] = useState(1);
-  const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [isUrlReady, setIsUrlReady] = useState(false);
+  const [isUrlReady, setIsUrlReady] = useState(true);
   const [specialists, setSpecialists] = useState<SpecialistProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const currentPathname = basePath.split('?')[0];
+  const { h1: pageH1 } = useBrowsePageHeading('business');
   const urlCityNames = useMemo(() => slugsToPersianNames(citySlugs), [citySlugs]);
-  const hasUrlCityFilter = urlCityNames.length > 0;
+  const provinceSlugs = urlFilters?.provinces ?? [];
+  const hasLocationScope = urlCityNames.length > 0 || provinceSlugs.length > 0;
+  const singleCitySlug = citySlugs.length === 1 ? citySlugs[0] : null;
+  const { neighborhoods: cityNeighborhoods } = useCityNeighborhoods(singleCitySlug);
+  const neighborhoodTokens = useMemo(() => {
+    const slugs = new Set(urlFilters?.neighborhoods ?? []);
+    if (!slugs.size) return [];
+    return cityNeighborhoods
+      .filter((n) => slugs.has(n.id))
+      .flatMap((n) => neighborhoodSearchTokens(n));
+  }, [cityNeighborhoods, urlFilters?.neighborhoods]);
   const preservedFilters = useMemo(
     () => ({
-      type: urlFilters?.type ?? 'business',
+      type: 'business' as const,
       cities: urlFilters?.cities ?? [],
+      provinces: urlFilters?.provinces ?? [],
+      neighborhoods: urlFilters?.neighborhoods ?? [],
       q: urlFilters?.q ?? undefined,
       sort: urlFilters?.sort,
       verified: urlFilters?.verified ?? undefined,
-      hasPhoto: urlFilters?.hasPhoto ?? undefined,
-      urgent: urlFilters?.urgent ?? undefined,
-      recent: urlFilters?.recent ?? undefined,
-      priceMin: urlFilters?.priceMin ?? undefined,
-      priceMax: urlFilters?.priceMax ?? undefined,
-      status: urlFilters?.status ?? undefined,
     }),
     [urlFilters]
   );
-  const selectedProvince = useMemo(
-    () => provinces.find((province) => province.name === provinceFilter || province.id === provinceFilter),
-    [provinceFilter, provinces]
-  );
-  const filteredCities = useMemo(
-    () => (selectedProvince ? selectedProvince.cities : cities),
-    [cities, selectedProvince]
-  );
-  const cityLinkItems = useMemo(
-    () => provinces.flatMap((province) => province.cities.map((city) => ({ city, province }))),
-    [provinces]
-  );
-  const currentShareUrl = buildUrlWithQuery(
-    currentPathname,
-    {
-      q: query,
-      skill: skillFilter,
-      province: provinceFilter,
-      city: cityFilter,
-      sort: sortBy,
-      view: viewMode,
-      page: currentPage,
-    },
-    SPECIALIST_FILTER_DEFAULTS
-  );
-
-  const activeFilterCount = [
-    query,
-    skillFilter,
-    provinceFilter !== 'all' ? provinceFilter : '',
-    cityFilter !== 'all' ? cityFilter : '',
-  ].filter(Boolean).length;
-
-  const applyFiltersFromUrl = useCallback((search: string) => {
-    const nextFilters = readSpecialistFilters(search);
-    setQuery(nextFilters.query);
-    setSkillFilter(nextFilters.skill);
-    setProvinceFilter(nextFilters.province);
-    setCityFilter(nextFilters.city);
-    setSortBy(nextFilters.sort);
-    setViewMode(nextFilters.view);
-    setCurrentPage(nextFilters.page);
-    setShowFilters(Boolean(nextFilters.query || nextFilters.skill || nextFilters.province !== 'all' || nextFilters.city !== 'all'));
-    setIsUrlReady(true);
-  }, []);
+  const currentShareUrl = useMemo(() => {
+    const params = serializeFilters({ ...preservedFilters, q: query || null, type: 'business' });
+    const qs = params.toString();
+    return qs ? `${currentPathname}?${qs}` : currentPathname;
+  }, [currentPathname, preservedFilters, query]);
 
   useEffect(() => {
-    queueMicrotask(() => applyFiltersFromUrl(window.location.search));
-
-    const handlePopState = () => {
-      applyFiltersFromUrl(window.location.search);
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [applyFiltersFromUrl]);
+    setQuery(urlFilters?.q ?? '');
+  }, [urlFilters?.q]);
 
   useEffect(() => {
     if (!isUrlReady) return;
-
     replaceBrowseUrl(
       currentPathname,
-      {
-        q: query,
-        skill: skillFilter,
-        province: hasUrlCityFilter ? undefined : provinceFilter,
-        city: hasUrlCityFilter ? undefined : cityFilter,
-        sort: sortBy,
-        view: viewMode,
-        page: currentPage,
-      },
+      { q: query, page: currentPage, view: viewMode },
       SPECIALIST_FILTER_DEFAULTS,
-      preservedFilters
+      { ...preservedFilters, q: query || null, type: 'business' }
     );
-  }, [
-    cityFilter,
-    currentPage,
-    currentPathname,
-    hasUrlCityFilter,
-    isUrlReady,
-    preservedFilters,
-    provinceFilter,
-    query,
-    skillFilter,
-    sortBy,
-    viewMode,
-  ]);
+  }, [currentPage, currentPathname, isUrlReady, preservedFilters, query, viewMode]);
 
   const fetchSpecialists = useCallback(async () => {
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
-      params.set('page', String(hasUrlCityFilter ? 1 : currentPage));
-      params.set('limit', String(hasUrlCityFilter ? 50 : SPECIALISTS_PAGE_LIMIT));
+      params.set('page', String(currentPage));
+      params.set('limit', String(SPECIALISTS_PAGE_LIMIT));
       if (query.trim()) params.set('search', query.trim());
-      if (skillFilter.trim()) params.set('skill', skillFilter.trim());
-      if (!hasUrlCityFilter && provinceFilter !== 'all') params.set('province', provinceFilter);
-      if (!hasUrlCityFilter && cityFilter !== 'all') params.set('city', cityFilter);
-      const apiSort =
-        sortBy === 'projects' ? 'most_projects' : sortBy === 'newest' ? 'newest' : 'rating';
-      params.set('sort', apiSort);
+      if (categorySlug) params.set('category', categorySlug);
+      if (urlFilters?.verified) params.set('verified', 'true');
+      params.set('sort', mapSortToBusinessApi(urlFilters?.sort ?? 'rating'));
+      if (hasLocationScope && urlCityNames.length > 0) {
+        params.set('cities', urlCityNames.join(','));
+      }
+      if (hasLocationScope && provinceSlugs.length > 0) {
+        params.set('provinces', provinceSlugs.join(','));
+      }
 
       const res = await fetch(`/api/specialists?${params.toString()}`);
       if (!res.ok) throw new Error('fetch failed');
       const json = await res.json();
       let rows: SpecialistProfile[] = (json.data ?? []).map(mapApiSpecialistToProfile);
 
-      if (hasUrlCityFilter) {
-        const names = new Set(urlCityNames);
-        rows = rows.filter((s) => s.city != null && names.has(s.city));
+      if (neighborhoodTokens.length > 0) {
+        rows = rows.filter((s) => {
+          const hay = `${s.city ?? ''}`;
+          return neighborhoodTokens.some((token) => hay.includes(token));
+        });
+      }
+
+      if (neighborhoodTokens.length > 0) {
         setTotalCount(rows.length);
         setTotalPages(Math.max(1, Math.ceil(rows.length / SPECIALISTS_PAGE_LIMIT)));
         const start = (currentPage - 1) * SPECIALISTS_PAGE_LIMIT;
@@ -574,14 +509,14 @@ export function BrowseSpecialists({
       setIsLoading(false);
     }
   }, [
-    cityFilter,
+    categorySlug,
     currentPage,
-    hasUrlCityFilter,
-    provinceFilter,
+    hasLocationScope,
+    provinceSlugs,
     query,
-    skillFilter,
-    sortBy,
     urlCityNames,
+    urlFilters,
+    neighborhoodTokens,
   ]);
 
   useEffect(() => {
@@ -590,7 +525,7 @@ export function BrowseSpecialists({
       fetchSpecialists();
     }, 300);
     return () => clearTimeout(timer);
-  }, [fetchSpecialists, isUrlReady]);
+  }, [fetchSpecialists, isUrlReady, urlFilters]);
 
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const visibleSpecialists = specialists;
@@ -601,29 +536,19 @@ export function BrowseSpecialists({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const clearFilters = () => {
-    setQuery('');
-    setSkillFilter('');
-    setProvinceFilter('all');
-    setCityFilter('all');
-    setSortBy('rating');
-    setViewMode('grid');
-    setCurrentPage(1);
-  };
-
   const copyCurrentLink = async () => {
     await navigator.clipboard?.writeText(`${window.location.origin}${currentShareUrl}`);
   };
 
   return (
-    <div className="min-h-screen bg-muted/20" dir="rtl">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="w-full min-h-[50vh] bg-muted/20" dir="rtl">
+      <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-gradient-to-l from-foreground to-foreground/80 bg-clip-text">
-                کسب‌وکارها
+              <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-linear-to-l from-foreground to-foreground/80 bg-clip-text">
+                {pageH1}
               </h1>
               <p className="mt-1.5 text-sm text-muted-foreground">
                 {totalCount.toLocaleString('fa-IR')} کسب‌وکار یافت شد
@@ -669,22 +594,6 @@ export function BrowseSpecialists({
                 <Copy className="size-4" aria-hidden="true" />
                 کپی لینک
               </Button>
-              {/* Filter button */}
-              <Button
-                onClick={() => setShowFilters(!showFilters)}
-                variant="outline"
-                className="gap-2"
-                aria-label="نمایش فیلترها"
-                title="نمایش و مخفی کردن فیلترهای جستجوی کسب‌وکارها"
-              >
-                <SlidersHorizontal className="size-4" aria-hidden="true" />
-                فیلترها
-                {activeFilterCount > 0 && (
-                  <Badge className="mr-1 size-5 rounded-full p-0 text-caption flex items-center justify-center">
-                    {activeFilterCount}
-                  </Badge>
-                )}
-              </Button>
             </div>
           </div>
         </div>
@@ -701,7 +610,7 @@ export function BrowseSpecialists({
                 setCurrentPage(1);
               }}
               aria-label="جستجوی کسب‌وکارها"
-              className="h-12 w-full rounded-xl border-border/50 bg-card/80 backdrop-blur-sm pr-10 text-sm shadow-md shadow-black/[0.03] focus-visible:shadow-lg focus-visible:shadow-emerald-500/[0.06] focus-visible:border-emerald-300/50 dark:focus-visible:border-emerald-700/50 transition-shadow"
+              className="h-12 w-full rounded-xl border-border/50 bg-card/80 backdrop-blur-xs pr-10 text-sm shadow-md shadow-black/3 focus-visible:shadow-lg focus-visible:shadow-emerald-500/6 focus-visible:border-emerald-300/50 dark:focus-visible:border-emerald-700/50 transition-shadow"
             />
             {query && (
               <button
@@ -718,209 +627,12 @@ export function BrowseSpecialists({
           </div>
         </div>
 
-        {/* Expandable filter row */}
-        {showFilters && (
-          <div className="mb-6">
-            <Card className="border-border/50 bg-card/80 backdrop-blur-sm shadow-lg shadow-black/[0.03]">
-              <CardContent className="p-5">
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {/* Skill filter */}
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground" htmlFor="skill-filter">
-                      مهارت
-                    </label>
-                    <div className="relative">
-                      <Input
-                        id="skill-filter"
-                        placeholder="مثلاً React، طراحی..."
-                        value={skillFilter}
-                        onChange={(e) => {
-                          setSkillFilter(e.target.value);
-                          setCurrentPage(1);
-                        }}
-                        className="h-9 w-full rounded-lg text-sm"
-                        aria-label="فیلتر مهارت"
-                      />
-                      {skillFilter && (
-                        <button
-                          onClick={() => {
-                            setSkillFilter('');
-                            setCurrentPage(1);
-                          }}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                          aria-label="پاک کردن فیلتر مهارت"
-                          title="پاک کردن فیلتر مهارت"
-                        >
-                          <X className="size-3.5" aria-hidden="true" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Province */}
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground" htmlFor="province-filter">
-                      استان
-                    </label>
-                    <Select
-                      value={provinceFilter}
-                      onValueChange={(value) => {
-                        setProvinceFilter(value);
-                        setCityFilter('all');
-                        setCurrentPage(1);
-                      }}
-                    >
-                      <SelectTrigger className="w-full rounded-lg" id="province-filter">
-                        <SelectValue placeholder="همه استان‌ها" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">همه استان‌ها</SelectItem>
-                        {provinces.map((province) => (
-                          <SelectItem key={province.id} value={province.name}>
-                            {province.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* City */}
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground" htmlFor="city-filter">
-                      شهر
-                    </label>
-                    <Select
-                      value={cityFilter}
-                      onValueChange={(value) => {
-                        setCityFilter(value);
-                        setCurrentPage(1);
-                      }}
-                    >
-                      <SelectTrigger className="w-full rounded-lg" id="city-filter">
-                        <SelectValue placeholder="همه شهرها" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">همه شهرها</SelectItem>
-                        {filteredCities.map((city) => (
-                          <SelectItem key={city.id} value={city.name}>
-                            {city.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Sort */}
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground" htmlFor="sort-filter">
-                      مرتب‌سازی
-                    </label>
-                    <Select
-                      value={sortBy}
-                      onValueChange={(value) => {
-                        setSortBy(value);
-                        setCurrentPage(1);
-                      }}
-                    >
-                      <SelectTrigger className="w-full rounded-lg" id="sort-filter">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {SORT_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {activeFilterCount > 0 && (
-                  <div className="mt-4 flex justify-start">
-                    <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs text-muted-foreground" aria-label="حذف همه فیلترها">
-                      <X className="size-3" aria-hidden="true" />
-                      حذف همه فیلترها
-                    </Button>
-                  </div>
-                )}
-
-                <div className="mt-5 grid gap-4 border-t border-border/50 pt-5 lg:grid-cols-2">
-                  <div>
-                    <h3 className="mb-2 text-xs font-black text-muted-foreground">لینک استان‌ها</h3>
-                    <div className="flex max-h-40 flex-wrap gap-2 overflow-y-auto rounded-lg border border-border/50 bg-muted/20 p-2">
-                      {provinces.map((province) => (
-                        <Link
-                          key={province.id}
-                          href={buildUrlWithQuery(currentPathname, { province: province.name })}
-                          className="rounded-full border bg-background px-2 py-1 text-caption hover:border-emerald-400 hover:text-emerald-600"
-                        >
-                          {`استان ${province.name}`}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="mb-2 text-xs font-black text-muted-foreground">لینک شهرها</h3>
-                    <div className="flex max-h-40 flex-wrap gap-2 overflow-y-auto rounded-lg border border-border/50 bg-muted/20 p-2">
-                      {cityLinkItems.map(({ city, province }) => (
-                        <Link
-                          key={`${province.id}-${city.id}`}
-                          href={buildUrlWithQuery(currentPathname, { province: province.name, city: city.name })}
-                          className="rounded-full border bg-background px-2 py-1 text-caption hover:border-emerald-400 hover:text-emerald-600"
-                        >
-                          {`${city.name}، ${province.name}`}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* Active filter chips when filters panel is closed */}
-        {!showFilters && activeFilterCount > 0 && (
-          <div className="mb-4 flex flex-wrap gap-2" role="list" aria-label="فیلترهای فعال">
-            {query && (
-              <Badge variant="secondary" className="gap-1.5 rounded-lg pl-1.5" role="listitem">
-                {query}
-                <button onClick={() => { setQuery(''); setCurrentPage(1); }} aria-label="حذف فیلتر جستجو"><X className="size-3" aria-hidden="true" /></button>
-              </Badge>
-            )}
-            {skillFilter && (
-              <Badge variant="secondary" className="gap-1.5 rounded-lg pl-1.5" role="listitem">
-                {skillFilter}
-                <button onClick={() => { setSkillFilter(''); setCurrentPage(1); }} aria-label="حذف فیلتر مهارت"><X className="size-3" aria-hidden="true" /></button>
-              </Badge>
-            )}
-            {provinceFilter !== 'all' && (
-              <Badge variant="secondary" className="gap-1.5 rounded-lg pl-1.5" role="listitem">
-                <MapPin className="size-3" aria-hidden="true" />
-                {selectedProvince?.name || provinceFilter}
-                <button onClick={() => { setProvinceFilter('all'); setCityFilter('all'); setCurrentPage(1); }} aria-label="حذف فیلتر استان"><X className="size-3" aria-hidden="true" /></button>
-              </Badge>
-            )}
-            {cityFilter !== 'all' && (
-              <Badge variant="secondary" className="gap-1.5 rounded-lg pl-1.5" role="listitem">
-                <MapPin className="size-3" aria-hidden="true" />
-                {cityFilter}
-                <button onClick={() => { setCityFilter('all'); setCurrentPage(1); }} aria-label="حذف فیلتر شهر"><X className="size-3" aria-hidden="true" /></button>
-              </Badge>
-            )}
-            <Button variant="ghost" size="sm" onClick={clearFilters} className="h-6 text-xs text-muted-foreground" title="حذف همه فیلترهای فعال">
-              حذف همه
-            </Button>
-          </div>
-        )}
-
         {/* Results */}
         {isLoading ? (
           <div
             className={
               viewMode === 'grid'
-                ? 'grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'
+                ? 'grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3'
                 : 'flex flex-col gap-4'
             }
           >
@@ -937,29 +649,37 @@ export function BrowseSpecialists({
             <p className="mx-auto max-w-sm text-sm text-muted-foreground">
               لطفاً فیلترهای خود را تغییر دهید یا عبارت جستجو را اصلاح کنید.
             </p>
-            <Button variant="outline" className="mt-4" onClick={clearFilters} title="حذف فیلترها و نمایش همه کسب‌وکارها">
-              حذف فیلترها
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => {
+                setQuery('');
+                setCurrentPage(1);
+              }}
+              title="پاک کردن جستجو"
+            >
+              پاک کردن جستجو
             </Button>
           </div>
         ) : (
           <>
             <div
-              key={`${query}-${skillFilter}-${cityFilter}-${sortBy}-${viewMode}`}
+              key={`${query}-${viewMode}-${urlFilters?.sort ?? ''}`}
               className={viewMode === 'grid'
-                ? 'grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3'
+                ? 'grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3'
                 : 'flex flex-col gap-4'
               }
               itemScope
               itemType="https://schema.org/ItemList"
             >
               <meta itemProp="numberOfItems" content={String(totalCount)} />
-              <meta itemProp="name" content="فهرست کسب‌وکارها در نیاز فایندر" />
+              <meta itemProp="name" content={pageH1} />
               {visibleSpecialists.map((specialist) => (
                 <div key={specialist.id} itemProp="itemListElement">
                   {viewMode === 'grid' ? (
-                    <SpecialistCard specialist={specialist} />
+                    <SpecialistCard specialist={specialist} fromPathname={pathname} />
                   ) : (
-                    <SpecialistListCard specialist={specialist} />
+                    <SpecialistListCard specialist={specialist} fromPathname={pathname} />
                   )}
                 </div>
               ))}
@@ -999,7 +719,7 @@ export function BrowseSpecialists({
 
       <noscript>
         <div className="sr-only" itemScope itemType="https://schema.org/ItemList">
-          <h1>فهرست کسب‌وکارها در نیاز فایندر</h1>
+          <h1>{pageH1}</h1>
           <p>فهرست کسب‌وکارهای خدمات ثبت شده در پلتفرم. شامل کسب‌وکارهای طراحی وب، برنامه‌نویسی، تعمیرات، تولید محتوا، طراحی گرافیک و خدمات خانگی.</p>
         </div>
       </noscript>

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getAuthUser } from '@/lib/auth';
-import { isAllowedSuperAdmin } from '@/lib/super-admin';
 import { getLocationStats, readManagedLocationData } from '@/lib/admin-locations';
+import { requirePermission } from '@/lib/rbac/authz';
 
 export const runtime = 'nodejs';
 
@@ -144,13 +143,8 @@ function isoDateOffset(days: number) {
 
 export async function GET(request: NextRequest) {
   try {
-    const authUser = await getAuthUser(request);
-    if (!isAllowedSuperAdmin(authUser)) {
-      return NextResponse.json(
-        { error: 'این بخش فقط برای سوپرادمین اصلی فعال است' },
-        { status: 403 }
-      );
-    }
+    const authz = await requirePermission(request, 'superadmin:analytics:read');
+    if (!authz.ok) return authz.response;
 
     const timeline = makeTimeline(12);
     const since = addMonths(startOfMonth(new Date()), -11);
@@ -316,7 +310,7 @@ export async function GET(request: NextRequest) {
       [CHART_COLORS.amber, CHART_COLORS.emerald, CHART_COLORS.rose, CHART_COLORS.slate]
     );
 
-    const locationStats = getLocationStats(locationData);
+    const locationStats = await getLocationStats(locationData);
     const goals = [
       {
         label: 'پوشش شهرها',

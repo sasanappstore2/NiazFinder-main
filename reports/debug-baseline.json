@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-05-26T22:33:26.741Z",
+  "prisma": {
+    "validate": true,
+    "migrateStatus": "Environment variables loaded from .env\nPrisma schema loaded from prisma/schema.prisma\nDatasource \"db\": SQLite database \"custom.db\" at \"file:../db/custom.db\"\n\n4 migrations found in prisma/migrations\n\nDatabase schema is up to date!"
+  },
+  "typescript": {
+    "ok": true,
+    "errors": 0,
+    "sample": ""
+  },
+  "tailwindHintFiles": 0
+}

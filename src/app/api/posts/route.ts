@@ -79,22 +79,24 @@ export async function GET(request: NextRequest) {
       ? items[items.length - 1].createdAt.toISOString()
       : null;
 
-    // Check if current user liked each post
-    const postsWithLikeStatus = await Promise.all(
-      items.map(async (post) => {
-        const like = authUser
-          ? await db.postLike.findUnique({
-              where: { postId_userId: { postId: post.id, userId: authUser.id } },
-            })
-          : null;
-        return {
-          ...post,
-          likeCount: post._count.likes,
-          commentCount: post._count.comments,
-          isLiked: !!like,
-        };
-      })
-    );
+    const likedPostIds = new Set<string>();
+    if (authUser && items.length > 0) {
+      const likes = await db.postLike.findMany({
+        where: {
+          userId: authUser.id,
+          postId: { in: items.map((p) => p.id) },
+        },
+        select: { postId: true },
+      });
+      for (const like of likes) likedPostIds.add(like.postId);
+    }
+
+    const postsWithLikeStatus = items.map((post) => ({
+      ...post,
+      likeCount: post._count.likes,
+      commentCount: post._count.comments,
+      isLiked: likedPostIds.has(post.id),
+    }));
 
     return NextResponse.json({
       posts: postsWithLikeStatus,

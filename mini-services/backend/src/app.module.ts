@@ -23,7 +23,8 @@ import { EventsModule } from './modules/events/events.module';
 import { BookmarksModule } from './modules/bookmarks/bookmarks.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { HealthModule } from './modules/health/health.module';
-import { ChatGateway } from './gateways/chat.gateway';
+import { IntakeTypingModule } from './modules/intake-typing/intake-typing.module';
+import { InternalModule } from './modules/internal/internal.module';
 import { NotificationsGateway } from './gateways/notifications.gateway';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
@@ -33,6 +34,7 @@ import { NotificationProcessor } from './common/processors/notifications.process
 import { EmailProcessor } from './common/processors/email.processor';
 import { CleanupProcessor } from './common/processors/cleanup.processor';
 import { AnalyticsProcessor } from './common/processors/analytics.processor';
+import { RequestModerationProcessor } from './common/processors/request-moderation.processor';
 import { BullMQConfigModule } from './config/bullmq.config';
 import { DatabaseModule } from './config/database.module';
 
@@ -118,10 +120,11 @@ const entities = [
     BookmarksModule,
     DashboardModule,
     HealthModule,
+    IntakeTypingModule,
+    InternalModule,
   ],
   providers: [
-    // ─── WebSocket Gateways ───
-    ChatGateway,
+    // ─── WebSocket Gateways (ChatGateway is provided by ChatModule) ───
     NotificationsGateway,
 
     // ─── Global Filters & Interceptors ───
@@ -133,6 +136,7 @@ const entities = [
     EmailProcessor,
     CleanupProcessor,
     AnalyticsProcessor,
+    RequestModerationProcessor,
 
     // ─── Redis Service (for global access) ───
     RedisService,

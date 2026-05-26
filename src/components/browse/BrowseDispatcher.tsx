@@ -1,12 +1,19 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { Suspense, useMemo } from 'react';
+import { useSyncBrowseCityUrl } from '@/hooks/use-sync-browse-city-url';
 import { BrowseRequests } from '@/components/need/BrowseRequests';
 import { BrowseSpecialists } from '@/components/business/BrowseSpecialists';
 import { parseFilters } from '@/lib/filters/parser';
 import { routeBuilder } from '@/config/routes';
 import { getCategoryBySlug } from '@/config/categories';
+import {
+  type BrowseMarket,
+  getBrowseMarketFromPathname,
+  listingTypeFromMarket,
+  marketFromListingType,
+} from '@/config/market-routes';
 
 /**
  * Single dispatcher used by every search/browse route.
@@ -16,9 +23,11 @@ import { getCategoryBySlug } from '@/config/categories';
  * `resolveSearchSegments`) are passed in as props.
  */
 interface BrowseDispatcherProps {
-  /** Category slug from the path (or undefined for /s/{loc} root). */
+  /** Explicit market when path prefix is ambiguous (legacy /s/). */
+  market?: BrowseMarket;
+  /** Category slug from the path (or undefined for browse root). */
   categorySlug?: string;
-  /** City slug from the path (or undefined for country-wide /s/iran). */
+  /** City slug from the path (or undefined for country-wide /n|b/iran). */
   citySlug?: string;
 }
 
@@ -30,9 +39,18 @@ export function BrowseDispatcher(props: BrowseDispatcherProps) {
   );
 }
 
-function BrowseDispatcherInner({ categorySlug, citySlug }: BrowseDispatcherProps) {
+function BrowseDispatcherInner({ market: marketProp, categorySlug, citySlug }: BrowseDispatcherProps) {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
+  useSyncBrowseCityUrl(citySlug);
   const filters = useMemo(() => parseFilters(searchParams), [searchParams]);
+
+  const market = useMemo((): BrowseMarket => {
+    if (marketProp) return marketProp;
+    const fromPath = getBrowseMarketFromPathname(pathname);
+    if (fromPath) return fromPath;
+    return marketFromListingType(filters.type);
+  }, [marketProp, pathname, filters.type]);
 
   const citySlugs = useMemo(() => {
     const slugs = [...filters.cities];
@@ -45,12 +63,13 @@ function BrowseDispatcherInner({ categorySlug, citySlug }: BrowseDispatcherProps
   const basePath = useMemo(() => {
     const cat = categorySlug ? getCategoryBySlug(categorySlug) : null;
     const path = routeBuilder.search({
+      market,
       location: citySlug,
       parentCategory: cat?.parentSlug ?? undefined,
       category: cat?.slug,
     });
     return path.split('?')[0];
-  }, [categorySlug, citySlug]);
+  }, [categorySlug, citySlug, market]);
 
   const sharedProps = {
     basePath,
@@ -59,8 +78,7 @@ function BrowseDispatcherInner({ categorySlug, citySlug }: BrowseDispatcherProps
     urlFilters: filters,
   };
 
-  if (filters.type === 'need') return <BrowseRequests {...sharedProps} />;
-  if (filters.type === 'business') return <BrowseSpecialists {...sharedProps} />;
-
+  const listingType = listingTypeFromMarket(market);
+  if (listingType === 'business') return <BrowseSpecialists {...sharedProps} />;
   return <BrowseRequests {...sharedProps} />;
 }

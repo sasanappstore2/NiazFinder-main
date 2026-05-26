@@ -162,6 +162,15 @@ export function mapDraftToCreateRequest(
   if (answers.condition) tags.push(String(answers.condition));
   if (answers.dealType) tags.push(String(answers.dealType));
 
+  const neighborhoodSlug =
+    parsed.neighborhoodSlug ??
+    (typeof answers._neighborhoodSlug === 'string'
+      ? answers._neighborhoodSlug
+      : undefined);
+  if (neighborhoodSlug) {
+    answers.neighborhoodSlug = neighborhoodSlug;
+  }
+
   return {
     title,
     description,

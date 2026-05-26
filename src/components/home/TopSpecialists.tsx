@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAppStore } from '@/lib/store';
 import { routeBuilder } from '@/config/routes';
+import { useLocationScopeApiParams } from '@/hooks/use-location-scope-api-params';
 
 const AVATAR_COLORS = [
   'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -83,7 +84,7 @@ function SpecialistCard({ specialist, index }: { specialist: any; index: number 
         <div className="mb-4 flex items-start gap-3">
           <div className="relative">
             <Avatar className="size-14 ring-2 ring-primary/20">
-              <AvatarImage src={specialist.avatar} alt={`${displayName} - کسب‌وکار نیاز فایندر`} loading="lazy" />
+              <AvatarImage src={specialist.avatar} alt={`${displayName} - کسب‌وکار نیاز فایندر`} />
               <AvatarFallback className={`${AVATAR_COLORS[index % AVATAR_COLORS.length]} text-base font-bold`}>
                 {firstName.charAt(0)}{lastName.charAt(0)}
               </AvatarFallback>
@@ -152,13 +153,15 @@ function SpecialistCard({ specialist, index }: { specialist: any; index: number 
 }
 
 export function TopSpecialists() {
+  const { navigateTo } = useNavigate();
   const specialists = useAppStore((s) => s.specialists);
   const isLoading = useAppStore((s) => s.isLoading);
   const fetchSpecialists = useAppStore((s) => s.fetchSpecialists);
+  const geoParams = useLocationScopeApiParams();
 
   useEffect(() => {
-    fetchSpecialists({ limit: '6' });
-  }, [fetchSpecialists]);
+    fetchSpecialists({ limit: '6', ...geoParams });
+  }, [fetchSpecialists, geoParams]);
 
   return (
     <section id="specialists" className="section-padding bg-muted/20" aria-label="کسب‌وکارهای برتر" itemScope itemType="https://schema.org/ItemList">

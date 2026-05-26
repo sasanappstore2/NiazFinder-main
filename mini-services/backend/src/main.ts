@@ -163,6 +163,7 @@ async function bootstrap() {
   logger.log(`📖 Swagger:       http://localhost:${PORT}/api/docs`);
   logger.log(`🔌 WS Chat:       ws://localhost:${PORT}/chat`);
   logger.log(`🔌 WS Notifs:     ws://localhost:${PORT}/notifications`);
+  logger.log(`🔌 WS Typing:     ws://localhost:${PORT}/intake-typing`);
   logger.log(`🏥 Health:        http://localhost:${PORT}/health`);
   logger.log('═══════════════════════════════════════════');
   logger.log('📦 Loaded Modules:');
@@ -172,7 +173,8 @@ async function bootstrap() {
   logger.log('   ✅ Notifications   ✅ Reports         ✅ Referrals');
   logger.log('   ✅ Admin           ✅ Search          ✅ Dashboard');
   logger.log('   ✅ Bookmarks       ✅ Events          ✅ Health');
-  logger.log('   ✅ Redis           ✅ BullMQ (4 queues)');
+  logger.log('   ✅ Redis           ✅ BullMQ (5 queues)');
+  logger.log('   ✅ Intake Typing   ✅ intake-heavy worker');
   logger.log('   ✅ Rate Limiting   ✅ Cache Interceptor');
   logger.log('═══════════════════════════════════════════');
 }

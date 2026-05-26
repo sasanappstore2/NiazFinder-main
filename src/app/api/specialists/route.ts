@@ -50,12 +50,20 @@ export async function GET(request: NextRequest) {
       isBanned: false,
     };
 
-    if (province) {
-      where.province = { contains: province };
-    }
-
-    if (city) {
-      where.city = { contains: city };
+    const { buildGeoAndFilters } = await import('@/lib/search/geo-api-filters');
+    const geoClauses = buildGeoAndFilters({
+      citiesParam: searchParams.get('cities'),
+      provincesParam: searchParams.get('provinces'),
+      legacyCity: city,
+      legacyProvince: province,
+    });
+    if (geoClauses.length > 0) {
+      const existingAnd = Array.isArray(where.AND)
+        ? where.AND
+        : where.AND
+          ? [where.AND]
+          : [];
+      where.AND = [...existingAnd, ...(geoClauses as Prisma.UserWhereInput[])];
     }
 
     if (skill) {

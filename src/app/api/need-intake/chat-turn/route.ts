@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { NeedDraft } from '@/contracts/need-intake';
-import { runChatTurn } from '@/lib/need-intake/chat-turn-llm';
+import { runChatTurnRules } from '@/lib/need-intake/chat-turn-rules';
 import {
   checkNeedIntakeRateLimit,
   rateLimitKeyFromRequest,
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'پیام خالی است' }, { status: 400 });
     }
 
-    const result = await runChatTurn(draft, message);
+    const result = runChatTurnRules(draft, message);
     const { mergedIntent, ...response } = result;
 
     return NextResponse.json({

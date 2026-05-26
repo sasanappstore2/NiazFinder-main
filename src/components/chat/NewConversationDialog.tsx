@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { mv } from '@/lib/motion-variants';
 import {
   Search,
   MessageSquarePlus,
@@ -93,7 +94,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.3, ease: 'easeOut' },
+    transition: { duration: 0.3, ease: 'easeOut' as const },
   },
 };
 
@@ -130,6 +131,7 @@ export function NewConversationDialog({
   const [creating, setCreating] = useState(false);
   const [apiResults, setApiResults] = useState<SelectableUser[]>([]);
   const [isApiSearching, setIsApiSearching] = useState(false);
+  const [initialSuggestions, setInitialSuggestions] = useState<SelectableUser[]>([]);
 
   // ─── Recent Contacts (from existing conversations) ────────────────────
   const recentContacts = useMemo<SelectableUser[]>(() => {
@@ -257,8 +259,6 @@ export function NewConversationDialog({
     })();
     return () => controller.abort();
   }, [open]);
-
-  const [initialSuggestions, setInitialSuggestions] = useState<SelectableUser[]>([]);
 
   const isSearching = searchQuery.trim().length > 0;
   const handleClose = useCallback(
@@ -432,7 +432,7 @@ export function NewConversationDialog({
                 ) : filteredResults.length > 0 ? (
                   <motion.div
                     key="results"
-                    variants={containerVariants}
+                    variants={mv(containerVariants)}
                     initial="hidden"
                     animate="visible"
                     exit="hidden"
@@ -444,7 +444,7 @@ export function NewConversationDialog({
                     {filteredResults.map((user) => (
                       <motion.button
                         key={user.id}
-                        variants={itemVariants}
+                        variants={mv(itemVariants)}
                         onClick={() => handleSelectUser(user)}
                         className={cn(
                           'w-full flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 text-start',
@@ -595,7 +595,7 @@ export function NewConversationDialog({
                     </div>
 
                     <motion.div
-                      variants={containerVariants}
+                      variants={mv(containerVariants)}
                       initial="hidden"
                       animate="visible"
                       className="grid grid-cols-1 sm:grid-cols-2 gap-2"
@@ -603,13 +603,13 @@ export function NewConversationDialog({
                       {initialSuggestions.slice(0, 6).map((user) => (
                         <motion.div
                           key={user.id}
-                          variants={itemVariants}
+                          variants={mv(itemVariants)}
                           className="group relative flex items-start gap-3 p-3 rounded-xl border border-border/50 bg-muted/20 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-200"
                         >
                           {/* Avatar */}
                           <div className="relative shrink-0 mt-0.5">
                             <div
-n                              className={cn(
+                              className={cn(
                                 'h-11 w-11 rounded-full flex items-center justify-center text-white text-sm font-bold',
                                 'group-hover:shadow-md transition-shadow',
                                 getAvatarColor(user.displayName)
@@ -677,14 +677,14 @@ n                              className={cn(
           {selectedUser && (
             <motion.div
               key="selection-card"
-              variants={slideUpVariants}
+              variants={mv(slideUpVariants)}
               initial="hidden"
               animate="visible"
               exit="exit"
               className="relative border-t border-border/50 bg-muted/30 backdrop-blur-lg"
             >
               {/* Gradient line */}
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
+              <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-emerald-500/50 to-transparent" />
 
               <div className="flex items-center gap-3 px-5 py-3">
                 {/* Selected Avatar */}

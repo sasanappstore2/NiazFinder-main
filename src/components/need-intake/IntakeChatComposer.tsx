@@ -29,7 +29,7 @@ export function IntakeChatComposer({
   const canSend = Boolean(value.trim()) && !disabled;
 
   return (
-    <div className="flex items-end gap-2 rounded-2xl border border-border/60 bg-card/80 p-2 backdrop-blur-sm">
+    <div className="flex items-end gap-2 rounded-2xl border border-border/60 bg-card/80 p-2 backdrop-blur-xs">
       <Textarea
         ref={textareaRef}
         value={value}

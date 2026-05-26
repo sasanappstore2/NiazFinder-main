@@ -172,7 +172,7 @@ export function ProfileCompletionBar() {
         <div
           className="
             pointer-events-none absolute inset-x-0 top-0 h-1
-            bg-gradient-to-l from-emerald-400 via-emerald-500 to-teal-500
+            bg-linear-to-l from-emerald-400 via-emerald-500 to-teal-500
           "
         />
 
@@ -213,12 +213,12 @@ export function ProfileCompletionBar() {
           <div className="space-y-1.5">
             <div className="relative h-3 w-full overflow-hidden rounded-full bg-emerald-100 dark:bg-emerald-950/40">
               <div
-                className="absolute inset-y-0 right-0 rounded-full bg-gradient-to-l from-emerald-500 via-emerald-600 to-teal-500 transition-all duration-1000 ease-out"
+                className="absolute inset-y-0 right-0 rounded-full bg-linear-to-l from-emerald-500 via-emerald-600 to-teal-500 transition-all duration-1000 ease-out"
                 style={{ width: `${percentage}%` }}
               >
                 {/* Shimmer effect */}
                 <div
-                  className="absolute inset-0 rounded-full bg-gradient-to-l from-white/30 via-transparent to-white/10 animate-[shimmer_2s_ease-in-out_infinite]"
+                  className="absolute inset-0 rounded-full bg-linear-to-l from-white/30 via-transparent to-white/10 animate-[shimmer_2s_ease-in-out_infinite]"
                   style={{ animationDelay: '1.8s', animationDuration: '2s' }}
                 />
               </div>
@@ -269,7 +269,7 @@ export function ProfileCompletionBar() {
           <div>
             <Button
               onClick={handleNavigate}
-              className="w-full bg-gradient-to-l from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-600 hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-200"
+              className="w-full bg-linear-to-l from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-600 hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-200"
               size="lg"
             >
               تکمیل پروفایل

@@ -13,7 +13,7 @@ export default function ChatLayout({
 }) {
   return (
     <AppShell minimalChrome>
-      <div className="flex min-h-0 flex-1 flex-col h-[100dvh] max-h-[100dvh] overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col h-dvh max-h-dvh overflow-hidden">
         {children}
       </div>
     </AppShell>

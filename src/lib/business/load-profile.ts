@@ -47,6 +47,13 @@ async function hydrateAndMap(
   return mapProfileToBusiness(profile, citySlug, category);
 }
 
+/** Resolve `/pro/{id}` — id may be profile slug or legacy userId. */
+export async function loadBusinessForProRoute(id: string): Promise<Business | null> {
+  const bySlug = await loadBusinessByProfileSlug(id);
+  if (bySlug) return bySlug;
+  return loadBusinessByUserId(id);
+}
+
 export async function loadBusinessByUserId(userId: string): Promise<Business | null> {
   const user = await db.user.findUnique({ where: { id: userId } });
   if (!user || !user.isActive) return null;

@@ -118,12 +118,12 @@ export function CompareSpecialists() {
   // ─── Insufficient specialists ───────────────
   if (count < 2) {
     return (
-      <div className="min-h-screen bg-muted/20" dir="rtl">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="w-full min-h-[50vh] bg-muted/20" dir="rtl">
+        <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
           {/* Header */}
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-gradient-to-l from-foreground to-foreground/80 bg-clip-text">
+              <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-linear-to-l from-foreground to-foreground/80 bg-clip-text">
                 مقایسه کسب‌وکارها
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -147,7 +147,7 @@ export function CompareSpecialists() {
           </div>
 
           {/* Empty state */}
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/40 bg-card py-20 text-center shadow-lg shadow-black/[0.03]">
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/40 bg-card py-20 text-center shadow-lg shadow-black/3">
             <div className="mb-4 flex size-20 items-center justify-center rounded-2xl bg-muted/60">
               <Users className="size-10 text-muted-foreground/40" />
             </div>
@@ -175,8 +175,8 @@ export function CompareSpecialists() {
 
   // ─── Comparison table ────────────────────────
   return (
-    <div className="min-h-screen bg-muted/20" dir="rtl">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="w-full min-h-[50vh] bg-muted/20" dir="rtl">
+      <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         {/* Header */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -200,13 +200,13 @@ export function CompareSpecialists() {
         </div>
 
         {/* Table wrapper — horizontal scroll on mobile */}
-        <div className="overflow-x-auto rounded-2xl border border-border/40 bg-card shadow-xl shadow-black/[0.04]">
+        <div className="overflow-x-auto rounded-2xl border border-border/40 bg-card shadow-xl shadow-black/4">
           <table className="w-full min-w-[640px]">
             {/* ── Column Headers ── */}
             <thead>
               <tr className="border-b border-border/40">
                 {/* Sticky label column */}
-                <th className="sticky right-0 z-10 w-44 min-w-[11rem] bg-muted/60 px-4 py-5 text-right text-xs font-medium text-muted-foreground backdrop-blur-sm sm:w-52 sm:min-w-[13rem]" />
+                <th className="sticky right-0 z-10 w-44 min-w-44 bg-muted/60 px-4 py-5 text-right text-xs font-medium text-muted-foreground backdrop-blur-xs sm:w-52 sm:min-w-52" />
 
                 {specialists.map((specialist) => {
                   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
@@ -220,7 +220,7 @@ export function CompareSpecialists() {
                     >
                       <div className="flex flex-col items-center gap-3">
                         <div className="relative">
-                          <Avatar className="size-16" loading="lazy">
+                          <Avatar className="size-16">
                             <AvatarFallback
                               className={`text-base font-bold ${colorClass}`}
                             >
@@ -260,7 +260,7 @@ export function CompareSpecialists() {
             <tbody>
               {/* ── امتیاز (Rating) ── */}
               <tr className="border-b border-border/40 bg-card transition-colors hover:bg-muted/30">
-                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-sm">
+                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-xs">
                   <span className="flex items-center gap-2 text-sm font-medium">
                     <Star className="size-4 text-amber-400" />
                     امتیاز
@@ -283,7 +283,7 @@ export function CompareSpecialists() {
 
               {/* ── تعداد پروژه (Project count) ── */}
               <tr className="border-b border-border/40 bg-muted/20 transition-colors hover:bg-muted/30">
-                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-sm">
+                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-xs">
                   <span className="text-sm font-medium">تعداد پروژه</span>
                 </td>
                 {specialists.map((s) => (
@@ -303,7 +303,7 @@ export function CompareSpecialists() {
 
               {/* ── نرخ تکمیل (Completion rate) ── */}
               <tr className="border-b border-border/40 bg-card transition-colors hover:bg-muted/30">
-                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-sm">
+                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-xs">
                   <span className="text-sm font-medium">نرخ تکمیل</span>
                 </td>
                 {specialists.map((s) => (
@@ -320,7 +320,7 @@ export function CompareSpecialists() {
 
               {/* ── نرخ پاسخ‌دهی (Response rate) ── */}
               <tr className="border-b border-border/40 bg-muted/20 transition-colors hover:bg-muted/30">
-                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-sm">
+                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-xs">
                   <span className="text-sm font-medium">نرخ پاسخ‌دهی</span>
                 </td>
                 {specialists.map((s) => (
@@ -337,7 +337,7 @@ export function CompareSpecialists() {
 
               {/* ── زمان پاسخ (Response time) ── */}
               <tr className="border-b border-border/40 bg-card transition-colors hover:bg-muted/30">
-                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-sm">
+                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-xs">
                   <span className="text-sm font-medium">زمان پاسخ</span>
                 </td>
                 {specialists.map((s) => (
@@ -351,7 +351,7 @@ export function CompareSpecialists() {
 
               {/* ── دستمزد ساعتی (Hourly rate) ── */}
               <tr className="border-b border-border/40 bg-muted/20 transition-colors hover:bg-muted/30">
-                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-sm">
+                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-xs">
                   <span className="text-sm font-medium">دستمزد ساعتی</span>
                 </td>
                 {specialists.map((s) => (
@@ -373,7 +373,7 @@ export function CompareSpecialists() {
 
               {/* ── حداقل قیمت پروژه (Min project price) ── */}
               <tr className="border-b border-border/40 bg-card transition-colors hover:bg-muted/30">
-                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-sm">
+                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-xs">
                   <span className="text-sm font-medium">حداقل قیمت پروژه</span>
                 </td>
                 {specialists.map((s) => (
@@ -396,7 +396,7 @@ export function CompareSpecialists() {
 
               {/* ── مهارت‌ها (Skills) ── */}
               <tr className="border-b border-border/40 bg-muted/20 transition-colors hover:bg-muted/30">
-                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-sm">
+                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-xs">
                   <span className="text-sm font-medium">مهارت‌ها</span>
                 </td>
                 {specialists.map((s) => (
@@ -422,7 +422,7 @@ export function CompareSpecialists() {
 
               {/* ── وضعیت (Status) ── */}
               <tr className="border-b border-border/40 bg-card transition-colors hover:bg-muted/30">
-                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-sm">
+                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-4 backdrop-blur-xs">
                   <span className="text-sm font-medium">وضعیت</span>
                 </td>
                 {specialists.map((s) => (
@@ -447,7 +447,7 @@ export function CompareSpecialists() {
 
               {/* ── عملیات (Actions) ── */}
               <tr className="bg-muted/20">
-                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-5 backdrop-blur-sm">
+                <td className="sticky right-0 z-10 bg-muted/40 px-4 py-5 backdrop-blur-xs">
                   <span className="text-sm font-medium">عملیات</span>
                 </td>
                 {specialists.map((s) => (

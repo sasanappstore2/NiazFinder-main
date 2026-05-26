@@ -1,6 +1,8 @@
 'use client';
 
-import { useNavigate } from '@/hooks/navigation/use-navigate';
+import { useRouter } from 'next/navigation';
+import { getCategoryBrowseUrl } from '@/lib/search/category-browse-url';
+import { useBrowseListingType } from '@/hooks/use-browse-listing-type';
 import { useState } from 'react';
 import {
   LayoutGrid,
@@ -30,10 +32,11 @@ import {
 // ============ Desktop Category Bar ============
 function DesktopCategoryBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { navigateTo } = useNavigate();
+  const router = useRouter();
+  const listingType = useBrowseListingType();
 
   const handleSelect = (category: MegaMenuCategory) => {
-    navigateTo('browse-requests', { categoryId: category.value });
+    router.push(getCategoryBrowseUrl(category, { type: listingType }));
     setIsOpen(false);
   };
 
@@ -79,6 +82,7 @@ function DesktopCategoryBar() {
             onSelect={handleSelect}
             onClose={() => setIsOpen(false)}
             getIcon={getCategoryIcon}
+            getHref={(c) => getCategoryBrowseUrl(c, { type: listingType })}
           />
         </PopoverContent>
       </Popover>
@@ -89,10 +93,11 @@ function DesktopCategoryBar() {
 // ============ Mobile Category Bar ============
 function MobileCategoryBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { navigateTo } = useNavigate();
+  const router = useRouter();
+  const listingType = useBrowseListingType();
 
   const handleSelect = (category: MegaMenuCategory) => {
-    navigateTo('browse-requests', { categoryId: category.value });
+    router.push(getCategoryBrowseUrl(category, { type: listingType }));
     setIsOpen(false);
   };
 
@@ -116,6 +121,7 @@ function MobileCategoryBar() {
             onSelect={handleSelect}
             onClose={() => setIsOpen(false)}
             getIcon={getCategoryIcon}
+            getHref={(c) => getCategoryBrowseUrl(c, { type: listingType })}
           />
         </SheetContent>
       </Sheet>
@@ -132,7 +138,7 @@ export function CategoryBar() {
       aria-label="نوار دسته‌بندی‌ها"
     >
       {/* Gradient bottom line */}
-      <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-l from-transparent via-primary/15 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-l from-transparent via-primary/15 to-transparent" />
       <div className="container-default">
         <div className="flex h-11 items-center gap-2 overflow-x-auto scrollbar-none">
           <DesktopCategoryBar />

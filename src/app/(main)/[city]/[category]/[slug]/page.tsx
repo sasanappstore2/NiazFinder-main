@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Script from 'next/script';
+import { PageContainer } from '@/components/layout/PageContainer';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { Separator } from '@/components/ui/separator';
 import { UniversalBusinessProfile } from '@/components/business-profile';
 import { loadBusinessBySlug } from '@/lib/business/load-profile';
@@ -45,14 +46,12 @@ export default async function BusinessSeoPage({ params }: PageProps) {
 
   return (
     <>
-      <Script id="business-seo-jsonld" type="application/ld+json" strategy="beforeInteractive">
-        {JSON.stringify(jsonLd)}
-      </Script>
-      <div className="max-w-6xl mx-auto px-4 pt-2 pb-12">
+      <JsonLd id="business-seo-jsonld" data={jsonLd} />
+      <PageContainer width="wide">
         <Breadcrumb />
         <Separator className="my-4" />
         <UniversalBusinessProfile businessId={business.id} />
-      </div>
+      </PageContainer>
     </>
   );
 }

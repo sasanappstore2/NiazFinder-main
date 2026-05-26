@@ -30,6 +30,14 @@ export const PARSER_FIXTURES: ParserFixture[] = [
     expectCity: 'مشهد',
   },
   {
+    id: 'property-colloquial-valenjak',
+    text: 'خونه میخوام در محدوده ولنجک تهران',
+    expectIntentPrefix: 'property',
+    expectCategoryIncludes: 'apartment',
+    expectCity: 'تهران',
+    expectDealType: 'buy',
+  },
+  {
     id: 'vehicle-buy',
     text: 'دنبال پژو ۲۰۶ سفید کارکرده در اصفهان',
     expectIntentPrefix: 'vehicle',

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { mv } from '@/lib/motion-variants';
 import {
   ArrowRight,
   Search,
@@ -78,7 +79,7 @@ import { toast } from 'sonner';
 // ─── Animation variants ───────────────────────────────
 const fadeIn = {
   initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
 };
 
 const container = {
@@ -88,7 +89,7 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' as const } },
 };
 
 // ─── Types ────────────────────────────────────────────
@@ -391,7 +392,7 @@ export function AdminUsersPage() {
           isBanned: (u.isBanned as boolean) || false,
           online: (u.online as boolean) || false,
           createdAt: u.createdAt
-            ? new Date(u.createdAt).toISOString()
+            ? new Date(String(u.createdAt)).toISOString()
             : new Date().toISOString(),
           banReason: (u.banReason as string) || null,
         }));
@@ -598,7 +599,7 @@ export function AdminUsersPage() {
   // ── Render ─────────────────────────────────────────
   return (
     <div className="min-h-screen bg-muted/20" dir="rtl">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="w-full overflow-x-auto py-4 sm:py-6">
 
         {/* ── Header ───────────────────────────────── */}
         <motion.div {...fadeIn} className="mb-6">
@@ -701,7 +702,7 @@ export function AdminUsersPage() {
 
         {/* ── Users Table (Desktop) ────────────────── */}
         <motion.div
-          variants={container}
+          variants={mv(container)}
           initial="hidden"
           animate="show"
           className="hidden lg:block"
@@ -909,7 +910,7 @@ export function AdminUsersPage() {
 
         {/* ── Users Cards (Mobile) ─────────────────── */}
         <motion.div
-          variants={container}
+          variants={mv(container)}
           initial="hidden"
           animate="show"
           className="lg:hidden space-y-3"
@@ -920,7 +921,7 @@ export function AdminUsersPage() {
             <EmptyState />
           ) : (
             users.map((user) => (
-              <motion.div key={user.id} variants={item}>
+              <motion.div key={user.id} variants={mv(item)}>
                 <Card className="border-border/60 bg-card">
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
@@ -1177,8 +1178,8 @@ export function AdminUsersPage() {
               </DialogTitle>
               <DialogDescription>
                 {banTarget?.isBanned
-                  ? `آیا از رفع مسدودیت ${getDisplayName(banTarget)} اطمینان دارید؟`
-                  : `آیا از مسدود کردن ${getDisplayName(banTarget)} اطمینان دارید؟ لطفاً دلیل مسدودیت را ذکر کنید.`}
+                  ? `آیا از رفع مسدودیت ${banTarget ? getDisplayName(banTarget) : ''} اطمینان دارید؟`
+                  : `آیا از مسدود کردن ${banTarget ? getDisplayName(banTarget) : ''} اطمینان دارید؟ لطفاً دلیل مسدودیت را ذکر کنید.`}
               </DialogDescription>
             </DialogHeader>
 

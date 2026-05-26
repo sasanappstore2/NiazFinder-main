@@ -1,11 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { ArrowRight, Send, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+
+import { RealtimeNeedInput } from './realtime';
+import { mergeTypingIntoParsed } from '@/lib/typing-analysis/merge-typing-seed';
 import { Badge } from '@/components/ui/badge';
 import { useNeedIntakeStore } from '@/stores/need-intake-store';
 import { useAppStore } from '@/lib/store';
@@ -13,10 +15,13 @@ import { ChatBubble } from './ChatBubble';
 import { SuggestionChips } from './SuggestionChips';
 import { QuestionCard } from './QuestionCard';
 import { ProgressIndicator } from './ProgressIndicator';
-import { AIThinkingLoader } from './AIThinkingLoader';
+import { IntakeProcessingLoader } from './IntakeProcessingLoader';
+import { IntakeStepTimeline } from './IntakeStepTimeline';
 import { buildSummary } from '@/lib/need-intake/question-engine';
 import { seedAnswersFromParsed } from '@/lib/need-intake/seed-answers';
 import { getClarifyingChipSet } from '@/lib/need-intake/clarifying-chips';
+import { applyVerticalChipSelection } from '@/lib/need-intake/parse-assistant';
+import type { FieldOption } from '@/contracts/need-intake';
 import {
   chatTurnApi,
   extractSlotsApi,
@@ -54,6 +59,9 @@ export function NeedIntakePanel({
   initialPhone = null,
 }: NeedIntakePanelProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const linkToBusinessProfile =
+    searchParams.get('linkBusiness') === '1' || searchParams.get('as') === 'company';
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
   const setAuthModalTab = useAppStore((s) => s.setAuthModalTab);
@@ -92,12 +100,16 @@ export function NeedIntakePanel({
   const [chatInput, setChatInput] = useState('');
   const [isRepublishing, setIsRepublishing] = useState(false);
   const [fieldValue, setFieldValue] = useState<string | number>('');
-  const [aiMeta, setAiMeta] = useState<{
+  const [intakeMeta, setIntakeMeta] = useState<{
     source?: string;
-    aiEnabled?: boolean;
-    cacheHit?: boolean;
+    engine?: string;
     latencyMs?: number;
+    skipClarifying?: boolean;
+    verticalScore?: number;
+    verticalCertainty?: number;
   } | null>(null);
+  const [parseChips, setParseChips] = useState<FieldOption[] | null>(null);
+  const [parseChipFieldKey, setParseChipFieldKey] = useState<string | null>(null);
   const [liveSummary, setLiveSummary] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -197,16 +209,28 @@ export function NeedIntakePanel({
           if (prefilled?.city) intent = { ...intent, city: prefilled.city };
         }
 
+        intent = mergeTypingIntoParsed(
+          intent,
+          useNeedIntakeStore.getState().typingAnalysis
+        );
         setParsedIntent(intent);
         const phone = initialPhone?.trim() || getLeadPhone();
         const seeded = seedAnswersFromParsed(intent, phone);
         setAnswers(seeded);
         if (phone) setLeadPhone(phone);
-        setAiMeta(data.meta ?? null);
+        setIntakeMeta(data.meta ?? null);
         setLiveSummary(buildSummary(intent, seeded));
         addTurn({ role: 'assistant', content: data.assistantMessage });
 
-        if (intent.confidence >= 0.65) {
+        const chipSet = getClarifyingChipSet(intent, seeded);
+        setParseChips(data.suggestedChips?.length ? data.suggestedChips : chipSet?.options ?? null);
+        setParseChipFieldKey(chipSet?.fieldKey ?? null);
+
+        const skipClarify =
+          data.meta?.skipClarifying === true ||
+          (intent.confidence >= 0.65 && (data.meta?.verticalCertainty ?? 0) >= 0.3);
+
+        if (skipClarify) {
           await loadNextQuestion(intent, seeded);
         } else {
           setStep('clarifying');
@@ -220,13 +244,26 @@ export function NeedIntakePanel({
         setLoading(false);
       }
     },
-    [addTurn, setParsedIntent, setAnswers, setStep, setLoading, setError, setSeedText, loadNextQuestion]
+    [
+      addTurn,
+      setParsedIntent,
+      setAnswers,
+      setStep,
+      setLoading,
+      setError,
+      setSeedText,
+      loadNextQuestion,
+      initialCategory,
+      initialCity,
+      initialPhone,
+      setLeadPhone,
+    ]
   );
 
   useEffect(() => {
     reset();
     setDraftInput(initialSeed);
-    setAiMeta(null);
+    setIntakeMeta(null);
 
     const prefilled = buildPrefilledIntent(initialCategory, initialCity, initialSeed);
 
@@ -242,7 +279,7 @@ export function NeedIntakePanel({
       setStep('questioning');
       void loadNextQuestion(prefilled, seeded);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- one session per mount
+     
   }, []);
 
   const handleSeedSubmit = () => {
@@ -285,22 +322,20 @@ export function NeedIntakePanel({
     setLoading(true);
     setError(null);
     try {
-      if (aiMeta?.aiEnabled) {
-        try {
-          const { slots } = await extractSlotsApi(parsedIntent, nextAnswers, {
-            fieldKey: key,
-            value: val,
-          });
-          if (Object.keys(slots).length > 0) {
-            nextAnswers = {
-              ...nextAnswers,
-              ...(slots as Record<string, string | number | boolean>),
-            };
-            setAnswers(nextAnswers);
-          }
-        } catch {
-          /* slot extraction is best-effort */
+      try {
+        const { slots } = await extractSlotsApi(parsedIntent, nextAnswers, {
+          fieldKey: key,
+          value: val,
+        });
+        if (Object.keys(slots).length > 0) {
+          nextAnswers = {
+            ...nextAnswers,
+            ...(slots as Record<string, string | number | boolean>),
+          };
+          setAnswers(nextAnswers);
         }
+      } catch {
+        /* slot extraction is best-effort */
       }
       await loadNextQuestion(parsedIntent, nextAnswers);
     } catch (e) {
@@ -434,8 +469,14 @@ export function NeedIntakePanel({
     try {
       const token =
         typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null;
-      const data = await publishNeedApi(draft, token, listingPreview);
-      toast.success('نیاز شما ثبت شد!');
+      const data = await publishNeedApi(
+        draft,
+        token,
+        listingPreview,
+        useNeedIntakeStore.getState().typingSessionId,
+        { linkToBusinessProfile }
+      );
+      toast.success(data.message || 'آگهی ثبت شد و در صف بازبینی قرار گرفت');
       setStep('done');
       router.push(routeBuilder.listing(data.id, data.title));
     } catch (e) {
@@ -464,12 +505,13 @@ export function NeedIntakePanel({
   return (
     <div className="flex min-h-[70vh] gap-6">
       <div className="flex min-h-[70vh] flex-1 flex-col">
+      <IntakeStepTimeline step={step} />
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <Badge variant="outline" className="gap-1 text-caption">
           <Sparkles className="size-3" />
-          {aiMeta?.aiEnabled
-            ? `هوش مصنوعی (${aiMeta.source === 'hybrid' || aiMeta.source === 'llm' ? 'LM Studio' : 'فعال'}${aiMeta.cacheHit ? ' · کش' : ''}${aiMeta.latencyMs ? ` · ${Math.round(aiMeta.latencyMs / 1000)}ث` : ''})`
-            : 'تحلیل هوشمند (حالت آفلاین)'}
+          {intakeMeta?.engine === 'internal'
+            ? `دستیار هوشمند${intakeMeta.latencyMs ? ` · ${Math.round(intakeMeta.latencyMs)}ms` : ''}`
+            : 'تحلیل لحظه‌ای'}
         </Badge>
         {step === 'questioning' && currentQuestion && !currentQuestion.done && (
           <ProgressIndicator
@@ -486,26 +528,13 @@ export function NeedIntakePanel({
               نیازتان را با زبان ساده بنویسید. سیستم دسته‌بندی و سؤالات بعدی را پیشنهاد
               می‌دهد.
             </p>
-            <Textarea
+            <RealtimeNeedInput
               value={draftInput}
-              onChange={(e) => setDraftInput(e.target.value)}
-              placeholder="مثلاً: تعمیرکار کولر فوری غرب تهران"
-              className="min-h-[120px] text-lg"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSeedSubmit();
-                }
-              }}
+              onChange={setDraftInput}
+              onSubmit={handleSeedSubmit}
+              disabled={isLoading}
+              city={initialCity}
             />
-            <Button
-              className="w-full h-12"
-              onClick={handleSeedSubmit}
-              disabled={!draftInput.trim() || isLoading}
-            >
-              <Send className="size-4 ml-2" />
-              شروع
-            </Button>
           </div>
         )}
 
@@ -515,22 +544,40 @@ export function NeedIntakePanel({
           </ChatBubble>
         ))}
 
-        {isLoading && <AIThinkingLoader label={step === 'publishing' ? 'در حال ثبت…' : undefined} />}
+        {isLoading && (
+          <IntakeProcessingLoader
+            label={step === 'publishing' ? 'در حال ثبت…' : undefined}
+          />
+        )}
 
         {step === 'clarifying' && parsedIntent && !isLoading && (
           <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">
-              لطفاً نوع نیازتان را تأیید کنید:
-            </p>
-            {clarifyingChips && (
+            {parseChips && parseChips.some((c) => !['confirm', 'change', 'retry'].includes(c.value)) && (
               <>
-                <p className="text-xs text-muted-foreground">{clarifyingChips.label}</p>
+                {parseChipFieldKey && (
+                  <p className="text-xs text-muted-foreground">
+                    {clarifyingChips?.label ?? 'یک گزینه انتخاب کنید'}
+                  </p>
+                )}
                 <SuggestionChips
-                  options={clarifyingChips.options}
+                  options={parseChips.filter(
+                    (c) => !['confirm', 'change', 'retry'].includes(c.value)
+                  )}
                   onSelect={(v) => {
-                    const next = { ...answers, [clarifyingChips.fieldKey]: v };
-                    setAnswers(next);
-                    void loadNextQuestion(parsedIntent, next);
+                    if (v.startsWith('vertical:')) {
+                      const updated = applyVerticalChipSelection(parsedIntent, v);
+                      setParsedIntent(updated);
+                      const next = seedAnswersFromParsed(updated, leadPhone);
+                      setAnswers(next);
+                      setLiveSummary(buildSummary(updated, next));
+                      void loadNextQuestion(updated, next);
+                      return;
+                    }
+                    if (parseChipFieldKey) {
+                      const next = { ...answers, [parseChipFieldKey]: v };
+                      setAnswers(next);
+                      void loadNextQuestion(parsedIntent, next);
+                    }
                   }}
                 />
               </>
@@ -545,6 +592,7 @@ export function NeedIntakePanel({
                 else {
                   reset();
                   setDraftInput('');
+                  setParseChips(null);
                   setStep('idle');
                 }
               }}
@@ -620,7 +668,7 @@ export function NeedIntakePanel({
       </div>
 
       {step === 'chatting' && (
-        <div className="sticky bottom-0 border-t bg-background/95 pt-3 backdrop-blur-sm">
+        <div className="sticky bottom-0 border-t bg-background/95 pt-3 backdrop-blur-xs">
           <IntakeChatComposer
             value={chatInput}
             onChange={setChatInput}

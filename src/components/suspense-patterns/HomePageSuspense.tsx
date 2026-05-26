@@ -17,7 +17,7 @@ function HeroSectionSkeleton() {
         <div className="flex flex-col items-center text-center gap-6">
           <div className="h-7 w-40 rounded-full bg-primary/10 animate-pulse" />
           <div className="h-10 sm:h-12 w-72 sm:w-96 rounded-lg bg-muted animate-pulse" />
-          <div className="h-5 sm:h-6 w-80 sm:w-[28rem] rounded bg-muted animate-pulse" />
+          <div className="h-5 sm:h-6 w-80 sm:w-md rounded bg-muted animate-pulse" />
           <div className="h-12 sm:h-14 w-full max-w-xl rounded-2xl bg-muted animate-pulse" />
           <div className="flex items-center gap-3">
             <div className="h-11 w-36 rounded-xl bg-primary/15 animate-pulse" />

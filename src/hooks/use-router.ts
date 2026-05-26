@@ -58,10 +58,10 @@ export function useAppRouter() {
 function buildLegacyUrl(route: LegacyRouteKey, params?: Record<string, string>): string {
   if (route === 'request-detail' && params?.id) return routeBuilder.need(params.id);
   if (route === 'specialist-profile' && params?.id) return routeBuilder.business(params.id);
-  let url = ROUTE_MAP[route];
+  let url: string = String(ROUTE_MAP[route] ?? '/');
   if (params) {
     for (const [key, value] of Object.entries(params)) {
-      url = url.replace(`[${key}]`, encodeURIComponent(value));
+      url = url.replace(`[${key}]`, encodeURIComponent(String(value)));
     }
   }
   return url;

@@ -44,7 +44,7 @@ import type { ServiceRequest } from '@/lib/types';
 // ─── Animation variants ───────────────────────────────
 const fadeIn = {
   initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
 };
 
 const container = {
@@ -54,12 +54,12 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
 };
 
 const scaleIn = {
   initial: { opacity: 0, scale: 0.9 },
-  animate: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: 'easeOut' } },
+  animate: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: 'easeOut' as const } },
 };
 
 // ─── Color helpers ────────────────────────────────────
@@ -169,7 +169,7 @@ function StatPill({
   iconColor?: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl bg-white/60 px-4 py-3 backdrop-blur-sm dark:bg-card/60">
+    <div className="flex items-center gap-3 rounded-xl bg-white/60 px-4 py-3 backdrop-blur-xs dark:bg-card/60">
       <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-900/20">
         <Icon className={`size-4 ${iconColor}`} />
       </div>
@@ -272,7 +272,7 @@ function PostMiniCard({ post, index }: { post: ServiceRequest; index: number }) 
 // ─── Skeleton Loader ──────────────────────────────────
 function ProfileSkeleton() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="w-full py-6 sm:py-8">
       {/* Cover skeleton */}
       <div className="animate-shimmer-loading rounded-t-2xl bg-muted/40 h-48 sm:h-56" />
       {/* Avatar + info skeleton */}
@@ -429,9 +429,9 @@ export function UserProfile() {
           isVerified: (user.isVerified || currentUser?.isVerified || false) as boolean,
           online: (user.online || currentUser?.online || false) as boolean,
           createdAt: (user.createdAt || currentUser?.createdAt || new Date().toISOString()) as string,
-          avgRating: profileData.avgRating || currentUser?.rating || 0,
-          projectCount: profileData.projectCount || currentUser?.projectCount || 0,
-          postCount: profileData.postCount || currentUser?.postCount || posts.length,
+          avgRating: Number(profileData.avgRating ?? currentUser?.rating ?? 0),
+          projectCount: Number(profileData.projectCount ?? currentUser?.projectCount ?? 0),
+          postCount: Number(profileData.postCount ?? currentUser?.postCount ?? posts.length),
           skills: (profileData.skills || []) as { name: string; level: number }[],
         };
       })()
@@ -535,7 +535,7 @@ export function UserProfile() {
 
   return (
     <div className="min-h-screen bg-muted/20" dir="rtl">
-      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="w-full py-4 sm:py-6">
 
         {/* ── Back Button ──────────────────────────── */}
         <motion.div {...fadeIn} className="mb-4">
@@ -557,7 +557,7 @@ export function UserProfile() {
           className="mb-6 overflow-hidden rounded-2xl border border-border/60"
         >
           {/* Cover image area */}
-          <div className="relative h-48 overflow-hidden bg-gradient-to-bl from-emerald-500 via-emerald-600 to-teal-700 sm:h-56">
+          <div className="relative h-48 overflow-hidden bg-linear-to-bl from-emerald-500 via-emerald-600 to-teal-700 sm:h-56">
             {profile.coverImage ? (
               <img
                 src={profile.coverImage}
@@ -582,7 +582,7 @@ export function UserProfile() {
               <Button
                 size="sm"
                 variant="secondary"
-                className="absolute top-3 left-3 gap-1.5 rounded-lg bg-black/30 text-white border-0 backdrop-blur-sm hover:bg-black/40"
+                className="absolute top-3 left-3 gap-1.5 rounded-lg bg-black/30 text-white border-0 backdrop-blur-xs hover:bg-black/40"
                 onClick={() => toast.info('ویرایش کاور به زودی اضافه می‌شود')}
               >
                 <PenLine className="size-3.5" />
@@ -795,17 +795,17 @@ export function UserProfile() {
           <StatPill
             icon={FileText}
             label="پست‌ها"
-            value={profile.postCount || posts.length}
+            value={Number(profile.postCount) || posts.length}
             iconColor="text-amber-500"
           />
           <StatPill
             icon={Briefcase}
             label="پروژه‌ها"
-            value={profile.projectCount}
+            value={Number(profile.projectCount) || 0}
             iconColor="text-violet-500"
           />
           <div className="col-span-2 sm:col-span-1">
-            <div className="flex items-center gap-3 rounded-xl bg-white/60 px-4 py-3 backdrop-blur-sm dark:bg-card/60">
+            <div className="flex items-center gap-3 rounded-xl bg-white/60 px-4 py-3 backdrop-blur-xs dark:bg-card/60">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-900/20">
                 <Star className="size-4 text-amber-500" />
               </div>
@@ -985,7 +985,7 @@ export function UserProfile() {
                     {/* Verified badge card */}
                     {profile.isVerified && (
                       <motion.div {...scaleIn} transition={{ delay: 0.2 }}>
-                        <Card className="border-emerald-200 bg-gradient-to-b from-emerald-50 to-white dark:border-emerald-800 dark:from-emerald-950/40 dark:to-card">
+                        <Card className="border-emerald-200 bg-linear-to-b from-emerald-50 to-white dark:border-emerald-800 dark:from-emerald-950/40 dark:to-card">
                           <CardContent className="p-5 text-center">
                             <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900/30">
                               <BadgeCheck className="size-6 text-emerald-600 dark:text-emerald-400" />

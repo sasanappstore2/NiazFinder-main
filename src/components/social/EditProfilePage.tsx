@@ -31,7 +31,7 @@ import { toast } from 'sonner';
 // ─── Animation variants ───────────────────────────────
 const fadeIn = {
   initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
 };
 
 const staggerContainer = {
@@ -41,7 +41,7 @@ const staggerContainer = {
 
 const staggerItem = {
   hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' as const } },
 };
 
 // ─── Color helpers (same as UserProfile.tsx) ─────────
@@ -272,7 +272,7 @@ export function EditProfilePage() {
           <motion.div variants={staggerItem}>
             <Card className="overflow-hidden border-border/60">
               {/* Cover image preview */}
-              <div className="relative h-40 overflow-hidden bg-gradient-to-bl from-emerald-500 via-emerald-600 to-teal-700 sm:h-48">
+              <div className="relative h-40 overflow-hidden bg-linear-to-bl from-emerald-500 via-emerald-600 to-teal-700 sm:h-48">
                 {coverImage ? (
                   <img
                     src={coverImage}
@@ -290,7 +290,7 @@ export function EditProfilePage() {
                     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.08),transparent_50%)]" />
                   </>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
               </div>
 
               {/* Avatar preview */}

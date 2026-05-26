@@ -23,7 +23,10 @@ export interface UseAutoLocationCityOptions {
 export function useAutoLocationCity(options: UseAutoLocationCityOptions = {}) {
   const { skipAuto = false, onDetected } = options;
   const onDetectedRef = useRef(onDetected);
-  onDetectedRef.current = onDetected;
+
+  useEffect(() => {
+    onDetectedRef.current = onDetected;
+  }, [onDetected]);
 
   const [status, setStatus] = useState<AutoLocationStatus>(() =>
     isGeolocationSupported() ? 'idle' : 'unsupported'

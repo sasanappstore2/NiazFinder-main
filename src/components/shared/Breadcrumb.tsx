@@ -1,11 +1,22 @@
 'use client';
 
-import { Fragment, useMemo } from 'react';
+import { Fragment, useMemo, Suspense } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { ChevronLeft, Home } from 'lucide-react';
 import { routeBuilder } from '@/config/routes';
+import type { BrowseMarket } from '@/config/market-routes';
 import { resolveSearchSegments } from '@/lib/search/resolve-segments';
+import { isBusinessProfilePath } from '@/lib/search/browse-path';
+import { browseTrailFromSearchParams } from '@/lib/browse-trail';
+import {
+  buildUrlFromLocationScope,
+  resolveLocationScope,
+  scopeIsActive,
+  scopeLabel,
+  scopeToBrowseFilters,
+  type LocationScope,
+} from '@/lib/search/location-scope';
 
 import {
   Breadcrumb as BreadcrumbNav,
@@ -21,121 +32,177 @@ interface Crumb {
   href: string;
 }
 
+function marketplacePrefix(pathname: string): RegExp | null {
+  if (pathname === '/n' || pathname.startsWith('/n/')) return /^\/n\/?/;
+  if (pathname === '/b' || pathname.startsWith('/b/')) return /^\/b\/?/;
+  if (pathname === '/s' || pathname.startsWith('/s/')) return /^\/s\/?/;
+  return null;
+}
+
+function marketFromPathname(pathname: string): BrowseMarket {
+  if (pathname.startsWith('/b/')) return 'business';
+  return 'need';
+}
+
 /**
- * Build breadcrumbs for a `/s/{location}/{...segments}` URL.
- *
- * Examples:
- *   /s/iran             → خانه › جستجو
- *   /s/iran/real-estate → خانه › جستجو › املاک
- *   /s/mashhad          → خانه › جستجو › مشهد
- *   /s/mashhad/real-estate/buy-residential → خانه › جستجو › مشهد › املاک › فروش مسکونی
+ * Breadcrumbs for `/n/`, `/b/`, or legacy `/s/` marketplace URLs.
  */
-function searchCrumbs(pathname: string, home: Crumb): Crumb[] {
-  // Strip /s/ prefix and split
-  const parts = pathname.replace(/^\/s\/?/, '').split('/').filter(Boolean);
+function marketplaceCrumbs(
+  pathname: string,
+  home: Crumb,
+  searchParams: URLSearchParams
+): Crumb[] {
+  const prefix = marketplacePrefix(pathname);
+  if (!prefix) return [home];
+
+  const market = marketFromPathname(pathname);
+  const parts = pathname.replace(prefix, '').split('/').filter(Boolean);
   const [rawLocation, ...rawSegments] = parts;
+  const scope = resolveLocationScope(pathname, searchParams);
+  const scoped = scopeIsActive(scope);
+
+  const marketRootLabel = market === 'business' ? 'بازار کسب‌وکارها' : 'بازار نیازها';
+  const marketRootHref = routeBuilder.search({ market });
 
   if (!rawLocation) {
-    return [home, { label: 'جستجو', href: routeBuilder.search() }];
+    if (scoped) {
+      return [
+        home,
+        {
+          label: scopeLabel(scope),
+          href: buildUrlFromLocationScope(pathname, searchParams, scope),
+        },
+      ];
+    }
+    return [home, { label: marketRootLabel, href: marketRootHref }];
   }
 
   const ctx = resolveSearchSegments(rawLocation, rawSegments);
-  const root: Crumb = { label: 'جستجو', href: routeBuilder.search() };
 
-  if (ctx.kind === 'invalid-location') return [home, root];
-
-  const locSlug = ctx.location.kind === 'country' ? 'iran' : ctx.location.city.slug;
-  const locLabel = ctx.location.kind === 'country' ? 'سراسر ایران' : ctx.location.city.title;
-  const locCrumb: Crumb = {
-    label: locLabel,
-    href: routeBuilder.search({ location: locSlug }),
-  };
-
-  if (ctx.kind === 'all') {
-    return [home, root, locCrumb];
+  if (ctx.kind === 'invalid-location') {
+    return scoped
+      ? [home, { label: scopeLabel(scope), href: buildUrlFromLocationScope(pathname, searchParams, scope) }]
+      : [home, { label: marketRootLabel, href: marketRootHref }];
   }
 
+  const locSlug = ctx.location.kind === 'country' ? 'iran' : ctx.location.city.slug;
+  const pathLocLabel =
+    ctx.location.kind === 'country' ? 'سراسر ایران' : ctx.location.city.title;
+
+  const crumbs: Crumb[] = [home];
+
+  if (!scoped) {
+    crumbs.push({ label: marketRootLabel, href: marketRootHref });
+  }
+
+  crumbs.push({
+    label: scoped ? scopeLabel(scope) : pathLocLabel,
+    href: scoped
+      ? buildUrlFromLocationScope(pathname, searchParams, scope)
+      : routeBuilder.search({ market, location: locSlug }),
+  });
+
   if (ctx.kind === 'category') {
-    return [
-      home,
-      root,
-      locCrumb,
-      {
-        label: ctx.category.title,
-        href: routeBuilder.search({ location: locSlug, category: ctx.category.slug }),
-      },
-    ];
+    crumbs.push({
+      label: ctx.category.title,
+      href: scopedSearchHref(scope, market, locSlug, { category: ctx.category.slug }),
+    });
+    return crumbs;
   }
 
   if (ctx.kind === 'parent-child') {
-    return [
-      home,
-      root,
-      locCrumb,
-      {
-        label: ctx.parent.title,
-        href: routeBuilder.search({ location: locSlug, category: ctx.parent.slug }),
-      },
-      {
-        label: ctx.category.title,
-        href: routeBuilder.search({
-          location: locSlug,
-          parentCategory: ctx.parent.slug,
-          category: ctx.category.slug,
-        }),
-      },
-    ];
+    crumbs.push({
+      label: ctx.parent.title,
+      href: scopedSearchHref(scope, market, locSlug, { category: ctx.parent.slug }),
+    });
+    crumbs.push({
+      label: ctx.category.title,
+      href: scopedSearchHref(scope, market, locSlug, {
+        parentCategory: ctx.parent.slug,
+        category: ctx.category.slug,
+      }),
+    });
+    return crumbs;
   }
 
-  // invalid-segments → drop back to location root
-  return [home, root, locCrumb];
+  return crumbs;
 }
 
-function crumbsForPath(pathname: string): Crumb[] {
+function scopedSearchHref(
+  scope: LocationScope,
+  market: BrowseMarket,
+  pathLocSlug: string,
+  opts: { category?: string; parentCategory?: string }
+): string {
+  if (!scopeIsActive(scope)) {
+    return routeBuilder.search({ market, location: pathLocSlug, ...opts });
+  }
+  const location = scope.mode === 'city' ? scope.citySlug : 'iran';
+  return routeBuilder.search({
+    market,
+    location,
+    ...opts,
+    filters: scopeToBrowseFilters(scope),
+  });
+}
+
+function crumbsForPath(pathname: string, searchParams: URLSearchParams): Crumb[] {
   const home: Crumb = { label: 'صفحه اصلی', href: routeBuilder.home() };
 
   if (pathname === '/') return [home];
 
-  // Canonical search/browse path
-  if (pathname === '/s' || pathname.startsWith('/s/')) {
-    return searchCrumbs(pathname, home);
+  if (
+    pathname === '/n' ||
+    pathname.startsWith('/n/') ||
+    pathname === '/b' ||
+    (pathname.startsWith('/b/') && !isBusinessProfilePath(pathname)) ||
+    pathname === '/s' ||
+    pathname.startsWith('/s/')
+  ) {
+    return marketplaceCrumbs(pathname, home, searchParams);
   }
 
-  // Legacy /browse — should be redirected by the page handler, but if a
-  // partially-cached page lingers, render a sane breadcrumb.
   if (pathname === '/browse' || pathname.startsWith('/browse/')) {
-    return [home, { label: 'جستجو', href: routeBuilder.search() }];
+    return [home, { label: 'بازار نیازها', href: routeBuilder.search({ market: 'need' }) }];
   }
 
   if (pathname.startsWith('/v/')) {
+    const from = browseTrailFromSearchParams(searchParams);
+    if (from) {
+      return [
+        ...marketplaceCrumbs(from, home, new URLSearchParams()),
+        { label: 'جزئیات آگهی', href: pathname },
+      ];
+    }
     return [
       home,
-      { label: 'جستجو', href: routeBuilder.search({ filters: { type: 'need' } }) },
+      { label: 'بازار نیازها', href: routeBuilder.search({ market: 'need' }) },
       { label: 'جزئیات آگهی', href: pathname },
     ];
   }
+
   if (pathname.startsWith('/pro/')) {
     return [
       home,
-      { label: 'جستجو', href: routeBuilder.search({ filters: { type: 'business' } }) },
+      { label: 'بازار کسب‌وکارها', href: routeBuilder.search({ market: 'business' }) },
       { label: 'پروفایل کسب‌وکار', href: pathname },
     ];
   }
-  // Legacy /n/ and /b/ (redirect handlers; breadcrumb for cached pages)
-  if (pathname.startsWith('/n/')) {
+
+  if (isBusinessProfilePath(pathname)) {
+    const from = browseTrailFromSearchParams(searchParams);
+    const slug = pathname.split('/').filter(Boolean)[1] ?? '';
+    const terminal: Crumb = { label: slug, href: pathname };
+    if (from) {
+      return [...marketplaceCrumbs(from, home, new URLSearchParams()), terminal];
+    }
     return [
       home,
-      { label: 'جستجو', href: routeBuilder.search({ filters: { type: 'need' } }) },
-      { label: 'جزئیات نیاز', href: pathname },
+      { label: 'بازار کسب‌وکارها', href: routeBuilder.search({ market: 'business' }) },
+      terminal,
     ];
   }
-  if (pathname.startsWith('/b/')) {
-    return [
-      home,
-      { label: 'جستجو', href: routeBuilder.search({ filters: { type: 'business' } }) },
-      { label: 'پروفایل کسب‌وکار', href: pathname },
-    ];
-  }
+
   if (pathname === '/post')          return [home, { label: 'ثبت نیاز', href: routeBuilder.needNew() }];
   if (pathname === '/dashboard')     return [home, { label: 'داشبورد', href: routeBuilder.dashboard() }];
   if (pathname === '/chat' || pathname.startsWith('/chat/'))
@@ -150,14 +217,17 @@ function crumbsForPath(pathname: string): Crumb[] {
   return [home, { label: 'صفحه', href: pathname }];
 }
 
-export function Breadcrumb() {
+function BreadcrumbInner() {
   const pathname = usePathname();
-  const crumbs = useMemo(() => crumbsForPath(pathname), [pathname]);
+  const searchParams = useSearchParams();
+  const crumbs = useMemo(
+    () => crumbsForPath(pathname, searchParams),
+    [pathname, searchParams]
+  );
 
   return (
     <BreadcrumbNav dir="rtl" itemScope itemType="https://schema.org/BreadcrumbList">
       <BreadcrumbList className="flex flex-wrap items-center gap-1.5 text-sm sm:gap-2">
-        {/* Separator must be sibling BreadcrumbItem, not nested — both render <li>. */}
         {crumbs.map((crumb, index) => {
           const isLast = index === crumbs.length - 1;
           const showSeparator = index < crumbs.length - 1;
@@ -207,5 +277,13 @@ export function Breadcrumb() {
         })}
       </BreadcrumbList>
     </BreadcrumbNav>
+  );
+}
+
+export function Breadcrumb() {
+  return (
+    <Suspense fallback={null}>
+      <BreadcrumbInner />
+    </Suspense>
   );
 }

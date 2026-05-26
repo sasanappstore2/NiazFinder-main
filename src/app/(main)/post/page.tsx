@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { PageContainer } from '@/components/layout/PageContainer';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { NeedIntakePanel } from '@/components/need-intake';
@@ -16,7 +17,7 @@ function PostNeedContent() {
   const panelKey = [seed, category, city, phone].filter(Boolean).join('|') || 'empty';
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pt-2 pb-12">
+    <PageContainer width="narrow">
       <Breadcrumb />
       <Separator className="my-4" />
       <h1 className="text-xl font-bold mb-4">ثبت نیاز جدید</h1>
@@ -27,7 +28,7 @@ function PostNeedContent() {
         initialCity={city}
         initialPhone={phone}
       />
-    </div>
+    </PageContainer>
   );
 }
 
@@ -35,9 +36,9 @@ export default function PostNeedPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-2xl mx-auto px-4 py-12 text-center text-muted-foreground">
+        <PageContainer width="narrow" noVerticalPadding className="py-12 text-center text-muted-foreground">
           بارگذاری…
-        </div>
+        </PageContainer>
       }
     >
       <PostNeedContent />

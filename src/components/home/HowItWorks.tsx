@@ -45,7 +45,7 @@ export function HowItWorks() {
         {/* Steps */}
         <div className="relative">
           {/* Connecting line — desktop only */}
-          <div className="absolute top-12 start-[16%] end-[16%] hidden h-px bg-border md:block" aria-hidden="true" />
+          <div className="absolute top-12 inset-s-[16%] inset-e-[16%] hidden h-px bg-border md:block" aria-hidden="true" />
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-12">
             {steps.map((step, i) => {
@@ -53,13 +53,13 @@ export function HowItWorks() {
               return (
                 <div key={i} className="relative flex flex-col items-center text-center" itemScope itemType="https://schema.org/HowToStep">
                   {/* Circle */}
-                  <div className="relative z-10 mb-6 flex size-[88px] items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25 ring-4 ring-background">
-                    <Icon className="size-9 text-white" aria-hidden="true" loading="lazy" />
+                  <div className="relative z-10 mb-6 flex size-[88px] items-center justify-center rounded-full bg-linear-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25 ring-4 ring-background">
+                    <Icon className="size-9 text-white" aria-hidden="true" />
                   </div>
 
                   {/* Card */}
                   <div className="rounded-2xl border border-border/50 bg-card p-5 w-full hover-lift transition-all 150ms ease">
-                    <span className="absolute -top-3 start-4 flex size-7 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white shadow-md ring-[3px] ring-background" itemProp="position">
+                    <span className="absolute -top-3 inset-s-4 flex size-7 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white shadow-md ring-[3px] ring-background" itemProp="position">
                       {step.number}
                     </span>
                     <h3 className="mb-2 mt-1 text-base font-bold leading-snug" itemProp="name">{step.title}</h3>

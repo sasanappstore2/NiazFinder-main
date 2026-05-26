@@ -108,7 +108,7 @@ export function ReferralPage() {
     <div className="space-y-6" dir="rtl">
       {/* ============ Hero Section ============ */}
       <Card className="relative overflow-hidden rounded-2xl border-0 shadow-lg">
-        <div className="absolute inset-0 bg-gradient-to-bl from-emerald-500 via-emerald-600 to-teal-700" />
+        <div className="absolute inset-0 bg-linear-to-bl from-emerald-500 via-emerald-600 to-teal-700" />
         <div className="absolute inset-0 opacity-10">
           <div className="absolute -left-12 -top-12 h-52 w-52 rounded-full bg-white" />
           <div className="absolute -bottom-8 -right-8 h-40 w-40 rounded-full bg-white" />
@@ -117,7 +117,7 @@ export function ReferralPage() {
         </div>
         <CardContent className="relative z-10 px-6 py-10 sm:px-8 sm:py-14">
           <div className="flex flex-col items-center gap-5 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm sm:h-20 sm:w-20">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-xs sm:h-20 sm:w-20">
               <Gift className="h-8 w-8 text-white sm:h-10 sm:w-10" />
             </div>
             <div className="space-y-3">
@@ -125,8 +125,8 @@ export function ReferralPage() {
               <p className="mx-auto max-w-lg text-base leading-relaxed text-emerald-100 sm:text-lg">برای هر دعوت موفق، ۵۰ هزار تومان اعتبار کیف پول دریافت کنید</p>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <span className="flex items-center gap-1.5 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm"><Sparkles className="h-4 w-4" />بدون محدودیت دعوت</span>
-              <span className="flex items-center gap-1.5 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm"><Check className="h-4 w-4" />واریز فوری پاداش</span>
+              <span className="flex items-center gap-1.5 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-xs"><Sparkles className="h-4 w-4" />بدون محدودیت دعوت</span>
+              <span className="flex items-center gap-1.5 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-xs"><Check className="h-4 w-4" />واریز فوری پاداش</span>
             </div>
           </div>
         </CardContent>
@@ -190,7 +190,7 @@ export function ReferralPage() {
           const Icon = stat.icon;
           return (
             <Card key={stat.id} className="group relative overflow-hidden rounded-2xl shadow-lg shadow-emerald-500/5 border border-border/50 transition-all duration-150 hover:shadow-xl hover:shadow-emerald-500/10">
-              <div className={cn('absolute inset-0 bg-gradient-to-br opacity-[0.06] dark:opacity-[0.1]', stat.gradient)} />
+              <div className={cn('absolute inset-0 bg-linear-to-br opacity-[0.06] dark:opacity-[0.1]', stat.gradient)} />
               <CardContent className="relative z-10 p-5 sm:p-6">
                 <div className="flex items-start gap-4">
                   <div className={cn('flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-transform duration-150 group-hover:scale-110', stat.bgColor)}>
@@ -261,9 +261,9 @@ export function ReferralPage() {
               return (
                 <div key={step.number} className="relative flex flex-col items-center gap-4 text-center">
                   {index < HOW_IT_WORKS_STEPS.length - 1 && (
-                    <div className="absolute top-8 left-0 hidden h-px w-full bg-gradient-to-l from-emerald-300/40 to-transparent sm:block" />
+                    <div className="absolute top-8 left-0 hidden h-px w-full bg-linear-to-l from-emerald-300/40 to-transparent sm:block" />
                   )}
-                  <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/30">
+                  <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/30">
                     <span className="text-xl font-extrabold text-white">{step.number}</span>
                   </div>
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/40">

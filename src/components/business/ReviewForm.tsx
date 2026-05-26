@@ -144,7 +144,7 @@ function InteractiveStarRating({
         return (
           <div
             key={star}
-            className="cursor-pointer transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 rounded-sm"
+            className="cursor-pointer transition-transform hover:scale-110 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 rounded-xs"
             onMouseMove={(e) => handleMouseMove(e, star)}
             onClick={() => handleClick(star)}
             onKeyDown={(e) => handleKeyDown(e, star)}
@@ -217,7 +217,7 @@ function SuccessState({
 }) {
   return (
     <div className="relative">
-      <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-950/20 dark:to-background">
+      <Card className="border-emerald-200 bg-linear-to-br from-emerald-50 to-white dark:from-emerald-950/20 dark:to-background">
         <CardContent className="flex flex-col items-center justify-center py-12 px-6 gap-6">
           {/* Animated checkmark */}
           <div>
@@ -268,7 +268,7 @@ function SuccessState({
           {/* Go back button */}
           <div>
             <Button
-              onClick={handleGoBack}
+              onClick={onGoBack}
               className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-8 h-11 rounded-xl"
               data-href="/browse?type=business"
               title="بازگشت به پروفایل کسب‌وکار"
@@ -423,9 +423,9 @@ export default function ReviewForm() {
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      <Card className="border-emerald-200/50 dark:border-emerald-900/30 overflow-hidden shadow-xl shadow-emerald-500/[0.04]">
+      <Card className="border-emerald-200/50 dark:border-emerald-900/30 overflow-hidden shadow-xl shadow-emerald-500/4">
         {/* Header */}
-        <CardHeader className="bg-gradient-to-l from-emerald-50/80 to-white dark:from-emerald-950/15 dark:to-background pb-4">
+        <CardHeader className="bg-linear-to-l from-emerald-50/80 to-white dark:from-emerald-950/15 dark:to-background pb-4">
           <CardTitle className="text-xl font-extrabold text-foreground flex items-center gap-2">
             <Star className="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="currentColor" />
             ثبت نظر و امتیاز

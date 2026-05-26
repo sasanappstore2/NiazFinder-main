@@ -42,7 +42,7 @@ function ActivityRow({ activity, isLast }: { activity: ActivityItem; isLast: boo
       {/* Timeline */}
       <div className="relative flex flex-col items-center">
         <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${activity.iconBg}`} aria-hidden="true">
-          <Icon className="size-4" loading="lazy" />
+          <Icon className="size-4" />
         </div>
         {!isLast && <div className="absolute top-9 bottom-0 w-px bg-border/60" aria-hidden="true" />}
       </div>

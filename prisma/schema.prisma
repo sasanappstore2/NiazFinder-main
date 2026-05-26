@@ -19,6 +19,8 @@ model User {
   lastName      String    @default("")
   displayName   String?
   avatar        String?
+  coverImage    String?
+  website       String?
   bio           String?
   city          String?
   province      String?
@@ -47,6 +49,8 @@ model User {
   skills             UserSkill[]
   transactions       Transaction[]
   authTokens         AuthToken[]
+  staffRoles         UserStaffRole[]
+  adminAuditLogs     AdminAuditLog[]
   conversations1     Conversation[]     @relation("ConvUser1")
   conversations2     Conversation[]     @relation("ConvUser2")
   posts              UserPost[]
@@ -58,6 +62,8 @@ model User {
   businessProfile    BusinessProfile?
   callsAsCaller      VoiceCall[]     @relation("VoiceCallsAsCaller")
   callsAsCallee      VoiceCall[]     @relation("VoiceCallsAsCallee")
+  reviewedRequests   ServiceRequest[] @relation("ReviewedRequests")
+  assignedRequests   ServiceRequest[] @relation("AssignedRequests")
 
   @@index([role])
   @@index([city])
@@ -84,6 +90,83 @@ model AuthToken {
 
   @@index([token])
   @@index([userId])
+}
+
+// ============ STAFF RBAC (Super Admin) ============
+
+model StaffRole {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  permissions StaffRolePermission[]
+  users       UserStaffRole[]
+
+  @@unique([name])
+  @@index([isActive])
+}
+
+model StaffPermission {
+  /**
+   * Canonical permission id, e.g. `geo:locations:write`.
+   * Source of truth in code: `src/config/admin-permissions.ts`.
+   */
+  id          String   @id
+  label       String
+  group       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  roles StaffRolePermission[]
+
+  @@index([group])
+}
+
+model StaffRolePermission {
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  role       StaffRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission StaffPermission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+}
+
+model UserStaffRole {
+  userId    String
+  roleId    String
+  createdAt DateTime @default(now())
+
+  user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role StaffRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@index([roleId])
+}
+
+model AdminAuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String
+  action      String
+  entityType  String
+  entityId    String?
+  payload     String   @default("{}")
+  ip          String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  actor User @relation(fields: [actorUserId], references: [id], onDelete: Cascade)
+
+  @@index([actorUserId])
+  @@index([action])
+  @@index([entityType])
+  @@index([createdAt])
 }
 
 // ============ CATEGORIES & SKILLS ============
@@ -153,8 +236,8 @@ model ServiceRequest {
   title         String
   slug          String           @unique
   description   String
-  budgetMin     Int?
-  budgetMax     Int?
+  budgetMin     BigInt?
+  budgetMax     BigInt?
   budgetType    BudgetType       @default(FIXED)
   deliveryTime  Int?
   deliveryUnit  String           @default("day")
@@ -164,7 +247,13 @@ model ServiceRequest {
   categoryId    String
   subcategoryId String?
   priority      Priority         @default(NORMAL)
-  status        RequestStatus    @default(OPEN)
+  status        RequestStatus    @default(PENDING_REVIEW)
+  moderationStatus ModerationStatus @default(PENDING)
+  reviewedAt       DateTime?
+  reviewedByUserId String?
+  rejectionReason  String?
+  moderationNotes  String?
+  assignedToUserId String?
   tags          String           @default("[]")
   attachmentUrls String          @default("[]")
   viewCount     Int              @default(0)
@@ -182,6 +271,10 @@ model ServiceRequest {
 
   user              User           @relation(fields: [userId], references: [id])
   userId            String
+  businessProfile   BusinessProfile? @relation(fields: [businessProfileId], references: [id])
+  businessProfileId String?
+  reviewedBy        User?          @relation("ReviewedRequests", fields: [reviewedByUserId], references: [id])
+  assignedTo        User?          @relation("AssignedRequests", fields: [assignedToUserId], references: [id])
   category          Category       @relation(fields: [categoryId], references: [id])
   subcategory       Category?      @relation("SubcategoryRequest", fields: [subcategoryId], references: [id])
   proposals         Proposal[]
@@ -189,6 +282,7 @@ model ServiceRequest {
   leadOutreach      NeedLeadOutreach[]
 
   @@index([userId])
+  @@index([businessProfileId])
   @@index([categoryId])
   @@index([status])
   @@index([city])
@@ -197,6 +291,17 @@ model ServiceRequest {
   @@index([slug])
   @@index([intentType])
   @@index([source])
+  @@index([moderationStatus])
+  @@index([moderationStatus, createdAt])
+  @@index([assignedToUserId, moderationStatus])
+  @@index([reviewedByUserId])
+}
+
+enum ModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED_SOFT
+  REJECTED_FINAL
 }
 
 model NeedIntakeSession {
@@ -226,11 +331,13 @@ enum Priority {
 }
 
 enum RequestStatus {
+  PENDING_REVIEW
   OPEN
   IN_PROGRESS
   CLOSED
   COMPLETED
   CANCELLED
+  REJECTED
 }
 
 // ============ PROPOSALS ============
@@ -341,6 +448,7 @@ model BusinessProfile {
   portfolioItems BusinessPortfolioItem[]
   profileReviews BusinessProfileReview[]
   leadOutreach   NeedLeadOutreach[]
+  linkedRequests ServiceRequest[]
 
   @@index([slug])
   @@index([city])

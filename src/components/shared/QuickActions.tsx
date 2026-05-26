@@ -111,7 +111,7 @@ export function QuickActions() {
   return (
     <div
       ref={containerRef}
-      className="fixed bottom-24 left-4 z-[var(--z-overlay)] lg:bottom-6 lg:left-6"
+      className="fixed bottom-24 left-4 z-(--z-overlay) lg:bottom-6 lg:left-6"
       dir="rtl"
     >
       {/* Radial action buttons */}
@@ -136,7 +136,7 @@ export function QuickActions() {
             className={cn(
               'absolute z-10',
               'flex h-11 w-11 items-center justify-center rounded-full',
-              'shadow-lg backdrop-blur-sm',
+              'shadow-lg backdrop-blur-xs',
               'transition-all duration-150 ease-in-out',
               'hover:shadow-xl active:scale-95',
               'ring-2 ring-white/20 dark:ring-black/10',
@@ -183,13 +183,13 @@ export function QuickActions() {
         title={isOpen ? 'بستن منوی اقدامات سریع' : 'منوی اقدامات سریع - ثبت نیاز، جستجوی کسب‌وکار، پیام و دعوت دوست'}
         className={cn(
           'relative z-20 flex h-14 w-14 items-center justify-center rounded-full',
-          'bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-600',
+          'bg-linear-to-br from-emerald-400 via-emerald-500 to-emerald-600',
           'shadow-lg shadow-emerald-500/30',
           'ring-2 ring-white/20 dark:ring-black/10',
-          'backdrop-blur-sm',
+          'backdrop-blur-xs',
           'transition-shadow duration-150',
           'hover:shadow-xl hover:shadow-emerald-500/40',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2',
+          'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2',
         )}
       >
         {/* Plus / X icon with CSS rotation */}
@@ -197,7 +197,7 @@ export function QuickActions() {
           className="flex items-center justify-center transition-transform duration-150 ease-in-out"
           style={{ transform: isOpen ? 'rotate(135deg)' : 'rotate(0deg)' }}
         >
-          <Plus className="size-6 text-white drop-shadow-sm" strokeWidth={2.5} />
+          <Plus className="size-6 text-white drop-shadow-xs" strokeWidth={2.5} />
         </span>
       </button>
 

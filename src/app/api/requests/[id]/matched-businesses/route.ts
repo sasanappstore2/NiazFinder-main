@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { isNeedIntakeAiEnabled } from '@/lib/ai/env';
 import { buildNeedBriefSummary } from '@/lib/need-match/brief-summary';
 import { matchBusinessesForNeed } from '@/lib/need-match/rank-businesses';
 import type { NeedMatchContext } from '@/contracts/need-match';
 import { legacyValueToSlug } from '@/config/categories';
+import { budgetToJson } from '@/lib/budget';
 
 export async function GET(
   request: NextRequest,
@@ -50,8 +50,8 @@ export async function GET(
       categorySlug,
       categoryName: serviceRequest.category?.name ?? 'عمومی',
       tags,
-      budgetMin: serviceRequest.budgetMin,
-      budgetMax: serviceRequest.budgetMax,
+      budgetMin: budgetToJson(serviceRequest.budgetMin),
+      budgetMax: budgetToJson(serviceRequest.budgetMax),
     };
 
     const { businesses, source } = await matchBusinessesForNeed(need, limit);
@@ -61,7 +61,7 @@ export async function GET(
       briefSummary: buildNeedBriefSummary(need),
       meta: {
         source,
-        aiEnabled: isNeedIntakeAiEnabled(),
+        engine: 'internal',
         candidateCount: businesses.length,
       },
     });

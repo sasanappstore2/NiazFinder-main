@@ -830,7 +830,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                         }}
                           className={cn(
                             'absolute top-1 z-10 flex h-7 w-7 items-center justify-center rounded-full',
-                            'bg-background/80 border border-border/60 shadow-sm backdrop-blur-sm',
+                            'bg-background/80 border border-border/60 shadow-sm backdrop-blur-xs',
                             'text-muted-foreground hover:text-primary hover:bg-primary/10',
                             'transition-all duration-150',
                             isMe ? 'left-0 -translate-x-full ml-1' : 'right-0 translate-x-full mr-1',

@@ -85,7 +85,7 @@ export function StarRating({
               )}
               {/* Half star */}
               {fillType === 'half' && (
-                <div className="absolute inset-0 overflow-hidden w-1/2 start-0">
+                <div className="absolute inset-0 overflow-hidden w-1/2 inset-s-0">
                   <Star
                     className={cn(
                       sizeConfig.star,

@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { mv } from '@/lib/motion-variants';
 import {
   Forward,
   Search,
@@ -84,7 +85,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.25, ease: 'easeOut' },
+    transition: { duration: 0.25, ease: 'easeOut' as const },
   },
 };
 
@@ -212,7 +213,7 @@ export function ForwardMessageDialog({
                 className="relative rounded-xl border border-border/50 bg-muted/50 p-3.5"
               >
                 {/* Gradient accent line */}
-                <div className="absolute top-0 right-3 w-8 h-0.5 rounded-full bg-gradient-to-l from-emerald-400 to-emerald-600" />
+                <div className="absolute top-0 right-3 w-8 h-0.5 rounded-full bg-linear-to-l from-emerald-400 to-emerald-600" />
 
                 <div className="flex items-start gap-3">
                   {/* Quote icon */}
@@ -265,7 +266,7 @@ export function ForwardMessageDialog({
               {filteredConversations.length > 0 ? (
                 <motion.div
                   key="list"
-                  variants={containerVariants}
+                  variants={mv(containerVariants)}
                   initial="hidden"
                   animate="visible"
                   exit="hidden"
@@ -286,7 +287,7 @@ export function ForwardMessageDialog({
                     return (
                       <motion.button
                         key={conv.id}
-                        variants={itemVariants}
+                        variants={mv(itemVariants)}
                         onClick={() => handleForward(conv.id)}
                         disabled={!!forwarding}
                         className={cn(

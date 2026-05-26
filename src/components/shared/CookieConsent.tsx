@@ -64,7 +64,7 @@ export function CookieConsent() {
       role="dialog"
       aria-label="تنظیمات کوکی"
       className={cn(
-        'fixed bottom-20 inset-x-3 z-[var(--z-overlay)] mx-auto max-w-lg sm:bottom-6',
+        'fixed bottom-20 inset-x-3 z-(--z-overlay) mx-auto max-w-lg sm:bottom-6',
         'transition-all duration-150 ease-in-out',
         isVisible
           ? 'translate-y-0 opacity-100'
@@ -92,7 +92,7 @@ export function CookieConsent() {
             </div>
             <button
               onClick={handleReject}
-              className="mt-0.5 shrink-0 flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className="mt-0.5 shrink-0 flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
               aria-label="بستن"
             >
               <X className="size-4" />
@@ -128,7 +128,7 @@ export function CookieConsent() {
             </div>
             <button
               onClick={handleSettings}
-              className="flex h-8 items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:text-primary sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+              className="flex h-8 items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:text-primary sm:text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary rounded"
             >
               <Settings className="size-3.5" />
               تنظیمات پیشرفته

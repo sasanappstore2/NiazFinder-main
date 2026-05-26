@@ -48,8 +48,8 @@ export function NeedListingPreview({
         <h3 className="text-lg font-semibold">پیش‌نمایش آگهی</h3>
       </div>
       <p className="text-sm text-muted-foreground">
-        عنوان و متن را بررسی کنید. می‌توانید ویرایش دستی کنید یا دوباره با هوش مصنوعی
-        پالیش شود.
+        عنوان و متن را بررسی کنید. می‌توانید ویرایش دستی کنید یا با بازنویسی خودکار
+        به‌روزرسانی شود.
       </p>
 
       <div className="space-y-2">
@@ -137,7 +137,7 @@ export function NeedListingPreview({
           ) : (
             <Sparkles className="size-4 ml-2" />
           )}
-          پالیش دوباره با AI
+          بازنویسی خودکار
         </Button>
         <Button
           type="button"

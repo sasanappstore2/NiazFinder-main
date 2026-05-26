@@ -82,10 +82,10 @@ export function MatchedBusinessesSection({
           <Store className="size-5 text-primary" />
           <h2 className="text-h3 font-semibold">کسب‌وکارهای پیشنهادی</h2>
         </div>
-        {data?.meta.aiEnabled && (
+        {data?.meta.engine === 'internal' && (
           <Badge variant="outline" className="gap-1 text-caption">
             <Sparkles className="size-3" />
-            {data.meta.source === 'hybrid' ? 'مرتب‌سازی هوشمند' : 'تطبیق هوشمند'}
+            تطبیق هوشمند
           </Badge>
         )}
       </div>

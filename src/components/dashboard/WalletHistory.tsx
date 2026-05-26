@@ -136,18 +136,18 @@ export function WalletHistory() {
       <div>
         <Card className="relative overflow-hidden rounded-2xl border-0 shadow-lg">
           {/* Emerald gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-bl from-emerald-500 via-emerald-600 to-teal-700" />
+          <div className="absolute inset-0 bg-linear-to-bl from-emerald-500 via-emerald-600 to-teal-700" />
 
           {/* Decorative glass circles */}
-          <div className="pointer-events-none absolute -left-10 -top-10 h-48 w-48 rounded-full bg-white/10 backdrop-blur-sm" />
-          <div className="pointer-events-none absolute -bottom-6 -left-6 h-32 w-32 rounded-full bg-white/5 backdrop-blur-sm" />
-          <div className="pointer-events-none absolute -right-12 bottom-4 h-40 w-40 rounded-full bg-white/5 backdrop-blur-sm" />
+          <div className="pointer-events-none absolute -left-10 -top-10 h-48 w-48 rounded-full bg-white/10 backdrop-blur-xs" />
+          <div className="pointer-events-none absolute -bottom-6 -left-6 h-32 w-32 rounded-full bg-white/5 backdrop-blur-xs" />
+          <div className="pointer-events-none absolute -right-12 bottom-4 h-40 w-40 rounded-full bg-white/5 backdrop-blur-xs" />
 
           <CardContent className="relative z-10 p-6 sm:p-8">
             <div className="flex flex-col gap-6">
               {/* Header */}
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-xs">
                   <Wallet className="h-6 w-6 text-white" />
                 </div>
                 <div>
@@ -169,7 +169,7 @@ export function WalletHistory() {
 
                   <div className="flex flex-wrap items-center gap-4">
                     {/* Frozen */}
-                    <div className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 backdrop-blur-sm">
+                    <div className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 backdrop-blur-xs">
                       <Minus className="h-4 w-4 text-emerald-200" />
                       <span className="text-xs font-medium text-emerald-100">مسدود شده:</span>
                       <span className="text-sm font-bold text-white">
@@ -178,7 +178,7 @@ export function WalletHistory() {
                     </div>
 
                     {/* Available */}
-                    <div className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 backdrop-blur-sm">
+                    <div className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 backdrop-blur-xs">
                       <Plus className="h-4 w-4 text-emerald-200" />
                       <span className="text-xs font-medium text-emerald-100">قابل برداشت:</span>
                       <span className="text-sm font-bold text-white">
@@ -196,7 +196,7 @@ export function WalletHistory() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="gap-2 rounded-xl border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 active:scale-95 transition-transform"
+                    className="gap-2 rounded-xl border-white/30 bg-white/10 text-white backdrop-blur-xs hover:bg-white/20 active:scale-95 transition-transform"
                   >
                     <ArrowUpRight className="h-4 w-4" />
                     <span className="font-semibold">برداشت</span>

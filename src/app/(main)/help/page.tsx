@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { PageContainer } from '@/components/layout/PageContainer';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function HelpPage() {
   return (
-    <div className="max-w-3xl mx-auto px-4 pt-2 pb-16">
+    <PageContainer width="medium" className="pb-16">
       <Breadcrumb />
       <Separator className="my-4" />
 
@@ -58,6 +59,6 @@ export default function HelpPage() {
           </Button>
         </section>
       </div>
-    </div>
+    </PageContainer>
   );
 }

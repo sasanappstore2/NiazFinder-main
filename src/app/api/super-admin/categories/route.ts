@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { createSlug, getAuthUser } from '@/lib/auth';
-import { isAllowedSuperAdmin } from '@/lib/super-admin';
+import { createSlug } from '@/lib/auth';
+import { requirePermission } from '@/lib/rbac/authz';
+import { logAdminAction } from '@/lib/audit/admin-audit';
 
 interface CategoryPayload {
   name?: string;
@@ -12,11 +13,6 @@ interface CategoryPayload {
   parentId?: string | null;
   order?: number;
   isActive?: boolean;
-}
-
-async function requireSuperAdmin(request: NextRequest) {
-  const authUser = await getAuthUser(request);
-  return isAllowedSuperAdmin(authUser);
 }
 
 async function makeUniqueSlug(baseValue: string) {
@@ -34,12 +30,8 @@ async function makeUniqueSlug(baseValue: string) {
 
 export async function GET(request: NextRequest) {
   try {
-    if (!(await requireSuperAdmin(request))) {
-      return NextResponse.json(
-        { error: 'این بخش فقط برای سوپرادمین اصلی فعال است' },
-        { status: 403 }
-      );
-    }
+    const authz = await requirePermission(request, 'taxonomy:categories:read');
+    if (!authz.ok) return authz.response;
 
     const categories = await db.category.findMany({
       include: {
@@ -93,12 +85,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    if (!(await requireSuperAdmin(request))) {
-      return NextResponse.json(
-        { error: 'این بخش فقط برای سوپرادمین اصلی فعال است' },
-        { status: 403 }
-      );
-    }
+    const authz = await requirePermission(request, 'taxonomy:categories:write');
+    if (!authz.ok) return authz.response;
 
     const body: CategoryPayload = await request.json();
     const name = body.name?.trim();
@@ -135,6 +123,13 @@ export async function POST(request: NextRequest) {
         order: Number.isFinite(body.order) ? Number(body.order) : 0,
         isActive: typeof body.isActive === 'boolean' ? body.isActive : true,
       },
+    });
+
+    await logAdminAction(request, authz.user.id, 'category.create', 'Category', category.id, {
+      name: category.name,
+      slug: category.slug,
+      parentId: category.parentId,
+      isActive: category.isActive,
     });
 
     return NextResponse.json({ category }, { status: 201 });

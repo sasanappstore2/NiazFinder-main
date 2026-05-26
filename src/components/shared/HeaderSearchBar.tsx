@@ -295,7 +295,8 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
     addRecentSearch(suggestion.title);
     setRecentSearches(getRecentSearches());
     if (suggestion.type === 'category' || suggestion.type === 'subcategory') {
-      navigateTo('browse-requests', { categoryId: suggestion.id.replace('cat-', '').replace('subcat-', '') });
+      const catKey = suggestion.slug ?? suggestion.id.replace(/^cat-|^subcat-/, '');
+      navigateTo('browse-requests', { categoryId: catKey });
     } else if (suggestion.type === 'request') {
       navigateTo('request-detail', { id: suggestion.id.replace('req-', '') });
     }
@@ -404,7 +405,7 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
           type="text"
           placeholder="جستجوی کاربر، کسب‌وکار، نیاز..."
           className={cn(
-            'h-10 w-full rounded-xl border-border/60 bg-muted/50 pe-10 ps-4 text-sm backdrop-blur-sm transition-all duration-200',
+            'h-10 w-full rounded-xl border-border/60 bg-muted/50 pe-10 ps-4 text-sm backdrop-blur-xs transition-all duration-200',
             'focus-visible:bg-background focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:shadow-[0_0_12px_oklch(0.51_0.12_165/0.15)]',
             showDropdown && 'rounded-b-none border-b-0'
           )}
@@ -434,20 +435,20 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
               setFocusedIndex(-1);
               inputRef.current?.focus();
             }}
-            className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            className="absolute inset-e-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             aria-label="پاک کردن جستجو"
           >
             <X className="size-4" />
           </button>
         ) : (
-          <Search className="absolute end-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+          <Search className="absolute inset-e-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
         )}
       </div>
 
       {/* Search Dropdown */}
       {showDropdown && (
         <div
-          className="absolute start-0 end-0 top-full z-[var(--z-dropdown,100)] mt-0 overflow-hidden rounded-b-xl border border-t-0 border-border/60 bg-background shadow-[0_16px_48px_-8px_rgba(0,0,0,0.12)] backdrop-blur-xl ring-1 ring-primary/5"
+          className="absolute inset-s-0 inset-e-0 top-full z-(--z-dropdown,100) mt-0 overflow-hidden rounded-b-xl border border-t-0 border-border/60 bg-background shadow-[0_16px_48px_-8px_rgba(0,0,0,0.12)] backdrop-blur-xl ring-1 ring-primary/5"
           role="listbox"
           aria-label="نتایج جستجو"
         >

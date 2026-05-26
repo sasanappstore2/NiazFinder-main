@@ -16,9 +16,12 @@ interface MessageItem {
   createdAt: Date;
 }
 
+const VALID_MESSAGE_TYPES = ['TEXT', 'IMAGE', 'FILE', 'VOICE', 'NEED_CARD'] as const;
+type ValidMessageType = (typeof VALID_MESSAGE_TYPES)[number];
+
 interface SendMessageBody {
   content: string;
-  type?: 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE';
+  type?: ValidMessageType;
 }
 
 // ============ GET handler ============

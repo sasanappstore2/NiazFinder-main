@@ -1,6 +1,8 @@
 'use client';
 
+import { Suspense } from 'react';
 import { AuthGuard } from '@/components/shared/AuthGuard';
+import { PageContainer } from '@/components/layout/PageContainer';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { UserDashboard } from '@/components/dashboard/UserDashboard';
@@ -8,11 +10,13 @@ import { UserDashboard } from '@/components/dashboard/UserDashboard';
 export default function DashboardRoute() {
   return (
     <AuthGuard>
-      <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
+      <PageContainer>
         <Breadcrumb />
         <Separator className="my-4" />
-        <UserDashboard />
-      </div>
+        <Suspense fallback={null}>
+          <UserDashboard />
+        </Suspense>
+      </PageContainer>
     </AuthGuard>
   );
 }

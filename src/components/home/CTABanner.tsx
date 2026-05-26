@@ -22,14 +22,14 @@ export function CTABanner() {
   };
 
   return (
-    <section id="cta" className="relative w-full overflow-hidden bg-gradient-to-bl from-emerald-600 via-emerald-700 to-teal-800 cta-gradient-animate" aria-label="فراخوان به اقدام" itemScope itemType="https://schema.org/WPAdBlock">
+    <section id="cta" className="relative w-full overflow-hidden bg-linear-to-bl from-emerald-600 via-emerald-700 to-teal-800 cta-gradient-animate" aria-label="فراخوان به اقدام" itemScope itemType="https://schema.org/WPAdBlock">
       {/* Floating decorative shapes */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="float-shape-1 absolute top-[10%] start-[8%] size-16 rounded-2xl border border-white/10 bg-white/5 rotate-12" />
-        <div className="float-shape-2 absolute top-[20%] end-[12%] size-12 rounded-full border border-white/10 bg-white/5" />
-        <div className="float-shape-3 absolute bottom-[15%] start-[15%] size-20 rounded-xl border border-white/10 bg-white/5 -rotate-6" />
-        <div className="float-shape-4 absolute bottom-[25%] end-[8%] size-14 rounded-full border border-white/10 bg-white/5" />
-        <div className="float-shape-2 absolute top-[50%] start-[45%] size-8 rounded-lg border border-white/8 bg-white/3" />
+        <div className="float-shape-1 absolute top-[10%] inset-s-[8%] size-16 rounded-2xl border border-white/10 bg-white/5 rotate-12" />
+        <div className="float-shape-2 absolute top-[20%] inset-e-[12%] size-12 rounded-full border border-white/10 bg-white/5" />
+        <div className="float-shape-3 absolute bottom-[15%] inset-s-[15%] size-20 rounded-xl border border-white/10 bg-white/5 -rotate-6" />
+        <div className="float-shape-4 absolute bottom-[25%] inset-e-[8%] size-14 rounded-full border border-white/10 bg-white/5" />
+        <div className="float-shape-2 absolute top-[50%] inset-s-[45%] size-8 rounded-lg border border-white/8 bg-white/3" />
       </div>
 
       <div className="container-default mx-auto flex max-w-4xl flex-col items-center px-5 md:px-8 py-20 md:py-32 text-center">
@@ -56,7 +56,7 @@ export function CTABanner() {
             onClick={() => navigateTo('browse-specialists')}
             size="lg"
             variant="outline"
-            className="h-12 rounded-xl border-2 border-white/25 bg-white/5 px-8 text-base font-bold text-white backdrop-blur-sm transition-all duration-300 ease hover:border-white/50 hover:bg-white/15 hover:shadow-lg hover:shadow-white/5"
+            className="h-12 rounded-xl border-2 border-white/25 bg-white/5 px-8 text-base font-bold text-white backdrop-blur-xs transition-all duration-300 ease hover:border-white/50 hover:bg-white/15 hover:shadow-lg hover:shadow-white/5"
             data-href="/browse?type=business"
             title="مشاهده لیست کسب‌وکارها برتر و تخصص‌های آن‌ها"
           >

@@ -10,11 +10,15 @@ export function MobileLocationSelector() {
     isOpen,
     setIsOpen,
     selectedCities,
+    selectedProvinceIds,
     isInitialized,
     getLocationDisplayText,
     handleSelectionChange,
     geo,
   } = useLocationSelection();
+
+  const hasLocationScope =
+    selectedCities.length > 0 || selectedProvinceIds.length > 0;
 
   if (!isInitialized) return null;
 
@@ -25,7 +29,7 @@ export function MobileLocationSelector() {
         onClick={() => setIsOpen(true)}
         className={cn(
           'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150',
-          selectedCities.length > 0
+          hasLocationScope
             ? 'bg-primary/10 text-primary'
             : 'text-muted-foreground hover:bg-accent hover:text-foreground'
         )}
@@ -39,6 +43,7 @@ export function MobileLocationSelector() {
         open={isOpen}
         onOpenChange={setIsOpen}
         selectedCities={selectedCities}
+        selectedProvinceIds={selectedProvinceIds}
         onSelectionChange={handleSelectionChange}
         geoStatus={geo.status}
         detectedCity={geo.detectedCity}

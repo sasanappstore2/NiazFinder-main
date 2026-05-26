@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAppStore } from '@/lib/store';
 import { getChatSocketConfig } from '@/lib/chat-socket-config';
@@ -32,6 +32,7 @@ export function useChatSocket(): ChatSocketAPI {
   const {
     currentUser,
     isAuthenticated,
+    authToken,
     conversations,
     setConversations,
     activeConversationId,
@@ -40,6 +41,8 @@ export function useChatSocket(): ChatSocketAPI {
 
   const socketRef = useRef<Socket | null>(null);
   const typingTimeoutRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const [isConnected, setIsConnected] = useState(false);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   // ─── Connect ────────────────────────────────────────────────────────
   const connect = useCallback(() => {
@@ -49,11 +52,13 @@ export function useChatSocket(): ChatSocketAPI {
     const { url, path, enabled } = getChatSocketConfig();
     if (!enabled || !url) return;
 
-    const userId = currentUser.id;
+    if (!authToken) return;
 
-    socketInstance = io(url, {
+    const namespaceUrl = url.endsWith('/chat') ? url : `${url}/chat`;
+
+    socketInstance = io(namespaceUrl, {
       path,
-      auth: { userId },
+      auth: { token: authToken },
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: MAX_RECONNECT_ATTEMPTS,
@@ -67,6 +72,8 @@ export function useChatSocket(): ChatSocketAPI {
     socketInstance.on('connect', () => {
       console.log('✅ Chat socket connected');
       reconnectAttempts = 0;
+      setIsConnected(true);
+      setSocket(socketInstance);
 
       (window as unknown as { __chatSocket?: Socket }).__chatSocket = socketInstance!;
 
@@ -128,6 +135,8 @@ export function useChatSocket(): ChatSocketAPI {
 
     socketInstance.on('disconnect', (reason) => {
       console.log(`❌ Chat socket disconnected: ${reason}`);
+      setIsConnected(false);
+      setSocket(null);
     });
 
     socketInstance.on('connect_error', (error) => {
@@ -138,7 +147,7 @@ export function useChatSocket(): ChatSocketAPI {
 
       if (error.message === 'timeout') {
         console.warn(
-          '[chat] اتصال به سرویس چت برقرار نشد. سرویس را اجرا کنید: npm run dev:chat (پورت 3004)'
+          '[chat] اتصال به سرویس چت برقرار نشد. Nest backend را اجرا کنید (پورت 4000)'
         );
       } else {
         console.warn('[chat] خطای اتصال:', error.message);
@@ -322,6 +331,8 @@ export function useChatSocket(): ChatSocketAPI {
       socketRef.current = null;
       socketInstance = null;
     }
+    setIsConnected(false);
+    setSocket(null);
   }, []);
 
   // ─── Send Message ──────────────────────────────────────────────────
@@ -414,7 +425,7 @@ export function useChatSocket(): ChatSocketAPI {
       }
       typingTimeoutRef.current.clear();
     };
-  }, [isAuthenticated, currentUser, connect, disconnect]);
+  }, [isAuthenticated, currentUser, authToken, connect, disconnect]);
 
   // Re-join conversation when active changes
   useEffect(() => {
@@ -424,8 +435,8 @@ export function useChatSocket(): ChatSocketAPI {
   }, [activeConversationId]);
 
   return {
-    socket: socketRef.current,
-    isConnected: socketRef.current?.connected ?? false,
+    socket,
+    isConnected,
     sendMessage,
     emitTyping,
     markAsRead,

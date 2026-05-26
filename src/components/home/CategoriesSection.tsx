@@ -74,7 +74,7 @@ export function CategoriesSection() {
               return (
                 <Card
                   key={category.id}
-                  onClick={() => navigateTo('browse-requests', { categoryId: category.id })}
+                  onClick={() => navigateTo('browse-requests', { categoryId: category.slug || category.id })}
                   className="group cursor-pointer border-border/50 bg-card/80 py-5 hover-lift transition-all 150ms ease"
                   data-href={`/need?categoryId=${category.id}`}
                   title={`${category.name} - ${category.requestCount.toLocaleString('fa-IR')} نیاز فعال`}

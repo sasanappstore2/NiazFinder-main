@@ -72,6 +72,10 @@ export interface ParsedIntent {
   confidence: number;
   entities: Record<string, string>;
   rawText: string;
+  /** Canonical neighborhood slug from admin-locations (e.g. abadgaran). */
+  neighborhoodSlug?: string;
+  /** Intake field keys still needed (from question-engine). */
+  missingFields?: string[];
 }
 
 export type IntakeStep =
@@ -131,10 +135,12 @@ export interface NextQuestionResponse {
 }
 
 export interface ParseIntentMeta {
-  source?: 'llm' | 'rules' | 'hybrid';
-  aiEnabled?: boolean;
+  source?: 'rules';
+  engine?: 'internal';
   vertical?: string;
-  cacheHit?: boolean;
+  verticalScore?: number;
+  verticalCertainty?: number;
+  skipClarifying?: boolean;
   latencyMs?: number;
 }
 

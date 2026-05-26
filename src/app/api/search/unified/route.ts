@@ -60,6 +60,7 @@ export async function GET(request: NextRequest) {
       db.serviceRequest.findMany({
         where: {
           status: 'OPEN',
+          moderationStatus: 'APPROVED',
           OR: [{ title: { contains: q } }, { description: { contains: q } }],
         },
         select: {

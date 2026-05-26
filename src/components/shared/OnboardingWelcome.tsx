@@ -31,7 +31,7 @@ function StepWelcome() {
   return (
     <div className="space-y-6 text-center">
       {/* Large Sparkle Icon */}
-      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25">
+      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25">
         <Sparkles className="size-10 text-white" />
       </div>
 
@@ -59,7 +59,7 @@ function StepWelcome() {
             className="flex flex-col items-center gap-2 rounded-xl border border-border/40 bg-background/60 px-4 py-5 backdrop-blur-md transition-transform duration-150 ease-in-out hover:-translate-y-1 sm:px-6"
           >
             <div
-              className={`flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${card.color} shadow-sm`}
+              className={`flex h-10 w-10 items-center justify-center rounded-lg bg-linear-to-br ${card.color} shadow-sm`}
             >
               <card.icon className="size-5 text-white" />
             </div>
@@ -111,11 +111,11 @@ function StepHowItWorks() {
         {steps.map((step) => (
           <div
             key={step.num}
-            className="flex items-center gap-4 rounded-xl border border-border/40 bg-background/50 p-4 text-right backdrop-blur-sm"
+            className="flex items-center gap-4 rounded-xl border border-border/40 bg-background/50 p-4 text-right backdrop-blur-xs"
           >
             {/* Gradient numbered circle */}
             <div
-              className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${step.color} text-lg font-bold text-white shadow-md`}
+              className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br ${step.color} text-lg font-bold text-white shadow-md`}
             >
               {step.num}
             </div>
@@ -159,7 +159,7 @@ function StepGetStarted({
   return (
     <div className="space-y-6 text-center">
       {/* Rocket icon */}
-      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25">
+      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25">
         <Rocket className="size-10 text-white" />
       </div>
 
@@ -218,7 +218,7 @@ function DotsIndicator({ current, total, onDotClick }: { current: number; total:
           aria-label={`مرحله ${i + 1}`}
           className={cn(
             'relative flex h-[10px] w-[10px] items-center justify-center rounded-full transition-all duration-150 ease-in-out',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-1',
+            'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-1',
             i === current
               ? 'bg-emerald-500 scale-125'
               : 'bg-muted-foreground/30 hover:bg-muted-foreground/50',
@@ -316,7 +316,7 @@ export function OnboardingWelcome() {
 
   return (
     <div
-      className="fixed inset-0 z-[var(--z-onboarding)] flex items-center justify-center p-4 transition-opacity duration-150 ease-in-out"
+      className="fixed inset-0 z-(--z-onboarding) flex items-center justify-center p-4 transition-opacity duration-150 ease-in-out"
       dir="rtl"
       role="dialog"
       aria-modal="true"
@@ -324,7 +324,7 @@ export function OnboardingWelcome() {
     >
       {/* Dark overlay + blur */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 backdrop-blur-xs"
         onClick={handleClose}
         aria-hidden="true"
       />
@@ -340,7 +340,7 @@ export function OnboardingWelcome() {
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute left-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground/60 transition-colors duration-150 hover:bg-muted/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="absolute left-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground/60 transition-colors duration-150 hover:bg-muted/80 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
           aria-label="بستن"
         >
           <X className="size-4" />

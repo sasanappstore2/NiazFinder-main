@@ -154,12 +154,98 @@ export interface MechanicExtension {
   emergencyService: boolean;
 }
 
+export interface CompanyExtension {
+  legalName?: string;
+  registrationNumber?: string;
+  industry?: string;
+  employeeCount?: string;
+  website?: string;
+  foundedYear?: number;
+  description?: string;
+}
+
+export interface CoachExtension {
+  sport?: string;
+  ageGroups?: string[];
+  trainingLocation?: string;
+  instagram?: string;
+  certifications?: string[];
+}
+
 export interface BusinessExtension {
   restaurant?: RestaurantExtension;
   doctor?: DoctorExtension;
   salon?: SalonExtension;
   realEstate?: RealEstateExtension;
   mechanic?: MechanicExtension;
+  company?: CompanyExtension;
+  coach?: CoachExtension;
+  /** Optional layout overrides stored in extensions JSON */
+  _layout?: ProfileLayoutConfig;
+}
+
+// ─── Profile layout / section engine ─────────────────────────────────────────
+
+export type ProfileTemplate =
+  | 'company'
+  | 'professional'
+  | 'agency'
+  | 'store'
+  | 'real_estate'
+  | 'services'
+  | 'restaurant'
+  | 'coach';
+
+export type ProfileTabId =
+  | 'intro'
+  | 'products'
+  | 'services'
+  | 'portfolio'
+  | 'gallery'
+  | 'listings'
+  | 'menu'
+  | 'company'
+  | 'needs'
+  | 'reviews';
+
+/** @deprecated Use ProfileTabId — kept for backward-compatible stored values */
+export type ProfilePrimaryTab = ProfileTabId;
+
+export type ProfileSectionId =
+  | 'hero'
+  | 'highlights'
+  | 'about'
+  | 'services'
+  | 'products'
+  | 'portfolio'
+  | 'gallery'
+  | 'listings'
+  | 'menu'
+  | 'credentials'
+  | 'companyProfile'
+  | 'companyNeeds'
+  | 'trust'
+  | 'contact'
+  | 'seo';
+
+export interface ProfileLayoutConfig {
+  template?: ProfileTemplate;
+  sectionOrder?: ProfileSectionId[];
+  labels?: Partial<Record<ProfileSectionId, string>>;
+  /** Tab shown first when visitors open the profile */
+  defaultTab?: ProfileTabId;
+}
+
+export interface ResolvedProfileSection {
+  id: ProfileSectionId;
+  label: string;
+  visible: boolean;
+  anchor: string;
+}
+
+export interface ResolvedProfileLayout {
+  template: ProfileTemplate;
+  sections: ResolvedProfileSection[];
 }
 
 // ─── Root entity ─────────────────────────────────────────────────────────────
@@ -179,6 +265,7 @@ export interface Business {
   seo: BusinessSeo;
   analytics: BusinessAnalytics;
   extensions?: BusinessExtension;
+  layoutConfig?: ProfileLayoutConfig;
 }
 
 /** API list row (browse cards). */

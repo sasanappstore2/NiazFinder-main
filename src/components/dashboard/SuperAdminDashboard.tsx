@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ElementType, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Activity,
   AlertTriangle,
@@ -62,8 +63,16 @@ import {
   YAxis,
 } from 'recharts';
 import { toast } from 'sonner';
-import { useAppStore } from '@/lib/store';
-import { SUPER_ADMIN_PHONE, isSuperAdminPhone } from '@/lib/super-admin';
+import { useAdmin } from '@/components/admin/context/AdminContext';
+import { SUPER_ADMIN_PHONE } from '@/lib/super-admin';
+import {
+  routeForSection,
+  toDashboardSection,
+  ADMIN_SECTION_PERMISSIONS,
+  type AdminSectionId,
+} from '@/config/admin-routes';
+import { RbacManager } from '@/components/admin/rbac/RbacManager';
+import { ChatReviewPanel } from '@/components/admin/chat-review/ChatReviewPanel';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -152,6 +161,7 @@ interface ManagedNeighborhood {
   id: string;
   name: string;
   nameEn?: string;
+  areas?: string[];
   isActive: boolean;
   order: number;
 }
@@ -302,6 +312,7 @@ interface LocationFormState {
   isActive: boolean;
   isPopular: boolean;
   isIsland: boolean;
+  areasText: string;
 }
 
 const initialCategoryForm: CategoryFormState = {
@@ -326,6 +337,7 @@ const initialLocationForm: LocationFormState = {
   isActive: true,
   isPopular: false,
   isIsland: false,
+  areasText: '',
 };
 
 function formatNumber(value: number | undefined) {
@@ -511,15 +523,13 @@ function getSectionMeta(section: Section) {
 
 function UnauthorizedView() {
   return (
-    <div className="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-4 text-center">
+    <div className="mx-auto flex min-h-[40vh] max-w-xl flex-col items-center justify-center px-4 text-center">
       <div className="mb-5 flex size-20 items-center justify-center rounded-3xl bg-red-500/10 text-red-600">
         <Lock className="size-10" />
       </div>
       <h1 className="text-2xl font-black">دسترسی سوپرادمین محدود است</h1>
       <p className="mt-3 leading-7 text-muted-foreground">
-        این بخش فقط برای حسابی فعال می‌شود که با شماره
-        <span dir="ltr" className="mx-1 font-mono font-bold text-foreground">{SUPER_ADMIN_PHONE}</span>
-        وارد شده و نقش `SUPER_ADMIN` داشته باشد.
+        برای ورود به پنل، باید مالک پلتفرم باشید یا نقش کارمند با مجوزهای لازم داشته باشید.
       </p>
     </div>
   );
@@ -1520,6 +1530,8 @@ function MessagesHubPage({
           </Panel>
         </div>
       </div>
+
+      <ChatReviewPanel />
     </div>
   );
 }
@@ -1880,10 +1892,37 @@ function SettingsHubPage({
   );
 }
 
-export function SuperAdminDashboard() {
-  const currentUser = useAppStore((state) => state.currentUser);
-  const authToken = useAppStore((state) => state.authToken);
-  const [section, setSection] = useState<Section>('overview');
+function dashboardSectionToRoute(section: Section): string {
+  const map: Partial<Record<Section, AdminSectionId>> = {
+    overview: 'overview',
+    analytics: 'analytics',
+    categories: 'categories',
+    locations: 'locations',
+    requests: 'requests',
+    crm: 'users',
+    users: 'users',
+    messages: 'messages',
+    system: 'system',
+    settings: 'settings',
+    marketplace: 'requests',
+    growth: 'analytics',
+    charts: 'analytics',
+    billing: 'analytics',
+  };
+  return routeForSection(map[section] ?? 'overview');
+}
+
+export function SuperAdminDashboard({
+  section: sectionProp = 'overview',
+  embedded = false,
+}: {
+  section?: AdminSectionId;
+  embedded?: boolean;
+}) {
+  const router = useRouter();
+  const { me, hasPermission, apiFetch: adminApiFetch } = useAdmin();
+  const dashboardSection = toDashboardSection(sectionProp) as Section;
+  const [section, setSectionState] = useState<Section>(dashboardSection);
   const [isLoading, setIsLoading] = useState(true);
   const [overview, setOverview] = useState<OverviewStats | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
@@ -1894,30 +1933,33 @@ export function SuperAdminDashboard() {
   const [locationForm, setLocationForm] = useState<LocationFormState>(initialLocationForm);
 
   const isAllowed = Boolean(
-    currentUser?.role === 'SUPER_ADMIN' && isSuperAdminPhone(currentUser.phone)
+    me &&
+      (me.isOwner ||
+        hasPermission('superadmin:access') ||
+        hasPermission(ADMIN_SECTION_PERMISSIONS[sectionProp]))
+  );
+
+  useEffect(() => {
+    setSectionState(dashboardSection);
+  }, [dashboardSection]);
+
+  const setSection = useCallback(
+    (next: Section) => {
+      if (embedded) {
+        router.push(dashboardSectionToRoute(next));
+        return;
+      }
+      setSectionState(next);
+    },
+    [embedded, router]
   );
 
   const apiFetch = useCallback(async <T,>(url: string, init?: RequestInit): Promise<T> => {
-    const response = await fetch(url, {
-      ...init,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-        ...((init?.headers as Record<string, string> | undefined) || {}),
-      },
-    });
-
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      throw new Error(data.error || 'عملیات انجام نشد');
-    }
-
-    return data as T;
-  }, [authToken]);
+    return adminApiFetch<T>(url, init);
+  }, [adminApiFetch]);
 
   const loadAll = useCallback(async () => {
-    if (!isAllowed || !authToken) return;
+    if (!isAllowed) return;
 
     setIsLoading(true);
     try {
@@ -1938,12 +1980,20 @@ export function SuperAdminDashboard() {
     } finally {
       setIsLoading(false);
     }
-  }, [apiFetch, authToken, isAllowed]);
+  }, [apiFetch, isAllowed]);
 
   useEffect(() => {
     queueMicrotask(() => {
       void loadAll();
     });
+  }, [loadAll]);
+
+  useEffect(() => {
+    const handler = () => {
+      void loadAll();
+    };
+    window.addEventListener('admin-refresh', handler);
+    return () => window.removeEventListener('admin-refresh', handler);
   }, [loadAll]);
 
   const provinces = useMemo(() => {
@@ -2028,11 +2078,20 @@ export function SuperAdminDashboard() {
   };
 
   const saveLocation = async () => {
+    const areas =
+      locationForm.type === 'neighborhood' && locationForm.areasText.trim()
+        ? locationForm.areasText
+            .split(/[\n,،]/)
+            .map((a) => a.trim())
+            .filter(Boolean)
+        : undefined;
+
     const payload = {
       ...locationForm,
       provinceId: locationForm.provinceId || selectedProvince?.id || '',
       cityId: locationForm.cityId || selectedCity?.id || '',
       order: Number(locationForm.order) || 0,
+      areas,
     };
 
     try {
@@ -2057,6 +2116,10 @@ export function SuperAdminDashboard() {
 
   const editLocation = (type: LocationType, item: ManagedProvince | ManagedCity | ManagedNeighborhood) => {
     setSection('locations');
+    const areasText =
+      type === 'neighborhood' && 'areas' in item && item.areas?.length
+        ? item.areas.join('\n')
+        : '';
     setLocationForm((current) => ({
       ...current,
       id: item.id,
@@ -2067,6 +2130,7 @@ export function SuperAdminDashboard() {
       isActive: item.isActive,
       isPopular: 'isPopular' in item ? Boolean(item.isPopular) : false,
       isIsland: 'isIsland' in item ? Boolean(item.isIsland) : false,
+      areasText,
     }));
   };
 
@@ -2404,85 +2468,9 @@ export function SuperAdminDashboard() {
   if (!isAllowed) return <UnauthorizedView />;
 
   return (
-    <div className="dark min-h-screen bg-[#050505] text-foreground" dir="rtl">
-      <div className="mx-auto flex w-full max-w-[1800px] flex-col lg:min-h-screen lg:flex-row">
-        <aside className="lg:sticky lg:top-0 lg:h-screen lg:w-80 lg:shrink-0">
-          <div className="flex h-full flex-col border-b border-border/70 bg-[#070707]/95 shadow-2xl lg:border-b-0 lg:border-l">
-            <div className="border-b border-border/70 p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex size-11 items-center justify-center rounded-lg bg-emerald-600 text-white shadow-sm">
-                  <Crown className="size-5" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-black">NeedFinder Command</p>
-                  <p className="mt-1 text-xs text-muted-foreground">سوپرادمین مالک پلتفرم</p>
-                </div>
-              </div>
-              <div className="mt-4 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3">
-                <div className="flex items-center justify-between gap-3">
-                  <Badge className="bg-emerald-600 hover:bg-emerald-600">SUPER_ADMIN</Badge>
-                  <Badge variant="outline" dir="ltr">{SUPER_ADMIN_PHONE}</Badge>
-                </div>
-                <p className="mt-3 text-xs leading-6 text-muted-foreground">
-                  دسترسی این پنل روی شماره مالک قفل شده و APIهای حساس همین محدودیت را اعمال می‌کنند.
-                </p>
-              </div>
-            </div>
-
-            <nav aria-label="ناوبری سوپرادمین" className="flex-1 space-y-5 overflow-y-auto p-3">
-              {navGroups.map((group) => (
-                <div key={group.label} className="space-y-1">
-                  <div className="px-3 py-2 text-caption font-black uppercase tracking-[0.18em] text-muted-foreground">
-                    {group.label}
-                  </div>
-                  {group.items.map((item) => {
-                    const Icon = item.icon;
-                    const active = section === item.id;
-                    const badge = getSectionBadge(item.id);
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => setSection(item.id)}
-                        className={`group flex w-full items-center gap-3 rounded-lg px-3 py-3 text-right transition-colors ${
-                          active
-                            ? 'bg-emerald-500/15 text-emerald-300 shadow-sm ring-1 ring-emerald-500/25'
-                            : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
-                        }`}
-                      >
-                        <Icon className="size-4 shrink-0" />
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-sm font-black">{item.label}</span>
-                          <span className={`mt-1 block truncate text-xs ${active ? 'text-emerald-100/70' : 'text-muted-foreground'}`}>
-                            {item.description}
-                          </span>
-                        </span>
-                        {badge && (
-                          <Badge variant={active ? 'default' : 'secondary'} className={active ? 'bg-emerald-600 hover:bg-emerald-600' : ''}>
-                            {badge}
-                          </Badge>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
-            </nav>
-
-            <div className="mt-auto border-t border-border/70 p-4">
-              <div className="grid grid-cols-2 gap-2">
-                <SummaryTile label="کاربران" value={overview?.totalUsers} icon={Users} />
-                <SummaryTile label="نیازها" value={overview?.totalRequests} icon={Database} />
-              </div>
-              <Button onClick={loadAll} variant="outline" disabled={isLoading} className="mt-3 w-full justify-center rounded-lg">
-                {isLoading ? <Loader2 className="size-4 animate-spin" /> : <RefreshCcw className="size-4" />}
-                بروزرسانی
-              </Button>
-            </div>
-          </div>
-        </aside>
-
-        <main id="main-content" tabIndex={-1} className="min-w-0 flex-1 space-y-4 px-4 pb-8 pt-4 lg:h-screen lg:overflow-y-auto">
+    <div className={`space-y-4 ${embedded ? '' : 'dark min-h-screen bg-[#050505] text-foreground px-4 pb-8 pt-4 sm:px-6 lg:px-8'}`} dir="rtl">
+      {!embedded && (
+        <>
           <div className="sticky top-0 z-20 -mx-4 -mt-4 border-b border-border/70 bg-[#050505]/90 px-4 py-3 backdrop-blur-xl">
             <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
               <div className="relative max-w-xl flex-1">
@@ -2548,6 +2536,8 @@ export function SuperAdminDashboard() {
               </div>
             </div>
           </header>
+        </>
+      )}
 
           {isLoading && (
             <Panel title="در حال دریافت اطلاعات مدیریتی" description="داده‌های عملیاتی از API سوپرادمین خوانده می‌شود." icon={Loader2}>
@@ -2780,6 +2770,18 @@ export function SuperAdminDashboard() {
                 <Field label="ترتیب">
                   <Input type="number" value={locationForm.order} onChange={(event) => setLocationForm({ ...locationForm, order: event.target.value })} />
                 </Field>
+                {locationForm.type === 'neighborhood' && (
+                  <Field label="زیرمحدوده‌ها (هر خط یا با ویرگول)">
+                    <Textarea
+                      value={locationForm.areasText}
+                      onChange={(event) =>
+                        setLocationForm({ ...locationForm, areasText: event.target.value })
+                      }
+                      placeholder={'بهارستان\nارغوان\nرضاشهر'}
+                      className="min-h-[100px]"
+                    />
+                  </Field>
+                )}
                 <div className="grid gap-2">
                   <div className="flex items-center justify-between rounded-xl border px-3 py-2">
                     <span className="text-sm font-medium">فعال باشد</span>
@@ -2914,6 +2916,8 @@ export function SuperAdminDashboard() {
                 </div>
               </Panel>
 
+              <RbacManager />
+
               <div className="grid gap-4 xl:grid-cols-3">
                 <GovernanceItem
                   icon={ShieldCheck}
@@ -2939,8 +2943,6 @@ export function SuperAdminDashboard() {
               </div>
             </div>
           )}
-        </main>
-      </div>
     </div>
   );
 }

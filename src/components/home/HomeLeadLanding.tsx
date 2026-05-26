@@ -32,6 +32,7 @@ export function HomeLeadLanding() {
     isOpen: cityPickerOpen,
     setIsOpen: setCityPickerOpen,
     selectedCities,
+    selectedProvinceIds,
     isInitialized,
     getLocationDisplayText,
     handleSelectionChange,
@@ -43,7 +44,7 @@ export function HomeLeadLanding() {
     typeof window !== 'undefined' ? getLeadPhone() : ''
   );
 
-  const hasCity = selectedCities.length > 0;
+  const hasCity = selectedCities.length > 0 || selectedProvinceIds.length > 0;
   const primaryCity = selectedCities[0];
   const citySlug = primaryCity ? locationCityIdToSlug(primaryCity.id) : null;
 
@@ -161,7 +162,7 @@ export function HomeLeadLanding() {
             style={{ maxWidth: COMPOSER_MAX_WIDTH }}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: 'easeOut' }}
+            transition={{ duration: 0.45, ease: 'easeOut' as const }}
           >
             <div className="mb-[13px] inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-[13px] py-[8px] text-sm font-medium text-primary">
               <Sparkles className="size-4" aria-hidden />
@@ -228,7 +229,7 @@ export function HomeLeadLanding() {
       {/* Business CTA — below fold */}
       <section className="border-t border-border/60 bg-muted/20">
         <div className="container-default mx-auto max-w-lg px-5 py-10 md:px-8">
-          <div className="rounded-2xl border border-border/60 bg-card/80 p-6 shadow-sm backdrop-blur-sm">
+          <div className="rounded-2xl border border-border/60 bg-card/80 p-6 shadow-sm backdrop-blur-xs">
             <div className="mb-4 flex items-start gap-3">
               <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
                 <Building2 className="size-5 text-primary" />
@@ -256,6 +257,7 @@ export function HomeLeadLanding() {
         open={cityPickerOpen}
         onOpenChange={setCityPickerOpen}
         selectedCities={selectedCities}
+        selectedProvinceIds={selectedProvinceIds}
         onSelectionChange={handleSelectionChange}
         geoStatus={geo.status}
         detectedCity={geo.detectedCity}

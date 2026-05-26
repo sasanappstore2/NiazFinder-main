@@ -22,6 +22,7 @@ import { FeaturedBusinesses } from '@/components/home/FeaturedBusinesses';
 import { HomepageTestimonials } from '@/components/home/HomepageTestimonials';
 import { HomepageFAQ } from '@/components/home/HomepageFAQ';
 import { routeBuilder } from '@/config/routes';
+import { useLocationScopeApiParams } from '@/hooks/use-location-scope-api-params';
 import { NeedHeroInput } from '@/components/need-intake';
 
 
@@ -52,7 +53,7 @@ const PRIORITY_CONFIG: Record<string, {
     icon: Zap,
     className: 'text-red-600 dark:text-red-400',
     badgeClass: 'bg-red-50 text-red-700 border-red-200/80 dark:bg-red-950/50 dark:text-red-400 dark:border-red-800/60',
-    glowClass: 'shadow-red-500/[0.08] hover:shadow-red-500/[0.15]',
+    glowClass: 'shadow-red-500/8 hover:shadow-red-500/15',
     accentGradient: 'from-red-500 via-orange-500 to-amber-500',
   },
   HIGH: {
@@ -60,7 +61,7 @@ const PRIORITY_CONFIG: Record<string, {
     icon: Flame,
     className: 'text-amber-600 dark:text-amber-400',
     badgeClass: 'bg-amber-50 text-amber-700 border-amber-200/80 dark:bg-amber-950/50 dark:text-amber-400 dark:border-amber-800/60',
-    glowClass: 'shadow-amber-500/[0.06] hover:shadow-amber-500/[0.12]',
+    glowClass: 'shadow-amber-500/6 hover:shadow-amber-500/12',
     accentGradient: 'from-amber-500 via-orange-400 to-yellow-500',
   },
   NORMAL: {
@@ -120,7 +121,7 @@ function UrgentPriorityBadge({ priority }: { priority: string }) {
 // ─── Skeleton Card ───────────────────────────
 function SkeletonCard() {
   return (
-    <div className="relative flex overflow-hidden rounded-2xl border border-border/40 bg-card/80 backdrop-blur-sm">
+    <div className="relative flex overflow-hidden rounded-2xl border border-border/40 bg-card/80 backdrop-blur-xs">
       {/* Accent strip skeleton */}
       <div className="w-1 shrink-0 bg-muted animate-pulse" />
       <div className="flex flex-1 items-center gap-4 p-4 sm:gap-5 sm:p-5">
@@ -191,18 +192,18 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
         }}
         className={cn(
           'group relative flex cursor-pointer overflow-hidden rounded-2xl border',
-          'bg-card/70 backdrop-blur-sm',
+          'bg-card/70 backdrop-blur-xs',
           'transition-all duration-300 cubic-bezier(0.16, 1, 0.3, 1)',
           // Hover effects
           'hover:bg-card/95 hover:backdrop-blur-md',
-          'hover:shadow-lg hover:shadow-black/[0.04] dark:hover:shadow-black/[0.2]',
-          'hover:-translate-y-[2px] hover:scale-[1.008]',
+          'hover:shadow-lg hover:shadow-black/4 dark:hover:shadow-black/20',
+          'hover:translate-y-[-2px] hover:scale-[1.008]',
           // Priority glow + category border glow
           priorityConfig.glowClass,
           // Category color hover glow
           `hover:shadow-[0_0_0_1px_${resolvedColor}18,0_0_16px_${resolvedColor}0d]`,
           // New item glow
-          isNew && 'shadow-md shadow-emerald-500/[0.10] dark:shadow-emerald-400/[0.08]',
+          isNew && 'shadow-md shadow-emerald-500/10 dark:shadow-emerald-400/8',
           isNew ? 'border-emerald-300/50 dark:border-emerald-700/40' : 'border-border/40 hover:border-border/60',
           isUrgent && !isNew && 'border-red-200/40 dark:border-red-900/30',
         )}
@@ -219,7 +220,7 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
 
         {/* ── Pulse indicator for urgent ── */}
         {isUrgent && (
-          <div className="absolute top-5 start-5 z-10">
+          <div className="absolute top-5 inset-s-5 z-10">
             <span className="relative flex size-2.5">
               <span className="absolute inset-0 inline-flex size-full animate-ping rounded-full bg-red-400 opacity-50" />
               <span className="relative inline-flex size-2.5 rounded-full bg-red-500 ring-2 ring-red-100 dark:ring-red-900/40" />
@@ -237,7 +238,7 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
             animate={{ opacity: 1 }}
             className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-2xl"
           >
-            <div className="absolute inset-0 bg-gradient-to-l from-emerald-100/20 via-transparent to-emerald-100/10 dark:from-emerald-400/5 dark:via-transparent dark:to-emerald-400/5" />
+            <div className="absolute inset-0 bg-linear-to-l from-emerald-100/20 via-transparent to-emerald-100/10 dark:from-emerald-400/5 dark:via-transparent dark:to-emerald-400/5" />
           </motion.div>
         )}
 
@@ -386,7 +387,7 @@ function RequestCard({ request, isNew, onQuickView }: { request: ServiceRequest;
         </div>
 
         {/* ── Hover Arrow Indicator ── */}
-        <div className="absolute bottom-5 start-5 opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
+        <div className="absolute bottom-5 inset-s-5 opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
           <ArrowUpRight
             className="size-4 text-muted-foreground/40"
             aria-hidden="true"
@@ -446,7 +447,7 @@ function EmptyState() {
         {/* Glassmorphism container */}
         <div className="relative flex items-center justify-center">
           {/* Gradient background blob */}
-          <div className="absolute -inset-4 rounded-[32px] bg-gradient-to-br from-emerald-400/20 via-teal-400/10 to-cyan-400/20 blur-xl dark:from-emerald-500/10 dark:via-teal-500/5 dark:to-cyan-500/10" />
+          <div className="absolute -inset-4 rounded-[32px] bg-linear-to-br from-emerald-400/20 via-teal-400/10 to-cyan-400/20 blur-xl dark:from-emerald-500/10 dark:via-teal-500/5 dark:to-cyan-500/10" />
           {/* Glass card */}
           <div
             className="relative flex items-center justify-center rounded-3xl border border-white/30 dark:border-white/10"
@@ -459,12 +460,12 @@ function EmptyState() {
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
             }}
           >
-            <div className="flex items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 p-4 shadow-lg shadow-emerald-500/20">
+            <div className="flex items-center justify-center rounded-2xl bg-linear-to-br from-emerald-500 via-teal-500 to-cyan-500 p-4 shadow-lg shadow-emerald-500/20">
               <FileSearch className="size-10 text-white" aria-hidden="true" strokeWidth={1.5} />
             </div>
           </div>
           {/* Sparkle badge */}
-          <div className="absolute -bottom-1.5 -end-1.5 flex size-9 items-center justify-center rounded-xl border border-white/40 dark:border-white/15 bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-orange-500/25">
+          <div className="absolute -bottom-1.5 -inset-e-1.5 flex size-9 items-center justify-center rounded-xl border border-white/40 dark:border-white/15 bg-linear-to-br from-amber-400 to-orange-500 shadow-lg shadow-orange-500/25">
             <Sparkles className="size-4 text-white" aria-hidden="true" />
           </div>
         </div>
@@ -485,7 +486,7 @@ function EmptyState() {
         onClick={() => navigateTo('post-need')}
         className={cn(
           'inline-flex items-center gap-2 rounded-2xl px-8 py-3.5 text-sm font-bold text-white',
-          'bg-gradient-to-l from-emerald-500 via-emerald-600 to-teal-600',
+          'bg-linear-to-l from-emerald-500 via-emerald-600 to-teal-600',
           'shadow-lg shadow-emerald-600/25 hover:shadow-xl hover:shadow-emerald-600/35',
           'ring-1 ring-white/20 ring-inset',
           'transition-shadow duration-300',
@@ -559,16 +560,13 @@ export function NeedsHomepage() {
   const categoryScrollRef = useRef<HTMLDivElement>(null);
 
   const { quickView, showQuickView, closeQuickView } = useQuickView();
-
-
-
-
+  const geoParams = useLocationScopeApiParams();
 
   // Initial fetch (direct API call)
   useEffect(() => {
     let cancelled = false;
     setInitialLoading(true);
-    fetchRequestsAPI({ limit: '12', page: String(page), status: 'OPEN' }).then((reqs) => {
+    fetchRequestsAPI({ limit: '12', page: String(page), status: 'OPEN', ...geoParams }).then((reqs) => {
       if (cancelled) return;
       setLocalRequests(reqs);
       setTotalPages(reqs.length < 12 ? page : page + 1);
@@ -576,7 +574,7 @@ export function NeedsHomepage() {
       lastFetchTimeRef.current = Date.now();
     });
     return () => { cancelled = true; };
-  }, [page]);
+  }, [page, geoParams]);
 
   // Polling for new requests
   useEffect(() => {
@@ -584,7 +582,12 @@ export function NeedsHomepage() {
 
     const interval = setInterval(async () => {
       try {
-        const latestRequests = await fetchRequestsAPI({ limit: '5', page: '1', status: 'OPEN' });
+        const latestRequests = await fetchRequestsAPI({
+          limit: '5',
+          page: '1',
+          status: 'OPEN',
+          ...geoParams,
+        });
         if (latestRequests.length > 0) {
           setLocalRequests((prev) => {
             const existingIds = new Set(prev.map((r) => r.id));
@@ -617,7 +620,7 @@ export function NeedsHomepage() {
     }, POLL_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [initialLoading]);
+  }, [initialLoading, geoParams]);
 
   // Filter and sort: use localRequests directly
   const baseRequests = localRequests;
@@ -659,7 +662,12 @@ export function NeedsHomepage() {
   const loadMore = async () => {
     const nextPage = page + 1;
     setLoadingMore(true);
-    const moreReqs = await fetchRequestsAPI({ limit: '12', page: String(nextPage), status: 'OPEN' });
+    const moreReqs = await fetchRequestsAPI({
+      limit: '12',
+      page: String(nextPage),
+      status: 'OPEN',
+      ...geoParams,
+    });
     if (moreReqs.length > 0) {
       setLocalRequests((prev) => [...prev, ...moreReqs]);
       setPage(nextPage);
@@ -749,13 +757,13 @@ export function NeedsHomepage() {
       {/* ═══ CTA Banner Section ═══ */}
       <section
         dir="rtl"
-        className="relative overflow-hidden bg-gradient-to-l from-emerald-600 via-emerald-700 to-teal-800"
+        className="relative overflow-hidden bg-linear-to-l from-emerald-600 via-emerald-700 to-teal-800"
         aria-label="شروع کنید"
       >
         {/* Decorative blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-10 -start-10 h-48 w-48 rounded-full bg-emerald-400/20 blur-2xl" />
-          <div className="absolute -bottom-10 -end-10 h-56 w-56 rounded-full bg-teal-400/15 blur-2xl" />
+          <div className="absolute -top-10 -inset-s-10 h-48 w-48 rounded-full bg-emerald-400/20 blur-2xl" />
+          <div className="absolute -bottom-10 -inset-e-10 h-56 w-56 rounded-full bg-teal-400/15 blur-2xl" />
         </div>
         <div className="relative container-default mx-auto flex max-w-3xl flex-col items-center px-5 md:px-8 py-16 md:py-24 text-center">
           <h2 className="mb-4 text-2xl md:text-3xl font-extrabold leading-snug tracking-tight text-white">

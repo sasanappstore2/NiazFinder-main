@@ -136,8 +136,8 @@ export function ContactActions({
       className={cn(
         layout,
         variant === 'sticky' &&
-          'fixed inset-x-0 z-[calc(var(--z-mobile-nav)-1)] border-t border-border/60 bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80',
-        variant === 'sticky' && 'bottom-[var(--mobile-nav-offset)]',
+          'fixed inset-x-0 z-[calc(var(--z-mobile-nav)-1)] border-t border-border/60 bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/80',
+        variant === 'sticky' && 'bottom-(--mobile-nav-offset)',
         className
       )}
       role="group"

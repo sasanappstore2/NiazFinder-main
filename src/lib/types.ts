@@ -30,6 +30,8 @@ export interface User {
   lastName: string;
   displayName?: string;
   avatar?: string;
+  coverImage?: string;
+  website?: string;
   bio?: string;
   city?: string;
   province?: string;
@@ -41,6 +43,9 @@ export interface User {
   projectCount: number;
   completionRate: number;
   responseRate: number;
+  followerCount?: number;
+  followingCount?: number;
+  postCount?: number;
   createdAt: string;
 }
 
@@ -64,6 +69,8 @@ export interface ServiceRequest {
   title: string;
   slug: string;
   description: string;
+  /** Optional free-form address; may start with neighborhood. */
+  address?: string;
   budgetMin?: number;
   budgetMax?: number;
   budgetType: 'FIXED' | 'HOURLY' | 'NEGOTIABLE';
@@ -77,7 +84,9 @@ export interface ServiceRequest {
   categorySlug?: string;
   categoryIcon?: string;
   priority: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
-  status: 'OPEN' | 'IN_PROGRESS' | 'CLOSED' | 'COMPLETED' | 'CANCELLED';
+  status: 'PENDING_REVIEW' | 'OPEN' | 'IN_PROGRESS' | 'CLOSED' | 'COMPLETED' | 'CANCELLED' | 'REJECTED';
+  moderationStatus?: 'PENDING' | 'APPROVED' | 'REJECTED_SOFT' | 'REJECTED_FINAL';
+  rejectionReason?: string | null;
   tags: string[];
   viewCount: number;
   proposalCount: number;
@@ -101,6 +110,8 @@ export interface Proposal {
 
 // ============ Specialist Profile ============
 export interface SpecialistProfile extends User {
+  /** Public profile slug for `/b/{slug}` URLs. */
+  profileSlug?: string;
   skills: { name: string; level: number }[];
   portfolios: Portfolio[];
   hourlyRate?: number;
@@ -129,8 +140,12 @@ export interface Message {
   senderId: string;
   content: string;
   type: 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE' | 'SYSTEM' | 'NEED_CARD';
+  attachmentUrls?: string[];
   isRead: boolean;
   createdAt: string;
+  clientTempId?: string;
+  replyToId?: string;
+  replyTo?: { id: string; content: string; senderFirstName: string; senderLastName: string };
   sender?: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatar'>;
 }
 
@@ -152,7 +167,7 @@ export interface Notification {
   message: string;
   isRead: boolean;
   createdAt: string;
-  data?: Record<string, string>;
+  data?: Record<string, string | undefined>;
 }
 
 // ============ Review ============
@@ -205,6 +220,44 @@ export interface PricingPlan {
   highlighted?: boolean;
   badge?: string;
   icon?: string;
+}
+
+// ============ Social Post ============
+export interface Post {
+  id: string;
+  userId: string;
+  content: string;
+  imageUrls: string;
+  isPrivate: boolean;
+  createdAt: string | Date;
+  updatedAt?: string | Date;
+  user: Pick<User, 'id' | 'firstName' | 'lastName' | 'displayName' | 'avatar' | 'username'>;
+  likeCount?: number;
+  commentCount?: number;
+  isLiked?: boolean;
+  _count?: { likes: number; comments: number };
+}
+
+export interface PostComment {
+  id: string;
+  postId: string;
+  userId: string;
+  content: string;
+  createdAt: string | Date;
+  user?: Pick<User, 'id' | 'firstName' | 'lastName' | 'displayName' | 'avatar' | 'username'>;
+}
+
+export interface LikeResponse {
+  liked: boolean;
+  likeCount: number;
+}
+
+export interface FollowResponse {
+  followerCount?: number;
+  followingCount?: number;
+  isFollowing?: boolean;
+  following?: boolean;
+  message?: string;
 }
 
 // ============ Search Filters ============

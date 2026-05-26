@@ -1,14 +1,13 @@
 /**
  * Canonical route builder — single source of truth for ALL navigation URLs.
  *
- * URL contract (locked, Divar-inspired):
- *   /                                          — home
- *   /s/{location}                              — search root (location ∈ {iran} ∪ city slugs)
- *   /s/{location}/{category}                   — search + category
- *   /s/{location}/{parent}/{category}          — search + nested category
- *   /s/iran?cities=tehran,mashhad              — multi-city scope (Divar ?cities=)
- *   /v/{slug}/{id}                             — listing detail (Divar /v/ parity)
- *   /pro/{id}                                  — business profile (Divar /pro/ parity)
+ * URL contract (NiazFinder):
+ *   /n/{location}                              — needs marketplace
+ *   /b/{location}                              — businesses marketplace
+ *   /n|b/{location}/{category}                 — category browse
+ *   /v/{slug}/{id}                             — need listing detail
+ *   /b/{profileSlug}                           — business public profile
+ *   /s/**                                      — legacy → 301 to /n or /b
  *   /post                                      — post a need
  *   /chat, /chat/new, /chat/{convId}           — chat
  *   /help                                      — support
@@ -37,6 +36,12 @@ import {
   isLocationSlug,
 } from './locations';
 import { slugifyTitle } from '@/lib/seo/slug';
+import {
+  type BrowseMarket,
+  marketFromListingType,
+  marketplaceLocationPrefix,
+  MARKET_PREFIX,
+} from './market-routes';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Static route templates
@@ -47,8 +52,10 @@ export const ROUTES = {
   login:                         '/login',
   register:                      '/register',
 
-  /** Search root — country (iran) or any city. */
+  /** @deprecated Legacy — redirects to /n/iran */
   searchRoot:                    '/s',
+  needMarketRoot:                '/n',
+  businessMarketRoot:            '/b',
 
   /** Listing detail — canonical: /v/{slug}/{id} (Divar /v/ parity). */
   listingDetail:               '/v/[slug]/[id]',
@@ -57,6 +64,8 @@ export const ROUTES = {
 
   /** Business profile — canonical: /pro/{id} (Divar /pro/ parity). */
   proProfile:                  '/pro/[id]',
+  /** Business owner edit panel — /pro/{id}/edit */
+  proEdit:                     '/pro/[id]/edit',
 
   /** @deprecated Use listingDetail — kept for redirect handlers. */
   needDetail:                  '/n/[slug]/[id]',
@@ -106,16 +115,28 @@ export type RouteKey = keyof typeof ROUTES;
 function fillParams(template: string, params: Record<string, string>): string {
   let url = template;
   for (const [key, value] of Object.entries(params)) {
-    url = url.replace(`[${key}]`, encodeURIComponent(value));
+    url = url.replace(`[${key}]`, encodeURIComponent(String(value)));
   }
   return url;
 }
 
-/** Build /s/{location} prefix; falls back to /s/iran if invalid/empty. */
-function locationPrefix(location?: string | null): string {
-  if (!location) return `/s/${COUNTRY_SLUG}`;
-  const slug = location.toLowerCase();
-  return isLocationSlug(slug) ? `/s/${slug}` : `/s/${COUNTRY_SLUG}`;
+function resolveMarketFromOpts(opts: SearchUrlOptions): BrowseMarket {
+  if (opts.market) return opts.market;
+  return marketFromListingType(opts.filters?.type);
+}
+
+function filtersForMarket(
+  filters: Partial<BrowseFilters> | undefined,
+  market: BrowseMarket
+): Partial<BrowseFilters> | undefined {
+  if (!filters) return undefined;
+  const next = { ...filters };
+  const implied = marketFromListingType(next.type);
+  if (next.type === implied || next.type === 'all') {
+    const { type: _t, ...rest } = next;
+    return Object.keys(rest).length ? rest : undefined;
+  }
+  return next;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -134,6 +155,8 @@ export interface SearchUrlOptions {
   location?: string | null;
   category?: string | null;
   parentCategory?: string | null;
+  /** Defaults from filters.type or `need`. */
+  market?: BrowseMarket;
   filters?: Partial<BrowseFilters>;
 }
 
@@ -159,7 +182,8 @@ export const routeBuilder = {
    *                                                  → /s/iran?cities=tehran,mashhad
    */
   search(opts: SearchUrlOptions = {}): string {
-    const prefix = locationPrefix(opts.location);
+    const market = resolveMarketFromOpts(opts);
+    const prefix = marketplaceLocationPrefix(opts.location, market);
     const segments: string[] = [];
 
     if (opts.category) {
@@ -183,7 +207,7 @@ export const routeBuilder = {
       ? `${prefix}/${segments.map(encodeURIComponent).join('/')}`
       : prefix;
 
-    return `${path}${serializeFiltersString(opts.filters)}`;
+    return `${path}${serializeFiltersString(filtersForMarket(opts.filters, market))}`;
   },
 
   // ── Back-compat shortcuts (mapped onto search()) ──────────────────────────
@@ -250,9 +274,21 @@ export const routeBuilder = {
     return `/v/${encodeURIComponent(id)}`;
   },
 
-  /** /pro/{id} — business profile (Divar /pro/ parity). */
+  /** /b/{profileSlug} — public business profile. */
+  businessProfile(slug: string, opts?: { from?: string }): string {
+    const base = `/b/${encodeURIComponent(slug)}`;
+    if (!opts?.from) return base;
+    return `${base}?from=${encodeURIComponent(opts.from)}`;
+  },
+
+  /** @deprecated Use businessProfile(slug) — /pro kept for redirects. */
   pro(id: string): string {
     return `/pro/${encodeURIComponent(id)}`;
+  },
+
+  /** /pro/{id}/edit — business owner management panel. */
+  businessEdit(slug: string): string {
+    return fillParams(ROUTES.proEdit, { id: slug });
   },
 
   /**
@@ -271,8 +307,8 @@ export const routeBuilder = {
   needIntake:         () => ROUTES.needIntake,
   needPropose:        (id: string) => `/n/${encodeURIComponent(id)}/propose`,
 
-  /** @deprecated Alias for pro() — kept for existing callers. */
-  business(id: string): string {
+  /** Business profile by user id — callers should prefer businessProfile(slug). */
+  business(id: string, opts?: { from?: string }): string {
     return routeBuilder.pro(id);
   },
   businessReview:     (id: string) => `/b/${encodeURIComponent(id)}/review`,
@@ -281,6 +317,8 @@ export const routeBuilder = {
 
   // ── App
   dashboard:          () => ROUTES.dashboard,
+  dashboardTab:       (tab: string) =>
+    `${ROUTES.dashboard}?tab=${encodeURIComponent(tab)}`,
   chat:               () => ROUTES.chat,
   chatNew:            () => ROUTES.chatNew,
   chatWithUser:       (
@@ -323,18 +361,14 @@ export function legacyViewToPath(view: string, params?: Record<string, string>):
 
   if (view === 'browse-requests') {
     return routeBuilder.search({
-      filters: {
-        type: 'need',
-        ...(params?.search ? { q: params.search } : {}),
-      },
+      market: 'need',
+      ...(params?.search ? { filters: { q: params.search } } : {}),
     });
   }
   if (view === 'browse-specialists') {
     return routeBuilder.search({
-      filters: {
-        type: 'business',
-        ...(params?.search ? { q: params.search } : {}),
-      },
+      market: 'business',
+      ...(params?.search ? { filters: { q: params.search } } : {}),
     });
   }
 
@@ -359,6 +393,8 @@ export function legacyViewToPath(view: string, params?: Record<string, string>):
 
 // Re-exports for consumers that still depend on these names
 export type { BrowseFilters, ListingType, SortKey };
+export type { BrowseMarket } from './market-routes';
+export { MARKET_PREFIX, marketFromListingType } from './market-routes';
 export { LEGACY_VIEW_PATHS } from './_legacy-view-paths';
 
 export function buildRoute(routeKey: RouteKey, params?: Record<string, string>): string {

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { mv } from '@/lib/motion-variants';
 import {
   X,
   MapPin,
@@ -208,18 +209,18 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
           {/* ─── Overlay ──────────────────────────────────────────────── */}
           <motion.div
             key="info-overlay"
-            variants={overlayVariants}
+            variants={mv(overlayVariants)}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-xs"
             onClick={handleClose}
           />
 
           {/* ─── Panel ────────────────────────────────────────────────── */}
           <motion.div
             key="info-panel"
-            variants={panelVariants}
+            variants={mv(panelVariants)}
             initial="hidden"
             animate="visible"
             exit="exit"
@@ -227,8 +228,8 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
             dir="rtl"
           >
             {/* ─── Header ─────────────────────────────────────────── */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-l from-background via-background to-emerald-50/50 dark:to-emerald-950/20">
-              <h2 className="text-base font-bold bg-gradient-to-l from-emerald-700 to-emerald-500 bg-clip-text text-transparent">اطلاعات گفتگو</h2>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-linear-to-l from-background via-background to-emerald-50/50 dark:to-emerald-950/20">
+              <h2 className="text-base font-bold bg-linear-to-l from-emerald-700 to-emerald-500 bg-clip-text text-transparent">اطلاعات گفتگو</h2>
               <Button
                 variant="ghost"
                 size="icon"
@@ -245,14 +246,14 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
                 {/* ═══ Profile Card ═══ */}
                 <motion.div
                   custom={sectionIndex.profile}
-                  variants={sectionVariants}
+                  variants={mv(sectionVariants)}
                   initial="hidden"
                   animate="visible"
                   className="flex flex-col items-center text-center gap-3"
                 >
                   {/* Avatar */}
                   <div className="relative">
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-300 to-emerald-500 blur-xl opacity-20 scale-110" />
+                    <div className="absolute inset-0 rounded-full bg-linear-to-br from-emerald-300 to-emerald-500 blur-xl opacity-20 scale-110" />
                     <Avatar className="relative h-20 w-20 border-[3px] border-white dark:border-gray-800 shadow-lg shadow-emerald-500/15 ring-2 ring-emerald-200/40 dark:ring-emerald-800/30">
                       <AvatarImage src={otherUser?.avatar} alt={otherUserName} />
                       <AvatarFallback
@@ -309,12 +310,6 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
                         ? formatRelativeTime(activeConversation.lastMessageAt)
                         : 'اخیراً فعال'}
                     </span>
-                    {(otherUser as Record<string, unknown>)?.city && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="h-3.5 w-3.5" />
-                        {(otherUser as Record<string, string>).city}
-                      </span>
-                    )}
                   </div>
 
                   {/* Member since */}
@@ -335,7 +330,7 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
                 {pinnedMessages.length > 0 && (
                   <motion.div
                     custom={sectionIndex.pinned}
-                    variants={sectionVariants}
+                    variants={mv(sectionVariants)}
                     initial="hidden"
                     animate="visible"
                     className="space-y-3"
@@ -379,7 +374,7 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
                 {/* ═══ Shared Media ═══ */}
                 <motion.div
                   custom={sectionIndex.media}
-                  variants={sectionVariants}
+                  variants={mv(sectionVariants)}
                   initial="hidden"
                   animate="visible"
                   className="space-y-3"
@@ -413,7 +408,7 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
                         </div>
                       ))}
                       {imageMessages.length > 6 && (
-                        <div className="aspect-square rounded-lg bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-900/30 dark:to-emerald-950/20 flex items-center justify-center">
+                        <div className="aspect-square rounded-lg bg-linear-to-br from-emerald-100 to-emerald-50 dark:from-emerald-900/30 dark:to-emerald-950/20 flex items-center justify-center">
                           <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
                             +{toPersianDigits(String(imageMessages.length - 6))}
                           </span>
@@ -422,7 +417,7 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
                     </div>
                   ) : (
                     <div className="rounded-xl border border-dashed border-emerald-200/60 dark:border-emerald-800/30 p-6 flex flex-col items-center gap-2.5 text-center">
-                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-900/30 dark:to-emerald-950/20 flex items-center justify-center">
+                      <div className="h-12 w-12 rounded-full bg-linear-to-br from-emerald-100 to-emerald-50 dark:from-emerald-900/30 dark:to-emerald-950/20 flex items-center justify-center">
                         <MessageSquare className="h-5 w-5 text-emerald-500" />
                       </div>
                       <p className="text-sm text-muted-foreground">
@@ -446,7 +441,7 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
                 {starredMessages.length > 0 && (
                   <motion.div
                     custom={sectionIndex.starred}
-                    variants={sectionVariants}
+                    variants={mv(sectionVariants)}
                     initial="hidden"
                     animate="visible"
                     className="space-y-3"
@@ -490,7 +485,7 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
                 {/* ═══ Actions ═══ */}
                 <motion.div
                   custom={sectionIndex.actions}
-                  variants={sectionVariants}
+                  variants={mv(sectionVariants)}
                   initial="hidden"
                   animate="visible"
                   className="space-y-1"

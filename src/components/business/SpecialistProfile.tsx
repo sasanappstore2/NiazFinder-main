@@ -119,7 +119,7 @@ function StatCard({
   suffix?: string;
 }) {
   return (
-    <Card className="border-border/40 bg-white/80 backdrop-blur-sm dark:bg-card/80 transition-all duration-200 hover:shadow-md hover:border-emerald-200/40 dark:hover:border-emerald-800/40">
+    <Card className="border-border/40 bg-white/80 backdrop-blur-xs dark:bg-card/80 transition-all duration-200 hover:shadow-md hover:border-emerald-200/40 dark:hover:border-emerald-800/40">
       <CardContent className="flex flex-col items-center gap-1.5 p-4 text-center">
         <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-900/20" aria-hidden="true">
           <Icon className="size-4.5 text-emerald-600 dark:text-emerald-400" />
@@ -137,14 +137,14 @@ function StatCard({
 // ─── Portfolio Card ───────────────────────────────────
 function PortfolioCard({ portfolio, index }: { portfolio: Portfolio; index: number }) {
   return (
-    <Card className="group overflow-hidden border-border/50 bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/[0.06] hover:border-emerald-300/60 dark:hover:border-emerald-700/60">
-      <div className={`aspect-video bg-gradient-to-br ${getGradient(index)} relative flex items-center justify-center`} aria-hidden="true">
+    <Card className="group overflow-hidden border-border/50 bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/6 hover:border-emerald-300/60 dark:hover:border-emerald-700/60">
+      <div className={`aspect-video bg-linear-to-br ${getGradient(index)} relative flex items-center justify-center`} aria-hidden="true">
         <div className="flex flex-col items-center gap-1 text-white/80">
           <FolderOpen className="size-8" />
           <span className="text-xs font-medium">{portfolio.title}</span>
         </div>
         {portfolio.completedAt && (
-          <Badge className="absolute top-2 left-2 rounded-lg bg-black/30 text-caption text-white border-0 backdrop-blur-sm">
+          <Badge className="absolute top-2 left-2 rounded-lg bg-black/30 text-caption text-white border-0 backdrop-blur-xs">
             {new Date(portfolio.completedAt).toLocaleDateString('fa-IR')}
           </Badge>
         )}
@@ -168,7 +168,7 @@ function ReviewCard({ review }: { review: Review }) {
   const colorClass = getAvatarColor(fullName);
 
   return (
-    <Card className="border-border/50 bg-card transition-all duration-300 hover:border-emerald-300/60 dark:hover:border-emerald-700/60 hover:shadow-lg hover:shadow-emerald-500/[0.04]">
+    <Card className="border-border/50 bg-card transition-all duration-300 hover:border-emerald-300/60 dark:hover:border-emerald-700/60 hover:shadow-lg hover:shadow-emerald-500/4">
       <CardContent className="p-5">
         <div className="mb-3 flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -256,9 +256,9 @@ export function SpecialistProfile({
         </div>
 
         {/* ── Profile Header Card ──────────────────── */}
-        <div className="mb-6 overflow-hidden rounded-2xl border border-border/50 shadow-lg shadow-black/[0.03]">
+        <div className="mb-6 overflow-hidden rounded-2xl border border-border/50 shadow-lg shadow-black/3">
           {/* Gradient banner */}
-          <div className="relative bg-gradient-to-bl from-emerald-500 via-emerald-600 to-teal-700 px-6 pb-24 pt-8 sm:px-10 sm:pt-10" aria-hidden="true">
+          <div className="relative bg-linear-to-bl from-emerald-500 via-emerald-600 to-teal-700 px-6 pb-24 pt-8 sm:px-10 sm:pt-10" aria-hidden="true">
             <div className="pointer-events-none absolute -left-10 -top-10 size-40 rounded-full bg-white/5" />
             <div className="pointer-events-none absolute bottom-0 left-1/3 size-60 rounded-full bg-white/5" />
             <div className="pointer-events-none absolute -right-8 bottom-4 size-32 rounded-full bg-white/5" />
@@ -403,11 +403,11 @@ export function SpecialistProfile({
                           <div className="flex items-center gap-3">
                             <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-muted/40" aria-hidden="true">
                               <div
-                                className="h-full rounded-full bg-gradient-to-l from-emerald-500 to-teal-400 transition-all duration-1000 ease-out"
+                                className="h-full rounded-full bg-linear-to-l from-emerald-500 to-teal-400 transition-all duration-1000 ease-out"
                                 style={{ width: `${percentage}%`, transitionDelay: `${index * 100}ms` }}
                               />
                             </div>
-                            <span className="min-w-[2.5rem] text-xs font-bold tabular-nums text-muted-foreground">
+                            <span className="min-w-10 text-xs font-bold tabular-nums text-muted-foreground">
                               {percentage.toLocaleString('fa-IR')}٪
                             </span>
                           </div>
@@ -541,7 +541,7 @@ export function SpecialistProfile({
             {/* Verified badge card */}
             {specialist.isVerified && (
               <div>
-                <Card className="border-emerald-200 bg-gradient-to-b from-emerald-50 to-white dark:border-emerald-800 dark:from-emerald-950/40 dark:to-card">
+                <Card className="border-emerald-200 bg-linear-to-b from-emerald-50 to-white dark:border-emerald-800 dark:from-emerald-950/40 dark:to-card">
                   <CardContent className="p-5 text-center">
                     <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900/30" aria-hidden="true">
                       <BadgeCheck className="size-6 text-emerald-600 dark:text-emerald-400" />
@@ -557,7 +557,7 @@ export function SpecialistProfile({
 
             {/* Invite CTA */}
             <div>
-              <Card className="overflow-hidden border-emerald-200 bg-gradient-to-b from-emerald-50 to-white dark:border-emerald-800 dark:from-emerald-950/40 dark:to-card">
+              <Card className="overflow-hidden border-emerald-200 bg-linear-to-b from-emerald-50 to-white dark:border-emerald-800 dark:from-emerald-950/40 dark:to-card">
                 <CardContent className="p-5 text-center">
                   <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900/30" aria-hidden="true">
                     <UserPlus className="size-6 text-emerald-600 dark:text-emerald-400" />

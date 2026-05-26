@@ -109,10 +109,14 @@
     var(--mobile-nav-bar) + var(--mobile-nav-fab-overhang) +
       var(--mobile-nav-float-gap) + env(safe-area-inset-bottom, 0px)
   );
+  --page-max-width: 80rem;
   --z-dropdown: 40;
   --z-header: 50;
+  --z-popover: 55;
   --z-modal: 50;
   --z-onboarding: 60;
+  /* Set dynamically by Header; fallback covers main row + category bar */
+  --site-header-offset: 6.5rem;
 }
 
 .dark {
@@ -173,9 +177,31 @@
 
 /* ── Layout (Fibonacci spacing: 4 4 8 12 20 32 52 84 136 px) ── */
 .section-padding { padding-top: 84px; padding-bottom: 84px; }
-.container-narrow { max-width: 640px; margin-inline: auto; padding-inline: 20px; }
-.container-default { max-width: 1152px; margin-inline: auto; padding-inline: 20px; }
-.container-wide { max-width: 1360px; margin-inline: auto; padding-inline: 20px; }
+.container-narrow { max-width: 640px; margin-inline: auto; padding-inline: 1rem; }
+.container-default {
+  max-width: var(--page-max-width);
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .container-default { padding-inline: 1.5rem; }
+}
+@media (min-width: 1024px) {
+  .container-default { padding-inline: 2rem; }
+}
+.container-wide { max-width: 1360px; margin-inline: auto; padding-inline: 1rem; }
+.page-container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .page-container { padding-inline: 1.5rem; }
+}
+@media (min-width: 1024px) {
+  .page-container { padding-inline: 2rem; }
+}
 .touch-target-min { min-height: 44px; min-width: 44px; }
 
 /* ── Reduced Motion ── */
@@ -1252,6 +1278,11 @@
 .has-mobile-nav {
   padding-bottom: var(--mobile-nav-offset);
 }
+@media (min-width: 1024px) {
+  .has-mobile-nav {
+    padding-bottom: 0;
+  }
+}
 
 /* ══════════════════════════════════════════════════════════════
    TASK 1D: Header Enhancements
@@ -1269,6 +1300,25 @@
   background: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+}
+.header-solid {
+  background: oklch(0.99 0.001 120 / 0.92);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+.dark .header-solid {
+  background: oklch(0.14 0.005 160 / 0.92);
+}
+
+/* Ark UI menus / popovers must sit above sticky page chrome */
+[data-scope='menu'][data-part='positioner'] {
+  z-index: var(--z-popover) !important;
+}
+
+/* Business profile tab bar — sticks flush below site header */
+.profile-primary-tabs {
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
 }
 
 .header-emerald-bottom-line {

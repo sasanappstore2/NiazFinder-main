@@ -1,7 +1,7 @@
 'use client';
 
 import { useNavigate } from '@/hooks/navigation/use-navigate';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense, useSyncExternalStore } from 'react';
 import {
   LocateFixed,
   Bell,
@@ -33,6 +33,11 @@ import {
 } from '@/components/layout/CategoryMegaMenu';
 import type { MegaMenuCategory } from '@/components/layout/CategoryMegaMenu';
 import { routeBuilder } from '@/config/routes';
+import { getCategoryBrowseUrl } from '@/lib/search/category-browse-url';
+import { useBrowseListingType } from '@/hooks/use-browse-listing-type';
+import { usePathname, useRouter } from 'next/navigation';
+import { isBrowsePath } from '@/lib/search/browse-path';
+import { BrowseFilterBar } from '@/components/browse/BrowseFilterBar';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -128,7 +133,7 @@ function NotificationsButton() {
           {unreadNotificationCount > 0 && (
             <span
               className={cn(
-                "absolute -top-1 -end-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-caption font-bold text-white",
+                "absolute -top-1 -inset-e-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-caption font-bold text-white",
                 "animate-notification-pulse"
               )}
             >
@@ -269,7 +274,7 @@ function MessagesButton() {
     >
       <MessageSquare className="size-[16px]" />
       {unreadCount > 0 && (
-        <Badge className="absolute -top-1 -end-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-caption font-bold text-white">
+        <Badge className="absolute -top-1 -inset-e-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-caption font-bold text-white">
           {unreadCount > 99 ? '99+' : unreadCount}
         </Badge>
       )}
@@ -314,10 +319,11 @@ function AuthSection() {
 // ============ Category Mega Menu in Header (Desktop) ============
 function HeaderCategoryMenuDesktop() {
   const [isOpen, setIsOpen] = useState(false);
-  const { navigateTo } = useNavigate();
+  const router = useRouter();
+  const listingType = useBrowseListingType();
 
   const handleSelect = (category: MegaMenuCategory) => {
-    navigateTo('browse-requests', { categoryId: category.value });
+    router.push(getCategoryBrowseUrl(category, { type: listingType }));
     setIsOpen(false);
   };
 
@@ -360,6 +366,7 @@ function HeaderCategoryMenuDesktop() {
             onSelect={handleSelect}
             onClose={() => setIsOpen(false)}
             getIcon={getCategoryIcon}
+            getHref={(c) => getCategoryBrowseUrl(c, { type: listingType })}
           />
         </PopoverContent>
       </Popover>
@@ -370,10 +377,11 @@ function HeaderCategoryMenuDesktop() {
 // ============ Category Mega Menu in Header (Mobile) ============
 function HeaderCategoryMenuMobile() {
   const [isOpen, setIsOpen] = useState(false);
-  const { navigateTo } = useNavigate();
+  const router = useRouter();
+  const listingType = useBrowseListingType();
 
   const handleSelect = (category: MegaMenuCategory) => {
-    navigateTo('browse-requests', { categoryId: category.value });
+    router.push(getCategoryBrowseUrl(category, { type: listingType }));
     setIsOpen(false);
   };
 
@@ -397,6 +405,7 @@ function HeaderCategoryMenuMobile() {
             onSelect={handleSelect}
             onClose={() => setIsOpen(false)}
             getIcon={getCategoryIcon}
+            getHref={(c) => getCategoryBrowseUrl(c, { type: listingType })}
           />
         </SheetContent>
       </Sheet>
@@ -405,25 +414,80 @@ function HeaderCategoryMenuMobile() {
 }
 
 // ============ Header Component ============
-export function Header({ compact = false }: { compact?: boolean }) {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const { navigateTo } = useNavigate();
+function HeaderFilterRow() {
+  const pathname = usePathname();
+  if (!isBrowsePath(pathname)) return null;
+  return (
+    <div className="min-w-0 flex-1">
+      <Suspense fallback={null}>
+        <BrowseFilterBar />
+      </Suspense>
+    </div>
+  );
+}
 
-  const handleScroll = useCallback(() => {
-    setIsScrolled(window.scrollY > 10);
-  }, []);
+function subscribeScroll(onStoreChange: () => void) {
+  window.addEventListener('scroll', onStoreChange, { passive: true });
+  return () => window.removeEventListener('scroll', onStoreChange);
+}
+
+function getScrollSnapshot() {
+  return window.scrollY > 10;
+}
+
+export function Header({ compact = false }: { compact?: boolean }) {
+  const isScrolled = useSyncExternalStore(
+    subscribeScroll,
+    getScrollSnapshot,
+    () => false
+  );
+  const headerRef = useRef<HTMLElement>(null);
+  const pathname = usePathname();
+  const { navigateTo } = useNavigate();
+  const isHome = pathname === '/';
+  const useSolidHeader = !isHome || isScrolled;
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+    const el = headerRef.current;
+    if (!el) return;
+
+    const syncHeaderOffset = () => {
+      const height = Math.ceil(el.getBoundingClientRect().height);
+      document.documentElement.style.setProperty(
+        '--site-header-offset',
+        `${height + 2}px`
+      );
+    };
+
+    syncHeaderOffset();
+    const observer = new ResizeObserver(syncHeaderOffset);
+    observer.observe(el);
+    window.addEventListener('scroll', syncHeaderOffset, { passive: true });
+    window.addEventListener('resize', syncHeaderOffset);
+
+    const t1 = window.setTimeout(syncHeaderOffset, 100);
+    const t2 = window.setTimeout(syncHeaderOffset, 500);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', syncHeaderOffset);
+      window.removeEventListener('resize', syncHeaderOffset);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
+  }, [compact, pathname, isScrolled, useSolidHeader]);
 
   return (
     <header
+      ref={headerRef}
       className={cn(
-        'sticky top-0 z-[var(--z-header)] w-full transition-all duration-300 ease-out',
-        isScrolled
-          ? 'header-glass header-scrolled shadow-md shadow-black/[0.04] dark:shadow-black/[0.15] -translate-y-px'
+        'sticky top-0 isolate z-(--z-header) w-full transition-all duration-300 ease-out',
+        useSolidHeader
+          ? cn(
+              'header-glass header-solid',
+              isScrolled &&
+                'header-scrolled shadow-md shadow-black/4 dark:shadow-black/15 -translate-y-px'
+            )
           : 'header-transparent'
       )}
       role="banner"
@@ -431,10 +495,10 @@ export function Header({ compact = false }: { compact?: boolean }) {
       {/* Emerald gradient bottom line */}
       <div className="header-emerald-bottom-line absolute inset-x-0 bottom-0" />
       <div className={cn(
-        'container-default border-b transition-colors duration-300',
+        'page-container border-b transition-colors duration-300',
         isScrolled ? 'border-border/30' : 'border-border/20',
       )}>
-        <div className="flex h-[52px] items-center justify-between gap-4">
+        <div className="flex h-[52px] min-w-0 items-center justify-between gap-2 sm:gap-4">
           {/* Right: Logo */}
           <button
             type="button"
@@ -450,9 +514,9 @@ export function Header({ compact = false }: { compact?: boolean }) {
             </span>
           </button>
 
-          {/* Center: Search Bar (visible on all screens) */}
-          <div className="flex flex-1 max-w-[600px] items-center">
-            <div className="flex-1 search-glow-focus rounded-xl">
+          {/* Center: Search — hidden on very narrow phones to avoid crowding */}
+          <div className="hidden min-w-0 flex-1 max-w-[600px] items-center sm:flex">
+            <div className="w-full min-w-0 flex-1 search-glow-focus rounded-xl">
               <HeaderSearchBar data={DEMO_SEARCH_DATA} />
             </div>
           </div>
@@ -464,9 +528,12 @@ export function Header({ compact = false }: { compact?: boolean }) {
         </div>
 
         {!compact && (
-          <div className="flex items-center gap-2 py-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-2 py-2">
             <HeaderCategoryMenuDesktop />
             <HeaderCategoryMenuMobile />
+            <div className="min-w-0 flex-1 basis-full overflow-x-auto sm:basis-auto">
+              <HeaderFilterRow />
+            </div>
           </div>
         )}
       </div>

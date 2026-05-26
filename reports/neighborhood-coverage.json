@@ -1,0 +1,2407 @@
+{
+  "generatedAt": "2026-05-26T12:36:21.091Z",
+  "summary": {
+    "totalCities": 399,
+    "ok": 31,
+    "missing": 0,
+    "empty": 323,
+    "unmapped": 45
+  },
+  "cities": [
+    {
+      "cityId": "tehran-city",
+      "name": "تهران",
+      "count": 421,
+      "status": "ok"
+    },
+    {
+      "cityId": "karaj",
+      "name": "کرج",
+      "count": 163,
+      "status": "ok"
+    },
+    {
+      "cityId": "shahriar",
+      "name": "شهریار",
+      "count": 29,
+      "status": "ok"
+    },
+    {
+      "cityId": "malard",
+      "name": "ملارد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "varamin",
+      "name": "ورامین",
+      "count": 11,
+      "status": "ok"
+    },
+    {
+      "cityId": "islamshahr",
+      "name": "اسلامشهر",
+      "count": 35,
+      "status": "ok"
+    },
+    {
+      "cityId": "rey",
+      "name": "ری",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "pakdasht",
+      "name": "پاکدشت",
+      "count": 7,
+      "status": "ok"
+    },
+    {
+      "cityId": "robatskarim",
+      "name": "رباط‌کریم",
+      "count": 29,
+      "status": "ok"
+    },
+    {
+      "cityId": "damavand",
+      "name": "دماوند",
+      "count": 4,
+      "status": "ok"
+    },
+    {
+      "cityId": "firouzkouh",
+      "name": "فیروزکوه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "baharestan",
+      "name": "بهارستان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "pishva",
+      "name": "پیشوا",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "qods",
+      "name": "قدس",
+      "count": 9,
+      "status": "ok"
+    },
+    {
+      "cityId": "eshkevar",
+      "name": "اشکوار",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "emamshahr",
+      "name": "امامشهر",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "isfahan-city",
+      "name": "اصفهان",
+      "count": 272,
+      "status": "ok"
+    },
+    {
+      "cityId": "kashan",
+      "name": "کاشان",
+      "count": 121,
+      "status": "ok"
+    },
+    {
+      "cityId": "khomeinishahr",
+      "name": "خمینی‌شهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "najafabad",
+      "name": "نجف‌آباد",
+      "count": 66,
+      "status": "ok"
+    },
+    {
+      "cityId": "shahinshahr",
+      "name": "شاهین‌شهر",
+      "count": 54,
+      "status": "ok"
+    },
+    {
+      "cityId": "mobarakeh",
+      "name": "مبارکه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "falavarjan",
+      "name": "فلاورجان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "lenjan",
+      "name": "لنجان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "natanz",
+      "name": "نطنز",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ardestan",
+      "name": "اردستان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khouzankola",
+      "name": "خوزانکلا",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "dehaqan",
+      "name": "دهاقان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "semirom",
+      "name": "سمیرم",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "fereydan",
+      "name": "فریدن",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "fereydunshahr",
+      "name": "فریدونشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "golpayegan",
+      "name": "گلپایگان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khansar",
+      "name": "خوانسار",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "tiranchi",
+      "name": "تیرانچی",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "bakhtiyar",
+      "name": "بختیار",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "shiraz",
+      "name": "شیراز",
+      "count": 271,
+      "status": "ok"
+    },
+    {
+      "cityId": "kazerun",
+      "name": "کازرون",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "marvdasht",
+      "name": "مرودشت",
+      "count": 35,
+      "status": "ok"
+    },
+    {
+      "cityId": "jahrom",
+      "name": "جهرم",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "fasa",
+      "name": "فسا",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "darab",
+      "name": "داراب",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "larestan",
+      "name": "لار",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "evaz",
+      "name": "اوز",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "gerash",
+      "name": "گراش",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "lar",
+      "name": "لار",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khonj",
+      "name": "خنج",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "mamasani",
+      "name": "ممسنی",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "nourabad",
+      "name": "نورآباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "sepidan",
+      "name": "سپیدان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "abadeh",
+      "name": "آباده",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "neyriz",
+      "name": "نی‌ریز",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "estehban",
+      "name": "استهبان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "zarrindasht",
+      "name": "زرین‌دشت",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "pasargad",
+      "name": "پاسارگاد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ramjerd",
+      "name": "رمژرد",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "mashhad",
+      "name": "مشهد",
+      "count": 263,
+      "status": "ok"
+    },
+    {
+      "cityId": "nishapur",
+      "name": "نیشابور",
+      "count": 94,
+      "status": "ok"
+    },
+    {
+      "cityId": "sabzevar",
+      "name": "سبزوار",
+      "count": 67,
+      "status": "ok"
+    },
+    {
+      "cityId": "torbatheydariyeh",
+      "name": "تربت حیدریه",
+      "count": 58,
+      "status": "ok"
+    },
+    {
+      "cityId": "kashmar",
+      "name": "کاشمر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "gonabad",
+      "name": "گناباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "quchan",
+      "name": "قوچان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "torbatjam",
+      "name": "تربت جام",
+      "count": 46,
+      "status": "ok"
+    },
+    {
+      "cityId": "chenaran",
+      "name": "چناران",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khaf",
+      "name": "خاف",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "dargaz",
+      "name": "درگز",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "taybad",
+      "name": "تایباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bajestan",
+      "name": "بجستان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "jowayin",
+      "name": "جوین",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kalat",
+      "name": "کلات",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "mehdishahr",
+      "name": "مه‌دیشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "golmakan",
+      "name": "گلمکان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "fariman",
+      "name": "فریمان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "nishabur",
+      "name": "نیشابور",
+      "count": 94,
+      "status": "ok"
+    },
+    {
+      "cityId": "tabriz",
+      "name": "تبریز",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "maragheh",
+      "name": "مراغه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "mianeh",
+      "name": "میانه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "shabestar",
+      "name": "شبستر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "marand",
+      "name": "مرند",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bonab",
+      "name": "بناب",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ahar",
+      "name": "اهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "sarab",
+      "name": "سراب",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "hashtrood",
+      "name": "هشتروود",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "jolfa",
+      "name": "جلفا",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "malekan",
+      "name": "ملکان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bostanabad",
+      "name": "بستان‌آباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "harris",
+      "name": "هریس",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "azarshahr",
+      "name": "آذرشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "oskoo",
+      "name": "اسکو",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kaleybar",
+      "name": "کلیبر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "urmia",
+      "name": "ارومیه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khoy",
+      "name": "خوی",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "mahabad",
+      "name": "مهاباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "sardasht",
+      "name": "سردشت",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "piranshahr",
+      "name": "پیرانشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "miandoab",
+      "name": "میاندوآب",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bukan",
+      "name": "بوکان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "salmas",
+      "name": "سلماس",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "naqadeh",
+      "name": "نقده",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "oshnavieh",
+      "name": "اشنویه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "takab",
+      "name": "تکاب",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "maku",
+      "name": "ماکو",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "shahindej",
+      "name": "شاهین‌دژ",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "chaldoran",
+      "name": "چالدران",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ahvaz",
+      "name": "اهواز",
+      "count": 145,
+      "status": "ok"
+    },
+    {
+      "cityId": "khorramshahr",
+      "name": "خرمشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "dezful",
+      "name": "دزفول",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "abadan",
+      "name": "آبادان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "mahshahr",
+      "name": "ماهشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "behbahan",
+      "name": "بهبهان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "shush",
+      "name": "شوش",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "shushtar",
+      "name": "شوشتر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "masjedsoleyman",
+      "name": "مسجدسلیمان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "izeh",
+      "name": "ایذه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "andimeshk",
+      "name": "اندیمشک",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "gotvand",
+      "name": "گتوند",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "lali",
+      "name": "لالی",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "baghmalek",
+      "name": "باغ‌ملک",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ramhormoz",
+      "name": "رامهرمز",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ramshir",
+      "name": "رامشیر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "omidieh",
+      "name": "امیدیه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "hoveyzeh",
+      "name": "هویزه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "karun",
+      "name": "کارون",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bavi",
+      "name": "باوی",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kerman-city",
+      "name": "کرمان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "jiroft",
+      "name": "جیرفت",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bam",
+      "name": "بم",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "sirjan",
+      "name": "سیرجان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "rafsanjan",
+      "name": "رفسنجان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "zarand",
+      "name": "زرند",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "shahrbabak",
+      "name": "شهربابک",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bardsir",
+      "name": "بردسیر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kahnooj",
+      "name": "کوهنج",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "anbarabad",
+      "name": "انبارآباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "manujan",
+      "name": "منوجان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "rudbarjonub",
+      "name": "رودبار جنوب",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "faryab",
+      "name": "فاریاب",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ghaleganj",
+      "name": "قلعه‌گنج",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "baft",
+      "name": "بافت",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ravars",
+      "name": "راور",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "mahani",
+      "name": "مهری",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "rasht",
+      "name": "رشت",
+      "count": 120,
+      "status": "ok"
+    },
+    {
+      "cityId": "bandaranzali",
+      "name": "بندر انزلی",
+      "count": 68,
+      "status": "ok"
+    },
+    {
+      "cityId": "lahijan",
+      "name": "لاهیجان",
+      "count": 36,
+      "status": "ok"
+    },
+    {
+      "cityId": "langrud",
+      "name": "لنگرود",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "fouman",
+      "name": "فومن",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "astara",
+      "name": "آستارا",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "astaneashrafiyeh",
+      "name": "آستانه اشرفیه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "somehsara",
+      "name": "صومعه‌سرا",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "tavak",
+      "name": "تاک",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "talesh",
+      "name": "طوالش",
+      "count": 4,
+      "status": "ok"
+    },
+    {
+      "cityId": "siahkal",
+      "name": "سیاهکل",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "rudsar",
+      "name": "رودسر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "aman",
+      "name": "آمان",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "roudhan",
+      "name": "رودسر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "masouleh",
+      "name": "ماسوله",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "chaboksar",
+      "name": "چابکسر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kouchesfahan",
+      "name": "کوچصفهان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "sari",
+      "name": "ساری",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "babol",
+      "name": "بابل",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "amol",
+      "name": "آمل",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "qaemshahr",
+      "name": "قائم‌شهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "behshahr",
+      "name": "بهشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "chalus",
+      "name": "چالوس",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "nowshahr",
+      "name": "نوشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "tonkabon",
+      "name": "تنکابن",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ramsar",
+      "name": "رامسر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "noor",
+      "name": "نور",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "mahmoudabad",
+      "name": "محمودآباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "gorgan",
+      "name": "گرگان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "feridunkenar",
+      "name": "فریدونکنار",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "babolsar",
+      "name": "بابلسر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "joybar",
+      "name": "جویبار",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "savadkuh",
+      "name": "سوادکوه",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "kelardasht",
+      "name": "کلاردشت",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "nozad",
+      "name": "نوشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "qom-city",
+      "name": "قم",
+      "count": 145,
+      "status": "ok"
+    },
+    {
+      "cityId": "kahak",
+      "name": "کهک",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "salafchegan",
+      "name": "سلفچگان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ghanavat",
+      "name": "قنوات",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "jafarabad",
+      "name": "جعفرباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "veshnaveh",
+      "name": "وشنه",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "alborz-karaj",
+      "name": "کرج",
+      "count": 163,
+      "status": "ok"
+    },
+    {
+      "cityId": "nazarabad",
+      "name": "نظرآباد",
+      "count": 17,
+      "status": "ok"
+    },
+    {
+      "cityId": "fardis",
+      "name": "فردیس",
+      "count": 33,
+      "status": "ok"
+    },
+    {
+      "cityId": "mahdasht",
+      "name": "ماهدشت",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "taleghan",
+      "name": "طالقان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "savojbolagh",
+      "name": "ساوجبلاغ",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "hashtgerd",
+      "name": "هشتگرد",
+      "count": 56,
+      "status": "ok"
+    },
+    {
+      "cityId": "meshkinshahr",
+      "name": "مشن‌شهر",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "kamalshahr",
+      "name": "کمالشهر",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "mohammadiyeh",
+      "name": "محمدیه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "zanjan-city",
+      "name": "زنجان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "abhar",
+      "name": "ابهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khodabandeh",
+      "name": "خدابنده",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "mahneshan",
+      "name": "ماهنشان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "tarom",
+      "name": "طارم",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "soltaniyeh",
+      "name": "سلطانیه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "idhaj",
+      "name": "ایجرود",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khoramdareh",
+      "name": "خرمدره",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "hamedan-city",
+      "name": "همدان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "malayer",
+      "name": "ملایر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "nahavand",
+      "name": "نهاوند",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "tuyserkan",
+      "name": "تویسرکان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "asadabad",
+      "name": "اسدآباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bahar",
+      "name": "بهار",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kabudarahang",
+      "name": "کبودرآهنگ",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "razan",
+      "name": "رزن",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "famenin",
+      "name": "فامنین",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kermanshah-city",
+      "name": "کرمانشاه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "sahneh",
+      "name": "صحنه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "javanrud",
+      "name": "جوانرود",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "qasrshirin",
+      "name": "قصرشیرین",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "paveh",
+      "name": "پاوه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kangavar",
+      "name": "کنگاور",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "islamabad",
+      "name": "اسلام‌آباد غرب",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "sonqor",
+      "name": "سنقر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "gilangharb",
+      "name": "گیلانغرب",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "harsin",
+      "name": "هرسین",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ravansar",
+      "name": "روانسر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "dalahu",
+      "name": "دالهو",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "salasebabajani",
+      "name": "سه‌قلعه",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "khorramabad",
+      "name": "خرم‌آباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "borujerd",
+      "name": "بروجرد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "dorud",
+      "name": "دورود",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kuhdasht",
+      "name": "کوهدشت",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "aligudarz",
+      "name": "الیگودرز",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "azna",
+      "name": "ازنا",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "nourabad",
+      "name": "نورآباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "poldokhtar",
+      "name": "پلدختر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "rumeshkan",
+      "name": "رومشکان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "difful",
+      "name": "درفول",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "ilam-city",
+      "name": "ایلام",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "dehloran",
+      "name": "دهلران",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ivan",
+      "name": "ایوان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "mehran",
+      "name": "مهران",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "abdanan",
+      "name": "آبدانان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "darrehshahr",
+      "name": "دره‌شهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "chardavol",
+      "name": "چرداول",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "malekshahi",
+      "name": "ملکشاهی",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "arkvaz",
+      "name": "ارکواز",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "bushehr-city",
+      "name": "بوشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "borazjan",
+      "name": "برازجان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "genaveh",
+      "name": "گناوه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "asaluyeh",
+      "name": "عسلویه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kangan",
+      "name": "نگان",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "dayer",
+      "name": "دیر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "deylam",
+      "name": "دیلم",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khormoj",
+      "name": "خورموج",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ganaveh",
+      "name": "گناوه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bandartaheri",
+      "name": "بندر طاهری",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "bandarabbas",
+      "name": "بندرعباس",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "minab",
+      "name": "میناب",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bandarlengeh",
+      "name": "بندرلنگه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "qeshm",
+      "name": "قشم",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kish",
+      "name": "کیش",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "hormuz",
+      "name": "هرمز",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "hengam",
+      "name": "هنگام",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "lavan",
+      "name": "لاوان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "larak",
+      "name": "لاک",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "hendurabi",
+      "name": "هندورابی",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "abumusa",
+      "name": "ابوموسی",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "greatertunb",
+      "name": "تنب بزرگ",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "lessertunb",
+      "name": "تنب کوچک",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "sirri",
+      "name": "سیری",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "farur",
+      "name": "فارور",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bani-forur",
+      "name": "بنی‌فارور",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "greaterandsmallerfarur",
+      "name": "فارور بزرگ و کوچک",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "jask",
+      "name": "جاسک",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "rudan",
+      "name": "رودان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bastak",
+      "name": "بستک",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bandarkhamir",
+      "name": "بندرخمیر",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "hajiabad",
+      "name": "حاجی‌آباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "parsian",
+      "name": "پارسیان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "zahedan",
+      "name": "زاهدان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "zabol",
+      "name": "زابل",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "chabahar",
+      "name": "چابهار",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "iranshahr",
+      "name": "ایرانشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khash",
+      "name": "خاش",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "saravan",
+      "name": "سراوان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "nikshahr",
+      "name": "نیکشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "sarbaz",
+      "name": "سرباز",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "conark",
+      "name": "چنارک",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "hirmand",
+      "name": "هیرمند",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "delgan",
+      "name": "دلگان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "qasreqand",
+      "name": "قصرقند",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "dalgan",
+      "name": "دلگان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "mohammadabad",
+      "name": "محمدآباد",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "fanooj",
+      "name": "فنوج",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "yazd-city",
+      "name": "یزد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ardakan",
+      "name": "اردکان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "mehriz",
+      "name": "مهریز",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bafq",
+      "name": "بافق",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "taft",
+      "name": "تفت",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "maybod",
+      "name": "میبد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "abadan",
+      "name": "ابرکوه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ashkezar",
+      "name": "اشکذر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bahabad",
+      "name": "بافق",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khatam",
+      "name": "خاتم",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "sadoogh",
+      "name": "صدوق",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "zarich",
+      "name": "زرچ",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "shahrekord",
+      "name": "شهرکرد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "borujen",
+      "name": "بروجن",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "farsan",
+      "name": "فارسان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "lordegan",
+      "name": "لردگان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ardehal",
+      "name": "اردل",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kouhrang",
+      "name": "کوهرنگ",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ben",
+      "name": "بن",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "samman",
+      "name": "سامان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "junqan",
+      "name": "جونقان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "yasuj",
+      "name": "یاسوج",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "dehdasht",
+      "name": "دهدشت",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "dogonbadan",
+      "name": "دوگنبدان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "gachsaran",
+      "name": "گچساران",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "bahmai",
+      "name": "بهمئی",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "kohgiluyeh",
+      "name": "کهگیلویه",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "likak",
+      "name": "لیکک",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "charam",
+      "name": "چرام",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "landeh",
+      "name": "لنده",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "gorgan",
+      "name": "گرگان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "aliabadkatul",
+      "name": "علی‌آباد کتول",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "azadshahr",
+      "name": "آزادشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kalaleh",
+      "name": "کلاله",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "gonbadkavus",
+      "name": "گنبدکاووس",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "minudasht",
+      "name": "مینودشت",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kordkuy",
+      "name": "کردکوی",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bandarturkman",
+      "name": "بندرترکمن",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "galikash",
+      "name": "گالیکش",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ramian",
+      "name": "رامیان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "azarshahr",
+      "name": "آق‌قلا",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bojnurd",
+      "name": "بجنورد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "shirvan",
+      "name": "شیروان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "esfarayen",
+      "name": "اسفراین",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "jajarm",
+      "name": "جاجرم",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "manehsaman",
+      "name": "مانه و سملقان",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "farooj",
+      "name": "فاروج",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "garmeh",
+      "name": "گرمه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "suvragh",
+      "name": "سوخراگ",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "birjand",
+      "name": "بیرجند",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "qaen",
+      "name": "قائن",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ferdows",
+      "name": "فردوس",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "tabas",
+      "name": "طبس",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "darmian",
+      "name": "دمیان",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "nehbandan",
+      "name": "نهبندان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "sarisabz",
+      "name": "سریسبز",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "khosf",
+      "name": "خوسف",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bashavard",
+      "name": "بشاورود",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "ardabil-city",
+      "name": "اردبیل",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "parsabad",
+      "name": "پارس‌آباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khalkhal",
+      "name": "خلخال",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "meshginshahr",
+      "name": "مشگین‌شهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "germi",
+      "name": "گرمی",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bilehsavar",
+      "name": "بیله‌سوار",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "namin",
+      "name": "نمین",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "nir",
+      "name": "نیر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kosar",
+      "name": "کوثر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "qazvin-city",
+      "name": "قزوین",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "takestan",
+      "name": "تاکستان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "abyek",
+      "name": "آبیک",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "boinnzahra",
+      "name": "بوئین‌زهرا",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "avaj",
+      "name": "آوج",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "tarom-e-olfat",
+      "name": "طالارالعلفا",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "alvand",
+      "name": "الوند",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "esfarvarin",
+      "name": "اسفرورین",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "arak",
+      "name": "اراک",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "saveh",
+      "name": "ساوه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khomein",
+      "name": "خمین",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "delijan",
+      "name": "دلیجان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "mahallat",
+      "name": "محلات",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "komijan",
+      "name": "کمیجان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "shazand",
+      "name": "شازند",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "tafresh",
+      "name": "تفرش",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "ashtian",
+      "name": "آشتیان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "khondab",
+      "name": "خنداب",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "zarandiyeh",
+      "name": "زرندیه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "semnan-city",
+      "name": "سمنان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "shahrood",
+      "name": "شاهرود",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "damghan",
+      "name": "دامغان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "garmsar",
+      "name": "گرمسار",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "mehdishahr",
+      "name": "مه‌دیشهر",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "aradan",
+      "name": "آرادان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "sorkheh",
+      "name": "سرخه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bayat",
+      "name": "بایات",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "miandasht",
+      "name": "میاندشت",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "shahmirzad",
+      "name": "شاه‌میرزاد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kalateh",
+      "name": "کلاته",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "chashm",
+      "name": "چشمه‌علی",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "sanandaj",
+      "name": "سنندج",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "saghez",
+      "name": "سقز",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "marivan",
+      "name": "مریوان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "baneh",
+      "name": "بانه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kamyaran",
+      "name": "کامیاران",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "bijar",
+      "name": "بیجار",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "qorveh",
+      "name": "قروه",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "dehgolan",
+      "name": "دهگلان",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "diwandareh",
+      "name": "دیواندره",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "hawraman",
+      "name": "هورامان",
+      "count": 0,
+      "status": "unmapped"
+    },
+    {
+      "cityId": "sarvabad",
+      "name": "سروآباد",
+      "count": 0,
+      "status": "empty"
+    },
+    {
+      "cityId": "kurdistan-other",
+      "name": "باشت",
+      "count": 0,
+      "status": "empty"
+    }
+  ],
+  "errors": []
+}

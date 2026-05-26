@@ -1,7 +1,8 @@
 "use client";
 
 import { useNavigate } from '@/hooks/navigation/use-navigate';
-import { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
+import { useState } from "react";
 import { Menu } from "@ark-ui/react/menu";
 import { Portal } from "@ark-ui/react/portal";
 import {
@@ -10,7 +11,6 @@ import {
   LogOut,
   LayoutDashboard,
   Bookmark,
-  FileText,
   CreditCard,
   Gift,
   GitCompareArrows,
@@ -22,12 +22,11 @@ import {
   Phone,
   Mail,
   Crown,
-  Moon,
-  Sun,
+  Store,
 } from "lucide-react";
-import { useTheme } from "next-themes";
-
 import { cn } from "@/lib/utils";
+import { routeBuilder } from '@/config/routes';
+import { canManageBusinessProfile } from '@/lib/business/can-manage-business-profile';
 import { useAppStore } from "@/lib/store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -74,6 +73,11 @@ const menuItemDefault =
 const menuItemDestructive =
   "text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-50 dark:focus:bg-red-950/30";
 
+function getAuthHeaders(): HeadersInit {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('nf_auth_token') : null;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 // ============ Component ============
 export function ArkUserMenu() {
   const {
@@ -88,6 +92,7 @@ export function ArkUserMenu() {
     conversations,
   } = useAppStore();
   const { navigateTo } = useNavigate();
+  const router = useRouter();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const unreadMsgCount = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
@@ -100,7 +105,26 @@ export function ArkUserMenu() {
 
   const handleOpenChange = (details: { open: boolean }) => {
     setMenuOpen(details.open);
-    if (details.open) fetchNotifications();
+    if (details.open) {
+      fetchNotifications();
+    }
+  };
+
+  const openMyBusinessManage = async () => {
+    setMenuOpen(false);
+    try {
+      const res = await fetch('/api/business/me', { headers: getAuthHeaders() });
+      if (res.ok) {
+        const data = (await res.json()) as { slug?: string };
+        if (data.slug) {
+          router.push(routeBuilder.businessEdit(data.slug));
+          return;
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+    router.push(routeBuilder.dashboard());
   };
 
   const nav = (view: AppView) => {
@@ -158,7 +182,7 @@ export function ArkUserMenu() {
                   </AvatarFallback>
                 </Avatar>
                 {totalBadges > 0 && (
-                  <span className="absolute -top-1 -end-1 flex size-4 items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-white animate-notification-pulse">
+                  <span className="absolute -top-1 -inset-e-1 flex size-4 items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-white animate-notification-pulse">
                     {totalBadges > 99 ? "99+" : totalBadges}
                   </span>
                 )}
@@ -172,7 +196,7 @@ export function ArkUserMenu() {
               <span className="relative">
                 <User className="size-[18px]" />
                 {totalBadges > 0 && (
-                  <span className="absolute -top-1 -end-1 flex size-4 items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-white animate-notification-pulse">
+                  <span className="absolute -top-1 -inset-e-1 flex size-4 items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-white animate-notification-pulse">
                     {totalBadges > 99 ? "99+" : totalBadges}
                   </span>
                 )}
@@ -190,11 +214,7 @@ export function ArkUserMenu() {
       </Menu.Trigger>
 
       <Portal>
-        <Menu.Positioner
-          gutter={8}
-          align="end"
-          className="z-[100]"
-        >
+        <Menu.Positioner className="z-(--z-popover) mt-2">
           <Menu.Content
             dir="rtl"
             className={cn(
@@ -266,6 +286,16 @@ export function ArkUserMenu() {
                   <LayoutDashboard className="size-4 text-muted-foreground" />
                   داشبورد
                 </Menu.Item>
+                {currentUser?.role && canManageBusinessProfile(currentUser.role) && (
+                  <Menu.Item
+                    value="my-business"
+                    className={cn(menuItemBase, menuItemDefault)}
+                    onClick={openMyBusinessManage}
+                  >
+                    <Store className="size-4 text-muted-foreground" />
+                    کسب‌وکار من
+                  </Menu.Item>
+                )}
                 {currentUser?.role === "SUPER_ADMIN" && isSuperAdminPhone(currentUser.phone) && (
                   <Menu.Item
                     value="super-admin"
@@ -283,14 +313,6 @@ export function ArkUserMenu() {
                 >
                   <Bookmark className="size-4 text-muted-foreground" />
                   علاقه‌مندی‌ها
-                </Menu.Item>
-                <Menu.Item
-                  value="proposals"
-                  className={cn(menuItemBase, menuItemDefault)}
-                  onClick={() => nav("dashboard")}
-                >
-                  <FileText className="size-4 text-muted-foreground" />
-                  پیشنهادها
                 </Menu.Item>
 
                 <Menu.Separator className="my-1 h-px bg-border/50" />

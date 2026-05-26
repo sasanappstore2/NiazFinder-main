@@ -110,11 +110,9 @@ export function getMegaMenuCanonicalSlug(category: MegaMenuCategory): string {
   return category.canonicalSlug ?? category.id;
 }
 
-export function getCategoryBrowseHref(category: MegaMenuCategory, pathname = '/browse') {
-  const slug = getMegaMenuCanonicalSlug(category);
-  const params = new URLSearchParams({ category: slug });
-  return `${pathname}?${params.toString()}`;
-}
+import { getCategoryBrowseUrl } from '@/lib/search/category-browse-url';
+
+export { getCategoryBrowseUrl as getCategoryBrowseHref } from '@/lib/search/category-browse-url';
 
 /** Link to need intake with pre-selected category (and optional city). */
 export function getPostNeedHref(category: MegaMenuCategory, citySlug?: string) {
@@ -462,7 +460,7 @@ function DesktopView({
   onClose,
   onSelect,
   getIcon,
-  getHref = getCategoryBrowseHref,
+  getHref = getCategoryBrowseUrl,
 }: {
   nestedCategories: MegaMenuCategory[];
   onClose: () => void;
@@ -499,7 +497,7 @@ function DesktopView({
         onClick={() => onClick(category)}
         onMouseEnter={onHover}
         className={cn(
-          'flex w-full items-center justify-between h-10 px-3 rounded-md cursor-pointer transition-colors duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
+          'flex w-full items-center justify-between h-10 px-3 rounded-md cursor-pointer transition-colors duration-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40',
           isActive ? 'bg-primary/10 font-semibold text-primary' : 'hover:bg-muted/50 text-foreground'
         )}
         dir="rtl"
@@ -508,7 +506,7 @@ function DesktopView({
         <div className="flex items-center gap-3 overflow-hidden">
           <span className="truncate text-sm">{category.name}</span>
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-3 shrink-0">
           <Icon className="w-5 h-5" style={{ color: getCategoryColor(category.value) }} />
           {hasSub && <ChevronLeft className="h-4 w-4 text-muted-foreground" />}
         </div>
@@ -551,7 +549,7 @@ function DesktopView({
                 <Link
                   href={getHref(effectiveCol1)}
                   onClick={() => handleItemClick(effectiveCol1)}
-                  className="flex w-full items-center h-10 px-3 font-semibold rounded-md cursor-pointer hover:bg-muted/50 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  className="flex w-full items-center h-10 px-3 font-semibold rounded-md cursor-pointer hover:bg-muted/50 text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40"
                   dir="rtl"
                   title={`مشاهده همه موارد ${effectiveCol1.name}`}
                 >
@@ -588,7 +586,7 @@ function DesktopView({
                 <Link
                   href={getHref(activeCol2)}
                   onClick={() => handleItemClick(activeCol2)}
-                  className="flex w-full items-center h-10 px-3 font-semibold rounded-md cursor-pointer hover:bg-muted/50 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  className="flex w-full items-center h-10 px-3 font-semibold rounded-md cursor-pointer hover:bg-muted/50 text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40"
                   dir="rtl"
                   title={`مشاهده همه موارد ${activeCol2.name}`}
                 >
@@ -620,7 +618,7 @@ function MobileView({
   onClose,
   onSelect,
   getIcon,
-  getHref = getCategoryBrowseHref,
+  getHref = getCategoryBrowseUrl,
 }: {
   nestedCategories: MegaMenuCategory[];
   onClose: () => void;
@@ -692,13 +690,13 @@ function MobileView({
     <div className="flex h-full flex-col">
       {/* Header with back button */}
       <header className="flex items-center p-4 border-b border-border/40">
-        <Button variant="ghost" size="icon" onClick={handleBack} className="flex-shrink-0">
+        <Button variant="ghost" size="icon" onClick={handleBack} className="shrink-0">
           <ArrowRight className="w-5 h-5" />
         </Button>
-        <div className="flex-grow text-center">
+        <div className="grow text-center">
           <SheetTitle className="text-base font-semibold">{parentCategoryName}</SheetTitle>
         </div>
-        <div className="w-10 flex-shrink-0" />
+        <div className="w-10 shrink-0" />
       </header>
 
       {/* Sliding content */}
@@ -720,7 +718,7 @@ function MobileView({
                   <>
                     <Link
                       href={getHref(parentCategory)}
-                      className="flex w-full items-center text-right h-12 px-3 text-base rounded-md cursor-pointer hover:bg-muted/50 font-semibold text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                      className="flex w-full items-center text-right h-12 px-3 text-base rounded-md cursor-pointer hover:bg-muted/50 font-semibold text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40"
                       onClick={handleSelectAll}
                       title={`مشاهده همه موارد ${parentCategoryName}`}
                     >
@@ -742,7 +740,7 @@ function MobileView({
                       <Link
                         href={getHref(cat)}
                         onClick={() => handleLinkClick(cat)}
-                        className="flex h-12 min-w-0 flex-1 items-center gap-3 px-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                        className="flex h-12 min-w-0 flex-1 items-center gap-3 px-3 text-base focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40"
                         title={`مشاهده آگهی‌های ${cat.name}`}
                       >
                         <span className="truncate">{cat.name}</span>
@@ -752,7 +750,7 @@ function MobileView({
                         <button
                           type="button"
                           onClick={() => openSubCategories(cat)}
-                          className="ml-2 flex size-10 flex-shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          className="ml-2 flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40"
                           aria-label={`نمایش زیر‌دسته‌های ${cat.name}`}
                           title={`نمایش زیر‌دسته‌های ${cat.name}`}
                         >

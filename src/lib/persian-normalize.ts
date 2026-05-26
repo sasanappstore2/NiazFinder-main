@@ -238,19 +238,22 @@ export function fuzzyScore(query: string, target: string): number {
 export function fuzzySearch<T>(
   items: T[],
   query: string,
-  fields: (item: T) => string[],
+  fields: Array<(item: T) => string> | ((item: T) => string[]),
   maxDistance: number = 1,
   minScore: number = 0.3
 ): { item: T; score: number }[] {
   if (!query || !items.length) return [];
 
   const results: { item: T; score: number }[] = [];
+  const resolveFields =
+    typeof fields === 'function' && !Array.isArray(fields)
+      ? (item: T) => fields(item)
+      : (item: T) => (fields as Array<(item: T) => string>).map((fn) => fn(item));
 
   for (const item of items) {
     let bestScore = 0;
 
-    for (const getField of fields) {
-      const fieldValue = getField(item);
+    for (const fieldValue of resolveFields(item)) {
       if (!fieldValue) continue;
 
       const score = fuzzyScore(query, fieldValue);

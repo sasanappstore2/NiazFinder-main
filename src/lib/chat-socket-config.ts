@@ -1,8 +1,8 @@
 /**
- * Socket.io chat service URL (mini-services/chat-service, default port 3004).
+ * Socket.io chat service URL (Nest backend, default port 4000).
  *
  * Set in `.env.local`:
- *   NEXT_PUBLIC_CHAT_SOCKET_URL=http://localhost:3004
+ *   NEXT_PUBLIC_CHAT_SOCKET_URL=http://localhost:4000
  *
  * Disable realtime (no console spam):
  *   NEXT_PUBLIC_CHAT_SOCKET_URL=off
@@ -26,12 +26,12 @@ export function getChatSocketConfig(): {
   }
 
   if (process.env.NODE_ENV === 'development') {
-    return { url: 'http://localhost:3004', path: SOCKET_PATH, enabled: true };
+    return { url: 'http://localhost:4000', path: SOCKET_PATH, enabled: true };
   }
 
   if (typeof window !== 'undefined') {
     return { url: window.location.origin, path: SOCKET_PATH, enabled: true };
   }
 
-  return { url: 'http://localhost:3004', path: SOCKET_PATH, enabled: true };
+  return { url: 'http://localhost:4000', path: SOCKET_PATH, enabled: true };
 }

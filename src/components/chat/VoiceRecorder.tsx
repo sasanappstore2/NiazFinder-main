@@ -52,7 +52,7 @@ export function VoiceRecorder({ onSend, onCancel }: VoiceRecorderProps) {
   const streamRef = useRef<MediaStream | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animFrameRef = useRef<number>(0);
-  const previewBarsRef = useRef<number[]>([4, 4, 4, 4, 4, 4, 4]);
+  const [previewBars, setPreviewBars] = useState<number[]>([4, 4, 4, 4, 4, 4, 4]);
 
   // ─── Cleanup on Unmount ───────────────────────────────────────────────
   useEffect(() => {
@@ -202,7 +202,7 @@ export function VoiceRecorder({ onSend, onCancel }: VoiceRecorderProps) {
             const height = 4 + Math.max(0, 1 - dist * 3) * 20 + Math.sin(Date.now() / 200 + i) * 4;
             bars.push(Math.max(4, height));
           }
-          previewBarsRef.current = bars;
+          setPreviewBars(bars);
         }
       }, 50);
     }
@@ -229,7 +229,7 @@ export function VoiceRecorder({ onSend, onCancel }: VoiceRecorderProps) {
       setIsPlaying(false);
       setPlaybackTime(0);
       if (timerRef.current) clearInterval(timerRef.current);
-      previewBarsRef.current = [4, 4, 4, 4, 4, 4, 4];
+      setPreviewBars([4, 4, 4, 4, 4, 4, 4]);
     };
 
     audio.addEventListener('ended', handleEnded);
@@ -288,7 +288,7 @@ export function VoiceRecorder({ onSend, onCancel }: VoiceRecorderProps) {
               <div className="h-3 w-3 rounded-full bg-red-500" />
               <div className="absolute h-3 w-3 rounded-full bg-red-500/40" />
             </motion.div>
-            <span className="text-sm font-mono text-red-400 tabular-nums min-w-[3.5rem]">
+            <span className="text-sm font-mono text-red-400 tabular-nums min-w-14">
               {formatTime(recordingDuration)}
             </span>
           </div>
@@ -325,7 +325,7 @@ export function VoiceRecorder({ onSend, onCancel }: VoiceRecorderProps) {
             className="h-8 w-8 shrink-0 text-red-400 hover:text-red-300 hover:bg-red-500/20"
             onClick={stopRecording}
           >
-            <div className="h-3.5 w-3.5 rounded-sm bg-red-500" />
+            <div className="h-3.5 w-3.5 rounded-xs bg-red-500" />
           </Button>
         </motion.div>
       )}
@@ -381,9 +381,7 @@ export function VoiceRecorder({ onSend, onCancel }: VoiceRecorderProps) {
                 key={i}
                 className="w-1 rounded-full"
                 animate={{
-                  height: isPlaying
-                    ? previewBarsRef.current[i]
-                    : 4,
+                  height: isPlaying ? previewBars[i] : 4,
                   backgroundColor: isPlaying
                     ? '#10b981'
                     : '#52525b',
@@ -401,7 +399,7 @@ export function VoiceRecorder({ onSend, onCancel }: VoiceRecorderProps) {
           </div>
 
           {/* Duration */}
-          <span className="text-xs font-mono text-zinc-400 tabular-nums shrink-0 min-w-[3rem]">
+          <span className="text-xs font-mono text-zinc-400 tabular-nums shrink-0 min-w-12">
             {formatTime(isPlaying ? playbackTime : totalDuration)}
           </span>
 

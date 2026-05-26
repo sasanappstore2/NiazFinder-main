@@ -1,13 +1,18 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Heart, Bookmark } from 'lucide-react';
+import type { MouseEvent } from 'react';
+import { Bookmark } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 
 interface BookmarkButtonProps {
-  itemId: string;
+  itemId?: string;
   itemType?: 'request' | 'specialist';
+  /** @deprecated Use itemId */
+  id?: string;
+  /** @deprecated Use itemType */
+  type?: 'request' | 'specialist';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   showLabel?: boolean;
@@ -20,17 +25,23 @@ const SIZE_MAP = {
 };
 
 export function BookmarkButton({
-  itemId,
-  itemType = 'request',
+  itemId: itemIdProp,
+  itemType: itemTypeProp = 'request',
+  id,
+  type,
   size = 'md',
   className,
   showLabel = false,
 }: BookmarkButtonProps) {
+  const itemId = itemIdProp ?? id ?? '';
+  const itemType = itemTypeProp ?? type ?? 'request';
   const [bookmarked, setBookmarked] = useState(false);
   const [animating, setAnimating] = useState(false);
   const sizeConfig = SIZE_MAP[size];
 
-  const toggleBookmark = useCallback(() => {
+  const toggleBookmark = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+    // Prevent navigating when the button lives inside a clickable card.
+    e.stopPropagation();
     setBookmarked((prev) => !prev);
     setAnimating(true);
     setTimeout(() => setAnimating(false), 600);
@@ -53,8 +64,8 @@ export function BookmarkButton({
       aria-label={bookmarked ? 'حذف از علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی‌ها'}
       aria-pressed={bookmarked}
     >
-      {/* Heart icon */}
-      <Heart
+      {/* Bookmark icon */}
+      <Bookmark
         className={cn(
           sizeConfig.icon,
           'transition-all duration-300',

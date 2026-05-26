@@ -1,10 +1,12 @@
 import { permanentRedirect } from 'next/navigation';
+import { legacySearchRedirectTarget } from '@/lib/search/legacy-s-redirect';
 
-/**
- * `/s` → permanent redirect to canonical country root `/s/iran`.
- * This keeps the search root reachable as a bare `/s` URL while the canonical
- * SEO target remains `/s/iran`.
- */
-export default function SearchRootRedirect() {
-  permanentRedirect('/s/iran');
+interface PageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+/** Legacy `/s` → `/n/iran` or `/b/iran` when `?type=business`. */
+export default async function LegacySearchRootPage({ searchParams }: PageProps) {
+  const sp = await searchParams;
+  permanentRedirect(legacySearchRedirectTarget('/s', sp));
 }

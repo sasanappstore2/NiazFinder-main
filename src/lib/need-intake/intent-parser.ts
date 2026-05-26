@@ -10,39 +10,61 @@ import {
   legacyValueToSlug,
   normalizeCategoryPair,
 } from '@/config/categories';
+import {
+  categorySlugForVertical,
+  classifyVertical,
+  isVerticalConfident,
+  parseAreaFromText,
+  type VerticalClassification,
+} from '@/lib/need-intake/vertical-classifier';
 
 const BUY_KEYWORDS = ['می‌خرم', 'میخرم', 'میخوام', 'میخواهم', 'نیاز دارم', 'دنبال', 'جستجو', 'پیدا کن', 'خرید'];
 const SELL_KEYWORDS = ['می‌فروشم', 'میفروشم', 'فروش', 'آگهی', 'فروشنده'];
 const RENT_KEYWORDS = ['اجاره', 'رنت', 'اجاره‌ای', 'مستاجر'];
-const REPAIR_KEYWORDS = ['تعمیر', 'تعمیرکار', 'سرویس', 'خدمات', 'نصب'];
+const REPAIR_KEYWORDS = ['تعمیر', 'تعمیرکار', 'نصب'];
 const URGENT_KEYWORDS = ['فوری', 'سریع', 'امروز', 'الان'];
 
-const RAHN_FULL_KEYWORDS = ['رهن کامل', 'رهن کامل', 'فقط رهن'];
-const RAHN_EJARE_KEYWORDS = ['رهن و اجاره', 'رهن و اجاره', 'ودیعه و اجاره', 'ودیعه'];
+const RAHN_FULL_KEYWORDS = ['رهن کامل', 'فقط رهن'];
+const RAHN_EJARE_KEYWORDS = ['رهن و اجاره', 'ودیعه و اجاره', 'ودیعه'];
 const RENT_MONTHLY_KEYWORDS = ['اجاره ماهانه', 'اجاره ماهیانه'];
 
-/** Category keyword hints → canonical slug (first match wins). */
-const CATEGORY_KEYWORDS: { slug: string; words: string[] }[] = [
-  { slug: 'agency-services', words: ['آژانس املاک', 'مشاور املاک'] },
-  { slug: 'pre-sale-services', words: ['پیش فروش', 'پیش‌فروش'] },
-  { slug: 'apartment-rent', words: ['اجاره آپارتمان', 'رهن', 'ودیعه'] },
-  { slug: 'apartment-sale', words: ['خرید آپارتمان', 'فروش آپارتمان', 'آپارتمان', 'خانه', 'ملک', 'ویلا', 'زمین'] },
-  { slug: 'car', words: ['ماشین', 'خودرو', 'پژو', 'پراید', 'سمند', 'تیبا', 'دنا'] },
-  { slug: 'mobile-phone', words: ['گوشی', 'آیفون', 'iphone', 'سامسونگ', 'شیائومی'] },
-  { slug: 'laptop', words: ['لپ‌تاپ', 'لپ تاپ', 'macbook'] },
-  { slug: 'game-console', words: ['ps5', 'playstation', 'پلی‌استیشن', 'xbox', 'کنسول'] },
-  { slug: 'repairs', words: ['تعمیر', 'تعمیرکار', 'کولر'] },
-  { slug: 'cleaning', words: ['نظافت', 'نظافتچی'] },
-  { slug: 'plumbing', words: ['لوله', 'لوله‌کشی', 'تاسیسات'] },
-  { slug: 'moving', words: ['اسباب کشی', 'اسباب‌کشی', 'باربری', 'اسبابکشی'] },
-  { slug: 'electrical', words: ['برقکار', 'برق‌کار', 'برق کاری', 'سیم کشی'] },
-  { slug: 'painting', words: ['نقاش', 'نقاشی', 'کاغذ دیواری'] },
-  { slug: 'medical-health', words: ['پزشک', 'دندانپزشک', 'درمان', 'ویزیت'] },
-  { slug: 'legal-services', words: ['وکیل', 'حقوقی', 'دادگاه'] },
-  { slug: 'it-services', words: ['طراحی سایت', 'ساخت اپ', 'سئو سایت', 'توسعه نرم'] },
-  { slug: 'it', words: ['استخدام برنامه', 'استخدام فناوری', 'جویای کار', 'نیاز به نیرو'] },
-  { slug: 'lost-found', words: ['گم شده', 'گمشده', 'پیدا شد', 'گم کردم'] },
-  { slug: 'pre-sale-services', words: ['پیش فروش', 'پیش‌فروش', 'پروژه'] },
+/** Category keyword hints → canonical slug (higher priority first). */
+const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] = [
+  { slug: 'agency-services', words: ['آژانس املاک', 'مشاور املاک'], priority: 10 },
+  { slug: 'pre-sale-services', words: ['پیش فروش', 'پیش‌فروش', 'پروژه'], priority: 10 },
+  { slug: 'apartment-rent', words: ['اجاره آپارتمان', 'رهن', 'ودیعه'], priority: 9 },
+  {
+    slug: 'apartment-sale',
+    words: [
+      'خرید آپارتمان',
+      'فروش آپارتمان',
+      'آپارتمان',
+      'خانه',
+      'خونه',
+      'خونه',
+      'ملک',
+      'ویلا',
+      'زمین',
+      'سوئیت',
+      'آپارت',
+    ],
+    priority: 9,
+  },
+  { slug: 'car', words: ['ماشین', 'خودرو', 'پژو', 'پراید', 'سمند', 'تیبا', 'دنا'], priority: 8 },
+  { slug: 'mobile-phone', words: ['گوشی', 'آیفون', 'iphone', 'سامسونگ', 'شیائومی'], priority: 8 },
+  { slug: 'laptop', words: ['لپ‌تاپ', 'لپ تاپ', 'macbook'], priority: 8 },
+  { slug: 'game-console', words: ['ps5', 'playstation', 'پلی‌استیشن', 'xbox', 'کنسول'], priority: 7 },
+  { slug: 'repairs', words: ['تعمیرکار', 'تعمیر', 'کولر'], priority: 7 },
+  { slug: 'cleaning', words: ['نظافت', 'نظافتچی'], priority: 7 },
+  { slug: 'plumbing', words: ['لوله', 'لوله‌کشی', 'تاسیسات'], priority: 7 },
+  { slug: 'moving', words: ['اسباب کشی', 'اسباب‌کشی', 'باربری', 'اسبابکشی'], priority: 7 },
+  { slug: 'electrical', words: ['برقکار', 'برق‌کار', 'برق کاری', 'سیم کشی'], priority: 7 },
+  { slug: 'painting', words: ['نقاش', 'نقاشی', 'کاغذ دیواری'], priority: 7 },
+  { slug: 'medical-health', words: ['پزشک', 'دندانپزشک', 'ویزیت'], priority: 6 },
+  { slug: 'legal-services', words: ['وکیل', 'حقوقی', 'دادگاه'], priority: 6 },
+  { slug: 'it-services', words: ['طراحی سایت', 'ساخت اپ', 'سئو سایت', 'توسعه نرم'], priority: 6 },
+  { slug: 'it', words: ['استخدام برنامه', 'استخدام فناوری', 'جویای کار', 'نیاز به نیرو'], priority: 8 },
+  { slug: 'lost-found', words: ['گم شده', 'گمشده', 'پیدا شد', 'گم کردم'], priority: 8 },
 ];
 
 function normalizeText(text: string): string {
@@ -87,7 +109,7 @@ function parseCity(text: string): string | undefined {
   return undefined;
 }
 
-function detectCategorySlug(text: string): string {
+function detectCategorySlugFromKeywords(text: string): string | null {
   if (
     text.includes('استخدام') &&
     (text.includes('برنامه') || text.includes('فناوری') || text.includes('توسعه'))
@@ -95,12 +117,28 @@ function detectCategorySlug(text: string): string {
     return 'it';
   }
 
+  let best: { slug: string; priority: number } | null = null;
   for (const row of CATEGORY_KEYWORDS) {
-    if (row.words.some((w) => text.includes(w))) return row.slug;
+    if (row.words.some((w) => text.includes(w))) {
+      if (!best || row.priority > best.priority) {
+        best = { slug: row.slug, priority: row.priority };
+      }
+    }
   }
+  if (best) return best.slug;
 
   for (const cat of CANONICAL_CATEGORIES) {
     if (text.includes(cat.title.toLowerCase())) return cat.slug;
+  }
+  return null;
+}
+
+function detectCategorySlug(text: string, classification: VerticalClassification): string {
+  const fromKeywords = detectCategorySlugFromKeywords(text);
+  if (fromKeywords) return fromKeywords;
+
+  if (isVerticalConfident(classification) || classification.score > 0) {
+    return categorySlugForVertical(classification.vertical, text);
   }
 
   return 'services';
@@ -132,26 +170,38 @@ function parseProductDealType(text: string): string | undefined {
 }
 
 function parsePropertyKind(text: string): string | undefined {
-  if (text.includes('آپارتمان')) return 'apartment';
-  if (text.includes('ویلا') || text.includes('خانه')) return 'villa';
+  if (text.includes('آپارتمان') || text.includes('آپارت')) return 'apartment';
+  if (text.includes('ویلا') || text.includes('خانه') || text.includes('خونه')) {
+    return 'villa';
+  }
   if (text.includes('زمین') || text.includes('کلنگی')) return 'land';
   if (text.includes('دفتر')) return 'office';
   if (text.includes('مغازه')) return 'shop';
+  if (text.includes('خونه') || text.includes('خانه')) return 'apartment';
   return undefined;
 }
 
-function detectIntent(text: string, categorySlug: string): IntentType {
+function detectIntent(
+  text: string,
+  categorySlug: string,
+  classification: VerticalClassification
+): IntentType {
   const allowed = getIntentsForCategory(categorySlug);
   const path = getCategoryPath(categorySlug);
   const root = path[0]?.slug ?? categorySlug;
 
-  if (root === 'real-estate' || categorySlug.includes('apartment') || categorySlug.includes('rent')) {
+  if (
+    root === 'real-estate' ||
+    categorySlug.includes('apartment') ||
+    categorySlug.includes('rent') ||
+    classification.vertical === 'real-estate'
+  ) {
     const deal = parsePropertyDealType(text);
     if (deal === 'sell' && allowed.includes('property_listing')) return 'property_listing';
     if (allowed.includes('property_search')) return 'property_search';
   }
 
-  if (root === 'vehicles') {
+  if (root === 'vehicles' || classification.vertical === 'vehicles') {
     if (parseVehicleDealType(text) === 'service' && allowed.includes('vehicle_service')) {
       return 'vehicle_service';
     }
@@ -165,7 +215,7 @@ function detectIntent(text: string, categorySlug: string): IntentType {
     return allowed.includes('job_search') ? 'job_search' : allowed[0];
   }
 
-  if (REPAIR_KEYWORDS.some((w) => text.includes(w))) {
+  if (REPAIR_KEYWORDS.some((w) => text.includes(w)) && classification.vertical === 'services') {
     if (allowed.includes('service_request')) return 'service_request';
     if (allowed.includes('vehicle_service')) return 'vehicle_service';
   }
@@ -176,10 +226,25 @@ function detectIntent(text: string, categorySlug: string): IntentType {
     if (allowed.includes('property_listing')) return 'property_listing';
   }
 
-  if (BUY_KEYWORDS.some((w) => text.includes(w)) || text.includes('میخوام')) {
+  if (classification.vertical === 'real-estate' && allowed.includes('property_search')) {
+    return 'property_search';
+  }
+
+  if (classification.vertical === 'products' && allowed.includes('product_search')) {
+    return 'product_search';
+  }
+
+  if (classification.vertical === 'vehicles' && allowed.includes('vehicle_search')) {
+    return 'vehicle_search';
+  }
+
+  const hasConcreteBuy =
+    BUY_KEYWORDS.some((w) => text.includes(w)) &&
+    classification.vertical !== 'services';
+  if (hasConcreteBuy) {
+    if (allowed.includes('property_search')) return 'property_search';
     if (allowed.includes('product_search')) return 'product_search';
     if (allowed.includes('vehicle_search')) return 'vehicle_search';
-    if (allowed.includes('property_search')) return 'property_search';
   }
 
   return allowed[0] ?? DEFAULT_INTENT;
@@ -194,11 +259,17 @@ function buildEntities(
   const path = getCategoryPath(categorySlug);
   const root = path[0]?.slug ?? categorySlug;
 
+  const area = parseAreaFromText(text);
+  if (area) entities.area = area;
+
   if (root === 'real-estate' || intentType.startsWith('property')) {
     const deal = parsePropertyDealType(text);
     if (deal) entities.dealType = deal;
     const kind = parsePropertyKind(text);
     if (kind) entities.propertyKind = kind;
+    if (!entities.dealType && (text.includes('میخوام') || text.includes('میخواهم'))) {
+      entities.dealType = 'buy';
+    }
   }
 
   if (root === 'vehicles' || intentType.startsWith('vehicle')) {
@@ -221,8 +292,14 @@ function buildEntities(
     if (text.includes('کار پیدا') || text.includes('جویای کار')) entities.roleType = 'seeking';
   }
 
-  if (text.includes('تعمیر')) entities.serviceCategory = 'repairs';
-  if (text.includes('نظافت')) entities.serviceCategory = 'cleaning';
+  if (root === 'services' || intentType === 'service_request') {
+    if (text.includes('تعمیر') || text.includes('کولر')) entities.serviceCategory = 'repairs';
+    if (text.includes('نظافت')) entities.serviceCategory = 'cleaning';
+    if (text.includes('لوله')) entities.serviceCategory = 'plumbing';
+    if (text.includes('اسباب')) entities.serviceCategory = 'moving';
+    if (text.includes('برق')) entities.serviceCategory = 'electrical';
+    if (text.includes('نقاش')) entities.serviceCategory = 'painting';
+  }
 
   if (root === 'social') {
     if (text.includes('گم') || text.includes('پیدا')) entities.socialType = 'lost';
@@ -233,41 +310,72 @@ function buildEntities(
   return entities;
 }
 
-function buildTitle(raw: string, intent: IntentType, entities: Record<string, string>): string {
-  const trimmed = raw.trim().slice(0, 80);
-  if (trimmed.length >= 10) return trimmed;
-
+function buildTitle(
+  intent: IntentType,
+  entities: Record<string, string>,
+  city?: string,
+  area?: string
+): string {
   const deal = entities.dealType;
-  if (deal === 'rent_rahn_full') return 'درخواست ملک — رهن کامل';
-  if (deal === 'rent_rahn_ejare') return 'درخواست ملک — رهن و اجاره';
-  if (deal === 'buy') return 'جستجوی خرید';
-  if (deal === 'sell') return 'ثبت آگهی فروش';
+  const kind = entities.propertyKind;
+  const parts: string[] = [];
 
-  const labels: Record<string, string> = {
-    vehicle_search: 'جستجوی خودرو',
-    property_search: 'جستجوی ملک',
-    product_search: 'جستجوی کالا',
-    service_request: 'درخواست خدمات',
-    job_search: 'آگهی استخدام',
-  };
-  return labels[intent] ?? 'ثبت نیاز';
+  if (intent.startsWith('property')) {
+    if (deal === 'rent_rahn_full') return 'جستجوی ملک — رهن کامل';
+    if (deal === 'rent_rahn_ejare') return 'جستجوی ملک — رهن و اجاره';
+    if (deal === 'rent_monthly') parts.push('اجاره');
+    if (deal === 'buy') parts.push('خرید');
+    if (deal === 'sell') parts.push('فروش');
+    if (kind === 'apartment') parts.push('آپارتمان');
+    else if (kind === 'villa') parts.push('خانه');
+    else parts.push('ملک');
+  } else {
+    const labels: Record<string, string> = {
+      vehicle_search: 'جستجوی خودرو',
+      property_search: 'جستجوی ملک',
+      product_search: 'جستجوی کالا',
+      service_request: 'درخواست خدمات',
+      job_search: 'آگهی استخدام',
+    };
+    return labels[intent] ?? 'ثبت نیاز';
+  }
+
+  if (area) parts.push(area);
+  if (city) parts.push(city);
+  return parts.join(' — ').slice(0, 80) || 'جستجوی ملک';
+}
+
+function buildDescription(rawText: string, entities: Record<string, string>, city?: string): string {
+  const area = entities.area;
+  const hints: string[] = [];
+  if (area && city) hints.push(`محدوده: ${area}، ${city}`);
+  else if (area) hints.push(`محدوده: ${area}`);
+  else if (city) hints.push(`شهر: ${city}`);
+  const base = rawText.trim();
+  if (hints.length === 0) return base;
+  return `${base}\n${hints.join(' · ')}`.trim();
 }
 
 export function parseIntentFromText(rawText: string): ParsedIntent {
   const text = normalizeText(rawText);
-  const categorySlug = detectCategorySlug(text);
-  const intentType = detectIntent(text, categorySlug);
+  const classification = classifyVertical(rawText);
+  const categorySlug = detectCategorySlug(text, classification);
+  const intentType = detectIntent(text, categorySlug, classification);
   const budget = parseBudget(text);
   const city = parseCity(text);
   const urgent = URGENT_KEYWORDS.some((w) => text.includes(w));
   const entities = buildEntities(text, categorySlug, intentType);
+  const area = entities.area;
 
-  let confidence = 0.55;
-  if (categorySlug !== 'services') confidence += 0.12;
-  if (entities.dealType) confidence += 0.15;
-  if (budget.max) confidence += 0.08;
-  if (city) confidence += 0.08;
-  if (rawText.trim().length > 20) confidence += 0.08;
+  let confidence = 0.5;
+  if (categorySlug !== 'services') confidence += 0.1;
+  if (entities.dealType) confidence += 0.12;
+  if (entities.propertyKind) confidence += 0.08;
+  if (budget.max) confidence += 0.06;
+  if (city) confidence += 0.06;
+  if (area) confidence += 0.08;
+  if (rawText.trim().length > 15) confidence += 0.05;
+  if (isVerticalConfident(classification)) confidence += 0.15;
   confidence = Math.min(confidence, 0.95);
 
   const pair = normalizeCategoryPair(categorySlug);
@@ -276,8 +384,8 @@ export function parseIntentFromText(rawText: string): ParsedIntent {
     intentType,
     categorySlug: pair.categorySlug,
     subcategorySlug: pair.subcategorySlug,
-    title: buildTitle(rawText, intentType, entities),
-    description: rawText.trim(),
+    title: buildTitle(intentType, entities, city, area),
+    description: buildDescription(rawText, entities, city),
     budgetMin: budget.min,
     budgetMax: budget.max,
     city,
@@ -286,6 +394,11 @@ export function parseIntentFromText(rawText: string): ParsedIntent {
     entities,
     rawText: rawText.trim(),
   };
+}
+
+/** Expose classification for API / coherence layer. */
+export function classifyNeedVertical(rawText: string): VerticalClassification {
+  return classifyVertical(rawText);
 }
 
 export function resolveCategorySlugFromLegacy(value: string): string | null {

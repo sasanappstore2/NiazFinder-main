@@ -45,11 +45,11 @@ const container = {
 };
 const item = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const } },
 };
 const fadeIn = {
   initial: { opacity: 0, y: 14 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' as const } },
 };
 
 // ─── Avatar color generator ───────────────────────────
@@ -74,12 +74,14 @@ function getAvatarColor(name: string) {
   const hash = name.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 }
-function getAvatarSolid(name: string) {
-  const hash = name.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+function getAvatarSolid(name?: string) {
+  const safe = name?.trim() || '?';
+  const hash = safe.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   return AVATAR_SOLID[hash % AVATAR_SOLID.length];
 }
-function getInitials(name: string) {
-  const parts = name.trim().split(' ');
+function getInitials(name?: string) {
+  const safe = name?.trim() || '?';
+  const parts = safe.split(/\s+/);
   return parts.length > 1 ? parts[0][0] + parts[1][0] : parts[0][0];
 }
 
@@ -173,9 +175,9 @@ function FeaturedCard({ user, onFollow, onView }: {
     <motion.div
       whileHover={{ y: -4, scale: 1.02 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="min-w-[220px] max-w-[220px] snap-center shrink-0"
+      className="w-[min(220px,85vw)] min-w-[min(220px,85vw)] max-w-[220px] snap-center shrink-0"
     >
-      <Card className="border-border/40 overflow-hidden bg-gradient-to-b from-card to-card/80 backdrop-blur-sm transition-shadow duration-300 hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-200/60 dark:hover:border-emerald-800/60">
+      <Card className="border-border/40 overflow-hidden bg-linear-to-b from-card to-card/80 backdrop-blur-xs transition-shadow duration-300 hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-200/60 dark:hover:border-emerald-800/60">
         <CardContent className="p-5">
           {/* Avatar + Name */}
           <div className="mb-4 flex flex-col items-center text-center">
@@ -394,7 +396,9 @@ const FollowState = (() => {
 
   function subscribe(listener: () => void) {
     state.listeners.add(listener);
-    return () => state.listeners.delete(listener);
+    return () => {
+      state.listeners.delete(listener);
+    };
   }
 
   function notify() {
@@ -710,8 +714,8 @@ export function UserDiscovery() {
   }, [push]);
 
   return (
-    <div className="min-h-screen bg-muted/20" dir="rtl">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="w-full min-h-[50vh] bg-muted/20" dir="rtl">
+      <div className="w-full py-4 sm:py-6">
 
         {/* ─── Header ────────────────────────────── */}
         <motion.div {...fadeIn} className="mb-8">

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import type { ProposalStatus } from '@prisma/client';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 
@@ -58,13 +59,13 @@ export async function PUT(
     }
 
     // Map frontend action to DB status
-    const statusMap: Record<string, string> = {
+    const statusMap: Record<string, ProposalStatus> = {
       ACCEPT: 'ACCEPTED',
       REJECT: 'REJECTED',
       WITHDRAW: 'WITHDRAWN',
     };
 
-    const newStatus = statusMap[status];
+    const newStatus = statusMap[status] as ProposalStatus;
 
     // Only request owner can ACCEPT or REJECT
     if ((status === 'ACCEPT' || status === 'REJECT') && proposal.request.userId !== user.id) {

@@ -12,6 +12,7 @@ import { formatBudgetRange, getTimeAgo, getPriorityLabel } from '@/lib/constants
 import type { ServiceRequest } from '@/lib/types';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
 import { routeBuilder } from '@/config/routes';
+import { useLocationScopeApiParams } from '@/hooks/use-location-scope-api-params';
 
 // Category icon mapping
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -112,7 +113,7 @@ function RequestCard({ request }: { request: ServiceRequest }) {
 
           {/* Meta */}
           <div className="mb-4 space-y-2">
-            <div className="flex items-center gap-2 rounded-lg bg-emerald-500/[0.06] px-2.5 py-1.5" itemProp="offers" itemScope itemType="https://schema.org/Offer">
+            <div className="flex items-center gap-2 rounded-lg bg-emerald-500/6 px-2.5 py-1.5" itemProp="offers" itemScope itemType="https://schema.org/Offer">
               <div className="flex size-6 items-center justify-center rounded-md bg-emerald-500/10" aria-hidden="true">
                 <DollarSign className="size-3.5 text-emerald-600" />
               </div>
@@ -146,13 +147,15 @@ function RequestCard({ request }: { request: ServiceRequest }) {
 }
 
 export function FeaturedRequests() {
+  const { navigateTo } = useNavigate();
   const requests = useAppStore((s) => s.requests);
   const isLoading = useAppStore((s) => s.isLoading);
   const fetchRequests = useAppStore((s) => s.fetchRequests);
+  const geoParams = useLocationScopeApiParams();
 
   useEffect(() => {
-    fetchRequests({ limit: '6', status: 'OPEN' });
-  }, [fetchRequests]);
+    fetchRequests({ limit: '6', status: 'OPEN', ...geoParams });
+  }, [fetchRequests, geoParams]);
 
   return (
     <section id="requests" className="section-padding bg-background" aria-label="آخرین نیازها" itemScope itemType="https://schema.org/ItemList">

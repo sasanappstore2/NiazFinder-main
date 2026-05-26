@@ -20,7 +20,17 @@ export function seedAnswersFromParsed(
   if (e.socialType) answers.socialType = e.socialType;
   if (e.projectName) answers.projectName = e.projectName;
 
-  if (parsed.city && !answers.location) answers.location = parsed.city;
+  if (parsed.neighborhoodSlug) {
+    answers._neighborhoodSlug = parsed.neighborhoodSlug;
+  }
+
+  if (e.area && parsed.city && !answers.location) {
+    answers.location = `${e.area}، ${parsed.city}`;
+  } else if (e.area && !answers.location) {
+    answers.location = String(e.area);
+  } else if (parsed.city && !answers.location) {
+    answers.location = parsed.city;
+  }
   if (parsed.budgetMax && !answers.budget) answers.budget = parsed.budgetMax;
   if (parsed.budgetMax && e.dealType === 'rent_rahn_full' && !answers.rahnAmount) {
     answers.rahnAmount = parsed.budgetMax;

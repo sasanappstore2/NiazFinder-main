@@ -11,9 +11,9 @@ export function FloatingCTA() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-[calc(var(--mobile-nav-offset)+3.5rem)] end-4 z-[var(--z-fixed-overlay)] sm:bottom-6 sm:end-6 flex flex-col items-end gap-2">
+    <div className="fixed bottom-[calc(var(--mobile-nav-offset)+3.5rem)] inset-e-4 z-(--z-fixed-overlay) sm:bottom-6 sm:inset-e-6 flex flex-col items-end gap-2">
       {isOpen && (
-        <div className="animate-slide-down flex flex-col gap-2 rounded-2xl border border-border/40 bg-card/90 p-3 shadow-xl shadow-black/[0.08] backdrop-blur-xl">
+        <div className="animate-slide-down flex flex-col gap-2 rounded-2xl border border-border/40 bg-card/90 p-3 shadow-xl shadow-black/8 backdrop-blur-xl">
           <Link
             href={routeBuilder.chat()}
             className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-primary/10 hover:text-primary"

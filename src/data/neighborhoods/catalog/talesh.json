@@ -1,0 +1,32 @@
+{
+  "cityId": "talesh",
+  "cityName": "طوالش",
+  "source": "divar",
+  "importedAt": "2026-05-26T12:33:27.077Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "تالش",
+      "name": "تالش",
+      "nameEn": "تالش"
+    },
+    {
+      "id": "جوکندان",
+      "name": "جوکندان",
+      "nameEn": "جوکندان"
+    },
+    {
+      "id": "طولارود",
+      "name": "طولارود",
+      "nameEn": "طولارود"
+    },
+    {
+      "id": "هشتپر",
+      "name": "هشتپر",
+      "nameEn": "هشتپر",
+      "areas": [
+        "خرمشهر"
+      ]
+    }
+  ]
+}

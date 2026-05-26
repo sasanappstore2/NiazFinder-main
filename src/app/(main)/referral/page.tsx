@@ -1,15 +1,16 @@
 'use client';
 
+import { PageContainer } from '@/components/layout/PageContainer';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { ReferralPage } from '@/components/dashboard/ReferralPage';
 
 export default function ReferralRoute() {
   return (
-    <div className="max-w-4xl mx-auto px-4 pt-2 pb-12">
+    <PageContainer width="content">
       <Breadcrumb />
       <Separator className="my-4" />
       <ReferralPage />
-    </div>
+    </PageContainer>
   );
 }

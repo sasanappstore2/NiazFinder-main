@@ -14,6 +14,7 @@ import { buildNeedBriefSummary } from '@/lib/need-match/brief-summary';
 import type { NeedMatchContext } from '@/contracts/need-match';
 import type { ServiceRequest } from '@/lib/types';
 import { ContactActions } from '@/components/contact/ContactActions';
+import { RequestResubmitBanner } from '@/components/need/RequestResubmitBanner';
 
 export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string } = {}) {
   const params = useParams();
@@ -113,6 +114,26 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
         onBack={goBack}
         onReport={() => setReportOpen(true)}
       />
+
+      {isOwner && request.moderationStatus === 'REJECTED_SOFT' && (
+        <div className="mx-auto max-w-6xl px-4 pb-4">
+          <RequestResubmitBanner
+            requestId={request.id}
+            rejectionReason={request.rejectionReason}
+            onResubmitted={() => {
+              void fetchRequestDetail(requestId).then((r) => r && setRequest(r));
+            }}
+          />
+        </div>
+      )}
+
+      {isOwner && request.moderationStatus === 'PENDING' && (
+        <div className="mx-auto max-w-6xl px-4 pb-4">
+          <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 px-4 py-3 text-sm text-sky-900 dark:text-sky-100">
+            آگهی شما در صف بازبینی است و پس از تأیید در بازار نمایش داده می‌شود.
+          </div>
+        </div>
+      )}
 
       <MatchedBusinessesSection
         requestId={request.id}

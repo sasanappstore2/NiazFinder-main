@@ -23,7 +23,7 @@ export function SpecialistCardSkeleton({ className }: SpecialistCardSkeletonProp
       {/* Rating stars placeholder */}
       <div className="flex items-center gap-1.5">
         {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="size-4 rounded-sm bg-primary/10" />
+          <Skeleton key={i} className="size-4 rounded-xs bg-primary/10" />
         ))}
         <Skeleton className="h-3.5 w-8 ms-1 rounded" />
         <Skeleton className="h-3.5 w-20 rounded" />

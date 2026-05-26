@@ -1,15 +1,25 @@
-/**
- * Build browse URLs with saved city from cookies + listing type.
- */
-
-import { getCategoryPath, legacyValueToSlug } from '@/config/categories';
+import { legacyValueToSlug } from '@/config/categories';
+import { getBrowseUrlForCategorySlug } from '@/lib/search/category-browse-url';
 import { COUNTRY_SLUG } from '@/config/locations';
 import { routeBuilder } from '@/config/routes';
 import type { BrowseFilters } from '@/lib/filters/parser';
 import { cookieManager } from '@/lib/cookie-manager';
 import { citiesToSlugs, isKnownCitySlug } from '@/lib/search/city-slugs';
+import {
+  scopeFromCookie,
+  scopeToBrowseFilters,
+  type LocationScope,
+} from '@/lib/search/location-scope';
 
 export type BrowseListingType = 'need' | 'business';
+
+export type BrowseUrlOptions = {
+  type: BrowseListingType;
+  categorySlug?: string;
+  parentCategorySlug?: string;
+  q?: string;
+  citySlug?: string;
+};
 
 /** Primary city slug from cookie, or country-wide. */
 export function getSavedCitySlug(): string {
@@ -23,28 +33,25 @@ export function getSavedCitySlug(): string {
   return COUNTRY_SLUG;
 }
 
-export function getBrowseUrl(opts: {
-  type: BrowseListingType;
-  categorySlug?: string;
-  parentCategorySlug?: string;
-  q?: string;
-  citySlug?: string;
-}): string {
-  const cities = typeof window !== 'undefined'
-    ? cookieManager.getPreferences().location.selectedCities
-    : [];
-  const slugs = cities.length > 1 ? citiesToSlugs(cities) : [];
+function locationFromScope(scope: LocationScope, citySlugOverride?: string): string {
+  if (citySlugOverride) return citySlugOverride;
+  if (scope.mode === 'city') return scope.citySlug;
+  return COUNTRY_SLUG;
+}
 
-  const filters: Partial<BrowseFilters> = { type: opts.type };
+/** Build browse URL from an explicit location scope (SSR-safe when scope is country). */
+export function buildBrowseUrl(scope: LocationScope, opts: BrowseUrlOptions): string {
+  const geoFilters = scopeToBrowseFilters(scope);
+
+  const market = opts.type === 'business' ? 'business' : 'need';
+  const filters: Partial<BrowseFilters> = { ...geoFilters };
   if (opts.q?.trim()) filters.q = opts.q.trim();
-  if (slugs.length > 1) filters.cities = slugs;
 
-  const location =
-    opts.citySlug ??
-    (cities.length === 1 ? citiesToSlugs(cities)[0] : COUNTRY_SLUG);
+  const location = locationFromScope(scope, opts.citySlug);
 
   if (opts.parentCategorySlug && opts.categorySlug) {
     return routeBuilder.search({
+      market,
       location,
       parentCategory: opts.parentCategorySlug,
       category: opts.categorySlug,
@@ -54,13 +61,24 @@ export function getBrowseUrl(opts: {
 
   if (opts.categorySlug) {
     return routeBuilder.search({
+      market,
       location,
       category: opts.categorySlug,
       filters,
     });
   }
 
-  return routeBuilder.search({ location, filters });
+  return routeBuilder.search({ market, location, filters });
+}
+
+/** Country-wide browse URL — matches SSR output for hydration. */
+export function getBrowseUrlSSR(opts: BrowseUrlOptions): string {
+  return buildBrowseUrl({ mode: 'country' }, opts);
+}
+
+export function getBrowseUrl(opts: BrowseUrlOptions): string {
+  const scope = typeof window !== 'undefined' ? scopeFromCookie() : { mode: 'country' as const };
+  return buildBrowseUrl(scope, opts);
 }
 
 /** SPA legacy views → browse URL with saved city + optional category/search. */
@@ -72,19 +90,8 @@ export function resolveLegacyBrowsePath(
   const legacyCat = params?.categoryId ?? params?.categorySlug;
   const slug = legacyCat ? legacyValueToSlug(legacyCat) : null;
 
-  if (slug && type === 'need') {
-    const path = getCategoryPath(slug);
-    const leaf = path[path.length - 1];
-    if (leaf && leaf.depth === 2 && path.length >= 2) {
-      const parent = path[path.length - 2]!;
-      return getBrowseUrl({
-        type: 'need',
-        parentCategorySlug: parent.slug,
-        categorySlug: leaf.slug,
-        q: params?.search,
-      });
-    }
-    return getBrowseUrl({ type: 'need', categorySlug: slug, q: params?.search });
+  if (slug) {
+    return getBrowseUrlForCategorySlug(slug, { type, q: params?.search });
   }
 
   return getBrowseUrl({ type, q: params?.search });

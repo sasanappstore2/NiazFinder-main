@@ -1,21 +1,29 @@
-# Need detail — business matching
+# Need match — rule-based business ranking
 
-## Flow
+## Overview
 
-1. **Viewport (`NeedBriefingPanel`)** — compact need summary without scrolling.
-2. **Scroll** — `GET /api/requests/:id/matched-businesses` loads ranked businesses (lazy via IntersectionObserver).
-3. **Owner** — collapsible `OwnerProposalsSection` for incoming proposals.
+When a need is published, [`rank-businesses.ts`](../src/lib/need-match/rank-businesses.ts) finds candidate businesses and scores them deterministically:
 
-## AI
+- Category slug overlap
+- Same city / province
+- Address / neighborhood proximity
+- Keyword overlap in title/description
 
-Uses same env as need intake:
+No LLM re-ranking. Results exposed via `GET /api/requests/[id]/matched-businesses`.
 
-- `NEED_INTAKE_AI_ENABLED` — LLM re-ranking of candidates
-- Fallback: rule-based category/city/keyword scoring
+## API response meta
 
-## Files
+```json
+{
+  "meta": {
+    "source": "rules",
+    "engine": "internal",
+    "candidateCount": 12
+  }
+}
+```
 
-- `src/lib/need-match/*`
-- `src/app/api/requests/[id]/matched-businesses/route.ts`
-- `src/components/need/NeedBriefingPanel.tsx`
-- `src/components/need/MatchedBusinessesSection.tsx`
+## Related
+
+- [`candidate-query.ts`](../src/lib/need-match/candidate-query.ts) — SQL + rule scoring
+- [`brief-summary.ts`](../src/lib/need-match/brief-summary.ts) — short Persian summary for UI

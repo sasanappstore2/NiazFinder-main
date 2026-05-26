@@ -31,6 +31,8 @@ import {
   isCountryLocation,
   type CanonicalCity,
 } from '@/config/locations';
+import type { BrowseMarket } from '@/config/market-routes';
+import { canonicalMarketPath } from '@/config/market-routes';
 
 export type SearchLocation =
   | { kind: 'country'; slug: typeof COUNTRY_SLUG }
@@ -116,10 +118,14 @@ export function activeCitySlug(ctx: SearchContext): string | null {
  * Generate the canonical URL for a resolved context (no query string).
  * Useful for `<link rel="canonical">` tags.
  */
-export function canonicalPath(ctx: SearchContext): string {
-  if (ctx.kind === 'invalid-location' || ctx.kind === 'invalid-segments') return '/s/iran';
+export function canonicalPath(ctx: SearchContext, market: BrowseMarket = 'need'): string {
+  if (ctx.kind === 'invalid-location' || ctx.kind === 'invalid-segments') {
+    return canonicalMarketPath(market, COUNTRY_SLUG);
+  }
   const locSlug = ctx.location.kind === 'country' ? COUNTRY_SLUG : ctx.location.city.slug;
-  if (ctx.kind === 'all') return `/s/${locSlug}`;
-  if (ctx.kind === 'category') return `/s/${locSlug}/${ctx.category.slug}`;
-  return `/s/${locSlug}/${ctx.parent.slug}/${ctx.category.slug}`;
+  if (ctx.kind === 'all') return canonicalMarketPath(market, locSlug);
+  if (ctx.kind === 'category') {
+    return canonicalMarketPath(market, locSlug, [ctx.category.slug]);
+  }
+  return canonicalMarketPath(market, locSlug, [ctx.parent.slug, ctx.category.slug]);
 }

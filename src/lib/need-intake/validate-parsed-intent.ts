@@ -24,6 +24,8 @@ export const llmParsedIntentSchema = z.object({
   urgency: urgencySchema,
   confidence: z.number().min(0).max(1).optional(),
   entities: z.record(z.string(), z.string()).optional(),
+  neighborhoodSlug: z.string().nullish(),
+  missingFields: z.array(z.string()).optional(),
 });
 
 export type LlmParsedIntentRaw = z.infer<typeof llmParsedIntentSchema>;
@@ -75,5 +77,9 @@ export function validateAndNormalizeLlmParsed(
     confidence,
     entities: { ...ruleFallback.entities, ...(d.entities ?? {}) },
     rawText,
+    neighborhoodSlug:
+      d.neighborhoodSlug?.trim() || ruleFallback.neighborhoodSlug || undefined,
+    missingFields:
+      d.missingFields?.length ? d.missingFields : ruleFallback.missingFields,
   };
 }

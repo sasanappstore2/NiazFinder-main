@@ -1257,7 +1257,7 @@ Work Log:
    - Two quick actions: phone call (tel: link) and WhatsApp (wa.me link)
    - Smooth slide-down animation for popup
    - X rotation animation on open/close
-   - Fixed position: bottom-20 end-4 (above mobile nav), bottom-6 on desktop
+   - Fixed position: bottom-20 inset-e-4 (above mobile nav), bottom-6 on desktop
    - Only shown on homepage (isHome condition)
    - Glassmorphism popup with backdrop-blur
 
@@ -1908,7 +1908,7 @@ Task: Remove two green floating circles (+ button and call button) from left sid
 Work Log:
 - Identified two floating action buttons on the left side of the page:
   1. QuickActions (green + FAB button) at fixed bottom-24 left-4
-  2. FloatingCTA (green phone/call button) at fixed bottom-20 end-4
+  2. FloatingCTA (green phone/call button) at fixed bottom-20 inset-e-4
 - Removed both <QuickActions /> and <FloatingCTA /> from src/app/page.tsx
 - Removed their import statements from page.tsx
 - Cleaned up extra empty lines left after removal

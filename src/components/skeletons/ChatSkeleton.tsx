@@ -29,7 +29,7 @@ export function ChatSkeleton({ className }: ChatSkeletonProps) {
               <div className="relative shrink-0">
                 <Skeleton className="size-10 rounded-full" />
                 {i < 3 && (
-                  <Skeleton className="absolute bottom-0 end-0 size-3 rounded-full border-2 border-card bg-emerald-400/60" />
+                  <Skeleton className="absolute bottom-0 inset-e-0 size-3 rounded-full border-2 border-card bg-emerald-400/60" />
                 )}
               </div>
 

@@ -1,4 +1,5 @@
 import { db } from '@/lib/db';
+import { budgetToJson } from '@/lib/budget';
 import type { NeedCardSnapshot } from '@/contracts/need-card-snapshot';
 import type { NeedMatchContext } from '@/contracts/need-match';
 
@@ -31,8 +32,8 @@ export async function buildNeedCardSnapshot(
     title: r.title,
     slug: r.slug,
     description: r.description.slice(0, 500),
-    budgetMin: r.budgetMin ?? undefined,
-    budgetMax: r.budgetMax ?? undefined,
+    budgetMin: budgetToJson(r.budgetMin) ?? undefined,
+    budgetMax: budgetToJson(r.budgetMax) ?? undefined,
     budgetType: r.budgetType,
     city: r.city ?? undefined,
     province: r.province ?? undefined,

@@ -93,19 +93,26 @@ export async function previewListingApi(
 export async function publishNeedApi(
   draft: NeedDraft,
   token?: string | null,
-  listingPreview?: ListingPreview
-): Promise<{ id: string; slug: string; title: string }> {
+  listingPreview?: ListingPreview,
+  sessionId?: string | null,
+  options?: { linkToBusinessProfile?: boolean }
+): Promise<{ id: string; slug: string; title: string; message?: string }> {
   const res = await fetch('/api/need-intake/publish', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify({ draft, listingPreview }),
+    body: JSON.stringify({
+      draft,
+      listingPreview,
+      sessionId: sessionId ?? undefined,
+      linkToBusinessProfile: options?.linkToBusinessProfile ?? false,
+    }),
   });
   const data = await res.json();
   if (!res.ok) {
     throw new Error((data as { error?: string }).error || 'خطا در ثبت نیاز');
   }
-  return data as { id: string; slug: string; title: string };
+  return data as { id: string; slug: string; title: string; message?: string };
 }

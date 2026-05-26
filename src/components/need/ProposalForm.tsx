@@ -194,15 +194,15 @@ export function ProposalForm() {
   return (
     <div className="w-full max-w-2xl mx-auto" dir="rtl">
       <div>
-        <Card className="overflow-hidden rounded-2xl border-border/50 shadow-lg shadow-black/[0.04]">
+        <Card className="overflow-hidden rounded-2xl border-border/50 shadow-lg shadow-black/4">
           {/* Gradient accent bar */}
-          <div className="h-1.5 bg-gradient-to-l from-emerald-400 via-teal-500 to-emerald-600" aria-hidden="true" />
+          <div className="h-1.5 bg-linear-to-l from-emerald-400 via-teal-500 to-emerald-600" aria-hidden="true" />
 
           {/* ── Header ── */}
           <CardHeader className="pb-4 pt-6 px-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-b from-emerald-100 to-emerald-50 dark:from-emerald-900/40 dark:to-emerald-900/20 text-lg shrink-0 shadow-sm" aria-hidden="true">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-linear-to-b from-emerald-100 to-emerald-50 dark:from-emerald-900/40 dark:to-emerald-900/20 text-lg shrink-0 shadow-sm" aria-hidden="true">
                   {request.categoryIcon || '📋'}
                 </div>
                 <div className="min-w-0">

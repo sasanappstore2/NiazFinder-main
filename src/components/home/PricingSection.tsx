@@ -74,7 +74,7 @@ export function PricingSection() {
                 itemType="https://schema.org/Offer"
               >
                 {isHighlighted && (
-                  <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.06] via-transparent to-primary/[0.03] pointer-events-none" aria-hidden="true" />
+                  <div className="absolute inset-0 bg-linear-to-b from-primary/6 via-transparent to-primary/3 pointer-events-none" aria-hidden="true" />
                 )}
 
                 {plan.badge && (
@@ -86,7 +86,7 @@ export function PricingSection() {
                 )}
 
                 <CardHeader className="relative flex flex-col items-center gap-2 px-6 pt-8 pb-2 text-center">
-                  <span className="mb-1 text-4xl" aria-hidden="true" loading="lazy">{plan.icon}</span>
+                  <span className="mb-1 text-4xl" aria-hidden="true">{plan.icon}</span>
                   <CardTitle className="text-xl" itemProp="name">{plan.name}</CardTitle>
                   <p className="text-sm text-muted-foreground">{plan.description}</p>
 

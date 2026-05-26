@@ -1,13 +1,14 @@
 import { permanentRedirect } from 'next/navigation';
 import { resolveBrowseSegments } from '@/lib/browse/resolve-segments';
 import { COUNTRY_SLUG } from '@/config/locations';
+import { routeBuilder } from '@/config/routes';
 
 interface PageProps {
   params: Promise<{ segments: string[] }>;
 }
 
 /**
- * Legacy `/browse/...` URLs → permanent redirect to canonical `/s/...`.
+ * Legacy `/browse/...` URLs → permanent redirect to canonical `/n/...`.
  *
  * Static `next.config.ts` redirects can't disambiguate between
  * `/browse/{city}/{cat}` and `/browse/{parent}/{cat}` because both have the
@@ -18,21 +19,36 @@ export default async function LegacyBrowseSegments({ params }: PageProps) {
   const { segments } = await params;
   const ctx = resolveBrowseSegments(segments);
 
-  // /browse/{cat} → /s/iran/{cat}
   if (ctx.kind === 'category') {
-    permanentRedirect(`/s/${COUNTRY_SLUG}/${ctx.category.slug}`);
+    permanentRedirect(
+      routeBuilder.search({
+        market: 'need',
+        location: COUNTRY_SLUG,
+        category: ctx.category.slug,
+      })
+    );
   }
 
-  // /browse/{parent}/{cat} → /s/iran/{parent}/{cat}
   if (ctx.kind === 'parent-child') {
-    permanentRedirect(`/s/${COUNTRY_SLUG}/${ctx.parent.slug}/${ctx.category.slug}`);
+    permanentRedirect(
+      routeBuilder.search({
+        market: 'need',
+        location: COUNTRY_SLUG,
+        parentCategory: ctx.parent.slug,
+        category: ctx.category.slug,
+      })
+    );
   }
 
-  // /browse/{city}/{cat} → /s/{city}/{cat}
   if (ctx.kind === 'city-category') {
-    permanentRedirect(`/s/${ctx.city.slug}/${ctx.category.slug}`);
+    permanentRedirect(
+      routeBuilder.search({
+        market: 'need',
+        location: ctx.city.slug,
+        category: ctx.category.slug,
+      })
+    );
   }
 
-  // Anything else → bare canonical search root
-  permanentRedirect(`/s/${COUNTRY_SLUG}`);
+  permanentRedirect(routeBuilder.search({ market: 'need' }));
 }

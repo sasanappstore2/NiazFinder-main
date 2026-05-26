@@ -35,7 +35,7 @@ interface PostUser {
 // ─── Animation variants ─────────────────────────────────
 const fadeIn = {
   initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
 };
 
 // ─── Color helpers ──────────────────────────────────────
@@ -59,10 +59,10 @@ function getInitials(name: string) {
 }
 
 // ─── Persian relative time ──────────────────────────────
-function getTimeAgo(dateString: string): string {
+function getTimeAgo(dateInput: string | Date): string {
   try {
     const now = new Date();
-    const date = new Date(dateString);
+    const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
     const diffMs = now.getTime() - date.getTime();
     const diffSec = Math.floor(diffMs / 1000);
     const diffMin = Math.floor(diffSec / 60);
@@ -77,9 +77,9 @@ function getTimeAgo(dateString: string): string {
     if (diffDay < 7) return `${diffDay.toLocaleString('fa-IR')} روز پیش`;
     if (diffWeek < 4) return `${diffWeek.toLocaleString('fa-IR')} هفته پیش`;
     if (diffMonth < 12) return `${diffMonth.toLocaleString('fa-IR')} ماه پیش`;
-    return new Date(dateString).toLocaleDateString('fa-IR');
+    return date.toLocaleDateString('fa-IR');
   } catch {
-    return dateString;
+    return String(dateInput);
   }
 }
 
@@ -249,7 +249,7 @@ function PostCard({
           onClick={() => onNavigateToDetail(post.id)}
           className="block w-full text-right"
         >
-          <p className="mb-3 text-sm leading-7 text-foreground/90 whitespace-pre-wrap break-words">
+          <p className="mb-3 text-sm leading-7 text-foreground/90 whitespace-pre-wrap wrap-break-word">
             {post.content}
           </p>
 
@@ -278,7 +278,7 @@ function PostCard({
                     loading="lazy"
                   />
                   {imageUrls.length > 4 && i === 3 && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-xs">
                       <span className="text-lg font-bold text-white">
                         +{(imageUrls.length - 4).toLocaleString('fa-IR')}
                       </span>
@@ -297,7 +297,7 @@ function PostCard({
           <div className="flex items-center gap-1">
             <LikeButton
               isLiked={post.isLiked ?? false}
-              count={post.likeCount}
+              count={post.likeCount ?? 0}
               onToggle={() => onLike(post.id)}
             />
             <button
@@ -306,8 +306,8 @@ function PostCard({
             >
               <MessageCircle className="size-5 text-muted-foreground" />
               <span className="text-sm font-medium tabular-nums text-muted-foreground">
-                {post.commentCount > 0
-                  ? post.commentCount.toLocaleString('fa-IR')
+                {(post.commentCount ?? 0) > 0
+                  ? (post.commentCount ?? 0).toLocaleString('fa-IR')
                   : ''}
               </span>
             </button>
@@ -445,8 +445,8 @@ export function SocialFeedPage() {
   // ── Loading state ─────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-muted/20" dir="rtl">
-        <div className="mx-auto max-w-2xl px-4 py-6">
+      <div className="w-full min-h-[40vh]" dir="rtl">
+        <div className="w-full py-4">
           <div className="mb-6 flex items-center justify-between">
             <h1 className="text-xl font-extrabold">فید اجتماعی</h1>
             <div className="animate-shimmer-loading h-9 w-28 rounded-xl bg-muted/40" />
@@ -460,8 +460,8 @@ export function SocialFeedPage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/20" dir="rtl">
-      <div className="mx-auto max-w-2xl px-4 py-6 pb-24">
+    <div className="w-full min-h-[40vh]" dir="rtl">
+      <div className="w-full py-4">
         {/* ── Header ──────────────────────────────────── */}
         <motion.div
           {...fadeIn}

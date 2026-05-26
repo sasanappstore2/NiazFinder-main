@@ -56,10 +56,10 @@ export function buildUrl(route: LegacyRouteKey, params?: Record<string, string>)
   if (route === 'browse-specialists') {
     return routeBuilder.browseAll({ type: 'business', q: params?.search });
   }
-  let url: string = ROUTE_MAP[route];
+  let url: string = String(ROUTE_MAP[route] ?? '/');
   if (params) {
     for (const [key, value] of Object.entries(params)) {
-      url = url.replace(`[${key}]`, encodeURIComponent(value));
+      url = url.replace(`[${key}]`, encodeURIComponent(String(value)));
     }
   }
   return url;

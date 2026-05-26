@@ -105,12 +105,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               key="error-boundary"
               initial={{ opacity: 0, y: 20, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
+              transition={{ duration: 0.35, ease: 'easeOut' as const }}
               className="w-full max-w-lg"
             >
               <Card className="border-0 shadow-xl overflow-hidden">
                 {/* Emerald accent top bar */}
-                <div className="h-1.5 bg-gradient-to-l from-emerald-400 via-emerald-500 to-emerald-600" />
+                <div className="h-1.5 bg-linear-to-l from-emerald-400 via-emerald-500 to-emerald-600" />
 
                 <CardContent className="p-8 md:p-10">
                   {/* Illustration */}
@@ -168,16 +168,16 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
                       {showDevDetails && (
                         <div className="mt-3 p-4 bg-muted/60 rounded-lg border border-border text-left" dir="ltr">
-                          <p className="text-xs font-semibold text-red-500 dark:text-red-400 mb-2 font-mono break-words">
+                          <p className="text-xs font-semibold text-red-500 dark:text-red-400 mb-2 font-mono wrap-break-word">
                             {error.name}: {error.message}
                           </p>
                           {errorInfo?.componentStack && (
-                            <pre className="text-caption text-muted-foreground font-mono whitespace-pre-wrap break-words max-h-48 overflow-y-auto leading-relaxed">
+                            <pre className="text-caption text-muted-foreground font-mono whitespace-pre-wrap wrap-break-word max-h-48 overflow-y-auto leading-relaxed">
                               {errorInfo.componentStack}
                             </pre>
                           )}
                           {error.stack && (
-                            <pre className="text-caption text-muted-foreground font-mono whitespace-pre-wrap break-words max-h-48 overflow-y-auto mt-2 leading-relaxed">
+                            <pre className="text-caption text-muted-foreground font-mono whitespace-pre-wrap wrap-break-word max-h-48 overflow-y-auto mt-2 leading-relaxed">
                               {error.stack}
                             </pre>
                           )}

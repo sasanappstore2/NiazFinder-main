@@ -29,11 +29,19 @@ function LocationSelectorInner() {
     isOpen,
     setIsOpen,
     selectedCities,
+    selectedProvinceIds,
     isInitialized,
     getLocationDisplayText,
     handleSelectionChange,
     geo,
   } = useLocationSelection({ preservePathOnHome: pathname === '/' });
+
+  const hasLocationScope =
+    selectedCities.length > 0 || selectedProvinceIds.length > 0;
+  const badgeCount =
+    selectedProvinceIds.length > 0
+      ? selectedProvinceIds.length
+      : selectedCities.length;
 
   if (!isInitialized) {
     return (
@@ -52,20 +60,20 @@ function LocationSelectorInner() {
         className={cn(
           'hidden sm:inline-flex h-9 px-3 gap-1.5 text-sm font-normal shrink-0 rounded-lg',
           'border border-border/40 transition-all duration-200',
-          selectedCities.length > 0
+          hasLocationScope
             ? 'bg-primary/8 text-primary border-primary/20 hover:bg-primary/15 hover:border-primary/30 shadow-[0_0_8px_oklch(0.51_0.12_165/0.08)]'
             : 'bg-muted/40 text-muted-foreground hover:bg-muted/60 hover:text-foreground hover:border-border/60'
         )}
-        title="انتخاب شهر"
+        title="انتخاب مکان"
       >
         <MapPin className="h-4 w-4 shrink-0" />
         <span className="truncate max-w-[100px]">{getLocationDisplayText()}</span>
-        {selectedCities.length > 0 && (
+        {hasLocationScope && badgeCount > 0 && (
           <Badge
             variant="secondary"
             className="h-5 min-w-[18px] px-1 text-caption font-bold tabular-nums"
           >
-            {selectedCities.length}
+            {badgeCount}
           </Badge>
         )}
         <ChevronDown className="h-3 w-3 opacity-50" />
@@ -78,20 +86,20 @@ function LocationSelectorInner() {
         className={cn(
           'sm:hidden h-9 px-2.5 gap-1.5 text-sm font-normal shrink-0 rounded-lg',
           'border border-border/40 transition-all duration-200',
-          selectedCities.length > 0
+          hasLocationScope
             ? 'bg-primary/8 text-primary border-primary/20'
             : 'bg-muted/40 text-muted-foreground hover:bg-muted/60'
         )}
-        title="انتخاب شهر"
+        title="انتخاب مکان"
       >
         <MapPin className="h-4 w-4 shrink-0" />
         <span className="truncate max-w-[60px] text-xs">{getLocationDisplayText()}</span>
-        {selectedCities.length > 0 && (
+        {hasLocationScope && badgeCount > 0 && (
           <Badge
             variant="secondary"
             className="h-4 min-w-[16px] px-1 text-[9px] font-bold tabular-nums"
           >
-            {selectedCities.length}
+            {badgeCount}
           </Badge>
         )}
       </Button>
@@ -100,6 +108,7 @@ function LocationSelectorInner() {
         open={isOpen}
         onOpenChange={setIsOpen}
         selectedCities={selectedCities}
+        selectedProvinceIds={selectedProvinceIds}
         onSelectionChange={handleSelectionChange}
         geoStatus={geo.status}
         detectedCity={geo.detectedCity}

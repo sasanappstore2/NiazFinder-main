@@ -6,6 +6,7 @@ import { Star, MapPin, ArrowLeft, BadgeCheck, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 import { StarRating } from '@/components/shared/StarRating';
+import { useLocationScopeApiParams } from '@/hooks/use-location-scope-api-params';
 
 const FEATURED_SPECIALTIES = [
   'طراحی وب', 'برنامه‌نویسی', 'تولید محتوا', 'عکاسی',
@@ -125,6 +126,7 @@ function SkeletonCard() {
 
 export function FeaturedBusinesses() {
   const { navigateTo } = useNavigate();
+  const geoParams = useLocationScopeApiParams();
   const [specialists, setSpecialists] = useState<SpecialistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -133,7 +135,8 @@ export function FeaturedBusinesses() {
     setLoading(true);
     setError(false);
     try {
-      const res = await fetch('/api/specialists?limit=6&sort=rating');
+      const qs = new URLSearchParams({ limit: '6', sort: 'rating', ...geoParams });
+      const res = await fetch(`/api/specialists?${qs.toString()}`);
       if (!res.ok) throw new Error('API error');
       const json = await res.json();
       if (json.data && json.data.length > 0) {
@@ -144,7 +147,7 @@ export function FeaturedBusinesses() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [geoParams]);
 
   useEffect(() => {
     fetchSpecialists();
@@ -172,8 +175,8 @@ export function FeaturedBusinesses() {
       aria-label="کسب‌وکارهای برتر"
     >
       {/* Subtle background decoration */}
-      <div className="absolute top-0 start-0 h-64 w-64 rounded-full bg-emerald-100/30 blur-3xl pointer-events-none" aria-hidden="true" />
-      <div className="absolute bottom-0 end-0 h-48 w-48 rounded-full bg-teal-100/20 blur-3xl pointer-events-none" aria-hidden="true" />
+      <div className="absolute top-0 inset-s-0 h-64 w-64 rounded-full bg-emerald-100/30 blur-3xl pointer-events-none" aria-hidden="true" />
+      <div className="absolute bottom-0 inset-e-0 h-48 w-48 rounded-full bg-teal-100/20 blur-3xl pointer-events-none" aria-hidden="true" />
 
       <div className="relative container-default mx-auto px-5 md:px-8">
         {/* Section Header */}
@@ -210,7 +213,7 @@ export function FeaturedBusinesses() {
           {FEATURED_SPECIALTIES.map((spec) => (
             <span
               key={spec}
-              className="inline-flex items-center rounded-full border border-border/40 bg-card/50 px-3 py-1 text-caption font-medium text-muted-foreground backdrop-blur-sm transition-colors hover:border-primary/20 hover:text-primary hover:bg-primary/5 cursor-default"
+              className="inline-flex items-center rounded-full border border-border/40 bg-card/50 px-3 py-1 text-caption font-medium text-muted-foreground backdrop-blur-xs transition-colors hover:border-primary/20 hover:text-primary hover:bg-primary/5 cursor-default"
             >
               {spec}
             </span>
@@ -245,11 +248,11 @@ export function FeaturedBusinesses() {
                   }}
                   className={cn(
                     'group relative flex items-start gap-4 rounded-2xl border p-4 sm:p-5',
-                    'bg-card/50 backdrop-blur-sm',
+                    'bg-card/50 backdrop-blur-xs',
                     'border-border/40 dark:border-border/20',
                     'transition-all duration-300 cursor-pointer',
-                    'hover:bg-card/80 hover:shadow-lg hover:shadow-black/[0.04] dark:hover:shadow-black/20',
-                    'hover:-translate-y-[2px] hover:border-primary/20',
+                    'hover:bg-card/80 hover:shadow-lg hover:shadow-black/4 dark:hover:shadow-black/20',
+                    'hover:translate-y-[-2px] hover:border-primary/20',
                     'active:scale-[0.99]'
                   )}
                 >
@@ -258,7 +261,7 @@ export function FeaturedBusinesses() {
                     <div
                       className={cn(
                         'flex size-12 sm:size-14 items-center justify-center rounded-2xl text-sm font-bold text-white shadow-md',
-                        'bg-gradient-to-br',
+                        'bg-linear-to-br',
                         business.avatarColor,
                         'ring-2 ring-white/50 dark:ring-card/50',
                         'transition-transform duration-300 group-hover:scale-105'
@@ -267,7 +270,7 @@ export function FeaturedBusinesses() {
                       {initials}
                     </div>
                     {business.verified && (
-                      <div className="absolute -bottom-0.5 -end-0.5 flex size-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm">
+                      <div className="absolute -bottom-0.5 -inset-e-0.5 flex size-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm">
                         <BadgeCheck className="size-3" strokeWidth={3} />
                       </div>
                     )}

@@ -2,6 +2,8 @@ import type { City } from './location-system';
 
 export interface LocationPreferences {
   selectedCities: City[];
+  /** Full province selection (location-system province ids). */
+  selectedProvinceIds?: string[];
   lastUpdated: number;
   /** Auto GPS attempt already ran once on this device */
   geoAutoAttempted?: boolean;
@@ -157,7 +159,7 @@ export class CookieManager {
     return this.preferences || { ...DEFAULT_PREFERENCES };
   }
 
-  public updateLocation(selectedCities: City[]): void {
+  public updateLocation(selectedCities: City[], selectedProvinceIds: string[] = []): void {
     if (!this.preferences) {
       this.preferences = { ...DEFAULT_PREFERENCES };
     }
@@ -165,6 +167,7 @@ export class CookieManager {
     this.preferences.location = {
       ...this.preferences.location,
       selectedCities,
+      selectedProvinceIds,
       lastUpdated: Date.now(),
     };
 
@@ -172,7 +175,8 @@ export class CookieManager {
   }
 
   public hasSavedLocation(): boolean {
-    return this.getPreferences().location.selectedCities.length > 0;
+    const loc = this.getPreferences().location;
+    return loc.selectedCities.length > 0 || (loc.selectedProvinceIds?.length ?? 0) > 0;
   }
 
   public markGeoAutoAttempted(): void {

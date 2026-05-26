@@ -1,6 +1,6 @@
 import type { ListingPreview, NeedDraft } from '@/contracts/need-intake';
+import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
 import { mapDraftToCreateRequest } from '@/lib/need-intake/map-to-request';
-import { enrichListingWithLlm } from '@/lib/need-intake/llm-parse-intent';
 
 function budgetFromDraft(draft: NeedDraft): {
   budgetMin?: number;
@@ -18,25 +18,15 @@ function budgetFromDraft(draft: NeedDraft): {
   };
 }
 
-/** Build polished listing preview from draft (AI enrich when available). */
+/** Build listing preview from draft using internal template composer. */
 export async function buildListingPreview(
   draft: NeedDraft,
   extras?: string[]
 ): Promise<ListingPreview> {
   const mapped = mapDraftToCreateRequest(draft, 'preview', null);
-  let title = mapped.title;
-  let description = mapped.description;
-
-  const enriched = await enrichListingWithLlm(
-    draft.parsedIntent,
-    draft.answers,
-    title,
-    description
-  );
-  if (enriched) {
-    title = enriched.title;
-    description = enriched.description;
-  }
+  const composed = composeListingFromDraft(draft);
+  const title = composed.title || mapped.title;
+  const description = composed.description || mapped.description;
 
   const budget = budgetFromDraft(draft);
   const mergedExtras = [

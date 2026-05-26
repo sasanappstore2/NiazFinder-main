@@ -41,6 +41,8 @@
     "node_modules",
     ".next/dev",
     "mini-services",
+    "nellavio",
+    "ml",
     "examples",
     "agent-ctx",
     "download",

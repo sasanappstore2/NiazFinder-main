@@ -11,12 +11,6 @@ export async function GET(
   try {
     const { id } = await params;
 
-    // Increment viewCount
-    await db.serviceRequest.update({
-      where: { id },
-      data: { viewCount: { increment: 1 } },
-    });
-
     const serviceRequest = await db.serviceRequest.findUnique({
       where: { id },
       include: {
@@ -82,6 +76,26 @@ export async function GET(
       );
     }
 
+    const user = await getAuthUser(request);
+    const isOwner = user?.id === serviceRequest.userId;
+    const isPublic =
+      serviceRequest.moderationStatus === 'APPROVED' &&
+      ['OPEN', 'IN_PROGRESS', 'COMPLETED', 'CLOSED'].includes(serviceRequest.status);
+
+    if (!isPublic && !isOwner && !['ADMIN', 'SUPER_ADMIN'].includes(user?.role ?? '')) {
+      return NextResponse.json(
+        { error: 'نیاز مورد نظر یافت نشد' },
+        { status: 404 }
+      );
+    }
+
+    if (isPublic) {
+      await db.serviceRequest.update({
+        where: { id },
+        data: { viewCount: { increment: 1 } },
+      });
+    }
+
     const mappedProposals = serviceRequest.proposals.map((p) => {
       const ratings = p.user.givenReviews.map((r) => r.rating);
       const avgRating = ratings.length > 0
@@ -135,6 +149,8 @@ export async function GET(
       province: serviceRequest.province,
       priority: serviceRequest.priority,
       status: serviceRequest.status,
+      moderationStatus: serviceRequest.moderationStatus,
+      rejectionReason: serviceRequest.rejectionReason,
       tags: JSON.parse(serviceRequest.tags),
       attachmentUrls: JSON.parse(serviceRequest.attachmentUrls),
       viewCount: serviceRequest.viewCount,

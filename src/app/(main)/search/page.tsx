@@ -25,6 +25,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PageContainer } from '@/components/layout/PageContainer';
 import { Separator } from '@/components/ui/separator';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useAppStore } from '@/lib/store';
@@ -206,7 +207,7 @@ function UserResultCard({
         onClick={() => onNavigate(`/profile/${user.id}`)}
       >
         <CardContent className="p-4 flex items-center gap-3">
-          <div className="relative flex-shrink-0">
+          <div className="relative shrink-0">
             <Avatar className="h-12 w-12">
               <AvatarImage src={user.avatar || undefined} alt={name} />
               <AvatarFallback className={`${color} text-white font-bold text-sm`}>
@@ -221,9 +222,9 @@ function UserResultCard({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
               <h3 className="font-semibold text-sm truncate">{name}</h3>
-              {user.isVerified && <BadgeCheck className="h-4 w-4 text-emerald-500 flex-shrink-0" />}
+              {user.isVerified && <BadgeCheck className="h-4 w-4 text-emerald-500 shrink-0" />}
               {roleBadge && (
-                <Badge variant="secondary" className={`text-caption px-1.5 py-0 h-4 flex-shrink-0 ${roleBadge.className}`}>
+                <Badge variant="secondary" className={`text-caption px-1.5 py-0 h-4 shrink-0 ${roleBadge.className}`}>
                   {roleBadge.label}
                 </Badge>
               )}
@@ -283,7 +284,7 @@ function RequestResultCard({ request, onNavigate }: { request: RequestResult; on
       >
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <Avatar className="h-9 w-9 mt-0.5 flex-shrink-0">
+            <Avatar className="h-9 w-9 mt-0.5 shrink-0">
               <AvatarImage src={request.user.avatar || undefined} alt={request.user.firstName} />
               <AvatarFallback className={`${userColor} text-white text-xs`}>{userInitials}</AvatarFallback>
             </Avatar>
@@ -293,11 +294,11 @@ function RequestResultCard({ request, onNavigate }: { request: RequestResult; on
                   {request.title}
                 </h3>
                 {priorityBadge && (
-                  <Badge variant="outline" className={`text-caption px-1.5 py-0 h-4 flex-shrink-0 ${priorityBadge.className}`}>
+                  <Badge variant="outline" className={`text-caption px-1.5 py-0 h-4 shrink-0 ${priorityBadge.className}`}>
                     {priorityBadge.label}
                   </Badge>
                 )}
-                <Badge variant="secondary" className="text-caption px-1.5 py-0 h-4 flex-shrink-0 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                <Badge variant="secondary" className="text-caption px-1.5 py-0 h-4 shrink-0 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
                   {request.categoryName}
                 </Badge>
               </div>
@@ -353,7 +354,7 @@ function SpecialistResultCard({
       >
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <div className="relative flex-shrink-0">
+            <div className="relative shrink-0">
               <Avatar className="h-12 w-12">
                 <AvatarImage src={specialist.avatar || undefined} alt={name} />
                 <AvatarFallback className={`${color} text-white font-bold text-sm`}>{initials}</AvatarFallback>
@@ -368,7 +369,7 @@ function SpecialistResultCard({
                 <h3 className="font-semibold text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">
                   {name}
                 </h3>
-                {specialist.isVerified && <BadgeCheck className="h-4 w-4 text-emerald-500 flex-shrink-0" />}
+                {specialist.isVerified && <BadgeCheck className="h-4 w-4 text-emerald-500 shrink-0" />}
               </div>
 
               {specialist.bio && (
@@ -452,14 +453,14 @@ function BusinessResultCard({
         onClick={() => onNavigate(`/b/${business.profileId}`)}
       >
         <CardContent className="p-4 flex items-start gap-3">
-          <Avatar className="h-12 w-12 flex-shrink-0">
+          <Avatar className="h-12 w-12 shrink-0">
             <AvatarImage src={business.avatar || undefined} alt={business.name} />
             <AvatarFallback className={`${color} text-white font-bold text-sm`}>{initials}</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="font-semibold text-sm truncate">{business.name}</h3>
-              {business.verified && <BadgeCheck className="h-4 w-4 text-emerald-500 flex-shrink-0" />}
+              {business.verified && <BadgeCheck className="h-4 w-4 text-emerald-500 shrink-0" />}
               <Badge variant="secondary" className="text-caption h-4 px-1.5">
                 کسب‌وکار
               </Badge>
@@ -495,7 +496,7 @@ function UserSkeleton() {
   return (
     <Card className="border-border/50">
       <CardContent className="p-4 flex items-center gap-3">
-        <Skeleton className="h-12 w-12 rounded-full flex-shrink-0" />
+        <Skeleton className="h-12 w-12 rounded-full shrink-0" />
         <div className="flex-1 space-y-2">
           <Skeleton className="h-4 w-32" />
           <Skeleton className="h-3 w-24" />
@@ -515,7 +516,7 @@ function RequestSkeleton() {
     <Card className="border-border/50">
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <Skeleton className="h-9 w-9 rounded-full flex-shrink-0" />
+          <Skeleton className="h-9 w-9 rounded-full shrink-0" />
           <div className="flex-1 space-y-2">
             <div className="flex gap-2">
               <Skeleton className="h-4 w-48" />
@@ -540,7 +541,7 @@ function SpecialistSkeleton() {
     <Card className="border-border/50">
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <Skeleton className="h-12 w-12 rounded-full flex-shrink-0" />
+          <Skeleton className="h-12 w-12 rounded-full shrink-0" />
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
               <Skeleton className="h-4 w-32" />
@@ -792,7 +793,7 @@ function SearchPageContent() {
     specialistResults.length;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 pt-4 pb-12" dir="rtl">
+    <PageContainer width="medium" className="pt-4" as="div">
       {/* Search Input */}
       <div className="relative mb-6">
         <div className="relative">
@@ -802,7 +803,7 @@ function SearchPageContent() {
             placeholder="جستجوی کاربران، نیازها، متخصص‌ها..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="pr-10 pl-10 h-12 text-base rounded-xl border-border/60 focus-visible:border-emerald-400 focus-visible:ring-emerald-400/20 bg-background/80 backdrop-blur-sm"
+            className="pr-10 pl-10 h-12 text-base rounded-xl border-border/60 focus-visible:border-emerald-400 focus-visible:ring-emerald-400/20 bg-background/80 backdrop-blur-xs"
             autoFocus
           />
           {query && (
@@ -1005,7 +1006,7 @@ function SearchPageContent() {
       {hasSearched && !loading && !error && totalResults === 0 && debouncedQuery.trim() && (
         <EmptyState type="no-results" query={debouncedQuery.trim()} />
       )}
-    </div>
+    </PageContainer>
   );
 }
 
@@ -1015,7 +1016,7 @@ export default function SearchPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-3xl mx-auto px-4 pt-4 pb-12" dir="rtl">
+        <PageContainer width="medium" className="pt-4">
           <div className="mb-6">
             <Skeleton className="h-12 w-full rounded-xl" />
           </div>
@@ -1023,7 +1024,7 @@ export default function SearchPage() {
             {[1, 2, 3, 4].map((i) => (
               <Card key={i} className="border-border/50">
                 <CardContent className="p-4 flex items-center gap-3">
-                  <Skeleton className="h-12 w-12 rounded-full flex-shrink-0" />
+                  <Skeleton className="h-12 w-12 rounded-full shrink-0" />
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-4 w-32" />
                     <Skeleton className="h-3 w-24" />
@@ -1037,7 +1038,7 @@ export default function SearchPage() {
               </Card>
             ))}
           </div>
-        </div>
+        </PageContainer>
       }
     >
       <SearchPageContent />

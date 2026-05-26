@@ -35,8 +35,15 @@
  * province/category slugs are silently dropped.
  */
 
-import { isCitySlug, isProvinceSlug } from '@/config/locations';
+import { isCitySlug } from '@/config/locations';
+import { isKnownProvinceSlug } from '@/lib/search/province-slugs';
 import { isKnownCitySlug } from '@/lib/search/city-slugs';
+import {
+  RESERVED_BROWSE_PARAMS,
+  parseRangeShorthand,
+  RANGE_PARAM_MAP,
+} from '@/config/category-filters/attr-params';
+import { DEAL_TYPE_PROPERTY } from '@/config/category-filters/options';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -63,6 +70,8 @@ export interface BrowseFilters {
   city: string | null;
   cities: string[];
   provinces: string[];
+  /** Neighborhood slugs (comma-separated in URL). */
+  neighborhoods: string[];
 
   priceMin: number | null;
   priceMax: number | null;
@@ -73,6 +82,9 @@ export interface BrowseFilters {
 
   recent: RecentWindow | null;
   sort: SortKey;
+
+  /** Category-specific filters (synced with intake `dynamicAnswers` keys). */
+  attributes: Record<string, string>;
 }
 
 export const DEFAULT_FILTERS: BrowseFilters = {
@@ -82,6 +94,7 @@ export const DEFAULT_FILTERS: BrowseFilters = {
   city: null,
   cities: [],
   provinces: [],
+  neighborhoods: [],
   priceMin: null,
   priceMax: null,
   verified: null,
@@ -89,7 +102,10 @@ export const DEFAULT_FILTERS: BrowseFilters = {
   urgent: null,
   recent: null,
   sort: 'newest',
+  attributes: {},
 };
+
+const DEAL_TYPE_VALUES = new Set<string>(DEAL_TYPE_PROPERTY.map((o) => o.value));
 
 const VALID_TYPES: ReadonlySet<ListingType> = new Set(['need', 'business', 'all']);
 const VALID_SORTS: ReadonlySet<SortKey> = new Set([
@@ -131,6 +147,10 @@ function parseCsv(value: string | null, validate: (s: string) => boolean): strin
         .filter(validate)
     )
   );
+}
+
+function isNeighborhoodSlug(s: string): boolean {
+  return /^[\u0600-\u06FFa-z0-9-]+$/.test(s) && s.length >= 2;
 }
 
 function parseUint(value: string | null): number | null {
@@ -192,7 +212,8 @@ export function parseFilters(src: ParamSource): BrowseFilters {
     cityRaw && (isCitySlug(cityRaw) || isKnownCitySlug(cityRaw)) ? cityRaw : null;
 
   const cities = parseCsv(getString(src, 'cities'), isKnownCitySlug);
-  const provinces = parseCsv(getString(src, 'provinces'), isProvinceSlug);
+  const provinces = parseCsv(getString(src, 'provinces'), isKnownProvinceSlug);
+  const neighborhoods = parseCsv(getString(src, 'neighborhoods'), isNeighborhoodSlug);
 
   const verified = parseBool(getString(src, 'verified'));
   const hasPhoto = parseBool(getString(src, 'has-photo'));
@@ -203,7 +224,39 @@ export function parseFilters(src: ParamSource): BrowseFilters {
   const priceMax = parseUint(getString(src, 'priceMax')) ?? priceShort.max;
 
   const q = getString(src, 'q')?.trim() || null;
-  const status = getString(src, 'status')?.trim().toLowerCase() || null;
+  const statusRaw = getString(src, 'status')?.trim().toLowerCase() || null;
+  const status =
+    statusRaw && !DEAL_TYPE_VALUES.has(statusRaw) ? statusRaw : null;
+
+  const attributes: Record<string, string> = {};
+
+  const dealType =
+    getString(src, 'dealType')?.trim().toLowerCase() ||
+    (statusRaw && DEAL_TYPE_VALUES.has(statusRaw) ? statusRaw : null);
+  if (dealType) attributes.dealType = dealType;
+
+  const iterateKeys = (keys: string[]) => {
+    for (const key of keys) {
+      if (RESERVED_BROWSE_PARAMS.has(key)) continue;
+      const raw = getString(src, key);
+      if (!raw) continue;
+      if (RANGE_PARAM_MAP[key]) {
+        Object.assign(attributes, parseRangeShorthand(key, raw));
+      } else {
+        attributes[key] = raw.trim();
+      }
+    }
+  };
+
+  if (src instanceof URLSearchParams) {
+    iterateKeys(Array.from(src.keys()));
+  } else {
+    iterateKeys(Object.keys(src));
+  }
+
+  for (const [key, val] of Object.entries(attributes)) {
+    if (!val) delete attributes[key];
+  }
 
   return {
     type,
@@ -212,6 +265,7 @@ export function parseFilters(src: ParamSource): BrowseFilters {
     city,
     cities,
     provinces,
+    neighborhoods,
     priceMin,
     priceMax,
     verified,
@@ -219,6 +273,7 @@ export function parseFilters(src: ParamSource): BrowseFilters {
     urgent,
     recent,
     sort,
+    attributes,
   };
 }
 
@@ -250,6 +305,9 @@ export function serializeFilters(filters?: Partial<BrowseFilters>): URLSearchPar
   if (filters.provinces && filters.provinces.length > 0) {
     params.set('provinces', filters.provinces.join(','));
   }
+  if (filters.neighborhoods && filters.neighborhoods.length > 0) {
+    params.set('neighborhoods', filters.neighborhoods.join(','));
+  }
 
   // Money
   if (filters.priceMin != null || filters.priceMax != null) {
@@ -269,8 +327,30 @@ export function serializeFilters(filters?: Partial<BrowseFilters>): URLSearchPar
   // Sort (omit default)
   if (filters.sort && filters.sort !== 'newest') params.set('sort', filters.sort);
 
-  // Status (free-form)
+  // Status (request lifecycle — not deal type)
   if (filters.status) params.set('status', filters.status);
+
+  if (filters.attributes) {
+    const rangeEmitted = new Set<string>();
+    for (const [key, val] of Object.entries(filters.attributes)) {
+      if (!val) continue;
+      for (const [rangeParam, map] of Object.entries(RANGE_PARAM_MAP)) {
+        if (key === map.minKey || key === map.maxKey) {
+          if (rangeEmitted.has(rangeParam)) continue;
+          const min = filters.attributes[map.minKey];
+          const max = filters.attributes[map.maxKey];
+          if (min || max) {
+            params.set(rangeParam, `${min ?? ''}-${max ?? ''}`);
+            rangeEmitted.add(rangeParam);
+          }
+          continue;
+        }
+      }
+      if (!Object.values(RANGE_PARAM_MAP).some((m) => m.minKey === key || m.maxKey === key)) {
+        params.set(key, val);
+      }
+    }
+  }
 
   return params;
 }
@@ -282,19 +362,43 @@ export function serializeFiltersString(filters?: Partial<BrowseFilters>): string
 }
 
 export function hasActiveFilters(f: BrowseFilters): boolean {
-  return (
-    f.type !== 'all' ||
-    f.q != null ||
-    f.status != null ||
-    f.city != null ||
-    f.cities.length > 0 ||
-    f.provinces.length > 0 ||
-    f.priceMin != null ||
-    f.priceMax != null ||
-    f.verified != null ||
-    f.hasPhoto != null ||
-    f.urgent != null ||
-    f.recent != null ||
-    f.sort !== 'newest'
-  );
+  return countQueryFilters(f) > 0 || f.type !== 'all';
+}
+
+/** Count filters stored in query string (excludes path-based category/city). */
+export function countQueryFilters(f: BrowseFilters): number {
+  let n = 0;
+  if (f.q) n++;
+  if (f.status) n++;
+  if (f.priceMin != null || f.priceMax != null) n++;
+  if (f.verified === true) n++;
+  if (f.hasPhoto === true) n++;
+  if (f.urgent === true) n++;
+  if (f.recent) n++;
+  if (f.sort !== 'newest') n++;
+  if (f.type !== 'all') n++;
+  if (f.cities.length > 0) n++;
+  if (f.provinces.length > 0) n++;
+  if (f.neighborhoods.length > 0) n++;
+  n += Object.keys(f.attributes).length;
+  return n;
+}
+
+export function getAttribute(
+  filters: BrowseFilters,
+  key: string
+): string | null {
+  return filters.attributes[key] ?? null;
+}
+
+export function patchAttributes(
+  filters: BrowseFilters,
+  patch: Record<string, string | null | undefined>
+): BrowseFilters {
+  const next = { ...filters.attributes };
+  for (const [k, v] of Object.entries(patch)) {
+    if (v == null || v === '') delete next[k];
+    else next[k] = v;
+  }
+  return { ...filters, attributes: next };
 }

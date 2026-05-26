@@ -114,6 +114,34 @@ async function handleErrorResponse(response: Response): Promise<never> {
 }
 
 // ---------------------------------------------------------------------------
+// Lightweight fetch for Next.js API routes (used by hooks)
+// ---------------------------------------------------------------------------
+
+export async function apiFetch<T = unknown>(
+  url: string,
+  options?: { method?: string; body?: unknown; params?: Record<string, unknown> }
+): Promise<T> {
+  let fullUrl = url;
+  if (options?.params) {
+    const qs = new URLSearchParams(
+      Object.entries(options.params)
+        .filter(([, v]) => v != null)
+        .map(([k, v]) => [k, String(v)])
+    ).toString();
+    fullUrl = `${url}${qs ? `?${qs}` : ''}`;
+  }
+
+  const res = await fetch(fullUrl, {
+    method: options?.method || 'GET',
+    headers: buildHeaders(),
+    body: options?.body ? JSON.stringify(options.body) : undefined,
+  });
+
+  if (!res.ok) await handleErrorResponse(res);
+  return res.json() as Promise<T>;
+}
+
+// ---------------------------------------------------------------------------
 // Generic request functions
 // ---------------------------------------------------------------------------
 
@@ -263,7 +291,7 @@ export const requestsApi = {
   list: (params?: RequestsListParams) => {
     const query = params ? `?${new URLSearchParams(
       Object.entries(params)
-        .filter(([, v]) => v !== undefined && v !== '')
+        .filter(([, v]) => v != null)
         .map(([k, v]) => [k, String(v)]),
     ).toString()}` : '';
     return apiGet<any>(`/requests${query}`);
@@ -313,7 +341,7 @@ export const specialistsApi = {
   list: (params?: SpecialistsListParams) => {
     const query = params ? `?${new URLSearchParams(
       Object.entries(params)
-        .filter(([, v]) => v !== undefined && v !== '')
+        .filter(([, v]) => v != null)
         .map(([k, v]) => [k, String(v)]),
     ).toString()}` : '';
     return apiGet<any>(`/specialists${query}`);
@@ -350,7 +378,7 @@ export const chatApi = {
   messages: (conversationId: string, token: string, params?: { page?: number; limit?: number }) => {
     const query = params ? `?${new URLSearchParams(
       Object.entries(params)
-        .filter(([, v]) => v !== undefined && v !== '')
+        .filter(([, v]) => v != null)
         .map(([k, v]) => [k, String(v)]),
     ).toString()}` : '';
     return apiGet<any>(`/chat/conversations/${conversationId}/messages${query}`, token);
@@ -369,7 +397,7 @@ export const notificationsApi = {
   list: (token: string, params?: { page?: number; limit?: number }) => {
     const query = params ? `?${new URLSearchParams(
       Object.entries(params)
-        .filter(([, v]) => v !== undefined && v !== '')
+        .filter(([, v]) => v != null)
         .map(([k, v]) => [k, String(v)]),
     ).toString()}` : '';
     return apiGet<any>(`/notifications${query}`, token);
@@ -400,7 +428,7 @@ export const walletApi = {
   transactions: (token: string, params?: { page?: number; limit?: number; type?: string }) => {
     const query = params ? `?${new URLSearchParams(
       Object.entries(params)
-        .filter(([, v]) => v !== undefined && v !== '')
+        .filter(([, v]) => v != null)
         .map(([k, v]) => [k, String(v)]),
     ).toString()}` : '';
     return apiGet<any>(`/wallet/transactions${query}`, token);
@@ -439,7 +467,7 @@ export const searchApi = {
   search: (params: { q: string; page?: number; limit?: number; type?: string; categoryId?: string; city?: string }) =>
     apiGet<any>(`/search?${new URLSearchParams(
       Object.entries(params)
-        .filter(([, v]) => v !== undefined && v !== '')
+        .filter(([, v]) => v != null)
         .map(([k, v]) => [k, String(v)]),
     ).toString()}`),
 
@@ -459,7 +487,7 @@ export const reviewsApi = {
   list: (specialistId: string, params?: { page?: number; limit?: number }) => {
     const query = params ? `?${new URLSearchParams(
       Object.entries(params)
-        .filter(([, v]) => v !== undefined && v !== '')
+        .filter(([, v]) => v != null)
         .map(([k, v]) => [k, String(v)]),
     ).toString()}` : '';
     return apiGet<any>(`/reviews/${specialistId}${query}`);

@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser, createSlug } from '@/lib/auth';
 import { mapDraftToCreateRequest } from '@/lib/need-intake/map-to-request';
-import { enrichListingWithLlm } from '@/lib/need-intake/llm-parse-intent';
+import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
 import { resolveCategoryIds } from '@/lib/need-intake/resolve-category';
 import { normalizeCategoryPair } from '@/config/categories';
 import type { NeedDraft } from '@/contracts/need-intake';
-import { scheduleNeedLeadOutreach } from '@/lib/need-leads/schedule';
+import { enqueueIntakeHeavyJob } from '@/lib/need-intake/enqueue-heavy';
+import { enqueueRequestModerationJob } from '@/lib/request-moderation/enqueue';
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,31 +45,32 @@ export async function POST(request: NextRequest) {
     const mapped = mapDraftToCreateRequest(draft, categoryId, subcategoryId);
 
     if (!listingPreview) {
-      const enriched = await enrichListingWithLlm(
-        draft.parsedIntent,
-        draft.answers,
-        mapped.title,
-        mapped.description
-      );
-      if (enriched) {
-        mapped.title = enriched.title;
-        mapped.description = enriched.description;
-        mapped.aiExtractedData = {
-          ...mapped.aiExtractedData,
-          listingEnriched: true,
-        };
-      }
+      const composed = composeListingFromDraft(draft);
+      mapped.title = composed.title;
+      mapped.description = composed.description;
+      mapped.aiExtractedData = {
+        ...mapped.aiExtractedData,
+        listingEnriched: true,
+        engine: 'internal',
+      };
     } else {
       mapped.aiExtractedData = {
         ...mapped.aiExtractedData,
         listingEnriched: true,
         fromPreview: true,
+        engine: 'internal',
       };
     }
 
     let slug = createSlug(mapped.title);
     const existingSlug = await db.serviceRequest.findUnique({ where: { slug } });
     if (existingSlug) slug = `${slug}-${Date.now()}`;
+
+    let businessProfileId: string | null = null;
+    if (body.linkToBusinessProfile === true) {
+      const bizProfile = await db.businessProfile.findUnique({ where: { userId: user.id } });
+      if (bizProfile) businessProfileId = bizProfile.id;
+    }
 
     const serviceRequest = await db.serviceRequest.create({
       data: {
@@ -95,15 +97,24 @@ export async function POST(request: NextRequest) {
         aiExtractedData: JSON.stringify(mapped.aiExtractedData),
         source: mapped.source,
         userId: user.id,
+        businessProfileId,
+        status: 'PENDING_REVIEW',
+        moderationStatus: 'PENDING',
       },
     });
 
-    scheduleNeedLeadOutreach(serviceRequest.id);
+    const sessionId =
+      typeof body.sessionId === 'string' ? body.sessionId : undefined;
+    void enqueueIntakeHeavyJob(serviceRequest.id, sessionId);
+    void enqueueRequestModerationJob(serviceRequest.id);
 
     return NextResponse.json({
       id: serviceRequest.id,
       slug: serviceRequest.slug,
       title: serviceRequest.title,
+      status: serviceRequest.status,
+      moderationStatus: serviceRequest.moderationStatus,
+      message: 'آگهی ثبت شد و در صف بازبینی قرار گرفت',
     });
   } catch (error) {
     console.error('need-intake publish error:', error);

@@ -1,0 +1,1747 @@
+{
+  "tehran-city": {
+    "divarCityId": 1,
+    "divarSlug": "tehran",
+    "matchMethod": "slug"
+  },
+  "karaj": {
+    "divarCityId": 2,
+    "divarSlug": "karaj",
+    "matchMethod": "slug"
+  },
+  "shahriar": {
+    "divarCityId": 1759,
+    "divarSlug": "shahriar-city",
+    "matchMethod": "name"
+  },
+  "malard": {
+    "divarCityId": 4032,
+    "divarSlug": "malard-city",
+    "matchMethod": "name"
+  },
+  "varamin": {
+    "divarCityId": 1762,
+    "divarSlug": "varamin-city",
+    "matchMethod": "name"
+  },
+  "islamshahr": {
+    "divarCityId": 29,
+    "divarSlug": "eslamshahr",
+    "matchMethod": "name"
+  },
+  "pakdasht": {
+    "divarCityId": 1760,
+    "divarSlug": "pakdasht-city",
+    "matchMethod": "name"
+  },
+  "robatskarim": {
+    "divarCityId": 1765,
+    "divarSlug": "robat-karim",
+    "matchMethod": "name"
+  },
+  "damavand": {
+    "divarCityId": 783,
+    "divarSlug": "damavand",
+    "matchMethod": "slug"
+  },
+  "firouzkouh": {
+    "divarCityId": 1770,
+    "divarSlug": "firuzkooh",
+    "matchMethod": "name"
+  },
+  "baharestan": {
+    "divarCityId": 4035,
+    "divarSlug": "baharestan-city",
+    "matchMethod": "name"
+  },
+  "pishva": {
+    "divarCityId": 781,
+    "divarSlug": "pishva",
+    "matchMethod": "slug"
+  },
+  "qods": {
+    "divarCityId": 1758,
+    "divarSlug": "qods-city",
+    "matchMethod": "name"
+  },
+  "isfahan-city": {
+    "divarCityId": 4,
+    "divarSlug": "isfahan",
+    "matchMethod": "slug"
+  },
+  "kashan": {
+    "divarCityId": 30,
+    "divarSlug": "kashan",
+    "matchMethod": "slug"
+  },
+  "khomeinishahr": {
+    "divarCityId": 1747,
+    "divarSlug": "khomeyni-shahr",
+    "matchMethod": "name"
+  },
+  "najafabad": {
+    "divarCityId": 31,
+    "divarSlug": "najafabad",
+    "matchMethod": "slug"
+  },
+  "shahinshahr": {
+    "divarCityId": 1744,
+    "divarSlug": "shahin-shahr",
+    "matchMethod": "name"
+  },
+  "mobarakeh": {
+    "divarCityId": 1748,
+    "divarSlug": "mobarakeh",
+    "matchMethod": "slug"
+  },
+  "falavarjan": {
+    "divarCityId": 849,
+    "divarSlug": "falavarjan",
+    "matchMethod": "slug"
+  },
+  "lenjan": {
+    "divarCityId": 1749,
+    "divarSlug": "lenjan",
+    "matchMethod": "slug"
+  },
+  "natanz": {
+    "divarCityId": 2210,
+    "divarSlug": "natanz",
+    "matchMethod": "slug"
+  },
+  "ardestan": {
+    "divarCityId": 2202,
+    "divarSlug": "ardestaan",
+    "matchMethod": "name"
+  },
+  "dehaqan": {
+    "divarCityId": 2207,
+    "divarSlug": "dahaaghan",
+    "matchMethod": "name"
+  },
+  "semirom": {
+    "divarCityId": 1725,
+    "divarSlug": "semirom",
+    "matchMethod": "slug"
+  },
+  "fereydunshahr": {
+    "divarCityId": 2208,
+    "divarSlug": "fereydoonshahr",
+    "matchMethod": "name"
+  },
+  "golpayegan": {
+    "divarCityId": 848,
+    "divarSlug": "golpayegan",
+    "matchMethod": "slug"
+  },
+  "khansar": {
+    "divarCityId": 1727,
+    "divarSlug": "khansar",
+    "matchMethod": "slug"
+  },
+  "shiraz": {
+    "divarCityId": 6,
+    "divarSlug": "shiraz",
+    "matchMethod": "slug"
+  },
+  "kazerun": {
+    "divarCityId": 1790,
+    "divarSlug": "kazeroon",
+    "matchMethod": "name"
+  },
+  "marvdasht": {
+    "divarCityId": 1788,
+    "divarSlug": "marvdasht-city",
+    "matchMethod": "name"
+  },
+  "jahrom": {
+    "divarCityId": 808,
+    "divarSlug": "jahrom",
+    "matchMethod": "slug"
+  },
+  "fasa": {
+    "divarCityId": 1789,
+    "divarSlug": "fasa-city",
+    "matchMethod": "name"
+  },
+  "darab": {
+    "divarCityId": 809,
+    "divarSlug": "darab",
+    "matchMethod": "slug"
+  },
+  "larestan": {
+    "divarCityId": 1730,
+    "divarSlug": "lar",
+    "matchMethod": "name"
+  },
+  "evaz": {
+    "divarCityId": 2715,
+    "divarSlug": "owz",
+    "matchMethod": "name"
+  },
+  "gerash": {
+    "divarCityId": 2761,
+    "divarSlug": "gerash",
+    "matchMethod": "slug"
+  },
+  "lar": {
+    "divarCityId": 1730,
+    "divarSlug": "lar",
+    "matchMethod": "slug"
+  },
+  "khonj": {
+    "divarCityId": 2754,
+    "divarSlug": "khanj",
+    "matchMethod": "name"
+  },
+  "nourabad": {
+    "divarCityId": 753,
+    "divarSlug": "nurabad",
+    "matchMethod": "name"
+  },
+  "sepidan": {
+    "divarCityId": 2737,
+    "divarSlug": "sepiddan",
+    "matchMethod": "name"
+  },
+  "abadeh": {
+    "divarCityId": 851,
+    "divarSlug": "abadeh",
+    "matchMethod": "slug"
+  },
+  "neyriz": {
+    "divarCityId": 1726,
+    "divarSlug": "neyriz",
+    "matchMethod": "slug"
+  },
+  "estehban": {
+    "divarCityId": 2723,
+    "divarSlug": "estahban",
+    "matchMethod": "name"
+  },
+  "zarrindasht": {
+    "divarCityId": 3998,
+    "divarSlug": "zarrin-dasht-city",
+    "matchMethod": "manual"
+  },
+  "pasargad": {
+    "divarCityId": 2711,
+    "divarSlug": "pasargad",
+    "matchMethod": "slug"
+  },
+  "mashhad": {
+    "divarCityId": 3,
+    "divarSlug": "mashhad",
+    "matchMethod": "slug"
+  },
+  "nishapur": {
+    "divarCityId": 318,
+    "divarSlug": "neyshabur",
+    "matchMethod": "name"
+  },
+  "sabzevar": {
+    "divarCityId": 316,
+    "divarSlug": "sabzevar",
+    "matchMethod": "slug"
+  },
+  "torbatheydariyeh": {
+    "divarCityId": 1776,
+    "divarSlug": "torbat-heydariyeh",
+    "matchMethod": "manual"
+  },
+  "kashmar": {
+    "divarCityId": 2946,
+    "divarSlug": "kasmar",
+    "matchMethod": "name"
+  },
+  "gonabad": {
+    "divarCityId": 847,
+    "divarSlug": "gonabad",
+    "matchMethod": "slug"
+  },
+  "quchan": {
+    "divarCityId": 1777,
+    "divarSlug": "quchan",
+    "matchMethod": "slug"
+  },
+  "torbatjam": {
+    "divarCityId": 791,
+    "divarSlug": "torbat-jam",
+    "matchMethod": "name"
+  },
+  "chenaran": {
+    "divarCityId": 1732,
+    "divarSlug": "chenaran",
+    "matchMethod": "slug"
+  },
+  "khaf": {
+    "divarCityId": 1736,
+    "divarSlug": "khaf",
+    "matchMethod": "slug"
+  },
+  "dargaz": {
+    "divarCityId": 2968,
+    "divarSlug": "dargaz",
+    "matchMethod": "slug"
+  },
+  "taybad": {
+    "divarCityId": 1729,
+    "divarSlug": "taybad",
+    "matchMethod": "slug"
+  },
+  "bajestan": {
+    "divarCityId": 2955,
+    "divarSlug": "bajestan",
+    "matchMethod": "slug"
+  },
+  "jowayin": {
+    "divarCityId": 2963,
+    "divarSlug": "jovin",
+    "matchMethod": "name"
+  },
+  "kalat": {
+    "divarCityId": 2996,
+    "divarSlug": "kalat",
+    "matchMethod": "slug"
+  },
+  "mehdishahr": {
+    "divarCityId": 3715,
+    "divarSlug": "mahdi-shahr",
+    "matchMethod": "manual"
+  },
+  "golmakan": {
+    "divarCityId": 2998,
+    "divarSlug": "golmakan",
+    "matchMethod": "slug"
+  },
+  "fariman": {
+    "divarCityId": 2991,
+    "divarSlug": "fariman",
+    "matchMethod": "slug"
+  },
+  "nishabur": {
+    "divarCityId": 318,
+    "divarSlug": "neyshabur",
+    "matchMethod": "name"
+  },
+  "tabriz": {
+    "divarCityId": 5,
+    "divarSlug": "tabriz",
+    "matchMethod": "slug"
+  },
+  "maragheh": {
+    "divarCityId": 762,
+    "divarSlug": "maragheh",
+    "matchMethod": "slug"
+  },
+  "mianeh": {
+    "divarCityId": 764,
+    "divarSlug": "mianeh",
+    "matchMethod": "slug"
+  },
+  "shabestar": {
+    "divarCityId": 3503,
+    "divarSlug": "shabestar",
+    "matchMethod": "slug"
+  },
+  "marand": {
+    "divarCityId": 763,
+    "divarSlug": "marand",
+    "matchMethod": "slug"
+  },
+  "bonab": {
+    "divarCityId": 760,
+    "divarSlug": "bonab",
+    "matchMethod": "slug"
+  },
+  "ahar": {
+    "divarCityId": 759,
+    "divarSlug": "ahar",
+    "matchMethod": "slug"
+  },
+  "sarab": {
+    "divarCityId": 852,
+    "divarSlug": "sarab",
+    "matchMethod": "slug"
+  },
+  "hashtrood": {
+    "divarCityId": 3530,
+    "divarSlug": "hashtrood",
+    "matchMethod": "slug"
+  },
+  "jolfa": {
+    "divarCityId": 3506,
+    "divarSlug": "jolfa-city",
+    "matchMethod": "name"
+  },
+  "malekan": {
+    "divarCityId": 3524,
+    "divarSlug": "malekan",
+    "matchMethod": "slug"
+  },
+  "bostanabad": {
+    "divarCityId": 3527,
+    "divarSlug": "bostan-abad",
+    "matchMethod": "manual"
+  },
+  "harris": {
+    "divarCityId": 3514,
+    "divarSlug": "heris",
+    "matchMethod": "name"
+  },
+  "azarshahr": {
+    "divarCityId": 853,
+    "divarSlug": "azarshahr",
+    "matchMethod": "slug"
+  },
+  "oskoo": {
+    "divarCityId": 3518,
+    "divarSlug": "osku",
+    "matchMethod": "name"
+  },
+  "kaleybar": {
+    "divarCityId": 3496,
+    "divarSlug": "kalibar",
+    "matchMethod": "name"
+  },
+  "urmia": {
+    "divarCityId": 10,
+    "divarSlug": "urmia",
+    "matchMethod": "slug"
+  },
+  "khoy": {
+    "divarCityId": 767,
+    "divarSlug": "khoy",
+    "matchMethod": "slug"
+  },
+  "mahabad": {
+    "divarCityId": 769,
+    "divarSlug": "mahabad",
+    "matchMethod": "slug"
+  },
+  "sardasht": {
+    "divarCityId": 857,
+    "divarSlug": "sardasht",
+    "matchMethod": "slug"
+  },
+  "piranshahr": {
+    "divarCityId": 766,
+    "divarSlug": "piranshahr",
+    "matchMethod": "slug"
+  },
+  "miandoab": {
+    "divarCityId": 792,
+    "divarSlug": "miandoab",
+    "matchMethod": "slug"
+  },
+  "bukan": {
+    "divarCityId": 765,
+    "divarSlug": "bukan",
+    "matchMethod": "slug"
+  },
+  "salmas": {
+    "divarCityId": 768,
+    "divarSlug": "salmas",
+    "matchMethod": "slug"
+  },
+  "naqadeh": {
+    "divarCityId": 770,
+    "divarSlug": "naqadeh",
+    "matchMethod": "slug"
+  },
+  "oshnavieh": {
+    "divarCityId": 859,
+    "divarSlug": "oshnavieh",
+    "matchMethod": "slug"
+  },
+  "takab": {
+    "divarCityId": 3538,
+    "divarSlug": "takab",
+    "matchMethod": "slug"
+  },
+  "maku": {
+    "divarCityId": 856,
+    "divarSlug": "maku",
+    "matchMethod": "slug"
+  },
+  "shahindej": {
+    "divarCityId": 858,
+    "divarSlug": "shahin-dej",
+    "matchMethod": "manual"
+  },
+  "chaldoran": {
+    "divarCityId": 3539,
+    "divarSlug": "chaldaran",
+    "matchMethod": "name"
+  },
+  "ahvaz": {
+    "divarCityId": 7,
+    "divarSlug": "ahvaz",
+    "matchMethod": "slug"
+  },
+  "khorramshahr": {
+    "divarCityId": 799,
+    "divarSlug": "khorramshahr",
+    "matchMethod": "slug"
+  },
+  "dezful": {
+    "divarCityId": 23,
+    "divarSlug": "dezful",
+    "matchMethod": "slug"
+  },
+  "abadan": {
+    "divarCityId": 24,
+    "divarSlug": "abadan",
+    "matchMethod": "slug"
+  },
+  "mahshahr": {
+    "divarCityId": 37,
+    "divarSlug": "mahshahr",
+    "matchMethod": "slug"
+  },
+  "behbahan": {
+    "divarCityId": 314,
+    "divarSlug": "behbahan",
+    "matchMethod": "slug"
+  },
+  "shush": {
+    "divarCityId": 754,
+    "divarSlug": "shush",
+    "matchMethod": "slug"
+  },
+  "shushtar": {
+    "divarCityId": 602,
+    "divarSlug": "shushtar",
+    "matchMethod": "slug"
+  },
+  "masjedsoleyman": {
+    "divarCityId": 317,
+    "divarSlug": "masjed-e-soleyman",
+    "matchMethod": "manual"
+  },
+  "izeh": {
+    "divarCityId": 797,
+    "divarSlug": "izeh",
+    "matchMethod": "slug"
+  },
+  "andimeshk": {
+    "divarCityId": 796,
+    "divarSlug": "andimeshk",
+    "matchMethod": "slug"
+  },
+  "gotvand": {
+    "divarCityId": 3395,
+    "divarSlug": "getvand",
+    "matchMethod": "name"
+  },
+  "lali": {
+    "divarCityId": 3396,
+    "divarSlug": "lali",
+    "matchMethod": "slug"
+  },
+  "baghmalek": {
+    "divarCityId": 3401,
+    "divarSlug": "bagh-malek",
+    "matchMethod": "manual"
+  },
+  "ramhormoz": {
+    "divarCityId": 800,
+    "divarSlug": "ramhormoz",
+    "matchMethod": "slug"
+  },
+  "ramshir": {
+    "divarCityId": 1781,
+    "divarSlug": "ramshir",
+    "matchMethod": "slug"
+  },
+  "omidieh": {
+    "divarCityId": 1779,
+    "divarSlug": "omidiyeh",
+    "matchMethod": "name"
+  },
+  "hoveyzeh": {
+    "divarCityId": 4573,
+    "divarSlug": "hoyze",
+    "matchMethod": "name"
+  },
+  "karun": {
+    "divarCityId": 3393,
+    "divarSlug": "karun",
+    "matchMethod": "slug"
+  },
+  "bavi": {
+    "divarCityId": 3399,
+    "divarSlug": "bavi",
+    "matchMethod": "slug"
+  },
+  "kerman-city": {
+    "divarCityId": 13,
+    "divarSlug": "kerman",
+    "matchMethod": "slug"
+  },
+  "jiroft": {
+    "divarCityId": 816,
+    "divarSlug": "jiroft",
+    "matchMethod": "slug"
+  },
+  "bam": {
+    "divarCityId": 815,
+    "divarSlug": "bam",
+    "matchMethod": "slug"
+  },
+  "sirjan": {
+    "divarCityId": 818,
+    "divarSlug": "sirjan",
+    "matchMethod": "slug"
+  },
+  "rafsanjan": {
+    "divarCityId": 817,
+    "divarSlug": "rafsanjan",
+    "matchMethod": "slug"
+  },
+  "zarand": {
+    "divarCityId": 867,
+    "divarSlug": "zarand",
+    "matchMethod": "slug"
+  },
+  "shahrbabak": {
+    "divarCityId": 3819,
+    "divarSlug": "shahr-babak",
+    "matchMethod": "manual"
+  },
+  "bardsir": {
+    "divarCityId": 1805,
+    "divarSlug": "bardsir",
+    "matchMethod": "slug"
+  },
+  "kahnooj": {
+    "divarCityId": 1803,
+    "divarSlug": "kahnooj",
+    "matchMethod": "slug"
+  },
+  "anbarabad": {
+    "divarCityId": 3855,
+    "divarSlug": "anbarabad",
+    "matchMethod": "slug"
+  },
+  "manujan": {
+    "divarCityId": 3846,
+    "divarSlug": "manujan",
+    "matchMethod": "slug"
+  },
+  "faryab": {
+    "divarCityId": 3853,
+    "divarSlug": "faryab",
+    "matchMethod": "slug"
+  },
+  "ghaleganj": {
+    "divarCityId": 3848,
+    "divarSlug": "ghaleh-ganj",
+    "matchMethod": "manual"
+  },
+  "baft": {
+    "divarCityId": 1804,
+    "divarSlug": "baft",
+    "matchMethod": "slug"
+  },
+  "ravars": {
+    "divarCityId": 3817,
+    "divarSlug": "ravar",
+    "matchMethod": "name"
+  },
+  "rasht": {
+    "divarCityId": 12,
+    "divarSlug": "rasht",
+    "matchMethod": "slug"
+  },
+  "bandaranzali": {
+    "divarCityId": 708,
+    "divarSlug": "bandar-anzali",
+    "matchMethod": "name"
+  },
+  "lahijan": {
+    "divarCityId": 746,
+    "divarSlug": "lahijan",
+    "matchMethod": "slug"
+  },
+  "langrud": {
+    "divarCityId": 828,
+    "divarSlug": "langarud",
+    "matchMethod": "name"
+  },
+  "fouman": {
+    "divarCityId": 860,
+    "divarSlug": "fuman",
+    "matchMethod": "name"
+  },
+  "astara": {
+    "divarCityId": 824,
+    "divarSlug": "astara",
+    "matchMethod": "slug"
+  },
+  "astaneashrafiyeh": {
+    "divarCityId": 825,
+    "divarSlug": "astaneh-ashrafiyeh",
+    "matchMethod": "name"
+  },
+  "somehsara": {
+    "divarCityId": 827,
+    "divarSlug": "someh-sara",
+    "matchMethod": "name"
+  },
+  "talesh": {
+    "divarCityId": 829,
+    "divarSlug": "talesh",
+    "matchMethod": "slug"
+  },
+  "siahkal": {
+    "divarCityId": 861,
+    "divarSlug": "siahkal",
+    "matchMethod": "slug"
+  },
+  "rudsar": {
+    "divarCityId": 826,
+    "divarSlug": "rudsar",
+    "matchMethod": "slug"
+  },
+  "roudhan": {
+    "divarCityId": 826,
+    "divarSlug": "rudsar",
+    "matchMethod": "name"
+  },
+  "masouleh": {
+    "divarCityId": 1815,
+    "divarSlug": "masuleh",
+    "matchMethod": "name"
+  },
+  "chaboksar": {
+    "divarCityId": 864,
+    "divarSlug": "chaboksar",
+    "matchMethod": "slug"
+  },
+  "kouchesfahan": {
+    "divarCityId": 1840,
+    "divarSlug": "kouchesfahan",
+    "matchMethod": "slug"
+  },
+  "sari": {
+    "divarCityId": 22,
+    "divarSlug": "sari",
+    "matchMethod": "slug"
+  },
+  "babol": {
+    "divarCityId": 664,
+    "divarSlug": "babol",
+    "matchMethod": "slug"
+  },
+  "amol": {
+    "divarCityId": 663,
+    "divarSlug": "amol",
+    "matchMethod": "slug"
+  },
+  "qaemshahr": {
+    "divarCityId": 665,
+    "divarSlug": "qaem-shahr",
+    "matchMethod": "name"
+  },
+  "behshahr": {
+    "divarCityId": 832,
+    "divarSlug": "behshahr",
+    "matchMethod": "slug"
+  },
+  "chalus": {
+    "divarCityId": 835,
+    "divarSlug": "chalus",
+    "matchMethod": "slug"
+  },
+  "nowshahr": {
+    "divarCityId": 709,
+    "divarSlug": "nowshahr",
+    "matchMethod": "slug"
+  },
+  "tonkabon": {
+    "divarCityId": 833,
+    "divarSlug": "tonekabon",
+    "matchMethod": "name"
+  },
+  "ramsar": {
+    "divarCityId": 745,
+    "divarSlug": "ramsar",
+    "matchMethod": "slug"
+  },
+  "noor": {
+    "divarCityId": 744,
+    "divarSlug": "nur",
+    "matchMethod": "name"
+  },
+  "mahmoudabad": {
+    "divarCityId": 837,
+    "divarSlug": "mahmudabad",
+    "matchMethod": "name"
+  },
+  "gorgan": {
+    "divarCityId": 21,
+    "divarSlug": "gorgan",
+    "matchMethod": "slug"
+  },
+  "feridunkenar": {
+    "divarCityId": 836,
+    "divarSlug": "fereydunkenar",
+    "matchMethod": "name"
+  },
+  "babolsar": {
+    "divarCityId": 710,
+    "divarSlug": "babolsar",
+    "matchMethod": "slug"
+  },
+  "joybar": {
+    "divarCityId": 834,
+    "divarSlug": "juybar",
+    "matchMethod": "name"
+  },
+  "kelardasht": {
+    "divarCityId": 1696,
+    "divarSlug": "kelarestan",
+    "matchMethod": "name"
+  },
+  "nozad": {
+    "divarCityId": 709,
+    "divarSlug": "nowshahr",
+    "matchMethod": "name"
+  },
+  "qom-city": {
+    "divarCityId": 8,
+    "divarSlug": "qom",
+    "matchMethod": "slug"
+  },
+  "kahak": {
+    "divarCityId": 2575,
+    "divarSlug": "kahak",
+    "matchMethod": "slug"
+  },
+  "salafchegan": {
+    "divarCityId": 2572,
+    "divarSlug": "salfchegan",
+    "matchMethod": "name"
+  },
+  "ghanavat": {
+    "divarCityId": 2576,
+    "divarSlug": "qanavat",
+    "matchMethod": "name"
+  },
+  "jafarabad": {
+    "divarCityId": 2570,
+    "divarSlug": "jafarabad",
+    "matchMethod": "slug"
+  },
+  "alborz-karaj": {
+    "divarCityId": 2,
+    "divarSlug": "karaj",
+    "matchMethod": "name"
+  },
+  "nazarabad": {
+    "divarCityId": 774,
+    "divarSlug": "nazarabad",
+    "matchMethod": "slug"
+  },
+  "fardis": {
+    "divarCityId": 1751,
+    "divarSlug": "fardis-city",
+    "matchMethod": "name"
+  },
+  "mahdasht": {
+    "divarCityId": 1753,
+    "divarSlug": "mahdasht-city",
+    "matchMethod": "name"
+  },
+  "taleghan": {
+    "divarCityId": 850,
+    "divarSlug": "taleqan",
+    "matchMethod": "name"
+  },
+  "hashtgerd": {
+    "divarCityId": 1754,
+    "divarSlug": "hashtgerd-city",
+    "matchMethod": "name"
+  },
+  "mohammadiyeh": {
+    "divarCityId": 873,
+    "divarSlug": "mohammadieh",
+    "matchMethod": "manual"
+  },
+  "zanjan-city": {
+    "divarCityId": 20,
+    "divarSlug": "zanjan",
+    "matchMethod": "name"
+  },
+  "abhar": {
+    "divarCityId": 802,
+    "divarSlug": "abhar",
+    "matchMethod": "slug"
+  },
+  "mahneshan": {
+    "divarCityId": 3699,
+    "divarSlug": "mahneshan",
+    "matchMethod": "slug"
+  },
+  "soltaniyeh": {
+    "divarCityId": 3710,
+    "divarSlug": "soltaniye",
+    "matchMethod": "name"
+  },
+  "idhaj": {
+    "divarCityId": 3697,
+    "divarSlug": "ijrud",
+    "matchMethod": "name"
+  },
+  "khoramdareh": {
+    "divarCityId": 803,
+    "divarSlug": "khorramdarreh",
+    "matchMethod": "name"
+  },
+  "hamedan-city": {
+    "divarCityId": 14,
+    "divarSlug": "hamedan",
+    "matchMethod": "name"
+  },
+  "malayer": {
+    "divarCityId": 843,
+    "divarSlug": "malayer",
+    "matchMethod": "slug"
+  },
+  "nahavand": {
+    "divarCityId": 844,
+    "divarSlug": "nahavand",
+    "matchMethod": "slug"
+  },
+  "tuyserkan": {
+    "divarCityId": 866,
+    "divarSlug": "tuyserkan",
+    "matchMethod": "slug"
+  },
+  "asadabad": {
+    "divarCityId": 842,
+    "divarSlug": "asadabad",
+    "matchMethod": "slug"
+  },
+  "bahar": {
+    "divarCityId": 1828,
+    "divarSlug": "bahar-city",
+    "matchMethod": "name"
+  },
+  "kabudarahang": {
+    "divarCityId": 1827,
+    "divarSlug": "kabudrahang",
+    "matchMethod": "name"
+  },
+  "razan": {
+    "divarCityId": 3993,
+    "divarSlug": "razen",
+    "matchMethod": "name"
+  },
+  "famenin": {
+    "divarCityId": 3990,
+    "divarSlug": "famenin",
+    "matchMethod": "slug"
+  },
+  "kermanshah-city": {
+    "divarCityId": 9,
+    "divarSlug": "kermanshah",
+    "matchMethod": "name"
+  },
+  "sahneh": {
+    "divarCityId": 1800,
+    "divarSlug": "sahneh",
+    "matchMethod": "slug"
+  },
+  "javanrud": {
+    "divarCityId": 820,
+    "divarSlug": "javanrud",
+    "matchMethod": "slug"
+  },
+  "qasrshirin": {
+    "divarCityId": 3864,
+    "divarSlug": "ghasr-shirin",
+    "matchMethod": "name"
+  },
+  "paveh": {
+    "divarCityId": 3880,
+    "divarSlug": "paveh",
+    "matchMethod": "slug"
+  },
+  "kangavar": {
+    "divarCityId": 821,
+    "divarSlug": "kangavar",
+    "matchMethod": "slug"
+  },
+  "islamabad": {
+    "divarCityId": 819,
+    "divarSlug": "eslamabad-gharb",
+    "matchMethod": "name"
+  },
+  "sonqor": {
+    "divarCityId": 855,
+    "divarSlug": "sonqor",
+    "matchMethod": "slug"
+  },
+  "gilangharb": {
+    "divarCityId": 3882,
+    "divarSlug": "gilan-gharb",
+    "matchMethod": "manual"
+  },
+  "harsin": {
+    "divarCityId": 1799,
+    "divarSlug": "harsin",
+    "matchMethod": "slug"
+  },
+  "ravansar": {
+    "divarCityId": 3877,
+    "divarSlug": "ravansar",
+    "matchMethod": "slug"
+  },
+  "dalahu": {
+    "divarCityId": 3863,
+    "divarSlug": "dalahu",
+    "matchMethod": "slug"
+  },
+  "khorramabad": {
+    "divarCityId": 27,
+    "divarSlug": "khorramabad",
+    "matchMethod": "slug"
+  },
+  "borujerd": {
+    "divarCityId": 26,
+    "divarSlug": "borujerd",
+    "matchMethod": "slug"
+  },
+  "dorud": {
+    "divarCityId": 752,
+    "divarSlug": "dorud",
+    "matchMethod": "slug"
+  },
+  "kuhdasht": {
+    "divarCityId": 831,
+    "divarSlug": "kuhdasht",
+    "matchMethod": "slug"
+  },
+  "aligudarz": {
+    "divarCityId": 830,
+    "divarSlug": "aligudarz",
+    "matchMethod": "slug"
+  },
+  "azna": {
+    "divarCityId": 870,
+    "divarSlug": "azna",
+    "matchMethod": "slug"
+  },
+  "poldokhtar": {
+    "divarCityId": 1817,
+    "divarSlug": "pol-dokhtar",
+    "matchMethod": "name"
+  },
+  "rumeshkan": {
+    "divarCityId": 3907,
+    "divarSlug": "rumeshkan",
+    "matchMethod": "slug"
+  },
+  "ilam-city": {
+    "divarCityId": 32,
+    "divarSlug": "ilam",
+    "matchMethod": "name"
+  },
+  "dehloran": {
+    "divarCityId": 777,
+    "divarSlug": "dehloran",
+    "matchMethod": "slug"
+  },
+  "ivan": {
+    "divarCityId": 776,
+    "divarSlug": "eyvan",
+    "matchMethod": "name"
+  },
+  "mehran": {
+    "divarCityId": 1823,
+    "divarSlug": "mehran",
+    "matchMethod": "slug"
+  },
+  "abdanan": {
+    "divarCityId": 775,
+    "divarSlug": "abdanan",
+    "matchMethod": "slug"
+  },
+  "darrehshahr": {
+    "divarCityId": 3595,
+    "divarSlug": "darreh-shahr",
+    "matchMethod": "manual"
+  },
+  "chardavol": {
+    "divarCityId": 3605,
+    "divarSlug": "chardavol",
+    "matchMethod": "slug"
+  },
+  "malekshahi": {
+    "divarCityId": 3598,
+    "divarSlug": "malekshahi",
+    "matchMethod": "slug"
+  },
+  "bushehr-city": {
+    "divarCityId": 25,
+    "divarSlug": "bushehr",
+    "matchMethod": "name"
+  },
+  "borazjan": {
+    "divarCityId": 778,
+    "divarSlug": "borazjan",
+    "matchMethod": "slug"
+  },
+  "genaveh": {
+    "divarCityId": 780,
+    "divarSlug": "bandar-ganaveh",
+    "matchMethod": "manual"
+  },
+  "asaluyeh": {
+    "divarCityId": 3630,
+    "divarSlug": "asalouye",
+    "matchMethod": "name"
+  },
+  "dayer": {
+    "divarCityId": 1756,
+    "divarSlug": "dayyer",
+    "matchMethod": "manual"
+  },
+  "deylam": {
+    "divarCityId": 3615,
+    "divarSlug": "deylam",
+    "matchMethod": "slug"
+  },
+  "khormoj": {
+    "divarCityId": 1755,
+    "divarSlug": "khormoj",
+    "matchMethod": "slug"
+  },
+  "ganaveh": {
+    "divarCityId": 780,
+    "divarSlug": "bandar-ganaveh",
+    "matchMethod": "manual"
+  },
+  "bandarabbas": {
+    "divarCityId": 18,
+    "divarSlug": "bandar-abbas",
+    "matchMethod": "name"
+  },
+  "minab": {
+    "divarCityId": 841,
+    "divarSlug": "minab",
+    "matchMethod": "slug"
+  },
+  "bandarlengeh": {
+    "divarCityId": 3956,
+    "divarSlug": "bandar-lengeh",
+    "matchMethod": "name"
+  },
+  "qeshm": {
+    "divarCityId": 660,
+    "divarSlug": "qeshm",
+    "matchMethod": "slug"
+  },
+  "kish": {
+    "divarCityId": 33,
+    "divarSlug": "kish",
+    "matchMethod": "slug"
+  },
+  "hormuz": {
+    "divarCityId": 1821,
+    "divarSlug": "hormuz",
+    "matchMethod": "slug"
+  },
+  "hengam": {
+    "divarCityId": 3946,
+    "divarSlug": "jazireh-hengam",
+    "matchMethod": "name"
+  },
+  "lavan": {
+    "divarCityId": 3945,
+    "divarSlug": "jazireh-lavan",
+    "matchMethod": "name"
+  },
+  "hendurabi": {
+    "divarCityId": 3983,
+    "divarSlug": "jazireh-hendorabi",
+    "matchMethod": "name"
+  },
+  "abumusa": {
+    "divarCityId": 3981,
+    "divarSlug": "jazireh-boumousi",
+    "matchMethod": "manual"
+  },
+  "greatertunb": {
+    "divarCityId": 3980,
+    "divarSlug": "jazireh-tonb-bozorg",
+    "matchMethod": "name"
+  },
+  "lessertunb": {
+    "divarCityId": 3979,
+    "divarSlug": "jazireh-tonb-koochak",
+    "matchMethod": "name"
+  },
+  "sirri": {
+    "divarCityId": 3982,
+    "divarSlug": "jazireh-siri",
+    "matchMethod": "name"
+  },
+  "farur": {
+    "divarCityId": 3977,
+    "divarSlug": "jazireh-farur",
+    "matchMethod": "name"
+  },
+  "greaterandsmallerfarur": {
+    "divarCityId": 3977,
+    "divarSlug": "jazireh-farur",
+    "matchMethod": "manual"
+  },
+  "jask": {
+    "divarCityId": 3973,
+    "divarSlug": "jask",
+    "matchMethod": "slug"
+  },
+  "rudan": {
+    "divarCityId": 3964,
+    "divarSlug": "rudan",
+    "matchMethod": "slug"
+  },
+  "bastak": {
+    "divarCityId": 3958,
+    "divarSlug": "bastak",
+    "matchMethod": "slug"
+  },
+  "hajiabad": {
+    "divarCityId": 3948,
+    "divarSlug": "haji-abad-city",
+    "matchMethod": "manual"
+  },
+  "parsian": {
+    "divarCityId": 3952,
+    "divarSlug": "parsian",
+    "matchMethod": "slug"
+  },
+  "zahedan": {
+    "divarCityId": 11,
+    "divarSlug": "zahedan",
+    "matchMethod": "slug"
+  },
+  "zabol": {
+    "divarCityId": 706,
+    "divarSlug": "zabol",
+    "matchMethod": "slug"
+  },
+  "chabahar": {
+    "divarCityId": 747,
+    "divarSlug": "chabahar",
+    "matchMethod": "slug"
+  },
+  "iranshahr": {
+    "divarCityId": 807,
+    "divarSlug": "Iranshahr",
+    "matchMethod": "slug"
+  },
+  "khash": {
+    "divarCityId": 1785,
+    "divarSlug": "khash",
+    "matchMethod": "slug"
+  },
+  "saravan": {
+    "divarCityId": 865,
+    "divarSlug": "saravan",
+    "matchMethod": "slug"
+  },
+  "nikshahr": {
+    "divarCityId": 3779,
+    "divarSlug": "nik-shahr",
+    "matchMethod": "manual"
+  },
+  "sarbaz": {
+    "divarCityId": 3755,
+    "divarSlug": "sarbaz",
+    "matchMethod": "slug"
+  },
+  "hirmand": {
+    "divarCityId": 3783,
+    "divarSlug": "hirmand",
+    "matchMethod": "slug"
+  },
+  "delgan": {
+    "divarCityId": 3750,
+    "divarSlug": "delgan",
+    "matchMethod": "slug"
+  },
+  "qasreqand": {
+    "divarCityId": 3760,
+    "divarSlug": "ghasrghand",
+    "matchMethod": "name"
+  },
+  "dalgan": {
+    "divarCityId": 3750,
+    "divarSlug": "delgan",
+    "matchMethod": "name"
+  },
+  "fanooj": {
+    "divarCityId": 3758,
+    "divarSlug": "fanouj",
+    "matchMethod": "name"
+  },
+  "yazd-city": {
+    "divarCityId": 16,
+    "divarSlug": "yazd",
+    "matchMethod": "slug"
+  },
+  "ardakan": {
+    "divarCityId": 846,
+    "divarSlug": "ardakan",
+    "matchMethod": "slug"
+  },
+  "mehriz": {
+    "divarCityId": 1830,
+    "divarSlug": "mehriz",
+    "matchMethod": "slug"
+  },
+  "bafq": {
+    "divarCityId": 1829,
+    "divarSlug": "bafq",
+    "matchMethod": "slug"
+  },
+  "taft": {
+    "divarCityId": 1831,
+    "divarSlug": "taft",
+    "matchMethod": "slug"
+  },
+  "maybod": {
+    "divarCityId": 845,
+    "divarSlug": "meybod",
+    "matchMethod": "name"
+  },
+  "ashkezar": {
+    "divarCityId": 4005,
+    "divarSlug": "ashkazar",
+    "matchMethod": "name"
+  },
+  "bahabad": {
+    "divarCityId": 1829,
+    "divarSlug": "bafq",
+    "matchMethod": "name"
+  },
+  "khatam": {
+    "divarCityId": 4011,
+    "divarSlug": "khatam",
+    "matchMethod": "slug"
+  },
+  "shahrekord": {
+    "divarCityId": 36,
+    "divarSlug": "shahrekord",
+    "matchMethod": "slug"
+  },
+  "borujen": {
+    "divarCityId": 785,
+    "divarSlug": "boroujen",
+    "matchMethod": "name"
+  },
+  "farsan": {
+    "divarCityId": 3640,
+    "divarSlug": "faarsan",
+    "matchMethod": "name"
+  },
+  "lordegan": {
+    "divarCityId": 787,
+    "divarSlug": "lordegan",
+    "matchMethod": "slug"
+  },
+  "ardehal": {
+    "divarCityId": 3637,
+    "divarSlug": "ardal",
+    "matchMethod": "name"
+  },
+  "kouhrang": {
+    "divarCityId": 3648,
+    "divarSlug": "kuhrang",
+    "matchMethod": "name"
+  },
+  "ben": {
+    "divarCityId": 3646,
+    "divarSlug": "bon",
+    "matchMethod": "name"
+  },
+  "samman": {
+    "divarCityId": 1833,
+    "divarSlug": "saman-city",
+    "matchMethod": "name"
+  },
+  "junqan": {
+    "divarCityId": 3641,
+    "divarSlug": "joneghan",
+    "matchMethod": "name"
+  },
+  "yasuj": {
+    "divarCityId": 38,
+    "divarSlug": "yasuj",
+    "matchMethod": "slug"
+  },
+  "dehdasht": {
+    "divarCityId": 822,
+    "divarSlug": "dehdasht",
+    "matchMethod": "slug"
+  },
+  "dogonbadan": {
+    "divarCityId": 874,
+    "divarSlug": "dogonbadan",
+    "matchMethod": "slug"
+  },
+  "likak": {
+    "divarCityId": 3890,
+    "divarSlug": "likak",
+    "matchMethod": "slug"
+  },
+  "charam": {
+    "divarCityId": 3895,
+    "divarSlug": "charam",
+    "matchMethod": "slug"
+  },
+  "landeh": {
+    "divarCityId": 3898,
+    "divarSlug": "lendeh",
+    "matchMethod": "name"
+  },
+  "aliabadkatul": {
+    "divarCityId": 823,
+    "divarSlug": "aliabad-katul",
+    "matchMethod": "name"
+  },
+  "azadshahr": {
+    "divarCityId": 1691,
+    "divarSlug": "azadshahr-golestan",
+    "matchMethod": "name"
+  },
+  "kalaleh": {
+    "divarCityId": 1692,
+    "divarSlug": "kalale",
+    "matchMethod": "name"
+  },
+  "gonbadkavus": {
+    "divarCityId": 743,
+    "divarSlug": "gonbad-kavus",
+    "matchMethod": "manual"
+  },
+  "minudasht": {
+    "divarCityId": 1693,
+    "divarSlug": "minoodasht",
+    "matchMethod": "name"
+  },
+  "kordkuy": {
+    "divarCityId": 750,
+    "divarSlug": "Kordkuy",
+    "matchMethod": "slug"
+  },
+  "bandarturkman": {
+    "divarCityId": 751,
+    "divarSlug": "bandar-torkaman",
+    "matchMethod": "manual"
+  },
+  "galikash": {
+    "divarCityId": 1832,
+    "divarSlug": "galikesh",
+    "matchMethod": "name"
+  },
+  "ramian": {
+    "divarCityId": 1979,
+    "divarSlug": "ramiyan",
+    "matchMethod": "name"
+  },
+  "bojnurd": {
+    "divarCityId": 39,
+    "divarSlug": "bojnurd",
+    "matchMethod": "slug"
+  },
+  "shirvan": {
+    "divarCityId": 795,
+    "divarSlug": "shirvan",
+    "matchMethod": "slug"
+  },
+  "esfarayen": {
+    "divarCityId": 794,
+    "divarSlug": "esfarayen",
+    "matchMethod": "slug"
+  },
+  "jajarm": {
+    "divarCityId": 3694,
+    "divarSlug": "jajarm",
+    "matchMethod": "slug"
+  },
+  "farooj": {
+    "divarCityId": 3688,
+    "divarSlug": "faruj",
+    "matchMethod": "name"
+  },
+  "garmeh": {
+    "divarCityId": 3687,
+    "divarSlug": "garmeh",
+    "matchMethod": "slug"
+  },
+  "birjand": {
+    "divarCityId": 34,
+    "divarSlug": "birjand",
+    "matchMethod": "slug"
+  },
+  "qaen": {
+    "divarCityId": 790,
+    "divarSlug": "ghayen",
+    "matchMethod": "name"
+  },
+  "ferdows": {
+    "divarCityId": 789,
+    "divarSlug": "ferdows",
+    "matchMethod": "slug"
+  },
+  "tabas": {
+    "divarCityId": 788,
+    "divarSlug": "tabas",
+    "matchMethod": "slug"
+  },
+  "nehbandan": {
+    "divarCityId": 3681,
+    "divarSlug": "nahbandan",
+    "matchMethod": "name"
+  },
+  "khosf": {
+    "divarCityId": 3672,
+    "divarSlug": "khusf",
+    "matchMethod": "name"
+  },
+  "ardabil-city": {
+    "divarCityId": 17,
+    "divarSlug": "ardabil",
+    "matchMethod": "name"
+  },
+  "parsabad": {
+    "divarCityId": 771,
+    "divarSlug": "parsabad",
+    "matchMethod": "slug"
+  },
+  "khalkhal": {
+    "divarCityId": 772,
+    "divarSlug": "khalkhal",
+    "matchMethod": "slug"
+  },
+  "meshginshahr": {
+    "divarCityId": 773,
+    "divarSlug": "meshgin-shahr",
+    "matchMethod": "manual"
+  },
+  "germi": {
+    "divarCityId": 1743,
+    "divarSlug": "germi",
+    "matchMethod": "slug"
+  },
+  "bilehsavar": {
+    "divarCityId": 3571,
+    "divarSlug": "bileh-savar",
+    "matchMethod": "manual"
+  },
+  "namin": {
+    "divarCityId": 1742,
+    "divarSlug": "namin",
+    "matchMethod": "slug"
+  },
+  "nir": {
+    "divarCityId": 3573,
+    "divarSlug": "nir",
+    "matchMethod": "slug"
+  },
+  "kosar": {
+    "divarCityId": 3572,
+    "divarSlug": "kosar-city",
+    "matchMethod": "name"
+  },
+  "qazvin-city": {
+    "divarCityId": 19,
+    "divarSlug": "qazvin",
+    "matchMethod": "name"
+  },
+  "takestan": {
+    "divarCityId": 811,
+    "divarSlug": "takestan",
+    "matchMethod": "slug"
+  },
+  "abyek": {
+    "divarCityId": 869,
+    "divarSlug": "abyek",
+    "matchMethod": "slug"
+  },
+  "boinnzahra": {
+    "divarCityId": 3786,
+    "divarSlug": "boveyn-zahra",
+    "matchMethod": "manual"
+  },
+  "avaj": {
+    "divarCityId": 3785,
+    "divarSlug": "avaj",
+    "matchMethod": "slug"
+  },
+  "alvand": {
+    "divarCityId": 872,
+    "divarSlug": "alvand",
+    "matchMethod": "slug"
+  },
+  "esfarvarin": {
+    "divarCityId": 3788,
+    "divarSlug": "asfarvarin",
+    "matchMethod": "name"
+  },
+  "arak": {
+    "divarCityId": 15,
+    "divarSlug": "arak",
+    "matchMethod": "slug"
+  },
+  "saveh": {
+    "divarCityId": 671,
+    "divarSlug": "saveh",
+    "matchMethod": "slug"
+  },
+  "khomein": {
+    "divarCityId": 839,
+    "divarSlug": "khomein",
+    "matchMethod": "slug"
+  },
+  "delijan": {
+    "divarCityId": 1824,
+    "divarSlug": "delijan",
+    "matchMethod": "slug"
+  },
+  "mahallat": {
+    "divarCityId": 840,
+    "divarSlug": "mahalat",
+    "matchMethod": "name"
+  },
+  "komijan": {
+    "divarCityId": 3933,
+    "divarSlug": "komijan",
+    "matchMethod": "slug"
+  },
+  "shazand": {
+    "divarCityId": 1825,
+    "divarSlug": "shazand",
+    "matchMethod": "slug"
+  },
+  "tafresh": {
+    "divarCityId": 3932,
+    "divarSlug": "tafresh",
+    "matchMethod": "slug"
+  },
+  "ashtian": {
+    "divarCityId": 3937,
+    "divarSlug": "ashtian",
+    "matchMethod": "slug"
+  },
+  "khondab": {
+    "divarCityId": 3930,
+    "divarSlug": "khandab",
+    "matchMethod": "name"
+  },
+  "zarandiyeh": {
+    "divarCityId": 3928,
+    "divarSlug": "zarandieh",
+    "matchMethod": "name"
+  },
+  "semnan-city": {
+    "divarCityId": 35,
+    "divarSlug": "semnan",
+    "matchMethod": "name"
+  },
+  "shahrood": {
+    "divarCityId": 3581,
+    "divarSlug": "shahrood",
+    "matchMethod": "slug"
+  },
+  "damghan": {
+    "divarCityId": 805,
+    "divarSlug": "damghan",
+    "matchMethod": "slug"
+  },
+  "garmsar": {
+    "divarCityId": 806,
+    "divarSlug": "garmsar",
+    "matchMethod": "slug"
+  },
+  "aradan": {
+    "divarCityId": 3713,
+    "divarSlug": "aradan",
+    "matchMethod": "slug"
+  },
+  "sorkheh": {
+    "divarCityId": 3714,
+    "divarSlug": "sorkheh",
+    "matchMethod": "slug"
+  },
+  "miandasht": {
+    "divarCityId": 2203,
+    "divarSlug": "booyin-va-miyaandasht",
+    "matchMethod": "manual"
+  },
+  "shahmirzad": {
+    "divarCityId": 3721,
+    "divarSlug": "shahmirzad",
+    "matchMethod": "slug"
+  },
+  "sanandaj": {
+    "divarCityId": 28,
+    "divarSlug": "sanandaj",
+    "matchMethod": "slug"
+  },
+  "saghez": {
+    "divarCityId": 812,
+    "divarSlug": "saqqez",
+    "matchMethod": "name"
+  },
+  "marivan": {
+    "divarCityId": 814,
+    "divarSlug": "marivan",
+    "matchMethod": "slug"
+  },
+  "baneh": {
+    "divarCityId": 662,
+    "divarSlug": "baneh",
+    "matchMethod": "slug"
+  },
+  "kamyaran": {
+    "divarCityId": 1797,
+    "divarSlug": "kamyaran",
+    "matchMethod": "slug"
+  },
+  "bijar": {
+    "divarCityId": 868,
+    "divarSlug": "bijar",
+    "matchMethod": "slug"
+  },
+  "qorveh": {
+    "divarCityId": 813,
+    "divarSlug": "qorveh",
+    "matchMethod": "slug"
+  },
+  "dehgolan": {
+    "divarCityId": 1798,
+    "divarSlug": "dehgolan",
+    "matchMethod": "slug"
+  },
+  "diwandareh": {
+    "divarCityId": 3797,
+    "divarSlug": "divandareh",
+    "matchMethod": "name"
+  },
+  "sarvabad": {
+    "divarCityId": 3803,
+    "divarSlug": "sarvabad",
+    "matchMethod": "slug"
+  },
+  "kurdistan-other": {
+    "divarCityId": 3899,
+    "divarSlug": "basht",
+    "matchMethod": "name"
+  }
+}

@@ -59,7 +59,7 @@ export function HomepageHowItWorks() {
         <div className="stagger-children relative">
           {/* Connecting animated gradient line — desktop only */}
           <div
-            className="absolute top-[52px] start-[12.5%] end-[12.5%] hidden md:block z-0 step-connector-animated animate"
+            className="absolute top-[52px] inset-s-[12.5%] inset-e-[12.5%] hidden md:block z-0 step-connector-animated animate"
             aria-hidden="true"
           >
             <div className="w-full h-[2px]" />
@@ -67,7 +67,7 @@ export function HomepageHowItWorks() {
 
           {/* Connecting dots — desktop only */}
           <div
-            className="absolute top-[52px] start-[12.5%] end-[12.5%] hidden md:block z-0 h-[2px] step-connector-dots"
+            className="absolute top-[52px] inset-s-[12.5%] inset-e-[12.5%] hidden md:block z-0 h-[2px] step-connector-dots"
             aria-hidden="true"
           />
 
@@ -85,7 +85,7 @@ export function HomepageHowItWorks() {
                   <div
                     className={cn(
                       'relative z-10 mb-6 flex size-[88px] items-center justify-center rounded-full',
-                      'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600',
+                      'bg-linear-to-br from-emerald-500 via-emerald-600 to-teal-600',
                       'shadow-lg shadow-emerald-500/25',
                       'ring-4 ring-emerald-50 dark:ring-emerald-950/30',
                       'transition-transform duration-300 hover:scale-110',
@@ -93,7 +93,7 @@ export function HomepageHowItWorks() {
                     )}
                   >
                     <span
-                      className="absolute -top-1 -end-1 flex size-6 items-center justify-center rounded-full bg-white dark:bg-card text-xs font-extrabold text-emerald-600 shadow-md ring-2 ring-emerald-200 dark:ring-emerald-800"
+                      className="absolute -top-1 -inset-e-1 flex size-6 items-center justify-center rounded-full bg-white dark:bg-card text-xs font-extrabold text-emerald-600 shadow-md ring-2 ring-emerald-200 dark:ring-emerald-800"
                       itemProp="position"
                       aria-hidden="true"
                     >

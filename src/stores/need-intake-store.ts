@@ -9,6 +9,10 @@ import type {
   NextQuestionResponse,
   ParsedIntent,
 } from '@/contracts/need-intake';
+import type {
+  TypingAnalysisResult,
+  TypingAnalysisStatus,
+} from '@/contracts/typing-analysis';
 
 interface NeedIntakeState {
   step: IntakeStep;
@@ -24,6 +28,10 @@ interface NeedIntakeState {
   leadPhone: string | null;
   error: string | null;
   isLoading: boolean;
+  typingAnalysis: TypingAnalysisResult | null;
+  analysisStatus: TypingAnalysisStatus;
+  typingPreloading: boolean;
+  typingSessionId: string | null;
 
   setSeedText: (text: string) => void;
   addTurn: (turn: ConversationTurn) => void;
@@ -38,6 +46,10 @@ interface NeedIntakeState {
   setLeadPhone: (phone: string | null) => void;
   setError: (e: string | null) => void;
   setLoading: (v: boolean) => void;
+  setTypingAnalysis: (r: TypingAnalysisResult | null) => void;
+  setAnalysisStatus: (s: TypingAnalysisStatus) => void;
+  setTypingPreloading: (v: boolean) => void;
+  setTypingSessionId: (id: string | null) => void;
   reset: () => void;
   getDraft: () => NeedDraft | null;
 }
@@ -56,6 +68,10 @@ const initialState = {
   leadPhone: null,
   error: null,
   isLoading: false,
+  typingAnalysis: null,
+  analysisStatus: 'idle' as TypingAnalysisStatus,
+  typingPreloading: false,
+  typingSessionId: null,
 };
 
 export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
@@ -76,6 +92,10 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
   setLeadPhone: (leadPhone) => set({ leadPhone }),
   setError: (error) => set({ error }),
   setLoading: (isLoading) => set({ isLoading }),
+  setTypingAnalysis: (typingAnalysis) => set({ typingAnalysis }),
+  setAnalysisStatus: (analysisStatus) => set({ analysisStatus }),
+  setTypingPreloading: (typingPreloading) => set({ typingPreloading }),
+  setTypingSessionId: (typingSessionId) => set({ typingSessionId }),
   reset: () => set(initialState),
 
   getDraft: () => {

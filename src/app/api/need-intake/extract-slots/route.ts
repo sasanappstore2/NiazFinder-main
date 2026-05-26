@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { ParsedIntent } from '@/contracts/need-intake';
-import { extractSlotsWithLlm } from '@/lib/need-intake/extract-slots';
-import { isNeedIntakeAiEnabled } from '@/lib/ai/env';
+import { extractSlotsFromRules } from '@/lib/need-intake/extract-slots-rules';
 import {
   checkNeedIntakeRateLimit,
   rateLimitKeyFromRequest,
@@ -29,11 +28,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'پارامتر نامعتبر' }, { status: 400 });
     }
 
-    const slots = await extractSlotsWithLlm(parsed, answers, lastAnswer);
+    const slots = extractSlotsFromRules(parsed, answers, lastAnswer);
 
     return NextResponse.json({
       slots,
-      meta: { aiEnabled: isNeedIntakeAiEnabled() },
+      meta: { engine: 'internal' },
     });
   } catch (error) {
     console.error('extract-slots error:', error);

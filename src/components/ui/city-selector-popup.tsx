@@ -22,12 +22,18 @@ import type { AutoLocationStatus } from '@/hooks/use-auto-location-city';
 import { cn } from '@/lib/utils';
 import { type City } from '@/lib/location-system';
 import { useManagedLocations } from '@/lib/use-managed-locations';
+import {
+  compressCitySelection,
+  type LocationSelection,
+} from '@/lib/search/location-scope';
 
 interface CitySelectorPopupProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selectedCities: City[];
-  onSelectionChange: (cities: City[]) => void;
+  /** Full provinces (location-system ids) stored in cookie when entire province selected. */
+  selectedProvinceIds?: string[];
+  onSelectionChange: (selection: LocationSelection) => void;
   geoStatus?: AutoLocationStatus;
   detectedCity?: City | null;
   isDetecting?: boolean;
@@ -75,6 +81,7 @@ export function CitySelectorPopup({
   open,
   onOpenChange,
   selectedCities,
+  selectedProvinceIds = [],
   onSelectionChange,
   geoStatus = 'idle',
   detectedCity = null,
@@ -88,10 +95,27 @@ export function CitySelectorPopup({
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { provinces, searchCities } = useManagedLocations();
 
-  // Sync temp selection
+  // Sync temp selection (expand full provinces into cities for UI)
   React.useEffect(() => {
-    setTempSelection(selectedCities);
-  }, [selectedCities]);
+    const merged: City[] = [];
+    const seen = new Set<string>();
+    for (const city of selectedCities) {
+      if (!seen.has(city.id)) {
+        seen.add(city.id);
+        merged.push(city);
+      }
+    }
+    for (const province of provinces) {
+      if (!selectedProvinceIds.includes(province.id)) continue;
+      for (const city of province.cities) {
+        if (!seen.has(city.id)) {
+          seen.add(city.id);
+          merged.push(city);
+        }
+      }
+    }
+    setTempSelection(merged);
+  }, [selectedCities, selectedProvinceIds, provinces]);
 
   // Focus search on open
   React.useEffect(() => {
@@ -128,7 +152,8 @@ export function CitySelectorPopup({
   const clearAll = () => setTempSelection([]);
 
   const handleConfirm = () => {
-    onSelectionChange(tempSelection);
+    const selection = compressCitySelection(tempSelection, provinces);
+    onSelectionChange(selection);
     onOpenChange(false);
   };
 
@@ -344,7 +369,7 @@ export function CitySelectorPopup({
 
                   {/* Cities list */}
                   {isExpanded && (
-                    <div className="mr-5 pr-1 mb-1 space-y-px border-r-[2px] border-emerald-500/20 rounded-bl-lg">
+                    <div className="mr-5 pr-1 mb-1 space-y-px border-r-2 border-emerald-500/20 rounded-bl-lg">
                       {province.cities.map(city => {
                         const selected = isCitySelected(city.id);
                         return (
@@ -387,7 +412,7 @@ export function CitySelectorPopup({
         </div>
 
         {/* ─── Sticky Footer ─── */}
-        <div className="shrink-0 border-t border-border/40 bg-background/95 backdrop-blur-sm px-5 py-3">
+        <div className="shrink-0 border-t border-border/40 bg-background/95 backdrop-blur-xs px-5 py-3">
           <div className="flex items-center justify-between gap-3">
             {/* Left info */}
             <div className="flex items-center gap-2 min-w-0">

@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { slugifyBusinessName, uniqueBusinessSlug } from '@/lib/business/slug';
 import { parseJsonArray, toJson } from '@/lib/business/json-fields';
 import type { BusinessProfile, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 type UserForProfile = Pick<
   User,
@@ -13,15 +14,51 @@ type UserForProfile = Pick<
   | 'bio'
   | 'city'
   | 'province'
-  | 'address'
   | 'phone'
   | 'email'
   | 'isVerified'
   | 'createdAt'
   | 'role'
->;
+> & { address?: string | null };
 
-/** Load or create BusinessProfile from a specialist User. */
+function isUniqueConstraintError(error: unknown): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002'
+  );
+}
+
+function buildProfileData(user: UserForProfile, name: string, slug: string) {
+  const yearsActive = Math.max(
+    0,
+    Math.floor((Date.now() - user.createdAt.getTime()) / (365.25 * 24 * 60 * 60 * 1000))
+  );
+
+  return {
+    userId: user.id,
+    name,
+    slug,
+    logo: user.avatar,
+    description: user.bio ?? '',
+    city: user.city,
+    province: user.province,
+    address: user.address,
+    verified: user.isVerified,
+    phone: user.phone,
+    email: user.email,
+    yearsActive,
+    seoTitle: `${name}${user.city ? ` | ${user.city}` : ''}`,
+    seoDescription: user.bio?.slice(0, 160) ?? '',
+    aiAssistantConfig: toJson({ systemPrompt: '', dynamicQuestions: [] }),
+    extensions: toJson({}),
+  };
+}
+
+async function slugExists(slug: string): Promise<boolean> {
+  const row = await db.businessProfile.findUnique({ where: { slug } });
+  return Boolean(row);
+}
+
+/** Load or create BusinessProfile from a specialist User (idempotent under concurrency). */
 export async function ensureBusinessProfile(user: UserForProfile): Promise<BusinessProfile> {
   const existing = await db.businessProfile.findUnique({ where: { userId: user.id } });
   if (existing) return existing;
@@ -31,39 +68,53 @@ export async function ensureBusinessProfile(user: UserForProfile): Promise<Busin
     `${user.firstName} ${user.lastName}`.trim() ||
     'کسب‌وکار';
 
-  const slug = await uniqueBusinessSlug(name, async (s) => {
-    const row = await db.businessProfile.findUnique({ where: { slug: s } });
-    return Boolean(row);
-  });
+  let slug = await uniqueBusinessSlug(name, slugExists);
+  const data = buildProfileData(user, name, slug);
 
-  const yearsActive = Math.max(
-    0,
-    Math.floor((Date.now() - user.createdAt.getTime()) / (365.25 * 24 * 60 * 60 * 1000))
-  );
+  try {
+    const profile = await db.businessProfile.create({ data });
+    await syncCategorySlugsFromSkills(profile.id, user.id);
+    return profile;
+  } catch (error) {
+    if (!isUniqueConstraintError(error)) throw error;
 
-  const profile = await db.businessProfile.create({
-    data: {
-      userId: user.id,
-      name,
-      slug,
-      logo: user.avatar,
-      description: user.bio ?? '',
-      city: user.city,
-      province: user.province,
-      address: user.address,
-      verified: user.isVerified,
-      phone: user.phone,
-      email: user.email,
-      yearsActive,
-      seoTitle: `${name}${user.city ? ` | ${user.city}` : ''}`,
-      seoDescription: user.bio?.slice(0, 160) ?? '',
-      aiAssistantConfig: toJson({ systemPrompt: '', dynamicQuestions: [] }),
-      extensions: toJson({}),
-    },
-  });
+    const raced = await db.businessProfile.findUnique({ where: { userId: user.id } });
+    if (raced) return raced;
 
-  await syncCategorySlugsFromSkills(profile.id, user.id);
-  return profile;
+    const target = (error as Prisma.PrismaClientKnownRequestError).meta?.target;
+    const fields = Array.isArray(target)
+      ? target
+      : typeof target === 'string'
+        ? [target]
+        : [];
+
+    if (fields.some((f) => String(f).includes('slug'))) {
+      slug = `${slugifyBusinessName(name)}-${user.id.slice(-8)}`;
+      let attempt = 0;
+      while (await slugExists(slug)) {
+        attempt += 1;
+        slug = `${slugifyBusinessName(name)}-${user.id.slice(-8)}-${attempt}`;
+      }
+
+      try {
+        const profile = await db.businessProfile.create({
+          data: buildProfileData(user, name, slug),
+        });
+        await syncCategorySlugsFromSkills(profile.id, user.id);
+        return profile;
+      } catch (retryError) {
+        if (isUniqueConstraintError(retryError)) {
+          const final = await db.businessProfile.findUnique({ where: { userId: user.id } });
+          if (final) return final;
+        }
+        throw retryError;
+      }
+    }
+
+    const final = await db.businessProfile.findUnique({ where: { userId: user.id } });
+    if (final) return final;
+    throw error;
+  }
 }
 
 /** Copy category slugs from UserSkill when profile has none (improves need matching). */

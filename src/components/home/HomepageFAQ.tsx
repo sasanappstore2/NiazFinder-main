@@ -98,7 +98,7 @@ export function HomepageFAQ() {
 
           {/* FAQ Accordion */}
           <div
-            className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-sm p-5 md:p-6"
+            className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-xs p-5 md:p-6"
           >
             {FAQ_DATA.map((item, i) => (
               <FAQAccordionItem

@@ -91,10 +91,19 @@ function scoreCandidate(
   return { score: Math.min(score, 0.95), reason: reasons.join(' · ') };
 }
 
+const candidateCache = new Map<string, { at: number; data: RawCandidate[] }>();
+const CANDIDATE_CACHE_TTL_MS = 60_000;
+
 export async function findCandidateBusinesses(
   need: NeedMatchContext,
   limit = 30
 ): Promise<RawCandidate[]> {
+  const cacheKey = `${need.categorySlug}|${need.city ?? ''}|${need.province ?? ''}|${limit}`;
+  const cached = candidateCache.get(cacheKey);
+  if (cached && Date.now() - cached.at < CANDIDATE_CACHE_TTL_MS) {
+    return cached.data;
+  }
+
   const relevantSlugs = expandCategorySlugsForMatch(need.categorySlug);
   const needText = `${need.title} ${need.description}`.toLowerCase();
 
@@ -160,7 +169,9 @@ export async function findCandidateBusinesses(
   scored.sort((a, b) => b.ruleScore - a.ruleScore);
 
   if (scored.length >= 3) {
-    return scored.slice(0, limit);
+    const result = scored.slice(0, limit);
+    candidateCache.set(cacheKey, { at: Date.now(), data: result });
+    return result;
   }
 
   const specialists = await db.user.findMany({
@@ -215,7 +226,9 @@ export async function findCandidateBusinesses(
   }
 
   scored.sort((a, b) => b.ruleScore - a.ruleScore);
-  return scored.slice(0, limit);
+  const result = scored.slice(0, limit);
+  candidateCache.set(cacheKey, { at: Date.now(), data: result });
+  return result;
 }
 
 export function toMatchedBusinessItems(candidates: RawCandidate[]): MatchedBusinessItem[] {

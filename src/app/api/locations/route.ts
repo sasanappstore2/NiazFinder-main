@@ -4,16 +4,19 @@ import {
   getPublicLocationData,
   readManagedLocationData,
 } from '@/lib/admin-locations';
+import { readManifest } from '@/lib/neighborhoods/catalog';
 
 export const runtime = 'nodejs';
 
 export async function GET() {
   try {
-    const data = getPublicLocationData(await readManagedLocationData());
+    const raw = await readManagedLocationData();
+    const manifest = await readManifest();
+    const data = getPublicLocationData(raw, manifest.counts);
 
     return NextResponse.json({
       ...data,
-      stats: getLocationStats(data),
+      stats: await getLocationStats(raw),
     });
   } catch (error) {
     console.error('Locations GET error:', error);

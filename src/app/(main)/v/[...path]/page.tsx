@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
-import Script from 'next/script';
+import { PageContainer } from '@/components/layout/PageContainer';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { Separator } from '@/components/ui/separator';
 import { RequestDetail } from '@/components/need/RequestDetail';
 import { db } from '@/lib/db';
@@ -76,21 +77,19 @@ export default async function ListingDetailPage({ params }: PageProps) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: SITE_NAME, item: `${SITE_URL}/` },
-      { '@type': 'ListItem', position: 2, name: 'جستجو', item: `${SITE_URL}/s/iran` },
+      { '@type': 'ListItem', position: 2, name: 'بازار نیازها', item: `${SITE_URL}/n/iran` },
       { '@type': 'ListItem', position: 3, name: title, item: `${SITE_URL}${canonical}` },
     ],
   };
 
   return (
     <>
-      <Script id="listing-breadcrumb-jsonld" type="application/ld+json" strategy="beforeInteractive">
-        {JSON.stringify(jsonLd)}
-      </Script>
-      <div className="max-w-6xl mx-auto px-4 pt-2 pb-12">
+      <JsonLd id="listing-breadcrumb-jsonld" data={jsonLd} />
+      <PageContainer width="wide">
         <Breadcrumb />
         <Separator className="my-4" />
         <RequestDetail id={id} />
-      </div>
+      </PageContainer>
     </>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { AuthGuard } from '@/components/shared/AuthGuard';
+import { PageContainer } from '@/components/layout/PageContainer';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { UserDiscovery } from '@/components/social/UserDiscovery';
@@ -8,11 +9,11 @@ import { UserDiscovery } from '@/components/social/UserDiscovery';
 export default function DiscoverRoute() {
   return (
     <AuthGuard>
-      <div className="max-w-7xl mx-auto px-4 pt-2 pb-12">
+      <PageContainer>
         <Breadcrumb />
         <Separator className="my-4" />
         <UserDiscovery />
-      </div>
+      </PageContainer>
     </AuthGuard>
   );
 }

@@ -189,7 +189,7 @@ export function NeedLeadPromptBox({
             'text-base leading-[1.618] shadow-none',
             'focus-visible:ring-0 focus-visible:ring-offset-0',
             'placeholder:text-muted-foreground/80',
-            '[scrollbar-width:thin]'
+            'scrollbar-thin'
           )}
           style={{ overflow: 'hidden' }}
           onKeyDown={(e) => {

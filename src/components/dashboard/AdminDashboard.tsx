@@ -328,14 +328,14 @@ function UsersView() {
         <CardContent className="p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative flex-1">
-              <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute inset-s-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input placeholder="جستجوی نام یا ایمیل..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }} className="ps-9" aria-label="جستجوی کاربر" />
             </div>
             <div className="flex gap-2">
-              <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-border/60 bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30" aria-label="فیلتر نقش">
+              <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-border/60 bg-background px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30" aria-label="فیلتر نقش">
                 <option value="all">همه نقش‌ها</option><option value="مشتری">مشتری</option><option value="کسب‌وکار">کسب‌وکار</option>
               </select>
-              <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-border/60 bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30" aria-label="فیلتر وضعیت">
+              <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-border/60 bg-background px-3 py-2 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-500/30" aria-label="فیلتر وضعیت">
                 <option value="all">همه وضعیت‌ها</option><option value="active">فعال</option><option value="inactive">غیرفعال</option><option value="banned">مسدود</option>
               </select>
             </div>
@@ -366,7 +366,7 @@ function UsersView() {
                     <TableRow key={user.id}>
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-8 w-8" loading="lazy"><AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">{user.initials}</AvatarFallback></Avatar>
+                          <Avatar className="h-8 w-8"><AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">{user.initials}</AvatarFallback></Avatar>
                           <span className="font-medium text-sm">{user.name}</span>
                         </div>
                       </TableCell>
@@ -511,13 +511,13 @@ function Sidebar({ activeSection, onSectionChange, isOpen, onClose }: { activeSe
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 z-[var(--z-dropdown)] bg-black/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-(--z-dropdown) bg-black/50 backdrop-blur-xs lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
       )}
       <aside
-        className={`fixed top-0 right-0 z-[var(--z-header)] h-full w-64 border-e bg-card shadow-xl transition-transform duration-300 ease-in-out lg:translate-x-0 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed top-0 right-0 z-(--z-header) h-full w-64 border-e bg-card shadow-xl transition-transform duration-300 ease-in-out lg:translate-x-0 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
         aria-label="منوی مدیریت"
       >
         <div className="flex h-full flex-col">
@@ -547,7 +547,7 @@ function Sidebar({ activeSection, onSectionChange, isOpen, onClose }: { activeSe
 
           <div className="border-t p-4">
             <div className="flex items-center gap-3">
-              <Avatar className="h-9 w-9" loading="lazy"><AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">م م</AvatarFallback></Avatar>
+              <Avatar className="h-9 w-9"><AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">م م</AvatarFallback></Avatar>
               <div className="flex-1 overflow-hidden"><p className="truncate text-sm font-medium">مدیر سیستم</p><p className="truncate text-xs text-muted-foreground">admin@needfinder.ir</p></div>
             </div>
           </div>
@@ -603,7 +603,7 @@ export function AdminDashboard() {
       {/* Main content */}
       <div className="transition-all duration-300 lg:mr-64">
         {/* Mobile header */}
-        <div className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b bg-background/95 backdrop-blur-sm px-4 lg:hidden">
+        <div className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b bg-background/95 backdrop-blur-xs px-4 lg:hidden">
           <Button variant="ghost" size="icon" className="h-11 w-11" onClick={() => setSidebarOpen(true)} aria-label="باز کردن منو">
             <Menu className="h-5 w-5" />
           </Button>

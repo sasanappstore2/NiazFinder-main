@@ -4,7 +4,7 @@ export default function RootLoading() {
   return (
     <div className="min-h-screen bg-background" dir="rtl">
       {/* Header Skeleton */}
-      <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-sm">
+      <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xs">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
           {/* Logo */}
           <div className="flex items-center gap-2">

@@ -49,7 +49,7 @@ export function getSchemaForIntake(
   categorySlug: string
 ): IntentSchema {
   if (intentType === 'real_estate_service') {
-    return buildServicesIntakeSchema(intentType);
+    return buildServicesIntakeSchema(intentType, categorySlug);
   }
 
   if (isPreSaleCategory(categorySlug)) {
@@ -57,7 +57,7 @@ export function getSchemaForIntake(
   }
 
   if (isSocialCategory(categorySlug) || intentType === 'help_request') {
-    return buildSocialIntakeSchema(intentType);
+    return buildSocialIntakeSchema(intentType, categorySlug);
   }
 
   if (
@@ -65,7 +65,7 @@ export function getSchemaForIntake(
     intentType === 'property_listing' ||
     isRealEstateCategory(categorySlug)
   ) {
-    return buildPropertyIntakeSchema(intentType);
+    return buildPropertyIntakeSchema(intentType, categorySlug);
   }
 
   if (
@@ -74,11 +74,11 @@ export function getSchemaForIntake(
     intentType === 'vehicle_service' ||
     isVehicleCategory(categorySlug)
   ) {
-    return buildVehicleIntakeSchema(intentType);
+    return buildVehicleIntakeSchema(intentType, categorySlug);
   }
 
   if (intentType === 'job_search' || isJobsCategory(categorySlug)) {
-    return buildJobsIntakeSchema(intentType);
+    return buildJobsIntakeSchema(intentType, categorySlug);
   }
 
   if (
@@ -86,17 +86,16 @@ export function getSchemaForIntake(
     intentType === 'product_listing' ||
     isProductCategory(categorySlug)
   ) {
-    return buildProductIntakeSchema(intentType);
+    return buildProductIntakeSchema(intentType, categorySlug);
   }
 
   if (
     intentType === 'service_request' ||
     intentType === 'booking' ||
     intentType === 'consultation' ||
-    intentType === 'help_request' ||
     isServicesCategory(categorySlug)
   ) {
-    return buildServicesIntakeSchema(intentType);
+    return buildServicesIntakeSchema(intentType, categorySlug);
   }
 
   return generalSchema;

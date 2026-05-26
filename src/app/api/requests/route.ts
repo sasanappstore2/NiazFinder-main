@@ -3,6 +3,17 @@ import { db } from '@/lib/db';
 import { getAuthUser, createSlug, type PaginatedResponse } from '@/lib/auth';
 import type { Prisma } from '@prisma/client';
 import { scheduleNeedLeadOutreach } from '@/lib/need-leads/schedule';
+import {
+  RESERVED_BROWSE_PARAMS,
+  parseRangeShorthand,
+  RANGE_PARAM_MAP,
+} from '@/config/category-filters/attr-params';
+import {
+  matchesDynamicAnswers,
+  matchesNumericRanges,
+} from '@/lib/filters/dynamic-answers-filter';
+import { resolveNeighborhoodSlugs } from '@/lib/neighborhoods/server';
+import { buildNeighborhoodWhereClauses } from '@/lib/neighborhoods/tokens';
 
 // ============ TYPES ============
 
@@ -58,6 +69,72 @@ interface RequestListItem {
   updatedAt: Date;
 }
 
+const REQUEST_STATUSES = ['PENDING_REVIEW', 'OPEN', 'IN_PROGRESS', 'CLOSED', 'COMPLETED', 'CANCELLED', 'REJECTED'] as const;
+
+function budgetToJson(value: bigint | number | null | undefined): number | null {
+  if (value == null) return null;
+  const n = typeof value === 'bigint' ? Number(value) : value;
+  return Number.isFinite(n) ? n : null;
+}
+
+function budgetToDb(value: number | undefined | null): bigint | null {
+  if (value == null || Number.isNaN(value)) return null;
+  return BigInt(Math.trunc(value));
+}
+
+function collectAttributeFilters(searchParams: URLSearchParams): {
+  exact: Record<string, string>;
+  ranges: { key: string; min?: number; max?: number }[];
+} {
+  const exact: Record<string, string> = {};
+  const rangeAccum = new Map<string, { key: string; min?: number; max?: number }>();
+
+  for (const key of searchParams.keys()) {
+    if (RESERVED_BROWSE_PARAMS.has(key)) continue;
+    const raw = searchParams.get(key);
+    if (!raw?.trim()) continue;
+
+    if (RANGE_PARAM_MAP[key]) {
+      const parsed = parseRangeShorthand(key, raw);
+      for (const [attrKey, val] of Object.entries(parsed)) {
+        const n = Number(val);
+        if (Number.isNaN(n)) continue;
+        const entry = rangeAccum.get(attrKey) ?? { key: attrKey };
+        if (attrKey.endsWith('Min')) entry.min = n;
+        if (attrKey.endsWith('Max')) entry.max = n;
+        rangeAccum.set(attrKey, entry);
+      }
+      continue;
+    }
+
+    if (key.endsWith('Min') || key.endsWith('Max')) {
+      const n = Number(raw);
+      if (!Number.isNaN(n)) {
+        const entry = rangeAccum.get(key) ?? { key };
+        if (key.endsWith('Min')) entry.min = n;
+        else entry.max = n;
+        rangeAccum.set(key, entry);
+      }
+      continue;
+    }
+
+    exact[key] = raw.trim();
+  }
+
+  const dealType = searchParams.get('dealType');
+  if (dealType) exact.dealType = dealType.trim();
+
+  return { exact, ranges: Array.from(rangeAccum.values()) };
+}
+
+function recentCutoff(recent: string): Date | null {
+  const now = Date.now();
+  if (recent === '24h') return new Date(now - 24 * 60 * 60 * 1000);
+  if (recent === '7d') return new Date(now - 7 * 24 * 60 * 60 * 1000);
+  if (recent === '30d') return new Date(now - 30 * 24 * 60 * 60 * 1000);
+  return null;
+}
+
 // ============ GET handler ============
 
 export async function GET(request: NextRequest) {
@@ -69,13 +146,27 @@ export async function GET(request: NextRequest) {
     const categoryFilter = searchParams.get('category') || searchParams.get('categoryId') || undefined;
     const province = searchParams.get('province') || undefined;
     const city = searchParams.get('city') || undefined;
-    const status = searchParams.get('status') || undefined;
+    const statusParam = searchParams.get('status') || undefined;
     const sort = searchParams.get('sort') || 'newest';
     const search = searchParams.get('search') || undefined;
+    const budgetMin = searchParams.get('budgetMin');
+    const budgetMax = searchParams.get('budgetMax');
+    const priority = searchParams.get('priority');
+    const hasPhoto = searchParams.get('hasPhoto') === 'true' || searchParams.get('has-photo') === 'true';
+    const recent = searchParams.get('recent');
+    const { exact: attrExact, ranges: attrRanges } = collectAttributeFilters(searchParams);
+    const needsPostFilter = attrRanges.length > 0;
 
     // Build where clause
     const where: Prisma.ServiceRequestWhereInput = {};
     const andFilters: Prisma.ServiceRequestWhereInput[] = [];
+
+    const status =
+      statusParam && REQUEST_STATUSES.includes(statusParam as (typeof REQUEST_STATUSES)[number])
+        ? statusParam
+        : 'OPEN';
+    where.status = status as Prisma.EnumRequestStatusFilter['equals'];
+    where.moderationStatus = 'APPROVED';
 
     if (categoryFilter) {
       const category = await db.category.findFirst({
@@ -103,29 +194,66 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    if (province) {
-      where.province = { contains: province };
+    const { buildGeoAndFilters } = await import('@/lib/search/geo-api-filters');
+    andFilters.push(
+      ...buildGeoAndFilters({
+        citiesParam: searchParams.get('cities'),
+        provincesParam: searchParams.get('provinces'),
+        legacyCity: city,
+        legacyProvince: province,
+      })
+    );
+
+    const neighborhoodsParam = searchParams.get('neighborhoods');
+    const neighborhoodCityId = searchParams.get('neighborhoodCity')?.trim();
+
+    if (neighborhoodsParam && neighborhoodCityId) {
+      const slugs = neighborhoodsParam
+        .split(',')
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean);
+      if (slugs.length > 0) {
+        const resolved = await resolveNeighborhoodSlugs(neighborhoodCityId, slugs);
+        if (resolved.length > 0) {
+          andFilters.push(...buildNeighborhoodWhereClauses(resolved));
+        }
+      }
     }
 
-    const citiesParam = searchParams.get('cities');
-    if (citiesParam) {
-      const cityNames = citiesParam
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
-      if (cityNames.length === 1) {
-        where.city = { contains: cityNames[0] };
-      } else if (cityNames.length > 1) {
+    if (budgetMin) {
+      const n = Number(budgetMin);
+      if (!Number.isNaN(n)) {
         andFilters.push({
-          OR: cityNames.map((name) => ({ city: { contains: name } })),
+          OR: [{ budgetMin: { gte: n } }, { budgetMax: { gte: n } }],
         });
       }
-    } else if (city) {
-      where.city = { contains: city };
+    }
+    if (budgetMax) {
+      const n = Number(budgetMax);
+      if (!Number.isNaN(n)) {
+        andFilters.push({
+          OR: [{ budgetMin: { lte: n } }, { budgetMax: { lte: n } }, { budgetMin: null }],
+        });
+      }
     }
 
-    if (status && ['OPEN', 'IN_PROGRESS', 'CLOSED', 'COMPLETED', 'CANCELLED'].includes(status)) {
-      where.status = status as Prisma.EnumRequestStatusFilter['equals'];
+    if (priority && ['LOW', 'NORMAL', 'HIGH', 'URGENT'].includes(priority)) {
+      where.priority = priority as Prisma.EnumPriorityFilter['equals'];
+    }
+
+    if (hasPhoto) {
+      andFilters.push({ NOT: { attachmentUrls: '[]' } });
+    }
+
+    const recentDate = recent ? recentCutoff(recent) : null;
+    if (recentDate) {
+      where.createdAt = { gte: recentDate };
+    }
+
+    for (const [key, val] of Object.entries(attrExact)) {
+      andFilters.push({
+        dynamicAnswers: { contains: `"${key}":"${val}"` },
+      });
     }
 
     if (search) {
@@ -163,13 +291,15 @@ export async function GET(request: NextRequest) {
     }
 
     const skip = (page - 1) * limit;
+    const fetchTake = needsPostFilter ? Math.min(limit * 8, 200) : limit;
+    const fetchSkip = needsPostFilter ? 0 : skip;
 
-    const [requests, total] = await Promise.all([
+    let [requests, total] = await Promise.all([
       db.serviceRequest.findMany({
         where,
         orderBy,
-        skip,
-        take: limit,
+        skip: fetchSkip,
+        take: fetchTake,
         include: {
           category: {
             select: { id: true, name: true, icon: true },
@@ -189,13 +319,23 @@ export async function GET(request: NextRequest) {
       db.serviceRequest.count({ where }),
     ]);
 
+    if (needsPostFilter) {
+      const filtered = requests.filter((r) =>
+        matchesDynamicAnswers(r.dynamicAnswers, attrExact) &&
+        matchesNumericRanges(r.dynamicAnswers, attrRanges)
+      );
+      total = filtered.length;
+      requests = filtered.slice(skip, skip + limit);
+    }
+
     const mappedRequests: RequestListItem[] = requests.map((r) => ({
       id: r.id,
       title: r.title,
       slug: r.slug,
       description: r.description,
-      budgetMin: r.budgetMin,
-      budgetMax: r.budgetMax,
+      address: r.address,
+      budgetMin: budgetToJson(r.budgetMin),
+      budgetMax: budgetToJson(r.budgetMax),
       budgetType: r.budgetType,
       deliveryTime: r.deliveryTime,
       deliveryUnit: r.deliveryUnit,
@@ -203,7 +343,14 @@ export async function GET(request: NextRequest) {
       province: r.province,
       priority: r.priority,
       status: r.status,
-      tags: JSON.parse(r.tags),
+      tags: (() => {
+        try {
+          const parsed = JSON.parse(r.tags || '[]');
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      })(),
       viewCount: r.viewCount,
       proposalCount: r.proposalCount,
       categoryId: r.categoryId,
@@ -302,8 +449,8 @@ export async function POST(request: NextRequest) {
         title: title.trim(),
         slug,
         description: description.trim(),
-        budgetMin: budgetMin ?? null,
-        budgetMax: budgetMax ?? null,
+        budgetMin: budgetToDb(budgetMin),
+        budgetMax: budgetToDb(budgetMax),
         budgetType: budgetType || 'FIXED',
         deliveryTime: deliveryTime ?? null,
         deliveryUnit: deliveryUnit || 'day',
@@ -318,6 +465,8 @@ export async function POST(request: NextRequest) {
         aiExtractedData: JSON.stringify(aiExtractedData ?? {}),
         source: source?.trim() || 'form',
         userId: user.id,
+        status: 'PENDING_REVIEW',
+        moderationStatus: 'PENDING',
       },
       include: {
         category: {
@@ -341,8 +490,8 @@ export async function POST(request: NextRequest) {
       title: serviceRequest.title,
       slug: serviceRequest.slug,
       description: serviceRequest.description,
-      budgetMin: serviceRequest.budgetMin,
-      budgetMax: serviceRequest.budgetMax,
+      budgetMin: budgetToJson(serviceRequest.budgetMin),
+      budgetMax: budgetToJson(serviceRequest.budgetMax),
       budgetType: serviceRequest.budgetType,
       deliveryTime: serviceRequest.deliveryTime,
       deliveryUnit: serviceRequest.deliveryUnit,
@@ -361,10 +510,12 @@ export async function POST(request: NextRequest) {
       updatedAt: serviceRequest.updatedAt,
     };
 
-    scheduleNeedLeadOutreach(serviceRequest.id);
+    void import('@/lib/request-moderation/enqueue').then(({ enqueueRequestModerationJob }) =>
+      enqueueRequestModerationJob(serviceRequest.id)
+    );
 
     return NextResponse.json(
-      { message: 'نیاز با موفقیت ثبت شد', request: mappedRequest },
+      { message: 'نیاز ثبت شد و در صف بازبینی قرار گرفت', request: mappedRequest },
       { status: 201 }
     );
   } catch (error) {
