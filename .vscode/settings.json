@@ -52,5 +52,12 @@
     "**/ml": true,
     "**/mini-services": true,
     "**/.next": true
-  }
+  },
+  "git.postCommitCommand": "push",
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.autofetch": true,
+  "git.showPushSuccessNotification": true,
+  "git.replaceTagsWhenPull": true,
+  "git.pullBeforeCheckout": false
 }
