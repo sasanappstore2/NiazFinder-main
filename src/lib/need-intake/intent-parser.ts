@@ -8,6 +8,7 @@ import {
   CANONICAL_CATEGORIES,
   getCategoryPath,
   legacyValueToSlug,
+  normalizeCategoryPair,
 } from '@/config/categories';
 
 const BUY_KEYWORDS = ['می‌خرم', 'میخرم', 'میخوام', 'میخواهم', 'نیاز دارم', 'دنبال', 'جستجو', 'پیدا کن', 'خرید'];
@@ -20,17 +21,26 @@ const RAHN_FULL_KEYWORDS = ['رهن کامل', 'رهن کامل', 'فقط رهن
 const RAHN_EJARE_KEYWORDS = ['رهن و اجاره', 'رهن و اجاره', 'ودیعه و اجاره', 'ودیعه'];
 const RENT_MONTHLY_KEYWORDS = ['اجاره ماهانه', 'اجاره ماهیانه'];
 
-/** Category keyword hints → canonical slug */
+/** Category keyword hints → canonical slug (first match wins). */
 const CATEGORY_KEYWORDS: { slug: string; words: string[] }[] = [
+  { slug: 'agency-services', words: ['آژانس املاک', 'مشاور املاک'] },
+  { slug: 'pre-sale-services', words: ['پیش فروش', 'پیش‌فروش'] },
   { slug: 'apartment-rent', words: ['اجاره آپارتمان', 'رهن', 'ودیعه'] },
   { slug: 'apartment-sale', words: ['خرید آپارتمان', 'فروش آپارتمان', 'آپارتمان', 'خانه', 'ملک', 'ویلا', 'زمین'] },
   { slug: 'car', words: ['ماشین', 'خودرو', 'پژو', 'پراید', 'سمند', 'تیبا', 'دنا'] },
   { slug: 'mobile-phone', words: ['گوشی', 'آیفون', 'iphone', 'سامسونگ', 'شیائومی'] },
   { slug: 'laptop', words: ['لپ‌تاپ', 'لپ تاپ', 'macbook'] },
   { slug: 'game-console', words: ['ps5', 'playstation', 'پلی‌استیشن', 'xbox', 'کنسول'] },
-  { slug: 'repairs', words: ['تعمیر', 'تعمیرکار', 'کولر', 'اسباب کشی', 'اسباب‌کشی'] },
+  { slug: 'repairs', words: ['تعمیر', 'تعمیرکار', 'کولر'] },
   { slug: 'cleaning', words: ['نظافت', 'نظافتچی'] },
-  { slug: 'it', words: ['برنامه نویس', 'فریلنسر', 'استخدام', 'کار'] },
+  { slug: 'plumbing', words: ['لوله', 'لوله‌کشی', 'تاسیسات'] },
+  { slug: 'moving', words: ['اسباب کشی', 'اسباب‌کشی', 'باربری', 'اسبابکشی'] },
+  { slug: 'electrical', words: ['برقکار', 'برق‌کار', 'برق کاری', 'سیم کشی'] },
+  { slug: 'painting', words: ['نقاش', 'نقاشی', 'کاغذ دیواری'] },
+  { slug: 'medical-health', words: ['پزشک', 'دندانپزشک', 'درمان', 'ویزیت'] },
+  { slug: 'legal-services', words: ['وکیل', 'حقوقی', 'دادگاه'] },
+  { slug: 'it-services', words: ['طراحی سایت', 'ساخت اپ', 'سئو سایت', 'توسعه نرم'] },
+  { slug: 'it', words: ['استخدام برنامه', 'استخدام فناوری', 'جویای کار', 'نیاز به نیرو'] },
   { slug: 'lost-found', words: ['گم شده', 'گمشده', 'پیدا شد', 'گم کردم'] },
   { slug: 'pre-sale-services', words: ['پیش فروش', 'پیش‌فروش', 'پروژه'] },
 ];
@@ -78,6 +88,13 @@ function parseCity(text: string): string | undefined {
 }
 
 function detectCategorySlug(text: string): string {
+  if (
+    text.includes('استخدام') &&
+    (text.includes('برنامه') || text.includes('فناوری') || text.includes('توسعه'))
+  ) {
+    return 'it';
+  }
+
   for (const row of CATEGORY_KEYWORDS) {
     if (row.words.some((w) => text.includes(w))) return row.slug;
   }
@@ -253,9 +270,12 @@ export function parseIntentFromText(rawText: string): ParsedIntent {
   if (rawText.trim().length > 20) confidence += 0.08;
   confidence = Math.min(confidence, 0.95);
 
+  const pair = normalizeCategoryPair(categorySlug);
+
   return {
     intentType,
-    categorySlug,
+    categorySlug: pair.categorySlug,
+    subcategorySlug: pair.subcategorySlug,
     title: buildTitle(rawText, intentType, entities),
     description: rawText.trim(),
     budgetMin: budget.min,

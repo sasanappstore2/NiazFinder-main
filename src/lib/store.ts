@@ -14,7 +14,6 @@
 
 import { create } from 'zustand';
 import type {
-  AppView,
   User,
   Notification,
   Conversation,
@@ -45,13 +44,6 @@ async function apiFetch<T = any>(endpoint: string, options?: RequestInit): Promi
 // ============ Store Interface ============
 
 interface AppState {
-  // Navigation
-  currentView: AppView;
-  viewParams: Record<string, string>;
-  previousView: AppView | null;
-  navigateTo: (view: AppView, params?: Record<string, string>) => void;
-  goBack: () => void;
-
   // Auth (local)
   currentUser: User | null;
   isAuthenticated: boolean;
@@ -82,6 +74,24 @@ interface AppState {
   setAuthModalOpen: (open: boolean) => void;
   authModalTab: 'login' | 'register';
   setAuthModalTab: (tab: 'login' | 'register') => void;
+
+  // In-site voice call overlay
+  voiceCallOpen: boolean;
+  voiceCallTarget: import('@/lib/voice/voice-call-peer').VoiceCallPeer | null;
+  voiceCallType: 'incoming' | 'outgoing';
+  voiceCallStatus: 'idle' | 'ringing' | 'active' | 'ended';
+  voiceCallId: string | null;
+  voiceCallMuted: boolean;
+  voiceCallDuration: number;
+  openVoiceCall: (
+    user: import('@/lib/voice/voice-call-peer').VoiceCallPeer,
+    conversationId?: string
+  ) => void;
+  closeVoiceCall: () => void;
+  acceptVoiceCall: () => void;
+  rejectVoiceCall: () => void;
+  hangupVoiceCall: () => void;
+  toggleVoiceCallMute: () => void;
 
   // Notifications (local)
   notifications: Notification[];
@@ -133,6 +143,9 @@ interface AppState {
   fetchProposals: (requestId: string) => Promise<any[]>;
   submitProposal: (data: { requestId: string; price: number; deliveryTime?: number; deliveryUnit?: string; message: string }) => Promise<boolean>;
   updateProposalStatus: (id: string, status: string) => Promise<boolean>;
+  acceptProposal: (
+    proposalId: string
+  ) => Promise<{ success: boolean; proposerUserId?: string }>;
 
   // Specialists (API)
   specialists: any[];
@@ -167,32 +180,6 @@ const LEGACY_TOKEN_KEY = 'nf_auth_token';
 
 export const useAppStore = create<AppState>((set, get) => ({
   // ===========================
-  // Navigation
-  // ===========================
-  currentView: 'home',
-  viewParams: {},
-  previousView: null,
-  navigateTo: (view, params = {}) => {
-    const { currentView } = get();
-    set({
-      previousView: currentView,
-      currentView: view,
-      viewParams: params,
-      mobileMenuOpen: false,
-    });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  },
-  goBack: () => {
-    const { previousView } = get();
-    if (previousView) {
-      set({ currentView: previousView, previousView: null });
-    } else {
-      set({ currentView: 'home', previousView: null });
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  },
-
-  // ===========================
   // Auth (local)
   // ===========================
   currentUser: null,
@@ -213,7 +200,6 @@ export const useAppStore = create<AppState>((set, get) => ({
       currentUser: null,
       isAuthenticated: false,
       authToken: null,
-      currentView: 'home',
       notifications: [],
       unreadNotificationCount: 0,
       conversations: [],
@@ -535,6 +521,42 @@ export const useAppStore = create<AppState>((set, get) => ({
   authModalTab: 'login',
   setAuthModalTab: (tab) => set({ authModalTab: tab }),
 
+  voiceCallOpen: false,
+  voiceCallTarget: null,
+  voiceCallType: 'outgoing',
+  voiceCallStatus: 'idle',
+  voiceCallId: null,
+  voiceCallMuted: false,
+  voiceCallDuration: 0,
+  openVoiceCall: (user, conversationId) => {
+    void import('@/lib/voice/call-controller').then(({ startOutgoingCall }) =>
+      startOutgoingCall(user, conversationId)
+    );
+  },
+  closeVoiceCall: () => {
+    void import('@/lib/voice/call-controller').then(({ hangupVoiceCall }) =>
+      hangupVoiceCall()
+    );
+  },
+  acceptVoiceCall: () => {
+    void import('@/lib/voice/call-controller').then(({ acceptIncomingCall }) =>
+      acceptIncomingCall()
+    );
+  },
+  rejectVoiceCall: () => {
+    void import('@/lib/voice/call-controller').then(({ rejectIncomingCall }) =>
+      rejectIncomingCall()
+    );
+  },
+  hangupVoiceCall: () => {
+    void import('@/lib/voice/call-controller').then(({ hangupVoiceCall }) =>
+      hangupVoiceCall()
+    );
+  },
+  toggleVoiceCallMute: () => {
+    void import('@/lib/voice/call-controller').then(({ toggleMute }) => toggleMute());
+  },
+
   // ===========================
   // Notifications (local)
   // ===========================
@@ -782,8 +804,10 @@ export const useAppStore = create<AppState>((set, get) => ({
         city: r.city ?? undefined,
         province: r.province ?? undefined,
         categoryId: r.categoryId,
+        subcategoryId: r.subcategoryId ?? undefined,
         categoryName: r.categoryName,
-        categoryIcon: r.categoryIcon ?? undefined,
+        categorySlug: r.categorySlug ?? r.subcategory?.slug ?? r.category?.slug ?? undefined,
+        categoryIcon: r.categoryIcon ?? r.subcategory?.icon ?? r.category?.icon ?? undefined,
         priority: r.priority,
         status: r.status,
         tags: r.tags ?? [],
@@ -826,8 +850,10 @@ export const useAppStore = create<AppState>((set, get) => ({
         city: r.city ?? undefined,
         province: r.province ?? undefined,
         categoryId: r.categoryId,
+        subcategoryId: r.subcategoryId ?? undefined,
         categoryName: r.categoryName,
-        categoryIcon: r.categoryIcon ?? undefined,
+        categorySlug: r.categorySlug ?? r.subcategory?.slug ?? r.category?.slug ?? undefined,
+        categoryIcon: r.categoryIcon ?? r.subcategory?.icon ?? r.category?.icon ?? undefined,
         priority: r.priority,
         status: r.status,
         tags: r.tags ?? [],
@@ -876,8 +902,10 @@ export const useAppStore = create<AppState>((set, get) => ({
         city: r.city ?? undefined,
         province: r.province ?? undefined,
         categoryId: r.categoryId,
+        subcategoryId: r.subcategoryId ?? undefined,
         categoryName: r.categoryName,
-        categoryIcon: r.categoryIcon ?? undefined,
+        categorySlug: r.categorySlug ?? r.subcategory?.slug ?? r.category?.slug ?? undefined,
+        categoryIcon: r.categoryIcon ?? r.subcategory?.icon ?? r.category?.icon ?? undefined,
         priority: r.priority,
         status: r.status,
         tags: r.tags ?? [],
@@ -943,14 +971,34 @@ export const useAppStore = create<AppState>((set, get) => ({
   updateProposalStatus: async (id: string, status: string) => {
     set({ isLoading: true, error: null });
     try {
+      const apiStatus =
+        status === 'ACCEPTED' ? 'ACCEPT' : status === 'REJECTED' ? 'REJECT' : status;
       await apiFetch(`/api/proposals/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ status }),
+        method: 'PUT',
+        body: JSON.stringify({ status: apiStatus }),
       });
       return true;
     } catch (err: any) {
       set({ error: err.message || 'خطا در بروزرسانی وضعیت پیشنهاد' });
       return false;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  acceptProposal: async (proposalId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await apiFetch<{
+        proposal: { user: { id: string } };
+      }>(`/api/proposals/${proposalId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: 'ACCEPT' }),
+      });
+      return { success: true, proposerUserId: res.proposal?.user?.id };
+    } catch (err: any) {
+      set({ error: err.message || 'خطا در پذیرش پیشنهاد' });
+      return { success: false };
     } finally {
       set({ isLoading: false });
     }

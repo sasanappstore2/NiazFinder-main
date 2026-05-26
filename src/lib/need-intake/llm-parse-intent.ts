@@ -8,6 +8,7 @@ import {
   buildListingEnrichSystemPrompt,
   buildListingEnrichUserMessage,
 } from '@/lib/need-intake/ai-prompts';
+import { shouldPolishListing } from '@/lib/need-intake/listing-quality';
 import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
 import {
   buildParseSystemPromptForText,
@@ -116,12 +117,16 @@ export interface ListingEnrichment {
   description: string;
 }
 
-function needsListingEnrichment(title: string, description: string): boolean {
+function needsListingEnrichment(
+  title: string,
+  description: string,
+  rawText: string,
+  force?: boolean
+): boolean {
+  if (force) return true;
   const t = title.trim();
-  if (t.length < 10) return true;
   if (GENERIC_TITLES.has(t)) return true;
-  if (description.trim().length < 40) return true;
-  return false;
+  return shouldPolishListing(title, description, rawText);
 }
 
 /** Optional second LLM call for publish title/description. */
@@ -132,7 +137,12 @@ export async function enrichListingWithLlm(
   currentDescription: string
 ): Promise<ListingEnrichment | null> {
   if (!isNeedIntakeAiEnabled()) return null;
-  if (!needsListingEnrichment(currentTitle, currentDescription)) return null;
+  if (
+    !needsListingEnrichment(currentTitle, currentDescription, parsed.rawText, true) &&
+    !needsListingEnrichment(currentTitle, currentDescription, parsed.rawText)
+  ) {
+    return null;
+  }
 
   try {
     const { content } = await chatCompletion({

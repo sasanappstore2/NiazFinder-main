@@ -72,7 +72,9 @@ export interface ServiceRequest {
   city?: string;
   province?: string;
   categoryId: string;
+  subcategoryId?: string | null;
   categoryName: string;
+  categorySlug?: string;
   categoryIcon?: string;
   priority: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
   status: 'OPEN' | 'IN_PROGRESS' | 'CLOSED' | 'COMPLETED' | 'CANCELLED';
@@ -126,7 +128,7 @@ export interface Message {
   conversationId: string;
   senderId: string;
   content: string;
-  type: 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE' | 'SYSTEM';
+  type: 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE' | 'SYSTEM' | 'NEED_CARD';
   isRead: boolean;
   createdAt: string;
   sender?: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatar'>;

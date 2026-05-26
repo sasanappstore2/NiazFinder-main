@@ -1,5 +1,6 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
@@ -134,7 +135,7 @@ function CircularProgress({
         <span className="text-2xl font-extrabold tabular-nums text-emerald-600 dark:text-emerald-400">
           {toPersianDigits(percentage)}
         </span>
-        <span className="text-[10px] font-medium text-muted-foreground mt-0.5">
+        <span className="text-caption font-medium text-muted-foreground mt-0.5">
           درصد
         </span>
       </div>
@@ -143,7 +144,7 @@ function CircularProgress({
 }
 
 export function ProfileCompletionBar() {
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
 
   const completedCount = useMemo(
     () => completionItems.filter((item) => item.completed).length,

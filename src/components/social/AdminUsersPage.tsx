@@ -242,7 +242,7 @@ function StatsCard({
               <div className="text-lg font-extrabold tabular-nums leading-tight">
                 {value.toLocaleString('fa-IR')}
               </div>
-              <div className="text-[11px] font-medium text-muted-foreground leading-tight">
+              <div className="text-caption font-medium text-muted-foreground leading-tight">
                 {label}
               </div>
             </div>
@@ -782,7 +782,7 @@ export function AdminUsersPage() {
                       {/* Role */}
                       <TableCell>
                         <span
-                          className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium ${
+                          className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-caption font-medium ${
                             ROLE_CONFIG[user.role]?.className || ROLE_CONFIG.CLIENT.className
                           }`}
                         >
@@ -797,23 +797,23 @@ export function AdminUsersPage() {
                       <TableCell>
                         <div className="flex items-center gap-1 flex-wrap">
                           {user.isBanned ? (
-                            <Badge variant="destructive" className="text-[10px] gap-0.5">
+                            <Badge variant="destructive" className="text-caption gap-0.5">
                               <XCircle className="size-3" />
                               مسدود
                             </Badge>
                           ) : !user.isActive ? (
-                            <Badge variant="secondary" className="text-[10px] gap-0.5">
+                            <Badge variant="secondary" className="text-caption gap-0.5">
                               <XCircle className="size-3" />
                               غیرفعال
                             </Badge>
                           ) : (
-                            <Badge className="text-[10px] gap-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-0">
+                            <Badge className="text-caption gap-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-0">
                               <CheckCircle2 className="size-3" />
                               فعال
                             </Badge>
                           )}
                           {user.online && !user.isBanned && (
-                            <Badge className="text-[10px] gap-0.5 bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300 border-0">
+                            <Badge className="text-caption gap-0.5 bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300 border-0">
                               <CircleDot className="size-3" />
                               آنلاین
                             </Badge>
@@ -1042,7 +1042,7 @@ export function AdminUsersPage() {
                     {/* Badges row */}
                     <div className="mt-3 flex flex-wrap items-center gap-1.5">
                       <span
-                        className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium ${
+                        className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-caption font-medium ${
                           ROLE_CONFIG[user.role]?.className || ROLE_CONFIG.CLIENT.className
                         }`}
                       >
@@ -1052,23 +1052,23 @@ export function AdminUsersPage() {
                         {ROLE_CONFIG[user.role]?.label || user.role}
                       </span>
                       {user.isBanned ? (
-                        <Badge variant="destructive" className="text-[10px] gap-0.5">
+                        <Badge variant="destructive" className="text-caption gap-0.5">
                           <XCircle className="size-3" />
                           مسدود
                         </Badge>
                       ) : !user.isActive ? (
-                        <Badge variant="secondary" className="text-[10px] gap-0.5">
+                        <Badge variant="secondary" className="text-caption gap-0.5">
                           <XCircle className="size-3" />
                           غیرفعال
                         </Badge>
                       ) : (
-                        <Badge className="text-[10px] gap-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-0">
+                        <Badge className="text-caption gap-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-0">
                           <CheckCircle2 className="size-3" />
                           فعال
                         </Badge>
                       )}
                       {user.online && !user.isBanned && (
-                        <Badge className="text-[10px] gap-0.5 bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300 border-0">
+                        <Badge className="text-caption gap-0.5 bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300 border-0">
                           <CircleDot className="size-3" />
                           آنلاین
                         </Badge>
@@ -1077,7 +1077,7 @@ export function AdminUsersPage() {
 
                     {/* Footer row */}
                     <div className="mt-3 flex items-center justify-between">
-                      <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                      <span className="text-caption text-muted-foreground flex items-center gap-1">
                         <CalendarDays className="size-3" />
                         {formatPersianDate(user.createdAt)}
                       </span>

@@ -56,6 +56,8 @@ model User {
   followers          Follow[]           @relation("Followers")
   following          Follow[]           @relation("Following")
   businessProfile    BusinessProfile?
+  callsAsCaller      VoiceCall[]     @relation("VoiceCallsAsCaller")
+  callsAsCallee      VoiceCall[]     @relation("VoiceCallsAsCallee")
 
   @@index([role])
   @@index([city])
@@ -184,6 +186,7 @@ model ServiceRequest {
   subcategory       Category?      @relation("SubcategoryRequest", fields: [subcategoryId], references: [id])
   proposals         Proposal[]
   reviews           Review[]
+  leadOutreach      NeedLeadOutreach[]
 
   @@index([userId])
   @@index([categoryId])
@@ -328,6 +331,7 @@ model BusinessProfile {
 
   aiAssistantConfig String @default("{}")
   extensions        String @default("{}")
+  leadAlertsEnabled Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -336,6 +340,7 @@ model BusinessProfile {
   offers         BusinessOffer[]
   portfolioItems BusinessPortfolioItem[]
   profileReviews BusinessProfileReview[]
+  leadOutreach   NeedLeadOutreach[]
 
   @@index([slug])
   @@index([city])
@@ -469,6 +474,66 @@ enum MessageType {
   FILE
   VOICE
   SYSTEM
+  NEED_CARD
+}
+
+enum VoiceCallStatus {
+  RINGING
+  ACTIVE
+  ENDED
+  REJECTED
+  MISSED
+}
+
+model VoiceCall {
+  id             String         @id @default(cuid())
+  callerId       String
+  calleeId       String
+  conversationId String?
+  status         VoiceCallStatus @default(RINGING)
+  startedAt      DateTime       @default(now())
+  endedAt        DateTime?
+  durationSec    Int?
+
+  caller User @relation("VoiceCallsAsCaller", fields: [callerId], references: [id], onDelete: Cascade)
+  callee User @relation("VoiceCallsAsCallee", fields: [calleeId], references: [id], onDelete: Cascade)
+
+  @@index([callerId])
+  @@index([calleeId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+enum NeedLeadOutreachStatus {
+  QUEUED
+  SENT
+  SKIPPED
+  FAILED
+}
+
+model NeedLeadOutreach {
+  id                String                 @id @default(cuid())
+  requestId         String
+  businessProfileId String
+  businessUserId    String
+  matchScore        Float                  @default(0)
+  matchReasonFa     String                 @default("")
+  status            NeedLeadOutreachStatus @default(QUEUED)
+  skipReason        String?
+  conversationId    String?
+  introMessageId    String?
+  cardMessageId     String?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  request  ServiceRequest  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  business BusinessProfile @relation(fields: [businessProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([requestId, businessUserId])
+  @@index([businessUserId])
+  @@index([requestId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 // ============ REVIEWS & RATINGS ============

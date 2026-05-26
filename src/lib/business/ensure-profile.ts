@@ -41,7 +41,7 @@ export async function ensureBusinessProfile(user: UserForProfile): Promise<Busin
     Math.floor((Date.now() - user.createdAt.getTime()) / (365.25 * 24 * 60 * 60 * 1000))
   );
 
-  return db.businessProfile.create({
+  const profile = await db.businessProfile.create({
     data: {
       userId: user.id,
       name,
@@ -60,6 +60,36 @@ export async function ensureBusinessProfile(user: UserForProfile): Promise<Busin
       aiAssistantConfig: toJson({ systemPrompt: '', dynamicQuestions: [] }),
       extensions: toJson({}),
     },
+  });
+
+  await syncCategorySlugsFromSkills(profile.id, user.id);
+  return profile;
+}
+
+/** Copy category slugs from UserSkill when profile has none (improves need matching). */
+export async function syncCategorySlugsFromSkills(profileId: string, userId: string) {
+  const profile = await db.businessProfile.findUnique({ where: { id: profileId } });
+  if (!profile) return;
+
+  const existing = parseJsonArray<string>(profile.categorySlugs);
+  if (existing.length > 0) return;
+
+  const skills = await db.userSkill.findMany({
+    where: { userId },
+    include: { skill: { include: { category: { select: { slug: true } } } } },
+  });
+
+  const slugs = new Set<string>();
+  for (const us of skills) {
+    const slug = us.skill.category?.slug;
+    if (slug) slugs.add(slug);
+  }
+
+  if (slugs.size === 0) return;
+
+  await db.businessProfile.update({
+    where: { id: profileId },
+    data: { categorySlugs: toJson([...slugs]) },
   });
 }
 

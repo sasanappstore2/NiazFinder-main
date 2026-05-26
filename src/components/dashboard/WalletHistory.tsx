@@ -364,7 +364,7 @@ function StatusBadge({ status }: { status: Transaction['status'] }) {
     <Badge
       variant={config.variant}
       className={cn(
-        'text-[10px] px-1.5 py-0 h-5 font-medium',
+        'text-caption px-1.5 py-0 h-5 font-medium',
         config.color
       )}
     >

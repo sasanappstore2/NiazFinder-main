@@ -12,10 +12,13 @@ import { Button } from '@/components/ui/button';
 import {
   Search,
   MapPin,
+  MapPinned,
   Check,
   X,
   ChevronLeft,
+  Loader2,
 } from 'lucide-react';
+import type { AutoLocationStatus } from '@/hooks/use-auto-location-city';
 import { cn } from '@/lib/utils';
 import { type City } from '@/lib/location-system';
 import { useManagedLocations } from '@/lib/use-managed-locations';
@@ -25,6 +28,10 @@ interface CitySelectorPopupProps {
   onOpenChange: (open: boolean) => void;
   selectedCities: City[];
   onSelectionChange: (cities: City[]) => void;
+  geoStatus?: AutoLocationStatus;
+  detectedCity?: City | null;
+  isDetecting?: boolean;
+  onDetectLocation?: () => void;
 }
 
 // ─── Checkbox Component ───
@@ -58,7 +65,7 @@ function Checkable({
     >
       {checked && <Check className="size-3 text-white" strokeWidth={3} />}
       {!checked && partial && (
-        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 leading-none">-</span>
+        <span className="text-caption font-bold text-emerald-600 dark:text-emerald-400 leading-none">-</span>
       )}
     </div>
   );
@@ -69,6 +76,10 @@ export function CitySelectorPopup({
   onOpenChange,
   selectedCities,
   onSelectionChange,
+  geoStatus = 'idle',
+  detectedCity = null,
+  isDetecting = false,
+  onDetectLocation,
 }: CitySelectorPopupProps) {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [tempSelection, setTempSelection] = React.useState<City[]>(selectedCities);
@@ -168,6 +179,20 @@ export function CitySelectorPopup({
   // Auto-expand when searching
   const searchMode = searchTerm.trim().length > 0;
 
+  const suggestedCity =
+    detectedCity && !tempSelection.some((c) => c.id === detectedCity.id)
+      ? detectedCity
+      : null;
+
+  const applySuggestedCity = () => {
+    if (!suggestedCity) return;
+    setTempSelection([suggestedCity]);
+    const province = provinces.find((p) =>
+      p.cities.some((c) => c.id === suggestedCity.id)
+    );
+    if (province) setExpandedProvince(province.id);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -182,8 +207,27 @@ export function CitySelectorPopup({
           </DialogTitle>
         </DialogHeader>
 
-        {/* ─── Search ─── */}
-        <div className="px-5 pb-2 shrink-0">
+        {/* ─── Geo suggestion ─── */}
+        {suggestedCity && (
+          <div className="mx-5 mb-2 shrink-0 rounded-lg border border-emerald-500/30 bg-emerald-50/80 dark:bg-emerald-950/30 px-3 py-2.5 flex items-center gap-2">
+            <MapPinned className="size-4 text-emerald-600 shrink-0" />
+            <p className="text-xs flex-1 text-emerald-900 dark:text-emerald-100">
+              شهر پیشنهادی: <strong>{suggestedCity.name}</strong>
+            </p>
+            <Button
+              type="button"
+              size="sm"
+              variant="secondary"
+              className="h-7 text-xs shrink-0"
+              onClick={applySuggestedCity}
+            >
+              اعمال
+            </Button>
+          </div>
+        )}
+
+        {/* ─── Search + detect ─── */}
+        <div className="px-5 pb-2 shrink-0 space-y-2">
           <div className="relative">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/50" />
             <Input
@@ -192,9 +236,11 @@ export function CitySelectorPopup({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="h-9 pr-9 pl-8 rounded-lg bg-muted/50 border-border/40 text-sm"
+              disabled={isDetecting}
             />
             {searchTerm && (
               <button
+                type="button"
                 onClick={() => setSearchTerm('')}
                 className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/50 hover:text-foreground"
               >
@@ -202,6 +248,23 @@ export function CitySelectorPopup({
               </button>
             )}
           </div>
+          {onDetectLocation && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="w-full h-9 gap-2 text-xs"
+              disabled={isDetecting || geoStatus === 'unsupported'}
+              onClick={onDetectLocation}
+            >
+              {isDetecting ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <MapPinned className="size-3.5" />
+              )}
+              {isDetecting ? 'در حال تشخیص موقعیت...' : 'موقعیت من'}
+            </Button>
+          )}
         </div>
 
         {/* ─── Selection Summary ─── */}
@@ -211,7 +274,7 @@ export function CitySelectorPopup({
               {tempSelection.slice(0, 6).map(city => (
                 <span
                   key={city.id}
-                  className="inline-flex items-center gap-1 px-2 py-[3px] rounded-full text-[11px] font-medium bg-emerald-600/10 text-emerald-700 dark:text-emerald-300"
+                  className="inline-flex items-center gap-1 px-2 py-[3px] rounded-full text-caption font-medium bg-emerald-600/10 text-emerald-700 dark:text-emerald-300"
                 >
                   {city.name}
                   <button
@@ -223,7 +286,7 @@ export function CitySelectorPopup({
                 </span>
               ))}
               {tempSelection.length > 6 && (
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-caption text-muted-foreground">
                   +{tempSelection.length - 6} شهر دیگر
                 </span>
               )}
@@ -266,7 +329,7 @@ export function CitySelectorPopup({
                     <span className="text-[13px] font-semibold flex-1 min-w-0 truncate">
                       {province.name}
                     </span>
-                    <span className="text-[11px] text-muted-foreground tabular-nums">
+                    <span className="text-caption text-muted-foreground tabular-nums">
                       {pState.count > 0 ? `${pState.count}/` : ''}{province.cities.length}
                     </span>
                     {!searchMode && (
@@ -308,7 +371,7 @@ export function CitySelectorPopup({
                               {city.name}
                             </span>
                             {city.isIsland && (
-                              <span className="text-[10px] text-blue-500 font-medium px-1.5 py-0.5 bg-blue-50 dark:bg-blue-950/30 rounded">
+                              <span className="text-caption text-blue-500 font-medium px-1.5 py-0.5 bg-blue-50 dark:bg-blue-950/30 rounded">
                                 جزیره
                               </span>
                             )}
@@ -331,7 +394,7 @@ export function CitySelectorPopup({
               {tempSelection.length > 0 && (
                 <button
                   onClick={clearAll}
-                  className="text-[11px] text-destructive/70 hover:text-destructive font-medium whitespace-nowrap transition-colors"
+                  className="text-caption text-destructive/70 hover:text-destructive font-medium whitespace-nowrap transition-colors"
                 >
                   پاک کردن
                 </button>
@@ -339,7 +402,7 @@ export function CitySelectorPopup({
               {!isAllSelected && (
                 <button
                   onClick={selectAll}
-                  className="text-[11px] text-muted-foreground hover:text-foreground font-medium whitespace-nowrap transition-colors"
+                  className="text-caption text-muted-foreground hover:text-foreground font-medium whitespace-nowrap transition-colors"
                 >
                   همه
                 </button>
@@ -348,7 +411,7 @@ export function CitySelectorPopup({
 
             {/* Right actions */}
             <div className="flex items-center gap-2">
-              <span className="text-[11px] text-muted-foreground tabular-nums whitespace-nowrap">
+              <span className="text-caption text-muted-foreground tabular-nums whitespace-nowrap">
                 {tempSelection.length > 0 ? `${tempSelection.length} شهر` : 'بدون انتخاب'}
               </span>
               <Button
@@ -362,6 +425,7 @@ export function CitySelectorPopup({
               <Button
                 size="sm"
                 onClick={handleConfirm}
+                disabled={isDetecting}
                 className="h-9 px-5 text-[13px] rounded-lg bg-emerald-600 hover:bg-emerald-700 font-semibold shadow-sm"
               >
                 تایید

@@ -304,7 +304,7 @@ export function FileUploadPreview({ onSend, onCancel }: FileUploadPreviewProps) 
                     <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
 
                     {/* File size badge */}
-                    <div className="absolute bottom-1 right-1 rounded-md bg-black/50 px-1.5 py-0.5 text-[10px] text-white/90 backdrop-blur-sm">
+                    <div className="absolute bottom-1 right-1 rounded-md bg-black/50 px-1.5 py-0.5 text-caption text-white/90 backdrop-blur-sm">
                       {toPersianDigits(formatFileSize(item.file.size))}
                     </div>
 
@@ -343,7 +343,7 @@ export function FileUploadPreview({ onSend, onCancel }: FileUploadPreviewProps) 
                       <span className="text-lg font-bold">
                         +{toPersianDigits(extraImageCount.toString())}
                       </span>
-                      <span className="text-[10px] text-white/70">
+                      <span className="text-caption text-white/70">
                         فایل دیگر
                       </span>
                     </div>
@@ -419,7 +419,7 @@ export function FileUploadPreview({ onSend, onCancel }: FileUploadPreviewProps) 
               className="w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/60 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/20"
               maxLength={500}
             />
-            <div className="mt-0.5 text-left text-[10px] text-muted-foreground/50">
+            <div className="mt-0.5 text-left text-caption text-muted-foreground/50">
               {toPersianDigits(caption.length.toString())}/۵۰۰
             </div>
           </div>

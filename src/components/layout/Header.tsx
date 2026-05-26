@@ -1,5 +1,6 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useState, useEffect, useCallback } from 'react';
 import {
   LocateFixed,
@@ -31,7 +32,7 @@ import {
   getCategoryIcon,
 } from '@/components/layout/CategoryMegaMenu';
 import type { MegaMenuCategory } from '@/components/layout/CategoryMegaMenu';
-import type { AppView } from '@/lib/types';
+import { routeBuilder } from '@/config/routes';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,52 +47,10 @@ import {
   PopoverContent,
 } from '@/components/ui/popover';
 
-// ============ View → SEO path mapping ============
-const VIEW_HREF: Record<AppView, string> = {
-  'home': '/',
-  'login': '/login',
-  'register': '/register',
-  'post-need': '/post-need',
-  'browse-requests': '/browse-requests',
-  'request-detail': '/request-detail',
-  'browse-specialists': '/browse-specialists',
-  'specialist-profile': '/specialist-profile',
-  'dashboard': '/dashboard',
-  'messages': '/messages',
-  'notifications': '/notifications',
-  'admin': '/admin',
-  'profile': '/profile',
-  'pricing': '/pricing',
-  'compare-specialists': '/compare-specialists',
-  'submit-proposal': '/submit-proposal',
-  'submit-review': '/submit-review',
-  'referral': '/referral',
-  'notification-settings': '/notification-settings',
-};
-
-// ============ View → Descriptive title mapping ============
-const VIEW_TITLE: Record<AppView, string> = {
-  'home': 'صفحه اصلی - نیاز فایندر',
-  'login': 'ورود به حساب کاربری',
-  'register': 'ثبت‌نام در نیاز فایندر',
-  'post-need': 'ثبت نیاز جدید',
-  'browse-requests': 'مشاهده نیازهای ثبت شده',
-  'request-detail': 'جزئیات نیاز',
-  'browse-specialists': 'مرور و جستجوی کسب‌وکارها',
-  'specialist-profile': 'پروفایل کسب‌وکار',
-  'dashboard': 'داشبورد کاربری',
-  'messages': 'پیام‌ها و مکاتبات',
-  'notifications': 'اعلان‌ها و اطلاع‌رسانی',
-  'admin': 'پنل مدیریت',
-  'profile': 'پروفایل من',
-  'pricing': 'تعرفه‌ها و طرح‌های اشتراک',
-  'compare-specialists': 'مقایسه کسب‌وکارها',
-  'submit-proposal': 'ارسال پیشنهاد',
-  'submit-review': 'ثبت نظر و امتیاز',
-  'referral': 'دعوت از دوستان',
-  'notification-settings': 'تنظیمات اعلان‌ها',
-};
-
+const VIEW_TITLE = {
+  notifications: 'اعلان‌ها و اطلاع‌رسانی',
+  messages: 'پیام‌ها و مکاتبات',
+} as const;
 
 
 // ============ Notification Type → Icon mapping ============
@@ -125,7 +84,8 @@ function timeAgo(dateStr: string): string {
 
 // ============ Notifications Button (with Dropdown) ============
 function NotificationsButton() {
-  const { notifications, unreadNotificationCount, fetchNotifications, markNotificationReadAPI, markAllNotificationsReadAPI, navigateTo } = useAppStore();
+  const { notifications, unreadNotificationCount, fetchNotifications, markNotificationReadAPI, markAllNotificationsReadAPI} = useAppStore();
+  const { navigateTo } = useNavigate();
   const [open, setOpen] = useState(false);
 
   const recentNotifications = notifications.slice(0, 5);
@@ -168,7 +128,7 @@ function NotificationsButton() {
           {unreadNotificationCount > 0 && (
             <span
               className={cn(
-                "absolute -top-1 -end-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-[10px] font-bold text-white",
+                "absolute -top-1 -end-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-caption font-bold text-white",
                 "animate-notification-pulse"
               )}
             >
@@ -258,7 +218,7 @@ function NotificationsButton() {
                             {notif.message}
                           </p>
                         )}
-                        <div className="mt-1 flex items-center gap-1 text-[11px] text-emerald-400/40">
+                        <div className="mt-1 flex items-center gap-1 text-caption text-emerald-400/40">
                           <Clock className="size-3" />
                           <span>{timeAgo(notif.createdAt)}</span>
                         </div>
@@ -278,7 +238,7 @@ function NotificationsButton() {
               type="button"
               onClick={handleViewAll}
               className="flex w-full items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium text-emerald-400 transition-colors hover:bg-emerald-500/10 hover:text-emerald-300"
-              data-href={VIEW_HREF['notifications']}
+              data-href={routeBuilder.notifications()}
               title={VIEW_TITLE['notifications']}
             >
               مشاهده همه
@@ -293,7 +253,8 @@ function NotificationsButton() {
 
 // ============ Messages Button ============
 function MessagesButton() {
-  const { navigateTo, conversations } = useAppStore();
+  const { conversations } = useAppStore();
+  const { navigateTo } = useNavigate();
   const unreadCount = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
 
   return (
@@ -304,11 +265,11 @@ function MessagesButton() {
       className="relative size-9 text-muted-foreground hover:text-foreground"
       aria-label={`پیام‌ها${unreadCount > 0 ? ` (${unreadCount} خوانده نشده)` : ''}`}
       title={VIEW_TITLE['messages']}
-      data-href={VIEW_HREF['messages']}
+      data-href={routeBuilder.chat()}
     >
       <MessageSquare className="size-[16px]" />
       {unreadCount > 0 && (
-        <Badge className="absolute -top-1 -end-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-[10px] font-bold text-white">
+        <Badge className="absolute -top-1 -end-1 flex size-5 items-center justify-center rounded-full bg-destructive p-0 text-caption font-bold text-white">
           {unreadCount > 99 ? '99+' : unreadCount}
         </Badge>
       )}
@@ -353,7 +314,7 @@ function AuthSection() {
 // ============ Category Mega Menu in Header (Desktop) ============
 function HeaderCategoryMenuDesktop() {
   const [isOpen, setIsOpen] = useState(false);
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
 
   const handleSelect = (category: MegaMenuCategory) => {
     navigateTo('browse-requests', { categoryId: category.value });
@@ -409,7 +370,7 @@ function HeaderCategoryMenuDesktop() {
 // ============ Category Mega Menu in Header (Mobile) ============
 function HeaderCategoryMenuMobile() {
   const [isOpen, setIsOpen] = useState(false);
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
 
   const handleSelect = (category: MegaMenuCategory) => {
     navigateTo('browse-requests', { categoryId: category.value });
@@ -444,12 +405,9 @@ function HeaderCategoryMenuMobile() {
 }
 
 // ============ Header Component ============
-export function Header() {
+export function Header({ compact = false }: { compact?: boolean }) {
   const [isScrolled, setIsScrolled] = useState(false);
-  const {
-    currentView,
-    navigateTo,
-  } = useAppStore();
+  const { navigateTo } = useNavigate();
 
   const handleScroll = useCallback(() => {
     setIsScrolled(window.scrollY > 10);
@@ -505,11 +463,12 @@ export function Header() {
           </div>
         </div>
 
-        {/* ═══ Second Row: Category Mega Menu ═══ */}
-        <div className="flex items-center gap-2 py-2">
-          <HeaderCategoryMenuDesktop />
-          <HeaderCategoryMenuMobile />
-        </div>
+        {!compact && (
+          <div className="flex items-center gap-2 py-2">
+            <HeaderCategoryMenuDesktop />
+            <HeaderCategoryMenuMobile />
+          </div>
+        )}
       </div>
     </header>
   );

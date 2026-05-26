@@ -474,7 +474,7 @@ export function NewConversationDialog({
                               {user.displayName}
                             </span>
                             {user.username && (
-                              <span className="text-[11px] text-muted-foreground">
+                              <span className="text-caption text-muted-foreground">
                                 @{user.username}
                               </span>
                             )}
@@ -485,18 +485,18 @@ export function NewConversationDialog({
                           <div className="flex items-center gap-1.5 mt-0.5">
                             <Badge
                               variant="secondary"
-                              className="text-[10px] px-1.5 py-0 h-4 font-medium"
+                              className="text-caption px-1.5 py-0 h-4 font-medium"
                             >
                               {user.role}
                             </Badge>
                             {user.rating && (
-                              <span className="flex items-center gap-0.5 text-[10px] text-amber-500">
+                              <span className="flex items-center gap-0.5 text-caption text-amber-500">
                                 <Star className="h-2.5 w-2.5 fill-amber-400" />
                                 {user.rating}
                               </span>
                             )}
                             {user.skills && user.skills.length > 0 && (
-                              <span className="text-[10px] text-muted-foreground truncate">
+                              <span className="text-caption text-muted-foreground truncate">
                                 {user.skills.slice(0, 2).join(' · ')}
                               </span>
                             )}
@@ -538,7 +538,7 @@ export function NewConversationDialog({
                       </h3>
                       <Badge
                         variant="secondary"
-                        className="text-[10px] px-1.5 py-0 h-4"
+                        className="text-caption px-1.5 py-0 h-4"
                       >
                         {recentContacts.length}
                       </Badge>
@@ -569,7 +569,7 @@ export function NewConversationDialog({
                               <span className="absolute bottom-0.5 left-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-background" />
                             )}
                           </div>
-                          <span className="text-[11px] font-medium text-foreground truncate max-w-[72px] text-center leading-tight">
+                          <span className="text-caption font-medium text-foreground truncate max-w-[72px] text-center leading-tight">
                             {contact.displayName.split(' ').slice(0, 2).join(' ')}
                           </span>
                         </motion.button>
@@ -588,7 +588,7 @@ export function NewConversationDialog({
                       </h3>
                       <Badge
                         variant="secondary"
-                        className="text-[10px] px-1.5 py-0 h-4"
+                        className="text-caption px-1.5 py-0 h-4"
                       >
                         {initialSuggestions.length}
                       </Badge>
@@ -633,7 +633,7 @@ n                              className={cn(
                               )}
                             </div>
                             {user.username && (
-                              <p className="text-[11px] text-muted-foreground mt-0.5">
+                              <p className="text-caption text-muted-foreground mt-0.5">
                                 @{user.username}
                               </p>
                             )}
@@ -641,11 +641,11 @@ n                              className={cn(
                             {/* Rating + Action */}
                             <div className="flex items-center justify-between mt-2">
                               <div className="flex items-center gap-1.5">
-                                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 font-medium">
+                                <Badge variant="secondary" className="text-caption px-1.5 py-0 h-4 font-medium">
                                   {user.role}
                                 </Badge>
                                 {user.rating && (
-                                  <span className="flex items-center gap-0.5 text-[11px] text-muted-foreground">
+                                  <span className="flex items-center gap-0.5 text-caption text-muted-foreground">
                                     <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
                                     {user.rating}
                                   </span>
@@ -654,7 +654,7 @@ n                              className={cn(
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                className="h-7 text-[11px] px-2.5 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
+                                className="h-7 text-caption px-2.5 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
                                 onClick={() => handleSelectUser(user)}
                               >
                                 پیام
@@ -711,13 +711,13 @@ n                              className={cn(
                     </span>
                     <Badge
                       variant="secondary"
-                      className="text-[10px] px-1.5 py-0 h-4"
+                      className="text-caption px-1.5 py-0 h-4"
                     >
                       {selectedUser.role}
                     </Badge>
                   </div>
                   {selectedUser.online && (
-                    <p className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-0.5">
+                    <p className="text-caption text-emerald-600 dark:text-emerald-400 mt-0.5">
                       آنلاین
                     </p>
                   )}

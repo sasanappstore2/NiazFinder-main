@@ -4,8 +4,6 @@ import Image from 'next/image';
 import {
   MapPin,
   BadgeCheck,
-  Phone,
-  MessageCircle,
   Star,
   Clock,
   Shield,
@@ -20,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Business, BusinessOffer, OfferCtaType } from '@/contracts/business-profile';
+import { ContactActions } from '@/components/contact/ContactActions';
 import { routeBuilder } from '@/config/routes';
 import { cn } from '@/lib/utils';
 
@@ -30,7 +29,13 @@ const CTA_LABEL: Record<OfferCtaType, string> = {
   chat: 'گفتگو',
 };
 
-export function BusinessHero({ business }: { business: Business }) {
+export function BusinessHero({
+  business,
+  requestId,
+}: {
+  business: Business;
+  requestId?: string;
+}) {
   const shareUrl =
     typeof window !== 'undefined'
       ? window.location.href
@@ -82,17 +87,18 @@ export function BusinessHero({ business }: { business: Business }) {
             ))}
           </div>
         </div>
-        <div className="flex flex-wrap gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <BookmarkButton itemId={business.id} itemType="specialist" />
           <ShareButton title={business.name} description={business.identity.description} url={shareUrl} />
-          {business.contact.chatEnabled && (
-            <Button size="sm" asChild>
-              <a href={routeBuilder.chatNew()}>
-                <MessageCircle className="size-4 ml-1" />
-                چت
-              </a>
-            </Button>
-          )}
+          <ContactActions
+            otherUserId={business.userId}
+            requestId={requestId}
+            displayName={business.name}
+            hasPhone={Boolean(business.contact.phone)}
+            chatEnabled={business.contact.chatEnabled}
+            showProfile={false}
+            variant="compact"
+          />
         </div>
       </div>
     </section>
@@ -261,36 +267,27 @@ export function BusinessTrustSection({ business }: { business: Business }) {
   );
 }
 
-export function BusinessContactSection({ business }: { business: Business }) {
+export function BusinessContactSection({
+  business,
+  requestId,
+}: {
+  business: Business;
+  requestId?: string;
+}) {
   return (
-    <section className="rounded-2xl border bg-muted/30 p-4 flex flex-col sm:flex-row flex-wrap gap-3">
-      {business.contact.phone && (
-        <Button variant="outline" asChild className="flex-1 min-w-[140px]">
-          <a href={`tel:${business.contact.phone}`}>
-            <Phone className="size-4 ml-2" />
-            تماس
-          </a>
-        </Button>
-      )}
-      {business.contact.whatsapp && (
-        <Button variant="outline" asChild className="flex-1 min-w-[140px]">
-          <a
-            href={`https://wa.me/${business.contact.whatsapp.replace(/\D/g, '')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            واتساپ
-          </a>
-        </Button>
-      )}
-      {business.contact.chatEnabled && (
-        <Button className="flex-1 min-w-[140px]" asChild>
-          <a href={routeBuilder.chatNew()}>
-            <MessageCircle className="size-4 ml-2" />
-            چت آنلاین
-          </a>
-        </Button>
-      )}
+    <section className="rounded-2xl border bg-muted/30 p-4">
+      <p className="text-caption text-muted-foreground mb-3">
+        ارتباط فقط از طریق چت و تماس درون سایت — پس از ورود، شماره در تماس صوتی نمایش داده می‌شود.
+      </p>
+      <ContactActions
+        otherUserId={business.userId}
+        requestId={requestId}
+        displayName={business.name}
+        hasPhone={Boolean(business.contact.phone)}
+        chatEnabled={business.contact.chatEnabled}
+        showProfile={false}
+        variant="default"
+      />
     </section>
   );
 }

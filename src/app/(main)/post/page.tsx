@@ -10,13 +10,23 @@ import { NeedIntakePanel } from '@/components/need-intake';
 function PostNeedContent() {
   const searchParams = useSearchParams();
   const seed = searchParams.get('seed') ?? '';
+  const category = searchParams.get('category');
+  const city = searchParams.get('city');
+  const phone = searchParams.get('phone');
+  const panelKey = [seed, category, city, phone].filter(Boolean).join('|') || 'empty';
 
   return (
     <div className="max-w-2xl mx-auto px-4 pt-2 pb-12">
       <Breadcrumb />
       <Separator className="my-4" />
       <h1 className="text-xl font-bold mb-4">ثبت نیاز جدید</h1>
-      <NeedIntakePanel key={seed || 'empty'} initialSeed={seed} />
+      <NeedIntakePanel
+        key={panelKey}
+        initialSeed={seed}
+        initialCategory={category}
+        initialCity={city}
+        initialPhone={phone}
+      />
     </div>
   );
 }

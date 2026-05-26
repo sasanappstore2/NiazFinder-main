@@ -349,7 +349,7 @@ export function NotificationsPanel() {
                     <p className="mt-0.5 text-sm text-muted-foreground leading-relaxed">
                       {notification.message}
                     </p>
-                    <p className="mt-1.5 text-[11px] text-muted-foreground/60">
+                    <p className="mt-1.5 text-caption text-muted-foreground/60">
                       {persianTimeAgo(notification.createdAt)}
                     </p>
                   </div>

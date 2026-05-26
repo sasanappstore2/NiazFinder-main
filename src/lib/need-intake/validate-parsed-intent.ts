@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { IntentType, ParsedIntent } from '@/contracts/need-intake';
-import { CANONICAL_CATEGORIES } from '@/config/categories';
+import { CANONICAL_CATEGORIES, normalizeCategoryPair } from '@/config/categories';
 import {
   DEFAULT_INTENT,
   getIntentsForCategory,
@@ -56,14 +56,15 @@ export function validateAndNormalizeLlmParsed(
   const d = parsed.data;
   const categorySlug = normalizeCategorySlug(d.categorySlug, ruleFallback.categorySlug);
   const intentType = normalizeIntentType(d.intentType, categorySlug);
+  const pair = normalizeCategoryPair(categorySlug, d.subcategorySlug ?? ruleFallback.subcategorySlug);
 
   let confidence = d.confidence ?? 0.7;
   confidence = Math.min(Math.max(confidence, 0), 1);
 
   return {
     intentType,
-    categorySlug,
-    subcategorySlug: d.subcategorySlug ?? undefined,
+    categorySlug: pair.categorySlug,
+    subcategorySlug: pair.subcategorySlug,
     title: d.title?.trim().slice(0, 120) || ruleFallback.title,
     description: d.description?.trim() || ruleFallback.description,
     budgetMin: d.budgetMin ?? ruleFallback.budgetMin,

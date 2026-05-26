@@ -1,6 +1,7 @@
 'use client';
 
 import { useNavigate } from '@/hooks/navigation/use-navigate';
+import { useStartChat } from '@/hooks/use-start-chat';
 import { useMemo } from 'react';
 import {
   ShieldCheck,
@@ -83,6 +84,7 @@ export function CompareSpecialists() {
   const compareSpecialistIds = useAppStore((s) => s.compareSpecialistIds);
   const clearCompareList = useAppStore((s) => s.clearCompareList);
   const { navigateTo } = useNavigate();
+  const { openChat } = useStartChat();
 
   const specialists = useMemo(
     () =>
@@ -455,8 +457,7 @@ export function CompareSpecialists() {
                         size="sm"
                         variant="outline"
                         className="h-9 gap-1.5 rounded-lg text-xs"
-                        onClick={() => navigateTo('messages', { id: s.id })}
-                        data-href="/messages"
+                        onClick={() => openChat(s.id)}
                         title="ارسال پیام به کسب‌وکار"
                       >
                         <MessageSquare className="size-3.5" />

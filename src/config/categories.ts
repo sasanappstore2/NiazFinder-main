@@ -98,6 +98,12 @@ export const CANONICAL_CATEGORIES: readonly CanonicalCategory[] = [
   { slug: 'cleaning',            parentSlug: 'services',           title: 'نظافت',          englishTitle: 'Cleaning',        depth: 1 },
   { slug: 'repairs',             parentSlug: 'services',           title: 'تعمیرات',        englishTitle: 'Repairs',         depth: 1 },
   { slug: 'plumbing',            parentSlug: 'services',           title: 'لوله‌کشی',       englishTitle: 'Plumbing',        depth: 1 },
+  { slug: 'moving',              parentSlug: 'services',           title: 'اسباب‌کشی و باربری', englishTitle: 'Moving',      depth: 1 },
+  { slug: 'electrical',          parentSlug: 'services',           title: 'برق‌کاری',       englishTitle: 'Electrical',      depth: 1 },
+  { slug: 'painting',            parentSlug: 'services',           title: 'نقاشی و کاغذدیواری', englishTitle: 'Painting',    depth: 1 },
+  { slug: 'medical-health',      parentSlug: 'services',           title: 'خدمات درمانی و پزشکی', englishTitle: 'Medical',   depth: 1 },
+  { slug: 'legal-services',      parentSlug: 'services',           title: 'مشاوره حقوقی',  englishTitle: 'Legal',           depth: 1 },
+  { slug: 'it-services',         parentSlug: 'services',           title: 'خدمات فناوری',   englishTitle: 'IT Services',     depth: 1 },
   { slug: 'transportation',      parentSlug: 'services',           title: 'حمل و نقل',                                         depth: 1 },
   { slug: 'beauty-health',       parentSlug: 'services',           title: 'زیبایی',                                            depth: 1 },
   { slug: 'events-catering',     parentSlug: 'services',           title: 'مراسم',                                             depth: 1 },
@@ -187,9 +193,18 @@ export function isAncestorCategory(parent: string, child: string): boolean {
  * Strategy: try the full string first, then strip prefixes one segment at a
  * time and look for a known slug.
  */
+/** Mega-menu compound values that do not strip cleanly to a canonical slug. */
+export const MEGA_VALUE_ALIASES: Readonly<Record<string, string>> = {
+  'real-estate-real-estate-services-agency': 'agency-services',
+  'real-estate-real-estate-services-pre-sale': 'pre-sale-services',
+};
+
 export function legacyValueToSlug(legacyValue: string | null | undefined): string | null {
   if (!legacyValue) return null;
   if (ALL_SLUGS.has(legacyValue)) return legacyValue;
+
+  const alias = MEGA_VALUE_ALIASES[legacyValue];
+  if (alias && ALL_SLUGS.has(alias)) return alias;
 
   const parts = legacyValue.split('-');
   for (let i = 1; i < parts.length; i++) {
@@ -197,6 +212,93 @@ export function legacyValueToSlug(legacyValue: string | null | undefined): strin
     if (ALL_SLUGS.has(candidate)) return candidate;
   }
   return null;
+}
+
+export interface ResolvedCategoryLevels {
+  /** Deepest canonical slug (leaf or mid). */
+  leafSlug: string;
+  /** Depth-1 parent when leaf is depth 2; null for depth-0/1 leaves. */
+  parentSlug: string | null;
+  /** Depth-0 root section. */
+  rootSlug: string;
+  /** Slug stored as ServiceRequest.category (depth-1 or depth-1 parent). */
+  categorySlug: string;
+  /** Slug stored as ServiceRequest.subcategory when depth=2. */
+  subcategorySlug: string | null;
+}
+
+/**
+ * Resolve any canonical or legacy slug to category/subcategory slugs for DB storage.
+ */
+export function resolveCategoryLevels(
+  slugOrLegacy: string,
+  explicitSubcategory?: string | null
+): ResolvedCategoryLevels | null {
+  const normalized =
+    legacyValueToSlug(slugOrLegacy) ?? (ALL_SLUGS.has(slugOrLegacy) ? slugOrLegacy : null);
+  if (!normalized) return null;
+
+  let leafSlug = normalized;
+  if (explicitSubcategory) {
+    const sub = legacyValueToSlug(explicitSubcategory) ?? explicitSubcategory;
+    if (ALL_SLUGS.has(sub)) leafSlug = sub;
+  }
+
+  const cat = BY_SLUG.get(leafSlug);
+  if (!cat) return null;
+
+  const path = getCategoryPath(leafSlug);
+  const rootSlug = path[0]?.slug ?? leafSlug;
+
+  if (cat.depth === 2) {
+    const parent = path[path.length - 2];
+    return {
+      leafSlug,
+      parentSlug: parent?.slug ?? null,
+      rootSlug,
+      categorySlug: parent?.slug ?? leafSlug,
+      subcategorySlug: leafSlug,
+    };
+  }
+
+  if (cat.depth === 1) {
+    return {
+      leafSlug,
+      parentSlug: cat.parentSlug,
+      rootSlug,
+      categorySlug: leafSlug,
+      subcategorySlug: null,
+    };
+  }
+
+  // depth 0 — prefer first active child as category when posting needs
+  const firstChild = getDirectChildren(leafSlug)[0];
+  if (firstChild) {
+    return resolveCategoryLevels(firstChild.slug);
+  }
+
+  return {
+    leafSlug,
+    parentSlug: null,
+    rootSlug: leafSlug,
+    categorySlug: leafSlug,
+    subcategorySlug: null,
+  };
+}
+
+/** Normalize parsed intent to consistent categorySlug + subcategorySlug pair. */
+export function normalizeCategoryPair(
+  categorySlug: string,
+  subcategorySlug?: string | null
+): { categorySlug: string; subcategorySlug?: string } {
+  const levels = resolveCategoryLevels(categorySlug, subcategorySlug);
+  if (!levels) {
+    return { categorySlug: ALL_SLUGS.has(categorySlug) ? categorySlug : 'services' };
+  }
+  return {
+    categorySlug: levels.subcategorySlug ? levels.categorySlug : levels.leafSlug,
+    subcategorySlug: levels.subcategorySlug ?? undefined,
+  };
 }
 
 export function getDirectChildren(parentSlug: string | null): CanonicalCategory[] {

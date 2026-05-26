@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Phone,
@@ -18,7 +18,7 @@ import { useAppRouter } from '@/hooks/use-router';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import type { User } from '@/lib/types';
+import type { VoiceCallPeer } from '@/lib/voice/voice-call-peer';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -27,7 +27,7 @@ import type { User } from '@/lib/types';
 export interface VoiceCallOverlayProps {
   isOpen: boolean;
   onClose: () => void;
-  targetUser: User | null;
+  targetUser: VoiceCallPeer | null;
   callType: 'incoming' | 'outgoing';
 }
 
@@ -69,14 +69,14 @@ const formatDuration = (seconds: number): string => {
   );
 };
 
-const getTargetDisplayName = (user: User): string =>
+const getTargetDisplayName = (user: VoiceCallPeer): string =>
   user.displayName || `${user.firstName} ${user.lastName}`.trim() || 'کاربر';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // RINGING AVATAR
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function RingingAvatar({ user }: { user: User }) {
+function RingingAvatar({ user }: { user: VoiceCallPeer }) {
   const name = getTargetDisplayName(user);
   const initials = getInitials(name);
   const color = getAvatarColor(name);
@@ -126,7 +126,7 @@ function IncomingCallView({
   onDecline,
   onMessage,
 }: {
-  targetUser: User;
+  targetUser: VoiceCallPeer;
   onAccept: () => void;
   onDecline: () => void;
   onMessage: () => void;
@@ -253,14 +253,16 @@ function ActiveCallBar({
   onToggleMute,
   onToggleSpeaker,
   onHangup,
+  subtitle,
 }: {
-  targetUser: User;
+  targetUser: VoiceCallPeer;
   duration: number;
   isMuted: boolean;
   isSpeakerOn: boolean;
   onToggleMute: () => void;
   onToggleSpeaker: () => void;
   onHangup: () => void;
+  subtitle?: string;
 }) {
   const name = getTargetDisplayName(targetUser);
   const initials = getInitials(name);
@@ -296,10 +298,16 @@ function ActiveCallBar({
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="truncate text-sm font-semibold text-white">{name}</span>
           <div className="flex items-center gap-1.5">
-            <Clock className="h-3 w-3 text-emerald-400" />
-            <span className="text-xs text-emerald-400 tabular-nums">
-              {formatDuration(duration)}
-            </span>
+            {subtitle ? (
+              <span className="text-xs text-amber-300">{subtitle}</span>
+            ) : (
+              <>
+                <Clock className="h-3 w-3 text-emerald-400" />
+                <span className="text-xs text-emerald-400 tabular-nums">
+                  {formatDuration(duration)}
+                </span>
+              </>
+            )}
           </div>
         </div>
 
@@ -354,7 +362,7 @@ function CallEndedView({
   duration,
   onCallBack,
 }: {
-  targetUser: User;
+  targetUser: VoiceCallPeer;
   duration: number;
   onCallBack: () => void;
 }) {
@@ -433,168 +441,96 @@ export function VoiceCallOverlay({
   callType,
 }: VoiceCallOverlayProps) {
   const { push } = useAppRouter();
+  const voiceCallStatus = useAppStore((s) => s.voiceCallStatus);
+  const duration = useAppStore((s) => s.voiceCallDuration);
+  const isMuted = useAppStore((s) => s.voiceCallMuted);
+  const acceptVoiceCall = useAppStore((s) => s.acceptVoiceCall);
+  const rejectVoiceCall = useAppStore((s) => s.rejectVoiceCall);
+  const hangupVoiceCall = useAppStore((s) => s.hangupVoiceCall);
+  const toggleVoiceCallMute = useAppStore((s) => s.toggleVoiceCallMute);
+  const openVoiceCall = useAppStore((s) => s.openVoiceCall);
 
-  // ─── Call state ───────────────────────────────────────────────────────
-  const [callState, setCallState] = useState<CallState>('ringing');
-  const [duration, setDuration] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
   const [isSpeakerOn, setIsSpeakerOn] = useState(false);
 
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const autoDismissRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const callState: CallState =
+    voiceCallStatus === 'idle' ? 'ended' : (voiceCallStatus as CallState);
 
-  // ─── Start duration timer ─────────────────────────────────────────────
-  const startDurationTimer = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    setDuration(0);
-    timerRef.current = setInterval(() => {
-      setDuration((prev) => prev + 1);
-    }, 1000);
-  }, []);
-
-  // ─── Stop duration timer ──────────────────────────────────────────────
-  const stopDurationTimer = useCallback(() => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-  }, []);
-
-  // ─── Sync state when props change ──────────────────────────────────
-  const prevIsOpenRef = useRef(isOpen);
-  useEffect(() => {
-    if (isOpen && !prevIsOpenRef.current) {
-      // isOpen changed from false to true — reset call state
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional state reset when overlay opens
-      setCallState('ringing'); setDuration(0); setIsMuted(false); setIsSpeakerOn(false);
-      if (timerRef.current) clearInterval(timerRef.current);
-      if (autoDismissRef.current) clearTimeout(autoDismissRef.current);
-
-      // For outgoing calls, auto-answer after a brief delay (simulated)
-      if (callType === 'outgoing') {
-        const autoAnswerTimer = setTimeout(() => {
-          setCallState('active');
-          startDurationTimer();
-        }, 2500);
-        return () => clearTimeout(autoAnswerTimer);
-      }
-    }
-    prevIsOpenRef.current = isOpen;
-
-    // Cleanup on close
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      if (autoDismissRef.current) clearTimeout(autoDismissRef.current);
-    };
-  }, [isOpen, callType, startDurationTimer, stopDurationTimer]);
-
-  // ─── Cleanup on unmount ───────────────────────────────────────────────
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      if (autoDismissRef.current) clearTimeout(autoDismissRef.current);
-    };
-  }, []);
-
-  // ─── Accept call ──────────────────────────────────────────────────────
   const handleAccept = useCallback(() => {
-    setCallState('active');
-    startDurationTimer();
-  }, [startDurationTimer]);
+    acceptVoiceCall();
+  }, [acceptVoiceCall]);
 
-  // ─── Decline call ─────────────────────────────────────────────────────
   const handleDecline = useCallback(() => {
-    setCallState('ended');
-    stopDurationTimer();
-  }, [stopDurationTimer]);
+    rejectVoiceCall();
+  }, [rejectVoiceCall]);
 
-  // ─── Hang up ──────────────────────────────────────────────────────────
   const handleHangup = useCallback(() => {
-    setCallState('ended');
-    stopDurationTimer();
-  }, [stopDurationTimer]);
+    hangupVoiceCall();
+  }, [hangupVoiceCall]);
 
-  // ─── Message (go to chat) ─────────────────────────────────────────────
   const handleMessage = useCallback(() => {
-    setCallState('ended');
-    stopDurationTimer();
-    // Brief delay then navigate to chat
+    rejectVoiceCall();
     setTimeout(() => {
       onClose();
-      push('messages');
+      if (targetUser) push('messages');
     }, 300);
-  }, [stopDurationTimer, onClose, push]);
+  }, [rejectVoiceCall, onClose, push, targetUser]);
 
-  // ─── Call back ────────────────────────────────────────────────────────
   const handleCallBack = useCallback(() => {
-    setCallState('ringing');
-    // Auto-answer after a brief delay (simulated)
-    const autoAnswer = setTimeout(() => {
-      setCallState('active');
-      startDurationTimer();
-    }, 2000);
-    return () => clearTimeout(autoAnswer);
-  }, [startDurationTimer]);
+    if (targetUser) openVoiceCall(targetUser);
+  }, [openVoiceCall, targetUser]);
 
-  // ─── Toggle mute ──────────────────────────────────────────────────────
-  const handleToggleMute = useCallback(() => {
-    setIsMuted((prev) => !prev);
-  }, []);
-
-  // ─── Toggle speaker ───────────────────────────────────────────────────
-  const handleToggleSpeaker = useCallback(() => {
-    setIsSpeakerOn((prev) => !prev);
-  }, []);
-
-  // ─── Auto-dismiss ended call after 5 seconds ─────────────────────────
-  useEffect(() => {
-    if (callState === 'ended') {
-      autoDismissRef.current = setTimeout(() => {
-        onClose();
-      }, 5000);
-      return () => {
-        if (autoDismissRef.current) clearTimeout(autoDismissRef.current);
-      };
-    }
-  }, [callState, onClose]);
-
-  // ─── Don't render if not open or no target user ───────────────────────
   if (!isOpen || !targetUser) return null;
 
-  // ─── Render ───────────────────────────────────────────────────────────
   return (
-    <AnimatePresence mode="wait">
-      {callState === 'ringing' && (
-        <IncomingCallView
-          key="incoming"
-          targetUser={targetUser}
-          onAccept={handleAccept}
-          onDecline={handleDecline}
-          onMessage={handleMessage}
-        />
-      )}
+    <>
+      <audio id="voice-call-remote-audio" autoPlay playsInline className="hidden" />
+      <AnimatePresence mode="wait">
+        {callState === 'ringing' && callType === 'incoming' && (
+          <IncomingCallView
+            key="incoming"
+            targetUser={targetUser}
+            onAccept={handleAccept}
+            onDecline={handleDecline}
+            onMessage={handleMessage}
+          />
+        )}
 
-      {callState === 'active' && (
-        <ActiveCallBar
-          key="active"
-          targetUser={targetUser}
-          duration={duration}
-          isMuted={isMuted}
-          isSpeakerOn={isSpeakerOn}
-          onToggleMute={handleToggleMute}
-          onToggleSpeaker={handleToggleSpeaker}
-          onHangup={handleHangup}
-        />
-      )}
+        {callState === 'ringing' && callType === 'outgoing' && (
+          <ActiveCallBar
+            key="outgoing-ring"
+            targetUser={targetUser}
+            duration={0}
+            isMuted={isMuted}
+            isSpeakerOn={isSpeakerOn}
+            onToggleMute={toggleVoiceCallMute}
+            onToggleSpeaker={() => setIsSpeakerOn((v) => !v)}
+            onHangup={handleHangup}
+            subtitle="در حال برقراری تماس..."
+          />
+        )}
 
-      {callState === 'ended' && (
-        <CallEndedView
-          key="ended"
-          targetUser={targetUser}
-          duration={duration}
-          onCallBack={handleCallBack}
-        />
-      )}
-    </AnimatePresence>
+        {callState === 'active' && (
+          <ActiveCallBar
+            key="active"
+            targetUser={targetUser}
+            duration={duration}
+            isMuted={isMuted}
+            isSpeakerOn={isSpeakerOn}
+            onToggleMute={toggleVoiceCallMute}
+            onToggleSpeaker={() => setIsSpeakerOn((v) => !v)}
+            onHangup={handleHangup}
+          />
+        )}
+
+        {callState === 'ended' && (
+          <CallEndedView
+            key="ended"
+            targetUser={targetUser}
+            duration={duration}
+            onCallBack={handleCallBack}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 }

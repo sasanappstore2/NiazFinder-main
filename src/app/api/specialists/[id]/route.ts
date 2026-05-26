@@ -106,7 +106,7 @@ export async function GET(
     const result = {
       id: user.id,
       email: user.email,
-      phone: user.phone,
+      hasPhone: Boolean(user.phone?.trim()),
       firstName: user.firstName,
       lastName: user.lastName,
       displayName: user.displayName,

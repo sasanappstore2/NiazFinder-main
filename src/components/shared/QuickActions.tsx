@@ -1,10 +1,12 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Plus, FileText, Search, MessageSquare, Gift } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import type { AppView } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { legacyViewToPath } from '@/config/routes';
 
 // ============ Action Configuration ============
 interface QuickAction {
@@ -56,29 +58,6 @@ const ACTIONS: QuickAction[] = [
   },
 ];
 
-// ============ View → SEO path mapping ============
-const VIEW_HREF: Record<AppView, string> = {
-  'home': '/',
-  'login': '/login',
-  'register': '/register',
-  'post-need': '/post-need',
-  'browse-requests': '/browse-requests',
-  'request-detail': '/request-detail',
-  'browse-specialists': '/browse-specialists',
-  'specialist-profile': '/specialist-profile',
-  'dashboard': '/dashboard',
-  'messages': '/messages',
-  'notifications': '/notifications',
-  'admin': '/admin',
-  'profile': '/profile',
-  'pricing': '/pricing',
-  'compare-specialists': '/compare-specialists',
-  'submit-proposal': '/submit-proposal',
-  'submit-review': '/submit-review',
-  'referral': '/referral',
-  'notification-settings': '/notification-settings',
-};
-
 // Arc positions for each action (fan out upward-left in RTL)
 const ARC_POSITIONS = [
   { x: -12, y: -68 },   // 1st: slightly left, first tier up
@@ -91,7 +70,7 @@ const ARC_POSITIONS = [
 export function QuickActions() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
 
   // Close on click outside
   const handleClickOutside = useCallback((e: MouseEvent) => {
@@ -143,7 +122,7 @@ export function QuickActions() {
           <button
             key={action.view}
             onClick={() => handleActionClick(action.view)}
-            data-href={VIEW_HREF[action.view]}
+            data-href={legacyViewToPath(action.view)}
             aria-label={action.ariaLabel}
             title={action.label}
             style={{

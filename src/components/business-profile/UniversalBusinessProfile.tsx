@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,7 +18,7 @@ import {
   BusinessExtensionsSection,
 } from '@/components/business-profile/sections';
 import type { OfferCtaType } from '@/contracts/business-profile';
-import { routeBuilder } from '@/config/routes';
+import { useAppStore } from '@/lib/store';
 
 interface Props {
   /** Override route param id (defaults to useParams). */
@@ -28,16 +28,57 @@ interface Props {
 export function UniversalBusinessProfile({ businessId: businessIdProp }: Props) {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestId = searchParams.get('need') ?? undefined;
   const id = businessIdProp ?? (params?.id as string | undefined);
   const { business, loading, error } = useBusinessProfile(id);
+  const openVoiceCall = useAppStore((s) => s.openVoiceCall);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const authToken = useAppStore((s) => s.authToken);
+  const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
 
-  const handleOfferAction = (_offerId: string, cta: OfferCtaType) => {
+  const handleOfferAction = async (_offerId: string, cta: OfferCtaType) => {
     if (!business) return;
-    if (cta === 'call' && business.contact.phone) {
-      window.location.href = `tel:${business.contact.phone}`;
+    if (cta === 'call') {
+      if (!isAuthenticated || !authToken) {
+        setAuthModalOpen(true);
+        return;
+      }
+      const { fetchUserContact } = await import('@/lib/contact/fetch-contact');
+      try {
+        const contact = await fetchUserContact(business.userId, authToken);
+        const parts = contact.displayName.split(/\s+/);
+        openVoiceCall({
+          id: business.userId,
+          firstName: parts[0] ?? business.name,
+          lastName: parts.slice(1).join(' ') || '',
+          displayName: contact.displayName,
+        });
+      } catch {
+        const { toast } = await import('sonner');
+        toast.error('خطا در برقراری تماس');
+      }
       return;
     }
-    router.push(routeBuilder.chatNew());
+    if (cta === 'chat') {
+      const { startConversation, navigateToConversation } = await import(
+        '@/lib/contact/start-conversation'
+      );
+      if (!isAuthenticated || !authToken) {
+        setAuthModalOpen(true);
+        return;
+      }
+      try {
+        const { conversationId } = await startConversation(
+          { otherUserId: business.userId, requestId },
+          authToken
+        );
+        navigateToConversation(router, conversationId);
+      } catch {
+        const { toast } = await import('sonner');
+        toast.error('خطا در باز کردن چت');
+      }
+    }
   };
 
   if (loading) {
@@ -64,8 +105,8 @@ export function UniversalBusinessProfile({ businessId: businessIdProp }: Props) 
 
   return (
     <div className="space-y-8 pb-24">
-      <BusinessHero business={business} />
-      <BusinessContactSection business={business} />
+      <BusinessHero business={business} requestId={requestId} />
+      <BusinessContactSection business={business} requestId={requestId} />
       <Separator />
       <BusinessIdentitySection business={business} />
       <BusinessExtensionsSection business={business} />

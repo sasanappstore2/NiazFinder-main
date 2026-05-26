@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser, type PaginatedResponse } from '@/lib/auth';
+import { needCardSnapshotSchema } from '@/contracts/need-card-snapshot';
 
 // ============ TYPES ============
 
@@ -158,12 +159,38 @@ export async function POST(
     const body: SendMessageBody = await request.json();
     const { content, type } = body;
 
-    if (!content?.trim()) {
+    const messageType = (type ?? 'TEXT') as ValidMessageType;
+    if (!VALID_MESSAGE_TYPES.includes(messageType)) {
+      return NextResponse.json({ error: 'نوع پیام نامعتبر است' }, { status: 400 });
+    }
+
+    if (messageType === 'NEED_CARD') {
+      try {
+        const parsed = needCardSnapshotSchema.safeParse(JSON.parse(content));
+        if (!parsed.success) {
+          return NextResponse.json({ error: 'فرمت کارت نیاز نامعتبر است' }, { status: 400 });
+        }
+      } catch {
+        return NextResponse.json({ error: 'فرمت کارت نیاز نامعتبر است' }, { status: 400 });
+      }
+    } else if (!content?.trim()) {
       return NextResponse.json(
         { error: 'محتوای پیام الزامی است' },
         { status: 400 }
       );
     }
+
+    const lastPreview =
+      messageType === 'NEED_CARD'
+        ? (() => {
+            try {
+              const p = JSON.parse(content) as { title?: string };
+              return p.title ? `نیاز: ${p.title}` : 'نیاز جدید';
+            } catch {
+              return 'نیاز جدید';
+            }
+          })()
+        : content.trim();
 
     // Determine the other user in this conversation
     const otherUserId = conversation.userId1 === user.id
@@ -177,8 +204,8 @@ export async function POST(
         data: {
           conversationId,
           senderId: user.id,
-          content: content.trim(),
-          type: type || 'TEXT',
+          content: messageType === 'NEED_CARD' ? content : content.trim(),
+          type: messageType,
           isRead: false,
         },
       });
@@ -187,7 +214,7 @@ export async function POST(
       const updatedConv = await tx.conversation.update({
         where: { id: conversationId },
         data: {
-          lastMessage: content.trim(),
+          lastMessage: lastPreview,
           lastMessageAt: new Date(),
         },
       });

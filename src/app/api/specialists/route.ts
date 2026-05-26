@@ -8,7 +8,7 @@ import type { Prisma } from '@prisma/client';
 interface SpecialistListItem {
   id: string;
   email: string;
-  phone: string | null;
+  hasPhone: boolean;
   firstName: string;
   lastName: string;
   displayName: string | null;
@@ -144,7 +144,7 @@ export async function GET(request: NextRequest) {
       return {
         id: user.id,
         email: user.email,
-        phone: user.phone,
+        hasPhone: Boolean(user.phone?.trim()),
         firstName: user.firstName,
         lastName: user.lastName,
         displayName: user.displayName,

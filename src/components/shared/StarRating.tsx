@@ -15,8 +15,8 @@ interface StarRatingProps {
 }
 
 const SIZE_MAP = {
-  xs: { star: 'size-3', gap: 'gap-px', text: 'text-[10px]' },
-  sm: { star: 'size-3.5', gap: 'gap-0.5', text: 'text-[11px]' },
+  xs: { star: 'size-3', gap: 'gap-px', text: 'text-caption' },
+  sm: { star: 'size-3.5', gap: 'gap-0.5', text: 'text-caption' },
   md: { star: 'size-4', gap: 'gap-1', text: 'text-xs' },
   lg: { star: 'size-5', gap: 'gap-1.5', text: 'text-sm' },
 };

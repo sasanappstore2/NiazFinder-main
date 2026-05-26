@@ -225,11 +225,11 @@ export function ForwardMessageDialog({
                     <div className="flex items-center gap-2 mb-1.5">
                       <Badge
                         variant="secondary"
-                        className="text-[10px] px-1.5 py-0 h-4 font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"
+                        className="text-caption px-1.5 py-0 h-4 font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"
                       >
                         {getMessageTypeLabel(message.type)}
                       </Badge>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-caption text-muted-foreground">
                         پیام منتقل‌شده
                       </span>
                     </div>
@@ -336,7 +336,7 @@ export function ForwardMessageDialog({
                         {/* Unread Badge + Arrow */}
                         <div className="flex items-center gap-2 shrink-0">
                           {conv.unreadCount > 0 && (
-                            <Badge className="text-[10px] px-1.5 py-0 h-4 min-w-[20px] justify-center bg-emerald-600 text-white border-0">
+                            <Badge className="text-caption px-1.5 py-0 h-4 min-w-[20px] justify-center bg-emerald-600 text-white border-0">
                               {conv.unreadCount}
                             </Badge>
                           )}

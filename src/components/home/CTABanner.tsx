@@ -1,5 +1,6 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { ArrowLeft, Users, Check, Headphones, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
@@ -11,7 +12,7 @@ const trustItems = [
 ];
 
 export function CTABanner() {
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
   const setAuthModalTab = useAppStore((s) => s.setAuthModalTab);
 
@@ -56,7 +57,7 @@ export function CTABanner() {
             size="lg"
             variant="outline"
             className="h-12 rounded-xl border-2 border-white/25 bg-white/5 px-8 text-base font-bold text-white backdrop-blur-sm transition-all duration-300 ease hover:border-white/50 hover:bg-white/15 hover:shadow-lg hover:shadow-white/5"
-            data-href="/browse-specialists"
+            data-href="/browse?type=business"
             title="مشاهده لیست کسب‌وکارها برتر و تخصص‌های آن‌ها"
           >
             <Users className="ml-2 size-5" aria-hidden="true" />

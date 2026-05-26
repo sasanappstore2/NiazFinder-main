@@ -386,7 +386,7 @@ export function EditProfilePage() {
                           onChange={(e) => setDisplayName(e.target.value)}
                           className="border-border/80 bg-background focus:border-emerald-500 focus:ring-emerald-500/20"
                         />
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-caption text-muted-foreground">
                           این نام در پروفایل شما نمایش داده می‌شود
                         </p>
                       </div>
@@ -413,17 +413,17 @@ export function EditProfilePage() {
                           )}
                         </div>
                         {usernameError ? (
-                          <p className="flex items-center gap-1 text-[11px] text-amber-600 dark:text-amber-400">
+                          <p className="flex items-center gap-1 text-caption text-amber-600 dark:text-amber-400">
                             <AlertTriangle className="size-3" />
                             {usernameError}
                           </p>
                         ) : username.trim() && username.trim() !== currentUser?.username?.toLowerCase() ? (
-                          <p className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400">
+                          <p className="flex items-center gap-1 text-caption text-emerald-600 dark:text-emerald-400">
                             <CheckCircle2 className="size-3" />
                             نام کاربری در دسترس به نظر می‌رسد
                           </p>
                         ) : (
-                          <p className="text-[11px] text-muted-foreground">
+                          <p className="text-caption text-muted-foreground">
                             فقط حروف انگلیسی، اعداد و _ (حداقل ۳ کاراکتر)
                           </p>
                         )}
@@ -452,12 +452,12 @@ export function EditProfilePage() {
                         className="border-border/80 bg-background resize-none focus:border-emerald-500 focus:ring-emerald-500/20"
                       />
                       <div className="flex items-center justify-between">
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-caption text-muted-foreground">
                           کمی درباره خودتان، مهارت‌ها و تخصص‌هایتان بنویسید
                         </p>
                         <Badge
                           variant={bio.length > 450 ? 'destructive' : 'secondary'}
-                          className="text-[10px] font-medium tabular-nums"
+                          className="text-caption font-medium tabular-nums"
                         >
                           {bio.length.toLocaleString('fa-IR')} / ۵۰۰
                         </Badge>
@@ -529,7 +529,7 @@ export function EditProfilePage() {
                             className="border-border/80 bg-background pr-10 focus:border-emerald-500 focus:ring-emerald-500/20"
                           />
                         </div>
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-caption text-muted-foreground">
                           لینک وب‌سایت یا پورتفولیوی شخصی خود را وارد کنید
                         </p>
                       </div>

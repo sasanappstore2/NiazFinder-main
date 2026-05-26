@@ -1,5 +1,6 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Eye, Clock, MapPin, DollarSign, ChevronLeft, Send, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -17,7 +18,7 @@ interface QuickViewProps {
 }
 
 export function QuickViewPopover({ request, anchorRect, onClose }: QuickViewProps) {
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
   const popoverRef = useRef<HTMLDivElement>(null);
 
   const catAppearance = getCategoryAppearance(request.categoryName);
@@ -114,7 +115,7 @@ export function QuickViewPopover({ request, anchorRect, onClose }: QuickViewProp
           </h3>
           <div className="flex items-center gap-2 flex-wrap">
             <span
-              className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold"
+              className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-caption font-semibold"
               style={{
                 backgroundColor: `${categoryColor}12`,
                 color: categoryColor,
@@ -124,7 +125,7 @@ export function QuickViewPopover({ request, anchorRect, onClose }: QuickViewProp
             </span>
             {request.priority !== 'NORMAL' && (
               <span className={cn(
-                'rounded-md px-2 py-0.5 text-[10px] font-semibold',
+                'rounded-md px-2 py-0.5 text-caption font-semibold',
                 request.priority === 'URGENT'
                   ? 'bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400'
                   : request.priority === 'HIGH'
@@ -146,22 +147,22 @@ export function QuickViewPopover({ request, anchorRect, onClose }: QuickViewProp
       {/* Meta pills */}
       <div className="flex flex-wrap gap-2 mb-4">
         {request.budgetMin && (
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50/80 px-2.5 py-1.5 text-[11px] font-semibold text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 ring-1 ring-emerald-200/40 dark:ring-emerald-800/30">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50/80 px-2.5 py-1.5 text-caption font-semibold text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 ring-1 ring-emerald-200/40 dark:ring-emerald-800/30">
             <DollarSign className="size-3" />
             {formatBudgetRange(request.budgetMin, request.budgetMax)}
           </span>
         )}
         {request.city && (
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-muted/40 px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground ring-1 ring-border/20">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-muted/40 px-2.5 py-1.5 text-caption font-medium text-muted-foreground ring-1 ring-border/20">
             <MapPin className="size-3" />
             {request.city}
           </span>
         )}
-        <span className="inline-flex items-center gap-1.5 rounded-lg bg-muted/40 px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground ring-1 ring-border/20">
+        <span className="inline-flex items-center gap-1.5 rounded-lg bg-muted/40 px-2.5 py-1.5 text-caption font-medium text-muted-foreground ring-1 ring-border/20">
           <Clock className="size-3" />
           {getTimeAgo(request.createdAt)}
         </span>
-        <span className="inline-flex items-center gap-1.5 rounded-lg bg-muted/40 px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground ring-1 ring-border/20">
+        <span className="inline-flex items-center gap-1.5 rounded-lg bg-muted/40 px-2.5 py-1.5 text-caption font-medium text-muted-foreground ring-1 ring-border/20">
           <Eye className="size-3" />
           {request.viewCount?.toLocaleString('fa-IR') || '۰'} بازدید
         </span>
@@ -170,12 +171,12 @@ export function QuickViewPopover({ request, anchorRect, onClose }: QuickViewProp
       {/* User + Action */}
       <div className="flex items-center justify-between pt-3 border-t border-border/40">
         <div className="flex items-center gap-2.5">
-          <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary">
+          <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-caption font-bold text-primary">
             {initials}
           </div>
           <div>
             <p className="text-[12px] font-medium text-foreground">{fullName}</p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-caption text-muted-foreground">
               {request.proposalCount?.toLocaleString('fa-IR') || '۰'} پیشنهاد
             </p>
           </div>
@@ -184,7 +185,7 @@ export function QuickViewPopover({ request, anchorRect, onClose }: QuickViewProp
           <Button
             size="sm"
             variant="outline"
-            className="h-8 rounded-lg text-[11px] font-medium gap-1.5 px-3"
+            className="h-8 rounded-lg text-caption font-medium gap-1.5 px-3"
             onClick={handleSendProposal}
           >
             <Send className="size-3" />
@@ -192,7 +193,7 @@ export function QuickViewPopover({ request, anchorRect, onClose }: QuickViewProp
           </Button>
           <Button
             size="sm"
-            className="h-8 rounded-lg text-[11px] font-medium gap-1.5 px-3"
+            className="h-8 rounded-lg text-caption font-medium gap-1.5 px-3"
             onClick={handleViewDetails}
           >
             مشاهده

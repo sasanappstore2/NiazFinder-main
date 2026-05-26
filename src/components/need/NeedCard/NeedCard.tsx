@@ -22,6 +22,11 @@ export function NeedCard({ need, href, onClick, variant = 'grid', className }: N
         {need.categoryName && (
           <p className="mt-1 text-caption text-muted-foreground">{need.categoryName}</p>
         )}
+        {(need.address || need.city) && (
+          <p className="mt-1 text-caption text-muted-foreground line-clamp-1">
+            {[need.address, need.city].filter(Boolean).join('، ')}
+          </p>
+        )}
         {need.description && (
           <p className="mt-2 text-body-sm text-muted-foreground line-clamp-2">{need.description}</p>
         )}

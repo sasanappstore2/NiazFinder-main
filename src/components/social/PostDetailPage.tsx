@@ -241,7 +241,7 @@ function CommentCard({ comment }: { comment: Comment }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-sm font-bold">{displayName}</span>
-          <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+          <span className="text-caption text-muted-foreground flex items-center gap-1">
             <Clock className="size-3" />
             {getTimeAgo(comment.createdAt)}
           </span>
@@ -566,7 +566,7 @@ export function PostDetailPage() {
               {comments.length > 0 && (
                 <Badge
                   variant="secondary"
-                  className="mr-2 text-[10px]"
+                  className="mr-2 text-caption"
                 >
                   {comments.length.toLocaleString('fa-IR')}
                 </Badge>

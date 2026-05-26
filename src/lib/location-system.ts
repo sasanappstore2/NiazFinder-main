@@ -181,7 +181,6 @@ export const countries: Country[] = [
           { id: 'maku', name: 'ماکو', nameEn: 'Maku' },
           { id: 'shahindej', name: 'شاهین‌دژ', nameEn: 'Shahindej' },
           { id: 'chaldoran', name: 'چالدران', nameEn: 'Chaldoran' },
-          { id: 'sardasht', name: 'سردشت', nameEn: 'Sardasht' },
         ],
       },
       // ─── ۷. خوزستان ───
@@ -351,7 +350,6 @@ export const countries: Country[] = [
           { id: 'kabudarahang', name: 'کبودرآهنگ', nameEn: 'Kabudarahang' },
           { id: 'razan', name: 'رزن', nameEn: 'Razan' },
           { id: 'famenin', name: 'فامنین', nameEn: 'Famenin' },
-          { id: 'malayer', name: 'ملایر', nameEn: 'Malayer' },
         ],
       },
       // ─── ۱۵. کرمانشاه ───
@@ -370,7 +368,6 @@ export const countries: Country[] = [
           { id: 'sonqor', name: 'سنقر', nameEn: 'Sonqor' },
           { id: 'gilangharb', name: 'گیلانغرب', nameEn: 'Gilangharb' },
           { id: 'harsin', name: 'هرسین', nameEn: 'Harsin' },
-          { id: 'javanrud', name: 'جوانرود', nameEn: 'Javanrud' },
           { id: 'ravansar', name: 'روانسر', nameEn: 'Ravansar' },
           { id: 'dalahu', name: 'دالهو', nameEn: 'Dalahu' },
           { id: 'salasebabajani', name: 'سه‌قلعه', nameEn: 'Salas Babajani' },
@@ -406,7 +403,6 @@ export const countries: Country[] = [
           { id: 'mehran', name: 'مهران', nameEn: 'Mehran' },
           { id: 'abdanan', name: 'آبدانان', nameEn: 'Abdanan' },
           { id: 'darrehshahr', name: 'دره‌شهر', nameEn: 'Darrehshahr' },
-          { id: 'dehloran', name: 'دهلران', nameEn: 'Dehloran' },
           { id: 'chardavol', name: 'چرداول', nameEn: 'Chardavol' },
           { id: 'malekshahi', name: 'ملکشاهی', nameEn: 'Malekshahi' },
           { id: 'arkvaz', name: 'ارکواز', nameEn: 'Arkvaz' },
@@ -459,7 +455,6 @@ export const countries: Country[] = [
           { id: 'bandarkhamir', name: 'بندرخمیر', nameEn: 'Bandar Khamir' },
           { id: 'hajiabad', name: 'حاجی‌آباد', nameEn: 'Hajiabad' },
           { id: 'parsian', name: 'پارسیان', nameEn: 'Parsian' },
-          { id: 'minab', name: 'میناب', nameEn: 'Minab' },
         ],
       },
       // ─── ۲۰. سیستان و بلوچستان ───

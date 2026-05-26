@@ -1,0 +1,195 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { MessageCircle, Phone, User, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useAppStore } from '@/lib/store';
+import { routeBuilder } from '@/config/routes';
+import {
+  startConversation,
+  navigateToConversation,
+  ContactAuthRequiredError,
+} from '@/lib/contact/start-conversation';
+import { fetchUserContact } from '@/lib/contact/fetch-contact';
+import { savePendingContact } from '@/lib/contact/pending-contact';
+import Link from 'next/link';
+
+export interface ContactActionsProps {
+  otherUserId: string;
+  requestId?: string;
+  displayName?: string;
+  hasPhone?: boolean;
+  chatEnabled?: boolean;
+  showProfile?: boolean;
+  profileHref?: string;
+  variant?: 'compact' | 'default' | 'sticky';
+  className?: string;
+}
+
+export function ContactActions({
+  otherUserId,
+  requestId,
+  displayName,
+  hasPhone = true,
+  chatEnabled = true,
+  showProfile = true,
+  profileHref,
+  variant = 'default',
+  className,
+}: ContactActionsProps) {
+  const router = useRouter();
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const authToken = useAppStore((s) => s.authToken);
+  const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
+  const openVoiceCall = useAppStore((s) => s.openVoiceCall);
+  const currentUserId = useAppStore((s) => s.currentUser?.id);
+
+  const [chatLoading, setChatLoading] = useState(false);
+  const [callLoading, setCallLoading] = useState(false);
+
+  const proHref = profileHref ?? routeBuilder.pro(otherUserId);
+  const isSelf = currentUserId === otherUserId;
+
+  const requireAuth = (action: 'chat' | 'call') => {
+    savePendingContact({
+      action,
+      otherUserId,
+      requestId,
+      returnTo: typeof window !== 'undefined' ? window.location.pathname : undefined,
+    });
+    setAuthModalOpen(true);
+  };
+
+  const handleChat = async () => {
+    if (isSelf) {
+      toast.info('نمی‌توانید با خودتان گفتگو کنید');
+      return;
+    }
+    if (!isAuthenticated || !authToken) {
+      requireAuth('chat');
+      return;
+    }
+    setChatLoading(true);
+    try {
+      const { conversationId } = await startConversation(
+        { otherUserId, requestId },
+        authToken
+      );
+      navigateToConversation(router, conversationId);
+    } catch (e) {
+      if (e instanceof ContactAuthRequiredError) {
+        setAuthModalOpen(true);
+      } else {
+        toast.error(e instanceof Error ? e.message : 'خطا در چت');
+      }
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  const handleCall = async () => {
+    if (isSelf) return;
+    if (!isAuthenticated || !authToken) {
+      requireAuth('call');
+      return;
+    }
+    setCallLoading(true);
+    try {
+      const contact = await fetchUserContact(otherUserId, authToken);
+      if (!contact.hasPhone) {
+        toast.info('این کاربر شماره تماس ثبت نکرده — از چت استفاده کنید');
+        return;
+      }
+      const parts = contact.displayName.split(/\s+/);
+      openVoiceCall({
+        id: contact.userId,
+        firstName: parts[0] ?? contact.displayName,
+        lastName: parts.slice(1).join(' ') || '',
+        displayName: contact.displayName,
+      });
+    } catch (e) {
+      if (e instanceof ContactAuthRequiredError) {
+        setAuthModalOpen(true);
+      } else {
+        toast.error(e instanceof Error ? e.message : 'خطا در تماس');
+      }
+    } finally {
+      setCallLoading(false);
+    }
+  };
+
+  if (isSelf) return null;
+
+  const btnSize = variant === 'compact' ? 'sm' : 'default';
+  const layout =
+    variant === 'sticky'
+      ? 'flex gap-2 p-3'
+      : variant === 'compact'
+        ? 'flex flex-wrap gap-1.5'
+        : 'flex flex-wrap gap-2';
+
+  return (
+    <div
+      className={cn(
+        layout,
+        variant === 'sticky' &&
+          'fixed inset-x-0 z-[calc(var(--z-mobile-nav)-1)] border-t border-border/60 bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80',
+        variant === 'sticky' && 'bottom-[var(--mobile-nav-offset)]',
+        className
+      )}
+      role="group"
+      aria-label={displayName ? `ارتباط با ${displayName}` : 'گزینه‌های ارتباط'}
+    >
+      {chatEnabled && (
+        <Button
+          type="button"
+          size={btnSize}
+          className={cn(variant === 'sticky' && 'flex-1')}
+          disabled={chatLoading}
+          onClick={() => void handleChat()}
+        >
+          {chatLoading ? (
+            <Loader2 className="size-4 animate-spin ml-1" />
+          ) : (
+            <MessageCircle className="size-4 ml-1" />
+          )}
+          چت
+        </Button>
+      )}
+      {hasPhone && (
+        <Button
+          type="button"
+          variant="outline"
+          size={btnSize}
+          className={cn(variant === 'sticky' && 'flex-1')}
+          disabled={callLoading}
+          onClick={() => void handleCall()}
+        >
+          {callLoading ? (
+            <Loader2 className="size-4 animate-spin ml-1" />
+          ) : (
+            <Phone className="size-4 ml-1" />
+          )}
+          تماس
+        </Button>
+      )}
+      {showProfile && (
+        <Button
+          type="button"
+          variant="ghost"
+          size={btnSize}
+          className={cn(variant === 'sticky' && 'shrink-0')}
+          asChild
+        >
+          <Link href={proHref}>
+            <User className="size-4 ml-1" />
+            {variant !== 'compact' && 'پروفایل'}
+          </Link>
+        </Button>
+      )}
+    </div>
+  );
+}

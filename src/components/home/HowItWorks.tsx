@@ -31,7 +31,7 @@ export function HowItWorks() {
         {/* Header */}
         <div className="mb-14 text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-sm font-semibold text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
-            <span className="flex size-6 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white" aria-hidden="true">۳</span>
+            <span className="flex size-6 items-center justify-center rounded-full bg-emerald-600 text-caption font-bold text-white" aria-hidden="true">۳</span>
             مرحله ساده
           </div>
           <h2 className="mb-3 text-2xl md:text-4xl font-extrabold tracking-tight" itemProp="name">

@@ -21,7 +21,10 @@ export async function GET(
       where: { id },
       include: {
         category: {
-          select: { id: true, name: true, icon: true },
+          select: { id: true, name: true, slug: true, icon: true },
+        },
+        subcategory: {
+          select: { id: true, name: true, slug: true, icon: true },
         },
         user: {
           select: {
@@ -140,7 +143,11 @@ export async function GET(
       createdAt: serviceRequest.createdAt.toISOString(),
       updatedAt: serviceRequest.updatedAt.toISOString(),
       categoryId: serviceRequest.categoryId,
+      subcategoryId: serviceRequest.subcategoryId,
       category: serviceRequest.category,
+      subcategory: serviceRequest.subcategory,
+      categoryName: serviceRequest.subcategory?.name ?? serviceRequest.category.name,
+      categorySlug: serviceRequest.subcategory?.slug ?? serviceRequest.category.slug,
       user: serviceRequest.user,
       proposals: mappedProposals,
       reviews: mappedReviews,

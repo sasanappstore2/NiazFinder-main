@@ -41,6 +41,7 @@ import { Separator } from '@/components/ui/separator';
 import { useAppStore } from '@/lib/store';
 import { formatPrice, formatBudgetRange, getStatusLabel, getTimeAgo } from '@/lib/constants';
 import type { ServiceRequest, Proposal, Transaction } from '@/lib/types';
+import { SmartLeadsSection } from '@/components/dashboard/SmartLeadsSection';
 
 // ============ MOCK DATA ============
 
@@ -451,6 +452,12 @@ export function UserDashboard() {
           ))}
         </div>
 
+        {currentUser.role === 'SPECIALIST' && (
+          <div className="mb-6">
+            <SmartLeadsSection />
+          </div>
+        )}
+
         {/* ============ MAIN TABS ============ */}
         <div>
           <Tabs value={activeTab} onValueChange={setActiveTab} dir="rtl" className="w-full">
@@ -512,7 +519,7 @@ export function UserDashboard() {
                               <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" />{getTimeAgo(request.createdAt)}</span>
                             </div>
                           </div>
-                          <Button variant="ghost" size="sm" className="flex-shrink-0 text-muted-foreground hover:text-foreground" onClick={() => {}} data-href="/request-detail" title="مشاهده جزئیات نیاز">
+                          <Button variant="ghost" size="sm" className="flex-shrink-0 text-muted-foreground hover:text-foreground" onClick={() => {}} data-href="/browse?type=need" title="مشاهده جزئیات نیاز">
                             مشاهده جزئیات<ChevronLeft className="w-4 h-4 mr-1" />
                           </Button>
                         </div>

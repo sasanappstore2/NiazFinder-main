@@ -200,7 +200,7 @@ function FeaturedCard({ user, onFollow, onView }: {
               {ROLE_LABELS[user.role]}
             </p>
             {user.bio && (
-              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground line-clamp-2">
+              <p className="mt-2 text-caption leading-relaxed text-muted-foreground line-clamp-2">
                 {user.bio}
               </p>
             )}
@@ -212,14 +212,14 @@ function FeaturedCard({ user, onFollow, onView }: {
               <span className="block text-sm font-bold tabular-nums">
                 {(user.followerCount || 0).toLocaleString('fa-IR')}
               </span>
-              <span className="text-[10px] text-muted-foreground">فالوور</span>
+              <span className="text-caption text-muted-foreground">فالوور</span>
             </div>
             <div className="h-8 w-px bg-border/60" />
             <div>
               <span className="block text-sm font-bold tabular-nums">
                 {user.projectCount.toLocaleString('fa-IR')}
               </span>
-              <span className="text-[10px] text-muted-foreground">پروژه</span>
+              <span className="text-caption text-muted-foreground">پروژه</span>
             </div>
           </div>
 
@@ -298,7 +298,7 @@ function UserCard({ user, onFollow, onView }: {
           {/* Role badge */}
           <Badge
             variant={ROLE_VARIANTS[user.role] || 'secondary'}
-            className="shrink-0 rounded-lg text-[10px] font-medium gap-1"
+            className="shrink-0 rounded-lg text-caption font-medium gap-1"
           >
             <RoleIcon className="size-3" />
             {ROLE_LABELS[user.role]}
@@ -317,7 +317,7 @@ function UserCard({ user, onFollow, onView }: {
           <div className="flex items-center gap-2">
             <Users className="size-3.5 text-emerald-500" />
             <div>
-              <span className="block text-[10px] text-muted-foreground">فالوور</span>
+              <span className="block text-caption text-muted-foreground">فالوور</span>
               <p className="text-xs font-bold tabular-nums">
                 {(user.followerCount || 0).toLocaleString('fa-IR')}
               </p>
@@ -326,7 +326,7 @@ function UserCard({ user, onFollow, onView }: {
           <div className="flex items-center gap-2">
             <Briefcase className="size-3.5 text-emerald-500" />
             <div>
-              <span className="block text-[10px] text-muted-foreground">پروژه</span>
+              <span className="block text-caption text-muted-foreground">پروژه</span>
               <p className="text-xs font-bold tabular-nums">
                 {user.projectCount.toLocaleString('fa-IR')}
               </p>
@@ -801,7 +801,7 @@ export function UserDiscovery() {
               >
                 <X className="size-3" />
                 حذف فیلترها
-                <Badge variant="secondary" className="mr-1 size-5 rounded-full p-0 text-[10px] flex items-center justify-center">
+                <Badge variant="secondary" className="mr-1 size-5 rounded-full p-0 text-caption flex items-center justify-center">
                   {activeFilterCount}
                 </Badge>
               </Button>
@@ -819,7 +819,7 @@ export function UserDiscovery() {
             <div className="mb-4 flex items-center gap-2">
               <Sparkles className="size-4 text-emerald-500" />
               <h2 className="text-base font-bold">پیشنهاد شده برای شما</h2>
-              <Badge variant="secondary" className="rounded-lg text-[10px]">
+              <Badge variant="secondary" className="rounded-lg text-caption">
                 {suggestedUsers.length.toLocaleString('fa-IR')} نفر
               </Badge>
             </div>

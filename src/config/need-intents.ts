@@ -54,6 +54,12 @@ const CATEGORY_INTENT_MAP: Record<string, IntentType[]> = {
   repairs: ['service_request'],
   cleaning: ['service_request'],
   plumbing: ['service_request'],
+  moving: ['service_request'],
+  electrical: ['service_request'],
+  painting: ['service_request'],
+  'medical-health': ['service_request', 'consultation'],
+  'legal-services': ['consultation', 'service_request'],
+  'it-services': ['service_request', 'consultation'],
 
   jobs: ['job_search'],
   it: ['job_search'],

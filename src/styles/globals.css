@@ -1,0 +1,2 @@
+/* Re-export app globals for architecture consistency */
+@import '../app/globals.css';

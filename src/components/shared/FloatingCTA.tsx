@@ -1,61 +1,51 @@
 'use client';
 
-import { Phone, MessageCircle, X } from 'lucide-react';
+import { MessageCircle, X, HelpCircle } from 'lucide-react';
 import { useState } from 'react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { routeBuilder } from '@/config/routes';
 
+/** Site support CTA — no external phone/WhatsApp. */
 export function FloatingCTA() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-20 end-4 z-[var(--z-fixed-overlay)] sm:bottom-6 sm:end-6 flex flex-col items-end gap-2">
-      {/* Quick actions popup */}
+    <div className="fixed bottom-[calc(var(--mobile-nav-offset)+3.5rem)] end-4 z-[var(--z-fixed-overlay)] sm:bottom-6 sm:end-6 flex flex-col items-end gap-2">
       {isOpen && (
         <div className="animate-slide-down flex flex-col gap-2 rounded-2xl border border-border/40 bg-card/90 p-3 shadow-xl shadow-black/[0.08] backdrop-blur-xl">
-          <a
-            href="tel:+982191000000"
+          <Link
+            href={routeBuilder.chat()}
             className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-            title="تماس تلفنی"
           >
             <span className="flex size-9 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md shadow-emerald-500/25">
-              <Phone className="size-4" />
-            </span>
-            تماس تلفنی
-          </a>
-          <a
-            href="https://wa.me/989123456789"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-green-500/10 hover:text-green-600"
-            title="پیام در واتساپ"
-          >
-            <span className="flex size-9 items-center justify-center rounded-full bg-green-500 text-white shadow-md shadow-green-500/25">
               <MessageCircle className="size-4" />
             </span>
-            واتساپ
-          </a>
+            پیام‌های من
+          </Link>
+          <Link
+            href={routeBuilder.help()}
+            className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+          >
+            <span className="flex size-9 items-center justify-center rounded-full bg-muted text-foreground">
+              <HelpCircle className="size-4" />
+            </span>
+            راهنما و پشتیبانی
+          </Link>
         </div>
       )}
 
-      {/* Main FAB button */}
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen((v) => !v)}
         className={cn(
-          'flex size-14 items-center justify-center rounded-full shadow-lg transition-all duration-300',
-          'hover:shadow-xl hover:scale-105 active:scale-95',
-          isOpen
-            ? 'bg-foreground text-background rotate-45'
-            : 'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 text-white animate-emerald-glow',
+          'flex size-12 items-center justify-center rounded-full shadow-lg transition-all',
+          'bg-emerald-600 text-white hover:bg-emerald-700',
+          isOpen && 'rotate-45'
         )}
-        aria-label={isOpen ? 'بستن منوی تماس' : 'تماس با ما'}
-        title={isOpen ? 'بستن' : 'تماس تلفنی یا واتساپ'}
+        aria-label={isOpen ? 'بستن منو' : 'منوی کمکی'}
       >
-        {isOpen ? (
-          <X className="size-5" />
-        ) : (
-          <Phone className="size-6" />
-        )}
+        {isOpen ? <X className="size-5" /> : <MessageCircle className="size-5" />}
       </button>
     </div>
   );

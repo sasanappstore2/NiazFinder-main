@@ -15,6 +15,8 @@ import {
   Loader2,
   SearchX,
   ArrowLeft,
+  MessageSquare,
+  Building2,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -26,6 +28,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useAppStore } from '@/lib/store';
+import { routeBuilder } from '@/config/routes';
+import { useStartChat } from '@/hooks/use-start-chat';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -70,6 +74,16 @@ interface RequestResult {
     city: string | null;
   };
   createdAt: string;
+}
+
+interface BusinessResult {
+  id: string;
+  profileId: string;
+  name: string;
+  subtitle: string;
+  avatar: string | null;
+  slug: string;
+  verified: boolean;
 }
 
 interface SpecialistResult {
@@ -166,7 +180,15 @@ function getRoleBadge(role: string) {
 
 // ─── Result Card Components ───────────────────────────────────────────────────
 
-function UserResultCard({ user, onNavigate }: { user: UserResult; onNavigate: (path: string) => void }) {
+function UserResultCard({
+  user,
+  onNavigate,
+  onMessage,
+}: {
+  user: UserResult;
+  onNavigate: (path: string) => void;
+  onMessage: (userId: string) => void;
+}) {
   const name = user.displayName || `${user.firstName} ${user.lastName}`;
   const initials = getInitials(user.firstName, user.lastName);
   const color = getAvatarColor(name);
@@ -201,7 +223,7 @@ function UserResultCard({ user, onNavigate }: { user: UserResult; onNavigate: (p
               <h3 className="font-semibold text-sm truncate">{name}</h3>
               {user.isVerified && <BadgeCheck className="h-4 w-4 text-emerald-500 flex-shrink-0" />}
               {roleBadge && (
-                <Badge variant="secondary" className={`text-[10px] px-1.5 py-0 h-4 flex-shrink-0 ${roleBadge.className}`}>
+                <Badge variant="secondary" className={`text-caption px-1.5 py-0 h-4 flex-shrink-0 ${roleBadge.className}`}>
                   {roleBadge.label}
                 </Badge>
               )}
@@ -223,8 +245,19 @@ function UserResultCard({ user, onNavigate }: { user: UserResult; onNavigate: (p
             </div>
           </div>
 
-          <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-            <ArrowLeft className="h-4 w-4 text-muted-foreground" />
+          <div className="flex shrink-0 gap-1">
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-9 gap-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                onMessage(user.id);
+              }}
+            >
+              <MessageSquare className="size-3.5" />
+              پیام
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -260,11 +293,11 @@ function RequestResultCard({ request, onNavigate }: { request: RequestResult; on
                   {request.title}
                 </h3>
                 {priorityBadge && (
-                  <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-4 flex-shrink-0 ${priorityBadge.className}`}>
+                  <Badge variant="outline" className={`text-caption px-1.5 py-0 h-4 flex-shrink-0 ${priorityBadge.className}`}>
                     {priorityBadge.label}
                   </Badge>
                 )}
-                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 flex-shrink-0 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                <Badge variant="secondary" className="text-caption px-1.5 py-0 h-4 flex-shrink-0 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
                   {request.categoryName}
                 </Badge>
               </div>
@@ -294,7 +327,15 @@ function RequestResultCard({ request, onNavigate }: { request: RequestResult; on
   );
 }
 
-function SpecialistResultCard({ specialist, onNavigate }: { specialist: SpecialistResult; onNavigate: (path: string) => void }) {
+function SpecialistResultCard({
+  specialist,
+  onNavigate,
+  onMessage,
+}: {
+  specialist: SpecialistResult;
+  onNavigate: (path: string) => void;
+  onMessage: (userId: string) => void;
+}) {
   const name = specialist.displayName || `${specialist.firstName} ${specialist.lastName}`;
   const initials = getInitials(specialist.firstName, specialist.lastName);
   const color = getAvatarColor(name);
@@ -308,7 +349,7 @@ function SpecialistResultCard({ specialist, onNavigate }: { specialist: Speciali
     >
       <Card
         className="group cursor-pointer border border-border/50 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 hover:shadow-md"
-        onClick={() => onNavigate(`/specialist/${specialist.id}`)}
+        onClick={() => onNavigate(routeBuilder.pro(specialist.id))}
       >
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
@@ -337,12 +378,12 @@ function SpecialistResultCard({ specialist, onNavigate }: { specialist: Speciali
               {specialist.skills.length > 0 && (
                 <div className="flex flex-wrap gap-1 mb-2">
                   {specialist.skills.slice(0, 3).map((skill) => (
-                    <Badge key={skill.id} variant="secondary" className="text-[10px] px-1.5 py-0 h-5 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
+                    <Badge key={skill.id} variant="secondary" className="text-caption px-1.5 py-0 h-5 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
                       {skill.name}
                     </Badge>
                   ))}
                   {specialist.skills.length > 3 && (
-                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-5">
+                    <Badge variant="secondary" className="text-caption px-1.5 py-0 h-5">
                       +{specialist.skills.length - 3}
                     </Badge>
                   )}
@@ -366,10 +407,82 @@ function SpecialistResultCard({ specialist, onNavigate }: { specialist: Speciali
               </div>
             </div>
 
-            <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-              <ArrowLeft className="h-4 w-4 text-muted-foreground" />
+            <div className="flex shrink-0 gap-1">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-9 gap-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMessage(specialist.id);
+                }}
+              >
+                <MessageSquare className="size-3.5" />
+                پیام
+              </Button>
             </div>
           </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
+function BusinessResultCard({
+  business,
+  onNavigate,
+  onMessage,
+}: {
+  business: BusinessResult;
+  onNavigate: (path: string) => void;
+  onMessage: (userId: string) => void;
+}) {
+  const initials = business.name.slice(0, 2);
+  const color = getAvatarColor(business.name);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.2 }}
+    >
+      <Card
+        className="group cursor-pointer border border-border/50 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 hover:shadow-md"
+        onClick={() => onNavigate(`/b/${business.profileId}`)}
+      >
+        <CardContent className="p-4 flex items-start gap-3">
+          <Avatar className="h-12 w-12 flex-shrink-0">
+            <AvatarImage src={business.avatar || undefined} alt={business.name} />
+            <AvatarFallback className={`${color} text-white font-bold text-sm`}>{initials}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-sm truncate">{business.name}</h3>
+              {business.verified && <BadgeCheck className="h-4 w-4 text-emerald-500 flex-shrink-0" />}
+              <Badge variant="secondary" className="text-caption h-4 px-1.5">
+                کسب‌وکار
+              </Badge>
+            </div>
+            {business.subtitle && (
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                {business.subtitle}
+              </p>
+            )}
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-9 gap-1 shrink-0"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMessage(business.id);
+            }}
+          >
+            <MessageSquare className="size-3.5" />
+            پیام
+          </Button>
         </CardContent>
       </Card>
     </motion.div>
@@ -522,8 +635,9 @@ function SearchPageContent() {
   const initialQuery = searchParams.get('q') || '';
 
   const [query, setQuery] = useState(initialQuery);
-  const [activeTab, setActiveTab] = useState<'users' | 'requests' | 'specialists'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'businesses' | 'requests' | 'specialists'>('users');
   const [userResults, setUserResults] = useState<UserResult[]>([]);
+  const [businessResults, setBusinessResults] = useState<BusinessResult[]>([]);
   const [requestResults, setRequestResults] = useState<RequestResult[]>([]);
   const [specialistResults, setSpecialistResults] = useState<SpecialistResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -533,14 +647,24 @@ function SearchPageContent() {
   const debouncedQuery = useDebounce(query, 400);
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
 
+  const { openChat } = useStartChat();
+
   const handleNavigate = useCallback((path: string) => {
     router.push(path);
   }, [router]);
+
+  const handleMessage = useCallback(
+    (userId: string) => {
+      void openChat(userId);
+    },
+    [openChat]
+  );
 
   // ─── Fetch results when debounced query changes ──────────────────────
   useEffect(() => {
     if (!debouncedQuery.trim()) {
       setUserResults([]);
+      setBusinessResults([]);
       setRequestResults([]);
       setSpecialistResults([]);
       setHasSearched(false);
@@ -584,16 +708,43 @@ function SearchPageContent() {
           .then((data) => data.data || [])
           .catch(() => []);
 
-        const [users, requests, specialists] = await Promise.all([
+        const businessesPromise = fetch(`/api/search/unified?${params.toString()}`)
+          .then((r) => (r.ok ? r.json() : { businesses: [] }))
+          .then((data) =>
+            (data.businesses || []).map(
+              (b: {
+                id: string;
+                profileId: string;
+                name: string;
+                subtitle?: string;
+                avatar?: string | null;
+                slug?: string;
+                verified?: boolean;
+              }) => ({
+                id: b.id,
+                profileId: b.profileId,
+                name: b.name,
+                subtitle: b.subtitle ?? '',
+                avatar: b.avatar ?? null,
+                slug: b.slug ?? '',
+                verified: b.verified ?? false,
+              })
+            )
+          )
+          .catch(() => []);
+
+        const [users, requests, specialists, businesses] = await Promise.all([
           usersPromise,
           requestsPromise,
           specialistsPromise,
+          businessesPromise,
         ]);
 
         if (!cancelled) {
           setUserResults(users);
           setRequestResults(requests);
           setSpecialistResults(specialists);
+          setBusinessResults(businesses);
         }
       } catch (err) {
         if (!cancelled) {
@@ -626,8 +777,19 @@ function SearchPageContent() {
   }, [query, router, searchParams]);
 
   // ─── Get results for active tab ──────────────────────────────────────
-  const currentResults = activeTab === 'users' ? userResults : activeTab === 'requests' ? requestResults : specialistResults;
-  const totalResults = userResults.length + requestResults.length + specialistResults.length;
+  const currentResults =
+    activeTab === 'users'
+      ? userResults
+      : activeTab === 'businesses'
+        ? businessResults
+        : activeTab === 'requests'
+          ? requestResults
+          : specialistResults;
+  const totalResults =
+    userResults.length +
+    businessResults.length +
+    requestResults.length +
+    specialistResults.length;
 
   return (
     <div className="max-w-3xl mx-auto px-4 pt-4 pb-12" dir="rtl">
@@ -679,6 +841,10 @@ function SearchPageContent() {
             {requestResults.length} نیاز
           </span>
           <span className="flex items-center gap-1">
+            <Building2 className="h-3.5 w-3.5" />
+            {businessResults.length} کسب‌وکار
+          </span>
+          <span className="flex items-center gap-1">
             <Briefcase className="h-3.5 w-3.5" />
             {specialistResults.length} متخصص
           </span>
@@ -694,16 +860,27 @@ function SearchPageContent() {
       {hasSearched && debouncedQuery.trim() && (
         <Tabs
           value={activeTab}
-          onValueChange={(v) => setActiveTab(v as 'users' | 'requests' | 'specialists')}
+          onValueChange={(v) =>
+            setActiveTab(v as 'users' | 'businesses' | 'requests' | 'specialists')
+          }
           className="w-full"
         >
-          <TabsList className="w-full grid grid-cols-3 mb-4 h-10 bg-muted/50">
+          <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4 mb-4 h-10 bg-muted/50">
             <TabsTrigger value="users" className="gap-1.5 text-xs sm:text-sm">
               <Users className="h-4 w-4" />
               <span>کاربران</span>
               {userResults.length > 0 && (
-                <Badge variant="secondary" className="h-5 px-1.5 text-[10px] mr-1">
+                <Badge variant="secondary" className="h-5 px-1.5 text-caption mr-1">
                   {userResults.length}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="businesses" className="gap-1.5 text-xs sm:text-sm">
+              <Building2 className="h-4 w-4" />
+              <span>کسب‌وکار</span>
+              {businessResults.length > 0 && (
+                <Badge variant="secondary" className="h-5 px-1.5 text-caption mr-1">
+                  {businessResults.length}
                 </Badge>
               )}
             </TabsTrigger>
@@ -711,7 +888,7 @@ function SearchPageContent() {
               <FileText className="h-4 w-4" />
               <span>نیازها</span>
               {requestResults.length > 0 && (
-                <Badge variant="secondary" className="h-5 px-1.5 text-[10px] mr-1">
+                <Badge variant="secondary" className="h-5 px-1.5 text-caption mr-1">
                   {requestResults.length}
                 </Badge>
               )}
@@ -720,7 +897,7 @@ function SearchPageContent() {
               <Briefcase className="h-4 w-4" />
               <span>متخصص‌ها</span>
               {specialistResults.length > 0 && (
-                <Badge variant="secondary" className="h-5 px-1.5 text-[10px] mr-1">
+                <Badge variant="secondary" className="h-5 px-1.5 text-caption mr-1">
                   {specialistResults.length}
                 </Badge>
               )}
@@ -740,7 +917,37 @@ function SearchPageContent() {
               <AnimatePresence mode="popLayout">
                 <div className="space-y-3">
                   {userResults.map((user) => (
-                    <UserResultCard key={user.id} user={user} onNavigate={handleNavigate} />
+                    <UserResultCard
+                      key={user.id}
+                      user={user}
+                      onNavigate={handleNavigate}
+                      onMessage={handleMessage}
+                    />
+                  ))}
+                </div>
+              </AnimatePresence>
+            )}
+          </TabsContent>
+
+          <TabsContent value="businesses">
+            {loading ? (
+              <div className="space-y-3">
+                {[1, 2, 3, 4].map((i) => <UserSkeleton key={i} />)}
+              </div>
+            ) : error && currentResults.length === 0 ? (
+              <EmptyState type="error" />
+            ) : currentResults.length === 0 ? (
+              <EmptyState type="no-results" query={debouncedQuery.trim()} />
+            ) : (
+              <AnimatePresence mode="popLayout">
+                <div className="space-y-3">
+                  {businessResults.map((business) => (
+                    <BusinessResultCard
+                      key={business.profileId}
+                      business={business}
+                      onNavigate={handleNavigate}
+                      onMessage={handleMessage}
+                    />
                   ))}
                 </div>
               </AnimatePresence>
@@ -780,7 +987,12 @@ function SearchPageContent() {
               <AnimatePresence mode="popLayout">
                 <div className="space-y-3">
                   {specialistResults.map((spec) => (
-                    <SpecialistResultCard key={spec.id} specialist={spec} onNavigate={handleNavigate} />
+                    <SpecialistResultCard
+                      key={spec.id}
+                      specialist={spec}
+                      onNavigate={handleNavigate}
+                      onMessage={handleMessage}
+                    />
                   ))}
                 </div>
               </AnimatePresence>

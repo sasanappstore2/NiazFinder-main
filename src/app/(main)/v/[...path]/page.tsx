@@ -86,7 +86,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
       <Script id="listing-breadcrumb-jsonld" type="application/ld+json" strategy="beforeInteractive">
         {JSON.stringify(jsonLd)}
       </Script>
-      <div className="max-w-5xl mx-auto px-4 pt-2 pb-12">
+      <div className="max-w-6xl mx-auto px-4 pt-2 pb-12">
         <Breadcrumb />
         <Separator className="my-4" />
         <RequestDetail id={id} />

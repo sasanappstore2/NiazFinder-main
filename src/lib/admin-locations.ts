@@ -151,6 +151,15 @@ export function getLocationStats(data: ManagedLocationData) {
   };
 }
 
+function dedupeCitiesById<T extends { id: string }>(cities: T[]): T[] {
+  const seen = new Set<string>();
+  return cities.filter((city) => {
+    if (seen.has(city.id)) return false;
+    seen.add(city.id);
+    return true;
+  });
+}
+
 export function getPublicLocationData(data: ManagedLocationData): ManagedLocationData {
   return {
     ...data,
@@ -163,15 +172,16 @@ export function getPublicLocationData(data: ManagedLocationData): ManagedLocatio
           .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, 'fa'))
           .map((province) => ({
             ...province,
-            cities: province.cities
-              .filter((city) => city.isActive)
-              .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, 'fa'))
-              .map((city) => ({
-                ...city,
-                neighborhoods: city.neighborhoods
-                  .filter((neighborhood) => neighborhood.isActive)
-                  .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, 'fa')),
-              })),
+            cities: dedupeCitiesById(
+              province.cities
+                .filter((city) => city.isActive)
+                .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, 'fa'))
+            ).map((city) => ({
+              ...city,
+              neighborhoods: city.neighborhoods
+                .filter((neighborhood) => neighborhood.isActive)
+                .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, 'fa')),
+            })),
           })),
       })),
   };

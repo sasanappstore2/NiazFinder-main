@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser, createSlug, type PaginatedResponse } from '@/lib/auth';
 import type { Prisma } from '@prisma/client';
+import { scheduleNeedLeadOutreach } from '@/lib/need-leads/schedule';
 
 // ============ TYPES ============
 
@@ -16,6 +17,7 @@ interface CreateRequestBody {
   deliveryUnit?: string;
   city?: string;
   province?: string;
+  address?: string;
   priority?: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
   tags?: string[];
   intentType?: string;
@@ -256,6 +258,7 @@ export async function POST(request: NextRequest) {
       deliveryUnit,
       city,
       province,
+      address,
       priority,
       tags,
       intentType,
@@ -306,6 +309,7 @@ export async function POST(request: NextRequest) {
         deliveryUnit: deliveryUnit || 'day',
         city: city?.trim() || null,
         province: province?.trim() || null,
+        address: address?.trim() || null,
         categoryId,
         priority: priority || 'NORMAL',
         tags: JSON.stringify(tags || []),
@@ -356,6 +360,8 @@ export async function POST(request: NextRequest) {
       createdAt: serviceRequest.createdAt,
       updatedAt: serviceRequest.updatedAt,
     };
+
+    scheduleNeedLeadOutreach(serviceRequest.id);
 
     return NextResponse.json(
       { message: 'نیاز با موفقیت ثبت شد', request: mappedRequest },

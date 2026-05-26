@@ -3,28 +3,22 @@
 import { useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
 import { ROUTE_PERMISSIONS } from '@/lib/route-config';
-import type { User } from '@/lib/types';
+import { useNavigate } from '@/hooks/navigation/use-navigate';
+import type { AppView, User } from '@/lib/types';
 
-/**
- * بررسی دسترسی کاربر بر اساس نقش‌های مورد نیاز
- */
 function checkPermission(user: User | null, requiredRoles: string[]): boolean {
   if (requiredRoles.length === 0) return true;
   if (!user) return false;
   return requiredRoles.includes(user.role);
 }
 
-/**
- * هوک محافظت از مسیرها - بررسی دسترسی کاربر
- * سازگار با Store قدیمی (store.ts)
- */
 export function useRouteGuard(
   requiredRoles: string[] = [],
-  redirectTo: 'login' | 'home' | 'dashboard' = 'login'
+  redirectTo: AppView | 'login' | 'home' | 'dashboard' = 'login'
 ): { isAllowed: boolean; isLoading: boolean } {
   const currentUser = useAppStore((s) => s.currentUser);
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
   const setAuthModalTab = useAppStore((s) => s.setAuthModalTab);
 
@@ -37,35 +31,27 @@ export function useRouteGuard(
       if (redirectTo === 'login') {
         setAuthModalTab('login');
         setAuthModalOpen(true);
-      } else {
-        navigateTo(redirectTo);
+      } else if (redirectTo !== 'login') {
+        navigateTo(redirectTo as AppView);
       }
       return;
     }
 
     if (currentUser && !checkPermission(currentUser, requiredRoles)) {
-      if (redirectTo === 'dashboard') {
-        navigateTo('dashboard');
-      } else {
-        navigateTo('home');
-      }
+      navigateTo(redirectTo === 'dashboard' ? 'dashboard' : 'home');
     }
   }, [isAuthenticated, currentUser, requiredRoles, redirectTo, navigateTo, setAuthModalOpen, setAuthModalTab]);
 
   return { isAllowed, isLoading: false };
 }
 
-/**
- * هوک بررسی دسترسی برای مسیر مشخص
- * سازگار با Store قدیمی (store.ts)
- */
 export function useViewGuard(
   view: string,
-  redirectTo: 'login' | 'home' | 'dashboard' = 'login'
+  redirectTo: AppView | 'login' | 'home' | 'dashboard' = 'login'
 ): { isAllowed: boolean } {
   const currentUser = useAppStore((s) => s.currentUser);
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
   const setAuthModalTab = useAppStore((s) => s.setAuthModalTab);
 
@@ -79,18 +65,14 @@ export function useViewGuard(
       if (redirectTo === 'login') {
         setAuthModalTab('login');
         setAuthModalOpen(true);
-      } else {
-        navigateTo(redirectTo);
+      } else if (redirectTo !== 'login') {
+        navigateTo(redirectTo as AppView);
       }
       return;
     }
 
     if (currentUser && !checkPermission(currentUser, requiredRoles)) {
-      if (redirectTo === 'dashboard') {
-        navigateTo('dashboard');
-      } else {
-        navigateTo('home');
-      }
+      navigateTo(redirectTo === 'dashboard' ? 'dashboard' : 'home');
     }
   }, [isAuthenticated, currentUser, requiredRoles, redirectTo, navigateTo, setAuthModalOpen, setAuthModalTab, view]);
 

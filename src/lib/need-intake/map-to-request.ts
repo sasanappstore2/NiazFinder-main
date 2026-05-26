@@ -6,11 +6,17 @@ import {
   VEHICLE_DEAL_LABELS,
   PRODUCT_DEAL_LABELS,
 } from '@/config/need-schemas/labels';
+import {
+  CANONICAL_CITIES,
+  getCityBySlug,
+  getProvinceBySlug,
+} from '@/config/locations';
 
 export interface MappedCreateRequest {
   title: string;
   description: string;
   categoryId: string;
+  subcategoryId?: string | null;
   budgetMin?: number;
   budgetMax?: number;
   budgetType: 'FIXED' | 'HOURLY' | 'NEGOTIABLE';
@@ -60,8 +66,11 @@ function buildIntakeTitle(
   if (city) parts.push(city);
 
   if (parts.length >= 2) return parts.join(' — ').slice(0, 120);
-  if (parsed.title && parsed.title.length >= 10) return parsed.title.slice(0, 120);
-  return parts.join(' ') || parsed.rawText.slice(0, 80) || 'ثبت نیاز';
+
+  const cityOnly = String(parsed.city ?? '').trim();
+  if (cityOnly) return `نیاز — ${cityOnly}`.slice(0, 120);
+
+  return parts.join(' ') || 'ثبت نیاز';
 }
 
 function mapUrgency(
@@ -75,16 +84,45 @@ function mapUrgency(
   return 'NORMAL';
 }
 
+function resolveCityAndProvince(
+  locationRaw: string | undefined,
+  parsedCity?: string
+): { city?: string; province?: string } {
+  const raw = String(locationRaw ?? parsedCity ?? '').trim();
+  if (!raw) return {};
+
+  const bySlug = getCityBySlug(raw.toLowerCase());
+  if (bySlug) {
+    const province = getProvinceBySlug(bySlug.provinceSlug);
+    return { city: bySlug.title, province: province?.title };
+  }
+
+  const byTitle = CANONICAL_CITIES.find(
+    (c) => c.title === raw || c.title.includes(raw) || raw.includes(c.title)
+  );
+  if (byTitle) {
+    const province = getProvinceBySlug(byTitle.provinceSlug);
+    return { city: byTitle.title, province: province?.title };
+  }
+
+  return { city: raw };
+}
+
 export function mapDraftToCreateRequest(
   draft: NeedDraft,
-  categoryId: string
+  categoryId: string,
+  subcategoryId?: string | null
 ): MappedCreateRequest {
   const { parsedIntent: parsed, answers } = draft;
-  const budget = answerBudget(answers, parsed);
+  const preview = draft.listingPreview;
+  const budget = preview?.budgetMax || preview?.budgetMin
+    ? { max: preview.budgetMax, min: preview.budgetMin }
+    : answerBudget(answers, parsed);
 
-  let description =
-    String(answers.details ?? answers.serviceType ?? parsed.description ?? parsed.rawText).trim() ||
-    parsed.rawText;
+  let description = preview?.description
+    ? preview.description.trim()
+    : String(answers.details ?? answers.serviceType ?? parsed.description ?? parsed.rawText).trim() ||
+      parsed.rawText;
 
   if (description.length < 30) {
     const extras = [
@@ -95,14 +133,32 @@ export function mapDraftToCreateRequest(
     description = [description, ...extras].join('\n').trim() || parsed.rawText;
   }
 
-  let title = buildIntakeTitle(parsed, answers);
+  let title = preview?.title?.trim() || buildIntakeTitle(parsed, answers);
   if (title.length < 8) {
-    title = (parsed.title ?? description).trim().slice(0, 120) || 'ثبت نیاز';
+    title = 'ثبت نیاز';
   }
 
-  const city = String(answers.location ?? parsed.city ?? '').trim() || undefined;
+  const listingExtras = [
+    ...(preview?.extras ?? []),
+    ...(Array.isArray(answers.extras)
+      ? (answers.extras as string[]).filter(Boolean)
+      : typeof answers.extras === 'string' && answers.extras.trim()
+        ? [answers.extras.trim()]
+        : []),
+  ].filter(Boolean);
+
+  if (listingExtras.length > 0) {
+    const block = listingExtras.map((e) => `• ${e}`).join('\n');
+    description = `${description.trim()}\n\n${block}`.trim();
+  }
+
+  const { city, province } = resolveCityAndProvince(
+    String(answers.location ?? ''),
+    parsed.city
+  );
 
   const tags: string[] = [parsed.intentType, parsed.categorySlug];
+  if (parsed.subcategorySlug) tags.push(parsed.subcategorySlug);
   if (answers.condition) tags.push(String(answers.condition));
   if (answers.dealType) tags.push(String(answers.dealType));
 
@@ -110,10 +166,12 @@ export function mapDraftToCreateRequest(
     title,
     description,
     categoryId,
+    subcategoryId: subcategoryId ?? null,
     budgetMin: budget.min,
     budgetMax: budget.max,
     budgetType: budget.max || budget.min ? 'FIXED' : 'NEGOTIABLE',
     city,
+    province,
     priority: mapUrgency(parsed, answers),
     tags,
     intentType: parsed.intentType,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronLeft, Home } from 'lucide-react';
@@ -157,12 +157,13 @@ export function Breadcrumb() {
   return (
     <BreadcrumbNav dir="rtl" itemScope itemType="https://schema.org/BreadcrumbList">
       <BreadcrumbList className="flex flex-wrap items-center gap-1.5 text-sm sm:gap-2">
+        {/* Separator must be sibling BreadcrumbItem, not nested — both render <li>. */}
         {crumbs.map((crumb, index) => {
           const isLast = index === crumbs.length - 1;
           const showSeparator = index < crumbs.length - 1;
 
           return (
-            <span key={`${crumb.href}-${index}`} className="contents">
+            <Fragment key={`${crumb.href}-${index}`}>
               <BreadcrumbItem
                 className="inline-flex items-center gap-1.5"
                 itemProp="itemListElement"
@@ -197,13 +198,11 @@ export function Breadcrumb() {
                 )}
               </BreadcrumbItem>
               {showSeparator && (
-                <BreadcrumbItem role="presentation" aria-hidden="true">
-                  <BreadcrumbSeparator>
-                    <ChevronLeft className="size-3.5 text-muted-foreground/60" />
-                  </BreadcrumbSeparator>
-                </BreadcrumbItem>
+                <BreadcrumbSeparator>
+                  <ChevronLeft className="size-3.5 text-muted-foreground/60" />
+                </BreadcrumbSeparator>
               )}
-            </span>
+            </Fragment>
           );
         })}
       </BreadcrumbList>

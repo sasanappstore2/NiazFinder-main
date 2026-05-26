@@ -116,7 +116,7 @@ export function HomepageTestimonials() {
                 {/* Verified Customer Badge */}
                 <div className="mb-3 flex items-center gap-1.5">
                   <ShieldCheck className="size-4 text-emerald-500" aria-hidden="true" />
-                  <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                  <span className="text-caption font-semibold text-emerald-600 dark:text-emerald-400">
                     مشتری تأیید شده
                   </span>
                 </div>
@@ -155,7 +155,7 @@ export function HomepageTestimonials() {
                     <p className="truncate text-sm font-semibold" itemProp="name">
                       {t.name}
                     </p>
-                    <p className="truncate text-[11px] font-medium text-muted-foreground">
+                    <p className="truncate text-caption font-medium text-muted-foreground">
                       {t.role}
                     </p>
                   </div>

@@ -34,6 +34,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAppStore } from '@/lib/store';
 import { useAppRouter } from '@/hooks/use-router';
+import { useRouter } from 'next/navigation';
+import { routeBuilder } from '@/config/routes';
+import { useStartChat } from '@/hooks/use-start-chat';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 import type { ServiceRequest } from '@/lib/types';
@@ -174,7 +177,7 @@ function StatPill({
         <div className="text-base font-extrabold tabular-nums leading-tight">
           {value.toLocaleString('fa-IR')}
         </div>
-        <div className="text-[11px] font-medium text-muted-foreground leading-tight">
+        <div className="text-caption font-medium text-muted-foreground leading-tight">
           {label}
         </div>
       </div>
@@ -202,7 +205,7 @@ function InfoRow({
         <Icon className={`size-4 ${iconColor}`} />
       </div>
       <div className="min-w-0 flex-1">
-        <span className="block text-[11px] text-muted-foreground">{label}</span>
+        <span className="block text-caption text-muted-foreground">{label}</span>
         <span className="block text-sm font-medium truncate">{value}</span>
       </div>
     </div>
@@ -231,7 +234,7 @@ function PostMiniCard({ post, index }: { post: ServiceRequest; index: number }) 
               <p className="mb-2 text-xs leading-relaxed text-muted-foreground line-clamp-2">
                 {post.description}
               </p>
-              <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+              <div className="flex items-center gap-3 text-caption text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <MapPin className="size-3" />
                   {post.city || 'نامشخص'}
@@ -245,7 +248,7 @@ function PostMiniCard({ post, index }: { post: ServiceRequest; index: number }) 
             <div className="shrink-0 flex flex-col items-end gap-2">
               <Badge
                 variant="secondary"
-                className={`text-[10px] ${
+                className={`text-caption ${
                   post.priority === 'URGENT'
                     ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                     : post.priority === 'HIGH'
@@ -255,7 +258,7 @@ function PostMiniCard({ post, index }: { post: ServiceRequest; index: number }) 
               >
                 {post.priority === 'URGENT' ? 'فوری' : post.priority === 'HIGH' ? 'مهم' : 'عادی'}
               </Badge>
-              <Badge variant="outline" className="text-[10px]">
+              <Badge variant="outline" className="text-caption">
                 {post.categoryName}
               </Badge>
             </div>
@@ -306,6 +309,9 @@ export function UserProfile() {
   const params = useParams();
   const targetId = params.id as string | undefined;
   const { push } = useAppRouter();
+  const router = useRouter();
+  const { openChat } = useStartChat();
+  const openVoiceCall = useAppStore((s) => s.openVoiceCall);
   const currentUser = useAppStore((s) => s.currentUser);
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const isOwnProfile = !targetId || (currentUser && targetId === currentUser.id);
@@ -619,7 +625,7 @@ export function UserProfile() {
                     </h1>
                     <Badge
                       variant={ROLE_VARIANTS[profile.role] || 'secondary'}
-                      className="rounded-lg text-[10px] font-medium"
+                      className="rounded-lg text-caption font-medium"
                     >
                       {ROLE_LABELS[profile.role] || profile.role}
                     </Badge>
@@ -677,7 +683,10 @@ export function UserProfile() {
                     <Button
                       variant="outline"
                       className="gap-2 rounded-xl px-5"
-                      onClick={() => push('messages', { userId: profile.id })}
+                      onClick={() => {
+                        if (!profile?.id) return;
+                        void openChat(String(profile.id));
+                      }}
                     >
                       <MessageCircle className="size-4" />
                       پیام
@@ -687,7 +696,16 @@ export function UserProfile() {
                     <Button
                       variant="outline"
                       className="gap-2 rounded-xl px-5"
-                      onClick={() => push('messages', { userId: profile.id, action: 'call' })}
+                      onClick={() => {
+                        if (!profile?.id) return;
+                        openVoiceCall({
+                          id: String(profile.id),
+                          firstName: String(profile.firstName ?? ''),
+                          lastName: String(profile.lastName ?? ''),
+                          displayName: profile.displayName ?? undefined,
+                          avatar: profile.avatar ?? undefined,
+                        });
+                      }}
                     >
                       <Phone className="size-4" />
                       تماس
@@ -798,7 +816,7 @@ export function UserProfile() {
                     {profile.avgRating > 0 ? profile.avgRating.toLocaleString('fa-IR') : '—'}
                   </span>
                 </div>
-                <div className="text-[11px] font-medium text-muted-foreground leading-tight">
+                <div className="text-caption font-medium text-muted-foreground leading-tight">
                   امتیاز
                 </div>
               </div>
@@ -815,7 +833,7 @@ export function UserProfile() {
                   <TabsTrigger value="posts" className="flex-1 gap-1.5">
                     <FileText className="size-3.5" />
                     پست‌ها
-                    <Badge variant="secondary" className="rounded-md px-1.5 text-[10px]">
+                    <Badge variant="secondary" className="rounded-md px-1.5 text-caption">
                       {(profile.postCount || posts.length).toLocaleString('fa-IR')}
                     </Badge>
                   </TabsTrigger>
@@ -826,7 +844,7 @@ export function UserProfile() {
                   <TabsTrigger value="projects" className="flex-1 gap-1.5">
                     <Briefcase className="size-3.5" />
                     پروژه‌ها
-                    <Badge variant="secondary" className="rounded-md px-1.5 text-[10px]">
+                    <Badge variant="secondary" className="rounded-md px-1.5 text-caption">
                       {profile.projectCount.toLocaleString('fa-IR')}
                     </Badge>
                   </TabsTrigger>
@@ -952,7 +970,7 @@ export function UserProfile() {
                                 className="rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/30 gap-1.5"
                               >
                                 {skill.name}
-                                <span className="text-[10px] opacity-60">
+                                <span className="text-caption opacity-60">
                                   {Array.from({ length: 5 }).map((_, i) => (
                                     <span key={i} className={`inline-block size-1 rounded-full ${i < skill.level ? 'bg-current' : 'bg-current/20'}`} />
                                   ))}
@@ -1006,7 +1024,7 @@ export function UserProfile() {
                                     تکمیل شده
                                   </p>
                                 </div>
-                                <Badge variant="secondary" className="rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-[10px]">
+                                <Badge variant="secondary" className="rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-caption">
                                   <CheckCircle2 className="size-3 ml-1" />
                                   تکمیل
                                 </Badge>

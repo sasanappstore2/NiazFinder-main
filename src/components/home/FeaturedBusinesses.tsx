@@ -1,5 +1,6 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useState, useEffect, useCallback } from 'react';
 import { Star, MapPin, ArrowLeft, BadgeCheck, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -123,7 +124,7 @@ function SkeletonCard() {
 }
 
 export function FeaturedBusinesses() {
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
   const [specialists, setSpecialists] = useState<SpecialistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -209,7 +210,7 @@ export function FeaturedBusinesses() {
           {FEATURED_SPECIALTIES.map((spec) => (
             <span
               key={spec}
-              className="inline-flex items-center rounded-full border border-border/40 bg-card/50 px-3 py-1 text-[11px] font-medium text-muted-foreground backdrop-blur-sm transition-colors hover:border-primary/20 hover:text-primary hover:bg-primary/5 cursor-default"
+              className="inline-flex items-center rounded-full border border-border/40 bg-card/50 px-3 py-1 text-caption font-medium text-muted-foreground backdrop-blur-sm transition-colors hover:border-primary/20 hover:text-primary hover:bg-primary/5 cursor-default"
             >
               {spec}
             </span>
@@ -295,7 +296,7 @@ export function FeaturedBusinesses() {
                     </div>
 
                     {/* Meta row */}
-                    <div className="flex items-center gap-3 text-[11px] text-muted-foreground/70">
+                    <div className="flex items-center gap-3 text-caption text-muted-foreground/70">
                       <span className="inline-flex items-center gap-1">
                         <MapPin className="size-3" />
                         {business.city}

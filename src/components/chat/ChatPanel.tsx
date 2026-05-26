@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { routeBuilder } from '@/config/routes';
 import {
   MessageSquare,
   Search,
@@ -21,10 +23,20 @@ import {
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { ChatMessageContent } from '@/components/chat/ChatMessageContent';
+import { ChatInfoPanel } from '@/components/chat/ChatInfoPanel';
+import { toVoiceCallPeer } from '@/lib/voice/voice-call-peer';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import {
   Popover,
   PopoverTrigger,
@@ -105,6 +117,7 @@ const QUICK_EMOJIS = [
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function ChatPanel({ conversationId: initialConversationId }: { conversationId?: string } = {}) {
+  const router = useRouter();
   const {
     isAuthenticated,
     setAuthModalOpen,
@@ -119,6 +132,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     sendMessage,
     setActiveConversationId,
     addOrUpdateConversation,
+    openVoiceCall,
   } = useAppStore();
 
   // ── Local state ────────────────────────────────────────────────────────
@@ -135,7 +149,9 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   const [replyTo, setReplyTo] = useState<{ messageId: string; senderName: string; content: string } | null>(null);
   const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [infoPanelOpen, setInfoPanelOpen] = useState(false);
+  const [mobileMsgActions, setMobileMsgActions] = useState<string | null>(null);
 
   // ── New Chat / User Search state ────────────────────────────────────────
   const [showNewChat, setShowNewChat] = useState(false);
@@ -262,12 +278,16 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   }, []);
 
   // ── Select conversation ────────────────────────────────────────────────
-  const handleSelectConversation = useCallback((convId: string) => {
-    setActiveConversationId(convId);
-    setShowMessages(true);
-    setReplyTo(null);
-    inputRef.current?.focus();
-  }, [setActiveConversationId]);
+  const handleSelectConversation = useCallback(
+    (convId: string) => {
+      setActiveConversationId(convId);
+      setShowMessages(true);
+      setReplyTo(null);
+      router.push(routeBuilder.chatConversation(convId));
+      inputRef.current?.focus();
+    },
+    [setActiveConversationId, router]
+  );
 
   // ── Create / select conversation from search result ─────────────────────
   const handleSelectSearchUser = useCallback(
@@ -305,7 +325,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
             id: user.id,
             firstName: user.firstName ?? '',
             lastName: user.lastName ?? '',
-            avatar: user.avatar ?? null,
+            avatar: user.avatar ?? undefined,
             online: user.online ?? false,
           },
         });
@@ -338,7 +358,8 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     setShowMessages(false);
     setActiveConversationId(null);
     setReplyTo(null);
-  }, [setActiveConversationId]);
+    router.push(routeBuilder.chat());
+  }, [setActiveConversationId, router]);
 
   // ── Send message ───────────────────────────────────────────────────────
   const handleSendMessage = useCallback(async () => {
@@ -358,7 +379,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     inputRef.current?.focus();
   }, [newMessage, activeConversationId, isSendingMessage, sendMessage]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -415,11 +436,11 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
 
   // ─── Render ──────────────────────────────────────────────────────────────
   return (
-    <div className="flex h-full min-h-0 overflow-hidden rounded-xl border bg-background shadow-sm">
+    <div className="flex h-full min-h-0 flex-1 overflow-hidden max-md:rounded-none max-md:border-0 max-md:shadow-none md:rounded-xl md:border md:shadow-sm bg-background">
       {/* ── Conversation List ── */}
       <div
         className={cn(
-          'flex w-full min-h-0 flex-col overflow-hidden border-l md:w-[380px] md:border-l',
+          'flex w-full min-h-0 flex-col overflow-hidden border-l md:w-[min(380px,35vw)] md:max-w-[420px] md:border-l',
           showMessages ? 'hidden md:flex' : 'flex'
         )}
         role="navigation"
@@ -723,13 +744,41 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9"
+                className="h-9 w-9 min-h-[44px] min-w-[44px] md:min-h-9 md:min-w-9"
+                aria-label="اطلاعات گفتگو"
+                onClick={() => setInfoPanelOpen(true)}
+              >
+                <MessageCircle className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 min-h-[44px] min-w-[44px] md:min-h-9 md:min-w-9"
                 aria-label="تماس"
                 title="تماس صوتی"
+                onClick={() => {
+                  if (!otherUser) return;
+                  openVoiceCall(
+                    toVoiceCallPeer(otherUser),
+                    selectedConversation.requestId ?? undefined
+                  );
+                }}
               >
                 <Phone className="h-4 w-4" />
               </Button>
             </div>
+
+            <ChatInfoPanel
+              open={infoPanelOpen}
+              onClose={() => setInfoPanelOpen(false)}
+              messages={messages.map((m) => ({
+                id: m.id,
+                content: m.type === 'NEED_CARD' ? 'نیاز' : m.content,
+                type: m.type,
+                senderId: m.senderId,
+                createdAt: m.createdAt,
+              }))}
+            />
 
             {/* Messages */}
             <ScrollArea className="min-h-0 flex-1 px-4 py-3">
@@ -772,7 +821,13 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                         {/* Reply button on hover (desktop) */}
                         <button
                           type="button"
-                          onClick={() => startReply(msg)}
+                          onClick={() => {
+                          if (window.matchMedia('(max-width: 767px)').matches) {
+                            setMobileMsgActions(msg.id);
+                          } else {
+                            startReply(msg);
+                          }
+                        }}
                           className={cn(
                             'absolute top-1 z-10 flex h-7 w-7 items-center justify-center rounded-full',
                             'bg-background/80 border border-border/60 shadow-sm backdrop-blur-sm',
@@ -799,7 +854,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                           {replyTo && replyTo.messageId === msg.id && (
                             <div className="sr-only">در حال پاسخ به این پیام</div>
                           )}
-                          <p className="text-sm leading-7">{msg.content}</p>
+                          <ChatMessageContent message={msg} isOwn={isMe} />
                           <div
                             className={cn(
                               'mt-1 flex items-center gap-1.5 text-caption',
@@ -850,8 +905,8 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
             )}
 
             {/* Message Input */}
-            <div className="border-t px-4 py-3">
-              <div className="flex items-center gap-2">
+            <div className="border-t px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-4">
+              <div className="flex items-end gap-2">
                 {/* Emoji picker */}
                 <Popover>
                   <PopoverTrigger asChild>
@@ -875,13 +930,14 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                   </PopoverContent>
                 </Popover>
 
-                <Input
+                <Textarea
                   ref={inputRef}
                   placeholder="پیام خود را بنویسید..."
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  className="h-10 text-sm flex-1"
+                  rows={1}
+                  className="min-h-[44px] max-h-32 resize-none text-sm flex-1 py-2.5"
                   disabled={isSendingMessage}
                 />
 
@@ -931,6 +987,27 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
           </div>
         )}
       </div>
+      <Sheet open={Boolean(mobileMsgActions)} onOpenChange={() => setMobileMsgActions(null)}>
+        <SheetContent side="bottom" className="rounded-t-2xl">
+          <SheetHeader>
+            <SheetTitle>عملیات پیام</SheetTitle>
+          </SheetHeader>
+          <div className="flex flex-col gap-2 py-4">
+            <Button
+              variant="outline"
+              className="h-11 justify-start gap-2"
+              onClick={() => {
+                const msg = messages.find((m) => m.id === mobileMsgActions);
+                if (msg) startReply(msg);
+                setMobileMsgActions(null);
+              }}
+            >
+              <Reply className="size-4" />
+              پاسخ
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

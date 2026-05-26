@@ -3,13 +3,16 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAppStore } from '@/lib/store';
+import { getChatSocketConfig } from '@/lib/chat-socket-config';
 import type { Message } from '@/lib/types';
 
 // ─── Socket Connection Manager ──────────────────────────────────────────
 
 let socketInstance: Socket | null = null;
 let reconnectAttempts = 0;
+let lastConnectErrorLogAt = 0;
 const MAX_RECONNECT_ATTEMPTS = 10;
+const CONNECT_ERROR_LOG_INTERVAL_MS = 20_000;
 
 export interface ChatSocketAPI {
   socket: Socket | null;
@@ -43,16 +46,20 @@ export function useChatSocket(): ChatSocketAPI {
     if (!currentUser || !isAuthenticated) return;
     if (socketRef.current?.connected) return;
 
+    const { url, path, enabled } = getChatSocketConfig();
+    if (!enabled || !url) return;
+
     const userId = currentUser.id;
 
-    socketInstance = io('/?XTransformPort=3004', {
+    socketInstance = io(url, {
+      path,
       auth: { userId },
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: MAX_RECONNECT_ATTEMPTS,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
-      timeout: 10000,
+      timeout: 20_000,
     });
 
     socketRef.current = socketInstance;
@@ -61,10 +68,62 @@ export function useChatSocket(): ChatSocketAPI {
       console.log('✅ Chat socket connected');
       reconnectAttempts = 0;
 
+      (window as unknown as { __chatSocket?: Socket }).__chatSocket = socketInstance!;
+
       // Join active conversation if any
       if (activeConversationId) {
         socketInstance!.emit('join:conversation', activeConversationId);
       }
+    });
+
+    socketInstance.on('call:invite', (data: {
+      callId: string;
+      callerId: string;
+      sdpOffer: RTCSessionDescriptionInit;
+      from?: { id: string; firstName: string; lastName: string; displayName?: string; avatar?: string };
+    }) => {
+      window.dispatchEvent(
+        new CustomEvent('call:invite', {
+          detail: {
+            callId: data.callId,
+            from: {
+              id: data.from?.id ?? data.callerId,
+              firstName: data.from?.firstName ?? '',
+              lastName: data.from?.lastName ?? '',
+              displayName: data.from?.displayName,
+              avatar: data.from?.avatar,
+              email: '',
+              role: 'CLIENT' as const,
+              isVerified: false,
+              isActive: true,
+              online: true,
+            },
+            sdpOffer: data.sdpOffer,
+          },
+        })
+      );
+    });
+
+    socketInstance.on('call:accept', (data: {
+      callId: string;
+      sdpAnswer: RTCSessionDescriptionInit;
+    }) => {
+      window.dispatchEvent(new CustomEvent('call:accept', { detail: data }));
+    });
+
+    socketInstance.on('call:ice-candidate', (data: {
+      callId: string;
+      candidate: RTCIceCandidateInit;
+    }) => {
+      window.dispatchEvent(new CustomEvent('call:ice-candidate', { detail: data }));
+    });
+
+    socketInstance.on('call:reject', (data: { callId: string }) => {
+      window.dispatchEvent(new CustomEvent('call:reject', { detail: data }));
+    });
+
+    socketInstance.on('call:hangup', (data: { callId: string }) => {
+      window.dispatchEvent(new CustomEvent('call:hangup', { detail: data }));
     });
 
     socketInstance.on('disconnect', (reason) => {
@@ -72,8 +131,18 @@ export function useChatSocket(): ChatSocketAPI {
     });
 
     socketInstance.on('connect_error', (error) => {
-      console.error('⚠️ Chat socket connection error:', error.message);
       reconnectAttempts++;
+      const now = Date.now();
+      if (now - lastConnectErrorLogAt < CONNECT_ERROR_LOG_INTERVAL_MS) return;
+      lastConnectErrorLogAt = now;
+
+      if (error.message === 'timeout') {
+        console.warn(
+          '[chat] اتصال به سرویس چت برقرار نشد. سرویس را اجرا کنید: npm run dev:chat (پورت 3004)'
+        );
+      } else {
+        console.warn('[chat] خطای اتصال:', error.message);
+      }
     });
 
     // ─── Real-time Events ─────────────────────────────────────────────

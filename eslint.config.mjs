@@ -43,6 +43,23 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "no-undef": "off",
     "no-unreachable": "off",
     "no-useless-escape": "off",
+
+  },
+}, {
+  files: ["src/**/*.{ts,tsx}"],
+  rules: {
+    "no-restricted-imports": ["warn", {
+      patterns: [
+        {
+          group: ["@/components/business/**"],
+          message: "Do not import business module from need module. Use contracts or shared.",
+        },
+        {
+          group: ["@/components/need/**"],
+          message: "Do not import need module from business module. Use contracts or shared.",
+        },
+      ],
+    }],
   },
 }, {
   ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "examples/**", "skills", "mini-services/**", "test-api*.js", "*.test.ts", "*.test.tsx"]

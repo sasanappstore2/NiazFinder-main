@@ -79,9 +79,19 @@ export type IntakeStep =
   | 'parsing'
   | 'clarifying'
   | 'questioning'
+  | 'chatting'
+  | 'preview'
   | 'summary'
   | 'publishing'
   | 'done';
+
+export interface ListingPreview {
+  title: string;
+  description: string;
+  extras?: string[];
+  budgetMin?: number;
+  budgetMax?: number;
+}
 
 export interface ConversationTurn {
   role: 'user' | 'assistant';
@@ -92,6 +102,24 @@ export interface NeedDraft {
   parsedIntent: ParsedIntent;
   answers: Record<string, string | number | boolean | string[]>;
   turns: ConversationTurn[];
+  leadPhone?: string;
+  listingPreview?: ListingPreview;
+}
+
+export interface ChatTurnResponse {
+  assistantMessage: string;
+  slotUpdates?: Record<string, unknown>;
+  readinessScore: number;
+  readyToPreview: boolean;
+  suggestedChips?: FieldOption[];
+}
+
+export interface PreviewListingResponse {
+  title: string;
+  description: string;
+  budgetMin?: number;
+  budgetMax?: number;
+  suggestedExtras?: string[];
 }
 
 export interface NextQuestionResponse {

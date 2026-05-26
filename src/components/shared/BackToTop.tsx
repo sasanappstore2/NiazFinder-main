@@ -91,7 +91,7 @@ export function BackToTop() {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         {isVisible && pctText > 5 ? (
-          <span className="text-[10px] font-bold leading-none" style={{ color: 'oklch(0.51 0.12 165)' }}>
+          <span className="text-caption font-bold leading-none" style={{ color: 'oklch(0.51 0.12 165)' }}>
             {pctText.toLocaleString('fa-IR')}
             <span className="text-[7px]">٪</span>
           </span>

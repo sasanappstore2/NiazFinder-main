@@ -655,6 +655,73 @@ io.on('connection', (socket: AuthenticatedSocket) => {
     }
   });
 
+  // ─── Voice call signaling ───────────────────────────────────────────
+  socket.on('call:invite', async (payload: {
+    callId: string;
+    calleeId: string;
+    sdpOffer: RTCSessionDescriptionInit;
+  }) => {
+    if (!payload?.callId || !payload?.calleeId) return;
+    const caller = await db.user.findUnique({
+      where: { id: userId },
+      select: { id: true, firstName: true, lastName: true, displayName: true, avatar: true },
+    });
+    io.to(`user:${payload.calleeId}`).emit('call:invite', {
+      callId: payload.callId,
+      callerId: userId,
+      sdpOffer: payload.sdpOffer,
+      from: caller,
+    });
+  });
+
+  socket.on('call:accept', (payload: { callId: string; sdpAnswer: RTCSessionDescriptionInit }) => {
+    if (!payload?.callId) return;
+    db.voiceCall
+      .findUnique({ where: { id: payload.callId }, select: { callerId: true, calleeId: true } })
+      .then((call) => {
+        if (!call) return;
+        const peerId = call.callerId === userId ? call.calleeId : call.callerId;
+        io.to(`user:${peerId}`).emit('call:accept', payload);
+      })
+      .catch(console.error);
+  });
+
+  socket.on('call:ice-candidate', (payload: { callId: string; candidate: RTCIceCandidateInit }) => {
+    if (!payload?.callId) return;
+    db.voiceCall
+      .findUnique({ where: { id: payload.callId }, select: { callerId: true, calleeId: true } })
+      .then((call) => {
+        if (!call) return;
+        const peerId = call.callerId === userId ? call.calleeId : call.callerId;
+        io.to(`user:${peerId}`).emit('call:ice-candidate', payload);
+      })
+      .catch(console.error);
+  });
+
+  socket.on('call:reject', (payload: { callId: string }) => {
+    if (!payload?.callId) return;
+    db.voiceCall
+      .findUnique({ where: { id: payload.callId }, select: { callerId: true, calleeId: true } })
+      .then((call) => {
+        if (!call) return;
+        const peerId = call.callerId === userId ? call.calleeId : call.callerId;
+        io.to(`user:${peerId}`).emit('call:reject', payload);
+      })
+      .catch(console.error);
+  });
+
+  socket.on('call:hangup', (payload: { callId: string }) => {
+    if (!payload?.callId) return;
+    db.voiceCall
+      .findUnique({ where: { id: payload.callId }, select: { callerId: true, calleeId: true } })
+      .then((call) => {
+        if (!call) return;
+        const peerId = call.callerId === userId ? call.calleeId : call.callerId;
+        io.to(`user:${peerId}`).emit('call:hangup', payload);
+      })
+      .catch(console.error);
+  });
+
   // ─── Disconnect ──────────────────────────────────────────────────────
   socket.on('disconnect', async (reason) => {
     console.log(`👋 User ${userId} disconnected (socket: ${socket.id}, reason: ${reason})`);

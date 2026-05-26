@@ -18,22 +18,41 @@ import { buildSummary } from '@/lib/need-intake/question-engine';
 import { seedAnswersFromParsed } from '@/lib/need-intake/seed-answers';
 import { getClarifyingChipSet } from '@/lib/need-intake/clarifying-chips';
 import {
+  chatTurnApi,
   extractSlotsApi,
   nextQuestionApi,
   parseIntentApi,
+  previewListingApi,
   publishNeedApi,
 } from '@/lib/need-intake/intake-client';
+import { isCoreIntakeComplete } from '@/lib/need-intake/core-progress';
 import { NeedSummarySidebar } from './NeedSummarySidebar';
+import { IntakeChatComposer } from './IntakeChatComposer';
+import { NeedListingPreview } from './NeedListingPreview';
 import { routeBuilder } from '@/config/routes';
 import type { NextQuestionResponse, ParsedIntent } from '@/contracts/need-intake';
+import {
+  buildPrefilledIntent,
+  resolveSlugFromQuery,
+} from '@/lib/need-intake/prefill-from-query';
+import { normalizeCategoryPair } from '@/config/categories';
+import { getLeadPhone, setLeadPhone } from '@/lib/lead-draft';
 
 const TOKEN_KEY = 'needfinder_auth_token';
 
 interface NeedIntakePanelProps {
   initialSeed?: string;
+  initialCategory?: string | null;
+  initialCity?: string | null;
+  initialPhone?: string | null;
 }
 
-export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
+export function NeedIntakePanel({
+  initialSeed = '',
+  initialCategory = null,
+  initialCity = null,
+  initialPhone = null,
+}: NeedIntakePanelProps) {
   const router = useRouter();
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
@@ -56,6 +75,13 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
     setParsedIntent,
     setCurrentQuestion,
     setSummary,
+    listingPreview,
+    setListingPreview,
+    readinessScore,
+    readyToPreview,
+    setReadiness,
+    leadPhone,
+    setLeadPhone,
     setError,
     setLoading,
     reset,
@@ -63,6 +89,8 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
   } = useNeedIntakeStore();
 
   const [draftInput, setDraftInput] = useState(initialSeed);
+  const [chatInput, setChatInput] = useState('');
+  const [isRepublishing, setIsRepublishing] = useState(false);
   const [fieldValue, setFieldValue] = useState<string | number>('');
   const [aiMeta, setAiMeta] = useState<{
     source?: string;
@@ -78,6 +106,11 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
   }, [initialSeed]);
 
   useEffect(() => {
+    const phone = initialPhone?.trim() || getLeadPhone();
+    if (phone) setLeadPhone(phone);
+  }, [initialPhone, setLeadPhone]);
+
+  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [turns, step, isLoading, currentQuestion]);
 
@@ -86,23 +119,42 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
       setLiveSummary('');
       return;
     }
-    if (step === 'questioning' || step === 'clarifying' || step === 'summary') {
+    if (
+      step === 'questioning' ||
+      step === 'clarifying' ||
+      step === 'chatting' ||
+      step === 'preview' ||
+      step === 'summary'
+    ) {
       setLiveSummary(buildSummary(parsedIntent, answers));
     }
   }, [parsedIntent, answers, step]);
 
+  const enterChattingPhase = useCallback(
+    (intent: ParsedIntent, answerMap: Record<string, unknown>) => {
+      setSummary(buildSummary(intent, answerMap));
+      setStep('chatting');
+      setReadiness(isCoreIntakeComplete(intent, answerMap) ? 0.7 : 0.4, false);
+      addTurn({
+        role: 'assistant',
+        content:
+          'سؤالات اولیه تمام شد. هر جزئیات دیگری (بودجه، زمان، محدوده کار) را بنویسید؛ وقتی کافی بود پیش‌نمایش آگهی را می‌سازیم.',
+      });
+    },
+    [addTurn, setSummary, setStep, setReadiness]
+  );
+
   const applyNextQuestion = useCallback(
     (intent: ParsedIntent, answerMap: Record<string, unknown>, data: NextQuestionResponse) => {
       setCurrentQuestion(data);
-      if (data.done) {
-        setSummary(buildSummary(intent, answerMap));
-        setStep('summary');
-      } else {
+      if (data.done && isCoreIntakeComplete(intent, answerMap)) {
+        enterChattingPhase(intent, answerMap);
+      } else if (!data.done) {
         setStep('questioning');
         setFieldValue('');
       }
     },
-    [setCurrentQuestion, setSummary, setStep]
+    [enterChattingPhase, setCurrentQuestion, setStep]
   );
 
   const loadNextQuestion = useCallback(
@@ -127,11 +179,29 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
 
       try {
         const data = await parseIntentApi(trimmed);
-        const intent = data.parsed;
+        let intent = data.parsed;
+        if (initialCategory) {
+          const slug = resolveSlugFromQuery(initialCategory);
+          if (slug) {
+            const pair = normalizeCategoryPair(slug);
+            intent = {
+              ...intent,
+              categorySlug: pair.categorySlug,
+              subcategorySlug: pair.subcategorySlug,
+              confidence: Math.max(intent.confidence, 0.85),
+            };
+          }
+        }
+        if (initialCity && !intent.city) {
+          const prefilled = buildPrefilledIntent(null, initialCity);
+          if (prefilled?.city) intent = { ...intent, city: prefilled.city };
+        }
 
         setParsedIntent(intent);
-        const seeded = seedAnswersFromParsed(intent);
+        const phone = initialPhone?.trim() || getLeadPhone();
+        const seeded = seedAnswersFromParsed(intent, phone);
         setAnswers(seeded);
+        if (phone) setLeadPhone(phone);
         setAiMeta(data.meta ?? null);
         setLiveSummary(buildSummary(intent, seeded));
         addTurn({ role: 'assistant', content: data.assistantMessage });
@@ -158,8 +228,19 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
     setDraftInput(initialSeed);
     setAiMeta(null);
 
+    const prefilled = buildPrefilledIntent(initialCategory, initialCity, initialSeed);
+
     if (initialSeed.trim()) {
       void startParse(initialSeed);
+    } else if (prefilled) {
+      setParsedIntent(prefilled);
+      const phone = initialPhone?.trim() || getLeadPhone();
+      const seeded = seedAnswersFromParsed(prefilled, phone);
+      setAnswers(seeded);
+      if (phone) setLeadPhone(phone);
+      setLiveSummary(buildSummary(prefilled, seeded));
+      setStep('questioning');
+      void loadNextQuestion(prefilled, seeded);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- one session per mount
   }, []);
@@ -211,7 +292,10 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
             value: val,
           });
           if (Object.keys(slots).length > 0) {
-            nextAnswers = { ...nextAnswers, ...slots };
+            nextAnswers = {
+              ...nextAnswers,
+              ...(slots as Record<string, string | number | boolean>),
+            };
             setAnswers(nextAnswers);
           }
         } catch {
@@ -228,11 +312,108 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
     }
   };
 
+  const goToPreview = useCallback(async () => {
+    const draft = getDraft();
+    if (!draft) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await previewListingApi(draft, listingPreview?.extras);
+      setListingPreview({
+        title: data.title,
+        description: data.description,
+        extras: data.suggestedExtras ?? listingPreview?.extras,
+        budgetMin: data.budgetMin,
+        budgetMax: data.budgetMax,
+      });
+      setStep('preview');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'خطا';
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  }, [getDraft, listingPreview?.extras, setListingPreview, setStep, setLoading, setError]);
+
+  const handleChatSend = useCallback(async () => {
+    const text = chatInput.trim();
+    if (!text || !parsedIntent) return;
+
+    setChatInput('');
+    addTurn({ role: 'user', content: text });
+    setLoading(true);
+    setError(null);
+
+    try {
+      const draft = getDraft();
+      if (!draft) return;
+
+      const result = await chatTurnApi(draft, text);
+      let nextAnswers = { ...answers };
+      if (result.slotUpdates && Object.keys(result.slotUpdates).length > 0) {
+        nextAnswers = {
+          ...nextAnswers,
+          ...(result.slotUpdates as Record<string, string | number | boolean>),
+        };
+        setAnswers(nextAnswers);
+      }
+      if (result.mergedIntent) {
+        setParsedIntent(result.mergedIntent);
+      }
+      addTurn({ role: 'assistant', content: result.assistantMessage });
+      setReadiness(result.readinessScore, result.readyToPreview);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'خطا';
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  }, [
+    chatInput,
+    parsedIntent,
+    answers,
+    addTurn,
+    getDraft,
+    setAnswers,
+    setParsedIntent,
+    setReadiness,
+    setLoading,
+    setError,
+  ]);
+
+  const handleRepolish = useCallback(async () => {
+    const draft = getDraft();
+    if (!draft || !listingPreview) return;
+    setIsRepublishing(true);
+    try {
+      const data = await previewListingApi(draft, listingPreview.extras);
+      setListingPreview({
+        ...listingPreview,
+        title: data.title,
+        description: data.description,
+        budgetMin: data.budgetMin,
+        budgetMax: data.budgetMax,
+      });
+      toast.success('آگهی دوباره پالیش شد');
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'خطا');
+    } finally {
+      setIsRepublishing(false);
+    }
+  }, [getDraft, listingPreview, setListingPreview]);
+
   const publish = async () => {
     if (!isAuthenticated) {
       setAuthModalTab('login');
       setAuthModalOpen(true);
-      toast.info('برای ثبت نیاز ابتدا وارد شوید');
+      const savedPhone = getLeadPhone();
+      toast.info(
+        savedPhone
+          ? `برای ثبت نیاز وارد شوید — شماره ${savedPhone} ذخیره شده است`
+          : 'برای ثبت نیاز ابتدا وارد شوید'
+      );
       return;
     }
 
@@ -242,13 +423,18 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
       return;
     }
 
+    if (!listingPreview) {
+      toast.error('ابتدا پیش‌نمایش آگهی را بسازید');
+      return;
+    }
+
     setStep('publishing');
     setLoading(true);
     setError(null);
     try {
       const token =
         typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null;
-      const data = await publishNeedApi(draft, token);
+      const data = await publishNeedApi(draft, token, listingPreview);
       toast.success('نیاز شما ثبت شد!');
       setStep('done');
       router.push(routeBuilder.listing(data.id, data.title));
@@ -260,7 +446,7 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
         setAuthModalTab('login');
         setAuthModalOpen(true);
       }
-      setStep('summary');
+      setStep('preview');
     } finally {
       setLoading(false);
     }
@@ -269,13 +455,6 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
   const showSeedForm =
     (step === 'idle' || (step === 'parsing' && !isLoading && Boolean(error))) &&
     !isLoading;
-
-  const inConversation =
-    step === 'parsing' ||
-    step === 'clarifying' ||
-    step === 'questioning' ||
-    step === 'summary' ||
-    step === 'publishing';
 
   const clarifyingChips =
     parsedIntent && step === 'clarifying'
@@ -398,16 +577,38 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
           </div>
         )}
 
-        {step === 'summary' && (
-          <div className="space-y-4 rounded-2xl border bg-card p-5 shadow-sm">
-            <h3 className="text-h3 font-semibold">خلاصه نیاز شما</h3>
-            <p className="text-body-sm whitespace-pre-line text-muted-foreground leading-relaxed">
-              {summary}
+        {step === 'chatting' && !isLoading && (
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              با دستیار گفتگو کنید تا جزئیات تکمیل شود.
+              {readinessScore > 0 && (
+                <span className="mr-1 text-primary">
+                  ({Math.round(readinessScore * 100)}٪ آماده)
+                </span>
+              )}
             </p>
-            <Button className="w-full h-12" onClick={() => void publish()} disabled={isLoading}>
-              تأیید و ثبت نیاز
-            </Button>
+            {(readyToPreview || readinessScore >= 0.85) && (
+              <Button
+                variant="secondary"
+                className="w-full"
+                onClick={() => void goToPreview()}
+                disabled={isLoading}
+              >
+                ساخت پیش‌نمایش آگهی
+              </Button>
+            )}
           </div>
+        )}
+
+        {step === 'preview' && listingPreview && (
+          <NeedListingPreview
+            preview={listingPreview}
+            onChange={setListingPreview}
+            onRepolish={() => void handleRepolish()}
+            onPublish={() => void publish()}
+            isLoading={isLoading}
+            isRepublishing={isRepublishing}
+          />
         )}
 
         {error && (
@@ -418,7 +619,22 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
         <div ref={bottomRef} />
       </div>
 
-      {inConversation && step !== 'summary' && step !== 'done' && (
+      {step === 'chatting' && (
+        <div className="sticky bottom-0 border-t bg-background/95 pt-3 backdrop-blur-sm">
+          <IntakeChatComposer
+            value={chatInput}
+            onChange={setChatInput}
+            onSubmit={() => void handleChatSend()}
+            disabled={isLoading}
+          />
+        </div>
+      )}
+
+      {(step === 'parsing' ||
+        step === 'clarifying' ||
+        step === 'questioning' ||
+        step === 'chatting' ||
+        step === 'summary') && (
         <Button
           variant="ghost"
           size="sm"
@@ -441,7 +657,11 @@ export function NeedIntakePanel({ initialSeed = '' }: NeedIntakePanelProps) {
         parsed={parsedIntent}
         visible={
           Boolean(liveSummary) &&
-          (step === 'questioning' || step === 'clarifying' || step === 'summary')
+          (step === 'questioning' ||
+            step === 'clarifying' ||
+            step === 'chatting' ||
+            step === 'preview' ||
+            step === 'summary')
         }
       />
     </div>

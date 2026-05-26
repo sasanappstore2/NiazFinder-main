@@ -44,6 +44,7 @@
     "examples",
     "agent-ctx",
     "download",
-    "upload"
+    "upload",
+    "prisma/seed-extra.ts"
   ]
 }

@@ -14,6 +14,7 @@ import {
   VEHICLE_DEAL_LABELS,
 } from '@/config/need-schemas/labels';
 import { formatMoneyToman } from '@/lib/format/money';
+import { isCoreIntakeComplete } from '@/lib/need-intake/core-progress';
 
 function fieldVisible(field: FieldSchema, answers: Record<string, unknown>): boolean {
   if (field.showIf) {
@@ -46,6 +47,12 @@ function isAnswered(
   if (field.key === 'rahnAmount' && parsed.budgetMax && e.dealType?.includes('rahn')) {
     return true;
   }
+  if (
+    (field.key === 'phone' || field.key === 'contact') &&
+    answers._leadPhone
+  ) {
+    return true;
+  }
   if (field.key === 'location' && (parsed.city || answers.location)) return true;
   if (field.key === 'area' && parsed.city) return true;
 
@@ -75,6 +82,33 @@ export function getNextQuestion(
   const answered = total - pending.length;
 
   if (pending.length === 0) {
+    if (isCoreIntakeComplete(parsed, answers)) {
+      return { done: true, progress: { current: total, total } };
+    }
+    const optionalUnanswered = visible.filter((f) => !isAnswered(f, answers, parsed));
+    if (optionalUnanswered.length > 0) {
+      const field = optionalUnanswered[0];
+      return {
+        done: false,
+        question: field.label,
+        field,
+        chips:
+          field.type === 'chips' || field.type === 'select' ? field.options : undefined,
+        progress: { current: answered, total },
+      };
+    }
+    const optionalAny = visible.filter((f) => !f.required);
+    if (optionalAny.length > 0) {
+      const field = optionalAny[0];
+      return {
+        done: false,
+        question: field.label,
+        field,
+        chips:
+          field.type === 'chips' || field.type === 'select' ? field.options : undefined,
+        progress: { current: answered, total },
+      };
+    }
     return { done: true, progress: { current: total, total } };
   }
 

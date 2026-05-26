@@ -1,10 +1,19 @@
 import type { City } from './location-system';
 
+export interface LocationPreferences {
+  selectedCities: City[];
+  lastUpdated: number;
+  /** Auto GPS attempt already ran once on this device */
+  geoAutoAttempted?: boolean;
+  /** User denied browser geolocation */
+  geoPermissionDenied?: boolean;
+  /** Last slug resolved from GPS (no raw coordinates stored) */
+  lastDetectedSlug?: string;
+  geoDetectedAt?: number;
+}
+
 export interface UserPreferences {
-  location: {
-    selectedCities: City[];
-    lastUpdated: number;
-  };
+  location: LocationPreferences;
   filters: {
     category: string;
     sort: 'newest' | 'oldest';
@@ -69,8 +78,23 @@ export class CookieManager {
     try {
       const cookieValue = this.getCookie(COOKIE_CONFIG.name);
       if (cookieValue) {
-        const parsed = JSON.parse(decodeURIComponent(cookieValue));
-        this.preferences = { ...DEFAULT_PREFERENCES, ...parsed };
+        const parsed = JSON.parse(decodeURIComponent(cookieValue)) as Partial<UserPreferences>;
+        this.preferences = {
+          ...DEFAULT_PREFERENCES,
+          ...parsed,
+          location: {
+            ...DEFAULT_PREFERENCES.location,
+            ...(parsed.location ?? {}),
+          },
+          filters: {
+            ...DEFAULT_PREFERENCES.filters,
+            ...(parsed.filters ?? {}),
+          },
+          ui: {
+            ...DEFAULT_PREFERENCES.ui,
+            ...(parsed.ui ?? {}),
+          },
+        };
       } else {
         this.preferences = { ...DEFAULT_PREFERENCES };
       }
@@ -139,11 +163,61 @@ export class CookieManager {
     }
 
     this.preferences.location = {
+      ...this.preferences.location,
       selectedCities,
       lastUpdated: Date.now(),
     };
 
     this.savePreferences();
+  }
+
+  public hasSavedLocation(): boolean {
+    return this.getPreferences().location.selectedCities.length > 0;
+  }
+
+  public markGeoAutoAttempted(): void {
+    if (!this.preferences) {
+      this.preferences = { ...DEFAULT_PREFERENCES };
+    }
+    this.preferences.location = {
+      ...this.preferences.location,
+      geoAutoAttempted: true,
+      lastUpdated: Date.now(),
+    };
+    this.savePreferences();
+  }
+
+  public markGeoDenied(): void {
+    if (!this.preferences) {
+      this.preferences = { ...DEFAULT_PREFERENCES };
+    }
+    this.preferences.location = {
+      ...this.preferences.location,
+      geoAutoAttempted: true,
+      geoPermissionDenied: true,
+      lastUpdated: Date.now(),
+    };
+    this.savePreferences();
+  }
+
+  public markGeoDetected(slug: string): void {
+    if (!this.preferences) {
+      this.preferences = { ...DEFAULT_PREFERENCES };
+    }
+    this.preferences.location = {
+      ...this.preferences.location,
+      geoAutoAttempted: true,
+      geoPermissionDenied: false,
+      lastDetectedSlug: slug,
+      geoDetectedAt: Date.now(),
+      lastUpdated: Date.now(),
+    };
+    this.savePreferences();
+  }
+
+  public shouldAttemptGeoAuto(): boolean {
+    const loc = this.getPreferences().location;
+    return !loc.geoAutoAttempted && loc.selectedCities.length === 0;
   }
 
   public updateFilters(filters: Partial<UserPreferences['filters']>): void {

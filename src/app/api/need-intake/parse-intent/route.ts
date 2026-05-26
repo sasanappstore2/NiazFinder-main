@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     const assistantMessage =
       parsed.confidence >= 0.75
-        ? `متوجه شدم: ${def.labelFa}. چند سؤال کوتاه می‌پرسم تا نیازتان را ثبت کنیم.`
+        ? `نیازتان را فهمیدم (${def.labelFa}). چند سؤال کوتاه می‌پرسم؛ بعد می‌توانید بیشتر با من گفتگو کنید.`
         : `فکر می‌کنم منظورتان «${def.labelFa}» است. درست است؟`;
 
     const response: ParseIntentResponse & {

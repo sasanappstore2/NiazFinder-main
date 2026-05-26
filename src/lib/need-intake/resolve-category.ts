@@ -1,41 +1,88 @@
 import { db } from '@/lib/db';
+import {
+  legacyValueToSlug,
+  resolveCategoryLevels,
+} from '@/config/categories';
 
-/** Map canonical intake slugs → DB category slugs when they differ. */
-const SLUG_ALIASES: Record<string, string[]> = {
-  services: ['home-services', 'repairs', 'home-services'],
-  'vehicles-car': ['repairs'],
-  electronics: ['mobile-app', 'web-design-development'],
-  general: ['consulting-education', 'home-services'],
-};
+export interface ResolvedCategoryIds {
+  categoryId: string;
+  subcategoryId: string | null;
+  categorySlug: string;
+  subcategorySlug: string | null;
+}
 
-/** Resolve Prisma category id from canonical slug (or first active category). */
-export async function resolveCategoryId(categorySlug: string): Promise<string> {
-  const aliases = SLUG_ALIASES[categorySlug] ?? [categorySlug];
+async function findCategoryIdBySlug(slug: string): Promise<string | null> {
+  const row = await db.category.findFirst({
+    where: { slug, isActive: true },
+    select: { id: true },
+  });
+  return row?.id ?? null;
+}
 
-  for (const slug of aliases) {
-    const bySlug = await db.category.findFirst({
-      where: { slug, isActive: true },
+/**
+ * Resolve Prisma category + subcategory ids from canonical or legacy slugs.
+ */
+export async function resolveCategoryIds(
+  categorySlug: string,
+  subcategorySlug?: string | null
+): Promise<ResolvedCategoryIds> {
+  const levels = resolveCategoryLevels(categorySlug, subcategorySlug);
+  if (!levels) {
+    const fallback = await db.category.findFirst({
+      where: { isActive: true, parentId: null },
+      orderBy: { order: 'asc' },
     });
-    if (bySlug) return bySlug.id;
+    if (!fallback) throw new Error('No active category in database');
+    return {
+      categoryId: fallback.id,
+      subcategoryId: null,
+      categorySlug: fallback.slug,
+      subcategorySlug: null,
+    };
   }
 
-  const bySlug = await db.category.findFirst({
-    where: { slug: categorySlug, isActive: true },
-  });
-  if (bySlug) return bySlug.id;
+  let categoryId = await findCategoryIdBySlug(levels.categorySlug);
+  let subcategoryId: string | null = null;
 
-  const byName = await db.category.findFirst({
-    where: { name: { contains: categorySlug }, isActive: true },
-  });
-  if (byName) return byName.id;
+  if (levels.subcategorySlug) {
+    subcategoryId = await findCategoryIdBySlug(levels.subcategorySlug);
+    if (!categoryId) {
+      categoryId = subcategoryId;
+      subcategoryId = null;
+    }
+  }
 
-  const fallback = await db.category.findFirst({
-    where: { isActive: true, parentId: null },
-    orderBy: { order: 'asc' },
-  });
-  if (fallback) return fallback.id;
+  if (!categoryId) {
+    const leafId = await findCategoryIdBySlug(levels.leafSlug);
+    if (leafId) {
+      categoryId = leafId;
+    }
+  }
 
-  const any = await db.category.findFirst({ where: { isActive: true } });
-  if (!any) throw new Error('No active category in database');
-  return any.id;
+  if (!categoryId) {
+    const any = await db.category.findFirst({
+      where: { isActive: true },
+      orderBy: { order: 'asc' },
+    });
+    if (!any) throw new Error('No active category in database');
+    categoryId = any.id;
+  }
+
+  return {
+    categoryId,
+    subcategoryId,
+    categorySlug: levels.categorySlug,
+    subcategorySlug: levels.subcategorySlug,
+  };
+}
+
+/** @deprecated Use resolveCategoryIds */
+export async function resolveCategoryId(categorySlug: string): Promise<string> {
+  const { categoryId } = await resolveCategoryIds(categorySlug);
+  return categoryId;
+}
+
+/** Resolve slug from URL query (?category= legacy or canonical). */
+export function resolveSlugFromQuery(categoryParam: string): string | null {
+  return legacyValueToSlug(categoryParam) ?? categoryParam;
 }

@@ -905,14 +905,6 @@
               "isActive": true,
               "order": 14,
               "neighborhoods": []
-            },
-            {
-              "id": "sardasht",
-              "name": "سردشت",
-              "nameEn": "Sardasht",
-              "isActive": true,
-              "order": 15,
-              "neighborhoods": []
             }
           ]
         },
@@ -1831,14 +1823,6 @@
               "isActive": true,
               "order": 9,
               "neighborhoods": []
-            },
-            {
-              "id": "malayer",
-              "name": "ملایر",
-              "nameEn": "Malayer",
-              "isActive": true,
-              "order": 10,
-              "neighborhoods": []
             }
           ]
         },
@@ -1928,14 +1912,6 @@
               "nameEn": "Harsin",
               "isActive": true,
               "order": 10,
-              "neighborhoods": []
-            },
-            {
-              "id": "javanrud",
-              "name": "جوانرود",
-              "nameEn": "Javanrud",
-              "isActive": true,
-              "order": 11,
               "neighborhoods": []
             },
             {
@@ -2106,14 +2082,6 @@
               "nameEn": "Darrehshahr",
               "isActive": true,
               "order": 6,
-              "neighborhoods": []
-            },
-            {
-              "id": "dehloran",
-              "name": "دهلران",
-              "nameEn": "Dehloran",
-              "isActive": true,
-              "order": 7,
               "neighborhoods": []
             },
             {
@@ -2437,14 +2405,6 @@
               "nameEn": "Parsian",
               "isActive": true,
               "order": 23,
-              "neighborhoods": []
-            },
-            {
-              "id": "minab",
-              "name": "میناب",
-              "nameEn": "Minab",
-              "isActive": true,
-              "order": 24,
               "neighborhoods": []
             }
           ]

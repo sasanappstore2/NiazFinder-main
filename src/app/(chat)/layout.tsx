@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AppShell } from '@/components/layout/AppShell';
 
 export const metadata: Metadata = {
   title: 'نیاز فایندر - پیام‌ها',
@@ -11,8 +12,10 @@ export default function ChatLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex" dir="rtl" style={{ height: 'calc(100vh - 64px)' }}>
-      {children}
-    </div>
+    <AppShell minimalChrome>
+      <div className="flex min-h-0 flex-1 flex-col h-[100dvh] max-h-[100dvh] overflow-hidden">
+        {children}
+      </div>
+    </AppShell>
   );
 }

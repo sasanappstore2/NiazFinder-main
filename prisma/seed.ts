@@ -216,7 +216,21 @@ async function main() {
   categories['machine-learning'] = subcategories[23].id;
 
   console.log(`  ✅ ${subcategories.length} زیردسته ساخته شد`);
-  console.log(`  📊 مجموعاً ${parentCategories.length + subcategories.length} دسته‌بندی\n`);
+
+  const { syncCanonicalCategoriesToDb } = await import('../src/lib/categories/sync-to-db');
+  const syncResult = await syncCanonicalCategoriesToDb();
+  console.log(
+    `  ✅ همگام‌سازی دسته‌های کانونیکال: ${syncResult.upserted} دسته، ${syncResult.deactivated} غیرفعال`
+  );
+
+  const canonicalRows = await prisma.category.findMany({
+    where: { slug: { in: ['services', 'cleaning', 'plumbing', 'mobile-phone', 'apartment-rent', 'car'] }, isActive: true },
+  });
+  for (const row of canonicalRows) {
+    categories[row.slug] = row.id;
+  }
+
+  console.log(`  📊 مجموعاً ${parentCategories.length + subcategories.length} دسته‌بندی (+ کانونیکال)\n`);
 
   // ========== ۳. ساخت مهارت‌ها ==========
   console.log('🎯 ساخت مهارت‌ها...');

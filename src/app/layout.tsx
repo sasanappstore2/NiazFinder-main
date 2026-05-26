@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { vazirmatn, geistMono } from "@/lib/fonts/vazirmatn";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import {
@@ -14,19 +14,6 @@ import {
   combineJsonLd,
 } from "@/lib/seo";
 import { FAQ_DATA } from "@/lib/constants";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-  preload: true,
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 // ═══════════════════════════════════════════════════════════════════
 // Viewport Configuration
@@ -147,10 +134,6 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <head>
-        {/* Preconnect to external resources */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
         {/* DNS Prefetch for performance */}
         <link rel="dns-prefetch" href="https://needfinder.ir" />
 
@@ -189,7 +172,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        className={`${vazirmatn.variable} ${geistMono.variable} font-sans antialiased bg-background text-foreground`}
       >
         {/* Skip to main content link for accessibility */}
         <a

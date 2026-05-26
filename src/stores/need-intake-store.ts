@@ -4,6 +4,7 @@ import { create } from 'zustand';
 import type {
   ConversationTurn,
   IntakeStep,
+  ListingPreview,
   NeedDraft,
   NextQuestionResponse,
   ParsedIntent,
@@ -17,6 +18,10 @@ interface NeedIntakeState {
   turns: ConversationTurn[];
   currentQuestion: NextQuestionResponse | null;
   summary: string;
+  listingPreview: ListingPreview | null;
+  readinessScore: number;
+  readyToPreview: boolean;
+  leadPhone: string | null;
   error: string | null;
   isLoading: boolean;
 
@@ -28,6 +33,9 @@ interface NeedIntakeState {
   setParsedIntent: (parsed: ParsedIntent) => void;
   setCurrentQuestion: (q: NextQuestionResponse | null) => void;
   setSummary: (s: string) => void;
+  setListingPreview: (p: ListingPreview | null) => void;
+  setReadiness: (score: number, ready: boolean) => void;
+  setLeadPhone: (phone: string | null) => void;
   setError: (e: string | null) => void;
   setLoading: (v: boolean) => void;
   reset: () => void;
@@ -42,6 +50,10 @@ const initialState = {
   turns: [],
   currentQuestion: null,
   summary: '',
+  listingPreview: null,
+  readinessScore: 0,
+  readyToPreview: false,
+  leadPhone: null,
   error: null,
   isLoading: false,
 };
@@ -58,6 +70,10 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
   setParsedIntent: (parsed) => set({ parsedIntent: parsed }),
   setCurrentQuestion: (q) => set({ currentQuestion: q }),
   setSummary: (summary) => set({ summary }),
+  setListingPreview: (listingPreview) => set({ listingPreview }),
+  setReadiness: (readinessScore, readyToPreview) =>
+    set({ readinessScore, readyToPreview }),
+  setLeadPhone: (leadPhone) => set({ leadPhone }),
   setError: (error) => set({ error }),
   setLoading: (isLoading) => set({ isLoading }),
   reset: () => set(initialState),
@@ -69,6 +85,8 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
       parsedIntent: s.parsedIntent,
       answers: s.answers,
       turns: s.turns,
+      leadPhone: s.leadPhone ?? undefined,
+      listingPreview: s.listingPreview ?? undefined,
     };
   },
 }));

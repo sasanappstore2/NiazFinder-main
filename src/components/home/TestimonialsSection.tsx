@@ -70,7 +70,7 @@ export function TestimonialsSection() {
                 {/* Rating + Verified */}
                 <div className="mb-4 flex items-start justify-between gap-2">
                   <RatingStars rating={review.rating} />
-                  <Badge variant="secondary" className="gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800">
+                  <Badge variant="secondary" className="gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-caption font-medium text-emerald-700 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800">
                     <ShieldCheck className="size-3" aria-hidden="true" />
                     بررسی شده
                   </Badge>
@@ -88,10 +88,10 @@ export function TestimonialsSection() {
                   </Avatar>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold" itemProp="name">{review.author.firstName} {review.author.lastName}</p>
-                    <p className="truncate text-[11px] font-medium text-muted-foreground" itemProp="jobTitle">
+                    <p className="truncate text-caption font-medium text-muted-foreground" itemProp="jobTitle">
                       {REVIEWER_ROLES[review.author.id] || 'کاربر نیاز فایندر'}
                     </p>
-                    <time className="text-[10px] text-muted-foreground/60" dateTime={review.createdAt} itemProp="datePublished">{formatDate(review.createdAt)}</time>
+                    <time className="text-caption text-muted-foreground/60" dateTime={review.createdAt} itemProp="datePublished">{formatDate(review.createdAt)}</time>
                   </div>
                 </div>
               </CardContent>

@@ -280,7 +280,7 @@ export function CreatePostPage() {
                   <div className="flex items-center gap-2 mb-3">
                     <ImagePlus className="size-4 text-emerald-500" />
                     <h3 className="text-sm font-bold">تصاویر</h3>
-                    <Badge variant="secondary" className="text-[10px]">
+                    <Badge variant="secondary" className="text-caption">
                       اختیاری · حداکثر ۱۰
                     </Badge>
                   </div>
@@ -352,21 +352,21 @@ export function CreatePostPage() {
                 <motion.div variants={item} className="flex items-center justify-between pt-2">
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     {isPrivate ? (
-                      <Badge variant="outline" className="text-[10px] gap-1">
+                      <Badge variant="outline" className="text-caption gap-1">
                         <EyeOff className="size-3" />
                         فقط من
                       </Badge>
                     ) : (
                       <Badge
                         variant="secondary"
-                        className="text-[10px] gap-1 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
+                        className="text-caption gap-1 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
                       >
                         <Eye className="size-3" />
                         عمومی
                       </Badge>
                     )}
                     {imageUrls.length > 0 && (
-                      <Badge variant="secondary" className="text-[10px] gap-1">
+                      <Badge variant="secondary" className="text-caption gap-1">
                         <ImagePlus className="size-3" />
                         {imageUrls.length.toLocaleString('fa-IR')} تصویر
                       </Badge>

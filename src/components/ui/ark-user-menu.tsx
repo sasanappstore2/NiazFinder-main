@@ -1,5 +1,6 @@
 "use client";
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useState, useEffect } from "react";
 import { Menu } from "@ark-ui/react/menu";
 import { Portal } from "@ark-ui/react/portal";
@@ -78,7 +79,6 @@ export function ArkUserMenu() {
   const {
     isAuthenticated,
     currentUser,
-    navigateTo,
     logout,
     setAuthModalOpen,
     setAuthModalTab,
@@ -87,6 +87,7 @@ export function ArkUserMenu() {
     fetchNotifications,
     conversations,
   } = useAppStore();
+  const { navigateTo } = useNavigate();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const unreadMsgCount = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
@@ -152,7 +153,7 @@ export function ArkUserMenu() {
               <span className="relative">
                 <Avatar className="size-7 border-2 border-primary/20">
                   <AvatarImage src={currentUser.avatar} />
-                  <AvatarFallback className="bg-primary/10 text-[10px] font-bold text-primary">
+                  <AvatarFallback className="bg-primary/10 text-caption font-bold text-primary">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -308,7 +309,7 @@ export function ArkUserMenu() {
                   اعلان‌ها
                 </span>
                 {unreadNotificationCount > 0 && (
-                  <span className="size-5 rounded-full bg-destructive/10 text-destructive text-[10px] font-bold flex items-center justify-center">
+                  <span className="size-5 rounded-full bg-destructive/10 text-destructive text-caption font-bold flex items-center justify-center">
                     {unreadNotificationCount > 99 ? "99+" : unreadNotificationCount}
                   </span>
                 )}
@@ -348,7 +349,7 @@ export function ArkUserMenu() {
                         >
                           {notif.title}
                         </p>
-                        <p className="text-[10px] text-muted-foreground/50 mt-px">
+                        <p className="text-caption text-muted-foreground/50 mt-px">
                           {timeAgo(notif.createdAt)}
                         </p>
                       </div>
@@ -358,7 +359,7 @@ export function ArkUserMenu() {
                 <button
                   type="button"
                   onClick={() => nav("notifications")}
-                  className="flex w-full items-center justify-center py-1 text-[10px] font-medium text-primary hover:underline cursor-pointer"
+                  className="flex w-full items-center justify-center py-1 text-caption font-medium text-primary hover:underline cursor-pointer"
                 >
                   مشاهده همه <ArrowLeft className="size-2.5 ms-1" />
                 </button>
@@ -366,7 +367,7 @@ export function ArkUserMenu() {
             ) : (
               <div className="flex items-center justify-center gap-1.5 py-2.5 text-muted-foreground/30">
                 <BellOff className="size-4" />
-                <p className="text-[11px]">بدون اعلان جدید</p>
+                <p className="text-caption">بدون اعلان جدید</p>
               </div>
             )}
 
@@ -379,7 +380,7 @@ export function ArkUserMenu() {
               <MessageSquare className="size-4 text-muted-foreground" />
               پیام‌ها
               {unreadMsgCount > 0 && (
-                <span className="me-auto size-5 rounded-full bg-destructive/10 text-destructive text-[10px] font-bold flex items-center justify-center">
+                <span className="me-auto size-5 rounded-full bg-destructive/10 text-destructive text-caption font-bold flex items-center justify-center">
                   {unreadMsgCount > 99 ? "99+" : unreadMsgCount}
                 </span>
               )}

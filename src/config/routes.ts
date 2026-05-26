@@ -283,6 +283,15 @@ export const routeBuilder = {
   dashboard:          () => ROUTES.dashboard,
   chat:               () => ROUTES.chat,
   chatNew:            () => ROUTES.chatNew,
+  chatWithUser:       (
+    userId: string,
+    opts?: { requestId?: string; returnTo?: string }
+  ) => {
+    const params = new URLSearchParams({ userId });
+    if (opts?.requestId) params.set('requestId', opts.requestId);
+    if (opts?.returnTo) params.set('returnTo', opts.returnTo);
+    return `${ROUTES.chatNew}?${params.toString()}`;
+  },
   chatConversation:   (conversationId: string) =>
     fillParams(ROUTES.chatConversation, { conversationId }),
   notifications:      () => ROUTES.notifications,

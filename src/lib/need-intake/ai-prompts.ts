@@ -31,8 +31,8 @@ Rules:
 - budgetMin/budgetMax in Toman (تومان). "۵۰ میلیون" → 50000000.
 - urgency: LOW | NORMAL | HIGH | URGENT (فوری → URGENT).
 - confidence: 0.0 to 1.0 (how sure you are).
-- title: short Persian headline (10-80 chars).
-- description: fuller Persian summary of the need.
+- title: INTERNAL draft label only (10-80 chars). NEVER use the user's raw sentence as title.
+- description: fuller Persian summary including implied customer needs between the lines.
 - entities: key-value strings. For real estate include dealType: buy|sell|rent_monthly|rent_rahn_full|rent_rahn_ejare and propertyKind: apartment|villa|land|office|shop. For vehicles dealType: buy|sell|rent|service|parts.
 
 JSON schema:
@@ -59,10 +59,57 @@ export function buildNeedIntakeParseUserMessage(text: string): string {
 /** Prompt for generating listing title + description at publish time. */
 export function buildListingEnrichSystemPrompt(): string {
   return `You are a Persian copywriter for Needs Finder.
-Given a user's need (intent, category, answers), write a clear title and description.
+Given a user's need (intent, category, answers, chat context), write a polished listing.
 Output ONLY JSON: { "title": "...", "description": "..." }
-- title: 10-80 Persian characters, specific and searchable
-- description: 50-500 Persian characters, polite and complete`;
+- title: 10-80 Persian characters, specific and searchable. NEVER copy the user's first long sentence verbatim.
+- description: 50-500 Persian characters, polite and complete. Include implied requirements the customer likely wants.
+- Infer practical details (skills, scope, urgency) when reasonable from context.`;
+}
+
+export function buildChatTurnSystemPrompt(hasLeadPhone: boolean): string {
+  return `You are a friendly Persian assistant for Needs Finder (نیاز فایندر).
+Help complete a service need posting through short chat messages.
+Rules:
+- Reply in Persian, 1-3 short sentences. Ask at most ONE follow-up question per turn.
+- Infer implied needs from context; do not repeat the user's text as a listing title.
+- Extract budget (Toman) if the user mentions money.
+${hasLeadPhone ? '- The user already provided a phone number on the landing page. Do NOT ask for phone again.' : '- You may ask for contact only if truly missing and critical.'}
+- When you have enough to publish a clear listing (service type, city/area, scope), set readiness high.
+Output ONLY JSON:
+{
+  "assistantMessage": "...",
+  "slotUpdates": { "budget": 5000000, "location": "مشهد", "details": "..." },
+  "readinessScore": 0.0,
+  "readyToPreview": false,
+  "suggestedChips": [{ "value": "...", "label": "..." }]
+}
+slotUpdates: only keys you learned this turn (budget, location, details, when, serviceType). Omit empty object if none.
+readinessScore: 0.0-1.0 how complete the need is.
+readyToPreview: true when readinessScore >= 0.85 and core info exists.`;
+}
+
+export function buildChatTurnUserMessage(
+  draft: {
+    parsedIntent: ParsedIntent;
+    answers: Record<string, unknown>;
+    turns: { role: string; content: string }[];
+  },
+  userMessage: string
+): string {
+  return JSON.stringify(
+    {
+      rawText: draft.parsedIntent.rawText,
+      intentType: draft.parsedIntent.intentType,
+      categorySlug: draft.parsedIntent.categorySlug,
+      city: draft.parsedIntent.city,
+      budgetMax: draft.parsedIntent.budgetMax,
+      answers: draft.answers,
+      recentTurns: draft.turns.slice(-8),
+      userMessage,
+    },
+    null,
+    2
+  );
 }
 
 export function buildListingEnrichUserMessage(

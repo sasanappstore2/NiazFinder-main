@@ -1,7 +1,11 @@
 import type {
+  ChatTurnResponse,
+  ListingPreview,
+  NeedDraft,
   NextQuestionResponse,
   ParseIntentResponse,
   ParsedIntent,
+  PreviewListingResponse,
 } from '@/contracts/need-intake';
 
 export async function parseIntentApi(text: string): Promise<ParseIntentResponse> {
@@ -54,9 +58,42 @@ export async function extractSlotsApi(
   return data as { slots: Record<string, unknown> };
 }
 
+export async function chatTurnApi(
+  draft: NeedDraft,
+  message: string
+): Promise<ChatTurnResponse & { mergedIntent?: ParsedIntent | null }> {
+  const res = await fetch('/api/need-intake/chat-turn', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ draft, message }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error((data as { error?: string }).error || 'خطا در گفتگو');
+  }
+  return data as ChatTurnResponse & { mergedIntent?: ParsedIntent | null };
+}
+
+export async function previewListingApi(
+  draft: NeedDraft,
+  extras?: string[]
+): Promise<PreviewListingResponse> {
+  const res = await fetch('/api/need-intake/preview-listing', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ draft, extras }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error((data as { error?: string }).error || 'خطا در ساخت پیش‌نمایش');
+  }
+  return data as PreviewListingResponse;
+}
+
 export async function publishNeedApi(
-  draft: { parsedIntent: ParsedIntent; answers: Record<string, unknown>; turns: unknown[] },
-  token?: string | null
+  draft: NeedDraft,
+  token?: string | null,
+  listingPreview?: ListingPreview
 ): Promise<{ id: string; slug: string; title: string }> {
   const res = await fetch('/api/need-intake/publish', {
     method: 'POST',
@@ -64,7 +101,7 @@ export async function publishNeedApi(
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify({ draft }),
+    body: JSON.stringify({ draft, listingPreview }),
   });
   const data = await res.json();
   if (!res.ok) {

@@ -62,5 +62,5 @@ function BrowseDispatcherInner({ categorySlug, citySlug }: BrowseDispatcherProps
   if (filters.type === 'need') return <BrowseRequests {...sharedProps} />;
   if (filters.type === 'business') return <BrowseSpecialists {...sharedProps} />;
 
-  return <BrowseSpecialists {...sharedProps} />;
+  return <BrowseRequests {...sharedProps} />;
 }

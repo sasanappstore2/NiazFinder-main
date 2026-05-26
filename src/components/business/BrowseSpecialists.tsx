@@ -36,6 +36,7 @@ import type { SpecialistProfile } from '@/lib/types';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
 import { SpecialistAvailabilityBadge } from '@/components/business/SpecialistAvailabilityBadge';
 import { routeBuilder } from '@/config/routes';
+import { useStartChat } from '@/hooks/use-start-chat';
 import { useManagedLocations } from '@/lib/use-managed-locations';
 import {
   buildUrlWithQuery,
@@ -116,7 +117,7 @@ function SkillLevelDots({ level }: { level: number }) {
 // ─── Specialist Card (Grid Mode) ──────────────────────────
 function SpecialistCard({ specialist }: { specialist: SpecialistProfile }) {
   const { toggleCompareSpecialist, compareSpecialistIds} = useAppStore();
-  const { navigateTo } = useNavigate();
+  const { openChat } = useStartChat();
   const profileHref = routeBuilder.pro(specialist.id);
   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
   const colorClass = getAvatarColor(specialist.displayName ?? '');
@@ -230,7 +231,10 @@ function SpecialistCard({ specialist }: { specialist: SpecialistProfile }) {
             </Link>
           </Button>
           <Button
-            onClick={() => navigateTo('messages')}
+            onClick={(e) => {
+              e.preventDefault();
+              void openChat(specialist.id);
+            }}
             size="icon"
             variant="outline"
             className="h-10 w-10 shrink-0 rounded-xl"
@@ -247,7 +251,7 @@ function SpecialistCard({ specialist }: { specialist: SpecialistProfile }) {
 // ─── Specialist Card (List Mode) ──────────────────────────
 function SpecialistListCard({ specialist }: { specialist: SpecialistProfile }) {
   const { toggleCompareSpecialist, compareSpecialistIds} = useAppStore();
-  const { navigateTo } = useNavigate();
+  const { openChat } = useStartChat();
   const profileHref = routeBuilder.pro(specialist.id);
   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
   const colorClass = getAvatarColor(specialist.displayName ?? '');
@@ -332,7 +336,11 @@ function SpecialistListCard({ specialist }: { specialist: SpecialistProfile }) {
               </Link>
             </Button>
             <Button
-              onClick={() => navigateTo('messages')}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                void openChat(specialist.id);
+              }}
               size="icon"
               variant="outline"
               className="h-9 w-9 shrink-0 rounded-lg"

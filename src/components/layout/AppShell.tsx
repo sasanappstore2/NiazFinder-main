@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect, type ReactNode } from 'react';
+import { Suspense, useEffect, type ReactNode } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
@@ -15,6 +15,9 @@ import ErrorBoundary from '@/components/shared/ErrorBoundary';
 import { Separator } from '@/components/ui/separator';
 import { useAppStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
+import { useResumePendingContact } from '@/hooks/use-resume-pending-contact';
+import { useChatSocket } from '@/lib/chat-socket';
+import { useVoiceCallSignaling } from '@/hooks/use-voice-call';
 
 interface AppShellProps {
   children: ReactNode;
@@ -27,6 +30,16 @@ export function AppShell({ children, minimalChrome = false }: AppShellProps) {
   const initializeFromStorage = useAppStore((state) => state.initializeFromStorage);
   const isHome = pathname === '/';
   const isChatView = pathname.startsWith('/chat');
+  const effectiveMinimal = minimalChrome || isChatView;
+  const voiceCallOpen = useAppStore((s) => s.voiceCallOpen);
+  const voiceCallTarget = useAppStore((s) => s.voiceCallTarget);
+  const voiceCallType = useAppStore((s) => s.voiceCallType);
+  const hangupVoiceCall = useAppStore((s) => s.hangupVoiceCall);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+
+  useResumePendingContact();
+  useChatSocket();
+  useVoiceCallSignaling();
 
   useEffect(() => {
     initializeFromStorage().catch(() => {});
@@ -37,19 +50,24 @@ export function AppShell({ children, minimalChrome = false }: AppShellProps) {
       <div
         className={cn(
           'flex flex-col bg-background text-foreground',
-          isChatView && minimalChrome ? 'h-screen overflow-hidden' : 'min-h-screen'
+          effectiveMinimal ? 'h-dvh max-h-dvh overflow-hidden' : 'min-h-screen'
         )}
       >
-        <Header />
+        <Header compact={effectiveMinimal} />
         <main
-          className={cn('flex-1', !isHome && !isChatView && 'pt-6')}
+          className={cn(
+            'flex min-h-0 flex-col',
+            effectiveMinimal ? 'flex-1 overflow-hidden' : 'flex-1',
+            !effectiveMinimal && !isHome && 'pt-6',
+            !effectiveMinimal && 'has-mobile-nav'
+          )}
           dir="rtl"
           id="main-content"
           role="main"
         >
           {children}
         </main>
-        {!minimalChrome && !isChatView && (
+        {!effectiveMinimal && (
           isHome ? (
             <Footer />
           ) : (
@@ -61,15 +79,19 @@ export function AppShell({ children, minimalChrome = false }: AppShellProps) {
         )}
         <AuthModal />
         <OnboardingWelcome />
-        {!minimalChrome && !isChatView && <MobileBottomNav />}
+        {!effectiveMinimal && (
+          <Suspense fallback={null}>
+            <MobileBottomNav />
+          </Suspense>
+        )}
         <CookieConsent />
-        <BackToTop />
-        <QuickActions />
+        {!effectiveMinimal && <BackToTop />}
+        {!effectiveMinimal && <QuickActions />}
         <VoiceCallOverlay
-          isOpen={false}
-          onClose={() => {}}
-          targetUser={null}
-          callType="incoming"
+          isOpen={voiceCallOpen}
+          onClose={hangupVoiceCall}
+          targetUser={voiceCallTarget}
+          callType={voiceCallType}
         />
       </div>
     </ErrorBoundary>

@@ -1,7 +1,10 @@
 'use client';
 
+import { useNavigate } from '@/hooks/navigation/use-navigate';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { Search, X, TrendingUp, Clock, FolderOpen, ArrowUpDown, Trash2 } from 'lucide-react';
+import { Search, X, TrendingUp, Clock, FolderOpen, Users, Building2 } from 'lucide-react';
+import { useStartChat } from '@/hooks/use-start-chat';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
@@ -92,12 +95,27 @@ function clearAllRecentSearches() {
 }
 
 // ============ Flat list for keyboard navigation ============
+interface UnifiedUserHit {
+  id: string;
+  name: string;
+  subtitle?: string;
+}
+
+interface UnifiedBusinessHit {
+  id: string;
+  profileId: string;
+  name: string;
+  subtitle?: string;
+}
+
 interface FlatItem {
-  type: 'recent' | 'category' | 'request' | 'popular';
+  type: 'recent' | 'category' | 'request' | 'popular' | 'user' | 'business';
   id: string;
   title: string;
   data?: APISuggestion;
   term?: string;
+  userId?: string;
+  profileId?: string;
 }
 
 // ============ Header Search Bar Component ============
@@ -106,13 +124,29 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [apiSuggestions, setApiSuggestions] = useState<APISuggestion[]>([]);
   const [apiCategories, setApiCategories] = useState<APISuggestion[]>([]);
+  const [unifiedUsers, setUnifiedUsers] = useState<UnifiedUserHit[]>([]);
+  const [unifiedBusinesses, setUnifiedBusinesses] = useState<UnifiedBusinessHit[]>([]);
   const [isApiLoading, setIsApiLoading] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const navigateTo = useAppStore((s) => s.navigateTo);
+  const { navigateTo } = useNavigate();
+  const router = useRouter();
+  const { openChat } = useStartChat();
+
+  const goToSearchPage = useCallback(
+    (q: string) => {
+      const trimmed = q.trim();
+      if (!trimmed) return;
+      addRecentSearch(trimmed);
+      router.push(`/search?q=${encodeURIComponent(trimmed)}`);
+      setIsExpanded(false);
+      setQuery('');
+    },
+    [router]
+  );
 
   // Build flat navigation list
   const flatItems: FlatItem[] = (() => {
@@ -123,6 +157,21 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
       // Recent searches
       recentSearches.forEach((term) => {
         items.push({ type: 'recent', id: `recent-${term}`, title: term, term });
+      });
+    }
+
+    if (hasQuery) {
+      unifiedUsers.slice(0, 3).forEach((u) => {
+        items.push({ type: 'user', id: `user-${u.id}`, title: u.name, userId: u.id });
+      });
+      unifiedBusinesses.slice(0, 3).forEach((b) => {
+        items.push({
+          type: 'business',
+          id: `biz-${b.profileId}`,
+          title: b.name,
+          userId: b.id,
+          profileId: b.profileId,
+        });
       });
     }
 
@@ -156,16 +205,48 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
   const fetchSuggestions = useCallback(async (q: string) => {
     if (q.length < 1) {
       setApiSuggestions([]);
+      setUnifiedUsers([]);
+      setUnifiedBusinesses([]);
       return;
     }
     setIsApiLoading(true);
     try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+      const [res, unifiedRes] = await Promise.all([
+        fetch(`/api/search?q=${encodeURIComponent(q)}`),
+        q.length >= 2
+          ? fetch(`/api/search/unified?q=${encodeURIComponent(q)}&limit=3`)
+          : Promise.resolve(null),
+      ]);
       const json = await res.json();
       setApiSuggestions(json.suggestions || []);
       setApiCategories(json.categories || []);
+      if (unifiedRes?.ok) {
+        const unified = await unifiedRes.json();
+        setUnifiedUsers(
+          (unified.users || []).map((u: { id: string; name: string; subtitle?: string }) => ({
+            id: u.id,
+            name: u.name,
+            subtitle: u.subtitle,
+          }))
+        );
+        setUnifiedBusinesses(
+          (unified.businesses || []).map(
+            (b: { id: string; profileId: string; name: string; subtitle?: string }) => ({
+              id: b.id,
+              profileId: b.profileId,
+              name: b.name,
+              subtitle: b.subtitle,
+            })
+          )
+        );
+      } else {
+        setUnifiedUsers([]);
+        setUnifiedBusinesses([]);
+      }
     } catch {
       setApiSuggestions([]);
+      setUnifiedUsers([]);
+      setUnifiedBusinesses([]);
     } finally {
       setIsApiLoading(false);
     }
@@ -223,9 +304,19 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
   };
 
   const handleRecentClick = (term: string) => {
-    setQuery(term);
-    navigateTo('browse-requests', { search: term });
+    goToSearchPage(term);
+  };
+
+  const handleSelectUser = (userId: string) => {
     setIsExpanded(false);
+    setQuery('');
+    void openChat(userId);
+  };
+
+  const handleSelectBusiness = (userId: string) => {
+    void openChat(userId);
+    setIsExpanded(false);
+    setQuery('');
   };
 
   const handleRecentClear = (e: React.MouseEvent, term: string) => {
@@ -243,9 +334,7 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!showDropdown) {
       if (e.key === 'Enter' && query.trim()) {
-        addRecentSearch(query.trim());
-        navigateTo('browse-requests', { search: query.trim() });
-        setIsExpanded(false);
+        goToSearchPage(query.trim());
       }
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
         setIsExpanded(true);
@@ -277,15 +366,17 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
           const item = flatItems[focusedIndex];
           if (item.type === 'recent' && item.term) {
             handleRecentClick(item.term);
+          } else if (item.type === 'user' && item.userId) {
+            handleSelectUser(item.userId);
+          } else if (item.type === 'business' && item.userId) {
+            handleSelectBusiness(item.userId);
           } else if (item.data) {
             handleSelectSuggestion(item.data);
           } else if (item.type === 'popular' && item.data) {
             handleSelectSuggestion(item.data);
           }
         } else if (query.trim()) {
-          addRecentSearch(query.trim());
-          navigateTo('browse-requests', { search: query.trim() });
-          setIsExpanded(false);
+          goToSearchPage(query.trim());
         }
         break;
       }
@@ -311,7 +402,7 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
         <Input
           ref={inputRef}
           type="text"
-          placeholder="جستجو در خدمات و نیازها..."
+          placeholder="جستجوی کاربر، کسب‌وکار، نیاز..."
           className={cn(
             'h-10 w-full rounded-xl border-border/60 bg-muted/50 pe-10 ps-4 text-sm backdrop-blur-sm transition-all duration-200',
             'focus-visible:bg-background focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:shadow-[0_0_12px_oklch(0.51_0.12_165/0.15)]',
@@ -372,10 +463,58 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
                     </div>
                   ) : flatItems.length > 0 ? (
                     <>
+                      {(flatItems.filter((i) => i.type === 'user').length > 0 ||
+                        flatItems.filter((i) => i.type === 'business').length > 0) && (
+                        <div className="mb-2">
+                          <p className="mb-1.5 px-3 pt-1 flex items-center gap-1.5 text-caption font-semibold text-muted-foreground">
+                            <Users className="size-3" />
+                            کاربران و کسب‌وکار
+                          </p>
+                          {flatItems
+                            .filter((i) => i.type === 'user' || i.type === 'business')
+                            .map((item) => {
+                              const globalIdx = flatItems.indexOf(item);
+                              const Icon = item.type === 'business' ? Building2 : Users;
+                              return (
+                                <button
+                                  key={item.id}
+                                  id={`search-option-${globalIdx}`}
+                                  data-index={globalIdx}
+                                  type="button"
+                                  onClick={() => {
+                                    if (item.type === 'user' && item.userId) {
+                                      handleSelectUser(item.userId);
+                                    } else if (item.type === 'business' && item.userId) {
+                                      handleSelectBusiness(item.userId);
+                                    }
+                                  }}
+                                  onMouseEnter={() => setFocusedIndex(globalIdx)}
+                                  className={cn(
+                                    'w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-start transition-colors duration-100',
+                                    focusedIndex === globalIdx
+                                      ? 'bg-primary/10 text-foreground'
+                                      : 'hover:bg-accent/60'
+                                  )}
+                                >
+                                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                                    <Icon className="size-4 text-primary" />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-medium truncate">{item.title}</p>
+                                    <p className="text-caption text-muted-foreground">
+                                      {item.type === 'business' ? 'کسب‌وکار' : 'کاربر'}
+                                    </p>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                        </div>
+                      )}
+
                       {/* Category Suggestions */}
                       {flatItems.filter(i => i.type === 'category').length > 0 && (
                         <div className="mb-2">
-                          <p className="mb-1.5 px-3 pt-1 flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
+                          <p className="mb-1.5 px-3 pt-1 flex items-center gap-1.5 text-caption font-semibold text-muted-foreground">
                             <FolderOpen className="size-3" />
                             دسته‌بندی‌ها
                           </p>
@@ -401,7 +540,7 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
                                 <div className="min-w-0 flex-1">
                                   <p className="truncate text-sm font-medium text-foreground">{item.title}</p>
                                   {item.data?.description && (
-                                    <p className="mt-0.5 text-[11px] text-muted-foreground">{item.data.description}</p>
+                                    <p className="mt-0.5 text-caption text-muted-foreground">{item.data.description}</p>
                                   )}
                                 </div>
                               </button>
@@ -413,7 +552,7 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
                       {/* Request Suggestions */}
                       {flatItems.filter(i => i.type === 'request').length > 0 && (
                         <div>
-                          <p className="mb-1.5 px-3 pt-2 flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground border-t border-border/30">
+                          <p className="mb-1.5 px-3 pt-2 flex items-center gap-1.5 text-caption font-semibold text-muted-foreground border-t border-border/30">
                             <Search className="size-3" />
                             نیازها
                           </p>
@@ -435,11 +574,11 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
                                 <div className="min-w-0 flex-1">
                                   <p className="truncate text-sm font-medium text-foreground">{item.title}</p>
                                   {item.data?.description && (
-                                    <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground">{item.data.description}</p>
+                                    <p className="mt-0.5 line-clamp-1 text-caption text-muted-foreground">{item.data.description}</p>
                                   )}
                                 </div>
                                 {item.data?.category && (
-                                  <span className="shrink-0 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                                  <span className="shrink-0 rounded-md bg-muted px-2 py-0.5 text-caption font-medium text-muted-foreground">
                                     {item.data.category}
                                   </span>
                                 )}
@@ -479,14 +618,14 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
                   {recentSearches.length > 0 && (
                     <div className="mb-2">
                       <div className="mb-1.5 px-3 pt-1 flex items-center justify-between">
-                        <p className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
+                        <p className="flex items-center gap-1.5 text-caption font-semibold text-muted-foreground">
                           <Clock className="size-3" />
                           جستجوهای اخیر
                         </p>
                         <button
                           type="button"
                           onClick={handleClearAll}
-                          className="text-[10px] text-muted-foreground/60 hover:text-destructive transition-colors"
+                          className="text-caption text-muted-foreground/60 hover:text-destructive transition-colors"
                           aria-label="پاک کردن همه جستجوهای اخیر"
                         >
                           پاک کردن همه
@@ -530,7 +669,7 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
                   {/* Popular Categories */}
                   {apiCategories.length > 0 && (
                     <div className={recentSearches.length > 0 ? 'border-t border-border/30 pt-2' : ''}>
-                      <p className="mb-1.5 px-3 pt-1 flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
+                      <p className="mb-1.5 px-3 pt-1 flex items-center gap-1.5 text-caption font-semibold text-muted-foreground">
                         <TrendingUp className="size-3" />
                         دسته‌بندی‌های محبوب
                       </p>
@@ -568,7 +707,7 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
 
           {/* Keyboard hint */}
           {flatItems.length > 0 && (
-            <div className="flex items-center gap-3 border-t border-border/30 px-3 py-2 text-[10px] text-muted-foreground/50">
+            <div className="flex items-center gap-3 border-t border-border/30 px-3 py-2 text-caption text-muted-foreground/50">
               <span className="flex items-center gap-1">
                 <kbd className="rounded border border-border/50 bg-muted/60 px-1.5 py-0.5 font-mono text-[9px]">↑↓</kbd>
                 <span>ناوبری</span>
