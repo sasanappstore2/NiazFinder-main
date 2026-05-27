@@ -15,8 +15,8 @@ import {
   CategorySelector,
   ALL_CATEGORIES,
   getCategoryIcon,
-} from '@/components/layout/CategoryMegaMenu';
-import type { MegaMenuCategory } from '@/components/layout/CategoryMegaMenu';
+} from '@/components/navigation/MegaMenu/CategoryMegaMenu';
+import type { MegaMenuCategory } from '@/components/navigation/MegaMenu/CategoryMegaMenu';
 import { Button } from '@/components/ui/button';
 import {
   Popover,

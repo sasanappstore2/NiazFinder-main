@@ -363,14 +363,6 @@ export const SEO_ROUTES: SEORoute[] = [
     section: 'تعرفه‌ها',
   },
   {
-    path: '/compare',
-    title: 'مقایسه کسب‌وکارها - نیاز فایندر',
-    description: 'کسب‌وکارها مختلف را در یک نگاه مقایسه کنید. قیمت، امتیاز، سرعت تحویل و نمونه کارها را بررسی کنید.',
-    priority: 0.6,
-    changeFrequency: 'weekly',
-    section: 'مقایسه',
-  },
-  {
     path: '/referral',
     title: 'دعوت از دوستان - نیاز فایندر',
     description: 'از برنامه دعوت از دوستان نیاز فایندر بهره‌مند شوید. با معرفی دوستان، کد تخفیف و پاداش نقدی دریافت کنید.',
@@ -442,7 +434,6 @@ export const INTERNAL_LINKS: InternalLink[] = [
   { label: 'مشاهده همه نیازها', href: '/n/iran', title: 'تمام نیازهای ثبت شده', section: 'featured-requests' },
   { label: 'مشاهده همه کسب‌وکارها', href: '/b/iran', title: 'تمام کسب‌وکارها', section: 'top-specialists' },
   { label: 'تعرفه‌ها', href: '/pricing', title: 'طرح‌های اشتراک و قیمت‌ها', section: 'pricing' },
-  { label: 'مقایسه کسب‌وکارها', href: '/compare', title: 'مقایسه کسب‌وکارها مختلف', section: 'compare' },
   { label: 'دعوت از دوستان', href: '/referral', title: 'دعوت از دوستان و دریافت پاداش', section: 'referral' },
   { label: 'سوالات متداول', href: '/#faq', title: 'پاسخ سوالات رایج', section: 'faq' },
   { label: 'تماس با ما', href: '/#contact', title: 'اطلاعات تماس', section: 'contact' },

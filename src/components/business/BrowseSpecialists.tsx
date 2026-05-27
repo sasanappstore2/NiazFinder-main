@@ -14,7 +14,6 @@ import {
   TrendingUp,
   MessageSquare,
   X,
-  GitCompareArrows,
   LayoutGrid,
   List,
   Copy,
@@ -99,12 +98,10 @@ function SpecialistCard({
   specialist: SpecialistProfile;
   fromPathname: string;
 }) {
-  const { toggleCompareSpecialist, compareSpecialistIds} = useAppStore();
   const { openChat } = useStartChat();
   const profileHref = specialistProfileHref(specialist, fromPathname);
   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
   const colorClass = getAvatarColor(specialist.displayName ?? '');
-  const isCompared = compareSpecialistIds.includes(specialist.id);
 
   return (
     <Card className="group border-border/50 bg-card overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-500/[0.07] hover:border-emerald-300/60 dark:hover:border-emerald-700/60 ring-0 hover:ring-1 hover:ring-emerald-200/40 dark:hover:ring-emerald-800/40" data-href={profileHref}>
@@ -141,13 +138,6 @@ function SpecialistCard({
           </div>
           <div className="flex flex-col items-center gap-1">
             <BookmarkButton itemId={specialist.id} itemType="specialist" size="sm" />
-            <button
-              onClick={(e) => { e.stopPropagation(); toggleCompareSpecialist(specialist.id); }}
-              className={`rounded-lg p-1.5 transition-colors ${isCompared ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
-              aria-label={`${isCompared ? 'حذف از مقایسه' : 'افزودن به مقایسه'} ${specialist.displayName}`}
-            >
-              <GitCompareArrows className="size-4" aria-hidden="true" />
-            </button>
           </div>
         </div>
 
@@ -239,12 +229,10 @@ function SpecialistListCard({
   specialist: SpecialistProfile;
   fromPathname: string;
 }) {
-  const { toggleCompareSpecialist, compareSpecialistIds} = useAppStore();
   const { openChat } = useStartChat();
   const profileHref = specialistProfileHref(specialist, fromPathname);
   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
   const colorClass = getAvatarColor(specialist.displayName ?? '');
-  const isCompared = compareSpecialistIds.includes(specialist.id);
 
   return (
     <Card className="group border-border/50 bg-card overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/[0.07] hover:border-emerald-300/60 dark:hover:border-emerald-700/60 ring-0 hover:ring-1 hover:ring-emerald-200/40 dark:hover:ring-emerald-800/40" data-href={profileHref}>
@@ -337,55 +325,10 @@ function SpecialistListCard({
             >
               <MessageSquare className="size-3.5" aria-hidden="true" />
             </Button>
-            <button
-              onClick={(e) => { e.stopPropagation(); toggleCompareSpecialist(specialist.id); }}
-              className={`rounded-lg p-1.5 transition-colors ${isCompared ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
-              aria-label={`${isCompared ? 'حذف از مقایسه' : 'افزودن به مقایسه'} ${specialist.displayName}`}
-            >
-              <GitCompareArrows className="size-3.5" aria-hidden="true" />
-            </button>
           </div>
         </div>
       </CardContent>
     </Card>
-  );
-}
-
-// ─── Floating Compare Bar ─────────────────────────────
-function CompareBar() {
-  const { compareSpecialistIds, clearCompareList } = useAppStore();
-  const { navigateTo } = useNavigate();
-  const count = compareSpecialistIds.length;
-
-  if (count === 0) return null;
-
-  return (
-    <div
-      className="fixed left-1/2 z-40 -translate-x-1/2 bottom-[calc(var(--mobile-nav-offset)+0.5rem)] lg:bottom-6"
-      role="status"
-      aria-label={`${count} کسب‌وکار برای مقایسه انتخاب شده`}
-    >
-      <div className="flex items-center gap-3 rounded-2xl border border-border/40 bg-card/95 px-5 py-3 shadow-2xl backdrop-blur-xl ring-1 ring-black/5">
-        <GitCompareArrows className="size-5 text-primary" aria-hidden="true" />
-        <span className="text-sm font-medium">
-          {count.toLocaleString('fa-IR')} کسب‌وکار انتخاب شده
-        </span>
-        {count >= 2 && (
-          <Button
-            size="sm"
-            onClick={() => navigateTo('compare-specialists')}
-            className="rounded-lg"
-            data-href="/compare"
-            aria-label="مقایسه کسب‌وکارها"
-          >
-            مقایسه کنید
-          </Button>
-        )}
-        <Button size="sm" variant="ghost" onClick={clearCompareList} className="text-xs text-muted-foreground" aria-label="پاک کردن لیست مقایسه" title="پاک کردن لیست مقایسه کسب‌وکارها">
-          پاک کردن
-        </Button>
-      </div>
-    </div>
   );
 }
 
@@ -713,9 +656,6 @@ export function BrowseSpecialists({
           </>
         )}
       </div>
-
-      {/* Floating Compare Bar */}
-      <CompareBar />
 
       <noscript>
         <div className="sr-only" itemScope itemType="https://schema.org/ItemList">

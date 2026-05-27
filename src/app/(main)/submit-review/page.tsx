@@ -3,7 +3,7 @@
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { Separator } from '@/components/ui/separator';
-import ReviewForm from '@/components/specialists/ReviewForm';
+import ReviewForm from '@/components/business/ReviewForm';
 
 export default function SubmitReviewRoute() {
   return (

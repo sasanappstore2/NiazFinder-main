@@ -1,5 +1,5 @@
 // ============ Shared Category Appearance Utilities ============
-// Used by NeedsHomepage, QuickView, HeaderSearchBar, and other components
+// Category icon/color map for browse cards, HeaderSearchBar, and other components
 
 import type { LucideIcon } from 'lucide-react';
 import {

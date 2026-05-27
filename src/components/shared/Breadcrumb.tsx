@@ -212,7 +212,6 @@ function crumbsForPath(pathname: string, searchParams: URLSearchParams): Crumb[]
   if (pathname === '/pricing')       return [home, { label: 'تعرفه‌ها', href: routeBuilder.pricing() }];
   if (pathname === '/login')         return [home, { label: 'ورود', href: routeBuilder.login() }];
   if (pathname === '/register')      return [home, { label: 'ثبت‌نام', href: routeBuilder.register() }];
-  if (pathname === '/compare')       return [home, { label: 'مقایسه', href: routeBuilder.compare() }];
 
   return [home, { label: 'صفحه', href: pathname }];
 }

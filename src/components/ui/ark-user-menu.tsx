@@ -13,7 +13,6 @@ import {
   Bookmark,
   CreditCard,
   Gift,
-  GitCompareArrows,
   Settings,
   Bell,
   MessageSquare,
@@ -426,14 +425,6 @@ export function ArkUserMenu() {
             >
               <Gift className="size-4 text-muted-foreground" />
               دعوت از دوستان
-            </Menu.Item>
-            <Menu.Item
-              value="compare"
-              className={cn(menuItemBase, menuItemDefault)}
-              onClick={() => nav("compare-specialists")}
-            >
-              <GitCompareArrows className="size-4 text-muted-foreground" />
-              مقایسه کسب‌وکارها
             </Menu.Item>
             <Menu.Item
               value="notification-settings"

@@ -30,8 +30,8 @@ import {
   CategorySelector,
   ALL_CATEGORIES,
   getCategoryIcon,
-} from '@/components/layout/CategoryMegaMenu';
-import type { MegaMenuCategory } from '@/components/layout/CategoryMegaMenu';
+} from '@/components/navigation/MegaMenu/CategoryMegaMenu';
+import type { MegaMenuCategory } from '@/components/navigation/MegaMenu/CategoryMegaMenu';
 import { routeBuilder } from '@/config/routes';
 import { getCategoryBrowseUrl } from '@/lib/search/category-browse-url';
 import { useBrowseListingType } from '@/hooks/use-browse-listing-type';

@@ -1,7 +1,5 @@
 export { NeedLeadPromptBox } from './NeedLeadPromptBox';
 export type { NeedLeadPromptBoxProps } from './NeedLeadPromptBox';
-/** @deprecated Use NeedLeadPromptBox */
-export { AiLeadComposer, type AiLeadComposerProps } from './AiLeadComposer';
 export { LeadQuickChips } from './LeadQuickChips';
 export type { LeadQuickChipsProps } from './LeadQuickChips';
 export {

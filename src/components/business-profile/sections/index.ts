@@ -17,4 +17,3 @@ export { PortfolioSection as BusinessPortfolioSection } from './PortfolioSection
 export { TrustSection as BusinessTrustSection } from './TrustSection';
 export { ContactSection as BusinessContactSection } from './HeroAboutContact';
 export { SeoSection as BusinessSeoSection } from './SeoSection';
-export { BusinessExtensionsSection } from './BusinessExtensionsSection';
