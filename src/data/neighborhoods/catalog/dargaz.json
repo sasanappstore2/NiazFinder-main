@@ -1,8 +1,24 @@
 {
   "cityId": "dargaz",
   "cityName": "درگز",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:23.126Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:02:51.659Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-فرهنگیان",
+      "name": "شهرک فرهنگیان",
+      "nameEn": "شهرک-فرهنگیان"
+    },
+    {
+      "id": "میدان-صیاد-شیرازی",
+      "name": "میدان صیاد شیرازی",
+      "nameEn": "میدان-صیاد-شیرازی"
+    },
+    {
+      "id": "میدان-مادر",
+      "name": "میدان مادر",
+      "nameEn": "میدان-مادر"
+    }
+  ]
 }

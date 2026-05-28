@@ -1,8 +1,19 @@
 {
   "cityId": "salmas",
   "cityName": "سلماس",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:47.650Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:07:47.559Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کتیبه-سنگی-خان-تختی",
+      "name": "کتیبه سنگی خان تختی",
+      "nameEn": "کتیبه-سنگی-خان-تختی"
+    },
+    {
+      "id": "میدان-آذربایجان",
+      "name": "میدان آذربایجان",
+      "nameEn": "میدان-آذربایجان"
+    }
+  ]
 }

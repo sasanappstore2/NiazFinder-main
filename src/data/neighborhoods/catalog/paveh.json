@@ -1,8 +1,29 @@
 {
   "cityId": "paveh",
   "cityName": "پاوه",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:08.596Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:27:38.929Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بله-بزان",
+      "name": "بله بزان",
+      "nameEn": "بله-بزان"
+    },
+    {
+      "id": "کانی-میشاو",
+      "name": "کانی میشاو",
+      "nameEn": "کانی-میشاو"
+    },
+    {
+      "id": "گزند",
+      "name": "گزند",
+      "nameEn": "گزند"
+    },
+    {
+      "id": "هوار-میشاو",
+      "name": "هوار میشاو",
+      "nameEn": "هوار-میشاو"
+    }
+  ]
 }

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   countries as fallbackCountries,
+  dedupeCitiesById,
   type City,
   type Country,
   type Province,
@@ -44,7 +45,7 @@ export function useManagedLocations() {
   }, [countries]);
 
   const cities = useMemo<City[]>(() => {
-    return provinces.flatMap((province) => province.cities);
+    return dedupeCitiesById(provinces.flatMap((province) => province.cities));
   }, [provinces]);
 
   const provinceNames = useMemo(() => provinces.map((province) => province.name), [provinces]);

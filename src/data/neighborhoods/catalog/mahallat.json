@@ -1,8 +1,29 @@
 {
   "cityId": "mahallat",
   "cityName": "محلات",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:50.586Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:48:53.764Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بعثت",
+      "name": "بعثت",
+      "nameEn": "بعثت"
+    },
+    {
+      "id": "دهکده-گل-محلات",
+      "name": "دهکده گل محلات",
+      "nameEn": "دهکده-گل-محلات"
+    },
+    {
+      "id": "شهرک-امام-خمینی",
+      "name": "شهرک امام خمینی",
+      "nameEn": "شهرک-امام-خمینی"
+    },
+    {
+      "id": "کوی-دکتر-صدر",
+      "name": "کوی دکتر صدر",
+      "nameEn": "کوی-دکتر-صدر"
+    }
+  ]
 }

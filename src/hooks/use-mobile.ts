@@ -1,5 +1,6 @@
 import * as React from "react"
 
+/** Tablet and below — aligns with layout `md` (768px). */
 const MOBILE_BREAKPOINT = 768
 
 export function useIsMobile() {

@@ -1,8 +1,19 @@
 {
   "cityId": "aradan",
   "cityName": "آرادان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:59.357Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:50:01.656Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شمشیر-کوه",
+      "name": "شمشیر کوه",
+      "nameEn": "شمشیر-کوه"
+    },
+    {
+      "id": "ماشین-خانه",
+      "name": "ماشین خانه",
+      "nameEn": "ماشین-خانه"
+    }
+  ]
 }

@@ -1,8 +1,44 @@
 {
   "cityId": "chardavol",
   "cityName": "چرداول",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:25.672Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T18:03:30.242Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زمان",
+      "name": "زمان",
+      "nameEn": "زمان"
+    },
+    {
+      "id": "زمین-شهری",
+      "name": "زمین شهری",
+      "nameEn": "زمین-شهری"
+    },
+    {
+      "id": "سلطان-قلی",
+      "name": "سلطان قلی",
+      "nameEn": "سلطان-قلی"
+    },
+    {
+      "id": "سلطانقلی",
+      "name": "سلطانقلی",
+      "nameEn": "سلطانقلی"
+    },
+    {
+      "id": "علی-مدد",
+      "name": "علی مدد",
+      "nameEn": "علی-مدد"
+    },
+    {
+      "id": "کوله",
+      "name": "کوله",
+      "nameEn": "کوله"
+    },
+    {
+      "id": "محله-نیروی-انتظامی",
+      "name": "محله نیروی انتظامی",
+      "nameEn": "محله-نیروی-انتظامی"
+    }
+  ]
 }

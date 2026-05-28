@@ -39,6 +39,9 @@ export type AdminPermissionId =
   | 'ops:workflow:read'
   | 'ops:settings:write'
   | 'ops:system:write'
+  | 'ops:intake-migration:read'
+  | 'ops:intake-training:read'
+  | 'ops:intake-training:write'
   // ─── Staff / RBAC ───────────────────────────────────────────────────
   | 'rbac:roles:read'
   | 'rbac:roles:write'
@@ -119,6 +122,21 @@ export const ADMIN_PERMISSIONS: readonly AdminPermission[] = [
   { id: 'ops:workflow:read', label: 'مشاهده گردش‌کارها و صف‌ها', group: 'Ops' },
   { id: 'ops:settings:write', label: 'ویرایش تنظیمات سیستم', group: 'Ops' },
   { id: 'ops:system:write', label: 'عملیات حساس سیستم', group: 'Ops' },
+  {
+    id: 'ops:intake-migration:read',
+    label: 'مشاهده داشبورد مهاجرت Intake',
+    group: 'Ops',
+  },
+  {
+    id: 'ops:intake-training:read',
+    label: 'مشاهده داده آموزشی Intake',
+    group: 'Ops',
+  },
+  {
+    id: 'ops:intake-training:write',
+    label: 'بازبینی و اصلاح نمونه‌های آموزشی',
+    group: 'Ops',
+  },
 
   { id: 'rbac:roles:read', label: 'مشاهده نقش‌های کارمندی', group: 'RBAC' },
   { id: 'rbac:roles:write', label: 'ساخت/ویرایش نقش‌های کارمندی', group: 'RBAC' },

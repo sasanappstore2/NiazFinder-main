@@ -13,7 +13,12 @@ import {
 } from '@/config/categories';
 import { normalizeIntakeText } from '@/lib/need-intake/normalize-intake-text';
 import { buildPropertyTitle } from '@/lib/need-intake/property-title';
-import { hasGamingProductPhrase, isLikelyProductPurchase } from '@/lib/need-intake/product-buy-hints';
+import {
+  hasConcreteProductNoun,
+  hasGamingProductPhrase,
+  hasWatchOrLuxuryProductPhrase,
+  isLikelyProductPurchase,
+} from '@/lib/need-intake/product-buy-hints';
 import {
   categorySlugForVertical,
   classifyVertical,
@@ -72,6 +77,23 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
   { slug: 'pets', words: ['گربه', 'سگ', 'حیوان خانگی'], priority: 10 },
   { slug: 'clothing', words: ['کت و شلوار', 'پوشاک', 'لباس'], priority: 10 },
   { slug: 'camera', words: ['دوربین', 'کانن', 'نیکون'], priority: 10 },
+  {
+    slug: 'jewelry-watches',
+    words: [
+      'ساعت',
+      'رولکس',
+      'rolex',
+      'دیتونا',
+      'daytona',
+      'امگا',
+      'omega',
+      'کارتیر',
+      'cartier',
+      'سابمارینر',
+      'submariner',
+    ],
+    priority: 11,
+  },
   { slug: 'land-sale', words: ['زمین', 'کلنگی', 'زمین کلنگی'], priority: 10 },
   { slug: 'land-rent', words: ['اجاره زمین', 'رهن زمین', 'ودیعه زمین', 'رهن و اجاره زمین'], priority: 11 },
   { slug: 'villa-rent', words: ['اجاره ویلا', 'اجاره خانه', 'اجاره ویلایی'], priority: 10 },
@@ -84,7 +106,8 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
     priority: 11,
   },
   { slug: 'apartment-rent', words: ['اجاره آپارتمان', 'اجاره ماهانه', 'رهن', 'ودیعه', 'رهن و اجاره'], priority: 9 },
-  { slug: 'apartment-sale', words: ['خرید آپارتمان', 'فروش آپارتمان', 'آپارتمان', 'اپارتمان', 'آپارت', 'سوئیت'], priority: 8 },
+  { slug: 'apartment-sale', words: ['خرید آپارتمان', 'فروش آپارتمان'], priority: 8 },
+  { slug: 'real-estate', words: ['آپارتمان', 'اپارتمان', 'آپارت', 'سوئیت', 'ملک مسکونی'], priority: 7 },
   { slug: 'villa-sale', words: ['فروش ویلا', 'ویلا', 'خانه ویلایی'], priority: 8 },
   { slug: 'car', words: ['ماشین', 'خودرو', 'پژو', 'پراید', 'سمند', 'تیبا', 'دنا', 'هوندا', 'سمند'], priority: 8 },
   { slug: 'mobile-phone', words: ['گوشی', 'آیفون', 'iphone', 's24', 's23'], priority: 8 },
@@ -139,6 +162,11 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
   },
 ];
 
+export interface SuggestedCategoryCandidate {
+  slug: string;
+  score: number;
+}
+
 const DESIRE_ONLY =
   /^(میخوام|میخواهم|میخرم|نیاز دارم|دنبال|میخام|میخام)$/;
 
@@ -148,6 +176,7 @@ function hasCategoryKeywordHit(text: string): boolean {
 
 function isDesireOnly(text: string): boolean {
   const t = normalizeIntakeText(text);
+  if (hasConcreteProductNoun(t)) return false;
   if (DESIRE_ONLY.test(t)) return true;
   if (t.length <= 12 && ALL_BUY_HINT_KEYWORDS.some((w) => t === w || t === w.replace('‌', ''))) {
     return true;
@@ -235,15 +264,19 @@ function detectCategorySlugFromKeywords(text: string): string | null {
 }
 
 function detectCategorySlug(text: string, classification: VerticalClassification): string {
-  if (isDesireOnly(text)) return 'services';
-
   if (isConstructionPartnershipText(text)) {
     return 'construction-partnership';
+  }
+
+  if (hasWatchOrLuxuryProductPhrase(text)) {
+    return 'jewelry-watches';
   }
 
   if (isLikelyProductPurchase(text) || hasGamingProductPhrase(text)) {
     return categorySlugForVertical('products', text);
   }
+
+  if (isDesireOnly(text)) return 'services';
 
   const fromKeywords = detectCategorySlugFromKeywords(text);
   if (fromKeywords) return fromKeywords;
@@ -470,14 +503,8 @@ function buildEntities(
     if (deal) entities.dealType = deal;
     const kind = parsePropertyKind(text);
     if (kind) entities.propertyKind = kind;
-    const rentHint = /رهن|ودیعه|اجاره|مجرد|کوتاه|روزانه|شب/.test(text);
-    if (
-      !entities.dealType &&
-      WANT_KEYWORDS.some((w) => text.includes(w)) &&
-      !rentHint
-    ) {
-      entities.dealType = 'buy';
-    }
+    // Do not force deal type from generic desire phrases (e.g. "میخوام آپارتمان").
+    // We only set dealType when explicit buy/sell/rent/rahn signals exist.
   }
 
   if (root === 'vehicles' || intentType.startsWith('vehicle')) {
@@ -600,4 +627,39 @@ export function resolveCategorySlugFromLegacy(value: string): string | null {
 
 export function getCategoryPathSlugs(slug: string): string[] {
   return getCategoryPath(slug).map((c) => c.slug);
+}
+
+/**
+ * Deterministic (non-AI) category suggestions from raw user text.
+ * Returns top unique canonical slugs sorted by score.
+ */
+export function suggestNeedCategoriesFromText(
+  rawText: string,
+  limit = 4
+): SuggestedCategoryCandidate[] {
+  const text = normalizeIntakeText(rawText);
+  const candidates: SuggestedCategoryCandidate[] = [];
+  const seen = new Set<string>();
+
+  for (const row of CATEGORY_KEYWORDS) {
+    let hits = 0;
+    for (const w of row.words) {
+      if (text.includes(w)) hits += 1;
+    }
+    if (!hits) continue;
+    const score = row.priority * 10 + hits;
+    if (!seen.has(row.slug)) {
+      candidates.push({ slug: row.slug, score });
+      seen.add(row.slug);
+    }
+  }
+
+  const classification = classifyVertical(rawText);
+  const fallback = categorySlugForVertical(classification.vertical, text);
+  if (fallback && !seen.has(fallback)) {
+    candidates.push({ slug: fallback, score: 40 + Math.round(classification.score * 10) });
+  }
+
+  candidates.sort((a, b) => b.score - a.score);
+  return candidates.slice(0, Math.max(1, limit));
 }

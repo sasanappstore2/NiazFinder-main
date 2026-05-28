@@ -1,8 +1,19 @@
 {
   "cityId": "evaz",
   "cityName": "اوز",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:05.551Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T18:59:55.180Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خضری",
+      "name": "خضری",
+      "nameEn": "خضری"
+    },
+    {
+      "id": "شهرک-فردوس",
+      "name": "شهرک فردوس",
+      "nameEn": "شهرک-فردوس"
+    }
+  ]
 }

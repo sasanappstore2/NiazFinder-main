@@ -1,8 +1,8 @@
 {
   "cityId": "kalat",
   "cityName": "کلات",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:26.146Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:04:06.414Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

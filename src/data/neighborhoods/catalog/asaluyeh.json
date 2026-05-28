@@ -1,8 +1,14 @@
 {
   "cityId": "asaluyeh",
   "cityName": "عسلویه",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:29.571Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:31:14.642Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-خلیج-فارس",
+      "name": "شهرک خلیج فارس",
+      "nameEn": "شهرک-خلیج-فارس"
+    }
+  ]
 }

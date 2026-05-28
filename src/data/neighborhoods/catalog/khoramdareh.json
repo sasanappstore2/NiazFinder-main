@@ -1,8 +1,39 @@
 {
   "cityId": "khoramdareh",
   "cityName": "خرمدره",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:58.253Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:25:35.340Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد"
+    },
+    {
+      "id": "شهرک-پونک",
+      "name": "شهرک پونک",
+      "nameEn": "شهرک-پونک"
+    },
+    {
+      "id": "شهرک-فرهنگیان",
+      "name": "شهرک فرهنگیان",
+      "nameEn": "شهرک-فرهنگیان"
+    },
+    {
+      "id": "شهرک-قدس",
+      "name": "شهرک قدس",
+      "nameEn": "شهرک-قدس"
+    },
+    {
+      "id": "گلدشت",
+      "name": "گلدشت",
+      "nameEn": "گلدشت"
+    },
+    {
+      "id": "مجتمع-مسکونی-مهستان",
+      "name": "مجتمع مسکونی مهستان",
+      "nameEn": "مجتمع-مسکونی-مهستان"
+    }
+  ]
 }

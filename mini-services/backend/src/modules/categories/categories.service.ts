@@ -1,35 +1,22 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In, Not } from 'typeorm';
-import { Category } from '../../entities/category.entity';
-import { Proposal } from '../../entities/proposal.entity';
-import { Request } from '../../entities/request.entity';
-import { User } from '../../entities/user.entity';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import * as slugify from 'slugify';
 
 @Injectable()
 export class CategoriesService {
-  constructor(
-    @InjectRepository(Category)
-    private readonly categoryRepo: Repository<Category>,
-    @InjectRepository(Proposal)
-    private readonly proposalRepo: Repository<Proposal>,
-    @InjectRepository(Request)
-    private readonly requestRepo: Repository<Request>,
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * دریافت تمام دسته‌بندی‌های اصلی با درخت زیردسته‌ها
    */
   async findAll() {
-    const categories = await this.categoryRepo.find({
-      where: { parentId: null as any, isActive: true },
-      relations: ['children', 'children.children'],
-      order: { order: 'ASC' },
+    const categories = await this.prisma.category.findMany({
+      where: { parentId: null, isActive: true },
+      include: { children: { where: { isActive: true }, include: { children: true } } },
+      orderBy: { order: 'asc' },
     });
 
     const result = await Promise.all(
@@ -40,8 +27,8 @@ export class CategoriesService {
             .filter((c) => c.isActive)
             .map(async (child) => {
               const childSpecialistCount = await this.countSpecialists(child.id);
-              const requestCount = await this.requestRepo.count({
-                where: { categoryId: child.id, deletedAt: null as any },
+              const requestCount = await this.prisma.serviceRequest.count({
+                where: { categoryId: child.id },
               });
               const grandchildren = (child.children || [])
                 .filter((gc) => gc.isActive)
@@ -64,8 +51,8 @@ export class CategoriesService {
             }),
         );
 
-        const requestCount = await this.requestRepo.count({
-          where: { categoryId: cat.id, deletedAt: null as any },
+        const requestCount = await this.prisma.serviceRequest.count({
+          where: { categoryId: cat.id },
         });
 
         return {
@@ -86,23 +73,23 @@ export class CategoriesService {
    * دریافت دسته‌بندی‌های محبوب (بیشترین درخواست) - 8 تای اول
    */
   async findPopular() {
-    const categories = await this.categoryRepo.find({
-      where: { parentId: null as any, isActive: true },
-      relations: ['children'],
-      order: { order: 'ASC' },
+    const categories = await this.prisma.category.findMany({
+      where: { parentId: null, isActive: true },
+      include: { children: { where: { isActive: true } } },
+      orderBy: { order: 'asc' },
     });
 
     const categoriesWithCounts = await Promise.all(
       categories.map(async (cat) => {
-        const catRequestCount = await this.requestRepo.count({
-          where: { categoryId: cat.id, deletedAt: null as any },
+        const catRequestCount = await this.prisma.serviceRequest.count({
+          where: { categoryId: cat.id },
         });
 
         const childIds = (cat.children || []).filter((c) => c.isActive).map((c) => c.id);
         let childRequests = 0;
         if (childIds.length > 0) {
           childRequests = await this.requestRepo.count({
-            where: { categoryId: In(childIds), deletedAt: null as any },
+            where: { categoryId: { in: childIds } },
           });
         }
 
@@ -128,9 +115,9 @@ export class CategoriesService {
    * دریافت دسته‌بندی با شناسه
    */
   async findById(id: string) {
-    const category = await this.categoryRepo.findOne({
+    const category = await this.prisma.category.findUnique({
       where: { id },
-      relations: ['parent', 'children'],
+      include: { parent: true, children: { where: { isActive: true } } },
     });
 
     if (!category) {
@@ -138,16 +125,16 @@ export class CategoriesService {
     }
 
     const specialistCount = await this.countSpecialists(id);
-    const requestCount = await this.requestRepo.count({
-      where: { categoryId: id, deletedAt: null as any },
+    const requestCount = await this.prisma.serviceRequest.count({
+      where: { categoryId: id },
     });
 
     const childrenWithStats = await Promise.all(
       (category.children || [])
         .filter((c) => c.isActive)
         .map(async (child) => {
-          const childRequestCount = await this.requestRepo.count({
-            where: { categoryId: child.id, deletedAt: null as any },
+          const childRequestCount = await this.prisma.serviceRequest.count({
+            where: { categoryId: child.id },
           });
           return {
             ...child,
@@ -173,21 +160,21 @@ export class CategoriesService {
    * دریافت زیردسته‌های مستقیم یک دسته‌بندی
    */
   async findChildren(parentId: string) {
-    const parent = await this.categoryRepo.findOne({ where: { id: parentId } });
+    const parent = await this.prisma.category.findUnique({ where: { id: parentId } });
 
     if (!parent) {
       throw new NotFoundException('دسته‌بندی والد یافت نشد');
     }
 
-    const children = await this.categoryRepo.find({
+    const children = await this.prisma.category.findMany({
       where: { parentId, isActive: true },
-      order: { order: 'ASC' },
+      orderBy: { order: 'asc' },
     });
 
     const result = await Promise.all(
       children.map(async (child) => {
-        const requestCount = await this.requestRepo.count({
-          where: { categoryId: child.id, deletedAt: null as any },
+        const requestCount = await this.prisma.serviceRequest.count({
+          where: { categoryId: child.id },
         });
         return {
           ...child,
@@ -211,31 +198,32 @@ export class CategoriesService {
   async create(dto: CreateCategoryDto) {
     const slug = slugify(dto.name, { lower: true, strict: true });
 
-    const existing = await this.categoryRepo.findOne({ where: { slug } });
+    const existing = await this.prisma.category.findUnique({ where: { slug } });
     if (existing) {
       throw new ConflictException('اسلاگ دسته‌بندی تکراری است');
     }
 
     if (dto.parentId) {
-      const parent = await this.categoryRepo.findOne({ where: { id: dto.parentId } });
+      const parent = await this.prisma.category.findUnique({ where: { id: dto.parentId } });
       if (!parent) {
         throw new NotFoundException('دسته‌بندی والد یافت نشد');
       }
     }
 
-    const categoryData: Partial<Category> = {
+    const categoryData: Prisma.CategoryCreateInput = {
       name: dto.name,
       slug,
       order: dto.order || 0,
+      isActive: true,
     };
     if (dto.description) categoryData.description = dto.description;
     if (dto.icon) categoryData.icon = dto.icon;
     if (dto.image) categoryData.image = dto.image;
-    if (dto.parentId) categoryData.parentId = dto.parentId;
+    if (dto.parentId) {
+      categoryData.parent = { connect: { id: dto.parentId } };
+    }
 
-    const category = this.categoryRepo.create(categoryData);
-
-    await this.categoryRepo.save(category);
+    const category = await this.prisma.category.create({ data: categoryData });
 
     return { category, message: 'دسته‌بندی با موفقیت ایجاد شد' };
   }
@@ -244,15 +232,15 @@ export class CategoriesService {
    * بروزرسانی دسته‌بندی (مدیر)
    */
   async update(id: string, dto: UpdateCategoryDto) {
-    const category = await this.categoryRepo.findOne({ where: { id } });
+    const category = await this.prisma.category.findUnique({ where: { id } });
     if (!category) {
       throw new NotFoundException('دسته‌بندی یافت نشد');
     }
 
     if (dto.name) {
       const newSlug = slugify(dto.name, { lower: true, strict: true });
-      const existing = await this.categoryRepo.findOne({
-        where: { slug: newSlug, id: Not(id) } as any,
+      const existing = await this.prisma.category.findFirst({
+        where: { slug: newSlug, id: { not: id } },
       });
       if (existing && newSlug !== category.slug) {
         throw new ConflictException('اسلاگ دسته‌بندی تکراری است');
@@ -267,26 +255,37 @@ export class CategoriesService {
     if (dto.order !== undefined) category.order = dto.order;
     if (dto.isActive !== undefined) category.isActive = dto.isActive;
 
-    await this.categoryRepo.save(category);
+    const updated = await this.prisma.category.update({
+      where: { id },
+      data: {
+        name: category.name,
+        slug: category.slug,
+        description: category.description,
+        icon: category.icon,
+        image: category.image,
+        order: category.order,
+        isActive: category.isActive,
+      },
+    });
 
-    return { category, message: 'دسته‌بندی با موفقیت بروزرسانی شد' };
+    return { category: updated, message: 'دسته‌بندی با موفقیت بروزرسانی شد' };
   }
 
   /**
    * حذف دسته‌بندی (غیرفعال‌سازی نرم) (مدیر)
    */
   async delete(id: string) {
-    const category = await this.categoryRepo.findOne({
+    const category = await this.prisma.category.findUnique({
       where: { id },
-      relations: ['children'],
+      include: { children: { where: { isActive: true } } },
     });
 
     if (!category) {
       throw new NotFoundException('دسته‌بندی یافت نشد');
     }
 
-    const requestCount = await this.requestRepo.count({
-      where: { categoryId: id, deletedAt: null as any },
+    const requestCount = await this.prisma.serviceRequest.count({
+      where: { categoryId: id },
     });
 
     if (requestCount > 0) {
@@ -303,37 +302,41 @@ export class CategoriesService {
     }
 
     category.isActive = false;
-    await this.categoryRepo.save(category);
+    const updated = await this.prisma.category.update({
+      where: { id },
+      data: { isActive: false },
+    });
 
-    return { category, message: 'دسته‌بندی با موفقیت غیرفعال شد' };
+    return { category: updated, message: 'دسته‌بندی با موفقیت غیرفعال شد' };
   }
 
   /**
    * افزایش شمارنده درخواست‌ها هنگام ایجاد درخواست جدید
    */
   async incrementRequestCount(categoryId: string) {
-    await this.categoryRepo.increment({ id: categoryId }, 'requestCount', 1);
+    // `requestCount` does not exist in Prisma category schema.
+    // Kept for compatibility with callers that still invoke this hook.
+    await this.prisma.category.findUnique({ where: { id: categoryId } });
   }
 
   // ========== Helper Methods ==========
 
   private async countSpecialists(categoryId: string): Promise<number> {
-    const subcategories = await this.categoryRepo.find({
-      where: { parentId: categoryId },
+    const subcategories = await this.prisma.category.findMany({
+      where: { parentId: categoryId, isActive: true },
       select: { id: true },
     });
     const categoryIds = [categoryId, ...subcategories.map((c) => c.id)];
 
-    const result = await this.proposalRepo
-      .createQueryBuilder('proposal')
-      .leftJoin('proposal.request', 'request')
-      .leftJoin('proposal.specialist', 'specialist')
-      .select('DISTINCT proposal.specialistId', 'id')
-      .where('request.categoryId IN (:...categoryIds)', { categoryIds })
-      .andWhere('specialist.role = :role', { role: 'SPECIALIST' })
-      .andWhere('specialist.isActive = :isActive', { isActive: true })
-      .getRawMany();
+    const proposals = await this.prisma.proposal.findMany({
+      where: {
+        request: { categoryId: { in: categoryIds } },
+        user: { role: 'SPECIALIST', isActive: true },
+      },
+      select: { userId: true },
+      distinct: ['userId'],
+    });
 
-    return result.length;
+    return proposals.length;
   }
 }

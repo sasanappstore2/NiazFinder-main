@@ -1,8 +1,29 @@
 {
   "cityId": "dehloran",
   "cityName": "دهلران",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:21.990Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:29:44.074Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چهارراه-رسالت",
+      "name": "چهارراه رسالت",
+      "nameEn": "چهارراه-رسالت"
+    },
+    {
+      "id": "شهرک-وحدت",
+      "name": "شهرک وحدت",
+      "nameEn": "شهرک-وحدت"
+    },
+    {
+      "id": "کوی-اندیشه",
+      "name": "کوی اندیشه",
+      "nameEn": "کوی-اندیشه"
+    },
+    {
+      "id": "کوی-جانبازان",
+      "name": "کوی جانبازان",
+      "nameEn": "کوی-جانبازان"
+    }
+  ]
 }

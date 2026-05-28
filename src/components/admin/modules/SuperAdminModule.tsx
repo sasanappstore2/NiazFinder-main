@@ -1,6 +1,6 @@
 'use client';
 
-import { Lock, Loader2 } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { useAdmin } from '@/components/admin/context/AdminContext';
 import { ADMIN_SECTION_PERMISSIONS, type AdminSectionId } from '@/config/admin-routes';
 import { OverviewPanel } from './OverviewPanel';
@@ -19,9 +19,9 @@ export function SuperAdminModule({ section }: { section: AdminSectionId }) {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[40vh] items-center justify-center gap-3 text-(--color-secondaryText)">
-        <Loader2 className="size-6 animate-spin" />
-        در حال بررسی دسترسی...
+      <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 text-(--color-secondaryText)">
+        <div className="admin-spinner size-8 animate-spin rounded-full border-2" />
+        <p className="text-sm">در حال بررسی دسترسی...</p>
       </div>
     );
   }
@@ -29,7 +29,9 @@ export function SuperAdminModule({ section }: { section: AdminSectionId }) {
   if (!me) {
     return (
       <div className="mx-auto flex min-h-[40vh] max-w-lg flex-col items-center justify-center text-center">
-        <Lock className="mb-4 size-12 text-red-400" />
+        <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-500">
+          <Lock className="size-7" />
+        </div>
         <h2 className="text-xl font-bold">ورود لازم است</h2>
         <p className="mt-2 text-sm text-(--color-secondaryText)">
           برای دسترسی به پنل سوپرادمین وارد حساب کاربری شوید.
@@ -44,7 +46,9 @@ export function SuperAdminModule({ section }: { section: AdminSectionId }) {
   if ((section === 'overview' || section === 'analytics') && !canViewDashboard) {
     return (
       <div className="mx-auto flex min-h-[40vh] max-w-lg flex-col items-center justify-center text-center">
-        <Lock className="mb-4 size-12 text-red-400" />
+        <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-500">
+          <Lock className="size-7" />
+        </div>
         <h2 className="text-xl font-bold">دسترسی کافی ندارید</h2>
         <p className="mt-2 text-sm text-(--color-secondaryText)">
           مجوز مشاهده داشبورد لازم است.
@@ -56,7 +60,9 @@ export function SuperAdminModule({ section }: { section: AdminSectionId }) {
   if (!hasPermission(requiredPermission) && section !== 'overview' && section !== 'analytics') {
     return (
       <div className="mx-auto flex min-h-[40vh] max-w-lg flex-col items-center justify-center text-center">
-        <Lock className="mb-4 size-12 text-red-400" />
+        <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-500">
+          <Lock className="size-7" />
+        </div>
         <h2 className="text-xl font-bold">دسترسی کافی ندارید</h2>
         <p className="mt-2 text-sm text-(--color-secondaryText)">
           مجوز `{requiredPermission}` برای این بخش لازم است.

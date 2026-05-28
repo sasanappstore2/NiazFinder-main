@@ -1,8 +1,19 @@
 {
   "cityId": "ramian",
   "cityName": "رامیان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:25.293Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:44:49.242Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مسکن-مهر-آزادشهر",
+      "name": "مسکن مهر آزادشهر",
+      "nameEn": "مسکن-مهر-آزادشهر"
+    },
+    {
+      "id": "میدان-امام-علی",
+      "name": "میدان امام علی",
+      "nameEn": "میدان-امام-علی"
+    }
+  ]
 }

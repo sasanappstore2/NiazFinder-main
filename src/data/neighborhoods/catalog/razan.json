@@ -1,8 +1,19 @@
 {
   "cityId": "razan",
   "cityName": "رزن",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:04.072Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:26:01.499Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-فرهنگیان",
+      "name": "شهرک فرهنگیان",
+      "nameEn": "شهرک-فرهنگیان"
+    },
+    {
+      "id": "مسکن-مهر-قروه-درجزین",
+      "name": "مسکن مهر قروه درجزین",
+      "nameEn": "مسکن-مهر-قروه-درجزین"
+    }
+  ]
 }

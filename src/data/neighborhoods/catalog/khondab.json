@@ -1,8 +1,19 @@
 {
   "cityId": "khondab",
   "cityName": "خنداب",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:54.261Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:49:22.966Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "محله-حصار-خنداب",
+      "name": "محله حصار خنداب",
+      "nameEn": "محله-حصار-خنداب"
+    },
+    {
+      "id": "محله-قلعه-خنداب",
+      "name": "محله قلعه خنداب",
+      "nameEn": "محله-قلعه-خنداب"
+    }
+  ]
 }

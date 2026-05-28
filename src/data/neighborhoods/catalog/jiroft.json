@@ -1,8 +1,24 @@
 {
   "cityId": "jiroft",
   "cityName": "جیرفت",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:09.660Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:12:30.581Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-خالق-آباد",
+      "name": "شهرک خالق آباد",
+      "nameEn": "شهرک-خالق-آباد"
+    },
+    {
+      "id": "مسکن-مهر-گلزار",
+      "name": "مسکن مهر گلزار",
+      "nameEn": "مسکن-مهر-گلزار"
+    },
+    {
+      "id": "منازل-سازمانی-آب-منطقه-ای",
+      "name": "منازل سازمانی آب منطقه ای",
+      "nameEn": "منازل-سازمانی-آب-منطقه-ای"
+    }
+  ]
 }

@@ -4,13 +4,7 @@ import {
   ForbiddenException,
   BadRequestException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not, In } from 'typeorm';
-import { Proposal, ProposalStatus, ProposalDeliveryUnit } from '../../entities/proposal.entity';
-import { Request, RequestStatus } from '../../entities/request.entity';
-import { User, UserRole } from '../../entities/user.entity';
-import { Review } from '../../entities/review.entity';
-import { Notification } from '../../entities/notification.entity';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateProposalDto } from './dto/create-proposal.dto';
 import { UpdateProposalStatusDto } from './dto/update-proposal-status.dto';
 import { RedisService } from '../../common/redis/redis.service';
@@ -18,16 +12,7 @@ import { RedisService } from '../../common/redis/redis.service';
 @Injectable()
 export class ProposalsService {
   constructor(
-    @InjectRepository(Proposal)
-    private readonly proposalRepo: Repository<Proposal>,
-    @InjectRepository(Request)
-    private readonly requestRepo: Repository<Request>,
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
-    @InjectRepository(Review)
-    private readonly reviewRepo: Repository<Review>,
-    @InjectRepository(Notification)
-    private readonly notificationRepo: Repository<Notification>,
+    private readonly prisma: PrismaService,
     private readonly redis: RedisService,
   ) {}
 
@@ -36,7 +21,7 @@ export class ProposalsService {
    */
   async create(specialistId: string, dto: CreateProposalDto) {
     // Check request exists, is OPEN, and not expired
-    const request = await this.requestRepo.findOne({
+    const request = await this.prisma.serviceRequest.findUnique({
       where: { id: dto.requestId },
     });
 
@@ -44,7 +29,7 @@ export class ProposalsService {
       throw new NotFoundException('درخواست مورد نظر یافت نشد');
     }
 
-    if (request.status !== RequestStatus.OPEN) {
+    if (request.status !== 'OPEN') {
       throw new BadRequestException(
         'این درخواست دیگر باز نیست و نمی‌توانید برای آن پیشنهاد ارسال کنید',
       );
@@ -64,8 +49,8 @@ export class ProposalsService {
     const existingProposal = await this.proposalRepo.findOne({
       where: {
         requestId: dto.requestId,
-        specialistId,
-        status: Not(In([ProposalStatus.WITHDRAWN, ProposalStatus.REJECTED])),
+        userId: specialistId,
+        status: { notIn: ['WITHDRAWN', 'REJECTED'] },
       },
     });
 
@@ -73,35 +58,38 @@ export class ProposalsService {
       throw new BadRequestException('شما قبلاً برای این درخواست پیشنهاد ارسال کرده‌اید');
     }
 
-    const proposal = this.proposalRepo.create({
-      coverLetter: dto.coverLetter,
-      estimatedBudget: dto.estimatedBudget || 0,
-      estimatedTime: dto.estimatedTime,
-      deliveryUnit: (dto.deliveryUnit || 'day') as ProposalDeliveryUnit,
-      status: ProposalStatus.PENDING,
-      requestId: dto.requestId,
-      specialistId,
+    const proposal = await this.prisma.proposal.create({
+      data: {
+        message: dto.coverLetter,
+        price: dto.estimatedBudget || 0,
+        deliveryTime: dto.estimatedTime,
+        deliveryUnit: dto.deliveryUnit || 'day',
+        status: 'PENDING',
+        requestId: dto.requestId,
+        userId: specialistId,
+      },
     });
 
-    await this.proposalRepo.save(proposal);
-
     // Increment proposal count on request
-    await this.requestRepo.increment({ id: dto.requestId }, 'proposalCount', 1);
+    await this.prisma.serviceRequest.update({
+      where: { id: dto.requestId },
+      data: { proposalCount: { increment: 1 } },
+    });
 
     // Create notification for request owner
-    await this.notificationRepo.save(
-      this.notificationRepo.create({
+    await this.prisma.notification.create({
+      data: {
         userId: request.userId,
-        type: 'NEW_PROPOSAL' as any,
+        type: 'NEW_PROPOSAL',
         title: 'پیشنهاد جدید',
-        body: `یک پیشنهاد جدید برای درخواست "${request.title}" دریافت شد`,
-        data: {
+        message: `یک پیشنهاد جدید برای درخواست "${request.title}" دریافت شد`,
+        data: JSON.stringify({
           requestId: dto.requestId,
           proposalId: proposal.id,
           specialistId,
-        },
-      } as any),
-    );
+        }),
+      },
+    });
 
     // Publish event
     await this.redis.publish('proposals:created', {
@@ -112,9 +100,9 @@ export class ProposalsService {
     });
 
     // Load specialist relation for response
-    const savedProposal = await this.proposalRepo.findOne({
+    const savedProposal = await this.prisma.proposal.findUnique({
       where: { id: proposal.id },
-      relations: ['specialist'],
+      include: { user: true },
     });
 
     return savedProposal;
@@ -124,22 +112,22 @@ export class ProposalsService {
    * دریافت تمام پیشنهادهای یک درخواست
    */
   async findByRequest(requestId: string) {
-    const request = await this.requestRepo.findOne({ where: { id: requestId } });
+    const request = await this.prisma.serviceRequest.findUnique({ where: { id: requestId } });
     if (!request) {
       throw new NotFoundException('درخواست مورد نظر یافت نشد');
     }
 
-    const proposals = await this.proposalRepo.find({
+    const proposals = await this.prisma.proposal.findMany({
       where: { requestId },
-      relations: ['specialist'],
-      order: { createdAt: 'DESC' },
+      include: { user: true },
+      orderBy: { createdAt: 'desc' },
     });
 
     // Enrich with rating stats
     const enrichedProposals = await Promise.all(
       proposals.map(async (proposal) => {
-        const reviews = await this.reviewRepo.find({
-          where: { targetUserId: proposal.specialistId } as any,
+        const reviews = await this.prisma.review.findMany({
+          where: { userId: proposal.userId },
           select: { rating: true },
         });
 
@@ -150,26 +138,26 @@ export class ProposalsService {
               )
             : null;
 
-        const projectCount = await this.proposalRepo.count({
+        const projectCount = await this.prisma.proposal.count({
           where: {
-            specialistId: proposal.specialistId,
-            status: ProposalStatus.ACCEPTED,
+            userId: proposal.userId,
+            status: 'ACCEPTED',
           },
         });
 
         return {
           ...proposal,
-          specialist: proposal.specialist
+          specialist: proposal.user
             ? {
-                id: proposal.specialist.id,
-                firstName: proposal.specialist.firstName,
-                lastName: proposal.specialist.lastName,
-                displayName: proposal.specialist.displayName,
-                avatar: proposal.specialist.avatar,
-                bio: proposal.specialist.bio,
-                city: proposal.specialist.city,
-                province: proposal.specialist.province,
-                isVerified: proposal.specialist.isVerified,
+                id: proposal.user.id,
+                firstName: proposal.user.firstName,
+                lastName: proposal.user.lastName,
+                displayName: proposal.user.displayName,
+                avatar: proposal.user.avatar,
+                bio: proposal.user.bio,
+                city: proposal.user.city,
+                province: proposal.user.province,
+                isVerified: proposal.user.isVerified,
                 avgRating,
                 totalReviews: reviews.length,
                 completedProjects: projectCount,
@@ -186,10 +174,10 @@ export class ProposalsService {
    * دریافت پیشنهادهای یک متخصص
    */
   async findBySpecialist(specialistId: string) {
-    const proposals = await this.proposalRepo.find({
-      where: { specialistId },
-      relations: ['request', 'request.category', 'request.user'],
-      order: { createdAt: 'DESC' },
+    const proposals = await this.prisma.proposal.findMany({
+      where: { userId: specialistId },
+      include: { request: { include: { category: true, user: true } } },
+      orderBy: { createdAt: 'desc' },
     });
 
     return proposals;
@@ -199,9 +187,9 @@ export class ProposalsService {
    * تغییر وضعیت پیشنهاد (پذیرش / رد / پس‌گرفتن)
    */
   async updateStatus(id: string, userId: string, dto: UpdateProposalStatusDto) {
-    const proposal = await this.proposalRepo.findOne({
+    const proposal = await this.prisma.proposal.findUnique({
       where: { id },
-      relations: ['request', 'request.user', 'specialist'],
+      include: { request: { include: { user: true } }, user: true },
     });
 
     if (!proposal) {
@@ -241,81 +229,86 @@ export class ProposalsService {
   /**
    * Accept proposal: set accepted, update request to IN_PROGRESS, reject other PENDING proposals
    */
-  private async acceptProposal(proposal: Proposal, userId: string) {
+  private async acceptProposal(proposal: any, userId: string) {
     // Only request owner can accept
     if (proposal.request.userId !== userId) {
       throw new ForbiddenException('فقط صاحب درخواست می‌تواند پیشنهاد را بپذیرد');
     }
 
-    if (proposal.status !== ProposalStatus.PENDING) {
+    if (proposal.status !== 'PENDING') {
       throw new BadRequestException('فقط پیشنهادهای در انتظار قابل قبول هستند');
     }
 
-    if (proposal.request.status !== RequestStatus.OPEN) {
+    if (proposal.request.status !== 'OPEN') {
       throw new BadRequestException('وضعیت درخواست اجازه پذیرش پیشنهاد را نمی‌دهد');
     }
 
     // Accept this proposal
-    proposal.status = ProposalStatus.ACCEPTED;
-    await this.proposalRepo.save(proposal);
+    await this.prisma.proposal.update({
+      where: { id: proposal.id },
+      data: { status: 'ACCEPTED' },
+    });
 
     // Reject all other PENDING proposals for this request
-    const otherPending = await this.proposalRepo.find({
+    const otherPending = await this.prisma.proposal.findMany({
       where: {
         requestId: proposal.requestId,
-        status: ProposalStatus.PENDING,
-        id: Not(proposal.id),
+        status: 'PENDING',
+        id: { not: proposal.id },
       },
     });
 
     if (otherPending.length > 0) {
-      const ids = otherPending.map((p) => p.id);
-      await this.proposalRepo.update(
-        { id: In(ids) as any },
-        { status: ProposalStatus.REJECTED },
-      );
+      await this.prisma.proposal.updateMany({
+        where: { id: { in: otherPending.map((p) => p.id) } },
+        data: { status: 'REJECTED' },
+      });
     }
 
     // Update request status
-    proposal.request.status = RequestStatus.IN_PROGRESS;
-    proposal.request.selectedProposalId = proposal.id;
-    await this.requestRepo.save(proposal.request);
+    await this.prisma.serviceRequest.update({
+      where: { id: proposal.requestId },
+      data: {
+        status: 'IN_PROGRESS',
+        selectedProposalId: proposal.id,
+      },
+    });
 
     // Notify accepted specialist
-    await this.notificationRepo.save(
-      this.notificationRepo.create({
-        userId: proposal.specialistId,
-        type: 'PROPOSAL_ACCEPTED' as any,
+    await this.prisma.notification.create({
+      data: {
+        userId: proposal.userId,
+        type: 'PROPOSAL_ACCEPTED',
         title: 'پیشنهاد شما پذیرفته شد',
-        body: `پیشنهاد شما برای درخواست "${proposal.request.title}" پذیرفته شد`,
-        data: { requestId: proposal.requestId, proposalId: proposal.id },
-      } as any),
-    );
+        message: `پیشنهاد شما برای درخواست "${proposal.request.title}" پذیرفته شد`,
+        data: JSON.stringify({ requestId: proposal.requestId, proposalId: proposal.id }),
+      },
+    });
 
     // Notify rejected specialists
     for (const rejected of otherPending) {
-      await this.notificationRepo.save(
-        this.notificationRepo.create({
-          userId: rejected.specialistId,
-          type: 'PROPOSAL_REJECTED' as any,
+      await this.prisma.notification.create({
+        data: {
+          userId: rejected.userId,
+          type: 'PROPOSAL_REJECTED',
           title: 'پیشنهاد شما رد شد',
-          body: `متأسفانه پیشنهاد شما برای درخواست "${proposal.request.title}" رد شد`,
-          data: { requestId: proposal.requestId },
-        } as any),
-      );
+          message: `متأسفانه پیشنهاد شما برای درخواست "${proposal.request.title}" رد شد`,
+          data: JSON.stringify({ requestId: proposal.requestId }),
+        },
+      });
     }
 
     // Publish events
     await this.redis.publish('proposals:accepted', {
       proposalId: proposal.id,
       requestId: proposal.requestId,
-      specialistId: proposal.specialistId,
+      specialistId: proposal.userId,
       requestOwnerId: proposal.request.userId,
     });
 
-    const saved = await this.proposalRepo.findOne({
+    const saved = await this.prisma.proposal.findUnique({
       where: { id: proposal.id },
-      relations: ['specialist'],
+      include: { user: true },
     });
 
     return saved;
@@ -324,39 +317,41 @@ export class ProposalsService {
   /**
    * Reject proposal
    */
-  private async rejectProposal(proposal: Proposal, userId: string) {
+  private async rejectProposal(proposal: any, userId: string) {
     // Only request owner can reject
     if (proposal.request.userId !== userId) {
       throw new ForbiddenException('فقط صاحب درخواست می‌تواند پیشنهاد را رد کند');
     }
 
-    if (proposal.status !== ProposalStatus.PENDING) {
+    if (proposal.status !== 'PENDING') {
       throw new BadRequestException('فقط پیشنهادهای در انتظار قابل رد هستند');
     }
 
-    proposal.status = ProposalStatus.REJECTED;
-    await this.proposalRepo.save(proposal);
+    await this.prisma.proposal.update({
+      where: { id: proposal.id },
+      data: { status: 'REJECTED' },
+    });
 
     // Notify specialist
-    await this.notificationRepo.save(
-      this.notificationRepo.create({
-        userId: proposal.specialistId,
-        type: 'PROPOSAL_REJECTED' as any,
+    await this.prisma.notification.create({
+      data: {
+        userId: proposal.userId,
+        type: 'PROPOSAL_REJECTED',
         title: 'پیشنهاد شما رد شد',
-        body: `متأسفانه پیشنهاد شما برای درخواست "${proposal.request.title}" رد شد`,
-        data: { requestId: proposal.requestId, proposalId: proposal.id },
-      } as any),
-    );
+        message: `متأسفانه پیشنهاد شما برای درخواست "${proposal.request.title}" رد شد`,
+        data: JSON.stringify({ requestId: proposal.requestId, proposalId: proposal.id }),
+      },
+    });
 
     await this.redis.publish('proposals:rejected', {
       proposalId: proposal.id,
       requestId: proposal.requestId,
-      specialistId: proposal.specialistId,
+      specialistId: proposal.userId,
     });
 
-    const saved = await this.proposalRepo.findOne({
+    const saved = await this.prisma.proposal.findUnique({
       where: { id: proposal.id },
-      relations: ['specialist'],
+      include: { user: true },
     });
 
     return saved;
@@ -365,43 +360,48 @@ export class ProposalsService {
   /**
    * Withdraw proposal
    */
-  private async withdrawProposal(proposal: Proposal, userId: string) {
+  private async withdrawProposal(proposal: any, userId: string) {
     // Only specialist can withdraw their own proposal
-    if (proposal.specialistId !== userId) {
+    if (proposal.userId !== userId) {
       throw new ForbiddenException('شما فقط می‌توانید پیشنهاد خود را پس بگیرید');
     }
 
-    if (proposal.status !== ProposalStatus.PENDING) {
+    if (proposal.status !== 'PENDING') {
       throw new BadRequestException('فقط پیشنهادهای در انتظار قابل پس‌گرفتن هستند');
     }
 
-    proposal.status = ProposalStatus.WITHDRAWN;
-    await this.proposalRepo.save(proposal);
+    await this.prisma.proposal.update({
+      where: { id: proposal.id },
+      data: { status: 'WITHDRAWN' },
+    });
 
     // Decrement proposal count
-    await this.requestRepo.increment({ id: proposal.requestId }, 'proposalCount', -1);
+    await this.prisma.serviceRequest.update({
+      where: { id: proposal.requestId },
+      data: { proposalCount: { decrement: 1 } },
+    });
 
     // Notify request owner
-    await this.notificationRepo.save(
-      this.notificationRepo.create({
+    await this.prisma.notification.create({
+      data: {
         userId: proposal.request.userId,
-        type: 'PROPOSAL_WITHDRAWN' as any,
+        type: 'PROPOSAL_WITHDRAWN',
         title: 'یک پیشنهاد پس گرفته شد',
-        body: `یک متخصص پیشنهاد خود را برای درخواست "${proposal.request.title}" پس گرفت`,
-        data: { requestId: proposal.requestId, proposalId: proposal.id },
-      } as any),
-    );
+        message: `یک متخصص پیشنهاد خود را برای درخواست "${proposal.request.title}" پس گرفت`,
+        data: JSON.stringify({ requestId: proposal.requestId, proposalId: proposal.id }),
+      },
+    });
 
     await this.redis.publish('proposals:withdrawn', {
       proposalId: proposal.id,
       requestId: proposal.requestId,
-      specialistId: proposal.specialistId,
+      specialistId: proposal.userId,
       requestOwnerId: proposal.request.userId,
     });
 
-    const saved = await this.proposalRepo.findOne({
+    const saved = await this.prisma.proposal.findUnique({
       where: { id: proposal.id },
-      relations: ['specialist'],
+      include: { user: true },
     });
 
     return saved;

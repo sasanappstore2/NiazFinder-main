@@ -1,8 +1,14 @@
 {
   "cityId": "garmsar",
   "cityName": "گرمسار",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:57.850Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:49:45.854Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ماشین-خانه",
+      "name": "ماشین خانه",
+      "nameEn": "ماشین-خانه"
+    }
+  ]
 }

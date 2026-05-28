@@ -1,8 +1,24 @@
 {
   "cityId": "darrehshahr",
   "cityName": "دره‌شهر",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:24.933Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:30:53.033Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-شهید-رجایی",
+      "name": "شهرک شهید رجایی",
+      "nameEn": "شهرک-شهید-رجایی"
+    },
+    {
+      "id": "شهرک-هزارانی",
+      "name": "شهرک هزارانی",
+      "nameEn": "شهرک-هزارانی"
+    },
+    {
+      "id": "کوی-فرهنگیان",
+      "name": "کوی فرهنگیان",
+      "nameEn": "کوی-فرهنگیان"
+    }
+  ]
 }

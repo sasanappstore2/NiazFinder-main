@@ -10,6 +10,11 @@ export function getLeadPhone(): string {
   return sessionStorage.getItem(LEAD_PHONE_KEY) ?? '';
 }
 
+export function clearLeadPhone(): void {
+  if (typeof sessionStorage === 'undefined') return;
+  sessionStorage.removeItem(LEAD_PHONE_KEY);
+}
+
 /** Iranian mobile: 09XXXXXXXXX */
 export function isValidIranMobile(phone: string): boolean {
   const n = phone.replace(/\s|-/g, '');

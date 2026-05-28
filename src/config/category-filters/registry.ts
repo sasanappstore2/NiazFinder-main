@@ -60,8 +60,9 @@ function filterFieldsByAudience(
 function filterKindToFieldType(kind: CategoryFilterField['kind']): FieldType {
   switch (kind) {
     case 'chips':
-    case 'multi':
       return 'chips';
+    case 'multi':
+      return 'multi_select';
     case 'select':
       return 'select';
     case 'toggle':

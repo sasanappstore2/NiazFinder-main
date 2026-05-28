@@ -1,8 +1,19 @@
 {
   "cityId": "lordegan",
   "cityName": "لردگان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:09.475Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:41:49.691Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مسکن-مهر",
+      "name": "مسکن مهر",
+      "nameEn": "مسکن-مهر"
+    },
+    {
+      "id": "منازل-مسکونی-طرح-سپاه",
+      "name": "منازل مسکونی طرح سپاه",
+      "nameEn": "منازل-مسکونی-طرح-سپاه"
+    }
+  ]
 }

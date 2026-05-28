@@ -1,8 +1,19 @@
 {
   "cityId": "deylam",
   "cityName": "دیلم",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:31.081Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:32:08.182Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چهار-راه-سید-رضا",
+      "name": "چهار راه سید رضا",
+      "nameEn": "چهار-راه-سید-رضا"
+    },
+    {
+      "id": "مسکن-مهر",
+      "name": "مسکن مهر",
+      "nameEn": "مسکن-مهر"
+    }
+  ]
 }

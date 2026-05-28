@@ -1,8 +1,24 @@
 {
   "cityId": "golmakan",
   "cityName": "گلمکان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:28.027Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:04:26.217Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "املاک-ولیعصر",
+      "name": "املاک ولیعصر",
+      "nameEn": "املاک-ولیعصر"
+    },
+    {
+      "id": "مجموعه-بوستان",
+      "name": "مجموعه بوستان",
+      "nameEn": "مجموعه-بوستان"
+    },
+    {
+      "id": "مجموعه-گلستان",
+      "name": "مجموعه گلستان",
+      "nameEn": "مجموعه-گلستان"
+    }
+  ]
 }

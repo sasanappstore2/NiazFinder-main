@@ -10,7 +10,7 @@ export interface CatalogNeighborhood {
 export interface CityNeighborhoodCatalog {
   cityId: string;
   cityName?: string;
-  source: 'divar' | 'manual';
+  source: 'divar' | 'manual' | 'osm';
   importedAt: string;
   emptyOnDivar?: boolean;
   neighborhoods: CatalogNeighborhood[];

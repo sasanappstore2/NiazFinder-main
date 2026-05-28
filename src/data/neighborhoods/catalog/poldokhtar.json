@@ -1,8 +1,8 @@
 {
   "cityId": "poldokhtar",
   "cityName": "پلدختر",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:19.776Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:29:04.736Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

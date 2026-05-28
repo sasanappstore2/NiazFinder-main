@@ -18,7 +18,7 @@ export function NeedSummarySidebar({
 
   return (
     <aside className="hidden lg:block w-72 shrink-0">
-      <div className="sticky top-24 rounded-2xl border bg-card/80 p-4 shadow-sm backdrop-blur-xs">
+      <div className="sticky-below-header rounded-2xl border bg-card/80 p-4 shadow-sm backdrop-blur-xs">
         <div className="mb-2 flex items-center gap-2 text-sm font-medium">
           <Sparkles className="size-4 text-primary" />
           پیش‌نمایش نیاز

@@ -1,8 +1,8 @@
 {
   "cityId": "ardehal",
   "cityName": "اردل",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:10.380Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:42:02.121Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

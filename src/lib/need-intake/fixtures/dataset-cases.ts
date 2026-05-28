@@ -48,7 +48,7 @@ export const DATASET_FIXTURES: DatasetFixture[] = [
     expectIntentPrefix: 'property',
     expectCategoryIncludes: 'apartment',
     expectCity: 'تهران',
-    expectDealType: 'buy',
+    // dealType omitted: «میخوام» alone no longer forces buy on real-estate (see intent-parser)
     expectVertical: 'real-estate',
   }),
   caseRow({

@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "../styles/typography.css";
+@import "../styles/responsive-golden.css";
+@import "../styles/intake-golden.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -115,6 +117,8 @@
   --z-popover: 55;
   --z-modal: 50;
   --z-onboarding: 60;
+  --z-overlay: 45;
+  --phi: 1.618;
   /* Set dynamically by Header; fallback covers main row + category bar */
   --site-header-offset: 6.5rem;
 }
@@ -175,32 +179,31 @@
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 .persian-nums { font-feature-settings: "ss02"; }
 
-/* ── Layout (Fibonacci spacing: 4 4 8 12 20 32 52 84 136 px) ── */
-.section-padding { padding-top: 84px; padding-bottom: 84px; }
-.container-narrow { max-width: 640px; margin-inline: auto; padding-inline: 1rem; }
+/* ── Layout (Fibonacci + golden — padding in responsive-golden.css) ── */
+.container-narrow {
+  max-width: min(100%, var(--content-readable, 38.2rem));
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
 .container-default {
   max-width: var(--page-max-width);
+  margin-inline: auto;
+}
+.container-wide {
+  max-width: min(100%, 84rem);
   margin-inline: auto;
   padding-inline: 1rem;
 }
 @media (min-width: 640px) {
-  .container-default { padding-inline: 1.5rem; }
+  .container-wide { padding-inline: 1.5rem; }
 }
 @media (min-width: 1024px) {
-  .container-default { padding-inline: 2rem; }
+  .container-wide { padding-inline: 2rem; }
 }
-.container-wide { max-width: 1360px; margin-inline: auto; padding-inline: 1rem; }
 .page-container {
   width: 100%;
   max-width: var(--page-max-width);
   margin-inline: auto;
-  padding-inline: 1rem;
-}
-@media (min-width: 640px) {
-  .page-container { padding-inline: 1.5rem; }
-}
-@media (min-width: 1024px) {
-  .page-container { padding-inline: 2rem; }
 }
 .touch-target-min { min-height: 44px; min-width: 44px; }
 
@@ -436,6 +439,18 @@
   to { opacity: 1; transform: scale(1); }
 }
 .animate-scale-in { animation: scaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+
+@keyframes intakeSuccessPop {
+  0% { opacity: 0; transform: scale(0.35); }
+  55% { opacity: 1; transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes intakeSuccessCheck {
+  0% { opacity: 0; transform: scale(0.5) rotate(-12deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.intake-success-badge { animation: intakeSuccessPop 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.intake-success-check { animation: intakeSuccessCheck 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both; }
 
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-8px); }
@@ -1128,8 +1143,7 @@
 /* ── Back to Top Progress Circle ── */
 .back-to-top-progress {
   position: fixed;
-  bottom: calc(env(safe-area-inset-bottom, 8px) + 24px);
-  left: 24px;
+  left: max(1rem, env(safe-area-inset-left, 0px));
   z-index: var(--z-sticky);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -1275,14 +1289,7 @@
   pointer-events: none;
 }
 
-.has-mobile-nav {
-  padding-bottom: var(--mobile-nav-offset);
-}
-@media (min-width: 1024px) {
-  .has-mobile-nav {
-    padding-bottom: 0;
-  }
-}
+/* has-mobile-nav padding: responsive-golden.css (max-width 1023px only) */
 
 /* ══════════════════════════════════════════════════════════════
    TASK 1D: Header Enhancements

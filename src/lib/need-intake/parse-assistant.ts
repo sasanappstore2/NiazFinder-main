@@ -139,7 +139,9 @@ export function shouldSkipClarifying(
   }
   if (parsed.confidence >= 0.72 && isVerticalConfident(classification)) return true;
   if (parsed.confidence >= 0.65 && classification.vertical === 'real-estate') {
-    return Boolean(parsed.entities?.dealType || parsed.entities?.propertyKind || parsed.entities?.area);
+    // For property flows, do not skip clarifying unless deal type is explicit.
+    // This prevents silently defaulting to "buy" on vague prompts.
+    return Boolean(parsed.entities?.dealType && (parsed.entities?.propertyKind || parsed.entities?.area));
   }
   return false;
 }

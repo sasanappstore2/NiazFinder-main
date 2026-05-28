@@ -1,8 +1,24 @@
 {
   "cityId": "parsian",
   "cityName": "پارسیان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:47.905Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:36:48.332Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "احشام",
+      "name": "احشام",
+      "nameEn": "احشام"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد"
+    },
+    {
+      "id": "سی-دستگاه",
+      "name": "سی دستگاه",
+      "nameEn": "سی-دستگاه"
+    }
+  ]
 }

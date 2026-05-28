@@ -1,8 +1,14 @@
 {
   "cityId": "salafchegan",
   "cityName": "سلفچگان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:46.847Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:19:20.870Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مسکن-مهر-سلفچگان",
+      "name": "مسکن مهر سلفچگان",
+      "nameEn": "مسکن-مهر-سلفچگان"
+    }
+  ]
 }

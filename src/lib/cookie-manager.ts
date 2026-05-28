@@ -1,9 +1,18 @@
 import type { City } from './location-system';
 
+export interface SavedNeighborhoodSelection {
+  slugs: string[];
+  /** Persian label for the first selected neighborhood (intake / display). */
+  primaryName?: string | null;
+  updatedAt: number;
+}
+
 export interface LocationPreferences {
   selectedCities: City[];
   /** Full province selection (location-system province ids). */
   selectedProvinceIds?: string[];
+  /** Last neighborhood picks on browse, keyed by city URL slug (e.g. mashhad). */
+  neighborhoodByCitySlug?: Record<string, SavedNeighborhoodSelection>;
   lastUpdated: number;
   /** Auto GPS attempt already ran once on this device */
   geoAutoAttempted?: boolean;
@@ -172,6 +181,52 @@ export class CookieManager {
     };
 
     this.savePreferences();
+  }
+
+  public updateNeighborhoodSelection(
+    citySlug: string,
+    slugs: string[],
+    primaryName?: string | null
+  ): void {
+    if (!this.preferences) {
+      this.preferences = { ...DEFAULT_PREFERENCES };
+    }
+
+    const slug = citySlug.trim().toLowerCase();
+    if (!slug) return;
+
+    const trimmed = slugs.map((s) => s.trim()).filter(Boolean);
+    const byCity = { ...(this.preferences.location.neighborhoodByCitySlug ?? {}) };
+
+    if (trimmed.length === 0) {
+      delete byCity[slug];
+    } else {
+      byCity[slug] = {
+        slugs: trimmed,
+        primaryName: primaryName?.trim() || null,
+        updatedAt: Date.now(),
+      };
+    }
+
+    this.preferences.location = {
+      ...this.preferences.location,
+      neighborhoodByCitySlug: byCity,
+      lastUpdated: Date.now(),
+    };
+
+    this.preferences.filters = {
+      ...this.preferences.filters,
+      neighborhood: trimmed.length > 0 ? (primaryName?.trim() || trimmed[0]) : null,
+      lastUpdated: Date.now(),
+    };
+
+    this.savePreferences();
+  }
+
+  public getNeighborhoodSelection(citySlug: string): SavedNeighborhoodSelection | null {
+    const slug = citySlug.trim().toLowerCase();
+    if (!slug) return null;
+    return this.getPreferences().location.neighborhoodByCitySlug?.[slug] ?? null;
   }
 
   public hasSavedLocation(): boolean {

@@ -1,8 +1,8 @@
 {
   "cityId": "jowayin",
   "cityName": "جوین",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:25.407Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:03:24.675Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

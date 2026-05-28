@@ -1,8 +1,14 @@
 {
   "cityId": "ahar",
   "cityName": "اهر",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:35.057Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:05:07.508Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دیزج-جالو",
+      "name": "دیزج جالو",
+      "nameEn": "دیزج-جالو"
+    }
+  ]
 }

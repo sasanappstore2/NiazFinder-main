@@ -9,6 +9,8 @@ import {
   ShieldCheck,
   Building2,
   Settings2,
+  GitBranch,
+  Bot,
 } from 'lucide-react';
 import type { AdminPermissionId } from '@/config/admin-permissions';
 
@@ -118,6 +120,30 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
         href: '/super-admin/system',
         icon: ShieldCheck,
         permission: 'rbac:roles:read',
+      },
+      {
+        id: 'intake-migration',
+        label: 'مهاجرت Intake',
+        description: 'کنترل Legacy vs Canonical',
+        href: '/super-admin/system/intake-migration',
+        icon: GitBranch,
+        permission: 'ops:intake-migration:read',
+      },
+      {
+        id: 'intake-ai-evaluation',
+        label: 'ارزیابی AI Intake',
+        description: 'Accuracy و KPI مدل Gemma',
+        href: '/super-admin/system/intake-ai-evaluation',
+        icon: Bot,
+        permission: 'ops:intake-migration:read',
+      },
+      {
+        id: 'intake-training',
+        label: 'داده آموزشی Intake',
+        description: 'Capture، بازبینی، Gold Dataset',
+        href: '/super-admin/system/intake-training',
+        icon: Bot,
+        permission: 'ops:intake-training:read',
       },
       {
         id: 'settings',

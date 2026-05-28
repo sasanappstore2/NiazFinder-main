@@ -1,8 +1,39 @@
 {
   "cityId": "nir",
   "cityName": "نیر",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:41.130Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T18:31:02.413Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "آغ-یورد",
+      "name": "آغ یورد",
+      "nameEn": "آغ-یورد"
+    },
+    {
+      "id": "دزه-قره",
+      "name": "دزه قره",
+      "nameEn": "دزه-قره"
+    },
+    {
+      "id": "ساری-گلوگ",
+      "name": "ساری گلوگ",
+      "nameEn": "ساری-گلوگ"
+    },
+    {
+      "id": "سه-راه-نماز",
+      "name": "سه راه نماز",
+      "nameEn": "سه-راه-نماز"
+    },
+    {
+      "id": "شیخ-لر",
+      "name": "شیخ لر",
+      "nameEn": "شیخ-لر"
+    },
+    {
+      "id": "قره-یورد",
+      "name": "قره یورد",
+      "nameEn": "قره-یورد"
+    }
+  ]
 }

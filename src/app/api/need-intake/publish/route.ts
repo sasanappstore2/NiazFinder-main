@@ -6,8 +6,16 @@ import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
 import { resolveCategoryIds } from '@/lib/need-intake/resolve-category';
 import { normalizeCategoryPair } from '@/config/categories';
 import type { NeedDraft } from '@/contracts/need-intake';
+import { validateNeedDraftForPublish } from '@/intake/validation/publishValidator';
+import { recordToEntities } from '@/intake/aggregate/needDraftAggregate';
+import { toServiceRequestV2 } from '@/intake/projections/serviceRequestV2';
+import { compareLegacyAndCanonical } from '@/intake/legacy/compareLegacyAndCanonical';
+import { recordIntakeMigrationEvent } from '@/intake/migration/events';
+import { getIntakeMigrationFeatureFlags } from '@/intake/migration/feature-flags';
+import { runPublishShadowMode } from '@/intake/migration/shadow-publish';
 import { enqueueIntakeHeavyJob } from '@/lib/need-intake/enqueue-heavy';
 import { enqueueRequestModerationJob } from '@/lib/request-moderation/enqueue';
+import { captureTrainingExampleAsync } from '@/intake/training/trainingCapture';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,26 +31,52 @@ export async function POST(request: NextRequest) {
     const draft = body.draft as NeedDraft;
     const listingPreview = body.listingPreview ?? draft?.listingPreview;
 
-    if (!draft?.parsedIntent) {
+    if (!draft?.entities || !draft?.needType) {
       return NextResponse.json({ error: 'پیش‌نویس نامعتبر' }, { status: 400 });
+    }
+
+    const validation = validateNeedDraftForPublish(draft);
+    if (!validation.success) {
+      return NextResponse.json(
+        { success: false, errors: validation.errors },
+        { status: 422 }
+      );
     }
 
     if (listingPreview) {
       draft.listingPreview = listingPreview;
     }
-    if (draft.leadPhone && !draft.answers._leadPhone) {
-      draft.answers = { ...draft.answers, _leadPhone: draft.leadPhone };
+    const entities = recordToEntities(draft.entities);
+    const serviceRequestV2 = toServiceRequestV2(draft);
+    const legacyCompare = compareLegacyAndCanonical(draft);
+    void recordIntakeMigrationEvent('CanonicalDiffDetected', {
+      equal: legacyCompare.equal,
+      diffs: legacyCompare.diffs,
+      needType: draft.needType,
+      schemaVersion: draft.schemaVersion,
+    });
+    if (!legacyCompare.equal) {
+      console.info('[LEGACY_CANONICAL_DIFF]', {
+        needType: draft.needType,
+        diffs: legacyCompare.diffs,
+      });
     }
 
     const normalized = normalizeCategoryPair(
-      draft.parsedIntent.categorySlug,
-      draft.parsedIntent.subcategorySlug
+      entities.categorySlug ?? draft.parsedIntent.categorySlug,
+      entities.subcategorySlug ?? draft.parsedIntent.subcategorySlug
     );
     const { categoryId, subcategoryId } = await resolveCategoryIds(
       normalized.categorySlug,
       normalized.subcategorySlug
     );
     const mapped = mapDraftToCreateRequest(draft, categoryId, subcategoryId);
+
+    const flags = getIntakeMigrationFeatureFlags();
+    let shadowComparison: ReturnType<typeof runPublishShadowMode> | null = null;
+    if (flags.shadowPublishEnabled) {
+      shadowComparison = runPublishShadowMode(draft, categoryId, subcategoryId);
+    }
 
     if (!listingPreview) {
       const composed = composeListingFromDraft(draft);
@@ -52,6 +86,7 @@ export async function POST(request: NextRequest) {
         ...mapped.aiExtractedData,
         listingEnriched: true,
         engine: 'internal',
+        serviceRequestV2,
       };
     } else {
       mapped.aiExtractedData = {
@@ -59,6 +94,7 @@ export async function POST(request: NextRequest) {
         listingEnriched: true,
         fromPreview: true,
         engine: 'internal',
+        serviceRequestV2,
       };
     }
 
@@ -85,15 +121,18 @@ export async function POST(request: NextRequest) {
         address:
           typeof mapped.dynamicAnswers?.address === 'string'
             ? mapped.dynamicAnswers.address
-            : typeof draft.answers?.location === 'string'
-              ? draft.answers.location
+            : typeof mapped.dynamicAnswers?.location === 'string'
+              ? mapped.dynamicAnswers.location
               : null,
         categoryId: mapped.categoryId,
         subcategoryId: mapped.subcategoryId ?? null,
         priority: mapped.priority,
         tags: JSON.stringify(mapped.tags),
         intentType: mapped.intentType,
-        dynamicAnswers: JSON.stringify(mapped.dynamicAnswers),
+        dynamicAnswers: JSON.stringify({
+          ...mapped.dynamicAnswers,
+          serviceRequestV2,
+        }),
         aiExtractedData: JSON.stringify(mapped.aiExtractedData),
         source: mapped.source,
         userId: user.id,
@@ -107,6 +146,40 @@ export async function POST(request: NextRequest) {
       typeof body.sessionId === 'string' ? body.sessionId : undefined;
     void enqueueIntakeHeavyJob(serviceRequest.id, sessionId);
     void enqueueRequestModerationJob(serviceRequest.id);
+
+    captureTrainingExampleAsync({
+      draft,
+      serviceRequestId: serviceRequest.id,
+      intakeTrace: draft.intakeTrace ?? null,
+    });
+
+    void recordIntakeMigrationEvent('NeedDraftPublished', {
+      requestId: serviceRequest.id,
+      needType: draft.needType,
+      schemaVersion: draft.schemaVersion,
+      canonicalHash: serviceRequestV2.canonicalHash,
+      completionScore: draft.completionScore,
+      matchabilityScore: draft.matchabilityScore,
+      legacyEqual: legacyCompare.equal,
+      shadowEqual: shadowComparison?.equal ?? null,
+    });
+
+    if (shadowComparison) {
+      void recordIntakeMigrationEvent('ShadowPublishComparison', {
+        requestId: serviceRequest.id,
+        needType: draft.needType,
+        equal: shadowComparison.equal,
+        diffs: shadowComparison.diffs,
+        canonicalHash: serviceRequestV2.canonicalHash,
+      });
+      if (!shadowComparison.equal) {
+        console.info('[SHADOW_PUBLISH_DIFF]', {
+          requestId: serviceRequest.id,
+          needType: draft.needType,
+          diffs: shadowComparison.diffs,
+        });
+      }
+    }
 
     return NextResponse.json({
       id: serviceRequest.id,

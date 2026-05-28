@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useBrowseFilters } from '@/hooks/use-browse-filters';
 import { useCityNeighborhoods } from '@/hooks/use-city-neighborhoods';
+import { cookieManager } from '@/lib/cookie-manager';
 import { cityFromSlug, locationCityIdToSlug } from '@/lib/search/city-slugs';
 import { COUNTRY_SLUG, isCitySlug } from '@/config/locations';
 import { parseBrowsePath } from '@/lib/search/browse-path';
@@ -42,18 +43,24 @@ export function useNeighborhoodSelection() {
   );
 
   const showNeighborhoodFilter = Boolean(cityId && hasNeighborhoods);
+  const citySlug = cityId ? locationCityIdToSlug(cityId) : null;
 
   const applySelection = useCallback(
     (slugs: string[]) => {
       replaceFilters({ neighborhoods: slugs });
+      if (citySlug) {
+        const primary = neighborhoods.find((n) => n.id === slugs[0])?.name ?? null;
+        cookieManager.updateNeighborhoodSelection(citySlug, slugs, primary);
+      }
       setOpen(false);
     },
-    [replaceFilters]
+    [replaceFilters, citySlug, neighborhoods]
   );
 
   const clearNeighborhoods = useCallback(() => {
     replaceFilters({ neighborhoods: [] });
-  }, [replaceFilters]);
+    if (citySlug) cookieManager.updateNeighborhoodSelection(citySlug, [], null);
+  }, [replaceFilters, citySlug]);
 
   const pillLabel =
     selected.length === 0
@@ -66,7 +73,7 @@ export function useNeighborhoodSelection() {
     open,
     setOpen,
     cityId,
-    citySlug: cityId ? locationCityIdToSlug(cityId) : null,
+    citySlug,
     neighborhoods,
     selectedSlugs,
     selected,

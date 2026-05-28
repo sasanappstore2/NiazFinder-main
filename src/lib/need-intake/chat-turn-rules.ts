@@ -1,4 +1,5 @@
 import type { ChatTurnResponse, NeedDraft } from '@/contracts/need-intake';
+import { recomputeNeedDraft } from '@/intake/aggregate/needDraftAggregate';
 import { parseMoneyInput } from '@/lib/format/money';
 import { buildReadiness } from '@/lib/need-intake/internal-orchestrator';
 import { parseFromText } from '@/lib/need-intake/internal-orchestrator.server';
@@ -62,11 +63,11 @@ export function runChatTurnRules(
       ? reParsed
       : undefined;
 
-  const readinessDraft: NeedDraft = {
+  const readinessDraft: NeedDraft = recomputeNeedDraft({
     ...draft,
     parsedIntent: mergedIntent ?? draft.parsedIntent,
     answers: mergedAnswers,
-  };
+  });
   const readiness = buildReadiness(readinessDraft);
 
   const hasCity = Boolean(

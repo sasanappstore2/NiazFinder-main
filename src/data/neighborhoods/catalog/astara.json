@@ -1,8 +1,44 @@
 {
   "cityId": "astara",
   "cityName": "آستارا",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:24.885Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:16:35.248Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-حاجیان",
+      "name": "شهرک حاجیان",
+      "nameEn": "شهرک-حاجیان"
+    },
+    {
+      "id": "شهرک-رسالت",
+      "name": "شهرک رسالت",
+      "nameEn": "شهرک-رسالت"
+    },
+    {
+      "id": "شهرک-صنعتی-آستارا",
+      "name": "شهرک صنعتی آستارا",
+      "nameEn": "شهرک-صنعتی-آستارا"
+    },
+    {
+      "id": "شهرک-فرهنگیان",
+      "name": "شهرک فرهنگیان",
+      "nameEn": "شهرک-فرهنگیان"
+    },
+    {
+      "id": "شهرک-ولیعصر",
+      "name": "شهرک ولیعصر",
+      "nameEn": "شهرک-ولیعصر"
+    },
+    {
+      "id": "astara-qsb",
+      "name": "Astara qəsəbə",
+      "nameEn": "astara-qsb"
+    },
+    {
+      "id": "cnub-baza",
+      "name": "Cənub Baza",
+      "nameEn": "cnub-baza"
+    }
+  ]
 }

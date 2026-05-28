@@ -1,8 +1,24 @@
 {
   "cityId": "takab",
   "cityName": "تکاب",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:49.749Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:08:24.384Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شریف-آباد",
+      "name": "شریف آباد",
+      "nameEn": "شریف-آباد"
+    },
+    {
+      "id": "قره-ناو",
+      "name": "قره ناو",
+      "nameEn": "قره-ناو"
+    },
+    {
+      "id": "کوی-پاسداران",
+      "name": "کوی پاسداران",
+      "nameEn": "کوی-پاسداران"
+    }
+  ]
 }

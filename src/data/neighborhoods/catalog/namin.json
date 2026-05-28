@@ -1,8 +1,14 @@
 {
   "cityId": "namin",
   "cityName": "نمین",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:40.428Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:47:22.315Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جنگل-فندقلو",
+      "name": "جنگل فندقلو",
+      "nameEn": "جنگل-فندقلو"
+    }
+  ]
 }

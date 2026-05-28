@@ -9,7 +9,7 @@ interface QuestionCardProps {
   question: string;
   field?: FieldSchema;
   value?: string | number | boolean;
-  onChange: (value: string | number) => void;
+  onChange: (value: string | number | string[]) => void;
   onSubmit: () => void;
   /** Chips/select: advance immediately on pick */
   onChipSelect?: (value: string) => void;

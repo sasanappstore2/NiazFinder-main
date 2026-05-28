@@ -1,8 +1,49 @@
 {
   "cityId": "bardsir",
   "cityName": "بردسیر",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:14.077Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T17:43:11.668Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سارم-آباد",
+      "name": "سارم آباد",
+      "nameEn": "سارم-آباد"
+    },
+    {
+      "id": "میدان-۱۷-شهریور",
+      "name": "میدان ۱۷ شهریور",
+      "nameEn": "میدان-۱۷-شهریور"
+    },
+    {
+      "id": "میدان-آزادی",
+      "name": "میدان آزادی",
+      "nameEn": "میدان-آزادی"
+    },
+    {
+      "id": "میدان-امام-حسین",
+      "name": "میدان امام حسین",
+      "nameEn": "میدان-امام-حسین"
+    },
+    {
+      "id": "میدان-امام-خمینی",
+      "name": "میدان امام خمینی",
+      "nameEn": "میدان-امام-خمینی"
+    },
+    {
+      "id": "میدان-امام-علی",
+      "name": "میدان امام علی",
+      "nameEn": "میدان-امام-علی"
+    },
+    {
+      "id": "janbaz-square",
+      "name": "Janbaz square",
+      "nameEn": "janbaz-square"
+    },
+    {
+      "id": "moallem-square",
+      "name": "Moallem square",
+      "nameEn": "moallem-square"
+    }
+  ]
 }

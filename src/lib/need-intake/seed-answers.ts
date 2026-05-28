@@ -43,9 +43,14 @@ export function seedAnswersFromParsed(
   if (e.area && parsed.city && !answers.location) {
     const area = String(e.area).trim();
     const city = parsed.city.trim();
-    answers.location = area === city ? city : `${area}، ${city}`;
+    if (area.length >= 2) {
+      answers.location = area === city ? city : `${area}، ${city}`;
+    } else if (city) {
+      answers.location = city;
+    }
   } else if (e.area && !answers.location) {
-    answers.location = String(e.area);
+    const area = String(e.area).trim();
+    if (area.length >= 2) answers.location = area;
   } else if (parsed.city && !answers.location) {
     answers.location = parsed.city;
   }

@@ -1,8 +1,14 @@
 {
   "cityId": "taybad",
   "cityName": "تایباد",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:23.872Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:03:06.545Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چهارراه-پست",
+      "name": "چهارراه پست",
+      "nameEn": "چهارراه-پست"
+    }
+  ]
 }

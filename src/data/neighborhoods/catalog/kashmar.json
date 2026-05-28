@@ -1,8 +1,19 @@
 {
   "cityId": "kashmar",
   "cityName": "کاشمر",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:18.653Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:01:48.319Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کلاته-احمدی",
+      "name": "کلاته احمدی",
+      "nameEn": "کلاته-احمدی"
+    },
+    {
+      "id": "میدان-ولیعصر",
+      "name": "میدان ولیعصر",
+      "nameEn": "میدان-ولیعصر"
+    }
+  ]
 }

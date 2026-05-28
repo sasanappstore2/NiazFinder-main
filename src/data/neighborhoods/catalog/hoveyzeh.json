@@ -1,8 +1,49 @@
 {
   "cityId": "hoveyzeh",
   "cityName": "هویزه",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:06.764Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T17:41:17.682Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "الحمزه",
+      "name": "الحمزه",
+      "nameEn": "الحمزه"
+    },
+    {
+      "id": "اهل-جرف",
+      "name": "اهل جرف",
+      "nameEn": "اهل-جرف"
+    },
+    {
+      "id": "حاجیه",
+      "name": "حاجیه",
+      "nameEn": "حاجیه"
+    },
+    {
+      "id": "ساکیه",
+      "name": "ساکیه",
+      "nameEn": "ساکیه"
+    },
+    {
+      "id": "کوت-جنوبی",
+      "name": "کوت جنوبی",
+      "nameEn": "کوت-جنوبی"
+    },
+    {
+      "id": "کوت-شمالی",
+      "name": "کوت شمالی",
+      "nameEn": "کوت-شمالی"
+    },
+    {
+      "id": "کوی-سلمان-فارسی",
+      "name": "کوی سلمان فارسی",
+      "nameEn": "کوی-سلمان-فارسی"
+    },
+    {
+      "id": "نیس",
+      "name": "نیس",
+      "nameEn": "نیس"
+    }
+  ]
 }

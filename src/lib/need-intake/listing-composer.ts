@@ -1,16 +1,15 @@
 import type { NeedDraft, ParsedIntent } from '@/contracts/need-intake';
-import {
-  JOB_ROLE_LABELS,
-  PRODUCT_DEAL_LABELS,
-  PROPERTY_DEAL_LABELS,
-  PROPERTY_KIND_LABELS,
-  VEHICLE_DEAL_LABELS,
-} from '@/config/need-schemas/labels';
+import { JOB_ROLE_LABELS, PROPERTY_KIND_LABELS } from '@/config/need-schemas/labels';
 import { getRootCategorySlug } from '@/config/need-schemas/resolve-schema';
 import { formatMoneyToman } from '@/lib/format/money';
 import { isConstructionPartnershipText } from '@/lib/need-intake/intent-parser';
-import { mapDraftToCreateRequest } from '@/lib/need-intake/map-to-request';
+import {
+  buildProductSearchTitle,
+  dealLabelForCategory,
+  joinListingTitleParts,
+} from '@/lib/need-intake/listing-title';
 import { buildRealEstateServiceTitle } from '@/lib/need-intake/property-title';
+import { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
 
 export interface ComposedListing {
   title: string;
@@ -19,11 +18,7 @@ export interface ComposedListing {
 
 function dealLabel(parsed: ParsedIntent, answers: Record<string, unknown>): string | undefined {
   const deal = String(answers.dealType ?? parsed.entities?.dealType ?? '');
-  return (
-    PROPERTY_DEAL_LABELS[deal] ??
-    VEHICLE_DEAL_LABELS[deal] ??
-    PRODUCT_DEAL_LABELS[deal]
-  );
+  return dealLabelForCategory(parsed.categorySlug, deal);
 }
 
 function buildDescriptionLines(
@@ -96,14 +91,13 @@ function buildDescriptionLines(
 
 /** Template-based title/description polish — replaces LLM enrich. */
 export function composeListingFromDraft(draft: NeedDraft): ComposedListing {
-  const mapped = mapDraftToCreateRequest(draft, 'preview', null);
-  const { parsedIntent: parsed, answers } = draft;
+  const { parsedIntent: parsed, answers } = draftToLegacyPayload(draft);
 
   const parsedTitle = parsed.title?.trim();
   let title =
     parsedTitle && parsedTitle.length >= 8 && parsedTitle !== 'ثبت نیاز'
       ? parsedTitle
-      : mapped.title;
+      : 'ثبت نیاز';
 
   if (
     parsed.intentType === 'real_estate_service' ||
@@ -117,19 +111,31 @@ export function composeListingFromDraft(draft: NeedDraft): ComposedListing {
   }
 
   if (title.length < 12 || title === 'ثبت نیاز') {
-    const parts: string[] = [];
-    const deal = dealLabel(parsed, answers);
-    if (deal) parts.push(deal);
     const root = getRootCategorySlug(parsed.categorySlug);
-    if (root === 'real-estate') {
-      const kind = answers.propertyKind ?? parsed.entities?.propertyKind;
-      if (kind) parts.push(PROPERTY_KIND_LABELS[String(kind)] ?? String(kind));
+    const deal = String(answers.dealType ?? parsed.entities?.dealType ?? '');
+    if (
+      parsed.intentType === 'product_search' ||
+      root === 'personal-items' ||
+      root === 'electronics'
+    ) {
+      title = buildProductSearchTitle(parsed.rawText ?? '', deal || 'buy', parsed.city);
+    } else {
+      const parts: string[] = [];
+      const dealFa = dealLabel(parsed, answers);
+      if (dealFa) parts.push(dealFa);
+      if (root === 'real-estate') {
+        const kind = answers.propertyKind ?? parsed.entities?.propertyKind;
+        if (kind) parts.push(PROPERTY_KIND_LABELS[String(kind)] ?? String(kind));
+      }
+      const serviceType = String(answers.serviceType ?? '').trim();
+      if (serviceType) parts.push(serviceType.slice(0, 40));
+      const productName = String(answers.productName ?? '').trim();
+      if (productName) parts.push(productName);
+      const loc = String(answers.location ?? parsed.city ?? '').trim();
+      if (loc) parts.push(loc);
+      const joined = joinListingTitleParts(parts);
+      if (joined.length >= 8) title = joined.slice(0, 120);
     }
-    if (answers.serviceType) parts.push(String(answers.serviceType).slice(0, 40));
-    if (answers.productName) parts.push(String(answers.productName));
-    const loc = String(answers.location ?? parsed.city ?? '').trim();
-    if (loc) parts.push(loc);
-    if (parts.length >= 2) title = parts.join(' — ').slice(0, 120);
   }
 
   const bodyLines = buildDescriptionLines(parsed, answers);

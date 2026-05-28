@@ -1,8 +1,14 @@
 {
   "cityId": "taleghan",
   "cityName": "طالقان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:52.330Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:23:26.502Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "محله-شهرک",
+      "name": "محله شهرک",
+      "nameEn": "محله-شهرک"
+    }
+  ]
 }

@@ -42,7 +42,7 @@ export function NeedListingPreview({
   };
 
   return (
-    <div className="space-y-5 rounded-2xl border bg-card p-5 shadow-sm">
+    <div className="intake-form-card">
       <div className="flex items-center gap-2">
         <Sparkles className="size-5 text-primary" />
         <h3 className="text-lg font-semibold">پیش‌نمایش آگهی</h3>

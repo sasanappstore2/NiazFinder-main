@@ -1,8 +1,8 @@
 {
   "cityId": "sarab",
   "cityName": "سراب",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:35.846Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:05:14.966Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

@@ -1,5 +1,6 @@
 import type { ParseVertical } from '@/lib/need-intake/parse-vertical';
 import { CANONICAL_CITIES } from '@/config/locations';
+import { hasBuyIntentPhrase } from '@/lib/need-intake/product-buy-hints';
 import { normalizeIntakeText } from '@/lib/need-intake/normalize-intake-text';
 
 function stripTrailingCityFromArea(area: string): string {
@@ -119,6 +120,15 @@ const PRODUCT_SIGNALS: { word: string; weight: number }[] = [
   { word: 'کت و شلوار', weight: 4 },
   { word: 'دوربین', weight: 4 },
   { word: 'تبلت', weight: 3 },
+  { word: 'ساعت', weight: 5 },
+  { word: 'رولکس', weight: 6 },
+  { word: 'rolex', weight: 6 },
+  { word: 'دیتونا', weight: 6 },
+  { word: 'daytona', weight: 6 },
+  { word: 'کارتیر', weight: 5 },
+  { word: 'cartier', weight: 5 },
+  { word: 'امگا', weight: 4 },
+  { word: 'omega', weight: 4 },
 ];
 
 /** Service signals require concrete service nouns, not generic desire words. */
@@ -281,8 +291,11 @@ export function classifyVertical(rawText: string): VerticalClassification {
       ? 0
       : Math.min(1, (topScore - secondScore) / Math.max(topScore, 1) + topScore / maxPossible / 2);
 
+  const fallbackVertical: ClassifierVertical =
+    hasBuyIntentPhrase(text) && scores.products >= scores.services ? 'products' : 'services';
+
   return {
-    vertical: topScore > 0 ? top : 'services',
+    vertical: topScore > 0 ? top : fallbackVertical,
     score: topScore,
     certainty: topScore > 0 ? certainty : 0,
     signals,
@@ -328,7 +341,8 @@ export function categorySlugForVertical(
         return 'apartment-rent';
       }
       if (t.includes('فروش') || t.includes('میفروش')) return 'apartment-sale';
-      return 'apartment-sale';
+      // Keep neutral when deal type is not explicit; dealType will be asked in intake.
+      return 'real-estate';
     }
     case 'vehicles':
       if (t.includes('موتور') || t.includes('موتورسیکلت')) return 'motorcycle';
@@ -336,6 +350,17 @@ export function categorySlugForVertical(
       if (t.includes('یدکی') || t.includes('قطعه')) return 'spare-parts';
       return 'car';
     case 'products':
+      if (
+        t.includes('ساعت') ||
+        t.includes('رولکس') ||
+        t.includes('rolex') ||
+        t.includes('دیتونا') ||
+        t.includes('daytona') ||
+        t.includes('کارتیر') ||
+        t.includes('cartier')
+      ) {
+        return 'jewelry-watches';
+      }
       if (
         t.includes('پلی استیشن') ||
         t.includes('پلیستیشن') ||

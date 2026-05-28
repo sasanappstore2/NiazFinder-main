@@ -9,10 +9,7 @@ import { ChatPanel } from '@/components/chat/ChatPanel';
 export default function MessagesRoute() {
   return (
     <AuthGuard>
-      <PageContainer
-        style={{ height: 'calc(100dvh - var(--mobile-nav-offset) - 5rem)' }}
-        className="lg:pb-12!"
-      >
+      <PageContainer className="h-messages-panel flex min-h-0 flex-col lg:pb-12!">
         <Breadcrumb />
         <Separator className="my-4" />
         <ChatPanel />

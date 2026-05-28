@@ -1,8 +1,24 @@
 {
   "cityId": "nehbandan",
   "cityName": "نهبندان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:34.521Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:46:30.554Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "پل-استقلال",
+      "name": "پل استقلال",
+      "nameEn": "پل-استقلال"
+    },
+    {
+      "id": "پل-بنگی-آباد",
+      "name": "پل بنگی آباد",
+      "nameEn": "پل-بنگی-آباد"
+    },
+    {
+      "id": "عاشورا-خانه",
+      "name": "عاشورا خانه",
+      "nameEn": "عاشورا-خانه"
+    }
+  ]
 }

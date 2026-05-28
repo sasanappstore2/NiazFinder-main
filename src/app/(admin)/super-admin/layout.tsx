@@ -19,10 +19,16 @@ export default function SuperAdminLayout({ children }: { children: ReactNode }) 
 
   if (!isReady) {
     return (
-      <div className="admin-nellavio admin-nellavio-dark flex min-h-screen min-h-dvh items-center justify-center" dir="rtl">
-        <div className="flex items-center gap-3 rounded-lg border border-(--color-mainBorder) bg-(--color-primaryBg) px-5 py-4 text-sm text-(--color-secondaryText)">
-          <div className="size-5 animate-spin rounded-full border-2 border-(--color-mainColor)/30 border-t-(--color-mainColor)" />
-          در حال آماده‌سازی پنل سوپرادمین...
+      <div className="admin-nellavio admin-nellavio-dark relative flex min-h-screen min-h-dvh items-center justify-center" dir="rtl">
+        <div className="admin-bg-mesh" aria-hidden />
+        <div className="admin-shell-layer flex flex-col items-center gap-4 px-6 text-center">
+          <div className="admin-sidebar-brand flex size-14 items-center justify-center rounded-2xl text-white shadow-lg">
+            <div className="admin-spinner size-6 animate-spin rounded-full border-2" />
+          </div>
+          <div className="admin-loading-card rounded-xl px-6 py-4">
+            <p className="text-sm font-medium text-(--color-primaryText)">مرکز فرماندهی نیازفایندر</p>
+            <p className="mt-1 text-xs text-(--color-secondaryText)">در حال آماده‌سازی پنل سوپرادمین...</p>
+          </div>
         </div>
       </div>
     );

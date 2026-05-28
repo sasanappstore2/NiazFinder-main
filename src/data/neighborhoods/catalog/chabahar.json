@@ -1,8 +1,29 @@
 {
   "cityId": "chabahar",
   "cityName": "چابهار",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:50.179Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:37:19.263Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سرخ-ریگ",
+      "name": "سرخ ریگ",
+      "nameEn": "سرخ-ریگ"
+    },
+    {
+      "id": "سیدآباد",
+      "name": "سیدآباد",
+      "nameEn": "سیدآباد"
+    },
+    {
+      "id": "مرادآباد",
+      "name": "مرادآباد",
+      "nameEn": "مرادآباد"
+    },
+    {
+      "id": "هوت-آباد",
+      "name": "هوت آباد",
+      "nameEn": "هوت-آباد"
+    }
+  ]
 }

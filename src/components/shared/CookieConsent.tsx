@@ -64,7 +64,7 @@ export function CookieConsent() {
       role="dialog"
       aria-label="تنظیمات کوکی"
       className={cn(
-        'fixed bottom-20 inset-x-3 z-(--z-overlay) mx-auto max-w-lg sm:bottom-6',
+        'cookie-consent-anchor fixed inset-x-3 z-(--z-overlay) mx-auto max-w-lg',
         'transition-all duration-150 ease-in-out',
         isVisible
           ? 'translate-y-0 opacity-100'

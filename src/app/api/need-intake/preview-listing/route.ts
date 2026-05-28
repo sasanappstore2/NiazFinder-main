@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       ? (body.extras as string[]).filter((e) => typeof e === 'string' && e.trim())
       : undefined;
 
-    if (!draft?.parsedIntent) {
+    if (!draft?.entities || !draft?.needType) {
       return NextResponse.json({ error: 'پیش‌نویس نامعتبر' }, { status: 400 });
     }
 

@@ -1,18 +1,12 @@
 /**
- * ─────────────────────────────────────────────────────────────────────────────
- * MIGRATION NOTE
- * ─────────────────────────────────────────────────────────────────────────────
- * The local `apiFetch` helper below targets the old Next.js API routes.
- * New code should prefer the NestJS‑backend bridge at `@/lib/api-client.ts`
- * which routes all requests through Caddy → port 4000.
- *
- * Gradually replace each `apiFetch('/api/…')` call with the corresponding
- * function from api‑client (e.g. `authApi.login`, `requestsApi.list`, etc.)
- * while keeping the same local‑state mutations in this store.
- * ─────────────────────────────────────────────────────────────────────────────
+ * App store network policy:
+ * - All app-facing calls go through Next.js API routes (`/api/...`)
+ * - Use shared `apiFetch` from `@/lib/api-client` for auth/error handling
+ * - Do not call backend port 4000 directly from this store
  */
 
 import { create } from 'zustand';
+import { apiFetch } from '@/lib/api-client';
 import type {
   User,
   Notification,
@@ -26,22 +20,6 @@ import type {
 } from './types';
 import { CHAT_CONTACT_SHARE_PREFIX } from '@/lib/chat/contact-share';
 import { chatMessageListPreview } from '@/lib/chat/contact-share';
-
-// ============ API Helper (legacy — see migration note above) ============
-
-async function apiFetch<T = any>(endpoint: string, options?: RequestInit): Promise<T> {
-  const token = useAppStore.getState().authToken;
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-
-  const res = await fetch(endpoint, { ...options, headers: { ...headers, ...(options?.headers as Record<string, string> ?? {}) } });
-
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({}));
-    throw new Error(error.message || error.error || `API error: ${res.status}`);
-  }
-  return res.json();
-}
 
 // ============ Store Interface ============
 

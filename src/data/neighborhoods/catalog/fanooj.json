@@ -1,8 +1,8 @@
 {
   "cityId": "fanooj",
   "cityName": "فنوج",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:59.060Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:39:52.201Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

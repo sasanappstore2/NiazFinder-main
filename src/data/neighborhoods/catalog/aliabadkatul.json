@@ -1,8 +1,34 @@
 {
   "cityId": "aliabadkatul",
   "cityName": "علی‌آباد کتول",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:19.233Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:43:55.731Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جنگل-کبودوال",
+      "name": "جنگل کبودوال",
+      "nameEn": "جنگل-کبودوال"
+    },
+    {
+      "id": "خارکلا",
+      "name": "خارکلا",
+      "nameEn": "خارکلا"
+    },
+    {
+      "id": "شهرک-ایثارگران",
+      "name": "شهرک ایثارگران",
+      "nameEn": "شهرک-ایثارگران"
+    },
+    {
+      "id": "شهرک-فرهنگیان",
+      "name": "شهرک فرهنگیان",
+      "nameEn": "شهرک-فرهنگیان"
+    },
+    {
+      "id": "شهرک-منابع-طبیعی",
+      "name": "شهرک منابع طبیعی",
+      "nameEn": "شهرک-منابع-طبیعی"
+    }
+  ]
 }

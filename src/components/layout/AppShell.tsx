@@ -53,17 +53,17 @@ export function AppShell({ children, minimalChrome = false }: AppShellProps) {
       <ErrorBoundary>
         <div
           className={cn(
-            'flex flex-col bg-background text-foreground',
+            'flex min-w-0 flex-col bg-background text-foreground',
             effectiveMinimal ? 'h-dvh max-h-dvh overflow-hidden' : 'min-h-screen'
           )}
         >
           <Header compact={effectiveMinimal} />
           <main
             className={cn(
-              'flex min-h-0 flex-col',
+              'flex min-h-0 min-w-0 flex-col',
               effectiveMinimal ? 'flex-1 overflow-hidden' : 'flex-1',
-              !effectiveMinimal && !isHome && 'pt-4 sm:pt-6',
-              !hideMobileNav && 'has-mobile-nav lg:pb-0'
+              !effectiveMinimal && !isHome && 'pt-3 sm:pt-5 md:pt-6',
+              !hideMobileNav && 'has-mobile-nav'
             )}
             dir="rtl"
             id="main-content"

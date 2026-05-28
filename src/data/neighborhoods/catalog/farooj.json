@@ -1,8 +1,29 @@
 {
   "cityId": "farooj",
   "cityName": "فاروج",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:30.120Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:45:37.958Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فاروج-پایتخت-آجیل",
+      "name": "فاروج پایتخت آجیل",
+      "nameEn": "فاروج-پایتخت-آجیل"
+    },
+    {
+      "id": "محمد-آباد",
+      "name": "محمد آباد",
+      "nameEn": "محمد-آباد"
+    },
+    {
+      "id": "میدان-ورزش",
+      "name": "میدان ورزش",
+      "nameEn": "میدان-ورزش"
+    },
+    {
+      "id": "هرده",
+      "name": "هرده",
+      "nameEn": "هرده"
+    }
+  ]
 }

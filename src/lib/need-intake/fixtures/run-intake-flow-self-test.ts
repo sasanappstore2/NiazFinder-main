@@ -1,4 +1,5 @@
 import type { NeedDraft } from '@/contracts/need-intake';
+import { legacyNeedDraftFromParsed } from '@/intake/aggregate/needDraftAggregate';
 import { extractSlotsFromRules } from '@/lib/need-intake/extract-slots-rules';
 import { buildReadiness, getNextStep } from '@/lib/need-intake/internal-orchestrator';
 import { parseFromText } from '@/lib/need-intake/internal-orchestrator.server';
@@ -37,11 +38,7 @@ function runFixture(f: FlowFixture): string | null {
     ...(slots as NeedDraft['answers']),
   };
 
-  const draft: NeedDraft = {
-    parsedIntent: parsed,
-    answers: mergedAnswers,
-    turns: [],
-  };
+  const draft = legacyNeedDraftFromParsed(parsed, mergedAnswers, []);
 
   const step = getNextStep(draft);
   if (!step.progress || step.progress.total < 1) {

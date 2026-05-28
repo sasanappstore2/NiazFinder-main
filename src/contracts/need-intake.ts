@@ -2,6 +2,20 @@
  * Need intake — conversational posting contracts.
  */
 
+import type {
+  CompletionState,
+  MissingFieldItem,
+  WizardQuestion,
+} from '@/intake/types';
+
+export type { CompletionState, MissingFieldItem, WizardQuestion };
+
+export interface NeedDraftSection {
+  key: string;
+  label: string;
+  fields: string[];
+}
+
 export type IntentType =
   | 'service_request'
   | 'booking'
@@ -86,11 +100,9 @@ export interface ParsedIntent {
 }
 
 export type IntakeStep =
-  | 'idle'
-  | 'parsing'
-  | 'clarifying'
-  | 'questioning'
-  | 'chatting'
+  | 'need'
+  | 'details'
+  | 'location'
   | 'preview'
   | 'summary'
   | 'publishing'
@@ -110,11 +122,47 @@ export interface ConversationTurn {
 }
 
 export interface NeedDraft {
+  /** Canonical intake aggregate — single source of truth for wizard + publish. */
+  id?: string;
+  needType: string;
+  schemaVersion: number;
+  vertical: string;
+  category: string;
+  entities: Record<string, unknown>;
+  completionScore: number;
+  matchabilityScore: number;
+  completionState: CompletionState;
+  sections: NeedDraftSection[];
+  missingFields: MissingFieldItem[];
+  nextQuestion?: WizardQuestion | null;
+  sourceText: string;
+  updatedAt: string;
+
+  /**
+   * @deprecated Derived read model — generated from `entities` via projection.
+   * Do not write directly. Use `patchNeedDraftEntities()` instead.
+   */
   parsedIntent: ParsedIntent;
+  /**
+   * @deprecated Derived read model — generated from `entities` via projection.
+   * Do not write directly. Use `patchNeedDraftEntities()` instead.
+   */
   answers: Record<string, string | number | boolean | string[]>;
   turns: ConversationTurn[];
   leadPhone?: string;
   listingPreview?: ListingPreview;
+  /** Analysis trace for training capture — set during /api/intake/analyze. */
+  intakeTrace?: import('@/intake/training/trainingExample').IntakeAnalysisTrace;
+}
+
+export interface PublishValidationError {
+  field: string;
+  message: string;
+}
+
+export interface PublishNeedValidationResponse {
+  success: false;
+  errors: PublishValidationError[];
 }
 
 export interface ChatTurnResponse {

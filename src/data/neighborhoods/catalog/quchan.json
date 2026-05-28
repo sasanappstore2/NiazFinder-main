@@ -1,8 +1,29 @@
 {
   "cityId": "quchan",
   "cityName": "قوچان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:20.112Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:02:10.702Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوی-آستانه",
+      "name": "کوی آستانه",
+      "nameEn": "کوی-آستانه"
+    },
+    {
+      "id": "کوی-حافظیه-فرهنگیان۴",
+      "name": "کوی حافظیه (فرهنگیان۴)",
+      "nameEn": "کوی-حافظیه-فرهنگیان۴"
+    },
+    {
+      "id": "کوی-شهید-مخبری",
+      "name": "کوی شهید مخبری",
+      "nameEn": "کوی-شهید-مخبری"
+    },
+    {
+      "id": "میدان-الغدیر",
+      "name": "میدان الغدیر",
+      "nameEn": "میدان-الغدیر"
+    }
+  ]
 }

@@ -1,8 +1,8 @@
 {
   "cityId": "shahindej",
   "cityName": "شاهین‌دژ",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:51.284Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:09:01.696Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

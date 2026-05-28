@@ -1,8 +1,19 @@
 {
   "cityId": "manujan",
   "cityName": "منوجان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:16.285Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:14:29.797Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چشمه",
+      "name": "چشمه",
+      "nameEn": "چشمه"
+    },
+    {
+      "id": "ماه-کنگان",
+      "name": "ماه کنگان",
+      "nameEn": "ماه-کنگان"
+    }
+  ]
 }

@@ -1,135 +1,369 @@
-/* ─── Nellavio Admin — Dark theme (default) ─── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   NiazFinder Super Admin — هم‌راستا با تم سبز برند سایت (globals.css)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Dark (default) ─── */
 .admin-nellavio-dark {
-  --color-primaryText: rgb(231, 233, 236);
-  --color-secondaryText: rgb(201, 203, 207);
-  --color-coloredText: rgb(61, 185, 133);
-  --color-coloredTextHover: rgb(105, 217, 170);
-  --color-navItemText: rgb(224, 227, 230, 0.8);
-  --color-navItemTextActive: rgb(255, 255, 255);
-  --color-navSectionTitle: rgb(225, 227, 230);
-  --color-tableCellText: rgb(190, 195, 200);
-  --color-tableRowBgHover: rgb(255, 255, 255, 0.03);
-  --color-tableHeaderBg: rgb(255, 255, 255, 0.03);
-  --color-primaryBg: rgb(28, 32, 37);
-  --color-secondaryBg: rgb(22, 26, 31);
-  --color-mainColor: rgb(61, 185, 133);
-  --color-navigationBg: rgb(28, 32, 37);
-  --color-navItemBgHover: rgb(255, 255, 255, 0.03);
-  --color-navItemActiveBg: rgb(255, 255, 255, 0.07);
-  --color-navItemIconActive: rgb(61, 185, 133);
-  --color-inputBg: rgb(255, 255, 255, 0.03);
-  --color-inputBorder: rgba(255, 255, 255, 0.11);
-  --color-containedButtonBg: rgb(54, 128, 96);
-  --color-containedButtonBgHover: #4a9373;
-  --color-cardBorder: rgb(255, 255, 255, 0.04);
-  --color-mainBorder: rgb(255, 255, 255, 0.05);
-  --color-logoBg: rgb(53, 136, 101);
-  --color-navbarButtonBgHover: rgb(255, 255, 255, 0.05);
-  --color-sideMenuButtonBgHover: rgb(255, 255, 255, 0.06);
-  --color-overlayBg: rgb(0, 0, 0, 0.55);
-  --color-shadow: 0 8px 32px rgb(0, 0, 0, 0.35);
+  --color-primaryText: #e8f0ec;
+  --color-secondaryText: #8a9a92;
+  --color-tertiaryText: #5c6b64;
+  --color-coloredText: #6ee7b7;
+  --color-coloredTextHover: #34d399;
+  --color-navItemText: #9aaba3;
+  --color-navItemTextActive: #f0fdf8;
+  --color-navSectionTitle: #5c6b64;
+  --color-tableCellText: #a3b5ac;
+  --color-tableRowBgHover: rgba(52, 211, 153, 0.04);
+  --color-tableHeaderBg: rgba(255, 255, 255, 0.04);
+  --color-primaryBg: #161c19;
+  --color-secondaryBg: #0c100e;
+  --color-elevatedBg: #1a221e;
+  --color-mainColor: #34d399;
+  --color-mainColorMuted: rgba(52, 211, 153, 0.14);
+  --color-accentGlow: rgba(16, 185, 129, 0.2);
+  --color-accentGlowSecondary: rgba(52, 211, 153, 0.07);
+  --color-navigationBg: #111614;
+  --color-navItemBgHover: rgba(255, 255, 255, 0.04);
+  --color-navItemActiveBg: rgba(52, 211, 153, 0.12);
+  --color-navItemIconActive: #34d399;
+  --color-inputBg: rgba(255, 255, 255, 0.04);
+  --color-inputBorder: rgba(255, 255, 255, 0.08);
+  --color-containedButtonBg: #10b981;
+  --color-containedButtonBgHover: #34d399;
+  --color-cardBorder: rgba(255, 255, 255, 0.06);
+  --color-mainBorder: rgba(255, 255, 255, 0.07);
+  --color-logoBg: linear-gradient(135deg, #047857 0%, #10b981 45%, #34d399 100%);
+  --color-logoBgSolid: #10b981;
+  --color-navbarButtonBgHover: rgba(255, 255, 255, 0.05);
+  --color-sideMenuButtonBgHover: rgba(255, 255, 255, 0.06);
+  --color-overlayBg: rgba(0, 0, 0, 0.65);
+  --color-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --color-shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.45);
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
 
-  --background: oklch(0.2 0.008 250);
-  --foreground: oklch(0.93 0.005 250);
-  --card: oklch(0.24 0.01 250);
-  --card-foreground: oklch(0.93 0.005 250);
-  --popover: oklch(0.26 0.01 250);
-  --popover-foreground: oklch(0.93 0.005 250);
-  --primary: oklch(0.62 0.14 160);
-  --primary-foreground: oklch(0.99 0.002 120);
-  --secondary: oklch(0.28 0.01 250);
-  --secondary-foreground: oklch(0.88 0.005 250);
-  --muted: oklch(0.28 0.01 250);
-  --muted-foreground: oklch(0.68 0.01 250);
-  --accent: oklch(0.3 0.012 250);
-  --accent-foreground: oklch(0.93 0.005 250);
-  --border: oklch(0.35 0.01 250);
-  --input: oklch(0.35 0.01 250);
-  --ring: oklch(0.62 0.14 160);
+  --background: oklch(0.13 0.005 160);
+  --foreground: oklch(0.96 0.005 155);
+  --card: oklch(0.18 0.007 160);
+  --card-foreground: oklch(0.96 0.005 155);
+  --popover: oklch(0.18 0.007 160);
+  --popover-foreground: oklch(0.96 0.005 155);
+  --primary: oklch(0.65 0.15 165);
+  --primary-foreground: oklch(0.13 0.005 160);
+  --secondary: oklch(0.22 0.01 160);
+  --secondary-foreground: oklch(0.96 0.005 155);
+  --muted: oklch(0.22 0.01 160);
+  --muted-foreground: oklch(0.65 0.02 160);
+  --accent: oklch(0.24 0.03 165);
+  --accent-foreground: oklch(0.96 0.005 155);
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.65 0.15 165);
 }
 
-/* ─── Nellavio Admin — Light theme ─── */
+/* ─── Light ─── */
 .admin-nellavio-light {
-  --color-primaryText: rgb(15, 23, 42);
-  --color-secondaryText: rgb(71, 85, 105);
-  --color-coloredText: rgb(5, 150, 105);
-  --color-coloredTextHover: rgb(4, 120, 87);
-  --color-navItemText: rgb(51, 65, 85);
-  --color-navItemTextActive: rgb(5, 150, 105);
-  --color-navSectionTitle: rgb(100, 116, 139);
-  --color-tableCellText: rgb(51, 65, 85);
-  --color-tableRowBgHover: rgb(5, 150, 105, 0.06);
-  --color-tableHeaderBg: rgb(241, 245, 249);
-  --color-primaryBg: rgb(255, 255, 255);
-  --color-secondaryBg: rgb(248, 250, 252);
-  --color-mainColor: rgb(5, 150, 105);
-  --color-navigationBg: rgb(255, 255, 255);
-  --color-navItemBgHover: rgb(5, 150, 105, 0.08);
-  --color-navItemActiveBg: rgb(5, 150, 105, 0.12);
-  --color-navItemIconActive: rgb(5, 150, 105);
-  --color-inputBg: rgb(255, 255, 255);
-  --color-inputBorder: rgb(226, 232, 240);
-  --color-containedButtonBg: rgb(5, 150, 105);
-  --color-containedButtonBgHover: rgb(4, 120, 87);
-  --color-cardBorder: rgb(226, 232, 240);
-  --color-mainBorder: rgb(226, 232, 240);
-  --color-logoBg: rgb(5, 150, 105);
-  --color-navbarButtonBgHover: rgb(241, 245, 249);
-  --color-sideMenuButtonBgHover: rgb(241, 245, 249);
-  --color-overlayBg: rgb(15, 23, 42, 0.4);
-  --color-shadow: 0 8px 32px rgb(15, 23, 42, 0.12);
+  --color-primaryText: #0f172a;
+  --color-secondaryText: #64748b;
+  --color-tertiaryText: #94a3b8;
+  --color-coloredText: #059669;
+  --color-coloredTextHover: #047857;
+  --color-navItemText: #475569;
+  --color-navItemTextActive: #0f172a;
+  --color-navSectionTitle: #94a3b8;
+  --color-tableCellText: #475569;
+  --color-tableRowBgHover: rgba(16, 185, 129, 0.05);
+  --color-tableHeaderBg: #f0fdf9;
+  --color-primaryBg: #ffffff;
+  --color-secondaryBg: #f0fdf9;
+  --color-elevatedBg: #ffffff;
+  --color-mainColor: #10b981;
+  --color-mainColorMuted: rgba(16, 185, 129, 0.12);
+  --color-accentGlow: rgba(16, 185, 129, 0.14);
+  --color-accentGlowSecondary: rgba(52, 211, 153, 0.08);
+  --color-navigationBg: #ffffff;
+  --color-navItemBgHover: rgba(16, 185, 129, 0.06);
+  --color-navItemActiveBg: rgba(16, 185, 129, 0.1);
+  --color-navItemIconActive: #059669;
+  --color-inputBg: #ffffff;
+  --color-inputBorder: #d1fae5;
+  --color-containedButtonBg: #059669;
+  --color-containedButtonBgHover: #10b981;
+  --color-cardBorder: #d1fae5;
+  --color-mainBorder: #e2e8f0;
+  --color-logoBg: linear-gradient(135deg, #047857 0%, #10b981 50%, #34d399 100%);
+  --color-logoBgSolid: #10b981;
+  --color-navbarButtonBgHover: #f0fdf9;
+  --color-sideMenuButtonBgHover: #f0fdf9;
+  --color-overlayBg: rgba(15, 23, 42, 0.45);
+  --color-shadow: 0 4px 24px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(16, 185, 129, 0.06);
+  --color-shadow-lg: 0 12px 40px rgba(15, 23, 42, 0.1);
+  --color-success: #059669;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
 
-  --background: oklch(0.985 0.002 250);
-  --foreground: oklch(0.2 0.02 250);
+  --background: oklch(0.995 0.001 120);
+  --foreground: oklch(0.145 0.005 160);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.02 250);
+  --card-foreground: oklch(0.145 0.005 160);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.02 250);
-  --primary: oklch(0.55 0.14 160);
+  --popover-foreground: oklch(0.145 0.005 160);
+  --primary: oklch(0.51 0.12 165);
   --primary-foreground: oklch(0.99 0.002 120);
-  --secondary: oklch(0.96 0.005 250);
-  --secondary-foreground: oklch(0.3 0.02 250);
-  --muted: oklch(0.96 0.005 250);
-  --muted-foreground: oklch(0.5 0.02 250);
-  --accent: oklch(0.96 0.01 160);
-  --accent-foreground: oklch(0.25 0.05 160);
-  --border: oklch(0.9 0.005 250);
-  --input: oklch(0.9 0.005 250);
-  --ring: oklch(0.55 0.14 160);
+  --secondary: oklch(0.965 0.005 155);
+  --secondary-foreground: oklch(0.25 0.02 160);
+  --muted: oklch(0.965 0.005 155);
+  --muted-foreground: oklch(0.5 0.02 160);
+  --accent: oklch(0.965 0.02 165);
+  --accent-foreground: oklch(0.25 0.02 160);
+  --border: oklch(0.925 0.005 155);
+  --input: oklch(0.925 0.005 155);
+  --ring: oklch(0.51 0.12 165);
 }
 
+/* ─── Base shell ─── */
 .admin-nellavio {
   background-color: var(--color-secondaryBg);
   color: var(--color-primaryText);
   min-height: 100vh;
   min-height: 100dvh;
+  font-feature-settings: 'ss01', 'cv11';
 }
 
+.admin-nellavio .admin-bg-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 100% 0%, var(--color-accentGlow), transparent 55%),
+    radial-gradient(ellipse 50% 45% at 0% 100%, var(--color-accentGlowSecondary), transparent 50%);
+  opacity: 0.85;
+}
+
+.admin-nellavio .admin-bg-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(var(--color-mainBorder) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-mainBorder) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 20%, transparent 75%);
+}
+
+.admin-nellavio .admin-shell-layer {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Cards & surfaces ─── */
 .admin-nellavio .admin-card {
   background-color: var(--color-primaryBg);
   border: 1px solid var(--color-cardBorder);
-  border-radius: 0.75rem;
+  border-radius: var(--admin-radius-lg);
+  box-shadow: var(--color-shadow);
 }
 
+.admin-nellavio .admin-paper {
+  border: 1px solid var(--color-cardBorder);
+  border-radius: var(--admin-radius-xl);
+  background: var(--color-primaryBg);
+  box-shadow: var(--color-shadow);
+}
+
+.admin-nellavio .admin-paper-elevated {
+  border: 1px solid var(--color-cardBorder);
+  border-radius: var(--admin-radius-xl);
+  background: var(--color-elevatedBg);
+  box-shadow: var(--color-shadow-lg);
+}
+
+/* ─── Navigation ─── */
 .admin-nellavio .admin-nav-item-active {
-  background-color: var(--color-navItemActiveBg);
+  background: var(--color-navItemActiveBg);
   color: var(--color-navItemTextActive);
+  box-shadow: inset 0 0 0 1px var(--color-mainColorMuted);
 }
 
 .admin-nellavio .admin-nav-item-active svg {
   color: var(--color-navItemIconActive);
 }
 
+.admin-nellavio .admin-nav-rail {
+  position: absolute;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  right: 0;
+  width: 3px;
+  border-radius: 9999px;
+  background: var(--color-mainColor);
+  box-shadow: 0 0 12px var(--color-mainColor);
+}
+
+.admin-nellavio .admin-nav-link {
+  position: relative;
+}
+
+.admin-nellavio .admin-sidebar-brand {
+  background: var(--color-logoBg);
+}
+
+.admin-nellavio .admin-sidebar-brand--solid {
+  background-color: var(--color-logoBgSolid);
+}
+
+.admin-nellavio .admin-env-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--color-mainColorMuted);
+  color: var(--color-coloredText);
+  border: 1px solid var(--color-mainColorMuted);
+}
+
+.admin-nellavio .admin-env-pill::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-success);
+  box-shadow: 0 0 8px var(--color-success);
+}
+
+/* ─── Buttons & inputs ─── */
 .admin-nellavio .admin-btn-primary {
   background-color: var(--color-containedButtonBg);
   color: white;
+  font-weight: 600;
 }
 
 .admin-nellavio .admin-btn-primary:hover {
   background-color: var(--color-containedButtonBgHover);
 }
 
-/* Shadcn zone inside admin inherits admin theme */
+.admin-nellavio .admin-input {
+  background-color: var(--color-inputBg);
+  border-color: var(--color-inputBorder);
+  color: var(--color-primaryText);
+}
+
+.admin-nellavio .admin-input::placeholder {
+  color: var(--color-tertiaryText);
+}
+
+.admin-nellavio .admin-search-input {
+  background: var(--color-inputBg);
+  border: 1px solid var(--color-inputBorder);
+  border-radius: var(--admin-radius-md);
+  color: var(--color-primaryText);
+}
+
+.admin-nellavio .admin-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--admin-radius-sm);
+  color: var(--color-secondaryText);
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.admin-nellavio .admin-icon-btn:hover {
+  background-color: var(--color-navbarButtonBgHover);
+  color: var(--color-primaryText);
+}
+
+.admin-nellavio .admin-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.375rem 0.625rem 0.375rem 0.5rem;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.admin-nellavio .admin-user-chip:hover {
+  background: var(--color-navbarButtonBgHover);
+  border-color: var(--color-mainBorder);
+}
+
+/* ─── KPI & charts ─── */
+.admin-nellavio .admin-kpi-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+}
+
+.admin-nellavio .admin-kpi-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--color-mainColorMuted) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.admin-nellavio .admin-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--color-shadow-lg);
+  border-color: var(--color-mainColorMuted);
+}
+
+.admin-nellavio .admin-kpi-card:hover::before {
+  opacity: 1;
+}
+
+.admin-nellavio .admin-chart-card {
+  border: 1px solid var(--color-cardBorder);
+  border-radius: var(--admin-radius-xl);
+  background: var(--color-primaryBg);
+  box-shadow: var(--color-shadow);
+}
+
+/* ─── Page chrome ─── */
+.admin-nellavio .admin-page-shell {
+  animation: admin-fade-in 0.35s ease-out;
+}
+
+@keyframes admin-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.admin-nellavio .admin-breadcrumb a {
+  transition: color 0.15s;
+}
+
+.admin-nellavio .admin-breadcrumb a:hover {
+  color: var(--color-coloredText);
+}
+
+.admin-nellavio .admin-header-accent {
+  height: 3px;
+  background: var(--color-logoBg);
+  border-radius: 0 0 4px 4px;
+}
+
+/* Shadcn zone inside admin */
 .admin-nellavio .admin-content-zone {
   --background: var(--background);
   --foreground: var(--foreground);
@@ -150,81 +384,616 @@
   --ring: var(--ring);
 }
 
-.admin-nellavio .admin-input {
-  background-color: var(--color-inputBg);
-  border-color: var(--color-inputBorder);
-  color: var(--color-primaryText);
-}
-
-.admin-nellavio .admin-input::placeholder {
-  color: var(--color-secondaryText);
-}
-
-.admin-nellavio .admin-icon-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 0.5rem;
-  transition: background-color 0.15s;
-}
-
-.admin-nellavio .admin-icon-btn:hover {
-  background-color: var(--color-navbarButtonBgHover);
-}
-
 .admin-nellavio .admin-mobile-drawer {
+  box-shadow: var(--color-shadow-lg);
+}
+
+.admin-nellavio .admin-loading-card {
+  border: 1px solid var(--color-cardBorder);
+  background: var(--color-primaryBg);
   box-shadow: var(--color-shadow);
 }
 
-.admin-nellavio .admin-paper {
-  border: 1px solid var(--color-mainBorder);
+.admin-nellavio .admin-spinner {
+  border-color: var(--color-mainColorMuted);
+  border-top-color: var(--color-mainColor);
+}
+
+/* ─── Panels, forms, stat tiles (locations, categories, …) ─── */
+.admin-nellavio .admin-panel {
+  position: relative;
+  border: 1px solid var(--color-cardBorder);
+  border-radius: var(--admin-radius-xl);
+  background: var(--color-primaryBg);
+  box-shadow: var(--color-shadow);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.admin-nellavio .admin-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: 3px;
+  background: var(--color-logoBg);
+  border-radius: var(--admin-radius-xl) var(--admin-radius-xl) 0 0;
+  opacity: 0.9;
+}
+
+.admin-nellavio .admin-panel:hover {
+  box-shadow: var(--color-shadow-lg);
+  border-color: var(--color-mainColorMuted);
+}
+
+.admin-nellavio .admin-panel--form {
+  background: linear-gradient(180deg, var(--color-elevatedBg) 0%, var(--color-primaryBg) 12rem);
+}
+
+.admin-nellavio .admin-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.125rem 1.25rem;
+  border-bottom: 1px solid var(--color-mainBorder);
+  background: color-mix(in oklch, var(--color-primaryBg) 88%, var(--color-mainColorMuted));
+}
+
+.admin-nellavio .admin-panel__icon {
+  display: flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--admin-radius-md);
+  background: var(--color-logoBg);
+  color: white;
+  box-shadow: 0 4px 14px var(--color-mainColorMuted);
+}
+
+.admin-nellavio .admin-panel__title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-primaryText);
+  line-height: 1.35;
+}
+
+.admin-nellavio .admin-panel__desc {
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-secondaryText);
+}
+
+.admin-nellavio .admin-panel__body {
+  padding: 1.25rem;
+}
+
+.admin-nellavio .admin-panel__actions {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+}
+
+.admin-nellavio .admin-panel__actions > .flex-1 {
+  flex: 1;
+}
+
+/* Form fields inside panels */
+.admin-nellavio .admin-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.admin-nellavio .admin-form-field__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-secondaryText);
+}
+
+.admin-nellavio .admin-form-field__hint {
+  font-size: 0.6875rem;
+  color: var(--color-tertiaryText);
+}
+
+.admin-nellavio .admin-form-field__control input,
+.admin-nellavio .admin-form-field__control textarea,
+.admin-nellavio .admin-form-field__control [data-slot='select-trigger'] {
+  border-radius: var(--admin-radius-md);
+  border-color: var(--color-inputBorder);
+  background: var(--color-inputBg);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.admin-nellavio .admin-form-field__control input:focus-visible,
+.admin-nellavio .admin-form-field__control textarea:focus-visible,
+.admin-nellavio .admin-form-field__control [data-slot='select-trigger']:focus-visible {
+  border-color: var(--color-mainColor);
+  box-shadow: 0 0 0 3px var(--color-mainColorMuted);
+}
+
+.admin-nellavio .admin-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid var(--color-cardBorder);
+  background: color-mix(in oklch, var(--color-inputBg) 80%, transparent);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.admin-nellavio .admin-toggle-row:hover {
+  border-color: var(--color-mainColorMuted);
+  background: var(--color-navItemActiveBg);
+}
+
+.admin-nellavio .admin-toggle-row__label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-primaryText);
+}
+
+/* Stat tiles (استان / شهر / محله) */
+.admin-nellavio .admin-stat-tile {
+  position: relative;
+  overflow: hidden;
+  padding: 1rem;
+  border-radius: var(--admin-radius-lg);
+  border: 1px solid var(--color-cardBorder);
+  background: var(--color-primaryBg);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-nellavio .admin-stat-tile::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  height: 2px;
+  opacity: 0.6;
+}
+
+.admin-nellavio .admin-stat-tile--indigo::after,
+.admin-nellavio .admin-stat-tile--brand::after { background: var(--color-mainColor); }
+.admin-nellavio .admin-stat-tile--sky::after { background: #38bdf8; }
+.admin-nellavio .admin-stat-tile--amber::after { background: #f59e0b; }
+.admin-nellavio .admin-stat-tile--violet::after { background: #a78bfa; }
+.admin-nellavio .admin-stat-tile--emerald::after { background: #34d399; }
+
+.admin-nellavio .admin-stat-tile:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--color-shadow);
+}
+
+.admin-nellavio .admin-stat-tile__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.admin-nellavio .admin-stat-tile__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-secondaryText);
+}
+
+.admin-nellavio .admin-stat-tile__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--admin-radius-sm);
+  background: var(--color-mainColorMuted);
+  color: var(--color-coloredText);
+}
+
+.admin-nellavio .admin-stat-tile--sky .admin-stat-tile__icon-wrap {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+}
+
+.admin-nellavio .admin-stat-tile--amber .admin-stat-tile__icon-wrap {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.admin-nellavio .admin-stat-tile--violet .admin-stat-tile__icon-wrap {
+  background: rgba(167, 139, 250, 0.12);
+  color: #a78bfa;
+}
+
+.admin-nellavio .admin-stat-tile__value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primaryText);
+}
+
+/* List cards (province / city rows) */
+.admin-nellavio .admin-list-card {
+  border-radius: var(--admin-radius-lg);
+  border: 1px solid var(--color-cardBorder);
+  background: var(--color-primaryBg);
+  padding: 1rem 1.125rem;
+  box-shadow: var(--color-shadow);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.admin-nellavio .admin-list-card:hover {
+  border-color: var(--color-mainColorMuted);
+  box-shadow: var(--color-shadow);
+}
+
+.admin-nellavio .admin-list-card--nested {
+  padding: 0.75rem 1rem;
+  background: var(--color-inputBg);
+}
+
+/* Progress bars in panels */
+.admin-nellavio .admin-progress-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.admin-nellavio .admin-progress-row__track {
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: var(--color-navItemActiveBg);
+}
+
+.admin-nellavio .admin-progress-row__fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.4s ease;
+}
+
+/* Location hierarchy — compact cities + sheet for neighborhoods */
+.admin-nellavio .admin-province-head {
+  cursor: pointer;
+}
+
+.admin-nellavio .admin-city-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid var(--color-cardBorder);
+  background: var(--color-primaryBg);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.admin-nellavio .admin-city-row:hover {
+  border-color: var(--color-mainColorMuted);
+  box-shadow: var(--color-shadow);
+}
+
+.admin-nellavio .admin-city-row__main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-nellavio .admin-city-row__badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 3.5rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: var(--admin-radius-sm);
+  background: var(--color-mainColorMuted);
+  text-align: center;
+}
+
+.admin-nellavio .admin-city-row__count {
+  font-size: 1.125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  color: var(--color-coloredText);
+}
+
+.admin-nellavio .admin-city-row__count-label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--color-secondaryText);
+}
+
+.admin-nellavio .admin-city-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+/* Full-page neighborhood manager */
+.admin-nellavio .admin-neighborhoods-page__hero {
+  padding: 0.25rem 0 0;
+}
+
+.admin-nellavio .admin-neighborhoods-page__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--admin-radius-xl);
+  background: var(--color-primaryBg);
+  box-shadow: var(--color-shadow);
+  border: 1px solid var(--color-cardBorder);
+}
+
+.admin-nellavio .admin-neighborhoods-page__table {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--admin-radius-xl);
+  background: var(--color-primaryBg);
+  box-shadow: var(--color-shadow);
+  border: 1px solid var(--color-cardBorder);
+  overflow: hidden;
+}
+
+.admin-nellavio .admin-neighborhoods-page__table table {
+  background: transparent;
+}
+
+.admin-nellavio .admin-filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 0.25rem;
+  border-radius: var(--admin-radius-md);
+  background: var(--color-navItemActiveBg);
+}
+
+.admin-nellavio .admin-filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: var(--admin-radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-secondaryText);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.admin-nellavio .admin-filter-tab:hover {
+  color: var(--color-primaryText);
+  background: var(--color-navItemBgHover);
+}
+
+.admin-nellavio .admin-filter-tab--active {
+  color: var(--color-coloredText);
+  background: var(--color-primaryBg);
+  box-shadow: 0 1px 4px color-mix(in oklch, black 12%, transparent);
+}
+
+.admin-nellavio .admin-filter-tab__count {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: 0.125rem 0.375rem;
+  border-radius: 9999px;
+  background: var(--color-mainColorMuted);
+  color: var(--color-coloredText);
+}
+
+.admin-nellavio .admin-filter-tab--active .admin-filter-tab__count {
+  background: var(--color-mainColor);
+  color: white;
+}
+
+/* Legacy shadcn Card inside admin zone — elevate look */
+.admin-nellavio .admin-content-zone [data-slot='card']:not(.admin-panel *) {
+  gap: 0;
+  border-radius: var(--admin-radius-xl);
+  border-color: var(--color-cardBorder);
+  background: var(--color-primaryBg);
+  box-shadow: var(--color-shadow);
+  padding-block: 0;
+}
+
+.admin-nellavio .admin-content-zone [data-slot='card-header'] {
+  padding: 1.125rem 1.25rem;
+  border-bottom: 1px solid var(--color-mainBorder);
+}
+
+.admin-nellavio .admin-content-zone [data-slot='card-content'] {
+  padding: 1.25rem;
+}
+
+.admin-nellavio .admin-btn-save {
+  background: var(--color-containedButtonBg) !important;
+  color: white !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px var(--color-mainColorMuted);
+}
+
+.admin-nellavio .admin-btn-save:hover {
+  background: var(--color-containedButtonBgHover) !important;
+}
+
+/* ─── Intake ops dashboards (migration / AI eval / training) ─── */
+.admin-nellavio .admin-intake-block {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-cardBorder);
   border-radius: var(--admin-radius-xl);
   background: var(--color-primaryBg);
   box-shadow: var(--color-shadow);
 }
 
-.admin-nellavio .admin-nav-rail {
+.admin-nellavio .admin-intake-block::before {
+  content: '';
   position: absolute;
-  top: 0.5rem;
-  bottom: 0.5rem;
-  right: 0;
-  width: 3px;
-  border-radius: 9999px;
-  background: var(--color-mainColor);
+  top: 0;
+  inset-inline: 0;
+  height: 3px;
+  background: var(--color-logoBg);
+  opacity: 0.85;
 }
 
-.admin-nellavio .admin-kpi-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.admin-nellavio .admin-intake-block--highlight {
+  border-color: var(--color-mainColorMuted);
+  box-shadow: var(--color-shadow), 0 0 0 1px var(--color-mainColorMuted);
 }
 
-.admin-nellavio .admin-kpi-card:hover {
-  transform: translateY(-1px);
+.admin-nellavio .admin-intake-block__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.125rem 1.25rem;
+  border-bottom: 1px solid var(--color-mainBorder);
+  background: color-mix(in oklch, var(--color-primaryBg) 90%, var(--color-mainColorMuted));
 }
 
-.admin-nellavio .admin-nav-link {
-  position: relative;
-}
-
-.admin-nellavio .admin-search-input {
-  background: var(--color-inputBg);
-  border: 1px solid var(--color-inputBorder);
-  border-radius: var(--admin-radius-md);
+.admin-nellavio .admin-intake-block__title {
+  font-size: 0.9375rem;
+  font-weight: 700;
   color: var(--color-primaryText);
 }
 
-.admin-nellavio .admin-user-chip {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 0.375rem 0.625rem;
-  border-radius: var(--admin-radius-md);
-  transition: background 0.15s;
+.admin-nellavio .admin-intake-block__desc {
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-secondaryText);
 }
 
-.admin-nellavio .admin-user-chip:hover {
-  background: var(--color-navbarButtonBgHover);
+.admin-nellavio .admin-intake-block__body {
+  padding: 1.25rem;
+}
+
+.admin-nellavio .admin-intake-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  .admin-nellavio .admin-intake-metric-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.admin-nellavio .admin-intake-metric {
+  padding: 0.75rem 0.875rem;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid var(--color-cardBorder);
+  background: color-mix(in oklch, var(--color-inputBg) 70%, transparent);
+}
+
+.admin-nellavio .admin-intake-metric__value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--color-primaryText);
+  line-height: 1.2;
+}
+
+.admin-nellavio .admin-intake-metric__value--accent {
+  color: var(--color-coloredText);
+}
+
+.admin-nellavio .admin-intake-metric__label {
+  margin-top: 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-secondaryText);
+}
+
+.admin-nellavio .admin-intake-table-wrap {
+  overflow-x: auto;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid var(--color-cardBorder);
+}
+
+.admin-nellavio .admin-intake-table-wrap table {
+  width: 100%;
+  font-size: 0.8125rem;
+}
+
+.admin-nellavio .admin-intake-table-wrap thead tr {
+  border-bottom: 1px solid var(--color-mainBorder);
+  text-align: right;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-secondaryText);
+  background: var(--color-tableHeaderBg);
+}
+
+.admin-nellavio .admin-intake-table-wrap th,
+.admin-nellavio .admin-intake-table-wrap td {
+  padding: 0.625rem 0.75rem;
+}
+
+.admin-nellavio .admin-intake-table-wrap tbody tr {
+  border-bottom: 1px solid var(--color-mainBorder);
+  transition: background 0.12s;
+}
+
+.admin-nellavio .admin-intake-table-wrap tbody tr:hover {
+  background: var(--color-tableRowBgHover);
+}
+
+.admin-nellavio .admin-intake-flag-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--admin-radius-md);
+  border: 1px solid var(--color-cardBorder);
+  background: var(--color-inputBg);
+}
+
+.admin-nellavio .admin-intake-note {
+  border: 1px dashed var(--color-mainColorMuted);
+  border-radius: var(--admin-radius-xl);
+  padding: 1.125rem 1.25rem;
+  background: color-mix(in oklch, var(--color-mainColorMuted) 25%, transparent);
+}
+
+.admin-nellavio .admin-intake-note__title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-primaryText);
+}
+
+.admin-nellavio .admin-intake-note__body {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.65;
+  color: var(--color-secondaryText);
+}
+
+.admin-nellavio .admin-intake-review-card {
+  border-radius: var(--admin-radius-md);
+  border: 1px solid var(--color-cardBorder);
+  background: var(--color-inputBg);
+  padding: 0.875rem 1rem;
+  transition: border-color 0.15s;
+}
+
+.admin-nellavio .admin-intake-review-card:hover {
+  border-color: var(--color-mainColorMuted);
 }
 
 @media (max-width: 1023px) {

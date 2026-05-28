@@ -1,8 +1,24 @@
 {
   "cityId": "kaleybar",
   "cityName": "کلیبر",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:41.677Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:07:08.075Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد"
+    },
+    {
+      "id": "شهرک-دانش",
+      "name": "شهرک دانش",
+      "nameEn": "شهرک-دانش"
+    },
+    {
+      "id": "محله-بالا",
+      "name": "محله بالا",
+      "nameEn": "محله-بالا"
+    }
+  ]
 }

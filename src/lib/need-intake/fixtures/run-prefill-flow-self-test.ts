@@ -1,4 +1,4 @@
-import type { NeedDraft } from '@/contracts/need-intake';
+import { legacyNeedDraftFromParsed } from '@/intake/aggregate/needDraftAggregate';
 import { getNextQuestion } from '@/lib/need-intake/question-engine';
 import { parseFromText } from '@/lib/need-intake/internal-orchestrator.server';
 import { seedAnswersFromParsed } from '@/lib/need-intake/seed-answers';
@@ -43,7 +43,7 @@ export function runPrefillFlowSelfTest(): string | null {
     return `first question should not be ${firstKey}, got: ${step.question}`;
   }
 
-  const draft: NeedDraft = { parsedIntent: parsed, answers, turns: [] };
+  const draft = legacyNeedDraftFromParsed(parsed, answers, []);
   if (draft.answers.location !== 'شهید فرامرز عباسی، مشهد' && !String(draft.answers.location).includes('مشهد')) {
     return `location seed: ${draft.answers.location}`;
   }

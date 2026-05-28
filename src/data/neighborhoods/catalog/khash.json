@@ -1,8 +1,19 @@
 {
   "cityId": "khash",
   "cityName": "خاش",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:51.737Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:37:31.647Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "محله-فرودگاه",
+      "name": "محله فرودگاه",
+      "nameEn": "محله-فرودگاه"
+    },
+    {
+      "id": "محله-هواشناسی",
+      "name": "محله هواشناسی",
+      "nameEn": "محله-هواشناسی"
+    }
+  ]
 }

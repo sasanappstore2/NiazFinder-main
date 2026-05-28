@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -280,6 +280,7 @@ model ServiceRequest {
   proposals         Proposal[]
   reviews           Review[]
   leadOutreach      NeedLeadOutreach[]
+  intakeTrainingExample IntakeTrainingExample?
 
   @@index([userId])
   @@index([businessProfileId])
@@ -315,6 +316,77 @@ model NeedIntakeSession {
 
   @@index([userId])
   @@index([status])
+}
+
+/** Canonical migration observability — event log for intake domain migration control. */
+model IntakeMigrationEvent {
+  id        String   @id @default(cuid())
+  type      String
+  payload   String   @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([type])
+  @@index([createdAt])
+  @@index([type, createdAt])
+}
+
+/** Captured intake publish examples for learning pipeline (non-blocking). */
+model IntakeTrainingExample {
+  id                String   @id @default(cuid())
+  sourceText        String
+  needType          String?
+  ruleResult        Json?
+  aiResult          Json?
+  finalEntities     Json
+  finalNeedDraft    Json?
+  intakeTrace       Json?
+  serviceRequestId  String?  @unique
+  publishedAt       DateTime @default(now())
+  reviewed          Boolean  @default(false)
+  reviewedBy        String?
+  reviewedAt        DateTime?
+  correctedEntities Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  serviceRequest ServiceRequest? @relation(fields: [serviceRequestId], references: [id], onDelete: SetNull)
+
+  @@index([reviewed])
+  @@index([publishedAt])
+  @@index([needType])
+  @@index([reviewed, publishedAt])
+}
+
+/** Persisted validation reject events for analytics. */
+model IntakeValidationRejectEvent {
+  id        String   @id @default(cuid())
+  reason    String
+  field     String?
+  value     String?
+  detail    String?
+  provider  String?
+  createdAt DateTime @default(now())
+
+  @@index([reason])
+  @@index([createdAt])
+  @@index([reason, createdAt])
+}
+
+/** Candidate coverage failures — expected category missing from candidate list. */
+model IntakeCandidateFailureEvent {
+  id                 String   @id @default(cuid())
+  sourceText         String?
+  expectedCategory   String?
+  candidateSlugs     String   @default("[]")
+  aiSelectedCategory String?
+  publishedCategory  String?
+  coverage           Boolean  @default(false)
+  serviceRequestId   String?
+  createdAt          DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([coverage])
+  @@index([expectedCategory])
 }
 
 enum BudgetType {

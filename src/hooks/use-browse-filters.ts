@@ -18,6 +18,7 @@ import {
   pathWithoutCategory,
 } from '@/lib/search/browse-path';
 import { routeBuilder } from '@/config/routes';
+import { cookieManager } from '@/lib/cookie-manager';
 import {
   resolveLocationScope,
   scopeIsActive,
@@ -63,6 +64,23 @@ export function useBrowseFilters() {
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }, [filters, sanitizedFilters, pathname, router]);
 
+  useEffect(() => {
+    const scope = resolveLocationScope(pathname, searchParams);
+    if (scope.mode !== 'city' || sanitizedFilters.neighborhoods.length === 0) return;
+    const existing = cookieManager.getNeighborhoodSelection(scope.citySlug);
+    const slugs = sanitizedFilters.neighborhoods;
+    const unchanged =
+      existing &&
+      existing.slugs.length === slugs.length &&
+      existing.slugs.every((s, i) => s === slugs[i]);
+    if (unchanged) return;
+    cookieManager.updateNeighborhoodSelection(
+      scope.citySlug,
+      slugs,
+      existing?.primaryName ?? null
+    );
+  }, [pathname, searchParams, sanitizedFilters.neighborhoods]);
+
   const filterRoot = useMemo(() => getFilterRootFromPath(pathname), [pathname]);
   const categoryLabel = useMemo(() => getCategoryLabelFromPath(pathname), [pathname]);
   const queryFilterCount = useMemo(
@@ -76,11 +94,22 @@ export function useBrowseFilters() {
         { ...sanitizedFilters, ...patch },
         categoryFilters
       );
+      if (patch.neighborhoods !== undefined) {
+        const scope = resolveLocationScope(pathname, searchParams);
+        if (scope.mode === 'city') {
+          const existing = cookieManager.getNeighborhoodSelection(scope.citySlug);
+          cookieManager.updateNeighborhoodSelection(
+            scope.citySlug,
+            patch.neighborhoods,
+            existing?.primaryName ?? null
+          );
+        }
+      }
       const qs = serializeFilters(next).toString();
       const url = qs ? `${pathname}?${qs}` : pathname;
       router.replace(url, { scroll: false });
     },
-    [sanitizedFilters, categoryFilters, pathname, router]
+    [sanitizedFilters, categoryFilters, pathname, searchParams, router]
   );
 
   const replaceAttributes = useCallback(

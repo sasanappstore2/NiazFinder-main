@@ -5,7 +5,19 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { loadAdminCities, REPORTS_DIR } from './lib';
-import { loadCityCatalogFile, readManifest } from '../../src/lib/neighborhoods/catalog';
+import {
+  loadCityCatalogFile,
+  readManifest,
+  resolveCatalogCityIdCandidates,
+} from '../../src/lib/neighborhoods/catalog';
+
+async function loadCatalogForAdminCity(cityId: string) {
+  for (const candidate of resolveCatalogCityIdCandidates(cityId)) {
+    const catalog = await loadCityCatalogFile(candidate);
+    if (catalog) return catalog;
+  }
+  return null;
+}
 
 const CATALOG_DIR = path.join(process.cwd(), 'src', 'data', 'neighborhoods', 'catalog');
 
@@ -45,7 +57,7 @@ async function main() {
       continue;
     }
 
-    const catalog = await loadCityCatalogFile(city.id);
+    const catalog = await loadCatalogForAdminCity(city.id);
     const count = catalog?.neighborhoods?.length ?? 0;
 
     if (!catalog) {
@@ -89,7 +101,7 @@ async function main() {
     }
   }
 
-  const tehran = await loadCityCatalogFile('tehran-city');
+  const tehran = await loadCatalogForAdminCity('tehran-city');
   if (tehran && tehran.neighborhoods.length > 0 && tehran.neighborhoods.length < 350) {
     errors.push(
       `Tehran: expected >= 350 neighborhoods when present, got ${tehran.neighborhoods.length}`

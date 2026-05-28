@@ -1,8 +1,14 @@
 {
   "cityId": "naqadeh",
   "cityName": "نقده",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:48.392Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:08:01.425Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "آپارتمان-گلریز",
+      "name": "آپارتمان گلریز",
+      "nameEn": "آپارتمان-گلریز"
+    }
+  ]
 }

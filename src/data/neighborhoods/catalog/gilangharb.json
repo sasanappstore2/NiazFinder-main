@@ -1,8 +1,39 @@
 {
   "cityId": "gilangharb",
   "cityName": "گیلانغرب",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:11.561Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T17:59:00.875Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زرگوش",
+      "name": "زرگوش",
+      "nameEn": "زرگوش"
+    },
+    {
+      "id": "شهرک-نیروی-انتظامی",
+      "name": "شهرک نیروی انتظامی",
+      "nameEn": "شهرک-نیروی-انتظامی"
+    },
+    {
+      "id": "عبدالمحمدی",
+      "name": "عبدالمحمدی",
+      "nameEn": "عبدالمحمدی"
+    },
+    {
+      "id": "کله-شک-سفلی",
+      "name": "کله شک سفلی",
+      "nameEn": "کله-شک-سفلی"
+    },
+    {
+      "id": "گزار",
+      "name": "گزار",
+      "nameEn": "گزار"
+    },
+    {
+      "id": "نایب-حسین",
+      "name": "نایب حسین",
+      "nameEn": "نایب-حسین"
+    }
+  ]
 }

@@ -1,8 +1,8 @@
 {
   "cityId": "greatertunb",
   "cityName": "تنب بزرگ",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:40.984Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:34:03.868Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

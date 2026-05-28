@@ -1,8 +1,14 @@
 {
   "cityId": "jajarm",
   "cityName": "جاجرم",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:29.410Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:45:16.178Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "میدان-ولیعصر",
+      "name": "میدان ولیعصر",
+      "nameEn": "میدان-ولیعصر"
+    }
+  ]
 }

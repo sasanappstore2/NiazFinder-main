@@ -1,8 +1,39 @@
 {
   "cityId": "estehban",
   "cityName": "استهبان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:12.160Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T17:28:21.723Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "پنار",
+      "name": "پنار",
+      "nameEn": "پنار"
+    },
+    {
+      "id": "تیرونجان",
+      "name": "تیرونجان",
+      "nameEn": "تیرونجان"
+    },
+    {
+      "id": "خلوت",
+      "name": "خلوت",
+      "nameEn": "خلوت"
+    },
+    {
+      "id": "شهرک-امام-حسن-مجتبی",
+      "name": "شهرک امام حسن مجتبی",
+      "nameEn": "شهرک-امام-حسن-مجتبی"
+    },
+    {
+      "id": "شهرک-امام-حسین-ع",
+      "name": "شهرک امام حسین ع",
+      "nameEn": "شهرک-امام-حسین-ع"
+    },
+    {
+      "id": "شهرک-سنگبری",
+      "name": "شهرک سنگبری",
+      "nameEn": "شهرک-سنگبری"
+    }
+  ]
 }

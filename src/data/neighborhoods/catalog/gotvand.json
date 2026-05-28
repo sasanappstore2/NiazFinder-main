@@ -1,8 +1,14 @@
 {
   "cityId": "gotvand",
   "cityName": "گتوند",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:02.421Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:11:06.946Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "روستای-کایدان",
+      "name": "روستای کایدان",
+      "nameEn": "روستای-کایدان"
+    }
+  ]
 }

@@ -1,8 +1,29 @@
 {
   "cityId": "maybod",
   "cityName": "میبد",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:03.623Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:40:15.414Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-ولیعصر",
+      "name": "شهرک ولیعصر",
+      "nameEn": "شهرک-ولیعصر"
+    },
+    {
+      "id": "کوچه-آشتی-کنان",
+      "name": "کوچه آشتی کنان",
+      "nameEn": "کوچه-آشتی-کنان"
+    },
+    {
+      "id": "مهمانشهر",
+      "name": "مهمانشهر",
+      "nameEn": "مهمانشهر"
+    },
+    {
+      "id": "میدان-ولیعصر",
+      "name": "میدان ولیعصر",
+      "nameEn": "میدان-ولیعصر"
+    }
+  ]
 }

@@ -1,8 +1,8 @@
 {
   "cityId": "kouhrang",
   "cityName": "کوهرنگ",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:11.113Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:42:10.113Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

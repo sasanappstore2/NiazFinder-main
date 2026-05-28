@@ -18,7 +18,9 @@ export function SuperAdminPageClient({ section }: { section: AdminSectionId }) {
   return (
     <AdminLayoutProvider>
       <AdminLayout onRefresh={handleRefresh} isRefreshing={isRefreshing}>
-        <SuperAdminModule section={section} />
+        <div className="admin-content-zone">
+          <SuperAdminModule section={section} />
+        </div>
       </AdminLayout>
     </AdminLayoutProvider>
   );

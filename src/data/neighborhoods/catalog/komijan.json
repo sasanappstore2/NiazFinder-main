@@ -1,8 +1,14 @@
 {
   "cityId": "komijan",
   "cityName": "کمیجان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:51.311Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:49:04.318Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "باغ-کریز",
+      "name": "باغ کریز",
+      "nameEn": "باغ-کریز"
+    }
+  ]
 }

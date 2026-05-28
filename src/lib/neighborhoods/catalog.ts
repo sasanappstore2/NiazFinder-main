@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { makeLocationId } from '@/lib/admin-locations';
+import { locationCityIdToSlug } from '@/lib/search/city-slugs';
 import type { ManagedNeighborhood } from '@/lib/neighborhoods/types';
 import type {
   CityNeighborhoodCatalog,
@@ -86,22 +87,38 @@ export async function loadCityCatalogFile(
   }
 }
 
-export async function loadCityNeighborhoods(cityId: string): Promise<ManagedNeighborhood[]> {
-  const cached = catalogCache.get(cityId);
-  if (cached) return cached;
+/** Map location-system city id (e.g. tehran-city) to on-disk catalog file id (e.g. tehran). */
+export function resolveCatalogCityId(cityId: string): string {
+  return locationCityIdToSlug(cityId);
+}
 
-  const file = await loadCityCatalogFile(cityId);
-  if (!file?.neighborhoods?.length) {
-    catalogCache.set(cityId, []);
-    return [];
+/** Candidate catalog file ids for a location-system city id (handles tehran-city vs tehran). */
+export function resolveCatalogCityIdCandidates(cityId: string): string[] {
+  const slug = resolveCatalogCityId(cityId);
+  const candidates = [cityId, slug];
+  if (!cityId.endsWith('-city')) candidates.push(`${slug}-city`);
+  return [...new Set(candidates.filter(Boolean))];
+}
+
+export async function loadCityNeighborhoods(cityId: string): Promise<ManagedNeighborhood[]> {
+  for (const catalogCityId of resolveCatalogCityIdCandidates(cityId)) {
+    const cached = catalogCache.get(catalogCityId);
+    if (cached) return cached;
+
+    const file = await loadCityCatalogFile(catalogCityId);
+    if (!file?.neighborhoods?.length) continue;
+
+    const list = file.neighborhoods
+      .map((n, i) => catalogNeighborhoodToManaged(n, i + 1))
+      .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, 'fa'));
+
+    catalogCache.set(catalogCityId, list);
+    catalogCache.set(cityId, list);
+    return list;
   }
 
-  const list = file.neighborhoods
-    .map((n, i) => catalogNeighborhoodToManaged(n, i + 1))
-    .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, 'fa'));
-
-  catalogCache.set(cityId, list);
-  return list;
+  catalogCache.set(cityId, []);
+  return [];
 }
 
 export async function saveCityCatalog(

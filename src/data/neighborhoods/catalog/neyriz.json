@@ -1,8 +1,29 @@
 {
   "cityId": "neyriz",
   "cityName": "نی‌ریز",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:11.371Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:00:33.534Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چهارراه-جانبازان",
+      "name": "چهارراه جانبازان",
+      "nameEn": "چهارراه-جانبازان"
+    },
+    {
+      "id": "شهرک-سنگبری",
+      "name": "شهرک سنگبری",
+      "nameEn": "شهرک-سنگبری"
+    },
+    {
+      "id": "شهرک-صدرا",
+      "name": "شهرک صدرا",
+      "nameEn": "شهرک-صدرا"
+    },
+    {
+      "id": "فلکه-گاز",
+      "name": "فلکه گاز",
+      "nameEn": "فلکه-گاز"
+    }
+  ]
 }

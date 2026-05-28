@@ -1,8 +1,24 @@
 {
   "cityId": "likak",
   "cityName": "لیکک",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:16.188Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:43:09.984Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "آبلش",
+      "name": "آبلش",
+      "nameEn": "آبلش"
+    },
+    {
+      "id": "شهرک-سیاه-شیر",
+      "name": "شهرک سیاه شیر",
+      "nameEn": "شهرک-سیاه-شیر"
+    },
+    {
+      "id": "مسکن-مهر",
+      "name": "مسکن مهر",
+      "nameEn": "مسکن-مهر"
+    }
+  ]
 }

@@ -13,11 +13,21 @@ import type {
   TypingAnalysisResult,
   TypingAnalysisStatus,
 } from '@/contracts/typing-analysis';
+import type { IntakeAnalysisResult } from '@/intake/types';
+import {
+  createNeedDraftFromAnalysis,
+  patchNeedDraftEntities as patchDraftEntities,
+  syncNeedDraftFromForm,
+} from '@/intake/aggregate/needDraftAggregate';
+import { warnLegacyWriteDetected } from '@/intake/legacy/legacy-guards';
 
 interface NeedIntakeState {
   step: IntakeStep;
   seedText: string;
+  needDraft: NeedDraft | null;
+  /** @deprecated Derived read mirror — use needDraft + draftToLegacyPayload(). */
   parsedIntent: ParsedIntent | null;
+  /** @deprecated Derived read mirror — use needDraft.entities. */
   answers: Record<string, string | number | boolean | string[]>;
   turns: ConversationTurn[];
   currentQuestion: NextQuestionResponse | null;
@@ -35,9 +45,12 @@ interface NeedIntakeState {
 
   setSeedText: (text: string) => void;
   addTurn: (turn: ConversationTurn) => void;
+  /** @deprecated Use patchNeedDraftEntities(). Writes are logged as LEGACY_WRITE_DETECTED. */
   setAnswer: (key: string, value: string | number | boolean) => void;
+  /** @deprecated Use patchNeedDraftEntities(). Writes are logged as LEGACY_WRITE_DETECTED. */
   setAnswers: (answers: Record<string, string | number | boolean | string[]>) => void;
   setStep: (step: IntakeStep) => void;
+  /** @deprecated Use patchNeedDraftEntities(). Writes are logged as LEGACY_WRITE_DETECTED. */
   setParsedIntent: (parsed: ParsedIntent) => void;
   setCurrentQuestion: (q: NextQuestionResponse | null) => void;
   setSummary: (s: string) => void;
@@ -50,13 +63,29 @@ interface NeedIntakeState {
   setAnalysisStatus: (s: TypingAnalysisStatus) => void;
   setTypingPreloading: (v: boolean) => void;
   setTypingSessionId: (id: string | null) => void;
+  setNeedDraft: (draft: NeedDraft | null) => void;
+  setNeedDraftFromAnalysis: (
+    analysis: IntakeAnalysisResult,
+    sourceText: string,
+    intakeTrace?: import('@/intake/training/trainingExample').IntakeAnalysisTrace
+  ) => void;
+  patchNeedDraftEntities: (patch: Partial<Record<string, unknown>>) => void;
+  syncNeedDraftFromFormFields: (form: {
+    needText: string;
+    detailsText: string;
+    categorySlug: string;
+    subcategorySlug: string;
+    city: string;
+    neighborhood: string;
+  }) => NeedDraft | null;
   reset: () => void;
   getDraft: () => NeedDraft | null;
 }
 
 const initialState = {
-  step: 'idle' as IntakeStep,
+  step: 'need' as IntakeStep,
   seedText: '',
+  needDraft: null as NeedDraft | null,
   parsedIntent: null,
   answers: {},
   turns: [],
@@ -74,39 +103,83 @@ const initialState = {
   typingSessionId: null,
 };
 
+function applyNeedDraft(set: (partial: Partial<NeedIntakeState>) => void, draft: NeedDraft | null) {
+  set({
+    needDraft: draft,
+    parsedIntent: draft?.parsedIntent ?? null,
+    answers: draft?.answers ?? {},
+    seedText: draft?.sourceText ?? '',
+    readinessScore: draft?.completionScore ?? 0,
+    readyToPreview: draft?.completionState === 'READY_TO_PUBLISH',
+  });
+}
+
 export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
   ...initialState,
 
   setSeedText: (text) => set({ seedText: text }),
   addTurn: (turn) => set((s) => ({ turns: [...s.turns, turn] })),
-  setAnswer: (key, value) =>
-    set((s) => ({ answers: { ...s.answers, [key]: value } })),
-  setAnswers: (answers) => set({ answers }),
+  setAnswer: (key, value) => {
+    warnLegacyWriteDetected('answers', `need-intake-store.setAnswer(${key})`);
+    set((s) => ({ answers: { ...s.answers, [key]: value } }));
+  },
+  setAnswers: (answers) => {
+    warnLegacyWriteDetected('answers', 'need-intake-store.setAnswers');
+    set({ answers });
+  },
   setStep: (step) => set({ step }),
-  setParsedIntent: (parsed) => set({ parsedIntent: parsed }),
+  setParsedIntent: (parsed) => {
+    warnLegacyWriteDetected('parsedIntent', 'need-intake-store.setParsedIntent');
+    set({ parsedIntent: parsed });
+  },
   setCurrentQuestion: (q) => set({ currentQuestion: q }),
   setSummary: (summary) => set({ summary }),
-  setListingPreview: (listingPreview) => set({ listingPreview }),
+  setListingPreview: (listingPreview) =>
+    set((s) => ({
+      listingPreview,
+      needDraft: s.needDraft ? { ...s.needDraft, listingPreview: listingPreview ?? undefined } : null,
+    })),
   setReadiness: (readinessScore, readyToPreview) =>
     set({ readinessScore, readyToPreview }),
-  setLeadPhone: (leadPhone) => set({ leadPhone }),
+  setLeadPhone: (leadPhone) =>
+    set((s) => ({
+      leadPhone,
+      needDraft: s.needDraft ? { ...s.needDraft, leadPhone: leadPhone ?? undefined } : null,
+    })),
   setError: (error) => set({ error }),
   setLoading: (isLoading) => set({ isLoading }),
   setTypingAnalysis: (typingAnalysis) => set({ typingAnalysis }),
   setAnalysisStatus: (analysisStatus) => set({ analysisStatus }),
   setTypingPreloading: (typingPreloading) => set({ typingPreloading }),
   setTypingSessionId: (typingSessionId) => set({ typingSessionId }),
+
+  setNeedDraft: (draft) => applyNeedDraft(set, draft),
+
+  setNeedDraftFromAnalysis: (analysis, sourceText, intakeTrace) => {
+    const { leadPhone, listingPreview, turns } = get();
+    const draft = createNeedDraftFromAnalysis(analysis, sourceText, {
+      leadPhone,
+      intakeTrace,
+      existing: { listingPreview: listingPreview ?? undefined, turns },
+    });
+    applyNeedDraft(set, draft);
+  },
+
+  patchNeedDraftEntities: (patch) => {
+    const current = get().needDraft;
+    if (!current) return;
+    const updated = patchDraftEntities(current, patch);
+    applyNeedDraft(set, updated);
+  },
+
+  syncNeedDraftFromFormFields: (form) => {
+    const current = get().needDraft;
+    const updated = syncNeedDraftFromForm(current, form);
+    applyNeedDraft(set, updated);
+    return updated;
+  },
+
   reset: () => set(initialState),
 
-  getDraft: () => {
-    const s = get();
-    if (!s.parsedIntent) return null;
-    return {
-      parsedIntent: s.parsedIntent,
-      answers: s.answers,
-      turns: s.turns,
-      leadPhone: s.leadPhone ?? undefined,
-      listingPreview: s.listingPreview ?? undefined,
-    };
-  },
+  getDraft: () => get().needDraft,
 }));

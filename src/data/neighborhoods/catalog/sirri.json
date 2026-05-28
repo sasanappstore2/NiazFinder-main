@@ -1,8 +1,8 @@
 {
   "cityId": "sirri",
   "cityName": "سیری",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:42.482Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:34:22.514Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

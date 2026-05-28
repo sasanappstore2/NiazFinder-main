@@ -68,6 +68,12 @@ export function canAccessAdminNavItem(
   if (itemId === 'overview') {
     return hasPermission('superadmin:overview:read') || hasPermission('superadmin:analytics:read');
   }
+  if (itemId === 'intake-migration' || itemId === 'intake-ai-evaluation') {
+    return hasPermission('ops:intake-migration:read');
+  }
+  if (itemId === 'intake-training') {
+    return hasPermission('ops:intake-training:read');
+  }
   const section = itemId as AdminSectionId;
   if (section in ADMIN_SECTION_PERMISSIONS) {
     return hasPermission(ADMIN_SECTION_PERMISSIONS[section]);

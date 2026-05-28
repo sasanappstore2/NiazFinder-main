@@ -1,8 +1,14 @@
 {
   "cityId": "landeh",
   "cityName": "لنده",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:17.738Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:43:36.690Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "اردوگاه-شرکت-نفت",
+      "name": "اردوگاه شرکت نفت",
+      "nameEn": "اردوگاه-شرکت-نفت"
+    }
+  ]
 }

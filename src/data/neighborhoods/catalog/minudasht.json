@@ -1,8 +1,29 @@
 {
   "cityId": "minudasht",
   "cityName": "مینودشت",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:22.171Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:44:15.692Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "احمد-کسرایی-۱",
+      "name": "احمد کسرایی ۱",
+      "nameEn": "احمد-کسرایی-۱"
+    },
+    {
+      "id": "دوراهی-کلاله",
+      "name": "دوراهی کلاله",
+      "nameEn": "دوراهی-کلاله"
+    },
+    {
+      "id": "شهرک-خسروی",
+      "name": "شهرک خسروی",
+      "nameEn": "شهرک-خسروی"
+    },
+    {
+      "id": "مسکن-مهر",
+      "name": "مسکن مهر",
+      "nameEn": "مسکن-مهر"
+    }
+  ]
 }

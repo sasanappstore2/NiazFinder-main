@@ -30,4 +30,11 @@ export const PARSER_FIXTURES: ParserFixture[] = [
     expectLocationAmbiguous: true,
     expectMinNeighborhoodCandidates: 2,
   },
+  {
+    id: 'rolex-daytona-buy',
+    text: 'یک ساعت رولکس دیتونا میخوام',
+    expectIntentPrefix: 'product',
+    expectCategoryIncludes: 'jewelry-watches',
+    expectDealType: 'buy',
+  },
 ];

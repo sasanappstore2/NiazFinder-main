@@ -1,8 +1,8 @@
 {
   "cityId": "ravars",
   "cityName": "راور",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:19.698Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:15:42.099Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

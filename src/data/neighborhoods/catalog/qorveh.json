@@ -1,8 +1,19 @@
 {
   "cityId": "qorveh",
   "cityName": "قروه",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:36:07.104Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:51:21.480Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-دانش",
+      "name": "شهرک دانش",
+      "nameEn": "شهرک-دانش"
+    },
+    {
+      "id": "شهرک-صادقیه",
+      "name": "شهرک صادقیه",
+      "nameEn": "شهرک-صادقیه"
+    }
+  ]
 }

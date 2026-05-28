@@ -6,7 +6,7 @@
  * API stores `city` as Persian text.
  */
 
-import { countries, type City } from '@/lib/location-system';
+import { countries, dedupeCitiesById, type City } from '@/lib/location-system';
 
 const ID_OVERRIDES: Record<string, string> = {
   'tehran-city': 'tehran',
@@ -19,11 +19,14 @@ const ID_OVERRIDES: Record<string, string> = {
   'kerman-city': 'kerman',
   'rasht-city': 'rasht',
   'yazd-city': 'yazd',
+  'khorasan-razavi-1': 'mashhad',
+  'khorasan-razavi-2': 'nishapur',
+  nishabur: 'nishapur',
 };
 
 /** Flat list of all cities from the location registry. */
-export const ALL_LOCATION_CITIES: readonly City[] = countries.flatMap((c) =>
-  c.provinces.flatMap((p) => p.cities)
+export const ALL_LOCATION_CITIES: readonly City[] = dedupeCitiesById(
+  countries.flatMap((c) => c.provinces.flatMap((p) => p.cities))
 );
 
 const BY_ID = new Map(ALL_LOCATION_CITIES.map((c) => [c.id, c]));

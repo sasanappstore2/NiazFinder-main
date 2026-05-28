@@ -1,0 +1,73 @@
+import type { TransactionType } from '@/intake/types';
+
+interface TransactionHit {
+  type: TransactionType;
+  confidence: number;
+}
+
+const RULES: Array<{ type: TransactionType; patterns: RegExp[]; confidence: number }> = [
+  {
+    type: 'FULL_DEPOSIT',
+    patterns: [/رهن\s*کامل/u, /فقط\s*رهن/u],
+    confidence: 0.95,
+  },
+  {
+    type: 'DEPOSIT_AND_RENT',
+    patterns: [/رهن\s*و\s*اجاره/u, /ودیعه\s*و\s*اجاره/u, /ودیعه/u],
+    confidence: 0.9,
+  },
+  {
+    type: 'DAILY_RENT',
+    patterns: [/اجاره\s*روزانه/u, /روزانه/u, /کوتاه\s*مدت/u, /کوتاه‌مدت/u, /هر\s*شب/u],
+    confidence: 0.92,
+  },
+  {
+    type: 'HOURLY_RENT',
+    patterns: [/اجاره\s*ساعتی/u, /ساعتی/u],
+    confidence: 0.9,
+  },
+  {
+    type: 'RENT',
+    patterns: [/اجاره\s*ماهانه/u, /اجاره/u, /رنت/u, /مستاجر/u],
+    confidence: 0.85,
+  },
+  {
+    type: 'BUY',
+    patterns: [/خرید/u, /می\s*خرم/u, /میخرم/u, /بخرم/u],
+    confidence: 0.88,
+  },
+  {
+    type: 'SELL',
+    patterns: [/فروش/u, /می\s*فروشم/u, /میفروشم/u],
+    confidence: 0.88,
+  },
+];
+
+/**
+ * Detect transaction intent. Does NOT infer BUY from vague «میخوام» alone.
+ */
+export function extractTransactionType(normalizedText: string): TransactionHit | null {
+  for (const rule of RULES) {
+    for (const re of rule.patterns) {
+      if (re.test(normalizedText)) {
+        return { type: rule.type, confidence: rule.confidence };
+      }
+    }
+  }
+  return null;
+}
+
+/** Property categories that require explicit transaction type. */
+export function categoryNeedsTransactionType(categorySlug: string | null): boolean {
+  if (!categorySlug) return false;
+  return (
+    categorySlug.includes('apartment') ||
+    categorySlug.includes('villa') ||
+    categorySlug.includes('land') ||
+    categorySlug.includes('office') ||
+    categorySlug.includes('shop') ||
+    categorySlug.includes('residential') ||
+    categorySlug.includes('commercial') ||
+    categorySlug === 'real-estate'
+  );
+}

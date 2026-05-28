@@ -1,8 +1,29 @@
 {
   "cityId": "qaen",
   "cityName": "قائن",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:32.276Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:46:02.985Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فاز-۳",
+      "name": "فاز ۳",
+      "nameEn": "فاز-۳"
+    },
+    {
+      "id": "میدان-۱۷-شهریور",
+      "name": "میدان ۱۷ شهریور",
+      "nameEn": "میدان-۱۷-شهریور"
+    },
+    {
+      "id": "میدان-آیت-الله-شیرازی",
+      "name": "میدان آیت الله شیرازی",
+      "nameEn": "میدان-آیت-الله-شیرازی"
+    },
+    {
+      "id": "میدان-هفت-تیر",
+      "name": "میدان هفت تیر",
+      "nameEn": "میدان-هفت-تیر"
+    }
+  ]
 }

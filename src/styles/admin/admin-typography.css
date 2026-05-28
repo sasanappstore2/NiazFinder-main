@@ -7,34 +7,62 @@
   --admin-space-6: 1.5rem;
   --admin-space-8: 2rem;
   --admin-radius-sm: 0.5rem;
-  --admin-radius-md: 0.75rem;
-  --admin-radius-lg: 1rem;
-  --admin-radius-xl: 1.25rem;
-  --admin-content-max: 87.5rem;
+  --admin-radius-md: 0.625rem;
+  --admin-radius-lg: 0.875rem;
+  --admin-radius-xl: 1rem;
+  --admin-content-max: 90rem;
 }
 
 .admin-nellavio .admin-page-title {
-  font-size: 1.5rem;
+  font-size: 1.625rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  color: var(--color-primaryText);
+}
+
+.admin-nellavio .admin-page-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-secondaryText);
+  line-height: 1.65;
+  max-width: 42rem;
+}
+
+.admin-nellavio .admin-section-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-navSectionTitle);
+}
+
+.admin-nellavio .admin-kpi-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primaryText);
+}
+
+.admin-nellavio .admin-brand-title {
+  font-size: 0.9375rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-primaryText);
 }
 
-.admin-nellavio .admin-page-subtitle {
-  font-size: 0.8125rem;
+.admin-nellavio .admin-brand-subtitle {
+  font-size: 0.6875rem;
+  font-weight: 500;
   color: var(--color-secondaryText);
-  line-height: 1.6;
-}
-
-.admin-nellavio .admin-kpi-value {
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--color-primaryText);
 }
 
 @media (min-width: 1280px) {
+  .admin-nellavio .admin-page-title {
+    font-size: 1.75rem;
+  }
+
   .admin-nellavio .admin-kpi-value {
-    font-size: 2rem;
+    font-size: 2.125rem;
   }
 }

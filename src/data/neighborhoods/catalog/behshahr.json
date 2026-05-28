@@ -1,8 +1,39 @@
 {
   "cityId": "behshahr",
   "cityName": "بهشهر",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:35.221Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T17:49:17.308Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بام-ولمازو",
+      "name": "بام ولمازو",
+      "nameEn": "بام-ولمازو"
+    },
+    {
+      "id": "چهارراه-استقلال",
+      "name": "چهارراه استقلال",
+      "nameEn": "چهارراه-استقلال"
+    },
+    {
+      "id": "شهرک-صنعتی-بهشهر",
+      "name": "شهرک صنعتی بهشهر",
+      "nameEn": "شهرک-صنعتی-بهشهر"
+    },
+    {
+      "id": "گرجی",
+      "name": "گرجی",
+      "nameEn": "گرجی"
+    },
+    {
+      "id": "گوکوزدان",
+      "name": "گوکوزدان",
+      "nameEn": "گوکوزدان"
+    },
+    {
+      "id": "مسکن-مهر",
+      "name": "مسکن مهر",
+      "nameEn": "مسکن-مهر"
+    }
+  ]
 }

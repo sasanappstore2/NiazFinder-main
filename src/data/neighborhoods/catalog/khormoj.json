@@ -1,8 +1,8 @@
 {
   "cityId": "khormoj",
   "cityName": "خورموج",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:31.837Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:32:16.328Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

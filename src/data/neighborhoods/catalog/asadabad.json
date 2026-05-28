@@ -1,8 +1,34 @@
 {
   "cityId": "asadabad",
   "cityName": "اسدآباد",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:01.893Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T17:56:46.879Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جنت-آباد",
+      "name": "جنت آباد",
+      "nameEn": "جنت-آباد"
+    },
+    {
+      "id": "شهرک-شهرداری",
+      "name": "شهرک شهرداری",
+      "nameEn": "شهرک-شهرداری"
+    },
+    {
+      "id": "شهرک-فرهنگیان",
+      "name": "شهرک فرهنگیان",
+      "nameEn": "شهرک-فرهنگیان"
+    },
+    {
+      "id": "شهرک-قندی",
+      "name": "شهرک قندی",
+      "nameEn": "شهرک-قندی"
+    },
+    {
+      "id": "مزرعبید",
+      "name": "مزرعبید",
+      "nameEn": "مزرعبید"
+    }
+  ]
 }

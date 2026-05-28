@@ -15,14 +15,17 @@ const CHECKS: ApiCheck[] = [
   { name: 'categories', path: '/api/categories', expect: 200 },
   { name: 'business_me_unauth', path: '/api/business/me', expect: 401 },
   { name: 'auth_get', path: '/api/auth', expect: 405 },
-  { name: 'need_intake_parse', path: '/api/need-intake/parse-intent', method: 'POST', expect: 400 },
+  { name: 'intake_analyze', path: '/api/intake/analyze', method: 'POST', expect: 400 },
 ];
 
 async function run(c: ApiCheck) {
   const start = Date.now();
   try {
+    const method = c.method ?? 'GET';
     const res = await fetch(`${BASE}${c.path}`, {
-      method: c.method ?? 'GET',
+      method,
+      headers: method === 'POST' ? { 'Content-Type': 'application/json' } : undefined,
+      body: method === 'POST' ? '{}' : undefined,
       signal: AbortSignal.timeout(8000),
     });
     return {

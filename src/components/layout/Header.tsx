@@ -359,7 +359,7 @@ function NeedHeaderCategoryMenuDesktop() {
           </button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-[840px] p-0 overflow-hidden"
+          className="w-[min(840px,calc(100vw-2rem))] max-h-[min(450px,calc(100dvh-var(--site-header-offset,6.5rem)-2rem))] p-0 overflow-hidden"
           dir="rtl"
           align="start"
           sideOffset={4}
@@ -410,7 +410,7 @@ function NeedHeaderCategoryMenuMobile() {
             <ChevronLeft className="size-3" />
           </button>
         </SheetTrigger>
-        <SheetContent side="right" className="w-[340px] p-0 sm:w-[400px]">
+        <SheetContent side="right" className="w-[min(340px,calc(100vw-1.5rem))] p-0 sm:w-[min(400px,calc(100vw-2rem))]">
           <CategorySelector
             isDesktop={false}
             nestedCategories={ALL_CATEGORIES}

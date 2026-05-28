@@ -1,16 +1,12 @@
 /**
- * API Client — Bridge to the NestJS backend (port 4000)
+ * API Client
  *
- * All requests are proxied through Caddy via the XTransformPort query parameter.
- * The NestJS backend already prefixes its routes with `/api`, so the path
- * arguments below start with `/auth/…`, `/requests/…`, etc.
+ * Canonical app path:
+ * - App code should call Next.js API routes (`/api/...`) via `apiFetch`.
  *
- * ── Usage ──────────────────────────────────────────────────────────────────
- *   import { authApi, requestsApi } from '@/lib/api-client';
- *
- *   const { accessToken, user } = await authApi.login(email, password);
- *   const { data, total }     = await requestsApi.list({ page: 1, limit: 12 });
- * ───────────────────────────────────────────────────────────────────────────
+ * Legacy bridge:
+ * - The `apiGet/apiPost/...` helpers route to backend port 4000 through Caddy
+ *   and are kept for compatibility only.
  */
 
 // ---------------------------------------------------------------------------
@@ -119,22 +115,40 @@ async function handleErrorResponse(response: Response): Promise<never> {
 
 export async function apiFetch<T = unknown>(
   url: string,
-  options?: { method?: string; body?: unknown; params?: Record<string, unknown> }
+  options?: RequestInit | { method?: string; body?: unknown; params?: Record<string, unknown> }
 ): Promise<T> {
+  const normalized = (options ?? {}) as RequestInit & {
+    params?: Record<string, unknown>;
+  };
   let fullUrl = url;
-  if (options?.params) {
+  if (normalized.params) {
     const qs = new URLSearchParams(
-      Object.entries(options.params)
+      Object.entries(normalized.params)
         .filter(([, v]) => v != null)
         .map(([k, v]) => [k, String(v)])
     ).toString();
     fullUrl = `${url}${qs ? `?${qs}` : ''}`;
   }
 
+  const suppliedHeaders =
+    normalized.headers instanceof Headers
+      ? Object.fromEntries(normalized.headers.entries())
+      : Array.isArray(normalized.headers)
+        ? Object.fromEntries(normalized.headers)
+        : ((normalized.headers ?? {}) as Record<string, string>);
+
+  let body: BodyInit | undefined;
+  if (typeof normalized.body === 'string' || normalized.body instanceof FormData) {
+    body = normalized.body as BodyInit;
+  } else if (normalized.body != null) {
+    body = JSON.stringify(normalized.body);
+  }
+
   const res = await fetch(fullUrl, {
-    method: options?.method || 'GET',
-    headers: buildHeaders(),
-    body: options?.body ? JSON.stringify(options.body) : undefined,
+    ...normalized,
+    method: normalized.method || 'GET',
+    headers: buildHeaders(undefined, suppliedHeaders),
+    body,
   });
 
   if (!res.ok) await handleErrorResponse(res);

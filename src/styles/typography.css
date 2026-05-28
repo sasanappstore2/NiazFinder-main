@@ -1,14 +1,15 @@
 /* Typography scale — Vazirmatn / Persian readability */
 
 :root {
-  --text-display: clamp(1.75rem, 5vw, 3rem);
-  --text-h1: 1.875rem;
-  --text-h2: 1.5rem;
-  --text-h3: 1.25rem;
-  --text-body: 1rem;
-  --text-body-sm: 0.9375rem;
-  --text-label: 0.875rem;
-  --text-caption: 0.8125rem;
+  /* Golden-ratio modular scale (φ ≈ 1.618), fluid between phone and desktop */
+  --text-display: clamp(1.75rem, 1.25rem + 2.5vw, 3rem);
+  --text-h1: clamp(1.5rem, 1.125rem + 1.5vw, 1.875rem);
+  --text-h2: clamp(1.25rem, 1rem + 1vw, 1.5rem);
+  --text-h3: clamp(1.0625rem, 0.95rem + 0.5vw, 1.25rem);
+  --text-body: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+  --text-body-sm: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
+  --text-label: clamp(0.8125rem, 0.8rem + 0.08vw, 0.875rem);
+  --text-caption: clamp(0.75rem, 0.74rem + 0.05vw, 0.8125rem);
   --text-overline: 0.75rem;
 
   --leading-display: 1.2;

@@ -3,14 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, Not, In } from 'typeorm';
-import { User, UserRole } from '../../entities/user.entity';
-import { Portfolio } from '../../entities/portfolio.entity';
-import { Review } from '../../entities/review.entity';
-import { Proposal, ProposalStatus } from '../../entities/proposal.entity';
-import { Skill } from '../../entities/skill.entity';
-import { UserSkill } from '../../entities/user-skill.entity';
+import { PrismaService } from '../../prisma/prisma.service';
 import { UpdateSpecialistProfileDto } from './dto/update-specialist-profile.dto';
 import { UpdateSkillsDto } from './dto/update-skills.dto';
 import { CreatePortfolioDto } from './dto/create-portfolio.dto';
@@ -20,21 +13,7 @@ import * as slugify from 'slugify';
 
 @Injectable()
 export class SpecialistsService {
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
-    @InjectRepository(Portfolio)
-    private readonly portfolioRepo: Repository<Portfolio>,
-    @InjectRepository(Review)
-    private readonly reviewRepo: Repository<Review>,
-    @InjectRepository(Proposal)
-    private readonly proposalRepo: Repository<Proposal>,
-    @InjectRepository(Skill)
-    private readonly skillRepo: Repository<Skill>,
-    @InjectRepository(UserSkill)
-    private readonly userSkillRepo: Repository<UserSkill>,
-
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * لیست متخصص‌ها با فیلتر و صفحه‌بندی
@@ -51,55 +30,49 @@ export class SpecialistsService {
       limit = 20,
     } = query;
 
-    const qb = this.userRepo
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.skills', 'userSkill')
-      .leftJoinAndSelect('userSkill.skill', 'skill')
-      .leftJoin(
-        'user.reviews',
-        'review',
-        'review.isPublished = :isPublished',
-        { isPublished: true },
-      )
-      .where('user.role = :role', { role: UserRole.SPECIALIST })
-      .andWhere('user.isActive = :isActive', { isActive: true });
-
-    if (city) {
-      qb.andWhere('user.city = :city', { city });
-    }
-    if (province) {
-      qb.andWhere('user.province = :province', { province });
-    }
-    if (search) {
-      qb.andWhere(
-        '(user.firstName ILIKE :search OR user.lastName ILIKE :search OR user.displayName ILIKE :search OR user.bio ILIKE :search OR skill.name ILIKE :search)',
-        { search: `%${search}%` },
-      );
-    }
-    if (categoryId) {
-      qb.andWhere('skill.categoryId = :categoryId', { categoryId });
-    }
-
-    // Fetch and filter by minRating in-memory after getting results
     const skip = (page - 1) * limit;
-    qb.skip(skip).take(limit * 2); // Fetch extra to filter by rating
-    qb.orderBy('user.createdAt', 'DESC');
-    qb.addOrderBy('user.isVerified', 'DESC');
+    const where = {
+      role: 'SPECIALIST' as const,
+      isActive: true,
+      ...(city ? { city } : {}),
+      ...(province ? { province } : {}),
+      ...(search
+        ? {
+            OR: [
+              { firstName: { contains: search, mode: 'insensitive' as const } },
+              { lastName: { contains: search, mode: 'insensitive' as const } },
+              { displayName: { contains: search, mode: 'insensitive' as const } },
+              { bio: { contains: search, mode: 'insensitive' as const } },
+              { skills: { some: { skill: { name: { contains: search, mode: 'insensitive' as const } } } } },
+            ],
+          }
+        : {}),
+      ...(categoryId ? { skills: { some: { skill: { categoryId } } } } : {}),
+    };
 
-    const [users, total] = await qb.getManyAndCount();
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        include: { skills: { include: { skill: true } } },
+        orderBy: [{ isVerified: 'desc' }, { createdAt: 'desc' }],
+        skip,
+        take: limit * 2,
+      }),
+      this.prisma.user.count({ where }),
+    ]);
 
     // Build specialist profiles with computed stats
     let specialists = await Promise.all(
       users.map(async (user) => {
         const avgRating = await this.getUserAvgRating(user.id);
-        const completedProjects = await this.proposalRepo.count({
-          where: { specialistId: user.id, status: ProposalStatus.ACCEPTED },
+        const completedProjects = await this.prisma.proposal.count({
+          where: { userId: user.id, status: 'ACCEPTED' },
         });
-        const portfoliosCount = await this.portfolioRepo.count({
-          where: { userId: user.id, isPublished: true } as any,
+        const portfoliosCount = await this.prisma.portfolio.count({
+          where: { userId: user.id, isPublished: true },
         });
-        const totalReviews = await this.reviewRepo.count({
-          where: { targetUserId: user.id } as any,
+        const totalReviews = await this.prisma.review.count({
+          where: { userId: user.id },
         });
 
         return {
@@ -165,32 +138,32 @@ export class SpecialistsService {
    * پروفایل کامل متخصص
    */
   async findById(id: string) {
-    const user = await this.userRepo.findOne({
+    const user = await this.prisma.user.findUnique({
       where: { id },
-      relations: ['skills', 'skills.skill'] as any,
+      include: { skills: { include: { skill: true } } },
     });
 
-    if (!user || user.role !== UserRole.SPECIALIST) {
+    if (!user || user.role !== 'SPECIALIST') {
       throw new NotFoundException('کسب‌وکار مورد نظر یافت نشد');
     }
 
-    const portfolios = await this.portfolioRepo.find({
-      where: { userId: id, isPublished: true } as any,
-      order: { order: 'ASC' } as any,
+    const portfolios = await this.prisma.portfolio.findMany({
+      where: { userId: id, isPublished: true },
+      orderBy: { order: 'asc' },
     });
 
-    const reviews = await this.reviewRepo.find({
-      where: { targetUserId: id } as any,
-      relations: ['author'],
-      order: { createdAt: 'DESC' },
+    const reviews = await this.prisma.review.findMany({
+      where: { userId: id },
+      include: { author: true },
+      orderBy: { createdAt: 'desc' },
     });
 
     const avgRating = await this.getUserAvgRating(id);
-    const completedProjects = await this.proposalRepo.count({
-      where: { specialistId: id, status: ProposalStatus.ACCEPTED },
+    const completedProjects = await this.prisma.proposal.count({
+      where: { userId: id, status: 'ACCEPTED' },
     });
-    const totalProposals = await this.proposalRepo.count({
-      where: { specialistId: id },
+    const totalProposals = await this.prisma.proposal.count({
+      where: { userId: id },
     });
 
     const completionRate =
@@ -241,25 +214,28 @@ export class SpecialistsService {
    * بروزرسانی پروفایل متخصص
    */
   async updateProfile(specialistId: string, dto: UpdateSpecialistProfileDto) {
-    const user = await this.userRepo.findOne({ where: { id: specialistId } });
+    const user = await this.prisma.user.findUnique({ where: { id: specialistId } });
 
-    if (!user || user.role !== UserRole.SPECIALIST) {
+    if (!user || user.role !== 'SPECIALIST') {
       throw new BadRequestException('فقط کسب‌وکارها می‌توانند پروفایل خود را بروزرسانی کنند');
     }
 
-    if (dto.displayName !== undefined) user.displayName = dto.displayName;
-    if (dto.bio !== undefined) user.bio = dto.bio;
-    if (dto.city !== undefined) user.city = dto.city;
-    if (dto.province !== undefined) user.province = dto.province;
-
-    await this.userRepo.save(user);
+    await this.prisma.user.update({
+      where: { id: specialistId },
+      data: {
+        ...(dto.displayName !== undefined ? { displayName: dto.displayName } : {}),
+        ...(dto.bio !== undefined ? { bio: dto.bio } : {}),
+        ...(dto.city !== undefined ? { city: dto.city } : {}),
+        ...(dto.province !== undefined ? { province: dto.province } : {}),
+      },
+    });
 
     // Handle skills update if provided
     if (dto.skills) {
       await this.replaceSkills(specialistId, dto.skills.map((name) => ({ name, level: 3 })));
     }
 
-    const updated = await this.userRepo.findOne({ where: { id: specialistId } });
+    const updated = await this.prisma.user.findUnique({ where: { id: specialistId } });
 
     return {
       message: 'پروفایل با موفقیت بروزرسانی شد',
@@ -271,18 +247,18 @@ export class SpecialistsService {
    * بروزرسانی مهارت‌ها
    */
   async updateSkills(specialistId: string, dto: UpdateSkillsDto) {
-    const user = await this.userRepo.findOne({ where: { id: specialistId } });
+    const user = await this.prisma.user.findUnique({ where: { id: specialistId } });
 
-    if (!user || user.role !== UserRole.SPECIALIST) {
+    if (!user || user.role !== 'SPECIALIST') {
       throw new BadRequestException('فقط کسب‌وکارها می‌توانند مهارت‌های خود را بروزرسانی کنند');
     }
 
     await this.replaceSkills(specialistId, dto.skills);
 
-    const userSkills = await this.userSkillRepo.find({
+    const userSkills = await this.prisma.userSkill.findMany({
       where: { userId: specialistId },
-      relations: ['skill'],
-      order: { level: 'DESC' } as any,
+      include: { skill: true },
+      orderBy: { level: 'desc' },
     });
 
     return {
@@ -300,21 +276,21 @@ export class SpecialistsService {
    * افزودن نمونه‌کار
    */
   async addPortfolio(specialistId: string, dto: CreatePortfolioDto) {
-    const user = await this.userRepo.findOne({ where: { id: specialistId } });
+    const user = await this.prisma.user.findUnique({ where: { id: specialistId } });
 
-    if (!user || user.role !== UserRole.SPECIALIST) {
+    if (!user || user.role !== 'SPECIALIST') {
       throw new BadRequestException('فقط کسب‌وکارها می‌توانند نمونه‌کار اضافه کنند');
     }
 
-    const portfolio = this.portfolioRepo.create({
-      userId: specialistId,
-      title: dto.title,
-      description: dto.description,
-      imageUrls: dto.imageUrl ? JSON.stringify([dto.imageUrl]) : '[]',
-      projectUrl: dto.projectUrl,
-    } as any);
-
-    await this.portfolioRepo.save(portfolio);
+    const portfolio = await this.prisma.portfolio.create({
+      data: {
+        userId: specialistId,
+        title: dto.title,
+        description: dto.description,
+        imageUrls: dto.imageUrl ? JSON.stringify([dto.imageUrl]) : '[]',
+        projectUrl: dto.projectUrl,
+      },
+    });
 
     return {
       message: 'نمونه‌کار با موفقیت اضافه شد',
@@ -330,9 +306,7 @@ export class SpecialistsService {
     portfolioId: string,
     dto: UpdatePortfolioDto,
   ) {
-    const portfolio = await this.portfolioRepo.findOne({
-      where: { id: portfolioId },
-    });
+    const portfolio = await this.prisma.portfolio.findUnique({ where: { id: portfolioId } });
 
     if (!portfolio) {
       throw new NotFoundException('نمونه‌کار مورد نظر یافت نشد');
@@ -342,16 +316,19 @@ export class SpecialistsService {
       throw new BadRequestException('شما فقط می‌توانید نمونه‌کارهای خود را ویرایش کنید');
     }
 
-    if (dto.title !== undefined) portfolio.title = dto.title;
-    if (dto.description !== undefined) portfolio.description = dto.description;
-    if (dto.imageUrl !== undefined) portfolio.imageUrls = JSON.stringify([dto.imageUrl]) as any;
-    if (dto.projectUrl !== undefined) portfolio.projectUrl = dto.projectUrl;
-
-    await this.portfolioRepo.save(portfolio);
+    const updatedPortfolio = await this.prisma.portfolio.update({
+      where: { id: portfolioId },
+      data: {
+        ...(dto.title !== undefined ? { title: dto.title } : {}),
+        ...(dto.description !== undefined ? { description: dto.description } : {}),
+        ...(dto.imageUrl !== undefined ? { imageUrls: JSON.stringify([dto.imageUrl]) } : {}),
+        ...(dto.projectUrl !== undefined ? { projectUrl: dto.projectUrl } : {}),
+      },
+    });
 
     return {
       message: 'نمونه‌کار با موفقیت بروزرسانی شد',
-      data: portfolio,
+      data: updatedPortfolio,
     };
   }
 
@@ -359,9 +336,7 @@ export class SpecialistsService {
    * حذف نمونه‌کار
    */
   async deletePortfolio(specialistId: string, portfolioId: string) {
-    const portfolio = await this.portfolioRepo.findOne({
-      where: { id: portfolioId },
-    });
+    const portfolio = await this.prisma.portfolio.findUnique({ where: { id: portfolioId } });
 
     if (!portfolio) {
       throw new NotFoundException('نمونه‌کار مورد نظر یافت نشد');
@@ -371,7 +346,7 @@ export class SpecialistsService {
       throw new BadRequestException('شما فقط می‌توانید نمونه‌کارهای خود را حذف کنید');
     }
 
-    await this.portfolioRepo.remove(portfolio);
+    await this.prisma.portfolio.delete({ where: { id: portfolioId } });
 
     return { message: 'نمونه‌کار با موفقیت حذف شد' };
   }
@@ -380,25 +355,25 @@ export class SpecialistsService {
    * متخصص‌های برتر (بر اساس امتیاز)
    */
   async getTopSpecialists(limit: number = 10) {
-    const users = await this.userRepo.find({
+    const users = await this.prisma.user.findMany({
       where: {
-        role: UserRole.SPECIALIST,
+        role: 'SPECIALIST',
         isActive: true,
         isVerified: true,
       },
-      relations: ['skills', 'skills.skill'] as any,
-      order: { createdAt: 'DESC' },
+      include: { skills: { include: { skill: true } } },
+      orderBy: { createdAt: 'desc' },
       take: limit * 3, // Fetch extra for filtering
     });
 
     const specialistsWithRating = await Promise.all(
       users.map(async (user) => {
         const avgRating = await this.getUserAvgRating(user.id);
-        const completedProjects = await this.proposalRepo.count({
-          where: { specialistId: user.id, status: ProposalStatus.ACCEPTED },
+        const completedProjects = await this.prisma.proposal.count({
+          where: { userId: user.id, status: 'ACCEPTED' },
         });
-        const totalReviews = await this.reviewRepo.count({
-          where: { targetUserId: user.id } as any,
+        const totalReviews = await this.prisma.review.count({
+          where: { userId: user.id },
         });
 
         return {
@@ -441,30 +416,27 @@ export class SpecialistsService {
     minRating?: number;
     categoryId?: string;
   } = {}) {
-    const qb = this.userRepo
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.skills', 'userSkill')
-      .leftJoinAndSelect('userSkill.skill', 'skill')
-      .where('user.role = :role', { role: UserRole.SPECIALIST })
-      .andWhere('user.isActive = :isActive', { isActive: true })
-      .andWhere(
-        '(user.firstName ILIKE :query OR user.lastName ILIKE :query OR user.displayName ILIKE :query OR user.bio ILIKE :search OR skill.name ILIKE :search)',
-        { query: `%${query}%`, search: `%${query}%` },
-      );
-
-    if (filters.city) {
-      qb.andWhere('user.city = :city', { city: filters.city });
-    }
-    if (filters.province) {
-      qb.andWhere('user.province = :province', { province: filters.province });
-    }
-    if (filters.categoryId) {
-      qb.andWhere('skill.categoryId = :categoryId', { categoryId: filters.categoryId });
-    }
-
-    qb.orderBy('user.isVerified', 'DESC').addOrderBy('user.createdAt', 'DESC').take(20);
-
-    const users = await qb.getMany();
+    const users = await this.prisma.user.findMany({
+      where: {
+        role: 'SPECIALIST',
+        isActive: true,
+        ...(filters.city ? { city: filters.city } : {}),
+        ...(filters.province ? { province: filters.province } : {}),
+        ...(filters.categoryId
+          ? { skills: { some: { skill: { categoryId: filters.categoryId } } } }
+          : {}),
+        OR: [
+          { firstName: { contains: query, mode: 'insensitive' } },
+          { lastName: { contains: query, mode: 'insensitive' } },
+          { displayName: { contains: query, mode: 'insensitive' } },
+          { bio: { contains: query, mode: 'insensitive' } },
+          { skills: { some: { skill: { name: { contains: query, mode: 'insensitive' } } } } },
+        ],
+      },
+      include: { skills: { include: { skill: true } } },
+      orderBy: [{ isVerified: 'desc' }, { createdAt: 'desc' }],
+      take: 20,
+    });
 
     const results = await Promise.all(
       users.map(async (user) => {
@@ -496,8 +468,8 @@ export class SpecialistsService {
   // ========== Private Helpers ==========
 
   private async getUserAvgRating(userId: string): Promise<number> {
-    const reviews = await this.reviewRepo.find({
-      where: { targetUserId: userId } as any,
+    const reviews = await this.prisma.review.findMany({
+      where: { userId },
       select: { rating: true },
     });
 
@@ -518,26 +490,28 @@ export class SpecialistsService {
     skills: { name: string; level: number }[],
   ): Promise<void> {
     // Delete existing skills
-    await this.userSkillRepo.delete({ userId });
+    await this.prisma.userSkill.deleteMany({ where: { userId } });
 
     // Create new skills
     for (const item of skills) {
       const slug = slugify(item.name, { lower: true, strict: true });
-      let skill = await this.skillRepo.findOne({ where: { slug } as any });
+      let skill = await this.prisma.skill.findUnique({ where: { slug } });
 
       if (!skill) {
-        skill = this.skillRepo.create({ name: item.name, slug });
-        await this.skillRepo.save(skill as any);
+        skill = await this.prisma.skill.create({
+          data: { name: item.name, slug },
+        });
       }
 
       if (!skill) continue;
 
-      const userSkill = this.userSkillRepo.create({
-        userId,
-        skillId: skill.id,
-        level: item.level,
+      await this.prisma.userSkill.create({
+        data: {
+          userId,
+          skillId: skill.id,
+          level: item.level,
+        },
       });
-      await this.userSkillRepo.save(userSkill);
     }
   }
 }

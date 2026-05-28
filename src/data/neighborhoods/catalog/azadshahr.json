@@ -1,8 +1,24 @@
 {
   "cityId": "azadshahr",
   "cityName": "آزادشهر",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:19.972Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:44:06.592Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-جواهری",
+      "name": "شهرک جواهری",
+      "nameEn": "شهرک-جواهری"
+    },
+    {
+      "id": "مسکن-مهر-آزادشهر",
+      "name": "مسکن مهر آزادشهر",
+      "nameEn": "مسکن-مهر-آزادشهر"
+    },
+    {
+      "id": "میدان-امام-علی",
+      "name": "میدان امام علی",
+      "nameEn": "میدان-امام-علی"
+    }
+  ]
 }

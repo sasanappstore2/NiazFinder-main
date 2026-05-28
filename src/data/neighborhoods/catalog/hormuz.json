@@ -1,8 +1,24 @@
 {
   "cityId": "hormuz",
   "cityName": "هرمز",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:37.181Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:33:39.786Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سنگ-کنی",
+      "name": "سنگ کنی",
+      "nameEn": "سنگ-کنی"
+    },
+    {
+      "id": "قریشی-ها",
+      "name": "قریشی ها",
+      "nameEn": "قریشی-ها"
+    },
+    {
+      "id": "نخل-ناخدا",
+      "name": "نخل ناخدا",
+      "nameEn": "نخل-ناخدا"
+    }
+  ]
 }

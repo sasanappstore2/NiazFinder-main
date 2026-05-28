@@ -1,8 +1,14 @@
 {
   "cityId": "ravansar",
   "cityName": "روانسر",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:13.045Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:27:53.495Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-روانسر",
+      "name": "شهرک روانسر",
+      "nameEn": "شهرک-روانسر"
+    }
+  ]
 }

@@ -1,8 +1,14 @@
 {
   "cityId": "faryab",
   "cityName": "فاریاب",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:17.012Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:14:57.916Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "اسلامآباد",
+      "name": "اسلامآباد",
+      "nameEn": "اسلامآباد"
+    }
+  ]
 }

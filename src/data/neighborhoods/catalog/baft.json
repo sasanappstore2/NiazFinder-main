@@ -1,8 +1,8 @@
 {
   "cityId": "baft",
   "cityName": "بافت",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:18.958Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:15:20.040Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

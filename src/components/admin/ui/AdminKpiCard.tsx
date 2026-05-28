@@ -15,31 +15,40 @@ export function AdminKpiCard({
   change?: number;
   changeLabel?: string;
   icon?: ReactNode;
-  accent?: 'green' | 'blue' | 'amber' | 'violet';
+  accent?: 'indigo' | 'sky' | 'amber' | 'violet' | 'green' | 'blue';
 }) {
   const positive = (change ?? 0) >= 0;
   const accentMap = {
-    green: 'bg-(--color-coloredText)/10 text-(--color-coloredText)',
-    blue: 'bg-sky-500/10 text-sky-500',
-    amber: 'bg-amber-500/10 text-amber-500',
-    violet: 'bg-violet-500/10 text-violet-500',
+    indigo: 'bg-(--color-mainColorMuted) text-(--color-coloredText) ring-1 ring-(--color-mainColorMuted)',
+    blue: 'bg-sky-500/10 text-sky-500 ring-1 ring-sky-500/20',
+    green: 'bg-emerald-500/10 text-emerald-500 ring-1 ring-emerald-500/20',
+    sky: 'bg-sky-500/10 text-sky-500 ring-1 ring-sky-500/20',
+    amber: 'bg-amber-500/10 text-amber-500 ring-1 ring-amber-500/20',
+    violet: 'bg-violet-500/10 text-violet-500 ring-1 ring-violet-500/20',
   };
 
   return (
-    <div className="admin-kpi-card group relative overflow-hidden rounded-xl border border-(--color-cardBorder) bg-(--color-primaryBg) p-5 transition-shadow hover:shadow-md">
-      <div className="flex items-start justify-between gap-4">
+    <div className="admin-kpi-card rounded-xl border border-(--color-cardBorder) bg-(--color-primaryBg) p-5 shadow-(--color-shadow)">
+      <div className="relative z-1 flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <p className="text-sm text-(--color-secondaryText)">{title}</p>
+          <p className="text-sm font-medium text-(--color-secondaryText)">{title}</p>
           <p className="admin-kpi-value mt-2">{value}</p>
           {(change !== undefined || changeLabel) && (
-            <div className="mt-2 flex items-center gap-1.5 text-xs">
+            <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-xs">
               {change !== undefined && (
-                <span className={cn('inline-flex items-center gap-0.5 font-medium', positive ? 'text-emerald-500' : 'text-rose-500')}>
+                <span
+                  className={cn(
+                    'inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 font-semibold',
+                    positive
+                      ? 'bg-emerald-500/10 text-emerald-500'
+                      : 'bg-rose-500/10 text-rose-500'
+                  )}
+                >
                   {positive ? <TrendingUp className="size-3" /> : <TrendingDown className="size-3" />}
                   {Math.abs(change).toLocaleString('fa-IR')}٪
                 </span>
               )}
-              {changeLabel && <span className="text-(--color-secondaryText)">{changeLabel}</span>}
+              {changeLabel && <span className="text-(--color-tertiaryText)">{changeLabel}</span>}
             </div>
           )}
         </div>
@@ -67,7 +76,7 @@ export function AdminChartCard({
   className?: string;
 }) {
   return (
-    <div className={cn('rounded-xl border border-(--color-cardBorder) bg-(--color-primaryBg)', className)}>
+    <div className={cn('admin-chart-card overflow-hidden', className)}>
       <div className="flex flex-col gap-2 border-b border-(--color-mainBorder) px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="font-semibold text-(--color-primaryText)">{title}</h3>

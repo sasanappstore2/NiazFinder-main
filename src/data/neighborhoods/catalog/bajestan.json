@@ -1,8 +1,24 @@
 {
   "cityId": "bajestan",
   "cityName": "بجستان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:24.608Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:03:15.399Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-شریعتی",
+      "name": "شهرک شریعتی",
+      "nameEn": "شهرک-شریعتی"
+    },
+    {
+      "id": "شهرک-فرهنگیان",
+      "name": "شهرک فرهنگیان",
+      "nameEn": "شهرک-فرهنگیان"
+    },
+    {
+      "id": "شهرک-کارمندان",
+      "name": "شهرک کارمندان",
+      "nameEn": "شهرک-کارمندان"
+    }
+  ]
 }

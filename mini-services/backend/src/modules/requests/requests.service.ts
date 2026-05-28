@@ -4,14 +4,7 @@ import {
   ForbiddenException,
   BadRequestException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, In, Not } from 'typeorm';
-import { Request, RequestStatus, RequestPriority, BudgetType, DeliveryUnit } from '../../entities/request.entity';
-import { Category } from '../../entities/category.entity';
-import { User } from '../../entities/user.entity';
-import { Proposal } from '../../entities/proposal.entity';
-import { Review } from '../../entities/review.entity';
-import { Notification } from '../../entities/notification.entity';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { QueryRequestsDto } from './dto/query-requests.dto';
@@ -21,18 +14,7 @@ import * as slugify from 'slugify';
 @Injectable()
 export class RequestsService {
   constructor(
-    @InjectRepository(Request)
-    private readonly requestRepo: Repository<Request>,
-    @InjectRepository(Category)
-    private readonly categoryRepo: Repository<Category>,
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
-    @InjectRepository(Proposal)
-    private readonly proposalRepo: Repository<Proposal>,
-    @InjectRepository(Review)
-    private readonly reviewRepo: Repository<Review>,
-    @InjectRepository(Notification)
-    private readonly notificationRepo: Repository<Notification>,
+    private readonly prisma: PrismaService,
     private readonly redis: RedisService,
   ) {}
 
@@ -40,7 +22,7 @@ export class RequestsService {
    * ایجاد درخواست جدید
    */
   async create(userId: string, dto: CreateRequestDto) {
-    const category = await this.categoryRepo.findOne({ where: { id: dto.categoryId } });
+    const category = await this.prisma.category.findUnique({ where: { id: dto.categoryId } });
     if (!category) {
       throw new NotFoundException('دسته‌بندی مورد نظر یافت نشد');
     }
@@ -48,32 +30,29 @@ export class RequestsService {
     // Generate unique slug
     let slug = slugify(dto.title, { lower: true, strict: true });
     let counter = 1;
-    while (await this.requestRepo.findOne({ where: { slug } })) {
+    while (await this.prisma.serviceRequest.findUnique({ where: { slug } })) {
       slug = `${slugify(dto.title, { lower: true, strict: true })}-${counter}`;
       counter++;
     }
 
-    const request = this.requestRepo.create({
-      title: dto.title,
-      slug,
-      description: dto.description,
-      categoryId: dto.categoryId,
-      budgetMin: dto.budgetMin,
-      budgetMax: dto.budgetMax,
-      budgetType: (dto.budgetType || 'FIXED') as BudgetType,
-      deliveryTime: dto.deliveryTime,
-      deliveryUnit: (dto.deliveryUnit || 'day') as DeliveryUnit,
-      city: dto.city,
-      province: dto.province,
-      priority: (dto.priority || 'NORMAL') as RequestPriority,
-      tags: dto.tags || [],
-      userId,
+    const request = await this.prisma.serviceRequest.create({
+      data: {
+        title: dto.title,
+        slug,
+        description: dto.description,
+        categoryId: dto.categoryId,
+        budgetMin: dto.budgetMin !== undefined ? BigInt(dto.budgetMin) : null,
+        budgetMax: dto.budgetMax !== undefined ? BigInt(dto.budgetMax) : null,
+        budgetType: (dto.budgetType || 'FIXED') as any,
+        deliveryTime: dto.deliveryTime,
+        deliveryUnit: dto.deliveryUnit || 'day',
+        city: dto.city,
+        province: dto.province,
+        priority: (dto.priority || 'NORMAL') as any,
+        tags: JSON.stringify(dto.tags || []),
+        userId,
+      },
     });
-
-    await this.requestRepo.save(request);
-
-    // Increment category request count
-    await this.categoryRepo.increment({ id: dto.categoryId }, 'requestCount', 1);
 
     // Publish event to Redis Pub/Sub
     await this.redis.publish('requests:created', {
@@ -88,9 +67,9 @@ export class RequestsService {
     await this.notifyMatchingSpecialists(request, category);
 
     // Load relations for response
-    const savedRequest = await this.requestRepo.findOne({
+    const savedRequest = await this.prisma.serviceRequest.findUnique({
       where: { id: request.id },
-      relations: ['category', 'user'],
+      include: { category: true, user: true },
     });
 
     return savedRequest;
@@ -112,59 +91,43 @@ export class RequestsService {
       sort = 'newest',
     } = query;
 
-    const qb = this.requestRepo
-      .createQueryBuilder('request')
-      .leftJoinAndSelect('request.category', 'category')
-      .leftJoinAndSelect('request.user', 'user')
-      .leftJoinAndSelect('request.proposals', 'proposals')
-      .where('request.deletedAt IS NULL');
-
-    if (categoryId) {
-      qb.andWhere('request.categoryId = :categoryId', { categoryId });
-    }
-    if (city) {
-      qb.andWhere('request.city = :city', { city });
-    }
-    if (province) {
-      qb.andWhere('request.province = :province', { province });
-    }
-    if (status) {
-      qb.andWhere('request.status = :status', { status });
-    }
-    if (priority) {
-      qb.andWhere('request.priority = :priority', { priority });
-    }
-    if (search) {
-      qb.andWhere(
-        '(request.title ILIKE :search OR request.description ILIKE :search)',
-        { search: `%${search}%` },
-      );
-    }
-
-    // Apply sorting
-    switch (sort) {
-      case 'oldest':
-        qb.orderBy('request.createdAt', 'ASC');
-        break;
-      case 'budget_low':
-        qb.orderBy('COALESCE(request.budgetMin, 0)', 'ASC');
-        break;
-      case 'budget_high':
-        qb.orderBy('COALESCE(request.budgetMax, 0)', 'DESC');
-        break;
-      case 'most_proposals':
-        qb.orderBy('request.proposalCount', 'DESC');
-        break;
-      case 'newest':
-      default:
-        qb.orderBy('request.createdAt', 'DESC');
-        break;
-    }
-
     const skip = (page - 1) * limit;
-    qb.skip(skip).take(limit);
+    const where = {
+      ...(categoryId ? { categoryId } : {}),
+      ...(city ? { city } : {}),
+      ...(province ? { province } : {}),
+      ...(status ? { status: status as any } : {}),
+      ...(priority ? { priority: priority as any } : {}),
+      ...(search
+        ? {
+            OR: [
+              { title: { contains: search, mode: 'insensitive' as const } },
+              { description: { contains: search, mode: 'insensitive' as const } },
+            ],
+          }
+        : {}),
+    };
+    const orderBy =
+      sort === 'oldest'
+        ? [{ createdAt: 'asc' as const }]
+        : sort === 'budget_low'
+          ? [{ budgetMin: 'asc' as const }]
+          : sort === 'budget_high'
+            ? [{ budgetMax: 'desc' as const }]
+            : sort === 'most_proposals'
+              ? [{ proposalCount: 'desc' as const }]
+              : [{ createdAt: 'desc' as const }];
 
-    const [items, total] = await qb.getManyAndCount();
+    const [items, total] = await Promise.all([
+      this.prisma.serviceRequest.findMany({
+        where,
+        include: { category: true, user: true, proposals: true },
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      this.prisma.serviceRequest.count({ where }),
+    ]);
 
     return {
       items: items.map((item) => ({
@@ -183,9 +146,9 @@ export class RequestsService {
    * دریافت جزئیات درخواست با افزایش بازدید (با محدودیت سشن در ردیس)
    */
   async findById(id: string, sessionId?: string) {
-    const request = await this.requestRepo.findOne({
+    const request = await this.prisma.serviceRequest.findUnique({
       where: { id },
-      relations: ['category', 'user', 'proposals', 'proposals.specialist'],
+      include: { category: true, user: true, proposals: { include: { user: true } } },
     });
 
     if (!request) {
@@ -195,7 +158,10 @@ export class RequestsService {
     // Rate-limited view count via Redis
     const shouldIncrement = await this.shouldIncrementView(id, sessionId);
     if (shouldIncrement) {
-      await this.requestRepo.increment({ id }, 'viewCount', 1);
+      await this.prisma.serviceRequest.update({
+        where: { id },
+        data: { viewCount: { increment: 1 } },
+      });
       request.viewCount += 1;
     }
 
@@ -203,15 +169,17 @@ export class RequestsService {
       ...request,
       proposals: (request.proposals || []).map((p) => ({
         ...p,
-        specialist: p.specialist ? {
-          id: p.specialist.id,
-          firstName: p.specialist.firstName,
-          lastName: p.specialist.lastName,
-          displayName: p.specialist.displayName,
-          avatar: p.specialist.avatar,
-          city: p.specialist.city,
-          isVerified: p.specialist.isVerified,
-        } : null,
+        specialist: p.user
+          ? {
+              id: p.user.id,
+              firstName: p.user.firstName,
+              lastName: p.user.lastName,
+              displayName: p.user.displayName,
+              avatar: p.user.avatar,
+              city: p.user.city,
+              isVerified: p.user.isVerified,
+            }
+          : null,
       })),
     };
   }
@@ -220,9 +188,9 @@ export class RequestsService {
    * بروزرسانی درخواست (صاحب یا مدیر)
    */
   async update(id: string, userId: string, dto: UpdateRequestDto) {
-    const request = await this.requestRepo.findOne({
+    const request = await this.prisma.serviceRequest.findUnique({
       where: { id },
-      relations: ['user'],
+      include: { user: true },
     });
 
     if (!request) {
@@ -235,12 +203,12 @@ export class RequestsService {
       throw new ForbiddenException('شما فقط می‌توانید درخواست‌های خود را ویرایش کنید');
     }
 
-    if (request.status !== RequestStatus.OPEN && !isAdmin) {
+    if (request.status !== 'OPEN' && !isAdmin) {
       throw new BadRequestException('فقط درخواست‌های باز قابل ویرایش هستند');
     }
 
     if (dto.categoryId) {
-      const category = await this.categoryRepo.findOne({ where: { id: dto.categoryId } });
+      const category = await this.prisma.category.findUnique({ where: { id: dto.categoryId } });
       if (!category) {
         throw new NotFoundException('دسته‌بندی مورد نظر یافت نشد');
       }
@@ -249,33 +217,36 @@ export class RequestsService {
     if (dto.title && dto.title !== request.title) {
       let slug = slugify(dto.title, { lower: true, strict: true });
       let counter = 1;
-      while (await this.requestRepo.findOne({ where: { slug } })) {
+      while (await this.prisma.serviceRequest.findUnique({ where: { slug } })) {
         slug = `${slugify(dto.title, { lower: true, strict: true })}-${counter}`;
         counter++;
       }
       request.slug = slug;
-      request.title = dto.title;
     }
-
-    if (dto.description !== undefined) request.description = dto.description;
-    if (dto.categoryId !== undefined) request.categoryId = dto.categoryId;
-    if (dto.budgetMin !== undefined) request.budgetMin = dto.budgetMin;
-    if (dto.budgetMax !== undefined) request.budgetMax = dto.budgetMax;
-    if (dto.budgetType !== undefined) request.budgetType = dto.budgetType as BudgetType;
-    if (dto.deliveryTime !== undefined) request.deliveryTime = dto.deliveryTime;
-    if (dto.deliveryUnit !== undefined) request.deliveryUnit = dto.deliveryUnit as DeliveryUnit;
-    if (dto.city !== undefined) request.city = dto.city;
-    if (dto.province !== undefined) request.province = dto.province;
-    if (dto.priority !== undefined) request.priority = dto.priority as RequestPriority;
-    if (dto.tags !== undefined) request.tags = dto.tags;
-
-    await this.requestRepo.save(request);
+    await this.prisma.serviceRequest.update({
+      where: { id },
+      data: {
+        ...(dto.title !== undefined ? { title: dto.title } : {}),
+        ...(request.slug ? { slug: request.slug } : {}),
+        ...(dto.description !== undefined ? { description: dto.description } : {}),
+        ...(dto.categoryId !== undefined ? { categoryId: dto.categoryId } : {}),
+        ...(dto.budgetMin !== undefined ? { budgetMin: BigInt(dto.budgetMin) } : {}),
+        ...(dto.budgetMax !== undefined ? { budgetMax: BigInt(dto.budgetMax) } : {}),
+        ...(dto.budgetType !== undefined ? { budgetType: dto.budgetType as any } : {}),
+        ...(dto.deliveryTime !== undefined ? { deliveryTime: dto.deliveryTime } : {}),
+        ...(dto.deliveryUnit !== undefined ? { deliveryUnit: dto.deliveryUnit } : {}),
+        ...(dto.city !== undefined ? { city: dto.city } : {}),
+        ...(dto.province !== undefined ? { province: dto.province } : {}),
+        ...(dto.priority !== undefined ? { priority: dto.priority as any } : {}),
+        ...(dto.tags !== undefined ? { tags: JSON.stringify(dto.tags) } : {}),
+      },
+    });
 
     await this.redis.publish('requests:updated', { requestId: id, userId });
 
-    const updated = await this.requestRepo.findOne({
+    const updated = await this.prisma.serviceRequest.findUnique({
       where: { id },
-      relations: ['category', 'user'],
+      include: { category: true, user: true },
     });
 
     return updated;
@@ -285,9 +256,9 @@ export class RequestsService {
    * حذف نرم درخواست (صاحب یا مدیر - تنظیم وضعیت به CANCELLED)
    */
   async delete(id: string, userId: string) {
-    const request = await this.requestRepo.findOne({
+    const request = await this.prisma.serviceRequest.findUnique({
       where: { id },
-      relations: ['user'],
+      include: { user: true },
     });
 
     if (!request) {
@@ -300,14 +271,15 @@ export class RequestsService {
       throw new ForbiddenException('شما فقط می‌توانید درخواست‌های خود را حذف کنید');
     }
 
-    if (request.status !== RequestStatus.OPEN && !isAdmin) {
+    if (request.status !== 'OPEN' && !isAdmin) {
       throw new BadRequestException('فقط درخواست‌های باز قابل حذف هستند');
     }
 
     // Soft delete
-    request.status = RequestStatus.CANCELLED;
-    await this.requestRepo.softRemove(request);
-    await this.requestRepo.save(request);
+    await this.prisma.serviceRequest.update({
+      where: { id },
+      data: { status: 'CANCELLED' },
+    });
 
     await this.redis.publish('requests:deleted', { requestId: id, userId });
 
@@ -318,9 +290,9 @@ export class RequestsService {
    * تغییر وضعیت درخواست با اعتبارسنجی انتقال وضعیت
    */
   async updateStatus(id: string, status: string, userId?: string) {
-    const request = await this.requestRepo.findOne({
+    const request = await this.prisma.serviceRequest.findUnique({
       where: { id },
-      relations: ['user'],
+      include: { user: true },
     });
 
     if (!request) {
@@ -343,20 +315,22 @@ export class RequestsService {
       );
     }
 
-    request.status = status as RequestStatus;
-    await this.requestRepo.save(request);
+    await this.prisma.serviceRequest.update({
+      where: { id },
+      data: { status: status as any },
+    });
 
     // Notify request owner if changed by admin
     if (userId && request.userId !== userId) {
-      await this.notificationRepo.save(
-        this.notificationRepo.create({
+      await this.prisma.notification.create({
+        data: {
           userId: request.userId,
-          type: 'REQUEST_STATUS_CHANGED' as any,
+          type: 'REQUEST_STATUS_CHANGED',
           title: 'تغییر وضعیت درخواست',
-          body: `وضعیت درخواست "${request.title}" به "${status}" تغییر یافت`,
-          data: { requestId: id, status },
-        } as any),
-      );
+          message: `وضعیت درخواست "${request.title}" به "${status}" تغییر یافت`,
+          data: JSON.stringify({ requestId: id, status }),
+        },
+      });
     }
 
     await this.redis.publish('requests:status_changed', {
@@ -374,37 +348,31 @@ export class RequestsService {
   async findByUser(userId: string, query: QueryRequestsDto) {
     const { page = 1, limit = 12, status, sort = 'newest' } = query;
 
-    const qb = this.requestRepo
-      .createQueryBuilder('request')
-      .leftJoinAndSelect('request.category', 'category')
-      .where('request.userId = :userId', { userId })
-      .andWhere('request.deletedAt IS NULL');
-
-    if (status) {
-      qb.andWhere('request.status = :status', { status });
-    }
-
-    switch (sort) {
-      case 'oldest':
-        qb.orderBy('request.createdAt', 'ASC');
-        break;
-      case 'budget_low':
-        qb.orderBy('COALESCE(request.budgetMin, 0)', 'ASC');
-        break;
-      case 'budget_high':
-        qb.orderBy('COALESCE(request.budgetMax, 0)', 'DESC');
-        break;
-      case 'most_proposals':
-        qb.orderBy('request.proposalCount', 'DESC');
-        break;
-      default:
-        qb.orderBy('request.createdAt', 'DESC');
-    }
-
     const skip = (page - 1) * limit;
-    qb.skip(skip).take(limit);
-
-    const [items, total] = await qb.getManyAndCount();
+    const orderBy =
+      sort === 'oldest'
+        ? [{ createdAt: 'asc' as const }]
+        : sort === 'budget_low'
+          ? [{ budgetMin: 'asc' as const }]
+          : sort === 'budget_high'
+            ? [{ budgetMax: 'desc' as const }]
+            : sort === 'most_proposals'
+              ? [{ proposalCount: 'desc' as const }]
+              : [{ createdAt: 'desc' as const }];
+    const where = {
+      userId,
+      ...(status ? { status: status as any } : {}),
+    };
+    const [items, total] = await Promise.all([
+      this.prisma.serviceRequest.findMany({
+        where,
+        include: { category: true },
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      this.prisma.serviceRequest.count({ where }),
+    ]);
 
     return {
       items,
@@ -424,32 +392,22 @@ export class RequestsService {
     province?: string;
     status?: string;
   } = {}) {
-    const qb = this.requestRepo
-      .createQueryBuilder('request')
-      .leftJoinAndSelect('request.category', 'category')
-      .leftJoinAndSelect('request.user', 'user')
-      .where('request.deletedAt IS NULL')
-      .andWhere(
-        '(request.title ILIKE :query OR request.description ILIKE :query OR :tag ANY(request.tags))',
-        { query: `%${query}%`, tag: query },
-      );
-
-    if (filters.categoryId) {
-      qb.andWhere('request.categoryId = :categoryId', { categoryId: filters.categoryId });
-    }
-    if (filters.city) {
-      qb.andWhere('request.city = :city', { city: filters.city });
-    }
-    if (filters.province) {
-      qb.andWhere('request.province = :province', { province: filters.province });
-    }
-    if (filters.status) {
-      qb.andWhere('request.status = :status', { status: filters.status });
-    }
-
-    qb.orderBy('request.createdAt', 'DESC').take(20);
-
-    return qb.getMany();
+    return this.prisma.serviceRequest.findMany({
+      where: {
+        ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
+        ...(filters.city ? { city: filters.city } : {}),
+        ...(filters.province ? { province: filters.province } : {}),
+        ...(filters.status ? { status: filters.status as any } : {}),
+        OR: [
+          { title: { contains: query, mode: 'insensitive' } },
+          { description: { contains: query, mode: 'insensitive' } },
+          { tags: { contains: query } },
+        ],
+      },
+      include: { category: true, user: true },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    });
   }
 
   /**
@@ -463,26 +421,18 @@ export class RequestsService {
       completed,
       cancelled,
       expired,
+      totalViewsAgg,
+      totalProposalsAgg,
     ] = await Promise.all([
-      this.requestRepo.count({ where: { deletedAt: null as any } }),
-      this.requestRepo.count({ where: { status: RequestStatus.OPEN, deletedAt: null as any } }),
-      this.requestRepo.count({ where: { status: RequestStatus.IN_PROGRESS, deletedAt: null as any } }),
-      this.requestRepo.count({ where: { status: RequestStatus.COMPLETED, deletedAt: null as any } }),
-      this.requestRepo.count({ where: { status: RequestStatus.CANCELLED, deletedAt: null as any } }),
-      this.requestRepo.count({ where: { status: RequestStatus.EXPIRED, deletedAt: null as any } }),
+      this.prisma.serviceRequest.count(),
+      this.prisma.serviceRequest.count({ where: { status: 'OPEN' } }),
+      this.prisma.serviceRequest.count({ where: { status: 'IN_PROGRESS' } }),
+      this.prisma.serviceRequest.count({ where: { status: 'COMPLETED' } }),
+      this.prisma.serviceRequest.count({ where: { status: 'CANCELLED' } }),
+      this.prisma.serviceRequest.count({ where: { status: 'REJECTED' } }),
+      this.prisma.serviceRequest.aggregate({ _sum: { viewCount: true } }),
+      this.prisma.serviceRequest.aggregate({ _sum: { proposalCount: true } }),
     ]);
-
-    const totalViews = await this.requestRepo
-      .createQueryBuilder('request')
-      .select('COALESCE(SUM(request.viewCount), 0)', 'total')
-      .where('request.deletedAt IS NULL')
-      .getRawOne();
-
-    const totalProposals = await this.requestRepo
-      .createQueryBuilder('request')
-      .select('COALESCE(SUM(request.proposalCount), 0)', 'total')
-      .where('request.deletedAt IS NULL')
-      .getRawOne();
 
     return {
       total,
@@ -491,8 +441,8 @@ export class RequestsService {
       completed,
       cancelled,
       expired,
-      totalViews: parseInt(totalViews?.total || '0'),
-      totalProposals: parseInt(totalProposals?.total || '0'),
+      totalViews: totalViewsAgg._sum.viewCount ?? 0,
+      totalProposals: totalProposalsAgg._sum.proposalCount ?? 0,
     };
   }
 
@@ -511,43 +461,36 @@ export class RequestsService {
   /**
    * Notify specialists who match the request's category/location
    */
-  private async notifyMatchingSpecialists(request: Request, category: Category): Promise<void> {
+  private async notifyMatchingSpecialists(request: any, category: any): Promise<void> {
     try {
-      // Find specialists with matching category skills or location
-      const specialists = await this.userRepo
-        .createQueryBuilder('user')
-        .leftJoin('user.skills', 'skill')
-        .where('user.role = :role', { role: 'SPECIALIST' })
-        .andWhere('user.isActive = :isActive', { isActive: true })
-        .andWhere(
-          '(skill.categoryId = :categoryId OR (user.city = :city AND :city IS NOT NULL) OR (user.province = :province AND :province IS NOT NULL))',
-          {
-            categoryId: category.id,
-            city: request.city || null,
-            province: request.province || null,
-          },
-        )
-        .select('user.id')
-        .distinct(true)
-        .limit(50)
-        .getMany();
+      const specialists = await this.prisma.user.findMany({
+        where: {
+          role: 'SPECIALIST',
+          isActive: true,
+          OR: [
+            { skills: { some: { skill: { categoryId: category.id } } } },
+            ...(request.city ? [{ city: request.city }] : []),
+            ...(request.province ? [{ province: request.province }] : []),
+          ],
+        },
+        select: { id: true },
+        take: 50,
+      });
 
-      const notifications = specialists.map((specialist) =>
-        this.notificationRepo.create({
-          userId: specialist.id,
-          type: 'NEW_REQUEST_MATCH' as any,
+      const notifications = specialists.map((specialist) => ({
+        userId: specialist.id,
+        type: 'NEW_REQUEST_MATCH',
           title: 'درخواست جدید مطابق تخصص شما',
-          body: `یک درخواست جدید در دسته‌بندی "${category.name}" ثبت شد`,
-          data: {
+          message: `یک درخواست جدید در دسته‌بندی "${category.name}" ثبت شد`,
+          data: JSON.stringify({
             requestId: request.id,
             categoryId: category.id,
             title: request.title,
-          },
-        } as any),
-      );
+          }),
+      }));
 
       if (notifications.length > 0) {
-        await this.notificationRepo.save(notifications as any);
+        await this.prisma.notification.createMany({ data: notifications });
       }
     } catch {
       // Non-critical: don't fail the request creation if notifications fail

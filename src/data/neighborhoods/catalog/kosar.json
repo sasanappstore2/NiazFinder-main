@@ -1,8 +1,19 @@
 {
   "cityId": "kosar",
   "cityName": "کوثر",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:41.854Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:47:43.476Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گیوی-بالا",
+      "name": "گیوی بالا",
+      "nameEn": "گیوی-بالا"
+    },
+    {
+      "id": "مسکن-مهر-گیوی",
+      "name": "مسکن مهر گیوی",
+      "nameEn": "مسکن-مهر-گیوی"
+    }
+  ]
 }

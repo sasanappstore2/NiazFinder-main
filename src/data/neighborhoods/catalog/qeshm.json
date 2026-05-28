@@ -1,8 +1,14 @@
 {
   "cityId": "qeshm",
   "cityName": "قشم",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:35.662Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:33:27.287Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-مسکونی-پرواز",
+      "name": "شهرک مسکونی پرواز",
+      "nameEn": "شهرک-مسکونی-پرواز"
+    }
+  ]
 }

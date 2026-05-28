@@ -1,0 +1,245 @@
+/**
+ * Responsive layout — golden ratio (φ ≈ 1.618) + Fibonacci spacing.
+ * Device tiers: phone (<640), tablet (640–1023), laptop (1024–1279), desktop (1280+).
+ */
+
+:root {
+  --phi: 1.618;
+  --golden-sm: 0.618rem;
+  --golden-md: 1rem;
+  --golden-lg: 1.618rem;
+  --golden-xl: 2.618rem;
+  --golden-2xl: 4.236rem;
+  --stack-gap: 1rem;
+  --content-readable: 38.2rem;
+  --content-comfort: 61.8rem;
+  --z-overlay: 45;
+}
+
+@media (max-width: 639px) {
+  :root {
+    --stack-gap: 0.809rem;
+    --section-pad-y: 2.5rem;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  :root {
+    --stack-gap: 1.25rem;
+    --section-pad-y: 3.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --stack-gap: var(--golden-lg);
+    --section-pad-y: 5.25rem;
+  }
+}
+
+/* Prevent horizontal bleed on narrow viewports */
+html {
+  overflow-x: clip;
+}
+
+body {
+  overflow-x: clip;
+  min-width: 0;
+}
+
+/* Main content must shrink inside flex shell */
+#main-content {
+  min-width: 0;
+  width: 100%;
+}
+
+/* Mobile bottom nav padding only when nav is visible (< lg) */
+@media (max-width: 1023px) {
+  .has-mobile-nav {
+    padding-bottom: var(--mobile-nav-offset);
+  }
+}
+
+@media (min-width: 1024px) {
+  .has-mobile-nav {
+    padding-bottom: 0;
+  }
+}
+
+/* Sticky elements below dynamic header */
+.sticky-below-header {
+  position: sticky;
+  top: calc(var(--site-header-offset, 6.5rem) + var(--golden-sm));
+  z-index: var(--z-sticky);
+}
+
+/* Safe viewport minus chrome (header + mobile nav) */
+.min-h-viewport-content {
+  min-height: calc(
+    100dvh - var(--site-header-offset, 6.5rem) - var(--mobile-nav-offset, 0px)
+  );
+}
+
+@media (min-width: 1024px) {
+  .min-h-viewport-content {
+    min-height: calc(100dvh - var(--site-header-offset, 6.5rem));
+  }
+}
+
+/* Golden split: primary column φ, sidebar 1 */
+.layout-golden-split {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap);
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .layout-golden-split {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--golden-lg);
+  }
+
+  .layout-golden-split > .layout-golden-main {
+    flex: var(--phi) 1 0;
+    min-width: 0;
+  }
+
+  .layout-golden-split > .layout-golden-aside {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 20rem;
+  }
+}
+
+/* Stack children with consistent rhythm */
+.layout-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap);
+  min-width: 0;
+}
+
+/* Text / chips must not force overflow */
+.overflow-guard {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.text-balance-safe {
+  text-wrap: balance;
+}
+
+/* Touch targets (Apple HIG + Material) */
+@media (pointer: coarse) {
+  .touch-target-min {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Fixed overlays above mobile nav */
+@media (max-width: 1023px) {
+  .fixed-above-mobile-nav {
+    bottom: calc(var(--mobile-nav-offset) + 0.75rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .fixed-above-mobile-nav {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 1.5rem);
+  }
+}
+
+/* Back to top — clear bottom nav on phone/tablet */
+.back-to-top-progress {
+  bottom: calc(var(--mobile-nav-offset) + 0.75rem);
+}
+
+@media (min-width: 1024px) {
+  .back-to-top-progress {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 1.5rem);
+  }
+}
+
+/* Cookie banner — sits above mobile nav */
+.cookie-consent-anchor {
+  bottom: calc(var(--mobile-nav-offset) + 0.5rem);
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .cookie-consent-anchor {
+    bottom: calc(var(--mobile-nav-offset) + 0.75rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cookie-consent-anchor {
+    bottom: 1.5rem;
+  }
+}
+
+/* Footer: nav offset only on handheld */
+.footer-with-mobile-nav {
+  padding-bottom: var(--mobile-nav-offset);
+}
+
+@media (min-width: 1024px) {
+  .footer-with-mobile-nav {
+    padding-bottom: 0;
+  }
+}
+
+/* Section vertical rhythm (golden clamp) */
+.section-padding {
+  padding-top: var(--section-pad-y, 3.25rem);
+  padding-bottom: var(--section-pad-y, 3.25rem);
+}
+
+/* Container padding — phone / tablet / laptop */
+.container-default,
+.page-container {
+  padding-inline: max(1rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+}
+
+@media (min-width: 640px) {
+  .container-default,
+  .page-container {
+    padding-inline: max(1.5rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container-default,
+  .page-container {
+    padding-inline: max(1.75rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-default,
+  .page-container {
+    padding-inline: 2rem;
+  }
+}
+
+/* Readable line length (golden ~38rem) */
+.prose-golden {
+  max-width: var(--content-readable);
+}
+
+/* Messages / chat panels inside AppShell */
+.h-messages-panel {
+  height: calc(
+    100dvh - var(--site-header-offset, 6.5rem) - var(--mobile-nav-offset, 0px) - 1rem
+  );
+  min-height: 0;
+}
+
+@media (min-width: 1024px) {
+  .h-messages-panel {
+    height: calc(100dvh - var(--site-header-offset, 6.5rem) - 2rem);
+  }
+}

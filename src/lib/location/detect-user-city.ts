@@ -20,8 +20,15 @@ export class GeoLocationError extends Error {
 
 const GEO_TIMEOUT_MS = 8_000;
 
+export interface RequestCoordinatesOptions {
+  /** Better district accuracy; may take longer. */
+  highAccuracy?: boolean;
+}
+
 /** Browser Geolocation API wrapper */
-export function requestUserCoordinates(): Promise<GeoCoordinates> {
+export function requestUserCoordinates(
+  opts?: RequestCoordinatesOptions
+): Promise<GeoCoordinates> {
   return new Promise((resolve, reject) => {
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
       reject(new GeoLocationError('Geolocation not supported', 'unsupported'));
@@ -47,12 +54,51 @@ export function requestUserCoordinates(): Promise<GeoCoordinates> {
         }
       },
       {
-        enableHighAccuracy: false,
+        enableHighAccuracy: opts?.highAccuracy ?? false,
         timeout: GEO_TIMEOUT_MS,
-        maximumAge: 5 * 60 * 1000,
+        maximumAge: opts?.highAccuracy ? 60_000 : 5 * 60 * 1000,
       }
     );
   });
+}
+
+export interface DetectedUserLocationFromGps {
+  cityName: string;
+  cityId: string;
+  citySlug: string;
+  neighborhood: { id: string; name: string } | null;
+  neighborhoodMatchScore: number;
+}
+
+/** City + neighborhood from GPS via server reverse-geocode (no raw coords stored). */
+export async function detectUserLocationFromGps(
+  opts?: RequestCoordinatesOptions
+): Promise<DetectedUserLocationFromGps | null> {
+  const { lat, lng } = await requestUserCoordinates({ highAccuracy: true, ...opts });
+
+  const res = await fetch(
+    `/api/locations/reverse-geocode?lat=${encodeURIComponent(String(lat))}&lng=${encodeURIComponent(String(lng))}`
+  );
+
+  if (!res.ok) return null;
+
+  const data = (await res.json()) as {
+    cityName?: string;
+    cityId?: string;
+    citySlug?: string;
+    neighborhood?: { id: string; name: string } | null;
+    neighborhoodMatchScore?: number;
+  };
+
+  if (!data.cityName?.trim() || !data.cityId || !data.citySlug) return null;
+
+  return {
+    cityName: data.cityName.trim(),
+    cityId: data.cityId,
+    citySlug: data.citySlug,
+    neighborhood: data.neighborhood ?? null,
+    neighborhoodMatchScore: data.neighborhoodMatchScore ?? 0,
+  };
 }
 
 /** Detect nearest site city from device GPS (no raw coords persisted) */

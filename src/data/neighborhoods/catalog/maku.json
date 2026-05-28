@@ -1,8 +1,19 @@
 {
   "cityId": "maku",
   "cityName": "ماکو",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:50.475Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:08:34.787Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مجتمع-آپارتمانی-۲۸۸-واحدی-ولیعصر",
+      "name": "مجتمع آپارتمانی ۲۸۸ واحدی ولیعصر",
+      "nameEn": "مجتمع-آپارتمانی-۲۸۸-واحدی-ولیعصر"
+    },
+    {
+      "id": "میدان-شیر",
+      "name": "میدان شیر",
+      "nameEn": "میدان-شیر"
+    }
+  ]
 }

@@ -1,5 +1,5 @@
 /**
- * End-to-end-ish check for home → parse-intent (and optional mlx-health in dev).
+ * Home / post intake analyze smoke (canonical engine).
  *
  * Run with Next dev up:
  *   npx tsx scripts/health/smoke-need-intake-home-parse.ts
@@ -17,56 +17,26 @@ const SAMPLE_TEXT =
 async function main() {
   const out: Record<string, unknown> = { baseUrl: BASE };
 
-  try {
-    const healthRes = await fetch(`${BASE}/api/need-intake/mlx-health`, {
-      method: 'GET',
-      signal: AbortSignal.timeout(8000),
-    });
-    if (healthRes.status === 404) {
-      out.mlxHealth = {
-        skipped: true,
-        note: 'Route disabled outside development (expected in production builds).',
-      };
-    } else {
-      const healthJson = (await healthRes.json().catch(() => ({}))) as Record<
-        string,
-        unknown
-      >;
-      out.mlxHealth = {
-        status: healthRes.status,
-        ok: healthRes.ok,
-        body: healthJson,
-      };
-    }
-  } catch (e) {
-    out.mlxHealth = {
-      error: e instanceof Error ? e.message : String(e),
-    };
-  }
-
-  const parseRes = await fetch(`${BASE}/api/need-intake/parse-intent`, {
+  const analyzeRes = await fetch(`${BASE}/api/intake/analyze`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text: SAMPLE_TEXT }),
     signal: AbortSignal.timeout(60000),
   });
 
-  const parseJson = (await parseRes.json().catch(() => ({}))) as Record<
-    string,
-    unknown
-  >;
+  const analyzeJson = (await analyzeRes.json().catch(() => ({}))) as Record<string, unknown>;
+  const entities = analyzeJson.entities as { categorySlug?: string; subcategorySlug?: string } | undefined;
+  const slug = entities?.subcategorySlug ?? entities?.categorySlug;
 
-  const parsed = parseJson.parsed as { categorySlug?: string } | undefined;
-  const slug = parsed?.categorySlug;
-
-  out.parseIntent = {
-    status: parseRes.status,
+  out.intakeAnalyze = {
+    status: analyzeRes.status,
     sampleLength: SAMPLE_TEXT.length,
-    meta: parseJson.meta,
+    meta: analyzeJson.meta,
     categorySlug: slug,
+    needType: analyzeJson.needType,
   };
 
-  const ok = parseRes.ok && typeof slug === 'string' && slug.length > 0;
+  const ok = analyzeRes.ok && typeof slug === 'string' && slug.length > 0;
 
   console.log(JSON.stringify({ ...out, passed: ok }, null, 2));
   process.exit(ok ? 0 : 1);

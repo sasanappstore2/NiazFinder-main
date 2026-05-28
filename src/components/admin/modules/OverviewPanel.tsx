@@ -103,7 +103,7 @@ export function OverviewPanel() {
           change={Math.round(openRequestRatio)}
           changeLabel="باز"
           icon={<ListChecks className="size-5" />}
-          accent="blue"
+          accent="sky"
         />
         <AdminKpiCard
           title="پیشنهادها"

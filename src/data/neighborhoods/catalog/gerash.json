@@ -1,8 +1,24 @@
 {
   "cityId": "gerash",
   "cityName": "گراش",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:06.721Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:00:05.113Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-امام-رضا",
+      "name": "شهرک امام رضا",
+      "nameEn": "شهرک-امام-رضا"
+    },
+    {
+      "id": "شهرک-رزمندگان",
+      "name": "شهرک رزمندگان",
+      "nameEn": "شهرک-رزمندگان"
+    },
+    {
+      "id": "شهرک-فرهنگیان",
+      "name": "شهرک فرهنگیان",
+      "nameEn": "شهرک-فرهنگیان"
+    }
+  ]
 }

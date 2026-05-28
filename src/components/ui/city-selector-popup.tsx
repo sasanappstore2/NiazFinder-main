@@ -38,6 +38,8 @@ interface CitySelectorPopupProps {
   detectedCity?: City | null;
   isDetecting?: boolean;
   onDetectLocation?: () => void;
+  /** When set to 1, only one city can be selected (intake flows). */
+  maxSelection?: number;
 }
 
 // ─── Checkbox Component ───
@@ -87,6 +89,7 @@ export function CitySelectorPopup({
   detectedCity = null,
   isDetecting = false,
   onDetectLocation,
+  maxSelection,
 }: CitySelectorPopupProps) {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [tempSelection, setTempSelection] = React.useState<City[]>(selectedCities);
@@ -94,6 +97,15 @@ export function CitySelectorPopup({
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { provinces, searchCities } = useManagedLocations();
+
+  const selectedCityIdsKey = React.useMemo(
+    () => selectedCities.map((c) => c.id).sort().join(','),
+    [selectedCities]
+  );
+  const selectedProvinceIdsKey = React.useMemo(
+    () => [...selectedProvinceIds].sort().join(','),
+    [selectedProvinceIds]
+  );
 
   // Sync temp selection (expand full provinces into cities for UI)
   React.useEffect(() => {
@@ -114,8 +126,16 @@ export function CitySelectorPopup({
         }
       }
     }
-    setTempSelection(merged);
-  }, [selectedCities, selectedProvinceIds, provinces]);
+    setTempSelection((prev) => {
+      if (
+        prev.length === merged.length &&
+        prev.every((city, index) => city.id === merged[index]?.id)
+      ) {
+        return prev;
+      }
+      return merged;
+    });
+  }, [selectedCityIdsKey, selectedProvinceIdsKey, provinces]);
 
   // Focus search on open
   React.useEffect(() => {
@@ -126,11 +146,13 @@ export function CitySelectorPopup({
 
   // Toggle city
   const toggleCity = (city: City) => {
-    setTempSelection(prev =>
-      prev.some(c => c.id === city.id)
-        ? prev.filter(c => c.id !== city.id)
-        : [...prev, city]
-    );
+    setTempSelection((prev) => {
+      if (prev.some((c) => c.id === city.id)) {
+        return prev.filter((c) => c.id !== city.id);
+      }
+      if (maxSelection === 1) return [city];
+      return [...prev, city];
+    });
   };
 
   // Toggle all cities of a province
@@ -424,7 +446,7 @@ export function CitySelectorPopup({
                   پاک کردن
                 </button>
               )}
-              {!isAllSelected && (
+              {!isAllSelected && maxSelection !== 1 && (
                 <button
                   onClick={selectAll}
                   className="text-caption text-muted-foreground hover:text-foreground font-medium whitespace-nowrap transition-colors"

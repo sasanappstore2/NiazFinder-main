@@ -41,6 +41,7 @@ export interface AdminCityRef {
   id: string;
   name: string;
   provinceId: string;
+  provinceName: string;
 }
 
 export function normalizePersianName(value: string): string {
@@ -60,7 +61,12 @@ export async function loadAdminCities(): Promise<AdminCityRef[]> {
   for (const country of data.countries) {
     for (const province of country.provinces) {
       for (const city of province.cities) {
-        cities.push({ id: city.id, name: city.name, provinceId: province.id });
+        cities.push({
+          id: city.id,
+          name: city.name,
+          provinceId: province.id,
+          provinceName: province.name,
+        });
       }
     }
   }

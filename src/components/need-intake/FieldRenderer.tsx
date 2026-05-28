@@ -8,8 +8,8 @@ import { PriceInput } from './PriceInput';
 
 interface FieldRendererProps {
   field: FieldSchema;
-  value: string | number | boolean | undefined;
-  onChange: (value: string | number) => void;
+  value: string | number | boolean | string[] | undefined;
+  onChange: (value: string | number | string[]) => void;
   onChipSelect?: (value: string) => void;
   disabled?: boolean;
 }
@@ -21,14 +21,25 @@ export function FieldRenderer({
   onChipSelect,
   disabled,
 }: FieldRendererProps) {
-  if (field.type === 'chips' && field.options) {
+  if ((field.type === 'chips' || field.type === 'multi_select') && field.options) {
+    const isMulti = field.type === 'multi_select';
+    const chipValue = isMulti
+      ? Array.isArray(value)
+        ? value
+        : typeof value === 'string' && value.trim()
+          ? value.split(',').map((v) => v.trim()).filter(Boolean)
+          : []
+      : String(value ?? '');
+
     return (
       <SuggestionChips
         options={field.options}
+        value={chipValue}
+        multiple={isMulti}
         disabled={disabled}
         onSelect={(v) => {
           onChange(v);
-          onChipSelect?.(v);
+          if (!isMulti && typeof v === 'string') onChipSelect?.(v);
         }}
       />
     );

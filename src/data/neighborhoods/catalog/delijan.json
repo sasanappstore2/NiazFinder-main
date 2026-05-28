@@ -1,8 +1,8 @@
 {
   "cityId": "delijan",
   "cityName": "دلیجان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:49.862Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:48:28.638Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

@@ -1,8 +1,29 @@
 {
   "cityId": "kamyaran",
   "cityName": "کامیاران",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:36:05.680Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:51:13.782Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-امام-خمینی",
+      "name": "شهرک امام خمینی",
+      "nameEn": "شهرک-امام-خمینی"
+    },
+    {
+      "id": "شهرک-بعثت",
+      "name": "شهرک بعثت",
+      "nameEn": "شهرک-بعثت"
+    },
+    {
+      "id": "شهرک-ژوان",
+      "name": "شهرک ژوان",
+      "nameEn": "شهرک-ژوان"
+    },
+    {
+      "id": "شهرک-سامان-سنجرآباد",
+      "name": "شهرک سامان (سنجرآباد)",
+      "nameEn": "شهرک-سامان-سنجرآباد"
+    }
+  ]
 }

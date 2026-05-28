@@ -1,8 +1,14 @@
 {
   "cityId": "jask",
   "cityName": "جاسک",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:44.771Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:35:52.012Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "یک-بنی",
+      "name": "یک بنی",
+      "nameEn": "یک-بنی"
+    }
+  ]
 }

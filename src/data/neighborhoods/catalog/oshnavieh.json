@@ -1,8 +1,39 @@
 {
   "cityId": "oshnavieh",
   "cityName": "اشنویه",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:49.101Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T17:37:09.187Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "آتش-نشانی",
+      "name": "آتش نشانی",
+      "nameEn": "آتش-نشانی"
+    },
+    {
+      "id": "امیرآباد",
+      "name": "امیرآباد",
+      "nameEn": "امیرآباد"
+    },
+    {
+      "id": "پیغامی",
+      "name": "پیغامی",
+      "nameEn": "پیغامی"
+    },
+    {
+      "id": "تاج-الدین-آباد",
+      "name": "تاج الدین آباد",
+      "nameEn": "تاج-الدین-آباد"
+    },
+    {
+      "id": "رو-شین",
+      "name": "رو شین",
+      "nameEn": "رو-شین"
+    },
+    {
+      "id": "شاکر-آباد",
+      "name": "شاکر آباد",
+      "nameEn": "شاکر-آباد"
+    }
+  ]
 }

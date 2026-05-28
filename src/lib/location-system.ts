@@ -131,7 +131,6 @@ export const countries: Country[] = [
           { id: 'bajestan', name: 'بجستان', nameEn: 'Bajestan' },
           { id: 'jowayin', name: 'جوین', nameEn: 'Jowayin' },
           { id: 'kalat', name: 'کلات', nameEn: 'Kalat' },
-          { id: 'mehdishahr', name: 'مه‌دیشهر', nameEn: 'Mehdishahr' },
           { id: 'golmakan', name: 'گلمکان', nameEn: 'Golmakan' },
           { id: 'fariman', name: 'فریمان', nameEn: 'Fariman' },
           { id: 'nishabur', name: 'نیشابور', nameEn: 'Nishabur' },
@@ -278,7 +277,6 @@ export const countries: Country[] = [
           { id: 'ramsar', name: 'رامسر', nameEn: 'Ramsar' },
           { id: 'noor', name: 'نور', nameEn: 'Noor' },
           { id: 'mahmoudabad', name: 'محمودآباد', nameEn: 'Mahmoudabad' },
-          { id: 'gorgan', name: 'گرگان', nameEn: 'Gorgan' },
           { id: 'feridunkenar', name: 'فریدونکنار', nameEn: 'Feridunkenar' },
           { id: 'babolsar', name: 'بابلسر', nameEn: 'Babolsar' },
           { id: 'joybar', name: 'جویبار', nameEn: 'Joybar' },
@@ -385,7 +383,7 @@ export const countries: Country[] = [
           { id: 'kuhdasht', name: 'کوهدشت', nameEn: 'Kuhdasht' },
           { id: 'aligudarz', name: 'الیگودرز', nameEn: 'Aligudarz' },
           { id: 'azna', name: 'ازنا', nameEn: 'Azna' },
-          { id: 'nourabad', name: 'نورآباد', nameEn: 'Nourabad' },
+          { id: 'nourabad-lorestan', name: 'نورآباد', nameEn: 'Nourabad' },
           { id: 'poldokhtar', name: 'پلدختر', nameEn: 'Poldokhtar' },
           { id: 'rumeshkan', name: 'رومشکان', nameEn: 'Rumeshkan' },
           { id: 'difful', name: 'درفول', nameEn: 'Difful' },
@@ -492,7 +490,7 @@ export const countries: Country[] = [
           { id: 'bafq', name: 'بافق', nameEn: 'Bafq' },
           { id: 'taft', name: 'تفت', nameEn: 'Taft' },
           { id: 'maybod', name: 'میبد', nameEn: 'Maybod' },
-          { id: 'abadan', name: 'ابرکوه', nameEn: 'Abarkouh' },
+          { id: 'abarkouh', name: 'ابرکوه', nameEn: 'Abarkouh' },
           { id: 'ashkezar', name: 'اشکذر', nameEn: 'Ashkezar' },
           { id: 'bahabad', name: 'بافق', nameEn: 'Bahabad' },
           { id: 'khatam', name: 'خاتم', nameEn: 'Khatam' },
@@ -550,7 +548,7 @@ export const countries: Country[] = [
           { id: 'bandarturkman', name: 'بندرترکمن', nameEn: 'Bandar Turkmen' },
           { id: 'galikash', name: 'گالیکش', nameEn: 'Galikash' },
           { id: 'ramian', name: 'رامیان', nameEn: 'Ramian' },
-          { id: 'azarshahr', name: 'آق‌قلا', nameEn: 'Aqqala' },
+          { id: 'aqqala', name: 'آق‌قلا', nameEn: 'Aqqala' },
         ],
       },
       // ─── ۲۵. خراسان شمالی ───
@@ -703,6 +701,18 @@ export const ISLANDS = [
 // Helper Functions
 // ═══════════════════════════════════════════════════════════════════
 
+/** First occurrence wins — guards against duplicate city ids across provinces. */
+export function dedupeCitiesById(cities: City[]): City[] {
+  const seen = new Set<string>();
+  const result: City[] = [];
+  for (const city of cities) {
+    if (seen.has(city.id)) continue;
+    seen.add(city.id);
+    result.push(city);
+  }
+  return result;
+}
+
 export const getLocationDisplayName = (selectedCities: City[]): string => {
   if (selectedCities.length === 0) return 'هیچ شهری انتخاب نشده';
   const allCities = countries.flatMap(country => country.provinces.flatMap(province => province.cities));
@@ -724,7 +734,7 @@ export const decodeLocationParams = (paramString: string): City[] => {
 export const getIranCities = (): City[] => {
   const iran = countries.find(country => country.id === 'iran');
   if (!iran) return [];
-  return iran.provinces.flatMap(province => province.cities);
+  return dedupeCitiesById(iran.provinces.flatMap((province) => province.cities));
 };
 
 export const getIranProvinces = (): Province[] => {

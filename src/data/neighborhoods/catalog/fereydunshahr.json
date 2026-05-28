@@ -1,8 +1,19 @@
 {
   "cityId": "fereydunshahr",
   "cityName": "فریدونشهر",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:31:56.233Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T18:59:45.593Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چهارصد-دستگاه",
+      "name": "چهارصد دستگاه",
+      "nameEn": "چهارصد-دستگاه"
+    },
+    {
+      "id": "خمسلو",
+      "name": "خمسلو",
+      "nameEn": "خمسلو"
+    }
+  ]
 }

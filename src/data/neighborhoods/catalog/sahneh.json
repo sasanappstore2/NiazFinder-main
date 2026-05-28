@@ -1,8 +1,29 @@
 {
   "cityId": "sahneh",
   "cityName": "صحنه",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:06.310Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:26:46.873Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "آباریک-شمالی",
+      "name": "آباریک شمالی",
+      "nameEn": "آباریک-شمالی"
+    },
+    {
+      "id": "شهرک-امام-خمینی",
+      "name": "شهرک امام خمینی",
+      "nameEn": "شهرک-امام-خمینی"
+    },
+    {
+      "id": "شهرک-امام-رضا",
+      "name": "شهرک امام رضا",
+      "nameEn": "شهرک-امام-رضا"
+    },
+    {
+      "id": "شهرک-بهشتی",
+      "name": "شهرک بهشتی",
+      "nameEn": "شهرک-بهشتی"
+    }
+  ]
 }

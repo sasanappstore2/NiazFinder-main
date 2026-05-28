@@ -1,8 +1,34 @@
 {
   "cityId": "kangavar",
   "cityName": "کنگاور",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:09.345Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T17:58:27.074Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-آزادگان",
+      "name": "شهرک آزادگان",
+      "nameEn": "شهرک-آزادگان"
+    },
+    {
+      "id": "شهرک-آموزگار",
+      "name": "شهرک آموزگار",
+      "nameEn": "شهرک-آموزگار"
+    },
+    {
+      "id": "شهرک-بسیج",
+      "name": "شهرک بسیج",
+      "nameEn": "شهرک-بسیج"
+    },
+    {
+      "id": "شهرک-فرمانداری",
+      "name": "شهرک فرمانداری",
+      "nameEn": "شهرک-فرمانداری"
+    },
+    {
+      "id": "محله-باغ-جمیله",
+      "name": "محله باغ جمیله",
+      "nameEn": "محله-باغ-جمیله"
+    }
+  ]
 }

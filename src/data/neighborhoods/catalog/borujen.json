@@ -1,8 +1,19 @@
 {
   "cityId": "borujen",
   "cityName": "بروجن",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:07.953Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:41:22.523Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چهارراه-رازی",
+      "name": "چهارراه رازی",
+      "nameEn": "چهارراه-رازی"
+    },
+    {
+      "id": "میدان-انقلاب",
+      "name": "میدان انقلاب",
+      "nameEn": "میدان-انقلاب"
+    }
+  ]
 }

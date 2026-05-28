@@ -1,8 +1,29 @@
 {
   "cityId": "azna",
   "cityName": "ازنا",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:34:18.285Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:28:51.508Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-المهدی",
+      "name": "شهرک المهدی",
+      "nameEn": "شهرک-المهدی"
+    },
+    {
+      "id": "شهرک-برنا-آباد",
+      "name": "شهرک برنا آباد",
+      "nameEn": "شهرک-برنا-آباد"
+    },
+    {
+      "id": "شهرک-غرب",
+      "name": "شهرک غرب",
+      "nameEn": "شهرک-غرب"
+    },
+    {
+      "id": "مسکن-مهر-ازنا",
+      "name": "مسکن مهر ازنا",
+      "nameEn": "مسکن-مهر-ازنا"
+    }
+  ]
 }

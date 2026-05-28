@@ -1,8 +1,14 @@
 {
   "cityId": "khosf",
   "cityName": "خوسف",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:35.229Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:46:50.945Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "میدان-امام-خمینی",
+      "name": "میدان امام خمینی",
+      "nameEn": "میدان-امام-خمینی"
+    }
+  ]
 }

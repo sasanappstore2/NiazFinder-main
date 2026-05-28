@@ -1,8 +1,34 @@
 {
   "cityId": "masouleh",
   "cityName": "ماسوله",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:30.004Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T17:47:44.952Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "اسدمحله",
+      "name": "اسدمحله",
+      "nameEn": "اسدمحله"
+    },
+    {
+      "id": "خانه-بر",
+      "name": "خانه بر",
+      "nameEn": "خانه-بر"
+    },
+    {
+      "id": "کشه-سر",
+      "name": "کشه سر",
+      "nameEn": "کشه-سر"
+    },
+    {
+      "id": "مسجدبر",
+      "name": "مسجدبر",
+      "nameEn": "مسجدبر"
+    },
+    {
+      "id": "ییلاق-نابارود",
+      "name": "ییلاق نابارود",
+      "nameEn": "ییلاق-نابارود"
+    }
+  ]
 }

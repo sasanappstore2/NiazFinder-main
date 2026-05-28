@@ -1,8 +1,24 @@
 {
   "cityId": "saghez",
   "cityName": "سقز",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:36:03.472Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:50:57.460Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مسکن-مهر-کیان",
+      "name": "مسکن مهر کیان",
+      "nameEn": "مسکن-مهر-کیان"
+    },
+    {
+      "id": "منازل-سازمانی-تیپ-۲۲۸",
+      "name": "منازل سازمانی تیپ ۲۲۸",
+      "nameEn": "منازل-سازمانی-تیپ-۲۲۸"
+    },
+    {
+      "id": "مهر-زاگرس",
+      "name": "مهر زاگرس",
+      "nameEn": "مهر-زاگرس"
+    }
+  ]
 }

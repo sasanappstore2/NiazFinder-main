@@ -1,8 +1,29 @@
 {
   "cityId": "bandarturkman",
   "cityName": "بندرترکمن",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:23.643Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:44:25.929Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "اکبرآباد",
+      "name": "اکبرآباد",
+      "nameEn": "اکبرآباد"
+    },
+    {
+      "id": "حاج-رضا",
+      "name": "حاج رضا",
+      "nameEn": "حاج-رضا"
+    },
+    {
+      "id": "کشتارگاه",
+      "name": "کشتارگاه",
+      "nameEn": "کشتارگاه"
+    },
+    {
+      "id": "مسعود-محله",
+      "name": "مسعود محله",
+      "nameEn": "مسعود-محله"
+    }
+  ]
 }

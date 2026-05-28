@@ -1,8 +1,19 @@
 {
   "cityId": "rafsanjan",
   "cityName": "رفسنجان",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:11.826Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:12:52.746Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-نفت",
+      "name": "شهرک نفت",
+      "nameEn": "شهرک-نفت"
+    },
+    {
+      "id": "محله-نیاوران",
+      "name": "محله نیاوران",
+      "nameEn": "محله-نیاوران"
+    }
+  ]
 }

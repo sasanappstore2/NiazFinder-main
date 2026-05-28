@@ -1,8 +1,8 @@
 {
   "cityId": "zarandiyeh",
   "cityName": "زرندیه",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:54.994Z",
+  "source": "osm",
+  "importedAt": "2026-05-28T19:49:31.609Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

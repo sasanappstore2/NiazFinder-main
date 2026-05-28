@@ -1,8 +1,34 @@
 {
   "cityId": "khonj",
   "cityName": "خنج",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:32:08.220Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T17:27:15.840Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "آزادگان",
+      "name": "آزادگان",
+      "nameEn": "آزادگان"
+    },
+    {
+      "id": "اکبر-آباد",
+      "name": "اکبر آباد",
+      "nameEn": "اکبر-آباد"
+    },
+    {
+      "id": "کوی-فردوس",
+      "name": "کوی فردوس",
+      "nameEn": "کوی-فردوس"
+    },
+    {
+      "id": "کوی-گلستان",
+      "name": "کوی گلستان",
+      "nameEn": "کوی-گلستان"
+    },
+    {
+      "id": "مسکن-مهر",
+      "name": "مسکن مهر",
+      "nameEn": "مسکن-مهر"
+    }
+  ]
 }

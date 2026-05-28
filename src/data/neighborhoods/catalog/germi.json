@@ -1,8 +1,39 @@
 {
   "cityId": "germi",
   "cityName": "گرمی",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:38.929Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:47:12.458Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جوادیه",
+      "name": "جوادیه",
+      "nameEn": "جوادیه"
+    },
+    {
+      "id": "شهرک-ولیعصر",
+      "name": "شهرک ولیعصر",
+      "nameEn": "شهرک-ولیعصر"
+    },
+    {
+      "id": "صاحب-الزمان",
+      "name": "صاحب الزمان",
+      "nameEn": "صاحب-الزمان"
+    },
+    {
+      "id": "قلعه-باشی",
+      "name": "قلعه باشی",
+      "nameEn": "قلعه-باشی"
+    },
+    {
+      "id": "موجره",
+      "name": "موجره",
+      "nameEn": "موجره"
+    },
+    {
+      "id": "l",
+      "name": "Şələ",
+      "nameEn": "l"
+    }
+  ]
 }

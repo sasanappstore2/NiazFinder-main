@@ -1,8 +1,14 @@
 {
   "cityId": "dehdasht",
   "cityName": "دهدشت",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:35:14.728Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:42:33.917Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-اکبر-آباد",
+      "name": "شهرک اکبر آباد",
+      "nameEn": "شهرک-اکبر-آباد"
+    }
+  ]
 }

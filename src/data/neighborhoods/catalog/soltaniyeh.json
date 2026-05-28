@@ -1,8 +1,29 @@
 {
   "cityId": "soltaniyeh",
   "cityName": "سلطانیه",
-  "source": "divar",
-  "importedAt": "2026-05-26T12:33:56.797Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-05-28T19:24:58.833Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سه-راه-زنجان-طارم",
+      "name": "سه راه زنجان طارم",
+      "nameEn": "سه-راه-زنجان-طارم"
+    },
+    {
+      "id": "سه-راه-سلطانیه",
+      "name": "سه راه سلطانیه",
+      "nameEn": "سه-راه-سلطانیه"
+    },
+    {
+      "id": "شاه-بلاغی",
+      "name": "شاه بلاغی",
+      "nameEn": "شاه-بلاغی"
+    },
+    {
+      "id": "شهرک-شهدا",
+      "name": "شهرک شهدا",
+      "nameEn": "شهرک-شهدا"
+    }
+  ]
 }
