@@ -1,6 +1,8 @@
 import type { CategoryFilterSpec } from './types';
 import {
   AMENITIES,
+  DEED_TYPE,
+  FAMILY_COUNT,
   CONDITION,
   DEAL_TYPE_PRODUCT,
   DEAL_TYPE_PROPERTY,
@@ -8,6 +10,7 @@ import {
   DELIVERY_PRE_SALE,
   EMPLOYMENT_TYPE,
   EXPERIENCE,
+  GUEST_COUNT,
   PET_TYPE,
   PROPERTY_KIND,
   RAM_OPTIONS,
@@ -20,6 +23,213 @@ import {
 } from './options';
 
 const G = { browse: true, intake: true } as const;
+
+const SALE_RESIDENTIAL_SPEC: CategoryFilterSpec = [
+  { key: 'budget', label: 'بودجه / قیمت (تومان)', kind: 'range', browse: true, intake: true },
+  {
+    key: 'areaMin',
+    label: 'حداقل متراژ (متر)',
+    kind: 'range',
+    urlParam: 'area',
+    ...G,
+  },
+  {
+    key: 'areaMax',
+    label: 'حداکثر متراژ (متر)',
+    kind: 'range',
+    urlParam: 'area',
+    ...G,
+  },
+  {
+    key: 'pricePerMeterMin',
+    label: 'حداقل قیمت هر متر (تومان)',
+    kind: 'range',
+    urlParam: 'pricePerMeter',
+    ...G,
+  },
+  {
+    key: 'pricePerMeterMax',
+    label: 'حداکثر قیمت هر متر (تومان)',
+    kind: 'range',
+    urlParam: 'pricePerMeter',
+    ...G,
+  },
+  { key: 'rooms', label: 'تعداد خواب', kind: 'chips', options: [...ROOMS], ...G },
+  {
+    key: 'yearMin',
+    label: 'حداقل سن بنا (سال)',
+    kind: 'range',
+    urlParam: 'year',
+    ...G,
+  },
+  {
+    key: 'yearMax',
+    label: 'حداکثر سن بنا (سال)',
+    kind: 'range',
+    urlParam: 'year',
+    ...G,
+  },
+  { key: 'floorMin', label: 'حداقل طبقه', kind: 'range', urlParam: 'floor', ...G },
+  { key: 'floorMax', label: 'حداکثر طبقه', kind: 'range', urlParam: 'floor', ...G },
+  {
+    key: 'amenities',
+    label: 'امکانات',
+    kind: 'multi',
+    options: [...AMENITIES],
+    ...G,
+  },
+  {
+    key: 'deedType',
+    label: 'نوع سند',
+    kind: 'chips',
+    options: [...DEED_TYPE],
+    browse: true,
+    intake: true,
+  },
+];
+
+const RENT_BUILT_SPEC: CategoryFilterSpec = [
+  { key: 'deposit', label: 'ودیعه (تومان)', kind: 'range', browse: true, intake: true },
+  { key: 'monthlyRent', label: 'اجاره ماهانه (تومان)', kind: 'range', browse: true, intake: true },
+  {
+    key: 'rahnAmount',
+    label: 'مبلغ رهن (تومان)',
+    kind: 'range',
+    showIf: { field: 'dealType', in: ['rent_rahn_full', 'rent_rahn_ejare'] },
+    browse: true,
+    intake: true,
+  },
+  {
+    key: 'areaMin',
+    label: 'حداقل متراژ (متر)',
+    kind: 'range',
+    urlParam: 'area',
+    ...G,
+  },
+  {
+    key: 'areaMax',
+    label: 'حداکثر متراژ (متر)',
+    kind: 'range',
+    urlParam: 'area',
+    ...G,
+  },
+  { key: 'rooms', label: 'تعداد خواب', kind: 'chips', options: [...ROOMS], ...G },
+  {
+    key: 'yearMin',
+    label: 'حداقل سن بنا (سال)',
+    kind: 'range',
+    urlParam: 'year',
+    ...G,
+  },
+  {
+    key: 'yearMax',
+    label: 'حداکثر سن بنا (سال)',
+    kind: 'range',
+    urlParam: 'year',
+    ...G,
+  },
+  { key: 'floorMin', label: 'حداقل طبقه', kind: 'range', urlParam: 'floor', ...G },
+  { key: 'floorMax', label: 'حداکثر طبقه', kind: 'range', urlParam: 'floor', ...G },
+  {
+    key: 'amenities',
+    label: 'امکانات',
+    kind: 'multi',
+    options: [...AMENITIES],
+    ...G,
+  },
+];
+
+const SHORT_TERM_SPEC: CategoryFilterSpec = [
+  {
+    key: 'guestCount',
+    label: 'تعداد نفرات',
+    kind: 'chips',
+    options: [...GUEST_COUNT],
+    required: true,
+    ...G,
+  },
+  {
+    key: 'nightlyRent',
+    label: 'اجاره هر شب (تومان)',
+    kind: 'range',
+    browse: true,
+    intake: true,
+  },
+  {
+    key: 'areaMin',
+    label: 'حداقل متراژ (متر)',
+    kind: 'range',
+    urlParam: 'area',
+    ...G,
+  },
+  {
+    key: 'areaMax',
+    label: 'حداکثر متراژ (متر)',
+    kind: 'range',
+    urlParam: 'area',
+    ...G,
+  },
+  { key: 'rooms', label: 'تعداد اتاق', kind: 'chips', options: [...ROOMS], ...G },
+];
+
+const LAND_SALE_SPEC: CategoryFilterSpec = [
+  { key: 'budget', label: 'بودجه / قیمت (تومان)', kind: 'range', browse: true, intake: true },
+  {
+    key: 'areaMin',
+    label: 'حداقل متراژ (متر)',
+    kind: 'range',
+    urlParam: 'area',
+    ...G,
+  },
+  {
+    key: 'areaMax',
+    label: 'حداکثر متراژ (متر)',
+    kind: 'range',
+    urlParam: 'area',
+    ...G,
+  },
+  {
+    key: 'pricePerMeterMin',
+    label: 'حداقل قیمت هر متر (تومان)',
+    kind: 'range',
+    urlParam: 'pricePerMeter',
+    ...G,
+  },
+  {
+    key: 'pricePerMeterMax',
+    label: 'حداکثر قیمت هر متر (تومان)',
+    kind: 'range',
+    urlParam: 'pricePerMeter',
+    ...G,
+  },
+];
+
+const LAND_RENT_SPEC: CategoryFilterSpec = [
+  { key: 'deposit', label: 'ودیعه (تومان)', kind: 'range', browse: true, intake: true },
+  { key: 'monthlyRent', label: 'اجاره ماهانه (تومان)', kind: 'range', browse: true, intake: true },
+  {
+    key: 'rahnAmount',
+    label: 'مبلغ رهن (تومان)',
+    kind: 'range',
+    showIf: { field: 'dealType', in: ['rent_rahn_full', 'rent_rahn_ejare'] },
+    browse: true,
+    intake: true,
+  },
+  {
+    key: 'areaMin',
+    label: 'حداقل متراژ (متر)',
+    kind: 'range',
+    urlParam: 'area',
+    ...G,
+  },
+  {
+    key: 'areaMax',
+    label: 'حداکثر متراژ (متر)',
+    kind: 'range',
+    urlParam: 'area',
+    ...G,
+  },
+];
 
 /** Global browse controls for needs marketplace (`/n/`). */
 export const GLOBAL_NEED_BROWSE_SPEC: CategoryFilterSpec = [
@@ -82,14 +292,14 @@ export const BUSINESS_ROOT_SPECS: Record<string, CategoryFilterSpec> = {
 export const ROOT_SPECS: Record<string, CategoryFilterSpec> = {
   'real-estate': [
     { key: 'dealType', label: 'نوع معامله', kind: 'chips', options: [...DEAL_TYPE_PROPERTY], required: true, ...G },
-    { key: 'propertyKind', label: 'نوع ملک', kind: 'chips', options: [...PROPERTY_KIND], ...G },
-    { key: 'rooms', label: 'تعداد خواب', kind: 'chips', options: [...ROOMS], showIf: { field: 'propertyKind', in: ['apartment', 'villa'] }, ...G },
-    { key: 'areaMin', label: 'حداقل متراژ (متر)', kind: 'range', urlParam: 'area', showIf: { field: 'propertyKind', in: ['apartment', 'villa', 'office', 'shop'] }, ...G },
-    { key: 'budget', label: 'بودجه / قیمت', kind: 'range', showIf: { field: 'dealType', in: ['buy', 'sell'] }, browse: false, intake: true },
-    { key: 'rahnAmount', label: 'مبلغ رهن', kind: 'range', showIf: { field: 'dealType', in: ['rent_rahn_full', 'rent_rahn_ejare'] }, browse: false, intake: true },
-    { key: 'deposit', label: 'ودیعه', kind: 'range', showIf: { field: 'dealType', in: ['rent_rahn_ejare', 'rent_monthly'] }, browse: false, intake: true },
-    { key: 'monthlyRent', label: 'اجاره ماهانه', kind: 'range', showIf: { field: 'dealType', in: ['rent_monthly', 'rent_rahn_ejare'] }, browse: false, intake: true },
-    { key: 'amenities', label: 'امکانات', kind: 'multi', options: [...AMENITIES], showIf: { field: 'propertyKind', in: ['apartment', 'villa'] }, browse: true, intake: true },
+    {
+      key: 'propertyKind',
+      label: 'نوع ملک',
+      kind: 'chips',
+      options: [...PROPERTY_KIND],
+      showIf: { field: 'dealType', in: ['buy', 'sell', 'rent_monthly', 'rent_rahn_full', 'rent_rahn_ejare'] },
+      ...G,
+    },
     { key: '_urgent', label: 'فوری', kind: 'toggle', globalKey: 'urgent', browse: true, intake: false },
     { key: '_recent', label: 'بازه زمانی', kind: 'select', globalKey: 'recent', browse: true, intake: false },
   ],
@@ -202,6 +412,7 @@ export const PARENT_SPECS: Record<string, CategoryFilterSpec> = {
       { value: 'commercial', label: 'تجاری' },
     ], browse: true, intake: true },
   ],
+  'short-term-rent': [...SHORT_TERM_SPEC],
   pets: [
     { key: 'petType', label: 'نوع حیوان', kind: 'chips', options: [...PET_TYPE], browse: true, intake: true },
   ],
@@ -209,8 +420,71 @@ export const PARENT_SPECS: Record<string, CategoryFilterSpec> = {
 
 export const LEAF_SPECS: Record<string, CategoryFilterSpec> = {
   'land-sale': [
+    ...LAND_SALE_SPEC,
     { key: 'rooms', label: 'تعداد خواب', kind: 'chips', options: [...ROOMS], browse: false, intake: false },
     { key: 'amenities', label: 'امکانات', kind: 'multi', options: [...AMENITIES], browse: false, intake: false },
+    { key: 'yearMin', label: 'حداقل سن بنا', kind: 'range', urlParam: 'year', browse: false, intake: false },
+    { key: 'yearMax', label: 'حداکثر سن بنا', kind: 'range', urlParam: 'year', browse: false, intake: false },
+    { key: 'floorMin', label: 'طبقه', kind: 'range', browse: false, intake: false },
+    { key: 'floorMax', label: 'طبقه', kind: 'range', browse: false, intake: false },
+    { key: 'deedType', label: 'سند', kind: 'chips', options: [...DEED_TYPE], browse: false, intake: false },
+  ],
+  'land-rent': [
+    ...LAND_RENT_SPEC,
+    { key: 'rooms', label: 'تعداد خواب', kind: 'chips', options: [...ROOMS], browse: false, intake: false },
+    { key: 'amenities', label: 'امکانات', kind: 'multi', options: [...AMENITIES], browse: false, intake: false },
+    { key: 'yearMin', label: 'حداقل سن بنا', kind: 'range', urlParam: 'year', browse: false, intake: false },
+    { key: 'yearMax', label: 'حداکثر سن بنا', kind: 'range', urlParam: 'year', browse: false, intake: false },
+    { key: 'familyCount', label: 'تعداد نفرات', kind: 'chips', options: [...FAMILY_COUNT], browse: false, intake: false },
+  ],
+  'apartment-sale': [...SALE_RESIDENTIAL_SPEC],
+  'villa-sale': [...SALE_RESIDENTIAL_SPEC],
+  'office-sale': [...SALE_RESIDENTIAL_SPEC],
+  'shop-sale': [...SALE_RESIDENTIAL_SPEC],
+  'industrial-sale': [
+    { key: 'budget', label: 'بودجه / قیمت', kind: 'range', browse: true, intake: true },
+    { key: 'areaMin', label: 'حداقل متراژ', kind: 'range', urlParam: 'area', ...G },
+    { key: 'areaMax', label: 'حداکثر متراژ', kind: 'range', urlParam: 'area', ...G },
+    { key: 'pricePerMeterMin', label: 'حداقل قیمت هر متر', kind: 'range', urlParam: 'pricePerMeter', ...G },
+    { key: 'pricePerMeterMax', label: 'حداکثر قیمت هر متر', kind: 'range', urlParam: 'pricePerMeter', ...G },
+    { key: 'deedType', label: 'نوع سند', kind: 'chips', options: [...DEED_TYPE], browse: true, intake: true },
+  ],
+  'apartment-rent': [...RENT_BUILT_SPEC, { key: 'familyCount', label: 'تعداد نفرات خانواده', kind: 'chips', options: [...FAMILY_COUNT], ...G }],
+  'villa-rent': [...RENT_BUILT_SPEC, { key: 'familyCount', label: 'تعداد نفرات خانواده', kind: 'chips', options: [...FAMILY_COUNT], ...G }],
+  'office-rent': [...RENT_BUILT_SPEC],
+  'shop-rent': [...RENT_BUILT_SPEC],
+  'industrial-rent': [...RENT_BUILT_SPEC],
+  'suite-apartment-rent': [...SHORT_TERM_SPEC],
+  'villa-short-rent': [...SHORT_TERM_SPEC],
+  'workspace-short-rent': [
+    ...SHORT_TERM_SPEC,
+    { key: 'rooms', label: 'تعداد اتاق', kind: 'chips', options: [...ROOMS], browse: false, intake: false },
+  ],
+  'construction-partnership': [
+    {
+      key: 'propertyKind',
+      label: 'نوع ملک / زمین',
+      kind: 'chips',
+      options: [...PROPERTY_KIND],
+      browse: true,
+      intake: true,
+    },
+    {
+      key: 'areaMin',
+      label: 'متراژ زمین (متر)',
+      kind: 'range',
+      urlParam: 'area',
+      browse: true,
+      intake: true,
+    },
+    {
+      key: 'plotWidth',
+      label: 'عرض زمین (متر)',
+      kind: 'text',
+      placeholder: 'مثلاً ۱۲',
+      browse: false,
+      intake: true,
+    },
   ],
   'spare-parts': [
     { key: 'yearMin', label: 'سال ساخت', kind: 'range', urlParam: 'year', browse: false, intake: false },

@@ -1,4 +1,19 @@
 import type { ParseVertical } from '@/lib/need-intake/parse-vertical';
+import { CANONICAL_CITIES } from '@/config/locations';
+import { normalizeIntakeText } from '@/lib/need-intake/normalize-intake-text';
+
+function stripTrailingCityFromArea(area: string): string {
+  const trimmed = area.trim();
+  for (const city of CANONICAL_CITIES) {
+    if (trimmed === city.title) return trimmed;
+    const suffix = ` ${city.title}`;
+    if (trimmed.endsWith(suffix)) {
+      const base = trimmed.slice(0, -suffix.length).trim();
+      if (base.length >= 2) return base;
+    }
+  }
+  return trimmed;
+}
 
 export type ClassifierVertical =
   | 'real-estate'
@@ -49,6 +64,10 @@ const REAL_ESTATE_SIGNALS: { word: string; weight: number }[] = [
   { word: 'پیش فروش', weight: 3 },
   { word: 'پیش‌فروش', weight: 3 },
   { word: 'سوئیت', weight: 3 },
+  { word: 'روزانه', weight: 4 },
+  { word: 'کوتاه‌مدت', weight: 4 },
+  { word: 'کوتاه مدت', weight: 4 },
+  { word: 'شب', weight: 2 },
   { word: 'دفتر', weight: 2 },
   { word: 'مغازه', weight: 2 },
 ];
@@ -61,7 +80,9 @@ const VEHICLE_SIGNALS: { word: string; weight: number }[] = [
   { word: 'سمند', weight: 3 },
   { word: 'تیبا', weight: 3 },
   { word: 'دنا', weight: 3 },
-  { word: 'موتور', weight: 3 },
+  { word: 'موتور', weight: 5 },
+  { word: 'موتورسیکلت', weight: 5 },
+  { word: 'قایق', weight: 5 },
   { word: 'کارکرد', weight: 3 },
   { word: 'یدکی', weight: 3 },
   { word: 'قطعه', weight: 2 },
@@ -76,9 +97,28 @@ const PRODUCT_SIGNALS: { word: string; weight: number }[] = [
   { word: 'macbook', weight: 3 },
   { word: 'کنسول', weight: 3 },
   { word: 'ps5', weight: 3 },
-  { word: 'playstation', weight: 3 },
+  { word: 'playstation', weight: 4 },
+  { word: 'پلی استیشن', weight: 5 },
+  { word: 'پلی‌استیشن', weight: 5 },
+  { word: 'پلیستیشن', weight: 5 },
+  { word: 'ps5', weight: 4 },
+  { word: 'ps4', weight: 4 },
+  { word: 'xbox', weight: 4 },
+  { word: 'کنسول', weight: 4 },
+  { word: 'دسته پلی', weight: 5 },
+  { word: 'دسته بازی', weight: 5 },
+  { word: 'کنترلر', weight: 4 },
+  { word: 'gamepad', weight: 3 },
   { word: 'سامسونگ', weight: 2 },
   { word: 'شیائومی', weight: 2 },
+  { word: 'یخچال', weight: 4 },
+  { word: 'مبل', weight: 4 },
+  { word: 'بلیط', weight: 4 },
+  { word: 'گربه', weight: 4 },
+  { word: 'پوشاک', weight: 3 },
+  { word: 'کت و شلوار', weight: 4 },
+  { word: 'دوربین', weight: 4 },
+  { word: 'تبلت', weight: 3 },
 ];
 
 /** Service signals require concrete service nouns, not generic desire words. */
@@ -116,6 +156,8 @@ const SOCIAL_SIGNALS: { word: string; weight: number }[] = [
   { word: 'گم کردم', weight: 4 },
   { word: 'داوطلب', weight: 3 },
   { word: 'رویداد', weight: 2 },
+  { word: 'همایش', weight: 4 },
+  { word: 'سمینار', weight: 3 },
 ];
 
 /** Known Tehran neighborhoods for area extraction. */
@@ -148,11 +190,7 @@ export const KNOWN_AREAS = [
 ];
 
 function normalizeForClassifier(text: string): string {
-  return text
-    .trim()
-    .replace(/\u200c/g, ' ')
-    .replace(/\s+/g, ' ')
-    .toLowerCase();
+  return normalizeIntakeText(text);
 }
 
 function scoreSignals(
@@ -206,6 +244,22 @@ export function classifyVertical(rawText: string): VerticalClassification {
   scores.social = soc.score;
   signals.push(...soc.matched.map((w) => `soc:${w}`));
 
+  if (text.includes('نقاش')) {
+    scores.services += 8;
+    scores['real-estate'] = Math.max(0, scores['real-estate'] - 5);
+  }
+  if (text.includes('وکیل') || text.includes('لوله')) {
+    scores.services += 5;
+    scores['real-estate'] = Math.max(0, scores['real-estate'] - 3);
+  }
+  if (text.includes('تعمیر') || text.includes('تعمیرکار')) {
+    scores.services += 4;
+    scores.products = Math.max(0, scores.products - 2);
+  }
+  if (text.includes('استخدام') || text.includes('نیاز به نیرو')) {
+    scores.jobs += 4;
+  }
+
   // "میخوام/میخواهم" boosts buy intent only when a vertical already has signal
   const hasDesire =
     text.includes('میخوام') ||
@@ -243,15 +297,59 @@ export function categorySlugForVertical(
 ): string {
   const t = normalizeForClassifier(text);
   switch (vertical) {
-    case 'real-estate':
+    case 'real-estate': {
+      const shortTerm =
+        t.includes('روزانه') ||
+        t.includes('کوتاه') ||
+        t.includes('شب') ||
+        t.includes('سوئیت روزانه');
+      if (shortTerm) {
+        if (t.includes('ویلا') || t.includes('باغ')) return 'villa-short-rent';
+        if (t.includes('دفتر') || t.includes('آموزشی')) return 'workspace-short-rent';
+        return 'suite-apartment-rent';
+      }
+      if (t.includes('زمین') || t.includes('کلنگی')) {
+        if (t.includes('اجاره') || t.includes('رهن') || t.includes('ودیعه')) return 'land-rent';
+        return 'land-sale';
+      }
+      if (t.includes('مغازه')) {
+        return t.includes('اجاره') || t.includes('رهن') ? 'shop-rent' : 'shop-sale';
+      }
+      if (t.includes('دفتر')) {
+        return t.includes('اجاره') || t.includes('رهن') ? 'office-rent' : 'office-sale';
+      }
+      if (t.includes('سوله') || t.includes('صنعتی')) {
+        return t.includes('اجاره') || t.includes('رهن') ? 'industrial-rent' : 'industrial-sale';
+      }
+      if (t.includes('ویلا') || (t.includes('خانه') && !t.includes('خونه میخوام'))) {
+        return t.includes('اجاره') || t.includes('رهن') ? 'villa-rent' : 'villa-sale';
+      }
       if (t.includes('اجاره') || t.includes('رهن') || t.includes('ودیعه')) {
         return 'apartment-rent';
       }
       if (t.includes('فروش') || t.includes('میفروش')) return 'apartment-sale';
       return 'apartment-sale';
+    }
     case 'vehicles':
+      if (t.includes('موتور') || t.includes('موتورسیکلت')) return 'motorcycle';
+      if (t.includes('قایق')) return 'boat';
+      if (t.includes('یدکی') || t.includes('قطعه')) return 'spare-parts';
       return 'car';
     case 'products':
+      if (
+        t.includes('پلی استیشن') ||
+        t.includes('پلیستیشن') ||
+        t.includes('playstation') ||
+        t.includes('ps5') ||
+        t.includes('ps4') ||
+        t.includes('xbox') ||
+        t.includes('کنسول') ||
+        t.includes('دسته پلی') ||
+        t.includes('دسته بازی') ||
+        t.includes('کنترلر')
+      ) {
+        return 'game-console';
+      }
       if (t.includes('لپ')) return 'laptop';
       if (t.includes('گوشی') || t.includes('آیفون') || t.includes('iphone')) {
         return 'mobile-phone';
@@ -288,7 +386,7 @@ export function parseAreaFromText(rawText: string): string | undefined {
   for (const re of patterns) {
     const m = text.match(re);
     if (m?.[1]) {
-      const area = m[1].trim();
+      const area = stripTrailingCityFromArea(m[1].trim());
       if (area.length >= 2 && area.length <= 40) return area;
     }
   }

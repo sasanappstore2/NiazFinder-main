@@ -1,0 +1,62 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { listBusinesses, type BusinessBrowseSort } from '@/lib/business/load-profile';
+import { cityNamesFromParam } from '@/lib/business/browse-geo-filters';
+import { citySlugToPersianName } from '@/lib/search/city-slugs';
+
+const VALID_SORT = new Set<BusinessBrowseSort>(['rating', 'newest', 'name', 'popular']);
+
+function parseSort(raw: string | null): BusinessBrowseSort {
+  if (raw && VALID_SORT.has(raw as BusinessBrowseSort)) {
+    return raw as BusinessBrowseSort;
+  }
+  return 'rating';
+}
+
+/** GET /api/business/browse — marketplace listing for `/b/` pages. */
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '12', 10)));
+    const category = searchParams.get('category') || undefined;
+    const search = searchParams.get('search') || searchParams.get('q') || undefined;
+    const verified = searchParams.get('verified') === 'true';
+    const sort = parseSort(searchParams.get('sort'));
+
+    const citiesParam = searchParams.get('cities') ?? undefined;
+    const provincesParam = searchParams.get('provinces') ?? undefined;
+    const legacyCitySlug = searchParams.get('city');
+    const legacyCity =
+      legacyCitySlug && !citiesParam
+        ? citySlugToPersianName(legacyCitySlug) ?? legacyCitySlug
+        : undefined;
+
+    if (citiesParam) {
+      const names = cityNamesFromParam(citiesParam);
+      if (names.length === 0 && !provincesParam) {
+        return NextResponse.json(
+          { error: 'Invalid city slugs' },
+          { status: 400 }
+        );
+      }
+    }
+
+    const result = await listBusinesses({
+      citiesParam,
+      provincesParam,
+      city: legacyCity,
+      category,
+      search,
+      verified,
+      sort,
+      page,
+      limit,
+    });
+
+    return NextResponse.json(result);
+  } catch (err) {
+    console.error('[GET /api/business/browse]', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

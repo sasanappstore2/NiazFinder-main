@@ -6,6 +6,7 @@ export const DEAL_TYPE_PROPERTY = [
   { value: 'rent_monthly', label: 'اجاره ماهانه' },
   { value: 'rent_rahn_full', label: 'رهن کامل' },
   { value: 'rent_rahn_ejare', label: 'رهن و اجاره' },
+  { value: 'rent_short_term', label: 'اجاره کوتاه‌مدت (روزانه)' },
 ] as const;
 
 export const DEAL_TYPE_VEHICLE = [
@@ -43,6 +44,33 @@ export const AMENITIES = [
   { value: 'elevator', label: 'آسانسور' },
   { value: 'storage', label: 'انباری' },
   { value: 'furnished', label: 'مبله' },
+  { value: 'balcony', label: 'بالکن' },
+  { value: 'renovated', label: 'بازسازی‌شده' },
+] as const;
+
+/** Guest count for short-term rent (Divar: تعداد نفرات). */
+export const GUEST_COUNT = [
+  { value: '1', label: '۱ نفر' },
+  { value: '2', label: '۲ نفر' },
+  { value: '3', label: '۳ نفر' },
+  { value: '4', label: '۴ نفر' },
+  { value: '5+', label: '۵ نفر و بیشتر' },
+] as const;
+
+/** Deed type for sale listings (Divar: سند). */
+export const DEED_TYPE = [
+  { value: 'single_sheet', label: 'تک‌برگ' },
+  { value: 'multi_owner', label: 'مشاعی' },
+  { value: 'power_of_attorney', label: 'وکالتی' },
+  { value: 'any', label: 'فرقی ندارد' },
+] as const;
+
+/** Household size for rental intake (رهن/اجاره). */
+export const FAMILY_COUNT = [
+  { value: '1', label: '۱ نفر' },
+  { value: '2', label: '۲ نفر' },
+  { value: '3', label: '۳ نفر' },
+  { value: '4+', label: '۴ نفر و بیشتر' },
 ] as const;
 
 export const CONDITION = [

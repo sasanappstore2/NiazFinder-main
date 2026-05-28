@@ -2,7 +2,7 @@
 
 import { useNavigate } from '@/hooks/navigation/use-navigate';
 import Link from 'next/link';
-import { mapApiSpecialistToProfile } from '@/services/business';
+import { mapBusinessProfileToBrowseCard } from '@/services/business';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import {
@@ -42,7 +42,6 @@ import { useStartChat } from '@/hooks/use-start-chat';
 import { replaceBrowseUrl } from '@/lib/filter-routing';
 import { serializeFilters, type BrowseFilters } from '@/lib/filters/parser';
 import { mapSortToBusinessApi } from '@/lib/browse/sort-map';
-import { slugsToPersianNames } from '@/lib/search/city-slugs';
 import { useBrowsePageHeading } from '@/hooks/use-browse-page-heading';
 import { useCityNeighborhoods } from '@/hooks/use-city-neighborhoods';
 import { neighborhoodSearchTokens } from '@/lib/neighborhoods';
@@ -359,9 +358,8 @@ export function BrowseSpecialists({
   const [totalPages, setTotalPages] = useState(1);
   const currentPathname = basePath.split('?')[0];
   const { h1: pageH1 } = useBrowsePageHeading('business');
-  const urlCityNames = useMemo(() => slugsToPersianNames(citySlugs), [citySlugs]);
   const provinceSlugs = urlFilters?.provinces ?? [];
-  const hasLocationScope = urlCityNames.length > 0 || provinceSlugs.length > 0;
+  const hasLocationScope = citySlugs.length > 0 || provinceSlugs.length > 0;
   const singleCitySlug = citySlugs.length === 1 ? citySlugs[0] : null;
   const { neighborhoods: cityNeighborhoods } = useCityNeighborhoods(singleCitySlug);
   const neighborhoodTokens = useMemo(() => {
@@ -413,17 +411,17 @@ export function BrowseSpecialists({
       if (categorySlug) params.set('category', categorySlug);
       if (urlFilters?.verified) params.set('verified', 'true');
       params.set('sort', mapSortToBusinessApi(urlFilters?.sort ?? 'rating'));
-      if (hasLocationScope && urlCityNames.length > 0) {
-        params.set('cities', urlCityNames.join(','));
+      if (hasLocationScope && citySlugs.length > 0) {
+        params.set('cities', citySlugs.join(','));
       }
       if (hasLocationScope && provinceSlugs.length > 0) {
         params.set('provinces', provinceSlugs.join(','));
       }
 
-      const res = await fetch(`/api/specialists?${params.toString()}`);
+      const res = await fetch(`/api/business/browse?${params.toString()}`);
       if (!res.ok) throw new Error('fetch failed');
       const json = await res.json();
-      let rows: SpecialistProfile[] = (json.data ?? []).map(mapApiSpecialistToProfile);
+      let rows: SpecialistProfile[] = (json.data ?? []).map(mapBusinessProfileToBrowseCard);
 
       if (neighborhoodTokens.length > 0) {
         rows = rows.filter((s) => {
@@ -455,9 +453,9 @@ export function BrowseSpecialists({
     categorySlug,
     currentPage,
     hasLocationScope,
+    citySlugs,
     provinceSlugs,
     query,
-    urlCityNames,
     urlFilters,
     neighborhoodTokens,
   ]);
@@ -588,9 +586,13 @@ export function BrowseSpecialists({
             <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-muted" aria-hidden="true">
               <Search className="size-8 text-muted-foreground/50" />
             </div>
-            <h2 className="mb-2 text-lg font-semibold">کسب‌وکاری یافت نشد</h2>
+            <h2 className="mb-2 text-lg font-semibold">
+              {categorySlug ? 'هنوز کسب‌وکاری در این دسته نیست' : 'کسب‌وکاری یافت نشد'}
+            </h2>
             <p className="mx-auto max-w-sm text-sm text-muted-foreground">
-              لطفاً فیلترهای خود را تغییر دهید یا عبارت جستجو را اصلاح کنید.
+              {categorySlug
+                ? 'می‌توانید فیلتر دسته را بردارید یا شهر دیگری انتخاب کنید.'
+                : 'لطفاً فیلترهای خود را تغییر دهید یا عبارت جستجو را اصلاح کنید.'}
             </p>
             <Button
               variant="outline"

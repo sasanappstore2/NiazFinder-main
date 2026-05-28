@@ -30,6 +30,16 @@ import type { BrowseFilters, ListingType, SortKey } from '@/lib/filters/parser';
 import { serializeFiltersString } from '@/lib/filters/parser';
 import { getCategoryBySlug, isCategorySlug } from './categories';
 import {
+  isAncestorOccupation,
+  isOccupationSlug,
+  isPickableOccupationSlug,
+} from './business-occupations';
+import {
+  isAncestorOnlineStore,
+  isOnlineStoreSlug,
+  isPickableOnlineStoreSlug,
+} from './online-stores';
+import {
   COUNTRY_SLUG,
   getCitySlugsExcept,
   isCitySlug,
@@ -81,6 +91,9 @@ export const ROUTES = {
 
   /** Help / support. */
   help:                          '/help',
+
+  /** Business owner manage panel (onboarding + edit). */
+  myBusiness:                    '/my-business',
 
   /** App. */
   dashboard:                     '/dashboard',
@@ -188,9 +201,16 @@ export const routeBuilder = {
 
     if (opts.category) {
       const cat = opts.category.toLowerCase();
-      if (isCategorySlug(cat)) {
-        if (opts.parentCategory) {
-          const parent = opts.parentCategory.toLowerCase();
+      const parent = opts.parentCategory?.toLowerCase();
+
+      if (market === 'business' && (isOccupationSlug(cat) || isOnlineStoreSlug(cat))) {
+        if (parent && (isAncestorOccupation(parent, cat) || isAncestorOnlineStore(parent, cat))) {
+          segments.push(parent, cat);
+        } else {
+          segments.push(cat);
+        }
+      } else if (isCategorySlug(cat)) {
+        if (parent) {
           const catRow = getCategoryBySlug(cat);
           if (catRow && catRow.parentSlug === parent && isCategorySlug(parent)) {
             segments.push(parent, cat);
@@ -200,6 +220,11 @@ export const routeBuilder = {
         } else {
           segments.push(cat);
         }
+      } else if (
+        market === 'business' &&
+        (isPickableOccupationSlug(cat) || isPickableOnlineStoreSlug(cat))
+      ) {
+        segments.push(cat);
       }
     }
 
@@ -275,10 +300,31 @@ export const routeBuilder = {
   },
 
   /** /b/{profileSlug} — public business profile. */
-  businessProfile(slug: string, opts?: { from?: string }): string {
+  businessProfile(
+    slug: string,
+    opts?: { from?: string; tab?: string; /** @deprecated use vitrineCategory */ category?: string; vitrineCategory?: string }
+  ): string {
     const base = `/b/${encodeURIComponent(slug)}`;
-    if (!opts?.from) return base;
-    return `${base}?from=${encodeURIComponent(opts.from)}`;
+    const params = new URLSearchParams();
+    if (opts?.tab) params.set('tab', opts.tab);
+    const vitrine = opts?.vitrineCategory ?? opts?.category;
+    if (vitrine) params.set('vitrineCategory', vitrine);
+    if (opts?.from) params.set('from', opts.from);
+    const qs = params.toString();
+    return qs ? `${base}?${qs}` : base;
+  },
+
+  /** Products tab on business profile (avoids legacy ?category= marketplace redirects). */
+  businessVitrine(profileSlug: string, vitrineCategoryId?: string): string {
+    return routeBuilder.businessProfile(profileSlug, {
+      tab: 'products',
+      vitrineCategory: vitrineCategoryId,
+    });
+  },
+
+  /** /b/{profileSlug}/p/{offerId} — product detail on business profile. */
+  businessProduct(profileSlug: string, offerId: string): string {
+    return `/b/${encodeURIComponent(profileSlug)}/p/${encodeURIComponent(offerId)}`;
   },
 
   /** @deprecated Use businessProfile(slug) — /pro kept for redirects. */
@@ -316,6 +362,7 @@ export const routeBuilder = {
   compare:            () => ROUTES.compare,
 
   // ── App
+  myBusiness:         () => ROUTES.myBusiness,
   dashboard:          () => ROUTES.dashboard,
   dashboardTab:       (tab: string) =>
     `${ROUTES.dashboard}?tab=${encodeURIComponent(tab)}`,
@@ -401,4 +448,11 @@ export function buildRoute(routeKey: RouteKey, params?: Record<string, string>):
   const template = ROUTES[routeKey];
   if (!params) return template;
   return fillParams(template, params);
+}
+
+/** `/b/{profileSlug}/p/{offerId}` — public product detail (immersive; no mobile bottom nav). */
+const BUSINESS_PRODUCT_DETAIL_PATH = /^\/b\/[^/]+\/p\/[^/]+\/?$/;
+
+export function isBusinessProductDetailPath(pathname: string): boolean {
+  return BUSINESS_PRODUCT_DETAIL_PATH.test(pathname);
 }

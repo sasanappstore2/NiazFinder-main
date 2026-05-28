@@ -38,9 +38,10 @@ export function locationCityIdToSlug(id: string): string {
   return ID_OVERRIDES[id] ?? id;
 }
 
-/** Reverse lookup: URL slug → location-system City (or null). */
+/** Reverse lookup: URL slug or location-system city id → City (or null). */
 export function cityFromSlug(slug: string): City | null {
-  return BY_SLUG.get(slug.toLowerCase()) ?? null;
+  const raw = slug.toLowerCase().trim();
+  return BY_SLUG.get(raw) ?? BY_SLUG.get(locationCityIdToSlug(raw)) ?? null;
 }
 
 /** All known URL slugs (for filter validation). */

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser, type PaginatedResponse } from '@/lib/auth';
 import { needCardSnapshotSchema } from '@/contracts/need-card-snapshot';
+import { productCardSnapshotSchema } from '@/contracts/product-card-snapshot';
+import { parseChatContactShareContent } from '@/lib/chat/contact-share';
 
 // ============ TYPES ============
 
@@ -16,7 +18,7 @@ interface MessageItem {
   createdAt: Date;
 }
 
-const VALID_MESSAGE_TYPES = ['TEXT', 'IMAGE', 'FILE', 'VOICE', 'NEED_CARD'] as const;
+const VALID_MESSAGE_TYPES = ['TEXT', 'IMAGE', 'FILE', 'VOICE', 'NEED_CARD', 'OFFER_CARD'] as const;
 type ValidMessageType = (typeof VALID_MESSAGE_TYPES)[number];
 
 interface SendMessageBody {
@@ -176,6 +178,15 @@ export async function POST(
       } catch {
         return NextResponse.json({ error: 'فرمت کارت نیاز نامعتبر است' }, { status: 400 });
       }
+    } else if (messageType === 'OFFER_CARD') {
+      try {
+        const parsed = productCardSnapshotSchema.safeParse(JSON.parse(content));
+        if (!parsed.success) {
+          return NextResponse.json({ error: 'فرمت کارت محصول نامعتبر است' }, { status: 400 });
+        }
+      } catch {
+        return NextResponse.json({ error: 'فرمت کارت محصول نامعتبر است' }, { status: 400 });
+      }
     } else if (!content?.trim()) {
       return NextResponse.json(
         { error: 'محتوای پیام الزامی است' },
@@ -193,7 +204,20 @@ export async function POST(
               return 'نیاز جدید';
             }
           })()
-        : content.trim();
+        : messageType === 'OFFER_CARD'
+          ? (() => {
+              try {
+                const p = JSON.parse(content) as { title?: string };
+                return p.title ? `محصول: ${p.title}` : 'محصول';
+              } catch {
+                return 'محصول';
+              }
+            })()
+          : messageType === 'VOICE'
+          ? 'پیام صوتی'
+          : parseChatContactShareContent(content)
+            ? 'شمارهٔ تماس'
+            : content.trim();
 
     // Determine the other user in this conversation
     const otherUserId = conversation.userId1 === user.id
@@ -207,7 +231,10 @@ export async function POST(
         data: {
           conversationId,
           senderId: user.id,
-          content: messageType === 'NEED_CARD' ? content : content.trim(),
+          content:
+            messageType === 'NEED_CARD' || messageType === 'OFFER_CARD'
+              ? content
+              : content.trim(),
           type: messageType,
           isRead: false,
         },

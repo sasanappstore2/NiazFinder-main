@@ -21,6 +21,7 @@ import { parseJsonArray, parseJsonObject } from '@/lib/business/json-fields';
 import { routeBuilder } from '@/config/routes';
 import { CANONICAL_CITIES } from '@/config/locations';
 import { slugifyBusinessName } from '@/lib/business/slug';
+import { parseOfferStorefrontFromFeatures } from '@/lib/business/offer-storefront-meta';
 
 type ProfileWithRelations = BusinessProfile & {
   offers: DbOffer[];
@@ -51,6 +52,8 @@ function mapMedia(v: string): PortfolioMediaType {
 }
 
 function mapOffer(o: DbOffer): BusinessOffer {
+  const rawFeatures = parseJsonArray<string>(o.features);
+  const { meta, displayFeatures } = parseOfferStorefrontFromFeatures(rawFeatures);
   return {
     id: o.id,
     title: o.title,
@@ -58,9 +61,13 @@ function mapOffer(o: DbOffer): BusinessOffer {
     priceRange: o.priceRange ?? undefined,
     duration: o.duration ?? undefined,
     images: parseJsonArray<string>(o.images),
-    features: parseJsonArray<string>(o.features),
+    features: displayFeatures,
     faq: parseJsonArray<{ q: string; a: string }>(o.faq),
     ctaType: mapCta(o.ctaType),
+    vitrineCategoryId: meta.primaryCategoryId ?? meta.categoryIds[0] ?? null,
+    categoryIds: meta.categoryIds,
+    primaryCategoryId: meta.primaryCategoryId,
+    variants: meta.variants,
   };
 }
 

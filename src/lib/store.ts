@@ -24,6 +24,8 @@ import type {
   Transaction,
   DashboardStats,
 } from './types';
+import { CHAT_CONTACT_SHARE_PREFIX } from '@/lib/chat/contact-share';
+import { chatMessageListPreview } from '@/lib/chat/contact-share';
 
 // ============ API Helper (legacy — see migration note above) ============
 
@@ -47,6 +49,8 @@ interface AppState {
   // Auth (local)
   currentUser: User | null;
   isAuthenticated: boolean;
+  /** True after initializeFromStorage() has finished (avoids auth flash on refresh). */
+  authHydrated: boolean;
   login: (user: User, token?: string) => void;
   logout: () => void;
   updateProfile: (data: Partial<User>) => void;
@@ -184,6 +188,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   // ===========================
   currentUser: null,
   isAuthenticated: false,
+  authHydrated: false,
   login: (user, token) => {
     if (token) {
       if (typeof window !== 'undefined') {
@@ -245,6 +250,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         set({ authToken: null, isAuthenticated: false, currentUser: null });
       }
     }
+    set({ authHydrated: true });
   },
 
   loginWithPhone: async (phone: string, code: string) => {
@@ -689,7 +695,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       const res = await apiFetch<{ data: any[]; pagination: any }>(`/api/chat/${id}`);
       const mapped: Message[] = res.data.map((m: any) => ({
         id: m.id,
-        conversationId: m.conversationId,
+        conversationId: id,
         senderId: m.senderId,
         content: m.content,
         type: m.type ?? 'TEXT',
@@ -697,7 +703,17 @@ export const useAppStore = create<AppState>((set, get) => ({
         isRead: m.isRead,
         createdAt: String(m.createdAt),
       }));
-      set({ messages: mapped });
+      set((state) => {
+        const byId = new Map<string, Message>();
+        for (const m of mapped) byId.set(m.id, m);
+        for (const m of state.messages) {
+          if (m.conversationId === id && !byId.has(m.id)) byId.set(m.id, m);
+        }
+        const merged = [...byId.values()].sort(
+          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+        return { messages: merged };
+      });
       return mapped;
     } catch {
       return [];
@@ -732,7 +748,11 @@ export const useAppStore = create<AppState>((set, get) => ({
       set((state) => ({
         conversations: state.conversations.map((c) =>
           c.id === conversationId
-            ? { ...c, lastMessage: msg.content, lastMessageAt: String(msg.createdAt) }
+            ? {
+                ...c,
+                lastMessage: chatMessageListPreview(msg.content, msg.type),
+                lastMessageAt: String(msg.createdAt),
+              }
             : c
         ),
       }));

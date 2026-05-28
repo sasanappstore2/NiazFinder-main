@@ -14,7 +14,6 @@ import {
 } from '@/lib/business/profile-tabs';
 import { renderProfileSection } from './ProfileShell';
 import { ProfileTabEmpty } from './ProfilePrimaryTabs';
-import { ContactSidebarCard } from './sections/index';
 
 const EMPTY_MESSAGES: Partial<Record<ProfileTabId, string>> = {
   portfolio: 'هنوز نمونه‌کاری ثبت نشده است.',
@@ -87,13 +86,39 @@ export function ProfileTabbedContent({
 
   const sectionProps = { business, requestId, onOfferAction };
   const gridCols = tabSpecs.length <= 3 ? 'grid-cols-3' : 'grid-cols-4';
-  const showSidebar = layout.sections.some((s) => s.id === 'contact');
+  const vitrineCategoryId =
+    searchParams.get('vitrineCategory') ?? searchParams.get('category');
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    const parsedTab = parseProfileTabParam(business, tabParam);
+    if (parsedTab) {
+      setActiveTab(parsedTab);
+    } else if (vitrineCategoryId && tabHasContent('products', business, layout)) {
+      setActiveTab('products');
+    }
+  }, [searchParams, business, layout, vitrineCategoryId]);
+
+  useEffect(() => {
+    if (
+      searchParams.get('tab') === 'products' ||
+      vitrineCategoryId
+    ) {
+      const t = window.setTimeout(() => {
+        document.getElementById('section-products')?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }, 150);
+      return () => window.clearTimeout(t);
+    }
+  }, [searchParams, vitrineCategoryId]);
 
   return (
     <Tabs value={activeTab} onValueChange={(v) => handleTabChange(v as ProfileTabId)} className="w-full">
       <TabsList
         dir="ltr"
-        className={`profile-primary-tabs sticky top-(--site-header-offset,6.5rem) z-[calc(var(--z-header)-1)] grid h-auto w-full ${gridCols} gap-1 rounded-none bg-background p-1 shadow-[0_1px_0_var(--border)]`}
+        className={`profile-primary-tabs sticky top-(--site-header-offset,6.5rem) z-[calc(var(--z-header)-1)] grid h-auto w-full ${gridCols} gap-1 rounded-xl border border-border/50 bg-muted/30 p-1 shadow-sm backdrop-blur-sm`}
       >
         {displayOrder.map((tabId) => {
           const spec = tabSpecs.find((t) => t.id === tabId);
@@ -102,7 +127,7 @@ export function ProfileTabbedContent({
             <TabsTrigger
               key={tabId}
               value={tabId}
-              className="rounded-lg py-2.5 text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
+              className="rounded-lg py-2.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm"
             >
               {spec.labelFa}
             </TabsTrigger>
@@ -110,32 +135,22 @@ export function ProfileTabbedContent({
         })}
       </TabsList>
 
-      <div className="grid gap-8 pt-6 lg:grid-cols-[1fr_280px]">
-        <div className="min-w-0">
-          {tabSpecs.map((tab) => {
-            const sectionIds = getSectionsForTab(tab.id, business, layout);
-            const hasContent = tabHasContent(tab.id, business, layout);
+      <div className="min-w-0 pt-6">
+        {tabSpecs.map((tab) => {
+          const sectionIds = getSectionsForTab(tab.id, business, layout);
+          const hasContent = tabHasContent(tab.id, business, layout);
 
-            return (
-              <TabsContent key={tab.id} value={tab.id} className="mt-0 space-y-8 focus-visible:outline-hidden">
-                {!hasContent && EMPTY_MESSAGES[tab.id] && (
-                  <ProfileTabEmpty message={EMPTY_MESSAGES[tab.id]!} />
-                )}
-                {sectionIds.map((id) => (
-                  <div key={id}>{renderProfileSection(id, sectionProps)}</div>
-                ))}
-              </TabsContent>
-            );
-          })}
-        </div>
-
-        {showSidebar && (
-          <aside className="hidden lg:block lg:pt-0">
-            <div className="sticky top-[calc(var(--site-header-offset,6.5rem)+3rem)]">
-              <ContactSidebarCard business={business} requestId={requestId} />
-            </div>
-          </aside>
-        )}
+          return (
+            <TabsContent key={tab.id} value={tab.id} className="mt-0 space-y-8 focus-visible:outline-hidden">
+              {!hasContent && EMPTY_MESSAGES[tab.id] && (
+                <ProfileTabEmpty message={EMPTY_MESSAGES[tab.id]!} />
+              )}
+              {sectionIds.map((id) => (
+                <div key={id}>{renderProfileSection(id, sectionProps)}</div>
+              ))}
+            </TabsContent>
+          );
+        })}
       </div>
     </Tabs>
   );

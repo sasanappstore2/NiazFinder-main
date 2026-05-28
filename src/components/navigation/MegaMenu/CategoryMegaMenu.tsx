@@ -161,6 +161,19 @@ const ALL_CATEGORIES_UNPROCESSED: MegaMenuCategory[] = [
         subCategories: [
           { id: 'apartment-rent', name: 'آپارتمان', value: 'real-estate-residential-rent-apartment-rent', label: 'آپارتمان', icon: Building2, specificFields: [{ name: 'bedrooms', label: 'تعداد اتاق', type: 'select' as const, options: [{ value: '1', label: '۱' }, { value: '2', label: '۲' }, { value: '3', label: '۳+' }] }] },
           { id: 'villa-rent', name: 'خانه و ویلا', value: 'real-estate-residential-rent-villa-rent', label: 'خانه و ویلا', icon: House },
+          { id: 'land-rent', name: 'زمین و کلنگی', value: 'real-estate-residential-rent-land-rent', label: 'زمین و کلنگی', icon: LandPlot },
+        ],
+      },
+      {
+        id: 'short-term-rent',
+        name: 'اجاره کوتاه‌مدت',
+        value: 'real-estate-short-term-rent',
+        label: 'اجاره کوتاه‌مدت',
+        icon: CalendarDays,
+        subCategories: [
+          { id: 'suite-apartment-rent', name: 'آپارتمان و سوئیت', value: 'real-estate-short-term-rent-suite-apartment-rent', canonicalSlug: 'suite-apartment-rent', label: 'آپارتمان و سوئیت', icon: Building2 },
+          { id: 'villa-short-rent', name: 'ویلا و باغ', value: 'real-estate-short-term-rent-villa-short-rent', canonicalSlug: 'villa-short-rent', label: 'ویلا و باغ', icon: House },
+          { id: 'workspace-short-rent', name: 'دفتر و فضای آموزشی', value: 'real-estate-short-term-rent-workspace-short-rent', canonicalSlug: 'workspace-short-rent', label: 'دفتر و فضای آموزشی', icon: Briefcase },
         ],
       },
       {

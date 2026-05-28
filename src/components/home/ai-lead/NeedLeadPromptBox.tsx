@@ -27,6 +27,8 @@ export interface NeedLeadPromptBoxProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit: () => void;
+  /** When true, send is disabled and the send button shows a spinner. */
+  isSubmitting?: boolean;
   phone: string;
   onPhoneChange: (value: string) => void;
   cityLabel: string;
@@ -112,6 +114,7 @@ export function NeedLeadPromptBox({
   onDetectLocation,
   placeholder = 'مثلاً: به تعمیرکار کولر در غرب تهران نیاز دارم…',
   className,
+  isSubmitting = false,
 }: NeedLeadPromptBoxProps) {
   const [showLocation, setShowLocation] = useState(hasCity);
   const [showContact, setShowContact] = useState(() => Boolean(phone.trim()));
@@ -130,7 +133,7 @@ export function NeedLeadPromptBox({
     [inputRef, textareaRef]
   );
 
-  const canSend = Boolean(value.trim());
+  const canSend = Boolean(value.trim()) && !isSubmitting;
 
   useEffect(() => {
     if (hasCity) setShowLocation(true);
@@ -195,7 +198,7 @@ export function NeedLeadPromptBox({
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
-              onSubmit();
+              if (!isSubmitting) onSubmit();
             }
           }}
         />
@@ -291,7 +294,11 @@ export function NeedLeadPromptBox({
               onClick={onSubmit}
               aria-label="ارسال و ادامه با هوش مصنوعی"
             >
-              <ArrowUp className="size-5" strokeWidth={2.5} />
+              {isSubmitting ? (
+                <Loader2 className="size-5 animate-spin" aria-hidden />
+              ) : (
+                <ArrowUp className="size-5" strokeWidth={2.5} />
+              )}
             </Button>
           </TooltipTrigger>
           <TooltipContent side="top">

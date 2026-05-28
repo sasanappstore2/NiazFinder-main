@@ -3,6 +3,10 @@
 import { useRouter } from 'next/navigation';
 import { getCategoryBrowseUrl } from '@/lib/search/category-browse-url';
 import { useBrowseListingType } from '@/hooks/use-browse-listing-type';
+import {
+  BusinessBrowseCategoryMenuDesktop,
+  BusinessBrowseCategoryMenuMobile,
+} from '@/components/browse/BusinessBrowseCategoryMenu';
 import { useState } from 'react';
 import {
   LayoutGrid,
@@ -30,7 +34,7 @@ import {
 } from '@/components/ui/sheet';
 
 // ============ Desktop Category Bar ============
-function DesktopCategoryBar() {
+function NeedDesktopCategoryBar() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const listingType = useBrowseListingType();
@@ -90,8 +94,16 @@ function DesktopCategoryBar() {
   );
 }
 
+function DesktopCategoryBar() {
+  const listingType = useBrowseListingType();
+  if (listingType === 'business') {
+    return <BusinessBrowseCategoryMenuDesktop />;
+  }
+  return <NeedDesktopCategoryBar />;
+}
+
 // ============ Mobile Category Bar ============
-function MobileCategoryBar() {
+function NeedMobileCategoryBar() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const listingType = useBrowseListingType();
@@ -127,6 +139,14 @@ function MobileCategoryBar() {
       </Sheet>
     </div>
   );
+}
+
+function MobileCategoryBar() {
+  const listingType = useBrowseListingType();
+  if (listingType === 'business') {
+    return <BusinessBrowseCategoryMenuMobile />;
+  }
+  return <NeedMobileCategoryBar />;
 }
 
 // ============ CategoryBar (Sub-Header) ============

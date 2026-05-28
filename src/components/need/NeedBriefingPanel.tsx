@@ -8,7 +8,6 @@ import {
   DollarSign,
   FileText,
   Flame,
-  Briefcase,
   Send,
   Flag,
   ChevronDown,
@@ -17,16 +16,13 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
 import { RequestShare } from '@/components/shared/RequestShare';
-import { ProposalSubmitSheet } from '@/components/need/ProposalSubmitSheet';
+import { ContactActions } from '@/components/contact/ContactActions';
+import { routeBuilder } from '@/config/routes';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import {
   formatBudgetRange,
@@ -48,6 +44,16 @@ function getPriorityConfig(priority: string) {
     LOW: { className: 'bg-muted text-muted-foreground border-border', icon: Clock },
   };
   return configs[priority] || configs.NORMAL;
+}
+
+function registrantInitials(user: ServiceRequest['user']): string {
+  const f = user.firstName?.trim();
+  const l = user.lastName?.trim();
+  if (f?.[0] && l?.[0]) return `${f[0]}${l[0]}`;
+  const full = `${f ?? ''} ${l ?? ''}`.trim();
+  if (full.length >= 2) return full.slice(0, 2);
+  if (full.length === 1) return full;
+  return '؟';
 }
 
 function getStatusConfig(status: string) {
@@ -222,49 +228,128 @@ export function NeedBriefingPanel({
           </p>
         </div>
 
-        <aside className="lg:col-span-4 flex flex-col gap-4 lg:border-r lg:border-border/50 lg:pr-6">
-          <div className="rounded-xl border border-border/50 bg-muted/15 p-4">
-            <p className="text-caption text-muted-foreground mb-2">ثبت‌کننده نیاز</p>
-            <p className="text-body font-semibold">{authorName}</p>
-            {request.user.city && (
-              <p className="text-caption text-muted-foreground mt-1 flex items-center gap-1">
-                <MapPin className="size-3" />
-                {request.user.city}
-              </p>
-            )}
-          </div>
+        <aside
+          className="lg:col-span-4 flex min-h-0 flex-col lg:border-r lg:border-border/60 lg:pr-6"
+          aria-label="ثبت‌کننده و تماس"
+        >
+          <div className="relative flex min-h-[min(440px,calc(100dvh-11rem))] flex-1 flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
+            <div
+              className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,oklch(var(--primary)/0.08)_0%,transparent_42%)]"
+              aria-hidden
+            />
+            <div className="relative flex flex-1 flex-col">
+              <div className="flex flex-none items-start justify-between gap-2 px-4 pt-4 sm:px-5 sm:pt-5">
+                <span className="text-overline font-semibold tracking-wide text-primary">
+                  ثبت‌کننده نیاز
+                </span>
+                <Badge
+                  variant="outline"
+                  className="shrink-0 border-primary/25 bg-background/80 text-caption font-medium text-muted-foreground backdrop-blur-xs"
+                >
+                  {isOwner ? 'صاحب آگهی' : 'ارتباط مستقیم'}
+                </Badge>
+              </div>
 
-          {!isOwner && (
-            <Sheet>
-              {isBusinessUser && (
-                <p className="text-caption text-muted-foreground mb-2 text-center">
-                  این نیاز را بررسی کنید و پیشنهاد خود را بفرستید
-                </p>
+              <div className="flex-none px-4 pb-1 pt-3 sm:px-5">
+                <div className="flex gap-4 rounded-xl border border-border/50 bg-gradient-to-br from-muted/40 to-muted/15 p-3.5 shadow-inner sm:p-4">
+                  <Avatar className="size-14 shrink-0 rounded-2xl border border-border/50 shadow-sm ring-2 ring-background">
+                    <AvatarImage src={request.user.avatar ?? undefined} alt={authorName.trim() || 'ثبت‌کننده'} />
+                    <AvatarFallback className="rounded-2xl bg-primary/10 text-sm font-bold text-primary">
+                      {registrantInitials(request.user)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0 flex flex-1 flex-col justify-center gap-0.5">
+                    <p className="text-base font-semibold leading-tight tracking-tight text-foreground">
+                      {authorName.trim() || 'کاربر نیاز‌فایندر'}
+                    </p>
+                    {request.user.city ? (
+                      <p className="text-caption text-muted-foreground flex items-center gap-1.5">
+                        <span className="inline-flex size-5 items-center justify-center rounded-full bg-background/90 text-primary">
+                          <MapPin className="size-3" aria-hidden />
+                        </span>
+                        {request.user.city}
+                      </p>
+                    ) : (
+                      <p className="text-caption text-muted-foreground">شهر ثبت نشده</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {!isOwner && (
+                <>
+                  <Separator className="mx-4 flex-none bg-border/60 sm:mx-5" />
+
+                  <div className="flex flex-none flex-col gap-4 px-4 py-4 sm:px-5 sm:pb-5">
+                    <p className="text-body-sm leading-relaxed text-muted-foreground [&>strong]:font-semibold [&>strong]:text-foreground">
+                      {isBusinessUser ? (
+                        <>
+                          اگر این نیاز با شما هم‌خوان است،{' '}
+                          <strong>با پیام اول هماهنگ شوید</strong>؛ سپس می‌توانید پیشنهاد رسمی هم
+                          ارسال کنید.
+                        </>
+                      ) : (
+                        <>
+                          برای پرسیدن جزئیات یا هماهنگی،{' '}
+                          <strong>پیام دهید یا تماس بگیرید</strong>.
+                        </>
+                      )}
+                    </p>
+
+                    <ContactActions
+                      otherUserId={request.user.id}
+                      requestId={request.id}
+                      displayName={authorName.trim() || undefined}
+                      needPreview={{
+                        title: request.title,
+                        categoryName: request.categoryName,
+                        city: request.city,
+                      }}
+                      chatLabel="پیام و گفتگو"
+                      variant="stacked"
+                      showProfile={false}
+                    />
+
+                    {isBusinessUser && (
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-xl border-dashed bg-muted/20 text-muted-foreground hover:border-primary/40 hover:bg-muted/35 hover:text-foreground"
+                        size="sm"
+                        asChild
+                      >
+                        <Link href={routeBuilder.needPropose(request.id)}>
+                          ارسال پیشنهاد رسمی (قیمت و زمان)
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
+                </>
               )}
-              <SheetTrigger asChild>
-                <Button className="w-full h-11 gap-2 rounded-xl" size="lg">
-                  <Briefcase className="size-4" />
-                  ارسال پیشنهاد
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="bottom" className="max-h-[90vh] overflow-y-auto rounded-t-2xl">
-                <SheetHeader>
-                  <SheetTitle>ارسال پیشنهاد برای این نیاز</SheetTitle>
-                </SheetHeader>
-                <ProposalSubmitSheet requestId={request.id} requestTitle={request.title} />
-              </SheetContent>
-            </Sheet>
-          )}
 
-          {isOwner && (
-            <p className="text-body-sm text-muted-foreground text-center">
-              شما صاحب این نیاز هستید. پیشنهادهای دریافتی را در بخش پایین ببینید.
-            </p>
-          )}
+              {isOwner && (
+                <>
+                  <Separator className="mx-4 flex-none bg-border/60 sm:mx-5" />
+                  <div className="flex-none px-4 pb-5 pt-4 sm:px-5">
+                    <div className="rounded-xl border border-border/60 bg-muted/25 px-3.5 py-3 text-body-sm leading-relaxed text-muted-foreground">
+                      شما صاحب این نیاز هستید. پیشنهادهای دریافتی را{' '}
+                      <span className="font-medium text-foreground">در بخش پایین همین صفحه</span>{' '}
+                      ببینید.
+                    </div>
+                  </div>
+                </>
+              )}
 
-          <div className="hidden lg:flex mt-auto items-center gap-2 text-caption text-muted-foreground">
-            <Send className="size-3.5" />
-            کسب‌وکارهای مرتبط در ادامه صفحه
+              <div className="mt-auto flex flex-none flex-col gap-2 border-t border-border/55 bg-muted/25 px-4 py-3 sm:px-5">
+                <p className="hidden items-start gap-2 text-caption leading-relaxed text-muted-foreground lg:flex">
+                  <Send className="mt-0.5 size-3.5 shrink-0 opacity-70" aria-hidden />
+                  برای دیدن کسب‌وکارهای مرتبط به پایین صفحه بروید.
+                </p>
+                <p className="flex items-start gap-2 text-caption leading-relaxed text-muted-foreground lg:hidden">
+                  <Send className="mt-0.5 size-3.5 shrink-0 opacity-70" aria-hidden />
+                  پیشنهادی‌ها را با اسکرول پایین ببینید.
+                </p>
+              </div>
+            </div>
           </div>
         </aside>
       </div>

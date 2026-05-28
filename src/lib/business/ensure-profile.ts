@@ -1,6 +1,9 @@
 import { db } from '@/lib/db';
-import { slugifyBusinessName, uniqueBusinessSlug } from '@/lib/business/slug';
+import { slugifyBusinessName } from '@/lib/business/slug';
+import { uniqueRandomBusinessSlug } from '@/lib/business/profile-slug';
 import { parseJsonArray, toJson } from '@/lib/business/json-fields';
+import { migrateSlugToOccupation } from '@/config/need-to-occupation-map';
+import { isOccupationSlug } from '@/config/business-occupations';
 import type { BusinessProfile, User } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 
@@ -50,6 +53,7 @@ function buildProfileData(user: UserForProfile, name: string, slug: string) {
     seoDescription: user.bio?.slice(0, 160) ?? '',
     aiAssistantConfig: toJson({ systemPrompt: '', dynamicQuestions: [] }),
     extensions: toJson({}),
+    status: 'INACTIVE' as const,
   };
 }
 
@@ -68,7 +72,7 @@ export async function ensureBusinessProfile(user: UserForProfile): Promise<Busin
     `${user.firstName} ${user.lastName}`.trim() ||
     'کسب‌وکار';
 
-  let slug = await uniqueBusinessSlug(name, slugExists);
+  let slug = await uniqueRandomBusinessSlug(slugExists);
   const data = buildProfileData(user, name, slug);
 
   try {
@@ -89,12 +93,7 @@ export async function ensureBusinessProfile(user: UserForProfile): Promise<Busin
         : [];
 
     if (fields.some((f) => String(f).includes('slug'))) {
-      slug = `${slugifyBusinessName(name)}-${user.id.slice(-8)}`;
-      let attempt = 0;
-      while (await slugExists(slug)) {
-        attempt += 1;
-        slug = `${slugifyBusinessName(name)}-${user.id.slice(-8)}-${attempt}`;
-      }
+      slug = await uniqueRandomBusinessSlug(slugExists);
 
       try {
         const profile = await db.businessProfile.create({
@@ -132,8 +131,16 @@ export async function syncCategorySlugsFromSkills(profileId: string, userId: str
 
   const slugs = new Set<string>();
   for (const us of skills) {
-    const slug = us.skill.category?.slug;
-    if (slug) slugs.add(slug);
+    const needSlug = us.skill.category?.slug;
+    if (!needSlug) continue;
+    if (isOccupationSlug(needSlug)) {
+      slugs.add(needSlug);
+      continue;
+    }
+    const { occupations, confidence } = migrateSlugToOccupation(needSlug);
+    if (confidence !== 'none' && occupations[0]) {
+      slugs.add(occupations[0]);
+    }
   }
 
   if (slugs.size === 0) return;

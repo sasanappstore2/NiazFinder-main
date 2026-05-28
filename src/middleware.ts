@@ -36,6 +36,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const marketPathParts = pathname.replace(/^\/(n|b|s)\/?/, '').split('/').filter(Boolean);
+  const firstSegment = marketPathParts[0]?.toLowerCase();
+  // /b/{profileSlug}, /b/{profileSlug}/p/... — not marketplace browse; do not rewrite ?category=
+  if (firstSegment && !isMarketplaceLocationSegment(firstSegment)) {
+    return NextResponse.next();
+  }
+
   const legacyCategory = searchParams.get('category');
   if (!legacyCategory) {
     return NextResponse.next();

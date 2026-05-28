@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Building2, Sparkles, Loader2 } from 'lucide-react';
@@ -21,6 +21,12 @@ import {
 import { locationCityIdToSlug } from '@/lib/search/city-slugs';
 import { useAppStore } from '@/lib/store';
 import { toast } from 'sonner';
+import { parseIntentApi } from '@/lib/need-intake/intake-client';
+import type { ParseIntentResponse } from '@/contracts/need-intake';
+
+const SHOW_INTAKE_HOME_PREVIEW =
+  process.env.NEXT_PUBLIC_INTAKE_HOME_PREVIEW === '1' ||
+  process.env.NEXT_PUBLIC_INTAKE_HOME_PREVIEW === 'true';
 
 export function HomeLeadLanding() {
   const router = useRouter();
@@ -43,6 +49,9 @@ export function HomeLeadLanding() {
   const [phone, setPhone] = useState(() =>
     typeof window !== 'undefined' ? getLeadPhone() : ''
   );
+  const [homeParsePreview, setHomeParsePreview] = useState<ParseIntentResponse | null>(null);
+  const [homeParseLoading, setHomeParseLoading] = useState(false);
+  const [homeParseError, setHomeParseError] = useState<string | null>(null);
 
   const hasCity = selectedCities.length > 0 || selectedProvinceIds.length > 0;
   const primaryCity = selectedCities[0];
@@ -52,7 +61,24 @@ export function HomeLeadLanding() {
     requestAnimationFrame(() => composerInputRef.current?.focus());
   }, []);
 
-  const goToPost = useCallback(() => {
+  useEffect(() => {
+    if (!SHOW_INTAKE_HOME_PREVIEW) return;
+    setHomeParsePreview(null);
+    setHomeParseError(null);
+  }, [needText]);
+
+  const navigateToPostForm = useCallback(
+    (seed: string, normalizedPhone: string) => {
+      const params = new URLSearchParams();
+      params.set('seed', seed);
+      if (citySlug) params.set('city', citySlug);
+      if (normalizedPhone) params.set('phone', normalizedPhone);
+      router.push(`${routeBuilder.needNew()}?${params.toString()}`);
+    },
+    [router, citySlug]
+  );
+
+  const goToPost = useCallback(async () => {
     const seed = needText.trim();
     if (!seed) {
       toast.error('لطفاً نیاز خود را بنویسید');
@@ -71,19 +97,59 @@ export function HomeLeadLanding() {
     }
     if (normalized) setLeadPhone(normalized);
 
-    const params = new URLSearchParams();
-    params.set('seed', seed);
-    if (citySlug) params.set('city', citySlug);
-    if (normalized) params.set('phone', normalized);
-    router.push(`${routeBuilder.needNew()}?${params.toString()}`);
+    if (SHOW_INTAKE_HOME_PREVIEW) {
+      setHomeParseError(null);
+      setHomeParseLoading(true);
+      try {
+        const data = await parseIntentApi(seed);
+        setHomeParsePreview(data);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'خطا در تحلیل';
+        setHomeParseError(msg);
+        setHomeParsePreview(null);
+        toast.error(msg);
+      } finally {
+        setHomeParseLoading(false);
+      }
+      return;
+    }
+
+    navigateToPostForm(seed, normalized);
   }, [
     needText,
     hasCity,
     phone,
-    citySlug,
-    router,
     setCityPickerOpen,
     focusComposer,
+    navigateToPostForm,
+  ]);
+
+  const continueToPostFromPreview = useCallback(() => {
+    const seed = needText.trim();
+    if (!seed) {
+      toast.error('لطفاً نیاز خود را بنویسید');
+      focusComposer();
+      return;
+    }
+    if (!hasCity) {
+      toast.error('ابتدا شهر خود را انتخاب کنید');
+      setCityPickerOpen(true);
+      return;
+    }
+    const normalized = normalizeIranMobile(phone);
+    if (phone.trim() && !isValidIranMobile(normalized)) {
+      toast.error('شماره موبایل معتبر نیست (مثال: 09123456789)');
+      return;
+    }
+    if (normalized) setLeadPhone(normalized);
+    navigateToPostForm(seed, normalized);
+  }, [
+    needText,
+    hasCity,
+    phone,
+    setCityPickerOpen,
+    focusComposer,
+    navigateToPostForm,
   ]);
 
   const browseNeeds = useCallback(() => {
@@ -204,7 +270,7 @@ export function HomeLeadLanding() {
               inputRef={composerInputRef}
               value={needText}
               onChange={setNeedText}
-              onSubmit={goToPost}
+              onSubmit={() => void goToPost()}
               phone={phone}
               onPhoneChange={setPhone}
               cityLabel={getLocationDisplayText()}
@@ -212,7 +278,55 @@ export function HomeLeadLanding() {
               isGeoDetecting={geo.isDetecting}
               onOpenCityPicker={() => setCityPickerOpen(true)}
               onDetectLocation={() => void geo.runDetection(true)}
+              isSubmitting={SHOW_INTAKE_HOME_PREVIEW && homeParseLoading}
             />
+
+            {SHOW_INTAKE_HOME_PREVIEW &&
+              (homeParsePreview || homeParseError) &&
+              !homeParseLoading && (
+                <div
+                  className="mt-4 rounded-2xl border border-border/60 bg-muted/40 p-4 text-start text-sm"
+                  aria-live="polite"
+                  dir="rtl"
+                >
+                  <p className="mb-1 font-semibold">پیش‌نمایش پارس نیاز‌فایندر</p>
+                  {homeParseError ? (
+                    <p className="text-destructive">{homeParseError}</p>
+                  ) : (
+                    homeParsePreview && (
+                      <>
+                        <p className="mt-2 text-muted-foreground">
+                          {homeParsePreview.assistantMessage}
+                        </p>
+                        <p className="mt-2 font-mono text-xs text-muted-foreground">
+                          دسته:&nbsp;{homeParsePreview.parsed.categorySlug}
+                          {homeParsePreview.meta?.engine != null && (
+                            <> · engine:&nbsp;{homeParsePreview.meta.engine}</>
+                          )}
+                          {homeParsePreview.meta?.source != null && (
+                            <> · source:&nbsp;{homeParsePreview.meta.source}</>
+                          )}
+                        </p>
+                        <details className="mt-3">
+                          <summary className="cursor-pointer select-none text-xs font-medium">
+                            پارس خام (parsed)
+                          </summary>
+                          <pre className="mt-2 max-h-48 overflow-auto rounded-lg bg-background p-2 text-xs leading-relaxed">
+                            {JSON.stringify(homeParsePreview.parsed, null, 2)}
+                          </pre>
+                        </details>
+                        <Button
+                          type="button"
+                          className="mt-4 w-full sm:w-auto"
+                          onClick={continueToPostFromPreview}
+                        >
+                          ادامه به فرم ثبت نیاز
+                        </Button>
+                      </>
+                    )
+                  )}
+                </div>
+              )}
 
             <LeadQuickChips
               hasCity={hasCity}

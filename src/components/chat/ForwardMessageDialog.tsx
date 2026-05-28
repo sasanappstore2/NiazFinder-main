@@ -158,6 +158,10 @@ export function ForwardMessageDialog({
         return 'فایل';
       case 'VOICE':
         return 'صوتی';
+      case 'NEED_CARD':
+        return 'نیاز';
+      case 'OFFER_CARD':
+        return 'محصول';
       case 'VIDEO':
         return 'ویدیو';
       default:

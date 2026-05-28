@@ -236,20 +236,9 @@ export function UserDashboard() {
   }, [tabFromUrl]);
 
   useEffect(() => {
-    if (tabFromUrl !== 'business' || !canManageBusiness) return;
-    let cancelled = false;
-    (async () => {
-      const token = localStorage.getItem('nf_auth_token');
-      const res = await fetch('/api/business/me', {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      if (cancelled || !res.ok) return;
-      const data = (await res.json()) as { slug?: string };
-      if (data.slug) router.replace(routeBuilder.businessEdit(data.slug));
-    })();
-    return () => {
-      cancelled = true;
-    };
+    if (tabFromUrl === 'business' && canManageBusiness) {
+      router.replace(routeBuilder.myBusiness());
+    }
   }, [tabFromUrl, canManageBusiness, router]);
 
   const handleTabChange = useCallback((value: string) => {

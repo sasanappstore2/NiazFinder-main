@@ -72,11 +72,6 @@ const menuItemDefault =
 const menuItemDestructive =
   "text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 focus:bg-red-50 dark:focus:bg-red-950/30";
 
-function getAuthHeaders(): HeadersInit {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('nf_auth_token') : null;
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
-
 // ============ Component ============
 export function ArkUserMenu() {
   const {
@@ -109,21 +104,9 @@ export function ArkUserMenu() {
     }
   };
 
-  const openMyBusinessManage = async () => {
+  const openMyBusinessManage = () => {
     setMenuOpen(false);
-    try {
-      const res = await fetch('/api/business/me', { headers: getAuthHeaders() });
-      if (res.ok) {
-        const data = (await res.json()) as { slug?: string };
-        if (data.slug) {
-          router.push(routeBuilder.businessEdit(data.slug));
-          return;
-        }
-      }
-    } catch {
-      /* ignore */
-    }
-    router.push(routeBuilder.dashboard());
+    router.push(routeBuilder.myBusiness());
   };
 
   const nav = (view: AppView) => {
@@ -285,14 +268,16 @@ export function ArkUserMenu() {
                   <LayoutDashboard className="size-4 text-muted-foreground" />
                   داشبورد
                 </Menu.Item>
-                {currentUser?.role && canManageBusinessProfile(currentUser.role) && (
+                {isAuthenticated && (
                   <Menu.Item
                     value="my-business"
                     className={cn(menuItemBase, menuItemDefault)}
-                    onClick={openMyBusinessManage}
+                    onSelect={openMyBusinessManage}
                   >
                     <Store className="size-4 text-muted-foreground" />
-                    کسب‌وکار من
+                    {currentUser?.role && canManageBusinessProfile(currentUser.role)
+                      ? 'کسب‌وکار من'
+                      : 'ثبت کسب‌وکار'}
                   </Menu.Item>
                 )}
                 {currentUser?.role === "SUPER_ADMIN" && isSuperAdminPhone(currentUser.phone) && (

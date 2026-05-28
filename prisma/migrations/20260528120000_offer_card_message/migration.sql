@@ -1,0 +1,1 @@
+-- SQLite stores Message.type as TEXT; OFFER_CARD is accepted once Prisma client is regenerated.

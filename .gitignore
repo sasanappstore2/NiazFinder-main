@@ -53,6 +53,17 @@ server.log
 # Skills directory
 /skills/
 
+# need-intake training exports + local MLX weights (never commit)
+data/
+models/
+mini-services/intake-mlx/.venv/
+# Local chat uploads (do not commit)
+public/uploads/chat/
+
+mini-services/intake-mlx/__pycache__/
+mini-services/intake-mlx/.env
+*.adapter.*
+
 # build artifacts & generated reports
 mini-services/backend/dist/
 reports/*.json

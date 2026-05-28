@@ -3,6 +3,14 @@
  */
 import { getCategoryPath, legacyValueToSlug } from '@/config/categories';
 import {
+  getOccupationPath,
+  isPickableOccupationSlug,
+} from '@/config/business-occupations';
+import {
+  getOnlineStorePath,
+  isPickableOnlineStoreSlug,
+} from '@/config/online-stores';
+import {
   getBrowseUrl,
   type BrowseListingType,
 } from '@/lib/search/browse-entry-url';
@@ -47,6 +55,38 @@ export function getBrowseUrlForCategorySlug(
 
   if (!slug) {
     return getBrowseUrl({ type, citySlug: opts.citySlug, q: opts.q });
+  }
+
+  if (type === 'business' && isPickableOnlineStoreSlug(slug)) {
+    const storePath = getOnlineStorePath(slug);
+    const leaf = storePath[storePath.length - 1];
+    if (leaf && storePath.length >= 2) {
+      const parent = storePath[storePath.length - 2]!;
+      return getBrowseUrl({
+        type,
+        parentCategorySlug: parent.slug,
+        categorySlug: leaf.slug,
+        citySlug: opts.citySlug,
+        q: opts.q,
+      });
+    }
+    return getBrowseUrl({ type, categorySlug: slug, citySlug: opts.citySlug, q: opts.q });
+  }
+
+  if (type === 'business' && isPickableOccupationSlug(slug)) {
+    const occPath = getOccupationPath(slug);
+    const leaf = occPath[occPath.length - 1];
+    if (leaf && occPath.length >= 2) {
+      const parent = occPath[occPath.length - 2]!;
+      return getBrowseUrl({
+        type,
+        parentCategorySlug: parent.slug,
+        categorySlug: leaf.slug,
+        citySlug: opts.citySlug,
+        q: opts.q,
+      });
+    }
+    return getBrowseUrl({ type, categorySlug: slug, citySlug: opts.citySlug, q: opts.q });
   }
 
   const path = getCategoryPath(slug);

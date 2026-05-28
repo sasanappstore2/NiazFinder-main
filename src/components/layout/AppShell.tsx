@@ -14,6 +14,7 @@ import ErrorBoundary from '@/components/shared/ErrorBoundary';
 import { QueryProvider } from '@/components/providers/QueryProvider';
 import { Separator } from '@/components/ui/separator';
 import { useAppStore } from '@/lib/store';
+import { isBusinessProductDetailPath } from '@/config/routes';
 import { cn } from '@/lib/utils';
 import { useResumePendingContact } from '@/hooks/use-resume-pending-contact';
 import { useChatSocket } from '@/lib/chat-socket';
@@ -30,7 +31,9 @@ export function AppShell({ children, minimalChrome = false }: AppShellProps) {
   const initializeFromStorage = useAppStore((state) => state.initializeFromStorage);
   const isHome = pathname === '/';
   const isChatView = pathname.startsWith('/chat');
+  const isProductDetail = isBusinessProductDetailPath(pathname);
   const effectiveMinimal = minimalChrome || isChatView;
+  const hideMobileNav = effectiveMinimal || isProductDetail;
   const voiceCallOpen = useAppStore((s) => s.voiceCallOpen);
   const voiceCallTarget = useAppStore((s) => s.voiceCallTarget);
   const voiceCallType = useAppStore((s) => s.voiceCallType);
@@ -60,7 +63,7 @@ export function AppShell({ children, minimalChrome = false }: AppShellProps) {
               'flex min-h-0 flex-col',
               effectiveMinimal ? 'flex-1 overflow-hidden' : 'flex-1',
               !effectiveMinimal && !isHome && 'pt-4 sm:pt-6',
-              !effectiveMinimal && 'has-mobile-nav lg:pb-0'
+              !hideMobileNav && 'has-mobile-nav lg:pb-0'
             )}
             dir="rtl"
             id="main-content"
@@ -79,13 +82,13 @@ export function AppShell({ children, minimalChrome = false }: AppShellProps) {
             ))}
           <AuthModal />
           <OnboardingWelcome />
-          {!effectiveMinimal && (
+          {!hideMobileNav && (
             <Suspense fallback={null}>
               <MobileBottomNav />
             </Suspense>
           )}
           <CookieConsent />
-          {!effectiveMinimal && <BackToTop />}
+          {!effectiveMinimal && !isProductDetail && <BackToTop />}
           <VoiceCallOverlay
             isOpen={voiceCallOpen}
             onClose={hangupVoiceCall}

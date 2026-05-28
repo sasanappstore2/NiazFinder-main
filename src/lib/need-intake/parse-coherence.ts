@@ -1,5 +1,8 @@
 import type { ParsedIntent } from '@/contracts/need-intake';
-import { normalizeCategoryPair } from '@/config/categories';
+import { getCategoryPath, normalizeCategoryPair } from '@/config/categories';
+import { buildPropertyTitle, buildRealEstateServiceTitle } from '@/lib/need-intake/property-title';
+import { isConstructionPartnershipText } from '@/lib/need-intake/intent-parser';
+import { toAsciiDigits } from '@/lib/need-intake/extract-property-slots';
 import {
   categorySlugForVertical,
   classifyVertical,
@@ -32,7 +35,13 @@ export function reconcileParsedIntent(
   let intentType = llm.intentType;
   let categorySlug = llm.categorySlug;
   let confidence = llm.confidence;
-  const entities = { ...rules.entities, ...llm.entities };
+  const partnershipRequest = isConstructionPartnershipText(rawText);
+  let entities: Record<string, string> = partnershipRequest
+    ? { ...llm.entities, ...rules.entities, serviceKind: 'partnership' }
+    : { ...rules.entities, ...llm.entities };
+  if (partnershipRequest) {
+    delete entities.dealType;
+  }
 
   const rulesConfident = isVerticalConfident(cls) || rules.confidence >= 0.7;
   const llmWrongServices =
@@ -43,7 +52,11 @@ export function reconcileParsedIntent(
     rules.categorySlug.includes('rent') ||
     cls.vertical === 'real-estate';
 
-  if (rulesConfident && llmWrongServices && rulesProperty && cls.vertical === 'real-estate') {
+  if (partnershipRequest) {
+    intentType = rules.intentType;
+    categorySlug = rules.categorySlug;
+    confidence = Math.max(rules.confidence, confidence, 0.88);
+  } else if (rulesConfident && llmWrongServices && rulesProperty && cls.vertical === 'real-estate') {
     const slug = categorySlugForVertical('real-estate', rawText);
     const pair = normalizeCategoryPair(slug);
     categorySlug = pair.categorySlug;
@@ -81,20 +94,78 @@ export function reconcileParsedIntent(
     confidence = Math.min(0.95, confidence + cls.certainty * 0.1);
   }
 
+  const city = llm.city ?? rules.city;
+  const mergedEntities = entities;
+  const areaName = mergedEntities.area;
+  const isProperty = intentType.startsWith('property');
+  const isPartnership =
+    intentType === 'real_estate_service' ||
+    isConstructionPartnershipText(rawText) ||
+    mergedEntities.serviceKind === 'partnership';
+
+  let title = (llm.title?.length ?? 0) >= 8 ? llm.title! : rules.title;
+  if (isPartnership) {
+    title = buildRealEstateServiceTitle(mergedEntities, city);
+  } else if (isProperty) {
+    const rawNorm = toAsciiDigits(rawText.toLowerCase());
+    const llmClaimsRooms =
+      mergedEntities.rooms &&
+      !rawNorm.includes(`${mergedEntities.rooms} خواب`) &&
+      !rawNorm.includes('خواب');
+    title = buildPropertyTitle(intentType, mergedEntities, city, areaName);
+    if (llmClaimsRooms && (llm.title?.length ?? 0) >= 8) {
+      const { rooms: _roomsOmit, ...withoutRooms } = mergedEntities;
+      title = buildPropertyTitle(intentType, withoutRooms, city, areaName);
+    }
+  }
+
   return {
     ...llm,
     intentType,
     categorySlug,
-    subcategorySlug: llm.subcategorySlug ?? rules.subcategorySlug,
+    subcategorySlug: partnershipRequest
+      ? rules.subcategorySlug ?? llm.subcategorySlug
+      : llm.subcategorySlug ?? rules.subcategorySlug,
     confidence,
-    entities,
-    city: llm.city ?? rules.city,
+    entities: mergedEntities,
+    city,
     budgetMin: llm.budgetMin ?? rules.budgetMin,
     budgetMax: llm.budgetMax ?? rules.budgetMax,
-    title: (llm.title?.length ?? 0) >= 8 ? llm.title : rules.title,
+    title,
     description:
       (llm.description?.length ?? 0) >= llm.rawText.length * 0.5
         ? llm.description
         : rules.description,
   };
+}
+
+const PRODUCT_ROOTS = new Set([
+  'electronics',
+  'home-appliances',
+  'personal-items',
+  'entertainment',
+]);
+
+/** Rules path: category slug should align with classified vertical. */
+export function isCategoryVerticalCoherent(
+  categorySlug: string,
+  vertical: VerticalClassification['vertical']
+): boolean {
+  const root = getCategoryPath(categorySlug)[0]?.slug ?? categorySlug;
+  switch (vertical) {
+    case 'real-estate':
+      return root === 'real-estate';
+    case 'vehicles':
+      return root === 'vehicles';
+    case 'products':
+      return PRODUCT_ROOTS.has(root);
+    case 'services':
+      return root === 'services';
+    case 'jobs':
+      return root === 'jobs';
+    case 'social':
+      return root === 'social';
+    default:
+      return true;
+  }
 }

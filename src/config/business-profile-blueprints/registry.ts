@@ -1,9 +1,53 @@
 import type { Business, ProfileTemplate } from '@/contracts/business-profile';
-import { getCategoryBySlug, getCategoryPath, isAncestorCategory } from '@/config/categories';
+import {
+  getOccupationBySlug,
+  getOccupationPath,
+  isAncestorOccupation,
+} from '@/config/business-occupations';
+import {
+  getOnlineStoreBySlug,
+  getOnlineStorePath,
+  isAncestorOnlineStore,
+} from '@/config/online-stores';
+import { isPickableProfileCategorySlug } from '@/lib/business/business-category';
 import { BLUEPRINT_SPECS } from './specs';
 import type { BusinessProfileBlueprint, ProfileTabId, ProfileTabSpec } from './types';
 
 export const DEFAULT_BLUEPRINT = BLUEPRINT_SPECS.find((b) => b.id === 'company')!;
+
+function slugMatchesProfileRules(
+  slug: string,
+  match: BusinessProfileBlueprint['match']
+): boolean {
+  const occPath = getOccupationPath(slug);
+  const occSector = occPath[0]?.slug ?? slug;
+  const occupation = getOccupationBySlug(slug);
+
+  if (match.occupationSlugs?.includes(slug)) return true;
+  if (match.occupationSectors?.some((s) => occSector === s || isAncestorOccupation(s, slug))) {
+    return true;
+  }
+  if (occupation?.depth === 1 && match.occupationSectors?.includes(occupation.parentSlug ?? '')) {
+    return true;
+  }
+
+  const storePath = getOnlineStorePath(slug);
+  const storeSector = storePath[0]?.slug ?? slug;
+  const onlineStore = getOnlineStoreBySlug(slug);
+
+  if (match.onlineStoreSlugs?.includes(slug)) return true;
+  if (match.onlineStoreSectors?.some((s) => storeSector === s || isAncestorOnlineStore(s, slug))) {
+    return true;
+  }
+  if (
+    onlineStore?.depth === 1 &&
+    match.onlineStoreSectors?.includes(onlineStore.parentSlug ?? '')
+  ) {
+    return true;
+  }
+
+  return false;
+}
 
 function categoriesMatch(business: Business, blueprint: BusinessProfileBlueprint): boolean {
   const categories = business.identity.category;
@@ -28,20 +72,13 @@ function categoriesMatch(business: Business, blueprint: BusinessProfileBlueprint
   }
 
   for (const cat of categories) {
-    const path = getCategoryPath(cat);
-    const root = path[0]?.slug ?? cat;
-    const parent = path.length >= 2 ? path[path.length - 2]?.slug : null;
-
-    if (match.rootSlugs?.some((r) => root === r || isAncestorCategory(r, cat))) return true;
-    if (match.parentSlugs?.some((p) => cat === p || parent === p || isAncestorCategory(p, cat)))
-      return true;
-    if (match.leafSlugs?.some((l) => cat === l)) return true;
+    if (slugMatchesProfileRules(cat, match)) return true;
   }
 
   return false;
 }
 
-/** Resolve blueprint from explicit template or category slugs. */
+/** Resolve blueprint from explicit template or profile category slugs. */
 export function getBlueprintForBusiness(business: Business): BusinessProfileBlueprint {
   const explicit = business.layoutConfig?.template;
   if (explicit) {
@@ -61,17 +98,32 @@ export function getBlueprintByTemplate(template: ProfileTemplate): BusinessProfi
   return BLUEPRINT_SPECS.find((b) => b.id === template) ?? DEFAULT_BLUEPRINT;
 }
 
-export function getBlueprintForCategorySlug(slug: string): BusinessProfileBlueprint {
-  const cat = getCategoryBySlug(slug);
-  if (!cat) return DEFAULT_BLUEPRINT;
+export function getBlueprintForOccupationSlug(slug: string): BusinessProfileBlueprint {
+  const occPath = getOccupationPath(slug);
+  const storePath = getOnlineStorePath(slug);
+  const pathSlugs =
+    occPath.length > 0
+      ? [slug, ...occPath.map((p) => p.slug)]
+      : storePath.length > 0
+        ? [slug, ...storePath.map((p) => p.slug)]
+        : [slug];
 
-  const path = getCategoryPath(slug);
+  if (occPath.length === 0 && storePath.length === 0) {
+    return DEFAULT_BLUEPRINT;
+  }
+
   const mockBusiness: Business = {
     id: '',
     userId: '',
     name: '',
     slug: '',
-    identity: { description: '', category: [slug, ...path.map((p) => p.slug)], tags: [], location: { city: '' }, status: 'active' },
+    identity: {
+      description: '',
+      category: [...new Set(pathSlugs)],
+      tags: [],
+      location: { city: '' },
+      status: 'active',
+    },
     trust: { rating: 0, reviewCount: 0, verified: false, badges: [], responseRate: 0, yearsActive: 0 },
     offers: [],
     portfolio: [],
@@ -85,6 +137,9 @@ export function getBlueprintForCategorySlug(slug: string): BusinessProfileBluepr
   return getBlueprintForBusiness(mockBusiness);
 }
 
+/** @deprecated Use getBlueprintForOccupationSlug — profile slugs include occupations and online stores. */
+export const getBlueprintForCategorySlug = getBlueprintForOccupationSlug;
+
 export function getTabsForBusiness(business: Business): ProfileTabSpec[] {
   return getBlueprintForBusiness(business).tabs;
 }
@@ -97,14 +152,17 @@ export function isValidTabForBusiness(business: Business, tabId: string): tabId 
   return getTabIdsForBusiness(business).includes(tabId as ProfileTabId);
 }
 
-export function getPrimaryCategorySlug(categories: string[]): string | null {
+export function getPrimaryOccupationSlug(categories: string[]): string | null {
   if (categories.length === 0) return null;
-  const sorted = [...categories].sort((a, b) => {
-    const da = getCategoryBySlug(a)?.depth ?? 0;
-    const db = getCategoryBySlug(b)?.depth ?? 0;
-    return db - da;
-  });
-  return sorted[0] ?? categories[0];
+  const first = categories[0]?.trim();
+  if (first && isPickableProfileCategorySlug(first)) return first;
+  for (const s of categories) {
+    if (isPickableProfileCategorySlug(s)) return s;
+  }
+  return categories[0] ?? null;
 }
+
+/** @deprecated Alias — returns primary profile category slug. */
+export const getPrimaryCategorySlug = getPrimaryOccupationSlug;
 
 export { BLUEPRINT_SPECS };

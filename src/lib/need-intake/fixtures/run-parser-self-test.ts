@@ -1,4 +1,5 @@
-import { parseIntentFromText, resolveCategorySlugFromLegacy } from '@/lib/need-intake/intent-parser';
+import { resolveCategorySlugFromLegacy } from '@/lib/need-intake/intent-parser';
+import { parseFromText } from '@/lib/need-intake/internal-orchestrator.server';
 import { PARSER_FIXTURES, type ParserFixture } from './parser-cases';
 
 const LEGACY_SLUG_CASES: { value: string; expected: string }[] = [
@@ -9,7 +10,7 @@ const LEGACY_SLUG_CASES: { value: string; expected: string }[] = [
 ];
 
 function assertFixture(f: ParserFixture): string | null {
-  const r = parseIntentFromText(f.text);
+  const r = parseFromText(f.text);
   const categoryHaystack = [r.categorySlug, r.subcategorySlug].filter(Boolean).join(' ');
 
   if (f.expectIntentPrefix && !r.intentType.startsWith(f.expectIntentPrefix)) {
@@ -23,6 +24,15 @@ function assertFixture(f: ParserFixture): string | null {
   }
   if (f.expectCity && r.city !== f.expectCity) {
     return `${f.id}: city ${r.city} expected ${f.expectCity}`;
+  }
+  if (f.expectLocationAmbiguous != null && Boolean(r.locationAmbiguous) !== f.expectLocationAmbiguous) {
+    return `${f.id}: locationAmbiguous ${r.locationAmbiguous} expected ${f.expectLocationAmbiguous}`;
+  }
+  if (f.expectMinNeighborhoodCandidates != null) {
+    const n = r.neighborhoodCandidates?.length ?? 0;
+    if (n < f.expectMinNeighborhoodCandidates) {
+      return `${f.id}: neighborhoodCandidates ${n} expected >= ${f.expectMinNeighborhoodCandidates}`;
+    }
   }
   return null;
 }
@@ -58,5 +68,5 @@ if (isDirectRun) {
     console.error('Parser fixtures FAILED:\n', failed.join('\n'));
     process.exit(1);
   }
-  console.log(`Parser fixtures OK: ${passed}/${PARSER_FIXTURES.length}`);
+    console.log(`Parser fixtures OK: ${passed}/${PARSER_FIXTURES.length + LEGACY_SLUG_CASES.length}`);
 }

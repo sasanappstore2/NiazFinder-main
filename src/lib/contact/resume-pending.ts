@@ -34,6 +34,7 @@ export async function resumePendingContact(deps: ResumeDeps): Promise<boolean> {
           otherUserId: intent.otherUserId,
           requestId: intent.requestId,
           returnTo: intent.returnTo,
+          productIntro: intent.productIntro,
         },
         deps.authToken
       );

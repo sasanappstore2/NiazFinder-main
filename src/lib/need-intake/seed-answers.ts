@@ -20,17 +20,36 @@ export function seedAnswersFromParsed(
   if (e.socialType) answers.socialType = e.socialType;
   if (e.projectName) answers.projectName = e.projectName;
 
+  if (e.rooms) answers.rooms = e.rooms;
+  if (e.areaMin) answers.areaMin = Number(e.areaMin);
+  if (e.areaMax) answers.areaMax = Number(e.areaMax);
+  if (e.plotWidth) answers.plotWidth = e.plotWidth;
+  if (e.floorMin) answers.floorMin = Number(e.floorMin);
+  if (e.floorMax) answers.floorMax = Number(e.floorMax);
+  if (e.pricePerMeterMin) answers.pricePerMeterMin = Number(e.pricePerMeterMin);
+  if (e.pricePerMeterMax) answers.pricePerMeterMax = Number(e.pricePerMeterMax);
+  if (e.deposit) answers.deposit = Number(e.deposit);
+  if (e.monthlyRent) answers.monthlyRent = Number(e.monthlyRent);
+  if (e.rahnAmount) answers.rahnAmount = Number(e.rahnAmount);
+  if (e.nightlyRent) answers.nightlyRent = Number(e.nightlyRent);
+  if (e.guestCount) answers.guestCount = e.guestCount;
+  if (e.deedType) answers.deedType = e.deedType;
+  if (e.serviceKind) answers.serviceKind = e.serviceKind;
+
   if (parsed.neighborhoodSlug) {
     answers._neighborhoodSlug = parsed.neighborhoodSlug;
   }
 
   if (e.area && parsed.city && !answers.location) {
-    answers.location = `${e.area}، ${parsed.city}`;
+    const area = String(e.area).trim();
+    const city = parsed.city.trim();
+    answers.location = area === city ? city : `${area}، ${city}`;
   } else if (e.area && !answers.location) {
     answers.location = String(e.area);
   } else if (parsed.city && !answers.location) {
     answers.location = parsed.city;
   }
+
   if (parsed.budgetMax && !answers.budget) answers.budget = parsed.budgetMax;
   if (parsed.budgetMax && e.dealType === 'rent_rahn_full' && !answers.rahnAmount) {
     answers.rahnAmount = parsed.budgetMax;

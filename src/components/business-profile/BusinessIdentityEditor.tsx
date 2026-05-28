@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Building2, Loader2, MapPin, Phone, Save, Search } from 'lucide-react';
+import { Building2, Loader2, MapPin, Phone, Save, Search, Sparkles } from 'lucide-react';
+import { sanitizeBusinessProfileSlug } from '@/lib/business/profile-slug';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -59,6 +60,7 @@ export function BusinessIdentityEditor({
   onSaved?: (data: { slug: string; name: string }) => void;
 }) {
   const [form, setForm] = useState<IdentityForm>(EMPTY);
+  const [suggestedProfileSlug, setSuggestedProfileSlug] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -70,10 +72,13 @@ export function BusinessIdentityEditor({
         toast.error('بارگذاری اطلاعات کسب‌وکار ناموفق بود');
         return;
       }
-      const data = (await res.json()) as IdentityForm;
+      const data = (await res.json()) as IdentityForm & {
+        suggestedProfileSlug?: string | null;
+      };
+      setSuggestedProfileSlug(data.suggestedProfileSlug ?? null);
       setForm({
         name: data.name ?? '',
-        slug: data.slug ?? '',
+        slug: sanitizeBusinessProfileSlug(data.slug ?? '') || (data.slug ?? ''),
         description: data.description ?? '',
         logo: data.logo ?? '',
         coverImage: data.coverImage ?? '',
@@ -153,17 +158,44 @@ export function BusinessIdentityEditor({
             <Label>نام کسب‌وکار</Label>
             <Input value={form.name} onChange={(e) => update({ name: e.target.value })} />
           </div>
-          <div className="space-y-1 sm:col-span-2">
-            <Label>آدرس پروفایل (slug)</Label>
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor="biz-username">نام کاربری پروفایل</Label>
+            <p className="text-xs text-muted-foreground">
+              آدرس عمومی شما: فقط حروف کوچک انگلیسی، عدد، خط تیره و زیرخط (۳ تا ۴۰ کاراکتر).
+              مثال: <span dir="ltr" className="font-mono">fnjekwnkv</span>
+            </p>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground shrink-0">/b/</span>
+              <span className="text-sm text-muted-foreground shrink-0" dir="ltr">
+                /b/
+              </span>
               <Input
+                id="biz-username"
                 dir="ltr"
                 className="font-mono text-sm"
                 value={form.slug}
-                onChange={(e) => update({ slug: e.target.value })}
+                onChange={(e) => update({ slug: sanitizeBusinessProfileSlug(e.target.value) })}
+                placeholder="myshop"
+                autoComplete="off"
+                spellCheck={false}
               />
             </div>
+            {suggestedProfileSlug &&
+              suggestedProfileSlug !== form.slug &&
+              suggestedProfileSlug.length >= 3 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-8 gap-1.5 border-emerald-500/30 text-emerald-800 dark:text-emerald-300"
+                  onClick={() => update({ slug: suggestedProfileSlug })}
+                >
+                  <Sparkles className="size-3.5" />
+                  پیشنهاد از شبکه‌های اجتماعی:
+                  <span dir="ltr" className="font-mono">
+                    {suggestedProfileSlug}
+                  </span>
+                </Button>
+              )}
           </div>
           <div className="space-y-1 sm:col-span-2">
             <Label>توضیحات</Label>

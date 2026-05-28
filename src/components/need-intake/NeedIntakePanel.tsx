@@ -42,6 +42,8 @@ import {
 } from '@/lib/need-intake/prefill-from-query';
 import { normalizeCategoryPair } from '@/config/categories';
 import { getLeadPhone, setLeadPhone } from '@/lib/lead-draft';
+import { CategoryConfidenceBadge } from './CategoryConfidenceBadge';
+import { IntakeLabPanel } from './lab/IntakeLabPanel';
 
 const TOKEN_KEY = 'needfinder_auth_token';
 
@@ -105,6 +107,7 @@ export function NeedIntakePanel({
     engine?: string;
     latencyMs?: number;
     skipClarifying?: boolean;
+    vertical?: string;
     verticalScore?: number;
     verticalCertainty?: number;
   } | null>(null);
@@ -176,6 +179,64 @@ export function NeedIntakePanel({
       return data;
     },
     [applyNextQuestion]
+  );
+
+  const handleNeighborhoodPick = useCallback(
+    async (slugOrOther: string) => {
+      if (!parsedIntent) return;
+      setLoading(true);
+      setError(null);
+      try {
+        let nextParsed: ParsedIntent = { ...parsedIntent };
+        let nextAnswers: Record<string, string | number | boolean | string[]> = { ...answers };
+
+        if (slugOrOther === '__neighborhood_other__') {
+          nextParsed = {
+            ...parsedIntent,
+            locationAmbiguous: false,
+            neighborhoodCandidates: undefined,
+            neighborhoodSlug: undefined,
+          };
+        } else {
+          const opt = parsedIntent.neighborhoodCandidates?.find((c) => c.slug === slugOrOther);
+          nextParsed = {
+            ...parsedIntent,
+            neighborhoodSlug: slugOrOther,
+            locationAmbiguous: false,
+            neighborhoodCandidates: undefined,
+            entities: {
+              ...parsedIntent.entities,
+              area: opt?.label ?? parsedIntent.entities.area,
+            },
+          };
+          const loc =
+            opt && nextParsed.city
+              ? `${opt.label}، ${nextParsed.city}`
+              : opt?.label ?? nextParsed.city;
+          if (loc) nextAnswers = { ...nextAnswers, location: loc };
+          nextAnswers = { ...nextAnswers, _neighborhoodSlug: slugOrOther };
+        }
+
+        setParsedIntent(nextParsed);
+        setAnswers(nextAnswers);
+        await loadNextQuestion(nextParsed, nextAnswers);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'خطا';
+        setError(msg);
+        toast.error(msg);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [
+      parsedIntent,
+      answers,
+      loadNextQuestion,
+      setParsedIntent,
+      setAnswers,
+      setLoading,
+      setError,
+    ]
   );
 
   const startParse = useCallback(
@@ -503,6 +564,7 @@ export function NeedIntakePanel({
       : null;
 
   return (
+    <>
     <div className="flex min-h-[70vh] gap-6">
       <div className="flex min-h-[70vh] flex-1 flex-col">
       <IntakeStepTimeline step={step} />
@@ -513,7 +575,23 @@ export function NeedIntakePanel({
             ? `دستیار هوشمند${intakeMeta.latencyMs ? ` · ${Math.round(intakeMeta.latencyMs)}ms` : ''}`
             : 'تحلیل لحظه‌ای'}
         </Badge>
-        {step === 'questioning' && currentQuestion && !currentQuestion.done && (
+        {parsedIntent &&
+          step !== 'idle' &&
+          step !== 'done' &&
+          step !== 'publishing' && (
+            <CategoryConfidenceBadge
+              parsed={parsedIntent}
+              verticalCertainty={intakeMeta?.verticalCertainty}
+              vertical={intakeMeta?.vertical}
+              onConfirm={
+                step === 'clarifying' ? () => void confirmIntent() : undefined
+              }
+            />
+          )}
+        {step === 'questioning' &&
+          currentQuestion &&
+          !currentQuestion.done &&
+          (currentQuestion.field || currentQuestion.disambiguation) && (
           <ProgressIndicator
             current={currentQuestion.progress.current}
             total={currentQuestion.progress.total}
@@ -600,7 +678,27 @@ export function NeedIntakePanel({
           </div>
         )}
 
-        {step === 'questioning' && !isLoading && currentQuestion && !currentQuestion.done && (
+        {step === 'questioning' &&
+          !isLoading &&
+          currentQuestion &&
+          !currentQuestion.done &&
+          currentQuestion.disambiguation && (
+            <div className="space-y-3 rounded-xl border bg-card/40 p-4">
+              <p className="text-sm font-medium leading-relaxed">
+                {currentQuestion.disambiguation.question}
+              </p>
+              <SuggestionChips
+                options={currentQuestion.disambiguation.options}
+                onSelect={(v) => void handleNeighborhoodPick(v)}
+              />
+            </div>
+          )}
+
+        {step === 'questioning' &&
+          !isLoading &&
+          currentQuestion &&
+          !currentQuestion.done &&
+          currentQuestion.field && (
           <QuestionCard
             question={currentQuestion.question ?? ''}
             field={currentQuestion.field}
@@ -713,5 +811,7 @@ export function NeedIntakePanel({
         }
       />
     </div>
+    <IntakeLabPanel lastParsed={parsedIntent} intakeMeta={intakeMeta} />
+    </>
   );
 }

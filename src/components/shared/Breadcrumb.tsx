@@ -7,7 +7,8 @@ import { ChevronLeft, Home } from 'lucide-react';
 import { routeBuilder } from '@/config/routes';
 import type { BrowseMarket } from '@/config/market-routes';
 import { resolveSearchSegments } from '@/lib/search/resolve-segments';
-import { isBusinessProfilePath } from '@/lib/search/browse-path';
+import { COUNTRY_SLUG, getCityBySlug } from '@/config/locations';
+import { isBusinessProfilePath, parseBrowsePath } from '@/lib/search/browse-path';
 import { browseTrailFromSearchParams } from '@/lib/browse-trail';
 import {
   buildUrlFromLocationScope,
@@ -75,6 +76,48 @@ function marketplaceCrumbs(
       ];
     }
     return [home, { label: marketRootLabel, href: marketRootHref }];
+  }
+
+  if (market === 'business') {
+    const pathCtx = parseBrowsePath(pathname);
+    const locSlug =
+      pathCtx.citySlug ??
+      (pathCtx.pathLocation === COUNTRY_SLUG ? 'iran' : pathCtx.pathLocation);
+    const pathLocLabel =
+      locSlug === 'iran' ? 'سراسر ایران' : (getCityBySlug(locSlug)?.title ?? locSlug);
+
+    const crumbs: Crumb[] = [home];
+    if (!scoped) {
+      crumbs.push({ label: marketRootLabel, href: marketRootHref });
+    }
+
+    crumbs.push({
+      label: scoped ? scopeLabel(scope) : pathLocLabel,
+      href: scoped
+        ? buildUrlFromLocationScope(pathname, searchParams, scope)
+        : routeBuilder.search({ market, location: locSlug }),
+    });
+
+    if (pathCtx.parentCategorySlug && pathCtx.parentCategoryTitle) {
+      crumbs.push({
+        label: pathCtx.parentCategoryTitle,
+        href: scopedSearchHref(scope, market, locSlug, {
+          category: pathCtx.parentCategorySlug,
+        }),
+      });
+    }
+
+    if (pathCtx.categorySlug && pathCtx.categoryTitle) {
+      crumbs.push({
+        label: pathCtx.categoryTitle,
+        href: scopedSearchHref(scope, market, locSlug, {
+          parentCategory: pathCtx.parentCategorySlug,
+          category: pathCtx.categorySlug,
+        }),
+      });
+    }
+
+    return crumbs;
   }
 
   const ctx = resolveSearchSegments(rawLocation, rawSegments);
@@ -146,7 +189,11 @@ function scopedSearchHref(
   });
 }
 
-function crumbsForPath(pathname: string, searchParams: URLSearchParams): Crumb[] {
+function crumbsForPath(
+  pathname: string,
+  searchParams: URLSearchParams,
+  businessProfileLabel?: string
+): Crumb[] {
   const home: Crumb = { label: 'صفحه اصلی', href: routeBuilder.home() };
 
   if (pathname === '/') return [home];
@@ -192,7 +239,8 @@ function crumbsForPath(pathname: string, searchParams: URLSearchParams): Crumb[]
   if (isBusinessProfilePath(pathname)) {
     const from = browseTrailFromSearchParams(searchParams);
     const slug = pathname.split('/').filter(Boolean)[1] ?? '';
-    const terminal: Crumb = { label: slug, href: pathname };
+    const label = businessProfileLabel?.trim() || slug;
+    const terminal: Crumb = { label, href: pathname };
     if (from) {
       return [...marketplaceCrumbs(from, home, new URLSearchParams()), terminal];
     }
@@ -216,12 +264,12 @@ function crumbsForPath(pathname: string, searchParams: URLSearchParams): Crumb[]
   return [home, { label: 'صفحه', href: pathname }];
 }
 
-function BreadcrumbInner() {
+function BreadcrumbInner({ businessProfileLabel }: { businessProfileLabel?: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const crumbs = useMemo(
-    () => crumbsForPath(pathname, searchParams),
-    [pathname, searchParams]
+    () => crumbsForPath(pathname, searchParams, businessProfileLabel),
+    [pathname, searchParams, businessProfileLabel]
   );
 
   return (
@@ -279,10 +327,15 @@ function BreadcrumbInner() {
   );
 }
 
-export function Breadcrumb() {
+export function Breadcrumb({
+  businessProfileLabel,
+}: {
+  /** Persian business name for `/b/{slug}` (SEO-friendly breadcrumb label). */
+  businessProfileLabel?: string;
+} = {}) {
   return (
     <Suspense fallback={null}>
-      <BreadcrumbInner />
+      <BreadcrumbInner businessProfileLabel={businessProfileLabel} />
     </Suspense>
   );
 }

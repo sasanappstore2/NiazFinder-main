@@ -8,7 +8,9 @@ import {
 } from '@/config/need-schemas/labels';
 import { getRootCategorySlug } from '@/config/need-schemas/resolve-schema';
 import { formatMoneyToman } from '@/lib/format/money';
+import { isConstructionPartnershipText } from '@/lib/need-intake/intent-parser';
 import { mapDraftToCreateRequest } from '@/lib/need-intake/map-to-request';
+import { buildRealEstateServiceTitle } from '@/lib/need-intake/property-title';
 
 export interface ComposedListing {
   title: string;
@@ -39,11 +41,30 @@ function buildDescriptionLines(
   const deal = dealLabel(parsed, answers);
   if (deal) lines.push(`نوع معامله: ${deal}`);
 
-  if (root === 'real-estate') {
+  if (parsed.entities?.serviceKind === 'partnership' || parsed.intentType === 'real_estate_service') {
+    lines.push('نوع درخواست: مشارکت در ساخت');
+    const kind = answers.propertyKind ?? parsed.entities?.propertyKind;
+    if (kind) lines.push(`نوع ملک: ${PROPERTY_KIND_LABELS[String(kind)] ?? kind}`);
+    if (answers.areaMin) lines.push(`متراژ زمین: ${answers.areaMin} متر`);
+    if (answers.plotWidth) lines.push(`عرض زمین: ${answers.plotWidth} متر`);
+  } else if (root === 'real-estate') {
     const kind = answers.propertyKind ?? parsed.entities?.propertyKind;
     if (kind) lines.push(`نوع ملک: ${PROPERTY_KIND_LABELS[String(kind)] ?? kind}`);
     if (answers.rooms) lines.push(`تعداد خواب: ${answers.rooms}`);
     if (answers.areaMin) lines.push(`متراژ حداقل: ${answers.areaMin} متر`);
+    if (answers.areaMax) lines.push(`متراژ حداکثر: ${answers.areaMax} متر`);
+    if (answers.floorMin) lines.push(`طبقه: ${answers.floorMin}`);
+    if (answers.pricePerMeterMin) {
+      lines.push(`قیمت هر متر: از ${formatMoneyToman(Number(answers.pricePerMeterMin))}`);
+    }
+    if (answers.deposit) lines.push(`ودیعه: ${formatMoneyToman(Number(answers.deposit))}`);
+    if (answers.monthlyRent) {
+      lines.push(`اجاره ماهانه: ${formatMoneyToman(Number(answers.monthlyRent))}`);
+    }
+    if (answers.nightlyRent) {
+      lines.push(`اجاره هر شب: ${formatMoneyToman(Number(answers.nightlyRent))}`);
+    }
+    if (answers.guestCount) lines.push(`تعداد نفرات: ${answers.guestCount}`);
   }
 
   if (root === 'vehicles') {
@@ -78,7 +99,23 @@ export function composeListingFromDraft(draft: NeedDraft): ComposedListing {
   const mapped = mapDraftToCreateRequest(draft, 'preview', null);
   const { parsedIntent: parsed, answers } = draft;
 
-  let title = mapped.title;
+  const parsedTitle = parsed.title?.trim();
+  let title =
+    parsedTitle && parsedTitle.length >= 8 && parsedTitle !== 'ثبت نیاز'
+      ? parsedTitle
+      : mapped.title;
+
+  if (
+    parsed.intentType === 'real_estate_service' ||
+    parsed.entities?.serviceKind === 'partnership' ||
+    isConstructionPartnershipText(parsed.rawText ?? '')
+  ) {
+    title = buildRealEstateServiceTitle(
+      { ...parsed.entities, ...answers } as Record<string, string>,
+      parsed.city
+    );
+  }
+
   if (title.length < 12 || title === 'ثبت نیاز') {
     const parts: string[] = [];
     const deal = dealLabel(parsed, answers);

@@ -1,23 +1,66 @@
+import { expandOccupationsForNeedMatch, migrateSlugToOccupation } from '@/config/need-to-occupation-map';
 import {
-  CANONICAL_CATEGORIES,
-  getCategoryPath,
-  isAncestorCategory,
-  legacyValueToSlug,
-} from '@/config/categories';
+  BUSINESS_OCCUPATIONS,
+  getOccupationPath,
+  isOccupationSlug,
+  resolveOccupationSlug,
+} from '@/config/business-occupations';
+import {
+  ONLINE_STORE_CATEGORIES,
+  getOnlineStorePath,
+  isOnlineStoreSlug,
+} from '@/config/online-stores';
 
-/** Slugs to match against business categorySlugs (self + ancestors + children). */
-export function expandCategorySlugsForMatch(dbSlug: string): string[] {
-  const canonical = legacyValueToSlug(dbSlug) ?? dbSlug;
-  const slugs = new Set<string>([canonical]);
+/**
+ * Occupation + online store slugs that can serve a need (from need category slug).
+ * @deprecated Name kept for callers; returns profile category slugs.
+ */
+export function expandCategorySlugsForMatch(needSlug: string): string[] {
+  return expandOccupationsForNeedMatch(needSlug);
+}
 
-  const path = getCategoryPath(canonical);
-  for (const c of path) slugs.add(c.slug);
+/** Normalize profile `categorySlugs` (occupation, online store, or legacy need slug) for matching. */
+export function normalizeProfileSlugsForMatch(storedSlugs: string[]): string[] {
+  const out = new Set<string>();
 
-  for (const cat of CANONICAL_CATEGORIES) {
-    if (isAncestorCategory(canonical, cat.slug) || cat.slug === canonical) {
-      slugs.add(cat.slug);
+  for (const raw of storedSlugs) {
+    const slug = raw.trim();
+    if (!slug) continue;
+
+    if (isOnlineStoreSlug(slug)) {
+      out.add(slug);
+      const store = ONLINE_STORE_CATEGORIES.find((c) => c.slug === slug);
+      if (store?.depth === 0) {
+        for (const child of ONLINE_STORE_CATEGORIES.filter((o) => o.parentSlug === slug)) {
+          out.add(child.slug);
+        }
+      }
+      for (const c of getOnlineStorePath(slug)) {
+        out.add(c.slug);
+      }
+      continue;
+    }
+
+    if (isOccupationSlug(slug)) {
+      const resolved = resolveOccupationSlug(slug);
+      out.add(resolved);
+      const occ = BUSINESS_OCCUPATIONS.find((o) => o.slug === resolved);
+      if (occ?.depth === 0) {
+        for (const child of BUSINESS_OCCUPATIONS.filter((o) => o.parentSlug === resolved)) {
+          out.add(child.slug);
+        }
+      }
+      for (const o of getOccupationPath(resolved)) {
+        out.add(o.slug);
+      }
+      continue;
+    }
+
+    const { occupations } = migrateSlugToOccupation(slug);
+    for (const o of occupations) {
+      out.add(o);
     }
   }
 
-  return [...slugs];
+  return [...out];
 }

@@ -78,8 +78,8 @@ export default async function BusinessSlugPage({ params }: PageProps) {
     <>
       <JsonLd id="business-jsonld" data={jsonLd} />
       <PageContainer width="wide">
-        <Breadcrumb />
-        <Separator className="my-4" />
+        <Breadcrumb businessProfileLabel={business.name} />
+        <Separator className="my-3 sm:my-4" />
         <UniversalBusinessProfile businessId={business.userId} />
       </PageContainer>
     </>

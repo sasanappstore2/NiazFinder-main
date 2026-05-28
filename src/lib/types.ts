@@ -139,7 +139,7 @@ export interface Message {
   conversationId: string;
   senderId: string;
   content: string;
-  type: 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE' | 'SYSTEM' | 'NEED_CARD';
+  type: 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE' | 'SYSTEM' | 'NEED_CARD' | 'OFFER_CARD';
   attachmentUrls?: string[];
   isRead: boolean;
   createdAt: string;

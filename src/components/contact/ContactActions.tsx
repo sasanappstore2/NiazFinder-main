@@ -15,6 +15,8 @@ import {
 } from '@/lib/contact/start-conversation';
 import { fetchUserContact } from '@/lib/contact/fetch-contact';
 import { savePendingContact } from '@/lib/contact/pending-contact';
+import { ensureNeedChatPreview } from '@/lib/contact/need-chat-preview';
+import type { NeedChatPreview } from '@/lib/contact/need-chat-preview';
 import Link from 'next/link';
 
 export interface ContactActionsProps {
@@ -25,7 +27,11 @@ export interface ContactActionsProps {
   chatEnabled?: boolean;
   showProfile?: boolean;
   profileHref?: string;
-  variant?: 'compact' | 'default' | 'sticky';
+  /** Snapshot for chat need-context banner (title, category, city). */
+  needPreview?: Omit<NeedChatPreview, 'id'>;
+  /** Override chat button label (e.g. primary CTA on need detail aside). */
+  chatLabel?: string;
+  variant?: 'compact' | 'default' | 'sticky' | 'stacked';
   className?: string;
 }
 
@@ -37,6 +43,8 @@ export function ContactActions({
   chatEnabled = true,
   showProfile = true,
   profileHref,
+  needPreview,
+  chatLabel = 'چت',
   variant = 'default',
   className,
 }: ContactActionsProps) {
@@ -74,6 +82,9 @@ export function ContactActions({
     }
     setChatLoading(true);
     try {
+      if (requestId) {
+        ensureNeedChatPreview(requestId, needPreview);
+      }
       const { conversationId } = await startConversation(
         { otherUserId, requestId },
         authToken
@@ -123,13 +134,17 @@ export function ContactActions({
 
   if (isSelf) return null;
 
-  const btnSize = variant === 'compact' ? 'sm' : 'default';
+  const btnSize =
+    variant === 'compact' ? 'sm' : variant === 'stacked' ? 'lg' : 'default';
   const layout =
     variant === 'sticky'
       ? 'flex gap-2 p-3'
-      : variant === 'compact'
-        ? 'flex flex-wrap gap-1.5'
-        : 'flex flex-wrap gap-2';
+      : variant === 'stacked'
+        ? 'flex flex-col gap-3'
+        : variant === 'compact'
+          ? 'flex flex-wrap gap-1.5'
+          : 'flex flex-wrap gap-2';
+  const fullWidthBtn = variant === 'sticky' || variant === 'stacked';
 
   return (
     <div
@@ -147,7 +162,11 @@ export function ContactActions({
         <Button
           type="button"
           size={btnSize}
-          className={cn(variant === 'sticky' && 'flex-1')}
+          className={cn(
+            fullWidthBtn && 'w-full flex-1',
+            variant === 'stacked' &&
+              'h-12 min-h-12 rounded-xl text-base font-semibold shadow-sm transition-[box-shadow,transform] hover:shadow-md active:scale-[0.99]'
+          )}
           disabled={chatLoading}
           onClick={() => void handleChat()}
         >
@@ -156,7 +175,7 @@ export function ContactActions({
           ) : (
             <MessageCircle className="size-4 ml-1" />
           )}
-          چت
+          {chatLabel}
         </Button>
       )}
       {hasPhone && (
@@ -164,7 +183,11 @@ export function ContactActions({
           type="button"
           variant="outline"
           size={btnSize}
-          className={cn(variant === 'sticky' && 'flex-1')}
+          className={cn(
+            fullWidthBtn && 'w-full flex-1',
+            variant === 'stacked' &&
+              'h-12 min-h-12 rounded-xl border-2 text-base font-medium bg-background/80 hover:bg-muted/40'
+          )}
           disabled={callLoading}
           onClick={() => void handleCall()}
         >
@@ -181,12 +204,16 @@ export function ContactActions({
           type="button"
           variant="ghost"
           size={btnSize}
-          className={cn(variant === 'sticky' && 'shrink-0')}
+          className={cn(
+            variant === 'sticky' && 'shrink-0',
+            variant === 'stacked' && 'w-full'
+          )}
           asChild
         >
           <Link href={proHref}>
             <User className="size-4 ml-1" />
-            {variant !== 'compact' && 'پروفایل'}
+            {variant !== 'compact' && variant !== 'stacked' && 'پروفایل'}
+            {variant === 'stacked' && 'مشاهده پروفایل'}
           </Link>
         </Button>
       )}

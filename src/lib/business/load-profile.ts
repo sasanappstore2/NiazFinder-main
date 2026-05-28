@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
 import { mapProfileToBusiness } from '@/lib/business/map-profile';
 import {
@@ -6,6 +7,11 @@ import {
   seedPortfolioFromLegacy,
   seedReviewsFromLegacy,
 } from '@/lib/business/ensure-profile';
+import { buildBusinessGeoWhere } from '@/lib/business/browse-geo-filters';
+import {
+  categoryFilterToPrismaWhere,
+  resolveBrowseCategoryFilter,
+} from '@/lib/business/resolve-browse-category-filter';
 import type { Business } from '@/contracts/business-profile';
 
 const profileInclude = {
@@ -92,9 +98,16 @@ export async function incrementBusinessView(userId: string) {
   });
 }
 
+export type BusinessBrowseSort = 'rating' | 'newest' | 'name' | 'popular';
+
 export async function listBusinesses(opts: {
   city?: string;
+  citiesParam?: string;
+  provincesParam?: string;
   category?: string;
+  search?: string;
+  verified?: boolean;
+  sort?: BusinessBrowseSort;
   minRating?: number;
   page?: number;
   limit?: number;
@@ -103,24 +116,69 @@ export async function listBusinesses(opts: {
   const limit = Math.min(50, Math.max(1, opts.limit ?? 12));
   const skip = (page - 1) * limit;
 
-  const where: {
-    status: 'ACTIVE';
-    city?: { contains: string };
-    rating?: { gte: number };
-    categorySlugs?: { contains: string };
-  } = { status: 'ACTIVE' };
+  const and: Prisma.BusinessProfileWhereInput[] = [{ status: 'ACTIVE' }];
 
-  if (opts.city) where.city = { contains: opts.city };
-  if (opts.minRating) where.rating = { gte: opts.minRating };
-  if (opts.category) where.categorySlugs = { contains: `"${opts.category}"` };
+  const geoClauses = buildBusinessGeoWhere({
+    citiesParam: opts.citiesParam,
+    provincesParam: opts.provincesParam,
+    legacyCity: opts.city,
+  });
+  and.push(...geoClauses);
+
+  const categoryWhere = categoryFilterToPrismaWhere(
+    resolveBrowseCategoryFilter(opts.category)
+  );
+  if (categoryWhere) and.push(categoryWhere);
+
+  if (opts.minRating) and.push({ rating: { gte: opts.minRating } });
+  if (opts.verified) and.push({ verified: true });
+
+  const q = opts.search?.trim();
+  if (q) {
+    and.push({
+      OR: [
+        { name: { contains: q } },
+        { description: { contains: q } },
+        { tags: { contains: q } },
+        { categorySlugs: { contains: q } },
+      ],
+    });
+  }
+
+  const where: Prisma.BusinessProfileWhereInput =
+    and.length === 1 ? and[0]! : { AND: and };
+
+  const orderBy: Prisma.BusinessProfileOrderByWithRelationInput[] = (() => {
+    switch (opts.sort) {
+      case 'newest':
+        return [{ createdAt: 'desc' }];
+      case 'name':
+        return [{ name: 'asc' }];
+      case 'popular':
+        return [{ viewCount: 'desc' }, { rating: 'desc' }];
+      case 'rating':
+      default:
+        return [{ verified: 'desc' }, { rating: 'desc' }];
+    }
+  })();
 
   const [rows, total] = await Promise.all([
     db.businessProfile.findMany({
       where,
       skip,
       take: limit,
-      orderBy: [{ verified: 'desc' }, { rating: 'desc' }],
-      include: { user: { select: { id: true, avatar: true, isVerified: true } } },
+      orderBy,
+      include: {
+        user: {
+          select: {
+            id: true,
+            avatar: true,
+            isVerified: true,
+            online: true,
+            createdAt: true,
+          },
+        },
+      },
     }),
     db.businessProfile.count({ where }),
   ]);
@@ -132,12 +190,16 @@ export async function listBusinesses(opts: {
       name: p.name,
       logo: p.logo ?? p.user.avatar ?? undefined,
       city: p.city ?? '',
+      province: p.province ?? '',
       category: JSON.parse(p.categorySlugs || '[]') as string[],
       rating: p.rating,
       reviewCount: p.reviewCount,
       verified: p.verified || p.user.isVerified,
       tags: JSON.parse(p.tags || '[]') as string[],
+      online: p.user.online,
+      createdAt: p.createdAt.toISOString(),
+      description: p.description ?? undefined,
     })),
-    pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    pagination: { page, limit, total, totalPages: Math.ceil(total / limit) || 1 },
   };
 }

@@ -5,6 +5,7 @@ const LEAF_PROPERTY_KIND: Record<string, string> = {
   'apartment-sale': 'apartment',
   'villa-sale': 'villa',
   'land-sale': 'land',
+  'land-rent': 'land',
   'apartment-rent': 'apartment',
   'villa-rent': 'villa',
   'office-sale': 'office',
@@ -13,6 +14,9 @@ const LEAF_PROPERTY_KIND: Record<string, string> = {
   'office-rent': 'office',
   'shop-rent': 'shop',
   'industrial-rent': 'industrial',
+  'suite-apartment-rent': 'apartment',
+  'villa-short-rent': 'villa',
+  'workspace-short-rent': 'office',
 };
 
 const LEAF_VEHICLE_KIND: Record<string, string> = {
@@ -29,6 +33,7 @@ const PARENT_DEAL_HINT: Record<string, string[]> = {
   'commercial-sale': ['buy', 'sell'],
   'residential-rent': ['rent_monthly', 'rent_rahn_full', 'rent_rahn_ejare'],
   'commercial-rent': ['rent_monthly', 'rent_rahn_full', 'rent_rahn_ejare'],
+  'short-term-rent': ['rent_short_term'],
   'car-rental': ['rent'],
 };
 
@@ -79,7 +84,21 @@ export function inferAttributesFromPath(categorySlug: string | null | undefined)
   if (categorySlug.endsWith('-sale') && !values.dealType) {
     hiddenKeys.add('dealType');
   }
-  if (categorySlug.endsWith('-rent') && !values.dealType) {
+  if (
+    categorySlug.endsWith('-rent') &&
+    !values.dealType &&
+    !categorySlug.includes('short') &&
+    categorySlug !== 'suite-apartment-rent' &&
+    categorySlug !== 'workspace-short-rent'
+  ) {
+    hiddenKeys.add('dealType');
+  }
+  if (
+    categorySlug === 'suite-apartment-rent' ||
+    categorySlug === 'villa-short-rent' ||
+    categorySlug === 'workspace-short-rent'
+  ) {
+    values.dealType = 'rent_short_term';
     hiddenKeys.add('dealType');
   }
 

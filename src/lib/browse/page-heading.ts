@@ -12,6 +12,8 @@ import {
   type LocationScope,
 } from '@/lib/search/location-scope';
 import { parseBrowsePath } from '@/lib/search/browse-path';
+import { getBrowseMarketFromPathname } from '@/config/market-routes';
+import { getCityBySlug, COUNTRY_SLUG } from '@/config/locations';
 import type { BrowseListingType } from '@/lib/search/browse-entry-url';
 
 export interface BrowsePageTitles {
@@ -122,12 +124,42 @@ export function buildBrowsePageTitlesFromPath(
   siteName: string,
   listingType: BrowseListingType
 ): BrowsePageTitles {
+  const scope = resolveLocationScope(pathname, searchParams);
+  const pathCtx = parseBrowsePath(pathname);
+  const market = getBrowseMarketFromPathname(pathname);
+
+  if (market === 'business' || listingType === 'business') {
+    const locationLabel = scopeIsActive(scope)
+      ? scopeLabel(scope)
+      : pathCtx.citySlug
+        ? (getCityBySlug(pathCtx.citySlug)?.title ?? pathCtx.citySlug)
+        : pathCtx.pathLocation === COUNTRY_SLUG
+          ? 'سراسر ایران'
+          : pathCtx.pathLocation;
+
+    const h1 = buildBrowsePageH1({
+      listingType: 'business',
+      locationLabel,
+      categoryTitle: pathCtx.categoryTitle ?? null,
+      parentCategoryTitle: pathCtx.parentCategoryTitle ?? null,
+    });
+    const description =
+      pathCtx.categoryTitle != null
+        ? `کسب‌وکارهای ${pathCtx.categoryTitle} در ${locationLabel} در ${siteName}.`
+        : `کسب‌وکارها در ${locationLabel} در ${siteName}.`;
+
+    return {
+      h1,
+      title: `${h1} | ${siteName}`,
+      description,
+      locationLabel,
+      categoryTitle: pathCtx.categoryTitle ?? null,
+    };
+  }
+
   const parts = pathname.replace(/^\/s\/?/, '').split('/').filter(Boolean);
   const [rawLoc, ...segments] = parts;
   const ctx = resolveSearchSegments(rawLoc ?? 'iran', segments);
-  const scope = resolveLocationScope(pathname, searchParams);
-  const pathCtx = parseBrowsePath(pathname);
-
   const base = buildBrowsePageTitlesFromContext(ctx, siteName, listingType, scope);
 
   if (pathCtx.categoryTitle && !base.categoryTitle) {

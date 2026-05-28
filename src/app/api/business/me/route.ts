@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requireBusinessManager } from '@/lib/business/require-business-manager';
-import { ensureBusinessProfile } from '@/lib/business/ensure-profile';
-import { slugifyBusinessName } from '@/lib/business/slug';
-import { parseJsonArray } from '@/lib/business/json-fields';
+import { requireBusinessAccess } from '@/lib/business/require-business-access';
+import { loadMyBusinessProfile } from '@/lib/business/load-my-business-profile';
+import {
+  suggestProfileSlugFromWebPresence,
+  validateBusinessProfileSlug,
+} from '@/lib/business/profile-slug';
+import { parseJsonArray, parseJsonObject } from '@/lib/business/json-fields';
+import type { WebPresenceExtension } from '@/contracts/business-profile';
 import { routeBuilder } from '@/config/routes';
+import { hasCompletedOnboarding, needsOnboarding } from '@/lib/business/onboarding';
+import { isPickableProfileCategorySlug } from '@/lib/business/business-category';
+import { parseStorefrontExtension } from '@/lib/business/storefront';
+import type { BusinessProfile } from '@prisma/client';
 
 export const runtime = 'nodejs';
 
-const EDIT_SELECT = {
+const PATCH_SELECT = {
   slug: true,
   name: true,
   logo: true,
@@ -26,20 +34,45 @@ const EDIT_SELECT = {
   seoDescription: true,
   verified: true,
   viewCount: true,
+  status: true,
 } as const;
 
-function mapProfileResponse(
-  profile: Awaited<ReturnType<typeof ensureBusinessProfile>>
-) {
-  const categorySlugs = parseJsonArray<string>(profile.categorySlugs);
+function readWebPresence(profile: BusinessProfile): WebPresenceExtension {
+  const extensions = parseJsonObject<Record<string, unknown>>(profile.extensions, {});
+  const wp = extensions.webPresence;
+  if (!wp || typeof wp !== 'object') return {};
+  const o = wp as Record<string, unknown>;
+  return {
+    website: typeof o.website === 'string' ? o.website : '',
+    instagram: typeof o.instagram === 'string' ? o.instagram : '',
+    telegram: typeof o.telegram === 'string' ? o.telegram : '',
+    bale: typeof o.bale === 'string' ? o.bale : '',
+    rubika: typeof o.rubika === 'string' ? o.rubika : '',
+    eitaa: typeof o.eitaa === 'string' ? o.eitaa : '',
+  };
+}
+
+function mapProfileResponse(profile: BusinessProfile) {
+  const occupationSlugs = parseJsonArray<string>(profile.categorySlugs);
+  const primaryOccupationSlug =
+    occupationSlugs.find((s) => isPickableProfileCategorySlug(s)) ?? occupationSlugs[0] ?? null;
+  const web = readWebPresence(profile);
   return {
     slug: profile.slug,
     name: profile.name,
-    logo: profile.logo,
-    coverImage: profile.coverImage,
+    logo: profile.logo ?? '',
+    coverImage: profile.coverImage ?? '',
+    website: web.website ?? '',
+    instagram: web.instagram ?? '',
+    telegram: web.telegram ?? '',
+    bale: web.bale ?? '',
+    rubika: web.rubika ?? '',
+    eitaa: web.eitaa ?? '',
     description: profile.description ?? '',
-    categorySlugs,
-    primaryCategorySlug: categorySlugs[0] ?? null,
+    categorySlugs: occupationSlugs,
+    occupationSlugs,
+    primaryCategorySlug: primaryOccupationSlug,
+    primaryOccupationSlug,
     city: profile.city ?? '',
     province: profile.province ?? '',
     address: profile.address ?? '',
@@ -51,27 +84,37 @@ function mapProfileResponse(
     seoDescription: profile.seoDescription ?? '',
     verified: profile.verified,
     viewCount: profile.viewCount,
+    status: profile.status,
+    onboardingCompleted: hasCompletedOnboarding(profile),
+    needsOnboarding: needsOnboarding(profile),
     publicUrl: routeBuilder.businessProfile(profile.slug),
-    editUrl: routeBuilder.businessEdit(profile.slug),
+    editUrl: routeBuilder.myBusiness(),
+    suggestedProfileSlug: suggestProfileSlugFromWebPresence(web) ?? null,
   };
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireBusinessManager(request);
+    const auth = await requireBusinessAccess(request);
     if ('error' in auth) return auth.error;
 
-    const profile = await ensureBusinessProfile(auth.user);
-    const full = await db.businessProfile.findUnique({
-      where: { id: profile.id },
-      select: EDIT_SELECT,
+    const profile = await loadMyBusinessProfile(auth.user);
+
+    const [offerCount, portfolioCount] = await Promise.all([
+      db.businessOffer.count({ where: { profileId: profile.id } }),
+      db.businessPortfolioItem.count({ where: { profileId: profile.id } }),
+    ]);
+
+    const extensions = parseJsonObject<Record<string, unknown>>(profile.extensions, {});
+    const storefront = parseStorefrontExtension(extensions.storefront);
+
+    return NextResponse.json({
+      ...mapProfileResponse(profile),
+      offerCount,
+      portfolioCount,
+      storefrontCategoryCount: storefront.categories.length,
+      roleUpgraded: auth.roleUpgraded,
     });
-
-    if (!full) {
-      return NextResponse.json({ error: 'پروفایل یافت نشد' }, { status: 404 });
-    }
-
-    return NextResponse.json(mapProfileResponse({ ...profile, ...full }));
   } catch (error) {
     console.error('Business me GET error:', error);
     return NextResponse.json({ error: 'خطای سرور' }, { status: 500 });
@@ -80,11 +123,11 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const auth = await requireBusinessManager(request);
+    const auth = await requireBusinessAccess(request);
     if ('error' in auth) return auth.error;
 
     const body = await request.json().catch(() => ({}));
-    const profile = await ensureBusinessProfile(auth.user);
+    const profile = await loadMyBusinessProfile(auth.user);
 
     const data: Record<string, unknown> = {};
 
@@ -97,14 +140,15 @@ export async function PATCH(request: NextRequest) {
     }
 
     if (typeof body.slug === 'string') {
-      const slug = slugifyBusinessName(body.slug);
-      if (slug.length < 2) {
-        return NextResponse.json({ error: 'آدرس پروفایل نامعتبر است' }, { status: 400 });
+      const validated = validateBusinessProfileSlug(body.slug);
+      if (!validated.ok) {
+        return NextResponse.json({ error: validated.message }, { status: 400 });
       }
+      const slug = validated.slug;
       if (slug !== profile.slug) {
         const taken = await db.businessProfile.findUnique({ where: { slug } });
         if (taken) {
-          return NextResponse.json({ error: 'این آدرس قبلاً استفاده شده است' }, { status: 409 });
+          return NextResponse.json({ error: 'این نام کاربری قبلاً گرفته شده است' }, { status: 409 });
         }
         data.slug = slug;
       }
@@ -141,12 +185,15 @@ export async function PATCH(request: NextRequest) {
     const updated = await db.businessProfile.update({
       where: { id: profile.id },
       data,
-      select: EDIT_SELECT,
+      select: PATCH_SELECT,
     });
+
+    const onboardingCompletedAt = profile.onboardingCompletedAt;
+    const merged = { ...profile, ...updated, onboardingCompletedAt } as BusinessProfile;
 
     return NextResponse.json({
       message: 'ذخیره شد',
-      ...mapProfileResponse({ ...profile, ...updated }),
+      ...mapProfileResponse(merged),
     });
   } catch (error) {
     console.error('Business me PATCH error:', error);

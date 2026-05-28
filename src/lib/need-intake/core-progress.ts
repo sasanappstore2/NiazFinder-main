@@ -1,5 +1,5 @@
 import type { ParsedIntent } from '@/contracts/need-intake';
-import { getSchemaForIntake } from '@/config/need-schemas/resolve-schema';
+import { getEffectiveIntakeSchema } from '@/lib/need-intake/essential-intake-schema';
 import { getNextQuestion } from '@/lib/need-intake/question-engine';
 
 function fieldVisible(
@@ -36,7 +36,12 @@ export function countAnsweredRequiredFields(
   parsed: ParsedIntent,
   answers: Record<string, unknown>
 ): number {
-  const schema = getSchemaForIntake(parsed.intentType, parsed.categorySlug);
+  const schema = getEffectiveIntakeSchema(
+    parsed.intentType,
+    parsed.categorySlug,
+    parsed,
+    answers
+  );
   const required = schema.fields.filter(
     (f) => f.required && fieldVisible(f, answers)
   );
@@ -48,7 +53,14 @@ export function isCoreIntakeComplete(
   parsed: ParsedIntent,
   answers: Record<string, unknown>
 ): boolean {
-  const schema = getSchemaForIntake(parsed.intentType, parsed.categorySlug);
+  if (parsed.locationAmbiguous === true) return false;
+
+  const schema = getEffectiveIntakeSchema(
+    parsed.intentType,
+    parsed.categorySlug,
+    parsed,
+    answers
+  );
   const required = schema.fields.filter(
     (f) => f.required && fieldVisible(f, answers)
   );
@@ -69,7 +81,12 @@ function countAnsweredFields(
   parsed: ParsedIntent,
   answers: Record<string, unknown>
 ): number {
-  const schema = getSchemaForIntake(parsed.intentType, parsed.categorySlug);
+  const schema = getEffectiveIntakeSchema(
+    parsed.intentType,
+    parsed.categorySlug,
+    parsed,
+    answers
+  );
   const visible = schema.fields.filter((f) => fieldVisible(f, answers));
   return visible.filter((f) => isFieldAnswered(f.key, answers, parsed)).length;
 }

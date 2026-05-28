@@ -412,7 +412,8 @@ model BusinessProfile {
   address     String?
   lat         Float?
   lng         Float?
-  status      BusinessStatus @default(ACTIVE)
+  status      BusinessStatus @default(INACTIVE)
+  onboardingCompletedAt DateTime?
 
   rating        Float   @default(0)
   reviewCount   Int     @default(0)
@@ -583,6 +584,7 @@ enum MessageType {
   VOICE
   SYSTEM
   NEED_CARD
+  OFFER_CARD
 }
 
 enum VoiceCallStatus {

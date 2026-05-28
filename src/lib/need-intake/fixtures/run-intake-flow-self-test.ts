@@ -1,10 +1,7 @@
 import type { NeedDraft } from '@/contracts/need-intake';
 import { extractSlotsFromRules } from '@/lib/need-intake/extract-slots-rules';
-import {
-  buildReadiness,
-  getNextStep,
-  parseFromText,
-} from '@/lib/need-intake/internal-orchestrator';
+import { buildReadiness, getNextStep } from '@/lib/need-intake/internal-orchestrator';
+import { parseFromText } from '@/lib/need-intake/internal-orchestrator.server';
 import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
 import { seedAnswersFromParsed } from '@/lib/need-intake/seed-answers';
 

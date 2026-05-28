@@ -42,7 +42,16 @@ type CompanyForm = {
   description: string;
 };
 
-export function BusinessProfileCMS() {
+export function BusinessProfileCMS({
+  hideOffers = false,
+  primaryCategorySlug,
+  onMutate,
+}: {
+  hideOffers?: boolean;
+  /** Skip /categories fetch when slug known from hub */
+  primaryCategorySlug?: string;
+  onMutate?: () => void;
+}) {
   const [modules, setModules] = useState<CmsModule[]>([]);
   const [loading, setLoading] = useState(true);
   const [offers, setOffers] = useState<OfferRow[]>([]);
@@ -61,21 +70,28 @@ export function BusinessProfileCMS() {
   const loadAll = useCallback(async () => {
     setLoading(true);
     try {
+      const needsCategoryFetch = !primaryCategorySlug;
       const [catRes, offersRes, portRes, extRes] = await Promise.all([
-        fetch('/api/business/me/categories', { headers: getAuthHeaders() }),
-        fetch('/api/business/me/offers', { headers: getAuthHeaders() }),
+        needsCategoryFetch
+          ? fetch('/api/business/me/categories', { headers: getAuthHeaders() })
+          : Promise.resolve(null),
+        hideOffers
+          ? Promise.resolve(null)
+          : fetch('/api/business/me/offers', { headers: getAuthHeaders() }),
         fetch('/api/business/me/portfolio', { headers: getAuthHeaders() }),
         fetch('/api/business/me/extensions', { headers: getAuthHeaders() }),
       ]);
 
-      if (catRes.ok) {
-        const cat = (await catRes.json()) as { primaryCategorySlug?: string };
-        if (cat.primaryCategorySlug) {
-          const bp = getBlueprintForCategorySlug(cat.primaryCategorySlug);
-          setModules(bp.cmsModules);
-        }
+      const slugForBlueprint =
+        primaryCategorySlug ??
+        (catRes && catRes.ok
+          ? ((await catRes.json()) as { primaryCategorySlug?: string }).primaryCategorySlug
+          : undefined);
+      if (slugForBlueprint) {
+        const bp = getBlueprintForCategorySlug(slugForBlueprint);
+        setModules(bp.cmsModules);
       }
-      if (offersRes.ok) {
+      if (offersRes && offersRes.ok) {
         const data = (await offersRes.json()) as { offers?: OfferRow[] };
         setOffers(data.offers ?? []);
       }
@@ -94,7 +110,7 @@ export function BusinessProfileCMS() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [primaryCategorySlug, hideOffers]);
 
   useEffect(() => {
     loadAll();
@@ -134,12 +150,14 @@ export function BusinessProfileCMS() {
     }
     setNewPortfolio({ title: '', mediaUrl: '' });
     toast.success('ذخیره شد');
-    loadAll();
+    await loadAll();
+    onMutate?.();
   };
 
   const deletePortfolio = async (id: string) => {
     await fetch(`/api/business/me/portfolio/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
-    loadAll();
+    await loadAll();
+    onMutate?.();
   };
 
   const saveCompany = async () => {
@@ -166,21 +184,15 @@ export function BusinessProfileCMS() {
     );
   }
 
-  const showOffers = modules.includes('offers');
+  const showOffers = !hideOffers && modules.includes('offers');
   const showPortfolio = modules.includes('portfolio');
   const showCompany = modules.includes('companyInfo');
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">مدیریت پروفایل کسب‌وکار</CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          محتوای عمومی پروفایل `/b/...` را از اینجا ویرایش کنید. تب‌ها و بخش‌ها بر اساس دسته‌بندی
-          انتخاب‌شده در بخش «دسته‌بندی» تنظیم می‌شوند.
-        </CardContent>
-      </Card>
+      <p className="text-sm text-muted-foreground">
+        عکس یا ویدیو از کارهای انجام‌شده اضافه کنید. محصولات فروشگاه را در بخش «ویترین» مدیریت کنید.
+      </p>
 
       {showOffers && (
         <Card>
@@ -227,7 +239,7 @@ export function BusinessProfileCMS() {
         <Card>
           <CardHeader className="flex flex-row items-center gap-2 pb-2">
             <ImageIcon className="size-4 text-primary" />
-            <CardTitle className="text-base">گالری / نمونه‌کار</CardTitle>
+            <CardTitle className="text-base">نمونه کارها</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {portfolio.map((p) => (

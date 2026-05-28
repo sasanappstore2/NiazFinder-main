@@ -1,35 +1,46 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { routeBuilder } from '@/config/routes';
+import {
+  buildChatContactShareContent,
+  CHAT_CONTACT_SHARE_PREFIX,
+} from '@/lib/chat/contact-share';
+import {
+  CHAT_PRODUCT_CARD_PREFIX,
+  parseLegacyProductIntroText,
+} from '@/contracts/product-card-snapshot';
+import { extFromChatMime, fileTypeForVoiceUpload } from '@/lib/chat/attachment-mime';
 import {
   MessageSquare,
   Search,
-  SendHorizontal,
-  Paperclip,
   ArrowRight,
   Plus,
-  MessageCircle,
   CheckCheck,
   Reply,
-  Smile,
   X,
   BadgeCheck,
   Loader2,
   Users,
   Phone,
+  CircleUserRound,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { ChatMessageContent } from '@/components/chat/ChatMessageContent';
 import { ChatInfoPanel } from '@/components/chat/ChatInfoPanel';
+import { ConversationNeedContextBanner } from '@/components/chat/ConversationNeedContextBanner';
+import {
+  ChatImageLightbox,
+  type ChatGalleryImage,
+} from '@/components/chat/ChatImageLightbox';
+import { ChatComposer } from '@/components/chat/ChatComposer';
 import { toVoiceCallPeer } from '@/lib/voice/voice-call-peer';
 import {
   Sheet,
@@ -37,12 +48,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from '@/components/ui/popover';
-
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const getAvatarColor = (name: string) => {
@@ -107,13 +112,6 @@ interface SearchedUser {
   role?: string;
 }
 
-const QUICK_EMOJIS = [
-  '❤️', '😊', '👍', '😂', '🎉', '😮',
-  '😢', '😡', '👏', '🙏', '💪', '✨',
-  '🎯', '💯', '🔥', '⭐', '🌟', '👌',
-  '🤝', '📌', '🔔', '✅', '❌', '💯',
-];
-
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function ChatPanel({ conversationId: initialConversationId }: { conversationId?: string } = {}) {
@@ -150,8 +148,13 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const imageAttachmentRef = useRef<HTMLInputElement>(null);
+  const fileAttachmentRef = useRef<HTMLInputElement>(null);
   const [infoPanelOpen, setInfoPanelOpen] = useState(false);
   const [mobileMsgActions, setMobileMsgActions] = useState<string | null>(null);
+
+  const [attachmentBusy, setAttachmentBusy] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   // ── New Chat / User Search state ────────────────────────────────────────
   const [showNewChat, setShowNewChat] = useState(false);
@@ -174,6 +177,27 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
       })
     : conversations;
 
+  const galleryImages = useMemo((): ChatGalleryImage[] => {
+    const otherName =
+      `${otherUser?.firstName ?? ''} ${otherUser?.lastName ?? ''}`.trim() || 'کاربر';
+    return messages
+      .filter((m) => m.type === 'IMAGE')
+      .map((m) => ({
+        id: m.id,
+        url: m.content.trim(),
+        createdAt: m.createdAt,
+        senderLabel: m.senderId === currentUser?.id ? 'شما' : otherName,
+      }));
+  }, [messages, currentUser?.id, otherUser]);
+
+  const openImageLightbox = useCallback(
+    (messageId: string) => {
+      const idx = galleryImages.findIndex((g) => g.id === messageId);
+      if (idx >= 0) setLightboxIndex(idx);
+    },
+    [galleryImages]
+  );
+
   // ── Fetch conversations on mount ───────────────────────────────────────
   useEffect(() => {
     if (isAuthenticated && authToken) {
@@ -186,6 +210,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     if (activeConversationId && authToken) {
       fetchConversationMessages(activeConversationId);
       setShowMessages(true);
+      setLightboxIndex(null);
     }
   }, [activeConversationId, authToken, fetchConversationMessages]);
 
@@ -363,7 +388,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
 
   // ── Send message ───────────────────────────────────────────────────────
   const handleSendMessage = useCallback(async () => {
-    if (!newMessage.trim() || !activeConversationId || isSendingMessage) return;
+    if (!newMessage.trim() || !activeConversationId || isSendingMessage || attachmentBusy) return;
 
     setIsSendingMessage(true);
     setNewMessage('');
@@ -377,29 +402,155 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
 
     setIsSendingMessage(false);
     inputRef.current?.focus();
-  }, [newMessage, activeConversationId, isSendingMessage, sendMessage]);
+  }, [newMessage, activeConversationId, isSendingMessage, attachmentBusy, sendMessage]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
+  const uploadAndSendAttachment = useCallback(
+    async (file: File, preferType: 'IMAGE' | 'FILE' | 'VOICE') => {
+      if (!activeConversationId || !authToken) {
+        toast.error('ابتدا وارد حساب شوید');
+        return;
+      }
+      setAttachmentBusy(true);
+      try {
+        const form = new FormData();
+        form.append('file', file);
+        const res = await fetch('/api/chat/attachment', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${authToken}` },
+          body: form,
+        });
+        const json = (await res.json().catch(() => ({}))) as { url?: string; mime?: string; error?: string };
+        if (!res.ok) throw new Error(json.error || 'خطا در آپلود فایل');
+        const url = json.url;
+        if (!url) throw new Error('آدرس فایل نامعتبر است');
+        const mime = json.mime || '';
+        const messageType: 'IMAGE' | 'FILE' | 'VOICE' =
+          preferType === 'VOICE'
+            ? 'VOICE'
+            : preferType === 'IMAGE' || mime.startsWith('image/')
+              ? 'IMAGE'
+              : 'FILE';
+        setIsSendingMessage(true);
+        let ok = false;
+        try {
+          ok = await sendMessage(activeConversationId, url, messageType);
+        } finally {
+          setIsSendingMessage(false);
+        }
+        if (!ok) {
+          toast.error('ارسال پیام ناموفق بود');
+          return;
+        }
+        toast.success(
+          messageType === 'IMAGE'
+            ? 'عکس ارسال شد'
+            : messageType === 'VOICE'
+              ? 'پیام صوتی ارسال شد'
+              : 'فایل ارسال شد'
+        );
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : 'خطا در آپلود');
+      } finally {
+        setAttachmentBusy(false);
+      }
+    },
+    [activeConversationId, authToken, sendMessage]
+  );
+
+  const sendVoiceBlob = useCallback(
+    async (blob: Blob) => {
+      if (!activeConversationId || !authToken) {
+        toast.error('ابتدا وارد حساب شوید');
+        return;
+      }
+      const mime = fileTypeForVoiceUpload(blob);
+      const ext = extFromChatMime(mime) || '.webm';
+      const file = new File([blob], `voice-${Date.now()}${ext}`, { type: mime });
+      await uploadAndSendAttachment(file, 'VOICE');
+    },
+    [activeConversationId, authToken, uploadAndSendAttachment]
+  );
+
+  const handleImageInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      e.target.value = '';
+      if (file) void uploadAndSendAttachment(file, 'IMAGE');
+    },
+    [uploadAndSendAttachment]
+  );
+
+  const handleFileInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      e.target.value = '';
+      if (file) void uploadAndSendAttachment(file, 'FILE');
+    },
+    [uploadAndSendAttachment]
+  );
+
+  const shareGeolocation = useCallback(() => {
+    if (!activeConversationId) return;
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      toast.error('مرورگر از موقعیت مکانی پشتیبانی نمی‌کند');
+      return;
     }
-  };
+    const loadingId = toast.loading('در حال دریافت موقعیت…');
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+          const text = `📍 موقعیت من روی نقشه\n${mapsUrl}`;
+          setIsSendingMessage(true);
+          let ok = false;
+          try {
+            ok = await sendMessage(activeConversationId, text, 'TEXT');
+          } finally {
+            setIsSendingMessage(false);
+          }
+          toast.dismiss(loadingId);
+          if (ok) toast.success('موقعیت ارسال شد');
+          else toast.error('ارسال موقعیت ناموفق بود');
+        } catch {
+          setIsSendingMessage(false);
+          toast.dismiss(loadingId);
+          toast.error('خطا در ارسال');
+        }
+      },
+      () => {
+        toast.dismiss(loadingId);
+        toast.error('دسترسی به موقعیت داده نشد یا در دسترس نیست');
+      },
+      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 }
+    );
+  }, [activeConversationId, sendMessage]);
 
-  // ─── Emoji helper ─────────────────────────────────────────────────────────
-  const insertEmoji = useCallback((emoji: string) => {
-    const input = inputRef.current;
-    if (!input) return;
-    const start = input.selectionStart ?? newMessage.length;
-    const end = input.selectionEnd ?? newMessage.length;
-    const updated = newMessage.slice(0, start) + emoji + newMessage.slice(end);
-    setNewMessage(updated);
-    requestAnimationFrame(() => {
-      input.focus();
-      const newPos = start + emoji.length;
-      input.setSelectionRange(newPos, newPos);
+  const shareMyContactCard = useCallback(async () => {
+    if (!activeConversationId || !currentUser) {
+      toast.error('ابتدا وارد حساب شوید');
+      return;
+    }
+    const rawPhone = currentUser.phone?.trim();
+    if (!rawPhone) {
+      toast.error('در پروفایل شمارهٔ موبایل ثبت نشده است — از تنظیمات حساب آن را وارد کنید.');
+      return;
+    }
+    const content = buildChatContactShareContent({
+      v: 1,
+      phone: rawPhone,
+      avatar: currentUser.avatar ?? null,
     });
-  }, [newMessage]);
+    setIsSendingMessage(true);
+    let ok = false;
+    try {
+      ok = await sendMessage(activeConversationId, content, 'TEXT');
+    } finally {
+      setIsSendingMessage(false);
+    }
+    if (ok) toast.success('شمارهٔ تماس با کارت اشتراک گذاشته شد');
+    else toast.error('ارسال ناموفق بود');
+  }, [activeConversationId, currentUser, sendMessage]);
 
   // ─── Reply helper ────────────────────────────────────────────────────────
   const startReply = useCallback((msg: any) => {
@@ -407,7 +558,16 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     setReplyTo({
       messageId: msg.id,
       senderName: isMe ? 'شما' : (otherUser ? `${otherUser.firstName} ${otherUser.lastName}`.trim() : 'ناشناس'),
-      content: msg.content,
+      content:
+        msg.type === 'VOICE'
+          ? 'پیام صوتی'
+          : msg.type === 'TEXT' &&
+              typeof msg.content === 'string' &&
+              msg.content.startsWith(CHAT_CONTACT_SHARE_PREFIX)
+            ? 'اشتراک شمارهٔ تماس'
+            : msg.type === 'IMAGE'
+              ? 'عکس'
+              : msg.content,
     });
     inputRef.current?.focus();
   }, [currentUser?.id, otherUser]);
@@ -603,7 +763,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
               </div>
             ) : filteredConversations.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center px-4">
-                <MessageCircle className="mb-3 h-10 w-10 text-muted-foreground/40" />
+                <MessageSquare className="mb-3 h-10 w-10 text-muted-foreground/40" />
                 <p className="text-sm text-muted-foreground">
                   {searchQuery ? 'مکالمه‌ای یافت نشد' : 'هنوز مکالمه‌ای ندارید'}
                 </p>
@@ -746,9 +906,10 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                 size="icon"
                 className="h-9 w-9 min-h-[44px] min-w-[44px] md:min-h-9 md:min-w-9"
                 aria-label="اطلاعات گفتگو"
+                title="جزئیات تماس و پروفایل"
                 onClick={() => setInfoPanelOpen(true)}
               >
-                <MessageCircle className="h-4 w-4" />
+                <CircleUserRound className="h-4 w-4" strokeWidth={2} />
               </Button>
               <Button
                 variant="ghost"
@@ -773,7 +934,20 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
               onClose={() => setInfoPanelOpen(false)}
               messages={messages.map((m) => ({
                 id: m.id,
-                content: m.type === 'NEED_CARD' ? 'نیاز' : m.content,
+                content:
+                  m.type === 'NEED_CARD'
+                    ? 'نیاز'
+                    : m.type === 'OFFER_CARD'
+                      ? 'محصول'
+                      : m.type === 'IMAGE'
+                      ? '[تصویر]'
+                      : m.type === 'FILE'
+                        ? '[فایل]'
+                        : m.type === 'TEXT' &&
+                            typeof m.content === 'string' &&
+                            m.content.startsWith(CHAT_CONTACT_SHARE_PREFIX)
+                          ? 'شمارهٔ تماس'
+                          : m.content,
                 type: m.type,
                 senderId: m.senderId,
                 createdAt: m.createdAt,
@@ -782,13 +956,26 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
 
             {/* Messages */}
             <ScrollArea className="min-h-0 flex-1 px-4 py-3">
-              <div className="space-y-3" role="log" aria-label="پیام‌ها" aria-live="polite">
+              <div
+                className="space-y-3"
+                dir="rtl"
+                role="log"
+                aria-label="پیام‌ها"
+                aria-live="polite"
+              >
                 {/* System message */}
                 <div className="flex justify-center py-2">
                   <span className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
                     مکالمه آغاز شد
                   </span>
                 </div>
+
+                {selectedConversation.requestId && (
+                  <ConversationNeedContextBanner
+                    requestId={selectedConversation.requestId}
+                    embedded
+                  />
+                )}
 
                 {isLoading && messages.length === 0 ? (
                   <div className="flex items-center justify-center py-12">
@@ -808,13 +995,23 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                   messages.map((msg) => {
                     const isMe = msg.senderId === currentUser?.id;
                     const isHovered = hoveredMsgId === msg.id;
+                    const isContactShare =
+                      msg.type === 'TEXT' &&
+                      typeof msg.content === 'string' &&
+                      msg.content.startsWith(CHAT_CONTACT_SHARE_PREFIX);
+                    const isImageMessage = msg.type === 'IMAGE';
+                    const isVoiceMessage = msg.type === 'VOICE';
+                    const isOfferCard =
+                      msg.type === 'OFFER_CARD' ||
+                      (msg.type === 'TEXT' &&
+                        typeof msg.content === 'string' &&
+                        (msg.content.startsWith(CHAT_PRODUCT_CARD_PREFIX) ||
+                          Boolean(parseLegacyProductIntroText(msg.content))));
+                    const isMediaBubble = isImageMessage || isVoiceMessage;
                     return (
                       <div
                         key={msg.id}
-                        className={cn(
-                          'group relative flex',
-                          isMe ? 'justify-start' : 'justify-end'
-                        )}
+                        className="group relative flex w-full"
                         onMouseEnter={() => setHoveredMsgId(msg.id)}
                         onMouseLeave={() => setHoveredMsgId(null)}
                       >
@@ -833,7 +1030,9 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                             'bg-background/80 border border-border/60 shadow-sm backdrop-blur-xs',
                             'text-muted-foreground hover:text-primary hover:bg-primary/10',
                             'transition-all duration-150',
-                            isMe ? 'left-0 -translate-x-full ml-1' : 'right-0 translate-x-full mr-1',
+                            isMe
+                              ? 'right-0 translate-x-full mr-1'
+                              : 'left-0 -translate-x-full ml-1',
                             isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none',
                             'max-md:hidden'
                           )}
@@ -844,35 +1043,77 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                         </button>
                         <div
                           className={cn(
-                            'relative max-w-[75%] rounded-2xl px-4 py-2.5',
-                            isMe
-                              ? 'rounded-br-md bg-primary text-primary-foreground'
-                              : 'rounded-bl-md bg-muted'
+                            'relative rounded-2xl',
+                            isMe ? 'me-auto' : 'ms-auto',
+                            isOfferCard
+                              ? 'w-fit max-w-[min(92vw,320px)] p-0.5'
+                              : isMediaBubble
+                                ? isImageMessage
+                                  ? 'w-fit max-w-[min(85vw,272px)] p-1'
+                                  : 'w-fit max-w-[min(85vw,292px)] px-2.5 py-2'
+                                : cn('max-w-[75%]', isContactShare ? 'px-2 py-1.5' : 'px-4 py-2.5'),
+                            isOfferCard
+                              ? isMe
+                                ? 'rounded-bl-md'
+                                : 'rounded-br-md'
+                              : isMe
+                                ? isMediaBubble
+                                  ? 'rounded-bl-md bg-primary/90 text-primary-foreground'
+                                  : 'rounded-bl-md bg-primary text-primary-foreground'
+                                : isMediaBubble
+                                  ? 'rounded-br-md bg-muted/80 text-foreground'
+                                  : 'rounded-br-md bg-muted'
                           )}
                         >
                           {/* Reply quote */}
                           {replyTo && replyTo.messageId === msg.id && (
                             <div className="sr-only">در حال پاسخ به این پیام</div>
                           )}
-                          <ChatMessageContent message={msg} isOwn={isMe} />
-                          <div
-                            className={cn(
-                              'mt-1 flex items-center gap-1.5 text-caption',
-                              isMe ? 'text-primary-foreground/60' : 'text-muted-foreground'
-                            )}
-                          >
-                            <span>{formatTime(msg.createdAt)}</span>
-                            {isMe && (
-                              <CheckCheck
-                                className={cn(
-                                  'h-3.5 w-3.5',
-                                  msg.isRead
-                                    ? 'text-emerald-400'
-                                    : 'text-primary-foreground/40'
-                                )}
-                              />
-                            )}
-                          </div>
+                          <ChatMessageContent
+                            message={msg}
+                            isOwn={isMe}
+                            imageMeta={
+                              isImageMessage
+                                ? {
+                                    timeLabel: formatTime(msg.createdAt),
+                                    isRead: Boolean(msg.isRead),
+                                  }
+                                : undefined
+                            }
+                            voiceMeta={
+                              isVoiceMessage
+                                ? {
+                                    timeLabel: formatTime(msg.createdAt),
+                                    isRead: Boolean(msg.isRead),
+                                  }
+                                : undefined
+                            }
+                            onImageOpen={
+                              isImageMessage ? () => openImageLightbox(msg.id) : undefined
+                            }
+                          />
+                          {!isMediaBubble && (
+                            <div
+                              className={cn(
+                                'mt-1 flex items-center gap-1.5 text-caption',
+                                isMe && !isOfferCard
+                                  ? 'text-primary-foreground/60'
+                                  : 'text-muted-foreground'
+                              )}
+                            >
+                              <span>{formatTime(msg.createdAt)}</span>
+                              {isMe && (
+                                <CheckCheck
+                                  className={cn(
+                                    'h-3.5 w-3.5',
+                                    msg.isRead
+                                      ? 'text-emerald-400'
+                                      : 'text-primary-foreground/40'
+                                  )}
+                                />
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -883,84 +1124,50 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
               </div>
             </ScrollArea>
 
-            {/* Reply indicator */}
-            {replyTo && (
-              <div className="flex items-center gap-2 border-t px-4 py-2 bg-muted/30">
-                <Reply className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-muted-foreground">
-                    پاسخ به {replyTo.senderName}
-                  </p>
-                  <p className="text-xs text-muted-foreground/60 truncate">
-                    {replyTo.content}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setReplyTo(null)}
-                  className="shrink-0 h-6 w-6 flex items-center justify-center rounded-full hover:bg-muted"
-                >
-                  <X className="h-3 w-3 text-muted-foreground" />
-                </button>
-              </div>
+            <input
+              ref={imageAttachmentRef}
+              type="file"
+              className="hidden"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              onChange={handleImageInputChange}
+            />
+            <input
+              ref={fileAttachmentRef}
+              type="file"
+              className="hidden"
+              accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,.pdf"
+              onChange={handleFileInputChange}
+            />
+
+            <ChatComposer
+              key={activeConversationId ?? 'no-conv'}
+              textareaRef={inputRef}
+              message={newMessage}
+              onMessageChange={setNewMessage}
+              onSendText={handleSendMessage}
+              onSendVoice={sendVoiceBlob}
+              isSending={isSendingMessage}
+              attachmentBusy={attachmentBusy}
+              replyTo={
+                replyTo
+                  ? { senderName: replyTo.senderName, content: replyTo.content }
+                  : null
+              }
+              onClearReply={() => setReplyTo(null)}
+              onPickImage={() => imageAttachmentRef.current?.click()}
+              onPickFile={() => fileAttachmentRef.current?.click()}
+              onShareLocation={shareGeolocation}
+              onShareContact={() => void shareMyContactCard()}
+            />
+
+            {lightboxIndex !== null && galleryImages.length > 0 && (
+              <ChatImageLightbox
+                images={galleryImages}
+                index={lightboxIndex}
+                onIndexChange={setLightboxIndex}
+                onClose={() => setLightboxIndex(null)}
+              />
             )}
-
-            {/* Message Input */}
-            <div className="border-t px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:px-4">
-              <div className="flex items-end gap-2">
-                {/* Emoji picker */}
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" aria-label="ایموجی">
-                      <Smile className="h-4 w-4" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 p-2" side="top">
-                    <div className="grid grid-cols-6 gap-1">
-                      {QUICK_EMOJIS.map((emoji) => (
-                        <button
-                          key={emoji}
-                          type="button"
-                          onClick={() => insertEmoji(emoji)}
-                          className="h-9 w-9 flex items-center justify-center rounded-md hover:bg-muted text-lg transition-colors"
-                        >
-                          {emoji}
-                        </button>
-                      ))}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-
-                <Textarea
-                  ref={inputRef}
-                  placeholder="پیام خود را بنویسید..."
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  rows={1}
-                  className="min-h-[44px] max-h-32 resize-none text-sm flex-1 py-2.5"
-                  disabled={isSendingMessage}
-                />
-
-                {/* Attach */}
-                <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" aria-label="فایل">
-                  <Paperclip className="h-4 w-4" />
-                </Button>
-
-                {/* Send */}
-                <Button
-                  onClick={handleSendMessage}
-                  disabled={!newMessage.trim() || isSendingMessage}
-                  className="h-9 w-9 shrink-0 bg-emerald-600 hover:bg-emerald-700 p-0"
-                  aria-label="ارسال پیام"
-                >
-                  {isSendingMessage ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <SendHorizontal className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-            </div>
           </>
         ) : (
           /* Empty state — no conversation selected */

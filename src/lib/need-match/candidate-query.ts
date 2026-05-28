@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import type { MatchedBusinessItem, NeedMatchContext } from '@/contracts/need-match';
-import { expandCategorySlugsForMatch } from './category-slugs';
+import { expandCategorySlugsForMatch, normalizeProfileSlugsForMatch } from './category-slugs';
 
 interface RawCandidate {
   id: string;
@@ -123,7 +123,7 @@ export async function findCandidateBusinesses(
   const scored: RawCandidate[] = [];
 
   for (const p of profiles) {
-    const businessSlugs = parseCategorySlugs(p.categorySlugs);
+    const businessSlugs = normalizeProfileSlugsForMatch(parseCategorySlugs(p.categorySlugs));
     const offerTitle = p.offers[0]?.title;
     const { score, reason } = scoreCandidate(
       need,

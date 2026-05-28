@@ -5,16 +5,9 @@ import { FolderTree, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { toast } from 'sonner';
-import { CANONICAL_CATEGORIES } from '@/config/categories';
-import { getBlueprintForCategorySlug } from '@/config/business-profile-blueprints';
+import { getBlueprintForOccupationSlug } from '@/config/business-profile-blueprints';
+import { BusinessProfileCategoryTabs } from '@/components/business-profile/BusinessProfileCategoryTabs';
 
 function getAuthHeaders(): HeadersInit {
   const token = typeof window !== 'undefined' ? localStorage.getItem('nf_auth_token') : null;
@@ -24,17 +17,12 @@ function getAuthHeaders(): HeadersInit {
   };
 }
 
-/** Pickable categories: depth-1 parents and depth-2 leaves (not section roots). */
-const PICKABLE = CANONICAL_CATEGORIES.filter((c) => c.depth >= 1).sort((a, b) =>
-  a.title.localeCompare(b.title, 'fa')
-);
-
 export function BusinessCategoryPicker({
   onCategorySaved,
 }: {
   onCategorySaved?: (slug: string) => void;
 }) {
-  const [primary, setPrimary] = useState('');
+  const [occupationSlugs, setOccupationSlugs] = useState<string[]>([]);
   const [template, setTemplate] = useState('');
   const [blueprintTitle, setBlueprintTitle] = useState('');
   const [loading, setLoading] = useState(true);
@@ -48,16 +36,20 @@ export function BusinessCategoryPicker({
         if (!res.ok) return;
         const data = (await res.json()) as {
           primaryCategorySlug?: string;
+          occupationSlugs?: string[];
+          categorySlugs?: string[];
           template?: string;
           blueprintTitle?: string;
         };
         if (!cancelled) {
-          setPrimary(data.primaryCategorySlug ?? '');
+          const slugs =
+            data.occupationSlugs ??
+            data.categorySlugs ??
+            (data.primaryCategorySlug ? [data.primaryCategorySlug] : []);
+          setOccupationSlugs(slugs);
           setTemplate(data.template ?? '');
           setBlueprintTitle(data.blueprintTitle ?? '');
-          if (data.primaryCategorySlug) {
-            onCategorySaved?.(data.primaryCategorySlug);
-          }
+          if (slugs[0]) onCategorySaved?.(slugs[0]);
         }
       } catch {
         /* ignore */
@@ -70,33 +62,35 @@ export function BusinessCategoryPicker({
     };
   }, [onCategorySaved]);
 
+  const primary = occupationSlugs[0] ?? '';
+
   const previewBlueprint = useMemo(() => {
     if (!primary) return null;
-    return getBlueprintForCategorySlug(primary);
+    return getBlueprintForOccupationSlug(primary);
   }, [primary]);
 
-  const handleChange = async (slug: string) => {
-    const prev = primary;
-    setPrimary(slug);
+  const handleChange = async (slugs: string[]) => {
+    const prev = occupationSlugs;
+    setOccupationSlugs(slugs);
     setSaving(true);
     try {
       const res = await fetch('/api/business/me/categories', {
         method: 'PATCH',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ primaryCategorySlug: slug }),
+        body: JSON.stringify({ occupationSlugs: slugs }),
       });
       if (!res.ok) {
-        setPrimary(prev);
+        setOccupationSlugs(prev);
         toast.error('ذخیره دسته‌بندی ناموفق بود');
         return;
       }
       const data = (await res.json()) as { template?: string; blueprintTitle?: string };
       setTemplate(data.template ?? '');
       setBlueprintTitle(data.blueprintTitle ?? '');
-      onCategorySaved?.(slug);
+      if (slugs[0]) onCategorySaved?.(slugs[0]);
       toast.success('دسته‌بندی و سبک پروفایل ذخیره شد');
     } catch {
-      setPrimary(prev);
+      setOccupationSlugs(prev);
       toast.error('خطا در ارتباط با سرور');
     } finally {
       setSaving(false);
@@ -108,13 +102,13 @@ export function BusinessCategoryPicker({
       <CardContent className="p-6">
         <div className="mb-4 flex items-center gap-2">
           <FolderTree className="size-4 text-emerald-500" />
-          <h3 className="text-sm font-bold">دسته‌بندی و سبک پروفایل</h3>
+          <h3 className="text-sm font-bold">شغل / فروشگاه و سبک پروفایل</h3>
           {saving && <Loader2 className="size-4 animate-spin text-muted-foreground" />}
         </div>
         <Separator className="mb-5 bg-border/60" />
         <p className="mb-4 text-sm text-muted-foreground">
-          با انتخاب دسته اصلی، تب‌ها و بخش‌های پروفایل کسب‌وکار شما متناسب با همان حوزه تنظیم
-          می‌شود (مثلاً فروشگاه → محصولات، مربی → گالری).
+          شغل یا حوزهٔ فروشگاه اینترنتی خود را انتخاب کنید تا تب‌ها و بخش‌های پروفایل متناسب
+          تنظیم شود.
         </p>
         {loading ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -124,20 +118,13 @@ export function BusinessCategoryPicker({
         ) : (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>دسته اصلی کسب‌وکار</Label>
-              <Select value={primary} onValueChange={handleChange} disabled={saving}>
-                <SelectTrigger>
-                  <SelectValue placeholder="انتخاب دسته..." />
-                </SelectTrigger>
-                <SelectContent className="max-h-72">
-                  {PICKABLE.map((cat) => (
-                    <SelectItem key={cat.slug} value={cat.slug}>
-                      {cat.title}
-                      {cat.depth === 2 ? ' · زیردسته' : ''}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>شغل یا فروشگاه اینترنتی</Label>
+              <div className={saving ? 'pointer-events-none opacity-60' : undefined}>
+                <BusinessProfileCategoryTabs
+                  selectedSlugs={occupationSlugs}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
             {(template || previewBlueprint) && (
               <div className="rounded-xl border bg-muted/40 p-4 text-sm">

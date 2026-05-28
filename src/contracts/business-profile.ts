@@ -72,6 +72,13 @@ export interface OfferFaq {
   a: string;
 }
 
+export interface OfferVariant {
+  id: string;
+  name: string;
+  price?: string;
+  imageUrl?: string;
+}
+
 export interface BusinessOffer {
   id: string;
   title: string;
@@ -82,6 +89,11 @@ export interface BusinessOffer {
   features: string[];
   faq?: OfferFaq[];
   ctaType: OfferCtaType;
+  /** @deprecated use categoryIds — legacy single shelf */
+  vitrineCategoryId?: string | null;
+  categoryIds?: string[];
+  primaryCategoryId?: string | null;
+  variants?: OfferVariant[];
 }
 
 export interface PortfolioItemMetadata {
@@ -172,6 +184,27 @@ export interface CoachExtension {
   certifications?: string[];
 }
 
+/** Custom vitrine shelf for store / online_store profiles. */
+export interface StorefrontCategory {
+  id: string;
+  title: string;
+  sortOrder: number;
+}
+
+export interface StorefrontExtension {
+  categories: StorefrontCategory[];
+}
+
+/** Website + Iranian social channels (onboarding / online sellers). */
+export interface WebPresenceExtension {
+  website?: string;
+  instagram?: string;
+  telegram?: string;
+  bale?: string;
+  rubika?: string;
+  eitaa?: string;
+}
+
 export interface BusinessExtension {
   restaurant?: RestaurantExtension;
   doctor?: DoctorExtension;
@@ -180,6 +213,8 @@ export interface BusinessExtension {
   mechanic?: MechanicExtension;
   company?: CompanyExtension;
   coach?: CoachExtension;
+  webPresence?: WebPresenceExtension;
+  storefront?: StorefrontExtension;
   /** Optional layout overrides stored in extensions JSON */
   _layout?: ProfileLayoutConfig;
 }
@@ -191,6 +226,7 @@ export type ProfileTemplate =
   | 'professional'
   | 'agency'
   | 'store'
+  | 'online_store'
   | 'real_estate'
   | 'services'
   | 'restaurant'

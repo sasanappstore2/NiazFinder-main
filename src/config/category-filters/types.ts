@@ -36,6 +36,11 @@ export interface CategoryFilterField {
   placeholder?: string;
   helpText?: string;
   audience?: FilterAudience;
+  /**
+   * `extended`: kept in merged registry/browse but omitted from minimal real-estate
+   * `/post` intake path unless we widen the matrix again.
+   */
+  intakeTier?: 'essential' | 'extended';
 }
 
 export interface ResolvedCategoryFilters {

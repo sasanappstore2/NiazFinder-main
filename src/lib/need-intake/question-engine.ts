@@ -5,7 +5,7 @@ import type {
   ParsedIntent,
 } from '@/contracts/need-intake';
 import { getIntentDefinition } from '@/config/need-intents';
-import { getSchemaForIntake } from '@/config/need-schemas/resolve-schema';
+import { getEffectiveIntakeSchema } from '@/lib/need-intake/essential-intake-schema';
 import {
   JOB_ROLE_LABELS,
   PRODUCT_DEAL_LABELS,
@@ -15,6 +15,75 @@ import {
 } from '@/config/need-schemas/labels';
 import { formatMoneyToman } from '@/lib/format/money';
 import { isCoreIntakeComplete } from '@/lib/need-intake/core-progress';
+import { isIntakeFieldAnswered } from '@/lib/need-intake/intake-field-answered';
+import { toAsciiDigits } from '@/lib/need-intake/extract-property-slots';
+
+/** Ask only when user hinted or after higher-value fields (budget, rent amounts). */
+const LOW_PRIORITY_UNLESS_HINTED = [
+  'rooms',
+  'yearMin',
+  'yearMax',
+  'familyCount',
+  'amenities',
+  'floorMin',
+  'floorMax',
+  'pricePerMeterMin',
+  'pricePerMeterMax',
+  'deedType',
+  'guestCount',
+] as const;
+
+function fieldHintedInRawText(fieldKey: string, rawText: string): boolean {
+  const t = toAsciiDigits(rawText.toLowerCase());
+  switch (fieldKey) {
+    case 'rooms':
+      return t.includes('خواب');
+    case 'yearMin':
+    case 'yearMax':
+      return t.includes('سال ساخت') || t.includes('نوساز') || t.includes('قدیمی');
+    case 'familyCount':
+      return t.includes('نفر') || t.includes('خانواده') || t.includes('مجرد');
+    case 'amenities':
+      return (
+        t.includes('پارکینگ') ||
+        t.includes('آسانسور') ||
+        t.includes('انباری') ||
+        t.includes('مبله') ||
+        t.includes('بالکن') ||
+        t.includes('بازسازی')
+      );
+    case 'floorMin':
+    case 'floorMax':
+      return t.includes('طبقه');
+    case 'pricePerMeterMin':
+    case 'pricePerMeterMax':
+      return t.includes('متری') || t.includes('هر متر');
+    case 'deedType':
+      return t.includes('سند') || t.includes('تک برگ') || t.includes('تک‌برگ');
+    case 'guestCount':
+      return t.includes('نفر');
+    default:
+      return false;
+  }
+}
+
+function sortPendingByPriority(
+  pending: FieldSchema[],
+  parsed: ParsedIntent
+): FieldSchema[] {
+  const raw = parsed.rawText ?? '';
+  return [...pending].sort((a, b) => {
+    const aLow =
+      LOW_PRIORITY_UNLESS_HINTED.includes(a.key as (typeof LOW_PRIORITY_UNLESS_HINTED)[number]) &&
+      !fieldHintedInRawText(a.key, raw);
+    const bLow =
+      LOW_PRIORITY_UNLESS_HINTED.includes(b.key as (typeof LOW_PRIORITY_UNLESS_HINTED)[number]) &&
+      !fieldHintedInRawText(b.key, raw);
+    if (aLow && !bLow) return 1;
+    if (!aLow && bLow) return -1;
+    return 0;
+  });
+}
 
 function fieldVisible(field: FieldSchema, answers: Record<string, unknown>): boolean {
   if (field.showIf) {
@@ -27,65 +96,45 @@ function fieldVisible(field: FieldSchema, answers: Record<string, unknown>): boo
   return true;
 }
 
-function isAnswered(
-  field: FieldSchema,
-  answers: Record<string, unknown>,
-  parsed: ParsedIntent
-): boolean {
-  const val = answers[field.key];
-  if (val !== undefined && val !== null && val !== '') return true;
-
-  const e = parsed.entities ?? {};
-
-  if (field.key === 'dealType' && (answers.dealType || e.dealType)) return true;
-  if (field.key === 'propertyKind' && e.propertyKind) return true;
-  if (field.key === 'vehicleKind' && e.vehicleKind) return true;
-  if (field.key === 'roleType' && e.roleType) return true;
-  if (field.key === 'serviceCategory' && e.serviceCategory) return true;
-
-  if (field.key === 'budget' && (parsed.budgetMax || parsed.budgetMin)) return true;
-  if (field.key === 'rahnAmount' && parsed.budgetMax && e.dealType?.includes('rahn')) {
-    return true;
-  }
-  if (
-    (field.key === 'phone' || field.key === 'contact') &&
-    answers._leadPhone
-  ) {
-    return true;
-  }
-  if (field.key === 'location' && (parsed.city || answers.location)) return true;
-  if (field.key === 'area' && parsed.city) return true;
-
-  if (field.key === 'productName' && parsed.title && parsed.intentType === 'product_search') {
-    const t = parsed.rawText.toLowerCase();
-    if (t.length > 4) return true;
-  }
-  if (field.key === 'serviceType' && parsed.description && parsed.description.length > 12) {
-    return true;
-  }
-  if (field.key === 'jobTitle' && parsed.title && parsed.title.length > 5) {
-    return true;
-  }
-
-  return false;
-}
-
 export function getNextQuestion(
   intentType: IntentType,
   parsed: ParsedIntent,
   answers: Record<string, unknown>
 ): NextQuestionResponse {
-  const schema = getSchemaForIntake(intentType, parsed.categorySlug);
+  const schema = getEffectiveIntakeSchema(intentType, parsed.categorySlug, parsed, answers);
   const visible = schema.fields.filter((f) => fieldVisible(f, answers));
-  const pending = visible.filter((f) => !isAnswered(f, answers, parsed));
+  const pending = sortPendingByPriority(
+    visible.filter((f) => !isIntakeFieldAnswered(f, answers, parsed)),
+    parsed
+  );
   const total = visible.length;
   const answered = total - pending.length;
+
+  if (parsed.locationAmbiguous === true && parsed.neighborhoodCandidates?.length) {
+    const totalSteps = Math.max(total, 1);
+    return {
+      done: false,
+      disambiguation: {
+        kind: 'neighborhood',
+        question:
+          'چند محله نزدیک این نام وجود دارد. لطفاً یکی را انتخاب کنید؛ یا گزینهٔ «دیگر» را بزنید تا متن دقیق بنویسید.',
+        options: [
+          ...parsed.neighborhoodCandidates.map((c) => ({
+            value: c.slug,
+            label: c.label,
+          })),
+          { value: '__neighborhood_other__', label: 'هیچ‌کدام / متن دقیق‌تر' },
+        ],
+      },
+      progress: { current: 1, total: totalSteps },
+    };
+  }
 
   if (pending.length === 0) {
     if (isCoreIntakeComplete(parsed, answers)) {
       return { done: true, progress: { current: total, total } };
     }
-    const optionalUnanswered = visible.filter((f) => !isAnswered(f, answers, parsed));
+    const optionalUnanswered = visible.filter((f) => !isIntakeFieldAnswered(f, answers, parsed));
     if (optionalUnanswered.length > 0) {
       const field = optionalUnanswered[0];
       return {
@@ -153,6 +202,14 @@ export function buildSummary(
   }
 
   if (answers.rooms) parts.push(`خواب: ${answers.rooms}`);
+  if (answers.areaMin) parts.push(`حداقل متراژ: ${answers.areaMin} متر`);
+  if (answers.areaMax) parts.push(`حداکثر متراژ: ${answers.areaMax} متر`);
+  if (answers.yearMin || answers.yearMax) {
+    const yMin = answers.yearMin ? String(answers.yearMin) : '—';
+    const yMax = answers.yearMax ? String(answers.yearMax) : '—';
+    parts.push(`سال ساخت: ${yMin} تا ${yMax}`);
+  }
+  if (answers.familyCount) parts.push(`تعداد نفرات: ${answers.familyCount}`);
   if (parsed.title) parts.push(`عنوان: ${parsed.title}`);
   if (answers.location || parsed.city) {
     parts.push(`مکان: ${answers.location ?? parsed.city}`);

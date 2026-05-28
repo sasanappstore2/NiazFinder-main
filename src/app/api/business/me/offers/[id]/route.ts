@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireBusinessManager } from '@/lib/business/require-business-manager';
 import { ensureBusinessProfile } from '@/lib/business/ensure-profile';
-import { toJson } from '@/lib/business/json-fields';
+import { parseJsonArray, toJson } from '@/lib/business/json-fields';
+import { buildOfferFeaturesFromBody } from '@/lib/business/serialize-offer-payload';
 
 export const runtime = 'nodejs';
 
@@ -30,6 +31,9 @@ export async function PATCH(
     if (!existing) return NextResponse.json({ error: 'یافت نشد' }, { status: 404 });
 
     const body = await request.json().catch(() => ({}));
+
+    const featuresUpdate = buildOfferFeaturesFromBody(existing.features, body);
+
     await db.businessOffer.update({
       where: { id },
       data: {
@@ -38,7 +42,7 @@ export async function PATCH(
         ...(body.priceRange !== undefined ? { priceRange: body.priceRange } : {}),
         ...(body.duration !== undefined ? { duration: body.duration } : {}),
         ...(body.images ? { images: toJson(body.images) } : {}),
-        ...(body.features ? { features: toJson(body.features) } : {}),
+        ...(featuresUpdate ? { features: toJson(featuresUpdate) } : {}),
         ...(body.ctaType ? { ctaType: (CTA_REVERSE[body.ctaType as string] ?? 'CHAT') as 'CHAT' } : {}),
         ...(body.isPublished !== undefined ? { isPublished: Boolean(body.isPublished) } : {}),
       },

@@ -6,6 +6,8 @@ import {
   VEHICLE_DEAL_LABELS,
   PRODUCT_DEAL_LABELS,
 } from '@/config/need-schemas/labels';
+import { isConstructionPartnershipText } from '@/lib/need-intake/intent-parser';
+import { buildPropertyTitle, buildRealEstateServiceTitle } from '@/lib/need-intake/property-title';
 import {
   CANONICAL_CITIES,
   getCityBySlug,
@@ -44,6 +46,36 @@ function buildIntakeTitle(
   parsed: NeedDraft['parsedIntent'],
   answers: Record<string, unknown>
 ): string {
+  const existing = parsed.title?.trim();
+  if (existing && existing.length >= 8 && existing !== 'ثبت نیاز') {
+    return existing.slice(0, 120);
+  }
+
+  const entities: Record<string, string> = {
+    ...parsed.entities,
+    ...(answers.propertyKind ? { propertyKind: String(answers.propertyKind) } : {}),
+    ...(answers.areaMin != null ? { areaMin: String(answers.areaMin) } : {}),
+    ...(answers.areaMax != null ? { areaMax: String(answers.areaMax) } : {}),
+    ...(answers.plotWidth ? { plotWidth: String(answers.plotWidth) } : {}),
+  };
+
+  if (
+    parsed.intentType === 'real_estate_service' ||
+    entities.serviceKind === 'partnership' ||
+    isConstructionPartnershipText(parsed.rawText ?? '')
+  ) {
+    return buildRealEstateServiceTitle(entities, parsed.city);
+  }
+
+  if (parsed.intentType.startsWith('property')) {
+    return buildPropertyTitle(
+      parsed.intentType,
+      entities,
+      parsed.city,
+      entities.area
+    );
+  }
+
   const deal = String(answers.dealType ?? parsed.entities?.dealType ?? '');
   const dealLabel =
     PROPERTY_DEAL_LABELS[deal] ??

@@ -51,9 +51,9 @@ function isSectionVisible(id: ProfileSectionId, business: Business, template: Pr
         business.trust.verified
       );
     case 'services':
-      return template !== 'store' && business.offers.length > 0;
+      return template !== 'store' && template !== 'online_store' && business.offers.length > 0;
     case 'products':
-      return template === 'store' && business.offers.length > 0;
+      return (template === 'store' || template === 'online_store') && business.offers.length > 0;
     case 'portfolio':
       return business.portfolio.length > 0;
     case 'gallery':

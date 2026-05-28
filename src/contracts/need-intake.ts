@@ -74,6 +74,13 @@ export interface ParsedIntent {
   rawText: string;
   /** Canonical neighborhood slug from admin-locations (e.g. abadgaran). */
   neighborhoodSlug?: string;
+  /**
+   * True when the area fragment matches several catalog neighborhoods and must not
+   * auto-resolve to a single slug until the user picks one.
+   */
+  locationAmbiguous?: boolean;
+  /** Top neighborhood options for disambiguation UI (same city as `city`). */
+  neighborhoodCandidates?: Array<{ slug: string; label: string }>;
   /** Intake field keys still needed (from question-engine). */
   missingFields?: string[];
 }
@@ -131,12 +138,18 @@ export interface NextQuestionResponse {
   question?: string;
   field?: FieldSchema;
   chips?: FieldOption[];
+  /** When set, client should show option chips before continuing schema questions. */
+  disambiguation?: {
+    kind: 'neighborhood';
+    question: string;
+    options: FieldOption[];
+  };
   progress: { current: number; total: number };
 }
 
 export interface ParseIntentMeta {
-  source?: 'rules';
-  engine?: 'internal';
+  source?: 'rules' | 'llm' | 'hybrid';
+  engine?: 'internal' | 'llm' | 'hybrid';
   vertical?: string;
   verticalScore?: number;
   verticalCertainty?: number;

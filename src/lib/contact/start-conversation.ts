@@ -1,4 +1,6 @@
 import { routeBuilder } from '@/config/routes';
+import type { ProductChatIntro } from '@/lib/chat/product-chat-intro';
+import { sendProductChatIntroMessage } from '@/lib/chat/product-chat-intro';
 import type { PendingContactIntent } from './constants';
 import { clearPendingContact, savePendingContact } from './pending-contact';
 
@@ -6,6 +8,8 @@ export interface StartConversationParams {
   otherUserId: string;
   requestId?: string;
   returnTo?: string;
+  /** Auto-send product context as first message after opening chat */
+  productIntro?: ProductChatIntro;
 }
 
 export interface StartConversationResult {
@@ -31,6 +35,7 @@ export async function startConversation(
       otherUserId: params.otherUserId,
       requestId: params.requestId,
       returnTo: params.returnTo,
+      productIntro: params.productIntro,
     };
     savePendingContact(intent);
     throw new ContactAuthRequiredError(intent);
@@ -54,8 +59,22 @@ export async function startConversation(
   }
 
   clearPendingContact();
+
+  const conversationId = json.conversation.id as string;
+
+  if (params.productIntro) {
+    const sent = await sendProductChatIntroMessage(
+      conversationId,
+      params.productIntro,
+      token
+    );
+    if (!sent) {
+      throw new Error('ارسال کارت محصول در گفتگو انجام نشد');
+    }
+  }
+
   return {
-    conversationId: json.conversation.id as string,
+    conversationId,
     existed: Boolean(json.message?.includes('قبلاً')),
   };
 }
@@ -78,6 +97,7 @@ export function requestChatWithAuthGate(
       otherUserId: params.otherUserId,
       requestId: params.requestId,
       returnTo: params.returnTo,
+      productIntro: params.productIntro,
     });
     openAuthModal();
     return;

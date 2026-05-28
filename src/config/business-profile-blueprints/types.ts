@@ -27,9 +27,19 @@ export interface ProfileTabSpec {
 }
 
 export interface BlueprintMatch {
+  /** @deprecated Legacy need-category roots — use occupationSectors */
   rootSlugs?: string[];
+  /** @deprecated Legacy need categories — use occupationSlugs */
   parentSlugs?: string[];
   leafSlugs?: string[];
+  /** Business occupation sector slugs (depth 0) */
+  occupationSectors?: string[];
+  /** Business occupation slugs (depth 1) */
+  occupationSlugs?: string[];
+  /** Online store sector slugs (depth 0) */
+  onlineStoreSectors?: string[];
+  /** Online store vertical slugs (depth 1) */
+  onlineStoreSlugs?: string[];
   /** Extension key must exist with non-empty data */
   extensionHint?: 'restaurant' | 'realEstate' | 'doctor' | 'mechanic' | 'company' | 'coach';
 }

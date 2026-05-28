@@ -1,6 +1,7 @@
 import { parseMoneyInput } from '@/lib/format/money';
 import type { ParsedIntent } from '@/contracts/need-intake';
 import { getSchemaForIntake } from '@/config/need-schemas/resolve-schema';
+import { extractPropertySlotsFromText } from '@/lib/need-intake/extract-property-slots';
 
 function allowedKeys(intentType: ParsedIntent['intentType'], categorySlug: string): string[] {
   const schema = getSchemaForIntake(intentType, categorySlug);
@@ -68,6 +69,29 @@ function seedFromParsedEntities(
   }
   if (keys.includes('areaMin') && !answers.areaMin && e.areaMin) {
     merged.areaMin = e.areaMin;
+  }
+  if (keys.includes('areaMax') && !answers.areaMax && e.areaMax) {
+    merged.areaMax = e.areaMax;
+  }
+  if (keys.includes('rahnAmount') && !answers.rahnAmount && e.rahnAmount) {
+    merged.rahnAmount = Number(e.rahnAmount);
+  }
+  if (keys.includes('deposit') && !answers.deposit && e.deposit) {
+    merged.deposit = Number(e.deposit);
+  }
+  if (keys.includes('monthlyRent') && !answers.monthlyRent && e.monthlyRent) {
+    merged.monthlyRent = Number(e.monthlyRent);
+  }
+
+  const slots = extractPropertySlotsFromText(parsed.rawText ?? '');
+  if (keys.includes('areaMin') && !answers.areaMin && slots.areaMin) {
+    merged.areaMin = Number(slots.areaMin);
+  }
+  if (keys.includes('rahnAmount') && !answers.rahnAmount && slots.rahnAmount) {
+    merged.rahnAmount = Number(slots.rahnAmount);
+  }
+  if (keys.includes('monthlyRent') && !answers.monthlyRent && slots.monthlyRent) {
+    merged.monthlyRent = Number(slots.monthlyRent);
   }
 
   return merged;

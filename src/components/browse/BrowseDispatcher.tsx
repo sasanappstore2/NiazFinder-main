@@ -66,7 +66,7 @@ function BrowseDispatcherInner({ market: marketProp, categorySlug, citySlug }: B
       market,
       location: citySlug,
       parentCategory: cat?.parentSlug ?? undefined,
-      category: cat?.slug,
+      category: categorySlug ?? cat?.slug,
     });
     return path.split('?')[0];
   }, [categorySlug, citySlug, market]);

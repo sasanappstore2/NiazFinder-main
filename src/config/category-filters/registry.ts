@@ -1,4 +1,6 @@
-import { getCategoryPath } from '@/config/categories';
+import { getCategoryPath, isCategorySlug } from '@/config/categories';
+import { isOccupationSlug } from '@/config/business-occupations';
+import { isOnlineStoreSlug } from '@/config/online-stores';
 
 function getRootCategorySlug(categorySlug: string): string {
   const path = getCategoryPath(categorySlug);
@@ -76,9 +78,20 @@ export function filterFieldToSchema(field: CategoryFilterField): FieldSchema {
   let type: FieldType = filterKindToFieldType(field.kind);
   if (field.key === 'location') type = 'location';
   else if (field.key === 'details' || field.key === 'serviceType') type = 'textarea';
-  else if (field.kind === 'range' && (field.key === 'budget' || field.key.includes('rent') || field.key.includes('rahn') || field.key.includes('deposit') || field.key.includes('salary'))) {
+  else if (
+    field.kind === 'range' &&
+    (field.key === 'budget' ||
+      field.key.includes('rent') ||
+      field.key.includes('rahn') ||
+      field.key.includes('deposit') ||
+      field.key.includes('salary') ||
+      field.key.includes('pricePerMeter'))
+  ) {
     type = 'price';
-  } else if (field.kind === 'range' && (field.key.includes('area') || field.key.includes('year') || field.key.includes('mileage'))) {
+  } else if (
+    field.kind === 'range' &&
+    (field.key.includes('area') || field.key.includes('year') || field.key.includes('mileage') || field.key.includes('floor'))
+  ) {
     type = 'number';
   }
 
@@ -107,7 +120,8 @@ function layersForSlug(categorySlug: string | null): CategoryFilterField[][] {
   const root = path[0]?.slug;
   const layers: CategoryFilterField[][] = [];
 
-  if (root && ROOT_SPECS[root]) layers.push(ROOT_SPECS[root]);
+  const underRealEstateServices = path.some((p) => p.slug === 'real-estate-services');
+  if (root && ROOT_SPECS[root] && !underRealEstateServices) layers.push(ROOT_SPECS[root]);
 
   for (const node of path) {
     if (node.slug === root) continue;
@@ -120,6 +134,14 @@ function layersForSlug(categorySlug: string | null): CategoryFilterField[][] {
 
 function businessLayersForSlug(categorySlug: string | null): CategoryFilterField[][] {
   if (!categorySlug) return [];
+
+  if (isOccupationSlug(categorySlug) || isOnlineStoreSlug(categorySlug)) {
+    return [];
+  }
+
+  if (isCategorySlug(categorySlug)) {
+    return layersForSlug(categorySlug);
+  }
 
   const path = getCategoryPath(categorySlug);
   const root = path[0]?.slug;
@@ -218,7 +240,9 @@ export function getFiltersForCategory(
 export function getIntakeFieldsForCategory(categorySlug: string): FieldSchema[] {
   const root = getRootCategorySlug(categorySlug);
   const layers = layersForSlug(categorySlug);
-  if (root && ROOT_SPECS[root]) {
+  const path = getCategoryPath(categorySlug);
+  const underRealEstateServices = path.some((p) => p.slug === 'real-estate-services');
+  if (root && ROOT_SPECS[root] && !underRealEstateServices) {
     const hasRoot = layers.some((l) => l === ROOT_SPECS[root]);
     if (!hasRoot) layers.unshift(ROOT_SPECS[root]);
   }

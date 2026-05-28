@@ -35,6 +35,10 @@ import type { MegaMenuCategory } from '@/components/navigation/MegaMenu/Category
 import { routeBuilder } from '@/config/routes';
 import { getCategoryBrowseUrl } from '@/lib/search/category-browse-url';
 import { useBrowseListingType } from '@/hooks/use-browse-listing-type';
+import {
+  BusinessBrowseCategoryMenuDesktop,
+  BusinessBrowseCategoryMenuMobile,
+} from '@/components/browse/BusinessBrowseCategoryMenu';
 import { usePathname, useRouter } from 'next/navigation';
 import { isBrowsePath } from '@/lib/search/browse-path';
 import { BrowseFilterBar } from '@/components/browse/BrowseFilterBar';
@@ -317,7 +321,7 @@ function AuthSection() {
 }
 
 // ============ Category Mega Menu in Header (Desktop) ============
-function HeaderCategoryMenuDesktop() {
+function NeedHeaderCategoryMenuDesktop() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const listingType = useBrowseListingType();
@@ -374,8 +378,16 @@ function HeaderCategoryMenuDesktop() {
   );
 }
 
+function HeaderCategoryMenuDesktop() {
+  const listingType = useBrowseListingType();
+  if (listingType === 'business') {
+    return <BusinessBrowseCategoryMenuDesktop />;
+  }
+  return <NeedHeaderCategoryMenuDesktop />;
+}
+
 // ============ Category Mega Menu in Header (Mobile) ============
-function HeaderCategoryMenuMobile() {
+function NeedHeaderCategoryMenuMobile() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const listingType = useBrowseListingType();
@@ -411,6 +423,14 @@ function HeaderCategoryMenuMobile() {
       </Sheet>
     </div>
   );
+}
+
+function HeaderCategoryMenuMobile() {
+  const listingType = useBrowseListingType();
+  if (listingType === 'business') {
+    return <BusinessBrowseCategoryMenuMobile />;
+  }
+  return <NeedHeaderCategoryMenuMobile />;
 }
 
 // ============ Header Component ============

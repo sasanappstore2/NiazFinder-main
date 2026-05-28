@@ -18,8 +18,11 @@ export function HeroSection({ business, requestId }: SectionProps) {
       : business.seo.canonicalUrl ?? routeBuilder.pro(business.id);
 
   return (
-    <section id="section-hero" className="relative z-0 overflow-hidden rounded-2xl border bg-card shadow-sm">
-      <div className="relative h-44 sm:h-56 md:h-64">
+    <section
+      id="section-hero"
+      className="relative z-0 overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm"
+    >
+      <div className="relative h-40 sm:h-52 md:h-60">
         {business.identity.coverImage ? (
           <Image
             src={business.identity.coverImage}
@@ -29,14 +32,14 @@ export function HeroSection({ business, requestId }: SectionProps) {
             priority
           />
         ) : (
-          <div className="absolute inset-0 bg-linear-to-l from-primary/30 via-primary/10 to-muted" />
+          <div className="absolute inset-0 bg-linear-to-br from-emerald-600/25 via-primary/15 to-muted" />
         )}
-        <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/35 to-black/5 sm:from-black/65" />
       </div>
 
       <div className="relative px-4 pb-5 sm:px-6">
-        <div className="-mt-12 sm:-mt-14 flex flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="size-24 shrink-0 overflow-hidden rounded-2xl border-4 border-background bg-muted shadow-lg sm:size-28">
+        <div className="-mt-10 flex flex-col gap-4 sm:-mt-14 sm:flex-row sm:items-end">
+          <div className="size-20 shrink-0 self-start overflow-hidden rounded-2xl border-4 border-background bg-muted shadow-lg ring-1 ring-border/40 sm:size-28">
             {business.identity.logo ? (
               <Image
                 src={business.identity.logo}
@@ -46,43 +49,52 @@ export function HeroSection({ business, requestId }: SectionProps) {
                 className="size-full object-cover"
               />
             ) : (
-              <div className="flex size-full items-center justify-center text-2xl font-bold text-muted-foreground">
+              <div className="flex size-full items-center justify-center text-xl font-bold text-muted-foreground sm:text-2xl">
                 {business.name.slice(0, 2)}
               </div>
             )}
           </div>
 
-          <div className="min-w-0 flex-1 text-white sm:text-foreground sm:drop-shadow-none">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-bold sm:text-3xl">{business.name}</h1>
-              {business.trust.verified && (
-                <BadgeCheck className="size-6 text-primary sm:text-primary" aria-label="تأیید شده" />
-              )}
-            </div>
-            <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 sm:bg-muted sm:text-foreground">
-                <StarRating rating={business.trust.rating} size="sm" />
-                <span className="font-semibold">{business.trust.rating.toFixed(1)}</span>
-                <span className="opacity-80">({business.trust.reviewCount})</span>
-              </span>
-              {business.identity.location.city && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-black/40 px-2.5 py-1 sm:bg-muted sm:text-muted-foreground">
-                  <MapPin className="size-3.5" />
-                  {business.identity.location.city}
+          <div className="min-w-0 flex-1">
+            <div className="rounded-xl border border-border/50 bg-background p-3 shadow-md sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none">
+              <div className="flex flex-wrap items-start gap-2">
+                <h1 className="min-w-0 flex-1 text-xl font-bold leading-snug text-foreground sm:text-3xl">
+                  {business.name}
+                </h1>
+                {business.trust.verified && (
+                  <BadgeCheck
+                    className="size-6 shrink-0 text-emerald-600 dark:text-emerald-400"
+                    aria-label="تأیید شده"
+                  />
+                )}
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-foreground">
+                  <StarRating rating={business.trust.rating} size="sm" />
+                  <span className="font-semibold">{business.trust.rating.toFixed(1)}</span>
+                  <span className="text-muted-foreground">
+                    ({business.trust.reviewCount.toLocaleString('fa-IR')})
+                  </span>
                 </span>
-              )}
-            </div>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {business.trust.badges.slice(0, 4).map((b) => (
-                <Badge key={b} variant="secondary" className="text-xs">
-                  {b}
-                </Badge>
-              ))}
-              {business.trust.yearsActive > 0 && (
-                <Badge variant="outline" className="border-white/30 text-xs text-white sm:border-border sm:text-foreground">
-                  {business.trust.yearsActive}+ سال فعالیت
-                </Badge>
-              )}
+                {business.identity.location.city && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-muted-foreground">
+                    <MapPin className="size-3.5 shrink-0" />
+                    {business.identity.location.city}
+                  </span>
+                )}
+              </div>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {business.trust.badges.slice(0, 4).map((b) => (
+                  <Badge key={b} variant="secondary" className="text-xs">
+                    {b}
+                  </Badge>
+                ))}
+                {business.trust.yearsActive > 0 && (
+                  <Badge variant="outline" className="text-xs">
+                    {business.trust.yearsActive.toLocaleString('fa-IR')}+ سال فعالیت
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
 
@@ -140,7 +152,7 @@ export function HighlightsSection({ business }: SectionProps) {
       {items.map((item) => (
         <div
           key={item.label}
-          className="rounded-xl border bg-card px-4 py-3 text-center shadow-sm"
+          className="rounded-xl border border-border/50 bg-card px-4 py-3 text-center shadow-sm transition hover:border-emerald-500/20"
         >
           <p className="text-xl font-bold">{item.value}</p>
           <p className="text-xs text-muted-foreground">{item.label}</p>
@@ -152,8 +164,11 @@ export function HighlightsSection({ business }: SectionProps) {
 
 export function AboutSection({ business }: SectionProps) {
   return (
-    <section id="section-about" className="scroll-mt-24 space-y-4 rounded-2xl border bg-card p-5 shadow-sm">
-      <h2 className="text-lg font-semibold">درباره</h2>
+    <section
+      id="section-about"
+      className="scroll-mt-24 space-y-4 rounded-2xl border border-border/50 bg-card p-5 shadow-sm"
+    >
+      <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-200">درباره</h2>
       <p className="leading-relaxed text-muted-foreground whitespace-pre-line">
         {business.identity.description || 'توضیحاتی ثبت نشده است.'}
       </p>

@@ -6,6 +6,7 @@ export const PROPERTY_DEAL_LABELS: Record<string, string> = {
   rent_monthly: 'اجاره ماهانه',
   rent_rahn_full: 'رهن کامل',
   rent_rahn_ejare: 'رهن و اجاره',
+  rent_short_term: 'اجاره کوتاه‌مدت',
 };
 
 export const PROPERTY_KIND_LABELS: Record<string, string> = {

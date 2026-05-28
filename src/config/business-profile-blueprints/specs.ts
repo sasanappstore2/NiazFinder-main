@@ -1,4 +1,5 @@
 import type { ProfileSectionId } from '@/contracts/business-profile';
+import { ONLINE_STORE_SECTOR_SLUGS } from '@/config/online-stores';
 import type { BusinessProfileBlueprint, ProfileTabSpec } from './types';
 
 const INTRO: ProfileSectionId[] = ['highlights', 'about', 'credentials', 'seo'];
@@ -12,7 +13,8 @@ export const BLUEPRINT_SPECS: BusinessProfileBlueprint[] = [
     id: 'real_estate',
     titleFa: 'املاک',
     match: {
-      rootSlugs: ['real-estate'],
+      occupationSectors: ['real-estate-facility'],
+      occupationSlugs: ['real-estate-agent', 'property-manager', 'interior-designer', 'architect'],
       extensionHint: 'realEstate',
     },
     sectionOrder: [
@@ -37,8 +39,9 @@ export const BLUEPRINT_SPECS: BusinessProfileBlueprint[] = [
     id: 'restaurant',
     titleFa: 'رستوران',
     match: {
+      occupationSectors: ['food-hospitality'],
+      occupationSlugs: ['restaurant-cafe', 'catering', 'pastry-bakery', 'butcher', 'hotel-guesthouse'],
       extensionHint: 'restaurant',
-      parentSlugs: ['food-dining'],
     },
     sectionOrder: ['hero', 'highlights', 'about', 'menu', 'services', 'trust', 'contact', 'seo'],
     tabs: tabs(
@@ -53,7 +56,32 @@ export const BLUEPRINT_SPECS: BusinessProfileBlueprint[] = [
     id: 'store',
     titleFa: 'فروشگاه',
     match: {
-      rootSlugs: ['electronics', 'home-appliances', 'personal-items'],
+      occupationSlugs: [
+        'mobile-repair',
+        'computer-repair',
+        'appliance-repair',
+        'car-dealership',
+        'auto-parts-store',
+        'mobile-phone-store',
+        'computer-store',
+        'furniture-store',
+        'appliance-store',
+      ],
+    },
+    sectionOrder: ['hero', 'highlights', 'about', 'products', 'trust', 'contact', 'seo'],
+    tabs: tabs(
+      { id: 'intro', labelFa: 'معرفی', sections: INTRO },
+      { id: 'products', labelFa: 'محصولات', sections: ['products'] },
+      { id: 'reviews', labelFa: 'نظرات', sections: ['trust'] }
+    ),
+    defaultTab: 'products',
+    cmsModules: ['offers'],
+  },
+  {
+    id: 'online_store',
+    titleFa: 'فروشگاه اینترنتی',
+    match: {
+      onlineStoreSectors: [...ONLINE_STORE_SECTOR_SLUGS],
     },
     sectionOrder: ['hero', 'highlights', 'about', 'products', 'trust', 'contact', 'seo'],
     tabs: tabs(
@@ -68,9 +96,9 @@ export const BLUEPRINT_SPECS: BusinessProfileBlueprint[] = [
     id: 'coach',
     titleFa: 'مربی / گالری',
     match: {
-      rootSlugs: ['entertainment'],
-      parentSlugs: ['sports-fitness', 'beauty-health'],
-      leafSlugs: ['sports-fitness'],
+      occupationSlugs: ['sports-coach', 'photographer', 'videographer-editor', 'music-teacher'],
+      occupationSectors: ['education-coaching', 'creative-media'],
+      extensionHint: 'coach',
     },
     sectionOrder: ['hero', 'highlights', 'about', 'gallery', 'trust', 'contact', 'seo'],
     tabs: tabs(
@@ -86,8 +114,15 @@ export const BLUEPRINT_SPECS: BusinessProfileBlueprint[] = [
     id: 'agency',
     titleFa: 'آژانس / طراحی',
     match: {
-      parentSlugs: ['it-services', 'graphic-design', 'web-design'],
-      leafSlugs: ['it-services', 'logo-design', 'frontend', 'web-design', 'graphic-design'],
+      occupationSectors: ['tech-digital', 'creative-media'],
+      occupationSlugs: [
+        'web-developer',
+        'ui-ux-designer',
+        'graphic-designer',
+        'seo-digital-marketing',
+        'photographer',
+        'social-media-manager',
+      ],
     },
     sectionOrder: ['hero', 'highlights', 'about', 'portfolio', 'services', 'trust', 'contact', 'seo'],
     tabs: tabs(
@@ -103,8 +138,16 @@ export const BLUEPRINT_SPECS: BusinessProfileBlueprint[] = [
     id: 'professional',
     titleFa: 'حرفه‌ای',
     match: {
-      parentSlugs: ['legal-services', 'medical-health', 'education'],
-      leafSlugs: ['legal-services', 'medical-health', 'consulting-education'],
+      occupationSectors: ['professional-legal-finance', 'health-beauty', 'education-coaching'],
+      occupationSlugs: [
+        'lawyer',
+        'accountant',
+        'tax-advisor',
+        'general-practitioner',
+        'dentist',
+        'private-tutor',
+        'career-coach',
+      ],
       extensionHint: 'doctor',
     },
     sectionOrder: [
@@ -129,7 +172,16 @@ export const BLUEPRINT_SPECS: BusinessProfileBlueprint[] = [
     id: 'services',
     titleFa: 'خدمات',
     match: {
-      rootSlugs: ['services'],
+      occupationSectors: ['trades-construction', 'home-personal-services', 'transport-logistics'],
+      occupationSlugs: [
+        'plumber',
+        'electrician',
+        'painter-decorator',
+        'cleaner',
+        'moving-company',
+        'auto-mechanic',
+        'appliance-repair',
+      ],
       extensionHint: 'mechanic',
     },
     sectionOrder: ['hero', 'highlights', 'about', 'services', 'portfolio', 'trust', 'contact', 'seo'],
@@ -147,7 +199,8 @@ export const BLUEPRINT_SPECS: BusinessProfileBlueprint[] = [
     id: 'company',
     titleFa: 'شرکت / سازمان',
     match: {
-      rootSlugs: ['jobs', 'social'],
+      occupationSlugs: ['management-consultant', 'recruitment-hr', 'event-planner'],
+      extensionHint: 'company',
     },
     sectionOrder: [
       'hero',

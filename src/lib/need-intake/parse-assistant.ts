@@ -2,6 +2,7 @@ import type { FieldOption, ParsedIntent } from '@/contracts/need-intake';
 import { getIntentDefinition } from '@/config/need-intents';
 import { getRootCategorySlug } from '@/config/need-schemas/resolve-schema';
 import { getClarifyingChipSet } from '@/lib/need-intake/clarifying-chips';
+import { isCategoryVerticalCoherent } from '@/lib/need-intake/parse-coherence';
 import {
   classifyVertical,
   isVerticalConfident,
@@ -26,25 +27,77 @@ function locationPhrase(parsed: ParsedIntent): string {
   return '';
 }
 
+function propertyKindFa(kind?: string): string {
+  if (kind === 'apartment') return 'آپارتمان';
+  if (kind === 'villa') return 'خانه ویلایی';
+  if (kind === 'land') return 'زمین';
+  if (kind === 'office') return 'دفتر کار';
+  if (kind === 'shop') return 'مغازه';
+  if (kind === 'industrial') return 'ملک صنعتی';
+  return 'ملک';
+}
+
+function dealFa(deal?: string): string {
+  if (deal === 'buy') return 'خرید';
+  if (deal === 'sell') return 'فروش';
+  if (deal === 'rent_monthly') return 'اجاره ماهانه';
+  if (deal === 'rent_rahn_full') return 'رهن کامل';
+  if (deal === 'rent_rahn_ejare') return 'رهن و اجاره';
+  if (deal === 'rent_short_term') return 'اجاره کوتاه‌مدت';
+  if (deal?.startsWith('rent')) return 'اجاره/رهن';
+  return '';
+}
+
 function buildRecap(parsed: ParsedIntent, classification: VerticalClassification): string {
   const loc = locationPhrase(parsed);
   const vertical = classification.vertical;
 
+  if (
+    parsed.intentType === 'real_estate_service' ||
+    parsed.categorySlug === 'construction-partnership' ||
+    parsed.entities?.serviceKind === 'partnership'
+  ) {
+    const kind = propertyKindFa(parsed.entities?.propertyKind);
+    const size = parsed.entities?.areaMin ?? parsed.entities?.areaMax;
+    const width = parsed.entities?.plotWidth;
+    let msg = `درخواست مشارکت در ساخت برای ${kind}`;
+    if (size) msg += ` حدود ${size} متر`;
+    if (width) msg += `، عرض ${width} متر`;
+    if (loc) msg += ` در ${loc}`;
+    return `${msg} — چند سؤال تکمیلی می‌پرسم.`;
+  }
+
   if (parsed.intentType.startsWith('property') || vertical === 'real-estate') {
-    const kind =
-      parsed.entities?.propertyKind === 'apartment'
-        ? 'آپارتمان/خانه'
-        : parsed.entities?.propertyKind === 'villa'
-          ? 'خانه/ویلا'
-          : 'ملک';
     const deal = parsed.entities?.dealType;
-    let dealFa = '';
-    if (deal === 'buy') dealFa = 'خرید';
-    else if (deal === 'sell') dealFa = 'فروش';
-    else if (deal?.startsWith('rent')) dealFa = 'اجاره/رهن';
-    const parts = [`به نظر می‌رسد دنبال ${dealFa ? `${dealFa} ` : ''}${kind} هستید`];
+    const kind = propertyKindFa(parsed.entities?.propertyKind);
+    const dealLabel = dealFa(deal);
+    const areaMax = parsed.entities?.areaMax;
+    const areaMin = parsed.entities?.areaMin;
+
+    if (deal && parsed.entities?.propertyKind) {
+      let msg = `${dealLabel} ${kind}`;
+      if (loc) msg += ` در ${loc}`;
+      if (areaMax && !areaMin) msg += ` (حداکثر ${areaMax} متر)`;
+      else if (areaMin && areaMax) msg += ` (${areaMin} تا ${areaMax} متر)`;
+      else if (areaMin) msg += ` (حداقل ${areaMin} متر)`;
+      return `${msg} — چند سؤال تکمیلی می‌پرسم.`;
+    }
+
+    if (deal || parsed.entities?.propertyKind) {
+      const parts: string[] = ['به نظر می‌رسد دنبال'];
+      if (dealLabel) parts.push(dealLabel);
+      if (parsed.entities?.propertyKind) parts.push(kind);
+      if (loc) parts.push(`در ${loc}`);
+      parts.push('هستید.');
+      if (!deal) parts.push('نوع معامله (خرید، اجاره، رهن) را مشخص کنید یا ادامه دهید.');
+      else if (!parsed.entities?.propertyKind) parts.push('نوع ملک را مشخص کنید یا ادامه دهید.');
+      else parts.push('چند سؤال تکمیلی می‌پرسم.');
+      return parts.join(' ');
+    }
+
+    const parts = [`به نظر می‌رسد دنبال ${kind} هستید`];
     if (loc) parts.push(`در ${loc}`);
-    parts.push('نوع معامله را مشخص کنید یا ادامه دهید.');
+    parts.push('نوع معامله و نوع ملک را مشخص کنید یا ادامه دهید.');
     return parts.join(' ');
   }
 
@@ -81,6 +134,9 @@ export function shouldSkipClarifying(
   parsed: ParsedIntent,
   classification: VerticalClassification
 ): boolean {
+  if (!isCategoryVerticalCoherent(parsed.categorySlug, classification.vertical)) {
+    return false;
+  }
   if (parsed.confidence >= 0.72 && isVerticalConfident(classification)) return true;
   if (parsed.confidence >= 0.65 && classification.vertical === 'real-estate') {
     return Boolean(parsed.entities?.dealType || parsed.entities?.propertyKind || parsed.entities?.area);
@@ -93,18 +149,28 @@ export function buildParseAssistantMessage(
   rawText: string
 ): string {
   const classification = classifyVertical(rawText);
+  let msg: string;
   if (shouldSkipClarifying(parsed, classification)) {
-    return buildRecap(parsed, classification);
+    msg = buildRecap(parsed, classification);
+  } else if (isVerticalConfident(classification) && parsed.confidence >= 0.55) {
+    msg = buildRecap(parsed, classification);
+  } else {
+    const label =
+      VERTICAL_LABELS[classification.vertical] ?? getIntentDefinition(parsed.intentType).labelFa;
+    const loc = locationPhrase(parsed);
+    if (loc) {
+      msg = `فکر می‌کنم منظورتان «${label}» در ${loc} است. درست است؟`;
+    } else {
+      msg = `فکر می‌کنم منظورتان «${label}» است. درست است؟`;
+    }
   }
-  if (isVerticalConfident(classification) && parsed.confidence >= 0.55) {
-    return buildRecap(parsed, classification);
+
+  if (parsed.locationAmbiguous === true && parsed.neighborhoodCandidates?.length) {
+    const names = parsed.neighborhoodCandidates.map((c) => c.label).join('، ');
+    msg = `برای محله چند گزینه نزدیک با این نام وجود دارد (${names}). لطفاً در قدم بعد محلهٔ دقیق را انتخاب کنید؛ ${msg}`;
   }
-  const label = VERTICAL_LABELS[classification.vertical] ?? getIntentDefinition(parsed.intentType).labelFa;
-  const loc = locationPhrase(parsed);
-  if (loc) {
-    return `فکر می‌کنم منظورتان «${label}» در ${loc} است. درست است؟`;
-  }
-  return `فکر می‌کنم منظورتان «${label}» است. درست است؟`;
+
+  return msg;
 }
 
 export function buildParseSuggestedChips(

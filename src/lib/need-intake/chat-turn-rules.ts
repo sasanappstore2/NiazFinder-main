@@ -1,6 +1,7 @@
 import type { ChatTurnResponse, NeedDraft } from '@/contracts/need-intake';
 import { parseMoneyInput } from '@/lib/format/money';
-import { buildReadiness, parseFromText } from '@/lib/need-intake/internal-orchestrator';
+import { buildReadiness } from '@/lib/need-intake/internal-orchestrator';
+import { parseFromText } from '@/lib/need-intake/internal-orchestrator.server';
 import { extractSlotsFromRules } from '@/lib/need-intake/extract-slots-rules';
 import { seedAnswersFromParsed } from '@/lib/need-intake/seed-answers';
 
@@ -41,17 +42,24 @@ export function runChatTurnRules(
     ...seeded,
   });
 
+  const rentSignals = /رهن|ودیعه|اجاره/.test(trimmed);
   const mergedAnswers: NeedDraft['answers'] = {
     ...draft.answers,
     ...seeded,
     ...(slotUpdates as NeedDraft['answers']),
   };
+  if (rentSignals && reParsed.entities?.dealType) {
+    mergedAnswers.dealType = reParsed.entities.dealType;
+  }
+  if (reParsed.entities?.propertyKind) {
+    mergedAnswers.propertyKind = reParsed.entities.propertyKind;
+  }
+
   const mergedIntent =
-    Object.keys(slotUpdates).length > 0 || reParsed.confidence > draft.parsedIntent.confidence
-      ? mergeSlotUpdates(
-          { ...draft, parsedIntent: reParsed, answers: mergedAnswers },
-          { ...seeded, ...slotUpdates }
-        )
+    rentSignals ||
+    Object.keys(slotUpdates).length > 0 ||
+    reParsed.confidence > draft.parsedIntent.confidence
+      ? reParsed
       : undefined;
 
   const readinessDraft: NeedDraft = {

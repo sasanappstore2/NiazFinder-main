@@ -6,7 +6,8 @@ import { getFiltersForCategory } from '@/config/category-filters/registry';
 import { parseFilters, serializeFilters } from '@/lib/filters/parser';
 
 const CASES = [
-  { slug: 'apartment-sale', expectBrowseKeys: ['rooms', 'areaMin'] },
+  { slug: 'apartment-sale', expectBrowseKeys: ['rooms', 'areaMin', 'pricePerMeterMin'] },
+  { slug: 'suite-apartment-rent', expectBrowseKeys: ['guestCount', 'nightlyRent'] },
   { slug: 'car-ride', expectBrowseKeys: ['condition', 'yearMin'] },
   { slug: 'mobile-phone', expectBrowseKeys: ['storage', 'condition'] },
   { slug: 'plumbing', expectHidden: ['serviceCategory'] },

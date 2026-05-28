@@ -1,6 +1,8 @@
 import { resolveSearchSegments } from '@/lib/search/resolve-segments';
+import { resolveBusinessSegments } from '@/lib/search/business-segments-resolve';
 import { COUNTRY_SLUG } from '@/config/locations';
 import { getCategoryBySlug } from '@/config/categories';
+import { getBusinessCategoryTitle } from '@/lib/business/business-category';
 import {
   type BrowseMarket,
   getBrowseMarketFromPathname,
@@ -60,10 +62,58 @@ export function isBusinessProfilePath(pathname: string): boolean {
   return !isMarketplaceLocationSegment(parsed.parts[0].toLowerCase());
 }
 
+function parseFromBusinessMarketPath(pathname: string): BrowsePathContext {
+  const market: BrowseMarket = 'business';
+  const parsed = parseMarketplacePath(pathname);
+  if (!parsed || parsed.market !== market) {
+    return { market, pathLocation: COUNTRY_SLUG };
+  }
+
+  const parts = parsed.parts;
+  if (parts.length === 0) return { market, pathLocation: COUNTRY_SLUG };
+
+  const [rawLoc, ...segments] = parts;
+  const ctx = resolveBusinessSegments(rawLoc, segments);
+
+  if (ctx.kind === 'invalid-location') {
+    return { market, pathLocation: COUNTRY_SLUG };
+  }
+
+  const pathLocation =
+    ctx.location.kind === 'country' ? COUNTRY_SLUG : ctx.location.city.slug;
+  const citySlug = ctx.location.kind === 'city' ? ctx.location.city.slug : undefined;
+
+  if (ctx.kind === 'profile-category' || ctx.kind === 'need-category') {
+    return {
+      market,
+      pathLocation,
+      citySlug,
+      categorySlug: ctx.categorySlug,
+      categoryTitle: ctx.categoryTitle,
+    };
+  }
+
+  if (ctx.kind === 'parent-child') {
+    return {
+      market,
+      pathLocation,
+      citySlug,
+      parentCategorySlug: ctx.parentSlug,
+      categorySlug: ctx.categorySlug,
+      categoryTitle: ctx.categoryTitle,
+      parentCategoryTitle: ctx.parentTitle,
+    };
+  }
+
+  return { market, pathLocation, citySlug };
+}
+
 function parseFromMarketPath(
   pathname: string,
   market: BrowseMarket
 ): BrowsePathContext {
+  if (market === 'business') return parseFromBusinessMarketPath(pathname);
+
   const parsed = parseMarketplacePath(pathname);
   if (!parsed || parsed.market !== market) {
     return { market, pathLocation: COUNTRY_SLUG };
@@ -131,12 +181,10 @@ export function pathWithoutCategory(pathname: string): string {
 export function getCategoryLabelFromPath(pathname: string): string | null {
   const ctx = parseBrowsePath(pathname);
   if (!ctx.categorySlug) return null;
+  if (ctx.categoryTitle) return ctx.categoryTitle;
   const cat = getCategoryBySlug(ctx.categorySlug);
   if (cat) return cat.title;
-  if (ctx.parentCategoryTitle && ctx.categoryTitle) {
-    return ctx.categoryTitle;
-  }
-  return ctx.categoryTitle ?? null;
+  return getBusinessCategoryTitle(ctx.categorySlug);
 }
 
 export function getFilterRootFromPath(pathname: string): string | null {

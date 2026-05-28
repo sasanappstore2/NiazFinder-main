@@ -1,6 +1,7 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 import type { Business, OfferCtaType, ProfileSectionId } from '@/contracts/business-profile';
 import type { ResolvedProfileLayout } from '@/contracts/business-profile';
 import { profileNavSections } from '@/lib/business/resolve-profile-sections';
@@ -40,7 +41,19 @@ export function renderProfileSection(
     case 'services':
       return <ServicesSection {...props} />;
     case 'products':
-      return <ProductsSection {...props} />;
+      return (
+        <Suspense
+          fallback={
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="aspect-[4/5] w-full rounded-2xl" />
+              ))}
+            </div>
+          }
+        >
+          <ProductsSection {...props} />
+        </Suspense>
+      );
     case 'portfolio':
       return <PortfolioSection {...props} />;
     case 'gallery':
@@ -117,7 +130,7 @@ export function ProfileShell({
   return (
     <div>
       {renderProfileSection('hero', { business, requestId })}
-      <div className="mt-6">{children}</div>
+      <div className="mt-5 sm:mt-6">{children}</div>
     </div>
   );
 }

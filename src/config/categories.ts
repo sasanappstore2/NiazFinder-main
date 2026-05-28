@@ -1,5 +1,8 @@
 /**
- * Canonical category registry.
+ * Canonical category registry — **need / listing marketplace only**.
+ *
+ * Business profiles use occupation slugs from `@/config/business-occupations`.
+ * Do not use these slugs for business onboarding or `BusinessProfile.categorySlugs`.
  *
  * Rules (locked, per architecture spec):
  * - Each category has a SHORT, LANGUAGE-INDEPENDENT slug.
@@ -44,6 +47,7 @@ export const CANONICAL_CATEGORIES: readonly CanonicalCategory[] = [
   { slug: 'residential-rent',    parentSlug: 'real-estate',        title: 'اجاره مسکونی',   englishTitle: 'Residential Rent',depth: 1 },
   { slug: 'apartment-rent',      parentSlug: 'residential-rent',   title: 'آپارتمان',       englishTitle: 'Apartment Rent',  depth: 2 },
   { slug: 'villa-rent',          parentSlug: 'residential-rent',   title: 'خانه و ویلا',    englishTitle: 'Villa Rent',      depth: 2 },
+  { slug: 'land-rent',           parentSlug: 'residential-rent',   title: 'زمین و کلنگی',   englishTitle: 'Land Rent',       depth: 2 },
   { slug: 'commercial-sale',     parentSlug: 'real-estate',        title: 'فروش اداری و تجاری',                                depth: 1 },
   { slug: 'office-sale',         parentSlug: 'commercial-sale',    title: 'دفتر کار',       englishTitle: 'Office Sale',     depth: 2 },
   { slug: 'shop-sale',           parentSlug: 'commercial-sale',    title: 'مغازه و غرفه',   englishTitle: 'Shop Sale',       depth: 2 },
@@ -52,6 +56,10 @@ export const CANONICAL_CATEGORIES: readonly CanonicalCategory[] = [
   { slug: 'office-rent',         parentSlug: 'commercial-rent',    title: 'دفتر کار',       englishTitle: 'Office Rent',     depth: 2 },
   { slug: 'shop-rent',           parentSlug: 'commercial-rent',    title: 'مغازه و غرفه',   englishTitle: 'Shop Rent',       depth: 2 },
   { slug: 'industrial-rent',     parentSlug: 'commercial-rent',    title: 'صنعتی',          englishTitle: 'Industrial Rent', depth: 2 },
+  { slug: 'short-term-rent',     parentSlug: 'real-estate',        title: 'اجاره کوتاه‌مدت', englishTitle: 'Short-term Rent', depth: 1 },
+  { slug: 'suite-apartment-rent', parentSlug: 'short-term-rent',   title: 'آپارتمان و سوئیت', englishTitle: 'Suite Apartment Rent', depth: 2 },
+  { slug: 'villa-short-rent',    parentSlug: 'short-term-rent',    title: 'ویلا و باغ',     englishTitle: 'Villa Short Rent', depth: 2 },
+  { slug: 'workspace-short-rent', parentSlug: 'short-term-rent',   title: 'دفتر و فضای آموزشی', englishTitle: 'Workspace Short Rent', depth: 2 },
   { slug: 'real-estate-services',parentSlug: 'real-estate',        title: 'خدمات املاک',                                       depth: 1 },
   { slug: 'agency-services',     parentSlug: 'real-estate-services',title: 'آژانس املاک',                                      depth: 2 },
   { slug: 'construction-partnership', parentSlug: 'real-estate-services', title: 'مشارکت در ساخت',                            depth: 2 },

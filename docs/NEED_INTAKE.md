@@ -60,8 +60,24 @@ flowchart LR
 ```bash
 npm run test:intake-parser    # rule parser fixtures
 npm run test:intake-flow      # end-to-end orchestrator per vertical
+npm run test:intake-dataset   # 58+ golden cases + accuracy report
 npm run test:typing-analysis  # typing strip rules
+npm run export:intake-dataset # JSONL for Unsloth (data/need-intake-training/)
 ```
+
+## هم‌ترازی املاک با دیوار
+
+Taxonomy و فیلترهای intake املاک با browse دیوار هم‌خوان شده‌اند (شامل **اجاره کوتاه‌مدت**، قیمت هر متر، سن بنا، طبقه، امکانات گسترده‌تر). مرجع کامل: [DIVAR_REAL_ESTATE_MATRIX.md](./DIVAR_REAL_ESTATE_MATRIX.md).
+
+```bash
+npm run divar:research -- --city=tehran --limit=500
+```
+
+خروجی نمونه‌برداری: `data/divar/research/` (در gitignore).
+
+## Dev lab (NODE_ENV=development)
+
+On [`/post`](http://localhost:3000/post), collapse **آزمایشگاه ثبت نیاز** to run fixtures, export JSONL, and inspect parse JSON. See [NEED_INTAKE_ML.md](./NEED_INTAKE_ML.md).
 
 ## QA checklist
 
@@ -74,4 +90,7 @@ npm run test:typing-analysis  # typing strip rules
 - [ ] «بازنویسی خودکار» refreshes copy
 - [ ] `خونه میخوام در محدوده ولنجک تهران` → property + ولنجک
 - [ ] `تعمیرکار کولر فوری غرب تهران` → services/repairs
-- [ ] Parser + flow self-tests pass offline
+- [ ] Low-confidence parse shows category badge + clarifying chips
+- [ ] `npm run test:intake-dataset` ≥75% (target 90% before ML phase 2)
+- [ ] Parser + flow + dataset self-tests pass offline
+- [ ] Dev lab: eval fixtures + JSONL export on `/post` (development only)

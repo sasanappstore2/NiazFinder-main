@@ -1,19 +1,11 @@
-import type {
-  NeedDraft,
-  NextQuestionResponse,
-  ParsedIntent,
-} from '@/contracts/need-intake';
-import type { TypingAnalysisResult } from '@/contracts/typing-analysis';
-import { mergeTypingIntoParsed } from '@/lib/typing-analysis/merge-typing-seed';
+import type { NeedDraft, NextQuestionResponse } from '@/contracts/need-intake';
 import {
   countAnsweredRequiredFields,
   isCoreIntakeComplete,
   isStructuredQuestionsDone,
 } from '@/lib/need-intake/core-progress';
-import { enrichParsedIntent } from '@/lib/need-intake/enrich-parsed-intent';
-import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
 import { getNextQuestion } from '@/lib/need-intake/question-engine';
-import { getSchemaForIntake } from '@/config/need-schemas/resolve-schema';
+import { getEffectiveIntakeSchema } from '@/lib/need-intake/essential-intake-schema';
 
 export interface IntakeReadiness {
   readinessScore: number;
@@ -43,17 +35,6 @@ export async function withProcessingDelay<T>(
   return result;
 }
 
-export function parseFromText(text: string): ParsedIntent {
-  return enrichParsedIntent(parseIntentFromText(text));
-}
-
-export function mergeTypingHints(
-  parsed: ParsedIntent,
-  typing: TypingAnalysisResult | null
-): ParsedIntent {
-  return enrichParsedIntent(mergeTypingIntoParsed(parsed, typing));
-}
-
 export function getNextStep(draft: NeedDraft): NextQuestionResponse {
   const { parsedIntent, answers } = draft;
   return getNextQuestion(parsedIntent.intentType, parsedIntent, answers);
@@ -61,7 +42,12 @@ export function getNextStep(draft: NeedDraft): NextQuestionResponse {
 
 export function buildReadiness(draft: NeedDraft): IntakeReadiness {
   const { parsedIntent, answers } = draft;
-  const schema = getSchemaForIntake(parsedIntent.intentType, parsedIntent.categorySlug);
+  const schema = getEffectiveIntakeSchema(
+    parsedIntent.intentType,
+    parsedIntent.categorySlug,
+    parsedIntent,
+    answers
+  );
   const totalRequired = schema.fields.filter((f) => f.required).length;
   const answeredRequired = countAnsweredRequiredFields(parsedIntent, answers);
   const coreComplete = isCoreIntakeComplete(parsedIntent, answers);

@@ -142,16 +142,22 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
 
       {isOwner && <OwnerProposalsSection requestId={request.id} />}
 
-      {!isOwner && isBusinessUser && (
+      {!isOwner && (
         <ContactActions
           variant="sticky"
           otherUserId={request.user.id}
           requestId={request.id}
+          needPreview={{
+            title: request.title,
+            categoryName: request.categoryName,
+            city: request.city,
+          }}
+          chatLabel="پیام و گفتگو"
           displayName={`${request.user.firstName} ${request.user.lastName}`.trim()}
           hasPhone
           chatEnabled
           showProfile={false}
-          className="max-w-6xl mx-auto"
+          className="max-w-6xl mx-auto lg:hidden"
         />
       )}
 

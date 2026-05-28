@@ -6,7 +6,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { Home, Users, MessageCircle, User, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
-import { routeBuilder, legacyViewToPath } from '@/config/routes';
+import { routeBuilder, legacyViewToPath, isBusinessProductDetailPath } from '@/config/routes';
 import { useBrowseUrl } from '@/hooks/use-browse-url';
 import type { AppView } from '@/lib/types';
 
@@ -32,6 +32,7 @@ function isTabActive(
 ): boolean {
   if (view === 'home') return pathname === '/';
   if (view === 'browse-specialists') {
+    if (isBusinessProductDetailPath(pathname)) return false;
     return pathname === '/b' || pathname.startsWith('/b/');
   }
   if (view === 'dashboard') {

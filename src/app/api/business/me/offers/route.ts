@@ -4,6 +4,11 @@ import { getAuthUser } from '@/lib/auth';
 import { requireBusinessManager } from '@/lib/business/require-business-manager';
 import { ensureBusinessProfile } from '@/lib/business/ensure-profile';
 import { parseJsonArray, toJson } from '@/lib/business/json-fields';
+import {
+  parseOfferStorefrontFromFeatures,
+  serializeOfferStorefrontFeatures,
+} from '@/lib/business/offer-storefront-meta';
+import { buildOfferFeaturesFromBody } from '@/lib/business/serialize-offer-payload';
 
 export const runtime = 'nodejs';
 
@@ -26,18 +31,26 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json({
-      offers: offers.map((o) => ({
-        id: o.id,
-        title: o.title,
-        description: o.description,
-        priceRange: o.priceRange,
-        duration: o.duration,
-        images: parseJsonArray<string>(o.images),
-        features: parseJsonArray<string>(o.features),
-        ctaType: o.ctaType.toLowerCase(),
-        order: o.order,
-        isPublished: o.isPublished,
-      })),
+      offers: offers.map((o) => {
+        const rawFeatures = parseJsonArray<string>(o.features);
+        const { meta, displayFeatures } = parseOfferStorefrontFromFeatures(rawFeatures);
+        return {
+          id: o.id,
+          title: o.title,
+          description: o.description,
+          priceRange: o.priceRange,
+          duration: o.duration,
+          images: parseJsonArray<string>(o.images),
+          features: displayFeatures,
+          vitrineCategoryId: meta.primaryCategoryId ?? meta.categoryIds[0] ?? null,
+          categoryIds: meta.categoryIds,
+          primaryCategoryId: meta.primaryCategoryId,
+          variants: meta.variants,
+          ctaType: o.ctaType.toLowerCase(),
+          order: o.order,
+          isPublished: o.isPublished,
+        };
+      }),
     });
   } catch (error) {
     console.error('Business offers GET error:', error);
@@ -61,6 +74,15 @@ export async function POST(request: NextRequest) {
     const profile = await ensureBusinessProfile(user);
     const count = await db.businessOffer.count({ where: { profileId: profile.id } });
 
+    const features =
+      buildOfferFeaturesFromBody('[]', body) ??
+      serializeOfferStorefrontFeatures([], {
+        categoryIds: Array.isArray(body.categoryIds) ? body.categoryIds : [],
+        primaryCategoryId:
+          typeof body.primaryCategoryId === 'string' ? body.primaryCategoryId : null,
+        variants: Array.isArray(body.variants) ? body.variants : [],
+      });
+
     const offer = await db.businessOffer.create({
       data: {
         profileId: profile.id,
@@ -68,8 +90,8 @@ export async function POST(request: NextRequest) {
         description,
         priceRange: body.priceRange ?? null,
         duration: body.duration ?? null,
-        images: toJson(body.images ?? []),
-        features: toJson(body.features ?? []),
+        images: toJson(Array.isArray(body.images) ? body.images : []),
+        features: toJson(features),
         faq: toJson([]),
         ctaType: (CTA_REVERSE[body.ctaType as string] ?? 'CHAT') as 'CHAT',
         order: count,
