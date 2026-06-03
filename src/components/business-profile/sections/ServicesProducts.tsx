@@ -92,7 +92,7 @@ function ProductTile({
   return (
     <Link
       href={href}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card text-right shadow-sm transition hover:border-emerald-500/35 hover:shadow-md hover:shadow-emerald-500/5"
+      className="profile-surface group flex flex-col overflow-hidden rounded-2xl text-right shadow-sm transition hover:border-emerald-500/35 hover:shadow-md hover:shadow-emerald-500/5"
     >
       <div className="relative aspect-[4/5] bg-muted">
         {image ? (

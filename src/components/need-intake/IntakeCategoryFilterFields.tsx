@@ -62,6 +62,19 @@ function resolveFieldValue(
   if (field.key === 'bedrooms' && entities.rooms != null) {
     return entities.rooms;
   }
+  if (field.key === 'rahnAmount') {
+    const answer = answers.rahnAmount ?? answers.deposit;
+    if (answer != null && answer !== '') return answer as string | number;
+    if (entities?.budgetMax != null && entities.budgetMax >= 50_000_000) {
+      return entities.budgetMax;
+    }
+  }
+  if (field.key === 'monthlyRent' && answers.monthlyRent != null && answers.monthlyRent !== '') {
+    return answers.monthlyRent as string | number;
+  }
+  if (field.key === 'deposit' && answers.deposit != null && answers.deposit !== '') {
+    return answers.deposit as string | number;
+  }
   if (field.key === 'area' && entities.area != null) {
     return entities.area;
   }

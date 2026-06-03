@@ -4,6 +4,8 @@ import { analyzeNeedText } from '@/intake/engine/intakeEngine';
 interface Fixture {
   id: string;
   text: string;
+  preferredCitySlug?: string;
+  preferredCityName?: string;
   expect: {
     categoryIncludes?: string;
     city?: string;
@@ -62,6 +64,16 @@ const FIXTURES: Fixture[] = [
       city: 'اصفهان',
     },
   },
+  {
+    id: 'imamat-prefers-user-city',
+    text: 'خونه در محله امامت',
+    preferredCitySlug: 'yasuj',
+    preferredCityName: 'یاسوج',
+    expect: {
+      city: 'یاسوج',
+      neighborhoodIncludes: 'امامت',
+    },
+  },
 ];
 
 /** Minimal neighborhood rows for offline self-test (no filesystem). */
@@ -80,6 +92,20 @@ const TEST_NEIGHBORHOOD_ROWS = [
     name: 'ونک',
     areas: [],
   },
+  {
+    cityId: 'yasuj',
+    cityName: 'یاسوج',
+    id: 'imamat-yasuj',
+    name: 'امامت',
+    areas: [],
+  },
+  {
+    cityId: 'tehran-city',
+    cityName: 'تهران',
+    id: 'imamat-tehran',
+    name: 'امامت',
+    areas: [],
+  },
 ];
 
 export function runIntakeEngineSelfTest(): { passed: number; failed: string[] } {
@@ -87,7 +113,10 @@ export function runIntakeEngineSelfTest(): { passed: number; failed: string[] } 
   const failed: string[] = [];
 
   for (const f of FIXTURES) {
-    const result = analyzeNeedText(f.text, indexes);
+    const result = analyzeNeedText(f.text, indexes, {
+      preferredCitySlug: f.preferredCitySlug,
+      preferredCityName: f.preferredCityName,
+    });
     const { expect: e } = f;
 
     if (e.categoryIncludes) {

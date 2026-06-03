@@ -138,7 +138,7 @@ export function ContactActions({
     variant === 'compact' ? 'sm' : variant === 'stacked' ? 'lg' : 'default';
   const layout =
     variant === 'sticky'
-      ? 'flex gap-2 p-3'
+      ? 'flex gap-2 px-3 py-2'
       : variant === 'stacked'
         ? 'flex flex-col gap-3'
         : variant === 'compact'
@@ -151,8 +151,9 @@ export function ContactActions({
       className={cn(
         layout,
         variant === 'sticky' &&
-          'fixed inset-x-0 z-[calc(var(--z-mobile-nav)-1)] border-t border-border/60 bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/80',
+          'fixed inset-x-0 z-[calc(var(--z-mobile-nav)-1)] border-t border-border/60 bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/80 supports-[padding:max(0px)]:pb-[max(0.75rem,env(safe-area-inset-bottom))]',
         variant === 'sticky' && 'bottom-(--mobile-nav-offset)',
+        variant === 'sticky' && 'min-h-(--sticky-contact-bar-height)',
         className
       )}
       role="group"
@@ -164,6 +165,7 @@ export function ContactActions({
           size={btnSize}
           className={cn(
             fullWidthBtn && 'w-full flex-1',
+            variant === 'sticky' && 'h-10 min-h-10 text-sm',
             variant === 'stacked' &&
               'h-12 min-h-12 rounded-xl text-base font-semibold shadow-sm transition-[box-shadow,transform] hover:shadow-md active:scale-[0.99]'
           )}
@@ -175,7 +177,8 @@ export function ContactActions({
           ) : (
             <MessageCircle className="size-4 ml-1" />
           )}
-          {chatLabel}
+          <span className="max-[360px]:hidden">{chatLabel}</span>
+          <span className="hidden max-[360px]:inline">پیام</span>
         </Button>
       )}
       {hasPhone && (
@@ -185,6 +188,7 @@ export function ContactActions({
           size={btnSize}
           className={cn(
             fullWidthBtn && 'w-full flex-1',
+            variant === 'sticky' && 'h-10 min-h-10 text-sm',
             variant === 'stacked' &&
               'h-12 min-h-12 rounded-xl border-2 text-base font-medium bg-background/80 hover:bg-muted/40'
           )}

@@ -9,6 +9,7 @@ import {
   Mic,
   Paperclip,
   Phone,
+  Pencil,
   Reply,
   SendHorizontal,
   X,
@@ -31,12 +32,17 @@ import {
   type VoiceRecorderHandle,
   type VoiceRecorderPhase,
 } from '@/components/chat/VoiceRecorder';
+import { FileUploadPreview } from '@/components/chat/FileUploadPreview';
 
 export type VoiceComposePhase = VoiceRecorderPhase;
 
 export interface ChatComposerReply {
   senderName: string;
   content: string;
+}
+
+export interface ChatComposerEdit {
+  preview: string;
 }
 
 export interface ChatComposerProps {
@@ -50,8 +56,11 @@ export interface ChatComposerProps {
   placeholder?: string;
   replyTo?: ChatComposerReply | null;
   onClearReply?: () => void;
+  editing?: ChatComposerEdit | null;
+  onClearEdit?: () => void;
   onPickImage: () => void;
   onPickFile: () => void;
+  onSendFiles?: (files: File[], caption: string) => void | Promise<void>;
   onShareLocation: () => void;
   onShareContact: () => void;
   onVoicePhaseChange?: (phase: VoiceComposePhase) => void;
@@ -70,14 +79,18 @@ export function ChatComposer({
   placeholder = 'پیام خود را بنویسید…',
   replyTo,
   onClearReply,
+  editing,
+  onClearEdit,
   onPickImage,
   onPickFile,
+  onSendFiles,
   onShareLocation,
   onShareContact,
   onVoicePhaseChange,
   textareaRef: externalTextareaRef,
 }: ChatComposerProps) {
   const [voicePhase, setVoicePhase] = useState<VoiceComposePhase>('idle');
+  const [filePreviewOpen, setFilePreviewOpen] = useState(false);
   const voiceRecorderRef = useRef<VoiceRecorderHandle>(null);
 
   const { textareaRef: internalTextareaRef, adjustHeight } = useAutoResizeTextarea({
@@ -93,6 +106,7 @@ export function ChatComposer({
   const hasText = Boolean(message.trim());
   const voiceActive = voicePhase !== 'idle';
   const busy = disabled || isSending || attachmentBusy;
+  const editMode = Boolean(editing);
   const canSendText = hasText && !busy && !voiceActive;
 
   const handleVoicePhase = useCallback(
@@ -135,14 +149,43 @@ export function ChatComposer({
     voiceRecorderRef.current?.startRecording();
   };
 
+  if (filePreviewOpen && onSendFiles) {
+    return (
+      <FileUploadPreview
+        onSend={async (files, caption) => {
+          await onSendFiles(files, caption);
+          setFilePreviewOpen(false);
+        }}
+        onCancel={() => setFilePreviewOpen(false)}
+      />
+    );
+  }
+
   return (
-    <div
-      className="shrink-0 border-t bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80"
-      dir="rtl"
-    >
-      {replyTo && (
+    <div className="chat-composer-bar" dir="rtl">
+      {editing && (
+        <div className="chat-composer-reply" role="status" aria-label="در حال ویرایش پیام">
+          <Pencil className="size-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden />
+          <div className="min-w-0 flex-1 border-s-2 border-amber-500/70 ps-2">
+            <p className="text-xs font-medium text-foreground">ویرایش پیام</p>
+            <p className="truncate text-xs text-muted-foreground">{editing.preview}</p>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-8 shrink-0 rounded-full"
+            onClick={onClearEdit}
+            aria-label="لغو ویرایش"
+          >
+            <X className="size-4" />
+          </Button>
+        </div>
+      )}
+
+      {replyTo && !editMode && (
         <div
-          className="flex items-center gap-2 border-b border-border/50 bg-muted/40 px-3 py-2 md:px-4"
+          className="chat-composer-reply"
           role="status"
           aria-label={`پاسخ به ${replyTo.senderName}`}
         >
@@ -182,7 +225,7 @@ export function ChatComposer({
                   className="size-11 shrink-0 rounded-full text-muted-foreground hover:text-foreground"
                   aria-label="پیوست — عکس، فایل، موقعیت یا تماس"
                   title="پیوست‌ها"
-                  disabled={busy}
+                  disabled={busy || editMode}
                 >
                   {attachmentBusy ? (
                     <Loader2 className="size-5 animate-spin" />
@@ -210,7 +253,8 @@ export function ChatComposer({
                   className="cursor-pointer gap-2"
                   onSelect={(ev) => {
                     ev.preventDefault();
-                    onPickFile();
+                    if (onSendFiles) setFilePreviewOpen(true);
+                    else onPickFile();
                   }}
                 >
                   <FileText className="size-4 text-primary" />
@@ -258,7 +302,7 @@ export function ChatComposer({
                     ? 'bg-emerald-600 text-white hover:bg-emerald-500'
                     : 'bg-muted text-muted-foreground'
                 )}
-                aria-label="ارسال پیام"
+                aria-label={editMode ? 'ذخیره ویرایش' : 'ارسال پیام'}
               >
                 {isSending ? (
                   <Loader2 className="size-5 animate-spin" />
@@ -271,7 +315,7 @@ export function ChatComposer({
                 type="button"
                 variant="ghost"
                 size="icon"
-                disabled={busy}
+                disabled={busy || editMode}
                 className="size-11 shrink-0 rounded-full text-muted-foreground hover:bg-emerald-500/10 hover:text-emerald-600"
                 onClick={startVoiceRecording}
                 aria-label="ضبط پیام صوتی"

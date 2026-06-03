@@ -8,32 +8,45 @@ import {
   buildChatContactShareContent,
   CHAT_CONTACT_SHARE_PREFIX,
 } from '@/lib/chat/contact-share';
-import {
-  CHAT_PRODUCT_CARD_PREFIX,
-  parseLegacyProductIntroText,
-} from '@/contracts/product-card-snapshot';
 import { extFromChatMime, fileTypeForVoiceUpload } from '@/lib/chat/attachment-mime';
 import {
   MessageSquare,
   Search,
   ArrowRight,
   Plus,
-  CheckCheck,
   Reply,
   X,
   BadgeCheck,
   Loader2,
   Users,
   Phone,
+  PhoneIncoming,
+  PhoneOutgoing,
+  PhoneMissed,
   CircleUserRound,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
+import { useShallow } from 'zustand/react/shallow';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { ChatMessageContent } from '@/components/chat/ChatMessageContent';
+import { toPersianDigits } from '@/lib/format/digits';
+import { ChatThread } from '@/components/chat/thread/ChatThread';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { canDeleteForEveryone } from '@/lib/chat/message-delete';
+import { canEditChatMessage } from '@/lib/chat/message-edit';
+import type { Message } from '@/lib/types';
 import { ChatInfoPanel } from '@/components/chat/ChatInfoPanel';
 import { ConversationNeedContextBanner } from '@/components/chat/ConversationNeedContextBanner';
 import {
@@ -42,12 +55,17 @@ import {
 } from '@/components/chat/ChatImageLightbox';
 import { ChatComposer } from '@/components/chat/ChatComposer';
 import { toVoiceCallPeer } from '@/lib/voice/voice-call-peer';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
+import { useChatRealtime } from '@/hooks/useChatRealtime';
+import { useChatTypingEmitter } from '@/hooks/useChatTypingEmitter';
+import { useConversationsTypingPoll } from '@/hooks/useConversationsTypingPoll';
+import { ChatConversationList } from '@/components/chat/ChatConversationList';
+import { useChatMessageScroll } from '@/hooks/useChatMessageScroll';
+import { tryJoinConversation } from '@/lib/chat/socket-bridge';
+import { markConversationRead } from '@/lib/chat/mark-conversation-read';
+import { useChatMessagePoll } from '@/hooks/useChatMessagePoll';
+import { useConversationsPoll } from '@/hooks/useConversationsPoll';
+import { isChatSocketConnected } from '@/lib/chat/socket-bridge';
+import { ChatPeerTyping, ChatTypingHeaderStatus } from '@/components/chat/ChatPeerTyping';
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 const getAvatarColor = (name: string) => {
@@ -72,7 +90,12 @@ const getInitials = (name: string) => {
 const formatTime = (dateStr: string) => {
   try {
     const d = new Date(dateStr);
-    return d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+    const raw = d.toLocaleTimeString('fa-IR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+    return toPersianDigits(raw);
   } catch {
     return '';
   }
@@ -112,57 +135,145 @@ interface SearchedUser {
   role?: string;
 }
 
+type SidebarTab = 'messages' | 'calls';
+
+interface VoiceCallUser {
+  id: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  displayName?: string | null;
+  avatar?: string | null;
+}
+
+interface VoiceCallRecord {
+  id: string;
+  callerId: string;
+  calleeId: string;
+  conversationId: string | null;
+  status: 'RINGING' | 'ACTIVE' | 'ENDED' | 'REJECTED' | 'MISSED';
+  startedAt: string;
+  endedAt: string | null;
+  durationSec: number | null;
+  caller: VoiceCallUser;
+  callee: VoiceCallUser;
+}
+
+import {
+  formatCallDuration,
+  formatCallLogLabel,
+} from '@/lib/voice/call-log-labels';
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function ChatPanel({ conversationId: initialConversationId }: { conversationId?: string } = {}) {
   const router = useRouter();
   const {
     isAuthenticated,
-    setAuthModalOpen,
     currentUser,
     conversations,
     messages,
     activeConversationId,
     isLoading,
     authToken,
-    fetchConversations,
-    fetchConversationMessages,
-    sendMessage,
-    setActiveConversationId,
-    addOrUpdateConversation,
-    openVoiceCall,
-  } = useAppStore();
+  } = useAppStore(
+    useShallow((s) => ({
+      isAuthenticated: s.isAuthenticated,
+      currentUser: s.currentUser,
+      conversations: s.conversations,
+      messages: s.messages,
+      activeConversationId: s.activeConversationId,
+      isLoading: s.isLoading,
+      authToken: s.authToken,
+    }))
+  );
+  const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
+  const fetchConversations = useAppStore((s) => s.fetchConversations);
+  const fetchConversationMessages = useAppStore((s) => s.fetchConversationMessages);
+  const sendMessage = useAppStore((s) => s.sendMessage);
+  const reactToMessage = useAppStore((s) => s.reactToMessage);
+  const deleteChatMessage = useAppStore((s) => s.deleteChatMessage);
+  const editChatMessage = useAppStore((s) => s.editChatMessage);
+  const setActiveConversationId = useAppStore((s) => s.setActiveConversationId);
+  const addOrUpdateConversation = useAppStore((s) => s.addOrUpdateConversation);
+  const openVoiceCall = useAppStore((s) => s.openVoiceCall);
+
+  const { peerTyping } = useChatRealtime(activeConversationId);
+  const { onDraftChange, stopTyping } = useChatTypingEmitter(activeConversationId);
+
+  useEffect(() => {
+    if (activeConversationId) tryJoinConversation(activeConversationId);
+  }, [activeConversationId]);
+
+  useConversationsTypingPoll(Boolean(isAuthenticated && authToken));
+
+  useConversationsPoll(Boolean(isAuthenticated && authToken));
 
   // ── Local state ────────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState('');
   const [newMessage, setNewMessage] = useState('');
   const [showMessages, setShowMessages] = useState(false);
+  const [replyTo, setReplyTo] = useState<{ messageId: string; senderName: string; content: string } | null>(null);
+  const [editingMessage, setEditingMessage] = useState<{
+    messageId: string;
+    originalContent: string;
+  } | null>(null);
+
+  const handleMessageChange = useCallback(
+    (value: string) => {
+      setNewMessage(value);
+      onDraftChange(value);
+    },
+    [onDraftChange]
+  );
+
+  useChatMessagePoll(
+    activeConversationId,
+    Boolean(activeConversationId && isAuthenticated && showMessages)
+  );
+
+  const threadMessages = useMemo(
+    () =>
+      activeConversationId
+        ? messages.filter((m) => m.conversationId === activeConversationId)
+        : [],
+    [messages, activeConversationId]
+  );
+
+  const { endRef: messagesEndRef, scrollRootRef: messagesScrollRootRef, scrollToBottomForced } =
+    useChatMessageScroll({
+      conversationId: activeConversationId,
+      messageCount: threadMessages.length,
+      enabled: Boolean(activeConversationId && showMessages),
+    });
 
   useEffect(() => {
     if (initialConversationId) {
       setActiveConversationId(initialConversationId);
-      setShowMessages(true);
     }
   }, [initialConversationId, setActiveConversationId]);
-  const [replyTo, setReplyTo] = useState<{ messageId: string; senderName: string; content: string } | null>(null);
-  const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setEditingMessage(null);
+  }, [activeConversationId]);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const imageAttachmentRef = useRef<HTMLInputElement>(null);
   const fileAttachmentRef = useRef<HTMLInputElement>(null);
   const [infoPanelOpen, setInfoPanelOpen] = useState(false);
-  const [mobileMsgActions, setMobileMsgActions] = useState<string | null>(null);
+  const [deleteConfirmMsgId, setDeleteConfirmMsgId] = useState<string | null>(null);
 
   const [attachmentBusy, setAttachmentBusy] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   // ── New Chat / User Search state ────────────────────────────────────────
   const [showNewChat, setShowNewChat] = useState(false);
+  const [sidebarTab, setSidebarTab] = useState<SidebarTab>('messages');
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchedUser[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [callHistory, setCallHistory] = useState<VoiceCallRecord[]>([]);
+  const [callsLoading, setCallsLoading] = useState(false);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const userSearchInputRef = useRef<HTMLInputElement>(null);
 
@@ -176,6 +287,20 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
         return name.includes(searchQuery) || (c.lastMessage?.includes(searchQuery) ?? false);
       })
     : conversations;
+
+  const filteredCalls = useMemo(() => {
+    const q = searchQuery.trim();
+    if (!q) return callHistory;
+    return callHistory.filter((call) => {
+      const isOutgoing = call.callerId === currentUser?.id;
+      const peer = isOutgoing ? call.callee : call.caller;
+      const name =
+        peer.displayName?.trim() ||
+        `${peer.firstName ?? ''} ${peer.lastName ?? ''}`.trim() ||
+        '';
+      return name.includes(q);
+    });
+  }, [callHistory, searchQuery, currentUser?.id]);
 
   const galleryImages = useMemo((): ChatGalleryImage[] => {
     const otherName =
@@ -198,6 +323,33 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     [galleryImages]
   );
 
+  // ── Fetch call history ─────────────────────────────────────────────────
+  const fetchCallHistory = useCallback(async () => {
+    if (!authToken) return;
+    setCallsLoading(true);
+    try {
+      const res = await fetch('/api/calls?limit=50', {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (!res.ok) {
+        setCallHistory([]);
+        return;
+      }
+      const data = await res.json();
+      setCallHistory(Array.isArray(data.data) ? data.data : []);
+    } catch {
+      setCallHistory([]);
+    } finally {
+      setCallsLoading(false);
+    }
+  }, [authToken]);
+
+  useEffect(() => {
+    if (sidebarTab === 'calls' && isAuthenticated && authToken) {
+      void fetchCallHistory();
+    }
+  }, [sidebarTab, isAuthenticated, authToken, fetchCallHistory]);
+
   // ── Fetch conversations on mount ───────────────────────────────────────
   useEffect(() => {
     if (isAuthenticated && authToken) {
@@ -209,17 +361,26 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   useEffect(() => {
     if (activeConversationId && authToken) {
       fetchConversationMessages(activeConversationId);
-      setShowMessages(true);
       setLightboxIndex(null);
+      void markConversationRead(activeConversationId);
     }
-  }, [activeConversationId, authToken, fetchConversationMessages]);
+    return () => stopTyping();
+  }, [activeConversationId, authToken, fetchConversationMessages, stopTyping]);
 
-  // ── Scroll to bottom on new messages ───────────────────────────────────
+  // فقط وقتی مکالمه در لیست موجود است صفحهٔ چت را نشان بده (موبایل)
   useEffect(() => {
-    if (messages.length > 0) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (!activeConversationId) {
+      setShowMessages(false);
+      return;
     }
-  }, [messages.length]);
+    if (selectedConversation) {
+      setShowMessages(true);
+      return;
+    }
+    if (!isLoading) {
+      setShowMessages(false);
+    }
+  }, [activeConversationId, selectedConversation, isLoading]);
 
   // ── Debounced user search ──────────────────────────────────────────────
   useEffect(() => {
@@ -371,6 +532,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
 
   // ── Toggle new chat panel ───────────────────────────────────────────────
   const handleToggleNewChat = useCallback(() => {
+    setSidebarTab('messages');
     setShowNewChat((prev) => !prev);
     if (showNewChat) {
       setUserSearchQuery('');
@@ -378,31 +540,127 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     }
   }, [showNewChat]);
 
+  const handleSidebarTabChange = useCallback((tab: SidebarTab) => {
+    setSidebarTab(tab);
+    setShowNewChat(false);
+    setUserSearchQuery('');
+    setSearchResults([]);
+  }, []);
+
+  const handleSelectCall = useCallback(
+    (call: VoiceCallRecord) => {
+      if (call.conversationId) {
+        handleSelectConversation(call.conversationId);
+        return;
+      }
+      const peerId = call.callerId === currentUser?.id ? call.calleeId : call.callerId;
+      const existing = conversations.find((c) => c.otherUser?.id === peerId);
+      if (existing) {
+        handleSelectConversation(existing.id);
+        return;
+      }
+      toast.message('گفتگویی با این کاربر یافت نشد', {
+        description: 'از دکمه + برای شروع گفتگوی جدید استفاده کنید.',
+      });
+    },
+    [conversations, currentUser?.id, handleSelectConversation]
+  );
+
+  const handleRedial = useCallback(
+    (call: VoiceCallRecord, e: React.MouseEvent) => {
+      e.stopPropagation();
+      const isOutgoing = call.callerId === currentUser?.id;
+      const peer = isOutgoing ? call.callee : call.caller;
+      openVoiceCall(
+        toVoiceCallPeer({
+          id: peer.id,
+          firstName: peer.firstName ?? '',
+          lastName: peer.lastName ?? '',
+          displayName: peer.displayName,
+          avatar: peer.avatar,
+        }),
+        call.conversationId ?? undefined
+      );
+    },
+    [currentUser?.id, openVoiceCall]
+  );
+
   // ── Back to conversation list ──────────────────────────────────────────
   const handleBack = useCallback(() => {
     setShowMessages(false);
     setActiveConversationId(null);
     setReplyTo(null);
+    setEditingMessage(null);
     router.push(routeBuilder.chat());
   }, [setActiveConversationId, router]);
 
   // ── Send message ───────────────────────────────────────────────────────
-  const handleSendMessage = useCallback(async () => {
-    if (!newMessage.trim() || !activeConversationId || isSendingMessage || attachmentBusy) return;
+  const handleSendMessage = useCallback(() => {
+    const text = newMessage.trim();
+    if (!text || !activeConversationId || isSendingMessage || attachmentBusy) return;
 
-    setIsSendingMessage(true);
-    setNewMessage('');
-    setReplyTo(null);
+    if (editingMessage) {
+      if (text === editingMessage.originalContent.trim()) {
+        setNewMessage('');
+        setEditingMessage(null);
+        inputRef.current?.focus();
+        return;
+      }
 
-    const success = await sendMessage(activeConversationId, newMessage.trim());
-    if (!success) {
-      // Restore the message if send failed
-      setNewMessage(newMessage.trim());
+      const messageId = editingMessage.messageId;
+      setIsSendingMessage(true);
+      void (async () => {
+        const success = await editChatMessage(messageId, text);
+        if (success) {
+          setNewMessage('');
+          setEditingMessage(null);
+          toast.success('پیام ویرایش شد');
+        } else {
+          toast.error('ویرایش پیام ناموفق بود');
+        }
+        setIsSendingMessage(false);
+        inputRef.current?.focus();
+      })();
+      return;
     }
 
-    setIsSendingMessage(false);
-    inputRef.current?.focus();
-  }, [newMessage, activeConversationId, isSendingMessage, attachmentBusy, sendMessage]);
+    const savedReply = replyTo;
+    const convId = activeConversationId;
+
+    setNewMessage('');
+    setReplyTo(null);
+    stopTyping();
+    setIsSendingMessage(true);
+
+    void (async () => {
+      const success = await sendMessage(convId, text, 'TEXT', {
+        replyToId: savedReply?.messageId,
+      });
+
+      if (!success) {
+        setNewMessage(text);
+        if (savedReply) setReplyTo(savedReply);
+        const errMsg = useAppStore.getState().error;
+        toast.error(errMsg || 'ارسال پیام ناموفق بود');
+        useAppStore.getState().clearError();
+      }
+
+      setIsSendingMessage(false);
+      inputRef.current?.focus();
+      scrollToBottomForced();
+    })();
+  }, [
+    newMessage,
+    editingMessage,
+    replyTo,
+    activeConversationId,
+    isSendingMessage,
+    attachmentBusy,
+    sendMessage,
+    editChatMessage,
+    stopTyping,
+    scrollToBottomForced,
+  ]);
 
   const uploadAndSendAttachment = useCallback(
     async (file: File, preferType: 'IMAGE' | 'FILE' | 'VOICE') => {
@@ -455,6 +713,26 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
       }
     },
     [activeConversationId, authToken, sendMessage]
+  );
+
+  const handleSendFiles = useCallback(
+    async (files: File[], caption: string) => {
+      for (const file of files) {
+        const preferType = file.type.startsWith('image/') ? 'IMAGE' : 'FILE';
+        await uploadAndSendAttachment(file, preferType);
+      }
+      if (caption.trim() && activeConversationId) {
+        setIsSendingMessage(true);
+        try {
+          await sendMessage(activeConversationId, caption.trim(), 'TEXT', {
+            replyToId: replyTo?.messageId,
+          });
+        } finally {
+          setIsSendingMessage(false);
+        }
+      }
+    },
+    [uploadAndSendAttachment, activeConversationId, sendMessage, replyTo?.messageId]
   );
 
   const sendVoiceBlob = useCallback(
@@ -553,7 +831,8 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   }, [activeConversationId, currentUser, sendMessage]);
 
   // ─── Reply helper ────────────────────────────────────────────────────────
-  const startReply = useCallback((msg: any) => {
+  const startReply = useCallback((msg: Message) => {
+    setEditingMessage(null);
     const isMe = msg.senderId === currentUser?.id;
     setReplyTo({
       messageId: msg.id,
@@ -571,6 +850,61 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     });
     inputRef.current?.focus();
   }, [currentUser?.id, otherUser]);
+
+  const startEdit = useCallback(
+    (msg: Message) => {
+      if (!canEditChatMessage(msg, currentUser?.id)) return;
+      setReplyTo(null);
+      setEditingMessage({ messageId: msg.id, originalContent: msg.content });
+      setNewMessage(msg.content);
+      inputRef.current?.focus();
+    },
+    [currentUser?.id]
+  );
+
+  const clearEdit = useCallback(() => {
+    setEditingMessage(null);
+    setNewMessage('');
+  }, []);
+
+  const scrollToMessage = useCallback((messageId: string) => {
+    const el = document.querySelector(`[data-message-id="${messageId}"]`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, []);
+
+  const handleReact = useCallback(
+    async (messageId: string, emoji: string) => {
+      const ok = await reactToMessage(messageId, emoji);
+      if (!ok) toast.error('ثبت واکنش ناموفق بود');
+    },
+    [reactToMessage]
+  );
+
+  const handleDeleteForMe = useCallback(
+    async (messageId: string) => {
+      try {
+        const ok = await deleteChatMessage(messageId, false);
+        if (ok) toast.success('پیام به‌صورت یک‌طرفه حذف شد');
+        else toast.error('حذف یک‌طرفه ناموفق بود');
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'حذف یک‌طرفه ناموفق بود');
+      }
+    },
+    [deleteChatMessage]
+  );
+
+  const handleDeleteForEveryone = useCallback(async () => {
+    if (!deleteConfirmMsgId) return;
+    const id = deleteConfirmMsgId;
+    setDeleteConfirmMsgId(null);
+    try {
+      const ok = await deleteChatMessage(id, true);
+      if (ok) toast.success('پیام به‌صورت دوطرفه حذف شد');
+      else toast.error('حذف دوطرفه ناموفق بود');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'حذف دوطرفه ناموفق بود');
+    }
+  }, [deleteChatMessage, deleteConfirmMsgId]);
 
   // ─── Auth Guard ──────────────────────────────────────────────────────────
   if (!isAuthenticated) {
@@ -601,29 +935,62 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
       <div
         className={cn(
           'flex w-full min-h-0 flex-col overflow-hidden border-l md:w-[min(380px,35vw)] md:max-w-[420px] md:border-l',
-          showMessages ? 'hidden md:flex' : 'flex'
+          selectedConversation && showMessages ? 'hidden md:flex' : 'flex'
         )}
         role="navigation"
         aria-label="لیست مکالمات"
       >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b px-4 py-3">
-          <h2 className="text-h2 font-bold">پیام‌ها</h2>
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
+        {/* Header: پیام‌ها | تماس‌ها | + */}
+        <div className="flex items-center gap-2 border-b px-3 py-2.5">
+          <div
+            className="flex flex-1 rounded-lg bg-muted/60 p-1"
+            role="tablist"
+            aria-label="بخش‌های گفتگو"
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected={sidebarTab === 'messages' && !showNewChat}
               className={cn(
-                'h-9 w-9',
-                showNewChat && 'text-primary bg-primary/10 hover:bg-primary/15'
+                'flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold transition-all',
+                sidebarTab === 'messages' && !showNewChat
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
-              aria-label={showNewChat ? 'بازگشت به مکالمات' : 'مکالمه جدید'}
-              title={showNewChat ? 'بازگشت به لیست مکالمات' : 'جستجوی کاربر و مکالمه جدید'}
-              onClick={handleToggleNewChat}
+              onClick={() => handleSidebarTabChange('messages')}
             >
-              {showNewChat ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-            </Button>
+              <MessageSquare className="h-4 w-4" />
+              پیام‌ها
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={sidebarTab === 'calls'}
+              className={cn(
+                'flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold transition-all',
+                sidebarTab === 'calls'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+              onClick={() => handleSidebarTabChange('calls')}
+            >
+              <Phone className="h-4 w-4" />
+              تماس‌ها
+            </button>
           </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-10 w-10 shrink-0 rounded-lg',
+              showNewChat && 'bg-primary/10 text-primary hover:bg-primary/15'
+            )}
+            aria-label={showNewChat ? 'بازگشت به لیست' : 'مکالمه جدید'}
+            title={showNewChat ? 'بازگشت به لیست' : 'جستجوی کاربر و مکالمه جدید'}
+            onClick={handleToggleNewChat}
+          >
+            {showNewChat ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+          </Button>
         </div>
 
         {/* Search */}
@@ -641,11 +1008,13 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
               />
             ) : (
               <Input
-                placeholder="جستجوی مکالمه..."
+                placeholder={
+                  sidebarTab === 'calls' ? 'جستجو در تماس‌ها...' : 'جستجوی مکالمه...'
+                }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-10 pr-9 text-sm"
-                aria-label="جستجوی مکالمه"
+                aria-label={sidebarTab === 'calls' ? 'جستجوی تماس' : 'جستجوی مکالمه'}
               />
             )}
           </div>
@@ -754,92 +1123,133 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                 })}
             </div>
           </ScrollArea>
-        ) : (
-          /* ── Conversation List ── */
-          <ScrollArea className="min-h-0 flex-1" role="list" aria-label="مکالمات">
-            {isLoading && conversations.length === 0 ? (
+        ) : sidebarTab === 'calls' ? (
+          <ScrollArea className="min-h-0 flex-1" role="list" aria-label="تاریخچه تماس‌ها">
+            {callsLoading && callHistory.length === 0 ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
-            ) : filteredConversations.length === 0 ? (
+            ) : filteredCalls.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center px-4">
-                <MessageSquare className="mb-3 h-10 w-10 text-muted-foreground/40" />
+                <Phone className="mb-3 h-10 w-10 text-muted-foreground/40" />
                 <p className="text-sm text-muted-foreground">
-                  {searchQuery ? 'مکالمه‌ای یافت نشد' : 'هنوز مکالمه‌ای ندارید'}
+                  {searchQuery ? 'تماسی یافت نشد' : 'هنوز تماسی ثبت نشده'}
                 </p>
-                {!searchQuery && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-3"
-                    onClick={handleToggleNewChat}
-                  >
-                    <Plus className="h-4 w-4 ml-1" />
-                    شروع گفتگوی جدید
-                  </Button>
-                )}
+                <p className="mt-1 text-xs text-muted-foreground/60">
+                  تماس‌های صوتی درون‌سایت اینجا نمایش داده می‌شوند
+                </p>
               </div>
             ) : (
               <div className="space-y-0.5 p-2">
-                {filteredConversations.map((conv) => {
-                  const convName = `${conv.otherUser?.firstName ?? ''} ${conv.otherUser?.lastName ?? ''}`.trim() || 'کاربر';
-                  const isSelected = conv.id === activeConversationId;
+                {filteredCalls.map((call) => {
+                  const isOutgoing = call.callerId === currentUser?.id;
+                  const peer = isOutgoing ? call.callee : call.caller;
+                  const name =
+                    peer.displayName?.trim() ||
+                    `${peer.firstName ?? ''} ${peer.lastName ?? ''}`.trim() ||
+                    'کاربر';
+                  const isMissed = call.status === 'MISSED' || call.status === 'REJECTED';
+                  const CallIcon = isMissed
+                    ? PhoneMissed
+                    : isOutgoing
+                      ? PhoneOutgoing
+                      : PhoneIncoming;
+                  const statusLabel =
+                    call.status === 'RINGING'
+                      ? 'در حال زنگ'
+                      : call.status === 'ACTIVE'
+                        ? 'در جریان'
+                        : formatCallLogLabel(
+                            call.status === 'ENDED'
+                              ? 'ENDED'
+                              : call.status === 'REJECTED'
+                                ? 'REJECTED'
+                                : 'MISSED',
+                            isOutgoing,
+                            call.durationSec
+                          );
 
                   return (
-                    <button
-                      key={conv.id}
-                      onClick={() => handleSelectConversation(conv.id)}
-                      className={cn(
-                        'flex w-full items-start gap-3 rounded-lg p-3 text-right transition-all duration-150',
-                        isSelected
-                          ? 'bg-primary/5 border border-primary/20'
-                          : 'hover:bg-muted/50 border border-transparent'
-                      )}
+                    <div
+                      key={call.id}
                       role="listitem"
-                      aria-label={`مکالمه با ${convName}${conv.unreadCount > 0 ? `، ${conv.unreadCount} پیام خوانده نشده` : ''}`}
+                      className={cn(
+                        'flex w-full items-center gap-1 rounded-lg border border-transparent p-1',
+                        'hover:bg-muted/50 transition-all duration-150'
+                      )}
                     >
-                      {/* Avatar */}
-                      <div className="relative shrink-0">
-                        <div
-                          className={cn(
-                            'flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white',
-                            getAvatarColor(convName)
-                          )}
-                        >
-                          {getInitials(convName)}
-                        </div>
-                        {conv.otherUser?.online && (
-                          <span className="absolute bottom-0 left-0 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500" />
-                        )}
-                      </div>
-
-                      {/* Content */}
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="truncate text-sm font-semibold">{convName}</span>
-                          <span className="shrink-0 text-xs text-muted-foreground">
-                            {conv.lastMessageAt ? formatTimeAgo(conv.lastMessageAt) : ''}
+                      <button
+                        type="button"
+                        onClick={() => handleSelectCall(call)}
+                        className="flex min-w-0 flex-1 items-center gap-3 rounded-lg p-2 text-right"
+                        aria-label={`تماس با ${name}`}
+                      >
+                        <div className="relative shrink-0">
+                          <div
+                            className={cn(
+                              'flex h-11 w-11 items-center justify-center rounded-full text-sm font-bold text-white',
+                              getAvatarColor(name)
+                            )}
+                          >
+                            {getInitials(name)}
+                          </div>
+                          <span
+                            className={cn(
+                              'absolute -bottom-0.5 -left-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background',
+                              isMissed ? 'bg-rose-500 text-white' : 'bg-primary/90 text-primary-foreground'
+                            )}
+                          >
+                            <CallIcon className="h-2.5 w-2.5" />
                           </span>
                         </div>
-                        <div className="mt-1 flex items-center justify-between gap-2">
-                          <p className="truncate text-sm text-muted-foreground" style={{ maxWidth: '200px' }}>
-                            {conv.lastMessage
-                              ? (conv.lastMessage.length > 40 ? conv.lastMessage.slice(0, 40) + '...' : conv.lastMessage)
-                              : 'شروع گفتگو...'}
+
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="truncate text-sm font-semibold">{name}</span>
+                            <span className="shrink-0 text-xs text-muted-foreground">
+                              {formatTimeAgo(call.startedAt)}
+                            </span>
+                          </div>
+                          <p
+                            className={cn(
+                              'mt-0.5 truncate text-xs text-right',
+                              isMissed ? 'text-rose-500' : 'text-muted-foreground'
+                            )}
+                          >
+                            {statusLabel}
                           </p>
-                          {conv.unreadCount > 0 && (
-                            <Badge className="shrink-0 h-5 min-w-5 flex items-center justify-center rounded-full px-1.5 text-xs">
-                              {conv.unreadCount}
-                            </Badge>
-                          )}
                         </div>
-                      </div>
-                    </button>
+                      </button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 shrink-0"
+                        aria-label={`تماس مجدد با ${name}`}
+                        title="تماس مجدد"
+                        onClick={(e) => handleRedial(call, e)}
+                      >
+                        <Phone className="h-4 w-4" />
+                      </Button>
+                    </div>
                   );
                 })}
               </div>
             )}
           </ScrollArea>
+        ) : (
+          <ChatConversationList
+            enabled={Boolean(isAuthenticated && authToken)}
+            isLoading={isLoading}
+            searchQuery={searchQuery}
+            conversations={filteredConversations}
+            activeConversationId={activeConversationId}
+            onSelectConversation={handleSelectConversation}
+            onStartNewChat={handleToggleNewChat}
+            getAvatarColor={getAvatarColor}
+            getInitials={getInitials}
+            formatTimeAgo={formatTimeAgo}
+          />
         )}
       </div>
 
@@ -847,7 +1257,11 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
       <div
         className={cn(
           'flex min-h-0 flex-1 flex-col overflow-hidden',
-          !showMessages ? 'hidden md:flex' : 'flex'
+          selectedConversation
+            ? showMessages
+              ? 'flex'
+              : 'hidden md:flex'
+            : 'hidden md:flex'
         )}
       >
         {selectedConversation ? (
@@ -889,16 +1303,20 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                 <h3 className="text-sm font-semibold truncate">
                   {`${otherUser?.firstName ?? ''} ${otherUser?.lastName ?? ''}`.trim() || 'کاربر'}
                 </h3>
-                <p
-                  className={cn(
-                    'text-xs',
-                    otherUser?.online
-                      ? 'text-emerald-600 dark:text-emerald-400'
-                      : 'text-muted-foreground'
-                  )}
-                >
-                  {otherUser?.online ? 'آنلاین' : 'آفلاین'}
-                </p>
+                {peerTyping.isTyping ? (
+                  <ChatTypingHeaderStatus visible />
+                ) : (
+                  <p
+                    className={cn(
+                      'text-xs transition-colors',
+                      otherUser?.online
+                        ? 'text-emerald-600 dark:text-emerald-400'
+                        : 'text-muted-foreground'
+                    )}
+                  >
+                    {otherUser?.online ? 'آنلاین' : 'آفلاین'}
+                  </p>
+                )}
               </div>
               {/* Call button */}
               <Button
@@ -932,7 +1350,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
             <ChatInfoPanel
               open={infoPanelOpen}
               onClose={() => setInfoPanelOpen(false)}
-              messages={messages.map((m) => ({
+              messages={threadMessages.map((m) => ({
                 id: m.id,
                 content:
                   m.type === 'NEED_CARD'
@@ -954,175 +1372,52 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
               }))}
             />
 
-            {/* Messages */}
-            <ScrollArea className="min-h-0 flex-1 px-4 py-3">
-              <div
-                className="space-y-3"
-                dir="rtl"
-                role="log"
-                aria-label="پیام‌ها"
-                aria-live="polite"
-              >
-                {/* System message */}
-                <div className="flex justify-center py-2">
-                  <span className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
-                    مکالمه آغاز شد
-                  </span>
-                </div>
-
-                {selectedConversation.requestId && (
+            <ChatThread
+              scrollRootRef={messagesScrollRootRef}
+              messagesEndRef={messagesEndRef}
+              messages={threadMessages}
+              peer={
+                otherUser
+                  ? {
+                      name: `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر',
+                      avatarUrl: otherUser.avatar,
+                      initials: getInitials(
+                        `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر'
+                      ),
+                      avatarClassName: getAvatarColor(
+                        `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر'
+                      ),
+                    }
+                  : undefined
+              }
+              currentUserId={currentUser?.id}
+              isLoading={isLoading}
+              formatTime={formatTime}
+              canDeleteForEveryone={canDeleteForEveryone}
+              onReply={startReply}
+              onEdit={startEdit}
+              onReact={(messageId, emoji) => void handleReact(messageId, emoji)}
+              onDeleteForMe={(messageId) => void handleDeleteForMe(messageId)}
+              onDeleteForEveryoneRequest={setDeleteConfirmMsgId}
+              onScrollToMessage={scrollToMessage}
+              onImageOpen={openImageLightbox}
+              peerTyping={{
+                isTyping: peerTyping.isTyping,
+                displayName:
+                  peerTyping.displayName ??
+                  (otherUser
+                    ? `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim()
+                    : undefined),
+              }}
+              needBanner={
+                selectedConversation.requestId ? (
                   <ConversationNeedContextBanner
                     requestId={selectedConversation.requestId}
                     embedded
                   />
-                )}
-
-                {isLoading && messages.length === 0 ? (
-                  <div className="flex items-center justify-center py-12">
-                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                  </div>
-                ) : messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <MessageSquare className="mb-3 h-10 w-10 text-muted-foreground/40" />
-                    <p className="text-sm text-muted-foreground">
-                      هنوز پیامی ارسال نشده
-                    </p>
-                    <p className="text-xs text-muted-foreground/60 mt-1">
-                      اولین پیام خود را ارسال کنید!
-                    </p>
-                  </div>
-                ) : (
-                  messages.map((msg) => {
-                    const isMe = msg.senderId === currentUser?.id;
-                    const isHovered = hoveredMsgId === msg.id;
-                    const isContactShare =
-                      msg.type === 'TEXT' &&
-                      typeof msg.content === 'string' &&
-                      msg.content.startsWith(CHAT_CONTACT_SHARE_PREFIX);
-                    const isImageMessage = msg.type === 'IMAGE';
-                    const isVoiceMessage = msg.type === 'VOICE';
-                    const isOfferCard =
-                      msg.type === 'OFFER_CARD' ||
-                      (msg.type === 'TEXT' &&
-                        typeof msg.content === 'string' &&
-                        (msg.content.startsWith(CHAT_PRODUCT_CARD_PREFIX) ||
-                          Boolean(parseLegacyProductIntroText(msg.content))));
-                    const isMediaBubble = isImageMessage || isVoiceMessage;
-                    return (
-                      <div
-                        key={msg.id}
-                        className="group relative flex w-full"
-                        onMouseEnter={() => setHoveredMsgId(msg.id)}
-                        onMouseLeave={() => setHoveredMsgId(null)}
-                      >
-                        {/* Reply button on hover (desktop) */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                          if (window.matchMedia('(max-width: 767px)').matches) {
-                            setMobileMsgActions(msg.id);
-                          } else {
-                            startReply(msg);
-                          }
-                        }}
-                          className={cn(
-                            'absolute top-1 z-10 flex h-7 w-7 items-center justify-center rounded-full',
-                            'bg-background/80 border border-border/60 shadow-sm backdrop-blur-xs',
-                            'text-muted-foreground hover:text-primary hover:bg-primary/10',
-                            'transition-all duration-150',
-                            isMe
-                              ? 'right-0 translate-x-full mr-1'
-                              : 'left-0 -translate-x-full ml-1',
-                            isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none',
-                            'max-md:hidden'
-                          )}
-                          aria-label="پاسخ"
-                          title="پاسخ به این پیام"
-                        >
-                          <Reply className="h-3.5 w-3.5" />
-                        </button>
-                        <div
-                          className={cn(
-                            'relative rounded-2xl',
-                            isMe ? 'me-auto' : 'ms-auto',
-                            isOfferCard
-                              ? 'w-fit max-w-[min(92vw,320px)] p-0.5'
-                              : isMediaBubble
-                                ? isImageMessage
-                                  ? 'w-fit max-w-[min(85vw,272px)] p-1'
-                                  : 'w-fit max-w-[min(85vw,292px)] px-2.5 py-2'
-                                : cn('max-w-[75%]', isContactShare ? 'px-2 py-1.5' : 'px-4 py-2.5'),
-                            isOfferCard
-                              ? isMe
-                                ? 'rounded-bl-md'
-                                : 'rounded-br-md'
-                              : isMe
-                                ? isMediaBubble
-                                  ? 'rounded-bl-md bg-primary/90 text-primary-foreground'
-                                  : 'rounded-bl-md bg-primary text-primary-foreground'
-                                : isMediaBubble
-                                  ? 'rounded-br-md bg-muted/80 text-foreground'
-                                  : 'rounded-br-md bg-muted'
-                          )}
-                        >
-                          {/* Reply quote */}
-                          {replyTo && replyTo.messageId === msg.id && (
-                            <div className="sr-only">در حال پاسخ به این پیام</div>
-                          )}
-                          <ChatMessageContent
-                            message={msg}
-                            isOwn={isMe}
-                            imageMeta={
-                              isImageMessage
-                                ? {
-                                    timeLabel: formatTime(msg.createdAt),
-                                    isRead: Boolean(msg.isRead),
-                                  }
-                                : undefined
-                            }
-                            voiceMeta={
-                              isVoiceMessage
-                                ? {
-                                    timeLabel: formatTime(msg.createdAt),
-                                    isRead: Boolean(msg.isRead),
-                                  }
-                                : undefined
-                            }
-                            onImageOpen={
-                              isImageMessage ? () => openImageLightbox(msg.id) : undefined
-                            }
-                          />
-                          {!isMediaBubble && (
-                            <div
-                              className={cn(
-                                'mt-1 flex items-center gap-1.5 text-caption',
-                                isMe && !isOfferCard
-                                  ? 'text-primary-foreground/60'
-                                  : 'text-muted-foreground'
-                              )}
-                            >
-                              <span>{formatTime(msg.createdAt)}</span>
-                              {isMe && (
-                                <CheckCheck
-                                  className={cn(
-                                    'h-3.5 w-3.5',
-                                    msg.isRead
-                                      ? 'text-emerald-400'
-                                      : 'text-primary-foreground/40'
-                                  )}
-                                />
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-
-                <div ref={messagesEndRef} />
-              </div>
-            </ScrollArea>
+                ) : null
+              }
+            />
 
             <input
               ref={imageAttachmentRef}
@@ -1143,7 +1438,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
               key={activeConversationId ?? 'no-conv'}
               textareaRef={inputRef}
               message={newMessage}
-              onMessageChange={setNewMessage}
+              onMessageChange={handleMessageChange}
               onSendText={handleSendMessage}
               onSendVoice={sendVoiceBlob}
               isSending={isSendingMessage}
@@ -1154,8 +1449,15 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                   : null
               }
               onClearReply={() => setReplyTo(null)}
+              editing={
+                editingMessage
+                  ? { preview: editingMessage.originalContent }
+                  : null
+              }
+              onClearEdit={clearEdit}
               onPickImage={() => imageAttachmentRef.current?.click()}
               onPickFile={() => fileAttachmentRef.current?.click()}
+              onSendFiles={handleSendFiles}
               onShareLocation={shareGeolocation}
               onShareContact={() => void shareMyContactCard()}
             />
@@ -1170,8 +1472,8 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
             )}
           </>
         ) : (
-          /* Empty state — no conversation selected */
-          <div className="flex h-full items-center justify-center p-6">
+          /* Empty state — desktop only (mobile shows conversation list) */
+          <div className="hidden h-full items-center justify-center p-6 md:flex">
             <div className="flex flex-col items-center gap-4 text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                 <MessageSquare className="h-8 w-8 text-muted-foreground" />
@@ -1179,7 +1481,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
               <div className="space-y-2">
                 <h3 className="text-lg font-semibold">یک گفتگو انتخاب کنید</h3>
                 <p className="text-sm text-muted-foreground max-w-[250px]">
-                  از لیست سمت راست یک مکالمه را انتخاب کنید یا گفتگوی جدید شروع کنید
+                  از لیست کنار صفحه یک مکالمه را انتخاب کنید یا گفتگوی جدید شروع کنید
                 </p>
               </div>
               <Button
@@ -1194,27 +1496,29 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
           </div>
         )}
       </div>
-      <Sheet open={Boolean(mobileMsgActions)} onOpenChange={() => setMobileMsgActions(null)}>
-        <SheetContent side="bottom" className="rounded-t-2xl">
-          <SheetHeader>
-            <SheetTitle>عملیات پیام</SheetTitle>
-          </SheetHeader>
-          <div className="flex flex-col gap-2 py-4">
-            <Button
-              variant="outline"
-              className="h-11 justify-start gap-2"
-              onClick={() => {
-                const msg = messages.find((m) => m.id === mobileMsgActions);
-                if (msg) startReply(msg);
-                setMobileMsgActions(null);
-              }}
+      <AlertDialog
+        open={Boolean(deleteConfirmMsgId)}
+        onOpenChange={(open) => !open && setDeleteConfirmMsgId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>حذف دوطرفه؟</AlertDialogTitle>
+            <AlertDialogDescription>
+              این پیام برای هر دو طرف با متن «این پیام حذف شد» جایگزین می‌شود. فقط تا ۴۸ ساعت پس
+              از ارسال امکان‌پذیر است.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>انصراف</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => void handleDeleteForEveryone()}
             >
-              <Reply className="size-4" />
-              پاسخ
-            </Button>
-          </div>
-        </SheetContent>
-      </Sheet>
+              حذف دوطرفه
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

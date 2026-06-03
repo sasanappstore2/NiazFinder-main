@@ -86,11 +86,195 @@ function MetricChip({
   value: string;
 }) {
   return (
-    <div className="rounded-xl border border-border/50 bg-muted/20 px-3 py-2.5 text-center">
+    <div className="rounded-xl border border-border/50 bg-muted/20 px-2 py-2 text-center max-[380px]:px-1.5 max-[380px]:py-1.5 sm:px-3 sm:py-2.5">
       <Icon className="mx-auto mb-1 size-4 text-primary" aria-hidden />
       <p className="text-caption text-muted-foreground">{label}</p>
-      <p className="text-label font-semibold tabular-nums">{value}</p>
+      <p className="text-label font-semibold tabular-nums truncate" title={value}>
+        {value}
+      </p>
     </div>
+  );
+}
+
+function NeedContactAside({
+  request,
+  authorName,
+  isOwner,
+  isBusinessUser,
+  compact = false,
+  className,
+}: {
+  request: ServiceRequest;
+  authorName: string;
+  isOwner: boolean;
+  isBusinessUser: boolean;
+  compact?: boolean;
+  className?: string;
+}) {
+  return (
+    <aside
+      className={cn(
+        'flex min-h-0 flex-col',
+        !compact && 'lg:sticky lg:top-[calc(var(--site-header-offset,6.5rem)+1rem)] lg:self-start',
+        className
+      )}
+      aria-label="ثبت‌کننده و تماس"
+    >
+      <div
+        className={cn(
+          'relative flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm',
+          compact ? 'flex-none' : 'lg:min-h-[min(440px,calc(100dvh-11rem))] lg:flex-1'
+        )}
+      >
+        <div
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,oklch(var(--primary)/0.08)_0%,transparent_42%)]"
+          aria-hidden
+        />
+        <div className="relative flex flex-col">
+          <div
+            className={cn(
+              'flex flex-none items-start justify-between gap-2',
+              compact ? 'px-3 pt-3' : 'px-4 pt-4 sm:px-5 sm:pt-5'
+            )}
+          >
+            <span className="text-overline font-semibold tracking-wide text-primary">
+              ثبت‌کننده نیاز
+            </span>
+            <Badge
+              variant="outline"
+              className="shrink-0 border-primary/25 bg-background/80 text-caption font-medium text-muted-foreground backdrop-blur-xs"
+            >
+              {isOwner ? 'صاحب آگهی' : 'ارتباط مستقیم'}
+            </Badge>
+          </div>
+
+          <div className={cn('flex-none pb-1 pt-2', compact ? 'px-3' : 'px-4 pt-3 sm:px-5')}>
+            <div
+              className={cn(
+                'flex gap-3 rounded-xl border border-border/50 bg-gradient-to-br from-muted/40 to-muted/15 shadow-inner',
+                compact ? 'p-3' : 'gap-4 p-3.5 sm:p-4'
+              )}
+            >
+              <Avatar
+                className={cn(
+                  'shrink-0 rounded-2xl border border-border/50 shadow-sm ring-2 ring-background',
+                  compact ? 'size-11' : 'size-14'
+                )}
+              >
+                <AvatarImage
+                  src={request.user.avatar ?? undefined}
+                  alt={authorName.trim() || 'ثبت‌کننده'}
+                />
+                <AvatarFallback className="rounded-2xl bg-primary/10 text-sm font-bold text-primary">
+                  {registrantInitials(request.user)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 flex flex-1 flex-col justify-center gap-0.5">
+                <p className="text-base font-semibold leading-tight tracking-tight text-foreground truncate">
+                  {authorName.trim() || 'کاربر نیاز‌فایندر'}
+                </p>
+                {request.user.city ? (
+                  <p className="text-caption text-muted-foreground flex items-center gap-1.5 truncate">
+                    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-background/90 text-primary">
+                      <MapPin className="size-3" aria-hidden />
+                    </span>
+                    {request.user.city}
+                  </p>
+                ) : (
+                  <p className="text-caption text-muted-foreground">شهر ثبت نشده</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {!isOwner && (
+            <>
+              <Separator className={cn('mx-3 flex-none bg-border/60', !compact && 'sm:mx-5')} />
+
+              <div
+                className={cn(
+                  'flex flex-none flex-col gap-3',
+                  compact ? 'px-3 py-3' : 'gap-4 px-4 py-4 sm:px-5 sm:pb-5'
+                )}
+              >
+                <p
+                  className={cn(
+                    'leading-relaxed text-muted-foreground [&>strong]:font-semibold [&>strong]:text-foreground',
+                    compact ? 'text-caption' : 'text-body-sm'
+                  )}
+                >
+                  {isBusinessUser ? (
+                    <>
+                      اگر این نیاز با شما هم‌خوان است،{' '}
+                      <strong>با پیام اول هماهنگ شوید</strong>؛ سپس می‌توانید پیشنهاد رسمی هم
+                      ارسال کنید.
+                    </>
+                  ) : compact ? (
+                    <>برای هماهنگی از <strong>نوار پایین</strong> پیام دهید یا تماس بگیرید.</>
+                  ) : (
+                    <>
+                      برای پرسیدن جزئیات یا هماهنگی،{' '}
+                      <strong>پیام دهید یا تماس بگیرید</strong>.
+                    </>
+                  )}
+                </p>
+
+                {!compact && (
+                  <ContactActions
+                    otherUserId={request.user.id}
+                    requestId={request.id}
+                    displayName={authorName.trim() || undefined}
+                    needPreview={{
+                      title: request.title,
+                      categoryName: request.categoryName,
+                      city: request.city,
+                    }}
+                    chatLabel="پیام و گفتگو"
+                    variant="stacked"
+                    showProfile={false}
+                  />
+                )}
+
+                {isBusinessUser && (
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-xl border-dashed bg-muted/20 text-muted-foreground hover:border-primary/40 hover:bg-muted/35 hover:text-foreground"
+                    size="sm"
+                    asChild
+                  >
+                    <Link href={routeBuilder.needPropose(request.id)}>
+                      ارسال پیشنهاد رسمی (قیمت و زمان)
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
+
+          {isOwner && (
+            <>
+              <Separator className={cn('mx-3 flex-none bg-border/60', !compact && 'sm:mx-5')} />
+              <div className={cn('flex-none pt-3', compact ? 'px-3 pb-3' : 'px-4 pb-5 pt-4 sm:px-5')}>
+                <div className="rounded-xl border border-border/60 bg-muted/25 px-3.5 py-3 text-body-sm leading-relaxed text-muted-foreground">
+                  شما صاحب این نیاز هستید. پیشنهادهای دریافتی را{' '}
+                  <span className="font-medium text-foreground">در بخش پایین همین صفحه</span>{' '}
+                  ببینید.
+                </div>
+              </div>
+            </>
+          )}
+
+          {!compact && isOwner && (
+            <div className="mt-auto flex flex-none flex-col gap-2 border-t border-border/55 bg-muted/25 px-4 py-3 sm:px-5">
+              <p className="flex items-start gap-2 text-caption leading-relaxed text-muted-foreground">
+                <Send className="mt-0.5 size-3.5 shrink-0 opacity-70" aria-hidden />
+                برای دیدن کسب‌وکارهای مرتبط به پایین صفحه بروید.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </aside>
   );
 }
 
@@ -106,10 +290,11 @@ export function NeedBriefingPanel({
   const priorityConfig = getPriorityConfig(request.priority);
   const PriorityIcon = priorityConfig.icon;
   const authorName = `${request.user.firstName} ${request.user.lastName}`;
+  const budgetValue = formatBudgetRange(request.budgetMin, request.budgetMax);
 
   return (
     <section
-      className="flex min-h-[calc(100dvh-8rem)] max-h-[720px] flex-col rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-6"
+      className="flex flex-col rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-6 lg:min-h-[calc(100dvh-8rem)] lg:max-h-[720px] lg:flex lg:flex-col"
       aria-label="خلاصه نیاز"
     >
       <Button
@@ -122,8 +307,9 @@ export function NeedBriefingPanel({
         بازگشت
       </Button>
 
-      <div className="grid flex-1 gap-6 lg:grid-cols-12 lg:gap-8">
-        <div className="lg:col-span-8 flex flex-col min-h-0">
+      <div className="flex flex-col gap-4 lg:grid lg:flex-1 lg:min-h-0 lg:grid-cols-12 lg:grid-rows-[auto_1fr] lg:gap-x-8 lg:gap-y-6">
+        {/* Header block — mobile order 1, desktop top-left */}
+        <div className="order-1 min-w-0 lg:col-span-8 lg:row-start-1">
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <Badge variant="outline" className={`text-caption ${getStatusConfig(request.status)}`}>
               {getStatusLabel(request.status)}
@@ -138,7 +324,7 @@ export function NeedBriefingPanel({
           </div>
 
           <div className="mb-3 flex items-start gap-2">
-            <h1 className="text-h2 flex-1 leading-snug">{request.title}</h1>
+            <h1 className="text-h2 min-w-0 flex-1 leading-snug">{request.title}</h1>
             <div className="flex shrink-0 gap-1">
               <BookmarkButton itemId={request.id} itemType="request" size="sm" />
               <RequestShare requestTitle={request.title} requestId={request.id} />
@@ -165,12 +351,8 @@ export function NeedBriefingPanel({
             </span>
           </p>
 
-          <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <MetricChip
-              icon={DollarSign}
-              label="بودجه"
-              value={formatBudgetRange(request.budgetMin, request.budgetMax)}
-            />
+          <div className="mb-0 grid grid-cols-2 gap-1.5 max-[380px]:gap-1.5 sm:grid-cols-4 sm:gap-2">
+            <MetricChip icon={DollarSign} label="بودجه" value={budgetValue} />
             <MetricChip icon={MapPin} label="شهر" value={request.city || 'نامشخص'} />
             <MetricChip
               icon={Clock}
@@ -183,7 +365,27 @@ export function NeedBriefingPanel({
               value={request.proposalCount.toLocaleString('fa-IR')}
             />
           </div>
+        </div>
 
+        {/* Contact — mobile order 2, desktop right column spanning both rows */}
+        <NeedContactAside
+          request={request}
+          authorName={authorName}
+          isOwner={isOwner}
+          isBusinessUser={isBusinessUser}
+          compact
+          className="order-2 lg:hidden"
+        />
+        <NeedContactAside
+          request={request}
+          authorName={authorName}
+          isOwner={isOwner}
+          isBusinessUser={isBusinessUser}
+          className="order-none hidden lg:col-span-4 lg:row-span-2 lg:row-start-1 lg:flex lg:border-r lg:border-border/60 lg:pr-6"
+        />
+
+        {/* Description — mobile order 3, desktop bottom-left */}
+        <div className="order-3 min-h-0 lg:col-span-8 lg:row-start-2 lg:flex lg:flex-col">
           {briefSummary && (
             <div className="mb-3 flex gap-2 rounded-xl border border-primary/15 bg-primary/5 px-3 py-2.5">
               <Sparkles className="size-4 shrink-0 text-primary mt-0.5" />
@@ -191,11 +393,11 @@ export function NeedBriefingPanel({
             </div>
           )}
 
-          <div className="flex-1 min-h-0">
+          <div className="min-h-0 lg:flex-1">
             <p
               className={cn(
                 'text-body-sm text-muted-foreground whitespace-pre-line leading-relaxed',
-                !expanded && 'line-clamp-3'
+                !expanded && 'line-clamp-3 lg:line-clamp-none'
               )}
             >
               {request.description}
@@ -205,7 +407,7 @@ export function NeedBriefingPanel({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="mt-1 h-8 gap-1 px-0 text-primary"
+                className="mt-1 h-8 gap-1 px-0 text-primary lg:hidden"
                 onClick={() => setExpanded((v) => !v)}
               >
                 {expanded ? (
@@ -222,136 +424,7 @@ export function NeedBriefingPanel({
               </Button>
             )}
           </div>
-
-          <p className="mt-4 text-caption text-muted-foreground lg:hidden">
-            برای دیدن کسب‌وکارهای پیشنهادی به پایین اسکرول کنید
-          </p>
         </div>
-
-        <aside
-          className="lg:col-span-4 flex min-h-0 flex-col lg:border-r lg:border-border/60 lg:pr-6"
-          aria-label="ثبت‌کننده و تماس"
-        >
-          <div className="relative flex min-h-[min(440px,calc(100dvh-11rem))] flex-1 flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
-            <div
-              className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,oklch(var(--primary)/0.08)_0%,transparent_42%)]"
-              aria-hidden
-            />
-            <div className="relative flex flex-1 flex-col">
-              <div className="flex flex-none items-start justify-between gap-2 px-4 pt-4 sm:px-5 sm:pt-5">
-                <span className="text-overline font-semibold tracking-wide text-primary">
-                  ثبت‌کننده نیاز
-                </span>
-                <Badge
-                  variant="outline"
-                  className="shrink-0 border-primary/25 bg-background/80 text-caption font-medium text-muted-foreground backdrop-blur-xs"
-                >
-                  {isOwner ? 'صاحب آگهی' : 'ارتباط مستقیم'}
-                </Badge>
-              </div>
-
-              <div className="flex-none px-4 pb-1 pt-3 sm:px-5">
-                <div className="flex gap-4 rounded-xl border border-border/50 bg-gradient-to-br from-muted/40 to-muted/15 p-3.5 shadow-inner sm:p-4">
-                  <Avatar className="size-14 shrink-0 rounded-2xl border border-border/50 shadow-sm ring-2 ring-background">
-                    <AvatarImage src={request.user.avatar ?? undefined} alt={authorName.trim() || 'ثبت‌کننده'} />
-                    <AvatarFallback className="rounded-2xl bg-primary/10 text-sm font-bold text-primary">
-                      {registrantInitials(request.user)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0 flex flex-1 flex-col justify-center gap-0.5">
-                    <p className="text-base font-semibold leading-tight tracking-tight text-foreground">
-                      {authorName.trim() || 'کاربر نیاز‌فایندر'}
-                    </p>
-                    {request.user.city ? (
-                      <p className="text-caption text-muted-foreground flex items-center gap-1.5">
-                        <span className="inline-flex size-5 items-center justify-center rounded-full bg-background/90 text-primary">
-                          <MapPin className="size-3" aria-hidden />
-                        </span>
-                        {request.user.city}
-                      </p>
-                    ) : (
-                      <p className="text-caption text-muted-foreground">شهر ثبت نشده</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {!isOwner && (
-                <>
-                  <Separator className="mx-4 flex-none bg-border/60 sm:mx-5" />
-
-                  <div className="flex flex-none flex-col gap-4 px-4 py-4 sm:px-5 sm:pb-5">
-                    <p className="text-body-sm leading-relaxed text-muted-foreground [&>strong]:font-semibold [&>strong]:text-foreground">
-                      {isBusinessUser ? (
-                        <>
-                          اگر این نیاز با شما هم‌خوان است،{' '}
-                          <strong>با پیام اول هماهنگ شوید</strong>؛ سپس می‌توانید پیشنهاد رسمی هم
-                          ارسال کنید.
-                        </>
-                      ) : (
-                        <>
-                          برای پرسیدن جزئیات یا هماهنگی،{' '}
-                          <strong>پیام دهید یا تماس بگیرید</strong>.
-                        </>
-                      )}
-                    </p>
-
-                    <ContactActions
-                      otherUserId={request.user.id}
-                      requestId={request.id}
-                      displayName={authorName.trim() || undefined}
-                      needPreview={{
-                        title: request.title,
-                        categoryName: request.categoryName,
-                        city: request.city,
-                      }}
-                      chatLabel="پیام و گفتگو"
-                      variant="stacked"
-                      showProfile={false}
-                    />
-
-                    {isBusinessUser && (
-                      <Button
-                        variant="outline"
-                        className="w-full rounded-xl border-dashed bg-muted/20 text-muted-foreground hover:border-primary/40 hover:bg-muted/35 hover:text-foreground"
-                        size="sm"
-                        asChild
-                      >
-                        <Link href={routeBuilder.needPropose(request.id)}>
-                          ارسال پیشنهاد رسمی (قیمت و زمان)
-                        </Link>
-                      </Button>
-                    )}
-                  </div>
-                </>
-              )}
-
-              {isOwner && (
-                <>
-                  <Separator className="mx-4 flex-none bg-border/60 sm:mx-5" />
-                  <div className="flex-none px-4 pb-5 pt-4 sm:px-5">
-                    <div className="rounded-xl border border-border/60 bg-muted/25 px-3.5 py-3 text-body-sm leading-relaxed text-muted-foreground">
-                      شما صاحب این نیاز هستید. پیشنهادهای دریافتی را{' '}
-                      <span className="font-medium text-foreground">در بخش پایین همین صفحه</span>{' '}
-                      ببینید.
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <div className="mt-auto flex flex-none flex-col gap-2 border-t border-border/55 bg-muted/25 px-4 py-3 sm:px-5">
-                <p className="hidden items-start gap-2 text-caption leading-relaxed text-muted-foreground lg:flex">
-                  <Send className="mt-0.5 size-3.5 shrink-0 opacity-70" aria-hidden />
-                  برای دیدن کسب‌وکارهای مرتبط به پایین صفحه بروید.
-                </p>
-                <p className="flex items-start gap-2 text-caption leading-relaxed text-muted-foreground lg:hidden">
-                  <Send className="mt-0.5 size-3.5 shrink-0 opacity-70" aria-hidden />
-                  پیشنهادی‌ها را با اسکرول پایین ببینید.
-                </p>
-              </div>
-            </div>
-          </div>
-        </aside>
       </div>
     </section>
   );

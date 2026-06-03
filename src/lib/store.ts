@@ -6,7 +6,7 @@
  */
 
 import { create } from 'zustand';
-import { apiFetch } from '@/lib/api-client';
+import { apiFetch, ApiClientError } from '@/lib/api-client';
 import type {
   User,
   Notification,
@@ -20,6 +20,21 @@ import type {
 } from './types';
 import { CHAT_CONTACT_SHARE_PREFIX } from '@/lib/chat/contact-share';
 import { chatMessageListPreview } from '@/lib/chat/contact-share';
+import { MESSAGE_DELETED_TOMBSTONE } from '@/lib/chat/message-delete';
+import { buildReplyToQuote } from '@/lib/chat/reply-quote';
+import {
+  isAllowedReactionEmoji,
+  removeReactionFromList,
+  upsertReactionInList,
+} from '@/lib/chat/reactions';
+import {
+  isChatSocketConnected,
+  tryDeleteMessage,
+  tryEditMessage,
+  tryReactToMessage,
+  trySendMessageViaSocket,
+} from '@/lib/chat/socket-bridge';
+import { canEditChatMessage } from '@/lib/chat/message-edit';
 
 // ============ Store Interface ============
 
@@ -41,7 +56,25 @@ interface AppState {
   clearError: () => void;
   initializeFromStorage: () => Promise<void>;
   loginAPI: (email: string, password: string) => Promise<boolean>;
-  loginWithPhone: (phone: string, code: string) => Promise<{ success: boolean; isNewUser: boolean; error: string | null }>;
+  loginWithPhone: (
+    phone: string,
+    code: string,
+    intent?: 'login' | 'register'
+  ) => Promise<{
+    success: boolean;
+    isNewUser: boolean;
+    needsPassword?: boolean;
+    error: string | null;
+  }>;
+  loginWithPhonePassword: (
+    phone: string,
+    password: string
+  ) => Promise<{ success: boolean; error: string | null }>;
+  registerWithPhonePassword: (
+    phone: string,
+    password: string,
+    code: string
+  ) => Promise<{ success: boolean; error: string | null }>;
   registerAPI: (data: { email: string; password: string; firstName: string; lastName: string; phone?: string; role?: string }) => Promise<boolean>;
   logoutAPI: () => Promise<void>;
   fetchCurrentUser: () => Promise<void>;
@@ -94,12 +127,60 @@ interface AppState {
   addOrUpdateConversation: (conv: Partial<Conversation> & { id: string }) => void;
   activeConversationId: string | null;
   setActiveConversationId: (id: string | null) => void;
+  /** Realtime «در حال نوشتن» طرف مقابل (از سوکت) */
+  peerTyping: {
+    conversationId: string;
+    userId: string;
+    isTyping: boolean;
+    displayName?: string;
+    updatedAt: number;
+  } | null;
+  applyPeerTypingFromSocket: (data: {
+    conversationId: string;
+    userId: string;
+    isTyping: boolean;
+    user?: { firstName?: string; lastName?: string };
+  }) => void;
+  clearPeerTyping: (conversationId: string) => void;
+  /** conversationId → timestamp آخرین تایپینگ طرف (برای لیست مکالمات) */
+  typingActivityByConvId: Record<string, number>;
+  isConversationTyping: (conversationId: string) => boolean;
+  /** طرف مقابل پیام‌های ما را خوانده — تیک سین */
+  applyReadReceipt: (conversationId: string, readerId: string) => void;
+  applyMessageReaction: (payload: {
+    messageId: string;
+    conversationId: string;
+    userId: string;
+    emoji: string;
+    eventType: 'added' | 'updated' | 'removed';
+    user?: { id: string; firstName: string; lastName: string; avatar?: string };
+  }) => void;
+  applyMessageDeleted: (payload: {
+    messageId: string;
+    conversationId: string;
+    forEveryone: boolean;
+    userId?: string;
+  }) => void;
+  applyMessageEdited: (payload: {
+    messageId: string;
+    conversationId: string;
+    content: string;
+    editedAt?: string | null;
+  }) => void;
+  reactToMessage: (messageId: string, emoji: string) => Promise<boolean>;
+  deleteChatMessage: (messageId: string, forEveryone: boolean) => Promise<boolean>;
+  editChatMessage: (messageId: string, content: string) => Promise<boolean>;
 
   // Chat (API)
   messages: Message[];
   fetchConversations: () => Promise<void>;
   fetchConversationMessages: (id: string) => Promise<Message[]>;
-  sendMessage: (conversationId: string, content: string, type?: string) => Promise<boolean>;
+  sendMessage: (
+    conversationId: string,
+    content: string,
+    type?: string,
+    options?: { replyToId?: string }
+  ) => Promise<boolean>;
 
   // Bookmarks
   bookmarkedRequests: string[];
@@ -157,6 +238,54 @@ interface AppState {
 
 const TOKEN_KEY = 'needfinder_auth_token';
 const LEGACY_TOKEN_KEY = 'nf_auth_token';
+
+function mapApiUserToLocal(apiUser: Record<string, unknown>): User {
+  return {
+    id: apiUser.id as string,
+    email: apiUser.email as string,
+    phone: (apiUser.phone as string | null) ?? undefined,
+    username: (apiUser.username as string | null) ?? undefined,
+    firstName: apiUser.firstName as string,
+    lastName: apiUser.lastName as string,
+    displayName: (apiUser.displayName as string | null) ?? undefined,
+    avatar: (apiUser.avatar as string | null) ?? undefined,
+    bio: (apiUser.bio as string | null) ?? undefined,
+    city: (apiUser.city as string | null) ?? undefined,
+    province: (apiUser.province as string | null) ?? undefined,
+    role: apiUser.role as User['role'],
+    isVerified: apiUser.isVerified as boolean,
+    isActive: true,
+    online: true,
+    rating: (apiUser.rating as number | undefined) ?? 0,
+    projectCount: (apiUser.projectCount as number | undefined) ?? 0,
+    completionRate: (apiUser.completionRate as number | undefined) ?? 0,
+    responseRate: (apiUser.responseRate as number | undefined) ?? 0,
+    createdAt:
+      typeof apiUser.createdAt === 'string'
+        ? apiUser.createdAt
+        : new Date(apiUser.createdAt as string | Date).toISOString(),
+  };
+}
+
+function applyPhoneAuthSuccess(
+  apiUser: Record<string, unknown>,
+  token: string,
+  options?: { closeModal?: boolean }
+) {
+  const mappedUser = mapApiUserToLocal(apiUser);
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(LEGACY_TOKEN_KEY, token);
+  }
+  useAppStore.setState({
+    authToken: token,
+    currentUser: mappedUser,
+    isAuthenticated: true,
+    ...(options?.closeModal !== false ? { authModalOpen: false } : {}),
+  });
+  useAppStore.getState().fetchNotifications().catch(() => {});
+  useAppStore.getState().fetchConversations().catch(() => {});
+}
 
 // ============ Create Store ============
 
@@ -231,74 +360,75 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ authHydrated: true });
   },
 
-  loginWithPhone: async (phone: string, code: string) => {
+  loginWithPhone: async (phone: string, code: string, intent: 'login' | 'register' = 'login') => {
     try {
-      // Step 1: Request OTP (may be rate-limited if already sent recently)
-      try {
-        await fetch('/api/auth/otp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone }),
-        });
-      } catch {
-        // Ignore OTP send errors — user may have already requested
-      }
-
-      // Step 2: Verify OTP
       const res = await fetch('/api/auth/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, code }),
+        body: JSON.stringify({ phone, code, intent }),
       });
 
+      const data = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        return { success: false, isNewUser: false, error: errorData.error || 'خطا در تأیید کد' };
+        return { success: false, isNewUser: false, error: data.error || 'خطا در تأیید کد' };
       }
 
-      const data = await res.json();
-      const apiUser = data.user;
-      const token = data.token;
-      const isNewUser = data.isNewUser;
-
-      // Map API user to local User shape
-      const mappedUser: User = {
-        id: apiUser.id,
-        email: apiUser.email,
-        phone: apiUser.phone ?? undefined,
-        username: apiUser.username ?? undefined,
-        firstName: apiUser.firstName,
-        lastName: apiUser.lastName,
-        displayName: apiUser.displayName ?? undefined,
-        avatar: apiUser.avatar ?? undefined,
-        bio: apiUser.bio ?? undefined,
-        city: apiUser.city ?? undefined,
-        province: apiUser.province ?? undefined,
-        role: apiUser.role,
-        isVerified: apiUser.isVerified,
-        isActive: true,
-        online: true,
-        rating: apiUser.rating ?? 0,
-        projectCount: apiUser.projectCount ?? 0,
-        completionRate: apiUser.completionRate ?? 0,
-        responseRate: apiUser.responseRate ?? 0,
-        createdAt: typeof apiUser.createdAt === 'string' ? apiUser.createdAt : new Date(apiUser.createdAt).toISOString(),
-      };
-
-      // Store token and login
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(TOKEN_KEY, token);
-        localStorage.setItem(LEGACY_TOKEN_KEY, token);
+      if (data.needsPassword) {
+        return { success: true, isNewUser: true, needsPassword: true, error: null };
       }
-      set({ authToken: token, currentUser: mappedUser, isAuthenticated: true, authModalOpen: false });
 
-      // Fire-and-forget background fetches
-      get().fetchNotifications().catch(() => {});
-      get().fetchConversations().catch(() => {});
+      applyPhoneAuthSuccess(data.user, data.token);
 
-      return { success: true, isNewUser, error: null };
+      return { success: true, isNewUser: Boolean(data.isNewUser), error: null };
     } catch {
-      return { success: false, isNewUser: false, error: 'خطای شبکه. لطفاً اتصال اینترنت خود را بررسی کنید.' };
+      return {
+        success: false,
+        isNewUser: false,
+        error: 'خطای شبکه. لطفاً اتصال اینترنت خود را بررسی کنید.',
+      };
+    }
+  },
+
+  loginWithPhonePassword: async (phone: string, password: string) => {
+    try {
+      const res = await fetch('/api/auth/login-phone', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, password }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        return { success: false, error: data.error || 'خطا در ورود' };
+      }
+
+      applyPhoneAuthSuccess(data.user, data.token);
+      return { success: true, error: null };
+    } catch {
+      return { success: false, error: 'خطای شبکه. لطفاً اتصال اینترنت خود را بررسی کنید.' };
+    }
+  },
+
+  registerWithPhonePassword: async (phone: string, password: string, code: string) => {
+    try {
+      const res = await fetch('/api/auth/register-phone', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, password, code }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        return { success: false, error: data.error || 'خطا در ثبت‌نام' };
+      }
+
+      applyPhoneAuthSuccess(data.user, data.token, { closeModal: false });
+      return { success: true, error: null };
+    } catch {
+      return { success: false, error: 'خطای شبکه. لطفاً اتصال اینترنت خود را بررسی کنید.' };
     }
   },
 
@@ -462,7 +592,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   updateProfileAPI: async (data) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await apiFetch<{ user: any }>('/api/profile', {
+      const res = await apiFetch<{ user: any }>('/api/users/profile', {
         method: 'PUT',
         body: JSON.stringify(data),
       });
@@ -480,6 +610,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             bio: user.bio ?? currentUser.bio,
             city: user.city ?? currentUser.city,
             province: user.province ?? currentUser.province,
+            phone: user.phone ?? currentUser.phone,
             avatar: user.avatar ?? currentUser.avatar,
           },
         });
@@ -643,7 +774,279 @@ export const useAppStore = create<AppState>((set, get) => ({
     });
   },
   activeConversationId: null,
-  setActiveConversationId: (id) => set({ activeConversationId: id }),
+  setActiveConversationId: (id) =>
+    set({
+      activeConversationId: id,
+      peerTyping: null,
+    }),
+
+  peerTyping: null,
+  typingActivityByConvId: {},
+
+  isConversationTyping: (conversationId) => {
+    const at = get().typingActivityByConvId[conversationId];
+    if (!at) return false;
+    return Date.now() - at < 3500;
+  },
+
+  applyPeerTypingFromSocket: (data) => {
+    const me = get().currentUser?.id;
+    if (!me || data.userId === me) return;
+
+    const before = get();
+    const prevConv = before.conversations.find((c) => c.id === data.conversationId);
+    const hadActivity = before.typingActivityByConvId[data.conversationId] != null;
+
+    if (!data.isTyping) {
+      if (!prevConv?.isPeerTyping && !hadActivity) return;
+    } else if (prevConv?.isPeerTyping && hadActivity) {
+      set((state) => ({
+        typingActivityByConvId: {
+          ...state.typingActivityByConvId,
+          [data.conversationId]: Date.now(),
+        },
+      }));
+      return;
+    }
+
+    set((state) => {
+      const typingActivityByConvId = { ...state.typingActivityByConvId };
+      if (data.isTyping) {
+        typingActivityByConvId[data.conversationId] = Date.now();
+      } else {
+        delete typingActivityByConvId[data.conversationId];
+      }
+
+      const conversations = state.conversations.map((c) =>
+        c.id === data.conversationId
+          ? { ...c, isPeerTyping: data.isTyping }
+          : c
+      );
+
+      let peerTyping = state.peerTyping;
+      if (data.conversationId === state.activeConversationId) {
+        if (!data.isTyping) {
+          peerTyping = null;
+        } else {
+          const displayName = data.user
+            ? `${data.user.firstName ?? ''} ${data.user.lastName ?? ''}`.trim()
+            : undefined;
+          peerTyping = {
+            conversationId: data.conversationId,
+            userId: data.userId,
+            isTyping: true,
+            displayName: displayName || undefined,
+            updatedAt: Date.now(),
+          };
+        }
+      } else if (
+        peerTyping?.conversationId === data.conversationId &&
+        !data.isTyping
+      ) {
+        peerTyping = null;
+      }
+
+      return { conversations, peerTyping, typingActivityByConvId };
+    });
+  },
+  clearPeerTyping: (conversationId) => {
+    const before = get();
+    const conv = before.conversations.find((c) => c.id === conversationId);
+    if (!conv?.isPeerTyping && !before.typingActivityByConvId[conversationId]) {
+      return;
+    }
+    set((state) => {
+      const typingActivityByConvId = { ...state.typingActivityByConvId };
+      delete typingActivityByConvId[conversationId];
+      return {
+        conversations: state.conversations.map((c) =>
+          c.id === conversationId ? { ...c, isPeerTyping: false } : c
+        ),
+        peerTyping:
+          state.peerTyping?.conversationId === conversationId
+            ? null
+            : state.peerTyping,
+        typingActivityByConvId,
+      };
+    });
+  },
+
+  applyReadReceipt: (conversationId, readerId) => {
+    const me = get().currentUser?.id;
+    if (!me || readerId === me) return;
+    set((state) => ({
+      messages: state.messages.map((m) =>
+        m.conversationId === conversationId && m.senderId === me
+          ? { ...m, isRead: true }
+          : m
+      ),
+    }));
+  },
+
+  applyMessageReaction: (payload) => {
+    set((state) => ({
+      messages: state.messages.map((m) => {
+        if (m.id !== payload.messageId) return m;
+        const list = m.reactions ?? [];
+        if (payload.eventType === 'removed') {
+          return {
+            ...m,
+            reactions: removeReactionFromList(list, payload.userId, payload.emoji),
+          };
+        }
+        return {
+          ...m,
+          reactions: upsertReactionInList(list, {
+            emoji: payload.emoji,
+            userId: payload.userId,
+            user: payload.user,
+          }),
+        };
+      }),
+    }));
+  },
+
+  applyMessageDeleted: (payload) => {
+    const me = get().currentUser?.id;
+    set((state) => {
+      if (payload.forEveryone) {
+        return {
+          messages: state.messages.map((m) =>
+            m.id === payload.messageId
+              ? {
+                  ...m,
+                  content: MESSAGE_DELETED_TOMBSTONE,
+                  deletedAt: new Date().toISOString(),
+                  replyTo: undefined,
+                  reactions: undefined,
+                }
+              : m
+          ),
+        };
+      }
+      if (payload.userId === me) {
+        return {
+          messages: state.messages.filter((m) => m.id !== payload.messageId),
+        };
+      }
+      return state;
+    });
+  },
+
+  applyMessageEdited: (payload) => {
+    set((state) => ({
+      messages: state.messages.map((m) =>
+        m.id === payload.messageId
+          ? {
+              ...m,
+              content: payload.content,
+              editedAt: payload.editedAt ?? new Date().toISOString(),
+            }
+          : m
+      ),
+    }));
+  },
+
+  reactToMessage: async (messageId, emoji) => {
+    if (!isAllowedReactionEmoji(emoji)) return false;
+    const me = get().currentUser?.id;
+    if (!me) return false;
+
+    const msg = get().messages.find((m) => m.id === messageId);
+    if (!msg || msg.deletedAt) return false;
+
+    const list = msg.reactions ?? [];
+    const hadSame = list.some((r) => r.userId === me && r.emoji === emoji);
+    const optimisticType = hadSame ? 'removed' : list.some((r) => r.userId === me) ? 'updated' : 'added';
+    get().applyMessageReaction({
+      messageId,
+      conversationId: msg.conversationId,
+      userId: me,
+      emoji,
+      eventType: optimisticType,
+      user: get().currentUser
+        ? {
+            id: get().currentUser!.id,
+            firstName: get().currentUser!.firstName,
+            lastName: get().currentUser!.lastName,
+            avatar: get().currentUser!.avatar,
+          }
+        : undefined,
+    });
+
+    if (tryReactToMessage(messageId, emoji)) return true;
+
+    try {
+      const res = await apiFetch<{ reactions: Message['reactions'] }>(
+        `/api/chat/messages/${messageId}/react`,
+        { method: 'POST', body: JSON.stringify({ emoji }) }
+      );
+      set((state) => ({
+        messages: state.messages.map((m) =>
+          m.id === messageId ? { ...m, reactions: res.reactions } : m
+        ),
+      }));
+      return true;
+    } catch {
+      await get().fetchConversationMessages(msg.conversationId);
+      return false;
+    }
+  },
+
+  deleteChatMessage: async (messageId, forEveryone) => {
+    const me = get().currentUser?.id;
+    if (!me) return false;
+    const msg = get().messages.find((m) => m.id === messageId);
+    if (!msg) return false;
+
+    try {
+      await apiFetch(`/api/chat/messages/${messageId}`, {
+        method: 'DELETE',
+        body: { forEveryone },
+      });
+      get().applyMessageDeleted({
+        messageId,
+        conversationId: msg.conversationId,
+        forEveryone,
+        userId: forEveryone ? undefined : me,
+      });
+      tryDeleteMessage(messageId, forEveryone);
+      return true;
+    } catch (err) {
+      if (err instanceof ApiClientError) throw err;
+      return false;
+    }
+  },
+
+  editChatMessage: async (messageId, content) => {
+    const me = get().currentUser?.id;
+    if (!me) return false;
+    const msg = get().messages.find((m) => m.id === messageId);
+    if (!msg || !canEditChatMessage(msg, me)) return false;
+
+    const trimmed = content.trim();
+    if (!trimmed) return false;
+
+    const editedAt = new Date().toISOString();
+    set((state) => ({
+      messages: state.messages.map((m) =>
+        m.id === messageId ? { ...m, content: trimmed, editedAt } : m
+      ),
+    }));
+
+    if (tryEditMessage(messageId, trimmed)) return true;
+
+    try {
+      await apiFetch(`/api/chat/messages/${messageId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ content: trimmed }),
+      });
+      return true;
+    } catch {
+      await get().fetchConversationMessages(msg.conversationId);
+      return false;
+    }
+  },
 
   // ===========================
   // Chat (API)
@@ -653,15 +1056,24 @@ export const useAppStore = create<AppState>((set, get) => ({
   fetchConversations: async () => {
     try {
       const res = await apiFetch<{ conversations: any[] }>('/api/chat');
-      const mapped: Conversation[] = res.conversations.map((c: any) => ({
-        id: c.id,
-        requestId: c.requestId,
-        otherUser: c.otherUser,
-        lastMessage: c.lastMessage,
-        lastMessageAt: c.lastMessageAt ? String(c.lastMessageAt) : undefined,
-        unreadCount: c.unreadCount ?? 0,
-      }));
-      set({ conversations: mapped });
+      set((state) => {
+        const now = Date.now();
+        const mapped: Conversation[] = res.conversations.map((c: any) => {
+          const typingAt = state.typingActivityByConvId[c.id];
+          const isTyping =
+            typingAt != null && now - typingAt < 3500;
+          return {
+            id: c.id,
+            requestId: c.requestId,
+            otherUser: c.otherUser,
+            lastMessage: c.lastMessage,
+            lastMessageAt: c.lastMessageAt ? String(c.lastMessageAt) : undefined,
+            unreadCount: c.unreadCount ?? 0,
+            isPeerTyping: isTyping,
+          };
+        });
+        return { conversations: mapped };
+      });
     } catch {
       // Silent fail
     }
@@ -680,17 +1092,30 @@ export const useAppStore = create<AppState>((set, get) => ({
         attachmentUrls: m.attachmentUrls ?? [],
         isRead: m.isRead,
         createdAt: String(m.createdAt),
+        clientTempId: m.clientTempId ?? undefined,
+        replyToId: m.replyToId,
+        replyTo: m.replyTo,
+        reactions: m.reactions,
+        deletedAt: m.deletedAt ?? null,
+        editedAt: m.editedAt ?? null,
       }));
       set((state) => {
+        const apiByClientTemp = new Set(
+          mapped.map((m) => m.clientTempId).filter(Boolean) as string[]
+        );
         const byId = new Map<string, Message>();
         for (const m of mapped) byId.set(m.id, m);
         for (const m of state.messages) {
-          if (m.conversationId === id && !byId.has(m.id)) byId.set(m.id, m);
+          if (m.conversationId !== id) continue;
+          if (byId.has(m.id)) continue;
+          if (m.clientTempId && apiByClientTemp.has(m.clientTempId)) continue;
+          byId.set(m.id, m);
         }
-        const merged = [...byId.values()].sort(
+        const forConv = [...byId.values()].sort(
           (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         );
-        return { messages: merged };
+        const otherConv = state.messages.filter((m) => m.conversationId !== id);
+        return { messages: [...otherConv, ...forConv] };
       });
       return mapped;
     } catch {
@@ -700,27 +1125,103 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
   },
 
-  sendMessage: async (conversationId: string, content: string, type = 'TEXT') => {
+  sendMessage: async (
+    conversationId: string,
+    content: string,
+    type = 'TEXT',
+    options?: { replyToId?: string }
+  ) => {
+    const clientTempId =
+      typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `tmp-${Date.now()}`;
+    const userId = get().currentUser?.id;
+    if (!userId) return false;
+
+    const replySource = options?.replyToId
+      ? get().messages.find((m) => m.id === options.replyToId)
+      : undefined;
+    const peer = get().conversations.find((c) => c.id === conversationId)?.otherUser;
+    const replyTo = replySource
+      ? buildReplyToQuote(replySource, userId, peer)
+      : undefined;
+
+    const optimistic: Message = {
+      id: clientTempId,
+      clientTempId,
+      conversationId,
+      senderId: userId,
+      content,
+      type: type as Message['type'],
+      attachmentUrls: [],
+      isRead: false,
+      createdAt: new Date().toISOString(),
+      replyToId: options?.replyToId,
+      replyTo,
+    };
+
+    set((state) => ({ messages: [...state.messages, optimistic] }));
+
+    const preview = chatMessageListPreview(content, type);
+    const sentAt = new Date().toISOString();
+
+    const updateConversationPreview = () =>
+      set((state) => ({
+        conversations: state.conversations.map((c) =>
+          c.id === conversationId
+            ? { ...c, lastMessage: preview, lastMessageAt: sentAt }
+            : c
+        ),
+      }));
+
+    if (isChatSocketConnected()) {
+      const sent = trySendMessageViaSocket(
+        conversationId,
+        content,
+        type,
+        clientTempId,
+        options?.replyToId,
+        replyTo
+      );
+      if (sent) {
+        updateConversationPreview();
+        return true;
+      }
+    }
+
     try {
       const res = await apiFetch<{ message: string; messageData: any }>(`/api/chat/${conversationId}`, {
         method: 'POST',
-        body: JSON.stringify({ content, type }),
+        body: JSON.stringify({
+          content,
+          type,
+          clientTempId,
+          replyToId: options?.replyToId,
+        }),
       });
 
       const msg = res.messageData;
       const newMessage: Message = {
         id: msg.id,
-        conversationId: msg.conversationId,
+        conversationId,
         senderId: msg.senderId,
         content: msg.content,
         type: msg.type ?? 'TEXT',
         attachmentUrls: msg.attachmentUrls ?? [],
         isRead: msg.isRead,
         createdAt: String(msg.createdAt),
+        clientTempId,
+        replyToId: msg.replyToId,
+        replyTo: msg.replyTo,
+        reactions: msg.reactions,
+        deletedAt: msg.deletedAt ?? null,
       };
 
-      // Add message to local state
-      set((state) => ({ messages: [...state.messages, newMessage] }));
+      set((state) => ({
+        messages: state.messages
+          .filter((m) => m.clientTempId !== clientTempId && m.id !== msg.id)
+          .concat(newMessage),
+      }));
 
       // Update conversation's last message
       set((state) => ({
@@ -736,8 +1237,13 @@ export const useAppStore = create<AppState>((set, get) => ({
       }));
 
       return true;
-    } catch (err: any) {
-      set({ error: err.message || 'خطا در ارسال پیام' });
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : 'خطا در ارسال پیام';
+      set((state) => ({
+        error: message,
+        messages: state.messages.filter((m) => m.clientTempId !== clientTempId),
+      }));
       return false;
     }
   },

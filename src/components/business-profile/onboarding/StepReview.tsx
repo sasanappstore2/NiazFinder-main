@@ -46,7 +46,7 @@ export function StepReview({
               <span>{values.description}</span>
             </div>
           )}
-          <div dir="ltr" className="font-mono text-left">
+          <div dir="ltr" className="font-sans tabular-nums text-left">
             <span className="text-muted-foreground">تلفن: </span>
             {isolatePhoneDisplay(values.phone)}
           </div>

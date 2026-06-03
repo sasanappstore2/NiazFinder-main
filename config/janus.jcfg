@@ -1,0 +1,26 @@
+general: {
+  configs_folder = "/usr/local/etc/janus"
+  plugins_folder = "/usr/local/lib/janus/plugins"
+  transports_folder = "/usr/local/lib/janus/transports"
+  log_to_stdout = true
+  debug_level = 4
+  nat_1_1_mapping = "${PUBLIC_IP:-127.0.0.1}"
+}
+
+nat: {
+  stun_server = "stun.l.google.com"
+  stun_port = 19302
+  turn_server = "${TURN_HOST:-127.0.0.1}"
+  turn_port = 443
+  turn_type = "tls"
+  turn_user = "janus"
+  turn_pwd = "${TURN_STATIC_AUTH_SECRET:-change-me-turn-secret}"
+  ice_enforce_list = ""
+  ice_ignore_list = ""
+}
+
+plugins: {
+}
+
+transports: {
+}

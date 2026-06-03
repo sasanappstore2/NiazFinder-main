@@ -9,11 +9,10 @@ import {
   type BusinessCategoryMegaMenuConfig,
 } from '@/components/business-profile/BusinessCategoryMegaMenuPicker';
 import {
-  UNIFIED_BUSINESS_BROWSE_MEGA_MENU_TREE,
-  filterUnifiedBusinessBrowseMegaMenu,
   isUnifiedBrowseNavigableSlug,
   unifiedBrowseSectorColor,
 } from '@/lib/business/unified-business-browse-mega-menu';
+import { useUnifiedBusinessBrowseMegaMenu } from '@/hooks/use-unified-business-browse-menu';
 import { routeBuilder } from '@/config/routes';
 import { parseBrowsePath } from '@/lib/search/browse-path';
 import { usePathname } from 'next/navigation';
@@ -27,18 +26,6 @@ import {
   SheetContent,
   SheetTrigger,
 } from '@/components/ui/sheet';
-
-const BROWSE_MENU_CONFIG: BusinessCategoryMegaMenuConfig = {
-  defaultTree: UNIFIED_BUSINESS_BROWSE_MEGA_MENU_TREE,
-  filterMenu: filterUnifiedBusinessBrowseMegaMenu,
-  getSectorColor: unifiedBrowseSectorColor,
-  maxSelections: 1,
-  selectionNoun: 'دسته',
-  searchPlaceholder: 'جستجوی شغل یا فروشگاه اینترنتی…',
-  emptySearchMessage: 'موردی یافت نشد',
-  mobileRootTitle: 'دسته‌بندی کسب‌وکار',
-  navigateOnLeaf: undefined,
-};
 
 function useBrowseNavigate() {
   const router = useRouter();
@@ -68,8 +55,16 @@ function BrowseMenuPanel({
   navigate: (slug: string) => void;
   layout: 'desktop' | 'mobile';
 }) {
+  const { tree, filterMenu } = useUnifiedBusinessBrowseMegaMenu();
   const config: BusinessCategoryMegaMenuConfig = {
-    ...BROWSE_MENU_CONFIG,
+    defaultTree: tree,
+    filterMenu,
+    getSectorColor: unifiedBrowseSectorColor,
+    maxSelections: 1,
+    selectionNoun: 'دسته',
+    searchPlaceholder: 'جستجوی شغل یا فروشگاه اینترنتی…',
+    emptySearchMessage: 'موردی یافت نشد',
+    mobileRootTitle: 'دسته‌بندی کسب‌وکار',
     navigateOnLeaf: (slug) => {
       navigate(slug);
       onClose();

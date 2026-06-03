@@ -1,7 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  Briefcase,
   Edit3,
   FolderTree,
   GitBranch,
@@ -9,6 +11,7 @@ import {
   Plus,
   Save,
   Search,
+  ShoppingBag,
   Trash2,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -25,6 +28,7 @@ import type { AdminCategory, FlatCategory } from '@/components/admin/modules/sha
 import { formatNumber } from '@/components/admin/modules/shared/formatters';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PersianDigitInput } from '@/components/ui/persian-digit-input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
@@ -187,7 +191,7 @@ export function CategoriesPanel() {
     <AdminPageShell
       section="categories"
       layout="form"
-      description="ساختار خدمات، اسلاگ، آیکن و وضعیت انتشار"
+      description="taxonomy آگهی و درخواست — جدا از دسته‌بندی کسب‌وکار"
       actions={
         <Button
           className="admin-btn-primary h-9 gap-2"
@@ -201,6 +205,28 @@ export function CategoriesPanel() {
         </Button>
       }
     >
+      <div className="mb-4 flex flex-col gap-2 rounded-lg border border-sky-500/30 bg-sky-500/5 p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sky-900 dark:text-sky-100">
+          این بخش فقط <strong>دسته‌بندی نیازها</strong> (آگهی/درخواست) است. برای مشاغل و حرفه‌های کسب‌وکار به بخش جدا بروید.
+        </p>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <Link
+            href="/super-admin/business-occupations"
+            className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-sky-700"
+          >
+            <Briefcase className="size-3.5" />
+            دسته‌بندی کسب‌وکار
+          </Link>
+          <Link
+            href="/super-admin/online-stores"
+            className="inline-flex items-center gap-2 rounded-lg border border-sky-500/40 px-3 py-1.5 text-xs font-semibold text-sky-800 hover:bg-sky-500/10 dark:text-sky-200"
+          >
+            <ShoppingBag className="size-3.5" />
+            فروشگاه اینترنتی
+          </Link>
+        </div>
+      </div>
+
       {isLoading ? (
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-3">
@@ -269,7 +295,12 @@ export function CategoriesPanel() {
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs">ترتیب</Label>
-                    <Input type="number" className="admin-input" value={form.order} onChange={(e) => setForm({ ...form, order: e.target.value })} />
+                    <PersianDigitInput
+                      variant="plain"
+                      className="admin-input"
+                      value={form.order}
+                      onChange={(order) => setForm({ ...form, order })}
+                    />
                   </div>
                 </div>
                 <div className="space-y-1.5">

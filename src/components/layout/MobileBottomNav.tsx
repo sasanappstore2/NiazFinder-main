@@ -1,7 +1,7 @@
 'use client';
 
 import { useNavigate } from '@/hooks/navigation/use-navigate';
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Home, Users, MessageCircle, User, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -46,15 +46,96 @@ function isTabActive(
   return pathname === pathOnly || pathname.startsWith(`${pathOnly}/`);
 }
 
+/** نقطه نئونی فشرده — حداکثر ۴px بیشتر از نقطه تکی (۴px → ۸px برای هر دو) */
+function MobileNavChatAlert({
+  hasUnread,
+  hasMissedCall,
+}: {
+  hasUnread: boolean;
+  hasMissedCall: boolean;
+}) {
+  if (!hasUnread && !hasMissedCall) return null;
+
+  if (hasUnread && hasMissedCall) {
+    return (
+      <span
+        className="pointer-events-none absolute -top-px -inset-e-px size-2 rounded-full ring-1 ring-background/80"
+        style={{
+          background: 'conic-gradient(from 135deg, #34d399 0deg 180deg, #f87171 180deg 360deg)',
+          boxShadow:
+            '0 0 4px rgba(52,211,153,0.95), 0 0 4px rgba(248,113,113,0.95), 0 0 8px rgba(52,211,153,0.35)',
+        }}
+        aria-hidden
+      />
+    );
+  }
+
+  return (
+    <span
+      className={cn(
+        'pointer-events-none absolute -top-px -inset-e-px size-1 rounded-full ring-1 ring-background/70',
+        hasUnread
+          ? 'bg-emerald-400 shadow-[0_0_4px_1px_rgba(52,211,153,0.9)]'
+          : 'bg-rose-500 shadow-[0_0_4px_1px_rgba(248,113,113,0.9)]'
+      )}
+      aria-hidden
+    />
+  );
+}
+
 export function MobileBottomNav() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { isAuthenticated, setAuthModalOpen, conversations } = useAppStore();
+  const { isAuthenticated, setAuthModalOpen, conversations, authToken, currentUser, fetchConversations } =
+    useAppStore();
   const { navigateTo } = useNavigate();
+  const [missedCallCount, setMissedCallCount] = useState(0);
 
   const businessHref = useBrowseUrl({ type: 'business' }, pathname);
 
   const unreadMessages = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
+  const hasUnreadMessages = unreadMessages > 0;
+  const hasMissedCalls = missedCallCount > 0;
+
+  const fetchMissedCalls = useCallback(async () => {
+    if (!isAuthenticated || !authToken || !currentUser?.id) {
+      setMissedCallCount(0);
+      return;
+    }
+    try {
+      const res = await fetch('/api/calls?limit=40', {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      const calls = Array.isArray(data.data) ? data.data : [];
+      const missed = calls.filter(
+        (call: { status: string; calleeId: string }) =>
+          call.status === 'MISSED' && call.calleeId === currentUser.id
+      ).length;
+      setMissedCallCount(missed);
+    } catch {
+      /* ignore */
+    }
+  }, [authToken, currentUser?.id, isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated && authToken) {
+      void fetchConversations();
+    }
+  }, [isAuthenticated, authToken, fetchConversations]);
+
+  useEffect(() => {
+    void fetchMissedCalls();
+    const interval = window.setInterval(() => void fetchMissedCalls(), 60_000);
+    return () => window.clearInterval(interval);
+  }, [fetchMissedCalls]);
+
+  useEffect(() => {
+    if (pathname.startsWith('/chat')) {
+      void fetchMissedCalls();
+    }
+  }, [pathname, fetchMissedCalls]);
 
   const tabHref = (view: AppView) =>
     view === 'browse-specialists' ? businessHref : legacyViewToPath(view);
@@ -69,7 +150,7 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-(--z-mobile-nav) pointer-events-none lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-(--z-mobile-nav) pointer-events-none"
       dir="rtl"
       role="navigation"
       aria-label="ناوبری پایین صفحه"
@@ -92,8 +173,14 @@ export function MobileBottomNav() {
           {TABS.map((tab, index) => {
             const isActive = isTabActive(pathname, tab.view, searchParams);
             const Icon = tab.icon;
-            const showBadge = tab.view === 'messages' && unreadMessages > 0;
+            const isMessagesTab = tab.view === 'messages';
             const href = tabHref(tab.view);
+            const messagesAlertLabel = [
+              hasUnreadMessages ? `${unreadMessages} پیام خوانده‌نشده` : '',
+              hasMissedCalls ? `${missedCallCount} تماس از دست‌رفته` : '',
+            ]
+              .filter(Boolean)
+              .join('، ');
 
             return (
               <React.Fragment key={tab.view}>
@@ -139,13 +226,19 @@ export function MobileBottomNav() {
                       : 'text-muted-foreground active:bg-accent/60'
                   )}
                   aria-current={isActive ? 'page' : undefined}
+                  aria-label={
+                    isMessagesTab && messagesAlertLabel
+                      ? `${tab.label} (${messagesAlertLabel})`
+                      : tab.label
+                  }
                 >
                   <span className="relative flex items-center justify-center size-8">
                     <Icon className="size-4.5" strokeWidth={isActive ? 2.25 : 2} aria-hidden />
-                    {showBadge && (
-                      <span className="absolute -top-0.5 -inset-e-0.5 flex min-w-3.5 h-3.5 items-center justify-center rounded-full bg-destructive px-0.5 text-[9px] font-bold text-white">
-                        {unreadMessages > 9 ? '9+' : unreadMessages}
-                      </span>
+                    {isMessagesTab && (
+                      <MobileNavChatAlert
+                        hasUnread={hasUnreadMessages}
+                        hasMissedCall={hasMissedCalls}
+                      />
                     )}
                   </span>
                   <span className="truncate max-w-full px-0.5">

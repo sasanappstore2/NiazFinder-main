@@ -18,6 +18,7 @@ import { ChatVoiceMessage } from '@/components/chat/ChatVoiceMessage';
 interface ChatMessageContentProps {
   message: Message;
   isOwn: boolean;
+  textClassName?: string;
   /** For IMAGE bubbles: time + read ticks rendered on the photo. */
   imageMeta?: { timeLabel: string; isRead?: boolean };
   /** For VOICE bubbles: time + read ticks below the player. */
@@ -28,6 +29,7 @@ interface ChatMessageContentProps {
 export function ChatMessageContent({
   message,
   isOwn,
+  textClassName = 'chat-message-text',
   imageMeta,
   voiceMeta,
   onImageOpen,
@@ -110,5 +112,5 @@ export function ChatMessageContent({
     }
   }
 
-  return <p className="text-sm leading-7 whitespace-pre-wrap">{message.content}</p>;
+  return <p className={textClassName}>{message.content}</p>;
 }

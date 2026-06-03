@@ -1,0 +1,48 @@
+:root {
+  --chat-phi: 1.618;
+  --chat-bubble-radius: 1.125rem;
+  --chat-bubble-radius-tail: 0.25rem;
+  --chat-bubble-max: min(78%, 22rem);
+  --chat-bubble-min: 2.75rem;
+  --chat-bubble-pad-x: 0.875rem;
+  --chat-bubble-pad-y: 0.5rem;
+  --chat-message-gap: 0.5rem;
+  --chat-group-break: 1.125rem;
+  --chat-stack-tight: 0.125rem;
+  --chat-thread-pad: 1rem 1.125rem 1.25rem;
+  --chat-sent-bg: var(--primary);
+  --chat-sent-fg: var(--primary-foreground);
+  --chat-sent-shadow: 0 1px 2px oklch(0.4 0.08 165 / 0.12);
+  --chat-received-bg: oklch(0.96 0.006 155);
+  --chat-received-fg: var(--foreground);
+  --chat-received-border: oklch(0.88 0.01 155);
+  --chat-received-shadow: 0 1px 2px oklch(0.2 0.02 160 / 0.06);
+  --chat-composer-radius: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --chat-thread-pad: 1.25rem 1.5rem 1.5rem;
+    --chat-message-gap: 0.625rem;
+  }
+}
+
+.dark {
+  --chat-received-bg: oklch(0.24 0.012 165);
+  --chat-received-fg: oklch(0.94 0.006 155);
+  --chat-received-border: oklch(1 0 0 / 7%);
+  --chat-received-shadow: 0 1px 3px oklch(0 0 0 / 0.35);
+  --chat-sent-bg: oklch(0.58 0.16 165);
+  --chat-sent-fg: oklch(0.12 0.02 165);
+  --chat-sent-shadow: 0 2px 8px oklch(0.45 0.14 165 / 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-gesture-surface {
+    transform: none !important;
+  }
+
+  .chat-message {
+    animation: none !important;
+  }
+}

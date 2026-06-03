@@ -67,7 +67,7 @@ export function CompanyNeedsSection({ business }: SectionProps) {
           در حال بارگذاری...
         </div>
       ) : needs.length === 0 ? (
-        <div className="rounded-2xl border border-dashed bg-muted/30 px-6 py-12 text-center">
+        <div className="profile-surface rounded-2xl border border-dashed px-6 py-12 text-center">
           <ClipboardList className="mx-auto mb-3 size-10 text-muted-foreground/50" />
           <p className="text-sm text-muted-foreground">هنوز نیازی ثبت نشده است.</p>
         </div>
@@ -77,7 +77,7 @@ export function CompanyNeedsSection({ business }: SectionProps) {
             <li key={need.id}>
               <Link
                 href={routeBuilder.listing(need.id, need.title)}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-xl border bg-card p-4 transition hover:border-primary/30 hover:bg-muted/30"
+                className="profile-surface flex flex-wrap items-center justify-between gap-2 rounded-xl p-4 transition hover:border-primary/30 hover:bg-muted/30"
               >
                 <div className="min-w-0">
                   <p className="font-medium">{need.title}</p>

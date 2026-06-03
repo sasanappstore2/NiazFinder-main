@@ -1,0 +1,23 @@
+# Janus + coturn for Iran-friendly voice (TURNS:443 TCP)
+# Usage: docker compose -f docker-compose.voice.yml --env-file .env.voice up -d
+
+services:
+  coturn:
+    image: coturn/coturn:latest
+    network_mode: host
+    volumes:
+      - ./config/turnserver.conf:/etc/coturn/turnserver.conf:ro
+      - ./config/certs:/etc/coturn/certs:ro
+    command: ["-c", "/etc/coturn/turnserver.conf"]
+
+  janus:
+    image: canyan/janus-gateway:latest
+    ports:
+      - "8188:8188"
+      - "10000-10050:10000-10050/udp"
+    environment:
+      JANUS_TRANSPORT_WS: "true"
+    volumes:
+      - ./config/janus.jcfg:/usr/local/etc/janus/janus.jcfg:ro
+    depends_on:
+      - coturn

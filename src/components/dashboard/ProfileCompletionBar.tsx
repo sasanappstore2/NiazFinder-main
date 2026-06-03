@@ -16,6 +16,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
+import { toPersianDigits } from '@/lib/format/digits';
 
 interface CompletionItem {
   id: string;
@@ -68,11 +69,6 @@ const completionItems: CompletionItem[] = [
     icon: <UserCheck className="size-4" />,
   },
 ];
-
-function toPersianDigits(num: number): string {
-  const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-  return String(num).replace(/\d/g, (d) => persianDigits[parseInt(d)]);
-}
 
 function CircularProgress({
   percentage,

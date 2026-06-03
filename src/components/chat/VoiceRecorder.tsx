@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, SendHorizontal, X, Pause, Play, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { toPersianDigits } from '@/lib/format/digits';
 
 export type VoiceRecorderPhase = 'idle' | 'recording' | 'preview';
 export type VoiceRecorderError = 'permission' | 'unsupported' | 'too_short' | 'unknown';
@@ -33,9 +34,6 @@ interface VoiceRecorderProps {
 
 const MAX_RECORD_SECONDS = 180;
 const MIN_RECORD_SECONDS = 0.4;
-
-const toPersianDigits = (str: string): string =>
-  str.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d, 10)]);
 
 const formatTime = (seconds: number): string => {
   const mins = Math.floor(seconds / 60)

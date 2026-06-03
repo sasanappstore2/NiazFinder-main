@@ -4,6 +4,7 @@ import tailwindcssAnimate from "tailwindcss-animate";
 const config: Config = {
     darkMode: "class",
     content: [
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
@@ -64,7 +65,20 @@ const config: Config = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+  		keyframes: {
+  			aurora: {
+  				from: {
+  					backgroundPosition: '50% 50%, 50% 50%',
+  				},
+  				to: {
+  					backgroundPosition: '350% 50%, 350% 50%',
+  				},
+  			},
+  		},
+  		animation: {
+  			aurora: 'aurora 60s linear infinite',
+  		},
   	}
   },
   plugins: [tailwindcssAnimate],

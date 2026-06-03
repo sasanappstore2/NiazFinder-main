@@ -8,26 +8,26 @@ interface ChatBubbleProps {
   className?: string;
 }
 
+/** Intake chat — shares main chat thread alignment tokens */
 export function ChatBubble({ role, children, className }: ChatBubbleProps) {
   const isUser = role === 'user';
   return (
+    <div className={cn('chat-thread', className)} dir="rtl">
     <div
       className={cn(
-        'flex w-full',
-        isUser ? 'justify-start' : 'justify-end',
-        className
+        'chat-thread-row',
+        isUser ? 'chat-thread-row--sent' : 'chat-thread-row--received'
       )}
     >
       <div
         className={cn(
-          'max-w-[88%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
-          isUser
-            ? 'bg-primary text-primary-foreground rounded-br-md'
-            : 'bg-muted text-foreground rounded-bl-md'
+          'chat-bubble',
+          isUser ? 'chat-bubble--sent chat-bubble--single' : 'chat-bubble--received chat-bubble--single'
         )}
       >
         {children}
       </div>
+    </div>
     </div>
   );
 }

@@ -48,6 +48,7 @@ import {
 import { slugifyTitle } from '@/lib/seo/slug';
 import {
   type BrowseMarket,
+  isMarketplaceLocationSegment,
   marketFromListingType,
   marketplaceLocationPrefix,
   MARKET_PREFIX,
@@ -455,4 +456,22 @@ const BUSINESS_PRODUCT_DETAIL_PATH = /^\/b\/[^/]+\/p\/[^/]+\/?$/;
 
 export function isBusinessProductDetailPath(pathname: string): boolean {
   return BUSINESS_PRODUCT_DETAIL_PATH.test(pathname);
+}
+
+const BUSINESS_PUBLIC_PROFILE_PATH = /^\/b\/[^/]+\/?$/;
+
+/** Public business profile (`/b/{slug}`), not product detail. */
+export function isBusinessPublicProfilePath(pathname: string): boolean {
+  return BUSINESS_PUBLIC_PROFILE_PATH.test(pathname);
+}
+
+/** Profile pages that use full-bleed brand aura (excludes marketplace + product detail). */
+export function isBusinessProfileAuraPath(pathname: string): boolean {
+  if (isBusinessProductDetailPath(pathname)) return false;
+  const parts = pathname.split('/').filter(Boolean);
+  if (parts[0] === 'b' && parts.length === 2) {
+    if (isMarketplaceLocationSegment(parts[1]!)) return false;
+    return true;
+  }
+  return parts.length === 3;
 }

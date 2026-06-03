@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requirePermission } from '@/lib/rbac/authz';
+import { adminPaginationMeta, parseAdminListQuery } from '@/lib/admin/list-query';
+import type { Prisma } from '@prisma/client';
 
 export const runtime = 'nodejs';
 
@@ -9,22 +11,38 @@ export async function GET(request: NextRequest) {
     const authz = await requirePermission(request, 'comms:messages:read');
     if (!authz.ok) return authz.response;
 
+    const { page, limit, skip, q } = parseAdminListQuery(request);
     const { searchParams } = new URL(request.url);
-    const q = searchParams.get('q')?.trim() || '';
-    const page = Math.max(Number(searchParams.get('page') || 1), 1);
-    const limit = Math.min(Math.max(Number(searchParams.get('limit') || 20), 1), 50);
-    const skip = (page - 1) * limit;
+    const userId = searchParams.get('userId')?.trim() || '';
+    const from = searchParams.get('from')?.trim() || '';
+    const to = searchParams.get('to')?.trim() || '';
 
-    const where: any = {};
-    if (q) {
-      where.OR = [
-        { lastMessage: { contains: q } },
-        { user1: { phone: { contains: q } } },
-        { user2: { phone: { contains: q } } },
-        { user1: { displayName: { contains: q } } },
-        { user2: { displayName: { contains: q } } },
-      ];
+    const and: Prisma.ConversationWhereInput[] = [];
+
+    if (userId) {
+      and.push({ OR: [{ userId1: userId }, { userId2: userId }] });
     }
+    if (from || to) {
+      and.push({
+        lastMessageAt: {
+          ...(from ? { gte: new Date(from) } : {}),
+          ...(to ? { lte: new Date(to) } : {}),
+        },
+      });
+    }
+    if (q) {
+      and.push({
+        OR: [
+          { lastMessage: { contains: q } },
+          { user1: { phone: { contains: q } } },
+          { user2: { phone: { contains: q } } },
+          { user1: { displayName: { contains: q } } },
+          { user2: { displayName: { contains: q } } },
+        ],
+      });
+    }
+
+    const where: Prisma.ConversationWhereInput = and.length > 0 ? { AND: and } : {};
 
     const [total, conversations] = await Promise.all([
       db.conversation.count({ where }),
@@ -49,13 +67,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       conversations: conversations.map((c) => ({
         ...c,
+        lastMessageAt: c.lastMessageAt?.toISOString() ?? null,
+        createdAt: c.createdAt.toISOString(),
         messageCount: c._count.messages,
+        _count: undefined,
       })),
-      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      pagination: adminPaginationMeta(page, limit, total),
     });
   } catch (error) {
     console.error('Chat review conversations GET error:', error);
     return NextResponse.json({ error: 'خطای سرور رخ داده است' }, { status: 500 });
   }
 }
-

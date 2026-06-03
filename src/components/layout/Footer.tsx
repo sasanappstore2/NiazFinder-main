@@ -7,25 +7,18 @@ import {
   Mail,
   Phone,
   MapPin,
-  Check,
   Instagram,
   Twitter,
   Linkedin,
   ExternalLink,
   ArrowUp,
-  Sparkles,
-  Loader2,
-  AlertCircle,
-  CheckCircle2,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
-import { useAppStore } from '@/lib/store';
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
 import type { AppView } from '@/lib/types';
 import { legacyViewToPath, routeBuilder } from '@/config/routes';
 
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
 // ============ Footer Link ============
@@ -111,13 +104,8 @@ interface FooterProps {
 
 export function Footer({ compact = false }: FooterProps) {
   const { navigateTo } = useNavigate();
-  const [email, setEmail] = useState('');
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isSubscribing, setIsSubscribing] = useState(false);
-  const [subscribeError, setSubscribeError] = useState('');
   const [showBackToTop, setShowBackToTop] = useState(false);
 
-  // Back to top visibility
   useEffect(() => {
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 400);
@@ -134,40 +122,6 @@ export function Footer({ compact = false }: FooterProps) {
     }
   };
 
-  const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubscribeError('');
-    if (!email.trim()) return;
-    if (!isValidEmail(email)) {
-      setSubscribeError('لطفاً ایمیل معتبر وارد کنید');
-      return;
-    }
-    // Check localStorage for duplicates
-    try {
-      const stored = JSON.parse(localStorage.getItem('nf_newsletters') || '[]');
-      if ((stored as string[]).includes(email.trim().toLowerCase())) {
-        setSubscribeError('این ایمیل قبلاً ثبت شده است');
-        return;
-      }
-    } catch {}
-    // Simulate loading
-    setIsSubscribing(true);
-    await new Promise((r) => setTimeout(r, 800));
-    try {
-      const stored: string[] = JSON.parse(localStorage.getItem('nf_newsletters') || '[]');
-      stored.push(email.trim().toLowerCase());
-      localStorage.setItem('nf_newsletters', JSON.stringify(stored));
-      setIsSubscribed(true);
-      setEmail('');
-      setTimeout(() => setIsSubscribed(false), 4000);
-    } catch {
-      setSubscribeError('خطا در ثبت ایمیل. لطفاً دوباره تلاش کنید');
-    }
-    setIsSubscribing(false);
-  };
-
   const currentYear = new Date().getFullYear();
 
   // ============ Compact Footer (non-home pages) ============
@@ -176,7 +130,6 @@ export function Footer({ compact = false }: FooterProps) {
       <footer id="footer" className="footer-with-mobile-nav bg-card/30" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
         <div className="page-container py-4">
           <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-            {/* Brand */}
             <div className="flex items-center gap-2" itemScope itemType="https://schema.org/Organization">
               <LocateFixed className="size-4 text-primary" />
               <span className="text-sm font-bold text-primary" itemProp="name">
@@ -185,7 +138,6 @@ export function Footer({ compact = false }: FooterProps) {
               <meta itemProp="url" content="/" />
             </div>
 
-            {/* Quick links */}
             <nav className="flex items-center gap-4" aria-label="پاورقی" role="navigation">
               <a
                 href={routeBuilder.home()}
@@ -227,14 +179,12 @@ export function Footer({ compact = false }: FooterProps) {
               </a>
             </nav>
 
-            {/* Copyright */}
             <p className="text-xs text-muted-foreground">
               &copy; {currentYear} {SITE_NAME}
             </p>
           </div>
         </div>
 
-        {/* Noscript fallback for crawlers */}
         <noscript>
           <div className="page-container py-3">
             <nav className="flex flex-wrap items-center justify-center gap-4 text-xs" aria-label="لینک‌های پایین صفحه">
@@ -253,151 +203,77 @@ export function Footer({ compact = false }: FooterProps) {
   // ============ Full Footer (home page) ============
   return (
     <footer id="footer" className="footer-with-mobile-nav mt-auto footer-glass footer-wave" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
-      {/* Gradient top decoration line */}
       <div className="gradient-line" />
-      {/* Newsletter Section */}
-      <div className="border-b border-border/30">
-        <div className="page-container py-10">
-          <div className="rounded-xl p-6 md:p-8 bg-muted/30">
-            <div className="flex flex-col items-center gap-4 text-center md:flex-row md:justify-between md:text-start">
-              <div className="max-w-md">
-                <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
-                  <Sparkles className="size-4 text-emerald-500" aria-hidden="true" />
-                  <h3 className="text-lg font-bold text-foreground">
-                    از آخرین خدمات و تخفیف‌ها باخبر شوید
-                  </h3>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  ایمیل خود را وارد کنید تا از جدیدترین اخبار و فرصت‌های ویژه
-                  مطلع شوید.
-                </p>
-              </div>
-              <form
-                onSubmit={handleSubscribe}
-                className="flex flex-col gap-2 w-full max-w-sm"
-                aria-label="عضویت در خبرنامه"
-              >
-                <div className="flex gap-2">
-                  <div className="newsletter-input-gradient rounded-lg flex-1">
-                    <input
-                      type="email"
-                      placeholder="ایمیل شما..."
-                      value={email}
-                      onChange={(e) => { setEmail(e.target.value); setSubscribeError(''); }}
-                      className="newsletter-input h-[40px] w-full rounded-lg px-3 text-sm"
-                      dir="ltr"
-                      aria-label="آدرس ایمیل"
-                      required
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    size="default"
-                    disabled={isSubscribing}
-                    className={cn(
-                      'h-[40px] px-5 transition-all duration-200 hover:shadow-[0_0_12px_oklch(0.51_0.12_165/0.25)]',
-                      isSubscribed && 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-[0_0_12px_oklch(0.51_0.12_165/0.3)] newsletter-success',
-                      isSubscribing && 'opacity-80 pointer-events-none',
-                    )}
-                  >
-                    {isSubscribing ? (
-                      <span className="flex items-center gap-2">
-                        <Loader2 className="size-4 animate-spin" />
-                        <span className="sr-only">در حال ثبت...</span>
-                      </span>
-                    ) : isSubscribed ? (
-                      <span className="flex items-center gap-2">
-                        <CheckCircle2 className="size-4" />
-                        عضویت موفق
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-2">
-                        <Mail className="size-4" />
-                        عضویت
-                      </span>
-                    )}
-                  </Button>
-                </div>
-                {subscribeError && (
-                  <div className="flex items-center gap-1.5 text-caption text-red-500 dark:text-red-400">
-                    <AlertCircle className="size-3 shrink-0" />
-                    {subscribeError}
-                  </div>
-                )}
-                {isSubscribed && (
-                  <div className="flex items-center gap-1.5 text-caption text-emerald-600 dark:text-emerald-400 animate-fade-in-up">
-                    <CheckCircle2 className="size-3 shrink-0" />
-                    عضویت شما با موفقیت انجام شد!
-                  </div>
-                )}
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Decorative gradient arc */}
-      <div className="absolute inset-x-0 top-0 h-24 bg-linear-to-b from-emerald-50/40 to-transparent dark:from-emerald-950/20 pointer-events-none" aria-hidden="true" />
-
-      {/* Main Footer */}
-      <div id="footer-contact" className="page-container py-12">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand Section */}
-          <div id="contact" className="sm:col-span-2 lg:col-span-1" itemScope itemType="https://schema.org/Organization">
+      <div id="footer-contact" className="page-container py-6 sm:py-8">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-5 sm:gap-6 lg:grid-cols-4 lg:gap-8">
+          {/* Brand — full width on mobile */}
+          <div
+            id="contact"
+            className="col-span-2 lg:col-span-1"
+            itemScope
+            itemType="https://schema.org/Organization"
+          >
             <div className="flex items-center gap-2">
-              <LocateFixed className="size-[24px] text-primary" />
-              <span className="text-xl font-bold text-primary" itemProp="name">
+              <LocateFixed className="size-5 text-primary sm:size-6" />
+              <span className="text-lg font-bold text-primary sm:text-xl" itemProp="name">
                 {SITE_NAME}
               </span>
               <meta itemProp="url" content="/" />
               <meta itemProp="description" content={SITE_DESCRIPTION} />
             </div>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground" itemProp="description">
+            <p
+              className="mt-2 line-clamp-2 max-w-xs text-xs leading-relaxed text-muted-foreground sm:text-sm"
+              itemProp="description"
+            >
               {SITE_DESCRIPTION}
             </p>
 
-            {/* Social Links */}
-            <div className="mt-6 flex items-center gap-3">
-              {SOCIAL_LINKS.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={social.label}
-                  title={social.title}
-                  className="flex size-9 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-all duration-200 hover:scale-110 hover:border-primary/30 hover:bg-linear-to-br hover:from-primary/15 hover:to-emerald-500/10 hover:text-primary hover:shadow-[0_0_12px_oklch(0.51_0.12_165/0.15)] hover:ring-2 hover:ring-primary/20"
-                >
-                  <social.icon className="size-4" />
-                </a>
-              ))}
-            </div>
-
-            {/* Contact Info */}
-            <div className="mt-6 flex flex-col gap-3" itemScope itemType="https://schema.org/ContactPoint">
-              {CONTACT_INFO.map((contact) => (
-                <a
-                  key={contact.label}
-                  href={contact.href}
-                  title={contact.title}
-                  className="flex items-center gap-2.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-primary"
-                >
-                  <contact.icon className="size-4 shrink-0 text-primary/70" />
-                  <span>{contact.value}</span>
-                </a>
-              ))}
+            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+              <div className="flex items-center gap-2">
+                {SOCIAL_LINKS.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.label}
+                    title={social.title}
+                    className="flex size-8 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-colors duration-200 hover:border-primary/30 hover:bg-primary/10 hover:text-primary"
+                  >
+                    <social.icon className="size-3.5" />
+                  </a>
+                ))}
+              </div>
+              <div
+                className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground"
+                itemScope
+                itemType="https://schema.org/ContactPoint"
+              >
+                {CONTACT_INFO.map((contact) => (
+                  <a
+                    key={contact.label}
+                    href={contact.href}
+                    title={contact.title}
+                    className="inline-flex items-center gap-1 transition-colors duration-200 hover:text-primary"
+                  >
+                    <contact.icon className="size-3.5 shrink-0 text-primary/70" />
+                    <span className="truncate max-w-[140px] sm:max-w-none">{contact.value}</span>
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Link Columns */}
+          {/* Link columns — 2×2 on mobile */}
           {FOOTER_COLUMNS.map((column) => (
             <div key={column.title}>
-              <h4 className="mb-4 text-sm font-semibold text-foreground">
+              <h4 className="mb-2 text-xs font-semibold text-foreground sm:text-sm">
                 {column.title}
               </h4>
-              <ul className="flex flex-col gap-2.5" role="list">
+              <ul className="flex flex-col gap-1.5" role="list">
                 {column.links.map((link) => (
-                  <li key={link.label} className="transition-all duration-150 hover:border-s-2 hover:border-primary hover:ps-3">
+                  <li key={link.label}>
                     {link.view ? (
                       <a
                         href={legacyViewToPath(link.view)}
@@ -405,7 +281,7 @@ export function Footer({ compact = false }: FooterProps) {
                         data-href={legacyViewToPath(link.view)}
                         title={link.title}
                         onClick={(e) => handleLinkClick(e, link)}
-                        className="flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 hover:text-primary link-underline-animated"
+                        className="flex items-center gap-1 text-xs text-muted-foreground transition-colors duration-150 hover:text-primary sm:text-sm link-underline-animated"
                       >
                         {link.label}
                       </a>
@@ -414,7 +290,7 @@ export function Footer({ compact = false }: FooterProps) {
                         href={link.href ?? '#'}
                         data-href={link.href ?? '#'}
                         title={link.title}
-                        className="flex items-center gap-1 text-sm text-muted-foreground transition-colors duration-150 hover:text-primary link-underline-animated"
+                        className="flex items-center gap-1 text-xs text-muted-foreground transition-colors duration-150 hover:text-primary sm:text-sm link-underline-animated"
                         target={
                           (link.href ?? '').startsWith('http') ? '_blank' : undefined
                         }
@@ -425,7 +301,9 @@ export function Footer({ compact = false }: FooterProps) {
                         }
                       >
                         {link.label}
-                        <ExternalLink className="size-3" />
+                        {(link.href ?? '').startsWith('http') && (
+                          <ExternalLink className="size-3" />
+                        )}
                       </a>
                     )}
                   </li>
@@ -436,24 +314,19 @@ export function Footer({ compact = false }: FooterProps) {
         </div>
       </div>
 
-      {/* Back to Top Button (home page only) */}
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className={cn(
-          'back-to-top-btn',
-          showBackToTop && 'visible',
-        )}
+        className={cn('back-to-top-btn', showBackToTop && 'visible')}
         aria-label="بازگشت به بالای صفحه"
         title="بازگشت به بالای صفحه"
       >
         <ArrowUp className="size-5" />
       </button>
 
-      {/* Bottom Bar */}
       <Separator />
-      <div className="page-container py-5">
-        <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+      <div className="page-container py-3 sm:py-4">
+        <div className="flex flex-col items-center justify-between gap-2 sm:flex-row sm:gap-3">
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground/70">
             <span className="inline-block size-1.5 rotate-45 rounded-[1px] bg-primary/60" aria-hidden="true" />
             &copy; {currentYear} {SITE_NAME}. تمامی حقوق محفوظ است.
@@ -482,7 +355,6 @@ export function Footer({ compact = false }: FooterProps) {
         </div>
       </div>
 
-      {/* Noscript fallback for crawlers */}
       <noscript>
         <div className="page-container border-t border-border py-6">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">

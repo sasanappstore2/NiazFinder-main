@@ -1,9 +1,21 @@
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import { createAdapter } from '@socket.io/redis-adapter';
+import Redis from 'ioredis';
 import { db } from './lib/prisma';
+import { resolveUserFromSocketAuth } from './lib/auth';
+import { startCommRedisSubscriber, stopCommRedisSubscriber } from './lib/redis';
+import {
+  buildInstantBroadcast,
+  fanoutMessageNew,
+  persistMessageSend,
+  replyInfoFromClientPayload,
+  resolveParticipants,
+} from './lib/message-dispatch';
 import type {
   AuthenticatedSocket,
   SendMessagePayload,
+  MessagePreviewPayload,
   TypingPayload,
   MarkReadPayload,
   MessageBroadcast,
@@ -21,6 +33,20 @@ const PORT = Number(process.env.PORT) || 3004;
 const onlineUsers = new Map<string, Set<string>>(); // userId -> Set<socketId>
 const typingUsers = new Map<string, Set<string>>();  // conversationId -> Set<userId>
 const typingTimeouts = new Map<string, NodeJS.Timeout>(); // "userId:conversationId" -> timeout
+const sendRateBuckets = new Map<string, { count: number; resetAt: number }>();
+const SEND_RATE_LIMIT = Number(process.env.CHAT_SEND_RATE_PER_MIN || 60);
+
+function allowSend(userId: string): boolean {
+  const now = Date.now();
+  const bucket = sendRateBuckets.get(userId);
+  if (!bucket || now > bucket.resetAt) {
+    sendRateBuckets.set(userId, { count: 1, resetAt: now + 60_000 });
+    return true;
+  }
+  if (bucket.count >= SEND_RATE_LIMIT) return false;
+  bucket.count += 1;
+  return true;
+}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────
 
@@ -55,45 +81,67 @@ function invalidateConversationCache(conversationId: string) {
 // ─── Auth Middleware ─────────────────────────────────────────────────────
 
 function authenticateSocket(socket: AuthenticatedSocket, next: (err?: Error) => void) {
-  const token = socket.handshake.auth.token;
-  const userId = socket.handshake.auth.userId;
-
-  if (!userId || typeof userId !== 'string') {
-    return next(new Error('Authentication required: userId is required'));
-  }
-
-  // Validate user exists in database
-  db.user.findUnique({
-    where: { id: userId },
-    select: { id: true, isActive: true, isBanned: true, firstName: true, lastName: true, avatar: true },
-  }).then(user => {
-    if (!user) {
-      return next(new Error('User not found'));
-    }
-    if (!user.isActive || user.isBanned) {
-      return next(new Error('User account is not active'));
-    }
-
-    socket.data.userId = userId;
-    socket.data.user = {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      avatar: user.avatar,
-    };
-    next();
-  }).catch(err => {
-    console.error('Auth error:', err);
-    next(new Error('Authentication failed'));
-  });
+  resolveUserFromSocketAuth(socket.handshake.auth)
+    .then((user) => {
+      if (!user) {
+        return next(new Error('Authentication required: valid token is required'));
+      }
+      socket.data.userId = user.id;
+      socket.data.user = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        avatar: user.avatar,
+      };
+      next();
+    })
+    .catch((err) => {
+      console.error('Auth error:', err);
+      next(new Error('Authentication failed'));
+    });
 }
 
 // ─── Socket.io Server ────────────────────────────────────────────────────
 
+let dispatchCommEvent: (type: string, payload: Record<string, unknown>) => void = () => {};
+
 const httpServer = createServer((req, res) => {
+  if (req.url === '/internal/fanout' && req.method === 'POST') {
+    const chunks: Buffer[] = [];
+    req.on('data', (chunk) => chunks.push(chunk));
+    req.on('end', () => {
+      try {
+        const parsed = JSON.parse(Buffer.concat(chunks).toString('utf8')) as {
+          type?: string;
+          payload?: Record<string, unknown>;
+        };
+        if (parsed.type && parsed.payload) {
+          dispatchCommEvent(parsed.type, parsed.payload);
+        }
+        res.writeHead(204);
+        res.end();
+      } catch {
+        res.writeHead(400);
+        res.end();
+      }
+    });
+    return;
+  }
   if (req.url === '/health' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ ok: true, service: 'chat-service', port: PORT }));
+    return;
+  }
+  if (req.url === '/metrics' && req.method === 'GET') {
+    const activeSockets = [...onlineUsers.values()].reduce((n, set) => n + set.size, 0);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(
+      JSON.stringify({
+        onlineUsers: onlineUsers.size,
+        activeSockets,
+        typingRooms: typingUsers.size,
+      })
+    );
     return;
   }
   res.writeHead(404, { 'Content-Type': 'application/json' });
@@ -115,6 +163,135 @@ const io = new Server(httpServer, {
 });
 
 io.use(authenticateSocket);
+
+async function setupRedisScaling() {
+  const url = process.env.REDIS_URL?.trim();
+  if (!url) return;
+  try {
+    const pub = new Redis(url, { maxRetriesPerRequest: null });
+    const sub = pub.duplicate();
+    io.adapter(createAdapter(pub, sub));
+    console.log('[chat-service] Socket.io Redis adapter enabled');
+  } catch (e) {
+    console.warn('[chat-service] Redis adapter failed:', e);
+  }
+}
+
+void setupRedisScaling();
+
+function handleCommRedisEvent(type: string, payload: Record<string, unknown>) {
+  if (type === 'message:new') {
+    const p = payload as MessageBroadcast;
+    io.to(`conv:${p.conversationId}`).emit('message:new', p);
+    return;
+  }
+  if (type === 'message:read-receipt') {
+    const conversationId = payload.conversationId as string;
+    const notifyUserId = payload.notifyUserId as string | undefined;
+    if (notifyUserId) {
+      io.to(`user:${notifyUserId}`).emit('message:read-receipt', payload);
+    }
+    if (conversationId) {
+      io.to(`conv:${conversationId}`).emit('message:read-receipt', payload);
+    }
+    return;
+  }
+  if (type === 'typing') {
+    const p = payload as {
+      conversationId?: string;
+      userId?: string;
+      targetUserId?: string;
+      isTyping?: boolean;
+      user?: { firstName?: string; lastName?: string };
+    };
+    if (!p.conversationId || !p.userId) return;
+    const event = {
+      conversationId: p.conversationId,
+      userId: p.userId,
+      user: {
+        id: p.userId,
+        firstName: p.user?.firstName ?? '',
+        lastName: p.user?.lastName ?? '',
+      },
+      isTyping: Boolean(p.isTyping),
+    };
+    if (p.targetUserId) {
+      io.to(`user:${p.targetUserId}`).emit('typing', event);
+    }
+    io.to(`conv:${p.conversationId}`).emit('typing', event);
+    return;
+  }
+  if (type === 'message:react') {
+    const conversationId = payload.conversationId as string;
+    if (conversationId) {
+      io.to(`conv:${conversationId}`).emit('message:react', payload);
+    }
+    return;
+  }
+  if (type === 'message:edit') {
+    const conversationId = payload.conversationId as string;
+    if (conversationId) {
+      io.to(`conv:${conversationId}`).emit('message:edited', payload);
+    }
+    return;
+  }
+  if (type === 'message:delete') {
+    const conversationId = payload.conversationId as string;
+    if (conversationId) {
+      io.to(`conv:${conversationId}`).emit('message:deleted', payload);
+    }
+    return;
+  }
+  if (type === 'call:invite') {
+    const calleeId = payload.calleeId as string | undefined;
+    const callId = payload.callId as string | undefined;
+    if (!calleeId || !callId) return;
+    io.to(`user:${calleeId}`).emit('call:invite', {
+      callId,
+      callerId: payload.callerId,
+      sdpOffer: payload.sdpOffer,
+      from: payload.from,
+    });
+    return;
+  }
+  if (type === 'call:ringing') {
+    const calleeId = payload.calleeId as string | undefined;
+    const callId = payload.callId as string | undefined;
+    if (!calleeId || !callId) return;
+    io.to(`user:${calleeId}`).emit('call:ringing', {
+      callId,
+      callerId: payload.callerId,
+      from: payload.from,
+    });
+    return;
+  }
+  if (type === 'call:reject') {
+    const targetUserId = payload.targetUserId as string | undefined;
+    const callId = payload.callId as string | undefined;
+    if (!targetUserId || !callId) return;
+    io.to(`user:${targetUserId}`).emit('call:reject', { callId });
+    return;
+  }
+  if (type === 'call:accepted') {
+    const targetUserId = payload.targetUserId as string | undefined;
+    const callId = payload.callId as string | undefined;
+    if (!targetUserId || !callId) return;
+    io.to(`user:${targetUserId}`).emit('call:accepted', {
+      callId,
+      sdpAnswer: payload.sdpAnswer,
+    });
+    return;
+  }
+  if (type === 'call:hangup') {
+    const targetUserId = payload.targetUserId as string | undefined;
+    const callId = payload.callId as string | undefined;
+    if (!targetUserId || !callId) return;
+    io.to(`user:${targetUserId}`).emit('call:hangup', { callId });
+  }
+}
+
+dispatchCommEvent = handleCommRedisEvent;
+void startCommRedisSubscriber(handleCommRedisEvent);
 
 // ─── Connection Handler ──────────────────────────────────────────────────
 
@@ -171,17 +348,20 @@ io.on('connection', (socket: AuthenticatedSocket) => {
   socket.join(`user:${userId}`);
 
   // ─── Event: join:conversation ────────────────────────────────────────
-  socket.on('join:conversation', async (payload: string) => {
+  socket.on('join:conversation', (payload: string) => {
     const conversationId = payload;
     if (!conversationId) return;
 
-    const participants = await loadConversationParticipants(conversationId);
-    if (!participants || !participants.has(userId)) {
+    const cached = conversationCache.get(conversationId);
+    if (cached?.has(userId)) {
+      socket.join(`conv:${conversationId}`);
       return;
     }
 
-    socket.join(`conv:${conversationId}`);
-    console.log(`💬 User ${userId} joined conversation ${conversationId}`);
+    void loadConversationParticipants(conversationId).then((participants) => {
+      if (!participants?.has(userId)) return;
+      socket.join(`conv:${conversationId}`);
+    });
   });
 
   // ─── Event: leave:conversation ───────────────────────────────────────
@@ -189,156 +369,69 @@ io.on('connection', (socket: AuthenticatedSocket) => {
     socket.leave(`conv:${conversationId}`);
   });
 
-  // ─── Event: message:send ─────────────────────────────────────────────
-  socket.on('message:send', async (payload: SendMessagePayload) => {
-    const { conversationId, content, type, attachmentUrls, clientTempId, replyToId } = payload;
+  // ─── Event: message:preview (legacy — same hot path as send) ───────────
+  socket.on('message:preview', (payload: MessagePreviewPayload) => {
+    if (!payload.conversationId || !payload.content?.trim() || !payload.clientTempId) return;
+    const participants = conversationCache.get(payload.conversationId);
+    if (!participants?.has(userId)) return;
+    fanoutMessageNew(
+      io,
+      buildInstantBroadcast(
+        {
+          conversationId: payload.conversationId,
+          content: payload.content,
+          type: payload.type,
+          clientTempId: payload.clientTempId,
+        },
+        userId,
+        payload.clientTempId
+      )
+    );
+  });
+
+  // ─── Event: message:send — emit FIRST (~0ms), persist AFTER ───────────
+  socket.on('message:send', (payload: SendMessagePayload) => {
+    const { conversationId, content, clientTempId, replyToId } = payload;
 
     if (!conversationId || !content?.trim()) return;
-
-    // Verify user is participant
-    const conv = await db.conversation.findUnique({
-      where: { id: conversationId },
-      select: { userId1: true, userId2: true },
-    });
-
-    if (!conv || (conv.userId1 !== userId && conv.userId2 !== userId)) {
-      socket.emit('error', { message: 'Access denied to conversation' });
+    if (!allowSend(userId)) {
+      socket.emit('error', { message: 'Rate limit exceeded' });
       return;
     }
 
-    const otherUserId = conv.userId1 === userId ? conv.userId2 : conv.userId1;
+    const tempId = clientTempId || `tmp-${userId}-${Date.now()}`;
+    const instantPayload: SendMessagePayload = { ...payload, clientTempId: tempId };
 
-    try {
-      // If replying to a message, verify it exists in the same conversation
-      let replyTo: { id: string; senderId: string; content: string; firstName: string; lastName: string } | undefined;
-      if (replyToId) {
-        const repliedMessage = await db.message.findFirst({
-          where: { id: replyToId, conversationId },
-          select: { id: true, senderId: true, content: true },
-          include: { sender: { select: { firstName: true, lastName: true } } },
-        });
-        if (repliedMessage) {
-          replyTo = {
-            id: repliedMessage.id,
-            senderId: repliedMessage.senderId,
-            content: repliedMessage.content.slice(0, 200),
-            firstName: repliedMessage.sender.firstName,
-            lastName: repliedMessage.sender.lastName,
-          };
-        }
-      }
+    const instantReplyTo = payload.replyTo
+      ? replyInfoFromClientPayload(payload.replyTo)
+      : undefined;
 
-      // Create message in DB
-      const message = await db.message.create({
-        data: {
-          conversationId,
-          senderId: userId,
-          content: content.trim(),
-          type: type || 'TEXT',
-          attachmentUrls: attachmentUrls ? JSON.stringify(attachmentUrls) : '[]',
-          isRead: false,
-          replyToId: replyTo && replyTo.id,
-        },
-      });
-
-      // Update conversation last message
-      await db.conversation.update({
-        where: { id: conversationId },
-        data: {
-          lastMessage: content.trim().slice(0, 200),
-          lastMessageAt: new Date(),
-        },
-      });
-
-      // Create notification for other user
-      await db.notification.create({
-        data: {
-          userId: otherUserId,
-          type: 'NEW_MESSAGE',
-          title: 'پیام جدید',
-          message: content.trim().slice(0, 100),
-          data: JSON.stringify({
-            conversationId,
-            messageId: message.id,
-            senderId: userId,
-          }),
-        },
-      });
-
-      // Broadcast message to conversation room
-      const broadcast: MessageBroadcast = {
-        id: message.id,
-        conversationId,
-        senderId: userId,
-        content: message.content,
-        type: message.type,
-        attachmentUrls: JSON.parse(message.attachmentUrls),
-        isRead: false,
-        createdAt: message.createdAt.toISOString(),
-        clientTempId,
-        replyToId: replyTo?.id,
-        replyTo,
-      };
-
-      io.to(`conv:${conversationId}`).emit('message:new', broadcast);
-
-      // Send updated unread count to other user
-      const unreadCount = await db.message.count({
-        where: {
-          conversation: {
-            OR: [{ userId1: otherUserId }, { userId2: otherUserId }],
-          },
-          isRead: false,
-          senderId: { not: otherUserId },
-        },
-      });
-
-      io.to(`user:${otherUserId}`).emit('conversation:unread-update', {
-        conversationId,
-        unreadCount,
-        totalUnread: unreadCount,
-      });
-
-      // Update conversation list for both users
-      const updatedConv = await db.conversation.findUnique({
-        where: { id: conversationId },
-        include: {
-          user1: { select: { id: true, firstName: true, lastName: true, avatar: true, online: true } },
-          user2: { select: { id: true, firstName: true, lastName: true, avatar: true, online: true } },
-        },
-      });
-
-      if (updatedConv) {
-        for (const uid of [conv.userId1, conv.userId2]) {
-          const other = uid === conv.userId1 ? updatedConv.user2 : updatedConv.user1;
-          const unread = await db.message.count({
-            where: {
-              conversationId,
-              senderId: { not: uid },
-              isRead: false,
-            },
-          });
-
-          io.to(`user:${uid}`).emit('conversation:updated', {
-            id: conversationId,
-            lastMessage: content.trim().slice(0, 200),
-            lastMessageAt: new Date().toISOString(),
-            otherUser: {
-              id: other.id,
-              firstName: other.firstName,
-              lastName: other.lastName,
-              avatar: other.avatar,
-              online: other.online,
-            },
-            unreadCount: unread,
-          });
-        }
-      }
-
-    } catch (error) {
-      console.error('Message send error:', error);
-      socket.emit('error', { message: 'Failed to send message' });
+    const cached = conversationCache.get(conversationId);
+    if (cached?.has(userId)) {
+      fanoutMessageNew(
+        io,
+        buildInstantBroadcast(instantPayload, userId, tempId, instantReplyTo)
+      );
+      void persistMessageSend(io, userId, instantPayload, replyToId, cached);
+      return;
     }
+
+    void (async () => {
+      const resolved = await resolveParticipants(
+        conversationId,
+        loadConversationParticipants,
+        conversationCache
+      );
+      if (!resolved?.map.has(userId)) {
+        socket.emit('error', { message: 'Access denied to conversation' });
+        return;
+      }
+      fanoutMessageNew(
+        io,
+        buildInstantBroadcast(instantPayload, userId, tempId, instantReplyTo)
+      );
+      await persistMessageSend(io, userId, instantPayload, replyToId, resolved.map);
+    })();
   });
 
   // ─── Event: message:react ───────────────────────────────────────────
@@ -430,38 +523,54 @@ io.on('connection', (socket: AuthenticatedSocket) => {
     try {
       const message = await db.message.findFirst({
         where: { id: data.messageId },
+        include: { conversation: true },
       });
       if (!message) return;
 
-      if (data.forEveryone && message.senderId === userId) {
-        // Delete for everyone (sender only)
-        await db.message.delete({ where: { id: data.messageId } });
+      const conv = message.conversation;
+      if (conv.userId1 !== userId && conv.userId2 !== userId) return;
+
+      if (data.forEveryone) {
+        if (message.senderId !== userId) return;
+        const ageMs = Date.now() - message.createdAt.getTime();
+        const maxAge = 48 * 60 * 60 * 1000;
+        if (ageMs > maxAge) return;
+
+        const tombstone = 'این پیام حذف شد';
+        await db.message.update({
+          where: { id: data.messageId },
+          data: { deletedAt: new Date(), content: tombstone },
+        });
         io.to(`conv:${message.conversationId}`).emit('message:deleted', {
           messageId: data.messageId,
           conversationId: message.conversationId,
           forEveryone: true,
         });
-      } else {
-        // Delete just for current user
-        let currentDeletedFor: string[] = [];
-        try {
-          currentDeletedFor = JSON.parse(message.deletedFor);
-        } catch {
-          currentDeletedFor = [];
-        }
-        if (!currentDeletedFor.includes(userId)) {
-          currentDeletedFor.push(userId);
-          await db.message.update({
-            where: { id: data.messageId },
-            data: { deletedFor: JSON.stringify(currentDeletedFor) },
-          });
-        }
-        socket.emit('message:deleted', {
-          messageId: data.messageId,
-          conversationId: message.conversationId,
-          forEveryone: false,
+        return;
+      }
+
+      let currentDeletedFor: string[] = [];
+      try {
+        const parsed = JSON.parse(message.deletedFor || '[]') as unknown;
+        currentDeletedFor = Array.isArray(parsed)
+          ? parsed.filter((id): id is string => typeof id === 'string')
+          : [];
+      } catch {
+        currentDeletedFor = [];
+      }
+      if (!currentDeletedFor.includes(userId)) {
+        currentDeletedFor.push(userId);
+        await db.message.update({
+          where: { id: data.messageId },
+          data: { deletedFor: JSON.stringify([...new Set(currentDeletedFor)]) },
         });
       }
+      socket.emit('message:deleted', {
+        messageId: data.messageId,
+        conversationId: message.conversationId,
+        forEveryone: false,
+        userId,
+      });
     } catch (error) {
       console.error('[delete] Error:', error);
     }
@@ -540,11 +649,23 @@ io.on('connection', (socket: AuthenticatedSocket) => {
     const { conversationId, isTyping } = payload;
     if (!conversationId) return;
 
-    const room = `conv:${conversationId}`;
     const timeoutKey = `${userId}:${conversationId}`;
     const user = socket.data.user;
 
-    // Clear existing timeout
+    const emitToPeer = (typing: boolean) => {
+      const peerId = conversationCache.get(conversationId)?.get(userId);
+      const event = {
+        conversationId,
+        userId,
+        user: { id: userId, firstName: user.firstName, lastName: user.lastName },
+        isTyping: typing,
+      };
+      if (peerId) {
+        io.to(`user:${peerId}`).emit('typing', event);
+      }
+      io.to(`conv:${conversationId}`).except(socket.id).emit('typing', event);
+    };
+
     const existingTimeout = typingTimeouts.get(timeoutKey);
     if (existingTimeout) clearTimeout(existingTimeout);
 
@@ -553,36 +674,16 @@ io.on('connection', (socket: AuthenticatedSocket) => {
         typingUsers.set(conversationId, new Set());
       }
       typingUsers.get(conversationId)!.add(userId);
+      emitToPeer(true);
 
-      // Broadcast to conversation room (excluding sender)
-      socket.to(room).emit('typing', {
-        conversationId,
-        userId,
-        user: { id: userId, firstName: user.firstName, lastName: user.lastName },
-        isTyping: true,
-      });
-
-      // Auto-stop after 3 seconds
       typingTimeouts.set(timeoutKey, setTimeout(() => {
         typingUsers.get(conversationId)?.delete(userId);
-        socket.to(room).emit('typing', {
-          conversationId,
-          userId,
-          user: { id: userId, firstName: user.firstName, lastName: user.lastName },
-          isTyping: false,
-        });
+        emitToPeer(false);
         typingTimeouts.delete(timeoutKey);
       }, 3000));
     } else {
       typingUsers.get(conversationId)?.delete(userId);
-
-      // Broadcast to conversation room (excluding sender)
-      socket.to(room).emit('typing', {
-        conversationId,
-        userId,
-        user: { id: userId, firstName: user.firstName, lastName: user.lastName },
-        isTyping: false,
-      });
+      emitToPeer(false);
     }
   });
 
@@ -664,22 +765,10 @@ io.on('connection', (socket: AuthenticatedSocket) => {
   });
 
   // ─── Voice call signaling ───────────────────────────────────────────
-  socket.on('call:invite', async (payload: {
-    callId: string;
-    calleeId: string;
-    sdpOffer: RTCSessionDescriptionInit;
-  }) => {
-    if (!payload?.callId || !payload?.calleeId) return;
-    const caller = await db.user.findUnique({
-      where: { id: userId },
-      select: { id: true, firstName: true, lastName: true, displayName: true, avatar: true },
-    });
-    io.to(`user:${payload.calleeId}`).emit('call:invite', {
-      callId: payload.callId,
-      callerId: userId,
-      sdpOffer: payload.sdpOffer,
-      from: caller,
-    });
+  // Invite delivery is server-authoritative via POST /api/calls/:id/invite fanout.
+  // Client socket invite relay disabled to avoid duplicate rings.
+  socket.on('call:invite', () => {
+    /* no-op — use HTTP invite route */
   });
 
   socket.on('call:accept', (payload: { callId: string; sdpAnswer: RTCSessionDescriptionInit }) => {
@@ -706,28 +795,12 @@ io.on('connection', (socket: AuthenticatedSocket) => {
       .catch(console.error);
   });
 
-  socket.on('call:reject', (payload: { callId: string }) => {
-    if (!payload?.callId) return;
-    db.voiceCall
-      .findUnique({ where: { id: payload.callId }, select: { callerId: true, calleeId: true } })
-      .then((call) => {
-        if (!call) return;
-        const peerId = call.callerId === userId ? call.calleeId : call.callerId;
-        io.to(`user:${peerId}`).emit('call:reject', payload);
-      })
-      .catch(console.error);
+  socket.on('call:reject', () => {
+    /* no-op — server PATCH reject publishes fanout */
   });
 
-  socket.on('call:hangup', (payload: { callId: string }) => {
-    if (!payload?.callId) return;
-    db.voiceCall
-      .findUnique({ where: { id: payload.callId }, select: { callerId: true, calleeId: true } })
-      .then((call) => {
-        if (!call) return;
-        const peerId = call.callerId === userId ? call.calleeId : call.callerId;
-        io.to(`user:${peerId}`).emit('call:hangup', payload);
-      })
-      .catch(console.error);
+  socket.on('call:hangup', () => {
+    /* no-op — server PATCH cancel/end publishes fanout */
   });
 
   // ─── Disconnect ──────────────────────────────────────────────────────
@@ -813,6 +886,8 @@ function gracefulShutdown(signal: string) {
     clearTimeout(timeout);
   }
   typingTimeouts.clear();
+
+  void stopCommRedisSubscriber();
 
   io.close(() => {
     httpServer.close(() => {

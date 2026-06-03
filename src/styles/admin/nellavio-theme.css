@@ -122,6 +122,29 @@
   --ring: oklch(0.51 0.12 165);
 }
 
+/* Tooltips in admin sidebar (Radix portals to body — explicit palette per theme) */
+.admin-tooltip-dark {
+  background: #1a221e !important;
+  color: #e8f0ec !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.admin-tooltip-dark .admin-tooltip-desc {
+  color: #a3b5ac !important;
+}
+
+.admin-tooltip-light {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.1) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12) !important;
+}
+
+.admin-tooltip-light .admin-tooltip-desc {
+  color: #64748b !important;
+}
+
 /* ─── Base shell ─── */
 .admin-nellavio {
   background-color: var(--color-secondaryBg);
@@ -158,6 +181,9 @@
 .admin-nellavio .admin-shell-layer {
   position: relative;
   z-index: 1;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* ─── Cards & surfaces ─── */

@@ -4,7 +4,9 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { Loader2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { PersianDigitInput } from '@/components/ui/persian-digit-input';
+import { PriceInput } from '@/components/need-intake/PriceInput';
+import { toAsciiDigits } from '@/lib/format/digits';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
@@ -13,6 +15,7 @@ import {
   startConversation,
   navigateToConversation,
 } from '@/lib/contact/start-conversation';
+import { trackAnalyticsEvent } from '@/lib/analytics/track';
 
 interface ProposalSubmitSheetProps {
   requestId: string;
@@ -40,8 +43,8 @@ export function ProposalSubmitSheet({ requestId, requestTitle }: ProposalSubmitS
       toast.info('ابتدا وارد شوید');
       return;
     }
-    const priceNum = Number(price.replace(/[^\d]/g, ''));
-    const days = Number(deliveryDays);
+    const priceNum = Number(toAsciiDigits(price));
+    const days = Number(toAsciiDigits(deliveryDays));
     if (message.trim().length < 50) {
       toast.error('توضیحات حداقل ۵۰ کاراکتر');
       return;
@@ -65,6 +68,7 @@ export function ProposalSubmitSheet({ requestId, requestTitle }: ProposalSubmitS
     });
     setLoading(false);
     if (ok) {
+      trackAnalyticsEvent('proposal_sent', { requestId }, { userId: currentUser?.id });
       toast.success('پیشنهاد شما ثبت شد');
       setMessage('');
       setPrice('');
@@ -110,23 +114,21 @@ export function ProposalSubmitSheet({ requestId, requestTitle }: ProposalSubmitS
       <div className="grid grid-cols-2 gap-3">
         <div>
           <Label htmlFor="prop-price">مبلغ (تومان)</Label>
-          <Input
-            id="prop-price"
-            dir="ltr"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            className="mt-1.5 text-left"
-            inputMode="numeric"
-          />
+          <div className="mt-1.5">
+            <PriceInput
+              value={price ? Number(toAsciiDigits(price)) : ''}
+              onChange={(v) => setPrice(v === '' ? '' : String(v))}
+            />
+          </div>
         </div>
         <div>
           <Label htmlFor="prop-days">تحویل (روز)</Label>
-          <Input
+          <PersianDigitInput
             id="prop-days"
             dir="ltr"
-            type="number"
+            variant="plain"
             value={deliveryDays}
-            onChange={(e) => setDeliveryDays(e.target.value)}
+            onChange={setDeliveryDays}
             className="mt-1.5 text-left"
           />
         </div>

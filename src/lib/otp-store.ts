@@ -44,3 +44,23 @@ export function markOtpVerified(phone: string, code: string): OtpRecord | null {
   }
   return record;
 }
+
+/** OTP verified within the last `withinMs` (default 10 min) — used for register-phone after verify step. */
+export function findRecentlyVerifiedOtp(
+  phone: string,
+  code?: string,
+  withinMs: number = 10 * 60 * 1000
+): OtpRecord | null {
+  const cutoff = Date.now() - withinMs;
+  return (
+    otpStore
+      .filter(
+        (r) =>
+          r.phone === phone &&
+          r.verified &&
+          r.createdAt.getTime() > cutoff &&
+          (code == null || r.code === code)
+      )
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0] || null
+  );
+}

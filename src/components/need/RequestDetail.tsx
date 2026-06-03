@@ -3,7 +3,7 @@
 import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
 import { ReportUser } from '@/components/shared/ReportUser';
@@ -15,6 +15,11 @@ import type { NeedMatchContext } from '@/contracts/need-match';
 import type { ServiceRequest } from '@/lib/types';
 import { ContactActions } from '@/components/contact/ContactActions';
 import { RequestResubmitBanner } from '@/components/need/RequestResubmitBanner';
+import { NeedDetailSkeleton } from '@/components/need/NeedDetailSkeleton';
+import { cn } from '@/lib/utils';
+import { getClientAuthHeaders } from '@/lib/auth/client-auth';
+import { hasSuperAdminPanelAccessFromRoleAndPermissions } from '@/lib/rbac/super-admin-access';
+import type { MatchedBusinessesViewerRole } from '@/components/need/MatchedBusinessesSection';
 
 export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string } = {}) {
   const params = useParams();
@@ -37,6 +42,7 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
   const [loadError, setLoadError] = useState<string | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [apiBriefSummary, setApiBriefSummary] = useState<string | undefined>();
+  const [hasStaffDebugAccess, setHasStaffDebugAccess] = useState(false);
 
   useEffect(() => {
     if (!requestId) {
@@ -64,6 +70,47 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
   const isOwner = Boolean(currentUser && request && currentUser.id === request.user.id);
   const isBusinessUser = currentUser?.role === 'SPECIALIST';
 
+  useEffect(() => {
+    if (!currentUser || isOwner || isBusinessUser) {
+      setHasStaffDebugAccess(false);
+      return;
+    }
+
+    if (currentUser.role === 'ADMIN' || currentUser.role === 'SUPER_ADMIN') {
+      setHasStaffDebugAccess(true);
+      return;
+    }
+
+    let cancelled = false;
+    void fetch('/api/super-admin/me', { headers: getClientAuthHeaders() })
+      .then(async (res) => (res.ok ? res.json() : null))
+      .then((data: { isOwner?: boolean; permissions?: string[] } | null) => {
+        if (cancelled || !data) return;
+        const permissions = data.permissions ?? [];
+        setHasStaffDebugAccess(
+          hasSuperAdminPanelAccessFromRoleAndPermissions(
+            currentUser.role,
+            currentUser.phone,
+            permissions
+          )
+        );
+      })
+      .catch(() => {
+        if (!cancelled) setHasStaffDebugAccess(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentUser, isOwner, isBusinessUser]);
+
+  const matchedViewerRole: MatchedBusinessesViewerRole = isOwner
+    ? 'owner'
+    : hasStaffDebugAccess
+      ? 'staff'
+      : 'business';
+  const showMatchedBusinesses = isOwner || isBusinessUser || hasStaffDebugAccess;
+
   const ruleBriefSummary = useMemo(() => {
     if (!request) return undefined;
     const ctx: NeedMatchContext = {
@@ -82,11 +129,7 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
   const briefSummary = apiBriefSummary ?? ruleBriefSummary;
 
   if (loading) {
-    return (
-      <div className="flex min-h-[40vh] items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-primary" />
-      </div>
-    );
+    return <NeedDetailSkeleton />;
   }
 
   if (loadError || !request) {
@@ -102,7 +145,12 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
   }
 
   return (
-    <div className="min-h-screen" dir="rtl" itemScope itemType="https://schema.org/Service">
+    <div
+      className={cn('min-h-screen', !isOwner && 'has-sticky-contact-bar')}
+      dir="rtl"
+      itemScope
+      itemType="https://schema.org/Service"
+    >
       <meta itemProp="name" content={request.title} />
       <meta itemProp="description" content={request.description} />
 
@@ -135,10 +183,13 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
         </div>
       )}
 
-      <MatchedBusinessesSection
-        requestId={request.id}
-        onBriefSummary={(s) => setApiBriefSummary((prev) => prev ?? s)}
-      />
+      {showMatchedBusinesses && (
+        <MatchedBusinessesSection
+          requestId={request.id}
+          viewerRole={matchedViewerRole}
+          onBriefSummary={(s) => setApiBriefSummary((prev) => prev ?? s)}
+        />
+      )}
 
       {isOwner && <OwnerProposalsSection requestId={request.id} />}
 

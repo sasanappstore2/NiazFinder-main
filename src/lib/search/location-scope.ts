@@ -290,6 +290,50 @@ export function compressCitySelection(
   return { cities: remainder, provinceIds };
 }
 
+/** Count distinct cities in a selection (expands full provinces into their cities). */
+export function countSelectedCities(
+  selection: LocationSelection,
+  provinces: { id: string; cities: City[] }[]
+): number {
+  const fromProvinces = new Set<string>();
+  for (const provinceId of selection.provinceIds) {
+    const province = provinces.find((p) => p.id === provinceId);
+    if (!province) continue;
+    for (const city of province.cities) {
+      fromProvinces.add(city.id);
+    }
+  }
+  for (const city of selection.cities) {
+    fromProvinces.add(city.id);
+  }
+  return fromProvinces.size;
+}
+
+export function totalIranCityCount(provinces: { cities: City[] }[]): number {
+  return provinces.reduce((sum, province) => sum + province.cities.length, 0);
+}
+
+/** Badge label for location picker: city count, or ∞ for all Iran. */
+export function formatLocationBadgeLabel(
+  selection: LocationSelection,
+  provinces: { id: string; cities: City[] }[],
+  opts?: { compact?: boolean }
+): string {
+  const total = totalIranCityCount(provinces);
+  const isCountry =
+    selection.cities.length === 0 && selection.provinceIds.length === 0;
+  const cityCount = countSelectedCities(selection, provinces);
+
+  if (isCountry || (total > 0 && cityCount >= total)) {
+    return '∞';
+  }
+
+  if (cityCount <= 0) return '';
+
+  if (opts?.compact && cityCount > 9) return '9+';
+  return String(cityCount);
+}
+
 export function buildUrlFromLocationScope(
   pathname: string,
   searchParams: ParamSource,
@@ -344,12 +388,9 @@ export function isCityNameInScope(scope: LocationScope, cityName: string | null 
   const norm = cityName.trim();
 
   if (scope.mode === 'provinces') {
-    const names = scopeProvincePersianNames(scope);
-    // Province-only scope: allow if city belongs to selected province (by name match in catalog)
     const city = slugsToCities(scopeCitySlugs(scope)).find((c) => c.name === norm);
     if (city) return true;
-    // Check all cities in selected provinces via cookie/selection - use Persian province on listing
-    return true; // refined below via province field when available
+    return true;
   }
 
   const allowed = scopeCityPersianNames(scope);

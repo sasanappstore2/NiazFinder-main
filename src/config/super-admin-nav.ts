@@ -7,10 +7,26 @@ import {
   Users,
   ListChecks,
   ShieldCheck,
+  ShoppingBag,
+  Briefcase,
   Building2,
   Settings2,
   GitBranch,
   Bot,
+  FileText,
+  AlertTriangle,
+  Phone,
+  Bell,
+  Star,
+  Wallet,
+  Workflow,
+  Send,
+  Radar,
+  ScrollText,
+  HardDrive,
+  Gift,
+  Ticket,
+  Handshake,
 } from 'lucide-react';
 import type { AdminPermissionId } from '@/config/admin-permissions';
 
@@ -20,7 +36,6 @@ export type SuperAdminNavItem = {
   description?: string;
   href: string;
   icon: LucideIcon;
-  /** Used later for RBAC-driven menu visibility */
   permission: AdminPermissionId;
 };
 
@@ -29,10 +44,6 @@ export type SuperAdminNavGroup = {
   items: SuperAdminNavItem[];
 };
 
-/**
- * Nellavio-style left navigation, customized for NiazFinder.
- * We keep it permission-aware from day 1 so RBAC is a drop-in later.
- */
 export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
   {
     label: 'اصلی',
@@ -45,6 +56,22 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
         icon: BarChart3,
         permission: 'superadmin:overview:read',
       },
+      {
+        id: 'analytics',
+        label: 'تحلیل‌ها',
+        description: 'نمودارها و روند رشد',
+        href: '/super-admin/analytics',
+        icon: BarChart3,
+        permission: 'superadmin:analytics:read',
+      },
+      {
+        id: 'workflow',
+        label: 'صف‌های کاری',
+        description: 'نمای یکپارچه moderation',
+        href: '/super-admin/workflow',
+        icon: Workflow,
+        permission: 'ops:workflow:read',
+      },
     ],
   },
   {
@@ -52,11 +79,27 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
     items: [
       {
         id: 'categories',
-        label: 'دسته‌بندی‌ها',
-        description: 'ساختار خدمات و فیلترها',
+        label: 'دسته‌بندی نیازها',
+        description: 'taxonomy آگهی و درخواست',
         href: '/super-admin/categories',
         icon: FolderTree,
         permission: 'taxonomy:categories:read',
+      },
+      {
+        id: 'business-occupations',
+        label: 'دسته‌بندی کسب‌وکار',
+        description: 'شغل‌ها و حرفه‌های متخصص',
+        href: '/super-admin/business-occupations',
+        icon: Briefcase,
+        permission: 'taxonomy:business-occupations:read',
+      },
+      {
+        id: 'online-stores',
+        label: 'فروشگاه‌های اینترنتی',
+        description: 'حوزه‌های فروش آنلاین',
+        href: '/super-admin/online-stores',
+        icon: ShoppingBag,
+        permission: 'taxonomy:online-stores:read',
       },
       {
         id: 'locations',
@@ -80,12 +123,36 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
         permission: 'market:requests:read',
       },
       {
+        id: 'proposals',
+        label: 'پیشنهادها',
+        description: 'مدیریت پیشنهادهای متخصص',
+        href: '/super-admin/proposals',
+        icon: Handshake,
+        permission: 'market:proposals:read',
+      },
+      {
         id: 'businesses',
         label: 'کسب‌وکارها',
         description: 'مدیریت پروفایل متخصص‌ها',
         href: '/super-admin/businesses',
         icon: Building2,
         permission: 'market:businesses:read',
+      },
+      {
+        id: 'outreach',
+        label: 'Outreach',
+        description: 'ارسال lead به کسب‌وکارها',
+        href: '/super-admin/outreach',
+        icon: Send,
+        permission: 'market:outreach:read',
+      },
+      {
+        id: 'need-alerts',
+        label: 'Alertهای مرور',
+        description: 'اشتراک‌های مرور نیاز',
+        href: '/super-admin/need-alerts',
+        icon: Radar,
+        permission: 'market:alerts:read',
       },
     ],
   },
@@ -101,12 +168,57 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
         permission: 'crm:users:read',
       },
       {
+        id: 'reports',
+        label: 'گزارش تخلف',
+        description: 'صف رسیدگی به گزارش‌ها',
+        href: '/super-admin/reports',
+        icon: AlertTriangle,
+        permission: 'content:reports:read',
+      },
+      {
         id: 'messages',
         label: 'بازبینی چت‌ها',
         description: 'مشاهده و کنترل گفتگوها',
         href: '/super-admin/messages',
         icon: MessagesSquare,
         permission: 'comms:messages:read',
+      },
+      {
+        id: 'voice-calls',
+        label: 'تماس صوتی',
+        description: 'مانیتoring تماس‌ها',
+        href: '/super-admin/voice-calls',
+        icon: Phone,
+        permission: 'comms:voice:read',
+      },
+      {
+        id: 'notifications',
+        label: 'اعلان‌ها',
+        description: 'مشاهده و broadcast',
+        href: '/super-admin/notifications',
+        icon: Bell,
+        permission: 'comms:notifications:read',
+      },
+      {
+        id: 'reviews',
+        label: 'نظرات',
+        description: 'بازبینی نظرات',
+        href: '/super-admin/reviews',
+        icon: Star,
+        permission: 'content:reviews:read',
+      },
+    ],
+  },
+  {
+    label: 'مالی',
+    items: [
+      {
+        id: 'billing',
+        label: 'تراکنش‌ها',
+        description: 'کیف پول و پرداخت',
+        href: '/super-admin/billing',
+        icon: Wallet,
+        permission: 'billing:transactions:read',
       },
     ],
   },
@@ -120,6 +232,22 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
         href: '/super-admin/system',
         icon: ShieldCheck,
         permission: 'rbac:roles:read',
+      },
+      {
+        id: 'audit',
+        label: 'گزارش تغییرات',
+        description: 'Audit log اقدامات admin',
+        href: '/super-admin/audit',
+        icon: ScrollText,
+        permission: 'audit:read',
+      },
+      {
+        id: 'files',
+        label: 'فایل‌ها',
+        description: 'آپلودها و دارایی‌ها',
+        href: '/super-admin/files',
+        icon: HardDrive,
+        permission: 'ops:files:read',
       },
       {
         id: 'intake-migration',
@@ -146,6 +274,22 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
         permission: 'ops:intake-training:read',
       },
       {
+        id: 'referrals',
+        label: 'ارجاع‌ها',
+        description: 'آمار referral',
+        href: '/super-admin/referrals',
+        icon: Gift,
+        permission: 'growth:referrals:read',
+      },
+      {
+        id: 'coupons',
+        label: 'کوپن‌ها',
+        description: 'مدیریت کوپن',
+        href: '/super-admin/coupons',
+        icon: Ticket,
+        permission: 'growth:coupons:read',
+      },
+      {
         id: 'settings',
         label: 'تنظیمات',
         description: 'پیکربندی و سیاست‌ها',
@@ -156,4 +300,3 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
     ],
   },
 ] as const;
-

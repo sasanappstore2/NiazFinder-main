@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { authorize } from '@/lib/rbac/authz';
+import { hasSuperAdminPanelAccess } from '@/lib/rbac/super-admin-access';
+import { canManageBusinessProfile } from '@/lib/business/can-manage-business-profile';
 import { buildNeedBriefSummary } from '@/lib/need-match/brief-summary';
 import { matchBusinessesForNeed } from '@/lib/need-match/rank-businesses';
 import type { NeedMatchContext } from '@/contracts/need-match';
@@ -11,6 +14,12 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const authz = await authorize(request);
+    if (!authz.ok) {
+      return NextResponse.json({ error: 'برای مشاهده این بخش وارد شوید' }, { status: 401 });
+    }
+
+    const authUser = authz.user;
     const { id } = await params;
     const { searchParams } = new URL(request.url);
     const limit = Math.min(20, Math.max(1, parseInt(searchParams.get('limit') || '12', 10)));
@@ -25,6 +34,14 @@ export async function GET(
 
     if (!serviceRequest) {
       return NextResponse.json({ error: 'نیاز یافت نشد' }, { status: 404 });
+    }
+
+    const isNeedOwner = authUser.id === serviceRequest.userId;
+    const isBusinessViewer = canManageBusinessProfile(authUser.role);
+    const isStaffDebug = hasSuperAdminPanelAccess(authUser, authz.permissions);
+
+    if (!isNeedOwner && !isBusinessViewer && !isStaffDebug) {
+      return NextResponse.json({ error: 'دسترسی مجاز نیست' }, { status: 403 });
     }
 
     const leafSlug =
@@ -54,15 +71,23 @@ export async function GET(
       budgetMax: budgetToJson(serviceRequest.budgetMax),
     };
 
-    const { businesses, source } = await matchBusinessesForNeed(need, limit);
+    const { businesses: allMatches, source } = await matchBusinessesForNeed(need, limit);
+
+    const seesFullList = isNeedOwner || isStaffDebug;
+    const businesses = seesFullList
+      ? allMatches
+      : allMatches.filter((b) => b.userId === authUser.id);
+
+    const viewerMode = isNeedOwner ? 'owner' : isStaffDebug ? 'staff' : 'business';
 
     return NextResponse.json({
       businesses,
-      briefSummary: buildNeedBriefSummary(need),
+      briefSummary: seesFullList ? buildNeedBriefSummary(need) : undefined,
       meta: {
         source,
         engine: 'internal',
         candidateCount: businesses.length,
+        viewerMode,
       },
     });
   } catch (error) {

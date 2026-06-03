@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { normalizeIranMobile } from '@/lib/format/digits';
 import { isPickableProfileCategorySlug } from '@/lib/business/business-category';
 import {
   isAllowedBusinessMediaUrl,
@@ -10,14 +11,10 @@ import {
   normalizeWebsiteUrl,
 } from '@/lib/business/normalize-web-presence';
 
-const iranPhoneRegex = /^(\+98|0098|98|0)?9\d{9}$/;
+const IRAN_MOBILE_ASCII = /^09[0-9]{9}$/;
 
 function normalizeIranPhone(raw: string): string {
-  const digits = raw.replace(/\D/g, '');
-  if (digits.startsWith('98') && digits.length === 12) return `0${digits.slice(2)}`;
-  if (digits.startsWith('0098') && digits.length === 14) return `0${digits.slice(4)}`;
-  if (digits.startsWith('9') && digits.length === 10) return `0${digits}`;
-  return digits;
+  return normalizeIranMobile(raw) ?? raw;
 }
 
 const optionalMediaUrl = z
@@ -73,13 +70,13 @@ export const businessOnboardingStep2Schema = z.object({
     .trim()
     .min(1, 'شماره تماس الزامی است')
     .transform(normalizeIranPhone)
-    .refine((p) => iranPhoneRegex.test(p.replace(/\D/g, '')), 'شماره موبایل معتبر وارد کنید'),
+    .refine((p) => IRAN_MOBILE_ASCII.test(p), 'شماره موبایل معتبر وارد کنید'),
   whatsapp: z
     .string()
     .trim()
     .optional()
     .transform((v) => (v ? normalizeIranPhone(v) : ''))
-    .refine((p) => !p || iranPhoneRegex.test(p.replace(/\D/g, '')), 'شماره واتساپ معتبر نیست'),
+    .refine((p) => !p || IRAN_MOBILE_ASCII.test(p), 'شماره واتساپ معتبر نیست'),
   email: z
     .string()
     .trim()

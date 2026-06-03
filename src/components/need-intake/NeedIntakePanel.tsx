@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { ArrowRight, Info, Loader2, MapPin, MapPinned, Shapes, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PersianDigitInput } from '@/components/ui/persian-digit-input';
+import { toPersianDigits } from '@/lib/format/digits';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { PriceInput } from '@/components/need-intake/PriceInput';
@@ -15,6 +17,7 @@ import { IntakeCityPicker } from '@/components/need-intake/IntakeCityPicker';
 import { IntakeCategoryFilterFields } from '@/components/need-intake/IntakeCategoryFilterFields';
 import { IntakeNeighborhoodPicker } from '@/components/need-intake/IntakeNeighborhoodPicker';
 import { NeedListingPreview } from './NeedListingPreview';
+import { IntakeProcessingLoader } from './IntakeProcessingLoader';
 import { IntakeStepTimeline } from './IntakeStepTimeline';
 import { PublishSuccessOverlay } from './PublishSuccessOverlay';
 import { SuggestionChips } from './SuggestionChips';
@@ -25,6 +28,7 @@ import { getLeadPhone, setLeadPhone as persistLeadPhone } from '@/lib/lead-draft
 import { parseIntentFromText, suggestNeedCategoriesFromText } from '@/lib/need-intake/intent-parser';
 import { buildManualSuggestionChips } from '@/lib/need-intake/manual-suggestions';
 import { buildSummary } from '@/lib/need-intake/question-engine';
+import { trackAnalyticsEvent } from '@/lib/analytics/track';
 import { previewListingApi, publishNeedApi } from '@/lib/need-intake/intake-client';
 import { analyzeIntakeTextApi } from '@/lib/intake/intake-analyze-client';
 import {
@@ -138,11 +142,15 @@ export function NeedIntakePanel({
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
   const [enabledSections, setEnabledSections] = useState<Set<string>>(() => new Set());
   const [isRepublishing, setIsRepublishing] = useState(false);
+  const [processingSteps, setProcessingSteps] = useState<string[] | null>(null);
   const [publishRedirect, setPublishRedirect] = useState<{ id: string; title: string } | null>(
     null
   );
   const [liveSummary, setLiveSummary] = useState('');
   const [myLocationLoading, setMyLocationLoading] = useState(false);
+  /** After manual city/neighborhood edit, block system re-detection until «مکان من» or another manual change. */
+  const cityLockedByUserRef = useRef(false);
+  const neighborhoodLockedByUserRef = useRef(false);
   const steps: Array<{ key: 'need' | 'details' | 'location' | 'preview'; title: string; subtitle: string }> = [
     { key: 'need', title: 'نیاز', subtitle: 'چه چیزی می‌خواهید؟' },
     { key: 'details', title: 'توضیحات', subtitle: 'جزئیات کاربردی را اضافه کنید' },
@@ -188,6 +196,24 @@ export function NeedIntakePanel({
   const selectedCityMeta = useMemo(() => {
     return resolveManagedCityForNeighborhoods(sortedCities, selectedCity);
   }, [sortedCities, selectedCity]);
+  const intakeAnalyzeCityHint = useMemo(() => {
+    const resolvedName =
+      resolveIntakeCitySelectValue(sortedCities, {
+        cityName: selectedCity,
+        citySlug: initialCity,
+      }) ?? selectedCity.trim();
+    const meta = resolvedName
+      ? resolveManagedCityForNeighborhoods(sortedCities, resolvedName)
+      : null;
+    const citySlug =
+      initialCity?.trim() ||
+      (meta ? locationCityIdToSlug(meta.id) : '') ||
+      undefined;
+    return {
+      cityName: resolvedName || undefined,
+      citySlug,
+    };
+  }, [selectedCity, initialCity, sortedCities]);
   const neighborhoodCatalogCityId = useMemo(() => {
     if (!selectedCityMeta) return null;
     return locationCityIdToSlug(selectedCityMeta.id);
@@ -223,13 +249,18 @@ export function NeedIntakePanel({
 
   const applyDetectedLocationFromDraft = (draft: NonNullable<typeof needDraft>) => {
     const { city, neighborhood } = extractIntakeLocationFromDraft(draft, sortedCities);
-    if (city) setSelectedCity(city);
-    if (neighborhood) setSelectedNeighborhood(neighborhood);
-    if (city || neighborhood) {
-      patchNeedDraftEntities({
-        ...(city ? { city } : {}),
-        ...(neighborhood ? { neighborhood } : {}),
-      });
+    const patch: Record<string, unknown> = {};
+
+    if (!cityLockedByUserRef.current && city) {
+      setSelectedCity(city);
+      patch.city = city;
+    }
+    if (!neighborhoodLockedByUserRef.current && neighborhood) {
+      setSelectedNeighborhood(neighborhood);
+      patch.neighborhood = neighborhood;
+    }
+    if (Object.keys(patch).length > 0) {
+      patchNeedDraftEntities(patch);
     }
   };
 
@@ -272,7 +303,10 @@ export function NeedIntakePanel({
 
     const entityPatch: Record<string, unknown> = {};
     if (key === 'dealType') entityPatch.transactionType = String(value);
-    if (key === 'bedrooms') entityPatch.rooms = Number(value) || null;
+    if (key === 'bedrooms' || key === 'rooms') {
+      const n = Number(value);
+      entityPatch.rooms = Number.isFinite(n) ? n : null;
+    }
     if (key === 'area' || key === 'areaMin') entityPatch.area = Number(value) || null;
     if (key === 'budget') {
       const n = Number(String(value).replace(/,/g, ''));
@@ -303,6 +337,8 @@ export function NeedIntakePanel({
 
   const applyCity = (cityName: string) => {
     const trimmed = cityName.trim();
+    cityLockedByUserRef.current = true;
+
     if (!trimmed) {
       setSelectedCity('');
       setSelectedNeighborhood('');
@@ -318,6 +354,7 @@ export function NeedIntakePanel({
     setSelectedCity(trimmed);
     if (sameCity) return;
 
+    neighborhoodLockedByUserRef.current = true;
     setSelectedNeighborhood('');
     patchNeedDraftEntities({
       city: trimmed,
@@ -329,6 +366,7 @@ export function NeedIntakePanel({
   const applyNeighborhood = (neighborhoodName: string, neighborhoodId?: string | null) => {
     const trimmed = neighborhoodName.trim();
     if (trimmed === selectedNeighborhood.trim()) return;
+    neighborhoodLockedByUserRef.current = true;
     setSelectedNeighborhood(trimmed);
     const hit =
       neighborhoods.find((n) => n.id === neighborhoodId) ??
@@ -342,7 +380,8 @@ export function NeedIntakePanel({
   const applyLocationBundle = (
     cityName: string,
     neighborhoodName?: string | null,
-    neighborhoodSlug?: string | null
+    neighborhoodSlug?: string | null,
+    options?: { lockUserChoice?: boolean }
   ) => {
     const city = cityName.trim();
     const neighborhood = neighborhoodName?.trim() ?? '';
@@ -353,6 +392,10 @@ export function NeedIntakePanel({
       neighborhood: neighborhood || null,
       neighborhoodSlug: neighborhoodSlug?.trim() || null,
     });
+    if (options?.lockUserChoice) {
+      cityLockedByUserRef.current = true;
+      neighborhoodLockedByUserRef.current = true;
+    }
   };
 
   const resolveNeighborhoodLabelFromSlug = async (
@@ -414,7 +457,9 @@ export function NeedIntakePanel({
       }
     }
 
-    applyLocationBundle(saved.cityName, neighborhoodName, neighborhoodSlug);
+    applyLocationBundle(saved.cityName, neighborhoodName, neighborhoodSlug, {
+      lockUserChoice: true,
+    });
     toast.success('مکان ذخیره‌شده اعمال شد', {
       description: neighborhoodName
         ? `${saved.cityName} — ${neighborhoodName}`
@@ -433,7 +478,8 @@ export function NeedIntakePanel({
             applyLocationBundle(
               geo.cityName,
               geo.neighborhood?.name ?? null,
-              geo.neighborhood?.id ?? null
+              geo.neighborhood?.id ?? null,
+              { lockUserChoice: true }
             );
             cookieManager.markGeoDetected(geo.citySlug);
             cookieManager.updateNeighborhoodSelection(
@@ -490,12 +536,21 @@ export function NeedIntakePanel({
 
   useEffect(() => {
     reset();
-    setStep('need');
-    setNeedText(initialSeed);
+    cityLockedByUserRef.current = false;
+    neighborhoodLockedByUserRef.current = false;
+    const seed = initialSeed.trim();
+    setNeedText(seed);
     if (initialCity) setSelectedCity(initialCity);
     const phone = initialPhone?.trim() || getLeadPhone();
     if (phone) setLeadPhone(phone);
-  }, [initialSeed, initialCity, initialPhone, reset, setStep, setLeadPhone]);
+
+    if (seed) {
+      setSeedText(seed);
+      setStep('details');
+    } else {
+      setStep('need');
+    }
+  }, [initialSeed, initialCity, initialPhone, reset, setStep, setLeadPhone, setSeedText]);
 
   useEffect(() => {
     if (selectedCity.trim()) return;
@@ -520,9 +575,10 @@ export function NeedIntakePanel({
 
   useEffect(() => {
     if (step !== 'location' || !needDraft) return;
+    if (cityLockedByUserRef.current && neighborhoodLockedByUserRef.current) return;
     const { city, neighborhood } = extractIntakeLocationFromDraft(needDraft, sortedCities);
-    if (city && city !== selectedCity) setSelectedCity(city);
-    if (neighborhood && neighborhood !== selectedNeighborhood) {
+    if (!cityLockedByUserRef.current && city && city !== selectedCity) setSelectedCity(city);
+    if (!neighborhoodLockedByUserRef.current && neighborhood && neighborhood !== selectedNeighborhood) {
       setSelectedNeighborhood(neighborhood);
     }
   }, [step, needDraft, sortedCities, selectedCity, selectedNeighborhood]);
@@ -565,6 +621,7 @@ export function NeedIntakePanel({
     const combined = `${needText.trim()}\n${detailsText.trim()}`.trim();
     setLoading(true);
     setError(null);
+    setProcessingSteps(['در حال تحلیل نیاز…', 'شناسایی دسته و شهر…']);
 
     let enginePrefill: {
       categorySlug?: string;
@@ -575,7 +632,7 @@ export function NeedIntakePanel({
 
     let analysisSucceeded = false;
     try {
-      const analysis = await analyzeIntakeTextApi(combined);
+      const analysis = await analyzeIntakeTextApi(combined, intakeAnalyzeCityHint);
       setNeedDraftFromAnalysis(analysis, combined, analysis.meta?.trace);
       analysisSucceeded = true;
       enginePrefill = {
@@ -588,6 +645,7 @@ export function NeedIntakePanel({
       analysisSucceeded = false;
     } finally {
       setLoading(false);
+      setProcessingSteps(null);
     }
 
     const parsed = buildParsedFromForm();
@@ -625,7 +683,20 @@ export function NeedIntakePanel({
           });
 
     if (draftForLocation) {
-      applyDetectedLocationFromDraft(draftForLocation);
+      if (cityLockedByUserRef.current || neighborhoodLockedByUserRef.current) {
+        const patch: Record<string, unknown> = {};
+        if (cityLockedByUserRef.current && selectedCity.trim()) {
+          patch.city = selectedCity.trim();
+        }
+        if (neighborhoodLockedByUserRef.current) {
+          patch.neighborhood = selectedNeighborhood.trim() || null;
+        }
+        if (Object.keys(patch).length > 0) {
+          patchNeedDraftEntities(patch);
+        }
+      } else {
+        applyDetectedLocationFromDraft(draftForLocation);
+      }
       if (draftForLocation.sections?.length) {
         setEnabledSections(computeEnabledSectionsForLocation(draftForLocation));
       }
@@ -667,6 +738,11 @@ export function NeedIntakePanel({
     }
     setLoading(true);
     setError(null);
+    setProcessingSteps([
+      'در حال آماده‌سازی پیش‌نمایش…',
+      'هوش مصنوعی در حال نوشتن عنوان…',
+      'تکمیل جزئیات…',
+    ]);
     try {
       const data = await previewListingApi(draft, listingPreview?.extras);
       setListingPreview({
@@ -675,6 +751,7 @@ export function NeedIntakePanel({
         extras: data.suggestedExtras ?? listingPreview?.extras,
         budgetMin: data.budgetMin,
         budgetMax: data.budgetMax,
+        titleSource: data.titleSource,
       });
       setStep('preview');
     } catch (e) {
@@ -683,6 +760,7 @@ export function NeedIntakePanel({
       toast.error(msg);
     } finally {
       setLoading(false);
+      setProcessingSteps(null);
     }
   };
 
@@ -690,6 +768,7 @@ export function NeedIntakePanel({
     const draft = getDraft();
     if (!draft || !listingPreview) return;
     setIsRepublishing(true);
+    setProcessingSteps(['هوش مصنوعی در حال بازنویسی عنوان…']);
     try {
       const data = await previewListingApi(draft, listingPreview.extras);
       setListingPreview({
@@ -698,12 +777,14 @@ export function NeedIntakePanel({
         description: data.description,
         budgetMin: data.budgetMin,
         budgetMax: data.budgetMax,
+        titleSource: data.titleSource,
       });
       toast.success('پیش‌نمایش به‌روز شد');
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'خطا');
     } finally {
       setIsRepublishing(false);
+      setProcessingSteps(null);
     }
   };
 
@@ -740,6 +821,7 @@ export function NeedIntakePanel({
       });
       setStep('done');
       setPublishRedirect({ id: data.id, title: data.title });
+      trackAnalyticsEvent('need_created', { requestId: data.id, title: data.title });
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'خطا در انتشار';
       setError(msg);
@@ -747,6 +829,7 @@ export function NeedIntakePanel({
       setStep('preview');
     } finally {
       setLoading(false);
+      setProcessingSteps(null);
     }
   };
 
@@ -979,16 +1062,15 @@ export function NeedIntakePanel({
       return (
         <div key={field} className="space-y-2">
           <label className="text-sm font-medium">متراژ (متر)</label>
-          <Input
-            type="number"
-            inputMode="numeric"
+          <PersianDigitInput
+            variant="plain"
             className="h-11"
-            value={entities?.area ?? ''}
-            onChange={(e) => {
-              const n = e.target.value ? Number(e.target.value) : null;
+            value={entities?.area != null ? String(entities.area) : ''}
+            onChange={(digits) => {
+              const n = digits ? Number(digits) : null;
               patchNeedDraftEntities({ area: Number.isFinite(n) ? n : null });
             }}
-            placeholder="مثلاً ۱۲۰"
+            placeholder={toPersianDigits('120')}
           />
         </div>
       );
@@ -999,16 +1081,15 @@ export function NeedIntakePanel({
       return (
         <div key={field} className="space-y-2">
           <label className="text-sm font-medium">تعداد خواب</label>
-          <Input
-            type="number"
-            inputMode="numeric"
+          <PersianDigitInput
+            variant="plain"
             className="h-11"
-            value={entities?.rooms ?? ''}
-            onChange={(e) => {
-              const n = e.target.value ? Number(e.target.value) : null;
+            value={entities?.rooms != null ? String(entities.rooms) : ''}
+            onChange={(digits) => {
+              const n = digits ? Number(digits) : null;
               patchNeedDraftEntities({ rooms: Number.isFinite(n) ? n : null });
             }}
-            placeholder="مثلاً ۲"
+            placeholder={toPersianDigits('2')}
           />
         </div>
       );
@@ -1161,7 +1242,7 @@ export function NeedIntakePanel({
           <p className="intake-hero-card__subtitle">
             {steps[Math.min(activeStepIndex, steps.length - 1)]?.subtitle}
           </p>
-          <IntakeStepTimeline step={step} progressPercent={progress} />
+          <IntakeStepTimeline step={step} progressPercent={progress} onStepSelect={setStep} />
         </header>
 
         <div className="intake-steps-stack">
@@ -1216,6 +1297,9 @@ export function NeedIntakePanel({
                   ادامه به دسته و مکان
                 </Button>
               </div>
+              {isLoading && processingSteps ? (
+                <IntakeProcessingLoader steps={processingSteps} />
+              ) : null}
             </section>
           )}
 
@@ -1301,6 +1385,9 @@ export function NeedIntakePanel({
                     : 'تکمیل اطلاعات و ادامه'}
                 </Button>
               </div>
+              {isLoading && processingSteps ? (
+                <IntakeProcessingLoader steps={processingSteps} />
+              ) : null}
             </section>
           )}
 

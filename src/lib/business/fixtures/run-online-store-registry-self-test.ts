@@ -1,11 +1,13 @@
 /**
- * Online store registry integrity self-test.
+ * Self-test: online store registry integrity.
  * Run: npx --yes tsx src/lib/business/fixtures/run-online-store-registry-self-test.ts
  */
+import { readManagedOnlineStores, setOnlineStoresCache } from '@/lib/business/online-stores-registry';
 import {
-  ONLINE_STORE_CATEGORIES,
+  getOnlineStoreCategoriesList,
   getPickableOnlineStoreCount,
-  isPickableOnlineStoreSlug,
+  getPickableOnlineStores,
+  isOnlineStoreSlug,
 } from '@/config/online-stores';
 
 let failed = 0;
@@ -17,31 +19,40 @@ function assert(cond: boolean, msg: string) {
   }
 }
 
-const slugs = ONLINE_STORE_CATEGORIES.map((c) => c.slug);
-const unique = new Set(slugs);
-assert(unique.size === slugs.length, 'all online store slugs must be unique');
+async function main() {
+  const managed = await readManagedOnlineStores();
+  setOnlineStoresCache(managed);
 
-for (const cat of ONLINE_STORE_CATEGORIES) {
-  if (cat.parentSlug) {
-    const parent = ONLINE_STORE_CATEGORIES.find((p) => p.slug === cat.parentSlug);
-    assert(parent != null, `parent ${cat.parentSlug} exists for ${cat.slug}`);
+  const categories = getOnlineStoreCategoriesList();
+  const slugs = categories.map((c) => c.slug);
+  const unique = new Set(slugs);
+  assert(unique.size === slugs.length, 'duplicate online store slugs');
+
+  for (const cat of categories) {
+    if (cat.depth === 1) {
+      assert(cat.parentSlug != null, `${cat.slug} depth-1 must have parent`);
+      assert(isOnlineStoreSlug(cat.parentSlug!), `${cat.slug} parent ${cat.parentSlug} must exist`);
+      assert(cat.slug.startsWith('online-'), `${cat.slug} must start with online-`);
+    }
+    if (cat.depth === 0) {
+      assert(cat.parentSlug === null, `${cat.slug} sector must have null parent`);
+      assert(cat.slug.startsWith('online-'), `${cat.slug} must start with online-`);
+    }
   }
-  if (cat.depth === 1) {
-    assert(cat.slug.startsWith('online-'), `leaf slug must start with online-: ${cat.slug}`);
-    assert(isPickableOnlineStoreSlug(cat.slug), `depth-1 slug pickable: ${cat.slug}`);
+
+  const pickable = getPickableOnlineStores();
+  assert(pickable.length >= 70, `expected ≥70 pickable leaves, got ${pickable.length}`);
+  assert(isOnlineStoreSlug('online-costume-jewelry'), 'online-costume-jewelry must exist');
+  assert(getPickableOnlineStoreCount() === pickable.length, 'count helper');
+
+  if (failed > 0) {
+    console.error(`\n${failed} assertion(s) failed`);
+    process.exit(1);
   }
+  console.log(`OK: online store registry self-test passed (${pickable.length} leaves, ${managed.length} managed)`);
 }
 
-const pickableCount = getPickableOnlineStoreCount();
-assert(pickableCount >= 60, `at least 60 pickable online verticals (got ${pickableCount})`);
-assert(
-  isPickableOnlineStoreSlug('online-costume-jewelry'),
-  'online-costume-jewelry must be pickable'
-);
-
-if (failed === 0) {
-  console.log(`OK: online store registry (${pickableCount} pickable leaves, ${unique.size} total slugs)`);
-} else {
-  console.error(`FAILED: ${failed} assertion(s)`);
+main().catch((e) => {
+  console.error(e);
   process.exit(1);
-}
+});

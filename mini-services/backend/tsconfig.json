@@ -2,7 +2,11 @@
   "compilerOptions": {
     "module": "commonjs",
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": [".ide-ts-stub.ts"],
   "exclude": ["node_modules", "dist"]

@@ -33,7 +33,7 @@ export function CompanyProfileSection({ business }: SectionProps) {
           {rows.map((row) => (
             <div
               key={row.label}
-              className="flex items-start gap-3 rounded-xl border bg-card p-4"
+              className="profile-surface flex items-start gap-3 rounded-xl p-4"
             >
               <row.icon className="mt-0.5 size-4 shrink-0 text-primary" />
               <div>

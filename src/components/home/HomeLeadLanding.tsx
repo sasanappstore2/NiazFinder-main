@@ -116,7 +116,7 @@ export function HomeLeadLanding() {
           setCityPickerOpen(true);
           break;
         case 'geo':
-          void geo.runDetection(true);
+          void geo.runDetection();
           break;
         case 'browse-needs':
           browseNeeds();
@@ -217,7 +217,7 @@ export function HomeLeadLanding() {
               hasCity={hasCity}
               isGeoDetecting={geo.isDetecting}
               onOpenCityPicker={() => setCityPickerOpen(true)}
-              onDetectLocation={() => void geo.runDetection(true)}
+              onDetectLocation={() => void geo.runDetection()}
               isSubmitting={false}
             />
 
@@ -269,7 +269,7 @@ export function HomeLeadLanding() {
         geoStatus={geo.status}
         detectedCity={geo.detectedCity}
         isDetecting={geo.isDetecting}
-        onDetectLocation={() => void geo.runDetection(true)}
+        onDetectLocation={() => void geo.runDetection()}
       />
     </div>
   );

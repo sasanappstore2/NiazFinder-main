@@ -106,7 +106,7 @@ export function BusinessBrandPanel() {
       <div className="grid gap-6 sm:grid-cols-2">
         <BusinessImageUpload
           label="عکس پروفایل (لوگو)"
-          hint="مربعی، حداکثر ۲ مگابایت"
+          hint="مربعی — بعد از انتخاب، برش دلخواه"
           value={logo}
           kind="logo"
           aspectClass="aspect-square max-w-[140px]"
@@ -114,7 +114,7 @@ export function BusinessBrandPanel() {
         />
         <BusinessImageUpload
           label="تصویر کاور"
-          hint="افقی، حداکثر ۴ مگابایت"
+          hint="افقی ۲:۱ — بعد از انتخاب، برش دلخواه"
           value={coverImage}
           kind="cover"
           aspectClass="aspect-[2/1] w-full"

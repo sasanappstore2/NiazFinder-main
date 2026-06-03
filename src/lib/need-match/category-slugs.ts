@@ -1,12 +1,12 @@
 import { expandOccupationsForNeedMatch, migrateSlugToOccupation } from '@/config/need-to-occupation-map';
 import {
-  BUSINESS_OCCUPATIONS,
+  getBusinessOccupationsList,
   getOccupationPath,
   isOccupationSlug,
   resolveOccupationSlug,
 } from '@/config/business-occupations';
 import {
-  ONLINE_STORE_CATEGORIES,
+  getOnlineStoreCategoriesList,
   getOnlineStorePath,
   isOnlineStoreSlug,
 } from '@/config/online-stores';
@@ -29,9 +29,10 @@ export function normalizeProfileSlugsForMatch(storedSlugs: string[]): string[] {
 
     if (isOnlineStoreSlug(slug)) {
       out.add(slug);
-      const store = ONLINE_STORE_CATEGORIES.find((c) => c.slug === slug);
+      const stores = getOnlineStoreCategoriesList();
+      const store = stores.find((c) => c.slug === slug);
       if (store?.depth === 0) {
-        for (const child of ONLINE_STORE_CATEGORIES.filter((o) => o.parentSlug === slug)) {
+        for (const child of stores.filter((o) => o.parentSlug === slug)) {
           out.add(child.slug);
         }
       }
@@ -44,9 +45,10 @@ export function normalizeProfileSlugsForMatch(storedSlugs: string[]): string[] {
     if (isOccupationSlug(slug)) {
       const resolved = resolveOccupationSlug(slug);
       out.add(resolved);
-      const occ = BUSINESS_OCCUPATIONS.find((o) => o.slug === resolved);
+      const occupations = getBusinessOccupationsList();
+      const occ = occupations.find((o) => o.slug === resolved);
       if (occ?.depth === 0) {
-        for (const child of BUSINESS_OCCUPATIONS.filter((o) => o.parentSlug === resolved)) {
+        for (const child of occupations.filter((o) => o.parentSlug === resolved)) {
           out.add(child.slug);
         }
       }

@@ -54,7 +54,7 @@ npm run dev:intake-mlx          # :8100
 npm run train:intake-mlx        # POST /train (close heavy apps on 16GB RAM)
 ```
 
-Hybrid parse in Next (rules always run; LLM merged via `reconcileParsedIntent`):
+Hybrid parse + analyze + title in Next (Qwen primary; rules fallback when MLX down):
 
 ```bash
 NEED_INTAKE_LLM_ENABLED=true
@@ -62,10 +62,18 @@ NEED_INTAKE_LLM_URL=http://127.0.0.1:8100
 npm run dev
 ```
 
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/v1/parse` | `{ "text": "..." }` → JSON labels |
+| POST | `/v1/title` | `{ "context": { ... } }` → Persian listing title (≤70 chars) |
+| POST | `/train` | Start LoRA (background) |
+| GET | `/train/status` | Train progress log |
+
 | Path | Role |
 |------|------|
 | `mini-services/intake-mlx/` | FastAPI infer + LoRA train |
-| `src/lib/need-intake/llm-parse-client.ts` | Next → MLX client |
+| `src/lib/need-intake/qwen-intake-client.ts` | Next → MLX client (parse + title) |
+| `src/lib/need-intake/llm-parse-client.ts` | Low-level parse client (used by qwen-intake-client) |
 | `models/intake-lora/` | LoRA adapter (gitignored) |
 
 ## Phase 2b: Unsloth (NVIDIA / Colab)

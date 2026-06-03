@@ -18,6 +18,13 @@ export interface JoinConversationPayload {
   conversationId: string;
 }
 
+export interface SendMessageReplyToPayload {
+  id: string;
+  content: string;
+  senderFirstName: string;
+  senderLastName: string;
+}
+
 export interface SendMessagePayload {
   conversationId: string;
   content: string;
@@ -25,6 +32,15 @@ export interface SendMessagePayload {
   attachmentUrls?: string[];
   clientTempId?: string;
   replyToId?: string;
+  replyTo?: SendMessageReplyToPayload;
+}
+
+/** Instant fanout to peer before DB persist completes */
+export interface MessagePreviewPayload {
+  conversationId: string;
+  content: string;
+  clientTempId: string;
+  type?: 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE';
 }
 
 export interface TypingPayload {

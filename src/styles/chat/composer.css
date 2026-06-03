@@ -1,0 +1,23 @@
+@layer components {
+  .chat-composer-bar {
+    flex-shrink: 0;
+    border-top: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+    background: color-mix(in oklch, var(--background) 95%, transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  .chat-composer-reply {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
+    background: color-mix(in oklch, var(--muted) 40%, transparent);
+    padding: 0.5rem 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .chat-composer-reply {
+      padding-inline: 1rem;
+    }
+  }
+}

@@ -23,10 +23,10 @@ function mergeSlotUpdates(
   return parsed;
 }
 
-export function runChatTurnRules(
+export async function runChatTurnRulesAsync(
   draft: NeedDraft,
   userMessage: string
-): ChatTurnResponse & { mergedIntent?: NeedDraft['parsedIntent'] } {
+): Promise<ChatTurnResponse & { mergedIntent?: NeedDraft['parsedIntent'] }> {
   const trimmed = userMessage.trim();
   if (!trimmed) {
     return {
@@ -36,7 +36,16 @@ export function runChatTurnRules(
     };
   }
 
-  const reParsed = parseFromText(`${draft.parsedIntent.rawText}\n${trimmed}`);
+  const { parseFromTextAsync } = await import('@/lib/need-intake/internal-orchestrator.server');
+  const reParsed = await parseFromTextAsync(`${draft.parsedIntent.rawText}\n${trimmed}`);
+  return finishChatTurn(draft, trimmed, reParsed);
+}
+
+function finishChatTurn(
+  draft: NeedDraft,
+  trimmed: string,
+  reParsed: NeedDraft['parsedIntent']
+): ChatTurnResponse & { mergedIntent?: NeedDraft['parsedIntent'] } {
   const seeded = seedAnswersFromParsed(reParsed, draft.leadPhone);
   const slotUpdates = extractSlotsFromRules(reParsed, {
     ...draft.answers,
@@ -89,4 +98,21 @@ export function runChatTurnRules(
       : undefined,
     mergedIntent,
   };
+}
+
+export function runChatTurnRules(
+  draft: NeedDraft,
+  userMessage: string
+): ChatTurnResponse & { mergedIntent?: NeedDraft['parsedIntent'] } {
+  const trimmed = userMessage.trim();
+  if (!trimmed) {
+    return {
+      assistantMessage: 'لطفاً پیام خود را بنویسید.',
+      readinessScore: 0,
+      readyToPreview: false,
+    };
+  }
+
+  const reParsed = parseFromText(`${draft.parsedIntent.rawText}\n${trimmed}`);
+  return finishChatTurn(draft, trimmed, reParsed);
 }

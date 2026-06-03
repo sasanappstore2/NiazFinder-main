@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
       budgetMin: preview.budgetMin,
       budgetMax: preview.budgetMax,
       suggestedExtras: preview.extras,
+      titleSource: preview.titleSource,
     });
   } catch (error) {
     console.error('preview-listing error:', error);

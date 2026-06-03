@@ -27,6 +27,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAppStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
+import { toPersianDigits } from '@/lib/format/digits';
 import { toast } from 'sonner';
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -92,9 +93,6 @@ const formatRelativeTime = (dateStr: string): string => {
   }
 };
 
-const toPersianDigits = (str: string): string =>
-  str.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d)]);
-
 // ═══════════════════════════════════════════════════════════════════════════════
 // ANIMATION VARIANTS
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -133,7 +131,7 @@ const sectionVariants = {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
-  const { activeConversationId, conversations } = useAppStore();
+  const { activeConversationId, conversations, authToken } = useAppStore();
 
   const [isMuted, setIsMuted] = useState(false);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
@@ -176,13 +174,31 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
     toast.success(isMuted ? 'صدای اعلان‌ها فعال شد' : 'بی‌صدا شد');
   };
 
-  const handleBlockUser = () => {
+  const handleBlockUser = async () => {
     if (!showBlockConfirm) {
       setShowBlockConfirm(true);
       return;
     }
-    setShowBlockConfirm(false);
-    toast.success(`${otherUserName} مسدود شد`);
+    if (!otherUser?.id || !authToken) {
+      toast.error('امکان مسدودسازی نیست');
+      return;
+    }
+    try {
+      const res = await fetch('/api/users/block', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ blockedId: otherUser.id }),
+      });
+      if (!res.ok) throw new Error('block failed');
+      setShowBlockConfirm(false);
+      toast.success(`${otherUserName} مسدود شد`);
+      onClose();
+    } catch {
+      toast.error('خطا در مسدودسازی');
+    }
   };
 
   const handleDeleteConversation = () => {

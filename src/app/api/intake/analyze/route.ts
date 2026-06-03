@@ -6,6 +6,8 @@ import {
   intakeAnalyzeRequestSchema,
   type IntakeAnalyzeResponse,
 } from '@/intake/api/intake.dto';
+import { analyzeNeedTextViaQwen } from '@/lib/need-intake/analysis-from-qwen';
+import { isNeedIntakeLlmEnabled } from '@/lib/need-intake/qwen-intake-client';
 
 export const runtime = 'nodejs';
 
@@ -26,10 +28,33 @@ export async function POST(request: NextRequest) {
     }
 
     const indexes = await getIntakeIndexes();
+    const analyzeOptions = {
+      preferredCitySlug: parsed.data.citySlug,
+      preferredCityName: parsed.data.cityName,
+    };
+
+    if (isNeedIntakeLlmEnabled()) {
+      const result = await analyzeNeedTextViaQwen(parsed.data.text, indexes, analyzeOptions);
+      const { meta: qwenMeta, ...analysis } = result;
+      const response: IntakeAnalyzeResponse = {
+        ...analysis,
+        meta: {
+          engine: qwenMeta.engine,
+          indexStats: {
+            categories: indexes.stats.categories,
+            cities: indexes.stats.cities,
+            neighborhoods: indexes.stats.neighborhoods,
+          },
+          qwen: qwenMeta,
+        },
+      };
+      return NextResponse.json(response);
+    }
+
     const aiConfig = getAiSemanticConfig();
 
     if (aiConfig.enabled) {
-      const result = await analyzeNeedTextAsync(parsed.data.text, indexes);
+      const result = await analyzeNeedTextAsync(parsed.data.text, indexes, analyzeOptions);
       const { meta: aiMeta, ...analysis } = result;
       const response: IntakeAnalyzeResponse = {
         ...analysis,
@@ -47,7 +72,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(response);
     }
 
-    const result = analyzeNeedText(parsed.data.text, indexes);
+    const result = analyzeNeedText(parsed.data.text, indexes, analyzeOptions);
     const response: IntakeAnalyzeResponse = {
       ...result,
       meta: {

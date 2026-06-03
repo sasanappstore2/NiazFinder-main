@@ -40,8 +40,28 @@ def main() -> int:
         slug = result.get("labels", {}).get("categorySlug", "")
         if "game" in slug or "console" in slug or "product" in str(result):
             print("OK: plausible product/game parse")
+        else:
+            print("WARN: unexpected categorySlug:", slug)
+
+        title_result = post(
+            "/v1/title",
+            {
+                "context": {
+                    "needType": "product_search",
+                    "intentType": "product_search",
+                    "categoryPathFa": "بازی و سرگرمی › کنسول بازی",
+                    "city": "تهران",
+                    "productName": "پلی‌استیشن",
+                    "sourceSummary": TEXT,
+                }
+            },
+        )
+        print("title:", json.dumps(title_result, ensure_ascii=False, indent=2))
+        title = title_result.get("title", "")
+        if title and len(title) <= 70:
+            print("OK: title generated")
             return 0
-        print("WARN: unexpected categorySlug:", slug)
+        print("WARN: title missing or too long:", title)
         return 0
     except urllib.error.URLError as e:
         print("FAIL: is intake-mlx running? npm run dev:intake-mlx", file=sys.stderr)

@@ -126,7 +126,7 @@ function NeedMobileCategoryBar() {
             <ChevronLeft className="size-3.5" />
           </button>
         </SheetTrigger>
-        <SheetContent side="right" className="w-[340px] p-0 sm:w-[400px]">
+        <SheetContent side="right" showCloseButton={false} className="w-[340px] p-0 sm:w-[400px]">
           <CategorySelector
             isDesktop={false}
             nestedCategories={ALL_CATEGORIES}

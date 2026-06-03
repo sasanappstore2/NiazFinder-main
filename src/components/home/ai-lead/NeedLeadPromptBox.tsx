@@ -9,9 +9,10 @@ import {
   type RefObject,
 } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUp, Loader2, MapPin, Phone } from 'lucide-react';
+import { ArrowUp, Loader2, MapPin, Mic, Phone } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { PersianDigitInput } from '@/components/ui/persian-digit-input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Tooltip,
@@ -19,6 +20,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useAutoResizeTextarea } from '@/hooks/use-auto-resize-textarea';
+import { useSpeechToText } from '@/hooks/use-speech-to-text';
 import { cn } from '@/lib/utils';
 import { fib } from './ai-lead-tokens';
 
@@ -134,6 +136,46 @@ export function NeedLeadPromptBox({
   );
 
   const canSend = Boolean(value.trim()) && !isSubmitting;
+  const speechBaseRef = useRef('');
+
+  const {
+    isListening,
+    isSupported,
+    transcript,
+    interimTranscript,
+    startListening,
+    stopListening,
+    resetTranscript,
+  } = useSpeechToText({
+    lang: 'fa-IR',
+    onError: (code) =>
+      toast.error('ورودی صوتی', {
+        description: code,
+        duration: 10_000,
+      }),
+  });
+
+  useEffect(() => {
+    const spoken = [transcript, interimTranscript].filter(Boolean).join(' ').trim();
+    if (!spoken && !isListening) return;
+
+    const base = speechBaseRef.current;
+    const merged = base && spoken ? `${base} ${spoken}`.trim() : base || spoken;
+    if (merged !== value) {
+      onChange(merged);
+      adjustHeight();
+    }
+  }, [transcript, interimTranscript, isListening, value, onChange, adjustHeight]);
+
+  const handleSpeechToggle = () => {
+    if (isListening) {
+      stopListening();
+      return;
+    }
+    speechBaseRef.current = value.trim();
+    resetTranscript();
+    startListening();
+  };
 
   useEffect(() => {
     if (hasCity) setShowLocation(true);
@@ -215,14 +257,13 @@ export function NeedLeadPromptBox({
           >
             <div className="relative pb-2">
               <Phone className="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="tel"
-                inputMode="tel"
+              <PersianDigitInput
+                variant="phone"
                 dir="ltr"
                 className="h-10 rounded-xl border-border/50 bg-muted/30 pr-10 text-left text-sm"
                 placeholder="09123456789 — اختیاری"
                 value={phone}
-                onChange={(e) => onPhoneChange(e.target.value)}
+                onChange={onPhoneChange}
               />
             </div>
           </motion.div>
@@ -257,26 +298,43 @@ export function NeedLeadPromptBox({
             }
           />
 
-          <VerticalDivider />
-
-          <ToggleChip
-            active={showContact}
-            onClick={() => setShowContact((v) => !v)}
-            label="تماس"
-            icon={
-              <motion.div
-                animate={{ scale: showContact ? 1.05 : 1 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              >
-                <Phone
-                  className={cn(
-                    'size-4',
-                    showContact ? 'text-primary' : 'text-inherit'
-                  )}
-                />
-              </motion.div>
-            }
-          />
+          {isSupported ? (
+            <>
+              <VerticalDivider />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex">
+                    <ToggleChip
+                      active={isListening}
+                      disabled={isSubmitting}
+                      onClick={handleSpeechToggle}
+                      label={isListening ? 'در حال شنیدن' : 'میکروفون'}
+                      activeClassName="border-destructive/40 bg-destructive/10 text-destructive"
+                      icon={
+                        isListening ? (
+                          <motion.span
+                            animate={{ scale: [1, 1.12, 1] }}
+                            transition={{ repeat: Infinity, duration: 1.2 }}
+                            className="relative flex size-5 items-center justify-center"
+                          >
+                            <span className="absolute inset-0 rounded-full bg-destructive/25" />
+                            <Mic className="relative size-4 text-destructive" />
+                          </motion.span>
+                        ) : (
+                          <Mic className="size-4" />
+                        )
+                      }
+                    />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs text-center leading-relaxed">
+                  {isListening
+                    ? 'صحبت کنید؛ برای توقف دوباره بزنید'
+                    : 'تبدیل گفتار به متن (Chrome / Edge)'}
+                </TooltipContent>
+              </Tooltip>
+            </>
+          ) : null}
         </div>
 
         <Tooltip>

@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { findExistingOtp, createOtp } from '@/lib/otp-store';
 import { isTestOtpMode, TEST_OTP_CODE } from '@/lib/auth/test-otp';
-
-const iranianPhoneRegex = /^09[0-9]{9}$/;
+import { normalizeIranMobile } from '@/lib/format/digits';
 
 /** Cryptographically-random 6-digit OTP (zero-padded). */
 function generateOtpCode(): string {
@@ -18,15 +17,16 @@ const ATTEMPT_WINDOW = 60 * 1000; // 1 minute
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { phone } = body;
+    const normalizedPhone = normalizeIranMobile(String(body.phone ?? ''));
 
-    // Validate phone number
-    if (!phone || !iranianPhoneRegex.test(phone)) {
+    if (!normalizedPhone) {
       return NextResponse.json(
         { error: 'شماره موبایل معتبر نیست (مثال: 09123456789)' },
         { status: 400 }
       );
     }
+
+    const phone = normalizedPhone;
 
     // Rate limiting
     const now = Date.now();

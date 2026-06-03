@@ -48,7 +48,7 @@ export function MobileLocationSelector() {
         geoStatus={geo.status}
         detectedCity={geo.detectedCity}
         isDetecting={geo.isDetecting}
-        onDetectLocation={() => void geo.runDetection(true)}
+        onDetectLocation={() => void geo.runDetection()}
       />
     </>
   );

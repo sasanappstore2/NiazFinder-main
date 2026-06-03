@@ -2,7 +2,44 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { canUsersVoiceCall } from '@/lib/voice/can-call';
-import { getIceServers } from '@/lib/voice/ice-servers';
+import { buildIceServersFromEnv } from '@/lib/voice/turn-credentials';
+import { persistCallLogMessage } from '@/lib/voice/call-log-message';
+
+const STALE_RINGING_MS = 2 * 60 * 1000;
+
+const userSelect = {
+  id: true,
+  firstName: true,
+  lastName: true,
+  displayName: true,
+  avatar: true,
+} as const;
+
+function existingCallPayload(
+  call: {
+    id: string;
+    status: string;
+    callerId: string;
+    calleeId: string;
+    caller: { id: string; firstName: string; lastName: string; displayName: string | null; avatar: string | null };
+    callee: { id: string; firstName: string; lastName: string; displayName: string | null; avatar: string | null };
+  },
+  userId: string
+) {
+  const peer = call.callerId === userId ? call.callee : call.caller;
+  return {
+    callId: call.id,
+    status: call.status,
+    callType: call.callerId === userId ? ('outgoing' as const) : ('incoming' as const),
+    peer: {
+      id: peer.id,
+      firstName: peer.firstName,
+      lastName: peer.lastName,
+      displayName: peer.displayName ?? undefined,
+      avatar: peer.avatar ?? undefined,
+    },
+  };
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,19 +68,60 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const activeRinging = await db.voiceCall.findFirst({
+    const inProgress = await db.voiceCall.findFirst({
       where: {
-        status: 'RINGING',
-        OR: [
-          { callerId: user.id, calleeId },
-          { callerId: calleeId, calleeId: user.id },
-        ],
+        status: { in: ['RINGING', 'ACTIVE'] },
+        OR: [{ callerId: user.id }, { calleeId: user.id }],
+      },
+      include: {
+        caller: { select: userSelect },
+        callee: { select: userSelect },
+      },
+      orderBy: { startedAt: 'desc' },
+    });
+
+    if (inProgress) {
+      const ageMs = Date.now() - inProgress.startedAt.getTime();
+      if (inProgress.status === 'RINGING' && ageMs > STALE_RINGING_MS) {
+        const missed = await db.voiceCall.update({
+          where: { id: inProgress.id },
+          data: { status: 'MISSED', endedAt: new Date() },
+        });
+        void persistCallLogMessage(missed).catch((e) =>
+          console.warn('[calls] persistCallLogMessage (stale ring) failed:', e)
+        );
+      } else {
+        return NextResponse.json(
+          {
+            error: 'تماس دیگری در جریان است',
+            existingCall: existingCallPayload(inProgress, user.id),
+          },
+          { status: 409 }
+        );
+      }
+    }
+
+    const callee = await db.user.findUnique({
+      where: { id: calleeId },
+      select: { online: true },
+    });
+    if (!callee?.online) {
+      return NextResponse.json(
+        { error: 'کاربر آفلاین است یا در دسترس نیست', unavailableReason: 'offline' as const },
+        { status: 422 }
+      );
+    }
+
+    const calleeBusy = await db.voiceCall.findFirst({
+      where: {
+        status: { in: ['RINGING', 'ACTIVE'] },
+        OR: [{ callerId: calleeId }, { calleeId }],
       },
     });
-    if (activeRinging) {
+    if (calleeBusy) {
       return NextResponse.json(
-        { error: 'تماس دیگری در جریان است' },
-        { status: 409 }
+        { error: 'طرف مقابل مشغول است', unavailableReason: 'busy' as const },
+        { status: 422 }
       );
     }
 
@@ -54,9 +132,12 @@ export async function POST(request: NextRequest) {
         conversationId: conversationId ?? sharedConvId ?? null,
         status: 'RINGING',
       },
+      include: {
+        caller: { select: userSelect },
+      },
     });
 
-    const iceServers = getIceServers();
+    const iceServers = buildIceServersFromEnv(user.id);
 
     return NextResponse.json({
       callId: call.id,

@@ -17,7 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
+import { PersianDigitInput } from '@/components/ui/persian-digit-input';
+import { toAsciiDigits } from '@/lib/format/digits';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { RECENT_OPTIONS, SORT_OPTIONS_BUSINESS, SORT_OPTIONS_NEED } from '@/config/browse-filter-definitions';
@@ -222,8 +223,8 @@ function RangePopover({
         <div className="space-y-3">
           <Label>{fieldLabel}</Label>
           <div className="grid grid-cols-2 gap-2">
-            <Input type="number" placeholder="از" value={min} onChange={(e) => setMin(e.target.value)} />
-            <Input type="number" placeholder="تا" value={max} onChange={(e) => setMax(e.target.value)} />
+            <PersianDigitInput variant="plain" placeholder="از" value={min} onChange={setMin} />
+            <PersianDigitInput variant="plain" placeholder="تا" value={max} onChange={setMax} />
           </div>
           <Button size="sm" className="w-full" onClick={() => { onApply(min, max); setOpen(false); }}>
             اعمال
@@ -371,16 +372,26 @@ export function GlobalBrowseControls({
             <div className="space-y-3">
               <Label>قیمت / بودجه (تومان)</Label>
               <div className="grid grid-cols-2 gap-2">
-                <Input type="number" placeholder="از" value={priceMinDraft} onChange={(e) => setPriceMinDraft(e.target.value)} />
-                <Input type="number" placeholder="تا" value={priceMaxDraft} onChange={(e) => setPriceMaxDraft(e.target.value)} />
+                <PersianDigitInput
+                  variant="plain"
+                  placeholder="از"
+                  value={priceMinDraft}
+                  onChange={setPriceMinDraft}
+                />
+                <PersianDigitInput
+                  variant="plain"
+                  placeholder="تا"
+                  value={priceMaxDraft}
+                  onChange={setPriceMaxDraft}
+                />
               </div>
               <Button
                 size="sm"
                 className="w-full"
                 onClick={() => {
                   onPatchGlobal({
-                    priceMin: priceMinDraft ? Number(priceMinDraft) : null,
-                    priceMax: priceMaxDraft ? Number(priceMaxDraft) : null,
+                    priceMin: priceMinDraft ? Number(toAsciiDigits(priceMinDraft)) : null,
+                    priceMax: priceMaxDraft ? Number(toAsciiDigits(priceMaxDraft)) : null,
                   });
                   setPriceOpen(false);
                 }}

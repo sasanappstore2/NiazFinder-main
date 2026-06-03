@@ -2,6 +2,8 @@
 
 import type { FieldSchema } from '@/contracts/need-intake';
 import { Input } from '@/components/ui/input';
+import { PersianDigitInput } from '@/components/ui/persian-digit-input';
+import { toAsciiDigits, toPersianDigits } from '@/lib/format/digits';
 import { Textarea } from '@/components/ui/textarea';
 import { SuggestionChips } from './SuggestionChips';
 import { PriceInput } from './PriceInput';
@@ -69,13 +71,21 @@ export function FieldRenderer({
   }
 
   if (field.type === 'number') {
+    const ascii =
+      value !== undefined && value !== null && value !== ''
+        ? toAsciiDigits(String(value))
+        : '';
     return (
-      <Input
-        type="number"
-        inputMode="numeric"
-        value={value != null ? String(value) : ''}
-        onChange={(e) => onChange(e.target.value ? Number(e.target.value) : '')}
-        placeholder={field.placeholder}
+      <PersianDigitInput
+        variant="plain"
+        value={ascii}
+        onChange={(digits) => {
+          if (!digits) onChange('');
+          else onChange(Number(digits));
+        }}
+        placeholder={
+          field.placeholder ? toPersianDigits(field.placeholder) : undefined
+        }
         disabled={disabled}
         className="h-12 text-base"
       />

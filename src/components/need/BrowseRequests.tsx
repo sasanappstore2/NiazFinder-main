@@ -3,7 +3,7 @@
 import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
-import { Search, X, Inbox, Copy } from 'lucide-react';
+import { Search, X, Inbox } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,6 +33,7 @@ import { slugsToPersianNames } from '@/lib/search/city-slugs';
 import { useLocationScope } from '@/hooks/use-location-scope';
 import { buildScopedSearchUrl } from '@/lib/search/location-scope';
 import { useBrowsePageHeading } from '@/hooks/use-browse-page-heading';
+import { NeedBrowseAlertButton } from '@/components/need/NeedBrowseAlertButton';
 
 const REQUEST_FILTER_DEFAULTS = {
   q: '',
@@ -98,11 +99,7 @@ export function BrowseRequests({
   );
   const flatCategories = useMemo(() => flattenCategories(categories), [categories]);
 
-  const currentShareUrl = useMemo(() => {
-    const params = serializeFilters({ ...preservedFilters, q: query || null });
-    const qs = params.toString();
-    return qs ? `${currentPathname}?${qs}` : currentPathname;
-  }, [currentPathname, preservedFilters, query]);
+  const alertLabel = pageH1;
 
   // Fetch categories on mount
   useEffect(() => {
@@ -226,11 +223,6 @@ export function BrowseRequests({
     setCurrentPage(1);
   };
 
-  const copyCurrentLink = async () => {
-    const absoluteUrl = `${window.location.origin}${currentShareUrl}`;
-    await navigator.clipboard?.writeText(absoluteUrl);
-  };
-
   return (
     <div className="w-full min-h-[50vh] bg-muted/20" dir="rtl">
       <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
@@ -248,16 +240,14 @@ export function BrowseRequests({
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-              <Button
-                onClick={copyCurrentLink}
-                variant="outline"
-                className="gap-2"
-                aria-label="کپی لینک همین فیلترها"
-                title="کپی لینک قابل اشتراک همین فیلترها"
-              >
-                <Copy className="size-4" aria-hidden="true" />
-                کپی لینک
-              </Button>
+              <NeedBrowseAlertButton
+                browsePath={currentPathname}
+                categorySlug={categorySlug}
+                citySlugs={citySlugs}
+                filters={{ ...preservedFilters, q: query || null }}
+                searchQuery={query.trim() || undefined}
+                label={alertLabel}
+              />
             </div>
           </div>
         </div>

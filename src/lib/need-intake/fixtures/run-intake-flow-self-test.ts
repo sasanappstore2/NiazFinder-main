@@ -54,6 +54,9 @@ function runFixture(f: FlowFixture): string | null {
   if (!listing.title || listing.title.length < 4) {
     return `${f.id}: empty listing title`;
   }
+  if (listing.title.length > 70) {
+    return `${f.id}: title exceeds 70 chars (${listing.title.length})`;
+  }
   if (!listing.description || listing.description.length < 10) {
     return `${f.id}: empty listing description`;
   }

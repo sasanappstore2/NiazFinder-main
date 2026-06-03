@@ -21,6 +21,8 @@ import { StepContact } from '@/components/business-profile/onboarding/StepContac
 import { StepBrand } from '@/components/business-profile/onboarding/StepBrand';
 import { StepReview } from '@/components/business-profile/onboarding/StepReview';
 import { getClientAuthHeaders, getClientAuthJsonHeaders } from '@/lib/auth/client-auth';
+import { trackAnalyticsEvent } from '@/lib/analytics/track';
+import { normalizeIranMobile } from '@/lib/format/digits';
 
 const EMPTY: BusinessOnboardingPayload = {
   name: '',
@@ -120,13 +122,8 @@ export function BusinessOnboardingWizard({
         }
 
         if (!cancelled) {
-          const userPhone = currentUser?.phone?.replace(/\D/g, '') ?? '';
           const normalizedUserPhone =
-            userPhone.length === 10 && userPhone.startsWith('9')
-              ? `0${userPhone}`
-              : userPhone.length === 12 && userPhone.startsWith('98')
-                ? `0${userPhone.slice(2)}`
-                : currentUser?.phone ?? '';
+            (currentUser?.phone && normalizeIranMobile(currentUser.phone)) ?? '';
 
           const merged: BusinessOnboardingPayload = {
             name: (draft?.name || (api.name as string) || currentUser?.displayName || '') as string,
@@ -223,10 +220,16 @@ export function BusinessOnboardingWizard({
 
   const goNext = () => {
     if (!validateStep(step)) return;
-    setStep((s) => Math.min(3, s + 1));
+    const next = Math.min(3, step + 1);
+    trackAnalyticsEvent('onboarding_step', { step: next, slug });
+    setStep(next);
   };
 
-  const goBack = () => setStep((s) => Math.max(0, s - 1));
+  const goBack = () => {
+    const prev = Math.max(0, step - 1);
+    trackAnalyticsEvent('onboarding_step', { step: prev, slug });
+    setStep(prev);
+  };
 
   const handlePublish = async () => {
     if (!validateStep(0) || !validateStep(1) || !validateStep(2)) {

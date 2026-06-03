@@ -9,39 +9,15 @@ import {
   MAX_PROFILE_CATEGORY_SELECTIONS,
 } from '@/lib/business/business-category';
 import {
-  filterOccupationMegaMenu,
   getOccupationSectorColor,
-  OCCUPATION_MEGA_MENU_TREE,
 } from '@/lib/business/occupation-mega-menu';
-import {
-  filterOnlineStoreMegaMenu,
-  getOnlineStoreSectorColor,
-  ONLINE_STORE_MEGA_MENU_TREE,
-} from '@/lib/business/online-store-mega-menu';
+import { useOccupationMegaMenuTree } from '@/hooks/use-occupation-mega-menu';
+import { useOnlineStoreMegaMenuTree } from '@/hooks/use-online-store-mega-menu';
+import { getOnlineStoreSectorColor } from '@/lib/business/online-store-mega-menu';
 import {
   BusinessCategoryMegaMenuPicker,
   type BusinessCategoryMegaMenuConfig,
 } from '@/components/business-profile/BusinessCategoryMegaMenuPicker';
-
-const OCCUPATION_MENU_CONFIG: BusinessCategoryMegaMenuConfig = {
-  defaultTree: OCCUPATION_MEGA_MENU_TREE,
-  filterMenu: filterOccupationMegaMenu,
-  getSectorColor: getOccupationSectorColor,
-  selectionNoun: 'مورد',
-  searchPlaceholder: 'جستجوی شغل…',
-  emptySearchMessage: 'شغلی یافت نشد',
-  mobileRootTitle: 'انتخاب شغل',
-};
-
-const ONLINE_STORE_MENU_CONFIG: BusinessCategoryMegaMenuConfig = {
-  defaultTree: ONLINE_STORE_MEGA_MENU_TREE,
-  filterMenu: filterOnlineStoreMegaMenu,
-  getSectorColor: getOnlineStoreSectorColor,
-  selectionNoun: 'مورد',
-  searchPlaceholder: 'جستجوی حوزه فروش…',
-  emptySearchMessage: 'حوزه‌ای یافت نشد',
-  mobileRootTitle: 'انتخاب فروشگاه اینترنتی',
-};
 
 export function BusinessProfileCategoryTabs({
   selectedSlugs,
@@ -52,15 +28,35 @@ export function BusinessProfileCategoryTabs({
   onChange: (slugs: string[]) => void;
   className?: string;
 }) {
+  const { tree: occupationTree, filterMenu: filterOccupationMenu } = useOccupationMegaMenuTree();
+  const { tree: onlineStoreTree, filterMenu: filterOnlineStoreMenu } = useOnlineStoreMegaMenuTree();
   const sharedHint = `حداکثر ${MAX_PROFILE_CATEGORY_SELECTIONS} مورد از هر دو زبانه — اولین = اصلی`;
 
   const occupationConfig = React.useMemo(
-    () => ({ ...OCCUPATION_MENU_CONFIG, hintText: sharedHint }),
-    []
+    (): BusinessCategoryMegaMenuConfig => ({
+      defaultTree: occupationTree,
+      filterMenu: filterOccupationMenu,
+      getSectorColor: getOccupationSectorColor,
+      selectionNoun: 'مورد',
+      searchPlaceholder: 'جستجوی شغل…',
+      emptySearchMessage: 'شغلی یافت نشد',
+      mobileRootTitle: 'انتخاب شغل',
+      hintText: sharedHint,
+    }),
+    [occupationTree, filterOccupationMenu, sharedHint]
   );
   const onlineConfig = React.useMemo(
-    () => ({ ...ONLINE_STORE_MENU_CONFIG, hintText: sharedHint }),
-    []
+    (): BusinessCategoryMegaMenuConfig => ({
+      defaultTree: onlineStoreTree,
+      filterMenu: filterOnlineStoreMenu,
+      getSectorColor: getOnlineStoreSectorColor,
+      selectionNoun: 'مورد',
+      searchPlaceholder: 'جستجوی حوزه فروش…',
+      emptySearchMessage: 'حوزه‌ای یافت نشد',
+      mobileRootTitle: 'انتخاب فروشگاه اینترنتی',
+      hintText: sharedHint,
+    }),
+    [onlineStoreTree, filterOnlineStoreMenu, sharedHint]
   );
 
   return (

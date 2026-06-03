@@ -5,35 +5,43 @@ This repo has 4 runtimes you may run locally:
 - **Next.js** (web + Next route handlers) on **:3000**
 - **Nest backend** (`mini-services/backend`) on **:4000** (default)
 - **Chat service** (`mini-services/chat-service`) on **:3004** (default)
-- **Intake MLX** (`mini-services/intake-mlx`) on **:8100** (optional — Mac, local ML)
+- **Intake MLX** (`mini-services/intake-mlx`) on **:8100** — **required for Qwen intake AI** (Mac)
 
 > Note: `docs/DEBUG_PLAYBOOK.md` already contains “recovery when broken”. This file focuses on a clean local start.
 
-### 0) Prereqs
+### Minimal stack (need intake with AI)
 
-- Node.js (repo Dockerfiles use Node 20)
-- Bun (scripts `dev:backend` / `dev:chat` use bun)
-
-### 1) Install deps
-
-From repo root:
+Terminal A — database:
 
 ```bash
-npm install
+docker compose up -d postgres redis
+npm run db:migrate   # or db:push in dev
 ```
 
-### 2) Set env
+Terminal B — Qwen (intake-mlx):
 
-- Copy `.env.example` → `.env.local` (preferred for local) or `.env`
-- Minimum common ones you will likely need:
-  - `DATABASE_URL=...`
-  - `NEXT_PUBLIC_API_URL=...`
-  - `NEXT_PUBLIC_CHAT_SOCKET_URL=...`
-  - `NEXT_PUBLIC_TYPING_WS_URL=...` (if using typing WS)
+```bash
+npm run dev:intake-mlx
+npm run smoke:intake-mlx   # optional health check
+```
 
-See `docs/ENV_MAP.md` for the full map.
+Terminal C — Next:
 
-### 3) Start services (recommended order)
+```bash
+npm run dev
+```
+
+Add to `.env.local`:
+
+```bash
+NEED_INTAKE_LLM_ENABLED=true
+NEED_INTAKE_LLM_URL=http://127.0.0.1:8100
+NEED_INTAKE_LLM_TIMEOUT_MS=12000
+```
+
+Backend (`:4000`) and Chat (`:3004`) are optional unless you need auth, chat, or typing WebSocket features.
+
+### Full stack (all features)
 
 Terminal A (backend):
 
@@ -53,18 +61,10 @@ Terminal C (Next):
 npm run dev
 ```
 
-Terminal D (optional — MLX on Mac):
+Terminal D (MLX on Mac — Qwen intake AI):
 
 ```bash
-npm run export:intake-dataset
 npm run dev:intake-mlx
-```
-
-Hybrid parse (add to `.env.local`):
-
-```bash
-NEED_INTAKE_LLM_ENABLED=true
-NEED_INTAKE_LLM_URL=http://127.0.0.1:8100
 ```
 
 Optional — show parse preview on the **home** «نیازتان را بگویید» box (calls the same `/api/need-intake/parse-intent` before navigating to `/post`; requires `npm run dev` restart):

@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { vazirmatn, geistMono } from "@/lib/fonts/vazirmatn";
+import { vazirmatn } from "@/lib/fonts/vazirmatn";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
+import { GlobalVoiceCallLayer } from "@/components/voice/GlobalVoiceCallLayer";
 import {
   SITE_URL,
   SITE_NAME,
@@ -173,7 +174,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${vazirmatn.variable} ${geistMono.variable} font-sans antialiased bg-background text-foreground`}
+        className={`${vazirmatn.variable} font-sans antialiased bg-background text-foreground persian-nums`}
       >
         {/* Skip to main content link for accessibility */}
         <a
@@ -185,7 +186,8 @@ export default function RootLayout({
 
         <ThemeProvider>
           {children}
-          <Toaster position="top-center" richColors dir="rtl" />
+          <GlobalVoiceCallLayer />
+          <Toaster position="top-center" richColors dir="rtl" closeButton />
         </ThemeProvider>
       </body>
     </html>

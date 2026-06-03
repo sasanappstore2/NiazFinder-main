@@ -55,9 +55,6 @@ export function useLocationSelection(options: UseLocationSelectionOptions = {}) 
   const [selectedProvinceIds, setSelectedProvinceIds] = React.useState<string[]>([]);
   const [isInitialized, setIsInitialized] = React.useState(false);
 
-  const skipGeoAuto =
-    scopeIsActive(scopeFromUrl(pathname, searchParams)) || cookieManager.hasSavedLocation();
-
   const applySelection = React.useCallback(
     (selection: LocationSelection, opts?: { silent?: boolean; fromGeo?: boolean }) => {
       const scope = selectionToScope(selection);
@@ -124,7 +121,6 @@ export function useLocationSelection(options: UseLocationSelectionOptions = {}) 
   );
 
   const geo = useAutoLocationCity({
-    skipAuto: skipGeoAuto || !isInitialized,
     onDetected: handleGeoDetected,
   });
 

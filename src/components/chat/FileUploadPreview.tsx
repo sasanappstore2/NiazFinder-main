@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { toPersianDigits } from '@/lib/format/digits';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -33,9 +34,6 @@ interface SelectedFile {
 // ═══════════════════════════════════════════════════════════════════════════════
 // UTILITY HELPERS
 // ═══════════════════════════════════════════════════════════════════════════════
-
-const toPersianDigits = (str: string): string =>
-  str.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d)]);
 
 const formatFileSize = (bytes: number): string => {
   if (bytes < 1024) return `${bytes} B`;

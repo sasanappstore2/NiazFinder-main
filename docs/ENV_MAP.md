@@ -54,17 +54,30 @@ This is a practical index of env vars that affect local dev and common debugging
   - **Example**: in `.env.example`
 
 - **`NEED_INTAKE_LLM_ENABLED`**
-  - **Used in**: `src/lib/need-intake/llm-parse-client.ts`, `parse-intent` route
-  - **Role**: enable hybrid parse via local MLX service (`'true'` in dev only)
+  - **Used in**: `src/lib/need-intake/qwen-intake-client.ts`, `parse-intent` route, `analysis-from-qwen.ts`, `generate-listing-title.ts`
+  - **Role**: enable Qwen intake via local MLX service (`'true'` in dev on Mac)
   - **Default**: unset / false
 
 - **`NEED_INTAKE_LLM_URL`**
-  - **Used in**: `src/lib/need-intake/llm-parse-client.ts`
+  - **Used in**: `src/lib/need-intake/qwen-intake-client.ts`
   - **Role**: base URL for `mini-services/intake-mlx` (default `http://127.0.0.1:8100`)
 
 - **`NEED_INTAKE_LLM_TIMEOUT_MS`**
-  - **Used in**: `src/lib/need-intake/llm-parse-client.ts`
-  - **Role**: fetch timeout for MLX parse (default `8000`)
+  - **Used in**: `src/lib/need-intake/qwen-intake-client.ts`
+  - **Role**: fetch timeout for MLX parse/title (default `12000`)
+
+- **`NEED_INTAKE_TITLE_AI_ENABLED`**
+  - **Used in**: `src/lib/need-intake/generate-listing-title.ts`
+  - **Role**: set `false` to skip AI and use template titles only; default auto when `NEED_INTAKE_LLM_ENABLED=true`
+
+- **Intake AI = Qwen only** — parse, analyze, and title use `mini-services/intake-mlx` (Qwen3.5-2B). Rules engine remains as hybrid fallback when MLX is down. LM Studio / Ollama are **not** used for need intake when `NEED_INTAKE_LLM_ENABLED=true`.
+
+- **`AI_SEMANTIC_RESOLVER_ENABLED`**, **`OLLAMA_URL`**, **`OLLAMA_MODEL`**
+  - **Used in**: `src/ai/**` (legacy semantic resolver; skipped for intake analyze when Qwen is enabled)
+
+- **Home lead mic (browser only)**
+  - **Used in**: `src/hooks/use-speech-to-text.ts`, `src/lib/voice/browser-speech.ts`
+  - **Requires**: Chrome or Edge on HTTPS/localhost (`window.SpeechRecognition`). Safari/Firefox: mic hidden.
 
 - **Lead outreach knobs** (examples live in `.env.example`)
   - `LEAD_OUTREACH_ENABLED`

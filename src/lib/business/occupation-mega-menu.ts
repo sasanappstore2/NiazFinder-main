@@ -147,12 +147,17 @@ export function buildOccupationMegaMenuTree(): OccupationMegaMenuNode[] {
     .filter((s) => (s.subCategories?.length ?? 0) > 0);
 }
 
+/** Current tree from sync cache (defaults until warmed). */
+export function getOccupationMegaMenuTree(): OccupationMegaMenuNode[] {
+  return buildOccupationMegaMenuTree();
+}
+
+/** @deprecated Use getOccupationMegaMenuTree() — built at module load from defaults. */
 export const OCCUPATION_MEGA_MENU_TREE = buildOccupationMegaMenuTree();
 
-/** Flat pickable jobs for search. */
-export function getAllOccupationMenuJobs(): OccupationMegaMenuNode[] {
+function collectMenuJobs(tree: OccupationMegaMenuNode[]): OccupationMegaMenuNode[] {
   const out: OccupationMegaMenuNode[] = [];
-  for (const sector of OCCUPATION_MEGA_MENU_TREE) {
+  for (const sector of tree) {
     for (const job of sector.subCategories ?? []) {
       out.push(job);
     }
@@ -160,20 +165,28 @@ export function getAllOccupationMenuJobs(): OccupationMegaMenuNode[] {
   return out;
 }
 
+/** Flat pickable jobs for search. */
+export function getAllOccupationMenuJobs(
+  tree: OccupationMegaMenuNode[] = getOccupationMegaMenuTree()
+): OccupationMegaMenuNode[] {
+  return collectMenuJobs(tree);
+}
+
 export function filterOccupationMegaMenu(
-  query: string
+  query: string,
+  tree: OccupationMegaMenuNode[] = getOccupationMegaMenuTree()
 ): { sectors: OccupationMegaMenuNode[]; flatJobs: OccupationMegaMenuNode[] } {
   const q = query.trim().toLowerCase();
   if (!q) {
-    return { sectors: OCCUPATION_MEGA_MENU_TREE, flatJobs: [] };
+    return { sectors: tree, flatJobs: [] };
   }
 
-  const flatJobs = getAllOccupationMenuJobs().filter(
+  const flatJobs = getAllOccupationMenuJobs(tree).filter(
     (j) => j.name.includes(query.trim()) || j.slug.includes(q)
   );
 
   const sectorSlugs = new Set(flatJobs.map((j) => j.parent).filter(Boolean));
-  const sectors = OCCUPATION_MEGA_MENU_TREE.filter((s) => sectorSlugs.has(s.slug)).map((sector) => ({
+  const sectors = tree.filter((s) => sectorSlugs.has(s.slug)).map((sector) => ({
     ...sector,
     subCategories: (sector.subCategories ?? []).filter((j) =>
       flatJobs.some((f) => f.slug === j.slug)

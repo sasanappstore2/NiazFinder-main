@@ -43,6 +43,11 @@ const CASES: { id: string; text: string; expect: Partial<ReturnType<typeof extra
       text: 'آپارتمان طبقه ۵ تهران',
       expect: { floorMin: '5' },
     },
+    {
+      id: 'rahn-ejare-billion-million',
+      text: 'من یک خونه توی زعفرانیه تهران می‌خوام رهن و اجاره باشه حدوداً ۱۰ میلیارد هم بودجه دارم اجاره‌ام هم ۱۵ میلیون',
+      expect: { rahnAmount: '10000000000', monthlyRent: '15000000' },
+    },
   ];
 
 function run(): { failed: string[] } {

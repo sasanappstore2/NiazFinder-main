@@ -1,10 +1,11 @@
 'use client';
 
-import { Suspense, type ReactNode } from 'react';
+import { Suspense, useEffect, type ReactNode } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Business, OfferCtaType, ProfileSectionId } from '@/contracts/business-profile';
 import type { ResolvedProfileLayout } from '@/contracts/business-profile';
 import { profileNavSections } from '@/lib/business/resolve-profile-sections';
+import { trackAnalyticsEvent } from '@/lib/analytics/track';
 import { cn } from '@/lib/utils';
 import {
   HeroSection,
@@ -127,6 +128,10 @@ export function ProfileShell({
   requestId?: string;
   children: ReactNode;
 }) {
+  useEffect(() => {
+    trackAnalyticsEvent('business_profile_view', { businessId: business.id, slug: business.slug });
+  }, [business.id, business.slug]);
+
   return (
     <div>
       {renderProfileSection('hero', { business, requestId })}

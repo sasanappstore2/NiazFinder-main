@@ -8,6 +8,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import type { ListingPreview } from '@/contracts/need-intake';
 import { formatMoneyToman } from '@/lib/format/money';
+import { LISTING_TITLE_MAX_LENGTH } from '@/lib/need-intake/listing-title';
+import { truncateListingTitle } from '@/lib/need-intake/listing-title-sanitize';
+import { toPersianDigits } from '@/lib/format/digits';
 
 export interface NeedListingPreviewProps {
   preview: ListingPreview;
@@ -41,6 +44,8 @@ export function NeedListingPreview({
     onChange({ ...preview, extras: extras.length ? extras : undefined });
   };
 
+  const titleLen = preview.title.length;
+
   return (
     <div className="intake-form-card">
       <div className="flex items-center gap-2">
@@ -48,16 +53,28 @@ export function NeedListingPreview({
         <h3 className="text-lg font-semibold">پیش‌نمایش آگهی</h3>
       </div>
       <p className="text-sm text-muted-foreground">
-        عنوان و متن را بررسی کنید. می‌توانید ویرایش دستی کنید یا با بازنویسی خودکار
-        به‌روزرسانی شود.
+        عنوان توسط هوش مصنوعی پیشنهاد شده و قابل ویرایش است. متن توضیحات را هم بررسی کنید.
       </p>
 
       <div className="space-y-2">
-        <Label htmlFor="preview-title">عنوان آگهی</Label>
+        <div className="flex items-center justify-between gap-2">
+          <Label htmlFor="preview-title">عنوان آگهی</Label>
+          <span
+            className={`text-xs tabular-nums ${titleLen > LISTING_TITLE_MAX_LENGTH ? 'text-destructive' : 'text-muted-foreground'}`}
+          >
+            {toPersianDigits(String(titleLen))}/{toPersianDigits(String(LISTING_TITLE_MAX_LENGTH))}
+          </span>
+        </div>
         <Input
           id="preview-title"
           value={preview.title}
-          onChange={(e) => onChange({ ...preview, title: e.target.value })}
+          maxLength={LISTING_TITLE_MAX_LENGTH}
+          onChange={(e) =>
+            onChange({
+              ...preview,
+              title: truncateListingTitle(e.target.value),
+            })
+          }
           className="text-base"
         />
       </div>

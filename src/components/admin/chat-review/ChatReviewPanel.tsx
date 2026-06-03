@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { useAppStore } from '@/lib/store';
+import { useAdmin } from '@/components/admin/context/AdminContext';
 
 type ConversationRow = {
   id: string;
@@ -37,34 +37,19 @@ function displayName(user: ConversationRow['user1']) {
 }
 
 export function ChatReviewPanel() {
-  const authToken = useAppStore((s) => s.authToken);
+  const { apiFetch, hasPermission } = useAdmin();
   const [isLoading, setIsLoading] = useState(true);
   const [q, setQ] = useState('');
   const [conversations, setConversations] = useState<ConversationRow[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [messages, setMessages] = useState<MessageRow[]>([]);
+  const [blocks, setBlocks] = useState<Array<{ id: string; blockerId: string; blockedId: string }>>([]);
   const selected = useMemo(
     () => conversations.find((c) => c.id === selectedId) ?? null,
     [conversations, selectedId]
   );
 
-  const apiFetch = useCallback(
-    async <T,>(url: string): Promise<T> => {
-      const res = await fetch(url, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-        },
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'عملیات انجام نشد');
-      return data as T;
-    },
-    [authToken]
-  );
-
   const loadConversations = useCallback(async () => {
-    if (!authToken) return;
     setIsLoading(true);
     try {
       const data = await apiFetch<{ conversations: ConversationRow[] }>(
@@ -77,11 +62,10 @@ export function ChatReviewPanel() {
     } finally {
       setIsLoading(false);
     }
-  }, [apiFetch, authToken, q, selectedId]);
+  }, [apiFetch, q, selectedId]);
 
   const loadMessages = useCallback(
     async (conversationId: string) => {
-      if (!authToken) return;
       try {
         const data = await apiFetch<{ messages: MessageRow[] }>(
           `/api/super-admin/chat-review/conversations/${conversationId}/messages?limit=120`
@@ -91,8 +75,32 @@ export function ChatReviewPanel() {
         toast.error(e instanceof Error ? e.message : 'خطا در بارگذاری پیام‌ها');
       }
     },
-    [apiFetch, authToken]
+    [apiFetch]
   );
+
+  const loadBlocks = useCallback(
+    async (userId: string) => {
+      try {
+        const data = await apiFetch<{ blocks: typeof blocks }>(
+          `/api/super-admin/chat-review/users/${userId}/blocks`
+        );
+        setBlocks(data.blocks);
+      } catch {
+        setBlocks([]);
+      }
+    },
+    [apiFetch]
+  );
+
+  const hideMessage = async (messageId: string) => {
+    try {
+      await apiFetch(`/api/super-admin/chat-review/messages/${messageId}/hide`, { method: 'POST' });
+      toast.success('پیام مخفی شد');
+      if (selectedId) void loadMessages(selectedId);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'خطا');
+    }
+  };
 
   useEffect(() => {
     void loadConversations();
@@ -103,6 +111,11 @@ export function ChatReviewPanel() {
     void loadMessages(selectedId);
   }, [selectedId, loadMessages]);
 
+  useEffect(() => {
+    if (!selected) return;
+    void loadBlocks(selected.user1.id);
+  }, [selected, loadBlocks]);
+
   return (
     <Card className="border-border/60 bg-card/90">
       <CardHeader className="flex flex-col gap-2">
@@ -110,18 +123,16 @@ export function ChatReviewPanel() {
           <div className="min-w-0">
             <CardTitle className="flex items-center gap-2 text-base">
               <MessageSquare className="size-4 text-emerald-500" />
-              بازبینی چت‌ها (Backdoor)
+              بازبینی چت‌ها
             </CardTitle>
             <CardDescription className="text-xs leading-6">
-              لیست گفتگوها و پیام‌ها فقط برای نظارت و مدیریت. (فاز بعد: فیلترهای پیشرفته و اقدامات مدیریتی)
+              مشاهده گفتگوها، مخفی‌سازی پیام و بررسی blockها
             </CardDescription>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" className="rounded-lg" onClick={loadConversations} disabled={isLoading}>
-              <RefreshCcw className="size-4" />
-              تازه‌سازی
-            </Button>
-          </div>
+          <Button variant="outline" className="rounded-lg" onClick={loadConversations} disabled={isLoading}>
+            <RefreshCcw className="size-4" />
+            تازه‌سازی
+          </Button>
         </div>
 
         <div className="flex items-center gap-2">
@@ -134,9 +145,7 @@ export function ChatReviewPanel() {
               className="pr-10"
             />
           </div>
-          <Button className="rounded-lg" onClick={loadConversations}>
-            جستجو
-          </Button>
+          <Button className="rounded-lg" onClick={loadConversations}>جستجو</Button>
         </div>
       </CardHeader>
 
@@ -181,9 +190,9 @@ export function ChatReviewPanel() {
                 <div className="truncate text-sm font-black">
                   {selected ? `${displayName(selected.user1)} ↔ ${displayName(selected.user2)}` : 'یک گفتگو را انتخاب کنید'}
                 </div>
-                <div className="mt-1 text-xs text-muted-foreground" dir="ltr">
-                  {selected?.id ?? ''}
-                </div>
+                {blocks.length > 0 && (
+                  <div className="mt-1 text-xs text-amber-600">{blocks.length} block مرتبط</div>
+                )}
               </div>
               {selected?.requestId && <Badge variant="secondary">request: {selected.requestId}</Badge>}
             </div>
@@ -195,18 +204,18 @@ export function ChatReviewPanel() {
                     <div className="min-w-0">
                       <div className="text-xs font-black">{displayName(m.sender)}</div>
                       <div className="mt-1 text-sm leading-7">{m.content}</div>
-                      {m.attachmentUrls?.length ? (
-                        <div className="mt-2 text-xs text-muted-foreground" dir="ltr">
-                          attachments: {m.attachmentUrls.join(', ')}
-                        </div>
-                      ) : null}
+                      {m.type === 'CALL' && <Badge variant="outline" className="mt-1">تماس صوتی</Badge>}
                       <div className="mt-2 text-[11px] text-muted-foreground" dir="ltr">
                         {new Date(m.createdAt).toLocaleString('fa-IR')}
                       </div>
                     </div>
-                    <div className="shrink-0 text-xs text-muted-foreground">
-                      {m.type}
-                      {!m.isRead ? <span className="ml-2">• unread</span> : null}
+                    <div className="flex shrink-0 flex-col items-end gap-1">
+                      <span className="text-xs text-muted-foreground">{m.type}</span>
+                      {hasPermission('comms:messages:moderate') && (
+                        <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => hideMessage(m.id)}>
+                          مخفی
+                        </Button>
+                      )}
                     </div>
                   </div>
                   {idx !== messages.length - 1 && <Separator className="my-3" />}
@@ -214,9 +223,7 @@ export function ChatReviewPanel() {
               ))}
 
               {!messages.length && (
-                <div className="py-10 text-center text-sm text-muted-foreground">
-                  پیامی وجود ندارد.
-                </div>
+                <div className="py-10 text-center text-sm text-muted-foreground">پیامی وجود ندارد.</div>
               )}
             </div>
           </div>
@@ -225,4 +232,3 @@ export function ChatReviewPanel() {
     </Card>
   );
 }
-

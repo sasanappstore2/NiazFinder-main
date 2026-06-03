@@ -14,6 +14,7 @@ import {
   VEHICLE_DEAL_LABELS,
 } from '@/config/need-schemas/labels';
 import { formatMoneyToman } from '@/lib/format/money';
+import { realEstateFilterSummaryLines } from '@/lib/need-intake/filter-answer-lines';
 import { isCoreIntakeComplete } from '@/lib/need-intake/core-progress';
 import { isIntakeFieldAnswered } from '@/lib/need-intake/intake-field-answered';
 import { toAsciiDigits } from '@/lib/need-intake/extract-property-slots';
@@ -201,7 +202,10 @@ export function buildSummary(
     parts.push(`نوع ملک: ${PROPERTY_KIND_LABELS[String(kind)] ?? kind}`);
   }
 
-  if (answers.rooms) parts.push(`خواب: ${answers.rooms}`);
+  for (const line of realEstateFilterSummaryLines(answers)) {
+    parts.push(line);
+  }
+
   if (answers.areaMin) parts.push(`حداقل متراژ: ${answers.areaMin} متر`);
   if (answers.areaMax) parts.push(`حداکثر متراژ: ${answers.areaMax} متر`);
   if (answers.yearMin || answers.yearMax) {
@@ -209,7 +213,6 @@ export function buildSummary(
     const yMax = answers.yearMax ? String(answers.yearMax) : '—';
     parts.push(`سال ساخت: ${yMin} تا ${yMax}`);
   }
-  if (answers.familyCount) parts.push(`تعداد نفرات: ${answers.familyCount}`);
   if (parsed.title) parts.push(`عنوان: ${parsed.title}`);
   if (answers.location || parsed.city) {
     parts.push(`مکان: ${answers.location ?? parsed.city}`);
@@ -219,14 +222,8 @@ export function buildSummary(
   } else if (parsed.budgetMax) {
     parts.push(`بودجه: ${formatMoneyToman(parsed.budgetMax)} تومان`);
   }
-  if (answers.rahnAmount) {
-    parts.push(`رهن: ${formatMoneyToman(Number(answers.rahnAmount))} تومان`);
-  }
   if (answers.deposit) {
     parts.push(`ودیعه: ${formatMoneyToman(Number(answers.deposit))} تومان`);
-  }
-  if (answers.monthlyRent) {
-    parts.push(`اجاره ماهانه: ${formatMoneyToman(Number(answers.monthlyRent))} تومان`);
   }
   if (answers.brand) parts.push(`خودرو: ${answers.brand}`);
   if (answers.productName) parts.push(`کالا: ${answers.productName}`);

@@ -6,7 +6,8 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { RedisCacheInterceptor } from './common/interceptors/redis-cache.interceptor';
-import cookieParser from 'cookie-parser';
+import { RedisService } from './common/redis/redis.service';
+import cookieParser = require('cookie-parser');
 
 // ─── Suppress ioredis unhandled errors when Redis is not available ───
 process.on('unhandledRejection', (reason) => {
@@ -60,7 +61,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(
     new ClassSerializerInterceptor(reflector),
     new TransformInterceptor(),
-    new RedisCacheInterceptor(reflector, app.get('RedisService' as any, { strict: false })),
+    new RedisCacheInterceptor(reflector, app.get(RedisService)),
   );
 
   // ─── Global Exception Filter ───

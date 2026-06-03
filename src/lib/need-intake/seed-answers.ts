@@ -56,7 +56,17 @@ export function seedAnswersFromParsed(
   }
 
   if (parsed.budgetMax && !answers.budget) answers.budget = parsed.budgetMax;
-  if (parsed.budgetMax && e.dealType === 'rent_rahn_full' && !answers.rahnAmount) {
+  if (!answers.rahnAmount && e.rahnAmount) {
+    answers.rahnAmount = Number(e.rahnAmount);
+  }
+  if (
+    !answers.rahnAmount &&
+    parsed.budgetMax &&
+    parsed.budgetMax >= 50_000_000 &&
+    (e.dealType === 'rent_rahn_full' || e.dealType === 'rent_rahn_ejare')
+  ) {
+    answers.rahnAmount = parsed.budgetMax;
+  } else if (parsed.budgetMax && e.dealType === 'rent_rahn_full' && !answers.rahnAmount) {
     answers.rahnAmount = parsed.budgetMax;
   }
 

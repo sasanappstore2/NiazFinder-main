@@ -49,7 +49,6 @@ export function BusinessCategoryPicker({
           setOccupationSlugs(slugs);
           setTemplate(data.template ?? '');
           setBlueprintTitle(data.blueprintTitle ?? '');
-          if (slugs[0]) onCategorySaved?.(slugs[0]);
         }
       } catch {
         /* ignore */
@@ -60,7 +59,7 @@ export function BusinessCategoryPicker({
     return () => {
       cancelled = true;
     };
-  }, [onCategorySaved]);
+  }, []);
 
   const primary = occupationSlugs[0] ?? '';
 

@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 
+/** @deprecated Use `/api/chat` instead. */
+const DEPRECATION_HEADERS = {
+  Deprecation: 'true',
+  Link: '</api/chat>; rel="successor-version"',
+};
+
 // ============ TYPES ============
 
 interface ConversationListItem {
@@ -95,7 +101,7 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({ conversations: mappedConversations });
+    return NextResponse.json({ conversations: mappedConversations }, { headers: DEPRECATION_HEADERS });
   } catch (error) {
     console.error('Conversations GET error:', error);
     return NextResponse.json(

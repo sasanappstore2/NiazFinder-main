@@ -5,9 +5,9 @@ import json
 import re
 from typing import Any
 
-from app.config import MAX_TOKENS, TEMPERATURE
+from app.config import LISTING_TITLE_MAX_LENGTH, MAX_TOKENS, TITLE_MAX_TOKENS
 from app.model_loader import get_model_state
-from app.prompts import NEED_INTAKE_SYSTEM_PROMPT
+from app.prompts import LISTING_TITLE_SYSTEM_PROMPT, NEED_INTAKE_SYSTEM_PROMPT
 
 
 def _extract_json(text: str) -> dict[str, Any]:
@@ -31,7 +31,6 @@ def _extract_json(text: str) -> dict[str, Any]:
             pass
 
         # Heuristic: convert single quotes → double quotes.
-        # (Works when the only issue is quote style.)
         try:
             normalized = text.replace("'", '"')
             return json.loads(normalized)
@@ -39,17 +38,16 @@ def _extract_json(text: str) -> dict[str, Any]:
             raise e
 
 
-def parse_text(text: str) -> tuple[dict[str, Any], str]:
+def generate_with_prompt(system: str, user: str, *, max_tokens: int = MAX_TOKENS) -> str:
     state = get_model_state()
     if state.load_error or state.model is None or state.tokenizer is None:
         raise RuntimeError(state.load_error or "Model not loaded")
 
     from mlx_lm import generate
 
-    # Keep prompt format consistent with our training text conversion.
     prompt = (
-        f"<|system|>\n{NEED_INTAKE_SYSTEM_PROMPT}\n"
-        f"<|user|>\n{text.strip()}\n"
+        f"<|system|>\n{system}\n"
+        f"<|user|>\n{user.strip()}\n"
         "<|assistant|>\n"
     )
 
@@ -57,13 +55,43 @@ def parse_text(text: str) -> tuple[dict[str, Any], str]:
         state.model,
         state.tokenizer,
         prompt,
-        max_tokens=MAX_TOKENS,
+        max_tokens=max_tokens,
         verbose=False,
     )
-    raw_str = raw.strip() if isinstance(raw, str) else str(raw).strip()
+    return raw.strip() if isinstance(raw, str) else str(raw).strip()
+
+
+def _normalize_title(raw: str) -> str:
+    text = raw.strip()
+    if text.startswith("```"):
+        text = re.sub(r"^```(?:\w+)?\s*", "", text)
+        text = re.sub(r"\s*```$", "", text)
+    text = text.split("\n", 1)[0].strip()
+    text = text.strip('"\'«»')
+    if len(text) > LISTING_TITLE_MAX_LENGTH:
+        text = text[:LISTING_TITLE_MAX_LENGTH].rstrip()
+    return text
+
+
+def parse_text(text: str) -> tuple[dict[str, Any], str]:
+    raw_str = generate_with_prompt(NEED_INTAKE_SYSTEM_PROMPT, text)
     try:
         labels = _extract_json(raw_str)
         return labels, raw_str
     except Exception as e:
         snippet = raw_str[:500]
         raise RuntimeError(f"Model output parse failed: {e}. Raw snippet: {snippet}")
+
+
+def generate_title(context: dict[str, Any]) -> tuple[str, str]:
+    user_payload = json.dumps(context, ensure_ascii=False, indent=2)
+    user = f"Write one listing title in Persian for this need:\n{user_payload}"
+    raw_str = generate_with_prompt(
+        LISTING_TITLE_SYSTEM_PROMPT,
+        user,
+        max_tokens=TITLE_MAX_TOKENS,
+    )
+    title = _normalize_title(raw_str)
+    if not title:
+        raise RuntimeError(f"Empty title from model. Raw snippet: {raw_str[:500]}")
+    return title, raw_str

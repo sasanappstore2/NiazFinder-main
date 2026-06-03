@@ -7,6 +7,7 @@ import '@/styles/admin/admin-typography.css';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { AuthGuard } from '@/components/shared/AuthGuard';
 import { AdminProvider } from '@/components/admin/context/AdminContext';
+import { AdminAccessGuard } from '@/components/admin/AdminAccessGuard';
 import { useAppStore } from '@/lib/store';
 
 export default function SuperAdminLayout({ children }: { children: ReactNode }) {
@@ -37,7 +38,9 @@ export default function SuperAdminLayout({ children }: { children: ReactNode }) 
   return (
     <>
       <AuthGuard>
-        <AdminProvider>{children}</AdminProvider>
+        <AdminProvider>
+          <AdminAccessGuard>{children}</AdminAccessGuard>
+        </AdminProvider>
       </AuthGuard>
       <AuthModal />
     </>

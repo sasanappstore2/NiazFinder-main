@@ -3,8 +3,9 @@ import type {
   IntakeConfidence,
   IntakeEntities,
   IntakeIndexes,
+  CityIndexEntry,
 } from '@/intake/types';
-import { normalizePersian } from '@/intake/normalizer/normalizePersian';
+import { normalizePersian, normalizeLookupKey } from '@/intake/normalizer/normalizePersian';
 import { tokenize } from '@/intake/tokenizer/tokenize';
 import { generateNgrams } from '@/intake/ngrams/generateNgrams';
 import { bestCategoryMatch } from '@/intake/matchers/categoryMatcher';
@@ -34,46 +35,43 @@ import { getAiSemanticConfig } from '@/ai/config/feature-flags';
 import { runSemanticResolver } from '@/ai/services/semanticResolver';
 import type { IntakeAnalysisTrace } from '@/intake/training/trainingExample';
 
-function finalizeIntakeAnalysis(
-  entities: IntakeEntities,
-  confidence: IntakeConfidence,
-  normalizedText: string,
-  started: number
-): IntakeAnalysisResult {
-  const missingFields = buildPrioritizedMissingFields(entities);
-  const nextQuestion = buildNextQuestion(entities, missingFields);
-  const completionScore = computeCompletionScore(missingFields);
-  const matchabilityScore = computeMatchabilityScore(entities);
-  const completionState = completionStateFromScore(completionScore);
-  const needType = resolveNeedType(entities);
+export interface AnalyzeNeedTextOptions {
+  /** City slug from home picker / URL — neighborhoods resolve in this city first. */
+  preferredCitySlug?: string | null;
+  /** Persian city name fallback when slug is unavailable. */
+  preferredCityName?: string | null;
+}
 
-  return {
-    entities,
-    confidence,
-    needType: needType.key,
-    detectedVertical: entities.vertical,
-    detectedCategory: entities.category,
-    missingFields,
-    nextQuestion,
-    recommendedQuestions: missingFields.map((f) => f.field),
-    completionScore,
-    matchabilityScore,
-    completionState,
-    sections: needType.sections.map((s) => ({
-      key: s.key,
-      label: s.label,
-      fields: [...s.fields],
-    })),
-    normalizedText,
-    latencyMs: Math.round(performance.now() - started),
-  };
+function resolvePreferredCityEntry(
+  indexes: IntakeIndexes,
+  options?: AnalyzeNeedTextOptions
+): CityIndexEntry | null {
+  const slug = options?.preferredCitySlug?.trim().toLowerCase();
+  if (slug) {
+    for (const entry of indexes.cities.values()) {
+      if (entry.slug === slug || entry.id === slug) return entry;
+    }
+  }
+
+  const name = options?.preferredCityName?.trim();
+  if (name) {
+    const key = normalizeLookupKey(name);
+    const byLookup = key ? indexes.cityLookup.get(key) : undefined;
+    if (byLookup) return indexes.cities.get(byLookup) ?? null;
+    for (const entry of indexes.cities.values()) {
+      if (entry.name === name) return entry;
+    }
+  }
+
+  return null;
 }
 
 function buildEntities(
   indexes: IntakeIndexes,
   normalizedText: string,
   tokens: readonly string[],
-  ngrams: readonly string[]
+  ngrams: readonly string[],
+  options?: AnalyzeNeedTextOptions
 ): { entities: IntakeEntities; confidence: IntakeConfidence } {
   const confidence: IntakeConfidence = {};
   const entities: IntakeEntities = {
@@ -105,19 +103,27 @@ function buildEntities(
     confidence.category = clampConfidence(categoryHit.score);
   }
 
+  const preferredCity = resolvePreferredCityEntry(indexes, options);
   const cityHit = bestCityMatch(indexes, tokens, ngrams);
-  if (cityHit) {
+
+  if (cityHit && (!preferredCity || cityHit.entry.id === preferredCity.id || cityHit.score >= 0.95)) {
     entities.city = cityHit.entry.name;
     entities.citySlug = cityHit.entry.slug;
     entities.province = cityHit.entry.provinceName || null;
     confidence.city = clampConfidence(cityHit.score);
+  } else if (preferredCity) {
+    entities.city = preferredCity.name;
+    entities.citySlug = preferredCity.slug;
+    entities.province = preferredCity.provinceName || null;
+    confidence.city = 0.88;
   }
 
+  const neighborhoodCityId = preferredCity?.id ?? cityHit?.entry.id ?? null;
   const neighborhoodHit = bestNeighborhoodMatch(
     indexes,
     tokens,
     ngrams,
-    cityHit?.entry.id
+    neighborhoodCityId
   );
   if (neighborhoodHit && neighborhoodHit.score >= 0.65) {
     entities.neighborhood = neighborhoodHit.entry.name;
@@ -200,7 +206,8 @@ function buildEntities(
  */
 export function analyzeNeedText(
   text: string,
-  indexes: IntakeIndexes
+  indexes: IntakeIndexes,
+  options?: AnalyzeNeedTextOptions
 ): IntakeAnalysisResult {
   const started = performance.now();
   const normalizedText = normalizePersian(text);
@@ -211,10 +218,47 @@ export function analyzeNeedText(
     indexes,
     normalizedText,
     tokens,
-    ngrams.all
+    ngrams.all,
+    options
   );
 
-  return finalizeIntakeAnalysis(entities, confidence, normalizedText, started);
+  return buildAnalysisFromEntities(entities, confidence, normalizedText, started);
+}
+
+/** Build full analysis from pre-extracted entities (used by Qwen merge path). */
+export function buildAnalysisFromEntities(
+  entities: IntakeEntities,
+  confidence: IntakeConfidence,
+  normalizedText: string,
+  started: number
+): IntakeAnalysisResult {
+  const missingFields = buildPrioritizedMissingFields(entities);
+  const nextQuestion = buildNextQuestion(entities, missingFields);
+  const completionScore = computeCompletionScore(missingFields);
+  const matchabilityScore = computeMatchabilityScore(entities);
+  const completionState = completionStateFromScore(completionScore);
+  const needType = resolveNeedType(entities);
+
+  return {
+    entities,
+    confidence,
+    needType: needType.key,
+    detectedVertical: entities.vertical,
+    detectedCategory: entities.category,
+    missingFields,
+    nextQuestion,
+    recommendedQuestions: missingFields.map((f) => f.field),
+    completionScore,
+    matchabilityScore,
+    completionState,
+    sections: needType.sections.map((s) => ({
+      key: s.key,
+      label: s.label,
+      fields: [...s.fields],
+    })),
+    normalizedText,
+    latencyMs: Math.round(performance.now() - started),
+  };
 }
 
 export interface AnalyzeNeedTextAsyncMeta {
@@ -252,9 +296,10 @@ function buildTrace(
 export async function analyzeNeedTextAsync(
   text: string,
   indexes: IntakeIndexes,
-  options?: { forceAi?: boolean; providerOverride?: string }
+  options?: { forceAi?: boolean; providerOverride?: string } & AnalyzeNeedTextOptions
 ): Promise<IntakeAnalysisResult & { meta: AnalyzeNeedTextAsyncMeta }> {
-  const ruleResult = analyzeNeedText(text, indexes);
+  const { forceAi, providerOverride, ...analyzeOptions } = options ?? {};
+  const ruleResult = analyzeNeedText(text, indexes, analyzeOptions);
   const config = getAiSemanticConfig();
   const ruleConfidence = overallConfidence(ruleResult.confidence);
 

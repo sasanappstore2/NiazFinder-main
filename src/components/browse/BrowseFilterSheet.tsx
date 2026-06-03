@@ -4,6 +4,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { PersianDigitInput } from '@/components/ui/persian-digit-input';
+import { toAsciiDigits, toPersianDigits } from '@/lib/format/digits';
 import {
   Select,
   SelectContent,
@@ -64,23 +66,27 @@ export function BrowseFilterSheet({
             <div className="space-y-2">
               <Label>قیمت / بودجه (تومان)</Label>
               <div className="grid grid-cols-2 gap-2">
-                <Input
-                  type="number"
+                <PersianDigitInput
+                  variant="plain"
                   placeholder="از"
-                  value={filters.priceMin ?? ''}
-                  onChange={(e) =>
+                  value={
+                    filters.priceMin != null ? String(filters.priceMin) : ''
+                  }
+                  onChange={(d) =>
                     onApplyGlobal({
-                      priceMin: e.target.value ? Number(e.target.value) : null,
+                      priceMin: d ? Number(d) : null,
                     })
                   }
                 />
-                <Input
-                  type="number"
+                <PersianDigitInput
+                  variant="plain"
                   placeholder="تا"
-                  value={filters.priceMax ?? ''}
-                  onChange={(e) =>
+                  value={
+                    filters.priceMax != null ? String(filters.priceMax) : ''
+                  }
+                  onChange={(d) =>
                     onApplyGlobal({
-                      priceMax: e.target.value ? Number(e.target.value) : null,
+                      priceMax: d ? Number(d) : null,
                     })
                   }
                 />
@@ -235,21 +241,17 @@ function SheetFieldRow({
       <div className="space-y-2">
         <Label>{field.label}</Label>
         <div className="grid grid-cols-2 gap-2">
-          <Input
-            type="number"
-            placeholder="از"
-            value={getAttribute(filters, minKey) ?? ''}
-            onChange={(e) =>
-              onApplyAttributes({ [minKey]: e.target.value || null })
-            }
+          <PersianDigitInput
+            variant="plain"
+            placeholder={toPersianDigits('از')}
+            value={toAsciiDigits(String(getAttribute(filters, minKey) ?? ''))}
+            onChange={(d) => onApplyAttributes({ [minKey]: d || null })}
           />
-          <Input
-            type="number"
-            placeholder="تا"
-            value={getAttribute(filters, maxKey) ?? ''}
-            onChange={(e) =>
-              onApplyAttributes({ [maxKey]: e.target.value || null })
-            }
+          <PersianDigitInput
+            variant="plain"
+            placeholder={toPersianDigits('تا')}
+            value={toAsciiDigits(String(getAttribute(filters, maxKey) ?? ''))}
+            onChange={(d) => onApplyAttributes({ [maxKey]: d || null })}
           />
         </div>
       </div>

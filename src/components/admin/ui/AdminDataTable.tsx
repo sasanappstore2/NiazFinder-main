@@ -23,6 +23,9 @@ export function AdminDataTable<T extends { id: string }>({
   emptyMessage,
   rowActions,
   onRowClick,
+  selectable,
+  selectedIds,
+  onSelectionChange,
 }: {
   columns: AdminColumn<T>[];
   rows: T[];
@@ -33,6 +36,9 @@ export function AdminDataTable<T extends { id: string }>({
   emptyMessage?: string;
   rowActions?: (row: T) => ReactNode;
   onRowClick?: (row: T) => void;
+  selectable?: boolean;
+  selectedIds?: Set<string>;
+  onSelectionChange?: (ids: Set<string>) => void;
 }) {
   if (isLoading) return <AdminTableSkeleton />;
 
@@ -45,6 +51,7 @@ export function AdminDataTable<T extends { id: string }>({
       <table className="w-full min-w-[720px] text-sm">
         <thead>
           <tr className="border-b border-(--color-mainBorder) bg-(--color-tableHeaderBg)">
+            {selectable && <th scope="col" className="w-10 px-4 py-3" />}
             {columns.map((col) => (
               <th
                 key={col.id}
@@ -79,6 +86,20 @@ export function AdminDataTable<T extends { id: string }>({
               className={`border-b border-(--color-mainBorder) transition-colors last:border-0 hover:bg-(--color-tableRowBgHover) ${onRowClick ? 'cursor-pointer' : ''}`}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
             >
+              {selectable && onSelectionChange && selectedIds ? (
+                <td className="px-4 py-3.5" onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(row.id)}
+                    onChange={() => {
+                      const next = new Set(selectedIds);
+                      if (next.has(row.id)) next.delete(row.id);
+                      else next.add(row.id);
+                      onSelectionChange(next);
+                    }}
+                  />
+                </td>
+              ) : selectable ? <td className="px-4 py-3.5" /> : null}
               {columns.map((col) => (
                 <td key={col.id} className={`px-4 py-3.5 text-(--color-tableCellText) ${col.className ?? ''}`}>
                   {col.cell(row)}

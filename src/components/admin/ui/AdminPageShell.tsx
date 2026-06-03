@@ -10,15 +10,30 @@ export type AdminPageLayout = 'dashboard' | 'table' | 'form';
 
 const SECTION_LABELS: Record<AdminSectionId, string> = {
   overview: 'داشبورد',
-  analytics: 'داشبورد',
-  categories: 'دسته‌بندی‌ها',
+  analytics: 'تحلیل‌ها',
+  workflow: 'صف‌های کاری',
+  categories: 'دسته‌بندی نیازها',
+  'business-occupations': 'دسته‌بندی کسب‌وکار',
+  'online-stores': 'فروشگاه‌های اینترنتی',
   locations: 'مکان‌ها',
   requests: 'نیازها',
+  proposals: 'پیشنهادها',
   businesses: 'کسب‌وکارها',
+  outreach: 'Outreach',
+  'need-alerts': 'Alertهای مرور',
   users: 'کاربران',
+  reports: 'گزارش تخلف',
   messages: 'بازبینی چت‌ها',
+  'voice-calls': 'تماس صوتی',
+  notifications: 'اعلان‌ها',
+  reviews: 'نظرات',
+  billing: 'تراکنش‌ها',
   system: 'نقش‌ها و دسترسی‌ها',
+  audit: 'گزارش تغییرات',
+  files: 'فایل‌ها',
   settings: 'تنظیمات',
+  referrals: 'ارجاع‌ها',
+  coupons: 'کوپن‌ها',
 };
 
 export function AdminPageShell({

@@ -1,10 +1,11 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
+import { PersianDigitInput } from '@/components/ui/persian-digit-input';
 import { cn } from '@/lib/utils';
 import { isolatePhoneDisplay } from '@/lib/chat/contact-share';
+import { normalizeIranMobile, toPersianDigits } from '@/lib/format/digits';
 
-/** Iran mobile input — keeps 09… display, normalizes on blur. */
+/** Iran mobile input — ASCII in state, Persian display, normalizes on blur. */
 export function PhoneField({
   id,
   label,
@@ -20,10 +21,7 @@ export function PhoneField({
   error?: string;
   required?: boolean;
 }) {
-  const handleChange = (raw: string) => {
-    const digits = raw.replace(/\D/g, '').slice(0, 11);
-    onChange(digits);
-  };
+  const displayStored = value.startsWith('0') ? value : value ? `0${value}` : '';
 
   return (
     <div className="space-y-2">
@@ -38,27 +36,27 @@ export function PhoneField({
         )}
         dir="ltr"
       >
-        <span className="flex items-center border-e border-border/80 bg-muted/50 px-3 text-sm font-medium text-muted-foreground">
-          +98
+        <span className="flex items-center border-e border-border/80 bg-muted/50 px-3 text-sm font-medium text-muted-foreground persian-nums">
+          {toPersianDigits('+98')}
         </span>
-        <Input
+        <PersianDigitInput
           id={id}
-          inputMode="numeric"
+          variant="plain"
           autoComplete="tel"
-          placeholder="9123456789"
+          placeholder={toPersianDigits('9123456789')}
           value={value.replace(/^0/, '')}
-          onChange={(e) => handleChange(e.target.value)}
+          onChange={(ascii) => onChange(ascii.slice(0, 11))}
           onBlur={() => {
-            const d = value.replace(/\D/g, '');
-            if (d.length === 10 && d.startsWith('9')) onChange(`0${d}`);
-            else if (d.length === 11 && d.startsWith('09')) onChange(d);
+            const normalized = normalizeIranMobile(value.startsWith('0') ? value : `0${value}`);
+            if (normalized) onChange(normalized);
           }}
-          className="border-0 font-mono shadow-none focus-visible:ring-0"
+          className="border-0 font-sans tabular-nums shadow-none focus-visible:ring-0"
+          maxLength={11}
         />
       </div>
-      {value.trim() && !error && (
+      {displayStored.trim() && !error && (
         <p className="text-xs text-muted-foreground" dir="ltr">
-          {isolatePhoneDisplay(value.startsWith('0') ? value : value ? `0${value}` : '')}
+          {isolatePhoneDisplay(displayStored)}
         </p>
       )}
       {error && <p className="text-xs text-destructive">{error}</p>}

@@ -39,6 +39,8 @@ interface APISuggestion {
 interface HeaderSearchBarProps {
   data?: SearchItem[];
   onSelect?: (item: SearchItem) => void;
+  /** Tighter input for mobile header row */
+  compact?: boolean;
 }
 
 // ============ Icon Mapping for Categories ============
@@ -119,7 +121,7 @@ interface FlatItem {
 }
 
 // ============ Header Search Bar Component ============
-export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
+export function HeaderSearchBar({ data = [], onSelect, compact = false }: HeaderSearchBarProps) {
   const [query, setQuery] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const [apiSuggestions, setApiSuggestions] = useState<APISuggestion[]>([]);
@@ -403,9 +405,12 @@ export function HeaderSearchBar({ data = [], onSelect }: HeaderSearchBarProps) {
         <Input
           ref={inputRef}
           type="text"
-          placeholder="جستجوی کاربر، کسب‌وکار، نیاز..."
+          placeholder={compact ? 'جستجو…' : 'جستجوی کاربر، کسب‌وکار، نیاز...'}
           className={cn(
-            'h-10 w-full rounded-xl border-border/60 bg-muted/50 pe-10 ps-4 text-sm backdrop-blur-xs transition-all duration-200',
+            'w-full rounded-xl border-border/60 bg-muted/50 pe-10 ps-4 text-sm backdrop-blur-xs transition-all duration-200',
+            compact
+              ? 'h-9 border-border/70 bg-background/80 shadow-sm sm:h-10 sm:bg-muted/50 sm:shadow-none'
+              : 'h-10',
             'focus-visible:bg-background focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:shadow-[0_0_12px_oklch(0.51_0.12_165/0.15)]',
             showDropdown && 'rounded-b-none border-b-0'
           )}

@@ -1,13 +1,17 @@
 {
   "name": "needfinder-chat-service",
   "version": "1.0.0",
-  "description": "نیاز فایندر - Real-time Chat Service (Socket.io)",
+  "description": "نیاز فایندر - Communication Gateway (Socket.io)",
   "scripts": {
     "dev": "bun --hot index.ts",
-    "start": "bun run index.ts"
+    "start": "bun run index.ts",
+    "predev": "cd ../.. && npx prisma generate",
+    "prestart": "cd ../.. && npx prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
+    "@socket.io/redis-adapter": "^8.3.0",
+    "ioredis": "^5.4.1",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {

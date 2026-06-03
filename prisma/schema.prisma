@@ -39,6 +39,10 @@ model User {
 
   // Relations
   sentMessages       Message[]         @relation("SentMessages")
+  messageDeliveries  MessageDelivery[]
+  messageReactions   MessageReaction[]
+  blockedUsers       UserBlock[]       @relation("UserBlocks")
+  blockedByUsers     UserBlock[]       @relation("BlockedByUsers")
   sentProposals      Proposal[]
   requests           ServiceRequest[]
   reviews            Review[]
@@ -64,6 +68,8 @@ model User {
   callsAsCallee      VoiceCall[]     @relation("VoiceCallsAsCallee")
   reviewedRequests   ServiceRequest[] @relation("ReviewedRequests")
   assignedRequests   ServiceRequest[] @relation("AssignedRequests")
+  needBrowseAlerts   NeedBrowseAlert[]
+  analyticsSessions  AnalyticsSession[]
 
   @@index([role])
   @@index([city])
@@ -630,23 +636,74 @@ model Conversation {
 }
 
 model Message {
-  id          String        @id @default(cuid())
+  id             String      @id @default(cuid())
   conversationId String
-  senderId    String
-  content     String
-  type        MessageType   @default(TEXT)
-  attachmentUrls String     @default("[]")
-  isRead      Boolean       @default(false)
-  readAt      DateTime?
-  createdAt   DateTime      @default(now())
+  senderId       String
+  content        String
+  type           MessageType @default(TEXT)
+  attachmentUrls String      @default("[]")
+  isRead         Boolean     @default(false)
+  readAt         DateTime?
+  replyToId      String?
+  editedAt       DateTime?
+  deletedAt      DateTime?
+  deletedFor     String      @default("[]")
+  clientTempId   String?
+  createdAt      DateTime    @default(now())
 
-  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender      User          @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  conversation Conversation      @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User              @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  replyTo      Message?          @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies      Message[]         @relation("MessageReplies")
+  deliveries   MessageDelivery[]
+  reactions    MessageReaction[]
 
   @@index([conversationId])
+  @@index([conversationId, createdAt(sort: Desc)])
   @@index([senderId])
   @@index([isRead])
   @@index([createdAt])
+  @@index([replyToId])
+  @@index([clientTempId])
+}
+
+model MessageDelivery {
+  messageId String
+  userId    String
+  readAt    DateTime?
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, userId])
+  @@index([userId])
+}
+
+model MessageReaction {
+  messageId String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+}
+
+model UserBlock {
+  id        String   @id @default(cuid())
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+
+  blocker User @relation("UserBlocks", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked User @relation("BlockedByUsers", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+  @@index([blockerId])
+  @@index([blockedId])
 }
 
 enum MessageType {
@@ -657,9 +714,11 @@ enum MessageType {
   SYSTEM
   NEED_CARD
   OFFER_CARD
+  CALL
 }
 
 enum VoiceCallStatus {
+  INITIATED
   RINGING
   ACTIVE
   ENDED
@@ -668,14 +727,21 @@ enum VoiceCallStatus {
 }
 
 model VoiceCall {
-  id             String         @id @default(cuid())
+  id             String          @id @default(cuid())
   callerId       String
   calleeId       String
   conversationId String?
-  status         VoiceCallStatus @default(RINGING)
-  startedAt      DateTime       @default(now())
+  status         VoiceCallStatus @default(INITIATED)
+  startedAt      DateTime        @default(now())
   endedAt        DateTime?
   durationSec    Int?
+  janusRoomId    Int?
+  janusPin       String?
+  turnUsername   String?
+  /** JSON SDP offer for callee polling fallback (cleared when call ends) */
+  signalingOffer String?
+  /** JSON SDP answer for caller polling fallback (cleared when call ends) */
+  signalingAnswer String?
 
   caller User @relation("VoiceCallsAsCaller", fields: [callerId], references: [id], onDelete: Cascade)
   callee User @relation("VoiceCallsAsCallee", fields: [calleeId], references: [id], onDelete: Cascade)
@@ -799,6 +865,29 @@ enum TransactionStatus {
 }
 
 // ============ NOTIFICATIONS ============
+
+/** اشتراک اعلان برای صفحهٔ مرور نیاز (دسته + شهر + فیلترها) */
+model NeedBrowseAlert {
+  id            String   @id @default(cuid())
+  userId        String
+  label         String
+  browsePath    String
+  categorySlug  String?
+  citySlugs     String   @default("[]")
+  filtersJson   String   @default("{}")
+  searchQuery   String?
+  fingerprint   String
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, fingerprint])
+  @@index([userId, active])
+  @@index([categorySlug])
+  @@index([fingerprint])
+}
 
 model Notification {
   id        String   @id @default(cuid())
@@ -973,4 +1062,87 @@ model Follow {
   @@unique([followerId, followingId])
   @@index([followerId])
   @@index([followingId])
+}
+
+// ============ FIRST-PARTY ANALYTICS ============
+
+model AnalyticsSession {
+  id            String   @id @default(cuid())
+  sessionId     String   @unique
+  visitorId     String
+  userId        String?
+  firstSeen     DateTime @default(now())
+  lastSeen      DateTime @default(now())
+  device        String?
+  browser       String?
+  os            String?
+  country       String?  @default("IR")
+  province      String?
+  city          String?
+  ipHash        String?
+  landingPath   String?
+  referrer      String?
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+  utmContent    String?
+  utmTerm       String?
+  pageViewCount Int      @default(0)
+  eventCount    Int      @default(0)
+  totalDurationMs Int    @default(0)
+
+  user   User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  events AnalyticsEvent[]
+
+  @@index([visitorId])
+  @@index([lastSeen])
+  @@index([userId])
+  @@index([firstSeen])
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  sessionId  String
+  visitorId  String
+  userId     String?
+  type       String
+  name       String?
+  path       String
+  title      String?
+  referrer   String?
+  durationMs Int?
+  properties Json     @default("{}")
+  dimensions Json     @default("{}")
+  device     String?
+  browser    String?
+  os         String?
+  country    String?
+  province   String?
+  city       String?
+  createdAt  DateTime @default(now())
+
+  session AnalyticsSession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([sessionId])
+  @@index([type, createdAt])
+  @@index([visitorId])
+  @@index([path])
+}
+
+model AnalyticsDailyRollup {
+  id             String   @id @default(cuid())
+  date           DateTime @db.Date
+  dimensionKey   String   @default("_total")
+  dimensionValue String   @default("_all")
+  sessions       Int      @default(0)
+  pageViews      Int      @default(0)
+  uniqueVisitors Int      @default(0)
+  events         Int      @default(0)
+  avgDurationMs  Int      @default(0)
+  data           Json     @default("{}")
+
+  @@unique([date, dimensionKey, dimensionValue])
+  @@index([date])
+  @@index([dimensionKey, dimensionValue])
 }

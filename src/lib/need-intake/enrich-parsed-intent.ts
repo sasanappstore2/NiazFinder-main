@@ -1,7 +1,7 @@
 import type { ParsedIntent } from '@/contracts/need-intake';
 import { getCategoryPath } from '@/config/categories';
 import { computeMissingIntakeFields } from '@/lib/need-intake/compute-missing-fields';
-import { extractPropertySlotsFromText } from '@/lib/need-intake/extract-property-slots';
+import { applyPropertySlotsToParsed } from '@/lib/need-intake/apply-property-slots-to-parsed';
 import { isConstructionPartnershipText, parseCity } from '@/lib/need-intake/intent-parser';
 import { buildPropertyTitle, buildRealEstateServiceTitle } from '@/lib/need-intake/property-title';
 import {
@@ -23,37 +23,7 @@ function isPropertyParsed(parsed: ParsedIntent): boolean {
 
 /** Attach neighborhood slug, slot extraction, optional disambiguation, and missingFields. */
 export function enrichParsedIntent(parsed: ParsedIntent): ParsedIntent {
-  let next: ParsedIntent = {
-    ...parsed,
-    entities: { ...parsed.entities },
-  };
-
-  if (isPropertyParsed(next) && next.rawText) {
-    const slots = extractPropertySlotsFromText(next.rawText);
-    if (slots.areaMin && !next.entities.areaMin) next.entities.areaMin = slots.areaMin;
-    if (slots.areaMax && !next.entities.areaMax) next.entities.areaMax = slots.areaMax;
-    if (slots.rooms && !next.entities.rooms) next.entities.rooms = slots.rooms;
-    if (slots.plotWidth && !next.entities.plotWidth) next.entities.plotWidth = slots.plotWidth;
-    if (slots.floorMin && !next.entities.floorMin) next.entities.floorMin = slots.floorMin;
-    if (slots.pricePerMeterMin && !next.entities.pricePerMeterMin) {
-      next.entities.pricePerMeterMin = slots.pricePerMeterMin;
-    }
-    if (slots.deposit && !next.entities.deposit) next.entities.deposit = slots.deposit;
-    if (slots.monthlyRent && !next.entities.monthlyRent) {
-      next.entities.monthlyRent = slots.monthlyRent;
-    }
-    if (slots.rahnAmount && !next.entities.rahnAmount) next.entities.rahnAmount = slots.rahnAmount;
-    if (slots.nightlyRent && !next.entities.nightlyRent) {
-      next.entities.nightlyRent = slots.nightlyRent;
-    }
-    if (slots.guestCount && !next.entities.guestCount) {
-      next.entities.guestCount = slots.guestCount;
-    }
-    if (slots.nightlyRent && !next.entities.dealType) {
-      next.entities.dealType = 'rent_short_term';
-    }
-  }
-
+  let next: ParsedIntent = applyPropertySlotsToParsed(parsed);
   const partnership = isConstructionPartnershipText(next.rawText ?? '');
   const raw = next.rawText?.trim() ?? '';
 

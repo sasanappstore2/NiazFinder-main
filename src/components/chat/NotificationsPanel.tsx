@@ -1,19 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Bell,
   BellOff,
   FileText,
   MessageSquare,
   Star,
-  CreditCard,
-  CheckCircle,
   CheckCheck,
   ShieldAlert,
   ArrowLeft,
   Settings,
   Wallet,
+  Inbox,
+  CheckCircle,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
@@ -21,10 +21,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { Notification } from '@/lib/types';
+import { NEED_BROWSE_ALERT_NOTIFICATION_TYPE } from '@/lib/need-alerts/types';
+import type { NeedBrowseAlertNotificationData } from '@/lib/need-alerts/types';
+import { NeedBrowseNotificationCard } from '@/components/notifications/NeedBrowseNotificationCard';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
-type FilterTab = 'all' | 'unread';
+type FilterTab = 'all' | 'unread' | 'needs';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -40,6 +43,8 @@ const getNotificationIcon = (type: string) => {
       return Wallet;
     case 'request_accepted':
       return CheckCircle;
+    case NEED_BROWSE_ALERT_NOTIFICATION_TYPE:
+      return Inbox;
     case 'system':
     default:
       return type === 'warning' ? ShieldAlert : Bell;
@@ -58,6 +63,8 @@ const getNotificationIconColor = (type: string) => {
       return 'text-violet-500 bg-violet-500/10';
     case 'request_accepted':
       return 'text-emerald-500 bg-emerald-500/10';
+    case NEED_BROWSE_ALERT_NOTIFICATION_TYPE:
+      return 'text-emerald-600 bg-emerald-500/10';
     case 'warning':
       return 'text-rose-500 bg-rose-500/10';
     case 'system':
@@ -73,6 +80,7 @@ const getNotificationTypeLabel = (type: string) => {
     case 'review': return 'نظر';
     case 'payment': return 'پرداخت';
     case 'request_accepted': return 'پروژه';
+    case NEED_BROWSE_ALERT_NOTIFICATION_TYPE: return 'نیاز جدید';
     case 'warning': return 'تذکر';
     case 'system': return 'سیستم';
     default: return '';
@@ -98,116 +106,60 @@ function persianTimeAgo(dateStr: string): string {
   return `${Math.floor(months / 12)} سال پیش`;
 }
 
-// ─── Mock Data ───────────────────────────────────────────────────────────────
-
-const mockNotifications: Notification[] = [
-  {
-    id: 'notif-1',
-    type: 'new_proposal',
-    title: 'پیشنهاد جدید',
-    message: 'علی محمدی پیشنهادی برای پروژه شما ارسال کرد',
-    isRead: false,
-    createdAt: new Date(Date.now() - 5 * 60000).toISOString(),
-  },
-  {
-    id: 'notif-2',
-    type: 'message',
-    title: 'پیام جدید',
-    message: 'سارا احمدی پیامی برای شما ارسال کرد',
-    isRead: false,
-    createdAt: new Date(Date.now() - 15 * 60000).toISOString(),
-  },
-  {
-    id: 'notif-3',
-    type: 'review',
-    title: 'نظر جدید',
-    message: 'رضا کریمی به پروژه شما امتیاز ۵ داد',
-    isRead: true,
-    createdAt: new Date(Date.now() - 3600000).toISOString(),
-  },
-  {
-    id: 'notif-4',
-    type: 'payment',
-    title: 'پرداخت موفق',
-    message: 'پرداخت ۵,۰۰۰,۰۰۰ تومان با موفقیت انجام شد',
-    isRead: false,
-    createdAt: new Date(Date.now() - 2 * 3600000).toISOString(),
-  },
-  {
-    id: 'notif-5',
-    type: 'request_accepted',
-    title: 'پروژه پذیرفته شد',
-    message: 'پیشنهاد شما برای پروژه طراحی سایت پذیرفته شد',
-    isRead: true,
-    createdAt: new Date(Date.now() - 3 * 3600000).toISOString(),
-  },
-  {
-    id: 'notif-6',
-    type: 'system',
-    title: 'سیستم',
-    message: 'خوش آمدید! حساب شما با موفقیت ایجاد شد',
-    isRead: true,
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-  },
-  {
-    id: 'notif-7',
-    type: 'new_proposal',
-    title: 'پیشنهاد جدید',
-    message: 'مینا حسینی پیشنهادی برای پروژه شما ارسال کرد',
-    isRead: false,
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-  },
-  {
-    id: 'notif-8',
-    type: 'message',
-    title: 'پیام جدید',
-    message: 'حسن نجفی پیامی برای شما ارسال کرد',
-    isRead: false,
-    createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
-  },
-  {
-    id: 'notif-9',
-    type: 'warning',
-    title: 'تذکر',
-    message: 'لطفاً پروفایل خود را تکمیل کنید',
-    isRead: false,
-    createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
-  },
-  {
-    id: 'notif-10',
-    type: 'payment',
-    title: 'پرداخت',
-    message: 'تسویه حساب ۲,۰۰۰,۰۰۰ تومان انجام شد',
-    isRead: true,
-    createdAt: new Date(Date.now() - 7 * 86400000).toISOString(),
-  },
-];
+function parseNeedAlertData(
+  notification: Notification
+): NeedBrowseAlertNotificationData | null {
+  if (notification.type !== NEED_BROWSE_ALERT_NOTIFICATION_TYPE || !notification.data) {
+    return null;
+  }
+  const d = notification.data;
+  if (!d.requestId || !d.requestTitle) return null;
+  return d as unknown as NeedBrowseAlertNotificationData;
+}
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function NotificationsPanel() {
-  const { isAuthenticated, setAuthModalOpen, markNotificationRead, markAllNotificationsRead, unreadNotificationCount, markAllNotificationsReadAPI, fetchNotifications } =
-    useAppStore();
+  const {
+    isAuthenticated,
+    setAuthModalOpen,
+    notifications,
+    markNotificationRead,
+    markAllNotificationsRead,
+    unreadNotificationCount,
+    markNotificationReadAPI,
+    markAllNotificationsReadAPI,
+    fetchNotifications,
+  } = useAppStore();
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
 
-  const notifications = mockNotifications;
+  useEffect(() => {
+    if (isAuthenticated) {
+      void fetchNotifications();
+    }
+  }, [isAuthenticated, fetchNotifications]);
 
-  const filteredNotifications =
-    activeFilter === 'all'
-      ? notifications
-      : notifications.filter((n) => !n.isRead);
+  const filteredNotifications = useMemo(() => {
+    if (activeFilter === 'unread') {
+      return notifications.filter((n) => !n.isRead);
+    }
+    if (activeFilter === 'needs') {
+      return notifications.filter((n) => n.type === NEED_BROWSE_ALERT_NOTIFICATION_TYPE);
+    }
+    return notifications;
+  }, [activeFilter, notifications]);
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const unreadCount = unreadNotificationCount;
 
   const handleMarkAllRead = () => {
     markAllNotificationsRead();
-    // Try API call if available
-    if (markAllNotificationsReadAPI) {
-      markAllNotificationsReadAPI();
-    }
-    if (fetchNotifications) {
-      fetchNotifications();
-    }
+    void markAllNotificationsReadAPI();
+    void fetchNotifications();
+  };
+
+  const handleMarkRead = (id: string) => {
+    markNotificationRead(id);
+    void markNotificationReadAPI(id);
   };
 
   // ─── Auth Guard ──────────────────────────────────────────────────────────
@@ -263,6 +215,7 @@ export function NotificationsPanel() {
       <div className="flex gap-1 border-b px-5 pt-3" role="tablist" aria-label="فیلتر اعلان‌ها">
         {([
           { key: 'all' as FilterTab, label: 'همه' },
+          { key: 'needs' as FilterTab, label: 'نیازهای دنبال‌شده' },
           { key: 'unread' as FilterTab, label: 'خوانده نشده' },
         ]).map((tab) => (
           <button
@@ -293,17 +246,18 @@ export function NotificationsPanel() {
               const IconComponent = getNotificationIcon(notification.type);
               const iconColorClass = getNotificationIconColor(notification.type);
               const typeLabel = getNotificationTypeLabel(notification.type);
+              const needData = parseNeedAlertData(notification);
 
               return (
                 <div
                   key={notification.id}
                   onClick={() => {
                     if (!notification.isRead) {
-                      markNotificationRead(notification.id);
+                      handleMarkRead(notification.id);
                     }
                   }}
                   className={cn(
-                    'flex cursor-pointer items-start gap-3 px-5 py-4 transition-all duration-150',
+                    'cursor-pointer px-5 py-4 transition-all duration-150',
                     !notification.isRead
                       ? 'bg-primary/5 hover:bg-primary/10'
                       : 'hover:bg-muted/50'
@@ -311,53 +265,52 @@ export function NotificationsPanel() {
                   role="listitem"
                   aria-label={`${notification.title}: ${notification.message}${!notification.isRead ? '، خوانده نشده' : ''}`}
                 >
-                  {/* Icon with type badge */}
-                  <div className="relative">
-                    <div
-                      className={cn(
-                        'flex h-11 w-11 shrink-0 items-center justify-center rounded-full',
-                        iconColorClass
-                      )}
-                    >
-                      <IconComponent className="h-5 w-5" />
-                    </div>
-                    {!notification.isRead && (
-                      <span className="absolute -top-0.5 -inset-e-0.5 flex size-3">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                        <span className="relative inline-flex size-3 rounded-full bg-primary" />
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0 flex items-center gap-2">
-                        <h4 className="text-sm font-semibold leading-relaxed truncate">
-                          {notification.title}
-                        </h4>
-                        {typeLabel && (
-                          <span className={cn(
-                            'shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-semibold',
-                            iconColorClass,
-                          )}>
-                            {typeLabel}
-                          </span>
+                  <div className="flex items-start gap-3">
+                    <div className="relative shrink-0">
+                      <div
+                        className={cn(
+                          'flex h-11 w-11 items-center justify-center rounded-full',
+                          iconColorClass
                         )}
+                      >
+                        <IconComponent className="h-5 w-5" />
                       </div>
+                      {!notification.isRead && (
+                        <span className="absolute -top-0.5 -inset-e-0.5 flex size-3">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                          <span className="relative inline-flex size-3 rounded-full bg-primary" />
+                        </span>
+                      )}
                     </div>
-                    <p className="mt-0.5 text-sm text-muted-foreground leading-relaxed">
-                      {notification.message}
-                    </p>
-                    <p className="mt-1.5 text-caption text-muted-foreground/60">
-                      {persianTimeAgo(notification.createdAt)}
-                    </p>
-                  </div>
 
-                  {/* Unread Indicator */}
-                  {!notification.isRead && (
-                    <span className="mt-2.5 h-2.5 w-2.5 shrink-0 rounded-full bg-primary" />
-                  )}
+                    <div className="min-w-0 flex-1 space-y-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-sm font-semibold leading-relaxed truncate">
+                            {notification.title}
+                          </h4>
+                          {typeLabel && (
+                            <span
+                              className={cn(
+                                'shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-semibold',
+                                iconColorClass
+                              )}
+                            >
+                              {typeLabel}
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-0.5 text-sm text-muted-foreground leading-relaxed">
+                          {notification.message}
+                        </p>
+                        <p className="mt-1.5 text-caption text-muted-foreground/60">
+                          {persianTimeAgo(notification.createdAt)}
+                        </p>
+                      </div>
+
+                      {needData && <NeedBrowseNotificationCard data={needData} />}
+                    </div>
+                  </div>
                 </div>
               );
             })}
@@ -372,7 +325,9 @@ export function NotificationsPanel() {
             <p className="mt-1 max-w-[240px] text-sm text-muted-foreground">
               {activeFilter === 'unread'
                 ? 'تمام اعلان‌های شما را خوانده‌اید'
-                : 'هنوز اعلانی دریافت نکرده‌اید'}
+                : activeFilter === 'needs'
+                  ? 'هنوز نیاز جدیدی مطابق جستجوهای دنبال‌شده ثبت نشده'
+                  : 'هنوز اعلانی دریافت نکرده‌اید'}
             </p>
           </div>
         )}

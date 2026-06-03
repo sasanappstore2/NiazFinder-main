@@ -40,6 +40,7 @@ uvicorn app.main:app --host 127.0.0.1 --port 8100
 |--------|------|-------------|
 | GET | `/health` | Model load status |
 | POST | `/v1/parse` | `{ "text": "..." }` → JSON labels |
+| POST | `/v1/title` | `{ "context": { ... } }` → Persian listing title |
 | POST | `/train` | Start LoRA (background) |
 | GET | `/train/status` | Train progress log |
 

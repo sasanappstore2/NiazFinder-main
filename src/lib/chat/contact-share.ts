@@ -1,4 +1,6 @@
 import { CHAT_PRODUCT_CARD_PREFIX, parseLegacyProductIntroText } from '@/contracts/product-card-snapshot';
+import { callLogListPreview, parseCallLogSnapshot } from '@/lib/voice/call-log-labels';
+import { normalizeIranMobile, toAsciiDigits } from '@/lib/format/digits';
 
 /** Marker for v1 structured contact-share payloads inside message `content` (type TEXT). */
 export const CHAT_CONTACT_SHARE_PREFIX = '__NF_CONTACT_V1__:' as const;
@@ -26,7 +28,7 @@ export function parseChatContactShareContent(content: string): ChatContactShareP
 
 /** E.164-ish display for Iran mobile; falls back to original. */
 export function formatPhoneDisplayFa(phone: string): string {
-  const digits = phone.replace(/\D/g, '');
+  const digits = toAsciiDigits(phone);
   if (digits.startsWith('98') && digits.length >= 12) {
     const rest = digits.slice(2);
     if (rest.length === 10) {
@@ -48,6 +50,7 @@ export function isolatePhoneDisplay(display: string): string {
 }
 
 export function chatMessageListPreview(content: string, type?: string): string {
+  if (type === 'CALL') return callLogListPreview(content);
   if (type === 'NEED_CARD') return 'نیاز';
   if (type === 'OFFER_CARD') {
     try {
@@ -75,7 +78,7 @@ export function chatMessageListPreview(content: string, type?: string): string {
 }
 
 export function phoneToTelHref(phone: string): string {
-  const d = phone.replace(/\D/g, '');
+  const d = normalizeIranMobile(phone) ?? toAsciiDigits(phone);
   if (d.startsWith('98')) return `tel:+${d}`;
   if (d.startsWith('0') && d.length >= 10) return `tel:+98${d.slice(1)}`;
   if (d.length === 10 && d.startsWith('9')) return `tel:+98${d}`;

@@ -114,6 +114,8 @@ export interface ListingPreview {
   extras?: string[];
   budgetMin?: number;
   budgetMax?: number;
+  /** How the title was generated (preview step). */
+  titleSource?: 'qwen' | 'template';
 }
 
 export interface ConversationTurn {
@@ -179,6 +181,7 @@ export interface PreviewListingResponse {
   budgetMin?: number;
   budgetMax?: number;
   suggestedExtras?: string[];
+  titleSource?: 'qwen' | 'template';
 }
 
 export interface NextQuestionResponse {

@@ -410,7 +410,7 @@ function NeedHeaderCategoryMenuMobile() {
             <ChevronLeft className="size-3" />
           </button>
         </SheetTrigger>
-        <SheetContent side="right" className="w-[min(340px,calc(100vw-1.5rem))] p-0 sm:w-[min(400px,calc(100vw-2rem))]">
+        <SheetContent side="right" showCloseButton={false} className="w-[min(340px,calc(100vw-1.5rem))] p-0 sm:w-[min(400px,calc(100vw-2rem))]">
           <CategorySelector
             isDesktop={false}
             nestedCategories={ALL_CATEGORIES}
@@ -518,14 +518,14 @@ export function Header({ compact = false }: { compact?: boolean }) {
         'page-container border-b transition-colors duration-300',
         isScrolled ? 'border-border/30' : 'border-border/20',
       )}>
-        <div className="flex h-[52px] min-w-0 items-center justify-between gap-2 sm:gap-4">
-          {/* Right: Logo */}
+        <div className="flex h-[52px] min-w-0 items-center gap-2 sm:gap-4">
+          {/* Logo — hidden on mobile to prioritize search */}
           <button
             type="button"
             data-href="/"
             title="نیاز فایندر - صفحه اصلی"
             onClick={() => navigateTo('home')}
-            className="flex shrink-0 items-center gap-2 transition-colors duration-150 hover:opacity-80"
+            className="hidden shrink-0 items-center gap-2 transition-colors duration-150 hover:opacity-80 sm:flex"
             aria-label={SITE_NAME}
           >
             <LocateFixed className="size-[24px] text-primary" />
@@ -534,15 +534,15 @@ export function Header({ compact = false }: { compact?: boolean }) {
             </span>
           </button>
 
-          {/* Center: Search — hidden on very narrow phones to avoid crowding */}
-          <div className="hidden min-w-0 flex-1 max-w-[600px] items-center sm:flex">
-            <div className="w-full min-w-0 flex-1 search-glow-focus rounded-xl">
-              <HeaderSearchBar data={DEMO_SEARCH_DATA} />
+          {/* Search — full width on mobile */}
+          <div className="flex min-w-0 flex-1 max-w-[600px] items-center">
+            <div className="search-glow-focus w-full min-w-0 flex-1 rounded-xl">
+              <HeaderSearchBar data={DEMO_SEARCH_DATA} compact />
             </div>
           </div>
 
-          {/* Left: Actions */}
-          <div className="flex items-center gap-1.5">
+          {/* Left: city + auth */}
+          <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
             <AuthSection />
           </div>
         </div>

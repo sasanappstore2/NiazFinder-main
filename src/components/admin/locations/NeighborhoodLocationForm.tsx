@@ -3,6 +3,7 @@
 import { MapPin, Save, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PersianDigitInput } from '@/components/ui/persian-digit-input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { AdminPanel, AdminPanelActions, AdminToggleRow } from '@/components/admin/ui';
@@ -61,10 +62,10 @@ export function NeighborhoodLocationForm({
           />
         </Field>
         <Field label="ترتیب">
-          <Input
-            type="number"
+          <PersianDigitInput
+            variant="plain"
             value={values.order}
-            onChange={(event) => onChange({ order: event.target.value })}
+            onChange={(order) => onChange({ order })}
           />
         </Field>
         <Field label="زیرمحدوده‌ها (هر خط یا با ویرگول)">

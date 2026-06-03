@@ -69,7 +69,7 @@ export class RedisModule {
 
     return {
       module: RedisModule,
-      providers: [redisProvider, redisPubProvider, redisSubProvider],
+      providers: [redisProvider, redisPubProvider, redisSubProvider, RedisService],
       exports: ['REDIS_CLIENT', 'REDIS_PUB', 'REDIS_SUB', RedisService],
     };
   }

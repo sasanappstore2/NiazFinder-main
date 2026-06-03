@@ -62,6 +62,9 @@ export async function startConversation(
 
   const conversationId = json.conversation.id as string;
 
+  const { trackAnalyticsEvent } = await import('@/lib/analytics/track');
+  trackAnalyticsEvent('chat_started', { conversationId, requestId: params.requestId });
+
   if (params.productIntro) {
     const sent = await sendProductChatIntroMessage(
       conversationId,

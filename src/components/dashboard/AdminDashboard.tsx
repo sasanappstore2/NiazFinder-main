@@ -1,5 +1,7 @@
 'use client';
 
+/** @deprecated Legacy mock admin — use /super-admin instead. Kept for reference only. */
+
 import React, { useState, useMemo } from 'react';
 import {
   LineChart,

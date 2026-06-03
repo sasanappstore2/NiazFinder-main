@@ -7,9 +7,11 @@ import {
   buildProductSearchTitle,
   dealLabelForCategory,
   joinListingTitleParts,
+  LISTING_TITLE_MAX_LENGTH,
 } from '@/lib/need-intake/listing-title';
 import { buildRealEstateServiceTitle } from '@/lib/need-intake/property-title';
 import { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
+import { realEstateFilterSummaryLines } from '@/lib/need-intake/filter-answer-lines';
 
 export interface ComposedListing {
   title: string;
@@ -45,7 +47,7 @@ function buildDescriptionLines(
   } else if (root === 'real-estate') {
     const kind = answers.propertyKind ?? parsed.entities?.propertyKind;
     if (kind) lines.push(`نوع ملک: ${PROPERTY_KIND_LABELS[String(kind)] ?? kind}`);
-    if (answers.rooms) lines.push(`تعداد خواب: ${answers.rooms}`);
+    lines.push(...realEstateFilterSummaryLines(answers));
     if (answers.areaMin) lines.push(`متراژ حداقل: ${answers.areaMin} متر`);
     if (answers.areaMax) lines.push(`متراژ حداکثر: ${answers.areaMax} متر`);
     if (answers.floorMin) lines.push(`طبقه: ${answers.floorMin}`);
@@ -53,9 +55,6 @@ function buildDescriptionLines(
       lines.push(`قیمت هر متر: از ${formatMoneyToman(Number(answers.pricePerMeterMin))}`);
     }
     if (answers.deposit) lines.push(`ودیعه: ${formatMoneyToman(Number(answers.deposit))}`);
-    if (answers.monthlyRent) {
-      lines.push(`اجاره ماهانه: ${formatMoneyToman(Number(answers.monthlyRent))}`);
-    }
     if (answers.nightlyRent) {
       lines.push(`اجاره هر شب: ${formatMoneyToman(Number(answers.nightlyRent))}`);
     }
@@ -134,7 +133,7 @@ export function composeListingFromDraft(draft: NeedDraft): ComposedListing {
       const loc = String(answers.location ?? parsed.city ?? '').trim();
       if (loc) parts.push(loc);
       const joined = joinListingTitleParts(parts);
-      if (joined.length >= 8) title = joined.slice(0, 120);
+      if (joined.length >= 8) title = joined.slice(0, LISTING_TITLE_MAX_LENGTH);
     }
   }
 
@@ -145,7 +144,7 @@ export function composeListingFromDraft(draft: NeedDraft): ComposedListing {
   }
 
   return {
-    title: title.slice(0, 120),
+    title: title.slice(0, LISTING_TITLE_MAX_LENGTH),
     description: description.slice(0, 2000),
   };
 }

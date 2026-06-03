@@ -7,10 +7,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from app.config import HOST, MODEL_ID, PORT
-from app.infer import parse_text
+from app.infer import generate_title, parse_text
 from app.model_loader import get_model_state
 from app.train_job import get_train_status, start_train_async
-
 app = FastAPI(title="NiazFinder Intake MLX", version="0.1.0")
 
 app.add_middleware(
@@ -34,6 +33,33 @@ class ParseResponse(BaseModel):
     modelId: str
 
 
+class TitleContext(BaseModel):
+    needType: str = ""
+    intentType: str = ""
+    categoryPathFa: str = ""
+    city: str | None = None
+    neighborhood: str | None = None
+    dealTypeFa: str | None = None
+    propertyKind: str | None = None
+    rooms: str | None = None
+    productName: str | None = None
+    serviceType: str | None = None
+    jobTitle: str | None = None
+    budgetHint: str | None = None
+    sourceSummary: str = ""
+
+
+class TitleRequest(BaseModel):
+    context: TitleContext
+    fallbackTitle: str | None = None
+
+
+class TitleResponse(BaseModel):
+    title: str
+    raw: str
+    modelId: str
+
+
 @app.get("/")
 def root():
     state = get_model_state()
@@ -44,6 +70,7 @@ def root():
         "endpoints": {
             "health": "GET /health",
             "parse": "POST /v1/parse",
+            "title": "POST /v1/title",
             "docs": "GET /docs",
         },
         "note": "این سرویس API است؛ صفحهٔ سفید در / طبیعی بود — از /health یا /docs استفاده کنید.",
@@ -68,6 +95,16 @@ def v1_parse(body: ParseRequest):
         return ParseResponse(labels=labels, raw=raw, modelId=MODEL_ID)
     except json.JSONDecodeError as e:
         raise HTTPException(status_code=422, detail=f"Invalid JSON from model: {e}") from e
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
+
+
+@app.post("/v1/title", response_model=TitleResponse)
+def v1_title(body: TitleRequest):
+    try:
+        ctx = body.context.model_dump(exclude_none=True)
+        title, raw = generate_title(ctx)
+        return TitleResponse(title=title, raw=raw, modelId=MODEL_ID)
     except Exception as e:
         raise HTTPException(status_code=503, detail=str(e)) from e
 

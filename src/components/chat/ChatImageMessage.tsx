@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { CheckCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ChatReadReceiptIcon } from '@/components/chat/bubble/ChatReadReceiptIcon';
 
 const AUTO_DOWNLOAD_KEY_PREFIX = 'nf-chat-img-dl:';
 
@@ -89,9 +89,12 @@ export function ChatImageMessage({
         >
           {timeLabel}
           {isOwn && (
-            <CheckCheck
-              className={cn('size-3.5 shrink-0', isRead ? 'text-emerald-300' : 'text-white/50')}
-              aria-hidden
+            <ChatReadReceiptIcon
+              isRead={isRead}
+              className={cn(
+                'size-3.5 shrink-0',
+                isRead ? 'text-emerald-300' : 'text-white/50'
+              )}
             />
           )}
         </span>

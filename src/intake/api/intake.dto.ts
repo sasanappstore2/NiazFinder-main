@@ -5,6 +5,7 @@ export const intakeAnalyzeRequestSchema = z.object({
   text: z.string().trim().min(3, 'متن باید حداقل ۳ کاراکتر باشد').max(4000),
   /** Optional city hint from cookie/URL to boost neighborhood matching. */
   citySlug: z.string().trim().optional(),
+  cityName: z.string().trim().optional(),
 });
 
 export type IntakeAnalyzeRequest = z.infer<typeof intakeAnalyzeRequestSchema>;
@@ -68,7 +69,7 @@ export const intakeAnalyzeResponseSchema = z.object({
   latencyMs: z.number(),
   meta: z
     .object({
-      engine: z.enum(['intake-rules', 'intake-rules+ai']),
+      engine: z.enum(['intake-rules', 'intake-rules+ai', 'intake-qwen', 'intake-qwen+rules']),
       indexStats: z.object({
         categories: z.number(),
         cities: z.number(),
@@ -80,7 +81,7 @@ export const intakeAnalyzeResponseSchema = z.object({
 
 export type IntakeAnalyzeResponse = IntakeAnalysisResult & {
   meta?: {
-    engine: 'intake-rules' | 'intake-rules+ai';
+    engine: 'intake-rules' | 'intake-rules+ai' | 'intake-qwen' | 'intake-qwen+rules';
     indexStats: { categories: number; cities: number; neighborhoods: number };
     ai?: {
       engine: 'intake-rules' | 'intake-rules+ai';
@@ -88,6 +89,12 @@ export type IntakeAnalyzeResponse = IntakeAnalysisResult & {
       aiInvoked: boolean;
       aiProvider: string | null;
       aiLatencyMs: number;
+    };
+    qwen?: {
+      engine: 'intake-rules' | 'intake-qwen' | 'intake-qwen+rules';
+      ruleConfidence: number;
+      qwenInvoked: boolean;
+      qwenLatencyMs: number;
     };
     trace?: import('@/intake/training/trainingExample').IntakeAnalysisTrace;
   };

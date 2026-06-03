@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import { SuperAdminPageClient } from '@/components/admin/SuperAdminPageClient';
 
 export default function SuperAdminAnalyticsPage() {
-  redirect('/super-admin');
+  return <SuperAdminPageClient section="analytics" />;
 }

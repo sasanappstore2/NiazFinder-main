@@ -182,21 +182,34 @@ export interface NeighborhoodGlobalMatch {
 }
 
 /** Resolve neighborhood (and city) from text without an explicit city mention. */
-export function findNeighborhoodInAnyCity(text: string): NeighborhoodGlobalMatch | null {
+export function findNeighborhoodInAnyCity(
+  text: string,
+  preferredCityId?: string | null
+): NeighborhoodGlobalMatch | null {
   const norm = text.trim();
   if (!norm || norm.length < 4) return null;
 
+  const searchOrder = preferredCityId
+    ? [
+        preferredCityId,
+        ...NEIGHBORHOOD_SEARCH_PRIORITY.filter((id) => id !== preferredCityId),
+      ]
+    : [...NEIGHBORHOOD_SEARCH_PRIORITY];
+
   let best: NeighborhoodGlobalMatch | null = null;
 
-  for (const cityId of NEIGHBORHOOD_SEARCH_PRIORITY) {
+  for (const cityId of searchOrder) {
     const cityMeta = ALL_LOCATION_CITIES.find((c) => locationCityIdToSlug(c.id) === cityId);
     const cityLabel = cityMeta?.name ?? cityId;
     const catalog = loadCatalogForCityId(cityId, cityLabel);
     if (!catalog.length) continue;
 
     for (const entry of catalog) {
-      const score = scoreNeighborhoodAgainstText(norm, entry);
+      let score = scoreNeighborhoodAgainstText(norm, entry);
       if (score <= 0) continue;
+      if (preferredCityId && cityId === preferredCityId) {
+        score += 18;
+      }
       if (!best || score > best.score) {
         best = {
           city: entry.city,

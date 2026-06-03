@@ -4,20 +4,36 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAppStore } from '@/lib/store';
 import { getChatSocketConfig } from '@/lib/chat-socket-config';
-import type { Message } from '@/lib/types';
-
-// ─── Socket Connection Manager ──────────────────────────────────────────
+import {
+  registerChatSocketBridge,
+  unregisterChatSocketBridge,
+  setChatSocketConnected,
+} from '@/lib/chat/socket-bridge';
+import { bindChatSocketListeners } from '@/lib/chat/chat-socket-listeners';
 
 let socketInstance: Socket | null = null;
 let reconnectAttempts = 0;
 let lastConnectErrorLogAt = 0;
+let socketConsumerCount = 0;
 const MAX_RECONNECT_ATTEMPTS = 10;
 const CONNECT_ERROR_LOG_INTERVAL_MS = 20_000;
 
 export interface ChatSocketAPI {
   socket: Socket | null;
   isConnected: boolean;
-  sendMessage: (conversationId: string, content: string, type?: string, clientTempId?: string, replyToId?: string) => boolean;
+  sendMessage: (
+    conversationId: string,
+    content: string,
+    type?: string,
+    clientTempId?: string,
+    replyToId?: string,
+    replyTo?: {
+      id: string;
+      content: string;
+      senderFirstName: string;
+      senderLastName: string;
+    }
+  ) => boolean;
   emitTyping: (conversationId: string, isTyping: boolean) => void;
   markAsRead: (conversationId: string) => void;
   deleteConversation: (conversationId: string) => void;
@@ -29,37 +45,61 @@ export interface ChatSocketAPI {
 }
 
 export function useChatSocket(): ChatSocketAPI {
-  const {
-    currentUser,
-    isAuthenticated,
-    authToken,
-    conversations,
-    setConversations,
-    activeConversationId,
-    addNotification,
-  } = useAppStore();
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const currentUser = useAppStore((s) => s.currentUser);
+  const authToken = useAppStore((s) => s.authToken);
+  const activeConversationId = useAppStore((s) => s.activeConversationId);
 
   const socketRef = useRef<Socket | null>(null);
+  const listenersBoundRef = useRef(false);
   const typingTimeoutRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const [isConnected, setIsConnected] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);
 
-  // ─── Connect ────────────────────────────────────────────────────────
   const connect = useCallback(() => {
-    if (!currentUser || !isAuthenticated) return;
-    if (socketRef.current?.connected) return;
+    if (!currentUser || !isAuthenticated || !authToken) return;
 
-    const { url, path, enabled } = getChatSocketConfig();
+    const { url, path, enabled, useNestNamespace } = getChatSocketConfig();
     if (!enabled || !url) return;
 
-    if (!authToken) return;
+    if (socketRef.current?.connected) {
+      const activeId = useAppStore.getState().activeConversationId;
+      if (activeId) {
+        socketRef.current.emit('join:conversation', activeId);
+      }
+      return;
+    }
 
-    const namespaceUrl = url.endsWith('/chat') ? url : `${url}/chat`;
+    if (socketInstance?.connected) {
+      socketRef.current = socketInstance;
+      setIsConnected(true);
+      setChatSocketConnected(true);
+      setSocket(socketInstance);
+      (window as unknown as { __chatSocket?: Socket }).__chatSocket = socketInstance;
+      const activeId = useAppStore.getState().activeConversationId;
+      if (activeId) {
+        socketInstance.emit('join:conversation', activeId);
+      }
+      return;
+    }
+
+    if (socketRef.current || socketInstance) {
+      const existing = socketRef.current ?? socketInstance!;
+      existing.auth = { token: authToken };
+      socketRef.current = existing;
+      socketInstance = existing;
+      existing.connect();
+      return;
+    }
+
+    const namespaceUrl =
+      useNestNamespace && !url.endsWith('/chat') ? `${url}/chat` : url.replace(/\/chat$/, '');
 
     socketInstance = io(namespaceUrl, {
       path,
       auth: { token: authToken },
       transports: ['websocket', 'polling'],
+      upgrade: true,
       reconnection: true,
       reconnectionAttempts: MAX_RECONNECT_ATTEMPTS,
       reconnectionDelay: 1000,
@@ -69,73 +109,30 @@ export function useChatSocket(): ChatSocketAPI {
 
     socketRef.current = socketInstance;
 
+    if (!listenersBoundRef.current) {
+      bindChatSocketListeners(socketInstance);
+      listenersBoundRef.current = true;
+    }
+
     socketInstance.on('connect', () => {
       console.log('✅ Chat socket connected');
       reconnectAttempts = 0;
       setIsConnected(true);
+      setChatSocketConnected(true);
       setSocket(socketInstance);
 
       (window as unknown as { __chatSocket?: Socket }).__chatSocket = socketInstance!;
 
-      // Join active conversation if any
-      if (activeConversationId) {
-        socketInstance!.emit('join:conversation', activeConversationId);
+      const activeId = useAppStore.getState().activeConversationId;
+      if (activeId) {
+        socketInstance!.emit('join:conversation', activeId);
       }
-    });
-
-    socketInstance.on('call:invite', (data: {
-      callId: string;
-      callerId: string;
-      sdpOffer: RTCSessionDescriptionInit;
-      from?: { id: string; firstName: string; lastName: string; displayName?: string; avatar?: string };
-    }) => {
-      window.dispatchEvent(
-        new CustomEvent('call:invite', {
-          detail: {
-            callId: data.callId,
-            from: {
-              id: data.from?.id ?? data.callerId,
-              firstName: data.from?.firstName ?? '',
-              lastName: data.from?.lastName ?? '',
-              displayName: data.from?.displayName,
-              avatar: data.from?.avatar,
-              email: '',
-              role: 'CLIENT' as const,
-              isVerified: false,
-              isActive: true,
-              online: true,
-            },
-            sdpOffer: data.sdpOffer,
-          },
-        })
-      );
-    });
-
-    socketInstance.on('call:accept', (data: {
-      callId: string;
-      sdpAnswer: RTCSessionDescriptionInit;
-    }) => {
-      window.dispatchEvent(new CustomEvent('call:accept', { detail: data }));
-    });
-
-    socketInstance.on('call:ice-candidate', (data: {
-      callId: string;
-      candidate: RTCIceCandidateInit;
-    }) => {
-      window.dispatchEvent(new CustomEvent('call:ice-candidate', { detail: data }));
-    });
-
-    socketInstance.on('call:reject', (data: { callId: string }) => {
-      window.dispatchEvent(new CustomEvent('call:reject', { detail: data }));
-    });
-
-    socketInstance.on('call:hangup', (data: { callId: string }) => {
-      window.dispatchEvent(new CustomEvent('call:hangup', { detail: data }));
     });
 
     socketInstance.on('disconnect', (reason) => {
       console.log(`❌ Chat socket disconnected: ${reason}`);
       setIsConnected(false);
+      setChatSocketConnected(false);
       setSocket(null);
     });
 
@@ -147,197 +144,64 @@ export function useChatSocket(): ChatSocketAPI {
 
       if (error.message === 'timeout') {
         console.warn(
-          '[chat] اتصال به سرویس چت برقرار نشد. Nest backend را اجرا کنید (پورت 4000)'
+          '[chat] اتصال به Communication Gateway برقرار نشد. npm run dev:chat را اجرا کنید (پورت 3004)'
         );
       } else {
         console.warn('[chat] خطای اتصال:', error.message);
       }
     });
+  }, [currentUser, isAuthenticated, authToken]);
 
-    // ─── Real-time Events ─────────────────────────────────────────────
-
-    // New message received
-    socketInstance.on('message:new', (data: {
-      id: string;
-      conversationId: string;
-      senderId: string;
-      content: string;
-      type: string;
-      attachmentUrls: string[];
-      isRead: boolean;
-      createdAt: string;
-      clientTempId?: string;
-      replyToId?: string;
-      replyTo?: { id: string; content: string; senderFirstName: string; senderLastName: string };
-    }) => {
-      const now = new Date();
-      const persianTime = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
-
-      const message: Message & { replyToId?: string; replyTo?: { id: string; content: string; senderFirstName: string; senderLastName: string } } = {
-        id: data.id,
-        conversationId: data.conversationId,
-        senderId: data.senderId,
-        content: data.content,
-        type: data.type as Message['type'],
-        isRead: data.isRead,
-        createdAt: persianTime,
-        clientTempId: data.clientTempId,
-        replyToId: data.replyToId,
-        replyTo: data.replyTo,
-      };
-
-      // Update conversation list
-      setConversations(
-        conversations.map(c =>
-          c.id === data.conversationId
-            ? { ...c, lastMessage: data.content, lastMessageAt: new Date().toISOString() }
-            : c
-        )
-      );
-
-      // Dispatch to active ChatPanel
-      if (data.conversationId === activeConversationId) {
-        window.dispatchEvent(new CustomEvent('chat:new-message', { detail: message }));
-        socketInstance!.emit('message:read', { conversationId: data.conversationId });
-      } else {
-        const senderName = currentUser.id === data.senderId ? 'شما' : 'کاربر';
-        addNotification({
-          id: data.id,
-          type: 'NEW_MESSAGE' as any,
-          title: 'پیام جدید',
-          message: data.content.slice(0, 80),
-          isRead: false,
-          createdAt: persianTime,
-          data: { conversationId: data.conversationId },
-        });
-      }
-    });
-
-    // Typing indicator
-    socketInstance.on('typing', (data: {
-      conversationId: string;
-      userId: string;
-      user?: { id: string; firstName: string; lastName: string };
-      isTyping: boolean;
-    }) => {
-      if (data.conversationId === activeConversationId) {
-        window.dispatchEvent(new CustomEvent('chat:typing', { detail: data }));
-      }
-    });
-
-    // Read receipt
-    socketInstance.on('message:read-receipt', (data: {
-      conversationId: string;
-      readerId: string;
-      count: number;
-      timestamp: string;
-    }) => {
-      if (data.conversationId === activeConversationId) {
-        window.dispatchEvent(new CustomEvent('chat:read-receipt', { detail: data }));
-      }
-    });
-
-    // Conversation updated
-    socketInstance.on('conversation:updated', (data: {
-      id: string;
-      lastMessage: string;
-      lastMessageAt: string;
-      otherUser: { id: string; firstName: string; lastName: string; avatar: string | null; online: boolean };
-      unreadCount: number;
-    }) => {
-      setConversations(
-        conversations.map(c =>
-          c.id === data.id
-            ? { ...c, lastMessage: data.lastMessage, lastMessageAt: data.lastMessageAt, unreadCount: data.unreadCount }
-            : c
-        )
-      );
-    });
-
-    // User online/offline status
-    socketInstance.on('user:status', (data: { userId: string; online: boolean; lastSeenAt: string }) => {
-      setConversations(
-        conversations.map(c =>
-          c.otherUser?.id === data.userId
-            ? { ...c, otherUser: { ...c.otherUser, online: data.online } }
-            : c
-        )
-      );
-      window.dispatchEvent(new CustomEvent('chat:user-status', { detail: data }));
-    });
-
-    // Conversation deleted
-    socketInstance.on('conversation:deleted', (data: { conversationId: string; deletedBy: string }) => {
-      if (data.conversationId === activeConversationId) {
-        useAppStore.getState().setActiveConversationId(null);
-      }
-      setConversations(conversations.filter(c => c.id !== data.conversationId));
-    });
-
-    // Unread count update
-    socketInstance.on('conversation:unread-update', (data: { conversationId: string; unreadCount: number; totalUnread?: number }) => {
-      setConversations(
-        conversations.map(c =>
-          c.id === data.conversationId
-            ? { ...c, unreadCount: data.unreadCount }
-            : c
-        )
-      );
-    });
-
-    // ─── New Real-time Events (Enterprise) ─────────────────────────────
-
-    // Message reaction added
-    socketInstance.on('message:reaction-added', (data: any) => {
-      window.dispatchEvent(new CustomEvent('chat:reaction-added', { detail: data }));
-    });
-
-    // Message reaction updated
-    socketInstance.on('message:reaction-updated', (data: any) => {
-      window.dispatchEvent(new CustomEvent('chat:reaction-updated', { detail: data }));
-    });
-
-    // Message reaction removed
-    socketInstance.on('message:reaction-removed', (data: any) => {
-      window.dispatchEvent(new CustomEvent('chat:reaction-removed', { detail: data }));
-    });
-
-    // Message edited
-    socketInstance.on('message:edited', (data: any) => {
-      window.dispatchEvent(new CustomEvent('chat:message-edited', { detail: data }));
-    });
-
-    // Message deleted
-    socketInstance.on('message:deleted', (data: any) => {
-      window.dispatchEvent(new CustomEvent('chat:message-deleted', { detail: data }));
-    });
-
-    // Message pinned/unpinned
-    socketInstance.on('message:pin-changed', (data: any) => {
-      window.dispatchEvent(new CustomEvent('chat:message-pin-changed', { detail: data }));
-    });
-
-    // Message starred/unstarred
-    socketInstance.on('message:star-changed', (data: any) => {
-      window.dispatchEvent(new CustomEvent('chat:message-star-changed', { detail: data }));
-    });
-  }, [currentUser, isAuthenticated, activeConversationId, conversations, setConversations, addNotification]);
-
-  // ─── Disconnect ────────────────────────────────────────────────────
   const disconnect = useCallback(() => {
+    socketConsumerCount = Math.max(0, socketConsumerCount - 1);
+    if (socketConsumerCount > 0) return;
+
     if (socketRef.current) {
       socketRef.current.removeAllListeners();
       socketRef.current.disconnect();
       socketRef.current = null;
       socketInstance = null;
+      listenersBoundRef.current = false;
+      delete (window as unknown as { __chatSocket?: Socket }).__chatSocket;
     }
     setIsConnected(false);
+    setChatSocketConnected(false);
     setSocket(null);
   }, []);
 
-  // ─── Send Message ──────────────────────────────────────────────────
+  const previewMessage = useCallback(
+    (
+      conversationId: string,
+      content: string,
+      clientTempId: string,
+      type: string = 'TEXT'
+    ) => {
+      if (!socketRef.current?.connected) return false;
+      socketRef.current.emit('message:preview', {
+        conversationId,
+        content,
+        type,
+        clientTempId,
+      });
+      return true;
+    },
+    []
+  );
+
   const sendMessage = useCallback(
-    (conversationId: string, content: string, type: string = 'TEXT', clientTempId?: string, replyToId?: string) => {
+    (
+      conversationId: string,
+      content: string,
+      type: string = 'TEXT',
+      clientTempId?: string,
+      replyToId?: string,
+      replyTo?: {
+        id: string;
+        content: string;
+        senderFirstName: string;
+        senderLastName: string;
+      }
+    ) => {
       if (!socketRef.current?.connected) return false;
       socketRef.current.emit('message:send', {
         conversationId,
@@ -345,13 +209,13 @@ export function useChatSocket(): ChatSocketAPI {
         type,
         clientTempId,
         replyToId,
+        replyTo,
       });
       return true;
     },
     []
   );
 
-  // ─── Emit Typing ──────────────────────────────────────────────────
   const emitTyping = useCallback((conversationId: string, isTyping: boolean) => {
     if (!socketRef.current?.connected) return;
 
@@ -361,78 +225,109 @@ export function useChatSocket(): ChatSocketAPI {
     socketRef.current.emit('typing', { conversationId, isTyping });
 
     if (isTyping) {
-      typingTimeoutRef.current.set(conversationId, setTimeout(() => {
-        if (socketRef.current?.connected) {
-          socketRef.current.emit('typing', { conversationId, isTyping: false });
-        }
-        typingTimeoutRef.current.delete(conversationId);
-      }, 3000));
+      typingTimeoutRef.current.set(
+        conversationId,
+        setTimeout(() => {
+          if (socketRef.current?.connected) {
+            socketRef.current.emit('typing', { conversationId, isTyping: false });
+          }
+          typingTimeoutRef.current.delete(conversationId);
+        }, 3000)
+      );
     }
   }, []);
 
-  // ─── Mark as Read ─────────────────────────────────────────────────
   const markAsRead = useCallback((conversationId: string) => {
     if (!socketRef.current?.connected) return;
     socketRef.current.emit('message:read', { conversationId });
   }, []);
 
-  // ─── Delete Conversation ──────────────────────────────────────────
   const deleteConversation = useCallback((conversationId: string) => {
     if (!socketRef.current?.connected) return;
     socketRef.current.emit('conversation:delete', conversationId);
   }, []);
 
-  // ─── React to Message ─────────────────────────────────────────────
   const reactToMessage = useCallback((messageId: string, emoji: string) => {
-    if (!socketRef.current?.connected) return;
+    if (!socketRef.current?.connected) return false;
     socketRef.current.emit('message:react', { messageId, emoji });
+    return true;
   }, []);
 
-  // ─── Edit Message ─────────────────────────────────────────────────
   const editMessage = useCallback((messageId: string, content: string) => {
-    if (!socketRef.current?.connected) return;
+    if (!socketRef.current?.connected) return false;
     socketRef.current.emit('message:edit', { messageId, content });
+    return true;
   }, []);
 
-  // ─── Delete Message ───────────────────────────────────────────────
   const deleteMessage = useCallback((messageId: string, forEveryone: boolean) => {
-    if (!socketRef.current?.connected) return;
+    if (!socketRef.current?.connected) return false;
     socketRef.current.emit('message:delete', { messageId, forEveryone });
+    return true;
   }, []);
 
-  // ─── Pin Message ──────────────────────────────────────────────────
-  const pinMessage = useCallback((messageId: string, conversationId: string, unpin: boolean) => {
-    if (!socketRef.current?.connected) return;
-    socketRef.current.emit('message:pin', { messageId, conversationId, unpin });
-  }, []);
+  const pinMessage = useCallback(
+    (messageId: string, conversationId: string, unpin: boolean) => {
+      if (!socketRef.current?.connected) return;
+      socketRef.current.emit('message:pin', { messageId, conversationId, unpin });
+    },
+    []
+  );
 
-  // ─── Star Message ─────────────────────────────────────────────────
   const starMessage = useCallback((messageId: string, unstar: boolean) => {
     if (!socketRef.current?.connected) return;
     socketRef.current.emit('message:star', { messageId, unstar });
   }, []);
 
-  // ─── Lifecycle ────────────────────────────────────────────────────
   useEffect(() => {
-    if (isAuthenticated && currentUser) {
+    if (isAuthenticated && currentUser && authToken) {
+      socketConsumerCount += 1;
       connect();
     }
-
     return () => {
       disconnect();
+    };
+  }, [isAuthenticated, currentUser, authToken, connect, disconnect]);
+
+  useEffect(() => {
+    return () => {
       for (const timeout of typingTimeoutRef.current.values()) {
         clearTimeout(timeout);
       }
       typingTimeoutRef.current.clear();
     };
-  }, [isAuthenticated, currentUser, authToken, connect, disconnect]);
+  }, []);
 
-  // Re-join conversation when active changes
   useEffect(() => {
     if (socketRef.current?.connected && activeConversationId) {
       socketRef.current.emit('join:conversation', activeConversationId);
+      socketRef.current.emit('message:read', { conversationId: activeConversationId });
     }
-  }, [activeConversationId]);
+  }, [activeConversationId, isConnected]);
+
+  useEffect(() => {
+    if (socketRef.current && authToken) {
+      socketRef.current.auth = { token: authToken };
+    }
+  }, [authToken]);
+
+  const joinConversation = useCallback((conversationId: string) => {
+    if (!socketRef.current?.connected || !conversationId) return;
+    socketRef.current.emit('join:conversation', conversationId);
+  }, []);
+
+  useEffect(() => {
+    registerChatSocketBridge({
+      sendMessage,
+      previewMessage,
+      emitTyping,
+      joinConversation,
+      isConnected: () => Boolean(socketRef.current?.connected),
+      reactToMessage,
+      deleteMessage,
+      editMessage,
+    });
+    return () => unregisterChatSocketBridge();
+  }, [sendMessage, emitTyping, joinConversation, isConnected, reactToMessage, deleteMessage, editMessage]);
 
   return {
     socket,

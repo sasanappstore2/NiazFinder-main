@@ -14,3 +14,4 @@ export { AdminEmptyState, AdminSkeleton, AdminKpiSkeleton, AdminTableSkeleton } 
 export { AdminFilterBar } from './AdminFilterBar';
 export { AdminDataTable, AdminPagination } from './AdminDataTable';
 export type { AdminColumn } from './AdminDataTable';
+export { AdminDetailDrawer } from './AdminDetailDrawer';

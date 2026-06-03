@@ -153,7 +153,7 @@ export function IntakeCategoryMegaMenuPicker({
         <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
       </button>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="bottom" className="h-[85vh] p-0" dir="rtl">
+        <SheetContent side="bottom" showCloseButton={false} className="h-[85vh] p-0" dir="rtl">
           <SheetTitle className="sr-only">انتخاب دسته‌بندی</SheetTitle>
           {menu}
         </SheetContent>

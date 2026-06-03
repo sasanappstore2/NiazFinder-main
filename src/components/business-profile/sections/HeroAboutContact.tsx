@@ -8,6 +8,7 @@ import { ShareButton } from '@/components/shared/ShareButton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ContactActions } from '@/components/contact/ContactActions';
+import { HeroCoverAurora } from '@/components/business-profile/HeroCoverAurora';
 import { routeBuilder } from '@/config/routes';
 import type { SectionProps } from './types';
 
@@ -20,7 +21,7 @@ export function HeroSection({ business, requestId }: SectionProps) {
   return (
     <section
       id="section-hero"
-      className="relative z-0 overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm"
+      className="profile-surface relative z-0 overflow-hidden rounded-2xl shadow-sm"
     >
       <div className="relative h-40 sm:h-52 md:h-60">
         {business.identity.coverImage ? (
@@ -32,13 +33,19 @@ export function HeroSection({ business, requestId }: SectionProps) {
             priority
           />
         ) : (
-          <div className="absolute inset-0 bg-linear-to-br from-emerald-600/25 via-primary/15 to-muted" />
+          <HeroCoverAurora className="absolute inset-0" />
         )}
-        <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/35 to-black/5 sm:from-black/65" />
+        <div
+          className={
+            business.identity.coverImage
+              ? 'absolute inset-0 bg-linear-to-t from-black/75 via-black/35 to-black/5 sm:from-black/65'
+              : 'absolute inset-0 bg-linear-to-t from-black/55 via-black/20 to-transparent'
+          }
+        />
       </div>
 
-      <div className="relative px-4 pb-5 sm:px-6">
-        <div className="-mt-10 flex flex-col gap-4 sm:-mt-14 sm:flex-row sm:items-end">
+      <div className="relative z-10 px-4 pb-5 sm:px-6">
+        <div className="-mt-10 flex flex-col gap-4 sm:-mt-12 sm:flex-row sm:items-start">
           <div className="size-20 shrink-0 self-start overflow-hidden rounded-2xl border-4 border-background bg-muted shadow-lg ring-1 ring-border/40 sm:size-28">
             {business.identity.logo ? (
               <Image
@@ -56,9 +63,9 @@ export function HeroSection({ business, requestId }: SectionProps) {
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="rounded-xl border border-border/50 bg-background p-3 shadow-md sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none">
+            <div className="profile-surface rounded-xl p-4 shadow-md">
               <div className="flex flex-wrap items-start gap-2">
-                <h1 className="min-w-0 flex-1 text-xl font-bold leading-snug text-foreground sm:text-3xl">
+                <h1 className="min-w-0 flex-1 text-xl font-bold leading-snug tracking-tight text-foreground sm:text-2xl md:text-3xl">
                   {business.name}
                 </h1>
                 {business.trust.verified && (
@@ -98,7 +105,7 @@ export function HeroSection({ business, requestId }: SectionProps) {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
+          <div className="flex flex-wrap items-center gap-2 sm:mt-2 sm:shrink-0">
             <BookmarkButton itemId={business.id} itemType="specialist" />
             <ShareButton title={business.name} description={business.identity.description} url={shareUrl} />
             <ContactActions
@@ -152,7 +159,7 @@ export function HighlightsSection({ business }: SectionProps) {
       {items.map((item) => (
         <div
           key={item.label}
-          className="rounded-xl border border-border/50 bg-card px-4 py-3 text-center shadow-sm transition hover:border-emerald-500/20"
+          className="profile-surface rounded-xl px-4 py-3 text-center shadow-sm transition hover:border-emerald-500/20"
         >
           <p className="text-xl font-bold">{item.value}</p>
           <p className="text-xs text-muted-foreground">{item.label}</p>
@@ -166,7 +173,7 @@ export function AboutSection({ business }: SectionProps) {
   return (
     <section
       id="section-about"
-      className="scroll-mt-24 space-y-4 rounded-2xl border border-border/50 bg-card p-5 shadow-sm"
+      className="profile-surface scroll-mt-24 space-y-4 rounded-2xl p-5 shadow-sm"
     >
       <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-200">درباره</h2>
       <p className="leading-relaxed text-muted-foreground whitespace-pre-line">
@@ -196,7 +203,7 @@ export function AboutSection({ business }: SectionProps) {
 
 export function ContactSection({ business, requestId }: SectionProps) {
   return (
-    <section id="section-contact" className="scroll-mt-24 rounded-2xl border bg-muted/40 p-5">
+    <section id="section-contact" className="profile-surface scroll-mt-24 rounded-2xl p-5">
       <h2 className="mb-3 text-lg font-semibold">ارتباط</h2>
       <p className="mb-4 text-xs text-muted-foreground">
         ارتباط از طریق چت و تماس درون سایت — پس از ورود، شماره در تماس صوتی نمایش داده می‌شود.

@@ -195,7 +195,7 @@ export function OwnerProposalsSection({ requestId, defaultOpen = false }: OwnerP
   };
 
   return (
-    <section className="mt-8 border-t border-border/50 pt-6 pb-8">
+    <section className="need-detail-scroll-section mt-8 border-t border-border/50 pt-6 pb-8">
       <button
         type="button"
         className="flex w-full items-center justify-between gap-2 text-right"

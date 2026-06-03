@@ -36,9 +36,9 @@ export class NeighborhoodMatcher implements DictionaryMatcher<NeighborhoodIndexE
               : Math.min(0.9, 0.72 + key.length * 0.012);
 
         if (this.preferredCityId && entry.cityId === this.preferredCityId) {
-          score = Math.min(0.99, score + 0.08);
+          score = Math.min(0.99, score + 0.14);
         } else if (this.preferredCityId && entry.cityId !== this.preferredCityId) {
-          score *= 0.75;
+          score *= 0.5;
         }
 
         const prev = hits.get(slug);

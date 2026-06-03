@@ -29,7 +29,7 @@ import { canManageBusinessProfile } from '@/lib/business/can-manage-business-pro
 import { useAppStore } from "@/lib/store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import { ThemeModeSelector } from "@/components/shared/ThemeToggle";
 import type { AppView } from "@/lib/types";
 import { SUPER_ADMIN_PHONE, isSuperAdminPhone } from "@/lib/super-admin";
 
@@ -79,7 +79,6 @@ export function ArkUserMenu() {
     currentUser,
     logout,
     setAuthModalOpen,
-    setAuthModalTab,
     notifications,
     unreadNotificationCount,
     fetchNotifications,
@@ -113,14 +112,7 @@ export function ArkUserMenu() {
     navigateTo(view);
   };
 
-  const handleLogin = () => {
-    setAuthModalTab("login");
-    setAuthModalOpen(true);
-    setMenuOpen(false);
-  };
-
-  const handleRegister = () => {
-    setAuthModalTab("register");
+  const handleAuthOpen = () => {
     setAuthModalOpen(true);
     setMenuOpen(false);
   };
@@ -146,18 +138,19 @@ export function ArkUserMenu() {
         <button
           type="button"
           className={cn(
-            "inline-flex items-center gap-2.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all duration-200",
-            "border border-border/40 outline-hidden",
+            'inline-flex items-center gap-2.5 rounded-xl text-sm font-medium transition-all duration-200',
+            'border border-border/40 outline-hidden',
+            'size-9 justify-center px-0 sm:h-auto sm:w-auto sm:px-3 sm:py-1.5',
             menuOpen
-              ? "bg-primary/10 text-primary border-primary/25 shadow-[0_0_12px_oklch(0.51_0.12_165/0.1)]"
-              : "bg-background/60 text-foreground hover:bg-accent hover:border-border/60"
+              ? 'bg-primary/10 text-primary border-primary/25 shadow-[0_0_12px_oklch(0.51_0.12_165/0.1)]'
+              : 'bg-background/60 text-foreground hover:bg-accent hover:border-border/60'
           )}
-          aria-label="منوی کاربری"
+          aria-label={isAuthenticated && currentUser ? 'منوی کاربری' : 'ورود / ثبت‌نام'}
         >
           {isAuthenticated && currentUser ? (
             <>
               <span className="relative">
-                <Avatar className="size-7 border-2 border-primary/20">
+                <Avatar className="size-6 border-2 border-primary/20 sm:size-7">
                   <AvatarImage src={currentUser.avatar} />
                   <AvatarFallback className="bg-primary/10 text-caption font-bold text-primary">
                     {initials}
@@ -169,7 +162,7 @@ export function ArkUserMenu() {
                   </span>
                 )}
               </span>
-              <span className="hidden md:inline-block max-w-[100px] truncate text-sm">
+              <span className="hidden max-w-[100px] truncate text-sm lg:inline-block">
                 {displayName}
               </span>
             </>
@@ -183,13 +176,13 @@ export function ArkUserMenu() {
                   </span>
                 )}
               </span>
-              <span className="hidden md:inline-block">ورود / ثبت‌نام</span>
+              <span className="hidden lg:inline-block">ورود / ثبت‌نام</span>
             </>
           )}
           <ChevronDown
             className={cn(
-              "size-3.5 transition-transform duration-200 opacity-60",
-              menuOpen && "rotate-180"
+              'hidden size-3.5 opacity-60 transition-transform duration-200 sm:block',
+              menuOpen && 'rotate-180'
             )}
           />
         </button>
@@ -231,21 +224,12 @@ export function ArkUserMenu() {
                 <p className="text-xs text-muted-foreground text-center mb-1">
                   برای دسترسی کامل وارد شوید
                 </p>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    className="flex-1 h-8 text-xs"
-                    onClick={handleLogin}
-                  >
-                    ورود
-                  </Button>
-                  <Button
-                    className="flex-1 h-8 text-xs"
-                    onClick={handleRegister}
-                  >
-                    ثبت‌نام
-                  </Button>
-                </div>
+                <Button
+                  className="w-full h-8 text-xs"
+                  onClick={handleAuthOpen}
+                >
+                  ورود و ثبت‌نام
+                </Button>
               </div>
             )}
 
@@ -422,9 +406,9 @@ export function ArkUserMenu() {
 
             <Menu.Separator className="my-1 h-px bg-border/50" />
 
-            {/* ── Theme Toggle ── */}
-            <div className="px-1 py-1.5">
-              <ThemeToggle />
+            {/* ── Theme ── */}
+            <div className="px-2 py-2">
+              <ThemeModeSelector />
             </div>
 
             <Menu.Separator className="my-1 h-px bg-border/50" />

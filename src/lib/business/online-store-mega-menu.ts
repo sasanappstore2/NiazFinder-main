@@ -127,11 +127,16 @@ export function buildOnlineStoreMegaMenuTree(): OccupationMegaMenuNode[] {
     .filter((s) => (s.subCategories?.length ?? 0) > 0);
 }
 
+export function getOnlineStoreMegaMenuTree(): OccupationMegaMenuNode[] {
+  return buildOnlineStoreMegaMenuTree();
+}
+
+/** @deprecated Use getOnlineStoreMegaMenuTree() */
 export const ONLINE_STORE_MEGA_MENU_TREE = buildOnlineStoreMegaMenuTree();
 
-export function getAllOnlineStoreMenuLeaves(): OccupationMegaMenuNode[] {
+function collectMenuLeaves(tree: OccupationMegaMenuNode[]): OccupationMegaMenuNode[] {
   const out: OccupationMegaMenuNode[] = [];
-  for (const sector of ONLINE_STORE_MEGA_MENU_TREE) {
+  for (const sector of tree) {
     for (const leaf of sector.subCategories ?? []) {
       out.push(leaf);
     }
@@ -139,20 +144,27 @@ export function getAllOnlineStoreMenuLeaves(): OccupationMegaMenuNode[] {
   return out;
 }
 
+export function getAllOnlineStoreMenuLeaves(
+  tree: OccupationMegaMenuNode[] = getOnlineStoreMegaMenuTree()
+): OccupationMegaMenuNode[] {
+  return collectMenuLeaves(tree);
+}
+
 export function filterOnlineStoreMegaMenu(
-  query: string
+  query: string,
+  tree: OccupationMegaMenuNode[] = getOnlineStoreMegaMenuTree()
 ): { sectors: OccupationMegaMenuNode[]; flatJobs: OccupationMegaMenuNode[] } {
   const q = query.trim().toLowerCase();
   if (!q) {
-    return { sectors: ONLINE_STORE_MEGA_MENU_TREE, flatJobs: [] };
+    return { sectors: tree, flatJobs: [] };
   }
 
-  const flatJobs = getAllOnlineStoreMenuLeaves().filter(
+  const flatJobs = getAllOnlineStoreMenuLeaves(tree).filter(
     (j) => j.name.includes(query.trim()) || j.slug.includes(q)
   );
 
   const sectorSlugs = new Set(flatJobs.map((j) => j.parent).filter(Boolean));
-  const sectors = ONLINE_STORE_MEGA_MENU_TREE.filter((s) => sectorSlugs.has(s.slug)).map((sector) => ({
+  const sectors = tree.filter((s) => sectorSlugs.has(s.slug)).map((sector) => ({
     ...sector,
     subCategories: (sector.subCategories ?? []).filter((j) =>
       flatJobs.some((f) => f.slug === j.slug)

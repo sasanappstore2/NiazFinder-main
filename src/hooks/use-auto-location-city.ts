@@ -15,13 +15,12 @@ export type AutoLocationStatus =
   | 'error';
 
 export interface UseAutoLocationCityOptions {
-  /** Skip auto-run (e.g. URL already has a city) */
-  skipAuto?: boolean;
   onDetected?: (city: City) => void;
 }
 
+/** GPS city detection — only runs when `runDetection()` is called (user action). */
 export function useAutoLocationCity(options: UseAutoLocationCityOptions = {}) {
-  const { skipAuto = false, onDetected } = options;
+  const { onDetected } = options;
   const onDetectedRef = useRef(onDetected);
 
   useEffect(() => {
@@ -32,15 +31,10 @@ export function useAutoLocationCity(options: UseAutoLocationCityOptions = {}) {
     isGeolocationSupported() ? 'idle' : 'unsupported'
   );
   const [detectedCity, setDetectedCity] = useState<City | null>(null);
-  const ranAutoRef = useRef(false);
 
-  const runDetection = useCallback(async (force = false) => {
+  const runDetection = useCallback(async () => {
     if (!isGeolocationSupported()) {
       setStatus('unsupported');
-      return null;
-    }
-
-    if (!force && !cookieManager.shouldAttemptGeoAuto() && !detectedCity) {
       return null;
     }
 
@@ -70,19 +64,7 @@ export function useAutoLocationCity(options: UseAutoLocationCityOptions = {}) {
       }
       return null;
     }
-  }, [detectedCity]);
-
-  useEffect(() => {
-    if (skipAuto || ranAutoRef.current) return;
-    if (!cookieManager.shouldAttemptGeoAuto()) return;
-    if (!isGeolocationSupported()) {
-      setStatus('unsupported');
-      return;
-    }
-
-    ranAutoRef.current = true;
-    void runDetection(false);
-  }, [skipAuto, runDetection]);
+  }, []);
 
   return {
     status,

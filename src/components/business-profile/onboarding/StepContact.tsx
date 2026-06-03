@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
+import { BusinessLocationPicker } from '@/components/business-profile/onboarding/BusinessLocationPicker';
 import { PhoneField } from '@/components/business-profile/onboarding/PhoneField';
 
 export type StepContactValues = {
@@ -65,31 +66,14 @@ export function StepContact({
 
       <div className="flex items-center gap-2 text-sm font-medium text-foreground">
         <MapPin className="size-4 text-emerald-600" />
-        مکان (اختیاری — نقشه به‌زودی)
+        مکان (اختیاری)
       </div>
 
-      <div className="grid gap-[13px] sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="biz-city">شهر</Label>
-          <Input
-            id="biz-city"
-            value={values.city}
-            onChange={(e) => onChange({ city: e.target.value })}
-            placeholder="مشهد"
-            className="h-11"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="biz-province">استان</Label>
-          <Input
-            id="biz-province"
-            value={values.province}
-            onChange={(e) => onChange({ province: e.target.value })}
-            placeholder="خراسان رضوی"
-            className="h-11"
-          />
-        </div>
-      </div>
+      <BusinessLocationPicker
+        city={values.city}
+        province={values.province}
+        onChange={onChange}
+      />
 
       <div className="space-y-2">
         <Label htmlFor="biz-address">آدرس</Label>

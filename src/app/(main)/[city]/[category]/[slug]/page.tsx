@@ -4,7 +4,7 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Separator } from '@/components/ui/separator';
-import { UniversalBusinessProfile } from '@/components/business-profile';
+import { BusinessProfileAuraScope, UniversalBusinessProfile } from '@/components/business-profile';
 import { loadBusinessBySlug } from '@/lib/business/load-profile';
 import { buildLocalBusinessJsonLd } from '@/lib/seo/business-json-ld';
 import { SITE_NAME, SITE_URL } from '@/lib/seo';
@@ -47,11 +47,19 @@ export default async function BusinessSeoPage({ params }: PageProps) {
   return (
     <>
       <JsonLd id="business-seo-jsonld" data={jsonLd} />
-      <PageContainer width="wide">
-        <Breadcrumb />
-        <Separator className="my-4" />
-        <UniversalBusinessProfile businessId={business.id} />
-      </PageContainer>
+      <BusinessProfileAuraScope logoUrl={business.identity.logo}>
+        <PageContainer
+          width="wide"
+          noVerticalPadding
+          className="relative bg-transparent pb-12 sm:pb-14"
+        >
+          <div className="profile-surface rounded-xl px-3 py-2">
+            <Breadcrumb />
+          </div>
+          <Separator className="my-4 bg-border/35" />
+          <UniversalBusinessProfile businessId={business.id} />
+        </PageContainer>
+      </BusinessProfileAuraScope>
     </>
   );
 }

@@ -1,21 +1,13 @@
 import type { AuthUser } from '@/lib/auth';
+import { normalizeIranMobile, toAsciiDigits } from '@/lib/format/digits';
 
 export const SUPER_ADMIN_PHONE = '09374333028';
 
 export function normalizePhone(phone?: string | null): string {
   if (!phone) return '';
-
-  const digits = phone.replace(/[^\d+]/g, '');
-
-  if (digits.startsWith('+98')) {
-    return `0${digits.slice(3)}`;
-  }
-
-  if (digits.startsWith('98') && digits.length === 12) {
-    return `0${digits.slice(2)}`;
-  }
-
-  return digits;
+  const normalized = normalizeIranMobile(phone);
+  if (normalized) return normalized;
+  return toAsciiDigits(phone);
 }
 
 export function isSuperAdminPhone(phone?: string | null): boolean {

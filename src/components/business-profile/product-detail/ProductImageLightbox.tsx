@@ -48,6 +48,7 @@ export function ProductImageLightbox({
   const [downloading, setDownloading] = useState(false);
   const [dragY, setDragY] = useState(0);
   const [draggingDismiss, setDraggingDismiss] = useState(false);
+  const [liveTransform, setLiveTransform] = useState(false);
 
   const panRef = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
   const touchRef = useRef<{
@@ -163,6 +164,7 @@ export function ProductImageLightbox({
     if (scale <= 1) return;
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
     panRef.current = { x: e.clientX, y: e.clientY, px: pan.x, py: pan.y };
+    setLiveTransform(true);
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
@@ -175,6 +177,7 @@ export function ProductImageLightbox({
 
   const onPointerUp = () => {
     panRef.current = null;
+    setLiveTransform(false);
   };
 
   const pinchDistance = (touches: { length: number; 0?: Touch; 1?: Touch }) => {
@@ -194,6 +197,7 @@ export function ProductImageLightbox({
         pinchDist: dist,
         pinchScale: scale,
       };
+      setLiveTransform(true);
       return;
     }
     const t = e.touches[0];
@@ -221,6 +225,7 @@ export function ProductImageLightbox({
   const onTouchEnd = (e: React.TouchEvent) => {
     if (touchRef.current?.pinchDist) {
       touchRef.current = null;
+      setLiveTransform(false);
       return;
     }
     if (!touchRef.current) return;
@@ -384,7 +389,7 @@ export function ProductImageLightbox({
           )}
           style={{
             transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`,
-            transition: panRef.current || touchRef.current?.pinchDist ? 'none' : 'transform 0.15s ease-out',
+            transition: liveTransform ? 'none' : 'transform 0.15s ease-out',
           }}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}

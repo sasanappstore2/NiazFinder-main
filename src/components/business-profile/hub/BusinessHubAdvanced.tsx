@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { ChevronDown, Settings2 } from 'lucide-react';
 import {
   Collapsible,
@@ -17,6 +18,9 @@ export function BusinessHubAdvanced({
   onSlugSaved?: (data: { slug: string; name: string }) => void;
 }) {
   const { refresh } = useBusinessHub();
+  const handleCategorySaved = useCallback(() => {
+    void refresh();
+  }, [refresh]);
 
   return (
     <Collapsible className="rounded-xl border border-border/60">
@@ -33,7 +37,7 @@ export function BusinessHubAdvanced({
         <div className="space-y-2">
           <p className="text-sm font-medium">حوزه کاری پروفایل</p>
           <p className="text-xs text-muted-foreground">حداکثر ۳ مورد (مشاغل + فروشگاه اینترنتی)</p>
-          <BusinessCategoryPicker onCategorySaved={() => void refresh()} />
+          <BusinessCategoryPicker onCategorySaved={handleCategorySaved} />
         </div>
 
         <div className="space-y-2">

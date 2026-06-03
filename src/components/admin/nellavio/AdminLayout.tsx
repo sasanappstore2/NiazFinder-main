@@ -36,14 +36,14 @@ export function AdminLayout({
 
   return (
     <div
-      className={`admin-nellavio admin-nellavio-${theme} flex min-h-screen min-h-dvh w-full overflow-x-hidden`}
+      className={`admin-nellavio admin-nellavio-${theme} flex h-screen h-dvh w-full overflow-hidden`}
       dir="rtl"
       style={{ ['--admin-content-max' as string]: ADMIN_CONTENT_MAX }}
     >
       <div className="admin-bg-mesh" aria-hidden />
       <div className="admin-bg-grid" aria-hidden />
 
-      <div className="admin-shell-layer flex min-h-0 w-full min-w-0 flex-1">
+      <div className="admin-shell-layer flex h-full min-h-0 w-full min-w-0 flex-1 overflow-hidden">
         <AdminSideMenu />
 
         {mobileMenuOpen && (

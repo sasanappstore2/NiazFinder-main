@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { generateToken, daysFromNow } from '@/lib/auth';
-import crypto from 'crypto';
+import { simpleHash } from '@/lib/auth/password';
 
 // ============ TYPES ============
 
@@ -30,11 +30,6 @@ interface AuthResponseBody {
   token: string;
 }
 
-// ============ SIMPLE PASSWORD HASH (demo purposes) ============
-
-function simpleHash(password: string): string {
-  return crypto.createHash('sha256').update(password + '_needfinder_salt').digest('hex');
-}
 
 // ============ POST handler ============
 

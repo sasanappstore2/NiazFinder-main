@@ -28,7 +28,15 @@ import {
   Check,
   AtSign,
   AlertCircle,
+  Loader2,
+  MapPinned,
 } from 'lucide-react';
+import {
+  detectUserCity,
+  detectUserLocationFromGps,
+  GeoLocationError,
+  isGeolocationSupported,
+} from '@/lib/location/detect-user-city';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -262,6 +270,7 @@ export function UserDashboard() {
 
   const [profileForm, setProfileForm] = useState(initialProfile);
   const [usernameError, setUsernameError] = useState<string | null>(null);
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false);
 
   const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9_]{2,29}$/;
 
@@ -281,6 +290,40 @@ export function UserDashboard() {
     setProfileForm((prev) => ({ ...prev, username: sanitized }));
     setUsernameError(validateUsername(sanitized));
   }, [validateUsername]);
+
+  const handleDetectLocation = useCallback(async () => {
+    if (!isGeolocationSupported()) {
+      toast.error('مرورگر شما از موقعیت مکانی پشتیبانی نمی‌کند.');
+      return;
+    }
+
+    setIsDetectingLocation(true);
+    try {
+      const geo = await detectUserLocationFromGps({ highAccuracy: true });
+      if (geo?.cityName) {
+        setProfileForm((prev) => ({ ...prev, city: geo.cityName }));
+        toast.success('شهر شما تشخیص داده شد', { description: geo.cityName });
+        return;
+      }
+
+      const nearest = await detectUserCity();
+      if (nearest?.name) {
+        setProfileForm((prev) => ({ ...prev, city: nearest.name }));
+        toast.success('شهر شما تشخیص داده شد', { description: nearest.name });
+        return;
+      }
+
+      toast.error('شهر از موقعیت شما پیدا نشد.');
+    } catch (e) {
+      if (e instanceof GeoLocationError && e.code === 'denied') {
+        toast.error('اجازه دسترسی به موقعیت داده نشد. در تنظیمات مرورگر اجازه دهید.');
+      } else {
+        toast.error('تشخیص موقعیت ناموفق بود.');
+      }
+    } finally {
+      setIsDetectingLocation(false);
+    }
+  }, []);
 
   if (!isAuthenticated || !currentUser) {
     return (
@@ -331,7 +374,8 @@ export function UserDashboard() {
     if (success) {
       toast.success('پروفایل با موفقیت ذخیره شد');
     } else {
-      toast.error('خطا در ذخیره پروفایل');
+      const apiError = useAppStore.getState().error;
+      toast.error(apiError || 'خطا در ذخیره پروفایل');
     }
   };
 
@@ -555,7 +599,31 @@ export function UserDashboard() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="city">شهر</Label>
-                      <Input id="city" value={profileForm.city} onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })} placeholder="شهر" />
+                      <div className="flex gap-2">
+                        <Input
+                          id="city"
+                          value={profileForm.city}
+                          onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
+                          placeholder="شهر"
+                          className="min-w-0 flex-1"
+                          disabled={isDetectingLocation}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="h-10 shrink-0 gap-1.5 px-3"
+                          disabled={isDetectingLocation || !isGeolocationSupported()}
+                          onClick={() => void handleDetectLocation()}
+                          title="تشخیص شهر از موقعیت من"
+                        >
+                          {isDetectingLocation ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <MapPinned className="w-4 h-4" />
+                          )}
+                          <span className="text-sm">موقعیت من</span>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -568,7 +636,7 @@ export function UserDashboard() {
                         onChange={(e) => handleUsernameChange(e.target.value)}
                         placeholder="مثلاً: sasan_rashidi"
                         dir="ltr"
-                        className={`pl-8 text-left font-mono ${usernameError ? 'border-rose-400 focus-visible:ring-rose-400' : ''}`}
+                        className={`pl-8 text-left font-sans tabular-nums ${usernameError ? 'border-rose-400 focus-visible:ring-rose-400' : ''}`}
                         maxLength={30}
                       />
                     </div>

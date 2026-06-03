@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useAppStore } from '@/lib/store';
 import type { AdminPermissionId } from '@/config/admin-permissions';
+import { permissionSatisfied } from '@/lib/rbac/permission-check';
 
 export type AdminMe = {
   user: {
@@ -76,7 +77,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       if (!me) return false;
       if (me.isOwner || me.permissions.includes('*')) return true;
       const list = Array.isArray(permission) ? permission : [permission];
-      return list.some((p) => me.permissions.includes(p));
+      return list.some((p) => permissionSatisfied(me.permissions, p));
     },
     [me]
   );

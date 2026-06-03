@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   Dot,
   ArrowRight,
+  X,
   Car,
   Laptop,
   Armchair,
@@ -79,7 +80,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
-import { SheetTitle } from '@/components/ui/sheet';
+import { SheetTitle, SheetClose } from '@/components/ui/sheet';
 
 // ============ Type definitions ============
 export type FormFieldDefinition = {
@@ -752,14 +753,24 @@ function MobileView({
   return (
     <div className="flex h-full flex-col">
       {/* Header with back button */}
-      <header className="flex items-center p-4 border-b border-border/40">
-        <Button variant="ghost" size="icon" onClick={handleBack} className="shrink-0">
-          <ArrowRight className="w-5 h-5" />
+      <header className="flex items-center gap-2 border-b border-border/40 p-4">
+        <Button variant="ghost" size="icon" onClick={handleBack} className="size-9 shrink-0">
+          <ArrowRight className="size-5" />
         </Button>
-        <div className="grow text-center">
+        <div className="min-w-0 flex-1 text-center">
           <SheetTitle className="text-base font-semibold">{parentCategoryName}</SheetTitle>
         </div>
-        <div className="w-10 shrink-0" />
+        <SheetClose asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-10 shrink-0"
+            aria-label="بستن"
+            title="بستن"
+          >
+            <X className="size-5" />
+          </Button>
+        </SheetClose>
       </header>
 
       {/* Sliding content */}
@@ -836,7 +847,7 @@ function MobileView({
                         <button
                           type="button"
                           onClick={() => openSubCategories(cat)}
-                          className="ml-2 flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40"
+                          className="ml-2 flex h-10 w-[8.5rem] shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40"
                           aria-label={`نمایش زیر‌دسته‌های ${cat.name}`}
                           title={`نمایش زیر‌دسته‌های ${cat.name}`}
                         >

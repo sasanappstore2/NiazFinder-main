@@ -4,6 +4,8 @@ import { ChatService } from './chat.service';
 import { ChatController } from './chat.controller';
 import { ChatGateway } from './chat.gateway';
 
+const socketGatewayEnabled = process.env.CHAT_SOCKET_GATEWAY_ENABLED === 'true';
+
 @Module({
   imports: [
     JwtModule.register({
@@ -12,7 +14,10 @@ import { ChatGateway } from './chat.gateway';
     }),
   ],
   controllers: [ChatController],
-  providers: [ChatService, ChatGateway],
-  exports: [ChatService, ChatGateway],
+  providers: [
+    ChatService,
+    ...(socketGatewayEnabled ? [ChatGateway] : []),
+  ],
+  exports: [ChatService, ...(socketGatewayEnabled ? [ChatGateway] : [])],
 })
 export class ChatModule {}

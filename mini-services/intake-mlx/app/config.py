@@ -21,6 +21,8 @@ TRAIN_BATCH_SIZE = int(os.getenv("INTAKE_MLX_TRAIN_BATCH_SIZE", "1"))
 TRAIN_LORA_RANK = int(os.getenv("INTAKE_MLX_TRAIN_LORA_RANK", "8"))
 TRAIN_LR = float(os.getenv("INTAKE_MLX_TRAIN_LR", "1e-5"))
 MAX_TOKENS = int(os.getenv("INTAKE_MLX_MAX_TOKENS", "256"))
+TITLE_MAX_TOKENS = int(os.getenv("INTAKE_MLX_TITLE_MAX_TOKENS", "80"))
+LISTING_TITLE_MAX_LENGTH = int(os.getenv("INTAKE_MLX_TITLE_MAX_LENGTH", "70"))
 TEMPERATURE = float(os.getenv("INTAKE_MLX_TEMPERATURE", "0.1"))
 
 # Lazy load on first request (saves RAM when only training)

@@ -2,8 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useSpring, useTransform, type MotionValue } from 'framer-motion';
-import { CheckCheck, Pause, Play } from 'lucide-react';
+import { Pause, Play } from 'lucide-react';
+import { ChatReadReceiptIcon } from '@/components/chat/bubble/ChatReadReceiptIcon';
 import { cn } from '@/lib/utils';
+import { toPersianDigits } from '@/lib/format/digits';
 
 const BAR_COUNT = 42;
 
@@ -13,9 +15,6 @@ interface ChatVoiceMessageProps {
   timeLabel: string;
   isRead?: boolean;
 }
-
-const toPersianDigits = (str: string): string =>
-  str.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d, 10)]);
 
 function formatDuration(seconds: number): string {
   const s = Math.max(0, Math.floor(seconds));
@@ -245,12 +244,12 @@ export function ChatVoiceMessage({ url, isOwn, timeLabel, isRead }: ChatVoiceMes
             >
               {timeLabel}
               {isOwn && (
-                <CheckCheck
+                <ChatReadReceiptIcon
+                  isRead={isRead}
                   className={cn(
                     'size-3.5 shrink-0',
                     isRead ? 'text-sky-300' : 'text-white/45'
                   )}
-                  aria-hidden
                 />
               )}
             </span>

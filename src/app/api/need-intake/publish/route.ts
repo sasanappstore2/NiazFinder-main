@@ -16,6 +16,7 @@ import { runPublishShadowMode } from '@/intake/migration/shadow-publish';
 import { enqueueIntakeHeavyJob } from '@/lib/need-intake/enqueue-heavy';
 import { enqueueRequestModerationJob } from '@/lib/request-moderation/enqueue';
 import { captureTrainingExampleAsync } from '@/intake/training/trainingCapture';
+import { truncateListingTitle } from '@/lib/need-intake/listing-title-sanitize';
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,7 +45,10 @@ export async function POST(request: NextRequest) {
     }
 
     if (listingPreview) {
-      draft.listingPreview = listingPreview;
+      draft.listingPreview = {
+        ...listingPreview,
+        title: truncateListingTitle(String(listingPreview.title ?? '').trim() || 'ثبت نیاز'),
+      };
     }
     const entities = recordToEntities(draft.entities);
     const serviceRequestV2 = toServiceRequestV2(draft);
@@ -94,6 +98,7 @@ export async function POST(request: NextRequest) {
         listingEnriched: true,
         fromPreview: true,
         engine: 'internal',
+        titleSource: draft.listingPreview?.titleSource,
         serviceRequestV2,
       };
     }

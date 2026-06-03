@@ -1,15 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Loader2, MapPin, Phone, Save } from 'lucide-react';
+import { BellOff, BellRing, Loader2, MapPin, Phone, Save } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import { SwitchWithIcon } from '@/components/ui/switch-with-icon';
 import { toast } from 'sonner';
 import { getClientAuthHeaders } from '@/lib/auth/client-auth';
+import { BusinessLocationPicker } from '@/components/business-profile/onboarding/BusinessLocationPicker';
 import { useBusinessHub } from '../BusinessHubContext';
 
 export function BusinessProfileBasicsForm({
@@ -19,6 +20,7 @@ export function BusinessProfileBasicsForm({
 }) {
   const { profile, patchProfile, refresh } = useBusinessHub();
   const [saving, setSaving] = useState(false);
+  const [chatSaving, setChatSaving] = useState(false);
   const [form, setForm] = useState({
     name: '',
     description: '',
@@ -44,11 +46,48 @@ export function BusinessProfileBasicsForm({
       email: profile.email,
       chatEnabled: profile.chatEnabled,
     });
-  }, [profile]);
+  }, [
+    profile?.name,
+    profile?.description,
+    profile?.city,
+    profile?.province,
+    profile?.address,
+    profile?.phone,
+    profile?.whatsapp,
+    profile?.email,
+    profile?.chatEnabled,
+  ]);
 
   if (!profile) return null;
 
   const update = (patch: Partial<typeof form>) => setForm((prev) => ({ ...prev, ...patch }));
+
+  const saveChatEnabled = async (checked: boolean) => {
+    const previous = form.chatEnabled;
+    update({ chatEnabled: checked });
+    setChatSaving(true);
+    try {
+      const res = await fetch('/api/business/me', {
+        method: 'PATCH',
+        headers: getClientAuthHeaders(),
+        body: JSON.stringify({ chatEnabled: checked }),
+      });
+      const data = (await res.json()) as { error?: string; chatEnabled?: boolean };
+      if (!res.ok) {
+        update({ chatEnabled: previous });
+        toast.error(data.error ?? 'ذخیره تنظیم چت ناموفق بود');
+        return;
+      }
+      const saved = typeof data.chatEnabled === 'boolean' ? data.chatEnabled : checked;
+      update({ chatEnabled: saved });
+      patchProfile({ chatEnabled: saved });
+    } catch {
+      update({ chatEnabled: previous });
+      toast.error('خطا در ارتباط با سرور');
+    } finally {
+      setChatSaving(false);
+    }
+  };
 
   const save = async () => {
     if (!form.name.trim()) {
@@ -119,16 +158,13 @@ export function BusinessProfileBasicsForm({
           <MapPin className="size-4 text-emerald-600" />
           <CardTitle className="text-base">موقعیت</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
+        <CardContent className="grid gap-4">
+          <BusinessLocationPicker
+            city={form.city}
+            province={form.province}
+            onChange={(patch) => update(patch)}
+          />
           <div className="space-y-1">
-            <Label>شهر</Label>
-            <Input value={form.city} onChange={(e) => update({ city: e.target.value })} />
-          </div>
-          <div className="space-y-1">
-            <Label>استان</Label>
-            <Input value={form.province} onChange={(e) => update({ province: e.target.value })} />
-          </div>
-          <div className="space-y-1 sm:col-span-2">
             <Label>آدرس</Label>
             <Textarea
               value={form.address}
@@ -161,22 +197,17 @@ export function BusinessProfileBasicsForm({
             <Label>ایمیل (اختیاری)</Label>
             <Input dir="ltr" value={form.email} onChange={(e) => update({ email: e.target.value })} />
           </div>
-          <div className="flex items-center gap-4 rounded-xl border px-4 py-4 sm:col-span-2">
-            <div className="min-w-0 flex-1 space-y-0.5">
-              <Label htmlFor="hub-chat-enabled" className="cursor-pointer text-sm font-medium">
-                پیام آنلاین در نیازفایندر
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                مشتریان می‌توانند از صفحه شما پیام بفرستند
-              </p>
-            </div>
-            <Switch
-              id="hub-chat-enabled"
-              className="shrink-0"
-              checked={form.chatEnabled}
-              onCheckedChange={(checked) => update({ chatEnabled: checked })}
-            />
-          </div>
+          <SwitchWithIcon
+            id="hub-chat-enabled"
+            className="sm:col-span-2"
+            checked={form.chatEnabled}
+            disabled={chatSaving || saving}
+            onCheckedChange={(checked) => void saveChatEnabled(checked)}
+            title="پیام آنلاین در نیازفایندر"
+            description="مشتریان می‌توانند از صفحه شما پیام بفرستند"
+            iconOn={<BellOff className="size-4" />}
+            iconOff={<BellRing className="size-4" />}
+          />
         </CardContent>
       </Card>
 

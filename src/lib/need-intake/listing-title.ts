@@ -6,6 +6,9 @@ import {
 } from '@/config/need-schemas/labels';
 import { extractProductSubjectFromText } from '@/lib/need-intake/product-buy-hints';
 
+/** Max chars for marketplace need titles (browse cards + SEO). */
+export const LISTING_TITLE_MAX_LENGTH = 70;
+
 export function dealLabelForCategory(
   categorySlug: string | undefined,
   deal: string
@@ -35,5 +38,5 @@ export function buildProductSearchTitle(
   const parts = [dealFa];
   if (subject) parts.push(subject);
   if (city?.trim()) parts.push(city.trim());
-  return joinListingTitleParts(parts).slice(0, 120) || 'خرید کالا';
+  return joinListingTitleParts(parts).slice(0, LISTING_TITLE_MAX_LENGTH) || 'خرید کالا';
 }

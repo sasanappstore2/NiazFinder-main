@@ -2,7 +2,10 @@
 
 Taxonomy for **product verticals** sold online in Iran — aligned with Digikala/Basalam category trees, not a list of shop domains.
 
-Registry: [`src/config/online-stores.ts`](../src/config/online-stores.ts)
+Registry: [`src/config/online-stores.ts`](../src/config/online-stores.ts) — admin-managed via [`src/data/online-stores.json`](../src/data/online-stores.json)
+
+**Super Admin:** `/super-admin/online-stores` (permissions `taxonomy:online-stores:read|write`)  
+**Seed:** `npx tsx scripts/seed-online-stores-json.ts`
 
 ## Design rules
 

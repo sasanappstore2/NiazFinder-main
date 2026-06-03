@@ -3,6 +3,7 @@ import { normalizeCategoryPair } from '@/config/categories';
 import { recordToEntities } from '@/intake/entities/entityRecord';
 import type { IntakeEntities } from '@/intake/types';
 import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
+import { applyPropertySlotsToParsed } from '@/lib/need-intake/apply-property-slots-to-parsed';
 import { seedAnswersFromParsed } from '@/lib/need-intake/seed-answers';
 
 /** Map canonical transactionType → legacy dealType chip values. */
@@ -38,7 +39,7 @@ export function draftToLegacyPayload(draft: NeedDraft): LegacyNeedPayload {
     entities.subcategorySlug ?? parsedBase.subcategorySlug
   );
 
-  const parsedIntent: NeedDraft['parsedIntent'] = {
+  const parsedIntent: NeedDraft['parsedIntent'] = applyPropertySlotsToParsed({
     ...parsedBase,
     categorySlug: normalized.categorySlug,
     subcategorySlug: normalized.subcategorySlug,
@@ -55,12 +56,12 @@ export function draftToLegacyPayload(draft: NeedDraft): LegacyNeedPayload {
       ...(entities.rooms != null ? { rooms: String(entities.rooms) } : {}),
       ...(entities.neighborhood ? { area: entities.neighborhood } : {}),
     },
-  };
+  });
 
   const legacyDealType = legacyDealTypeFromEntities(entities);
 
   const answers: NeedDraft['answers'] = {
-    ...seedAnswersFromParsed(parsedIntent),
+    ...seedAnswersFromParsed(parsedIntent, draft.leadPhone),
     /* User chip/select answers (advanced filters) — must survive recompute */
     ...draft.answers,
     ...(entities.neighborhood?.trim() && entities.city

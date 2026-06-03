@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useBusinessHub } from './BusinessHubContext';
 import type { HubTaskId } from './types';
+import { toPersianDigits } from '@/lib/format/digits';
 
 const TASK_LABELS: Record<HubTaskId, string> = {
   storefront: 'ویترین و محصولات',
@@ -12,10 +13,6 @@ const TASK_LABELS: Record<HubTaskId, string> = {
   brand: 'عکس و لینک‌ها',
   gallery: 'نمونه کارها',
 };
-
-function toPersianDigits(num: number): string {
-  return num.toLocaleString('fa-IR');
-}
 
 export function BusinessHubProgress() {
   const { completion, setActiveTask } = useBusinessHub();

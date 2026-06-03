@@ -8,7 +8,7 @@ import {
   filterOnlineStoreMegaMenu,
 } from '@/lib/business/online-store-mega-menu';
 import {
-  OCCUPATION_MEGA_MENU_TREE,
+  getOccupationMegaMenuTree,
   filterOccupationMegaMenu,
   getOccupationSectorColor,
   type OccupationMegaMenuNode,
@@ -31,23 +31,30 @@ function buildOnlineStoresBrowseRoot(): OccupationMegaMenuNode {
   };
 }
 
-export function buildUnifiedBusinessBrowseMegaMenuTree(): OccupationMegaMenuNode[] {
-  return [buildOnlineStoresBrowseRoot(), ...OCCUPATION_MEGA_MENU_TREE];
+export function buildUnifiedBusinessBrowseMegaMenuTree(
+  occupationTree: OccupationMegaMenuNode[] = getOccupationMegaMenuTree()
+): OccupationMegaMenuNode[] {
+  return [buildOnlineStoresBrowseRoot(), ...occupationTree];
 }
 
-export const UNIFIED_BUSINESS_BROWSE_MEGA_MENU_TREE =
-  buildUnifiedBusinessBrowseMegaMenuTree();
+export function getUnifiedBusinessBrowseMegaMenuTree(): OccupationMegaMenuNode[] {
+  return buildUnifiedBusinessBrowseMegaMenuTree();
+}
+
+/** @deprecated Use getUnifiedBusinessBrowseMegaMenuTree() */
+export const UNIFIED_BUSINESS_BROWSE_MEGA_MENU_TREE = buildUnifiedBusinessBrowseMegaMenuTree();
 
 export function filterUnifiedBusinessBrowseMegaMenu(
-  query: string
+  query: string,
+  tree: OccupationMegaMenuNode[] = getUnifiedBusinessBrowseMegaMenuTree()
 ): { sectors: OccupationMegaMenuNode[]; flatJobs: OccupationMegaMenuNode[] } {
   const q = query.trim();
   if (!q) {
-    return { sectors: UNIFIED_BUSINESS_BROWSE_MEGA_MENU_TREE, flatJobs: [] };
+    return { sectors: tree, flatJobs: [] };
   }
 
   const online = filterOnlineStoreMegaMenu(q);
-  const occupation = filterOccupationMegaMenu(q);
+  const occupation = filterOccupationMegaMenu(q, tree.slice(1));
   const flatJobs = [...online.flatJobs, ...occupation.flatJobs];
 
   const sectors: OccupationMegaMenuNode[] = [];

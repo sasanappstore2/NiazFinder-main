@@ -30,27 +30,60 @@ function connectorState(
   return 'idle';
 }
 
+function timelineIndexToStep(index: number): IntakeStep | null {
+  if (index === 4) return null;
+  const map: IntakeStep[] = ['need', 'details', 'location', 'preview'];
+  return map[index] ?? null;
+}
+
+function canNavigateToStep(
+  index: number,
+  active: number,
+  step: IntakeStep
+): boolean {
+  if (step === 'publishing') return false;
+  if (index > active) return false;
+  if (index === active) return false;
+  return timelineIndexToStep(index) !== null;
+}
+
 interface IntakeStepTimelineProps {
   step: IntakeStep;
   progressPercent: number;
+  onStepSelect?: (step: IntakeStep) => void;
 }
 
-export function IntakeStepTimeline({ step, progressPercent }: IntakeStepTimelineProps) {
+export function IntakeStepTimeline({
+  step,
+  progressPercent,
+  onStepSelect,
+}: IntakeStepTimelineProps) {
   const active = stepIndex(step);
 
+  const handleStepClick = (index: number) => {
+    if (!onStepSelect || !canNavigateToStep(index, active, step)) return;
+    const target = timelineIndexToStep(index);
+    if (target) onStepSelect(target);
+  };
+
   return (
-    <div
+    <nav
       className="intake-step-track"
-      role="progressbar"
-      aria-label="پیشرفت مراحل ثبت نیاز"
-      aria-valuenow={Math.round(progressPercent)}
-      aria-valuemin={0}
-      aria-valuemax={100}
+      aria-label="مراحل ثبت نیاز"
     >
+      <div
+        className="sr-only"
+        role="progressbar"
+        aria-label="پیشرفت مراحل ثبت نیاز"
+        aria-valuenow={Math.round(progressPercent)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      />
       <ol className="intake-step-track__list">
         {STEPS.map((s, i) => {
           const done = i < active;
           const current = i === active;
+          const navigable = canNavigateToStep(i, active, step);
           const hasConnector = i < STEPS.length - 1;
           const segmentState = hasConnector ? connectorState(i, active) : null;
 
@@ -61,12 +94,18 @@ export function IntakeStepTimeline({ step, progressPercent }: IntakeStepTimeline
                 'intake-step-track__segment',
                 hasConnector && 'intake-step-track__segment--grow'
               )}
-              aria-current={current ? 'step' : undefined}
             >
-              <div
-                className="intake-step-track__item"
+              <button
+                type="button"
+                className={cn(
+                  'intake-step-track__item',
+                  navigable && 'intake-step-track__item--clickable'
+                )}
                 data-done={done ? 'true' : undefined}
                 data-current={current ? 'true' : undefined}
+                aria-current={current ? 'step' : undefined}
+                disabled={!navigable}
+                onClick={() => handleStepClick(i)}
               >
                 <div className="intake-step-track__node">
                   {done ? (
@@ -76,7 +115,7 @@ export function IntakeStepTimeline({ step, progressPercent }: IntakeStepTimeline
                   )}
                 </div>
                 <span className="intake-step-track__label">{s.label}</span>
-              </div>
+              </button>
               {segmentState ? (
                 <div className="intake-step-track__connector" aria-hidden>
                   <span className="intake-step-track__connector-track" />
@@ -90,6 +129,6 @@ export function IntakeStepTimeline({ step, progressPercent }: IntakeStepTimeline
           );
         })}
       </ol>
-    </div>
+    </nav>
   );
 }

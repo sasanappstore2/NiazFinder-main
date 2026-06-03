@@ -5,18 +5,18 @@
 ```mermaid
 flowchart LR
   seed[seed from landing]
-  parse[parse-intent rules]
+  parse[parse Qwen plus rules]
   questions[structured questions]
-  chat[optional chat rules]
-  preview[listing preview]
+  chat[optional chat Qwen]
+  preview[listing preview Qwen title]
   publish[publish]
   seed --> parse --> questions --> chat --> preview --> publish
 ```
 
-1. **Parse** — Rule-based vertical classifier + intent parser (<100ms). Typing strip gives instant hints while user types.
+1. **Parse** — Qwen3.5-2B via `intake-mlx` merged with rules (`reconcileParsedIntent`). Typing strip gives instant hints while user types (rules only).
 2. **Structured questions** — One question per step from schema (property, vehicle, product, services, jobs, etc.).
-3. **Chat** — After core fields, free-form messages re-parsed with rules (no external LLM).
-4. **Preview** — Template-composed title + description; manual edit + optional extras.
+3. **Chat** — After core fields, free-form messages re-parsed with Qwen + rules hybrid.
+4. **Preview** — AI-generated title (max 70 chars, Qwen → template fallback) + template description; manual edit + optional extras.
 5. **Publish** — Creates `ServiceRequest`; lead outreach uses score threshold + template copy.
 
 ## Internal engine
@@ -25,7 +25,10 @@ flowchart LR
 |--------|------|
 | [`internal-orchestrator.ts`](../src/lib/need-intake/internal-orchestrator.ts) | parse, typing merge, next step, readiness |
 | [`extract-slots-rules.ts`](../src/lib/need-intake/extract-slots-rules.ts) | Map entities + chip answers to schema slots |
-| [`listing-composer.ts`](../src/lib/need-intake/listing-composer.ts) | Persian title/description templates per vertical |
+| [`listing-composer.ts`](../src/lib/need-intake/listing-composer.ts) | Persian description templates + title fallback |
+| [`generate-listing-title.ts`](../src/lib/need-intake/generate-listing-title.ts) | AI title (Qwen → template) |
+| [`qwen-intake-client.ts`](../src/lib/need-intake/qwen-intake-client.ts) | Unified MLX client (parse + title) |
+| [`analysis-from-qwen.ts`](../src/lib/need-intake/analysis-from-qwen.ts) | Analyze route Qwen + rules merge |
 | [`chat-turn-rules.ts`](../src/lib/need-intake/chat-turn-rules.ts) | Chat re-parse + slot merge |
 | [`typing-analysis/`](../src/lib/typing-analysis/) | Real-time hints while typing (rules only) |
 
@@ -33,11 +36,12 @@ flowchart LR
 
 | Route | Purpose |
 |-------|---------|
-| `POST /api/need-intake/parse-intent` | Initial parse (rules) |
+| `POST /api/need-intake/parse-intent` | Initial parse (Qwen + rules hybrid) |
+| `POST /api/intake/analyze` | Full entity analysis (Qwen + rules when MLX enabled) |
 | `POST /api/need-intake/next-question` | Next schema field |
 | `POST /api/need-intake/extract-slots` | Slot hints after each answer |
 | `POST /api/need-intake/chat-turn` | Chat message → slots + readiness |
-| `POST /api/need-intake/preview-listing` | Build title/description |
+| `POST /api/need-intake/preview-listing` | Build AI title + template description |
 | `POST /api/need-intake/publish` | Create `ServiceRequest` |
 | `POST /api/need-intake/typing-analyze` | Debounced typing hints |
 
@@ -45,8 +49,12 @@ flowchart LR
 
 | Variable | Default | Notes |
 |----------|---------|-------|
+| `NEED_INTAKE_LLM_ENABLED` | unset | Set `true` to use Qwen via MLX for parse/analyze/title |
+| `NEED_INTAKE_LLM_URL` | `http://127.0.0.1:8100` | intake-mlx base URL |
+| `NEED_INTAKE_LLM_TIMEOUT_MS` | 12000 | MLX request timeout |
 | `NEED_INTAKE_SKIP_PROCESSING_DELAY` | unset | Set `true` in dev to skip 250ms UX delay |
 | `NEED_INTAKE_PARSE_CACHE_TTL_MS` | 900000 | Parse cache TTL |
+| `NEED_INTAKE_TITLE_AI_ENABLED` | auto | Set `false` to force template titles only |
 
 ## UI
 
@@ -60,6 +68,7 @@ flowchart LR
 ```bash
 npm run test:intake-parser    # rule parser fixtures
 npm run test:intake-flow      # end-to-end orchestrator per vertical
+npm run test:listing-title    # title sanitizer + template fallback (offline)
 npm run test:intake-dataset   # 58+ golden cases + accuracy report
 npm run test:typing-analysis  # typing strip rules
 npm run export:intake-dataset # JSONL for Unsloth (data/need-intake-training/)

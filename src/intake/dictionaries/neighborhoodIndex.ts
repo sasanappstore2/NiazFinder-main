@@ -48,7 +48,7 @@ export function buildNeighborhoodIndex(
   };
 
   for (const row of rows) {
-    const slug = slugifyNeighborhood(row.name, row.cityId);
+    const slug = row.id?.trim() || slugifyNeighborhood(row.name, row.cityId);
     const entry: NeighborhoodIndexEntry = {
       slug,
       name: row.name,

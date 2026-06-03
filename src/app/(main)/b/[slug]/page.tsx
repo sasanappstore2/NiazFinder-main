@@ -4,7 +4,7 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Separator } from '@/components/ui/separator';
-import { UniversalBusinessProfile } from '@/components/business-profile';
+import { BusinessProfileAuraScope, UniversalBusinessProfile } from '@/components/business-profile';
 import {
   generateSearchMarketplaceMetadata,
   SearchMarketplacePage,
@@ -77,11 +77,19 @@ export default async function BusinessSlugPage({ params }: PageProps) {
   return (
     <>
       <JsonLd id="business-jsonld" data={jsonLd} />
-      <PageContainer width="wide">
-        <Breadcrumb businessProfileLabel={business.name} />
-        <Separator className="my-3 sm:my-4" />
-        <UniversalBusinessProfile businessId={business.userId} />
-      </PageContainer>
+      <BusinessProfileAuraScope logoUrl={business.identity.logo}>
+        <PageContainer
+          width="wide"
+          noVerticalPadding
+          className="relative bg-transparent pb-12 sm:pb-14"
+        >
+          <div className="profile-surface rounded-xl px-3 py-2">
+            <Breadcrumb businessProfileLabel={business.name} />
+          </div>
+          <Separator className="my-3 bg-border/35 sm:my-4" />
+          <UniversalBusinessProfile businessId={business.userId} />
+        </PageContainer>
+      </BusinessProfileAuraScope>
     </>
   );
 }

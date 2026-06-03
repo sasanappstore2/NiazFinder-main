@@ -6,6 +6,7 @@ import {
   buildProductSearchTitle,
   dealLabelForCategory,
   joinListingTitleParts,
+  LISTING_TITLE_MAX_LENGTH,
 } from '@/lib/need-intake/listing-title';
 import { buildPropertyTitle, buildRealEstateServiceTitle } from '@/lib/need-intake/property-title';
 import { getRootCategorySlug } from '@/config/need-schemas/resolve-schema';
@@ -15,6 +16,7 @@ import {
   getProvinceBySlug,
 } from '@/config/locations';
 import { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
+import { truncateListingTitle } from '@/lib/need-intake/listing-title-sanitize';
 import { toMatchProjection } from '@/intake/projections/matchProjection';
 import type { ProjectionMetadata } from '@/intake/projections/metadata';
 import { buildProjectionMetadata } from '@/intake/projections/metadata';
@@ -50,7 +52,9 @@ function answerBudget(answers: Record<string, unknown>, parsed: NeedDraft['parse
 
 function buildIntakeTitle(parsed: NeedDraft['parsedIntent'], answers: Record<string, unknown>): string {
   const existing = parsed.title?.trim();
-  if (existing && existing.length >= 8 && existing !== 'ثبت نیاز') return existing.slice(0, 120);
+  if (existing && existing.length >= 8 && existing !== 'ثبت نیاز') {
+    return existing.slice(0, LISTING_TITLE_MAX_LENGTH);
+  }
 
   const entities: Record<string, string> = {
     ...parsed.entities,
@@ -99,8 +103,8 @@ function buildIntakeTitle(parsed: NeedDraft['parsedIntent'], answers: Record<str
   if (city) parts.push(city);
 
   const joined = joinListingTitleParts(parts);
-  if (joined.length >= 8) return joined.slice(0, 120);
-  if (city) return `نیاز — ${city}`.slice(0, 120);
+  if (joined.length >= 8) return joined.slice(0, LISTING_TITLE_MAX_LENGTH);
+  if (city) return `نیاز — ${city}`.slice(0, LISTING_TITLE_MAX_LENGTH);
   return joined || 'ثبت نیاز';
 }
 
@@ -153,6 +157,7 @@ export function toPublishCommand(
   }
 
   let title = draft.listingPreview?.title?.trim() || buildIntakeTitle(parsed, answers);
+  title = truncateListingTitle(title);
   if (title.length < 8) title = 'ثبت نیاز';
 
   const listingExtras = [
@@ -195,6 +200,9 @@ export function toPublishCommand(
       entities: draft.entities,
       location: answers.location,
       details: answers.details,
+      rooms: answers.rooms,
+      familyCount: answers.familyCount,
+      amenities: answers.amenities,
     },
     aiExtractedData: {
       projection,

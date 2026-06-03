@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { getAuthUser, type AuthUser } from '@/lib/auth';
 import { isSuperAdminPhone } from '@/lib/super-admin';
 import type { AdminPermissionId } from '@/config/admin-permissions';
+import { permissionSatisfied } from '@/lib/rbac/permission-check';
 
 export type AuthzResult =
   | { ok: true; user: AuthUser; permissions: Set<string> }
@@ -55,7 +56,7 @@ export async function requirePermission(
   const authz = await authorize(request);
   if (!authz.ok) return authz;
 
-  if (authz.permissions.has('*') || authz.permissions.has(permission)) return authz;
+  if (authz.permissions.has('*') || permissionSatisfied(authz.permissions, permission)) return authz;
 
   return {
     ok: false,

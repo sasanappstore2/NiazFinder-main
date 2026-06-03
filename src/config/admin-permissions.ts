@@ -6,6 +6,10 @@ export type AdminPermissionId =
   // ─── Taxonomy ───────────────────────────────────────────────────────
   | 'taxonomy:categories:read'
   | 'taxonomy:categories:write'
+  | 'taxonomy:business-occupations:read'
+  | 'taxonomy:business-occupations:write'
+  | 'taxonomy:online-stores:read'
+  | 'taxonomy:online-stores:write'
   // ─── Geo / Locations ────────────────────────────────────────────────
   | 'geo:locations:read'
   | 'geo:locations:write'
@@ -26,11 +30,21 @@ export type AdminPermissionId =
   // ─── Reviews / Content ──────────────────────────────────────────────
   | 'content:reviews:read'
   | 'content:reviews:moderate'
+  | 'content:reports:read'
+  | 'content:reports:moderate'
   // ─── Chat / Communications ──────────────────────────────────────────
   | 'comms:messages:read'
   | 'comms:messages:moderate'
   | 'comms:notifications:read'
   | 'comms:notifications:write'
+  | 'comms:voice:read'
+  // ─── Market Ops ─────────────────────────────────────────────────────
+  | 'market:outreach:read'
+  | 'market:outreach:write'
+  | 'market:alerts:read'
+  // ─── Growth ─────────────────────────────────────────────────────────
+  | 'growth:referrals:read'
+  | 'growth:coupons:read'
   // ─── Billing ────────────────────────────────────────────────────────
   | 'billing:transactions:read'
   | 'billing:transactions:write'
@@ -62,6 +76,8 @@ export type AdminPermission = {
     | 'Businesses'
     | 'Content'
     | 'Communications'
+    | 'MarketOps'
+    | 'Growth'
     | 'Billing'
     | 'Ops'
     | 'RBAC'
@@ -89,6 +105,10 @@ export const ADMIN_PERMISSIONS: readonly AdminPermission[] = [
 
   { id: 'taxonomy:categories:read', label: 'مشاهده دسته‌بندی‌ها', group: 'Taxonomy' },
   { id: 'taxonomy:categories:write', label: 'ساخت/ویرایش/غیرفعال‌سازی دسته‌بندی‌ها', group: 'Taxonomy' },
+  { id: 'taxonomy:business-occupations:read', label: 'مشاهده دسته‌بندی کسب‌وکار', group: 'Taxonomy' },
+  { id: 'taxonomy:business-occupations:write', label: 'ویرایش دسته‌بندی کسب‌وکار', group: 'Taxonomy' },
+  { id: 'taxonomy:online-stores:read', label: 'مشاهده فروشگاه‌های اینترنتی', group: 'Taxonomy' },
+  { id: 'taxonomy:online-stores:write', label: 'ویرایش فروشگاه‌های اینترنتی', group: 'Taxonomy' },
 
   { id: 'geo:locations:read', label: 'مشاهده استان/شهر/محله', group: 'Geo' },
   { id: 'geo:locations:write', label: 'ساخت/ویرایش/حذف استان/شهر/محله', group: 'Geo' },
@@ -109,11 +129,21 @@ export const ADMIN_PERMISSIONS: readonly AdminPermission[] = [
 
   { id: 'content:reviews:read', label: 'مشاهده نظرات و امتیازها', group: 'Content' },
   { id: 'content:reviews:moderate', label: 'بازبینی/حذف/اقدام روی نظرات', group: 'Content' },
+  { id: 'content:reports:read', label: 'مشاهده گزارش‌های تخلف', group: 'Content' },
+  { id: 'content:reports:moderate', label: 'رسیدگی به گزارش‌های تخلف', group: 'Content' },
 
   { id: 'comms:messages:read', label: 'مشاهده پیام‌ها/چت‌ها (بازبینی)', group: 'Communications' },
   { id: 'comms:messages:moderate', label: 'اقدام مدیریتی روی چت‌ها (moderation)', group: 'Communications' },
   { id: 'comms:notifications:read', label: 'مشاهده اعلان‌ها', group: 'Communications' },
   { id: 'comms:notifications:write', label: 'ارسال/ویرایش اعلان‌ها', group: 'Communications' },
+  { id: 'comms:voice:read', label: 'مشاهده تماس‌های صوتی', group: 'Communications' },
+
+  { id: 'market:outreach:read', label: 'مشاهده صف outreach نیازها', group: 'MarketOps' },
+  { id: 'market:outreach:write', label: 'اجرای dispatch outreach', group: 'MarketOps' },
+  { id: 'market:alerts:read', label: 'مشاهده alertهای مرور نیاز', group: 'MarketOps' },
+
+  { id: 'growth:referrals:read', label: 'مشاهده ارجاع‌ها', group: 'Growth' },
+  { id: 'growth:coupons:read', label: 'مشاهده کوپن‌ها', group: 'Growth' },
 
   { id: 'billing:transactions:read', label: 'مشاهده تراکنش‌ها', group: 'Billing' },
   { id: 'billing:transactions:write', label: 'اقدام روی تراکنش‌ها/تسویه', group: 'Billing' },
@@ -154,6 +184,8 @@ export const ADMIN_PERMISSION_GROUPS: readonly AdminPermission['group'][] = [
   'Businesses',
   'Content',
   'Communications',
+  'MarketOps',
+  'Growth',
   'Billing',
   'Ops',
   'RBAC',

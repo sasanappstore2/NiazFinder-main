@@ -95,6 +95,13 @@
   .font-persian {
     font-feature-settings: 'kern', 'liga';
   }
+
+  /** Numbers (Persian or Latin) — Vazirmatn + tabular alignment */
+  .font-digits {
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'ss02', 'tnum';
+  }
 }
 
 @layer base {

@@ -8,6 +8,7 @@ import { CitySelectorPopup } from '@/components/ui/city-selector-popup';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useLocationSelection } from '@/hooks/use-location-selection';
+import { formatLocationBadgeLabel } from '@/lib/search/location-scope';
 
 export function LocationSelector() {
   return (
@@ -30,6 +31,7 @@ function LocationSelectorInner() {
     setIsOpen,
     selectedCities,
     selectedProvinceIds,
+    provinces,
     isInitialized,
     getLocationDisplayText,
     handleSelectionChange,
@@ -38,10 +40,12 @@ function LocationSelectorInner() {
 
   const hasLocationScope =
     selectedCities.length > 0 || selectedProvinceIds.length > 0;
-  const badgeCount =
-    selectedProvinceIds.length > 0
-      ? selectedProvinceIds.length
-      : selectedCities.length;
+  const badgeLabel = formatLocationBadgeLabel(
+    { cities: selectedCities, provinceIds: selectedProvinceIds },
+    provinces,
+    { compact: true }
+  );
+  const showBadge = badgeLabel.length > 0;
 
   if (!isInitialized) {
     return (
@@ -68,12 +72,15 @@ function LocationSelectorInner() {
       >
         <MapPin className="h-4 w-4 shrink-0" />
         <span className="truncate max-w-[100px]">{getLocationDisplayText()}</span>
-        {hasLocationScope && badgeCount > 0 && (
+        {showBadge && (
           <Badge
             variant="secondary"
             className="h-5 min-w-[18px] px-1 text-caption font-bold tabular-nums"
           >
-            {badgeCount}
+            {formatLocationBadgeLabel(
+              { cities: selectedCities, provinceIds: selectedProvinceIds },
+              provinces
+            )}
           </Badge>
         )}
         <ChevronDown className="h-3 w-3 opacity-50" />
@@ -81,26 +88,28 @@ function LocationSelectorInner() {
 
       <Button
         variant="ghost"
-        size="sm"
+        size="icon"
         onClick={() => setIsOpen(true)}
         className={cn(
-          'sm:hidden h-9 px-2.5 gap-1.5 text-sm font-normal shrink-0 rounded-lg',
+          'relative sm:hidden size-9 shrink-0 rounded-lg',
           'border border-border/40 transition-all duration-200',
           hasLocationScope
-            ? 'bg-primary/8 text-primary border-primary/20'
-            : 'bg-muted/40 text-muted-foreground hover:bg-muted/60'
+            ? 'bg-primary/8 text-primary border-primary/20 hover:bg-primary/15'
+            : 'bg-muted/40 text-muted-foreground hover:bg-muted/60 hover:text-foreground'
         )}
-        title="انتخاب مکان"
+        title={getLocationDisplayText()}
+        aria-label={`انتخاب شهر${hasLocationScope ? `: ${getLocationDisplayText()}` : ''}`}
       >
-        <MapPin className="h-4 w-4 shrink-0" />
-        <span className="truncate max-w-[60px] text-xs">{getLocationDisplayText()}</span>
-        {hasLocationScope && badgeCount > 0 && (
-          <Badge
-            variant="secondary"
-            className="h-4 min-w-[16px] px-1 text-[9px] font-bold tabular-nums"
+        <MapPin className="size-4 shrink-0" />
+        {showBadge && (
+          <span
+            className={cn(
+              'absolute -top-0.5 -inset-e-0.5 flex items-center justify-center rounded-full bg-primary font-bold text-primary-foreground',
+              badgeLabel === '∞' ? 'size-4 text-[10px]' : 'size-4 text-[9px]'
+            )}
           >
-            {badgeCount}
-          </Badge>
+            {badgeLabel}
+          </span>
         )}
       </Button>
 
@@ -113,7 +122,7 @@ function LocationSelectorInner() {
         geoStatus={geo.status}
         detectedCity={geo.detectedCity}
         isDetecting={geo.isDetecting}
-        onDetectLocation={() => void geo.runDetection(true)}
+        onDetectLocation={() => void geo.runDetection()}
       />
     </>
   );

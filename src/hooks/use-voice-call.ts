@@ -6,18 +6,22 @@ import {
   registerCallController,
   registerCallSocketEmit,
   handleCallInvite,
+  handleCallRinging,
+  handleCallAccepted,
   handleCallAccept,
   handleCallIce,
   handleCallReject,
   handleCallHangup,
+  handleCallUnavailable,
 } from '@/lib/voice/call-controller';
+import { getClientAuthToken } from '@/lib/auth/client-auth';
 
 export function useVoiceCallSignaling() {
   useEffect(() => {
     registerCallController({
       getVoiceCallId: () => useAppStore.getState().voiceCallId,
       setState: (partial) => useAppStore.setState(partial),
-      getAuthToken: () => useAppStore.getState().authToken,
+      getAuthToken: () => useAppStore.getState().authToken ?? getClientAuthToken(),
       getCurrentUserId: () => useAppStore.getState().currentUser?.id ?? null,
       incrementCallDuration: () =>
         useAppStore.setState((s) => ({ voiceCallDuration: s.voiceCallDuration + 1 })),
@@ -34,6 +38,12 @@ export function useVoiceCallSignaling() {
     const onInvite = (e: Event) => {
       handleCallInvite((e as CustomEvent).detail);
     };
+    const onRinging = (e: Event) => {
+      handleCallRinging((e as CustomEvent).detail);
+    };
+    const onAccepted = (e: Event) => {
+      void handleCallAccepted((e as CustomEvent).detail);
+    };
     const onAccept = (e: Event) => {
       void handleCallAccept((e as CustomEvent).detail);
     };
@@ -46,19 +56,28 @@ export function useVoiceCallSignaling() {
     const onHangup = (e: Event) => {
       handleCallHangup((e as CustomEvent).detail);
     };
+    const onUnavailable = (e: Event) => {
+      handleCallUnavailable((e as CustomEvent).detail);
+    };
 
     window.addEventListener('call:invite', onInvite);
+    window.addEventListener('call:ringing', onRinging);
+    window.addEventListener('call:accepted', onAccepted);
     window.addEventListener('call:accept', onAccept);
     window.addEventListener('call:ice-candidate', onIce);
     window.addEventListener('call:reject', onReject);
     window.addEventListener('call:hangup', onHangup);
+    window.addEventListener('call:unavailable', onUnavailable);
 
     return () => {
       window.removeEventListener('call:invite', onInvite);
+      window.removeEventListener('call:ringing', onRinging);
+      window.removeEventListener('call:accepted', onAccepted);
       window.removeEventListener('call:accept', onAccept);
       window.removeEventListener('call:ice-candidate', onIce);
       window.removeEventListener('call:reject', onReject);
       window.removeEventListener('call:hangup', onHangup);
+      window.removeEventListener('call:unavailable', onUnavailable);
     };
   }, []);
 }

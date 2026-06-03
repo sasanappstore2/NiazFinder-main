@@ -1,12 +1,5 @@
-'use client';
-
-import { AuthGuard } from '@/components/shared/AuthGuard';
-import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
+import { redirect } from 'next/navigation';
 
 export default function AdminRoute() {
-  return (
-    <AuthGuard>
-      <AdminDashboard />
-    </AuthGuard>
-  );
+  redirect('/super-admin');
 }

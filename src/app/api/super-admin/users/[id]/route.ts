@@ -7,6 +7,80 @@ import { logAdminAction } from '@/lib/audit/admin-audit';
 
 export const runtime = 'nodejs';
 
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const authz = await requirePermission(request, 'crm:users:read');
+    if (!authz.ok) return authz.response;
+
+    const { id } = await params;
+    const user = await db.user.findFirst({
+      where: { id },
+      select: {
+        id: true,
+        phone: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        displayName: true,
+        role: true,
+        isActive: true,
+        isBanned: true,
+        banReason: true,
+        isVerified: true,
+        city: true,
+        province: true,
+        avatar: true,
+        bio: true,
+        lastSeenAt: true,
+        createdAt: true,
+        updatedAt: true,
+        businessProfile: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            status: true,
+            verified: true,
+          },
+        },
+        _count: {
+          select: {
+            requests: true,
+            sentProposals: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'کاربر یافت نشد' }, { status: 404 });
+    }
+
+    const { _count, businessProfile, ...rest } = user;
+
+    return NextResponse.json({
+      user: {
+        ...rest,
+        lastSeenAt: rest.lastSeenAt?.toISOString() ?? null,
+        createdAt: rest.createdAt.toISOString(),
+        updatedAt: rest.updatedAt.toISOString(),
+        counts: {
+          requests: _count.requests,
+          proposals: _count.sentProposals,
+          businessProfile: businessProfile ? 1 : 0,
+        },
+        businessProfile,
+      },
+    });
+  } catch (error) {
+    console.error('Super admin user GET error:', error);
+    return NextResponse.json({ error: 'خطای سرور رخ داده است' }, { status: 500 });
+  }
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

@@ -53,16 +53,30 @@ body {
   width: 100%;
 }
 
-/* Mobile bottom nav padding only when nav is visible (< lg) */
-@media (max-width: 1023px) {
-  .has-mobile-nav {
-    padding-bottom: var(--mobile-nav-offset);
-  }
+/* Bottom nav padding when main shell shows mobile nav */
+.has-mobile-nav {
+  padding-bottom: var(--mobile-nav-offset);
+}
+
+/* Extra padding when a fixed contact bar sits above the bottom nav (need detail) */
+.has-sticky-contact-bar {
+  padding-bottom: var(--need-detail-scroll-pad, 5rem);
 }
 
 @media (min-width: 1024px) {
-  .has-mobile-nav {
+  .has-sticky-contact-bar {
     padding-bottom: 0;
+  }
+}
+
+/* Scroll targets clear fixed contact bar on need detail */
+.need-detail-scroll-section {
+  scroll-margin-bottom: var(--need-detail-scroll-pad, 5rem);
+}
+
+@media (min-width: 1024px) {
+  .need-detail-scroll-section {
+    scroll-margin-bottom: 0;
   }
 }
 
@@ -78,12 +92,6 @@ body {
   min-height: calc(
     100dvh - var(--site-header-offset, 6.5rem) - var(--mobile-nav-offset, 0px)
   );
-}
-
-@media (min-width: 1024px) {
-  .min-h-viewport-content {
-    min-height: calc(100dvh - var(--site-header-offset, 6.5rem));
-  }
 }
 
 /* Golden split: primary column φ, sidebar 1 */
@@ -140,56 +148,30 @@ body {
   }
 }
 
-/* Fixed overlays above mobile nav */
-@media (max-width: 1023px) {
-  .fixed-above-mobile-nav {
-    bottom: calc(var(--mobile-nav-offset) + 0.75rem);
-  }
+/* Fixed overlays above bottom nav */
+.fixed-above-mobile-nav {
+  bottom: calc(var(--mobile-nav-offset) + 0.75rem);
 }
 
-@media (min-width: 1024px) {
-  .fixed-above-mobile-nav {
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 1.5rem);
-  }
-}
-
-/* Back to top — clear bottom nav on phone/tablet */
+/* Back to top — clear bottom nav */
 .back-to-top-progress {
   bottom: calc(var(--mobile-nav-offset) + 0.75rem);
 }
 
-@media (min-width: 1024px) {
-  .back-to-top-progress {
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 1.5rem);
-  }
-}
-
-/* Cookie banner — sits above mobile nav */
+/* Cookie banner — sits above bottom nav */
 .cookie-consent-anchor {
   bottom: calc(var(--mobile-nav-offset) + 0.5rem);
 }
 
-@media (min-width: 640px) and (max-width: 1023px) {
+@media (min-width: 640px) {
   .cookie-consent-anchor {
     bottom: calc(var(--mobile-nav-offset) + 0.75rem);
   }
 }
 
-@media (min-width: 1024px) {
-  .cookie-consent-anchor {
-    bottom: 1.5rem;
-  }
-}
-
-/* Footer: nav offset only on handheld */
+/* Footer: offset for floating bottom nav */
 .footer-with-mobile-nav {
   padding-bottom: var(--mobile-nav-offset);
-}
-
-@media (min-width: 1024px) {
-  .footer-with-mobile-nav {
-    padding-bottom: 0;
-  }
 }
 
 /* Section vertical rhythm (golden clamp) */
@@ -236,10 +218,4 @@ body {
     100dvh - var(--site-header-offset, 6.5rem) - var(--mobile-nav-offset, 0px) - 1rem
   );
   min-height: 0;
-}
-
-@media (min-width: 1024px) {
-  .h-messages-panel {
-    height: calc(100dvh - var(--site-header-offset, 6.5rem) - 2rem);
-  }
 }

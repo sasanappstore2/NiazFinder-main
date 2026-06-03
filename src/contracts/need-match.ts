@@ -20,6 +20,7 @@ export interface MatchedBusinessesMeta {
   source: 'rules';
   engine?: 'internal';
   candidateCount: number;
+  viewerMode?: 'owner' | 'business' | 'staff';
 }
 
 export interface MatchedBusinessesResponse {

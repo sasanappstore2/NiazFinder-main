@@ -80,6 +80,7 @@ export function OverviewPanel() {
     { label: 'نیازهای باز', href: ADMIN_SECTION_ROUTES.requests, value: formatNumber(overview?.openRequests) },
     { label: 'کاربران', href: ADMIN_SECTION_ROUTES.users, value: formatNumber(overview?.totalUsers) },
     { label: 'دسته‌بندی‌ها', href: ADMIN_SECTION_ROUTES.categories, value: formatNumber(overview?.totalCategories) },
+    { label: 'تحلیل ترافیک', href: ADMIN_SECTION_ROUTES.analytics, value: 'Analytics Hub' },
   ];
 
   return (
@@ -264,6 +265,16 @@ export function OverviewPanel() {
               <ArrowUpRight className="size-4 text-(--color-secondaryText) transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-(--color-coloredText)" />
             </Link>
           ))}
+          <Link
+            href={ADMIN_SECTION_ROUTES.analytics}
+            className="group flex items-center justify-between rounded-xl border border-(--color-cardBorder) bg-(--color-primaryBg) px-4 py-3 transition-all hover:border-(--color-coloredText)/30 hover:shadow-sm"
+          >
+            <div className="flex items-center gap-2">
+              <Globe2 className="size-4 text-(--color-coloredText)" />
+              <span className="text-sm font-medium">تحلیل ترافیک کامل</span>
+            </div>
+            <ArrowUpRight className="size-4 text-(--color-secondaryText)" />
+          </Link>
           <Link
             href={ADMIN_SECTION_ROUTES.locations}
             className="group flex items-center justify-between rounded-xl border border-(--color-cardBorder) bg-(--color-primaryBg) px-4 py-3 transition-all hover:border-(--color-coloredText)/30 hover:shadow-sm"

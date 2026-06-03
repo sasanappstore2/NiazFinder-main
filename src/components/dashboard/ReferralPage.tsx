@@ -143,7 +143,7 @@ export function ReferralPage() {
             <label className="mb-2 block text-sm font-medium text-muted-foreground">کد دعوت</label>
             <div className="flex items-center gap-3">
               <div className="flex-1 rounded-xl border border-border/60 bg-muted/40 px-4 py-3">
-                <span className="font-mono text-lg font-bold tracking-widest text-foreground">{REFERRAL_CODE}</span>
+                <span className="text-lg font-bold tabular-nums tracking-widest text-foreground">{REFERRAL_CODE}</span>
               </div>
               <Button onClick={handleCopyCode} variant="outline" className="gap-2 rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 active:scale-95 transition-all duration-150" aria-label="کپی کد دعوت" title="کپی کد دعوت به کلیپ‌بورد">
                 {copiedCode ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}{copiedCode ? 'کپی شد' : 'کپی کد'}

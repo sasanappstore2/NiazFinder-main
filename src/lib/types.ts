@@ -134,18 +134,27 @@ export interface Portfolio {
 }
 
 // ============ Message ============
+export interface MessageReactionItem {
+  emoji: string;
+  userId: string;
+  user?: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatar'>;
+}
+
 export interface Message {
   id: string;
   conversationId: string;
   senderId: string;
   content: string;
-  type: 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE' | 'SYSTEM' | 'NEED_CARD' | 'OFFER_CARD';
+  type: 'TEXT' | 'IMAGE' | 'FILE' | 'VOICE' | 'SYSTEM' | 'NEED_CARD' | 'OFFER_CARD' | 'CALL';
   attachmentUrls?: string[];
   isRead: boolean;
   createdAt: string;
   clientTempId?: string;
   replyToId?: string;
   replyTo?: { id: string; content: string; senderFirstName: string; senderLastName: string };
+  reactions?: MessageReactionItem[];
+  deletedAt?: string | null;
+  editedAt?: string | null;
   sender?: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatar'>;
 }
 
@@ -157,6 +166,8 @@ export interface Conversation {
   lastMessage?: string;
   lastMessageAt?: string;
   unreadCount: number;
+  /** طرف مقابل در این گفتگو در حال تایپ است */
+  isPeerTyping?: boolean;
 }
 
 // ============ Notification ============

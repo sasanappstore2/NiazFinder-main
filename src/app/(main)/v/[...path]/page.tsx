@@ -85,7 +85,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
   return (
     <>
       <JsonLd id="listing-breadcrumb-jsonld" data={jsonLd} />
-      <PageContainer width="wide">
+      <PageContainer width="wide" className="max-lg:pb-4">
         <Breadcrumb />
         <Separator className="my-4" />
         <RequestDetail id={id} />

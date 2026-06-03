@@ -4,19 +4,19 @@ import { getAuthUser, type PaginatedResponse } from '@/lib/auth';
 import { needCardSnapshotSchema } from '@/contracts/need-card-snapshot';
 import { productCardSnapshotSchema } from '@/contracts/product-card-snapshot';
 import { parseChatContactShareContent } from '@/lib/chat/contact-share';
+import { publishMessageNew } from '@/lib/communication/redis-publish';
+import { enqueueMessagePushNotification } from '@/lib/communication/push-hook';
+import { isBlockedEitherWay } from '@/lib/chat/block-check';
+import {
+  createChatMessage,
+  findMessageByClientTempId,
+} from '@/lib/chat/prisma-message';
+import { mapDbMessageToClient, type DbMessageRow } from '@/lib/chat/message-map';
+import type { Message } from '@/lib/types';
 
 // ============ TYPES ============
 
-interface MessageItem {
-  id: string;
-  senderId: string;
-  content: string;
-  type: string;
-  attachmentUrls: string[];
-  isRead: boolean;
-  readAt: Date | null;
-  createdAt: Date;
-}
+type MessageItem = Message & { readAt?: Date | null };
 
 const VALID_MESSAGE_TYPES = ['TEXT', 'IMAGE', 'FILE', 'VOICE', 'NEED_CARD', 'OFFER_CARD'] as const;
 type ValidMessageType = (typeof VALID_MESSAGE_TYPES)[number];
@@ -24,6 +24,8 @@ type ValidMessageType = (typeof VALID_MESSAGE_TYPES)[number];
 interface SendMessageBody {
   content: string;
   type?: ValidMessageType;
+  clientTempId?: string;
+  replyToId?: string;
 }
 
 // ============ GET handler ============
@@ -80,23 +82,37 @@ export async function GET(
         orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
+        include: {
+          replyTo: {
+            select: {
+              id: true,
+              content: true,
+              type: true,
+              deletedAt: true,
+              sender: { select: { firstName: true, lastName: true } },
+            },
+          },
+          reactions: {
+            include: {
+              user: {
+                select: { id: true, firstName: true, lastName: true, avatar: true },
+              },
+            },
+          },
+        },
       }),
       db.message.count({ where: { conversationId } }),
     ]);
 
-    // Reverse to get chronological order (oldest first)
     const orderedMessages = messages.reverse();
 
-    const mappedMessages: MessageItem[] = orderedMessages.map((m) => ({
-      id: m.id,
-      senderId: m.senderId,
-      content: m.content,
-      type: m.type,
-      attachmentUrls: JSON.parse(m.attachmentUrls) as string[],
-      isRead: m.isRead,
-      readAt: m.readAt,
-      createdAt: m.createdAt,
-    }));
+    const mappedMessages: MessageItem[] = [];
+    for (const m of orderedMessages) {
+      const mapped = mapDbMessageToClient(m as DbMessageRow, conversationId, user.id);
+      if (mapped) {
+        mappedMessages.push({ ...mapped, readAt: m.readAt });
+      }
+    }
 
     const response: PaginatedResponse<MessageItem> = {
       data: mappedMessages,
@@ -161,8 +177,14 @@ export async function POST(
       );
     }
 
+    const otherUserId =
+      conversation.userId1 === user.id ? conversation.userId2 : conversation.userId1;
+    if (await isBlockedEitherWay(user.id, otherUserId)) {
+      return NextResponse.json({ error: 'امکان ارسال پیام وجود ندارد' }, { status: 403 });
+    }
+
     const body: SendMessageBody = await request.json();
-    const { content, type } = body;
+    const { content, type, clientTempId, replyToId } = body;
 
     const messageType = (type ?? 'TEXT') as ValidMessageType;
     if (!VALID_MESSAGE_TYPES.includes(messageType)) {
@@ -219,25 +241,78 @@ export async function POST(
             ? 'شمارهٔ تماس'
             : content.trim();
 
-    // Determine the other user in this conversation
-    const otherUserId = conversation.userId1 === user.id
-      ? conversation.userId2
-      : conversation.userId1;
+    if (clientTempId) {
+      const existing = await findMessageByClientTempId(db, {
+        conversationId,
+        clientTempId,
+        senderId: user.id,
+      });
+      if (existing) {
+        const mappedExisting: MessageItem = {
+          id: existing.id,
+          conversationId,
+          senderId: existing.senderId,
+          content: existing.content,
+          type: existing.type,
+          attachmentUrls: JSON.parse(existing.attachmentUrls) as string[],
+          isRead: existing.isRead,
+          readAt: existing.readAt,
+          createdAt: existing.createdAt.toISOString(),
+        };
+        return NextResponse.json(
+          { message: 'پیام قبلاً ثبت شده', messageData: mappedExisting },
+          { status: 200 }
+        );
+      }
+    }
+
+    let replyToMeta:
+      | { id: string; content: string; senderFirstName: string; senderLastName: string }
+      | undefined;
+    if (replyToId) {
+      const replied = await db.message.findFirst({
+        where: { id: replyToId, conversationId },
+        include: { sender: { select: { firstName: true, lastName: true } } },
+      });
+      if (replied) {
+        replyToMeta = {
+          id: replied.id,
+          content: replied.content.slice(0, 200),
+          senderFirstName: replied.sender.firstName,
+          senderLastName: replied.sender.lastName,
+        };
+      }
+    }
 
     // Create message and update conversation in a transaction
+    const trimmedContent =
+      messageType === 'NEED_CARD' || messageType === 'OFFER_CARD'
+        ? content
+        : content.trim();
+
+    const previewId = clientTempId || `tmp-${Date.now()}`;
+    void publishMessageNew({
+      id: previewId,
+      conversationId,
+      senderId: user.id,
+      content: trimmedContent,
+      type: messageType,
+      attachmentUrls: [],
+      isRead: false,
+      createdAt: new Date().toISOString(),
+      clientTempId: previewId,
+      replyToId: replyToMeta?.id,
+      replyTo: replyToMeta,
+    });
+
     const result = await db.$transaction(async (tx) => {
-      // Create the message
-      const message = await tx.message.create({
-        data: {
-          conversationId,
-          senderId: user.id,
-          content:
-            messageType === 'NEED_CARD' || messageType === 'OFFER_CARD'
-              ? content
-              : content.trim(),
-          type: messageType,
-          isRead: false,
-        },
+      const message = await createChatMessage(tx, {
+        conversationId,
+        senderId: user.id,
+        content: trimmedContent,
+        type: messageType,
+        clientTempId,
+        replyToId: replyToMeta?.id,
       });
 
       // Update conversation's last message info
@@ -265,16 +340,38 @@ export async function POST(
       return { message, updatedConv };
     });
 
+    const attachmentUrls = JSON.parse(result.message.attachmentUrls) as string[];
+
     const mappedMessage: MessageItem = {
       id: result.message.id,
+      conversationId,
       senderId: result.message.senderId,
       content: result.message.content,
       type: result.message.type,
-      attachmentUrls: [],
+      attachmentUrls,
       isRead: result.message.isRead,
       readAt: result.message.readAt,
-      createdAt: result.message.createdAt,
+      createdAt: result.message.createdAt.toISOString(),
+      replyToId: replyToMeta?.id,
+      replyTo: replyToMeta,
     };
+
+    const fanoutPayload = {
+      id: result.message.id,
+      conversationId,
+      senderId: result.message.senderId,
+      content: result.message.content,
+      type: result.message.type,
+      attachmentUrls,
+      isRead: false,
+      createdAt: result.message.createdAt.toISOString(),
+      clientTempId,
+      replyToId: replyToMeta?.id,
+      replyTo: replyToMeta,
+    };
+
+    void publishMessageNew(fanoutPayload);
+    void enqueueMessagePushNotification(otherUserId, fanoutPayload);
 
     return NextResponse.json(
       {

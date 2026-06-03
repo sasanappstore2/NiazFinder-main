@@ -94,7 +94,7 @@ export async function GET(
       content: m.content,
       type: m.type,
       attachmentUrls: JSON.parse(m.attachmentUrls),
-      isRead: m.isRead || m.senderId === user.id,
+      isRead: m.isRead,
       readAt: m.readAt?.toISOString() || null,
       createdAt: m.createdAt.toISOString(),
       sender: m.sender,

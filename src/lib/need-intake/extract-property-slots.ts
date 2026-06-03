@@ -63,6 +63,60 @@ const GUEST_WORDS: Record<string, string> = {
   پنج: '5+',
 };
 
+function parseMoneyMillion(millionStr: string): number | undefined {
+  const n = Number(millionStr);
+  if (!Number.isFinite(n) || n <= 0 || n > 5_000) return undefined;
+  return Math.round(n * 1_000_000);
+}
+
+function parseMoneyBillion(billionStr: string): number | undefined {
+  const n = Number(billionStr);
+  if (!Number.isFinite(n) || n <= 0 || n > 500) return undefined;
+  return Math.round(n * 1_000_000_000);
+}
+
+function extractMonthlyRentToman(norm: string): number | undefined {
+  const patterns = [
+    /اجاره\s*(?:ام)?\s*(?:هم\s*)?(\d+(?:\.\d+)?)\s*میلیون/u,
+    /(?:اجاره\s*ماهانه|اجاره\s*ماهیانه)\s*(?:هم\s*)?(\d+(?:\.\d+)?)\s*میلیون/u,
+    /(\d+(?:\.\d+)?)\s*میلیون\s*(?:تومان\s*)?(?:ماهانه|ماهیانه|\/\s*ماه)/u,
+    /(\d+(?:\.\d+)?)\s*میلیون[^\n]{0,12}اجاره/u,
+  ];
+  for (const re of patterns) {
+    const m = norm.match(re);
+    if (m?.[1]) {
+      const value = parseMoneyMillion(m[1]);
+      if (value != null) return value;
+    }
+  }
+  return undefined;
+}
+
+function extractRahnToman(norm: string): number | undefined {
+  const billionPatterns = [
+    /(\d+(?:\.\d+)?)\s*میلیارد[^\n]{0,50}(?:رهن|ودیعه|بودجه)/u,
+    /(?:رهن|ودیعه|بودجه)[^\n]{0,50}(\d+(?:\.\d+)?)\s*میلیارد/u,
+    /(?:حدوداً|حدودا|تا|حداکثر|حداقل)\s*(\d+(?:\.\d+)?)\s*میلیارد/u,
+  ];
+  for (const re of billionPatterns) {
+    const m = norm.match(re);
+    if (m?.[1]) {
+      const value = parseMoneyBillion(m[1]);
+      if (value != null) return value;
+    }
+  }
+
+  const millionRahn = norm.match(/(\d+(?:\.\d+)?)\s*میلیون[^\n]{0,30}رهن/u);
+  if (millionRahn?.[1]) return parseMoneyMillion(millionRahn[1]);
+
+  const rahn =
+    parseFirstNumber(norm, /رهن\s*(\d[\d,]*)/) ??
+    parseFirstNumber(norm, /(\d[\d,]*)\s*رهن/);
+  if (rahn != null) return rahn;
+
+  return undefined;
+}
+
 /** Extract area min/max and bedroom count from free-form property text. */
 export function extractPropertySlotsFromText(rawText: string): PropertySlotsFromText {
   const norm = toAsciiDigits(normalizeIntakeText(rawText));
@@ -115,12 +169,11 @@ export function extractPropertySlotsFromText(rawText: string): PropertySlotsFrom
     if (ppm != null) slots.pricePerMeterMin = String(ppm);
   }
 
-  const millionRahn = norm.match(/(\d+)\s*میلیون[^\n]{0,30}رهن/);
-  if (millionRahn) slots.rahnAmount = String(Number(millionRahn[1]) * 1_000_000);
-  const millionRent =
-    norm.match(/(\d+)\s*میلیون[^\n]{0,30}اجاره/) ??
-    norm.match(/اجاره[^\n]{0,20}(\d+)\s*میلیون/);
-  if (millionRent) slots.monthlyRent = String(Number(millionRent[1]) * 1_000_000);
+  const monthlyRent = extractMonthlyRentToman(norm);
+  if (monthlyRent != null) slots.monthlyRent = String(monthlyRent);
+
+  const rahnAmount = extractRahnToman(norm);
+  if (rahnAmount != null) slots.rahnAmount = String(rahnAmount);
 
   const floor =
     parseFirstNumber(norm, /طبقه\s*(\d{1,2})/) ??
@@ -132,15 +185,12 @@ export function extractPropertySlotsFromText(rawText: string): PropertySlotsFrom
     parseFirstNumber(norm, /(\d[\d,]*)\s*ودیعه/);
   if (deposit != null) slots.deposit = String(deposit);
 
-  const rahn =
-    parseFirstNumber(norm, /رهن\s*(\d[\d,]*)/) ??
-    parseFirstNumber(norm, /(\d[\d,]*)\s*رهن/);
-  if (rahn != null) slots.rahnAmount = String(rahn);
-
-  const monthly =
-    parseFirstNumber(norm, /اجاره\s*(\d[\d,]*)/) ??
-    parseFirstNumber(norm, /(\d[\d,]*)\s*اجاره\s*ماه/);
-  if (monthly != null) slots.monthlyRent = String(monthly);
+  if (!slots.monthlyRent) {
+    const monthly =
+      parseFirstNumber(norm, /اجاره\s*(\d[\d,]*)/) ??
+      parseFirstNumber(norm, /(\d[\d,]*)\s*اجاره\s*ماه/);
+    if (monthly != null) slots.monthlyRent = String(monthly);
+  }
 
   const nightly =
     parseFirstNumber(norm, /(\d[\d,]*)\s*(?:تومان\s*)?(?:\/\s*)?شب/) ??

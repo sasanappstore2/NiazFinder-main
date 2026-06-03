@@ -5,8 +5,9 @@ import { Settings, Shield, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { ANALYTICS_CONSENT_KEY } from '@/lib/analytics/consent';
 
-const CONSENT_STORAGE_KEY = 'needfinder-cookie-consent';
+const CONSENT_STORAGE_KEY = ANALYTICS_CONSENT_KEY;
 
 type ConsentChoice = 'accepted' | 'rejected' | null;
 
@@ -37,8 +38,9 @@ export function CookieConsent() {
     }
     setIsVisible(false);
     toast.success('کوکی‌ها فعال شدند', {
-      description: 'تنظیمات کوکی شما ذخیره شد.',
+      description: 'تحلیل ترافیک first-party فعال شد.',
     });
+    window.dispatchEvent(new StorageEvent('storage', { key: CONSENT_STORAGE_KEY, newValue: 'accepted' }));
   };
 
   const handleReject = () => {
@@ -51,6 +53,7 @@ export function CookieConsent() {
     toast.info('تنظیمات ذخیره شد', {
       description: 'فقط کوکی‌های ضروری فعال هستند.',
     });
+    window.dispatchEvent(new StorageEvent('storage', { key: CONSENT_STORAGE_KEY, newValue: 'rejected' }));
   };
 
   const handleSettings = () => {

@@ -118,7 +118,7 @@ export function ProfileTabbedContent({
     <Tabs value={activeTab} onValueChange={(v) => handleTabChange(v as ProfileTabId)} className="w-full">
       <TabsList
         dir="ltr"
-        className={`profile-primary-tabs sticky top-(--site-header-offset,6.5rem) z-[calc(var(--z-header)-1)] grid h-auto w-full ${gridCols} gap-1 rounded-xl border border-border/50 bg-muted/30 p-1 shadow-sm backdrop-blur-sm`}
+        className={`profile-primary-tabs profile-surface sticky top-(--site-header-offset,6.5rem) z-[calc(var(--z-header)-1)] grid h-auto w-full ${gridCols} gap-1 rounded-xl p-1 shadow-sm`}
       >
         {displayOrder.map((tabId) => {
           const spec = tabSpecs.find((t) => t.id === tabId);
@@ -127,7 +127,7 @@ export function ProfileTabbedContent({
             <TabsTrigger
               key={tabId}
               value={tabId}
-              className="rounded-lg py-2.5 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm"
+              className="rounded-lg py-2.5 text-sm font-medium transition-all data-[state=active]:bg-background/75 data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:backdrop-blur-sm"
             >
               {spec.labelFa}
             </TabsTrigger>

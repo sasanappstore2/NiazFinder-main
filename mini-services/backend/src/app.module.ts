@@ -14,6 +14,7 @@ import { SpecialistsModule } from './modules/specialists/specialists.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { WalletModule } from './modules/wallet/wallet.module';
 import { ChatModule } from './modules/chat/chat.module';
+import { VoiceModule } from './modules/voice/voice.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { ReferralsModule } from './modules/referrals/referrals.module';
@@ -111,6 +112,7 @@ const entities = [
     ReviewsModule,
     WalletModule,
     ChatModule,
+    VoiceModule,
     NotificationsModule,
     ReportsModule,
     ReferralsModule,

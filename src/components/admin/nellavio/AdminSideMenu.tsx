@@ -22,7 +22,7 @@ export function AdminSideMenu() {
   const pathname = usePathname();
   const activeSection = sectionFromPathname(pathname);
   const { me, hasPermission } = useAdmin();
-  const { sidebarCollapsed, toggleSidebar } = useAdminLayout();
+  const { sidebarCollapsed, toggleSidebar, theme } = useAdminLayout();
   const { overview } = useAdminOverview();
   const { pending: moderationPending } = useModerationStats();
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
@@ -50,7 +50,7 @@ export function AdminSideMenu() {
   return (
     <TooltipProvider delayDuration={200}>
       <aside
-        className={`hidden shrink-0 border-l border-(--color-mainBorder) bg-(--color-navigationBg)/95 backdrop-blur-xl transition-[width] duration-200 ease-out lg:sticky lg:top-0 lg:flex lg:h-screen lg:h-dvh lg:flex-col ${
+        className={`hidden shrink-0 self-stretch border-l border-(--color-mainBorder) bg-(--color-navigationBg)/95 backdrop-blur-xl transition-[width] duration-200 ease-out lg:flex lg:h-full lg:max-h-dvh lg:flex-col ${
           sidebarCollapsed ? 'lg:w-[4.5rem]' : 'lg:w-64 xl:w-[17rem]'
         }`}
       >
@@ -124,10 +124,13 @@ export function AdminSideMenu() {
                     return (
                       <Tooltip key={item.id}>
                         <TooltipTrigger asChild>{link}</TooltipTrigger>
-                        <TooltipContent side="left" className="max-w-[200px]">
+                        <TooltipContent
+                          side="left"
+                          className={`admin-tooltip admin-tooltip-${theme} max-w-[200px]`}
+                        >
                           <p className="font-medium">{item.label}</p>
                           {item.description && (
-                            <p className="mt-0.5 text-xs text-muted-foreground">{item.description}</p>
+                            <p className="admin-tooltip-desc mt-0.5 text-[11px] leading-snug">{item.description}</p>
                           )}
                         </TooltipContent>
                       </Tooltip>

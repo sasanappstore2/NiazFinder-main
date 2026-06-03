@@ -1,3 +1,12 @@
 :80 {
-	reverse_proxy http://frontend:3000
+	@websocket {
+		header Connection *Upgrade*
+		header Upgrade websocket
+	}
+	handle @websocket {
+		reverse_proxy http://chat:3004
+	}
+	handle {
+		reverse_proxy http://frontend:3000
+	}
 }

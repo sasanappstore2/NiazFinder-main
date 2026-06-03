@@ -92,6 +92,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import { Input } from '@/components/ui/input';
+import { PersianDigitInput } from '@/components/ui/persian-digit-input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
@@ -2711,7 +2712,11 @@ export function SuperAdminDashboard({
                     <Input dir="ltr" value={categoryForm.icon} onChange={(event) => setCategoryForm({ ...categoryForm, icon: event.target.value })} />
                   </Field>
                   <Field label="ترتیب">
-                    <Input type="number" value={categoryForm.order} onChange={(event) => setCategoryForm({ ...categoryForm, order: event.target.value })} />
+                    <PersianDigitInput
+                      variant="plain"
+                      value={categoryForm.order}
+                      onChange={(order) => setCategoryForm({ ...categoryForm, order })}
+                    />
                   </Field>
                 </div>
                 <Field label="تصویر">
@@ -2889,7 +2894,11 @@ export function SuperAdminDashboard({
                   <Input dir="ltr" value={locationForm.nameEn} onChange={(event) => setLocationForm({ ...locationForm, nameEn: event.target.value })} />
                 </Field>
                 <Field label="ترتیب">
-                  <Input type="number" value={locationForm.order} onChange={(event) => setLocationForm({ ...locationForm, order: event.target.value })} />
+                  <PersianDigitInput
+                    variant="plain"
+                    value={locationForm.order}
+                    onChange={(order) => setLocationForm({ ...locationForm, order })}
+                  />
                 </Field>
                 {locationForm.type === 'neighborhood' && (
                   <Field label="زیرمحدوده‌ها (هر خط یا با ویرگول)">

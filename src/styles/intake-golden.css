@@ -101,6 +101,30 @@
   min-width: 2.75rem;
   flex-shrink: 0;
   text-align: center;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: default;
+}
+
+.intake-step-track__item--clickable {
+  cursor: pointer;
+}
+
+.intake-step-track__item--clickable:hover .intake-step-track__node {
+  border-color: color-mix(in oklch, var(--primary) 65%, transparent);
+  background: color-mix(in oklch, var(--primary) 16%, transparent);
+}
+
+.intake-step-track__item--clickable:hover .intake-step-track__label {
+  color: var(--foreground);
+}
+
+.intake-step-track__item:disabled {
+  cursor: default;
 }
 
 .intake-step-track__connector {
@@ -546,12 +570,5 @@ html[dir='ltr'] .intake-step-track__connector-fill[data-state='active']::after {
 
   .layout-golden-split--intake.intake-flow--compact {
     gap: var(--golden-lg);
-  }
-
-  .intake-flow--compact .intake-section-menus__list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.5rem;
-    align-items: start;
   }
 }

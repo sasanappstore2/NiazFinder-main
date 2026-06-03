@@ -32,23 +32,47 @@ type OverviewStats = {
   };
 };
 
+type SystemSettings = {
+  chatEnabled: boolean;
+  voiceEnabled: boolean;
+  maintenanceMode: boolean;
+};
+
 export function SettingsPanel() {
   const { apiFetch, me } = useAdmin();
   const { theme, setTheme } = useAdminLayout();
   const [isLoading, setIsLoading] = useState(true);
   const [overview, setOverview] = useState<OverviewStats | null>(null);
+  const [systemSettings, setSystemSettings] = useState<SystemSettings | null>(null);
 
   const load = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await apiFetch<{ stats: OverviewStats }>('/api/super-admin/overview');
-      setOverview(res.stats);
+      const [overviewRes, settingsRes] = await Promise.all([
+        apiFetch<{ stats: OverviewStats }>('/api/super-admin/overview'),
+        apiFetch<{ settings: SystemSettings }>('/api/super-admin/settings').catch(() => null),
+      ]);
+      setOverview(overviewRes.stats);
+      if (settingsRes) setSystemSettings(settingsRes.settings);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'خطا در بارگذاری تنظیمات');
     } finally {
       setIsLoading(false);
     }
   }, [apiFetch]);
+
+  const saveSettings = async (patch: Partial<SystemSettings>) => {
+    try {
+      const res = await apiFetch<{ settings: SystemSettings }>('/api/super-admin/settings', {
+        method: 'PATCH',
+        body: JSON.stringify(patch),
+      });
+      setSystemSettings(res.settings);
+      toast.success('تنظیمات ذخیره شد');
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'خطا');
+    }
+  };
 
   useEffect(() => {
     void load();
@@ -218,6 +242,28 @@ export function SettingsPanel() {
           </div>
         </div>
       </div>
+
+      {systemSettings && (
+        <div className="mt-4 rounded-xl border border-(--color-cardBorder) bg-(--color-primaryBg) p-5">
+          <h2 className="text-base font-semibold">تنظیمات سیستم</h2>
+          <p className="mt-1 text-sm text-(--color-secondaryText)">feature flags و حالت maintenance</p>
+          <div className="mt-4 space-y-3">
+            {([
+              ['chatEnabled', 'چت فعال'],
+              ['voiceEnabled', 'تماس صوتی فعال'],
+              ['maintenanceMode', 'حالت maintenance'],
+            ] as const).map(([key, label]) => (
+              <div key={key} className="flex items-center justify-between rounded-lg border border-(--color-mainBorder) p-3">
+                <span className="text-sm">{label}</span>
+                <Switch
+                  checked={Boolean(systemSettings[key])}
+                  onCheckedChange={(checked) => saveSettings({ [key]: checked })}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </AdminPageShell>
   );
 }

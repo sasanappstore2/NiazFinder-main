@@ -50,8 +50,14 @@ Only **real** business occupations (no listing types like «فروش آپارت�
 
 ## Storage
 
+- **Admin-managed JSON:** `src/data/business-occupations.json` (seed via `npx tsx scripts/seed-business-occupations-json.ts`)
+- **Loader:** [`occupations-registry.ts`](../src/lib/business/occupations-registry.ts) with fallback to [`business-occupations-defaults.ts`](../src/config/business-occupations-defaults.ts)
+- **Super Admin:** `/super-admin/business-occupations` — CRUD without deploy (permissions `taxonomy:business-occupations:read|write`)
+- **Public API:** `GET /api/business/occupations` — client pickers warm in-memory cache
 - `BusinessProfile.categorySlugs` JSON array stores **occupation slugs** (legacy column name).
 - API exposes `primaryOccupationSlug` + alias `primaryCategorySlug` for one release.
+
+**Note:** This taxonomy is separate from need categories (`/super-admin/categories`). Slug overlap with need categories is rejected on create.
 
 ## Matching
 
