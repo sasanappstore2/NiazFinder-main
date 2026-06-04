@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, MapPin, Search } from 'lucide-react';
 import {
   Dialog,
@@ -21,6 +21,9 @@ interface IntakeNeighborhoodPickerProps {
   disabled?: boolean;
   onChange: (name: string, neighborhoodId: string | null) => void;
   className?: string;
+  /** Open picker when city is ready but neighborhood empty (after GPS). */
+  autoOpenWhenEmpty?: boolean;
+  onAutoOpenHandled?: () => void;
 }
 
 function matchesQuery(n: ManagedNeighborhood, q: string): boolean {
@@ -38,6 +41,8 @@ export function IntakeNeighborhoodPicker({
   disabled = false,
   onChange,
   className,
+  autoOpenWhenEmpty = false,
+  onAutoOpenHandled,
 }: IntakeNeighborhoodPickerProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -45,7 +50,9 @@ export function IntakeNeighborhoodPicker({
   const selected = useMemo(() => {
     const trimmed = value.trim();
     if (!trimmed) return null;
-    return neighborhoods.find((n) => n.name === trimmed || n.id === trimmed) ?? null;
+    return (
+      neighborhoods.find((n) => n.name === trimmed || n.id === trimmed) ?? null
+    );
   }, [value, neighborhoods]);
 
   const filtered = useMemo(
@@ -63,6 +70,12 @@ export function IntakeNeighborhoodPicker({
 
   const hasCatalog = neighborhoods.length > 0;
   const canOpenList = Boolean(cityName.trim()) && !disabled && !isLoading && hasCatalog;
+
+  useEffect(() => {
+    if (!autoOpenWhenEmpty || !canOpenList || value.trim()) return;
+    setOpen(true);
+    onAutoOpenHandled?.();
+  }, [autoOpenWhenEmpty, canOpenList, value, onAutoOpenHandled]);
 
   if (!hasCatalog && cityName.trim() && !isLoading) {
     return (

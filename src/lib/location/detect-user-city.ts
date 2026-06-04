@@ -1,5 +1,6 @@
 import type { City } from '@/lib/location-system';
 import { nearestLocationCity } from '@/lib/location/city-coordinates';
+import { locationCityIdToSlug } from '@/lib/search/city-slugs';
 
 export interface GeoCoordinates {
   lat: number;
@@ -70,35 +71,53 @@ export interface DetectedUserLocationFromGps {
   neighborhoodMatchScore: number;
 }
 
+function catalogFallbackFromCoords(lat: number, lng: number): DetectedUserLocationFromGps | null {
+  const city = nearestLocationCity(lat, lng);
+  if (!city) return null;
+  return {
+    cityName: city.name,
+    cityId: city.id,
+    citySlug: locationCityIdToSlug(city.id),
+    neighborhood: null,
+    neighborhoodMatchScore: 0,
+  };
+}
+
 /** City + neighborhood from GPS via server reverse-geocode (no raw coords stored). */
 export async function detectUserLocationFromGps(
   opts?: RequestCoordinatesOptions
 ): Promise<DetectedUserLocationFromGps | null> {
-  const { lat, lng } = await requestUserCoordinates({ highAccuracy: true, ...opts });
+  const { lat, lng } = await requestUserCoordinates({ highAccuracy: opts?.highAccuracy ?? true, ...opts });
 
-  const res = await fetch(
-    `/api/locations/reverse-geocode?lat=${encodeURIComponent(String(lat))}&lng=${encodeURIComponent(String(lng))}`
-  );
+  try {
+    const res = await fetch(
+      `/api/locations/reverse-geocode?lat=${encodeURIComponent(String(lat))}&lng=${encodeURIComponent(String(lng))}&matchNeighborhood=1`
+    );
 
-  if (!res.ok) return null;
+    if (res.ok) {
+      const data = (await res.json()) as {
+        cityName?: string;
+        cityId?: string;
+        citySlug?: string;
+        neighborhood?: { id: string; name: string } | null;
+        neighborhoodMatchScore?: number;
+      };
 
-  const data = (await res.json()) as {
-    cityName?: string;
-    cityId?: string;
-    citySlug?: string;
-    neighborhood?: { id: string; name: string } | null;
-    neighborhoodMatchScore?: number;
-  };
+      if (data.cityName?.trim() && data.cityId && data.citySlug) {
+        return {
+          cityName: data.cityName.trim(),
+          cityId: data.cityId,
+          citySlug: data.citySlug,
+          neighborhood: data.neighborhood ?? null,
+          neighborhoodMatchScore: data.neighborhoodMatchScore ?? 0,
+        };
+      }
+    }
+  } catch {
+    // fall through to nearest-city fallback
+  }
 
-  if (!data.cityName?.trim() || !data.cityId || !data.citySlug) return null;
-
-  return {
-    cityName: data.cityName.trim(),
-    cityId: data.cityId,
-    citySlug: data.citySlug,
-    neighborhood: data.neighborhood ?? null,
-    neighborhoodMatchScore: data.neighborhoodMatchScore ?? 0,
-  };
+  return catalogFallbackFromCoords(lat, lng);
 }
 
 /** Detect nearest site city from device GPS (no raw coords persisted) */

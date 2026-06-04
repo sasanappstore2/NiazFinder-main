@@ -8,8 +8,8 @@ general: {
 }
 
 nat: {
-  stun_server = "stun.l.google.com"
-  stun_port = 19302
+  stun_server = "${TURN_HOST:-127.0.0.1}"
+  stun_port = 3478
   turn_server = "${TURN_HOST:-127.0.0.1}"
   turn_port = 443
   turn_type = "tls"

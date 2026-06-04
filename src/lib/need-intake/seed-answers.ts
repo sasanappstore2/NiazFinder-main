@@ -35,6 +35,7 @@ export function seedAnswersFromParsed(
   if (e.guestCount) answers.guestCount = e.guestCount;
   if (e.deedType) answers.deedType = e.deedType;
   if (e.serviceKind) answers.serviceKind = e.serviceKind;
+  if (e.brand) answers.brand = e.brand;
 
   if (parsed.neighborhoodSlug) {
     answers._neighborhoodSlug = parsed.neighborhoodSlug;

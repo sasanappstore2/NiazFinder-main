@@ -70,6 +70,10 @@ model User {
   assignedRequests   ServiceRequest[] @relation("AssignedRequests")
   needBrowseAlerts   NeedBrowseAlert[]
   analyticsSessions  AnalyticsSession[]
+  businessMemberships BusinessMember[]
+  assignedContactPoints BusinessContactPoint[] @relation("ContactPointAssignee")
+  businessInvitesSent BusinessMemberInvite[] @relation("BusinessInviteInviter")
+  businessInvitesAccepted BusinessMemberInvite[] @relation("BusinessInviteAcceptor")
 
   @@index([role])
   @@index([city])
@@ -528,6 +532,9 @@ model BusinessProfile {
   profileReviews BusinessProfileReview[]
   leadOutreach   NeedLeadOutreach[]
   linkedRequests ServiceRequest[]
+  members        BusinessMember[]
+  contactPoints  BusinessContactPoint[]
+  memberInvites  BusinessMemberInvite[]
 
   @@index([slug])
   @@index([city])
@@ -613,26 +620,117 @@ model BusinessProfileReview {
   @@index([createdAt])
 }
 
+enum BusinessMemberRole {
+  OWNER
+  MANAGER
+  STAFF
+}
+
+enum BusinessMemberStatus {
+  ACTIVE
+  INVITED
+  REMOVED
+}
+
+enum BusinessInviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELLED
+}
+
+model BusinessMember {
+  id              String               @id @default(cuid())
+  profileId       String
+  userId          String
+  role            BusinessMemberRole   @default(STAFF)
+  status          BusinessMemberStatus @default(ACTIVE)
+  invitedByUserId String?
+  joinedAt        DateTime             @default(now())
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  profile BusinessProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, userId])
+  @@index([profileId, status])
+  @@index([userId])
+}
+
+model BusinessContactPoint {
+  id               String   @id @default(cuid())
+  profileId        String
+  label            String
+  slug             String
+  description      String?
+  assignedUserId   String
+  displayName      String?
+  avatar           String?
+  chatEnabled      Boolean  @default(true)
+  voiceEnabled     Boolean  @default(true)
+  isDefault        Boolean  @default(false)
+  sortOrder        Int      @default(0)
+  isPublished      Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  profile        BusinessProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  assignedUser   User            @relation("ContactPointAssignee", fields: [assignedUserId], references: [id], onDelete: Cascade)
+  conversations  Conversation[]
+
+  @@unique([profileId, slug])
+  @@index([profileId, isPublished, sortOrder])
+  @@index([assignedUserId])
+}
+
+model BusinessMemberInvite {
+  id              String               @id @default(cuid())
+  profileId       String
+  phone           String
+  role            BusinessMemberRole   @default(STAFF)
+  token           String               @unique
+  status          BusinessInviteStatus @default(PENDING)
+  expiresAt       DateTime
+  invitedByUserId String
+  acceptedUserId  String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  profile       BusinessProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  invitedBy     User            @relation("BusinessInviteInviter", fields: [invitedByUserId], references: [id], onDelete: Cascade)
+  acceptedUser  User?           @relation("BusinessInviteAcceptor", fields: [acceptedUserId], references: [id], onDelete: SetNull)
+
+  @@index([profileId, status])
+  @@index([phone, status])
+}
+
 // ============ MESSAGES & CHAT ============
 
 model Conversation {
-  id          String   @id @default(cuid())
-  requestId   String?
-  userId1     String
-  userId2     String
-  lastMessage String?
-  lastMessageAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                String   @id @default(cuid())
+  requestId         String?
+  businessProfileId String?
+  contactPointId    String?
+  userId1           String
+  userId2           String
+  lastMessage       String?
+  lastMessageAt     DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  user1       User           @relation("ConvUser1", fields: [userId1], references: [id])
-  user2       User           @relation("ConvUser2", fields: [userId2], references: [id])
-  messages    Message[]
+  user1         User                  @relation("ConvUser1", fields: [userId1], references: [id])
+  user2         User                  @relation("ConvUser2", fields: [userId2], references: [id])
+  contactPoint  BusinessContactPoint? @relation(fields: [contactPointId], references: [id], onDelete: SetNull)
+  messages      Message[]
 
   @@index([userId1])
   @@index([userId2])
   @@index([requestId])
+  @@index([businessProfileId])
+  @@index([contactPointId])
   @@index([lastMessageAt])
+  @@index([userId1, userId2, requestId, contactPointId])
 }
 
 model Message {
@@ -649,6 +747,9 @@ model Message {
   deletedAt      DateTime?
   deletedFor     String      @default("[]")
   clientTempId   String?
+  isPinned       Boolean     @default(false)
+  pinnedBy       String?
+  pinnedAt       DateTime?
   createdAt      DateTime    @default(now())
 
   conversation Conversation      @relation(fields: [conversationId], references: [id], onDelete: Cascade)
@@ -665,6 +766,7 @@ model Message {
   @@index([createdAt])
   @@index([replyToId])
   @@index([clientTempId])
+  @@index([isPinned])
 }
 
 model MessageDelivery {

@@ -37,6 +37,7 @@ export interface ChatMessageItemProps {
   onEdit?: () => void;
   onDeleteForMe: () => void;
   onDeleteForEveryone: () => void;
+  onPin?: () => void;
   onScrollToMessage?: (messageId: string) => void;
   onImageOpen?: () => void;
 }
@@ -55,6 +56,7 @@ export function ChatMessageItem({
   onEdit,
   onDeleteForMe,
   onDeleteForEveryone,
+  onPin,
   onScrollToMessage,
   onImageOpen,
 }: ChatMessageItemProps) {
@@ -96,6 +98,8 @@ export function ChatMessageItem({
                 onEdit={onEdit}
                 onDeleteForMe={onDeleteForMe}
                 onDeleteForEveryone={onDeleteForEveryone}
+                isPinned={Boolean(msg.isPinned)}
+                onPin={onPin}
               />
             </div>
           )}
@@ -122,6 +126,8 @@ export function ChatMessageItem({
                 onEdit={onEdit}
                 onDeleteForMe={onDeleteForMe}
                 onDeleteForEveryone={onDeleteForEveryone}
+                isPinned={Boolean(msg.isPinned)}
+                onPin={onPin}
               />
             )}
             {!isDeleted && (
@@ -189,6 +195,8 @@ export function ChatMessageItem({
                 onEdit={onEdit}
                 onDeleteForMe={onDeleteForMe}
                 onDeleteForEveryone={onDeleteForEveryone}
+                isPinned={Boolean(msg.isPinned)}
+                onPin={onPin}
               />
             </div>
           )}

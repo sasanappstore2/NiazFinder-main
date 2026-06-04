@@ -37,7 +37,6 @@ export const ROUTE_MAP = {
   'specialist-profile': '/b/[id]',
   'submit-proposal': '/n/[id]/propose',
   'submit-review': '/submit-review',
-  'compare-specialists': '/compare',
   pricing: '/pricing',
   referral: '/referral',
   'notification-settings': '/notification-settings',

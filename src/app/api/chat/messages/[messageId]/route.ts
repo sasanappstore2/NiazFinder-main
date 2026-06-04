@@ -9,6 +9,45 @@ import {
   parseDeletedFor,
   serializeDeletedFor,
 } from '@/lib/chat/message-delete';
+import { pinOrUnpinMessage } from '@/lib/chat/message-pin';
+
+type PinBody = { pin?: boolean; unpin?: boolean };
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ messageId: string }> }
+) {
+  const user = await getAuthUser(request);
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { messageId } = await params;
+  const body = (await request.json().catch(() => ({}))) as PinBody;
+  if (body.pin !== true) {
+    return NextResponse.json({ error: 'Unsupported action' }, { status: 400 });
+  }
+
+  const unpin = body.unpin === true;
+
+  try {
+    const result = await pinOrUnpinMessage(messageId, user.id, unpin);
+    return NextResponse.json(result);
+  } catch (err) {
+    const code = err instanceof Error ? err.message : '';
+    if (code === 'NOT_FOUND') {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+    if (code === 'FORBIDDEN') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+    if (code === 'DELETED') {
+      return NextResponse.json({ error: 'پیام حذف‌شده قابل سنجاق نیست' }, { status: 400 });
+    }
+    console.error('[message pin] Error:', err);
+    return NextResponse.json({ error: 'خطای سرور رخ داده است' }, { status: 500 });
+  }
+}
 
 export async function PATCH(
   request: NextRequest,

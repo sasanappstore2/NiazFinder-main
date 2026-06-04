@@ -31,8 +31,42 @@ This is a practical index of env vars that affect local dev and common debugging
   - **Role**: if set, Next calls Nest internal endpoint to enqueue moderation
 
 - **`INTERNAL_API_SECRET`**
-  - **Used in**: `src/lib/request-moderation/enqueue.ts` and `src/app/api/internal/**`
-  - **Role**: optional `x-internal-secret` header for internal Next route protection
+  - **Used in**: `src/lib/request-moderation/enqueue.ts`, `src/app/api/internal/**`, `src/lib/communication/redis-publish.ts`
+  - **Role**: **Required in production** — `x-internal-secret` for internal routes and chat-service HTTP fanout
+  - **Fail-closed**: without it, `/api/internal/request-moderation` returns 503
+
+- **`CHAT_INTERNAL_SECRET`**
+  - **Used in**: `mini-services/chat-service` `/internal/fanout`
+  - **Role**: same value as `INTERNAL_API_SECRET` if not set separately
+
+- **`SUPER_ADMIN_PHONES`**
+  - **Used in**: `src/lib/super-admin.ts`
+  - **Role**: comma-separated phones allowed SUPER_ADMIN role (replaces hardcoded phone)
+
+- **`ALLOW_TEST_OTP`**
+  - **Used in**: `src/lib/auth/test-otp.ts`
+  - **Role**: set `true` to allow test OTP `1234` in production (default: blocked in prod)
+
+- **`TURN_STATIC_AUTH_SECRET`** / **`TURN_SECRET`**
+  - **Used in**: `config/turnserver.conf`, voice credentials API
+  - **Role**: WebRTC TURN auth — must not use default `change-me-turn-secret` in prod
+
+- **`NEXT_PUBLIC_STUN_URLS`**
+  - **Used in**: `src/lib/voice/turn-credentials.ts`
+  - **Role**: comma-separated STUN URLs (default: `stun:127.0.0.1:3478` or `stun:${TURN_HOST}:3478` — no Google STUN)
+
+- **`NEXT_PUBLIC_TURN_HOST`** / **`TURN_HOST`**
+  - **Used in**: `src/lib/voice/turn-credentials.ts`, coturn
+  - **Role**: internal TURN/STUN host for WebRTC
+
+- **`NOMINATIM_ENABLED`**
+  - **Used in**: `src/app/api/locations/reverse-geocode/route.ts`
+  - **Role**: set `true` to call OpenStreetMap Nominatim (default: off — catalog-only GPS city match)
+  - **Future**: internal Redis cache + nominatim proxy
+
+- **`MINIO_PUBLIC_URL`**
+  - **Used in**: `src/lib/storage/minio.ts`, `next.config.ts` `images.remotePatterns`, CSP
+  - **Role**: public origin for internal MinIO objects (only external hostname allowed in Next image optimizer)
 
 - **`TYPING_INTERNAL_SECRET`**
   - **Used in**: `src/app/api/need-intake/typing-analyze/route.ts`

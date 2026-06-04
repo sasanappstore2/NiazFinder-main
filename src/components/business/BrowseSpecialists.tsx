@@ -39,6 +39,7 @@ function specialistProfileHref(
   return routeBuilder.pro(specialist.id);
 }
 import { useStartChat } from '@/hooks/use-start-chat';
+import { useBusinessContact } from '@/hooks/use-business-contact';
 import { replaceBrowseUrl } from '@/lib/filter-routing';
 import { serializeFilters, type BrowseFilters } from '@/lib/filters/parser';
 import { mapSortToBusinessApi } from '@/lib/browse/sort-map';
@@ -93,11 +94,12 @@ function SkillLevelDots({ level }: { level: number }) {
 function SpecialistCard({
   specialist,
   fromPathname,
+  onMessage,
 }: {
   specialist: SpecialistProfile;
   fromPathname: string;
+  onMessage: (specialist: SpecialistProfile) => void;
 }) {
-  const { openChat } = useStartChat();
   const profileHref = specialistProfileHref(specialist, fromPathname);
   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
   const colorClass = getAvatarColor(specialist.displayName ?? '');
@@ -205,7 +207,7 @@ function SpecialistCard({
           <Button
             onClick={(e) => {
               e.preventDefault();
-              void openChat(specialist.id);
+              onMessage(specialist);
             }}
             size="icon"
             variant="outline"
@@ -224,11 +226,12 @@ function SpecialistCard({
 function SpecialistListCard({
   specialist,
   fromPathname,
+  onMessage,
 }: {
   specialist: SpecialistProfile;
   fromPathname: string;
+  onMessage: (specialist: SpecialistProfile) => void;
 }) {
-  const { openChat } = useStartChat();
   const profileHref = specialistProfileHref(specialist, fromPathname);
   const initials = `${specialist.firstName.charAt(0)}${specialist.lastName.charAt(0)}`;
   const colorClass = getAvatarColor(specialist.displayName ?? '');
@@ -315,7 +318,7 @@ function SpecialistListCard({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                void openChat(specialist.id);
+                onMessage(specialist);
               }}
               size="icon"
               variant="outline"
@@ -347,6 +350,19 @@ export function BrowseSpecialists({
 }: BrowseSpecialistsProps = {}) {
   const { navigateTo } = useNavigate();
   const pathname = usePathname();
+  const { openChat } = useStartChat();
+  const { openBusinessContact, picker } = useBusinessContact();
+
+  const handleSpecialistMessage = useCallback(
+    (specialist: SpecialistProfile) => {
+      if (specialist.profileSlug) {
+        void openBusinessContact({ businessSlug: specialist.profileSlug });
+      } else {
+        void openChat(specialist.id);
+      }
+    },
+    [openBusinessContact, openChat]
+  );
 
   const [query, setQuery] = useState(urlFilters?.q ?? '');
   const [currentPage, setCurrentPage] = useState(1);
@@ -357,7 +373,7 @@ export function BrowseSpecialists({
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const currentPathname = basePath.split('?')[0];
-  const { h1: pageH1 } = useBrowsePageHeading('business');
+  const { h1: pageH1, displayH1 } = useBrowsePageHeading('business');
   const provinceSlugs = urlFilters?.provinces ?? [];
   const hasLocationScope = citySlugs.length > 0 || provinceSlugs.length > 0;
   const singleCitySlug = citySlugs.length === 1 ? citySlugs[0] : null;
@@ -488,8 +504,11 @@ export function BrowseSpecialists({
         <div className="mb-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-linear-to-l from-foreground to-foreground/80 bg-clip-text">
-                {pageH1}
+              <h1
+                className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-linear-to-l from-foreground to-foreground/80 bg-clip-text"
+                title={displayH1 !== pageH1 ? pageH1 : undefined}
+              >
+                {displayH1}
               </h1>
               <p className="mt-1.5 text-sm text-muted-foreground">
                 {totalCount.toLocaleString('fa-IR')} کسب‌وکار یافت شد
@@ -622,9 +641,17 @@ export function BrowseSpecialists({
               {visibleSpecialists.map((specialist) => (
                 <div key={specialist.id} itemProp="itemListElement">
                   {viewMode === 'grid' ? (
-                    <SpecialistCard specialist={specialist} fromPathname={pathname} />
+                    <SpecialistCard
+                      specialist={specialist}
+                      fromPathname={pathname}
+                      onMessage={handleSpecialistMessage}
+                    />
                   ) : (
-                    <SpecialistListCard specialist={specialist} fromPathname={pathname} />
+                    <SpecialistListCard
+                      specialist={specialist}
+                      fromPathname={pathname}
+                      onMessage={handleSpecialistMessage}
+                    />
                   )}
                 </div>
               ))}
@@ -665,6 +692,7 @@ export function BrowseSpecialists({
           <p>فهرست کسب‌وکارهای خدمات ثبت شده در پلتفرم. شامل کسب‌وکارهای طراحی وب، برنامه‌نویسی، تعمیرات، تولید محتوا، طراحی گرافیک و خدمات خانگی.</p>
         </div>
       </noscript>
+      {picker}
     </div>
   );
 }

@@ -22,6 +22,7 @@ import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAppStore } from '@/lib/store';
 import { useAppRouter } from '@/hooks/use-router';
+import { isAllowedMediaUrl } from '@/lib/media/is-allowed-media-url';
 import { toast } from 'sonner';
 
 // ─── Animation variants ─────────────────────────────────
@@ -95,9 +96,12 @@ export function CreatePostPage() {
     const url = imageUrlInput.trim();
     if (!url) return;
 
-    // Simple URL validation
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      toast.error('لطفاً آدرس اینترنتی معتبر وارد کنید (با http یا https)');
+    if (!url.startsWith('/uploads/') && !url.startsWith('/images/')) {
+      toast.error('فقط مسیر داخلی مجاز است (مثلاً /images/placeholders/demo-1.webp)');
+      return;
+    }
+    if (!isAllowedMediaUrl(url)) {
+      toast.error('آدرس تصویر باید از storage داخلی باشد');
       return;
     }
 
@@ -129,16 +133,14 @@ export function CreatePostPage() {
 
     setSubmitting(true);
     try {
-      const body = {
-        content: content.trim(),
-        imageUrls: JSON.stringify(imageUrls),
-        isPrivate,
-      };
-
       const res = await fetch('/api/posts', {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          content: content.trim(),
+          imageUrls,
+          isPrivate,
+        }),
       });
 
       if (res.ok) {
@@ -331,7 +333,7 @@ export function CreatePostPage() {
                           handleAddImageUrl();
                         }
                       }}
-                      placeholder="آدرس تصویر (URL) را وارد کنید..."
+                      placeholder="مسیر داخلی تصویر (مثلاً /images/placeholders/demo-1.webp)"
                       className="text-sm"
                     />
                     <Button

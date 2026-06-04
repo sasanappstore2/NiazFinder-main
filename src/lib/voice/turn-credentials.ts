@@ -21,11 +21,14 @@ export type IceServerConfig = {
 };
 
 export function buildIceServersFromEnv(userId: string): IceServerConfig[] {
-  const stun =
-    process.env.NEXT_PUBLIC_STUN_URLS?.split(',').map((s) => s.trim()).filter(Boolean) ||
-    ['stun:stun.l.google.com:19302'];
-
   const turnHost = process.env.NEXT_PUBLIC_TURN_HOST || process.env.TURN_HOST;
+  const stunFromEnv =
+    process.env.NEXT_PUBLIC_STUN_URLS?.split(',').map((s) => s.trim()).filter(Boolean) ?? [];
+
+  const defaultStunHost = turnHost ?? '127.0.0.1';
+  const stun =
+    stunFromEnv.length > 0 ? stunFromEnv : [`stun:${defaultStunHost}:3478`];
+
   const turnSecret = process.env.TURN_STATIC_AUTH_SECRET;
   const relayOnly = process.env.NEXT_PUBLIC_VOICE_RELAY_ONLY === 'true';
 

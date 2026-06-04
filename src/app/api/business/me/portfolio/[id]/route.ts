@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { requireBusinessManager } from '@/lib/business/require-business-manager';
 import { ensureBusinessProfile } from '@/lib/business/ensure-profile';
 import { toJson } from '@/lib/business/json-fields';
+import { isAllowedMediaUrl } from '@/lib/media/is-allowed-media-url';
 
 export const runtime = 'nodejs';
 
@@ -47,6 +48,30 @@ export async function PATCH(
     if (!existing) return NextResponse.json({ error: 'یافت نشد' }, { status: 404 });
 
     const body = await request.json().catch(() => ({}));
+
+    if (body.mediaUrl != null) {
+      const mediaUrl = String(body.mediaUrl).trim();
+      if (mediaUrl && !isAllowedMediaUrl(mediaUrl)) {
+        return NextResponse.json(
+          { error: 'آدرس رسانه باید از مسیر داخلی (/uploads/ یا /images/) باشد' },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (body.metadata && typeof body.metadata === 'object') {
+      const metadata = body.metadata as Record<string, unknown>;
+      for (const key of ['beforeUrl', 'afterUrl'] as const) {
+        const v = metadata[key];
+        if (typeof v === 'string' && v.trim() && !isAllowedMediaUrl(v)) {
+          return NextResponse.json(
+            { error: 'آدرس رسانه باید از مسیر داخلی (/uploads/ یا /images/) باشد' },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
     await db.businessPortfolioItem.update({
       where: { id },
       data: {

@@ -3,8 +3,10 @@
 import { useState, useCallback } from 'react';
 import type { MouseEvent } from 'react';
 import { Bookmark } from 'lucide-react';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
+import { getClientAuthJsonHeaders } from '@/lib/auth/client-auth';
 
 interface BookmarkButtonProps {
   itemId?: string;
@@ -35,36 +37,82 @@ export function BookmarkButton({
 }: BookmarkButtonProps) {
   const itemId = itemIdProp ?? id ?? '';
   const itemType = itemTypeProp ?? type ?? 'request';
-  const [bookmarked, setBookmarked] = useState(false);
-  const [animating, setAnimating] = useState(false);
   const sizeConfig = SIZE_MAP[size];
 
-  const toggleBookmark = useCallback((e: MouseEvent<HTMLButtonElement>) => {
-    // Prevent navigating when the button lives inside a clickable card.
-    e.stopPropagation();
-    setBookmarked((prev) => !prev);
-    setAnimating(true);
-    setTimeout(() => setAnimating(false), 600);
-  }, []);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
+  const bookmarkedRequests = useAppStore((s) => s.bookmarkedRequests);
+  const bookmarkedSpecialists = useAppStore((s) => s.bookmarkedSpecialists);
+  const applyBookmarkToggle = useAppStore((s) => s.applyBookmarkToggle);
+
+  const bookmarked =
+    itemType === 'request'
+      ? bookmarkedRequests.includes(itemId)
+      : bookmarkedSpecialists.includes(itemId);
+
+  const [animating, setAnimating] = useState(false);
+  const [pending, setPending] = useState(false);
+
+  const toggleBookmark = useCallback(
+    async (e: MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation();
+      if (!itemId) return;
+
+      if (!isAuthenticated) {
+        setAuthModalOpen(true);
+        return;
+      }
+
+      setPending(true);
+      setAnimating(true);
+      setTimeout(() => setAnimating(false), 600);
+
+      try {
+        const res = await fetch('/api/bookmarks', {
+          method: 'POST',
+          headers: getClientAuthJsonHeaders(),
+          body: JSON.stringify({ type: itemType, id: itemId }),
+        });
+        const data = (await res.json()) as {
+          isBookmarked?: boolean;
+          message?: string;
+          error?: string;
+        };
+
+        if (!res.ok) {
+          throw new Error(data.error ?? 'خطا در ذخیره علاقه‌مندی');
+        }
+
+        applyBookmarkToggle(itemType, itemId, Boolean(data.isBookmarked));
+        toast.success(data.message ?? (data.isBookmarked ? 'ذخیره شد' : 'حذف شد'));
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'خطا در ذخیره علاقه‌مندی');
+      } finally {
+        setPending(false);
+      }
+    },
+    [itemId, itemType, isAuthenticated, setAuthModalOpen, applyBookmarkToggle]
+  );
 
   return (
     <button
       type="button"
-      onClick={toggleBookmark}
+      onClick={(e) => void toggleBookmark(e)}
+      disabled={pending}
       className={cn(
         'relative inline-flex items-center justify-center rounded-full transition-all duration-300',
         sizeConfig.padding,
         sizeConfig.ring,
         bookmarked
-          ? 'bg-rose-50 text-rose-500 ring-rose-200/60 dark:bg-rose-950/30 dark:text-rose-400 dark:ring-rose-800/40'
-          : 'bg-muted/50 text-muted-foreground/50 ring-transparent hover:bg-muted hover:text-muted-foreground hover:ring-border/50',
+          ? 'bg-rose-50 text-rose-600 ring-rose-300/70 shadow-sm dark:bg-rose-950/40 dark:text-rose-400 dark:ring-rose-700/50'
+          : 'bg-background text-foreground/80 ring-border/60 shadow-sm hover:bg-accent hover:text-foreground hover:ring-border dark:bg-card dark:text-foreground/85 dark:ring-border/70 dark:hover:bg-accent/80',
         animating && 'scale-125',
+        pending && 'opacity-70',
         className
       )}
       aria-label={bookmarked ? 'حذف از علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی‌ها'}
       aria-pressed={bookmarked}
     >
-      {/* Bookmark icon */}
       <Bookmark
         className={cn(
           sizeConfig.icon,
@@ -74,12 +122,10 @@ export function BookmarkButton({
         )}
       />
 
-      {/* Ripple effect on bookmark */}
       {animating && (
         <span className="absolute inset-0 animate-ping rounded-full bg-rose-400/20" />
       )}
 
-      {/* Label */}
       {showLabel && (
         <span className="ms-1.5 text-xs font-medium">
           {bookmarked ? 'ذخیره شد' : 'ذخیره'}

@@ -12,15 +12,19 @@ function typingKey(conversationId: string): string {
   return `comm:typing:${conversationId}`;
 }
 
+let pooledRedis: import('ioredis').default | null = null;
+
 async function getRedis(): Promise<import('ioredis').default | null> {
   const url = process.env.REDIS_URL?.trim();
   if (!url) return null;
+  if (pooledRedis) return pooledRedis;
   try {
     const Redis = (await import('ioredis')).default;
-    const client = new Redis(url, { maxRetriesPerRequest: 1, lazyConnect: true });
-    if (client.status !== 'ready') await client.connect();
-    return client;
+    pooledRedis = new Redis(url, { maxRetriesPerRequest: 1, lazyConnect: true });
+    if (pooledRedis.status !== 'ready') await pooledRedis.connect();
+    return pooledRedis;
   } catch {
+    pooledRedis = null;
     return null;
   }
 }
@@ -37,7 +41,6 @@ export async function setConversationTypingState(
     const redis = await getRedis();
     if (redis) {
       await redis.del(typingKey(conversationId)).catch(() => {});
-      redis.disconnect();
     }
     return;
   }
@@ -48,7 +51,6 @@ export async function setConversationTypingState(
     await redis
       .set(typingKey(conversationId), JSON.stringify(state), 'EX', TYPING_TTL_SEC)
       .catch(() => {});
-    redis.disconnect();
   }
 }
 
@@ -59,7 +61,6 @@ export async function getConversationTypingState(
   if (redis) {
     try {
       const raw = await redis.get(typingKey(conversationId));
-      redis.disconnect();
       if (raw) {
         const parsed = JSON.parse(raw) as StoredTypingState;
         if (parsed.isTyping && Date.now() - parsed.updatedAt < TYPING_TTL_SEC * 1000) {
@@ -67,7 +68,7 @@ export async function getConversationTypingState(
         }
       }
     } catch {
-      redis.disconnect();
+      /* ignore */
     }
   }
 

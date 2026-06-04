@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { simpleHash } from '@/lib/auth/password';
+import { hashPassword } from '@/lib/auth/password';
 import { findValidOtp, findRecentlyVerifiedOtp, markOtpVerified } from '@/lib/otp-store';
 import { isTestOtpCode } from '@/lib/auth/test-otp';
 import { toAsciiDigits } from '@/lib/format/digits';
@@ -39,8 +39,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const otpRecord = findValidOtp(normalizedPhone, code);
-    const recentlyVerified = findRecentlyVerifiedOtp(normalizedPhone, code);
+    const otpRecord = await findValidOtp(normalizedPhone, code);
+    const recentlyVerified = await findRecentlyVerifiedOtp(normalizedPhone, code);
     const acceptedTestOtp = isTestOtpCode(code);
 
     if (!otpRecord && !recentlyVerified && !acceptedTestOtp) {
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (otpRecord) {
-      markOtpVerified(normalizedPhone, code);
+      await markOtpVerified(normalizedPhone, code);
     }
 
     const grantSuperAdmin = isSuperAdminPhone(normalizedPhone);
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
         data: {
           phone: normalizedPhone,
           email: `${normalizedPhone}@needfinder.local`,
-          password: simpleHash(password),
+          password: hashPassword(password),
           role: grantSuperAdmin ? ('SUPER_ADMIN' as const) : ('CLIENT' as const),
           isVerified: true,
           phoneVerified: true,
@@ -76,6 +76,9 @@ export async function POST(request: NextRequest) {
     });
 
     const token = await issueAuthToken(user.id);
+
+    const { acceptBusinessInvitesForUser } = await import('@/lib/business/team/accept-invite');
+    await acceptBusinessInvitesForUser(user.id, normalizedPhone);
 
     return NextResponse.json(
       {

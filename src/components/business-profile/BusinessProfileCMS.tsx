@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { getBlueprintForCategorySlug } from '@/config/business-profile-blueprints';
 import type { CmsModule } from '@/config/business-profile-blueprints/types';
+import { formatPriceText } from '@/lib/format/money';
 
 function getAuthHeaders(): HeadersInit {
   const token = typeof window !== 'undefined' ? localStorage.getItem('nf_auth_token') : null;
@@ -65,7 +66,13 @@ export function BusinessProfileCMS({
     description: '',
   });
   const [newOffer, setNewOffer] = useState({ title: '', description: '', priceRange: '' });
-  const [newPortfolio, setNewPortfolio] = useState({ title: '', mediaUrl: '' });
+  const [portfolioKind, setPortfolioKind] = useState<'image' | 'before_after'>('image');
+  const [newPortfolio, setNewPortfolio] = useState({
+    title: '',
+    mediaUrl: '',
+    beforeUrl: '',
+    afterUrl: '',
+  });
 
   const loadAll = useCallback(async () => {
     setLoading(true);
@@ -138,17 +145,34 @@ export function BusinessProfileCMS({
   };
 
   const addPortfolio = async () => {
-    if (!newPortfolio.title.trim() || !newPortfolio.mediaUrl.trim()) return;
+    if (!newPortfolio.title.trim()) return;
+    if (portfolioKind === 'before_after') {
+      if (!newPortfolio.beforeUrl.trim() || !newPortfolio.afterUrl.trim()) {
+        toast.error('آدرس قبل و بعد الزامی است');
+        return;
+      }
+    } else if (!newPortfolio.mediaUrl.trim()) {
+      return;
+    }
+    const payload =
+      portfolioKind === 'before_after'
+        ? {
+            title: newPortfolio.title,
+            type: 'before_after',
+            mediaUrl: newPortfolio.afterUrl,
+            metadata: { beforeUrl: newPortfolio.beforeUrl, afterUrl: newPortfolio.afterUrl },
+          }
+        : newPortfolio;
     const res = await fetch('/api/business/me/portfolio', {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify(newPortfolio),
+      body: JSON.stringify(payload),
     });
     if (!res.ok) {
       toast.error('افزودن به گالری ناموفق بود');
       return;
     }
-    setNewPortfolio({ title: '', mediaUrl: '' });
+    setNewPortfolio({ title: '', mediaUrl: '', beforeUrl: '', afterUrl: '' });
     toast.success('ذخیره شد');
     await loadAll();
     onMutate?.();
@@ -205,7 +229,9 @@ export function BusinessProfileCMS({
               <div key={o.id} className="flex items-start justify-between gap-2 rounded-lg border p-3">
                 <div>
                   <p className="font-medium">{o.title}</p>
-                  <p className="text-xs text-muted-foreground">{o.priceRange ?? '—'}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {o.priceRange ? formatPriceText(o.priceRange) : '—'}
+                  </p>
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => deleteOffer(o.id)}>
                   <Trash2 className="size-4 text-destructive" />
@@ -251,15 +277,46 @@ export function BusinessProfileCMS({
               </div>
             ))}
             <Separator />
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant={portfolioKind === 'image' ? 'default' : 'outline'}
+                onClick={() => setPortfolioKind('image')}
+              >
+                تصویر / ویدیو
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={portfolioKind === 'before_after' ? 'default' : 'outline'}
+                onClick={() => setPortfolioKind('before_after')}
+              >
+                قبل / بعد
+              </Button>
+            </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              <div className="space-y-1">
+              <div className="space-y-1 sm:col-span-2">
                 <Label>عنوان</Label>
                 <Input value={newPortfolio.title} onChange={(e) => setNewPortfolio({ ...newPortfolio, title: e.target.value })} />
               </div>
-              <div className="space-y-1">
-                <Label>URL تصویر</Label>
-                <Input dir="ltr" value={newPortfolio.mediaUrl} onChange={(e) => setNewPortfolio({ ...newPortfolio, mediaUrl: e.target.value })} />
-              </div>
+              {portfolioKind === 'image' ? (
+                <div className="space-y-1 sm:col-span-2">
+                  <Label>URL تصویر</Label>
+                  <Input dir="ltr" value={newPortfolio.mediaUrl} onChange={(e) => setNewPortfolio({ ...newPortfolio, mediaUrl: e.target.value })} />
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-1">
+                    <Label>قبل</Label>
+                    <Input dir="ltr" value={newPortfolio.beforeUrl} onChange={(e) => setNewPortfolio({ ...newPortfolio, beforeUrl: e.target.value })} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label>بعد</Label>
+                    <Input dir="ltr" value={newPortfolio.afterUrl} onChange={(e) => setNewPortfolio({ ...newPortfolio, afterUrl: e.target.value })} />
+                  </div>
+                </>
+              )}
             </div>
             <Button size="sm" onClick={addPortfolio}>
               <Plus className="ml-1 size-4" />

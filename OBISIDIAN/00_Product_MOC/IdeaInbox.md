@@ -22,10 +22,6 @@ tags: [product-moc, idea]
   - بخش: [[../10_Product_Areas/07_Communication_Chat|07]] + [[../10_Product_Areas/10_Proposals_Reviews|10]]
   - MVP: دکمه «ارسال پیشنهاد» در header چت
 
-- [ ] **مقایسه کسب‌وکارها** — کنار هم در یک دسته
-  - بخش: [[../10_Product_Areas/04_Business_Marketplace|04]]
-  - MVP: `/compare` با ۳ اسلاگ
-
 - [ ] **اعلان لحظه‌ای لید با امتیاز تطبیق**
   - بخش: [[../10_Product_Areas/06_Matching_Leads|06]] + [[../10_Product_Areas/14_Notifications_Referral|14]]
 
@@ -35,7 +31,7 @@ _(خالی — پر کن)_
 
 ## رد شده / بعداً
 
-_(خالی)_
+- **مقایسه نیاز/کسب‌وکار (`/compare`)** — حذف شد؛ لینک‌های قدیمی به browse کسب‌وکار redirect می‌شوند.
 
 ## Related
 

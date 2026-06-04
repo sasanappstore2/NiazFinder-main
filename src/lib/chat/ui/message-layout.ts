@@ -13,6 +13,7 @@ export type MessageContentKind =
   | 'file'
   | 'offer_card'
   | 'need_card'
+  | 'proposal'
   | 'contact_share';
 
 export type MessageLayoutHints = {
@@ -43,6 +44,9 @@ export function classifyMessageContent(msg: Message): MessageLayoutHints {
   }
   if (msg.type === 'OFFER_CARD') {
     return { kind: 'offer_card', isMedia: false, isCard: true, useUnbrokenWrap: false };
+  }
+  if (msg.type === 'PROPOSAL') {
+    return { kind: 'proposal', isMedia: false, isCard: true, useUnbrokenWrap: false };
   }
 
   if (msg.type === 'TEXT' && typeof msg.content === 'string') {

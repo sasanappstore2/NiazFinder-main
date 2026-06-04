@@ -4,6 +4,7 @@ import { getAuthUser } from '@/lib/auth';
 import { requireBusinessManager } from '@/lib/business/require-business-manager';
 import { ensureBusinessProfile } from '@/lib/business/ensure-profile';
 import { parseJsonObject, toJson } from '@/lib/business/json-fields';
+import { isAllowedMediaUrl } from '@/lib/media/is-allowed-media-url';
 
 export const runtime = 'nodejs';
 
@@ -54,6 +55,23 @@ export async function POST(request: NextRequest) {
     if (!title || !mediaUrl) {
       return NextResponse.json({ error: 'عنوان و آدرس رسانه الزامی است' }, { status: 400 });
     }
+    if (!isAllowedMediaUrl(mediaUrl)) {
+      return NextResponse.json(
+        { error: 'آدرس رسانه باید از مسیر داخلی (/uploads/ یا /images/) باشد' },
+        { status: 400 }
+      );
+    }
+
+    const metadata = (body.metadata ?? {}) as Record<string, unknown>;
+    for (const key of ['beforeUrl', 'afterUrl'] as const) {
+      const v = metadata[key];
+      if (typeof v === 'string' && v.trim() && !isAllowedMediaUrl(v)) {
+        return NextResponse.json(
+          { error: 'آدرس رسانه باید از مسیر داخلی (/uploads/ یا /images/) باشد' },
+          { status: 400 }
+        );
+      }
+    }
 
     const profile = await ensureBusinessProfile(user);
     const count = await db.businessPortfolioItem.count({ where: { profileId: profile.id } });
@@ -65,7 +83,7 @@ export async function POST(request: NextRequest) {
         title,
         description: body.description ?? null,
         mediaUrl,
-        metadata: toJson(body.metadata ?? {}),
+        metadata: toJson(metadata),
         order: count,
       },
     });

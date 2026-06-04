@@ -9,7 +9,10 @@ import { Label } from '@/components/ui/label';
 import type { ListingPreview } from '@/contracts/need-intake';
 import { formatMoneyToman } from '@/lib/format/money';
 import { LISTING_TITLE_MAX_LENGTH } from '@/lib/need-intake/listing-title';
-import { truncateListingTitle } from '@/lib/need-intake/listing-title-sanitize';
+import {
+  rejectListingTitleReason,
+  truncateListingTitle,
+} from '@/lib/need-intake/listing-title-sanitize';
 import { toPersianDigits } from '@/lib/format/digits';
 
 export interface NeedListingPreviewProps {
@@ -19,6 +22,7 @@ export interface NeedListingPreviewProps {
   onPublish: () => void;
   isLoading?: boolean;
   isRepublishing?: boolean;
+  isTitleEnriching?: boolean;
 }
 
 export function NeedListingPreview({
@@ -28,6 +32,7 @@ export function NeedListingPreview({
   onPublish,
   isLoading,
   isRepublishing,
+  isTitleEnriching,
 }: NeedListingPreviewProps) {
   const [extraLine, setExtraLine] = useState('');
 
@@ -45,6 +50,10 @@ export function NeedListingPreview({
   };
 
   const titleLen = preview.title.length;
+  const titlePending = isTitleEnriching && !preview.title.trim();
+  const titleRejectReason = preview.title.trim()
+    ? rejectListingTitleReason(preview.title)
+    : null;
 
   return (
     <div className="intake-form-card">
@@ -53,12 +62,21 @@ export function NeedListingPreview({
         <h3 className="text-lg font-semibold">پیش‌نمایش آگهی</h3>
       </div>
       <p className="text-sm text-muted-foreground">
-        عنوان توسط هوش مصنوعی پیشنهاد شده و قابل ویرایش است. متن توضیحات را هم بررسی کنید.
+        {titlePending
+          ? 'در حال نوشتن عنوان آگهی بر اساس توضیحات شما…'
+          : isTitleEnriching
+            ? 'عنوان در حال بهینه‌سازی است؛ می‌توانید همین‌جا ویرایش کنید.'
+            : 'عنوان پیشنهادی قابل ویرایش است. متن توضیحات را هم بررسی کنید.'}
       </p>
 
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
-          <Label htmlFor="preview-title">عنوان آگهی</Label>
+          <Label htmlFor="preview-title" className="flex items-center gap-2">
+            عنوان آگهی
+            {isTitleEnriching ? (
+              <Loader2 className="size-3.5 animate-spin text-primary" aria-hidden />
+            ) : null}
+          </Label>
           <span
             className={`text-xs tabular-nums ${titleLen > LISTING_TITLE_MAX_LENGTH ? 'text-destructive' : 'text-muted-foreground'}`}
           >
@@ -69,6 +87,8 @@ export function NeedListingPreview({
           id="preview-title"
           value={preview.title}
           maxLength={LISTING_TITLE_MAX_LENGTH}
+          placeholder={titlePending ? 'در حال نوشتن عنوان…' : 'عنوان آگهی'}
+          disabled={titlePending}
           onChange={(e) =>
             onChange({
               ...preview,
@@ -77,6 +97,11 @@ export function NeedListingPreview({
           }
           className="text-base"
         />
+        {titleRejectReason && !titlePending ? (
+          <p className="text-xs text-amber-700 dark:text-amber-400">
+            عنوان کلی به نظر می‌رسد؛ «بازنویسی خودکار» را بزنید یا دستی دقیق‌تر کنید.
+          </p>
+        ) : null}
       </div>
 
       <div className="space-y-2">
@@ -160,7 +185,7 @@ export function NeedListingPreview({
           type="button"
           className="flex-1 h-12"
           onClick={onPublish}
-          disabled={isLoading || isRepublishing || !preview.title.trim()}
+          disabled={isLoading || isRepublishing || isTitleEnriching || !preview.title.trim()}
         >
           {isLoading ? (
             <Loader2 className="size-4 ml-2 animate-spin" />

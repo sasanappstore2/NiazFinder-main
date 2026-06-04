@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if there's a valid unexpired OTP for this phone
-    const existingOtp = findExistingOtp(phone);
+    const existingOtp = await findExistingOtp(phone);
 
     if (existingOtp) {
       const timeSinceLastOtp = Date.now() - existingOtp.createdAt.getTime();
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     // Dev/staging: fixed 1234 (matches UI). Production: random 6-digit code.
     const otpCode = isTestOtpMode() ? TEST_OTP_CODE : generateOtpCode();
-    createOtp(phone, otpCode, 'auth');
+    await createOtp(phone, otpCode, 'auth');
 
     return NextResponse.json(
       {

@@ -56,6 +56,15 @@ function getOtherUserId(conversationId: string, userId: string): string | null {
 }
 
 const conversationCache = new Map<string, Map<string, string>>();
+const CONVERSATION_CACHE_MAX = 500;
+
+function setConversationCache(conversationId: string, map: Map<string, string>) {
+  if (conversationCache.size >= CONVERSATION_CACHE_MAX) {
+    const oldest = conversationCache.keys().next().value;
+    if (oldest) conversationCache.delete(oldest);
+  }
+  conversationCache.set(conversationId, map);
+}
 
 async function loadConversationParticipants(conversationId: string) {
   if (conversationCache.has(conversationId)) return conversationCache.get(conversationId)!;
@@ -70,7 +79,7 @@ async function loadConversationParticipants(conversationId: string) {
   const map = new Map<string, string>();
   map.set(conv.userId1, conv.userId2);
   map.set(conv.userId2, conv.userId1);
-  conversationCache.set(conversationId, map);
+  setConversationCache(conversationId, map);
   return map;
 }
 
@@ -105,10 +114,39 @@ function authenticateSocket(socket: AuthenticatedSocket, next: (err?: Error) => 
 
 let dispatchCommEvent: (type: string, payload: Record<string, unknown>) => void = () => {};
 
+const FANOUT_MAX_BODY = 64 * 1024;
+
+function verifyInternalSecret(req: import('http').IncomingMessage): boolean {
+  const expected =
+    process.env.CHAT_INTERNAL_SECRET?.trim() ||
+    process.env.INTERNAL_API_SECRET?.trim();
+  if (!expected) {
+    console.error('[chat-service] CHAT_INTERNAL_SECRET / INTERNAL_API_SECRET not set — fanout disabled');
+    return false;
+  }
+  const header = req.headers['x-internal-secret'];
+  return typeof header === 'string' && header === expected;
+}
+
 const httpServer = createServer((req, res) => {
   if (req.url === '/internal/fanout' && req.method === 'POST') {
+    if (!verifyInternalSecret(req)) {
+      res.writeHead(401);
+      res.end(JSON.stringify({ error: 'Unauthorized' }));
+      return;
+    }
     const chunks: Buffer[] = [];
-    req.on('data', (chunk) => chunks.push(chunk));
+    let total = 0;
+    req.on('data', (chunk) => {
+      total += chunk.length;
+      if (total > FANOUT_MAX_BODY) {
+        res.writeHead(413);
+        res.end(JSON.stringify({ error: 'Payload too large' }));
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
     req.on('end', () => {
       try {
         const parsed = JSON.parse(Buffer.concat(chunks).toString('utf8')) as {
@@ -158,7 +196,7 @@ const io = new Server(httpServer, {
   pingInterval: 25000,
   connectionStateRecovery: {
     maxDisconnectionDuration: 2 * 60 * 1000, // 2 minutes
-    skipMiddlewares: true,
+    skipMiddlewares: false,
   },
 });
 
@@ -239,6 +277,13 @@ function handleCommRedisEvent(type: string, payload: Record<string, unknown>) {
     const conversationId = payload.conversationId as string;
     if (conversationId) {
       io.to(`conv:${conversationId}`).emit('message:deleted', payload);
+    }
+    return;
+  }
+  if (type === 'message:pin') {
+    const conversationId = payload.conversationId as string;
+    if (conversationId) {
+      io.to(`conv:${conversationId}`).emit('message:pin-changed', payload);
     }
     return;
   }
@@ -593,6 +638,10 @@ io.on('connection', (socket: AuthenticatedSocket) => {
           data: { isPinned: false, pinnedBy: null, pinnedAt: null },
         });
       } else {
+        await db.message.updateMany({
+          where: { conversationId: data.conversationId, isPinned: true },
+          data: { isPinned: false, pinnedBy: null, pinnedAt: null },
+        });
         await db.message.update({
           where: { id: data.messageId },
           data: { isPinned: true, pinnedBy: userId, pinnedAt: new Date() },
@@ -604,6 +653,7 @@ io.on('connection', (socket: AuthenticatedSocket) => {
         conversationId: data.conversationId,
         isPinned: !data.unpin,
         pinnedBy: data.unpin ? null : userId,
+        pinnedAt: data.unpin ? null : new Date().toISOString(),
       });
     } catch (error) {
       console.error('[pin] Error:', error);
@@ -777,6 +827,7 @@ io.on('connection', (socket: AuthenticatedSocket) => {
       .findUnique({ where: { id: payload.callId }, select: { callerId: true, calleeId: true } })
       .then((call) => {
         if (!call) return;
+        if (call.callerId !== userId && call.calleeId !== userId) return;
         const peerId = call.callerId === userId ? call.calleeId : call.callerId;
         io.to(`user:${peerId}`).emit('call:accept', payload);
       })
@@ -789,6 +840,7 @@ io.on('connection', (socket: AuthenticatedSocket) => {
       .findUnique({ where: { id: payload.callId }, select: { callerId: true, calleeId: true } })
       .then((call) => {
         if (!call) return;
+        if (call.callerId !== userId && call.calleeId !== userId) return;
         const peerId = call.callerId === userId ? call.calleeId : call.callerId;
         io.to(`user:${peerId}`).emit('call:ice-candidate', payload);
       })

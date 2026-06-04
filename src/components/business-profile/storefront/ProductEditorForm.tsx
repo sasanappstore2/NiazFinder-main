@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Loader2, Plus, Save, Star, Trash2, X } from 'lucide-react';
+import { Loader2, Plus, Save, Star, Tag, Trash2, X } from 'lucide-react';
 import type { OfferVariant } from '@/contracts/business-profile';
-import type { StorefrontCategory } from '@/contracts/business-profile';
+import type { StorefrontCategory, StorefrontBrand } from '@/contracts/business-profile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,6 +27,7 @@ export type ProductFormValues = {
   images: string[];
   categoryIds: string[];
   primaryCategoryId: string | null;
+  brandId: string | null;
   variants: OfferVariant[];
 };
 
@@ -37,11 +38,14 @@ export const EMPTY_PRODUCT_FORM: ProductFormValues = {
   images: [],
   categoryIds: [],
   primaryCategoryId: null,
+  brandId: null,
   variants: [],
 };
 
 export function ProductEditorForm({
   categories,
+  brands,
+  onAddBrand,
   initial,
   title,
   onSave,
@@ -49,6 +53,8 @@ export function ProductEditorForm({
   saving,
 }: {
   categories: StorefrontCategory[];
+  brands: StorefrontBrand[];
+  onAddBrand: (title: string) => Promise<string | null>;
   initial: ProductFormValues;
   title: string;
   onSave: (values: ProductFormValues) => Promise<void>;
@@ -56,6 +62,8 @@ export function ProductEditorForm({
   saving: boolean;
 }) {
   const [form, setForm] = useState<ProductFormValues>(initial);
+  const [newBrandTitle, setNewBrandTitle] = useState('');
+  const [addingBrand, setAddingBrand] = useState(false);
 
   const toggleCategory = (catId: string, checked: boolean) => {
     setForm((prev) => {
@@ -109,6 +117,21 @@ export function ProductEditorForm({
     await onSave(form);
   };
 
+  const handleAddBrand = async () => {
+    const label = newBrandTitle.trim();
+    if (!label) return;
+    setAddingBrand(true);
+    try {
+      const id = await onAddBrand(label);
+      if (id) {
+        setForm((prev) => ({ ...prev, brandId: id }));
+        setNewBrandTitle('');
+      }
+    } finally {
+      setAddingBrand(false);
+    }
+  };
+
   return (
     <form onSubmit={(e) => void handleSubmit(e)} className="space-y-6 rounded-xl border bg-muted/15 p-4 sm:p-5">
       <div className="flex items-center justify-between gap-2">
@@ -152,6 +175,60 @@ export function ProductEditorForm({
       </div>
 
       <ProductImageGrid images={form.images} onChange={(images) => setForm({ ...form, images })} />
+
+      <div className="space-y-3 rounded-lg border bg-background p-3">
+        <div className="flex items-center gap-2">
+          <Tag className="size-4 text-muted-foreground" />
+          <Label>برند محصول (اختیاری)</Label>
+        </div>
+        {brands.length > 0 ? (
+          <Select
+            value={form.brandId ?? '_none'}
+            onValueChange={(val) =>
+              setForm({ ...form, brandId: val === '_none' ? null : val })
+            }
+          >
+            <SelectTrigger className="h-10">
+              <SelectValue placeholder="انتخاب برند" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="_none">بدون برند</SelectItem>
+              {brands.map((b) => (
+                <SelectItem key={b.id} value={b.id}>
+                  {b.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <p className="text-xs text-muted-foreground">هنوز برندی ثبت نشده — می‌توانید همین‌جا اضافه کنید.</p>
+        )}
+        <div className="flex gap-2">
+          <Input
+            value={newBrandTitle}
+            onChange={(e) => setNewBrandTitle(e.target.value)}
+            placeholder="نام برند جدید"
+            className="h-10"
+            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), void handleAddBrand())}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            className="h-10 shrink-0"
+            disabled={addingBrand || saving || !newBrandTitle.trim()}
+            onClick={() => void handleAddBrand()}
+          >
+            {addingBrand ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <>
+                <Plus className="ms-1 size-4" />
+                برند
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
 
       {categories.length > 0 && (
         <div className="space-y-2">

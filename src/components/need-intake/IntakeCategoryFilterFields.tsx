@@ -7,6 +7,7 @@ import { getIntakeFieldsForCategory } from '@/config/category-filters/registry';
 import { FieldRenderer } from '@/components/need-intake/FieldRenderer';
 import type { NeedDraft } from '@/contracts/need-intake';
 import { recordToEntities } from '@/intake/aggregate/needDraftAggregate';
+import { extractVehicleSubjectFromText } from '@/lib/need-intake/vertical-title';
 import { cn } from '@/lib/utils';
 
 /** Already captured elsewhere in intake (mega menu, location, budget section). */
@@ -41,7 +42,9 @@ interface IntakeCategoryFilterFieldsProps {
 function resolveFieldValue(
   field: FieldSchema,
   answers: Record<string, string | number | boolean | string[]>,
-  entities: ReturnType<typeof recordToEntities>
+  entities: ReturnType<typeof recordToEntities>,
+  sourceText?: string,
+  parsedBrand?: string
 ): string | number | boolean | string[] | undefined {
   const answer = answers[field.key];
   if (field.type === 'multi_select') {
@@ -78,6 +81,15 @@ function resolveFieldValue(
   if (field.key === 'area' && entities.area != null) {
     return entities.area;
   }
+  if (field.key === 'brand') {
+    const answer = answers.brand;
+    if (answer != null && answer !== '') return answer as string | number;
+    if (parsedBrand?.trim()) return parsedBrand.trim();
+    if (sourceText?.trim()) {
+      const extracted = extractVehicleSubjectFromText(sourceText);
+      if (extracted) return extracted;
+    }
+  }
   return undefined;
 }
 
@@ -105,6 +117,8 @@ export function IntakeCategoryFilterFields({
 
   const answers = needDraft?.answers ?? {};
   const entities = needDraft ? recordToEntities(needDraft.entities) : null;
+  const sourceText = needDraft?.sourceText ?? needDraft?.parsedIntent?.rawText ?? '';
+  const parsedBrand = needDraft?.parsedIntent?.entities?.brand;
   const context = useMemo(
     () => ({
       ...answers,
@@ -117,7 +131,13 @@ export function IntakeCategoryFilterFields({
   if (visibleFields.length === 0) return null;
 
   const filledCount = visibleFields.filter((field) => {
-    const v = resolveFieldValue(field, answers, entities ?? recordToEntities({}));
+    const v = resolveFieldValue(
+      field,
+      answers,
+      entities ?? recordToEntities({}),
+      sourceText,
+      parsedBrand
+    );
     if (Array.isArray(v)) return v.length > 0;
     return v != null && v !== '';
   }).length;
@@ -157,7 +177,13 @@ export function IntakeCategoryFilterFields({
                 <label className="text-sm font-medium">{label}</label>
                 <FieldRenderer
                   field={fieldForRender}
-                  value={resolveFieldValue(field, answers, entities ?? recordToEntities({}))}
+                  value={resolveFieldValue(
+                    field,
+                    answers,
+                    entities ?? recordToEntities({}),
+                    sourceText,
+                    parsedBrand
+                  )}
                   onChange={(value) => onPatchAnswer(field.key, value)}
                 />
                 {field.helpText ? (

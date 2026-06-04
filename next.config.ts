@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { buildContentSecurityPolicy } from "./src/lib/security/content-security-policy";
 
 /**
  * Legacy → canonical 301 redirects.
@@ -22,24 +23,44 @@ const legacyRedirects = [
   { source: "/requests/:slug",            destination: "/v/:slug",               permanent: true },
   { source: "/specialists",               destination: "/b/iran",                permanent: true },
   { source: "/specialists/:id",           destination: "/pro/:id",               permanent: true },
-  { source: "/specialists/compare",       destination: "/compare",               permanent: true },
+  { source: "/specialists/compare",       destination: "/b/iran",                permanent: true },
 
   { source: "/need",                      destination: "/n/iran",                permanent: true },
   { source: "/need/new",                  destination: "/post",                  permanent: true },
   { source: "/business",                  destination: "/b/iran",                permanent: true },
-  { source: "/business/compare",          destination: "/compare",               permanent: true },
+  { source: "/business/compare",          destination: "/b/iran",                permanent: true },
   { source: "/post-need",                 destination: "/post",                  permanent: true },
   { source: "/request/:id",               destination: "/v/:id",                 permanent: true },
   { source: "/request-detail/:id",        destination: "/v/:id",                 permanent: true },
   { source: "/specialist/:id",            destination: "/pro/:id",               permanent: true },
   { source: "/specialist-profile/:id",    destination: "/pro/:id",               permanent: true },
-  { source: "/compare-specialists",       destination: "/compare",               permanent: true },
+  { source: "/compare-specialists",       destination: "/b/iran",                permanent: true },
 
   { source: "/messages",                  destination: "/chat",                  permanent: true },
   { source: "/messages/:path*",           destination: "/chat/:path*",           permanent: true },
 
   { source: "/support",                   destination: "/help",                  permanent: true },
 ] as const;
+
+function buildMinioRemotePatterns(): NonNullable<NextConfig["images"]>["remotePatterns"] {
+  const raw = process.env.MINIO_PUBLIC_URL?.trim();
+  if (!raw) return [];
+
+  try {
+    const url = new URL(raw);
+    const protocol = url.protocol.replace(":", "") as "http" | "https";
+    return [
+      {
+        protocol,
+        hostname: url.hostname,
+        pathname: "/**",
+        ...(url.port ? { port: url.port } : {}),
+      },
+    ];
+  } catch {
+    return [];
+  }
+}
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -48,24 +69,34 @@ const nextConfig: NextConfig = {
     "localhost:3000",
     "127.0.0.1:3000",
   ],
+  async headers() {
+    const commonHeaders = [
+      { key: "X-Frame-Options", value: "SAMEORIGIN" },
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      {
+        key: "Permissions-Policy",
+        value: "camera=(), microphone=(self), geolocation=(self)",
+      },
+    ];
+
+    // CSP breaks React/Turbopack dev (requires eval). Enforce only in production.
+    if (process.env.NODE_ENV === "production") {
+      commonHeaders.push({
+        key: "Content-Security-Policy",
+        value: buildContentSecurityPolicy(),
+      });
+    }
+
+    return [
+      {
+        source: "/:path*",
+        headers: commonHeaders,
+      },
+    ];
+  },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "picsum.photos",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "avatars.githubusercontent.com",
-        pathname: "/**",
-      },
-    ],
+    remotePatterns: buildMinioRemotePatterns(),
   },
   async redirects() {
     return [...legacyRedirects];

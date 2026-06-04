@@ -3,6 +3,18 @@ import { LISTING_TITLE_MAX_LENGTH } from '@/lib/need-intake/listing-title';
 const GENERIC_ONLY_CITY =
   /^(خرید|فروش|اجاره|رهن|نیاز)\s*[—\-–]\s*\S+\s*$/u;
 
+/** Default titles from intent-parser — not usable as listing headlines. */
+export const GENERIC_PARSER_TITLES = new Set([
+  'جستجوی خودرو',
+  'جستجوی ملک',
+  'جستجوی کالا',
+  'درخواست خدمات',
+  'آگهی استخدام',
+  'ثبت نیاز',
+]);
+
+const CORRUPTED_TITLE_FRAGMENTS = [/نوحد/u, /حد\s*مش/u];
+
 export interface TitleQualityContext {
   sourceText?: string;
 }
@@ -43,14 +55,23 @@ export function rejectListingTitleReason(
 ): string | null {
   const t = title.trim();
   if (t === 'ثبت نیاز' || t === 'خرید کالا') return 'generic';
+  if (GENERIC_PARSER_TITLES.has(t)) return 'generic_parser_title';
   if (t.length < 10) return 'too_short';
   if (GENERIC_ONLY_CITY.test(t)) return 'generic_deal_city_only';
+  if (CORRUPTED_TITLE_FRAGMENTS.some((re) => re.test(t))) return 'corrupted_fragment';
 
   const seed = ctx?.sourceText?.trim();
   if (seed && seed.length >= 20) {
     const normSeed = normalizeForOverlap(seed);
     const normTitle = normalizeForOverlap(t);
-    if (normTitle.length >= 15 && overlapRatio(normSeed, normTitle) > 0.85) {
+    const structuredParts = t.split(/\s*[—\-–]\s*/u).filter((p) => p.trim().length > 0);
+    const isStructuredSummary = structuredParts.length >= 3;
+    if (
+      normTitle.length >= 15 &&
+      !isStructuredSummary &&
+      normTitle.length > normSeed.length * 0.55 &&
+      overlapRatio(normSeed, normTitle) > 0.85
+    ) {
       return 'verbatim_copy';
     }
   }

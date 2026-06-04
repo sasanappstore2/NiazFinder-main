@@ -36,6 +36,7 @@ export async function uploadChatObject(
       Key: key,
       Body: body,
       ContentType: contentType,
+      ACL: 'private',
     })
   );
 

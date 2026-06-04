@@ -334,7 +334,7 @@ export const getStatusLabel = (status: string): string => {
     REJECTED: 'رد شده',
     WITHDRAWN: 'بازگشتی',
   };
-  return labels[status] || status;
+  return labels[status] || 'نامشخص';
 };
 
 export const getPriorityLabel = (priority: string): string => {
@@ -344,7 +344,7 @@ export const getPriorityLabel = (priority: string): string => {
     HIGH: 'زیاد',
     URGENT: 'فوری',
   };
-  return labels[priority] || priority;
+  return labels[priority] || 'نامشخص';
 };
 
 export const getBudgetTypeLabel = (type: string): string => {

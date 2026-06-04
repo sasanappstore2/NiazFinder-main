@@ -4,6 +4,7 @@ import { findValidOtp, markOtpVerified } from '@/lib/otp-store';
 import { isTestOtpCode } from '@/lib/auth/test-otp';
 import { issueAuthToken, mapDbUserToResponse } from '@/lib/auth/phone-auth-response';
 import { toAsciiDigits } from '@/lib/format/digits';
+import { checkRateLimit, clientIp } from '@/lib/security/rate-limit';
 import { isSuperAdminPhone, normalizePhone } from '@/lib/super-admin';
 
 interface VerifyRequestBody {
@@ -26,9 +27,25 @@ export async function POST(request: NextRequest) {
 
     const normalizedPhone = normalizePhone(phone);
     const otpCode = toAsciiDigits(code);
+
+    const ipLimit = checkRateLimit(`verify:ip:${clientIp(request)}`, 30, 60_000);
+    if (!ipLimit.allowed) {
+      return NextResponse.json(
+        { error: 'تعداد تلاش بیش از حد مجاز است. لطفاً کمی بعد تلاش کنید.' },
+        { status: 429 }
+      );
+    }
+    const phoneLimit = checkRateLimit(`verify:phone:${normalizedPhone}`, 10, 60_000);
+    if (!phoneLimit.allowed) {
+      return NextResponse.json(
+        { error: 'تعداد تلاش بیش از حد مجاز است. لطفاً کمی بعد تلاش کنید.' },
+        { status: 429 }
+      );
+    }
+
     const grantSuperAdmin = isSuperAdminPhone(normalizedPhone);
 
-    const otpRecord = findValidOtp(normalizedPhone, otpCode);
+    const otpRecord = await findValidOtp(normalizedPhone, otpCode);
     const acceptedTestOtp = isTestOtpCode(otpCode);
 
     if (!otpRecord && !acceptedTestOtp) {
@@ -39,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (otpRecord) {
-      markOtpVerified(normalizedPhone, code);
+      await markOtpVerified(normalizedPhone, code);
     }
 
     let user = await db.user.findUnique({
@@ -89,6 +106,9 @@ export async function POST(request: NextRequest) {
     });
 
     const token = await issueAuthToken(user.id);
+
+    const { acceptBusinessInvitesForUser } = await import('@/lib/business/team/accept-invite');
+    await acceptBusinessInvitesForUser(user.id, normalizedPhone);
 
     return NextResponse.json({
       message: 'ورود با موفقیت انجام شد',

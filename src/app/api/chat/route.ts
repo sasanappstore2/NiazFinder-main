@@ -7,6 +7,8 @@ import { getAuthUser } from '@/lib/auth';
 interface ConversationListItem {
   id: string;
   requestId: string | null;
+  contactPointId: string | null;
+  businessProfileId: string | null;
   lastMessage: string | null;
   lastMessageAt: Date | null;
   unreadCount: number;
@@ -17,12 +19,19 @@ interface ConversationListItem {
     avatar: string | null;
     online: boolean;
   };
+  businessContext?: {
+    businessName: string;
+    contactLabel: string;
+    logo: string | null;
+  };
   createdAt: Date;
 }
 
 interface CreateConversationBody {
   otherUserId: string;
   requestId?: string;
+  contactPointId?: string;
+  businessProfileId?: string;
 }
 
 // ============ GET handler ============
@@ -53,6 +62,9 @@ export async function GET(request: NextRequest) {
         user2: {
           select: { id: true, firstName: true, lastName: true, avatar: true, online: true },
         },
+        contactPoint: {
+          include: { profile: { select: { name: true, logo: true } } },
+        },
         messages: {
           where: {
             senderId: { not: user.id },
@@ -70,6 +82,8 @@ export async function GET(request: NextRequest) {
       return {
         id: conv.id,
         requestId: conv.requestId,
+        contactPointId: conv.contactPointId,
+        businessProfileId: conv.businessProfileId,
         lastMessage: conv.lastMessage,
         lastMessageAt: conv.lastMessageAt,
         unreadCount: conv.messages.length,
@@ -80,6 +94,13 @@ export async function GET(request: NextRequest) {
           avatar: otherUser.avatar,
           online: otherUser.online,
         },
+        businessContext: conv.contactPoint
+          ? {
+              businessName: conv.contactPoint.profile.name,
+              contactLabel: conv.contactPoint.label,
+              logo: conv.contactPoint.profile.logo,
+            }
+          : undefined,
         createdAt: conv.createdAt,
       };
     });
@@ -107,7 +128,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body: CreateConversationBody = await request.json();
-    const { otherUserId, requestId } = body;
+    const { otherUserId, requestId, contactPointId, businessProfileId } = body;
 
     if (!otherUserId) {
       return NextResponse.json(
@@ -137,14 +158,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if conversation already exists between these two users for this request
+    let resolvedContactPointId: string | null = contactPointId ?? null;
+    let resolvedBusinessProfileId: string | null = businessProfileId ?? null;
+    let contactLabel: string | null = null;
+    let businessName: string | null = null;
+
+    if (contactPointId) {
+      const { validateContactPointForChat } = await import(
+        '@/lib/business/team/public-contacts'
+      );
+      const point = await validateContactPointForChat(
+        contactPointId,
+        otherUserId,
+        businessProfileId
+      );
+      if (!point) {
+        return NextResponse.json(
+          { error: 'مخاطب انتخاب‌شده معتبر نیست' },
+          { status: 400 }
+        );
+      }
+      resolvedContactPointId = point.id;
+      resolvedBusinessProfileId = point.profileId;
+      contactLabel = point.label;
+      businessName = point.profile.name;
+    }
+
+    const { isBlockedEitherWay } = await import('@/lib/chat/block-check');
+    if (await isBlockedEitherWay(user.id, otherUserId)) {
+      return NextResponse.json({ error: 'امکان گفتگو وجود ندارد' }, { status: 403 });
+    }
+
+    // Check if conversation already exists between these two users for this request + contact point
     const existingConv = await db.conversation.findFirst({
       where: {
         OR: [
           { userId1: user.id, userId2: otherUserId },
           { userId1: otherUserId, userId2: user.id },
         ],
-        ...(requestId ? { requestId } : {}),
+        requestId: requestId ?? null,
+        contactPointId: resolvedContactPointId,
       },
       include: {
         user1: {
@@ -152,6 +205,9 @@ export async function POST(request: NextRequest) {
         },
         user2: {
           select: { id: true, firstName: true, lastName: true, avatar: true, online: true },
+        },
+        contactPoint: {
+          include: { profile: { select: { name: true, logo: true } } },
         },
         messages: {
           where: {
@@ -172,6 +228,8 @@ export async function POST(request: NextRequest) {
         conversation: {
           id: existingConv.id,
           requestId: existingConv.requestId,
+          contactPointId: existingConv.contactPointId,
+          businessProfileId: existingConv.businessProfileId,
           lastMessage: existingConv.lastMessage,
           lastMessageAt: existingConv.lastMessageAt,
           unreadCount: existingConv.messages.length,
@@ -182,17 +240,25 @@ export async function POST(request: NextRequest) {
             avatar: other.avatar,
             online: other.online,
           },
+          businessContext: existingConv.contactPoint
+            ? {
+                businessName: existingConv.contactPoint.profile.name,
+                contactLabel: existingConv.contactPoint.label,
+                logo: existingConv.contactPoint.profile.logo,
+              }
+            : undefined,
           createdAt: existingConv.createdAt,
         },
       });
     }
 
-    // Create new conversation
     const conversation = await db.conversation.create({
       data: {
         userId1: user.id,
         userId2: otherUserId,
         requestId: requestId || null,
+        contactPointId: resolvedContactPointId,
+        businessProfileId: resolvedBusinessProfileId,
       },
       include: {
         user1: {
@@ -204,13 +270,33 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    if (contactLabel && businessName) {
+      await db.message.create({
+        data: {
+          conversationId: conversation.id,
+          senderId: user.id,
+          content: `شما با بخش ${contactLabel} ${businessName} گفتگو را شروع کردید`,
+          type: 'SYSTEM',
+        },
+      });
+      await db.conversation.update({
+        where: { id: conversation.id },
+        data: {
+          lastMessage: `گفتگو با ${contactLabel}`,
+          lastMessageAt: new Date(),
+        },
+      });
+    }
+
     return NextResponse.json(
       {
         message: 'گفتگو با موفقیت ایجاد شد',
         conversation: {
           id: conversation.id,
           requestId: conversation.requestId,
-          lastMessage: conversation.lastMessage,
+          contactPointId: conversation.contactPointId,
+          businessProfileId: conversation.businessProfileId,
+          lastMessage: contactLabel ? `گفتگو با ${contactLabel}` : conversation.lastMessage,
           lastMessageAt: conversation.lastMessageAt,
           unreadCount: 0,
           otherUser: {
@@ -220,6 +306,10 @@ export async function POST(request: NextRequest) {
             avatar: null,
             online: false,
           },
+          businessContext:
+            contactLabel && businessName
+              ? { businessName, contactLabel, logo: null }
+              : undefined,
           createdAt: conversation.createdAt,
         },
       },

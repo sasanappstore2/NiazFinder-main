@@ -28,11 +28,10 @@ import {
   upsertReactionInList,
 } from '@/lib/chat/reactions';
 import {
-  isChatSocketConnected,
   tryDeleteMessage,
   tryEditMessage,
+  tryPinMessage,
   tryReactToMessage,
-  trySendMessageViaSocket,
 } from '@/lib/chat/socket-bridge';
 import { canEditChatMessage } from '@/lib/chat/message-edit';
 
@@ -167,9 +166,21 @@ interface AppState {
     content: string;
     editedAt?: string | null;
   }) => void;
+  applyMessagePinChanged: (payload: {
+    messageId: string;
+    conversationId: string;
+    isPinned: boolean;
+    pinnedBy?: string | null;
+    pinnedAt?: string | null;
+  }) => void;
   reactToMessage: (messageId: string, emoji: string) => Promise<boolean>;
   deleteChatMessage: (messageId: string, forEveryone: boolean) => Promise<boolean>;
   editChatMessage: (messageId: string, content: string) => Promise<boolean>;
+  pinChatMessage: (
+    messageId: string,
+    conversationId: string,
+    unpin: boolean
+  ) => Promise<boolean>;
 
   // Chat (API)
   messages: Message[];
@@ -185,6 +196,9 @@ interface AppState {
   // Bookmarks
   bookmarkedRequests: string[];
   bookmarkedSpecialists: string[];
+  setBookmarkIds: (requestIds: string[], specialistIds: string[]) => void;
+  applyBookmarkToggle: (type: 'request' | 'specialist', id: string, isBookmarked: boolean) => void;
+  fetchBookmarks: () => Promise<void>;
   toggleBookmarkRequest: (id: string) => void;
   toggleBookmarkSpecialist: (id: string) => void;
   isRequestBookmarked: (id: string) => boolean;
@@ -306,6 +320,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     } else {
       set({ currentUser: user, isAuthenticated: true, authModalOpen: false });
     }
+    void get().fetchBookmarks();
   },
   logout: () => {
     set({
@@ -322,6 +337,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       wallet: null,
       transactions: [],
       dashboardStats: null,
+      bookmarkedRequests: [],
+      bookmarkedSpecialists: [],
     });
     if (typeof window !== 'undefined') {
       localStorage.removeItem(TOKEN_KEY);
@@ -350,6 +367,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       set({ authToken: token });
       try {
         await get().fetchCurrentUser();
+        await get().fetchBookmarks();
       } catch {
         // Token is invalid — clear it
         localStorage.removeItem(TOKEN_KEY);
@@ -947,6 +965,26 @@ export const useAppStore = create<AppState>((set, get) => ({
     }));
   },
 
+  applyMessagePinChanged: (payload) => {
+    set((state) => ({
+      messages: state.messages.map((m) => {
+        if (m.conversationId !== payload.conversationId) return m;
+        if (m.id === payload.messageId) {
+          return {
+            ...m,
+            isPinned: payload.isPinned,
+            pinnedBy: payload.pinnedBy ?? undefined,
+            pinnedAt: payload.pinnedAt ?? undefined,
+          };
+        }
+        if (payload.isPinned && m.isPinned) {
+          return { ...m, isPinned: false, pinnedBy: undefined, pinnedAt: undefined };
+        }
+        return m;
+      }),
+    }));
+  },
+
   reactToMessage: async (messageId, emoji) => {
     if (!isAllowedReactionEmoji(emoji)) return false;
     const me = get().currentUser?.id;
@@ -1048,6 +1086,37 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
   },
 
+  pinChatMessage: async (messageId, conversationId, unpin) => {
+    const me = get().currentUser?.id;
+    if (!me) return false;
+    const msg = get().messages.find((m) => m.id === messageId);
+    if (!msg || msg.deletedAt) return false;
+
+    try {
+      const res = await apiFetch<{
+        ok: boolean;
+        isPinned: boolean;
+        pinnedBy: string | null;
+        pinnedAt: string | null;
+      }>(`/api/chat/messages/${messageId}`, {
+        method: 'POST',
+        body: { pin: true, unpin },
+      });
+      get().applyMessagePinChanged({
+        messageId,
+        conversationId,
+        isPinned: res.isPinned,
+        pinnedBy: res.pinnedBy,
+        pinnedAt: res.pinnedAt,
+      });
+      tryPinMessage(messageId, conversationId, unpin);
+      return true;
+    } catch {
+      await get().fetchConversationMessages(conversationId);
+      return false;
+    }
+  },
+
   // ===========================
   // Chat (API)
   // ===========================
@@ -1065,10 +1134,13 @@ export const useAppStore = create<AppState>((set, get) => ({
           return {
             id: c.id,
             requestId: c.requestId,
+            contactPointId: c.contactPointId,
+            businessProfileId: c.businessProfileId,
             otherUser: c.otherUser,
             lastMessage: c.lastMessage,
             lastMessageAt: c.lastMessageAt ? String(c.lastMessageAt) : undefined,
             unreadCount: c.unreadCount ?? 0,
+            businessContext: c.businessContext,
             isPeerTyping: isTyping,
           };
         });
@@ -1098,6 +1170,9 @@ export const useAppStore = create<AppState>((set, get) => ({
         reactions: m.reactions,
         deletedAt: m.deletedAt ?? null,
         editedAt: m.editedAt ?? null,
+        isPinned: m.isPinned ?? false,
+        pinnedBy: m.pinnedBy ?? undefined,
+        pinnedAt: m.pinnedAt ?? undefined,
       }));
       set((state) => {
         const apiByClientTemp = new Set(
@@ -1161,33 +1236,6 @@ export const useAppStore = create<AppState>((set, get) => ({
     };
 
     set((state) => ({ messages: [...state.messages, optimistic] }));
-
-    const preview = chatMessageListPreview(content, type);
-    const sentAt = new Date().toISOString();
-
-    const updateConversationPreview = () =>
-      set((state) => ({
-        conversations: state.conversations.map((c) =>
-          c.id === conversationId
-            ? { ...c, lastMessage: preview, lastMessageAt: sentAt }
-            : c
-        ),
-      }));
-
-    if (isChatSocketConnected()) {
-      const sent = trySendMessageViaSocket(
-        conversationId,
-        content,
-        type,
-        clientTempId,
-        options?.replyToId,
-        replyTo
-      );
-      if (sent) {
-        updateConversationPreview();
-        return true;
-      }
-    }
 
     try {
       const res = await apiFetch<{ message: string; messageData: any }>(`/api/chat/${conversationId}`, {
@@ -1253,6 +1301,49 @@ export const useAppStore = create<AppState>((set, get) => ({
   // ===========================
   bookmarkedRequests: [],
   bookmarkedSpecialists: [],
+  setBookmarkIds: (requestIds, specialistIds) =>
+    set({ bookmarkedRequests: requestIds, bookmarkedSpecialists: specialistIds }),
+  applyBookmarkToggle: (type, id, isBookmarked) =>
+    set((state) => {
+      if (type === 'request') {
+        const exists = state.bookmarkedRequests.includes(id);
+        if (isBookmarked && !exists) {
+          return { bookmarkedRequests: [...state.bookmarkedRequests, id] };
+        }
+        if (!isBookmarked && exists) {
+          return {
+            bookmarkedRequests: state.bookmarkedRequests.filter((rId) => rId !== id),
+          };
+        }
+        return state;
+      }
+      const exists = state.bookmarkedSpecialists.includes(id);
+      if (isBookmarked && !exists) {
+        return { bookmarkedSpecialists: [...state.bookmarkedSpecialists, id] };
+      }
+      if (!isBookmarked && exists) {
+        return {
+          bookmarkedSpecialists: state.bookmarkedSpecialists.filter((sId) => sId !== id),
+        };
+      }
+      return state;
+    }),
+  fetchBookmarks: async () => {
+    const token = get().authToken;
+    if (!token) return;
+    try {
+      const res = await apiFetch<{
+        bookmarkedRequests: { id: string }[];
+        bookmarkedSpecialists: { id: string }[];
+      }>('/api/bookmarks');
+      set({
+        bookmarkedRequests: (res.bookmarkedRequests ?? []).map((r) => r.id),
+        bookmarkedSpecialists: (res.bookmarkedSpecialists ?? []).map((s) => s.id),
+      });
+    } catch {
+      // ignore — user may be logged out
+    }
+  },
   toggleBookmarkRequest: (id) =>
     set((state) => ({
       bookmarkedRequests: state.bookmarkedRequests.includes(id)

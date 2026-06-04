@@ -10,6 +10,7 @@ import {
   rankNeighborhoodCandidates,
   type NeighborhoodGlobalMatch,
 } from '@/lib/need-intake/neighborhood-catalog.server';
+import { extractVehicleSubjectFromText } from '@/lib/need-intake/vertical-title';
 import { parseAreaFromText } from '@/lib/need-intake/vertical-classifier';
 
 function isPropertyParsed(parsed: ParsedIntent): boolean {
@@ -19,6 +20,12 @@ function isPropertyParsed(parsed: ParsedIntent): boolean {
   if (parsed.rawText && isConstructionPartnershipText(parsed.rawText)) return true;
   const root = getCategoryPath(parsed.categorySlug)[0]?.slug;
   return root === 'real-estate';
+}
+
+function isVehicleParsed(parsed: ParsedIntent): boolean {
+  if (parsed.intentType.startsWith('vehicle')) return true;
+  const root = getCategoryPath(parsed.categorySlug)[0]?.slug;
+  return root === 'vehicles';
 }
 
 /** Attach neighborhood slug, slot extraction, optional disambiguation, and missingFields. */
@@ -93,6 +100,41 @@ export function enrichParsedIntent(parsed: ParsedIntent): ParsedIntent {
         }
       } else {
         next = { ...next, city };
+      }
+    }
+  }
+
+  if (isVehicleParsed(next) && raw) {
+    const city = next.city?.trim() || parseCity(raw);
+    const area =
+      parseAreaFromText(raw)?.trim() ||
+      next.entities?.area?.trim() ||
+      '';
+    const brand =
+      next.entities?.brand?.trim() ||
+      extractVehicleSubjectFromText(raw) ||
+      '';
+    const entityPatch: Record<string, string> = { ...(next.entities ?? {}) };
+    if (area) entityPatch.area = area;
+    if (brand) entityPatch.brand = brand;
+    next = {
+      ...next,
+      city: city || next.city,
+      entities: entityPatch,
+    };
+
+    if (city && area) {
+      const hit = findNeighborhoodInText(city, raw);
+      if (hit) {
+        next = {
+          ...next,
+          city,
+          neighborhoodSlug: hit.slug,
+          entities: {
+            ...next.entities,
+            area: (hit.matchedArea ?? hit.name).trim(),
+          },
+        };
       }
     }
   }

@@ -14,11 +14,11 @@ export type AppView =
   | 'admin'
   | 'profile'
   | 'pricing'
-  | 'compare-specialists'
   | 'submit-proposal'
   | 'submit-review'
   | 'referral'
-  | 'notification-settings';
+  | 'notification-settings'
+  | 'bookmarks';
 
 // ============ User ============
 export interface User {
@@ -155,6 +155,9 @@ export interface Message {
   reactions?: MessageReactionItem[];
   deletedAt?: string | null;
   editedAt?: string | null;
+  isPinned?: boolean;
+  pinnedBy?: string | null;
+  pinnedAt?: string | null;
   sender?: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatar'>;
 }
 
@@ -162,10 +165,17 @@ export interface Message {
 export interface Conversation {
   id: string;
   requestId?: string;
+  contactPointId?: string | null;
+  businessProfileId?: string | null;
   otherUser: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatar' | 'online'>;
   lastMessage?: string;
   lastMessageAt?: string;
   unreadCount: number;
+  businessContext?: {
+    businessName: string;
+    contactLabel: string;
+    logo: string | null;
+  };
   /** طرف مقابل در این گفتگو در حال تایپ است */
   isPeerTyping?: boolean;
 }

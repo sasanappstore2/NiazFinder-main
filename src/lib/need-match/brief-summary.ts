@@ -5,8 +5,8 @@ export function buildNeedBriefSummary(need: NeedMatchContext): string {
   const parts: string[] = [];
   parts.push(`نیاز «${need.title.trim()}» در دسته ${need.categoryName}.`);
   if (need.city) parts.push(`محدوده: ${need.city}.`);
-  const text = `${need.title} ${need.description}`.toLowerCase();
-  if (text.includes('ps5') || text.includes('ps4') || text.includes('playstation')) {
+  const text = `${need.title} ${need.description}`;
+  if (/ps5|ps4|playstation|پلی‌استیشن|پلی استیشن/i.test(text)) {
     parts.push('به دنبال کنسول یا بازی هستید.');
   }
   if (text.includes('خرید') || text.includes('می‌خرم') || text.includes('میخرم')) {

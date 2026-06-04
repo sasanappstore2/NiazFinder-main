@@ -256,7 +256,10 @@ function crumbsForPath(
   if (pathname === '/chat' || pathname.startsWith('/chat/'))
                                      return [home, { label: 'پیام‌ها', href: routeBuilder.chat() }];
   if (pathname === '/notifications') return [home, { label: 'اعلان‌ها', href: routeBuilder.notifications() }];
+  if (pathname === '/bookmarks')     return [home, { label: 'علاقه‌مندی‌ها', href: routeBuilder.bookmarks() }];
   if (pathname === '/help')          return [home, { label: 'پشتیبانی', href: routeBuilder.help() }];
+  if (pathname === '/terms')         return [home, { label: 'قوانین استفاده', href: '/terms' }];
+  if (pathname === '/privacy')       return [home, { label: 'حریم خصوصی', href: '/privacy' }];
   if (pathname === '/pricing')       return [home, { label: 'تعرفه‌ها', href: routeBuilder.pricing() }];
   if (pathname === '/login')         return [home, { label: 'ورود', href: routeBuilder.login() }];
   if (pathname === '/register')      return [home, { label: 'ثبت‌نام', href: routeBuilder.register() }];

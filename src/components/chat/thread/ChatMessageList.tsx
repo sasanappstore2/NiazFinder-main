@@ -27,6 +27,7 @@ export interface ChatMessageListProps {
   onEdit?: (msg: Message) => void;
   onDeleteForMe: (messageId: string) => void;
   onDeleteForEveryoneRequest: (messageId: string) => void;
+  onPin: (messageId: string) => void;
   onScrollToMessage: (messageId: string) => void;
   onImageOpen: (messageId: string) => void;
   peerTyping: {
@@ -49,6 +50,7 @@ export function ChatMessageList({
   onEdit,
   onDeleteForMe,
   onDeleteForEveryoneRequest,
+  onPin,
   onScrollToMessage,
   onImageOpen,
   peerTyping,
@@ -133,7 +135,8 @@ export function ChatMessageList({
               onEdit={onEdit ? () => onEdit(msg) : undefined}
               onDeleteForMe={() => onDeleteForMe(msg.id)}
               onDeleteForEveryone={() => onDeleteForEveryoneRequest(msg.id)}
-                onScrollToMessage={onScrollToMessage}
+              onPin={() => onPin(msg.id)}
+              onScrollToMessage={onScrollToMessage}
               onImageOpen={() => onImageOpen(msg.id)}
               peer={!isMe ? peer : undefined}
               showPeerAvatar={showPeerAvatar}

@@ -1,6 +1,6 @@
 'use client';
 
-import { ImageIcon, LayoutList, Store, UserRound } from 'lucide-react';
+import { ImageIcon, LayoutList, Store, UserRound, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useBusinessHub } from './BusinessHubContext';
 import type { HubTaskId } from './types';
@@ -35,6 +35,12 @@ const TASKS: {
     hint: 'عکس یا ویدیو از کارهای شما',
     icon: ImageIcon,
   },
+  {
+    id: 'contacts',
+    label: 'مخاطبین و تیم',
+    hint: 'بخش‌های تماس و دعوت کارمند',
+    icon: Users,
+  },
 ];
 
 export function BusinessHubTaskGrid({ className }: { className?: string }) {
@@ -44,7 +50,7 @@ export function BusinessHubTaskGrid({ className }: { className?: string }) {
     completion?.items.some((i) => !i.completed && i.taskId === taskId) ?? false;
 
   return (
-    <div className={cn('hidden gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-4', className)}>
+    <div className={cn('hidden gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-5', className)}>
       {TASKS.map(({ id, label, hint, icon: Icon }) => {
         const needsWork = incompleteByTask(id);
         const active = activeTask === id;

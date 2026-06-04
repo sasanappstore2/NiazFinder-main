@@ -78,6 +78,8 @@ export async function ensureBusinessProfile(user: UserForProfile): Promise<Busin
   try {
     const profile = await db.businessProfile.create({ data });
     await syncCategorySlugsFromSkills(profile.id, user.id);
+    const { seedBusinessTeamDefaults } = await import('@/lib/business/team/seed-defaults');
+    await seedBusinessTeamDefaults(profile.id, user.id);
     return profile;
   } catch (error) {
     if (!isUniqueConstraintError(error)) throw error;
@@ -100,6 +102,8 @@ export async function ensureBusinessProfile(user: UserForProfile): Promise<Busin
           data: buildProfileData(user, name, slug),
         });
         await syncCategorySlugsFromSkills(profile.id, user.id);
+        const { seedBusinessTeamDefaults } = await import('@/lib/business/team/seed-defaults');
+        await seedBusinessTeamDefaults(profile.id, user.id);
         return profile;
       } catch (retryError) {
         if (isUniqueConstraintError(retryError)) {
@@ -200,7 +204,7 @@ export async function seedPortfolioFromLegacy(profileId: string, userId: string)
             type: 'IMAGE' as const,
             title: p.title,
             description: p.description,
-            mediaUrl: p.videoUrl ?? '/placeholder-portfolio.jpg',
+            mediaUrl: p.videoUrl ?? '/images/placeholders/portfolio.jpg',
             order: i,
             metadata: toJson({}),
           },

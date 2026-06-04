@@ -8,6 +8,17 @@ import { toJson } from '../src/lib/business/json-fields';
 const prisma = new PrismaClient();
 const SLUG_PREFIX = 'biz-demo-';
 
+const DEMO_PLACEHOLDERS = [
+  '/images/placeholders/demo-1.webp',
+  '/images/placeholders/demo-2.webp',
+  '/images/placeholders/demo-3.webp',
+  '/images/placeholders/demo-4.webp',
+] as const;
+
+function demoImage(index: number): string {
+  return DEMO_PLACEHOLDERS[index % DEMO_PLACEHOLDERS.length];
+}
+
 type DemoSpec = {
   slug: string;
   name: string;
@@ -69,8 +80,8 @@ const DEMOS: DemoSpec[] = [
     extensions: {
       realEstate: {
         listings: [
-          { id: '1', title: 'آپارتمان ۱۱۰ متری آبادگران', price: '۱۲.۵ میلیارد', area: '۱۱۰ م²', rooms: 3, image: 'https://picsum.photos/seed/re1/600/400' },
-          { id: '2', title: 'ویلا ۲۵۰ متری طرق', price: '۲۸ میلیارد', area: '۲۵۰ م²', rooms: 4, image: 'https://picsum.photos/seed/re2/600/400' },
+          { id: '1', title: 'آپارتمان ۱۱۰ متری آبادگران', price: '۱۲.۵ میلیارد', area: '۱۱۰ م²', rooms: 3, image: demoImage(0) },
+          { id: '2', title: 'ویلا ۲۵۰ متری طرق', price: '۲۸ میلیارد', area: '۲۵۰ م²', rooms: 4, image: demoImage(1) },
         ],
       },
     },
@@ -114,9 +125,9 @@ const DEMOS: DemoSpec[] = [
       { title: 'طراحی UI اپ', description: 'Figma + Design System', priceRange: 'از ۱۸ میلیون', duration: '۲–۴ هفته' },
     ],
     portfolio: [
-      { title: 'فروشگاه مد', mediaUrl: 'https://picsum.photos/seed/p1/800/600' },
-      { title: 'داشبورد SaaS', mediaUrl: 'https://picsum.photos/seed/p2/800/600' },
-      { title: 'ری‌برند رستوران', type: 'BEFORE_AFTER', mediaUrl: 'https://picsum.photos/seed/p3a/800/600', beforeUrl: 'https://picsum.photos/seed/p3a/800/600', afterUrl: 'https://picsum.photos/seed/p3b/800/600' },
+      { title: 'فروشگاه مد', mediaUrl: demoImage(0) },
+      { title: 'داشبورد SaaS', mediaUrl: demoImage(1) },
+      { title: 'ری‌برند رستوران', type: 'BEFORE_AFTER', mediaUrl: demoImage(2), beforeUrl: demoImage(2), afterUrl: demoImage(3) },
     ],
     reviews: [
       { userName: 'سارا م.', rating: 5, comment: 'طراحی فوق‌العاده و تحویل به موقع.' },
@@ -143,10 +154,10 @@ const DEMOS: DemoSpec[] = [
       },
     },
     portfolio: [
-      { title: 'تمرین سینه', mediaUrl: 'https://picsum.photos/seed/coach1/600/600' },
-      { title: 'کلاس گروهی', mediaUrl: 'https://picsum.photos/seed/coach2/600/600' },
-      { title: 'نتیجه ۳ ماهه', mediaUrl: 'https://picsum.photos/seed/coach3/600/600' },
-      { title: 'تمرین پا', mediaUrl: 'https://picsum.photos/seed/coach4/600/600' },
+      { title: 'تمرین سینه', mediaUrl: demoImage(0) },
+      { title: 'کلاس گروهی', mediaUrl: demoImage(1) },
+      { title: 'نتیجه ۳ ماهه', mediaUrl: demoImage(2) },
+      { title: 'تمرین پا', mediaUrl: demoImage(3) },
     ],
     reviews: [
       { userName: 'رضا م.', rating: 5, comment: 'برنامه عالی و پیگیری دقیق.' },
@@ -267,7 +278,7 @@ async function upsertDemo(spec: DemoSpec) {
         priceRange: o.priceRange,
         duration: o.duration,
         features: toJson(o.features ?? []),
-        images: toJson([`https://picsum.photos/seed/${spec.slug}-${i}/600/400`]),
+        images: toJson([demoImage(i)]),
         faq: toJson([]),
         order: i,
         ctaType: 'CHAT',

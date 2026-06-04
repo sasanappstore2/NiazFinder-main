@@ -1,8 +1,11 @@
-/** Fixed OTP for local/staging — never enabled in production. */
+/** Fixed OTP for local/staging — never enabled in production unless explicitly allowed. */
 export const TEST_OTP_CODE = '1234';
 
 export function isTestOtpMode(): boolean {
-  return process.env.NODE_ENV !== 'production';
+  if (process.env.NODE_ENV === 'production') {
+    return process.env.ALLOW_TEST_OTP === 'true';
+  }
+  return process.env.ALLOW_TEST_OTP !== 'false';
 }
 
 export function isTestOtpCode(code: string): boolean {

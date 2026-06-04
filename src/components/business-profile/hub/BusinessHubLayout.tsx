@@ -13,12 +13,14 @@ import { BusinessProfilePanel } from './panels/BusinessProfilePanel';
 import { BusinessBrandPanel } from './panels/BusinessBrandPanel';
 import { BusinessStorefrontPanel } from './panels/BusinessStorefrontPanel';
 import { BusinessGalleryPanel } from './panels/BusinessGalleryPanel';
+import { BusinessContactsPanel } from './panels/BusinessContactsPanel';
 
 const PANEL_TITLES = {
   storefront: 'ویترین و محصولات',
   profile: 'معرفی و تماس',
   brand: 'عکس و لینک‌ها',
   gallery: 'نمونه کارها',
+  contacts: 'مخاطبین و تیم',
 } as const;
 
 function BusinessHubBody({
@@ -49,6 +51,7 @@ function BusinessHubBody({
           {activeTask === 'profile' && <BusinessProfilePanel onSaved={onProfileSaved} />}
           {activeTask === 'brand' && <BusinessBrandPanel />}
           {activeTask === 'gallery' && <BusinessGalleryPanel />}
+          {activeTask === 'contacts' && <BusinessContactsPanel />}
         </div>
       </div>
 

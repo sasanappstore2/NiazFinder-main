@@ -15,7 +15,7 @@ import { routeBuilder } from '@/config/routes';
 export const ROUTE_GROUPS = {
   auth: ['login', 'register'],
   marketplace: ['need', 'business', 'post-need'],
-  dashboard: ['dashboard', 'profile', 'pricing', 'referral', 'notification-settings'],
+  dashboard: ['dashboard', 'profile', 'pricing', 'referral', 'notification-settings', 'bookmarks'],
   chat: ['messages'],
   admin: ['admin'],
 } as const;
@@ -29,6 +29,7 @@ export const ROUTE_PERMISSIONS: Record<string, string[]> = {
   referral: ['CLIENT', 'SPECIALIST', 'ADMIN', 'SUPER_ADMIN'],
   'notification-settings': ['CLIENT', 'SPECIALIST', 'ADMIN', 'SUPER_ADMIN'],
   messages: ['CLIENT', 'SPECIALIST', 'ADMIN', 'SUPER_ADMIN'],
+  bookmarks: ['CLIENT', 'SPECIALIST', 'ADMIN', 'SUPER_ADMIN'],
 };
 
 export const ROUTE_METADATA: Record<string, { title: string; description: string }> = {
@@ -41,6 +42,10 @@ export const ROUTE_METADATA: Record<string, { title: string; description: string
   'post-need': { title: 'ثبت نیاز جدید', description: 'نیاز خود را ثبت کنید.' },
   'browse-requests': { title: 'مرور نیازها', description: 'نیازهای ثبت‌شده را مرور کنید.' },
   'browse-specialists': { title: 'مرور کسب‌وکارها', description: 'کسب‌وکارها را مرور کنید.' },
+  bookmarks: {
+    title: 'علاقه‌مندی‌ها',
+    description: 'آگهی‌های نیاز ذخیره‌شده و صندوق پیگیری لید.',
+  },
 };
 
 export function hasRoutePermission(routeView: string, userRole?: string): boolean {

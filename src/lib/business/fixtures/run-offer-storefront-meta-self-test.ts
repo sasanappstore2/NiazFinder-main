@@ -24,11 +24,13 @@ const serialized = serializeOfferStorefrontFeatures(['a'], {
   categoryIds: ['c1', 'c2'],
   primaryCategoryId: 'c2',
   variants: [{ id: 'v1', name: 'قرمز', price: '100' }],
+  brandId: 'brand-1',
 });
 const round = parseOfferStorefrontFromFeatures(serialized);
 assert(round.meta.categoryIds.length === 2, 'roundtrip categories');
 assert(round.meta.primaryCategoryId === 'c2', 'roundtrip primary');
 assert(round.meta.variants[0]?.name === 'قرمز', 'roundtrip variant');
+assert(round.meta.brandId === 'brand-1', 'roundtrip brand');
 
 assert(
   offerMatchesCategoryFilter(

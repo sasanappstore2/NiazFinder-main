@@ -7,6 +7,7 @@ import {
   normalizeListingTitle,
   truncateListingTitle,
 } from '@/lib/need-intake/listing-title-sanitize';
+import { buildHeuristicListingTitle } from '@/lib/need-intake/vertical-title';
 import {
   generateTitleViaQwen,
   isNeedIntakeLlmEnabled,
@@ -37,8 +38,29 @@ function logTitleResult(meta: {
   console.info('[listing-title]', meta);
 }
 
+function finalizeTemplateTitle(
+  draft: NeedDraft,
+  templateFallback: string,
+  qualityCtx: { sourceText?: string }
+): string {
+  const normalizedFallback = truncateListingTitle(
+    normalizeListingTitle(templateFallback) || 'ثبت نیاز'
+  );
+
+  if (isAcceptableListingTitle(normalizedFallback, qualityCtx)) {
+    return normalizedFallback;
+  }
+
+  const heuristic = buildHeuristicListingTitle(draft);
+  if (isAcceptableListingTitle(heuristic, qualityCtx)) {
+    return heuristic;
+  }
+
+  return truncateListingTitle(heuristic || normalizedFallback);
+}
+
 /**
- * Generate a marketplace title: Qwen (intake-mlx) → template fallback.
+ * Generate a marketplace title: Qwen (intake-mlx) → vertical heuristic → template.
  */
 export async function generateListingTitle(
   draft: NeedDraft,
@@ -47,16 +69,12 @@ export async function generateListingTitle(
   const started = performance.now();
   const ctx = buildListingTitleContext(draft);
   const qualityCtx = { sourceText: draft.sourceText ?? ctx.sourceSummary };
-  const fallback = truncateListingTitle(
-    normalizeListingTitle(templateFallback) || 'ثبت نیاز'
-  );
+  const heuristicFallback = buildHeuristicListingTitle(draft);
+  const fallback = finalizeTemplateTitle(draft, templateFallback, qualityCtx);
 
   if (!isTitleAiEnabled()) {
-    const title = isAcceptableListingTitle(fallback, qualityCtx)
-      ? fallback
-      : truncateListingTitle(fallback);
     const result: GenerateListingTitleResult = {
-      title,
+      title: fallback,
       source: 'template',
       latencyMs: Math.round(performance.now() - started),
     };
@@ -72,7 +90,7 @@ export async function generateListingTitle(
 
   try {
     const qwenResult = await generateTitleViaQwen(ctx, {
-      fallbackTitle: fallback,
+      fallbackTitle: heuristicFallback,
       sourceText: qualityCtx.sourceText,
     });
     if (qwenResult?.title) {
@@ -93,12 +111,8 @@ export async function generateListingTitle(
     rejectedReason = 'qwen_error';
   }
 
-  const title = isAcceptableListingTitle(fallback, qualityCtx)
-    ? fallback
-    : truncateListingTitle(fallback);
-
   const result: GenerateListingTitleResult = {
-    title,
+    title: fallback,
     source: 'template',
     latencyMs: Math.round(performance.now() - started),
     rejectedReason,

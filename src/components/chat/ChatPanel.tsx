@@ -57,14 +57,10 @@ import { ChatComposer } from '@/components/chat/ChatComposer';
 import { toVoiceCallPeer } from '@/lib/voice/voice-call-peer';
 import { useChatRealtime } from '@/hooks/useChatRealtime';
 import { useChatTypingEmitter } from '@/hooks/useChatTypingEmitter';
-import { useConversationsTypingPoll } from '@/hooks/useConversationsTypingPoll';
 import { ChatConversationList } from '@/components/chat/ChatConversationList';
 import { useChatMessageScroll } from '@/hooks/useChatMessageScroll';
 import { tryJoinConversation } from '@/lib/chat/socket-bridge';
 import { markConversationRead } from '@/lib/chat/mark-conversation-read';
-import { useChatMessagePoll } from '@/hooks/useChatMessagePoll';
-import { useConversationsPoll } from '@/hooks/useConversationsPoll';
-import { isChatSocketConnected } from '@/lib/chat/socket-bridge';
 import { ChatPeerTyping, ChatTypingHeaderStatus } from '@/components/chat/ChatPeerTyping';
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -193,6 +189,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   const reactToMessage = useAppStore((s) => s.reactToMessage);
   const deleteChatMessage = useAppStore((s) => s.deleteChatMessage);
   const editChatMessage = useAppStore((s) => s.editChatMessage);
+  const pinChatMessage = useAppStore((s) => s.pinChatMessage);
   const setActiveConversationId = useAppStore((s) => s.setActiveConversationId);
   const addOrUpdateConversation = useAppStore((s) => s.addOrUpdateConversation);
   const openVoiceCall = useAppStore((s) => s.openVoiceCall);
@@ -203,10 +200,6 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   useEffect(() => {
     if (activeConversationId) tryJoinConversation(activeConversationId);
   }, [activeConversationId]);
-
-  useConversationsTypingPoll(Boolean(isAuthenticated && authToken));
-
-  useConversationsPoll(Boolean(isAuthenticated && authToken));
 
   // ── Local state ────────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState('');
@@ -226,11 +219,6 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     [onDraftChange]
   );
 
-  useChatMessagePoll(
-    activeConversationId,
-    Boolean(activeConversationId && isAuthenticated && showMessages)
-  );
-
   const threadMessages = useMemo(
     () =>
       activeConversationId
@@ -238,6 +226,16 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
         : [],
     [messages, activeConversationId]
   );
+
+  const pinnedMessage = useMemo(() => {
+    const pinned = threadMessages.filter((m) => m.isPinned && !m.deletedAt);
+    if (pinned.length === 0) return null;
+    return pinned.reduce((latest, m) => {
+      const latestAt = latest.pinnedAt ? Date.parse(latest.pinnedAt) : 0;
+      const at = m.pinnedAt ? Date.parse(m.pinnedAt) : 0;
+      return at >= latestAt ? m : latest;
+    });
+  }, [threadMessages]);
 
   const { endRef: messagesEndRef, scrollRootRef: messagesScrollRootRef, scrollToBottomForced } =
     useChatMessageScroll({
@@ -906,6 +904,30 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     }
   }, [deleteChatMessage, deleteConfirmMsgId]);
 
+  const handlePin = useCallback(
+    async (messageId: string) => {
+      const msg = threadMessages.find((m) => m.id === messageId);
+      if (!msg || !activeConversationId) return;
+      const unpin = Boolean(msg.isPinned);
+      try {
+        const ok = await pinChatMessage(messageId, activeConversationId, unpin);
+        if (ok) {
+          toast.success(unpin ? 'سنجاق برداشته شد' : 'پیام سنجاق شد');
+        } else {
+          toast.error('سنجاق پیام ناموفق بود');
+        }
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'سنجاق پیام ناموفق بود');
+      }
+    },
+    [threadMessages, activeConversationId, pinChatMessage]
+  );
+
+  const handleUnpinPinned = useCallback(() => {
+    if (!pinnedMessage || !activeConversationId) return;
+    void handlePin(pinnedMessage.id);
+  }, [pinnedMessage, activeConversationId, handlePin]);
+
   // ─── Auth Guard ──────────────────────────────────────────────────────────
   if (!isAuthenticated) {
     return (
@@ -1305,6 +1327,11 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                 </h3>
                 {peerTyping.isTyping ? (
                   <ChatTypingHeaderStatus visible />
+                ) : selectedConversation.businessContext ? (
+                  <p className="text-xs text-muted-foreground truncate">
+                    {selectedConversation.businessContext.contactLabel} ·{' '}
+                    {selectedConversation.businessContext.businessName}
+                  </p>
                 ) : (
                   <p
                     className={cn(
@@ -1375,6 +1402,8 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
             <ChatThread
               scrollRootRef={messagesScrollRootRef}
               messagesEndRef={messagesEndRef}
+              pinnedMessage={pinnedMessage}
+              onUnpinPinned={handleUnpinPinned}
               messages={threadMessages}
               peer={
                 otherUser
@@ -1399,6 +1428,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
               onReact={(messageId, emoji) => void handleReact(messageId, emoji)}
               onDeleteForMe={(messageId) => void handleDeleteForMe(messageId)}
               onDeleteForEveryoneRequest={setDeleteConfirmMsgId}
+              onPin={(messageId) => void handlePin(messageId)}
               onScrollToMessage={scrollToMessage}
               onImageOpen={openImageLightbox}
               peerTyping={{

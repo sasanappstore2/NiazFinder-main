@@ -105,6 +105,7 @@ export const ROUTES = {
   chatNew:                       '/chat/new',
   chatConversation:              '/chat/[conversationId]',
   notifications:                 '/notifications',
+  bookmarks:                     '/bookmarks',
   admin:                         '/admin',
   adminUsers:                    '/admin/users',
   superAdmin:                    '/super-admin',
@@ -117,7 +118,6 @@ export const ROUTES = {
   discover:                      '/discover',
   createPost:                    '/create-post',
   submitReview:                  '/submit-review',
-  compare:                       '/compare',
 } as const;
 
 export type RouteKey = keyof typeof ROUTES;
@@ -360,7 +360,6 @@ export const routeBuilder = {
   },
   businessReview:     (id: string) => `/b/${encodeURIComponent(id)}/review`,
   businessInvite:     (id: string) => `/b/${encodeURIComponent(id)}/invite`,
-  compare:            () => ROUTES.compare,
 
   // ── App
   myBusiness:         () => ROUTES.myBusiness,
@@ -381,6 +380,7 @@ export const routeBuilder = {
   chatConversation:   (conversationId: string) =>
     fillParams(ROUTES.chatConversation, { conversationId }),
   notifications:      () => ROUTES.notifications,
+  bookmarks:          () => ROUTES.bookmarks,
   admin:              () => ROUTES.admin,
   adminUsers:         () => ROUTES.adminUsers,
   superAdmin:         () => ROUTES.superAdmin,
@@ -428,10 +428,12 @@ export function legacyViewToPath(view: string, params?: Record<string, string>):
     case 'dashboard':            return routeBuilder.dashboard();
     case 'messages':             return routeBuilder.chat();
     case 'notifications':        return routeBuilder.notifications();
+    case 'bookmarks':            return routeBuilder.bookmarks();
     case 'admin':                return routeBuilder.admin();
     case 'profile':              return routeBuilder.dashboard();
     case 'pricing':              return routeBuilder.pricing();
-    case 'compare-specialists':  return routeBuilder.compare();
+    case 'compare-specialists':
+      return routeBuilder.search({ market: 'business' });
     case 'referral':             return routeBuilder.referral();
     case 'notification-settings':return routeBuilder.notificationSettings();
     case 'help':                 return routeBuilder.help();

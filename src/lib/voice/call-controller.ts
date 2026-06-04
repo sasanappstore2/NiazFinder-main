@@ -889,69 +889,7 @@ export type IncomingCallRow = {
   from: VoiceCallPeer;
 };
 
-/** Poll incoming calls when no local session is open */
+/** @deprecated Incoming calls are delivered via Socket.io `call:invite` only. */
 export async function pollIncomingCalls(): Promise<void> {
-  const state = useAppStore.getState();
-  if (state.voiceCallOpen && state.voiceCallStatus === 'active') return;
-
-  const token = resolveAuthToken();
-  if (!token) return;
-
-  try {
-    const res = await fetch('/api/calls/incoming', {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: 'no-store',
-    });
-    if (!res.ok) return;
-
-    const data = (await res.json()) as { calls?: IncomingCallRow[] };
-    const ringingIds = new Set((data.calls ?? []).map((c) => c.callId));
-
-    if (
-      state.voiceCallOpen &&
-      state.voiceCallType === 'incoming' &&
-      state.voiceCallId &&
-      state.voiceCallStatus === 'ringing' &&
-      !ringingIds.has(state.voiceCallId)
-    ) {
-      markCallIgnored(state.voiceCallId);
-      dismissCallUI();
-      return;
-    }
-
-    const pending = data.calls?.find((c) => !isCallIgnored(c.callId));
-    if (!pending) return;
-
-    if (pending.sdpOffer) {
-      (window as unknown as { __pendingCallOffer?: RTCSessionDescriptionInit }).__pendingCallOffer =
-        pending.sdpOffer;
-    }
-
-    const alreadyShowing =
-      state.voiceCallOpen &&
-      state.voiceCallId === pending.callId &&
-      state.voiceCallType === 'incoming';
-
-    if (alreadyShowing) {
-      if (!pending.sdpOffer) {
-        const offer = await fetchCallOffer(pending.callId);
-        if (offer) {
-          handleCallInvite({
-            callId: pending.callId,
-            from: pending.from,
-            sdpOffer: offer,
-          });
-        }
-      }
-      return;
-    }
-
-    handleCallInvite({
-      callId: pending.callId,
-      from: pending.from,
-      sdpOffer: pending.sdpOffer ?? undefined,
-    });
-  } catch {
-    /* ignore */
-  }
+  /* no-op — socket-only */
 }

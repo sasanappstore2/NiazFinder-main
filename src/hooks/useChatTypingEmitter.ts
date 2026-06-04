@@ -1,26 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
-import { apiFetch } from '@/lib/api-client';
 import { tryEmitTyping } from '@/lib/chat/socket-bridge';
 
-const EMIT_INTERVAL_MS = 80;
+const EMIT_INTERVAL_MS = 300;
 /** بعد از این مدت بدون keystroke، تایپینگ قطع می‌شود */
 const TYPING_IDLE_MS = 3000;
 
-async function postTyping(conversationId: string, isTyping: boolean): Promise<void> {
-  try {
-    await apiFetch(`/api/chat/${conversationId}/typing`, {
-      method: 'POST',
-      body: JSON.stringify({ isTyping }),
-    });
-  } catch {
-    /* REST fanout is best-effort */
-  }
-}
-
 /**
- * Typing presence: REST (reliable) + socket when connected.
+ * Typing presence via Socket.io only.
  */
 export function useChatTypingEmitter(conversationId: string | null) {
   const lastEmitAt = useRef(0);
@@ -32,7 +20,6 @@ export function useChatTypingEmitter(conversationId: string | null) {
     (isTyping: boolean) => {
       if (!conversationId) return;
       tryEmitTyping(conversationId, isTyping);
-      void postTyping(conversationId, isTyping);
     },
     [conversationId]
   );

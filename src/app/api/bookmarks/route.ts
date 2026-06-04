@@ -2,40 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { budgetToJson } from '@/lib/budget';
-
-// ============ TYPES ============
-
-interface BookmarkRequestItem {
-  id: string;
-  title: string;
-  slug: string;
-  budgetMin: number | null;
-  budgetMax: number | null;
-  budgetType: string;
-  status: string;
-  city: string | null;
-  createdAt: Date;
-}
-
-interface BookmarkSpecialistItem {
-  id: string;
-  firstName: string;
-  lastName: string;
-  displayName: string | null;
-  avatar: string | null;
-  bio: string | null;
-  city: string | null;
-  isVerified: boolean;
-  online: boolean;
-  role: string;
-}
+import type { BookmarkProposalStatus } from '@/lib/bookmarks/types';
+import { buildEngagement } from '@/lib/bookmarks/types';
 
 interface ToggleBookmarkBody {
   type: 'request' | 'specialist';
   id: string;
 }
 
-// ============ GET handler ============
+function parseTags(raw: string): string[] {
+  try {
+    const parsed = JSON.parse(raw || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -55,39 +37,106 @@ export async function GET(request: NextRequest) {
     const requestBookmarks = bookmarks.filter((b) => b.type === 'request');
     const specialistBookmarks = bookmarks.filter((b) => b.type === 'specialist');
 
-    // Fetch bookmarked requests
-    let bookmarkedRequests: BookmarkRequestItem[] = [];
+    let bookmarkedRequests: Array<Record<string, unknown>> = [];
     if (requestBookmarks.length > 0) {
       const requestIds = requestBookmarks.map((b) => b.targetId);
       const requests = await db.serviceRequest.findMany({
         where: { id: { in: requestIds } },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          budgetMin: true,
-          budgetMax: true,
-          budgetType: true,
-          status: true,
-          city: true,
-          createdAt: true,
+        include: {
+          category: { select: { id: true, name: true, icon: true } },
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              avatar: true,
+              city: true,
+              createdAt: true,
+            },
+          },
         },
       });
-      bookmarkedRequests = requests.map((r) => ({
-        id: r.id,
-        title: r.title,
-        slug: r.slug,
-        budgetMin: budgetToJson(r.budgetMin),
-        budgetMax: budgetToJson(r.budgetMax),
-        budgetType: r.budgetType,
-        status: r.status,
-        city: r.city,
-        createdAt: r.createdAt,
-      }));
+      const byId = new Map(requests.map((r) => [r.id, r]));
+
+      const [proposals, conversations] = await Promise.all([
+        db.proposal.findMany({
+          where: {
+            userId: user.id,
+            requestId: { in: requestIds },
+          },
+          orderBy: { createdAt: 'desc' },
+          select: { requestId: true, status: true },
+        }),
+        db.conversation.findMany({
+          where: {
+            requestId: { in: requestIds },
+            OR: [{ userId1: user.id }, { userId2: user.id }],
+          },
+          select: { id: true, requestId: true, userId1: true, userId2: true },
+        }),
+      ]);
+
+      const proposalByRequest = new Map<string, BookmarkProposalStatus>();
+      for (const p of proposals) {
+        if (!proposalByRequest.has(p.requestId)) {
+          proposalByRequest.set(p.requestId, p.status as BookmarkProposalStatus);
+        }
+      }
+
+      const conversationByRequest = new Map<string, string>();
+      for (const c of conversations) {
+        if (!c.requestId) continue;
+        const r = byId.get(c.requestId);
+        if (!r) continue;
+        const involvesOwner =
+          (c.userId1 === user.id && c.userId2 === r.userId) ||
+          (c.userId2 === user.id && c.userId1 === r.userId);
+        if (involvesOwner && !conversationByRequest.has(c.requestId)) {
+          conversationByRequest.set(c.requestId, c.id);
+        }
+      }
+
+      bookmarkedRequests = requestBookmarks
+        .map((bookmark) => {
+          const r = byId.get(bookmark.targetId);
+          if (!r) return null;
+
+          const myProposalStatus = proposalByRequest.get(r.id) ?? null;
+          const conversationId = conversationByRequest.get(r.id) ?? null;
+          const engagement = buildEngagement(r.status, myProposalStatus, conversationId);
+
+          return {
+            id: r.id,
+            title: r.title,
+            slug: r.slug,
+            description: r.description,
+            address: r.address,
+            budgetMin: budgetToJson(r.budgetMin),
+            budgetMax: budgetToJson(r.budgetMax),
+            budgetType: r.budgetType,
+            deliveryTime: r.deliveryTime,
+            deliveryUnit: r.deliveryUnit,
+            city: r.city,
+            province: r.province,
+            priority: r.priority,
+            status: r.status,
+            tags: parseTags(r.tags),
+            viewCount: r.viewCount,
+            proposalCount: r.proposalCount,
+            categoryId: r.categoryId,
+            categoryName: r.category.name,
+            categoryIcon: r.category.icon,
+            bookmarkedAt: bookmark.createdAt.toISOString(),
+            user: r.user,
+            createdAt: r.createdAt,
+            updatedAt: r.updatedAt,
+            engagement,
+          };
+        })
+        .filter(Boolean) as Array<Record<string, unknown>>;
     }
 
-    // Fetch bookmarked specialists
-    let bookmarkedSpecialists: BookmarkSpecialistItem[] = [];
+    let bookmarkedSpecialists: Array<Record<string, unknown>> = [];
     if (specialistBookmarks.length > 0) {
       const specialistIds = specialistBookmarks.map((b) => b.targetId);
       const specialists = await db.user.findMany({
@@ -105,18 +154,18 @@ export async function GET(request: NextRequest) {
           role: true,
         },
       });
-      bookmarkedSpecialists = specialists.map((s) => ({
-        id: s.id,
-        firstName: s.firstName,
-        lastName: s.lastName,
-        displayName: s.displayName,
-        avatar: s.avatar,
-        bio: s.bio,
-        city: s.city,
-        isVerified: s.isVerified,
-        online: s.online,
-        role: s.role,
-      }));
+      const byId = new Map(specialists.map((s) => [s.id, s]));
+
+      bookmarkedSpecialists = specialistBookmarks
+        .map((bookmark) => {
+          const s = byId.get(bookmark.targetId);
+          if (!s) return null;
+          return {
+            ...s,
+            bookmarkedAt: bookmark.createdAt.toISOString(),
+          };
+        })
+        .filter(Boolean) as Array<Record<string, unknown>>;
     }
 
     return NextResponse.json({
@@ -125,14 +174,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Bookmarks GET error:', error);
-    return NextResponse.json(
-      { error: 'خطای سرور رخ داده است' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'خطای سرور رخ داده است' }, { status: 500 });
   }
 }
-
-// ============ POST handler ============
 
 export async function POST(request: NextRequest) {
   try {
@@ -155,23 +199,16 @@ export async function POST(request: NextRequest) {
     }
 
     if (type !== 'request' && type !== 'specialist') {
-      return NextResponse.json(
-        { error: 'نوع باید request یا specialist باشد' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'نوع علاقه‌مندی نامعتبر است' }, { status: 400 });
     }
 
-    // Verify target exists
     if (type === 'request') {
-      const request = await db.serviceRequest.findUnique({
+      const serviceRequest = await db.serviceRequest.findUnique({
         where: { id },
         select: { id: true },
       });
-      if (!request) {
-        return NextResponse.json(
-          { error: 'نیاز مورد نظر یافت نشد' },
-          { status: 404 }
-        );
+      if (!serviceRequest) {
+        return NextResponse.json({ error: 'نیاز مورد نظر یافت نشد' }, { status: 404 });
       }
     } else {
       const specialist = await db.user.findUnique({
@@ -179,14 +216,10 @@ export async function POST(request: NextRequest) {
         select: { id: true },
       });
       if (!specialist) {
-        return NextResponse.json(
-          { error: 'متخصص مورد نظر یافت نشد' },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: 'کسب‌وکار مورد نظر یافت نشد' }, { status: 404 });
       }
     }
 
-    // Check if already bookmarked
     const existing = await db.bookmark.findUnique({
       where: {
         userId_type_targetId: {
@@ -198,7 +231,6 @@ export async function POST(request: NextRequest) {
     });
 
     if (existing) {
-      // Remove bookmark
       await db.bookmark.delete({ where: { id: existing.id } });
       return NextResponse.json({
         message: 'از علاقه‌مندی‌ها حذف شد',
@@ -208,7 +240,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Add bookmark
     await db.bookmark.create({
       data: {
         userId: user.id,
@@ -228,9 +259,6 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('Bookmarks POST error:', error);
-    return NextResponse.json(
-      { error: 'خطای سرور رخ داده است' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'خطای سرور رخ داده است' }, { status: 500 });
   }
 }

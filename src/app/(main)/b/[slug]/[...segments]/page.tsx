@@ -8,6 +8,7 @@ import { isMarketplaceLocationSegment } from '@/config/market-routes';
 
 interface PageProps {
   params: Promise<{ slug: string; segments: string[] }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export async function generateMetadata(props: PageProps): Promise<Metadata> {
@@ -15,6 +16,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   if (!isMarketplaceLocationSegment(slug)) return { title: 'کسب‌وکار' };
   return generateSearchMarketplaceMetadata({
     params: Promise.resolve({ location: slug, segments: (await props.params).segments }),
+    searchParams: props.searchParams,
     market: 'business',
   });
 }

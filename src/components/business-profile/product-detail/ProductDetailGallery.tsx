@@ -1,8 +1,8 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import Image from 'next/image';
 import { ImageIcon, ZoomIn } from 'lucide-react';
+import { ProgressiveImage } from '@/components/shared/ProgressiveImage';
 import { cn } from '@/lib/utils';
 import {
   PRODUCT_GALLERY_SQUARE,
@@ -56,7 +56,7 @@ export function ProductDetailGallery({
       >
         {mainImage ? (
           <>
-            <Image
+            <ProgressiveImage
               src={mainImage}
               alt={title}
               fill
@@ -104,7 +104,15 @@ export function ProductDetailGallery({
                   : 'border-transparent opacity-75 hover:opacity-100'
               )}
             >
-              <Image src={url} alt="" fill className="object-contain p-1.5" sizes="80px" />
+              <ProgressiveImage
+                src={url}
+                alt=""
+                fill
+                className="object-contain p-1.5"
+                sizes="80px"
+                quality={78}
+                placeholderWidth={32}
+              />
             </button>
           ))}
         </div>

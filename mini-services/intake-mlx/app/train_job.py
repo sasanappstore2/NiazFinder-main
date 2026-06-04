@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import threading
@@ -15,6 +16,9 @@ from app.config import (
     TRAIN_BATCH_SIZE,
     TRAIN_ITERS,
     TRAIN_LR,
+    TRAIN_LORA_RANK,
+    TRAIN_LORA_LAYERS,
+    TRAIN_MAX_HOURS,
     MAX_TOKENS,
     REPO_ROOT,
 )
@@ -73,9 +77,29 @@ def _prepare_mlx_dataset(src: Path, dest: Path) -> None:
 def _prepare_mlx_splits(src: Path, out_dir: Path) -> None:
     """
     mlx_lm expects `--data` as a directory with {train, valid, test}.jsonl.
-    We create simple deterministic splits from our single exported JSONL.
+    Prefer pre-built stratified splits from `npm run build:intake-dataset-10k`.
     """
     out_dir.mkdir(parents=True, exist_ok=True)
+    prebuilt = REPO_ROOT / "data" / "need-intake-training" / "need-intake-mlx-splits"
+    ignore_prebuilt = os.environ.get("INTAKE_MLX_IGNORE_PREBUILT", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+    if (
+        not ignore_prebuilt
+        and (prebuilt / "train.jsonl").is_file()
+        and (prebuilt / "valid.jsonl").is_file()
+    ):
+        for name in ("train", "valid", "test"):
+            src_split = prebuilt / f"{name}.jsonl"
+            if src_split.is_file():
+                dest = out_dir / f"{name}.jsonl"
+                dest.write_text(src_split.read_text(encoding="utf-8"), encoding="utf-8")
+                lines = len([l for l in dest.read_text(encoding="utf-8").splitlines() if l.strip()])
+                _append_log(f"Using prebuilt {name} split: {lines} rows → {dest}")
+        return
+
     rows: list[dict] = []
     for line in src.read_text(encoding="utf-8").splitlines():
         line = line.strip()
@@ -143,12 +167,15 @@ def _run_train() -> None:
             str(TRAIN_LR),
             "--max-seq-length",
             str(MAX_TOKENS),
+            "--num-layers",
+            str(TRAIN_LORA_LAYERS),
             "--steps-per-report",
             "10",
             "--steps-per-eval",
             "50",
             "--grad-checkpoint",
         ]
+        _append_log(f"Train budget: up to {TRAIN_MAX_HOURS}h, {TRAIN_ITERS} iters")
         _append_log("Starting: " + " ".join(cmd))
         proc = subprocess.Popen(
             cmd,

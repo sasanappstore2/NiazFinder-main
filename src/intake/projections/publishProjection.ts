@@ -1,15 +1,7 @@
 import type { NeedDraft } from '@/contracts/need-intake';
 import type { Priority } from '@prisma/client';
-import { PROPERTY_KIND_LABELS } from '@/config/need-schemas/labels';
-import { isConstructionPartnershipText } from '@/lib/need-intake/intent-parser';
-import {
-  buildProductSearchTitle,
-  dealLabelForCategory,
-  joinListingTitleParts,
-  LISTING_TITLE_MAX_LENGTH,
-} from '@/lib/need-intake/listing-title';
-import { buildPropertyTitle, buildRealEstateServiceTitle } from '@/lib/need-intake/property-title';
-import { getRootCategorySlug } from '@/config/need-schemas/resolve-schema';
+import { LISTING_TITLE_MAX_LENGTH } from '@/lib/need-intake/listing-title';
+import { isGenericListingTitle, buildVerticalTitleFromDraft } from '@/lib/need-intake/vertical-title';
 import {
   CANONICAL_CITIES,
   getCityBySlug,
@@ -50,62 +42,18 @@ function answerBudget(answers: Record<string, unknown>, parsed: NeedDraft['parse
   return { max: parsed.budgetMax, min: parsed.budgetMin };
 }
 
-function buildIntakeTitle(parsed: NeedDraft['parsedIntent'], answers: Record<string, unknown>): string {
+function buildIntakeTitle(draft: NeedDraft): string {
+  const { parsedIntent: parsed } = draftToLegacyPayload(draft);
   const existing = parsed.title?.trim();
-  if (existing && existing.length >= 8 && existing !== 'ثبت نیاز') {
+  if (
+    existing &&
+    existing.length >= 8 &&
+    existing !== 'ثبت نیاز' &&
+    !isGenericListingTitle(existing)
+  ) {
     return existing.slice(0, LISTING_TITLE_MAX_LENGTH);
   }
-
-  const entities: Record<string, string> = {
-    ...parsed.entities,
-    ...(answers.propertyKind ? { propertyKind: String(answers.propertyKind) } : {}),
-    ...(answers.areaMin != null ? { areaMin: String(answers.areaMin) } : {}),
-    ...(answers.areaMax != null ? { areaMax: String(answers.areaMax) } : {}),
-    ...(answers.plotWidth ? { plotWidth: String(answers.plotWidth) } : {}),
-  };
-
-  if (
-    parsed.intentType === 'real_estate_service' ||
-    entities.serviceKind === 'partnership' ||
-    isConstructionPartnershipText(parsed.rawText ?? '')
-  ) {
-    return buildRealEstateServiceTitle(entities, parsed.city);
-  }
-  if (parsed.intentType.startsWith('property')) {
-    return buildPropertyTitle(parsed.intentType, entities, parsed.city, entities.area);
-  }
-
-  const root = getRootCategorySlug(parsed.categorySlug);
-  const deal = String(answers.dealType ?? parsed.entities?.dealType ?? '');
-  if (
-    parsed.intentType === 'product_search' ||
-    root === 'personal-items' ||
-    root === 'electronics'
-  ) {
-    return buildProductSearchTitle(parsed.rawText ?? '', deal || 'buy', parsed.city);
-  }
-
-  const dealFa = dealLabelForCategory(parsed.categorySlug, deal);
-  const kind = answers.propertyKind ?? parsed.entities?.propertyKind;
-  const kindLabel = kind ? PROPERTY_KIND_LABELS[String(kind)] : '';
-
-  const parts: string[] = [];
-  if (dealFa) parts.push(dealFa);
-  if (kindLabel) parts.push(kindLabel);
-  if (answers.rooms) parts.push(`${answers.rooms} خواب`);
-  const productName = String(answers.productName ?? '').trim();
-  if (productName) parts.push(productName);
-  if (answers.brand) parts.push(String(answers.brand));
-  if (answers.jobTitle) parts.push(String(answers.jobTitle));
-  const serviceType = String(answers.serviceType ?? '').trim();
-  if (serviceType) parts.push(serviceType.slice(0, 40));
-  const city = String(answers.location ?? parsed.city ?? '').trim();
-  if (city) parts.push(city);
-
-  const joined = joinListingTitleParts(parts);
-  if (joined.length >= 8) return joined.slice(0, LISTING_TITLE_MAX_LENGTH);
-  if (city) return `نیاز — ${city}`.slice(0, LISTING_TITLE_MAX_LENGTH);
-  return joined || 'ثبت نیاز';
+  return buildVerticalTitleFromDraft(draft);
 }
 
 function mapUrgency(parsed: NeedDraft['parsedIntent'], answers: Record<string, unknown>): Priority {
@@ -156,8 +104,11 @@ export function toPublishCommand(
     description = [description, ...extras].join('\n').trim() || parsed.rawText;
   }
 
-  let title = draft.listingPreview?.title?.trim() || buildIntakeTitle(parsed, answers);
+  let title = draft.listingPreview?.title?.trim() || buildIntakeTitle(draft);
   title = truncateListingTitle(title);
+  if (title.length < 8 || isGenericListingTitle(title)) {
+    title = truncateListingTitle(buildIntakeTitle(draft));
+  }
   if (title.length < 8) title = 'ثبت نیاز';
 
   const listingExtras = [

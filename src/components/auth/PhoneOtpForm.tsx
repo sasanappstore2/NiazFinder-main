@@ -33,6 +33,10 @@ const OTP_LENGTH = 4;
 const COUNTDOWN_SECONDS = 120;
 const DEMO_OTP = '1234';
 
+const showTestOtpHint =
+  process.env.NEXT_PUBLIC_ALLOW_TEST_OTP === 'true' ||
+  process.env.NODE_ENV !== 'production';
+
 const MOCK_NOTIFICATIONS = [
   {
     id: 'notif-mock-1',
@@ -466,7 +470,7 @@ export function PhoneOtpForm({
             )}
           </Button>
 
-          {process.env.NODE_ENV !== 'production' && (
+          {showTestOtpHint && (
             <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-center dark:bg-amber-950/30 dark:border-amber-900">
               <p className="text-xs text-amber-700 dark:text-amber-300">
                 محیط تست — کد تایید:{' '}
@@ -571,7 +575,7 @@ export function PhoneOtpForm({
             onChangePhone={handleBackToPhone}
             isResending={isLoading}
             devHint={
-              process.env.NODE_ENV !== 'production'
+              showTestOtpHint
                 ? `کد تست: ${toPersianDigits(DEMO_OTP)}`
                 : undefined
             }

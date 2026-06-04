@@ -1,14 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { verifyPassword } from '@/lib/auth/password';
+import { verifyPassword, hashPassword, passwordNeedsRehash } from '@/lib/auth/password';
 import { normalizePhone } from '@/lib/super-admin';
 import { issueAuthToken, mapDbUserToResponse } from '@/lib/auth/phone-auth-response';
+import { checkRateLimit, clientIp } from '@/lib/security/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const normalizedPhone = normalizePhone(String(body.phone ?? ''));
     const password = String(body.password ?? '');
+
+    const ipLimit = checkRateLimit(`login:ip:${clientIp(request)}`, 20, 60_000);
+    if (!ipLimit.allowed) {
+      return NextResponse.json(
+        { error: 'تعداد تلاش بیش از حد مجاز است. لطفاً کمی بعد تلاش کنید.' },
+        { status: 429 }
+      );
+    }
 
     if (!normalizedPhone || !password) {
       return NextResponse.json(
@@ -56,7 +65,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (passwordNeedsRehash(user.password)) {
+      await db.user.update({
+        where: { id: user.id },
+        data: { password: hashPassword(password) },
+      });
+    }
+
     const token = await issueAuthToken(user.id);
+
+    const { acceptBusinessInvitesForUser } = await import('@/lib/business/team/accept-invite');
+    await acceptBusinessInvitesForUser(user.id, normalizedPhone);
 
     return NextResponse.json({
       message: 'ورود با موفقیت انجام شد',

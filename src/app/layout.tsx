@@ -136,9 +136,6 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <head>
-        {/* DNS Prefetch for performance */}
-        <link rel="dns-prefetch" href="https://needfinder.ir" />
-
         {/* JSON-LD Structured Data */}
         {structuredData.map((schema, index) => (
           <script

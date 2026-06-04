@@ -54,6 +54,26 @@ export function ChatMessageContent({
     );
   }
 
+  if (message.type === 'PROPOSAL') {
+    let title = 'پیشنهاد';
+    let price = '';
+    try {
+      const data = JSON.parse(message.content) as { title?: string; price?: string; amount?: number };
+      if (data.title) title = data.title;
+      if (data.price) price = data.price;
+      else if (typeof data.amount === 'number') price = `${data.amount.toLocaleString('fa-IR')} تومان`;
+    } catch {
+      title = message.content.slice(0, 120);
+    }
+    return (
+      <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-sm">
+        <p className="font-semibold text-emerald-800 dark:text-emerald-200">پیشنهاد</p>
+        <p className="mt-1">{title}</p>
+        {price ? <p className="mt-1 text-muted-foreground">{price}</p> : null}
+      </div>
+    );
+  }
+
   if (message.type === 'IMAGE') {
     const url = message.content.trim();
     return (

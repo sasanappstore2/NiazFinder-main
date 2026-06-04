@@ -4,26 +4,26 @@ import path from 'path';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireBusinessAccess } from '@/lib/business/require-business-access';
 import { loadMyBusinessProfile } from '@/lib/business/load-my-business-profile';
+import {
+  isOptimizableImageMime,
+  optimizeUploadBuffer,
+  type ImageUploadPreset,
+} from '@/lib/image/optimize-upload';
+import { bufferMatchesDeclaredMime } from '@/lib/security/file-magic';
 
 export const runtime = 'nodejs';
 
 const MAX_LOGO_BYTES = 4 * 1024 * 1024;
 const MAX_COVER_BYTES = 6 * 1024 * 1024;
-const MAX_PRODUCT_BYTES = 5 * 1024 * 1024;
+const MAX_PRODUCT_BYTES = 10 * 1024 * 1024;
 
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 
-function extForMime(mime: string): string {
-  switch (mime) {
-    case 'image/png':
-      return '.png';
-    case 'image/webp':
-      return '.webp';
-    case 'image/gif':
-      return '.gif';
-    default:
-      return '.jpg';
-  }
+function presetForKind(kind: string): ImageUploadPreset {
+  if (kind === 'logo') return 'logo';
+  if (kind === 'cover') return 'cover';
+  if (kind === 'product') return 'product';
+  return 'general';
 }
 
 export async function POST(request: NextRequest) {
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
           ? 'حداکثر حجم لوگو ۴ مگابایت'
           : kind === 'cover'
             ? 'حداکثر حجم کاور ۶ مگابایت'
-            : 'حداکثر حجم تصویر محصول ۵ مگابایت';
+            : 'حداکثر حجم تصویر محصول ۱۰ مگابایت';
       return NextResponse.json({ error: msg }, { status: 400 });
     }
 
@@ -64,17 +64,50 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const ext = extForMime(mime);
+    const inputBuffer = Buffer.from(await file.arrayBuffer());
+    if (!bufferMatchesDeclaredMime(inputBuffer, mime)) {
+      return NextResponse.json(
+        { error: 'محتوای فایل با نوع اعلام‌شده مطابقت ندارد' },
+        { status: 400 }
+      );
+    }
+
+    let outputBuffer: Buffer = inputBuffer;
+    let ext =
+      mime === 'image/png'
+        ? '.png'
+        : mime === 'image/gif'
+          ? '.gif'
+          : mime === 'image/webp'
+            ? '.webp'
+            : '.jpg';
+    let bytesBefore = inputBuffer.length;
+    let bytesAfter = inputBuffer.length;
+    let optimized = false;
+
+    if (isOptimizableImageMime(mime)) {
+      const result = await optimizeUploadBuffer(inputBuffer, presetForKind(kind), mime);
+      outputBuffer = Buffer.from(result.buffer);
+      ext = result.extension;
+      bytesBefore = result.bytesBefore;
+      bytesAfter = result.bytesAfter;
+      optimized = result.optimized;
+    }
+
     const baseName = `${kind}-${randomUUID()}${ext}`;
     const relDir = path.join('uploads', 'business', profile.id);
     const absDir = path.join(process.cwd(), 'public', relDir);
     await mkdir(absDir, { recursive: true });
-
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(path.join(absDir, baseName), buffer);
+    await writeFile(path.join(absDir, baseName), outputBuffer);
 
     const publicUrl = `/${relDir.replace(/\\/g, '/')}/${baseName}`;
-    return NextResponse.json({ url: publicUrl, kind });
+    return NextResponse.json({
+      url: publicUrl,
+      kind,
+      bytesBefore,
+      bytesAfter,
+      optimized,
+    });
   } catch (e) {
     console.error('Business media POST error:', e);
     return NextResponse.json({ error: 'خطا در ذخیره تصویر' }, { status: 500 });

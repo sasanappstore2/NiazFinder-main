@@ -8,6 +8,8 @@ export interface StartConversationParams {
   otherUserId: string;
   requestId?: string;
   returnTo?: string;
+  contactPointId?: string;
+  businessProfileId?: string;
   /** Auto-send product context as first message after opening chat */
   productIntro?: ProductChatIntro;
 }
@@ -36,6 +38,8 @@ export async function startConversation(
       requestId: params.requestId,
       returnTo: params.returnTo,
       productIntro: params.productIntro,
+      contactPointId: params.contactPointId,
+      businessProfileId: params.businessProfileId,
     };
     savePendingContact(intent);
     throw new ContactAuthRequiredError(intent);
@@ -50,6 +54,8 @@ export async function startConversation(
     body: JSON.stringify({
       otherUserId: params.otherUserId,
       requestId: params.requestId,
+      contactPointId: params.contactPointId,
+      businessProfileId: params.businessProfileId,
     }),
   });
 
@@ -63,7 +69,12 @@ export async function startConversation(
   const conversationId = json.conversation.id as string;
 
   const { trackAnalyticsEvent } = await import('@/lib/analytics/track');
-  trackAnalyticsEvent('chat_started', { conversationId, requestId: params.requestId });
+  trackAnalyticsEvent('chat_started', {
+    conversationId,
+    requestId: params.requestId,
+    businessProfileId: params.businessProfileId,
+    contactPointId: params.contactPointId,
+  });
 
   if (params.productIntro) {
     const sent = await sendProductChatIntroMessage(

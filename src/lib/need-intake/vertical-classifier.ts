@@ -81,6 +81,8 @@ const VEHICLE_SIGNALS: { word: string; weight: number }[] = [
   { word: 'سمند', weight: 3 },
   { word: 'تیبا', weight: 3 },
   { word: 'دنا', weight: 3 },
+  { word: 'دوو', weight: 4 },
+  { word: 'سیلو', weight: 3 },
   { word: 'موتور', weight: 5 },
   { word: 'موتورسیکلت', weight: 5 },
   { word: 'قایق', weight: 5 },
@@ -399,20 +401,33 @@ export function categorySlugForVertical(
 
 export function parseAreaFromText(rawText: string): string | undefined {
   const text = rawText.trim();
+  if (!text) return undefined;
   for (const area of KNOWN_AREAS) {
     if (text.includes(area)) return area.replace(/\s+/g, ' ').trim();
   }
+  const scopedPatterns = [
+    /محدوده\s*[:：]?\s*([^،\n]+)/u,
+    /منطقه\s*[:：]?\s*([^،\n]+)/u,
+    /محله\s*[:：]?\s*([^،\n]+)/u,
+  ];
+  for (const re of scopedPatterns) {
+    const m = text.match(re);
+    if (m?.[1]) {
+      const area = stripTrailingCityFromArea(m[1].trim());
+      if (area.length >= 2 && area.length <= 60) return area;
+    }
+  }
   const patterns = [
-    /محدوده\s+([^\s،,.]+(?:\s+[^\s،,.]+)?)/,
-    /منطقه\s+([^\s،,.]+(?:\s+[^\s،,.]+)?)/,
-    /محله\s+([^\s،,.]+(?:\s+[^\s،,.]+)?)/,
-    /نزدیک\s+([^\s،,.]+)/,
+    /محدوده\s+([^\s،,.]+(?:\s+[^\s،,.]+){0,4})/u,
+    /منطقه\s+([^\s،,.]+(?:\s+[^\s،,.]+){0,4})/u,
+    /محله\s+([^\s،,.]+(?:\s+[^\s،,.]+){0,4})/u,
+    /نزدیک\s+([^\s،,.]+)/u,
   ];
   for (const re of patterns) {
     const m = text.match(re);
     if (m?.[1]) {
       const area = stripTrailingCityFromArea(m[1].trim());
-      if (area.length >= 2 && area.length <= 40) return area;
+      if (area.length >= 2 && area.length <= 60) return area;
     }
   }
   return undefined;

@@ -1,8 +1,8 @@
 # Need intake — ML dataset & fine-tune path
 
-## Phase 1 (current): rules teacher + on-page lab
+## Phase 1: rules teacher + on-page lab
 
-The internal rules engine is the **golden teacher**. Training data must reflect correct rule output before Unsloth fine-tune.
+The internal rules engine is the **golden teacher**. Training data must reflect correct rule output before fine-tune.
 
 ### Dataset schema
 
@@ -10,51 +10,92 @@ See [`src/lib/need-intake/dataset/schema.ts`](../src/lib/need-intake/dataset/sch
 
 Each fixture: Persian `input` + `labels` (intent, category, entities, city, budget, urgency).
 
-### JSONL export (Qwen / Unsloth chat format)
+### JSONL export (Qwen / MLX chat format)
 
 ```json
 {"messages":[{"role":"system","content":"..."},{"role":"user","content":"..."},{"role":"assistant","content":"{...json labels...}"}]}
 ```
 
-### Commands
+### Commands (68 golden fixtures)
 
 ```bash
-npm run test:intake-dataset    # eval all fixtures (target ≥75% accuracy)
+npm run test:intake-dataset    # eval all fixtures (target ≥90% accuracy)
 npm run export:intake-dataset  # write data/need-intake-training/need-intake-train.jsonl
 ```
 
-### Dev lab on `/post`
+## Phase 1b: 10k hybrid dataset (recommended for fine-tune)
 
-When `NODE_ENV=development`, **آزمایشگاه ثبت نیاز** appears at the bottom of [`/post`](http://localhost:3000/post):
+**Mix:** ~70% rule-verified synthetic + ~30% real Divar titles (or web-like fallback when research dir is empty).
 
-- Run all fixtures (calls `GET /api/need-intake/eval-fixtures`)
-- Download JSONL (`POST /api/need-intake/export-dataset`)
-- Live parse trace + custom text parse
+| Vertical | Synthetic target |
+|----------|-------------------|
+| Real estate | 2,500 |
+| Vehicles | 1,500 |
+| Products / electronics / home | 1,200+ |
+| Services | 1,200 |
+| Jobs | 800 |
+| Social | 500 |
+| Web (Divar / fallback) | 3,000 |
 
-APIs return **404** in production.
+### Build 10k dataset
 
-### Acceptance before fine-tune
+```bash
+# Optional: fetch real titles (rate-limited, dev only)
+npm run divar:research-all
 
-| Metric | Target |
-|--------|--------|
-| Dataset eval (`test:intake-dataset`) | ≥90% (current fixtures: 58 cases) |
-| Parser self-test | green |
-| Intake flow self-test | green |
-| Manual QA ([NEED_INTAKE.md](./NEED_INTAKE.md) checklist) | no blockers |
+# Build train + holdout + MLX stratified splits
+npm run build:intake-dataset-10k
+
+# Verify ≥250 samples per depth-2 leaf in pool
+npm run report:intake-dataset-coverage
+```
+
+**Outputs** (gitignored under `data/need-intake-training/`):
+
+| File | Role |
+|------|------|
+| `need-intake-train-10k.jsonl` | ~9,500 train rows |
+| `need-intake-holdout-500.jsonl` | Holdout (never in train) |
+| `need-intake-mlx-splits/{train,valid,test}.jsonl` | Stratified MLX splits |
+| `dataset-manifest.json` | Counts per slug, source mix |
+
+### Per-vertical generators
+
+```bash
+npm run generate:intake-estate-dataset
+# See src/lib/need-intake/dataset/generate-*-dataset.ts
+```
 
 ## Phase 2: MLX microservice (Mac Apple Silicon)
 
-Local service: [`mini-services/intake-mlx/README.md`](../mini-services/intake-mlx/README.md)
-
 Model: [mlx-community/Qwen3.5-2B-bf16](https://huggingface.co/mlx-community/Qwen3.5-2B-bf16)
 
+### Train (~12h budget)
+
 ```bash
-npm run export:intake-dataset   # data/need-intake-training/ (gitignored)
-npm run dev:intake-mlx          # :8100
-npm run train:intake-mlx        # POST /train (close heavy apps on 16GB RAM)
+npm run build:intake-dataset-10k
+npm run dev:intake-mlx
+
+INTAKE_MLX_DATASET_PATH=data/need-intake-training/need-intake-train-10k.jsonl \
+INTAKE_MLX_TRAIN_ITERS=2500 \
+INTAKE_MLX_TRAIN_LORA_RANK=16 \
+INTAKE_MLX_TRAIN_LR=8e-6 \
+INTAKE_MLX_TRAIN_MAX_HOURS=12 \
+npm run train:intake-mlx
+
+# Monitor
+curl -s http://127.0.0.1:8100/train/status | jq
 ```
 
-Hybrid parse + analyze + title in Next (Qwen primary; rules fallback when MLX down):
+### Eval before / after train
+
+```bash
+npm run eval:intake-baseline
+# Live MLX (service must be running):
+INTAKE_EVAL_LIVE=1 NEED_INTAKE_LLM_ENABLED=true npm run eval:intake-baseline
+```
+
+### Hybrid parse in Next
 
 ```bash
 NEED_INTAKE_LLM_ENABLED=true
@@ -65,26 +106,32 @@ npm run dev
 | Method | Path | Description |
 |--------|------|-------------|
 | POST | `/v1/parse` | `{ "text": "..." }` → JSON labels |
-| POST | `/v1/title` | `{ "context": { ... } }` → Persian listing title (≤70 chars) |
+| POST | `/v1/title` | `{ "context": { ... } }` → Persian listing title |
 | POST | `/train` | Start LoRA (background) |
 | GET | `/train/status` | Train progress log |
 
-| Path | Role |
-|------|------|
-| `mini-services/intake-mlx/` | FastAPI infer + LoRA train |
-| `src/lib/need-intake/qwen-intake-client.ts` | Next → MLX client (parse + title) |
-| `src/lib/need-intake/llm-parse-client.ts` | Low-level parse client (used by qwen-intake-client) |
-| `models/intake-lora/` | LoRA adapter (gitignored) |
+### Acceptance targets
+
+| Metric | Target |
+|--------|--------|
+| Golden fixtures (`test:intake-dataset`) | ≥90% |
+| Holdout eval (live MLX) | ≥90% on category slug |
+| Depth-2 leaf coverage (pool) | ≥250 per leaf |
+| Parser + intake flow self-tests | green |
+
+**Note:** Fine-tune improves classification accuracy and reduces rules fallback — it does not literally multiply raw inference speed. Perceived speed comes from LoRA + progressive shard UX in `NeedIntakePanel`.
 
 ## Phase 2b: Unsloth (NVIDIA / Colab)
 
-See [`scripts/ml/unsloth/README.md`](../scripts/ml/unsloth/README.md) — alternative to MLX on non-Mac GPUs.
+See [`scripts/ml/unsloth/README.md`](../scripts/ml/unsloth/README.md).
 
-## Files
+## Key paths
 
 | Path | Role |
 |------|------|
-| `src/lib/need-intake/fixtures/dataset-cases.ts` | Golden fixtures |
-| `src/lib/need-intake/fixtures/category-coverage.ts` | Coverage report |
-| `src/lib/need-intake/dataset/eval-dataset.ts` | Eval harness |
-| `src/components/need-intake/lab/IntakeLabPanel.tsx` | Dev UI |
+| `src/lib/need-intake/dataset/build-intake-dataset-10k.ts` | Merge + stratified export |
+| `src/lib/need-intake/dataset/shared/` | Teacher gate, stratified sampling |
+| `src/lib/need-intake/fixtures/dataset-cases.ts` | 68 golden fixtures |
+| `scripts/divar/research-all-verticals.ts` | Divar title research |
+| `mini-services/intake-mlx/app/train_job.py` | LoRA train job |
+| `models/intake-lora/` | LoRA adapter (gitignored) |

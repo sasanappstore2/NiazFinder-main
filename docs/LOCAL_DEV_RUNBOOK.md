@@ -108,3 +108,26 @@ If you changed typing analysis:
 npm run test:typing-analysis
 ```
 
+### Image upload optimization
+
+New uploads (business media + chat images) are re-encoded server-side with **Sharp → WebP** (high quality, smaller size). Optional env overrides:
+
+```bash
+IMAGE_OPTIMIZE_QUALITY_PRODUCT=86
+IMAGE_OPTIMIZE_QUALITY_LOGO=90
+IMAGE_OPTIMIZE_QUALITY_COVER=85
+IMAGE_OPTIMIZE_QUALITY_CHAT=82
+```
+
+Self-test:
+
+```bash
+npx tsx src/lib/image/fixtures/run-optimize-upload-self-test.ts
+```
+
+Batch recompress existing files under `public/uploads/` (dry-run first):
+
+```bash
+npx tsx scripts/optimize-existing-uploads.ts
+npx tsx scripts/optimize-existing-uploads.ts --apply
+```

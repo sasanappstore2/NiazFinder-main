@@ -1,6 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { assertAllowedMediaUrls, isAllowedMediaUrl } from '@/lib/media/is-allowed-media-url';
+
+function parseImageUrls(raw: unknown): string[] {
+  if (Array.isArray(raw)) {
+    return raw.map((u) => String(u).trim()).filter(Boolean);
+  }
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) {
+        return parsed.map((u) => String(u).trim()).filter(Boolean);
+      }
+    } catch {
+      return raw.trim() ? [raw.trim()] : [];
+    }
+  }
+  return [];
+}
 
 // POST /api/posts - create a post
 export async function POST(request: NextRequest) {
@@ -10,7 +28,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { content, imageUrls, isPrivate } = await request.json();
+    const body = await request.json();
+    const { content, imageUrls: rawImageUrls, isPrivate } = body;
     if (!content?.trim()) {
       return NextResponse.json({ error: 'محتوای پست الزامی است' }, { status: 400 });
     }
@@ -18,11 +37,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'متن پست حداکثر ۲۰۰۰ کاراکتر' }, { status: 400 });
     }
 
+    const imageUrls = parseImageUrls(rawImageUrls);
+    const mediaError = assertAllowedMediaUrls(imageUrls, 'آدرس تصویر');
+    if (mediaError) {
+      return NextResponse.json({ error: mediaError }, { status: 400 });
+    }
+
     const post = await db.userPost.create({
       data: {
         userId: authUser.id,
         content: content.trim(),
-        imageUrls: imageUrls || '[]',
+        imageUrls: JSON.stringify(imageUrls),
         isPrivate: isPrivate || false,
       },
       include: {

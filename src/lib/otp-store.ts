@@ -1,5 +1,4 @@
-// In-memory OTP storage (shared between otp and verify routes)
-// In production, this should be replaced with Redis or a database table
+// OTP storage — Redis when REDIS_URL is set, in-memory fallback for local dev.
 
 interface OtpRecord {
   phone: string;
@@ -10,21 +9,92 @@ interface OtpRecord {
   createdAt: Date;
 }
 
-const otpStore: OtpRecord[] = [];
+const OTP_PREFIX = 'otp:';
+const memoryStore: OtpRecord[] = [];
 
-export function findValidOtp(phone: string, code: string): OtpRecord | null {
-  return otpStore
-    .filter((r) => r.phone === phone && r.code === code && !r.verified && r.expiresAt > new Date())
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0] || null;
+let redisClient: import('ioredis').default | null = null;
+
+async function getRedis(): Promise<import('ioredis').default | null> {
+  const url = process.env.REDIS_URL?.trim();
+  if (!url) return null;
+  if (redisClient) return redisClient;
+  try {
+    const Redis = (await import('ioredis')).default;
+    redisClient = new Redis(url, { maxRetriesPerRequest: 1, lazyConnect: true });
+    if (redisClient.status !== 'ready') await redisClient.connect();
+    return redisClient;
+  } catch {
+    redisClient = null;
+    return null;
+  }
 }
 
-export function findExistingOtp(phone: string): OtpRecord | null {
-  return otpStore
-    .filter((r) => r.phone === phone && !r.verified && r.expiresAt > new Date())
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0] || null;
+function redisKey(phone: string): string {
+  return `${OTP_PREFIX}${phone}`;
 }
 
-export function createOtp(phone: string, code: string, type: string = 'auth', expiresMs: number = 2 * 60 * 1000): OtpRecord {
+function serialize(record: OtpRecord): string {
+  return JSON.stringify({
+    ...record,
+    expiresAt: record.expiresAt.toISOString(),
+    createdAt: record.createdAt.toISOString(),
+  });
+}
+
+function deserialize(raw: string): OtpRecord {
+  const p = JSON.parse(raw) as OtpRecord & { expiresAt: string; createdAt: string };
+  return {
+    ...p,
+    expiresAt: new Date(p.expiresAt),
+    createdAt: new Date(p.createdAt),
+  };
+}
+
+async function readPhoneRecords(phone: string): Promise<OtpRecord[]> {
+  const redis = await getRedis();
+  if (redis) {
+    const raw = await redis.get(redisKey(phone)).catch(() => null);
+    if (raw) return [deserialize(raw)];
+    return [];
+  }
+  return memoryStore.filter((r) => r.phone === phone);
+}
+
+async function writePhoneRecord(record: OtpRecord): Promise<void> {
+  const redis = await getRedis();
+  if (redis) {
+    const ttlMs = record.expiresAt.getTime() - Date.now();
+    const ttlSec = Math.max(1, Math.ceil(ttlMs / 1000));
+    await redis.set(redisKey(record.phone), serialize(record), 'EX', ttlSec).catch(() => {});
+    return;
+  }
+  memoryStore.push(record);
+}
+
+export async function findValidOtp(phone: string, code: string): Promise<OtpRecord | null> {
+  const records = await readPhoneRecords(phone);
+  return (
+    records
+      .filter((r) => r.code === code && !r.verified && r.expiresAt > new Date())
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0] || null
+  );
+}
+
+export async function findExistingOtp(phone: string): Promise<OtpRecord | null> {
+  const records = await readPhoneRecords(phone);
+  return (
+    records
+      .filter((r) => !r.verified && r.expiresAt > new Date())
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0] || null
+  );
+}
+
+export async function createOtp(
+  phone: string,
+  code: string,
+  type: string = 'auth',
+  expiresMs: number = 2 * 60 * 1000
+): Promise<OtpRecord> {
   const record: OtpRecord = {
     phone,
     code,
@@ -33,30 +103,30 @@ export function createOtp(phone: string, code: string, type: string = 'auth', ex
     expiresAt: new Date(Date.now() + expiresMs),
     createdAt: new Date(),
   };
-  otpStore.push(record);
+  await writePhoneRecord(record);
   return record;
 }
 
-export function markOtpVerified(phone: string, code: string): OtpRecord | null {
-  const record = findValidOtp(phone, code);
+export async function markOtpVerified(phone: string, code: string): Promise<OtpRecord | null> {
+  const record = await findValidOtp(phone, code);
   if (record) {
     record.verified = true;
+    await writePhoneRecord(record);
   }
   return record;
 }
 
-/** OTP verified within the last `withinMs` (default 10 min) — used for register-phone after verify step. */
-export function findRecentlyVerifiedOtp(
+export async function findRecentlyVerifiedOtp(
   phone: string,
   code?: string,
   withinMs: number = 10 * 60 * 1000
-): OtpRecord | null {
+): Promise<OtpRecord | null> {
   const cutoff = Date.now() - withinMs;
+  const records = await readPhoneRecords(phone);
   return (
-    otpStore
+    records
       .filter(
         (r) =>
-          r.phone === phone &&
           r.verified &&
           r.createdAt.getTime() > cutoff &&
           (code == null || r.code === code)

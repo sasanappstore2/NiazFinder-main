@@ -6,10 +6,15 @@ import type { NeedDraft } from '@/contracts/need-intake';
 import { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
 import { recordToEntities } from '@/intake/aggregate/needDraftAggregate';
 import { LISTING_TITLE_MAX_LENGTH } from '@/lib/need-intake/listing-title';
+import {
+  extractVehicleConditionFromText,
+  extractVehicleSubjectFromText,
+} from '@/lib/need-intake/vertical-title';
 
 export interface ListingTitleContext {
   needType: string;
   intentType: string;
+  categorySlug?: string;
   categoryPathFa: string;
   city?: string;
   neighborhood?: string;
@@ -20,7 +25,12 @@ export interface ListingTitleContext {
   serviceType?: string;
   jobTitle?: string;
   budgetHint?: string;
+  vehicleSubject?: string;
+  vehicleCondition?: string;
+  brand?: string;
+  model?: string;
   sourceSummary: string;
+  rawTextExcerpt?: string;
 }
 
 export function buildListingTitleContext(draft: NeedDraft): ListingTitleContext {
@@ -48,11 +58,22 @@ export function buildListingTitleContext(draft: NeedDraft): ListingTitleContext 
     parsed.budgetMax ?? entities.budgetMax ?? (typeof answers.budget === 'number' ? answers.budget : undefined);
   const budgetHint = budget ? `تا ${formatMoneyToman(budget)}` : undefined;
 
-  const sourceSummary = (draft.sourceText ?? parsed.rawText ?? '').trim().slice(0, 400);
+  const rawFull = (draft.sourceText ?? parsed.rawText ?? '').trim();
+  const sourceSummary = rawFull.slice(0, 400);
+  const rawTextExcerpt = rawFull.slice(0, 200) || undefined;
+
+  const brand = String(answers.brand ?? parsed.entities?.brand ?? '').trim() || undefined;
+  const model = String(answers.model ?? parsed.entities?.model ?? '').trim() || undefined;
+  const vehicleSubject =
+    [brand, model].filter(Boolean).join(' ').trim() ||
+    extractVehicleSubjectFromText(rawFull) ||
+    undefined;
+  const vehicleCondition = extractVehicleConditionFromText(rawFull) || undefined;
 
   return {
     needType: draft.needType,
     intentType: parsed.intentType,
+    categorySlug: parsed.categorySlug,
     categoryPathFa,
     city,
     neighborhood,
@@ -63,7 +84,12 @@ export function buildListingTitleContext(draft: NeedDraft): ListingTitleContext 
     serviceType: String(answers.serviceType ?? '').trim().slice(0, 60) || undefined,
     jobTitle: String(answers.jobTitle ?? '').trim() || undefined,
     budgetHint,
+    vehicleSubject,
+    vehicleCondition,
+    brand,
+    model,
     sourceSummary,
+    rawTextExcerpt,
   };
 }
 
@@ -71,8 +97,8 @@ export function buildListingTitleSystemPrompt(): string {
   return [
     'You write concise Persian marketplace listing titles for Iran (نیازفایندر).',
     `Output ONLY one line title, max ${LISTING_TITLE_MAX_LENGTH} characters, no quotes, no emoji.`,
-    'Include: what is needed + deal type (if known) + location (city/neighborhood) when relevant.',
-    'Be specific (product type, rooms, service name) — never generic like "ثبت نیاز" or only "خرید — شهر".',
+    'Include: what is needed (product, vehicle type, service) + deal type (if known) + location when relevant.',
+    'Never output only deal type and city (e.g. "خرید — مشهد"). Extract the subject from userNeedSummary or rawTextExcerpt.',
     'Do not copy user text verbatim; summarize clearly.',
     'Use Persian digits only if numbers appear.',
   ].join(' ');
@@ -82,6 +108,7 @@ export function buildListingTitleUserPrompt(ctx: ListingTitleContext): string {
   const payload = {
     needType: ctx.needType,
     intentType: ctx.intentType,
+    categorySlug: ctx.categorySlug,
     category: ctx.categoryPathFa,
     city: ctx.city,
     neighborhood: ctx.neighborhood,
@@ -92,7 +119,12 @@ export function buildListingTitleUserPrompt(ctx: ListingTitleContext): string {
     serviceType: ctx.serviceType,
     jobTitle: ctx.jobTitle,
     budget: ctx.budgetHint,
+    vehicleSubject: ctx.vehicleSubject,
+    vehicleCondition: ctx.vehicleCondition,
+    brand: ctx.brand,
+    model: ctx.model,
     userNeedSummary: ctx.sourceSummary,
+    rawTextExcerpt: ctx.rawTextExcerpt,
   };
 
   return `Write one listing title in Persian for this need:\n${JSON.stringify(payload, null, 2)}`;

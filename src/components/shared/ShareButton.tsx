@@ -145,9 +145,10 @@ export function ShareButton({
           type="button"
           className={cn(
             'inline-flex items-center justify-center rounded-full',
-            'bg-muted/50 text-muted-foreground/60 ring-1 ring-transparent',
+            'bg-background text-foreground/80 ring-2 ring-border/60 shadow-sm',
             'transition-all duration-200',
-            'hover:bg-muted hover:text-muted-foreground hover:ring-border/50',
+            'hover:bg-accent hover:text-foreground hover:ring-border',
+            'dark:bg-card dark:text-foreground/85 dark:ring-border/70 dark:hover:bg-accent/80',
             'active:scale-95',
             sizeConfig.trigger,
             className

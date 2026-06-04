@@ -123,6 +123,8 @@ export function useChatSocket(): ChatSocketAPI {
 
       (window as unknown as { __chatSocket?: Socket }).__chatSocket = socketInstance!;
 
+      void useAppStore.getState().fetchConversations().catch(() => {});
+
       const activeId = useAppStore.getState().activeConversationId;
       if (activeId) {
         socketInstance!.emit('join:conversation', activeId);
@@ -267,8 +269,9 @@ export function useChatSocket(): ChatSocketAPI {
 
   const pinMessage = useCallback(
     (messageId: string, conversationId: string, unpin: boolean) => {
-      if (!socketRef.current?.connected) return;
+      if (!socketRef.current?.connected) return false;
       socketRef.current.emit('message:pin', { messageId, conversationId, unpin });
+      return true;
     },
     []
   );
@@ -325,9 +328,10 @@ export function useChatSocket(): ChatSocketAPI {
       reactToMessage,
       deleteMessage,
       editMessage,
+      pinMessage,
     });
     return () => unregisterChatSocketBridge();
-  }, [sendMessage, emitTyping, joinConversation, isConnected, reactToMessage, deleteMessage, editMessage]);
+  }, [sendMessage, emitTyping, joinConversation, reactToMessage, deleteMessage, editMessage, pinMessage]);
 
   return {
     socket,

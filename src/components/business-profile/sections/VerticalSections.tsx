@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatPriceText } from '@/lib/format/money';
 import type { SectionProps } from './types';
 
 export function ListingsSection({ business }: SectionProps) {
@@ -22,7 +23,9 @@ export function ListingsSection({ business }: SectionProps) {
             )}
             <CardHeader className="pb-2">
               <CardTitle className="text-base">{item.title}</CardTitle>
-              {item.price && <p className="text-sm font-bold text-primary">{item.price}</p>}
+              {item.price && (
+                <p className="text-sm font-bold text-primary">{formatPriceText(item.price)}</p>
+              )}
             </CardHeader>
             <CardContent className="flex gap-3 text-xs text-muted-foreground">
               {item.area && <span>{item.area}</span>}
@@ -53,7 +56,9 @@ export function MenuSection({ business }: SectionProps) {
                 )}
               </div>
               {m.price && (
-                <span className="shrink-0 text-sm font-semibold text-primary">{m.price}</span>
+                <span className="shrink-0 text-sm font-semibold text-primary">
+                  {formatPriceText(m.price)}
+                </span>
               )}
             </div>
           ))}

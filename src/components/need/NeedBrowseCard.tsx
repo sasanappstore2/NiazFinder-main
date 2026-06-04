@@ -17,19 +17,11 @@ import type { ServiceRequest } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import {
   NEED_CARD_GRID_DESKTOP,
+  needBudgetPillClass,
   needCardSurfaceClass,
   priorityAccentClass,
 } from './need-browse-card-tokens';
-
-function extractNeighborhoodLabel(address?: string): string | null {
-  if (!address) return null;
-  const cleaned = address.trim();
-  if (!cleaned) return null;
-  const head = cleaned.split(/[،,\-|–—]/)[0]?.trim();
-  if (!head) return null;
-  // Avoid duplicating city if address begins with it.
-  return head;
-}
+import { extractNeighborhoodLabel } from './briefing/need-brief-utils';
 
 function PriorityBadge({ priority }: { priority: string }) {
   const config: Record<string, { className: string; icon: typeof Flame }> = {
@@ -172,7 +164,7 @@ export function NeedBrowseCard({
 
             {budgetLabel && (
               <div className="flex flex-wrap items-center gap-[13px]">
-                <span className="inline-flex items-center gap-2 rounded-xl bg-emerald-500/10 px-3 py-1.5 text-label font-semibold text-emerald-800 persian-nums dark:text-emerald-300">
+                <span className={needBudgetPillClass}>
                   <DollarSign
                     className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400"
                     aria-hidden="true"

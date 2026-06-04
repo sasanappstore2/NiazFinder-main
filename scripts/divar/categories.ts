@@ -1,8 +1,6 @@
 /** Divar browse slug ↔ NiazFinder canonical leaf slug (Tehran default). */
 export interface DivarResearchCategory {
-  /** NiazFinder canonical slug */
   nfSlug: string;
-  /** Divar path segment under /s/{city}/ */
   divarSlug: string;
   titleFa: string;
 }
@@ -25,6 +23,58 @@ export const DIVAR_REAL_ESTATE_CATEGORIES: DivarResearchCategory[] = [
   { nfSlug: 'workspace-short-rent', divarSlug: 'rent-temporary-workspace', titleFa: 'اجاره کوتاه‌مدت دفتر' },
   { nfSlug: 'construction-partnership', divarSlug: 'contribution-construction', titleFa: 'مشارکت در ساخت' },
   { nfSlug: 'pre-sale-services', divarSlug: 'pre-sell-home', titleFa: 'پیش‌فروش' },
+];
+
+export const DIVAR_VEHICLE_CATEGORIES: DivarResearchCategory[] = [
+  { nfSlug: 'car-ride', divarSlug: 'light', titleFa: 'خودرو سواری' },
+  { nfSlug: 'car-heavy', divarSlug: 'heavy', titleFa: 'خودرو سنگین' },
+  { nfSlug: 'car-classic', divarSlug: 'classic', titleFa: 'خودرو کلاسیک' },
+  { nfSlug: 'car-rental', divarSlug: 'rental', titleFa: 'اجاره خودرو' },
+  { nfSlug: 'motorcycle', divarSlug: 'motorcycles', titleFa: 'موتورسیکلت' },
+  { nfSlug: 'spare-parts', divarSlug: 'parts-accessories', titleFa: 'قطعات یدکی' },
+  { nfSlug: 'boat', divarSlug: 'boat', titleFa: 'قایق' },
+];
+
+export const DIVAR_ELECTRONICS_CATEGORIES: DivarResearchCategory[] = [
+  { nfSlug: 'mobile-phone', divarSlug: 'mobile-phones', titleFa: 'گوشی موبایل' },
+  { nfSlug: 'tablet', divarSlug: 'tablet', titleFa: 'تبلت' },
+  { nfSlug: 'mobile-accessories', divarSlug: 'mobile-tablet-accessories', titleFa: 'لوازم جانبی موبایل' },
+  { nfSlug: 'laptop', divarSlug: 'laptops', titleFa: 'لپ‌تاپ' },
+  { nfSlug: 'desktop-computer', divarSlug: 'computers', titleFa: 'رایانه' },
+  { nfSlug: 'computer-parts', divarSlug: 'computer-parts-accessories', titleFa: 'قطعات کامپیوتر' },
+  { nfSlug: 'game-console', divarSlug: 'game-consoles', titleFa: 'کنسول بازی' },
+  { nfSlug: 'audio-video', divarSlug: 'audio-video', titleFa: 'صوتی تصویری' },
+  { nfSlug: 'camera', divarSlug: 'camera-camcorder', titleFa: 'دوربین' },
+];
+
+export const DIVAR_HOME_CATEGORIES: DivarResearchCategory[] = [
+  { nfSlug: 'refrigerator', divarSlug: 'refrigerator-freezer', titleFa: 'یخچال' },
+  { nfSlug: 'washing-machine', divarSlug: 'washing-machines', titleFa: 'ماشین لباسشویی' },
+  { nfSlug: 'sofa-chair', divarSlug: 'sofa-couch', titleFa: 'مبل' },
+  { nfSlug: 'rugs', divarSlug: 'carpet-moquette', titleFa: 'فرش' },
+];
+
+export const DIVAR_SERVICES_CATEGORIES: DivarResearchCategory[] = [
+  { nfSlug: 'cleaning', divarSlug: 'cleaning', titleFa: 'نظافت' },
+  { nfSlug: 'repairs', divarSlug: 'repairs', titleFa: 'تعمیرات' },
+  { nfSlug: 'moving', divarSlug: 'moving', titleFa: 'اسباب‌کشی' },
+  { nfSlug: 'education', divarSlug: 'education', titleFa: 'آموزش' },
+];
+
+export const DIVAR_JOBS_CATEGORIES: DivarResearchCategory[] = [
+  { nfSlug: 'it', divarSlug: 'it-computer', titleFa: 'فناوری' },
+  { nfSlug: 'admin-management', divarSlug: 'administration', titleFa: 'اداری' },
+  { nfSlug: 'marketing-sales', divarSlug: 'marketing-sales', titleFa: 'بازاریابی' },
+  { nfSlug: 'engineering', divarSlug: 'technical-engineering', titleFa: 'فنی' },
+];
+
+export const DIVAR_ALL_VERTICALS: DivarResearchCategory[] = [
+  ...DIVAR_REAL_ESTATE_CATEGORIES,
+  ...DIVAR_VEHICLE_CATEGORIES,
+  ...DIVAR_ELECTRONICS_CATEGORIES,
+  ...DIVAR_HOME_CATEGORIES,
+  ...DIVAR_SERVICES_CATEGORIES,
+  ...DIVAR_JOBS_CATEGORIES,
 ];
 
 /** Persian keyword buckets for frequency analysis on listing titles. */

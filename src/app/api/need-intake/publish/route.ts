@@ -16,7 +16,10 @@ import { runPublishShadowMode } from '@/intake/migration/shadow-publish';
 import { enqueueIntakeHeavyJob } from '@/lib/need-intake/enqueue-heavy';
 import { enqueueRequestModerationJob } from '@/lib/request-moderation/enqueue';
 import { captureTrainingExampleAsync } from '@/intake/training/trainingCapture';
-import { truncateListingTitle } from '@/lib/need-intake/listing-title-sanitize';
+import {
+  rejectListingTitleReason,
+  truncateListingTitle,
+} from '@/lib/need-intake/listing-title-sanitize';
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,9 +48,30 @@ export async function POST(request: NextRequest) {
     }
 
     if (listingPreview) {
+      const previewTitle = truncateListingTitle(
+        String(listingPreview.title ?? '').trim() || 'ثبت نیاز'
+      );
+      const titleReject = rejectListingTitleReason(previewTitle, {
+        sourceText: draft.sourceText,
+      });
+      if (titleReject) {
+        return NextResponse.json(
+          {
+            success: false,
+            errors: [
+              {
+                path: 'listingPreview.title',
+                message:
+                  'عنوان آگهی خیلی کلی است. لطفاً موضوع نیاز (مثلاً نوع خودرو یا خدمات) را در عنوان بیاورید.',
+              },
+            ],
+          },
+          { status: 422 }
+        );
+      }
       draft.listingPreview = {
         ...listingPreview,
-        title: truncateListingTitle(String(listingPreview.title ?? '').trim() || 'ثبت نیاز'),
+        title: previewTitle,
       };
     }
     const entities = recordToEntities(draft.entities);

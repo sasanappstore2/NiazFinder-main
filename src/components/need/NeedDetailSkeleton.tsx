@@ -5,47 +5,64 @@ import { MatchedBusinessRowSkeleton } from '@/components/need/MatchedBusinessesS
 
 export function NeedDetailSkeleton() {
   return (
-    <div className="min-h-screen animate-in fade-in duration-300" dir="rtl" aria-busy="true" aria-label="در حال بارگذاری آگهی">
-      <section className="rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-6">
-        <Skeleton className="mb-3 h-8 w-24 rounded-md" />
+    <div
+      className="min-h-screen animate-in fade-in duration-300"
+      dir="rtl"
+      aria-busy="true"
+      aria-label="در حال بارگذاری آگهی"
+    >
+      <section className="overflow-hidden rounded-2xl border border-border/60 bg-card/40">
+        <div className="flex items-center justify-between border-b border-border/50 px-4 py-3 sm:px-6">
+          <Skeleton className="h-9 w-20 rounded-md" />
+          <div className="flex gap-1">
+            <Skeleton className="size-9 rounded-md" />
+            <Skeleton className="size-9 rounded-md" />
+            <Skeleton className="size-9 rounded-md" />
+          </div>
+        </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="space-y-5 px-4 py-4 sm:px-6 sm:py-5">
           <div className="space-y-3">
+            <Skeleton className="h-8 w-full max-w-lg rounded-md" />
             <div className="flex flex-wrap gap-2">
               <Skeleton className="h-6 w-16 rounded-full" />
-              <Skeleton className="h-6 w-14 rounded-full" />
-              <Skeleton className="h-6 w-24 rounded-full" />
+              <Skeleton className="h-6 w-12 rounded-full" />
             </div>
-            <Skeleton className="h-8 w-full max-w-md rounded-md" />
+            <Skeleton className="h-4 w-40 rounded-md" />
             <div className="flex gap-3">
               <Skeleton className="h-4 w-20 rounded-md" />
               <Skeleton className="h-4 w-16 rounded-md" />
+              <Skeleton className="h-4 w-20 rounded-md" />
             </div>
-            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 sm:gap-2">
-              {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-[4.5rem] rounded-xl" />
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-[4.25rem] rounded-xl" />
               ))}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border/60 bg-card p-3 shadow-sm">
-            <div className="mb-2 flex items-center justify-between">
-              <Skeleton className="h-4 w-24 rounded-md" />
-              <Skeleton className="h-5 w-20 rounded-full" />
-            </div>
-            <div className="flex gap-3 rounded-xl border border-border/50 p-3">
-              <Skeleton className="size-11 shrink-0 rounded-2xl" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-5 w-32 rounded-md" />
-                <Skeleton className="h-3 w-20 rounded-md" />
-              </div>
-            </div>
-          </div>
+          <Skeleton className="h-16 w-full rounded-xl" />
 
           <div className="space-y-2">
+            <Skeleton className="h-4 w-16 rounded-md" />
             <Skeleton className="h-4 w-full rounded-md" />
             <Skeleton className="h-4 w-full rounded-md" />
-            <Skeleton className="h-4 w-3/4 rounded-md" />
+            <Skeleton className="h-4 w-2/3 rounded-md" />
+          </div>
+
+          <div className="rounded-2xl border border-border/60 p-4">
+            <div className="mb-3 flex gap-3">
+              <Skeleton className="size-12 rounded-2xl" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-3 w-20 rounded-md" />
+                <Skeleton className="h-5 w-32 rounded-md" />
+                <Skeleton className="h-3 w-16 rounded-md" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <Skeleton className="h-11 rounded-xl" />
+              <Skeleton className="h-11 rounded-xl" />
+            </div>
           </div>
         </div>
       </section>

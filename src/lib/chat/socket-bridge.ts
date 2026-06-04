@@ -39,6 +39,13 @@ let socketConnectedFlag = false;
 export type ChatSocketReactFn = (messageId: string, emoji: string) => boolean;
 export type ChatSocketDeleteFn = (messageId: string, forEveryone: boolean) => boolean;
 export type ChatSocketEditFn = (messageId: string, content: string) => boolean;
+export type ChatSocketPinFn = (
+  messageId: string,
+  conversationId: string,
+  unpin: boolean
+) => boolean;
+
+let pinMessageFn: ChatSocketPinFn | null = null;
 
 export function setChatSocketConnected(connected: boolean): void {
   socketConnectedFlag = connected;
@@ -53,6 +60,7 @@ export function registerChatSocketBridge(handlers: {
   reactToMessage?: ChatSocketReactFn;
   deleteMessage?: ChatSocketDeleteFn;
   editMessage?: ChatSocketEditFn;
+  pinMessage?: ChatSocketPinFn;
 }) {
   sendMessageFn = handlers.sendMessage;
   previewMessageFn = handlers.previewMessage ?? null;
@@ -62,6 +70,7 @@ export function registerChatSocketBridge(handlers: {
   reactMessageFn = handlers.reactToMessage ?? null;
   deleteMessageFn = handlers.deleteMessage ?? null;
   editMessageFn = handlers.editMessage ?? null;
+  pinMessageFn = handlers.pinMessage ?? null;
 }
 
 export function unregisterChatSocketBridge() {
@@ -73,6 +82,7 @@ export function unregisterChatSocketBridge() {
   reactMessageFn = null;
   deleteMessageFn = null;
   editMessageFn = null;
+  pinMessageFn = null;
 }
 
 export function tryJoinConversation(conversationId: string): void {
@@ -122,4 +132,12 @@ export function tryDeleteMessage(messageId: string, forEveryone: boolean): boole
 
 export function tryEditMessage(messageId: string, content: string): boolean {
   return editMessageFn?.(messageId, content) ?? false;
+}
+
+export function tryPinMessage(
+  messageId: string,
+  conversationId: string,
+  unpin: boolean
+): boolean {
+  return pinMessageFn?.(messageId, conversationId, unpin) ?? false;
 }

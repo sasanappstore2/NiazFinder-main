@@ -30,6 +30,9 @@ export type DbMessageRow = {
   editedAt: Date | null;
   deletedAt: Date | null;
   deletedFor?: string | null;
+  isPinned?: boolean;
+  pinnedBy?: string | null;
+  pinnedAt?: Date | null;
   replyTo?: DbReply | null;
   reactions?: DbReaction[];
 };
@@ -93,5 +96,8 @@ export function mapDbMessageToClient(
     reactions: deletedEveryone ? undefined : reactions,
     deletedAt: m.deletedAt?.toISOString() ?? null,
     editedAt: m.editedAt?.toISOString() ?? null,
+    isPinned: m.isPinned ?? false,
+    pinnedBy: m.pinnedBy ?? undefined,
+    pinnedAt: m.pinnedAt?.toISOString() ?? undefined,
   };
 }

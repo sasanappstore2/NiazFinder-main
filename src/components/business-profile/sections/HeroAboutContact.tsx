@@ -210,6 +210,7 @@ export function ContactSection({ business, requestId }: SectionProps) {
       </p>
       <ContactActions
         otherUserId={business.userId}
+        businessSlug={business.slug}
         requestId={requestId}
         displayName={business.name}
         hasPhone={Boolean(business.contact.phone)}
@@ -228,6 +229,7 @@ export function ContactSidebarCard({ business, requestId }: SectionProps) {
       <h3 className="mb-3 font-semibold">تماس با {business.name}</h3>
       <ContactActions
         otherUserId={business.userId}
+        businessSlug={business.slug}
         requestId={requestId}
         displayName={business.name}
         hasPhone={Boolean(business.contact.phone)}

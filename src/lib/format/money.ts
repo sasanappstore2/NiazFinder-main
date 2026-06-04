@@ -26,3 +26,25 @@ export function formatMoneyToman(value: number): string {
   if (!Number.isFinite(value)) return '';
   return value.toLocaleString('fa-IR');
 }
+
+/** Digit runs in free-text prices, including existing ٬/, grouping. */
+const PRICE_NUMBER_RE = /[\d۰-۹٠-٩]+(?:[٬,][\d۰-۹٠-٩]+)*/g;
+
+/**
+ * Format digit runs inside free-text price strings (e.g. priceRange, variant price).
+ * Runs of 4+ digits get fa-IR grouping; shorter runs become Persian digits only.
+ */
+export function formatPriceText(value: string | null | undefined): string {
+  if (value == null || value === '') return value ?? '';
+
+  return value.replace(PRICE_NUMBER_RE, (match) => {
+    const ascii = toAsciiDigits(match);
+    if (!ascii) return match;
+    if (ascii.length >= 4) {
+      const n = Number(ascii);
+      if (!Number.isFinite(n)) return match;
+      return n.toLocaleString('fa-IR');
+    }
+    return toPersianDigits(ascii);
+  });
+}

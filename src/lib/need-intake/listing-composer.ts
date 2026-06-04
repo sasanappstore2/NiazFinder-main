@@ -2,25 +2,14 @@ import type { NeedDraft, ParsedIntent } from '@/contracts/need-intake';
 import { JOB_ROLE_LABELS, PROPERTY_KIND_LABELS } from '@/config/need-schemas/labels';
 import { getRootCategorySlug } from '@/config/need-schemas/resolve-schema';
 import { formatMoneyToman } from '@/lib/format/money';
-import { isConstructionPartnershipText } from '@/lib/need-intake/intent-parser';
-import {
-  buildProductSearchTitle,
-  dealLabelForCategory,
-  joinListingTitleParts,
-  LISTING_TITLE_MAX_LENGTH,
-} from '@/lib/need-intake/listing-title';
-import { buildRealEstateServiceTitle } from '@/lib/need-intake/property-title';
+import { dealLabelForCategory, LISTING_TITLE_MAX_LENGTH } from '@/lib/need-intake/listing-title';
+import { isGenericListingTitle, buildVerticalTitleFromDraft } from '@/lib/need-intake/vertical-title';
 import { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
 import { realEstateFilterSummaryLines } from '@/lib/need-intake/filter-answer-lines';
 
 export interface ComposedListing {
   title: string;
   description: string;
-}
-
-function dealLabel(parsed: ParsedIntent, answers: Record<string, unknown>): string | undefined {
-  const deal = String(answers.dealType ?? parsed.entities?.dealType ?? '');
-  return dealLabelForCategory(parsed.categorySlug, deal);
 }
 
 function buildDescriptionLines(
@@ -35,8 +24,9 @@ function buildDescriptionLines(
     String(answers.details ?? answers.serviceType ?? parsed.rawText).trim();
   if (intro) lines.push(intro);
 
-  const deal = dealLabel(parsed, answers);
-  if (deal) lines.push(`نوع معامله: ${deal}`);
+  const deal = String(answers.dealType ?? parsed.entities?.dealType ?? '');
+  const dealFa = deal ? dealLabelForCategory(parsed.categorySlug, deal) : undefined;
+  if (dealFa) lines.push(`نوع معامله: ${dealFa}`);
 
   if (parsed.entities?.serviceKind === 'partnership' || parsed.intentType === 'real_estate_service') {
     lines.push('نوع درخواست: مشارکت در ساخت');
@@ -94,47 +84,15 @@ export function composeListingFromDraft(draft: NeedDraft): ComposedListing {
 
   const parsedTitle = parsed.title?.trim();
   let title =
-    parsedTitle && parsedTitle.length >= 8 && parsedTitle !== 'ثبت نیاز'
+    parsedTitle &&
+    parsedTitle.length >= 8 &&
+    parsedTitle !== 'ثبت نیاز' &&
+    !isGenericListingTitle(parsedTitle)
       ? parsedTitle
-      : 'ثبت نیاز';
+      : buildVerticalTitleFromDraft(draft);
 
-  if (
-    parsed.intentType === 'real_estate_service' ||
-    parsed.entities?.serviceKind === 'partnership' ||
-    isConstructionPartnershipText(parsed.rawText ?? '')
-  ) {
-    title = buildRealEstateServiceTitle(
-      { ...parsed.entities, ...answers } as Record<string, string>,
-      parsed.city
-    );
-  }
-
-  if (title.length < 12 || title === 'ثبت نیاز') {
-    const root = getRootCategorySlug(parsed.categorySlug);
-    const deal = String(answers.dealType ?? parsed.entities?.dealType ?? '');
-    if (
-      parsed.intentType === 'product_search' ||
-      root === 'personal-items' ||
-      root === 'electronics'
-    ) {
-      title = buildProductSearchTitle(parsed.rawText ?? '', deal || 'buy', parsed.city);
-    } else {
-      const parts: string[] = [];
-      const dealFa = dealLabel(parsed, answers);
-      if (dealFa) parts.push(dealFa);
-      if (root === 'real-estate') {
-        const kind = answers.propertyKind ?? parsed.entities?.propertyKind;
-        if (kind) parts.push(PROPERTY_KIND_LABELS[String(kind)] ?? String(kind));
-      }
-      const serviceType = String(answers.serviceType ?? '').trim();
-      if (serviceType) parts.push(serviceType.slice(0, 40));
-      const productName = String(answers.productName ?? '').trim();
-      if (productName) parts.push(productName);
-      const loc = String(answers.location ?? parsed.city ?? '').trim();
-      if (loc) parts.push(loc);
-      const joined = joinListingTitleParts(parts);
-      if (joined.length >= 8) title = joined.slice(0, LISTING_TITLE_MAX_LENGTH);
-    }
+  if (title.length < 10 || title === 'ثبت نیاز' || isGenericListingTitle(title)) {
+    title = buildVerticalTitleFromDraft(draft);
   }
 
   const bodyLines = buildDescriptionLines(parsed, answers);

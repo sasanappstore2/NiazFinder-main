@@ -10,4 +10,7 @@ export interface PendingContactIntent {
   requestId?: string;
   returnTo?: string;
   productIntro?: ProductChatIntro;
+  contactPointId?: string;
+  businessProfileId?: string;
+  businessSlug?: string;
 }

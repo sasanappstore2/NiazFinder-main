@@ -9,6 +9,7 @@ export type CommRedisEventType =
   | 'message:react'
   | 'message:edit'
   | 'message:delete'
+  | 'message:pin'
   | 'call:invite'
   | 'call:ringing'
   | 'call:accepted'

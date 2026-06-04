@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { ChevronLeft, Clock } from 'lucide-react';
 import {
   Accordion,
@@ -16,6 +17,8 @@ import type { BusinessOffer, StorefrontCategory } from '@/contracts/business-pro
 import { routeBuilder } from '@/config/routes';
 import { groupOffersByVitrineCategory } from '@/lib/business/storefront';
 import { offerMatchesCategoryFilter } from '@/lib/business/offer-storefront-meta';
+import { formatPriceText } from '@/lib/format/money';
+import { VitrineCategoryNav } from './VitrineCategoryNav';
 import type { SectionProps } from './types';
 import { CTA_LABEL } from './types';
 
@@ -40,7 +43,9 @@ function ServiceCard({
       )}
       <CardHeader className="pb-2">
         <CardTitle className="text-base">{offer.title}</CardTitle>
-        {offer.priceRange && <p className="text-sm font-semibold text-primary">{offer.priceRange}</p>}
+        {offer.priceRange && (
+          <p className="text-sm font-semibold text-primary">{formatPriceText(offer.priceRange)}</p>
+        )}
         {offer.duration && (
           <p className="flex items-center gap-1 text-xs text-muted-foreground">
             <Clock className="size-3" />
@@ -112,7 +117,9 @@ function ProductTile({
       <div className="flex flex-1 flex-col gap-1 p-4">
         <p className="line-clamp-2 text-base font-medium leading-snug">{offer.title}</p>
         {price && (
-          <p className="text-base font-bold text-emerald-700 dark:text-emerald-400">{price}</p>
+          <p className="text-base font-bold text-emerald-700 dark:text-emerald-400">
+            {formatPriceText(price)}
+          </p>
         )}
         {offer.variants && offer.variants.length > 1 && (
           <p className="text-xs text-muted-foreground">
@@ -186,30 +193,66 @@ export function ServicesSection({ business, onOfferAction }: SectionProps) {
 
 export function ProductsSection({ business }: SectionProps) {
   const searchParams = useSearchParams();
-  const categoryFilter =
+  const pathname = usePathname();
+  const categoryFromUrl =
     searchParams.get('vitrineCategory') ?? searchParams.get('category');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    categoryFromUrl
+  );
+
+  useEffect(() => {
+    setSelectedCategoryId(categoryFromUrl);
+  }, [categoryFromUrl]);
+
+  useEffect(() => {
+    const onPopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      setSelectedCategoryId(params.get('vitrineCategory') ?? params.get('category'));
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  const handleCategorySelect = useCallback(
+    (categoryId: string | null) => {
+      setSelectedCategoryId(categoryId);
+
+      const params = new URLSearchParams(window.location.search);
+      params.set('tab', 'products');
+      if (categoryId) {
+        params.set('vitrineCategory', categoryId);
+      } else {
+        params.delete('vitrineCategory');
+        params.delete('category');
+      }
+      const nextUrl = `${pathname}?${params.toString()}`;
+      window.history.replaceState(window.history.state, '', nextUrl);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    },
+    [pathname]
+  );
 
   if (business.offers.length === 0) return null;
 
   const categories: StorefrontCategory[] = business.extensions?.storefront?.categories ?? [];
   const profileSlug = business.slug;
 
-  if (categoryFilter && categories.length > 0) {
-    const cat = categories.find((c) => c.id === categoryFilter);
-    const filtered = filterOffersByCategory(business.offers, categoryFilter);
+  if (selectedCategoryId && categories.length > 0) {
+    const cat = categories.find((c) => c.id === selectedCategoryId);
+    const filtered = filterOffersByCategory(business.offers, selectedCategoryId);
 
     return (
       <section id="section-products" className="scroll-mt-24 space-y-5">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
+        <div className="space-y-3 border-b border-border/50 pb-3">
           <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-200">
             {cat?.title ?? 'محصولات'}
           </h2>
-          <Link
-            href={routeBuilder.businessProfile(profileSlug, { tab: 'products' })}
-            className="text-sm text-muted-foreground hover:text-foreground"
-          >
-            همه دسته‌ها
-          </Link>
+          <VitrineCategoryNav
+            categories={categories}
+            offers={business.offers}
+            activeCategoryId={selectedCategoryId}
+            onCategorySelect={handleCategorySelect}
+          />
         </div>
         {filtered.length === 0 ? (
           <p className="text-sm text-muted-foreground">در این دسته محصولی نیست.</p>
@@ -237,9 +280,17 @@ export function ProductsSection({ business }: SectionProps) {
 
     return (
       <section id="section-products" className="scroll-mt-24 space-y-10">
-        <h2 className="border-b border-border/50 pb-3 text-lg font-semibold text-emerald-900 dark:text-emerald-200">
-          ویترین محصولات
-        </h2>
+        <div className="space-y-3 border-b border-border/50 pb-3">
+          <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-200">
+            ویترین محصولات
+          </h2>
+          <VitrineCategoryNav
+            categories={categories}
+            offers={business.offers}
+            activeCategoryId={null}
+            onCategorySelect={handleCategorySelect}
+          />
+        </div>
         {groups.map(({ category, offers }) => {
           if (!category || offers.length === 0) return null;
           const preview = offers.slice(0, PREVIEW_PER_CATEGORY);

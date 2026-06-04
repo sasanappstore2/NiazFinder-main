@@ -17,7 +17,8 @@ import { IntakeCityPicker } from '@/components/need-intake/IntakeCityPicker';
 import { IntakeCategoryFilterFields } from '@/components/need-intake/IntakeCategoryFilterFields';
 import { IntakeNeighborhoodPicker } from '@/components/need-intake/IntakeNeighborhoodPicker';
 import { NeedListingPreview } from './NeedListingPreview';
-import { IntakeProcessingLoader } from './IntakeProcessingLoader';
+import { IntakeAiShardBar, type IntakeAiShardStatus } from './IntakeAiShardBar';
+import { shardStatusFromNeedDraft } from './intake-shard-status';
 import { IntakeStepTimeline } from './IntakeStepTimeline';
 import { PublishSuccessOverlay } from './PublishSuccessOverlay';
 import { SuggestionChips } from './SuggestionChips';
@@ -30,6 +31,7 @@ import { buildManualSuggestionChips } from '@/lib/need-intake/manual-suggestions
 import { buildSummary } from '@/lib/need-intake/question-engine';
 import { trackAnalyticsEvent } from '@/lib/analytics/track';
 import { previewListingApi, publishNeedApi } from '@/lib/need-intake/intake-client';
+import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
 import { analyzeIntakeTextApi } from '@/lib/intake/intake-analyze-client';
 import {
   inferEntitiesFromCategorySlugs,
@@ -40,6 +42,7 @@ import {
 import {
   extractIntakeLocationFromDraft,
   resolveIntakeCitySelectValue,
+  resolveIntakeNeighborhoodFromDraft,
   resolveManagedCityForNeighborhoods,
 } from '@/lib/need-intake/sync-intake-location-form';
 import type { CompletionState, IntakeEntities, TransactionType } from '@/intake/types';
@@ -100,6 +103,7 @@ function computeEnabledSectionsForLocation(draft: NeedDraft): Set<string> {
   return next;
 }
 
+
 export function NeedIntakePanel({
   initialSeed = '',
   initialCategory = null,
@@ -142,12 +146,19 @@ export function NeedIntakePanel({
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
   const [enabledSections, setEnabledSections] = useState<Set<string>>(() => new Set());
   const [isRepublishing, setIsRepublishing] = useState(false);
-  const [processingSteps, setProcessingSteps] = useState<string[] | null>(null);
+  const [aiEnriching, setAiEnriching] = useState(false);
+  const [aiShardStatus, setAiShardStatus] = useState<
+    Partial<Record<IntakeAiShardKey, IntakeAiShardStatus>>
+  >({});
+  const [titleEnriching, setTitleEnriching] = useState(false);
+  const enrichGenRef = useRef(0);
+  const previewGenRef = useRef(0);
   const [publishRedirect, setPublishRedirect] = useState<{ id: string; title: string } | null>(
     null
   );
   const [liveSummary, setLiveSummary] = useState('');
   const [myLocationLoading, setMyLocationLoading] = useState(false);
+  const [promptNeighborhoodPick, setPromptNeighborhoodPick] = useState(false);
   /** After manual city/neighborhood edit, block system re-detection until «مکان من» or another manual change. */
   const cityLockedByUserRef = useRef(false);
   const neighborhoodLockedByUserRef = useRef(false);
@@ -223,13 +234,7 @@ export function NeedIntakePanel({
   );
 
   const detectedNeighborhood = useMemo(() => {
-    if (!needDraft) return '';
-    const entities = recordToEntities(needDraft.entities);
-    return (
-      entities.neighborhood?.trim() ||
-      needDraft.parsedIntent.entities?.area?.trim() ||
-      ''
-    );
+    return resolveIntakeNeighborhoodFromDraft(needDraft);
   }, [needDraft]);
 
   const neighborhoodOptions = useMemo(() => {
@@ -381,9 +386,19 @@ export function NeedIntakePanel({
     cityName: string,
     neighborhoodName?: string | null,
     neighborhoodSlug?: string | null,
-    options?: { lockUserChoice?: boolean }
+    options?: {
+      lockUserChoice?: boolean;
+      promptNeighborhood?: boolean;
+      citySlug?: string;
+    }
   ) => {
-    const city = cityName.trim();
+    const resolvedCity =
+      resolveIntakeCitySelectValue(sortedCities, {
+        cityName,
+        citySlug: options?.citySlug,
+      }) ?? cityName.trim();
+
+    const city = resolvedCity.trim();
     const neighborhood = neighborhoodName?.trim() ?? '';
     setSelectedCity(city);
     setSelectedNeighborhood(neighborhood);
@@ -395,6 +410,9 @@ export function NeedIntakePanel({
     if (options?.lockUserChoice) {
       cityLockedByUserRef.current = true;
       neighborhoodLockedByUserRef.current = true;
+    }
+    if (options?.promptNeighborhood && city && !neighborhood) {
+      setPromptNeighborhoodPick(true);
     }
   };
 
@@ -470,6 +488,7 @@ export function NeedIntakePanel({
 
   const applyMyLocation = async () => {
     setMyLocationLoading(true);
+    setPromptNeighborhoodPick(false);
     try {
       if (isGeolocationSupported()) {
         try {
@@ -479,7 +498,11 @@ export function NeedIntakePanel({
               geo.cityName,
               geo.neighborhood?.name ?? null,
               geo.neighborhood?.id ?? null,
-              { lockUserChoice: true }
+              {
+                lockUserChoice: true,
+                promptNeighborhood: !geo.neighborhood?.name,
+                citySlug: geo.citySlug,
+              }
             );
             cookieManager.markGeoDetected(geo.citySlug);
             cookieManager.updateNeighborhoodSelection(
@@ -487,11 +510,15 @@ export function NeedIntakePanel({
               geo.neighborhood ? [geo.neighborhood.id] : [],
               geo.neighborhood?.name ?? null
             );
-            toast.success('موقعیت از GPS تشخیص داده شد', {
-              description: geo.neighborhood
-                ? `${geo.cityName} — ${geo.neighborhood.name}`
-                : geo.cityName,
-            });
+            if (geo.neighborhood?.name) {
+              toast.success('موقعیت از GPS تشخیص داده شد', {
+                description: `${geo.cityName} — ${geo.neighborhood.name}`,
+              });
+            } else {
+              toast.success('شهر تشخیص داده شد', {
+                description: `${geo.cityName} — لطفاً محله را از لیست انتخاب کنید`,
+              });
+            }
             return;
           }
         } catch (err) {
@@ -507,6 +534,11 @@ export function NeedIntakePanel({
               if (fromSaved) return;
               toast.error('مرورگر از موقعیت مکانی پشتیبانی نمی‌کند.');
               return;
+            }
+            if (err.code === 'timeout') {
+              toast.error('زمان دریافت GPS تمام شد. دوباره تلاش کنید یا شهر را دستی انتخاب کنید.');
+            } else if (err.code === 'unavailable') {
+              toast.error('سیگنال GPS در دسترس نیست. شهر را دستی انتخاب کنید.');
             }
           }
         }
@@ -570,7 +602,9 @@ export function NeedIntakePanel({
       setLiveSummary('');
       return;
     }
-    setLiveSummary(buildSummary(needDraft.parsedIntent, needDraft.answers));
+    setLiveSummary(
+      buildSummary(needDraft.parsedIntent, needDraft.answers, needDraft.sourceText)
+    );
   }, [needDraft]);
 
   useEffect(() => {
@@ -582,6 +616,15 @@ export function NeedIntakePanel({
       setSelectedNeighborhood(neighborhood);
     }
   }, [step, needDraft, sortedCities, selectedCity, selectedNeighborhood]);
+
+  useEffect(() => {
+    if (!needDraft || neighborhoods.length === 0 || selectedNeighborhood.trim()) return;
+    const entities = recordToEntities(needDraft.entities);
+    const slug = entities.neighborhoodSlug?.trim();
+    if (!slug) return;
+    const hit = neighborhoods.find((n) => n.id === slug || n.name === slug);
+    if (hit) applyNeighborhood(hit.name, hit.id);
+  }, [needDraft, neighborhoods, selectedNeighborhood]);
 
   const buildParsedFromForm = (): ParsedIntent => {
     const combined = `${needText.trim()}\n\nتوضیحات:\n${detailsText.trim()}`.trim();
@@ -612,48 +655,17 @@ export function NeedIntakePanel({
     setStep('details');
   };
 
-  const goToLocation = async () => {
+  const goToLocation = () => {
     if (!detailsText.trim()) {
       toast.info('توضیحات را وارد کنید');
       return;
     }
 
     const combined = `${needText.trim()}\n${detailsText.trim()}`.trim();
-    setLoading(true);
     setError(null);
-    setProcessingSteps(['در حال تحلیل نیاز…', 'شناسایی دسته و شهر…']);
-
-    let enginePrefill: {
-      categorySlug?: string;
-      subcategorySlug?: string;
-      city?: string;
-      neighborhood?: string;
-    } = {};
-
-    let analysisSucceeded = false;
-    try {
-      const analysis = await analyzeIntakeTextApi(combined, intakeAnalyzeCityHint);
-      setNeedDraftFromAnalysis(analysis, combined, analysis.meta?.trace);
-      analysisSucceeded = true;
-      enginePrefill = {
-        categorySlug: analysis.entities.subcategorySlug ?? analysis.entities.categorySlug ?? undefined,
-        subcategorySlug: analysis.entities.subcategorySlug ?? undefined,
-        city: analysis.entities.city ?? undefined,
-        neighborhood: analysis.entities.neighborhood ?? undefined,
-      };
-    } catch {
-      analysisSucceeded = false;
-    } finally {
-      setLoading(false);
-      setProcessingSteps(null);
-    }
 
     const parsed = buildParsedFromForm();
-
-    const categorySlug =
-      enginePrefill.subcategorySlug ??
-      enginePrefill.categorySlug ??
-      parsed.categorySlug;
+    const categorySlug = parsed.categorySlug;
     const normalized = categorySlug ? normalizeCategoryPair(categorySlug) : null;
     if (normalized) {
       setSelectedCategory(normalized.categorySlug);
@@ -663,49 +675,97 @@ export function NeedIntakePanel({
       setSelectedSubcategory(parsed.subcategorySlug ?? '');
     }
 
-    const draftForLocation =
-      analysisSucceeded && getDraft()
-        ? getDraft()
-        : syncNeedDraftFromFormFields({
-            needText,
-            detailsText,
-            categorySlug: normalized?.categorySlug ?? selectedCategory,
-            subcategorySlug: normalized?.subcategorySlug ?? selectedSubcategory,
-            city:
-              resolveIntakeCitySelectValue(sortedCities, {
-                cityName: enginePrefill.city ?? selectedCity ?? parsed.city,
-              }) ?? '',
-            neighborhood:
-              enginePrefill.neighborhood ??
-              selectedNeighborhood ??
-              parsed.entities?.area ??
-              '',
-          });
+    const instantDraft = syncNeedDraftFromFormFields({
+      needText,
+      detailsText,
+      categorySlug: normalized?.categorySlug ?? selectedCategory,
+      subcategorySlug: normalized?.subcategorySlug ?? selectedSubcategory,
+      city:
+        resolveIntakeCitySelectValue(sortedCities, { cityName: selectedCity || parsed.city }) ??
+        '',
+      neighborhood: selectedNeighborhood || parsed.entities?.area || '',
+    });
 
-    if (draftForLocation) {
-      if (cityLockedByUserRef.current || neighborhoodLockedByUserRef.current) {
-        const patch: Record<string, unknown> = {};
-        if (cityLockedByUserRef.current && selectedCity.trim()) {
-          patch.city = selectedCity.trim();
-        }
-        if (neighborhoodLockedByUserRef.current) {
-          patch.neighborhood = selectedNeighborhood.trim() || null;
-        }
-        if (Object.keys(patch).length > 0) {
-          patchNeedDraftEntities(patch);
-        }
-      } else {
-        applyDetectedLocationFromDraft(draftForLocation);
+    if (instantDraft) {
+      setNeedDraft(recomputeNeedDraft(instantDraft));
+      if (!cityLockedByUserRef.current && !neighborhoodLockedByUserRef.current) {
+        applyDetectedLocationFromDraft(instantDraft);
       }
-      if (draftForLocation.sections?.length) {
-        setEnabledSections(computeEnabledSectionsForLocation(draftForLocation));
+      if (instantDraft.sections?.length) {
+        setEnabledSections(computeEnabledSectionsForLocation(instantDraft));
       }
+      setAiShardStatus(shardStatusFromNeedDraft(instantDraft, true));
+    } else {
+      setAiShardStatus({
+        category: 'running',
+        need: 'running',
+        city: 'running',
+        neighborhood: 'running',
+        budget: 'running',
+      });
     }
 
     setStep('location');
+
+    const runId = ++enrichGenRef.current;
+    setAiEnriching(true);
+
+    void (async () => {
+      try {
+        const analysis = await analyzeIntakeTextApi(combined, intakeAnalyzeCityHint);
+        if (enrichGenRef.current !== runId) return;
+
+        setNeedDraftFromAnalysis(analysis, combined, analysis.meta?.trace);
+
+        const enginePrefill = {
+          categorySlug:
+            analysis.entities.subcategorySlug ?? analysis.entities.categorySlug ?? undefined,
+          subcategorySlug: analysis.entities.subcategorySlug ?? undefined,
+          city: analysis.entities.city ?? undefined,
+          neighborhood: analysis.entities.neighborhood ?? undefined,
+        };
+
+        const engineCategory =
+          enginePrefill.subcategorySlug ?? enginePrefill.categorySlug ?? parsed.categorySlug;
+        const engineNormalized = engineCategory ? normalizeCategoryPair(engineCategory) : null;
+        if (engineNormalized) {
+          setSelectedCategory(engineNormalized.categorySlug);
+          setSelectedSubcategory(engineNormalized.subcategorySlug ?? '');
+        }
+
+        const enrichedDraft = getDraft();
+        if (enrichedDraft) {
+          if (cityLockedByUserRef.current || neighborhoodLockedByUserRef.current) {
+            const patch: Record<string, unknown> = {};
+            if (cityLockedByUserRef.current && selectedCity.trim()) {
+              patch.city = selectedCity.trim();
+            }
+            if (neighborhoodLockedByUserRef.current) {
+              patch.neighborhood = selectedNeighborhood.trim() || null;
+            }
+            if (Object.keys(patch).length > 0) {
+              patchNeedDraftEntities(patch);
+            }
+          } else {
+            applyDetectedLocationFromDraft(enrichedDraft);
+          }
+          if (enrichedDraft.sections?.length) {
+            setEnabledSections(computeEnabledSectionsForLocation(enrichedDraft));
+          }
+          setAiShardStatus(shardStatusFromNeedDraft(getDraft(), false));
+        }
+      } catch {
+        if (enrichGenRef.current !== runId) return;
+        setAiShardStatus(shardStatusFromNeedDraft(getDraft(), false));
+      } finally {
+        if (enrichGenRef.current === runId) {
+          setAiEnriching(false);
+        }
+      }
+    })();
   };
 
-  const goToPreview = async () => {
+  const goToPreview = () => {
     const draftEntities = needDraft ? recordToEntities(needDraft.entities) : null;
     const categorySlug =
       selectedCategory ||
@@ -736,39 +796,51 @@ export function NeedIntakePanel({
       toast.error('پیش‌نویس نامعتبر است');
       return;
     }
-    setLoading(true);
+
     setError(null);
-    setProcessingSteps([
-      'در حال آماده‌سازی پیش‌نمایش…',
-      'هوش مصنوعی در حال نوشتن عنوان…',
-      'تکمیل جزئیات…',
-    ]);
-    try {
-      const data = await previewListingApi(draft, listingPreview?.extras);
-      setListingPreview({
-        title: data.title,
-        description: data.description,
-        extras: data.suggestedExtras ?? listingPreview?.extras,
-        budgetMin: data.budgetMin,
-        budgetMax: data.budgetMax,
-        titleSource: data.titleSource,
-      });
-      setStep('preview');
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : 'خطا';
-      setError(msg);
-      toast.error(msg);
-    } finally {
-      setLoading(false);
-      setProcessingSteps(null);
-    }
+
+    const composed = composeListingFromDraft(draft);
+    setListingPreview({
+      title: '',
+      description: composed.description,
+      budgetMin: draft.parsedIntent.budgetMin,
+      budgetMax: draft.parsedIntent.budgetMax,
+      extras: listingPreview?.extras,
+      titleSource: 'template',
+    });
+    setStep('preview');
+
+    const runId = ++previewGenRef.current;
+    setTitleEnriching(true);
+
+    void (async () => {
+      try {
+        const data = await previewListingApi(draft, listingPreview?.extras);
+        if (previewGenRef.current !== runId) return;
+        setListingPreview({
+          title: data.title,
+          description: data.description,
+          extras: data.suggestedExtras ?? listingPreview?.extras,
+          budgetMin: data.budgetMin,
+          budgetMax: data.budgetMax,
+          titleSource: data.titleSource,
+        });
+      } catch (e) {
+        if (previewGenRef.current !== runId) return;
+        const msg = e instanceof Error ? e.message : 'خطا';
+        toast.error(msg);
+      } finally {
+        if (previewGenRef.current === runId) {
+          setTitleEnriching(false);
+        }
+      }
+    })();
   };
 
   const repolishPreview = async () => {
     const draft = getDraft();
     if (!draft || !listingPreview) return;
     setIsRepublishing(true);
-    setProcessingSteps(['هوش مصنوعی در حال بازنویسی عنوان…']);
     try {
       const data = await previewListingApi(draft, listingPreview.extras);
       setListingPreview({
@@ -784,7 +856,6 @@ export function NeedIntakePanel({
       toast.error(e instanceof Error ? e.message : 'خطا');
     } finally {
       setIsRepublishing(false);
-      setProcessingSteps(null);
     }
   };
 
@@ -829,7 +900,6 @@ export function NeedIntakePanel({
       setStep('preview');
     } finally {
       setLoading(false);
-      setProcessingSteps(null);
     }
   };
 
@@ -1006,6 +1076,8 @@ export function NeedIntakePanel({
             isLoading={neighborhoodsLoading}
             disabled={!selectedCity.trim()}
             onChange={(name, id) => applyNeighborhood(name, id)}
+            autoOpenWhenEmpty={promptNeighborhoodPick}
+            onAutoOpenHandled={() => setPromptNeighborhoodPick(false)}
           />
         </div>
       );
@@ -1293,13 +1365,10 @@ export function NeedIntakePanel({
                   <ArrowRight className="size-4 ml-1" />
                   بازگشت
                 </Button>
-                <Button className="w-full sm:w-auto" onClick={() => void goToLocation()} disabled={isLoading || !detailsText.trim()}>
+                <Button className="w-full sm:w-auto" onClick={goToLocation} disabled={!detailsText.trim()}>
                   ادامه به دسته و مکان
                 </Button>
               </div>
-              {isLoading && processingSteps ? (
-                <IntakeProcessingLoader steps={processingSteps} />
-              ) : null}
             </section>
           )}
 
@@ -1311,6 +1380,8 @@ export function NeedIntakePanel({
                   پیشنهادها را انتخاب کنید یا مقادیر دلخواه را دستی وارد کنید.
                 </p>
               </div>
+
+              <IntakeAiShardBar status={aiShardStatus} active={aiEnriching} />
 
               {needDraft && (
                 <div className="intake-internal-meta rounded-xl border bg-muted/25 px-3 py-2 text-xs">
@@ -1379,15 +1450,12 @@ export function NeedIntakePanel({
                   <ArrowRight className="size-4 ml-1" />
                   بازگشت
                 </Button>
-                <Button className="w-full sm:w-auto" onClick={() => void goToPreview()} disabled={isLoading}>
+                <Button className="w-full sm:w-auto" onClick={goToPreview}>
                   {needDraft?.completionState === 'READY_TO_PUBLISH'
                     ? 'ادامه به پیش‌نمایش'
                     : 'تکمیل اطلاعات و ادامه'}
                 </Button>
               </div>
-              {isLoading && processingSteps ? (
-                <IntakeProcessingLoader steps={processingSteps} />
-              ) : null}
             </section>
           )}
 
@@ -1399,6 +1467,7 @@ export function NeedIntakePanel({
               onPublish={() => void publish()}
               isLoading={isLoading}
               isRepublishing={isRepublishing}
+              isTitleEnriching={titleEnriching}
             />
           )}
 

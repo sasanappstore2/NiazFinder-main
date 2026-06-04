@@ -127,8 +127,9 @@ export function MobileBottomNav() {
 
   useEffect(() => {
     void fetchMissedCalls();
-    const interval = window.setInterval(() => void fetchMissedCalls(), 60_000);
-    return () => window.clearInterval(interval);
+    const onCallLogChanged = () => void fetchMissedCalls();
+    window.addEventListener('voice:call-log-changed', onCallLogChanged);
+    return () => window.removeEventListener('voice:call-log-changed', onCallLogChanged);
   }, [fetchMissedCalls]);
 
   useEffect(() => {

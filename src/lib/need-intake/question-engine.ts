@@ -4,6 +4,7 @@ import type {
   NextQuestionResponse,
   ParsedIntent,
 } from '@/contracts/need-intake';
+import { getCategoryPath } from '@/config/categories';
 import { getIntentDefinition } from '@/config/need-intents';
 import { getEffectiveIntakeSchema } from '@/lib/need-intake/essential-intake-schema';
 import {
@@ -18,6 +19,10 @@ import { realEstateFilterSummaryLines } from '@/lib/need-intake/filter-answer-li
 import { isCoreIntakeComplete } from '@/lib/need-intake/core-progress';
 import { isIntakeFieldAnswered } from '@/lib/need-intake/intake-field-answered';
 import { toAsciiDigits } from '@/lib/need-intake/extract-property-slots';
+import {
+  extractVehicleConditionFromText,
+  extractVehicleSubjectFromText,
+} from '@/lib/need-intake/vertical-title';
 
 /** Ask only when user hinted or after higher-value fields (budget, rent amounts). */
 const LOW_PRIORITY_UNLESS_HINTED = [
@@ -188,7 +193,8 @@ function labelDeal(deal?: unknown): string | null {
 
 export function buildSummary(
   parsed: ParsedIntent,
-  answers: Record<string, unknown>
+  answers: Record<string, unknown>,
+  sourceText?: string
 ): string {
   const def = getIntentDefinition(parsed.intentType);
   const parts: string[] = [];
@@ -214,8 +220,13 @@ export function buildSummary(
     parts.push(`سال ساخت: ${yMin} تا ${yMax}`);
   }
   if (parsed.title) parts.push(`عنوان: ${parsed.title}`);
-  if (answers.location || parsed.city) {
-    parts.push(`مکان: ${answers.location ?? parsed.city}`);
+  if (answers.location || parsed.city || parsed.entities?.area) {
+    const place =
+      (answers.location ? String(answers.location) : '') ||
+      [parsed.entities?.area, parsed.city].filter(Boolean).join('، ') ||
+      parsed.city ||
+      '';
+    if (place) parts.push(`مکان: ${place}`);
   }
   if (answers.budget) {
     parts.push(`بودجه: ${formatMoneyToman(Number(answers.budget))} تومان`);
@@ -225,7 +236,19 @@ export function buildSummary(
   if (answers.deposit) {
     parts.push(`ودیعه: ${formatMoneyToman(Number(answers.deposit))} تومان`);
   }
-  if (answers.brand) parts.push(`خودرو: ${answers.brand}`);
+  const vehicleRaw = sourceText?.trim() || parsed.rawText || '';
+  const isVehicle =
+    parsed.intentType.startsWith('vehicle') ||
+    getCategoryPath(parsed.categorySlug)[0]?.slug === 'vehicles';
+  const vehicleSubject =
+    (answers.brand ? String(answers.brand) : '') ||
+    (parsed.entities?.brand ? String(parsed.entities.brand) : '') ||
+    (isVehicle ? extractVehicleSubjectFromText(vehicleRaw) ?? '' : '');
+  if (vehicleSubject) parts.push(`خودرو: ${vehicleSubject}`);
+  if (isVehicle) {
+    const cond = extractVehicleConditionFromText(vehicleRaw);
+    if (cond) parts.push(`وضعیت: ${cond}`);
+  }
   if (answers.productName) parts.push(`کالا: ${answers.productName}`);
   if (answers.jobTitle) parts.push(`شغل: ${answers.jobTitle}`);
   if (answers.serviceType) parts.push(`خدمت: ${answers.serviceType}`);

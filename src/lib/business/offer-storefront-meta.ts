@@ -10,12 +10,14 @@ export type OfferStorefrontMeta = {
   categoryIds: string[];
   primaryCategoryId: string | null;
   variants: OfferVariant[];
+  brandId: string | null;
 };
 
 export const EMPTY_OFFER_STOREFRONT_META: OfferStorefrontMeta = {
   categoryIds: [],
   primaryCategoryId: null,
   variants: [],
+  brandId: null,
 };
 
 function parseMetaJson(raw: string): OfferStorefrontMeta | null {
@@ -43,7 +45,9 @@ function parseMetaJson(raw: string): OfferStorefrontMeta | null {
       primaryCategoryId && categoryIds.includes(primaryCategoryId)
         ? primaryCategoryId
         : categoryIds[0] ?? null;
-    return { categoryIds, primaryCategoryId: primary, variants };
+    const brandId =
+      typeof o.brandId === 'string' && o.brandId.trim() ? o.brandId.trim() : null;
+    return { categoryIds, primaryCategoryId: primary, variants, brandId };
   } catch {
     return null;
   }
@@ -69,7 +73,7 @@ export function parseOfferStorefrontFromFeatures(features: string[]): {
   if (legacy) {
     const id = legacy.slice(LEGACY_VITRINE_CATEGORY_PREFIX.length);
     return {
-      meta: { categoryIds: id ? [id] : [], primaryCategoryId: id || null, variants: [] },
+      meta: { categoryIds: id ? [id] : [], primaryCategoryId: id || null, variants: [], brandId: null },
       displayFeatures,
     };
   }
@@ -106,7 +110,10 @@ export function serializeOfferStorefrontFeatures(
     }));
 
   const hasMeta =
-    categoryIds.length > 0 || variants.length > 0 || primaryCategoryId != null;
+    categoryIds.length > 0 ||
+    variants.length > 0 ||
+    primaryCategoryId != null ||
+    meta.brandId != null;
 
   if (!hasMeta) return cleanDisplay;
 
@@ -114,6 +121,7 @@ export function serializeOfferStorefrontFeatures(
     categoryIds,
     primaryCategoryId,
     variants,
+    brandId: meta.brandId?.trim() || null,
   };
 
   return [

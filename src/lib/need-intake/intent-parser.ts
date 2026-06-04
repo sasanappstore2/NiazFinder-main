@@ -19,6 +19,7 @@ import {
   hasWatchOrLuxuryProductPhrase,
   isLikelyProductPurchase,
 } from '@/lib/need-intake/product-buy-hints';
+import { extractVehicleSubjectFromText } from '@/lib/need-intake/vertical-title';
 import {
   categorySlugForVertical,
   classifyVertical,
@@ -510,7 +511,9 @@ function buildEntities(
   if (root === 'vehicles' || intentType.startsWith('vehicle')) {
     const deal = parseVehicleDealType(text);
     if (deal) entities.dealType = deal;
-    if (text.includes('موتور')) entities.vehicleKind = 'motorcycle';
+    if (text.includes('موتورسیکلت')) entities.vehicleKind = 'motorcycle';
+    const brand = extractVehicleSubjectFromText(text);
+    if (brand) entities.brand = brand;
   }
 
   if (

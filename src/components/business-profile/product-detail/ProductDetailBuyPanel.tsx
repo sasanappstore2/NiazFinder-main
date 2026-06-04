@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { CTA_LABEL } from '../sections/types';
 import { ProductDetailSellerStrip } from './ProductDetailSellerStrip';
 import type { Business } from '@/contracts/business-profile';
+import { formatPriceText } from '@/lib/format/money';
 import { PRODUCT_STICKY_TOP } from './product-detail-tokens';
 
 export function ProductDetailBuyPanel({
@@ -43,6 +44,9 @@ export function ProductDetailBuyPanel({
         <h1 className="text-2xl font-bold leading-[1.3] tracking-tight sm:text-[28px] lg:text-[34px]">
           {offer.title}
         </h1>
+        {offer.brandName && (
+          <p className="text-sm text-muted-foreground">{offer.brandName}</p>
+        )}
 
         {price && (
           <p className="text-[21px] font-bold tabular-nums text-emerald-700 dark:text-emerald-400 lg:text-[34px]">
@@ -76,7 +80,9 @@ export function ProductDetailBuyPanel({
               >
                 {v.name}
                 {v.price ? (
-                  <span className="mr-1.5 text-muted-foreground">· {v.price}</span>
+                  <span className="mr-1.5 text-muted-foreground">
+                    · {formatPriceText(v.price)}
+                  </span>
                 ) : null}
               </button>
             ))}

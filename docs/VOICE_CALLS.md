@@ -8,7 +8,7 @@
 
 ## معماری
 
-**سرور منبع حقیقت است** — هر تغییر وضعیت (پذیرش، رد، لغو، قطع) از `PATCH /api/calls/[id]` انجام می‌شود. سرور از Redis/HTTP به طرف مقابل fanout می‌کند. کلاینت هر ۱ ثانیه با `useVoiceCallSync` وضعیت را poll می‌کند (fallback وقتی socket رویداد نرسد).
+**سرور منبع حقیقت است** — هر تغییر وضعیت (پذیرش، رد، لغو، قطع) از `PATCH /api/calls/[id]` انجام می‌شود. سرور از Redis/HTTP به طرف مقابل fanout می‌کند. کلاینت رویدادهای Socket.io (`call:invite`, `call:accepted`, `call:hangup`, …) را در `useVoiceCallSignaling` گوش می‌دهد — **بدون polling**.
 
 ```mermaid
 sequenceDiagram
@@ -57,7 +57,6 @@ docker compose -f docker-compose.voice.yml --env-file .env.voice up -d
 |-------|--------|
 | `POST /api/calls` | ایجاد تماس `RINGING` |
 | `POST /api/calls/[id]/invite` | ذخیره SDP offer + fanout `call:invite` |
-| `GET /api/calls/incoming` | poll تماس‌های ورودی (callee) |
 | `GET /api/calls/[id]/offer` | SDP offer (callee) |
 | `GET /api/calls/[id]/answer` | SDP answer (caller، وقتی ACTIVE) |
 | `GET /api/calls/[id]` | وضعیت تماس |
@@ -89,7 +88,7 @@ docker compose -f docker-compose.voice.yml --env-file .env.voice up -d
 
 - `GlobalVoiceCallLayer` — mount در `layout.tsx`
 - `call-controller.ts` — state machine + WebRTC
-- `useVoiceCallSync` — poll یکپارچه incoming + status
+- `useVoiceCallSignaling` — socket listeners برای تماس ورودی/خروجی
 - `VoiceCallOverlay` — UI بنر/تمام‌صفحه
 
 ## تست

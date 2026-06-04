@@ -1,7 +1,7 @@
 /**
  * Store vitrine categories in profile extensions + per-offer category tag in features JSON.
  */
-import type { StorefrontCategory, StorefrontExtension } from '@/contracts/business-profile';
+import type { StorefrontCategory, StorefrontBrand, StorefrontExtension } from '@/contracts/business-profile';
 
 export {
   LEGACY_VITRINE_CATEGORY_PREFIX as VITRINE_CATEGORY_FEATURE_PREFIX,
@@ -17,11 +17,33 @@ export function createStorefrontCategoryId(): string {
   return `cat-${Date.now().toString(36)}`;
 }
 
+export function createStorefrontBrandId(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return `brand-${Date.now().toString(36)}`;
+}
+
+function parseBrandList(raw: unknown): StorefrontBrand[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((c): c is Record<string, unknown> => c != null && typeof c === 'object')
+    .map((c) => ({
+      id: String(c.id ?? ''),
+      title: String(c.title ?? '').trim(),
+      sortOrder: typeof c.sortOrder === 'number' ? c.sortOrder : 0,
+    }))
+    .filter((c) => c.id && c.title)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
 export function parseStorefrontExtension(raw: unknown): StorefrontExtension {
-  if (!raw || typeof raw !== 'object') return { categories: [] };
+  if (!raw || typeof raw !== 'object') return { categories: [], brands: [] };
   const o = raw as Record<string, unknown>;
   const cats = o.categories;
-  if (!Array.isArray(cats)) return { categories: [] };
+  if (!Array.isArray(cats)) {
+    return { categories: [], brands: parseBrandList(o.brands) };
+  }
   const categories: StorefrontCategory[] = cats
     .filter((c): c is Record<string, unknown> => c != null && typeof c === 'object')
     .map((c) => ({
@@ -31,7 +53,7 @@ export function parseStorefrontExtension(raw: unknown): StorefrontExtension {
     }))
     .filter((c) => c.id && c.title)
     .sort((a, b) => a.sortOrder - b.sortOrder);
-  return { categories };
+  return { categories, brands: parseBrandList(o.brands) };
 }
 
 export function groupOffersByVitrineCategory<

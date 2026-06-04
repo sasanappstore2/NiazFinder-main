@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Package } from 'lucide-react';
 import type { ProductCardSnapshot } from '@/contracts/product-card-snapshot';
+import { formatPriceText } from '@/lib/format/money';
 import { cn } from '@/lib/utils';
 
 export function ProductChatCard({
@@ -62,7 +63,7 @@ export function ProductChatCard({
                     isOwn ? 'text-primary' : 'text-emerald-700 dark:text-emerald-400'
                   )}
                 >
-                  {product.price}
+                  {formatPriceText(product.price)}
                 </p>
               )}
               {product.businessName && (

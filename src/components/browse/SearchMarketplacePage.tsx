@@ -7,11 +7,9 @@ import { Separator } from '@/components/ui/separator';
 import { BrowseDispatcher } from '@/components/browse/BrowseDispatcher';
 import {
   resolveSearchSegments,
-  canonicalPath,
 } from '@/lib/search/resolve-segments';
 import {
   resolveBusinessSegments,
-  canonicalBusinessPath,
 } from '@/lib/search/resolve-business-segments';
 import { getCategoryPath } from '@/config/categories';
 import {
@@ -21,14 +19,25 @@ import {
 } from '@/config/market-routes';
 import type { BrowseListingType } from '@/lib/search/browse-entry-url';
 import { SITE_NAME, SITE_URL } from '@/lib/seo';
-import {
-  buildBrowsePageH1,
-  buildBrowsePageTitlesFromContext,
-} from '@/lib/browse/page-heading';
+import { buildBrowsePageTitlesFromPath } from '@/lib/browse/page-heading';
+
+type SearchParamsProp = Promise<Record<string, string | string[] | undefined>>;
 
 interface PageProps {
   params: Promise<{ location: string; segments?: string[] }>;
+  searchParams?: SearchParamsProp;
   market: BrowseMarket;
+}
+
+function toUrlSearchParams(
+  raw: Record<string, string | string[] | undefined>
+): URLSearchParams {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(raw)) {
+    if (Array.isArray(value)) value.forEach((v) => params.append(key, v));
+    else if (value != null) params.set(key, value);
+  }
+  return params;
 }
 
 function resolveMarketContext(market: BrowseMarket, location: string, segments: string[]) {
@@ -39,68 +48,27 @@ function resolveMarketContext(market: BrowseMarket, location: string, segments: 
 }
 
 export async function generateSearchMarketplaceMetadata(
-  { params, market }: PageProps
+  { params, searchParams, market }: PageProps
 ): Promise<Metadata> {
   const { location, segments = [] } = await params;
-  const resolved = resolveMarketContext(market, location, segments);
-
-  if (resolved.kind === 'business') {
-    const bctx = resolved.ctx;
-    if (bctx.kind === 'invalid-location' || bctx.kind === 'invalid-segments') {
-      return { title: `جستجو | ${SITE_NAME}` };
-    }
-    const path = canonicalBusinessPath(bctx);
-    const listingType = listingTypeFromMarket(market) as BrowseListingType;
-    const categoryTitle =
-      bctx.kind === 'profile-category' ||
-      bctx.kind === 'need-category' ||
-      bctx.kind === 'parent-child'
-        ? bctx.categoryTitle
-        : null;
-    const parentCategoryTitle =
-      bctx.kind === 'parent-child' ? bctx.parentTitle : null;
-    const locationLabel =
-      bctx.location.kind === 'country' ? 'سراسر ایران' : bctx.location.city.title;
-    const h1 = buildBrowsePageH1({
-      listingType,
-      locationLabel,
-      categoryTitle,
-      parentCategoryTitle,
-    });
-    const title = `${h1} | ${SITE_NAME}`;
-    const description =
-      categoryTitle != null
-        ? `کسب‌وکارهای ${categoryTitle} در ${locationLabel} در ${SITE_NAME}.`
-        : `کسب‌وکارها در ${locationLabel} در ${SITE_NAME}.`;
-    return {
-      title,
-      description,
-      alternates: { canonical: path },
-      openGraph: { title, description, url: `${SITE_URL}${path}`, type: 'website' },
-      twitter: { card: 'summary_large_image', title, description },
-    };
-  }
-
-  const ctx = resolved.ctx;
-  if (ctx.kind === 'invalid-location' || ctx.kind === 'invalid-segments') {
-    return { title: `جستجو | ${SITE_NAME}` };
-  }
-
-  const path = canonicalPath(ctx, market);
-  const { title, description } = buildBrowsePageTitlesFromContext(
-    ctx,
+  const rawSearchParams = searchParams ? await searchParams : {};
+  const pathname = canonicalMarketPath(market, location, segments);
+  const listingType = listingTypeFromMarket(market) as BrowseListingType;
+  const { title, description } = buildBrowsePageTitlesFromPath(
+    pathname,
+    toUrlSearchParams(rawSearchParams),
     SITE_NAME,
-    listingTypeFromMarket(market) as BrowseListingType
+    listingType
   );
 
   return {
     title,
     description,
-    alternates: { canonical: path },
+    alternates: { canonical: pathname },
     openGraph: {
       title,
       description,
-      url: `${SITE_URL}${path}`,
+      url: `${SITE_URL}${pathname}`,
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },

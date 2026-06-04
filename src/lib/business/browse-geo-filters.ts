@@ -49,12 +49,21 @@ export function buildBusinessGeoWhere(opts: {
     cityNames.push(opts.legacyCity);
   }
 
+  const cityClause = (name: string): Prisma.BusinessProfileWhereInput => ({
+    OR: [
+      { city: { contains: name } },
+      {
+        locations: {
+          some: { isPublished: true, city: { contains: name } },
+        },
+      },
+    ],
+  });
+
   if (cityNames.length === 1) {
-    and.push({ city: { contains: cityNames[0] } });
+    and.push(cityClause(cityNames[0]));
   } else if (cityNames.length > 1) {
-    and.push({
-      OR: cityNames.map((name) => ({ city: { contains: name } })),
-    });
+    and.push({ OR: cityNames.map(cityClause) });
   }
 
   return and;

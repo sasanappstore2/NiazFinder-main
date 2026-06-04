@@ -290,21 +290,6 @@ export async function POST(
         ? content
         : content.trim();
 
-    const previewId = clientTempId || `tmp-${Date.now()}`;
-    void publishMessageNew({
-      id: previewId,
-      conversationId,
-      senderId: user.id,
-      content: trimmedContent,
-      type: messageType,
-      attachmentUrls: [],
-      isRead: false,
-      createdAt: new Date().toISOString(),
-      clientTempId: previewId,
-      replyToId: replyToMeta?.id,
-      replyTo: replyToMeta,
-    });
-
     const result = await db.$transaction(async (tx) => {
       const message = await createChatMessage(tx, {
         conversationId,

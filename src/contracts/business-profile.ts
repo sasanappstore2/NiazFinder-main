@@ -94,6 +94,8 @@ export interface BusinessOffer {
   categoryIds?: string[];
   primaryCategoryId?: string | null;
   variants?: OfferVariant[];
+  brandId?: string | null;
+  brandName?: string;
 }
 
 export interface PortfolioItemMetadata {
@@ -191,8 +193,16 @@ export interface StorefrontCategory {
   sortOrder: number;
 }
 
+/** Product brand (e.g. Samsung, Nike) — scoped to business storefront. */
+export interface StorefrontBrand {
+  id: string;
+  title: string;
+  sortOrder: number;
+}
+
 export interface StorefrontExtension {
   categories: StorefrontCategory[];
+  brands?: StorefrontBrand[];
 }
 
 /** Website + Iranian social channels (onboarding / online sellers). */
@@ -335,4 +345,29 @@ export interface AssistantChatResponse {
   suggestedOffers?: string[];
   suggestedCta?: OfferCtaType;
   followUpQuestions?: string[];
+}
+
+// ─── Business team (public subset) ───────────────────────────────────────────
+
+export type BusinessMemberRole = 'OWNER' | 'MANAGER' | 'STAFF';
+
+export interface BusinessContactPointPublic {
+  id: string;
+  label: string;
+  slug: string;
+  description?: string;
+  chatEnabled: boolean;
+  voiceEnabled: boolean;
+  assignee: {
+    id: string;
+    displayName: string;
+    avatar?: string;
+    online: boolean;
+  };
+}
+
+export interface BusinessMemberPublic {
+  userId: string;
+  role: BusinessMemberRole;
+  displayName: string;
 }

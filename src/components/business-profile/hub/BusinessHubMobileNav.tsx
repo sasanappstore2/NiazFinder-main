@@ -1,6 +1,6 @@
 'use client';
 
-import { ImageIcon, LayoutList, Store, UserRound } from 'lucide-react';
+import { ImageIcon, LayoutList, Store, UserRound, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useBusinessHub } from './BusinessHubContext';
 import type { HubTaskId } from './types';
@@ -10,6 +10,7 @@ const ITEMS: { id: HubTaskId; label: string; icon: typeof Store }[] = [
   { id: 'profile', label: 'معرفی', icon: UserRound },
   { id: 'brand', label: 'عکس', icon: Store },
   { id: 'gallery', label: 'نمونه', icon: ImageIcon },
+  { id: 'contacts', label: 'تیم', icon: Users },
 ];
 
 export function BusinessHubMobileNav() {

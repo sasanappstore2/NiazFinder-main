@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { getBusinessCategoryTitle } from '@/lib/business/business-category';
-import { parseStorefrontExtension } from '@/lib/business/storefront';
-import type { StorefrontCategory } from '@/contracts/business-profile';
+import { createStorefrontBrandId, parseStorefrontExtension } from '@/lib/business/storefront';
+import type { StorefrontBrand, StorefrontCategory } from '@/contracts/business-profile';
 import { getClientAuthHeaders } from '@/lib/auth/client-auth';
+import { toast } from 'sonner';
 import {
   StorefrontCategoriesSection,
   stripCategoryFromOffers,
@@ -24,8 +25,28 @@ export function BusinessStorefrontEditor({
   onMutate?: () => void;
 }) {
   const [categories, setCategories] = useState<StorefrontCategory[]>([]);
+  const [brands, setBrands] = useState<StorefrontBrand[]>([]);
   const [offers, setOffers] = useState<StorefrontOfferRow[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const saveStorefront = async (patch: {
+    categories?: StorefrontCategory[];
+    brands?: StorefrontBrand[];
+  }) => {
+    const nextCategories = patch.categories ?? categories;
+    const nextBrands = patch.brands ?? brands;
+    const res = await fetch('/api/business/me/extensions', {
+      method: 'PATCH',
+      headers: getClientAuthHeaders(),
+      body: JSON.stringify({
+        extensions: { storefront: { categories: nextCategories, brands: nextBrands } },
+      }),
+    });
+    if (!res.ok) return false;
+    setCategories(nextCategories);
+    setBrands(nextBrands);
+    return true;
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -36,7 +57,9 @@ export function BusinessStorefrontEditor({
       ]);
       if (extRes.ok) {
         const data = (await extRes.json()) as { extensions?: { storefront?: unknown } };
-        setCategories(parseStorefrontExtension(data.extensions?.storefront).categories);
+        const storefront = parseStorefrontExtension(data.extensions?.storefront);
+        setCategories(storefront.categories);
+        setBrands(storefront.brands ?? []);
       }
       if (offersRes.ok) {
         const data = (await offersRes.json()) as { offers?: StorefrontOfferRow[] };
@@ -48,6 +71,7 @@ export function BusinessStorefrontEditor({
             primaryCategoryId:
               o.primaryCategoryId ?? o.vitrineCategoryId ?? o.categoryIds?.[0] ?? null,
             variants: o.variants ?? [],
+            brandId: o.brandId ?? null,
           }))
         );
       }
@@ -60,15 +84,29 @@ export function BusinessStorefrontEditor({
     void load();
   }, [load]);
 
-  const saveCategories = async (next: StorefrontCategory[]) => {
-    const res = await fetch('/api/business/me/extensions', {
-      method: 'PATCH',
-      headers: getClientAuthHeaders(),
-      body: JSON.stringify({ extensions: { storefront: { categories: next } } }),
-    });
-    if (!res.ok) return false;
-    setCategories(next);
-    return true;
+  const saveCategories = async (next: StorefrontCategory[]) => saveStorefront({ categories: next });
+
+  const addBrand = async (title: string): Promise<string | null> => {
+    const trimmed = title.trim();
+    if (!trimmed) return null;
+    const existing = brands.find((b) => b.title === trimmed);
+    if (existing) {
+      toast.info('این برند قبلاً ثبت شده');
+      return existing.id;
+    }
+    const nextBrand: StorefrontBrand = {
+      id: createStorefrontBrandId(),
+      title: trimmed,
+      sortOrder: brands.length,
+    };
+    const next = [...brands, nextBrand];
+    const ok = await saveStorefront({ brands: next });
+    if (!ok) {
+      toast.error('ذخیره برند ناموفق بود');
+      return null;
+    }
+    toast.success('برند اضافه شد');
+    return nextBrand.id;
   };
 
   const productCountByCategory = (id: string) =>
@@ -93,6 +131,8 @@ export function BusinessStorefrontEditor({
 
       <StorefrontProductsSection
         categories={categories}
+        brands={brands}
+        onAddBrand={addBrand}
         offers={offers}
         loading={loading}
         primaryLabel={

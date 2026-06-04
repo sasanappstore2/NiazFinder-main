@@ -2,17 +2,15 @@
  * Shared browse page titles (H1 + document title + description) for SEO consistency.
  */
 import {
-  resolveSearchSegments,
   type SearchContext,
 } from '@/lib/search/resolve-segments';
 import {
   resolveLocationScope,
   scopeIsActive,
-  scopeLabel,
+  scopeLabelForHeading,
   type LocationScope,
 } from '@/lib/search/location-scope';
-import { parseBrowsePath } from '@/lib/search/browse-path';
-import { getBrowseMarketFromPathname } from '@/config/market-routes';
+import { parseBrowsePath, type BrowsePathContext } from '@/lib/search/browse-path';
 import { getCityBySlug, COUNTRY_SLUG } from '@/config/locations';
 import type { BrowseListingType } from '@/lib/search/browse-entry-url';
 
@@ -24,11 +22,37 @@ export interface BrowsePageTitles {
   categoryTitle: string | null;
 }
 
+export const BROWSE_PAGE_H1_MAX_LENGTH = 160;
+
+/** Truncate visible browse H1; full string kept for SEO metadata. */
+export function truncateBrowsePageH1(
+  text: string,
+  max = BROWSE_PAGE_H1_MAX_LENGTH
+): string {
+  const trimmed = text.trim();
+  if (trimmed.length <= max) return trimmed;
+  return `${trimmed.slice(0, max - 3)}...`;
+}
+
+export function resolveBrowseLocationLabel(
+  pathCtx: BrowsePathContext,
+  scope: LocationScope
+): string {
+  if (scopeIsActive(scope)) return scopeLabelForHeading(scope);
+  if (pathCtx.citySlug) {
+    return getCityBySlug(pathCtx.citySlug)?.title ?? pathCtx.citySlug;
+  }
+  if (pathCtx.pathLocation === COUNTRY_SLUG) {
+    return 'سراسر ایران';
+  }
+  return pathCtx.pathLocation;
+}
+
 function locationLabelFromScope(
   ctx: SearchContext,
   scope: LocationScope
 ): string {
-  if (scopeIsActive(scope)) return scopeLabel(scope);
+  if (scopeIsActive(scope)) return scopeLabelForHeading(scope);
   if (ctx.kind === 'invalid-location' || ctx.kind === 'invalid-segments') {
     return 'سراسر ایران';
   }
@@ -60,6 +84,27 @@ export function buildBrowsePageH1(opts: {
   return isBusiness ? `کسب‌وکارها در ${locationLabel}` : `نیازها در ${locationLabel}`;
 }
 
+function buildBrowseDescription(opts: {
+  listingType: BrowseListingType;
+  locationLabel: string;
+  categoryTitle: string | null;
+  siteName: string;
+}): string {
+  const { listingType, locationLabel, categoryTitle, siteName } = opts;
+  const where =
+    locationLabel === 'سراسر ایران' ? 'سراسر ایران' : locationLabel;
+
+  if (listingType === 'business') {
+    return categoryTitle != null
+      ? `کسب‌وکارهای ${categoryTitle} در ${where} در ${siteName}.`
+      : `کسب‌وکارها در ${where} در ${siteName}.`;
+  }
+
+  return categoryTitle != null
+    ? `نیازها و کسب‌وکارهای ${categoryTitle} در ${where} در ${siteName}.`
+    : `جدیدترین نیازها و کسب‌وکارها در ${where} در ${siteName}.`;
+}
+
 export function buildBrowsePageTitlesFromContext(
   ctx: SearchContext,
   siteName: string,
@@ -85,21 +130,20 @@ export function buildBrowsePageTitlesFromContext(
 
   let categoryTitle: string | null = null;
   let parentCategoryTitle: string | null = null;
-  let description: string;
 
-  if (ctx.kind === 'all') {
-    description =
-      ctx.location.kind === 'country'
-        ? `جدیدترین نیازها و کسب‌وکارها در سراسر ایران در ${siteName}.`
-        : `جدیدترین نیازها و کسب‌وکارها در ${locationLabel} در ${siteName}.`;
-  } else if (ctx.kind === 'category') {
+  if (ctx.kind === 'category') {
     categoryTitle = ctx.category.title;
-    description = `نیازها و کسب‌وکارهای ${ctx.category.title} در ${locationLabel} در ${siteName}.`;
-  } else {
+  } else if (ctx.kind === 'parent-child') {
     categoryTitle = ctx.category.title;
     parentCategoryTitle = ctx.parent.title;
-    description = `${ctx.category.title} در ${locationLabel} — زیرمجموعه ${ctx.parent.title} در ${siteName}.`;
   }
+
+  const description = buildBrowseDescription({
+    listingType,
+    locationLabel,
+    categoryTitle,
+    siteName,
+  });
 
   const h1 = buildBrowsePageH1({
     listingType,
@@ -126,51 +170,28 @@ export function buildBrowsePageTitlesFromPath(
 ): BrowsePageTitles {
   const scope = resolveLocationScope(pathname, searchParams);
   const pathCtx = parseBrowsePath(pathname);
-  const market = getBrowseMarketFromPathname(pathname);
+  const locationLabel = resolveBrowseLocationLabel(pathCtx, scope);
+  const categoryTitle = pathCtx.categoryTitle ?? null;
 
-  if (market === 'business' || listingType === 'business') {
-    const locationLabel = scopeIsActive(scope)
-      ? scopeLabel(scope)
-      : pathCtx.citySlug
-        ? (getCityBySlug(pathCtx.citySlug)?.title ?? pathCtx.citySlug)
-        : pathCtx.pathLocation === COUNTRY_SLUG
-          ? 'سراسر ایران'
-          : pathCtx.pathLocation;
+  const h1 = buildBrowsePageH1({
+    listingType,
+    locationLabel,
+    categoryTitle,
+    parentCategoryTitle: pathCtx.parentCategoryTitle ?? null,
+  });
 
-    const h1 = buildBrowsePageH1({
-      listingType: 'business',
-      locationLabel,
-      categoryTitle: pathCtx.categoryTitle ?? null,
-      parentCategoryTitle: pathCtx.parentCategoryTitle ?? null,
-    });
-    const description =
-      pathCtx.categoryTitle != null
-        ? `کسب‌وکارهای ${pathCtx.categoryTitle} در ${locationLabel} در ${siteName}.`
-        : `کسب‌وکارها در ${locationLabel} در ${siteName}.`;
+  const description = buildBrowseDescription({
+    listingType,
+    locationLabel,
+    categoryTitle,
+    siteName,
+  });
 
-    return {
-      h1,
-      title: `${h1} | ${siteName}`,
-      description,
-      locationLabel,
-      categoryTitle: pathCtx.categoryTitle ?? null,
-    };
-  }
-
-  const parts = pathname.replace(/^\/s\/?/, '').split('/').filter(Boolean);
-  const [rawLoc, ...segments] = parts;
-  const ctx = resolveSearchSegments(rawLoc ?? 'iran', segments);
-  const base = buildBrowsePageTitlesFromContext(ctx, siteName, listingType, scope);
-
-  if (pathCtx.categoryTitle && !base.categoryTitle) {
-    const h1 = buildBrowsePageH1({
-      listingType,
-      locationLabel: base.locationLabel,
-      categoryTitle: pathCtx.categoryTitle,
-      parentCategoryTitle: pathCtx.parentCategoryTitle ?? null,
-    });
-    return { ...base, h1, title: `${h1} | ${siteName}`, categoryTitle: pathCtx.categoryTitle };
-  }
-
-  return base;
+  return {
+    h1,
+    title: `${h1} | ${siteName}`,
+    description,
+    locationLabel,
+    categoryTitle,
+  };
 }

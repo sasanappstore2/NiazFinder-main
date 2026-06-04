@@ -1,6 +1,6 @@
 'use client';
 
-import { MoreHorizontal, Reply } from 'lucide-react';
+import { MoreHorizontal, Pin, PinOff, Reply } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +19,8 @@ export interface MessageContextMenuProps {
   onEdit?: () => void;
   onDeleteForMe: () => void;
   onDeleteForEveryone: () => void;
+  isPinned?: boolean;
+  onPin?: () => void;
   /** Controlled open (mobile long-press). */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -36,6 +38,8 @@ function MessageContextMenuItems({
   onDeleteForEveryone,
   canDeleteForEveryone,
   canEdit,
+  isPinned = false,
+  onPin,
   onClose,
 }: Pick<
   MessageContextMenuProps,
@@ -46,6 +50,8 @@ function MessageContextMenuItems({
   | 'onDeleteForEveryone'
   | 'canDeleteForEveryone'
   | 'canEdit'
+  | 'isPinned'
+  | 'onPin'
 > & { onClose?: () => void }) {
   const close = () => onClose?.();
 
@@ -98,6 +104,28 @@ function MessageContextMenuItems({
           ویرایش پیام
         </DropdownMenuItem>
       )}
+      {onPin && (
+        <DropdownMenuItem
+          className="gap-2"
+          onSelect={(e) => {
+            e.preventDefault();
+            onPin();
+            close();
+          }}
+        >
+          {isPinned ? (
+            <>
+              <PinOff className="size-4 opacity-70" />
+              برداشتن سنجاق
+            </>
+          ) : (
+            <>
+              <Pin className="size-4 opacity-70" />
+              سنجاق کردن
+            </>
+          )}
+        </DropdownMenuItem>
+      )}
       <DropdownMenuSeparator />
       <DropdownMenuItem
         onSelect={(e) => {
@@ -133,6 +161,8 @@ export function MessageContextMenu({
   onEdit,
   onDeleteForMe,
   onDeleteForEveryone,
+  isPinned = false,
+  onPin,
   open,
   onOpenChange,
   showTriggers = true,
@@ -170,6 +200,8 @@ export function MessageContextMenu({
           onDeleteForEveryone={onDeleteForEveryone}
           canDeleteForEveryone={canDeleteForEveryone}
           canEdit={canEdit}
+          isPinned={isPinned}
+          onPin={onPin}
           onClose={() => onOpenChange?.(false)}
         />
       </DropdownMenuContent>

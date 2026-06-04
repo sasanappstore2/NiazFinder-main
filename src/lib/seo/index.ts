@@ -370,6 +370,22 @@ export const SEO_ROUTES: SEORoute[] = [
     changeFrequency: 'monthly',
     section: 'دعوت',
   },
+  {
+    path: '/terms',
+    title: 'قوانین استفاده - نیاز فایندر',
+    description: 'قوانین و شرایط استفاده از پلتفرم نیاز فایندر — حقوق و تکالیف کاربران، ثبت نیاز، پروفایل کسب‌وکار و ارتباطات.',
+    priority: 0.4,
+    changeFrequency: 'yearly',
+    section: 'قوانین',
+  },
+  {
+    path: '/help',
+    title: 'پشتیبانی و راهنما - نیاز فایندر',
+    description: 'راهنمای استفاده از نیاز فایندر و تماس با پشتیبانی.',
+    priority: 0.5,
+    changeFrequency: 'monthly',
+    section: 'پشتیبانی',
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════════════

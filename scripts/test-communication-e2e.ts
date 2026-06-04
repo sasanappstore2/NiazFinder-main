@@ -6,8 +6,23 @@ import { PrismaClient } from '@prisma/client';
 import { publishMessageNew } from '../src/lib/communication/redis-publish';
 
 const db = new PrismaClient();
+const CHAT_URL = process.env.CHAT_SERVICE_INTERNAL_URL || 'http://127.0.0.1:3004';
+
+async function assertFanoutProtected() {
+  const res = await fetch(`${CHAT_URL}/internal/fanout`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'ping', payload: {} }),
+  });
+  if (res.status !== 401) {
+    throw new Error(`Expected fanout 401 without secret, got ${res.status}`);
+  }
+  console.log('OK: fanout endpoint rejects unauthenticated requests');
+}
 
 async function main() {
+  await assertFanoutProtected();
+
   const conv = await db.conversation.findFirst({
     orderBy: { updatedAt: 'desc' },
     include: { user1: true, user2: true },

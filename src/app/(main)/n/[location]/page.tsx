@@ -6,6 +6,7 @@ import {
 
 interface PageProps {
   params: Promise<{ location: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export async function generateMetadata(props: PageProps): Promise<Metadata> {

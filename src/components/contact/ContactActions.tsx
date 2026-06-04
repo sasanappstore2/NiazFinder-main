@@ -18,6 +18,7 @@ import { savePendingContact } from '@/lib/contact/pending-contact';
 import { ensureNeedChatPreview } from '@/lib/contact/need-chat-preview';
 import type { NeedChatPreview } from '@/lib/contact/need-chat-preview';
 import Link from 'next/link';
+import { useBusinessContact } from '@/hooks/use-business-contact';
 
 export interface ContactActionsProps {
   otherUserId: string;
@@ -27,6 +28,8 @@ export interface ContactActionsProps {
   chatEnabled?: boolean;
   showProfile?: boolean;
   profileHref?: string;
+  /** When set, opens business contact picker instead of direct user chat */
+  businessSlug?: string;
   /** Snapshot for chat need-context banner (title, category, city). */
   needPreview?: Omit<NeedChatPreview, 'id'>;
   /** Override chat button label (e.g. primary CTA on need detail aside). */
@@ -47,8 +50,10 @@ export function ContactActions({
   chatLabel = 'چت',
   variant = 'default',
   className,
+  businessSlug,
 }: ContactActionsProps) {
   const router = useRouter();
+  const { openBusinessContact, picker } = useBusinessContact();
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const authToken = useAppStore((s) => s.authToken);
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
@@ -74,6 +79,14 @@ export function ContactActions({
   const handleChat = async () => {
     if (isSelf) {
       toast.info('نمی‌توانید با خودتان گفتگو کنید');
+      return;
+    }
+    if (businessSlug) {
+      await openBusinessContact({
+        businessSlug,
+        requestId,
+        returnTo: typeof window !== 'undefined' ? window.location.pathname : undefined,
+      });
       return;
     }
     if (!isAuthenticated || !authToken) {
@@ -147,7 +160,9 @@ export function ContactActions({
   const fullWidthBtn = variant === 'sticky' || variant === 'stacked';
 
   return (
-    <div
+    <>
+      {picker}
+      <div
       className={cn(
         layout,
         variant === 'sticky' &&
@@ -222,5 +237,6 @@ export function ContactActions({
         </Button>
       )}
     </div>
+    </>
   );
 }

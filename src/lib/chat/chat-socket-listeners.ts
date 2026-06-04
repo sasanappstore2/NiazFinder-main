@@ -220,7 +220,16 @@ export function bindChatSocketListeners(socket: Socket): void {
   };
 
   socket.off('message:pin-changed');
-  socket.on('message:pin-changed', relay('chat:message-pin-changed'));
+  socket.on('message:pin-changed', (data: {
+    messageId: string;
+    conversationId: string;
+    isPinned: boolean;
+    pinnedBy?: string | null;
+    pinnedAt?: string | null;
+  }) => {
+    useAppStore.getState().applyMessagePinChanged(data);
+    window.dispatchEvent(new CustomEvent('chat:message-pin-changed', { detail: data }));
+  });
   socket.off('message:star-changed');
   socket.on('message:star-changed', relay('chat:message-star-changed'));
 
@@ -307,6 +316,7 @@ export function bindChatSocketListeners(socket: Socket): void {
   socket.off('call:reject');
   socket.on('call:reject', (data) => {
     window.dispatchEvent(new CustomEvent('call:reject', { detail: data }));
+    window.dispatchEvent(new CustomEvent('voice:call-log-changed'));
   });
   socket.off('call:unavailable');
   socket.on('call:unavailable', (data) => {
@@ -315,5 +325,6 @@ export function bindChatSocketListeners(socket: Socket): void {
   socket.off('call:hangup');
   socket.on('call:hangup', (data) => {
     window.dispatchEvent(new CustomEvent('call:hangup', { detail: data }));
+    window.dispatchEvent(new CustomEvent('voice:call-log-changed'));
   });
 }

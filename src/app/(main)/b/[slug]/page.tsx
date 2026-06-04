@@ -21,6 +21,7 @@ import { SITE_NAME } from '@/lib/seo';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
 async function resolveBusiness(slug: string) {
@@ -29,11 +30,12 @@ async function resolveBusiness(slug: string) {
   return loadBusinessByUserId(slug);
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   if (isMarketplaceLocationSegment(slug)) {
     return generateSearchMarketplaceMetadata({
       params: Promise.resolve({ location: slug }),
+      searchParams,
       market: 'business',
     });
   }

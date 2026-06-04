@@ -5,6 +5,7 @@ import {
   serializeProductCardSnapshot,
 } from '@/contracts/product-card-snapshot';
 import { routeBuilder } from '@/config/routes';
+import { formatPriceText } from '@/lib/format/money';
 import { useAppStore } from '@/lib/store';
 
 export type ProductChatIntro = {
@@ -39,7 +40,7 @@ export function buildProductChatIntro(
   return {
     offerId: offer.id,
     title,
-    price: price ?? undefined,
+    price: price ? formatPriceText(price) : undefined,
     productUrl: routeBuilder.businessProduct(businessSlug, offer.id),
     imageUrl,
     businessName: '',

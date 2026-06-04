@@ -13,7 +13,7 @@ import { OwnerProposalsSection } from '@/components/need/OwnerProposalsSection';
 import { buildNeedBriefSummary } from '@/lib/need-match/brief-summary';
 import type { NeedMatchContext } from '@/contracts/need-match';
 import type { ServiceRequest } from '@/lib/types';
-import { ContactActions } from '@/components/contact/ContactActions';
+import { NeedMobileStickyBar } from '@/components/need/briefing/NeedMobileStickyBar';
 import { RequestResubmitBanner } from '@/components/need/RequestResubmitBanner';
 import { NeedDetailSkeleton } from '@/components/need/NeedDetailSkeleton';
 import { cn } from '@/lib/utils';
@@ -194,8 +194,8 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
       {isOwner && <OwnerProposalsSection requestId={request.id} />}
 
       {!isOwner && (
-        <ContactActions
-          variant="sticky"
+        <NeedMobileStickyBar
+          isBusinessUser={isBusinessUser}
           otherUserId={request.user.id}
           requestId={request.id}
           needPreview={{
@@ -205,10 +205,7 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
           }}
           chatLabel="پیام و گفتگو"
           displayName={`${request.user.firstName} ${request.user.lastName}`.trim()}
-          hasPhone
-          chatEnabled
-          showProfile={false}
-          className="max-w-6xl mx-auto lg:hidden"
+          className="max-w-6xl mx-auto"
         />
       )}
 

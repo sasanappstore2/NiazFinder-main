@@ -85,6 +85,22 @@ function matchNeighborhoodInCatalog(
   return best;
 }
 
+/** GPS → nearest catalog city (no external geocoder). Neighborhood is null until Nominatim proxy exists. */
+export async function matchGeoFromCoordinates(
+  lat: number,
+  lng: number
+): Promise<GeoMatchedLocation | null> {
+  const city = nearestLocationCity(lat, lng);
+  if (!city) return null;
+
+  return {
+    city,
+    citySlug: locationCityIdToSlug(city.id),
+    neighborhood: null,
+    neighborhoodMatchScore: 0,
+  };
+}
+
 /** Map Nominatim reverse result + coordinates to site city/neighborhood catalog. */
 export async function matchGeoToCatalog(
   lat: number,

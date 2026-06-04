@@ -22,6 +22,7 @@ import { routeBuilder } from '@/config/routes';
 import { CANONICAL_CITIES } from '@/config/locations';
 import { slugifyBusinessName } from '@/lib/business/slug';
 import { parseOfferStorefrontFromFeatures } from '@/lib/business/offer-storefront-meta';
+import { parseStorefrontExtension } from '@/lib/business/storefront';
 
 type ProfileWithRelations = BusinessProfile & {
   offers: DbOffer[];
@@ -51,7 +52,7 @@ function mapMedia(v: string): PortfolioMediaType {
   return MEDIA_MAP[v] ?? 'image';
 }
 
-function mapOffer(o: DbOffer): BusinessOffer {
+function mapOffer(o: DbOffer, brandById: Map<string, string>): BusinessOffer {
   const rawFeatures = parseJsonArray<string>(o.features);
   const { meta, displayFeatures } = parseOfferStorefrontFromFeatures(rawFeatures);
   return {
@@ -68,6 +69,8 @@ function mapOffer(o: DbOffer): BusinessOffer {
     categoryIds: meta.categoryIds,
     primaryCategoryId: meta.primaryCategoryId,
     variants: meta.variants,
+    brandId: meta.brandId,
+    brandName: meta.brandId ? brandById.get(meta.brandId) : undefined,
   };
 }
 
@@ -104,8 +107,18 @@ export function mapProfileToBusiness(
   const extensionsRaw = parseJsonObject<Record<string, unknown>>(profile.extensions, {});
   const layoutConfig = (extensionsRaw._layout as ProfileLayoutConfig | undefined) ?? undefined;
   const { _layout: _omit, ...extRest } = extensionsRaw;
-  const extensions =
-    Object.keys(extRest).length > 0 ? (extRest as BusinessExtension) : undefined;
+  const parsedStorefront = parseStorefrontExtension(extensionsRaw.storefront);
+  const hasStorefrontData =
+    parsedStorefront.categories.length > 0 || (parsedStorefront.brands?.length ?? 0) > 0;
+  const extensionsPayload =
+    Object.keys(extRest).length > 0 || layoutConfig || hasStorefrontData
+      ? ({
+          ...extRest,
+          ...(hasStorefrontData ? { storefront: parsedStorefront } : {}),
+          ...(layoutConfig ? { _layout: layoutConfig } : {}),
+        } as BusinessExtension)
+      : undefined;
+  const extensions = extensionsPayload;
   const aiRaw = parseJsonObject<Partial<AiAssistantConfig>>(profile.aiAssistantConfig, {
     systemPrompt: '',
     dynamicQuestions: [],
@@ -116,6 +129,8 @@ export function mapProfileToBusiness(
   const seoPath = profile.slug
     ? routeBuilder.businessProfile(profile.slug)
     : routeBuilder.pro(profile.userId);
+
+  const brandById = new Map((parsedStorefront.brands ?? []).map((b) => [b.id, b.title]));
 
   const business: Business = {
     id: profile.userId,
@@ -148,7 +163,7 @@ export function mapProfileToBusiness(
       responseTime: profile.responseTime ?? undefined,
       yearsActive: profile.yearsActive,
     },
-    offers: profile.offers.filter((o) => o.isPublished).map(mapOffer),
+    offers: profile.offers.filter((o) => o.isPublished).map((o) => mapOffer(o, brandById)),
     portfolio: profile.portfolioItems.filter((p) => p.isPublished).map(mapPortfolio),
     reviews: profile.profileReviews.filter((r) => r.isPublished).map(mapReview),
     aiAssistantConfig: {
@@ -174,7 +189,7 @@ export function mapProfileToBusiness(
       conversions: profile.conversionCount,
       saves: profile.saveCount,
     },
-    extensions: extensions ? { ...extensions, ...(layoutConfig ? { _layout: layoutConfig } : {}) } : layoutConfig ? { _layout: layoutConfig } : undefined,
+    extensions,
     layoutConfig,
   };
 

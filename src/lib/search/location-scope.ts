@@ -17,7 +17,6 @@ import {
 import {
   getProvinceByIdOrSlug,
   provinceIdToSlug,
-  provinceSlugToPersianName,
   provinceSlugsToPersianNames,
   isKnownProvinceSlug,
 } from '@/lib/search/province-slugs';
@@ -51,6 +50,22 @@ export function scopeIsActive(scope: LocationScope): boolean {
   return scope.mode !== 'country';
 }
 
+function formatNamesForHeading(names: string[], countFallback: string): string {
+  const filtered = names.filter(Boolean);
+  if (filtered.length === 0) return countFallback;
+  if (filtered.length === 1) return filtered[0];
+  if (filtered.length === 2) return `${filtered[0]}، ${filtered[1]}`;
+  const last = filtered[filtered.length - 1];
+  return `${filtered.slice(0, -1).join('، ')} و ${last}`;
+}
+
+function provinceScopeLabel(slugs: string[]): string {
+  return formatNamesForHeading(
+    provinceSlugsToPersianNames(slugs),
+    `${slugs.length} استان`
+  );
+}
+
 export function scopeLabel(scope: LocationScope): string {
   switch (scope.mode) {
     case 'country':
@@ -64,6 +79,24 @@ export function scopeLabel(scope: LocationScope): string {
       return scope.label;
     default:
       return 'تمام ایران';
+  }
+}
+
+/** Human-readable location label for browse H1 / page title (comma-separated city names). */
+export function scopeLabelForHeading(scope: LocationScope): string {
+  switch (scope.mode) {
+    case 'country':
+      return 'سراسر ایران';
+    case 'city':
+      return scope.cities[0]?.name ?? scope.citySlug;
+    case 'cities': {
+      const names = scope.cities.map((c) => c.name).filter(Boolean);
+      return formatNamesForHeading(names, `${scope.slugs.length} شهر`);
+    }
+    case 'provinces':
+      return provinceScopeLabel(scope.slugs);
+    default:
+      return 'سراسر ایران';
   }
 }
 
@@ -81,16 +114,7 @@ export function scopeFromUrl(pathname: string, searchParams: ParamSource): Locat
 
   const provinceSlugs = normalizeProvinceSlugs(filters.provinces);
   if (provinceSlugs.length > 0) {
-    const labels = provinceSlugs
-      .map((s) => provinceSlugToPersianName(s))
-      .filter((n): n is string => Boolean(n));
-    const label =
-      labels.length === 1
-        ? labels[0]
-        : labels.length > 1
-          ? `${labels.length} استان`
-          : `${provinceSlugs.length} استان`;
-    return { mode: 'provinces', slugs: provinceSlugs, label };
+    return { mode: 'provinces', slugs: provinceSlugs, label: provinceScopeLabel(provinceSlugs) };
   }
 
   const citySlugsFromQuery = [...filters.cities];
@@ -134,13 +158,11 @@ export function scopeFromCookie(): LocationScope {
     const labels = provinceIds
       .map((id) => getProvinceByIdOrSlug(id)?.name)
       .filter((n): n is string => Boolean(n));
-    const label =
-      labels.length === 1
-        ? labels[0]
-        : labels.length > 1
-          ? `${labels.length} استان`
-          : `${provinceIds.length} استان`;
-    return { mode: 'provinces', slugs, label };
+    return {
+      mode: 'provinces',
+      slugs,
+      label: formatNamesForHeading(labels, `${provinceIds.length} استان`),
+    };
   }
 
   const cities = loc.selectedCities;
@@ -223,13 +245,11 @@ export function selectionToScope(selection: LocationSelection): LocationScope {
     const labels = provinceIds
       .map((id) => getProvinceByIdOrSlug(id)?.name)
       .filter((n): n is string => Boolean(n));
-    const label =
-      labels.length === 1
-        ? labels[0]
-        : labels.length > 1
-          ? `${labels.length} استان`
-          : `${provinceIds.length} استان`;
-    return { mode: 'provinces', slugs, label };
+    return {
+      mode: 'provinces',
+      slugs,
+      label: formatNamesForHeading(labels, `${provinceIds.length} استان`),
+    };
   }
 
   if (cities.length === 0) return { mode: 'country' };

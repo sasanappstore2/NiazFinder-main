@@ -17,6 +17,7 @@ export type OfferWriteBody = {
   primaryCategoryId?: string | null;
   vitrineCategoryId?: string | null;
   variants?: OfferVariant[];
+  brandId?: string | null;
   ctaType?: string;
   isPublished?: boolean;
 };
@@ -30,6 +31,7 @@ export function buildOfferFeaturesFromBody(
     body.primaryCategoryId !== undefined ||
     body.vitrineCategoryId !== undefined ||
     body.variants !== undefined ||
+    body.brandId !== undefined ||
     body.features !== undefined;
 
   if (!hasStorefrontPatch) return undefined;
@@ -58,6 +60,7 @@ export function buildOfferFeaturesFromBody(
     categoryIds,
     primaryCategoryId,
     variants: body.variants ?? current.meta.variants,
+    brandId: body.brandId !== undefined ? body.brandId : current.meta.brandId,
   };
 
   return serializeOfferStorefrontFeatures(displayFeatures, meta);

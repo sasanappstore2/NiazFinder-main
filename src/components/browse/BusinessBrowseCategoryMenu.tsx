@@ -24,6 +24,7 @@ import {
 import {
   Sheet,
   SheetContent,
+  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 
@@ -148,6 +149,7 @@ export function BusinessBrowseCategoryMenuMobile() {
           </button>
         </SheetTrigger>
         <SheetContent side="right" className="w-full max-w-md p-0 sm:max-w-lg">
+          <SheetTitle className="sr-only">دسته‌بندی کسب‌وکار</SheetTitle>
           <BrowseMenuPanel
             layout="mobile"
             onClose={() => setIsOpen(false)}

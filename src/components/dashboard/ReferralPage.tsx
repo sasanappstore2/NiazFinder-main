@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { apiFetch } from '@/lib/api-client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,31 +32,11 @@ import { toast } from 'sonner';
 import { formatPrice } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
-// ============ Mock Data ============
-const REFERRAL_CODE = 'USER-8A3K';
-const REFERRAL_URL = `https://needfinder.ir/ref/${REFERRAL_CODE}`;
-
-const REFERRAL_STATS = [
-  { id: 'total', label: 'تعداد دعوت‌ها', value: '۱۲', suffix: 'نفر', icon: Users, gradient: 'from-emerald-500 to-teal-500', bgColor: 'bg-emerald-50 dark:bg-emerald-950/40', iconColor: 'text-emerald-600 dark:text-emerald-400' },
-  { id: 'successful', label: 'دعوت‌های موفق', value: '۸', suffix: 'نفر', icon: Check, gradient: 'from-teal-500 to-cyan-500', bgColor: 'bg-teal-50 dark:bg-teal-950/40', iconColor: 'text-teal-600 dark:text-teal-400' },
-  { id: 'rewards', label: 'پاداش کسب شده', value: formatPrice(400000), suffix: '', icon: Gift, gradient: 'from-amber-500 to-orange-500', bgColor: 'bg-amber-50 dark:bg-amber-950/40', iconColor: 'text-amber-600 dark:text-amber-400' },
-  { id: 'pending', label: 'در انتظار', value: '۴', suffix: 'نفر', icon: Clock, gradient: 'from-violet-500 to-purple-500', bgColor: 'bg-violet-50 dark:bg-violet-950/40', iconColor: 'text-violet-600 dark:text-violet-400' },
-];
-
 type ReferralStatus = 'success' | 'pending' | 'expired';
 
 interface ReferralRecord {
   id: string; name: string; date: string; status: ReferralStatus; reward: string;
 }
-
-const REFERRAL_HISTORY: ReferralRecord[] = [
-  { id: 'rh1', name: 'محمد رضایی', date: '۱۴۰۳/۰۳/۱۵', status: 'success', reward: '+۵۰,۰۰۰ تومان' },
-  { id: 'rh2', name: 'زهرا کریمی', date: '۱۴۰۳/۰۳/۱۰', status: 'success', reward: '+۵۰,۰۰۰ تومان' },
-  { id: 'rh3', name: 'امیر حسینی', date: '۱۴۰۳/۰۳/۰۵', status: 'pending', reward: '—' },
-  { id: 'rh4', name: 'فاطمه محمدی', date: '۱۴۰۳/۰۲/۲۸', status: 'success', reward: '+۵۰,۰۰۰ تومان' },
-  { id: 'rh5', name: 'حسن نوری', date: '۱۴۰۳/۰۲/۲۰', status: 'expired', reward: '—' },
-  { id: 'rh6', name: 'سارا احمدی', date: '۱۴۰۳/۰۲/۱۵', status: 'success', reward: '+۵۰,۰۰۰ تومان' },
-];
 
 const STATUS_CONFIG: Record<ReferralStatus, { label: string; className: string }> = {
   success: { label: 'موفق', className: 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800' },
@@ -81,10 +62,46 @@ const REFERRAL_RULES = [
 export function ReferralPage() {
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [code, setCode] = useState('');
+  const [url, setUrl] = useState('');
+  const [stats, setStats] = useState({ total: 0, successful: 0, pending: 0, rewards: 0 });
+  const [history, setHistory] = useState<ReferralRecord[]>([]);
+
+  useEffect(() => {
+    apiFetch<{
+      code: string;
+      url: string;
+      stats: { total: number; successful: number; pending: number; rewards: number };
+      history: { id: string; isClaimed: boolean; reward: number; createdAt: string }[];
+    }>('/api/referral/me')
+      .then((data) => {
+        setCode(data.code);
+        setUrl(data.url);
+        setStats(data.stats);
+        setHistory(
+          data.history.map((h) => ({
+            id: h.id,
+            name: h.id.slice(-6),
+            date: new Date(h.createdAt).toLocaleDateString('fa-IR'),
+            status: h.isClaimed ? 'success' : 'pending',
+            reward: h.isClaimed ? `+${formatPrice(h.reward)}` : '—',
+          }))
+        );
+      })
+      .catch(() => {});
+  }, []);
+
+  const REFERRAL_STATS = [
+    { id: 'total', label: 'تعداد دعوت‌ها', value: String(stats.total), suffix: 'نفر', icon: Users, gradient: 'from-emerald-500 to-teal-500', bgColor: 'bg-emerald-50 dark:bg-emerald-950/40', iconColor: 'text-emerald-600 dark:text-emerald-400' },
+    { id: 'successful', label: 'دعوت‌های موفق', value: String(stats.successful), suffix: 'نفر', icon: Check, gradient: 'from-teal-500 to-cyan-500', bgColor: 'bg-teal-50 dark:bg-teal-950/40', iconColor: 'text-teal-600 dark:text-teal-400' },
+    { id: 'rewards', label: 'پاداش کسب شده', value: formatPrice(stats.rewards), suffix: '', icon: Gift, gradient: 'from-amber-500 to-orange-500', bgColor: 'bg-amber-50 dark:bg-amber-950/40', iconColor: 'text-amber-600 dark:text-amber-400' },
+    { id: 'pending', label: 'در انتظار', value: String(stats.pending), suffix: 'نفر', icon: Clock, gradient: 'from-violet-500 to-purple-500', bgColor: 'bg-violet-50 dark:bg-violet-950/40', iconColor: 'text-violet-600 dark:text-violet-400' },
+  ];
 
   const handleCopyCode = async () => {
+    if (!code) return;
     try {
-      await navigator.clipboard.writeText(REFERRAL_CODE);
+      await navigator.clipboard.writeText(code);
       setCopiedCode(true);
       toast.success('کد دعوت کپی شد!');
       setTimeout(() => setCopiedCode(false), 2000);
@@ -94,8 +111,9 @@ export function ReferralPage() {
   };
 
   const handleCopyLink = async () => {
+    if (!url) return;
     try {
-      await navigator.clipboard.writeText(REFERRAL_URL);
+      await navigator.clipboard.writeText(url);
       setCopiedLink(true);
       toast.success('لینک دعوت کپی شد!');
       setTimeout(() => setCopiedLink(false), 2000);
@@ -143,7 +161,7 @@ export function ReferralPage() {
             <label className="mb-2 block text-sm font-medium text-muted-foreground">کد دعوت</label>
             <div className="flex items-center gap-3">
               <div className="flex-1 rounded-xl border border-border/60 bg-muted/40 px-4 py-3">
-                <span className="text-lg font-bold tabular-nums tracking-widest text-foreground">{REFERRAL_CODE}</span>
+                <span className="text-lg font-bold tabular-nums tracking-widest text-foreground">{code || '—'}</span>
               </div>
               <Button onClick={handleCopyCode} variant="outline" className="gap-2 rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 active:scale-95 transition-all duration-150" aria-label="کپی کد دعوت" title="کپی کد دعوت به کلیپ‌بورد">
                 {copiedCode ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}{copiedCode ? 'کپی شد' : 'کپی کد'}
@@ -156,7 +174,7 @@ export function ReferralPage() {
             <label className="mb-2 block text-sm font-medium text-muted-foreground">لینک کامل دعوت</label>
             <div className="flex items-center gap-3">
               <div className="flex-1 truncate rounded-xl border border-border/60 bg-muted/40 px-4 py-3">
-                <span className="text-sm text-foreground" dir="ltr">{REFERRAL_URL}</span>
+                <span className="text-sm text-foreground" dir="ltr">{url || '—'}</span>
               </div>
               <Button onClick={handleCopyLink} className="gap-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 active:scale-95 transition-all duration-150" aria-label="کپی لینک دعوت" title="کپی لینک دعوت به کلیپ‌بورد">
                 {copiedLink ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}{copiedLink ? 'کپی شد' : 'کپی لینک'}
@@ -227,7 +245,7 @@ export function ReferralPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {REFERRAL_HISTORY.map((record) => (
+                {history.map((record) => (
                   <TableRow key={record.id} className="border-b transition-colors duration-150 last:border-b-0 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20">
                     <TableCell className="py-3.5 pr-4 font-medium text-foreground">{record.name}</TableCell>
                     <TableCell className="py-3.5 pr-4 text-sm text-muted-foreground">{record.date}</TableCell>

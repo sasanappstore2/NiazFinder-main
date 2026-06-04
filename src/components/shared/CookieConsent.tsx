@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Settings, Shield, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -106,8 +107,10 @@ export function CookieConsent() {
           <p className="text-xs leading-6 text-muted-foreground sm:text-sm">
             ما از کوکی‌ها برای بهبود تجربه کاربری، تحلیل ترافیک و ارائه محتوای شخصی‌سازی شده
             استفاده می‌کنیم. با ادامه استفاده از سایت، با{' '}
-            <span className="font-medium text-foreground">سیاست حریم خصوصی</span> ما موافقت
-            می‌کنید.
+            <Link href="/privacy" className="font-medium text-foreground hover:text-primary hover:underline">
+              سیاست حریم خصوصی
+            </Link>{' '}
+            ما موافقت می‌کنید.
           </p>
 
           {/* Actions */}

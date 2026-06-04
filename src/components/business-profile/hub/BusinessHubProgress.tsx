@@ -12,6 +12,7 @@ const TASK_LABELS: Record<HubTaskId, string> = {
   profile: 'معرفی و تماس',
   brand: 'عکس و لینک‌ها',
   gallery: 'نمونه کارها',
+  contacts: 'مخاطبین و تیم',
 };
 
 export function BusinessHubProgress() {

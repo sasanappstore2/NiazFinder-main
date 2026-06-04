@@ -27,6 +27,7 @@ import {
 } from '@/lib/contact/start-conversation';
 import type { Proposal } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { NEED_OWNER_PROPOSALS_ANCHOR } from '@/components/need/briefing/need-brief-utils';
 
 function getAvatarBg(name: string) {
   const colors = [
@@ -195,7 +196,10 @@ export function OwnerProposalsSection({ requestId, defaultOpen = false }: OwnerP
   };
 
   return (
-    <section className="need-detail-scroll-section mt-8 border-t border-border/50 pt-6 pb-8">
+    <section
+      id={NEED_OWNER_PROPOSALS_ANCHOR}
+      className="need-detail-scroll-section mt-8 border-t border-border/50 pt-6 pb-8 scroll-mt-[calc(var(--site-header-offset,6.5rem)+1rem)]"
+    >
       <button
         type="button"
         className="flex w-full items-center justify-between gap-2 text-right"

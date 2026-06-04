@@ -6,8 +6,9 @@ import { Loader2, Package, Pencil, Plus, ShoppingBag, Trash2 } from 'lucide-reac
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import type { OfferVariant, StorefrontCategory } from '@/contracts/business-profile';
+import type { OfferVariant, StorefrontBrand, StorefrontCategory } from '@/contracts/business-profile';
 import { offerMatchesCategoryFilter } from '@/lib/business/offer-storefront-meta';
+import { formatPriceText } from '@/lib/format/money';
 import { getClientAuthHeaders } from '@/lib/auth/client-auth';
 import { cn } from '@/lib/utils';
 import {
@@ -24,6 +25,7 @@ export type StorefrontOfferRow = {
   images: string[];
   categoryIds: string[];
   primaryCategoryId: string | null;
+  brandId: string | null;
   variants: OfferVariant[];
   vitrineCategoryId?: string | null;
 };
@@ -36,12 +38,15 @@ function offerToForm(o: StorefrontOfferRow): ProductFormValues {
     images: o.images,
     categoryIds: o.categoryIds,
     primaryCategoryId: o.primaryCategoryId,
+    brandId: o.brandId ?? null,
     variants: o.variants,
   };
 }
 
 export function StorefrontProductsSection({
   categories,
+  brands,
+  onAddBrand,
   offers,
   loading,
   primaryLabel,
@@ -49,6 +54,8 @@ export function StorefrontProductsSection({
   onMutate,
 }: {
   categories: StorefrontCategory[];
+  brands: StorefrontBrand[];
+  onAddBrand: (title: string) => Promise<string | null>;
   offers: StorefrontOfferRow[];
   loading: boolean;
   primaryLabel: string | null;
@@ -70,6 +77,8 @@ export function StorefrontProductsSection({
   }, [offers, filterId]);
 
   const categoryTitle = (id: string) => categories.find((c) => c.id === id)?.title ?? '—';
+  const brandTitle = (id: string | null) =>
+    id ? brands.find((b) => b.id === id)?.title ?? null : null;
 
   const saveProduct = async (values: ProductFormValues, offerId?: string) => {
     if (!values.title.trim() || !values.description.trim()) {
@@ -85,6 +94,7 @@ export function StorefrontProductsSection({
         images: values.images,
         categoryIds: values.categoryIds,
         primaryCategoryId: values.primaryCategoryId,
+        brandId: values.brandId,
         variants: values.variants.filter((v) => v.name.trim()),
         ctaType: 'chat',
       };
@@ -187,6 +197,8 @@ export function StorefrontProductsSection({
       {editor === 'create' && (
         <ProductEditorForm
           categories={categories}
+          brands={brands}
+          onAddBrand={onAddBrand}
           initial={EMPTY_PRODUCT_FORM}
           title="محصول جدید"
           saving={saving}
@@ -198,6 +210,8 @@ export function StorefrontProductsSection({
       {editor !== 'closed' && editor !== 'create' && (
         <ProductEditorForm
           categories={categories}
+          brands={brands}
+          onAddBrand={onAddBrand}
           initial={offerToForm(offers.find((o) => o.id === editor)!)}
           title="ویرایش محصول"
           saving={saving}
@@ -239,8 +253,13 @@ export function StorefrontProductsSection({
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="font-medium leading-snug line-clamp-1">{o.title}</p>
+                    {brandTitle(o.brandId) && (
+                      <p className="text-xs text-muted-foreground">{brandTitle(o.brandId)}</p>
+                    )}
                     {o.priceRange && (
-                      <p className="text-sm text-emerald-700 dark:text-emerald-400">{o.priceRange}</p>
+                      <p className="text-sm text-emerald-700 dark:text-emerald-400">
+                        {formatPriceText(o.priceRange)}
+                      </p>
                     )}
                     {o.variants.length > 0 && (
                       <p className="text-xs text-muted-foreground">

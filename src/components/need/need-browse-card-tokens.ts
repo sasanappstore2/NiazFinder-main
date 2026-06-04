@@ -21,6 +21,10 @@ export const NEED_LIST_CLASS =
 export const needCardSurfaceClass =
   'group relative w-full cursor-pointer overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm transition-[border-color,box-shadow] duration-300 hover:border-emerald-300/60 hover:shadow-md hover:shadow-emerald-500/6 dark:hover:border-emerald-700/60 motion-reduce:transition-none';
 
+/** Shared budget pill for browse cards and need detail hero */
+export const needBudgetPillClass =
+  'inline-flex items-center gap-2 rounded-xl bg-emerald-500/10 px-3 py-1.5 text-label font-semibold text-emerald-800 persian-nums dark:text-emerald-300';
+
 export function priorityAccentClass(priority: string): string {
   switch (priority) {
     case 'URGENT':

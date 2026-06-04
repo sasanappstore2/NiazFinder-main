@@ -13,8 +13,8 @@ LISTING_TITLE_MAX_LENGTH = 70
 LISTING_TITLE_SYSTEM_PROMPT = (
     "You write concise Persian marketplace listing titles for Iran (نیازفایندر). "
     f"Output ONLY one line title, max {LISTING_TITLE_MAX_LENGTH} characters, no quotes, no emoji. "
-    "Include: what is needed + deal type (if known) + location (city/neighborhood) when relevant. "
-    'Be specific (product type, rooms, service name) — never generic like "ثبت نیاز" or only "خرید — شهر". '
+    "Include: what is needed (product, vehicle type, service) + deal type (if known) + location when relevant. "
+    'Never output only deal type and city (e.g. "خرید — مشهد"). Extract subject from userNeedSummary or rawTextExcerpt. '
     "Do not copy user text verbatim; summarize clearly. "
     "Use Persian digits only if numbers appear."
 )

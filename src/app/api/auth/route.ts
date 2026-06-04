@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { generateToken, daysFromNow } from '@/lib/auth';
-import { simpleHash } from '@/lib/auth/password';
+import { hashPassword, verifyPassword, passwordNeedsRehash } from '@/lib/auth/password';
 
 // ============ TYPES ============
 
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
         const newUser = await tx.user.create({
           data: {
             email: normalizedEmail,
-            password: simpleHash(password),
+            password: hashPassword(password),
             firstName: firstName.trim(),
             lastName: lastName?.trim() || '',
             phone: phone?.trim() || null,
@@ -152,12 +152,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const hashedPassword = simpleHash(password);
-    if (user.password !== hashedPassword) {
+    if (!verifyPassword(password, user.password)) {
       return NextResponse.json(
         { error: 'رمز عبور اشتباه است' },
         { status: 401 }
       );
+    }
+
+    if (passwordNeedsRehash(user.password)) {
+      await db.user.update({
+        where: { id: user.id },
+        data: { password: hashPassword(password) },
+      });
     }
 
     // Generate auth token

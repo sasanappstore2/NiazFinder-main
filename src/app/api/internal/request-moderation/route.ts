@@ -11,12 +11,14 @@ export const runtime = 'nodejs';
  */
 export async function POST(request: NextRequest) {
   try {
-    const secret = process.env.INTERNAL_API_SECRET;
-    if (secret) {
-      const header = request.headers.get('x-internal-secret');
-      if (header !== secret) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-      }
+    const secret = process.env.INTERNAL_API_SECRET?.trim();
+    if (!secret) {
+      console.error('[internal/request-moderation] INTERNAL_API_SECRET not configured');
+      return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });
+    }
+    const header = request.headers.get('x-internal-secret');
+    if (header !== secret) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await request.json().catch(() => ({}));

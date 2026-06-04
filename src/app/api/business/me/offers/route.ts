@@ -46,6 +46,7 @@ export async function GET(request: NextRequest) {
           categoryIds: meta.categoryIds,
           primaryCategoryId: meta.primaryCategoryId,
           variants: meta.variants,
+          brandId: meta.brandId,
           ctaType: o.ctaType.toLowerCase(),
           order: o.order,
           isPublished: o.isPublished,
@@ -81,6 +82,7 @@ export async function POST(request: NextRequest) {
         primaryCategoryId:
           typeof body.primaryCategoryId === 'string' ? body.primaryCategoryId : null,
         variants: Array.isArray(body.variants) ? body.variants : [],
+        brandId: typeof body.brandId === 'string' ? body.brandId : null,
       });
 
     const offer = await db.businessOffer.create({

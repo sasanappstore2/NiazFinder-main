@@ -74,7 +74,7 @@ export function BrowseRequests({
   const PAGE_LIMIT = 9;
   const currentPathname = basePath;
   const locationScope = useLocationScope();
-  const { h1: pageH1 } = useBrowsePageHeading('need');
+  const { h1: pageH1, displayH1 } = useBrowsePageHeading('need');
   const urlCityNames = useMemo(() => slugsToPersianNames(citySlugs), [citySlugs]);
   const provinceSlugs = urlFilters?.provinces ?? [];
   const hasLocationScope = urlCityNames.length > 0 || provinceSlugs.length > 0;
@@ -230,8 +230,11 @@ export function BrowseRequests({
         <div className="mb-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-linear-to-l from-foreground to-foreground/80 bg-clip-text">
-                {pageH1}
+              <h1
+                className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-linear-to-l from-foreground to-foreground/80 bg-clip-text"
+                title={displayH1 !== pageH1 ? pageH1 : undefined}
+              >
+                {displayH1}
               </h1>
               <p className="mt-1.5 text-sm text-muted-foreground">
                 {hasLoadedInitial

@@ -16,7 +16,7 @@ flowchart LR
 1. **Parse** — Qwen3.5-2B via `intake-mlx` merged with rules (`reconcileParsedIntent`). Typing strip gives instant hints while user types (rules only).
 2. **Structured questions** — One question per step from schema (property, vehicle, product, services, jobs, etc.).
 3. **Chat** — After core fields, free-form messages re-parsed with Qwen + rules hybrid.
-4. **Preview** — AI-generated title (max 70 chars, Qwen → template fallback) + template description; manual edit + optional extras.
+4. **Preview** — AI-generated title (max 70 chars, Qwen → vertical rules → snippet fallback) + template description; manual edit + optional extras. Generic titles like `خرید — مشهد` are rejected at publish.
 5. **Publish** — Creates `ServiceRequest`; lead outreach uses score threshold + template copy.
 
 ## Internal engine
@@ -26,7 +26,9 @@ flowchart LR
 | [`internal-orchestrator.ts`](../src/lib/need-intake/internal-orchestrator.ts) | parse, typing merge, next step, readiness |
 | [`extract-slots-rules.ts`](../src/lib/need-intake/extract-slots-rules.ts) | Map entities + chip answers to schema slots |
 | [`listing-composer.ts`](../src/lib/need-intake/listing-composer.ts) | Persian description templates + title fallback |
-| [`generate-listing-title.ts`](../src/lib/need-intake/generate-listing-title.ts) | AI title (Qwen → template) |
+| [`vertical-title.ts`](../src/lib/need-intake/vertical-title.ts) | Vertical title builders (vehicles, services, jobs, property, products) |
+| [`generate-listing-title.ts`](../src/lib/need-intake/generate-listing-title.ts) | AI title (Qwen → heuristic → template) |
+| [`listing-title-sanitize.ts`](../src/lib/need-intake/listing-title-sanitize.ts) | Max length, reject generic `deal — city` only |
 | [`qwen-intake-client.ts`](../src/lib/need-intake/qwen-intake-client.ts) | Unified MLX client (parse + title) |
 | [`analysis-from-qwen.ts`](../src/lib/need-intake/analysis-from-qwen.ts) | Analyze route Qwen + rules merge |
 | [`chat-turn-rules.ts`](../src/lib/need-intake/chat-turn-rules.ts) | Chat re-parse + slot merge |
@@ -62,6 +64,18 @@ flowchart LR
 - [`IntakeStepTimeline`](../src/components/need-intake/IntakeStepTimeline.tsx) — تشخیص → جزئیات → پیش‌نمایش → ثبت
 - [`IntakeProcessingLoader`](../src/components/need-intake/IntakeProcessingLoader.tsx) — short processing animation
 - [`NeedListingPreview`](../src/components/need-intake/NeedListingPreview.tsx) — edit + «بازنویسی خودکار»
+
+## Listing title rules
+
+| Vertical | Builder | Example |
+|----------|---------|---------|
+| Real estate | `buildPropertyTitle` | خرید آپارتمان ۲ خواب — مشهد |
+| Vehicles | `buildVehicleTitle` + text extract | خرید خودرو — کارواش — در حد نو — مشهد |
+| Services | `buildServiceTitle` | نیاز — [خدمت] — [شهر] |
+| Jobs | `buildJobTitle` | استخدام — [عنوان] — [شهر] |
+| Products / electronics | `buildProductSearchTitle` | خرید — [موضوع از متن] — [شهر] |
+
+Pipeline: [`generateListingTitle`](src/lib/need-intake/generate-listing-title.ts) tries MLX `/v1/title`, then [`buildHeuristicListingTitle`](src/lib/need-intake/vertical-title.ts). Titles that fail [`rejectListingTitleReason`](src/lib/need-intake/listing-title-sanitize.ts) cannot be published (HTTP 422).
 
 ## Tests
 

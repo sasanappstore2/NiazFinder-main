@@ -277,7 +277,7 @@ export function ArkUserMenu() {
                 <Menu.Item
                   value="bookmarks"
                   className={cn(menuItemBase, menuItemDefault)}
-                  onClick={() => nav("browse-requests")}
+                  onClick={() => nav("bookmarks")}
                 >
                   <Bookmark className="size-4 text-muted-foreground" />
                   علاقه‌مندی‌ها

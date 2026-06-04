@@ -1,11 +1,15 @@
 import { COMM_REDIS_CHANNEL, type CommRedisEnvelope } from '@/lib/communication/constants';
+import { resolveRedisUrl } from '@/lib/communication/redis-url';
 
 let publisher: import('ioredis').default | null = null;
 
 async function getPublisher(): Promise<import('ioredis').default | null> {
   if (publisher) return publisher;
-  const url = process.env.REDIS_URL?.trim();
-  if (!url) return null;
+  const url = resolveRedisUrl();
+  if (!url) {
+    console.warn('[comm] REDIS_URL not set (and REDIS_HOST/PORT unavailable) — fanout may fail');
+    return null;
+  }
   try {
     const Redis = (await import('ioredis')).default;
     publisher = new Redis(url, {
@@ -32,10 +36,24 @@ function chatServiceFanoutUrl(): string | null {
 async function fanoutViaChatServiceHttp(envelope: CommRedisEnvelope): Promise<void> {
   const base = chatServiceFanoutUrl();
   if (!base) return;
+  const secret =
+    process.env.INTERNAL_API_SECRET?.trim() ||
+    process.env.CHAT_INTERNAL_SECRET?.trim();
+  if (!secret) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('[comm] INTERNAL_API_SECRET not set — HTTP fanout skipped (use REDIS_URL)');
+    } else {
+      console.warn('[comm] INTERNAL_API_SECRET not set — skipping HTTP fanout');
+    }
+    return;
+  }
   try {
     const res = await fetch(`${base}/internal/fanout`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-internal-secret': secret,
+      },
       body: JSON.stringify(envelope),
       signal: AbortSignal.timeout(1500),
     });
