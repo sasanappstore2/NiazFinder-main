@@ -1,0 +1,12 @@
+{
+  "id": "b7-p0631",
+  "personaId": "b7-p0631",
+  "userMessages": [
+    "ویلا در سعادت‌آباد تهران فروش می‌خوام، پاساژ هم خوبه",
+    "بودجه تا ۸ میلیارد",
+    "حدوداً 50 متر"
+  ],
+  "expectedCategorySlug": "shop-sale",
+  "expectedCity": "تهران",
+  "expectedDealType": "sell"
+}

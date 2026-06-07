@@ -1,43 +1,51 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL, SEO_ROUTES, CATEGORY_ROUTES } from "@/lib/seo";
+import { SITE_URL, SEO_ROUTES } from "@/lib/seo";
+import {
+  generateStaticSitemapEntries,
+  generateCitySitemapEntries,
+  generateCategorySitemapEntries,
+} from "@/lib/seo/sitemap";
 
 /**
- * Dynamic Sitemap Generator
- * Generates XML sitemap for all virtual routes
+ * Dynamic sitemap — canonical marketplace URLs only.
+ * See `src/lib/seo/sitemap.ts` for URL patterns.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
+  const seen = new Set<string>();
+  const merged: MetadataRoute.Sitemap = [];
 
-  // Main SEO routes (virtual SPA pages)
-  const mainRoutes = SEO_ROUTES.map((route) => ({
-    url: `${SITE_URL}${route.path}`,
-    lastModified: now,
-    changeFrequency: route.changeFrequency as "daily" | "weekly" | "monthly" | "yearly",
-    priority: route.priority,
-  }));
+  const push = (
+    url: string,
+    changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"],
+    priority: number
+  ) => {
+    if (seen.has(url)) return;
+    seen.add(url);
+    merged.push({ url, lastModified: now, changeFrequency, priority });
+  };
 
-  // Category routes (service categories)
-  const categoryRoutes = CATEGORY_ROUTES.map((cat, index) => ({
-    url: `${SITE_URL}/category/${cat.slug}`,
-    lastModified: now,
-    changeFrequency: "weekly" as const,
-    priority: cat.parentSlug ? 0.5 : 0.7,
-  }));
+  for (const entry of [
+    ...generateStaticSitemapEntries(),
+    ...generateCitySitemapEntries(),
+    ...generateCategorySitemapEntries(),
+  ]) {
+    push(
+      entry.url,
+      entry.changeFrequency as MetadataRoute.Sitemap[number]["changeFrequency"],
+      entry.priority
+    );
+  }
 
-  // City pages (major Iranian cities)
-  const cities = [
-    "tehran", "isfahan", "shiraz", "tabriz", "mashhad", "ahvaz", "karaj", "qom",
-    "kermanshah", "urmia", "rasht", "zahedan", "hamedan", "kerman", "yazd",
-    "ardabil", "bandar-abbas", "arak", "sanandaj", "qazvin", "zanjan", "gorgan",
-    "sari", "bushehr", "bojnourd",
-  ];
+  for (const route of SEO_ROUTES) {
+    push(
+      `${SITE_URL}${route.path}`,
+      route.changeFrequency,
+      route.priority
+    );
+  }
 
-  const cityRoutes = cities.map((city) => ({
-    url: `${SITE_URL}/${city}`,
-    lastModified: now,
-    changeFrequency: "daily" as const,
-    priority: 0.4,
-  }));
+  push(`${SITE_URL}/privacy`, "yearly", 0.4);
 
-  return [...mainRoutes, ...categoryRoutes, ...cityRoutes];
+  return merged;
 }

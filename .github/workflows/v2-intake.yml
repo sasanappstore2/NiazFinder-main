@@ -1,0 +1,36 @@
+name: V2 Intake QA
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  v2-intake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: V2 scenario tests
+        run: npm run test:v2-scenarios
+        env:
+          NEED_INTAKE_LLM_ENABLED: 'false'
+
+      - name: V2 golden smoke replay
+        run: npm run test:v2-conv-golden-smoke
+        env:
+          NEED_INTAKE_LLM_ENABLED: 'false'
+
+      - name: V2 API smoke
+        run: npm run test:v2-api-smoke
+        env:
+          NEED_INTAKE_LLM_ENABLED: 'false'

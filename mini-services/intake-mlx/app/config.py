@@ -14,7 +14,7 @@ DATASET_PATH = Path(
     )
 )
 ADAPTER_PATH = Path(
-    os.getenv("INTAKE_MLX_ADAPTER_PATH", str(REPO_ROOT / "models" / "intake-lora"))
+    os.getenv("INTAKE_MLX_ADAPTER_PATH", str(REPO_ROOT / "models" / "estate-intake-lora-v1"))
 )
 TRAIN_ITERS = int(os.getenv("INTAKE_MLX_TRAIN_ITERS", "2500"))
 TRAIN_BATCH_SIZE = int(os.getenv("INTAKE_MLX_TRAIN_BATCH_SIZE", "1"))

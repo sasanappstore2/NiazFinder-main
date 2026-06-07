@@ -502,7 +502,13 @@ export function UserDashboard() {
                               <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" />{getTimeAgo(request.createdAt)}</span>
                             </div>
                           </div>
-                          <Button variant="ghost" size="sm" className="shrink-0 text-muted-foreground hover:text-foreground" onClick={() => {}} data-href="/browse?type=need" title="مشاهده جزئیات نیاز">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="shrink-0 text-muted-foreground hover:text-foreground"
+                            onClick={() => router.push(routeBuilder.listing(request.id, request.title))}
+                            title="مشاهده جزئیات نیاز"
+                          >
                             مشاهده جزئیات<ChevronLeft className="w-4 h-4 mr-1" />
                           </Button>
                         </div>

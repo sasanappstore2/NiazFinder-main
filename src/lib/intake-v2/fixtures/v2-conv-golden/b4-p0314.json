@@ -1,0 +1,20 @@
+{
+  "id": "b4-p0314",
+  "personaId": "b4-p0314",
+  "userMessages": [
+    "دفتر در گوهردشت کرج اجاره کوتاه‌مدت می‌خوام",
+    "گوهردشت",
+    "حدوداً 120 متر",
+    "ودیعه زیر ۱۰۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "areaMin",
+      "chipValue": "گوهردشت"
+    }
+  ],
+  "expectedCategorySlug": "office-rent",
+  "expectedCity": "کرج",
+  "expectedDealType": "rent_monthly"
+}

@@ -26,7 +26,8 @@ export type AdminSectionId =
   | 'files'
   | 'settings'
   | 'referrals'
-  | 'coupons';
+  | 'coupons'
+  | 'blog';
 
 export const ADMIN_SECTION_ROUTES: Record<AdminSectionId, string> = {
   overview: '/super-admin',
@@ -54,6 +55,7 @@ export const ADMIN_SECTION_ROUTES: Record<AdminSectionId, string> = {
   settings: '/super-admin/settings',
   referrals: '/super-admin/referrals',
   coupons: '/super-admin/coupons',
+  blog: '/super-admin/blog',
 };
 
 export const ADMIN_ROUTE_TO_SECTION: Record<string, AdminSectionId> = {
@@ -82,6 +84,7 @@ export const ADMIN_ROUTE_TO_SECTION: Record<string, AdminSectionId> = {
   settings: 'settings',
   referrals: 'referrals',
   coupons: 'coupons',
+  blog: 'blog',
 };
 
 export const ADMIN_SECTION_PERMISSIONS: Record<AdminSectionId, AdminPermissionId> = {
@@ -110,6 +113,7 @@ export const ADMIN_SECTION_PERMISSIONS: Record<AdminSectionId, AdminPermissionId
   settings: 'ops:settings:write',
   referrals: 'growth:referrals:read',
   coupons: 'growth:coupons:read',
+  blog: 'content:blog:read',
 };
 
 export function sectionFromPathname(pathname: string): AdminSectionId {

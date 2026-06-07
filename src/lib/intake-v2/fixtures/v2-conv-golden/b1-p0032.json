@@ -1,0 +1,20 @@
+{
+  "id": "b1-p0032",
+  "personaId": "b1-p0032",
+  "userMessages": [
+    "زمین در فردوسی اصفهان خرید می‌خوام",
+    "بوستان آینه خانه",
+    "بودجه تا ۱۲ میلیارد",
+    "حدوداً 80 متر"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "budget",
+      "chipValue": "بوستان آینه خانه"
+    }
+  ],
+  "expectedCategorySlug": "land-sale",
+  "expectedCity": "اصفهان",
+  "expectedDealType": "buy"
+}

@@ -1,4 +1,5 @@
 import { join } from 'node:path';
+import { CANONICAL_CITIES } from '@/config/locations';
 import type { DatasetFixture } from './schema';
 import { labelsFromParsedIntent } from './schema';
 import { exportFixturesToFile } from './export-jsonl';
@@ -22,22 +23,11 @@ const KIND_LABEL: Record<PropertyKind, string[]> = {
   industrial: ['سوله', 'ملک صنعتی', 'انبار صنعتی', 'سوله صنعتی'],
 };
 
-const CITIES = [
-  'تهران',
-  'مشهد',
-  'اصفهان',
-  'شیراز',
-  'کرج',
-  'تبریز',
-  'اهواز',
-  'قم',
-  'رشت',
-  'یزد',
-  'کرمان',
-  'همدان',
-] as const;
+const CITIES = CANONICAL_CITIES.map((c) => c.title) as readonly string[];
 
-const DISTRICTS: Partial<Record<(typeof CITIES)[number], string[]>> = {
+type CityTitle = (typeof CITIES)[number];
+
+const DISTRICTS: Partial<Record<CityTitle, string[]>> = {
   تهران: ['ولنجک', 'یوسف‌آباد', 'سعادت‌آباد', 'پونک', 'نیاوران', 'تهرانپارس'],
   مشهد: ['احمدآباد', 'سجاد', 'هاشمیه'],
   اصفهان: ['مرداویج', 'چهارباغ'],
@@ -67,7 +57,7 @@ function expectedCategorySlug(deal: PropertyDeal, kind: PropertyKind): string {
   return `${prefix[kind]}-rent`;
 }
 
-function districtFor(city: (typeof CITIES)[number], variant: number): string {
+function districtFor(city: CityTitle, variant: number): string {
   const list = DISTRICTS[city];
   if (!list?.length) return city;
   return `${list[variant % list.length]} ${city}`;

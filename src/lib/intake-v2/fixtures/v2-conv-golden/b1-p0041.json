@@ -1,0 +1,12 @@
+{
+  "id": "b1-p0041",
+  "personaId": "b1-p0041",
+  "userMessages": [
+    "آپارتمان در سعادت‌آباد تهران رهن کامل میخوام",
+    "دو خواب",
+    "ودیعه زیر ۱۰۰ میلیون"
+  ],
+  "expectedCategorySlug": "apartment-rent",
+  "expectedCity": "تهران",
+  "expectedDealType": "rent_rahn_full"
+}

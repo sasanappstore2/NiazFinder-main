@@ -17,7 +17,7 @@ import { IntakeCityPicker } from '@/components/need-intake/IntakeCityPicker';
 import { IntakeCategoryFilterFields } from '@/components/need-intake/IntakeCategoryFilterFields';
 import { IntakeNeighborhoodPicker } from '@/components/need-intake/IntakeNeighborhoodPicker';
 import { NeedListingPreview } from './NeedListingPreview';
-import { IntakeAiShardBar, type IntakeAiShardStatus } from './IntakeAiShardBar';
+import { IntakeAiShardBar, type IntakeAiShardKey, type IntakeAiShardStatus } from './IntakeAiShardBar';
 import { shardStatusFromNeedDraft } from './intake-shard-status';
 import { IntakeStepTimeline } from './IntakeStepTimeline';
 import { PublishSuccessOverlay } from './PublishSuccessOverlay';
@@ -916,6 +916,16 @@ export function NeedIntakePanel({
     ? buildManualSuggestionChips(needDraft.parsedIntent, selectedCity || initialCity)
     : [];
 
+  const neighborhoodDisambiguationChips = useMemo(() => {
+    const parsed = needDraft?.parsedIntent;
+    if (!parsed?.neighborhoodCandidates?.length) return [];
+    if (!parsed.locationAmbiguous && parsed.neighborhoodSlug) return [];
+    return parsed.neighborhoodCandidates.slice(0, 6).map((n) => ({
+      value: `neighborhood:${n.slug}`,
+      label: n.label,
+    }));
+  }, [needDraft?.parsedIntent]);
+
   const locationSuggestionChips = useMemo(() => {
     return manualSuggestionChips.filter((chip) => {
       if (
@@ -1194,23 +1204,45 @@ export function NeedIntakePanel({
     if (!showCity && !showNeighborhood) return null;
 
     return (
-      <div className="intake-location-row grid grid-cols-1 items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-        {showCity ? renderIntakeField('city') : null}
-        {showNeighborhood ? renderIntakeField('neighborhood') : null}
-        <Button
-          type="button"
-          variant="outline"
-          className="h-11 shrink-0 gap-1.5 px-3 text-sm"
-          disabled={myLocationLoading}
-          onClick={() => void applyMyLocation()}
-        >
-          {myLocationLoading ? (
-            <Loader2 className="size-4 animate-spin" aria-hidden />
-          ) : (
-            <MapPinned className="size-4 shrink-0 text-primary" aria-hidden />
-          )}
-          مکان من
-        </Button>
+      <div className="intake-location-row flex flex-col gap-2">
+        <div className="grid grid-cols-1 items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+          {showCity ? renderIntakeField('city') : null}
+          {showNeighborhood ? renderIntakeField('neighborhood') : null}
+          <Button
+            type="button"
+            variant="outline"
+            className="h-11 shrink-0 gap-1.5 px-3 text-sm"
+            disabled={myLocationLoading}
+            onClick={() => void applyMyLocation()}
+          >
+            {myLocationLoading ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+            ) : (
+              <MapPinned className="size-4 shrink-0 text-primary" aria-hidden />
+            )}
+            مکان من
+          </Button>
+        </div>
+        {neighborhoodDisambiguationChips.length > 0 ? (
+          <div className="space-y-2 rounded-xl border border-amber-500/25 bg-amber-500/5 px-3 py-2">
+            <p className="text-xs font-medium text-amber-800 dark:text-amber-300">
+              محله دقیق مشخص نیست — یکی از گزینه‌های زیر را انتخاب کنید:
+            </p>
+            <SuggestionChips
+              options={neighborhoodDisambiguationChips}
+              onSelect={(v) => {
+                const value = typeof v === 'string' ? v : v[0] ?? '';
+                if (!value.startsWith('neighborhood:')) return;
+                const slug = value.slice('neighborhood:'.length);
+                const hit = needDraft?.parsedIntent.neighborhoodCandidates?.find(
+                  (n) => n.slug === slug
+                );
+                const label = (hit?.label ?? slug).trim();
+                if (label) applyNeighborhood(label, slug);
+              }}
+            />
+          </div>
+        ) : null}
       </div>
     );
   };

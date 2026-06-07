@@ -1,4 +1,5 @@
 import type { NeedDraft, ParsedIntent } from '@/contracts/need-intake';
+import type { NeedIntelligenceProfile } from '@/contracts/need-intelligence';
 import { JOB_ROLE_LABELS, PROPERTY_KIND_LABELS } from '@/config/need-schemas/labels';
 import { getRootCategorySlug } from '@/config/need-schemas/resolve-schema';
 import { formatMoneyToman } from '@/lib/format/money';
@@ -12,9 +13,50 @@ export interface ComposedListing {
   description: string;
 }
 
-function buildDescriptionLines(
+function buildIntelligenceLines(profile?: NeedIntelligenceProfile): string[] {
+  if (!profile) return [];
+  const lines: string[] = [];
+  if (profile.mustHave?.length) lines.push(`الزامی: ${profile.mustHave.join('، ')}`);
+  if (profile.niceToHave?.length) lines.push(`ترجیحات: ${profile.niceToHave.join('، ')}`);
+  if (profile.locationPreferences?.length) {
+    lines.push(`محدوده ترجیحی: ${profile.locationPreferences.join('، ')}`);
+  }
+  if (profile.priorities?.length) lines.push(`اولویت‌ها: ${profile.priorities.join(' > ')}`);
+  if (profile.urgency === 'HIGH' || profile.urgency === 'URGENT') {
+    lines.push('فوریت: بالا');
+  }
+  if (profile.motivation === 'business') lines.push('هدف: کسب‌وکار');
+  return lines;
+}
+
+function buildIntelligenceTitle(
+  draft: NeedDraft,
   parsed: ParsedIntent,
   answers: Record<string, unknown>
+): string | null {
+  const ip = draft.intelligenceProfile;
+  const deal = String(answers.dealType ?? ip?.transaction ?? parsed.entities?.dealType ?? '');
+  const kind = String(answers.propertyKind ?? parsed.entities?.propertyKind ?? '');
+  if (!deal && !kind) return null;
+
+  const dealFa = deal ? dealLabelForCategory(parsed.categorySlug, deal) : '';
+  const kindFa = kind ? (PROPERTY_KIND_LABELS[kind] ?? kind) : 'ملک';
+  const area = ip?.area?.min ?? answers.areaMin;
+  const approx = ip?.area?.approximate;
+  const sizePart =
+    area != null ? (approx ? ` ~${area}m` : ` ${area} متر`) : '';
+
+  const hood = ip?.location?.neighborhood;
+  const city = ip?.location?.city ?? parsed.city;
+  const locPart = hood && city ? `${hood} ${city}` : hood ?? city ?? '';
+  const core = `${dealFa} ${kindFa}${sizePart}`.trim();
+  return locPart ? `${core} — ${locPart}` : core || null;
+}
+
+function buildDescriptionLines(
+  parsed: ParsedIntent,
+  answers: Record<string, unknown>,
+  profile?: NeedIntelligenceProfile
 ): string[] {
   const lines: string[] = [];
   const root = getRootCategorySlug(parsed.categorySlug);
@@ -38,7 +80,14 @@ function buildDescriptionLines(
     const kind = answers.propertyKind ?? parsed.entities?.propertyKind;
     if (kind) lines.push(`نوع ملک: ${PROPERTY_KIND_LABELS[String(kind)] ?? kind}`);
     lines.push(...realEstateFilterSummaryLines(answers));
-    if (answers.areaMin) lines.push(`متراژ حداقل: ${answers.areaMin} متر`);
+    if (answers.areaMin) {
+      const approx = profile?.area?.approximate;
+      lines.push(
+        approx
+          ? `متراژ تقریبی: ~${answers.areaMin} متر`
+          : `متراژ حداقل: ${answers.areaMin} متر`
+      );
+    }
     if (answers.areaMax) lines.push(`متراژ حداکثر: ${answers.areaMax} متر`);
     if (answers.floorMin) lines.push(`طبقه: ${answers.floorMin}`);
     if (answers.pricePerMeterMin) {
@@ -75,6 +124,8 @@ function buildDescriptionLines(
 
   if (answers.when) lines.push(`زمان: ${String(answers.when)}`);
 
+  lines.push(...buildIntelligenceLines(profile));
+
   return lines;
 }
 
@@ -82,6 +133,7 @@ function buildDescriptionLines(
 export function composeListingFromDraft(draft: NeedDraft): ComposedListing {
   const { parsedIntent: parsed, answers } = draftToLegacyPayload(draft);
 
+  const intelligenceTitle = buildIntelligenceTitle(draft, parsed, answers);
   const parsedTitle = parsed.title?.trim();
   let title =
     parsedTitle &&
@@ -89,13 +141,13 @@ export function composeListingFromDraft(draft: NeedDraft): ComposedListing {
     parsedTitle !== 'ثبت نیاز' &&
     !isGenericListingTitle(parsedTitle)
       ? parsedTitle
-      : buildVerticalTitleFromDraft(draft);
+      : intelligenceTitle ?? buildVerticalTitleFromDraft(draft);
 
   if (title.length < 10 || title === 'ثبت نیاز' || isGenericListingTitle(title)) {
-    title = buildVerticalTitleFromDraft(draft);
+    title = intelligenceTitle ?? buildVerticalTitleFromDraft(draft);
   }
 
-  const bodyLines = buildDescriptionLines(parsed, answers);
+  const bodyLines = buildDescriptionLines(parsed, answers, draft.intelligenceProfile);
   let description = bodyLines.join('\n').trim();
   if (description.length < 40 && parsed.rawText) {
     description = `${parsed.rawText.trim()}\n\n${description}`.trim();

@@ -62,17 +62,17 @@ export function draftToLegacyPayload(draft: NeedDraft): LegacyNeedPayload {
 
   const answers: NeedDraft['answers'] = {
     ...seedAnswersFromParsed(parsedIntent, draft.leadPhone),
-    /* User chip/select answers (advanced filters) — must survive recompute */
-    ...draft.answers,
     ...(entities.neighborhood?.trim() && entities.city
       ? { location: `${entities.neighborhood.trim()}، ${entities.city}` }
       : entities.city
         ? { location: entities.city }
         : {}),
-    ...(legacyDealType ? { dealType: legacyDealType } : {}),
+    ...(legacyDealType && draft.answers.dealType == null ? { dealType: legacyDealType } : {}),
     ...(entities.rooms != null ? { rooms: entities.rooms } : {}),
-    ...(entities.area != null ? { areaMin: entities.area } : {}),
-    ...(entities.budgetMax != null ? { budget: entities.budgetMax } : {}),
+    ...(entities.area != null && draft.answers.areaMin == null ? { areaMin: entities.area } : {}),
+    ...(entities.budgetMax != null && draft.answers.budget == null ? { budget: entities.budgetMax } : {}),
+    /* User chip/select answers (advanced filters) — must survive recompute */
+    ...draft.answers,
   };
 
   return { parsedIntent, answers };

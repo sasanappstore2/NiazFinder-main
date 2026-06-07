@@ -1,0 +1,12 @@
+{
+  "id": "b1-p0021",
+  "personaId": "b1-p0021",
+  "userMessages": [
+    "دفتر در سعادت‌آباد تهران فروش میخوام",
+    "بودجه تا ۸ میلیارد",
+    "حدود 50 متری"
+  ],
+  "expectedCategorySlug": "office-sale",
+  "expectedCity": "تهران",
+  "expectedDealType": "sell"
+}

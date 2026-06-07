@@ -70,6 +70,17 @@ export type CompletionState =
   | 'ALMOST_READY'
   | 'READY_TO_PUBLISH';
 
+/** LRE metadata returned from analyze (server-side location resolution). */
+export interface IntakeLocationHints {
+  locationAmbiguous?: boolean;
+  neighborhoodSlug?: string;
+  neighborhoodCandidates?: Array<{ slug: string; label: string; city?: string }>;
+  cityCandidates?: Array<{ cityId: string; label: string }>;
+  locationResolutionStatus?: string;
+  rejectLocationAutoConfirm?: boolean;
+  areaLabel?: string;
+}
+
 /** Full analysis output from the intake engine. */
 export interface IntakeAnalysisResult {
   entities: IntakeEntities;
@@ -90,6 +101,8 @@ export interface IntakeAnalysisResult {
   normalizedText: string;
   /** Analysis latency in milliseconds. */
   latencyMs: number;
+  /** Server LRE hints for ambiguous neighborhood/city (optional). */
+  locationHints?: IntakeLocationHints;
 }
 
 /** Swappable matcher contract — future Aho-Corasick implementations use this. */

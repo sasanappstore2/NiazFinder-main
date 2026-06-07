@@ -2,6 +2,7 @@
  * Need intake — conversational posting contracts.
  */
 
+import type { NeedIntelligenceProfile } from '@/contracts/need-intelligence';
 import type {
   CompletionState,
   MissingFieldItem,
@@ -94,7 +95,17 @@ export interface ParsedIntent {
    */
   locationAmbiguous?: boolean;
   /** Top neighborhood options for disambiguation UI (same city as `city`). */
-  neighborhoodCandidates?: Array<{ slug: string; label: string }>;
+  neighborhoodCandidates?: Array<{ slug: string; label: string; city?: string }>;
+  /** LRE status — cross-city / within-city resolution state. */
+  locationResolutionStatus?:
+    | 'resolved'
+    | 'city_ambiguous'
+    | 'neighborhood_ambiguous'
+    | 'unresolved';
+  /** When true, do not auto-confirm location from catalog match alone. */
+  rejectLocationAutoConfirm?: boolean;
+  /** Cross-city disambiguation options when city is ambiguous. */
+  cityCandidates?: Array<{ cityId: string; label: string }>;
   /** Intake field keys still needed (from question-engine). */
   missingFields?: string[];
 }
@@ -155,6 +166,8 @@ export interface NeedDraft {
   listingPreview?: ListingPreview;
   /** Analysis trace for training capture — set during /api/intake/analyze. */
   intakeTrace?: import('@/intake/training/trainingExample').IntakeAnalysisTrace;
+  /** Multi-layer Core / Decision / Smart extraction (v2). */
+  intelligenceProfile?: NeedIntelligenceProfile;
 }
 
 export interface PublishValidationError {

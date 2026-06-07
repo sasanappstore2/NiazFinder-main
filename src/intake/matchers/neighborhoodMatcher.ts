@@ -5,15 +5,18 @@ import type {
   NeighborhoodIndexEntry,
 } from '@/intake/types';
 import { normalizeLookupKey } from '@/intake/normalizer/normalizePersian';
+import { isDealTypeLocationToken, isAreaUnitSubstring } from '@/lib/need-intake/neighborhood-catalog.server';
 
 export class NeighborhoodMatcher implements DictionaryMatcher<NeighborhoodIndexEntry> {
   constructor(
     private readonly indexes: IntakeIndexes,
-    private readonly preferredCityId?: string | null
+    private readonly preferredCityId?: string | null,
+    private readonly sourceText?: string
   ) {}
 
   match(tokens: readonly string[], ngrams: readonly string[]): MatchHit<NeighborhoodIndexEntry>[] {
     const hits = new Map<string, MatchHit<NeighborhoodIndexEntry>>();
+    const context = this.sourceText ?? tokens.join(' ');
 
     const consider = (
       phrase: string,
@@ -21,12 +24,17 @@ export class NeighborhoodMatcher implements DictionaryMatcher<NeighborhoodIndexE
     ) => {
       const key = normalizeLookupKey(phrase);
       if (key.length < 3) return;
+      if (isDealTypeLocationToken(key, context)) return;
+      if (isAreaUnitSubstring(context, key)) return;
       const slugs = this.indexes.neighborhoodLookup.get(key);
       if (!slugs?.length) return;
 
       for (const slug of slugs) {
         const entry = this.indexes.neighborhoods.get(slug);
         if (!entry) continue;
+        if (this.preferredCityId && entry.cityId !== this.preferredCityId) {
+          continue;
+        }
 
         let score =
           matchType === 'exact'
@@ -37,8 +45,6 @@ export class NeighborhoodMatcher implements DictionaryMatcher<NeighborhoodIndexE
 
         if (this.preferredCityId && entry.cityId === this.preferredCityId) {
           score = Math.min(0.99, score + 0.14);
-        } else if (this.preferredCityId && entry.cityId !== this.preferredCityId) {
-          score *= 0.5;
         }
 
         const prev = hits.get(slug);
@@ -65,8 +71,9 @@ export function bestNeighborhoodMatch(
   indexes: IntakeIndexes,
   tokens: readonly string[],
   ngrams: readonly string[],
-  preferredCityId?: string | null
+  preferredCityId?: string | null,
+  sourceText?: string
 ): MatchHit<NeighborhoodIndexEntry> | null {
-  const matcher = new NeighborhoodMatcher(indexes, preferredCityId);
+  const matcher = new NeighborhoodMatcher(indexes, preferredCityId, sourceText);
   return matcher.match(tokens, ngrams)[0] ?? null;
 }

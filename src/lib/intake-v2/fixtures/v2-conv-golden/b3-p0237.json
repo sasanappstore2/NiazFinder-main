@@ -1,0 +1,22 @@
+{
+  "id": "b3-p0237",
+  "personaId": "b3-p0237",
+  "userMessages": [
+    "آپارتمان در مرداویج اصفهان اجاره کوتاه‌مدت میخوام",
+    "مرداویج",
+    "حدود 80 متری",
+    "اجاره شبانه ۵ میلیون",
+    "دو خواب",
+    "اجاره شبانه ۵ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "areaMin",
+      "chipValue": "مرداویج"
+    }
+  ],
+  "expectedCategorySlug": "apartment-rent",
+  "expectedCity": "اصفهان",
+  "expectedDealType": "rent_monthly"
+}

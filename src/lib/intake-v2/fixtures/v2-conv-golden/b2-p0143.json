@@ -1,0 +1,20 @@
+{
+  "id": "b2-p0143",
+  "personaId": "b2-p0143",
+  "userMessages": [
+    "آپارتمان در صدرا شیراز فروش می‌خوام، پاساژ هم خوبه",
+    "دوکوهک",
+    "بودجه تا ۲ میلیارد",
+    "حدوداً 100 متر"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "budget",
+      "chipValue": "دوکوهک"
+    }
+  ],
+  "expectedCategorySlug": "shop-sale",
+  "expectedCity": "شیراز",
+  "expectedDealType": "sell"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "b4-p0389",
+  "personaId": "b4-p0389",
+  "userMessages": [
+    "دفتر در مهرویلا کرج اجاره کوتاه‌مدت میخوام",
+    "فاز ۴ مهرشهر",
+    "حدود 120 متری",
+    "ودیعه زیر ۱۰۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "areaMin",
+      "chipValue": "فاز ۴ مهرشهر"
+    }
+  ],
+  "expectedCategorySlug": "office-rent",
+  "expectedCity": "کرج",
+  "expectedDealType": "rent_monthly"
+}

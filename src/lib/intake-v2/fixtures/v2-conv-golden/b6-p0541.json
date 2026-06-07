@@ -1,0 +1,13 @@
+{
+  "id": "b6-p0541",
+  "personaId": "b6-p0541",
+  "userMessages": [
+    "ویلا در سعادت‌آباد تهران فروش میخوام",
+    "بودجه تا ۸ میلیارد",
+    "حدود 50 متری",
+    "دو خواب"
+  ],
+  "expectedCategorySlug": "villa-sale",
+  "expectedCity": "تهران",
+  "expectedDealType": "sell"
+}

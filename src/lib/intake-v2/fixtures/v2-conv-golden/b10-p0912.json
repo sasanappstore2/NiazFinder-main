@@ -1,0 +1,21 @@
+{
+  "id": "b10-p0912",
+  "personaId": "b10-p0912",
+  "userMessages": [
+    "آپارتمان در مرداویج اصفهان اجاره کوتاه‌مدت می‌خوام",
+    "مرداویج",
+    "بودجه تا ۱۲ میلیارد",
+    "حدوداً 80 متر",
+    "دو خواب"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "budget",
+      "chipValue": "مرداویج"
+    }
+  ],
+  "expectedCategorySlug": "apartment-sale",
+  "expectedCity": "اصفهان",
+  "expectedDealType": "buy"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "b10-p0953",
+  "personaId": "b10-p0953",
+  "userMessages": [
+    "آپارتمان در صدرا شیراز فروش میخوام",
+    "دوکوهک",
+    "بودجه تا ۲ میلیارد",
+    "حدود 100 متری",
+    "دو خواب"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "budget",
+      "chipValue": "دوکوهک"
+    }
+  ],
+  "expectedCategorySlug": "apartment-sale",
+  "expectedCity": "شیراز",
+  "expectedDealType": "sell"
+}

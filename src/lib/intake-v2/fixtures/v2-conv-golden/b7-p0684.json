@@ -1,0 +1,20 @@
+{
+  "id": "b7-p0684",
+  "personaId": "b7-p0684",
+  "userMessages": [
+    "دفتر در گوهردشت کرج اجاره ماهانه می‌خوام",
+    "گوهردشت",
+    "حدوداً 120 متر",
+    "ودیعه زیر ۱۰۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "areaMin",
+      "chipValue": "گوهردشت"
+    }
+  ],
+  "expectedCategorySlug": "office-rent",
+  "expectedCity": "کرج",
+  "expectedDealType": "rent_monthly"
+}

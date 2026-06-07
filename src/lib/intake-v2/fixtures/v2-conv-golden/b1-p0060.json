@@ -1,0 +1,13 @@
+{
+  "id": "b1-p0060",
+  "personaId": "b1-p0060",
+  "userMessages": [
+    "آپارتمان در فرامرز عباسی مشهد خرید می‌خوام",
+    "بودجه تا ۵ میلیارد",
+    "حدوداً 35 متر",
+    "دو خواب"
+  ],
+  "expectedCategorySlug": "apartment-sale",
+  "expectedCity": "مشهد",
+  "expectedDealType": "buy"
+}

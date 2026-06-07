@@ -12,12 +12,6 @@ import type { LeadChipId } from '@/components/home/ai-lead';
 import { useLocationSelection } from '@/hooks/use-location-selection';
 import { routeBuilder } from '@/config/routes';
 import { getBrowseUrl } from '@/lib/search/browse-entry-url';
-import {
-  getLeadPhone,
-  isValidIranMobile,
-  normalizeIranMobile,
-  setLeadPhone,
-} from '@/lib/lead-draft';
 import { locationCityIdToSlug } from '@/lib/search/city-slugs';
 import { useAppStore } from '@/lib/store';
 import { toast } from 'sonner';
@@ -40,9 +34,6 @@ export function HomeLeadLanding() {
   } = useLocationSelection({ preservePathOnHome: true });
 
   const [needText, setNeedText] = useState('');
-  const [phone, setPhone] = useState(() =>
-    typeof window !== 'undefined' ? getLeadPhone() : ''
-  );
 
   const hasCity = selectedCities.length > 0 || selectedProvinceIds.length > 0;
   const primaryCity = selectedCities[0];
@@ -53,11 +44,10 @@ export function HomeLeadLanding() {
   }, []);
 
   const navigateToPostForm = useCallback(
-    (seed: string, normalizedPhone: string) => {
+    (seed: string) => {
       const params = new URLSearchParams();
       params.set('seed', seed);
       if (citySlug) params.set('city', citySlug);
-      if (normalizedPhone) params.set('phone', normalizedPhone);
       router.push(`${routeBuilder.needNew()}?${params.toString()}`);
     },
     [router, citySlug]
@@ -75,22 +65,8 @@ export function HomeLeadLanding() {
       setCityPickerOpen(true);
       return;
     }
-    const normalized = normalizeIranMobile(phone);
-    if (phone.trim() && !isValidIranMobile(normalized)) {
-      toast.error('شماره موبایل معتبر نیست (مثال: 09123456789)');
-      return;
-    }
-    if (normalized) setLeadPhone(normalized);
-
-    navigateToPostForm(seed, normalized);
-  }, [
-    needText,
-    hasCity,
-    phone,
-    setCityPickerOpen,
-    focusComposer,
-    navigateToPostForm,
-  ]);
+    navigateToPostForm(seed);
+  }, [needText, hasCity, setCityPickerOpen, focusComposer, navigateToPostForm]);
 
   const browseNeeds = useCallback(() => {
     if (!hasCity) {
@@ -178,8 +154,8 @@ export function HomeLeadLanding() {
               نیازتان را بگویید
             </h1>
             <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base">
-              مثل گفتگو با یک دستیار — نیاز را بنویسید، کسب‌وکارهای همان شهر
-              پیشنهاد می‌دهند و از داخل سایت با شما گفتگو می‌کنند.
+              نیاز ملکی خود را بنویسید — آپارتمان، زمین، رهن یا اجاره — فرم ثبت نیاز
+              پیشنهادها را پر می‌کند و شما قبل از انتشار بررسی می‌کنید.
             </p>
           </motion.div>
 
@@ -211,8 +187,9 @@ export function HomeLeadLanding() {
               value={needText}
               onChange={setNeedText}
               onSubmit={() => void goToPost()}
-              phone={phone}
-              onPhoneChange={setPhone}
+              phone=""
+              onPhoneChange={() => {}}
+              showPhoneField={false}
               cityLabel={getLocationDisplayText()}
               hasCity={hasCity}
               isGeoDetecting={geo.isDetecting}
@@ -227,6 +204,33 @@ export function HomeLeadLanding() {
               isGeoDetecting={geo.isDetecting}
               onChipAction={handleChipAction}
             />
+
+            <div className="mt-[13px] space-y-[8px]">
+              <p className="text-center text-[11px] font-medium text-muted-foreground/90">
+                نمونه‌های املاک
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-[8px]">
+                {[
+                  'آپارتمان دو خواب در فرامرز عباسی مشهد',
+                  'زمین ۲۵۰ متری منطقه سجاد مشهد',
+                  'آپارتمان رهن کامل در ونک تهران',
+                  'ویلا اجاره در شیراز',
+                ].map((sample) => (
+                  <Button
+                    key={sample}
+                    type="button"
+                    variant="outline"
+                    className="h-auto min-h-[34px] max-w-full whitespace-normal rounded-[13px] px-[13px] py-[8px] text-xs font-medium"
+                    onClick={() => {
+                      setNeedText(sample);
+                      focusComposer();
+                    }}
+                  >
+                    {sample}
+                  </Button>
+                ))}
+              </div>
+            </div>
               </div>
             </div>
           </motion.div>

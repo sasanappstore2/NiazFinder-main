@@ -1,0 +1,25 @@
+{
+  "id": "b10-p0992",
+  "personaId": "b10-p0992",
+  "userMessages": [
+    "زمین در فردوسی اصفهان رهن و اجاره می‌خوام، پاساژ هم خوبه",
+    "بوستان آینه خانه",
+    "ودیعه زیر ۱۰۰ میلیون",
+    "اجاره زیر ۲۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "deposit",
+      "chipValue": "بوستان آینه خانه"
+    },
+    {
+      "turn": 2,
+      "chipFieldKey": "monthlyRent",
+      "chipValue": "ودیعه زیر ۱۰۰ میلیون"
+    }
+  ],
+  "expectedCategorySlug": "shop-rent",
+  "expectedCity": "اصفهان",
+  "expectedDealType": "rent_rahn_ejare"
+}

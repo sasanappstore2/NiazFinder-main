@@ -1,0 +1,11 @@
+{
+  "id": "b5-p0455",
+  "personaId": "b5-p0455",
+  "userMessages": [
+    "زمین در فرامرز عباسی مشهد رهن کامل می‌خوام، پاساژ هم خوبه",
+    "ودیعه زیر ۱۰۰ میلیون"
+  ],
+  "expectedCategorySlug": "shop-rent",
+  "expectedCity": "مشهد",
+  "expectedDealType": "rent_rahn_full"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "b1-p0066",
+  "personaId": "b1-p0066",
+  "userMessages": [
+    "دفتر در سعادت‌آباد تهران خرید می‌خوام",
+    "حدوداً 50 متر",
+    "ودیعه زیر ۱۰۰ میلیون"
+  ],
+  "expectedCategorySlug": "office-rent",
+  "expectedCity": "تهران",
+  "expectedDealType": "rent_monthly"
+}

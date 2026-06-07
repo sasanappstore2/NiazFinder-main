@@ -1,0 +1,20 @@
+{
+  "id": "b5-p0459",
+  "personaId": "b5-p0459",
+  "userMessages": [
+    "دفتر در مهرویلا کرج اجاره ماهانه می‌خوام، پاساژ هم خوبه",
+    "فاز ۴ مهرشهر",
+    "حدوداً 120 متر",
+    "ودیعه زیر ۱۰۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "areaMin",
+      "chipValue": "فاز ۴ مهرشهر"
+    }
+  ],
+  "expectedCategorySlug": "shop-rent",
+  "expectedCity": "کرج",
+  "expectedDealType": "rent_monthly"
+}

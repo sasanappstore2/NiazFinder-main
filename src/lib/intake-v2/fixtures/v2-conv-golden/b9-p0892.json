@@ -1,0 +1,20 @@
+{
+  "id": "b9-p0892",
+  "personaId": "b9-p0892",
+  "userMessages": [
+    "مغازه در چهارباغ اصفهان خرید می‌خوام",
+    "دانشگاه اصفهان",
+    "حدوداً 80 متر",
+    "ودیعه زیر ۱۰۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "areaMin",
+      "chipValue": "دانشگاه اصفهان"
+    }
+  ],
+  "expectedCategorySlug": "shop-rent",
+  "expectedCity": "اصفهان",
+  "expectedDealType": "rent_monthly"
+}

@@ -30,6 +30,8 @@ const legacyRedirects = [
   { source: "/business",                  destination: "/b/iran",                permanent: true },
   { source: "/business/compare",          destination: "/b/iran",                permanent: true },
   { source: "/post-need",                 destination: "/post",                  permanent: true },
+  { source: "/v2",                        destination: "/post",                  permanent: false },
+  { source: "/v2/:path*",                 destination: "/post",                  permanent: false },
   { source: "/request/:id",               destination: "/v/:id",                 permanent: true },
   { source: "/request-detail/:id",        destination: "/v/:id",                 permanent: true },
   { source: "/specialist/:id",            destination: "/pro/:id",               permanent: true },
@@ -40,6 +42,10 @@ const legacyRedirects = [
   { source: "/messages/:path*",           destination: "/chat/:path*",           permanent: true },
 
   { source: "/support",                   destination: "/help",                  permanent: true },
+
+  { source: "/guide",                     destination: "/help",                  permanent: true },
+  { source: "/category/:slug",            destination: "/n/iran/:slug",          permanent: true },
+  { source: "/pricing/:plan",             destination: "/pricing",                 permanent: true },
 ] as const;
 
 function buildMinioRemotePatterns(): NonNullable<NextConfig["images"]>["remotePatterns"] {

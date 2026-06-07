@@ -1,0 +1,19 @@
+{
+  "id": "b8-p0785",
+  "personaId": "b8-p0785",
+  "userMessages": [
+    "زمین در فرامرز عباسی مشهد رهن کامل میخوام",
+    "ودیعه زیر ۱۰۰ میلیون",
+    "دو خواب"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "rooms",
+      "chipValue": "ودیعه زیر ۱۰۰ میلیون"
+    }
+  ],
+  "expectedCategorySlug": "land-rent",
+  "expectedCity": "مشهد",
+  "expectedDealType": "rent_rahn_full"
+}

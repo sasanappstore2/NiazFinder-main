@@ -9,7 +9,26 @@ export { extractMoneyDigits, toAsciiDigits, toPersianDigits };
 
 /** Parse user input → integer Toman (stored as plain number, e.g. 5000000). */
 export function parseMoneyInput(input: string): number | null {
-  const raw = toAsciiDigits(input);
+  const trimmed = input.trim();
+  if (/\d\s*(?:m\b|meter\b|متر|متری)/i.test(trimmed)) return null;
+
+  const millionMatch = trimmed.match(
+    /([\d۰-۹٠-٩]+(?:[٬,][\d۰-۹٠-٩]+)*(?:\.\d+)?)\s*میلیون/u
+  );
+  if (millionMatch?.[1]) {
+    const n = Number(toAsciiDigits(millionMatch[1].replace(/[٬,]/g, '')));
+    if (Number.isFinite(n) && n > 0) return Math.round(n * 1_000_000);
+  }
+
+  const billionMatch = trimmed.match(
+    /([\d۰-۹٠-٩]+(?:[٬,][\d۰-۹٠-٩]+)*(?:\.\d+)?)\s*میلیارد/u
+  );
+  if (billionMatch?.[1]) {
+    const n = Number(toAsciiDigits(billionMatch[1].replace(/[٬,]/g, '')));
+    if (Number.isFinite(n) && n > 0) return Math.round(n * 1_000_000_000);
+  }
+
+  const raw = toAsciiDigits(trimmed);
   if (!raw) return null;
   const n = Number(raw);
   if (!Number.isFinite(n) || n < 0) return null;

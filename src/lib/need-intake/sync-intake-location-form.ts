@@ -4,7 +4,22 @@ import { recordToEntities } from '@/intake/entities/entityRecord';
 import type { City } from '@/lib/location-system';
 import { parseCity } from '@/lib/need-intake/intent-parser';
 import { parseAreaFromText } from '@/lib/need-intake/vertical-classifier';
+import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
 import { cityFromSlug, locationCityIdToSlug } from '@/lib/search/city-slugs';
+
+function stripStreetPrefix(label: string): string {
+  return label
+    .replace(/^خیابان\s+/iu, '')
+    .replace(/^بلوار\s+/iu, '')
+    .replace(/^کوچه\s+/iu, '')
+    .trim();
+}
+
+function looksLikeLocationLabel(text: string): boolean {
+  const t = text.trim();
+  if (!t || /^\d+$/.test(t)) return false;
+  return /[\u0600-\u06FF]{2,}/.test(t);
+}
 
 /** Pick managed city row for neighborhood catalog (handles duplicate Persian names). */
 export function resolveManagedCityForNeighborhoods(
@@ -96,7 +111,11 @@ export function resolveIntakeNeighborhoodFromDraft(draft: NeedDraft | null): str
   if (!draft) return '';
   const entities = recordToEntities(draft.entities);
   if (entities.neighborhood?.trim()) return entities.neighborhood.trim();
-  if (draft.parsedIntent.entities?.area?.trim()) return draft.parsedIntent.entities.area.trim();
+
+  const parsedArea = draft.parsedIntent.entities?.area?.trim();
+  if (parsedArea && looksLikeLocationLabel(parsedArea)) {
+    return stripStreetPrefix(parsedArea);
+  }
 
   const loc = draft.answers?.location;
   if (typeof loc === 'string' && loc.trim()) {
@@ -105,15 +124,19 @@ export function resolveIntakeNeighborhoodFromDraft(draft: NeedDraft | null): str
       const cityPart = parseCity(parts[parts.length - 1]!);
       if (cityPart) {
         const hood = parts.slice(0, -1).join('، ').trim();
-        if (hood.length >= 2) return hood;
+        if (hood.length >= 2) return stripStreetPrefix(hood);
       }
     }
     const fromLoc = parseAreaFromText(loc);
-    if (fromLoc) return fromLoc;
+    if (fromLoc) return stripStreetPrefix(fromLoc);
   }
 
   const raw = (draft.sourceText ?? draft.parsedIntent.rawText ?? '').trim();
-  return parseAreaFromText(raw)?.trim() ?? '';
+  const fragment = extractLocationFragment(raw);
+  if (fragment) return stripStreetPrefix(fragment);
+
+  const fromRaw = parseAreaFromText(raw);
+  return fromRaw ? stripStreetPrefix(fromRaw) : '';
 }
 
 export function extractIntakeLocationFromDraft(

@@ -21,6 +21,7 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
+import { routeBuilder } from '@/config/routes';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -270,7 +271,7 @@ function SuccessState({
             <Button
               onClick={onGoBack}
               className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-8 h-11 rounded-xl"
-              data-href="/browse?type=business"
+              data-href={routeBuilder.browseAll({ type: 'business' })}
               title="بازگشت به پروفایل کسب‌وکار"
             >
               <ChevronLeft className="w-4 h-4" />

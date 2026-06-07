@@ -10,8 +10,17 @@ from app.model_loader import get_model_state
 from app.prompts import LISTING_TITLE_SYSTEM_PROMPT, NEED_INTAKE_SYSTEM_PROMPT
 
 
+def _strip_generation_leak(text: str) -> str:
+    """Keep only the first model segment (training rows sometimes leak chat markers)."""
+    for marker in ("<|user|>", "<|assistant|>", "<|system|>", "<|user||", "<|assistant|", "\n<|"):
+        idx = text.find(marker)
+        if idx > 0:
+            text = text[:idx]
+    return text.strip()
+
+
 def _extract_json(text: str) -> dict[str, Any]:
-    text = text.strip()
+    text = _strip_generation_leak(text.strip())
     if text.startswith("```"):
         text = re.sub(r"^```(?:json)?\s*", "", text)
         text = re.sub(r"\s*```$", "", text)
@@ -22,15 +31,12 @@ def _extract_json(text: str) -> dict[str, Any]:
     try:
         return json.loads(text)
     except json.JSONDecodeError as e:
-        # Some models output Python-like dicts with single quotes.
         try:
             parsed = ast.literal_eval(text)
             if isinstance(parsed, dict):
                 return parsed
         except Exception:
             pass
-
-        # Heuristic: convert single quotes → double quotes.
         try:
             normalized = text.replace("'", '"')
             return json.loads(normalized)
@@ -59,6 +65,28 @@ def generate_with_prompt(system: str, user: str, *, max_tokens: int = MAX_TOKENS
         verbose=False,
     )
     return raw.strip() if isinstance(raw, str) else str(raw).strip()
+
+
+def chat_completion(messages: list[dict[str, str]], *, max_tokens: int = MAX_TOKENS) -> str:
+    """OpenAI-style messages → single assistant reply."""
+    system_parts: list[str] = []
+    user_parts: list[str] = []
+    for msg in messages:
+        role = msg.get("role", "")
+        content = (msg.get("content") or "").strip()
+        if not content:
+            continue
+        if role == "system":
+            system_parts.append(content)
+        elif role == "user":
+            user_parts.append(content)
+        elif role == "assistant":
+            user_parts.append(f"[assistant]: {content}")
+
+    system = "\n\n".join(system_parts) if system_parts else "You are a helpful assistant."
+    user = "\n\n".join(user_parts)
+    raw_str = generate_with_prompt(system, user, max_tokens=max_tokens)
+    return _strip_generation_leak(raw_str)
 
 
 def _normalize_title(raw: str) -> str:

@@ -1,0 +1,20 @@
+{
+  "id": "b4-p0397",
+  "personaId": "b4-p0397",
+  "userMessages": [
+    "مغازه در چهارباغ اصفهان فروش میخوام",
+    "دانشگاه اصفهان",
+    "بودجه تا ۱۲ میلیارد",
+    "حدود 80 متری"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "budget",
+      "chipValue": "دانشگاه اصفهان"
+    }
+  ],
+  "expectedCategorySlug": "shop-sale",
+  "expectedCity": "اصفهان",
+  "expectedDealType": "sell"
+}

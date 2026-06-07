@@ -6,13 +6,16 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Share2, Link2, Send, MessageCircle, Mail, Check } from 'lucide-react';
 
+import { SITE_URL } from '@/lib/seo';
+import { slugifyTitle } from '@/lib/seo/slug';
+
 interface RequestShareProps {
   requestTitle: string;
   requestId: string;
 }
 
-const SHARE_URL = (requestId: string) =>
-  `https://needfinder.ir/request/${requestId}`;
+const SHARE_URL = (requestId: string, title: string) =>
+  `${SITE_URL}${`/v/${encodeURIComponent(slugifyTitle(title))}/${encodeURIComponent(requestId)}`}`;
 
 const socialButtons = [
   {
@@ -43,7 +46,7 @@ const socialButtons = [
 
 export function RequestShare({ requestTitle, requestId }: RequestShareProps) {
   const [copied, setCopied] = useState(false);
-  const url = SHARE_URL(requestId);
+  const url = SHARE_URL(requestId, requestTitle);
 
   const handleCopyLink = async () => {
     try {

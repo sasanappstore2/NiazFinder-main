@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from app.config import HOST, MODEL_ID, PORT
-from app.infer import generate_title, parse_text
+from app.infer import chat_completion, generate_title, parse_text
 from app.model_loader import get_model_state
 from app.train_job import get_train_status, start_train_async
 app = FastAPI(title="NiazFinder Intake MLX", version="0.1.0")
@@ -60,6 +60,31 @@ class TitleResponse(BaseModel):
     modelId: str
 
 
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+
+class ChatCompletionRequest(BaseModel):
+    model: str = "qwen3.5-2b"
+    messages: list[ChatMessage]
+    max_tokens: int = Field(default=512, ge=16, le=2048)
+    temperature: float = Field(default=0.1, ge=0, le=2)
+
+
+class ChatCompletionChoice(BaseModel):
+    index: int = 0
+    message: ChatMessage
+    finish_reason: str = "stop"
+
+
+class ChatCompletionResponse(BaseModel):
+    id: str = "chatcmpl-local"
+    object: str = "chat.completion"
+    model: str
+    choices: list[ChatCompletionChoice]
+
+
 @app.get("/")
 def root():
     state = get_model_state()
@@ -71,6 +96,7 @@ def root():
             "health": "GET /health",
             "parse": "POST /v1/parse",
             "title": "POST /v1/title",
+            "chatCompletions": "POST /v1/chat/completions",
             "docs": "GET /docs",
         },
         "note": "این سرویس API است؛ صفحهٔ سفید در / طبیعی بود — از /health یا /docs استفاده کنید.",
@@ -105,6 +131,26 @@ def v1_title(body: TitleRequest):
         ctx = body.context.model_dump(exclude_none=True)
         title, raw = generate_title(ctx)
         return TitleResponse(title=title, raw=raw, modelId=MODEL_ID)
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
+
+
+@app.post("/v1/chat/completions", response_model=ChatCompletionResponse)
+def v1_chat_completions(body: ChatCompletionRequest):
+    """OpenAI-compatible chat for ScrapeGraphAI / estate-scrape (Qwen 3.5-2B)."""
+    try:
+        raw = chat_completion(
+            [m.model_dump() for m in body.messages],
+            max_tokens=body.max_tokens,
+        )
+        return ChatCompletionResponse(
+            model=MODEL_ID,
+            choices=[
+                ChatCompletionChoice(
+                    message=ChatMessage(role="assistant", content=raw),
+                )
+            ],
+        )
     except Exception as e:
         raise HTTPException(status_code=503, detail=str(e)) from e
 

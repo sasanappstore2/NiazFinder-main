@@ -28,6 +28,7 @@ import { FilesPanel } from './FilesPanel';
 import { SettingsPanel } from './SettingsPanel';
 import { ReferralsPanel } from './ReferralsPanel';
 import { CouponsPanel } from './CouponsPanel';
+import { BlogPostsPanel } from './BlogPostsPanel';
 
 export function SuperAdminModule({ section }: { section: AdminSectionId }) {
   const { me, isLoading, hasPermission } = useAdmin();
@@ -139,6 +140,8 @@ export function SuperAdminModule({ section }: { section: AdminSectionId }) {
       return <ReferralsPanel />;
     case 'coupons':
       return <CouponsPanel />;
+    case 'blog':
+      return <BlogPostsPanel />;
     default:
       return <OverviewPanel />;
   }

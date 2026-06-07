@@ -8,6 +8,7 @@ import { toAsciiDigits } from '@/lib/format/digits';
 import type { DatasetFixture, DatasetLabels } from './schema';
 import { labelsFromParsedIntent } from './schema';
 import { normalizeInput } from './shared/normalize-input';
+import { cityToSlug } from './shared/normalize-city';
 
 export interface DivarNeedSourcePost {
   title: string;
@@ -155,7 +156,7 @@ export function divarListingToNeedInput(
 export function buildDivarNeedLabels(
   input: string,
   nfSlug: string,
-  opts?: { fallbackCity?: string; priceText?: string }
+  opts?: { fallbackCity?: string; fallbackCitySlug?: string; priceText?: string }
 ): DatasetLabels {
   const enriched = enrichParsedIntent({
     ...parseIntentFromText(input),
@@ -180,11 +181,15 @@ export function buildDivarNeedLabels(
     ...labels,
     intentType: inferNeedIntentType(nfSlug),
     categorySlug: nfSlug,
-    city: labels.city ?? enriched.city ?? opts?.fallbackCity,
+    city:
+      cityToSlug(labels.city) ??
+      cityToSlug(enriched.city) ??
+      cityToSlug(opts?.fallbackCity) ??
+      opts?.fallbackCitySlug,
     budgetMax,
     entities: {
       ...labels.entities,
-      dealType,
+      ...(dealType ? { dealType } : {}),
       ...(propertyKind ? { propertyKind } : {}),
       ...(enriched.entities?.area ? { area: enriched.entities.area } : {}),
       ...(enriched.entities?.brand ? { brand: enriched.entities.brand } : {}),
@@ -200,6 +205,7 @@ export function buildDivarNeedFixture(
   const input = divarListingToNeedInput(post, { nfSlug: post.nfSlug, variant });
   const labels = buildDivarNeedLabels(input, post.nfSlug, {
     fallbackCity: post.city,
+    fallbackCitySlug: post.citySlug,
     priceText: post.priceText,
   });
   const root = getCategoryPath(post.nfSlug)[0]?.slug ?? post.nfSlug;

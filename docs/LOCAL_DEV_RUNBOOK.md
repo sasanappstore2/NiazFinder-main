@@ -18,11 +18,23 @@ docker compose up -d postgres redis
 npm run db:migrate   # or db:push in dev
 ```
 
-Terminal B — Qwen (intake-mlx):
+Terminal B — Qwen (intake-mlx, **estate LoRA by default**):
 
 ```bash
 npm run dev:intake-mlx
-npm run smoke:intake-mlx   # optional health check
+npm run smoke:intake-mlx   # optional — checks adapterPath + parse
+```
+
+Legacy general intake LoRA (`intake-lora-v2`) for A/B:
+
+```bash
+npm run dev:intake-mlx:legacy
+```
+
+One-command stack (MLX + Next):
+
+```bash
+npm run dev:need-intake
 ```
 
 Terminal C — Next:
@@ -94,6 +106,14 @@ MLX (requires `dev:intake-mlx` running):
 
 ```bash
 npm run smoke:intake-mlx
+# health should show adapterPath ending in estate-intake-lora-v1
+curl -s http://127.0.0.1:8100/health | jq .adapterPath
+```
+
+Estate LLM benchmark (MLX + reconcile):
+
+```bash
+NEED_INTAKE_LLM_ENABLED=true npm run test:estate-benchmark:llm
 ```
 
 Home landing → `parse-intent` (requires **Next dev** on `:3000`; sample املاک):

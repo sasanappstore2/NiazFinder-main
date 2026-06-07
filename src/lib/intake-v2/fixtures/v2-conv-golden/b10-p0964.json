@@ -1,0 +1,21 @@
+{
+  "id": "b10-p0964",
+  "personaId": "b10-p0964",
+  "userMessages": [
+    "ویلا در گوهردشت کرج رهن و اجاره می‌خوام",
+    "گوهردشت",
+    "بودجه تا ۳ میلیارد",
+    "حدوداً 120 متر",
+    "دو خواب"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "budget",
+      "chipValue": "گوهردشت"
+    }
+  ],
+  "expectedCategorySlug": "villa-sale",
+  "expectedCity": "کرج",
+  "expectedDealType": "buy"
+}

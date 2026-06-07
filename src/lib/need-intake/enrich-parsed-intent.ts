@@ -4,12 +4,8 @@ import { computeMissingIntakeFields } from '@/lib/need-intake/compute-missing-fi
 import { applyPropertySlotsToParsed } from '@/lib/need-intake/apply-property-slots-to-parsed';
 import { isConstructionPartnershipText, parseCity } from '@/lib/need-intake/intent-parser';
 import { buildPropertyTitle, buildRealEstateServiceTitle } from '@/lib/need-intake/property-title';
-import {
-  findNeighborhoodInAnyCity,
-  findNeighborhoodInText,
-  rankNeighborhoodCandidates,
-  type NeighborhoodGlobalMatch,
-} from '@/lib/need-intake/neighborhood-catalog.server';
+import { applyLocationResolutionToParsed } from '@/lib/need-intake/location-resolution-engine';
+import { findNeighborhoodInText } from '@/lib/need-intake/neighborhood-catalog.server';
 import { extractVehicleSubjectFromText } from '@/lib/need-intake/vertical-title';
 import { parseAreaFromText } from '@/lib/need-intake/vertical-classifier';
 
@@ -29,7 +25,14 @@ function isVehicleParsed(parsed: ParsedIntent): boolean {
 }
 
 /** Attach neighborhood slug, slot extraction, optional disambiguation, and missingFields. */
-export function enrichParsedIntent(parsed: ParsedIntent): ParsedIntent {
+export function enrichParsedIntent(
+  parsed: ParsedIntent,
+  opts?: {
+    preferredCityId?: string | null;
+    preferredCityName?: string | null;
+    locationText?: string;
+  }
+): ParsedIntent {
   let next: ParsedIntent = applyPropertySlotsToParsed(parsed);
   const partnership = isConstructionPartnershipText(next.rawText ?? '');
   const raw = next.rawText?.trim() ?? '';
@@ -40,68 +43,20 @@ export function enrichParsedIntent(parsed: ParsedIntent): ParsedIntent {
     next.intentType === 'real_estate_service';
 
   if (isPropertyParsed(next) && raw && !skipNeighborhoodAuto) {
-    let globalMatchForCity: NeighborhoodGlobalMatch | null = null;
-    let city = next.city?.trim() || parseCity(raw);
-    if (!city) {
-      globalMatchForCity = findNeighborhoodInAnyCity(raw);
-      if (globalMatchForCity) city = globalMatchForCity.city;
-    }
-
-    if (city) {
-      let fragment =
-        parseAreaFromText(raw)?.trim() ||
-        next.entities?.area?.trim() ||
-        '';
-
-      if (!fragment) {
-        const hit = findNeighborhoodInText(city, raw);
-        if (hit) fragment = (hit.matchedArea ?? hit.name).trim();
+    const locationText = opts?.locationText ?? raw;
+    const cityHint =
+      next.city?.trim() ||
+      parseCity(locationText) ||
+      opts?.preferredCityName?.trim() ||
+      undefined;
+    next = applyLocationResolutionToParsed(
+      { ...next, city: cityHint || next.city },
+      {
+        preferredCityId: opts?.preferredCityId,
+        preferredCityName: opts?.preferredCityName,
+        locationText,
       }
-
-      const rankingSeed =
-        fragment ||
-        (globalMatchForCity ? globalMatchForCity.name : '') ||
-        '';
-
-      if (rankingSeed) {
-        const { candidates, ambiguous } = rankNeighborhoodCandidates(city, rankingSeed, raw, 8);
-        const areaHint = fragment || globalMatchForCity?.name || rankingSeed;
-        if (candidates.length === 0) {
-          next = {
-            ...next,
-            city,
-            entities: { ...next.entities, area: areaHint },
-            neighborhoodSlug: undefined,
-            locationAmbiguous: false,
-            neighborhoodCandidates: undefined,
-          };
-        } else if (ambiguous) {
-          next = {
-            ...next,
-            city,
-            neighborhoodSlug: undefined,
-            locationAmbiguous: true,
-            neighborhoodCandidates: candidates.slice(0, 6).map((c) => ({
-              slug: c.slug,
-              label: c.name,
-            })),
-            entities: { ...next.entities, area: areaHint },
-          };
-        } else {
-          const best = candidates[0];
-          next = {
-            ...next,
-            city,
-            neighborhoodSlug: best.slug,
-            locationAmbiguous: false,
-            neighborhoodCandidates: undefined,
-            entities: { ...next.entities, area: best.name },
-          };
-        }
-      } else {
-        next = { ...next, city };
-      }
-    }
+    );
   }
 
   if (isVehicleParsed(next) && raw) {

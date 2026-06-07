@@ -1,0 +1,21 @@
+{
+  "id": "b1-p0038",
+  "personaId": "b1-p0038",
+  "userMessages": [
+    "آپارتمان در معالی‌آباد شیراز خرید می‌خوام",
+    "معالی‌آباد",
+    "بودجه تا ۲ میلیارد",
+    "حدوداً 100 متر",
+    "دو خواب"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "budget",
+      "chipValue": "معالی‌آباد"
+    }
+  ],
+  "expectedCategorySlug": "apartment-sale",
+  "expectedCity": "شیراز",
+  "expectedDealType": "buy"
+}

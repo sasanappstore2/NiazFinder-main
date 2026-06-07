@@ -85,6 +85,22 @@ export const NEED_TYPES: readonly NeedTypeDefinition[] = [
     ],
   },
   {
+    key: 'real-estate-seeking',
+    schemaVersion: 1,
+    vertical: 'real-estate',
+    category: 'real-estate',
+    requiredFields: ['category', 'city', 'transactionType'],
+    optionalFields: ['neighborhood', 'area', 'budget', 'rooms'],
+    proposalMode: 'real-estate',
+    sections: [
+      { key: 'category', label: 'دسته‌بندی', fields: ['category', 'subcategory'] },
+      { key: 'deal', label: 'نوع معامله', fields: ['transactionType'] },
+      { key: 'location', label: 'موقعیت', fields: ['city', 'neighborhood'] },
+      { key: 'property-specs', label: 'مشخصات ملک', fields: ['area', 'rooms'] },
+      { key: 'budget', label: 'بودجه', fields: ['budget'] },
+    ],
+  },
+  {
     key: 'general-seeking',
     schemaVersion: 1,
     vertical: 'general',
@@ -123,12 +139,26 @@ export function resolveNeedType(entities: IntakeEntities): NeedTypeDefinition {
     }
     return NEED_TYPES[0]!;
   }
+  if (entities.vertical === 'real-estate' || entities.categorySlug?.includes('-')) {
+    const slug = entities.categorySlug ?? '';
+    if (
+      slug.includes('apartment') ||
+      slug.includes('villa') ||
+      slug.includes('shop') ||
+      slug.includes('office') ||
+      slug.includes('land') ||
+      slug.includes('industrial') ||
+      slug.includes('real-estate')
+    ) {
+      return NEED_TYPES[4]!;
+    }
+  }
   if (entities.category?.includes('plumb') || entities.vertical === 'services') {
     return NEED_TYPES[2]!;
   }
   if (entities.category?.includes('car') || entities.vertical === 'vehicles') {
     return NEED_TYPES[3]!;
   }
-  return NEED_TYPES[4]!;
+  return NEED_TYPES[5]!;
 }
 

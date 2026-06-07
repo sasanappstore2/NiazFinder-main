@@ -1,3 +1,4 @@
+import type { IntakeEntities } from '@/intake/types';
 import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
 import { generateListingTitle } from '@/lib/need-intake/generate-listing-title';
 import {
@@ -127,7 +128,7 @@ function testPeugeot207Draft(): string[] {
     city: 'مشهد',
     transactionType: 'BUY',
     budgetMax: 1_000_000_000,
-  });
+  } as IntakeEntities);
   draft = recomputeNeedDraft(draft);
 
   const title = buildVerticalTitleFromDraft(draft);
@@ -170,7 +171,7 @@ function testDaewooDraftTitle(): string[] {
     city: 'مشهد',
     neighborhood: 'آپارتمان های مرتفع',
     transactionType: 'BUY',
-  });
+  } as IntakeEntities);
   draft = recomputeNeedDraft(draft);
   const title = buildVerticalTitleFromDraft(draft);
   failed.push(assert(title.includes('دوو سیلو'), 'daewoo: subject') ?? '');
@@ -201,7 +202,7 @@ function testCarwashDraftCompose(): string[] {
     vertical: 'vehicles',
     city: 'مشهد',
     transactionType: 'BUY',
-  });
+  } as IntakeEntities);
   draft = recomputeNeedDraft(draft);
 
   const composed = composeListingFromDraft(draft);
@@ -249,7 +250,7 @@ async function testTemplateFallback(): Promise<string[]> {
       vertical: 'vehicles',
       city: 'مشهد',
       transactionType: 'BUY',
-    });
+    } as IntakeEntities);
     carDraft = recomputeNeedDraft(carDraft);
     const heuristic = buildHeuristicListingTitle(carDraft);
     failed.push(assert(heuristic.includes('کارواش'), 'heuristic: carwash') ?? '');

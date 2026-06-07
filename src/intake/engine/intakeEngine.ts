@@ -34,6 +34,7 @@ import { resolveNeedType } from '@/intake/schema/needTypes';
 import { getAiSemanticConfig } from '@/ai/config/feature-flags';
 import { runSemanticResolver } from '@/ai/services/semanticResolver';
 import type { IntakeAnalysisTrace } from '@/intake/training/trainingExample';
+import { applyLaunchIntakeEntityPolicy } from '@/lib/need-intake/intake-launch-policy';
 
 export interface AnalyzeNeedTextOptions {
   /** City slug from home picker / URL — neighborhoods resolve in this city first. */
@@ -123,7 +124,8 @@ function buildEntities(
     indexes,
     tokens,
     ngrams,
-    neighborhoodCityId
+    neighborhoodCityId,
+    normalizedText
   );
   if (neighborhoodHit && neighborhoodHit.score >= 0.65) {
     entities.neighborhood = neighborhoodHit.entry.name;
@@ -222,7 +224,9 @@ export function analyzeNeedText(
     options
   );
 
-  return buildAnalysisFromEntities(entities, confidence, normalizedText, started);
+  const policyEntities = applyLaunchIntakeEntityPolicy(text, entities);
+
+  return buildAnalysisFromEntities(policyEntities, confidence, normalizedText, started);
 }
 
 /** Build full analysis from pre-extracted entities (used by Qwen merge path). */

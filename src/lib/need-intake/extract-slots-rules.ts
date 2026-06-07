@@ -87,11 +87,18 @@ function seedFromParsedEntities(
   if (keys.includes('areaMin') && !answers.areaMin && slots.areaMin) {
     merged.areaMin = Number(slots.areaMin);
   }
+  if (keys.includes('rooms') && !answers.rooms && slots.rooms) {
+    merged.rooms = Number(slots.rooms);
+  }
   if (keys.includes('rahnAmount') && !answers.rahnAmount && slots.rahnAmount) {
     merged.rahnAmount = Number(slots.rahnAmount);
   }
   if (keys.includes('monthlyRent') && !answers.monthlyRent && slots.monthlyRent) {
-    merged.monthlyRent = Number(slots.monthlyRent);
+    const rent = Number(slots.monthlyRent);
+    const area = slots.areaMin ? Number(slots.areaMin) : null;
+    if (area == null || rent !== area) {
+      merged.monthlyRent = rent;
+    }
   }
 
   return merged;

@@ -1,14 +1,16 @@
 import type { DatasetFixture, DatasetLabels, TrainingMessageRow } from './schema';
 import { NEED_INTAKE_SYSTEM_PROMPT } from './schema';
+import { cityToSlug } from './shared/normalize-city';
 
 export function labelsToAssistantJson(labels: DatasetLabels): string {
+  const citySlug = cityToSlug(labels.city);
   return JSON.stringify(
     {
       intentType: labels.intentType,
       categorySlug: labels.categorySlug,
       ...(labels.subcategorySlug ? { subcategorySlug: labels.subcategorySlug } : {}),
       entities: labels.entities,
-      ...(labels.city ? { city: labels.city } : {}),
+      ...(citySlug ? { city: citySlug } : {}),
       ...(labels.budgetMin != null ? { budgetMin: labels.budgetMin } : {}),
       ...(labels.budgetMax != null ? { budgetMax: labels.budgetMax } : {}),
       ...(labels.urgency ? { urgency: labels.urgency } : {}),

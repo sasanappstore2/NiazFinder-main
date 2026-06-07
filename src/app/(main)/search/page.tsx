@@ -280,7 +280,7 @@ function RequestResultCard({ request, onNavigate }: { request: RequestResult; on
     >
       <Card
         className="group cursor-pointer border border-border/50 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 hover:shadow-md"
-        onClick={() => onNavigate(`/request/${request.id}`)}
+        onClick={() => onNavigate(routeBuilder.listing(request.id, request.title))}
       >
         <CardContent className="p-4">
           <div className="flex items-start gap-3">

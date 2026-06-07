@@ -41,7 +41,7 @@ export function IntakeAiShardBar({
       <p className="mb-2 text-xs text-muted-foreground">
         {hasRunning
           ? 'هوش مصنوعی بخش‌های زیر را در پس‌زمینه تکمیل می‌کند — می‌توانید همزمان فرم را ویرایش کنید.'
-          : 'پیشنهادهای هوش مصنوعی اعمال شد.'}
+          : 'پیشنهاد هوشمند — حتماً بررسی کنید'}
       </p>
       <div className="flex flex-wrap gap-1.5">
         {SHARD_ORDER.map((key) => {

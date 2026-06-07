@@ -1,0 +1,38 @@
+# Estate domain glossary — NiazFinder parse-intent (v1)
+
+## Informal → formal
+خونه/خانه → apartment or house (context)
+تومن → تومان (millions in buy, thousands in rent if ≤999)
+ودیعه → رهن (deposit)
+کلنگی → old land/building for redevelopment
+نقلی → small apartment (~≤50m)
+خانه‌مانی → monthly residential rent
+بهم‌پیوسته → adjacent units
+جابجایی/معاوضه → swap
+نوساز/کلید اول → building_age ≤2 years
+پنت‌هاوس/برج → apartment (high-rise)
+
+## Property types
+خانه ویلایی → house | ویلا → villa | مغازه/فروشگاه → shop
+دفتر/اداری/کلینیک → office | سوله/کارگاه/انبار → warehouse
+تجاری-مسکونی → mixed | زمین/باغ/کلنگی → land
+
+## Intents
+خرید/بخرم/می‌خرم → buy | اجاره/رنت → rent
+رهن کامل → full_mortgage | رهن+اجاره → rent_mortgage
+مشارکت در ساخت → partnership | پیش‌خرید → pre_purchase
+سرمایه‌گذاری/مستغل → investment | فروش/واگذاری → sell
+اجاره بدم/رهن بدم → lease_out
+
+## Budget (Toman)
+"X تومن" + apartment question → rent X×1,000/month
+"X تومن" + buy context → X×1,000,000
+"رهن A اجاره B" → A×1M deposit + B×1M monthly
+"یه و نیم میلیارد" → 1,500,000,000
+"زیر دو میلیارد" → max 2,000,000,000
+"۶ تومنه" → 6,000,000,000 (colloquial billion)
+
+## Clarification rules
+Ask when: city missing + location needed; "شمال" ambiguous; intent unclear;
+rent_mortgage missing one amount; partnership without land area/ratio.
+Do not ask: optional aesthetics; already explicit conversational slots.

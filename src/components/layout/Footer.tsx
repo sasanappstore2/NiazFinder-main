@@ -57,8 +57,8 @@ const FOOTER_COLUMNS: FooterLinkColumn[] = [
   {
     title: 'پشتیبانی',
     links: [
-      { label: 'راهنما', href: '/guide', title: 'راهنمای استفاده از نیاز فایندر' },
-      { label: 'سوالات متداول', href: '/faq', title: 'پاسخ سوالات رایج کاربران' },
+      { label: 'راهنما', href: routeBuilder.help(), title: 'راهنمای استفاده از نیاز فایندر' },
+      { label: 'سوالات متداول', href: '/#faq', title: 'پاسخ سوالات رایج کاربران' },
       { label: 'تماس با ما', href: '#contact', title: 'اطلاعات تماس با تیم پشتیبانی' },
       { label: 'قوانین و مقررات', href: '/terms', title: 'قوانین و مقررات استفاده از سرویس' },
     ],
@@ -190,7 +190,7 @@ export function Footer({ compact = false }: FooterProps) {
             <nav className="flex flex-wrap items-center justify-center gap-4 text-xs" aria-label="لینک‌های پایین صفحه">
               <a href="/" title="صفحه اصلی">صفحه اصلی</a>
               <a href="/post" title="ثبت نیاز">ثبت نیاز</a>
-              <a href="/browse?type=business" title="کسب‌وکارها">کسب‌وکارها</a>
+              <a href={routeBuilder.browseAll({ type: 'business' })} title="کسب‌وکارها">کسب‌وکارها</a>
               <a href="/pricing" title="تعرفه‌ها">تعرفه‌ها</a>
               <a href="#contact" title="تماس با ما">تماس با ما</a>
             </nav>
@@ -369,24 +369,24 @@ export function Footer({ compact = false }: FooterProps) {
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <li><a href="/" title="صفحه اصلی نیاز فایندر">صفحه اصلی</a></li>
                 <li><a href="/post" title="ثبت نیاز جدید">ثبت نیاز</a></li>
-                <li><a href="/browse?type=business" title="کسب‌وکارها حرفه‌ای">کسب‌وکارها</a></li>
+                <li><a href={routeBuilder.browseAll({ type: 'business' })} title="کسب‌وکارها حرفه‌ای">کسب‌وکارها</a></li>
                 <li><a href="/pricing" title="تعرفه‌ها و طرح‌های اشتراک">تعرفه‌ها</a></li>
               </ul>
             </nav>
             <nav aria-label="دسته‌بندی‌ها">
               <h4 className="mb-3 text-sm font-semibold">دسته‌بندی‌ها</h4>
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-                <li><a href="/browse?type=business" title="طراحی وب‌سایت">طراحی وب</a></li>
-                <li><a href="/browse?type=business" title="اپلیکیشن موبایل">اپلیکیشن موبایل</a></li>
-                <li><a href="/browse?type=business" title="تولید محتوا">تولید محتوا</a></li>
-                <li><a href="/browse?type=business" title="خدمات خانگی">خدمات خانگی</a></li>
+                <li><a href={routeBuilder.browseAll({ type: 'business' })} title="طراحی وب‌سایت">طراحی وب</a></li>
+                <li><a href={routeBuilder.browseAll({ type: 'business' })} title="اپلیکیشن موبایل">اپلیکیشن موبایل</a></li>
+                <li><a href={routeBuilder.browseAll({ type: 'business' })} title="تولید محتوا">تولید محتوا</a></li>
+                <li><a href={routeBuilder.browseAll({ type: 'business' })} title="خدمات خانگی">خدمات خانگی</a></li>
               </ul>
             </nav>
             <nav aria-label="پشتیبانی">
               <h4 className="mb-3 text-sm font-semibold">پشتیبانی</h4>
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-                <li><a href="/guide" title="راهنمای استفاده">راهنما</a></li>
-                <li><a href="/faq" title="سوالات متداول">سوالات متداول</a></li>
+                <li><a href={routeBuilder.help()} title="راهنمای استفاده">راهنما</a></li>
+                <li><a href="/#faq" title="سوالات متداول">سوالات متداول</a></li>
                 <li><a href="#contact" title="تماس با ما">تماس با ما</a></li>
                 <li><a href="/terms" title="قوانین و مقررات">قوانین و مقررات</a></li>
               </ul>

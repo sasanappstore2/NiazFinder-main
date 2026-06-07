@@ -1,0 +1,21 @@
+{
+  "id": "b7-p0693",
+  "personaId": "b7-p0693",
+  "userMessages": [
+    "آپارتمان در صدرا شیراز اجاره ماهانه میخوام",
+    "دوکوهک",
+    "دو خواب",
+    "حدود 100 متری",
+    "ودیعه زیر ۱۰۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "rooms",
+      "chipValue": "دوکوهک"
+    }
+  ],
+  "expectedCategorySlug": "apartment-rent",
+  "expectedCity": "شیراز",
+  "expectedDealType": "rent_monthly"
+}

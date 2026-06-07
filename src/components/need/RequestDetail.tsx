@@ -29,6 +29,7 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
   const { goBack } = useNavigate();
   const fetchRequestDetail = useAppStore((s) => s.fetchRequestDetail);
   const currentUser = useAppStore((s) => s.currentUser);
+  const authHydrated = useAppStore((s) => s.authHydrated);
 
   const requestId =
     idProp ??
@@ -40,6 +41,7 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
   const [request, setRequest] = useState<ServiceRequest | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [pendingReview, setPendingReview] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [apiBriefSummary, setApiBriefSummary] = useState<string | undefined>();
   const [hasStaffDebugAccess, setHasStaffDebugAccess] = useState(false);
@@ -50,6 +52,8 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
       setLoadError('شناسه نامعتبر');
       return;
     }
+    if (!authHydrated) return;
+
     let cancelled = false;
     setLoading(true);
     void fetchRequestDetail(requestId).then((r) => {
@@ -57,15 +61,24 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
       if (r) {
         setRequest(r);
         setLoadError(null);
+        setPendingReview(false);
       } else {
-        setLoadError('نیاز یافت نشد');
+        const apiError = useAppStore.getState().error ?? '';
+        const isPending =
+          apiError.includes('منتشر نشده') || apiError.includes('بازبینی');
+        setPendingReview(isPending);
+        setLoadError(
+          isPending
+            ? 'این آگهی در صف بازبینی است و هنوز برای عموم نمایش داده نمی‌شود.'
+            : apiError || 'نیاز یافت نشد'
+        );
       }
       setLoading(false);
     });
     return () => {
       cancelled = true;
     };
-  }, [requestId, fetchRequestDetail]);
+  }, [requestId, fetchRequestDetail, authHydrated]);
 
   const isOwner = Boolean(currentUser && request && currentUser.id === request.user.id);
   const isBusinessUser = currentUser?.role === 'SPECIALIST';
@@ -137,6 +150,12 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
       <div className="py-16 text-center space-y-4">
         <AlertCircle className="size-10 mx-auto text-muted-foreground" />
         <p className="text-muted-foreground">{loadError ?? 'نیاز یافت نشد'}</p>
+        {pendingReview && (
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            اگر صاحب آگهی هستید، با همان حسابی که ثبت کردید وارد شوید تا پیش‌نمایش را ببینید.
+            در محیط dev آگهی‌های جدید به‌صورت خودکار منتشر می‌شوند.
+          </p>
+        )}
         <Button variant="outline" onClick={goBack}>
           بازگشت
         </Button>

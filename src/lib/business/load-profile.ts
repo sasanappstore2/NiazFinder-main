@@ -1,3 +1,4 @@
+import type { BusinessProfile } from '@prisma/client';
 import type { Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
 import { mapProfileToBusiness } from '@/lib/business/map-profile';
@@ -32,6 +33,15 @@ const profileInclude = {
   },
 };
 
+type ProfileWithUserActive = Pick<BusinessProfile, 'status'> & {
+  user: { isActive: boolean };
+};
+
+/** Public storefronts: browse, /b/{slug}, sitemap, lead outreach. */
+export function isPublicBusinessProfile(profile: ProfileWithUserActive): boolean {
+  return profile.status === 'ACTIVE' && profile.user.isActive;
+}
+
 async function hydrateAndMap(
   profileId: string,
   userId: string,
@@ -65,6 +75,7 @@ export async function loadBusinessByUserId(userId: string): Promise<Business | n
   if (!user || !user.isActive) return null;
 
   const profile = await ensureBusinessProfile(user);
+  if (profile.status !== 'ACTIVE') return null;
   return hydrateAndMap(profile.id, user.id);
 }
 
@@ -78,7 +89,7 @@ export async function loadBusinessBySlug(
     include: profileInclude,
   });
 
-  if (!profile || !profile.user.isActive) return null;
+  if (!profile || !isPublicBusinessProfile(profile)) return null;
   return hydrateAndMap(profile.id, profile.userId, city, category);
 }
 
@@ -87,13 +98,13 @@ export async function loadBusinessByProfileSlug(slug: string): Promise<Business 
     where: { slug },
     include: profileInclude,
   });
-  if (!profile || !profile.user.isActive) return null;
+  if (!profile || !isPublicBusinessProfile(profile)) return null;
   return hydrateAndMap(profile.id, profile.userId);
 }
 
 export async function incrementBusinessView(userId: string) {
   await db.businessProfile.updateMany({
-    where: { userId },
+    where: { userId, status: 'ACTIVE' },
     data: { viewCount: { increment: 1 } },
   });
 }

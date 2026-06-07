@@ -33,8 +33,10 @@ _lock = threading.Lock()
 
 
 def _append_log(line: str) -> None:
+    msg = f"[{time.strftime('%H:%M:%S')}] {line}"
+    print(msg, flush=True)
     with _lock:
-        _log.append(f"[{time.strftime('%H:%M:%S')}] {line}")
+        _log.append(msg)
         if len(_log) > 200:
             _log.pop(0)
 

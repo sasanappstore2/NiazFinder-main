@@ -7,6 +7,7 @@ import {
   type IntakeAnalyzeResponse,
 } from '@/intake/api/intake.dto';
 import { analyzeNeedTextViaQwen } from '@/lib/need-intake/analysis-from-qwen';
+import { enrichIntakeAnalysisLocation } from '@/lib/need-intake/enrich-intake-analysis-location.server';
 import { isNeedIntakeLlmEnabled } from '@/lib/need-intake/qwen-intake-client';
 
 export const runtime = 'nodejs';
@@ -36,8 +37,9 @@ export async function POST(request: NextRequest) {
     if (isNeedIntakeLlmEnabled()) {
       const result = await analyzeNeedTextViaQwen(parsed.data.text, indexes, analyzeOptions);
       const { meta: qwenMeta, ...analysis } = result;
+      const enriched = enrichIntakeAnalysisLocation(analysis, parsed.data.text, analyzeOptions);
       const response: IntakeAnalyzeResponse = {
-        ...analysis,
+        ...enriched,
         meta: {
           engine: qwenMeta.engine,
           indexStats: {
@@ -56,8 +58,9 @@ export async function POST(request: NextRequest) {
     if (aiConfig.enabled) {
       const result = await analyzeNeedTextAsync(parsed.data.text, indexes, analyzeOptions);
       const { meta: aiMeta, ...analysis } = result;
+      const enriched = enrichIntakeAnalysisLocation(analysis, parsed.data.text, analyzeOptions);
       const response: IntakeAnalyzeResponse = {
-        ...analysis,
+        ...enriched,
         meta: {
           engine: aiMeta.engine,
           indexStats: {
@@ -73,8 +76,9 @@ export async function POST(request: NextRequest) {
     }
 
     const result = analyzeNeedText(parsed.data.text, indexes, analyzeOptions);
+    const enriched = enrichIntakeAnalysisLocation(result, parsed.data.text, analyzeOptions);
     const response: IntakeAnalyzeResponse = {
-      ...result,
+      ...enriched,
       meta: {
         engine: 'intake-rules',
         indexStats: {

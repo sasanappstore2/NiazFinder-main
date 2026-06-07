@@ -34,6 +34,7 @@ const SECTION_LABELS: Record<AdminSectionId, string> = {
   settings: 'تنظیمات',
   referrals: 'ارجاع‌ها',
   coupons: 'کوپن‌ها',
+  blog: 'وبلاگ',
 };
 
 export function AdminPageShell({

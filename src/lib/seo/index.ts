@@ -454,6 +454,6 @@ export const INTERNAL_LINKS: InternalLink[] = [
   { label: 'سوالات متداول', href: '/#faq', title: 'پاسخ سوالات رایج', section: 'faq' },
   { label: 'تماس با ما', href: '/#contact', title: 'اطلاعات تماس', section: 'contact' },
   { label: 'داشبورد', href: '/dashboard', title: 'داشبورد کاربری', section: 'dashboard' },
-  { label: 'پیام‌ها', href: '/messages', title: 'پیام‌رسانی', section: 'messages' },
+  { label: 'پیام‌ها', href: '/chat', title: 'پیام‌رسانی', section: 'messages' },
   { label: 'اعلان‌ها', href: '/notifications', title: 'اعلان‌ها و نوتیفیکیشن‌ها', section: 'notifications' },
 ];

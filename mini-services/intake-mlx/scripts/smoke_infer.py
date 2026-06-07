@@ -32,8 +32,17 @@ def main() -> int:
     try:
         health = get("/health")
         print("health:", json.dumps(health, ensure_ascii=False, indent=2))
+        adapter = health.get("adapterPath")
+        load_error = health.get("loadError")
+        if adapter:
+            print("adapterPath:", adapter)
+        if load_error:
+            print("FAIL: model load error:", load_error, file=sys.stderr)
+            return 1
         if not health.get("ok"):
             print("WARN: model not loaded yet; first parse will download/load weights")
+        elif adapter and "estate-intake-lora" not in str(adapter):
+            print("WARN: expected estate-intake-lora adapter in dev; got:", adapter)
 
         result = post("/v1/parse", {"text": TEXT})
         print("parse:", json.dumps(result, ensure_ascii=False, indent=2))

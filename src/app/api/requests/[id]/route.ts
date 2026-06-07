@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import type { Prisma } from '@prisma/client';
+import { ProposalStatus } from '@prisma/client';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+
+function budgetToJson(value: bigint | number | null | undefined): number | null {
+  if (value == null) return null;
+  const n = typeof value === 'bigint' ? Number(value) : value;
+  return Number.isFinite(n) ? n : null;
+}
 
 // ============ GET handler ============
 
@@ -9,65 +17,74 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
+    const { id: idOrSlug } = await params;
+    const decodedKey = decodeURIComponent(idOrSlug);
 
-    const serviceRequest = await db.serviceRequest.findUnique({
-      where: { id },
-      include: {
-        category: {
-          select: { id: true, name: true, slug: true, icon: true },
+    const requestInclude = {
+      category: {
+        select: { id: true, name: true, slug: true, icon: true },
+      },
+      subcategory: {
+        select: { id: true, name: true, slug: true, icon: true },
+      },
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          avatar: true,
+          city: true,
+          createdAt: true,
         },
-        subcategory: {
-          select: { id: true, name: true, slug: true, icon: true },
-        },
-        user: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            avatar: true,
-            city: true,
-            createdAt: true,
-          },
-        },
-        proposals: {
-          where: { status: { in: ['PENDING', 'ACCEPTED'] } },
-          orderBy: { createdAt: 'desc' },
-          include: {
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                avatar: true,
-                bio: true,
-                city: true,
-                isVerified: true,
-                givenReviews: {
-                  select: { rating: true },
-                },
-                sentProposals: {
-                  where: { status: 'ACCEPTED' },
-                  select: { id: true },
-                },
+      },
+      proposals: {
+        where: { status: { in: [ProposalStatus.PENDING, ProposalStatus.ACCEPTED] } },
+        orderBy: { createdAt: 'desc' as const },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              avatar: true,
+              bio: true,
+              city: true,
+              isVerified: true,
+              givenReviews: {
+                select: { rating: true },
               },
-            },
-          },
-        },
-        reviews: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                avatar: true,
+              sentProposals: {
+                where: { status: ProposalStatus.ACCEPTED },
+                select: { id: true },
               },
             },
           },
         },
       },
+      reviews: {
+        include: {
+          author: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              avatar: true,
+            },
+          },
+        },
+      },
+    } satisfies Prisma.ServiceRequestInclude;
+
+    let serviceRequest = await db.serviceRequest.findUnique({
+      where: { id: decodedKey },
+      include: requestInclude,
     });
+    if (!serviceRequest) {
+      serviceRequest = await db.serviceRequest.findUnique({
+        where: { slug: decodedKey },
+        include: requestInclude,
+      });
+    }
 
     if (!serviceRequest) {
       return NextResponse.json(
@@ -84,14 +101,19 @@ export async function GET(
 
     if (!isPublic && !isOwner && !['ADMIN', 'SUPER_ADMIN'].includes(user?.role ?? '')) {
       return NextResponse.json(
-        { error: 'نیاز مورد نظر یافت نشد' },
-        { status: 404 }
+        {
+          error: 'این آگهی هنوز منتشر نشده یا در دسترس نیست',
+          code: 'NOT_PUBLISHED',
+          moderationStatus: serviceRequest.moderationStatus,
+          status: serviceRequest.status,
+        },
+        { status: 403 }
       );
     }
 
     if (isPublic) {
       await db.serviceRequest.update({
-        where: { id },
+        where: { id: serviceRequest.id },
         data: { viewCount: { increment: 1 } },
       });
     }
@@ -140,8 +162,8 @@ export async function GET(
       title: serviceRequest.title,
       slug: serviceRequest.slug,
       description: serviceRequest.description,
-      budgetMin: serviceRequest.budgetMin,
-      budgetMax: serviceRequest.budgetMax,
+      budgetMin: budgetToJson(serviceRequest.budgetMin),
+      budgetMax: budgetToJson(serviceRequest.budgetMax),
       budgetType: serviceRequest.budgetType,
       deliveryTime: serviceRequest.deliveryTime,
       deliveryUnit: serviceRequest.deliveryUnit,

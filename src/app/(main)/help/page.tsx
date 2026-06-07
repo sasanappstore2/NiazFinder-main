@@ -39,13 +39,13 @@ export default function HelpPage() {
         <section className="rounded-2xl border border-border/60 bg-card p-6">
           <h2 className="font-semibold mb-2">جستجو و فیلتر</h2>
           <p className="text-sm text-muted-foreground mb-4">
-            از مسیر <code className="text-xs bg-muted px-1.5 py-0.5 rounded">/s/iran</code> برای
-            جستجوی سراسری، <code className="text-xs bg-muted px-1.5 py-0.5 rounded">/s/mashhad</code>{' '}
+            از مسیر <code className="text-xs bg-muted px-1.5 py-0.5 rounded">/n/iran</code> برای
+            جستجوی سراسری، <code className="text-xs bg-muted px-1.5 py-0.5 rounded">/n/mashhad</code>{' '}
             برای یک شهر، و پارامتر <code className="text-xs bg-muted px-1.5 py-0.5 rounded">?cities=</code>{' '}
             برای چند شهر همزمان استفاده کنید.
           </p>
           <Button asChild variant="outline" size="sm">
-            <Link href={routeBuilder.search()}>مشاهده آگهی‌ها</Link>
+            <Link href={routeBuilder.search({ market: 'need' })}>مشاهده آگهی‌ها</Link>
           </Button>
         </section>
 

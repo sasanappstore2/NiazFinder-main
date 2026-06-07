@@ -443,7 +443,12 @@ export async function POST(request: NextRequest) {
       slug = `${slug}-${Date.now()}`;
     }
 
-    // Create request
+    // Create request — dev defaults to auto-publish for easier local QA
+    const autoApproveDev =
+      process.env.NEED_AUTO_APPROVE_REQUESTS === 'true' ||
+      (process.env.NODE_ENV !== 'production' &&
+        process.env.NEED_AUTO_APPROVE_REQUESTS !== 'false');
+
     const serviceRequest = await db.serviceRequest.create({
       data: {
         title: title.trim(),
@@ -465,8 +470,11 @@ export async function POST(request: NextRequest) {
         aiExtractedData: JSON.stringify(aiExtractedData ?? {}),
         source: source?.trim() || 'form',
         userId: user.id,
-        status: 'PENDING_REVIEW',
-        moderationStatus: 'PENDING',
+        status: autoApproveDev ? 'OPEN' : 'PENDING_REVIEW',
+        moderationStatus: autoApproveDev ? 'APPROVED' : 'PENDING',
+        ...(autoApproveDev
+          ? { reviewedAt: new Date(), reviewedByUserId: user.id }
+          : {}),
       },
       include: {
         category: {

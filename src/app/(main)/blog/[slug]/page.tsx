@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { db } from '@/lib/db';
-import { createBrowseMetadata } from '@/lib/seo/metadata';
+import { createMetadata } from '@/lib/seo/metadata';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -15,10 +15,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     select: { title: true, seoDescription: true, excerpt: true },
   });
   if (!post) return { title: 'وبلاگ' };
-  return createBrowseMetadata({
+  return createMetadata({
     title: post.title,
     description: post.seoDescription ?? post.excerpt ?? post.title,
     path: `/blog/${slug}`,
+    type: 'article',
   });
 }
 

@@ -11,7 +11,7 @@ export default function EnHomePage() {
       </p>
       <ul className="mt-8 flex flex-col gap-3 text-sm">
         <li>
-          <Link href="/en/n/iran" className="text-emerald-700 underline">
+          <Link href="/n/iran" className="text-emerald-700 underline">
             Browse needs (Iran)
           </Link>
         </li>

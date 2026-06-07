@@ -1,0 +1,25 @@
+{
+  "id": "b1-p0079",
+  "personaId": "b1-p0079",
+  "userMessages": [
+    "ویلا در مهرویلا کرج رهن و اجاره می‌خوام، پاساژ هم خوبه",
+    "فاز ۴ مهرشهر",
+    "ودیعه زیر ۱۰۰ میلیون",
+    "اجاره زیر ۲۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "deposit",
+      "chipValue": "فاز ۴ مهرشهر"
+    },
+    {
+      "turn": 2,
+      "chipFieldKey": "monthlyRent",
+      "chipValue": "ودیعه زیر ۱۰۰ میلیون"
+    }
+  ],
+  "expectedCategorySlug": "shop-rent",
+  "expectedCity": "کرج",
+  "expectedDealType": "rent_rahn_ejare"
+}

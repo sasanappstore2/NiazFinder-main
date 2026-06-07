@@ -1,0 +1,19 @@
+{
+  "id": "b9-p0820",
+  "personaId": "b9-p0820",
+  "userMessages": [
+    "مغازه در فرامرز عباسی مشهد رهن و اجاره می‌خوام",
+    "ودیعه زیر ۱۰۰ میلیون",
+    "اجاره زیر ۲۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "monthlyRent",
+      "chipValue": "ودیعه زیر ۱۰۰ میلیون"
+    }
+  ],
+  "expectedCategorySlug": "shop-rent",
+  "expectedCity": "مشهد",
+  "expectedDealType": "rent_rahn_ejare"
+}

@@ -20,21 +20,7 @@ function getApiUrl(path: string): string {
   return `${API_BASE}/api${path}?XTransformPort=4000`;
 }
 
-// ---------------------------------------------------------------------------
-// Token storage (mirrors the key used in store.ts for consistency)
-// ---------------------------------------------------------------------------
-
-const TOKEN_KEY = 'needfinder_auth_token';
-
-function getStoredToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(TOKEN_KEY);
-}
-
-function clearStoredToken(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(TOKEN_KEY);
-}
+import { clearClientAuthTokens, getClientAuthToken } from '@/lib/auth/client-auth';
 
 // ---------------------------------------------------------------------------
 // Core HTTP helpers
@@ -68,7 +54,7 @@ function buildHeaders(token?: string, extra?: Record<string, string>): Record<st
     'Accept': 'application/json',
     ...extra,
   };
-  const resolvedToken = token ?? getStoredToken();
+  const resolvedToken = token ?? getClientAuthToken();
   if (resolvedToken) {
     headers['Authorization'] = `Bearer ${resolvedToken}`;
   }
@@ -98,7 +84,7 @@ async function handleErrorResponse(response: Response): Promise<never> {
 
   // On 401 — clear any stored token so the app can redirect to login
   if (status === 401) {
-    clearStoredToken();
+    clearClientAuthTokens();
   }
 
   throw new ApiClientError(

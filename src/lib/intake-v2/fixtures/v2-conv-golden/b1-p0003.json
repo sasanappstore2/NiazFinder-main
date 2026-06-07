@@ -1,0 +1,20 @@
+{
+  "id": "b1-p0003",
+  "personaId": "b1-p0003",
+  "userMessages": [
+    "آپارتمان در صدرا شیراز اجاره ماهانه می‌خوام، پاساژ هم خوبه",
+    "دوکوهک",
+    "حدوداً 100 متر",
+    "ودیعه زیر ۱۰۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "areaMin",
+      "chipValue": "دوکوهک"
+    }
+  ],
+  "expectedCategorySlug": "shop-rent",
+  "expectedCity": "شیراز",
+  "expectedDealType": "rent_monthly"
+}

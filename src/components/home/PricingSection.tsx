@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Check } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { PRICING_PLANS, formatPrice } from '@/lib/constants';
+import { routeBuilder } from '@/config/routes';
 
 export function PricingSection() {
   const [isYearly, setIsYearly] = useState(false);
@@ -108,13 +110,14 @@ export function PricingSection() {
 
                 <CardContent className="relative flex flex-1 flex-col px-6 pb-8 pt-4">
                   <Button
+                    asChild
                     variant={isHighlighted ? 'default' : 'outline'}
                     size="lg"
                     className={`w-full mb-6 rounded-xl transition-all 150ms ease ${isHighlighted ? 'shadow-lg' : ''}`}
-                    data-href={`/pricing/${plan.id}`}
-                    title={`انتخاب طرح ${plan.name}`}
                   >
-                    {isHighlighted ? 'انتخاب این طرح' : 'شروع کنید'}
+                    <Link href={routeBuilder.pricing()} title={`انتخاب طرح ${plan.name}`}>
+                      {isHighlighted ? 'انتخاب این طرح' : 'شروع کنید'}
+                    </Link>
                   </Button>
 
                   <ul className="flex flex-col gap-3 flex-1" role="list">

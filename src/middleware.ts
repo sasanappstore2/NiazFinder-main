@@ -13,6 +13,9 @@ export function middleware(request: NextRequest) {
 
   const nTwo = pathname.match(/^\/n\/([^/]+)\/([^/]+)$/);
   if (nTwo && !isMarketplaceLocationSegment(nTwo[1])) {
+    if (nTwo[2] === 'propose') {
+      return NextResponse.next();
+    }
     return NextResponse.redirect(
       new URL(`/v/${nTwo[1]}/${nTwo[2]}${request.nextUrl.search}`, request.url),
       301

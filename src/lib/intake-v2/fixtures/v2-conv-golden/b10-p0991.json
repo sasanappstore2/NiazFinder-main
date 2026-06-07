@@ -1,0 +1,19 @@
+{
+  "id": "b10-p0991",
+  "personaId": "b10-p0991",
+  "userMessages": [
+    "ویلا در سعادت‌آباد تهران رهن و اجاره می‌خوام، پاساژ هم خوبه",
+    "ودیعه زیر ۱۰۰ میلیون",
+    "اجاره زیر ۲۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "monthlyRent",
+      "chipValue": "ودیعه زیر ۱۰۰ میلیون"
+    }
+  ],
+  "expectedCategorySlug": "shop-rent",
+  "expectedCity": "تهران",
+  "expectedDealType": "rent_rahn_ejare"
+}

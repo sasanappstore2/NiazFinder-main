@@ -24,15 +24,25 @@ export function decodeDivarJsonString(raw: string): string {
   }
 }
 
+export function divarCategoryUrl(
+  citySlug: string,
+  categorySlug: string,
+  page = 1
+): string {
+  const base = `https://divar.ir/s/${citySlug}/${categorySlug}`;
+  return page > 1 ? `${base}?page=${page}` : base;
+}
+
 /** Divar embeds listing rows in SSR HTML when not rate-limited. */
 export async function fetchDivarCategoryHtml(
   citySlug: string,
   categorySlug: string,
-  opts?: { retries?: number; retryDelayMs?: number }
+  opts?: { retries?: number; retryDelayMs?: number; page?: number }
 ): Promise<string> {
   const retries = opts?.retries ?? 5;
   const retryDelayMs = opts?.retryDelayMs ?? 2_500;
-  const url = `https://divar.ir/s/${citySlug}/${categorySlug}`;
+  const page = opts?.page ?? 1;
+  const url = divarCategoryUrl(citySlug, categorySlug, page);
 
   for (let attempt = 0; attempt < retries; attempt++) {
     const res = await fetch(url, { headers: DIVAR_FETCH_HEADERS });
@@ -44,7 +54,11 @@ export async function fetchDivarCategoryHtml(
       return html;
     }
     if (attempt < retries - 1) {
-      await sleep(retryDelayMs * (attempt + 1));
+      const rateLimited = html.length < MIN_SSR_HTML_BYTES;
+      const backoff = rateLimited
+        ? Math.max(15_000, retryDelayMs * (attempt + 1) * 6)
+        : retryDelayMs * (attempt + 1);
+      await sleep(backoff);
     }
   }
 

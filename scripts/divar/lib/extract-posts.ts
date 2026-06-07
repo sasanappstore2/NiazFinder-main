@@ -9,8 +9,12 @@ export interface DivarCrawledPost {
   topDescription?: string;
 }
 
-const WEB_INFO_RE =
+const WEB_INFO_WITH_DISTRICT_RE =
   /"web_info":\{"title":"((?:[^"\\]|\\.)*)"(?:,"open_new_tab":(?:true|false))?,"district_persian":"((?:[^"\\]|\\.)*)","city_persian":"((?:[^"\\]|\\.)*)"\}/g;
+
+/** Some cities (e.g. tabriz) omit district_persian in SSR payloads. */
+const WEB_INFO_CITY_ONLY_RE =
+  /"web_info":\{"title":"((?:[^"\\]|\\.)*)","city_persian":"((?:[^"\\]|\\.)*)"(?:,"category_slug_persian":"((?:[^"\\]|\\.)*)")?\}/g;
 
 const TOKEN_BEFORE_TITLE_RE =
   /"token":"([^"]+)","should_indicate_seen_status":true[\s\S]{0,400}?"title":"((?:[^"\\]|\\.)*)"/g;
@@ -33,12 +37,20 @@ function isNoiseTitle(title: string): boolean {
 export function extractPostsFromDivarHtml(html: string): DivarCrawledPost[] {
   const byTitle = new Map<string, DivarCrawledPost>();
 
-  for (const match of html.matchAll(WEB_INFO_RE)) {
+  for (const match of html.matchAll(WEB_INFO_WITH_DISTRICT_RE)) {
     const title = cleanTitle(match[1]!);
     if (isNoiseTitle(title)) continue;
     const district = cleanTitle(match[2]!);
     const city = cleanTitle(match[3]!);
     byTitle.set(title, { title, district, city });
+  }
+
+  for (const match of html.matchAll(WEB_INFO_CITY_ONLY_RE)) {
+    const title = cleanTitle(match[1]!);
+    if (isNoiseTitle(title)) continue;
+    const city = cleanTitle(match[2]!);
+    const existing = byTitle.get(title);
+    byTitle.set(title, { ...existing, title, city: existing?.city ?? city });
   }
 
   for (const match of html.matchAll(TOKEN_BEFORE_TITLE_RE)) {

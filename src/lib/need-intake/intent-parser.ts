@@ -12,6 +12,11 @@ import {
   normalizeCategoryPair,
 } from '@/config/categories';
 import { normalizeIntakeText } from '@/lib/need-intake/normalize-intake-text';
+import { toAsciiDigits } from '@/lib/format/digits';
+
+function withAsciiDigitRuns(text: string): string {
+  return normalizeIntakeText(text).replace(/[۰-۹٠-٩0-9]+/g, (run) => toAsciiDigits(run));
+}
 import { buildPropertyTitle } from '@/lib/need-intake/property-title';
 import {
   hasConcreteProductNoun,
@@ -32,6 +37,8 @@ const WANT_KEYWORDS = ['میخوام', 'میخواهم', 'نیاز دارم', '�
 const BUY_KEYWORDS = ['می‌خرم', 'میخرم', 'بخرم', 'خرید', 'میخرم'];
 const ALL_BUY_HINT_KEYWORDS = [...WANT_KEYWORDS, ...BUY_KEYWORDS];
 const SELL_KEYWORDS = ['می‌فروشم', 'میفروشم', 'فروش', 'آگهی', 'فروشنده'];
+const NEED_SEEKER_OPENER =
+  /(?:^|[\s،])?(?:می\s*خو(?:ام|اهم|واه)|دنبال|نیاز\s*دار(?:م|یم)|به\s*دنبال|لازم\s*دار(?:م|یم))/u;
 const RENT_KEYWORDS = ['اجاره', 'رنت', 'اجاره‌ای', 'مستاجر'];
 const REPAIR_KEYWORDS = ['تعمیر', 'تعمیرکار', 'نصب'];
 const URGENT_KEYWORDS = ['فوری', 'سریع', 'امروز', 'الان'];
@@ -52,10 +59,52 @@ const RENT_SHORT_TERM_KEYWORDS = [
 /** مشارکت در ساخت / زمین برای ساخت — not buy/sell listing. */
 export function isConstructionPartnershipText(text: string): boolean {
   const t = normalizeIntakeText(text);
+  if (t.includes('مشارکت')) {
+    if (
+      t.includes('ساخت') ||
+      t.includes('سا خت') ||
+      t.includes('ساز') ||
+      t.includes('زمین') ||
+      t.includes('پیشنهاد') ||
+      t.includes('کلنگی')
+    ) {
+      return true;
+    }
+  }
+  if (t.includes('پروانه ساختمانی') || t.includes('پایان کار')) return true;
+  if (
+    t.includes('امتیاز تعاونی') ||
+    t.includes('تعاونی مسکن') ||
+    t.includes('تعاونی شهرداری') ||
+    t.includes('انبوه سازی')
+  ) {
+    return true;
+  }
+  if (t.includes('سازندگان محترم') || t.includes('زمینتو بسازی')) return true;
+  if (t.includes('خرید و فروش') && (t.includes('امتیاز') || t.includes('تعاونی'))) {
+    return true;
+  }
+  if (
+    (t.includes('سرمایه گذاری') || t.includes('سرمایه‌گذاری') || t.includes('مستغل')) &&
+    t.length < 90 &&
+    !t.includes('خرید') &&
+    !t.includes('اجاره') &&
+    !/(\d{1,5})\s*مت(?:ر|ری)/u.test(t)
+  ) {
+    return true;
+  }
   return (
-    (t.includes('مشارکت') && (t.includes('ساخت') || t.includes('در ساخت'))) ||
+    (t.includes('مشارکت') && (t.includes('ساخت') || t.includes('در ساخت') || t.includes('سا خت'))) ||
     t.includes('مشارکت در ساخت') ||
-    t.includes('مشارکت ساخت')
+    t.includes('مشارکت ساخت') ||
+    (t.includes('مشارکت') && (t.includes('سازنده') || t.includes('شریک'))) ||
+    (t.includes('شریک') && t.includes('سازنده'))
+  );
+}
+
+function hasPropertyContext(text: string): boolean {
+  return /(?:متری|متر(?:\s|$|،|\/|\d)|طبق(?:ه|ات)|واحد|پنت|برج|آپارت|اپارت|ملک|ویلا|زمین|رهن|ودیعه|اجاره|خواب|مستقل)/u.test(
+    text
   );
 }
 
@@ -68,7 +117,7 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
     priority: 12,
   },
   { slug: 'agency-services', words: ['آژانس املاک', 'اژانس املاک', 'مشاور املاک'], priority: 10 },
-  { slug: 'pre-sale-services', words: ['پیش فروش', 'پیش‌فروش', 'پیشفروش', 'پروژه'], priority: 10 },
+  { slug: 'pre-sale-services', words: ['پیش فروش', 'پیش‌فروش', 'پیشفروش', 'پیش‌خرید', 'پیش خرید', 'پروژه'], priority: 10 },
   { slug: 'conference', words: ['همایش', 'سمینار', 'کنفرانس'], priority: 10 },
   { slug: 'motorcycle', words: ['موتور', 'موتورسیکلت', 'هوندا 125'], priority: 10 },
   { slug: 'boat', words: ['قایق', 'قایق تفریحی'], priority: 10 },
@@ -108,7 +157,7 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
   },
   { slug: 'apartment-rent', words: ['اجاره آپارتمان', 'اجاره ماهانه', 'رهن', 'ودیعه', 'رهن و اجاره'], priority: 9 },
   { slug: 'apartment-sale', words: ['خرید آپارتمان', 'فروش آپارتمان'], priority: 8 },
-  { slug: 'real-estate', words: ['آپارتمان', 'اپارتمان', 'آپارت', 'سوئیت', 'ملک مسکونی'], priority: 7 },
+  { slug: 'real-estate', words: ['آپارتمان', 'اپارتمان', 'آپارت', 'سوئیت', 'ملک مسکونی', 'پنت', 'پنت‌هاوس', 'برج', 'واحد', 'ملک', 'جهیزیه', 'مستغل', 'سرمایه‌گذاری', 'سرمایه گذاری'], priority: 7 },
   { slug: 'villa-sale', words: ['فروش ویلا', 'ویلا', 'خانه ویلایی'], priority: 8 },
   { slug: 'car', words: ['ماشین', 'خودرو', 'پژو', 'پراید', 'سمند', 'تیبا', 'دنا', 'هوندا', 'سمند'], priority: 8 },
   { slug: 'mobile-phone', words: ['گوشی', 'آیفون', 'iphone', 's24', 's23'], priority: 8 },
@@ -178,6 +227,20 @@ function hasCategoryKeywordHit(text: string): boolean {
 function isDesireOnly(text: string): boolean {
   const t = normalizeIntakeText(text);
   if (hasConcreteProductNoun(t)) return false;
+  if (
+    t.includes('ملک') ||
+    t.includes('آپارت') ||
+    t.includes('خونه') ||
+    t.includes('زمین') ||
+    t.includes('رهن') ||
+    t.includes('ودیعه') ||
+    t.includes('مشارکت') ||
+    t.includes('پیش‌خرید') ||
+    t.includes('پیش خرید') ||
+    t.includes('سرمایه')
+  ) {
+    return false;
+  }
   if (DESIRE_ONLY.test(t)) return true;
   if (t.length <= 12 && ALL_BUY_HINT_KEYWORDS.some((w) => t === w || t === w.replace('‌', ''))) {
     return true;
@@ -189,9 +252,16 @@ function isDesireOnly(text: string): boolean {
 }
 
 function parseBudget(text: string): { min?: number; max?: number } {
-  const millionMatch = text.match(/(\d+)\s*میلیون/);
-  const tomanMatch = text.match(/(\d[\d,]*)\s*تومان/);
-  const plainNum = text.match(/تا\s*(\d[\d,]*)/);
+  const norm = withAsciiDigitRuns(text);
+  const budgetLine = norm.match(/بودجه\s*(?:حدود|تا)?\s*(\d[\d,]*)\s*تومان/u);
+  if (budgetLine) {
+    const n = Number(budgetLine[1].replace(/,/g, ''));
+    if (n > 0) return { max: n };
+  }
+
+  const millionMatch = norm.match(/(\d+)\s*میلیون/u);
+  const tomanMatch = norm.match(/(\d[\d,]*)\s*تومان/u);
+  const plainNum = norm.match(/تا\s*(\d[\d,]*)/);
 
   if (millionMatch) {
     const n = Number(millionMatch[1]) * 1_000_000;
@@ -210,11 +280,23 @@ function parseBudget(text: string): { min?: number; max?: number } {
 }
 
 export function parseCity(text: string): string | undefined {
+  const cityLine = text.match(/شهر\s*:\s*([\u0600-\u06FFa-z-]+)/i);
+  if (cityLine?.[1]) {
+    const slug = cityLine[1].trim().toLowerCase();
+    const hit = CANONICAL_CITIES.find((c) => c.slug === slug || c.title === cityLine[1].trim());
+    if (hit) return hit.title;
+  }
   for (const city of CANONICAL_CITIES) {
     if (text.includes(city.title) || text.includes(city.slug)) {
       return city.title;
     }
   }
+  if (text.includes('فرامرز')) return 'مشهد';
+  if (text.includes('اندیشه') || text.includes('فرحزادی') || text.includes('شمال تهران')) {
+    return 'تهران';
+  }
+  if (/منطقه\s*[۰-۹0-9]/u.test(text)) return 'تهران';
+  if (text.includes('کیش')) return 'کیش';
   if (text.includes('تهران') || text.includes('غرب')) return 'تهران';
   if (text.includes('اصفهان')) return 'اصفهان';
   if (text.includes('مشهد')) return 'مشهد';
@@ -309,17 +391,35 @@ function isShortTermRentText(text: string): boolean {
 }
 
 function parsePropertyDealType(text: string): string | undefined {
+  if (NEED_SEEKER_OPENER.test(text) && /فروش/u.test(text)) {
+    const sellerExplicit =
+      /می\s*فروش|میفروش|فروشنده|فروش\s*دم|اجاره\s*بدم|رهن\s*بدم|آگهی\s*فروش/u.test(text);
+    if (!sellerExplicit) return 'buy';
+  }
+  if (text.includes('اجاره بدم') || text.includes('اجاره دادن') || text.includes('اجاره دادنی')) {
+    return 'sell';
+  }
+  if (text.includes('رهن بدم') || text.includes('رهن می‌دم') || text.includes('رهن میدم')) {
+    return 'sell';
+  }
   if (isShortTermRentText(text)) return 'rent_short_term';
   const hasRahn = text.includes('رهن') || text.includes('ودیعه');
-  const hasRent = text.includes('اجاره') || RENT_MONTHLY_KEYWORDS.some((w) => text.includes(w));
+  let hasRent =
+    text.includes('اجاره') || RENT_MONTHLY_KEYWORDS.some((w) => text.includes(w));
+  if (text.includes('نه اجاره')) hasRent = false;
+  if (text.includes('اجاره ندارم') && hasRahn) return 'rent_rahn_full';
+  if (/رهن\s*\d+\s*اجاره\s*\d+/u.test(text)) return 'rent_rahn_ejare';
   if (hasRahn && hasRent) return 'rent_rahn_ejare';
   if (RAHN_FULL_KEYWORDS.some((w) => text.includes(w))) return 'rent_rahn_full';
   if (RAHN_EJARE_KEYWORDS.some((w) => text.includes(w))) return 'rent_rahn_ejare';
   if (RENT_MONTHLY_KEYWORDS.some((w) => text.includes(w))) return 'rent_monthly';
   if (SELL_KEYWORDS.some((w) => text.includes(w))) return 'sell';
-  if (hasRahn) return 'rent_rahn_ejare';
+  if (hasRahn && text.includes('اجاره ندارم')) return 'rent_rahn_full';
+  if (hasRahn && !text.includes('بدم')) return 'rent_rahn_ejare';
   if (RENT_KEYWORDS.some((w) => text.includes(w)) || hasRent) return 'rent_monthly';
   if (BUY_KEYWORDS.some((w) => text.includes(w))) return 'buy';
+  if (NEED_SEEKER_OPENER.test(text) && hasPropertyContext(text)) return 'buy';
+  if (text.includes('بگیرم') || text.includes('پول دارم')) return 'buy';
   return undefined;
 }
 
@@ -367,7 +467,10 @@ export function refinePropertyCategorySlug(
   if (!prefix) return slug;
 
   const isRent =
-    deal === 'rent_monthly' || deal === 'rent_rahn_full' || deal === 'rent_rahn_ejare';
+    deal === 'rent' ||
+    deal === 'rent_monthly' ||
+    deal === 'rent_rahn_full' ||
+    deal === 'rent_rahn_ejare';
   const isShortTerm = deal === 'rent_short_term';
   const isSale = deal === 'buy' || deal === 'sell';
 
@@ -391,18 +494,25 @@ export function refinePropertyCategorySlug(
 }
 
 function parsePropertyKind(text: string): string | undefined {
-  if (text.includes('مجرد') || text.includes('سوئیت')) return 'apartment';
-  if (text.includes('آپارتمانی') || text.includes('آپارتمان') || text.includes('آپارت')) {
+  const norm = withAsciiDigitRuns(text);
+  if (norm.includes('مجرد') || norm.includes('سوئیت')) return 'apartment';
+  if (norm.includes('پنت') || norm.includes('برج')) return 'apartment';
+  if (norm.includes('آپارتمانی') || norm.includes('آپارتمان') || norm.includes('آپارت')) {
     return 'apartment';
   }
-  if (text.includes('ویلا') || text.includes('خانه ویلایی') || text.includes('ویلایی')) {
-    return 'villa';
+  if (norm.includes('خانه ویلایی')) return 'villa';
+  if (norm.includes('زمین') || norm.includes('کلنگی') || norm.includes('باغ') || norm.includes('مزرعه')) {
+    return 'land';
   }
-  if (text.includes('خونه') || text.includes('خانه')) return 'apartment';
-  if (text.includes('زمین') || text.includes('کلنگی')) return 'land';
-  if (text.includes('دفتر')) return 'office';
-  if (text.includes('مغازه')) return 'shop';
-  if (text.includes('خونه') || text.includes('خانه')) return 'apartment';
+  if (norm.includes('ویلا') || norm.includes('ویلایی')) return 'villa';
+  if (norm.includes('سوله') || norm.includes('کارگاه')) return 'industrial';
+  if (norm.includes('انبار') && !norm.includes('انباری')) return 'industrial';
+  if (norm.includes('دفتر') || norm.includes('اداری') || norm.includes('کلینیک')) return 'office';
+  if (norm.includes('مغازه') || norm.includes('کیوسک')) return 'shop';
+  if (norm.includes('خونه') || norm.includes('خانه')) return 'apartment';
+  if (norm.includes('واحد') || norm.includes('ملک')) return 'apartment';
+  if (/\d{1,5}\s*مت(?:ر|ری)/u.test(norm)) return 'apartment';
+  if (/\d{1,5}\s*متر(?:\s|$|\/|،)/u.test(norm)) return 'apartment';
   return undefined;
 }
 
@@ -497,6 +607,7 @@ function buildEntities(
 
   if (categorySlug === 'construction-partnership' || isConstructionPartnershipText(text)) {
     entities.serviceKind = 'partnership';
+    entities.dealType = 'partnership';
     const kind = parsePropertyKind(text);
     if (kind) entities.propertyKind = kind;
   } else if (root === 'real-estate' || intentType.startsWith('property')) {

@@ -1,0 +1,25 @@
+{
+  "id": "b10-p0998",
+  "personaId": "b10-p0998",
+  "userMessages": [
+    "آپارتمان در معالی‌آباد شیراز رهن و اجاره می‌خوام، پاساژ هم خوبه",
+    "معالی‌آباد",
+    "ودیعه زیر ۱۰۰ میلیون",
+    "اجاره زیر ۲۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "deposit",
+      "chipValue": "معالی‌آباد"
+    },
+    {
+      "turn": 2,
+      "chipFieldKey": "monthlyRent",
+      "chipValue": "ودیعه زیر ۱۰۰ میلیون"
+    }
+  ],
+  "expectedCategorySlug": "shop-rent",
+  "expectedCity": "شیراز",
+  "expectedDealType": "rent_rahn_ejare"
+}

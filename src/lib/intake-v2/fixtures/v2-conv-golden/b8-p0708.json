@@ -1,0 +1,21 @@
+{
+  "id": "b8-p0708",
+  "personaId": "b8-p0708",
+  "userMessages": [
+    "آپارتمان در معالی‌آباد شیراز اجاره ماهانه می‌خوام",
+    "آب جوار",
+    "بودجه تا ۲ میلیارد",
+    "حدوداً 100 متر",
+    "دو خواب"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "budget",
+      "chipValue": "آب جوار"
+    }
+  ],
+  "expectedCategorySlug": "apartment-sale",
+  "expectedCity": "شیراز",
+  "expectedDealType": "buy"
+}

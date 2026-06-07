@@ -5,7 +5,10 @@ NEED_INTAKE_SYSTEM_PROMPT = (
     "برگردان با فیلدهای: intentType, categorySlug, subcategorySlug (اختیاری), "
     "entities (dealType, propertyKind, rooms, areaMin, areaMax, pricePerMeterMin, "
     "deposit, monthlyRent, nightlyRent, guestCount, plotWidth, …), city, budgetMin, "
-    "budgetMax, urgency. بدون توضیح اضافه."
+    "budgetMax, urgency. بدون توضیح اضافه. "
+    "برای املاک: خونه=apartment/house, تومن=میلیون(خرید) یا هزار(اجاره), ودیعه=رهن, "
+    "کلنگی=land, مشارکت=partnership, پیش‌خرید=pre_purchase. "
+    "اگر شهر/ intent نامشخص است entities را خالی بگذار."
 )
 
 LISTING_TITLE_MAX_LENGTH = 70

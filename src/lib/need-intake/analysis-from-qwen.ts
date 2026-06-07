@@ -1,5 +1,4 @@
 import type { ParsedIntent } from '@/contracts/need-intake';
-import type { TransactionType } from '@/intake/types';
 import {
   analyzeNeedText,
   buildAnalysisFromEntities,
@@ -13,6 +12,7 @@ import type { IntakeAnalysisResult, IntakeConfidence, IntakeEntities, IntakeInde
 import { parseFromText } from '@/lib/need-intake/internal-orchestrator.server';
 import { reconcileParsedIntent } from '@/lib/need-intake/parse-coherence';
 import { isNeedIntakeLlmEnabled, parseIntentViaQwen } from '@/lib/need-intake/qwen-intake-client';
+import { mapDealTypeToTransaction } from '@/lib/need-intake/deal-type-transaction';
 import { toAsciiDigits } from '@/lib/need-intake/extract-property-slots';
 
 export type IntakeAnalyzeEngine = 'intake-rules' | 'intake-qwen' | 'intake-qwen+rules';
@@ -22,19 +22,6 @@ export interface AnalyzeNeedTextViaQwenMeta {
   ruleConfidence: number;
   qwenInvoked: boolean;
   qwenLatencyMs: number;
-}
-
-function mapDealTypeToTransaction(dealType: string | undefined): TransactionType | null {
-  if (!dealType) return null;
-  const v = dealType.trim().toLowerCase();
-  if (v === 'buy' || v === 'purchase') return 'BUY';
-  if (v === 'sell' || v === 'sale') return 'SELL';
-  if (v === 'rent' || v === 'monthly_rent') return 'RENT';
-  if (v === 'full_deposit' || v === 'mortgage') return 'FULL_DEPOSIT';
-  if (v === 'deposit_and_rent') return 'DEPOSIT_AND_RENT';
-  if (v === 'daily_rent' || v === 'nightly') return 'DAILY_RENT';
-  if (v === 'hourly_rent') return 'HOURLY_RENT';
-  return null;
 }
 
 function parseRooms(value: unknown): number | null {

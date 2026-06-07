@@ -1,0 +1,12 @@
+{
+  "id": "b10-p0951",
+  "personaId": "b10-p0951",
+  "userMessages": [
+    "دفتر در سعادت‌آباد تهران فروش می‌خوام، پاساژ هم خوبه",
+    "بودجه تا ۸ میلیارد",
+    "حدوداً 50 متر"
+  ],
+  "expectedCategorySlug": "shop-sale",
+  "expectedCity": "تهران",
+  "expectedDealType": "sell"
+}

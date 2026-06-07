@@ -38,6 +38,8 @@ export interface NeedLeadPromptBoxProps {
   isGeoDetecting: boolean;
   onOpenCityPicker: () => void;
   onDetectLocation: () => void;
+  /** When false (default), phone is not collected here — only at final publish/login. */
+  showPhoneField?: boolean;
   placeholder?: string;
   className?: string;
 }
@@ -114,12 +116,15 @@ export function NeedLeadPromptBox({
   isGeoDetecting,
   onOpenCityPicker,
   onDetectLocation,
+  showPhoneField = false,
   placeholder = 'مثلاً: به تعمیرکار کولر در غرب تهران نیاز دارم…',
   className,
   isSubmitting = false,
 }: NeedLeadPromptBoxProps) {
   const [showLocation, setShowLocation] = useState(hasCity);
-  const [showContact, setShowContact] = useState(() => Boolean(phone.trim()));
+  const [showContact, setShowContact] = useState(
+    () => showPhoneField && Boolean(phone.trim())
+  );
   const geoTriggeredRef = useRef(false);
 
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({
@@ -182,8 +187,8 @@ export function NeedLeadPromptBox({
   }, [hasCity]);
 
   useEffect(() => {
-    if (phone.trim()) setShowContact(true);
-  }, [phone]);
+    if (showPhoneField && phone.trim()) setShowContact(true);
+  }, [phone, showPhoneField]);
 
   useEffect(() => {
     if (!showLocation) {
@@ -247,7 +252,7 @@ export function NeedLeadPromptBox({
       </div>
 
       <AnimatePresence>
-        {showContact && (
+        {showPhoneField && showContact && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}

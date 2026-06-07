@@ -1,0 +1,20 @@
+{
+  "id": "b7-p0677",
+  "personaId": "b7-p0677",
+  "userMessages": [
+    "زمین در فردوسی اصفهان فروش میخوام",
+    "بوستان آینه خانه",
+    "بودجه تا ۱۲ میلیارد",
+    "حدود 80 متری"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "budget",
+      "chipValue": "بوستان آینه خانه"
+    }
+  ],
+  "expectedCategorySlug": "land-sale",
+  "expectedCity": "اصفهان",
+  "expectedDealType": "sell"
+}

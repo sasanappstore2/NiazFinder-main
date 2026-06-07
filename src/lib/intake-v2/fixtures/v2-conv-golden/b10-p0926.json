@@ -1,0 +1,13 @@
+{
+  "id": "b10-p0926",
+  "personaId": "b10-p0926",
+  "userMessages": [
+    "آپارتمان در سعادت‌آباد تهران رهن کامل می‌خوام",
+    "دو خواب",
+    "بودجه تا ۸ میلیارد",
+    "حدوداً 50 متر"
+  ],
+  "expectedCategorySlug": "apartment-sale",
+  "expectedCity": "تهران",
+  "expectedDealType": "buy"
+}

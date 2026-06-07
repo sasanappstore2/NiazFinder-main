@@ -1,0 +1,12 @@
+{
+  "id": "b2-p0135",
+  "personaId": "b2-p0135",
+  "userMessages": [
+    "آپارتمان در فرامرز عباسی مشهد فروش می‌خوام، پاساژ هم خوبه",
+    "بودجه تا ۵ میلیارد",
+    "حدوداً 35 متر"
+  ],
+  "expectedCategorySlug": "shop-sale",
+  "expectedCity": "مشهد",
+  "expectedDealType": "sell"
+}

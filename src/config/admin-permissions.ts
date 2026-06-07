@@ -32,6 +32,8 @@ export type AdminPermissionId =
   | 'content:reviews:moderate'
   | 'content:reports:read'
   | 'content:reports:moderate'
+  | 'content:blog:read'
+  | 'content:blog:write'
   // ─── Chat / Communications ──────────────────────────────────────────
   | 'comms:messages:read'
   | 'comms:messages:moderate'
@@ -131,6 +133,8 @@ export const ADMIN_PERMISSIONS: readonly AdminPermission[] = [
   { id: 'content:reviews:moderate', label: 'بازبینی/حذف/اقدام روی نظرات', group: 'Content' },
   { id: 'content:reports:read', label: 'مشاهده گزارش‌های تخلف', group: 'Content' },
   { id: 'content:reports:moderate', label: 'رسیدگی به گزارش‌های تخلف', group: 'Content' },
+  { id: 'content:blog:read', label: 'مشاهده مقالات وبلاگ', group: 'Content' },
+  { id: 'content:blog:write', label: 'ویرایش و انتشار مقالات وبلاگ', group: 'Content' },
 
   { id: 'comms:messages:read', label: 'مشاهده پیام‌ها/چت‌ها (بازبینی)', group: 'Communications' },
   { id: 'comms:messages:moderate', label: 'اقدام مدیریتی روی چت‌ها (moderation)', group: 'Communications' },

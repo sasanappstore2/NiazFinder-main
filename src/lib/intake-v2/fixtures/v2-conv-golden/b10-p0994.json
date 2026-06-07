@@ -1,0 +1,25 @@
+{
+  "id": "b10-p0994",
+  "personaId": "b10-p0994",
+  "userMessages": [
+    "ویلا در گوهردشت کرج رهن و اجاره می‌خوام، پاساژ هم خوبه",
+    "گوهردشت",
+    "ودیعه زیر ۱۰۰ میلیون",
+    "اجاره زیر ۲۰ میلیون"
+  ],
+  "chipTurns": [
+    {
+      "turn": 1,
+      "chipFieldKey": "deposit",
+      "chipValue": "گوهردشت"
+    },
+    {
+      "turn": 2,
+      "chipFieldKey": "monthlyRent",
+      "chipValue": "ودیعه زیر ۱۰۰ میلیون"
+    }
+  ],
+  "expectedCategorySlug": "shop-rent",
+  "expectedCity": "کرج",
+  "expectedDealType": "rent_rahn_ejare"
+}

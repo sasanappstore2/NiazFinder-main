@@ -22,3 +22,10 @@ export function getClientAuthHeaders(extra?: HeadersInit): HeadersInit {
 export function getClientAuthJsonHeaders(): HeadersInit {
   return getClientAuthHeaders({ 'Content-Type': 'application/json' });
 }
+
+export function clearClientAuthTokens(): void {
+  if (typeof window === 'undefined') return;
+  for (const key of TOKEN_KEYS) {
+    localStorage.removeItem(key);
+  }
+}

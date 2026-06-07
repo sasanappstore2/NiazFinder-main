@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import type { ListingPreview } from '@/contracts/need-intake';
 import { formatMoneyToman } from '@/lib/format/money';
+import { cn } from '@/lib/utils';
 import { LISTING_TITLE_MAX_LENGTH } from '@/lib/need-intake/listing-title';
 import {
   rejectListingTitleReason,
@@ -95,8 +96,16 @@ export function NeedListingPreview({
               title: truncateListingTitle(e.target.value),
             })
           }
-          className="text-base"
+          className={cn(
+            'text-base',
+            !preview.title.trim() && !titlePending && 'border-amber-500/60 bg-amber-500/5'
+          )}
         />
+        {!preview.title.trim() && !titlePending ? (
+          <p className="text-xs text-amber-700 dark:text-amber-400">
+            عنوان خالی است — قبل از انتشار حتماً بررسی یا ویرایش کنید.
+          </p>
+        ) : null}
         {titleRejectReason && !titlePending ? (
           <p className="text-xs text-amber-700 dark:text-amber-400">
             عنوان کلی به نظر می‌رسد؛ «بازنویسی خودکار» را بزنید یا دستی دقیق‌تر کنید.
@@ -110,8 +119,16 @@ export function NeedListingPreview({
           id="preview-desc"
           value={preview.description}
           onChange={(e) => onChange({ ...preview, description: e.target.value })}
-          className="min-h-[140px] leading-relaxed"
+          className={cn(
+            'min-h-[140px] leading-relaxed',
+            !preview.description.trim() && 'border-amber-500/60 bg-amber-500/5'
+          )}
         />
+        {!preview.description.trim() ? (
+          <p className="text-xs text-amber-700 dark:text-amber-400">
+            توضیحات خالی است — جزئیات نیاز را قبل از انتشار تکمیل کنید.
+          </p>
+        ) : null}
       </div>
 
       {(preview.budgetMax || preview.budgetMin) && (
