@@ -37,7 +37,7 @@ export default function SuperAdminLayout({ children }: { children: ReactNode }) 
 
   return (
     <>
-      <AuthGuard>
+      <AuthGuard routeView="admin">
         <AdminProvider>
           <AdminAccessGuard>{children}</AdminAccessGuard>
         </AdminProvider>

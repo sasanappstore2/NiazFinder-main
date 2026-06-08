@@ -145,10 +145,12 @@ export async function SearchMarketplacePage({ params, market }: PageProps) {
     return (
       <>
         <JsonLd id="search-breadcrumb-jsonld" data={breadcrumbJsonLd} />
-        <PageContainer noVerticalPadding className="pt-2 pb-0">
-          <Breadcrumb />
-          <Separator className="my-4" />
-        </PageContainer>
+        <div data-browse-chrome>
+          <PageContainer noVerticalPadding className="pt-2 pb-0">
+            <Breadcrumb />
+            <Separator className="my-4" />
+          </PageContainer>
+        </div>
         <BrowseDispatcher market={market} categorySlug={categorySlug} citySlug={citySlug} />
       </>
     );
@@ -198,10 +200,12 @@ export async function SearchMarketplacePage({ params, market }: PageProps) {
   return (
     <>
       <JsonLd id="search-breadcrumb-jsonld" data={breadcrumbJsonLd} />
-      <PageContainer noVerticalPadding className="pt-2 pb-0">
-        <Breadcrumb />
-        <Separator className="my-4" />
-      </PageContainer>
+      <div data-browse-chrome>
+        <PageContainer noVerticalPadding className="pt-2 pb-0">
+          <Breadcrumb />
+          <Separator className="my-4" />
+        </PageContainer>
+      </div>
       <BrowseDispatcher market={market} categorySlug={categorySlug} citySlug={citySlug} />
     </>
   );

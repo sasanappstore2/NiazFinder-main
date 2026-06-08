@@ -112,6 +112,15 @@ export function useBrowseFilters() {
     [sanitizedFilters, categoryFilters, pathname, searchParams, router]
   );
 
+  useEffect(() => {
+    const scope = resolveLocationScope(pathname, searchParams);
+    if (scope.mode !== 'city') return;
+    if (sanitizedFilters.neighborhoods.length > 0) return;
+    const saved = cookieManager.getNeighborhoodSelection(scope.citySlug);
+    if (!saved?.slugs.length) return;
+    replaceFilters({ neighborhoods: saved.slugs });
+  }, [pathname, searchParams, sanitizedFilters.neighborhoods.length, replaceFilters]);
+
   const replaceAttributes = useCallback(
     (patch: Record<string, string | null | undefined>) => {
       replaceFilters(patchAttributes(sanitizedFilters, patch));

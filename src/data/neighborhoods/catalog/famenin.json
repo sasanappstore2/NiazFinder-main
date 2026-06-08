@@ -1,8 +1,8 @@
 {
   "cityId": "famenin",
   "cityName": "فامنین",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:26:17.047Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:42:03.125Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

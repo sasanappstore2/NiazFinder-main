@@ -1,5 +1,7 @@
 ## Architecture index (today's map)
 
+> **ایندکس کامل:** برای نقشه سکتوربه‌سکتور با ۱۹۰ API، ۸۵ صفحه، ۴۳ model و ۴۲ ماژول lib → [`PROJECT_INDEX.md`](./PROJECT_INDEX.md)
+
 This document is a short, practical map of the codebase so you can jump to the right entry point quickly.
 
 ### Top-level services

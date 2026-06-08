@@ -1,8 +1,8 @@
 {
   "cityId": "sepidan",
   "cityName": "سپیدان",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:00:24.201Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:40:10.482Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

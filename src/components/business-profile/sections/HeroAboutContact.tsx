@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ContactActions } from '@/components/contact/ContactActions';
 import { HeroCoverAurora } from '@/components/business-profile/HeroCoverAurora';
+import { BusinessProfileLocationMap } from '@/components/business/map/BusinessMapPinPickerLazy';
 import { routeBuilder } from '@/config/routes';
 import type { SectionProps } from './types';
 
@@ -170,6 +171,8 @@ export function HighlightsSection({ business }: SectionProps) {
 }
 
 export function AboutSection({ business }: SectionProps) {
+  const geo = business.identity.location.geo;
+
   return (
     <section
       id="section-about"
@@ -179,6 +182,16 @@ export function AboutSection({ business }: SectionProps) {
       <p className="leading-relaxed text-muted-foreground whitespace-pre-line">
         {business.identity.description || 'توضیحاتی ثبت نشده است.'}
       </p>
+      {geo ? (
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium text-foreground">موقعیت فروشگاه</h3>
+          <BusinessProfileLocationMap
+            lat={geo.lat}
+            lng={geo.lng}
+            city={business.identity.location.city}
+          />
+        </div>
+      ) : null}
       {business.identity.location.address && (
         <p className="flex items-start gap-2 text-sm">
           <MapPin className="mt-0.5 size-4 shrink-0 text-primary" />
@@ -202,9 +215,21 @@ export function AboutSection({ business }: SectionProps) {
 }
 
 export function ContactSection({ business, requestId }: SectionProps) {
+  const geo = business.identity.location.geo;
+
   return (
     <section id="section-contact" className="profile-surface scroll-mt-24 rounded-2xl p-5">
       <h2 className="mb-3 text-lg font-semibold">ارتباط</h2>
+      {geo ? (
+        <div className="mb-4">
+          <BusinessProfileLocationMap
+            lat={geo.lat}
+            lng={geo.lng}
+            city={business.identity.location.city}
+            className="max-w-xl"
+          />
+        </div>
+      ) : null}
       <p className="mb-4 text-xs text-muted-foreground">
         ارتباط از طریق چت و تماس درون سایت — پس از ورود، شماره در تماس صوتی نمایش داده می‌شود.
       </p>

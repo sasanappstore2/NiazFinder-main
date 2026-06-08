@@ -230,7 +230,13 @@ export function buildSummary(
   }
   if (answers.budget) {
     parts.push(`بودجه: ${formatMoneyToman(Number(answers.budget))} تومان`);
-  } else if (parsed.budgetMax) {
+  } else if (
+    parsed.budgetMax &&
+    !answers.rahnAmount &&
+    !parsed.entities?.rahnAmount &&
+    parsed.entities?.dealType !== 'rent_rahn_ejare' &&
+    parsed.entities?.dealType !== 'rent_rahn_full'
+  ) {
     parts.push(`بودجه: ${formatMoneyToman(parsed.budgetMax)} تومان`);
   }
   if (answers.deposit) {

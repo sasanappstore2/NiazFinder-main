@@ -22,18 +22,29 @@ export function buildContentSecurityPolicy(): string {
     parseOrigin(process.env.NEXT_PUBLIC_JANUS_WS_URL) ?? '',
   ]);
 
-  const imgExtras = unique([parseOrigin(process.env.MINIO_PUBLIC_URL) ?? '']);
+  const imgExtras = unique([
+    parseOrigin(process.env.MINIO_PUBLIC_URL) ?? '',
+    'https://unpkg.com',
+  ]);
 
-  const connectSrc = ["'self'", 'ws:', 'wss:', ...connectExtras].join(' ');
-  const imgSrc = ["'self'", 'data:', 'blob:', ...imgExtras].join(' ');
+  const mapboxConnect = [
+    'https://api.mapbox.com',
+    'https://events.mapbox.com',
+    'https://*.tiles.mapbox.com',
+  ];
+  const mapboxImg = ['https://api.mapbox.com', 'https://*.tiles.mapbox.com'];
+  const connectSrc = ["'self'", 'ws:', 'wss:', ...mapboxConnect, ...connectExtras].join(' ');
+  const imgSrc = ["'self'", 'data:', 'blob:', ...mapboxImg, ...imgExtras].join(' ');
 
   return [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline'",
+    "script-src 'self' 'unsafe-inline' blob:",
     "style-src 'self' 'unsafe-inline'",
     `img-src ${imgSrc}`,
     "font-src 'self'",
     `connect-src ${connectSrc}`,
+    "worker-src 'self' blob:",
+    "child-src blob:",
     "media-src 'self' blob:",
     "frame-src 'self'",
     "object-src 'none'",

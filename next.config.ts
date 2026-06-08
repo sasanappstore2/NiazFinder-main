@@ -103,6 +103,8 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: buildMinioRemotePatterns(),
+    // ProgressiveImage uses 20 (placeholder) and 86 (full); ProductDetailGallery uses 78.
+    qualities: [20, 75, 78, 86],
   },
   async redirects() {
     return [...legacyRedirects];

@@ -17,6 +17,7 @@ import { NeedMobileStickyBar } from '@/components/need/briefing/NeedMobileSticky
 import { RequestResubmitBanner } from '@/components/need/RequestResubmitBanner';
 import { NeedDetailSkeleton } from '@/components/need/NeedDetailSkeleton';
 import { cn } from '@/lib/utils';
+import { routeBuilder } from '@/config/routes';
 import { getClientAuthHeaders } from '@/lib/auth/client-auth';
 import { hasSuperAdminPanelAccessFromRoleAndPermissions } from '@/lib/rbac/super-admin-access';
 import type { MatchedBusinessesViewerRole } from '@/components/need/MatchedBusinessesSection';
@@ -196,8 +197,13 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
 
       {isOwner && request.moderationStatus === 'PENDING' && (
         <div className="mx-auto max-w-6xl px-4 pb-4">
-          <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 px-4 py-3 text-sm text-sky-900 dark:text-sky-100">
-            آگهی شما در صف بازبینی است و پس از تأیید در بازار نمایش داده می‌شود.
+          <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 px-4 py-3 text-sm text-sky-900 dark:text-sky-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <span>
+              آگهی شما در صف بازبینی است و پس از تأیید در بازار نمایش داده می‌شود.
+            </span>
+            <Button variant="outline" size="sm" asChild>
+              <a href={routeBuilder.dashboard()}>مشاهده در داشبورد</a>
+            </Button>
           </div>
         </div>
       )}

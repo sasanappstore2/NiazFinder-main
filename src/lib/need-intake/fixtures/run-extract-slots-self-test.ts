@@ -48,6 +48,11 @@ const CASES: { id: string; text: string; expect: Partial<ReturnType<typeof extra
       text: 'من یک خونه توی زعفرانیه تهران می‌خوام رهن و اجاره باشه حدوداً ۱۰ میلیارد هم بودجه دارم اجاره‌ام هم ۱۵ میلیون',
       expect: { rahnAmount: '10000000000', monthlyRent: '15000000' },
     },
+    {
+      id: 'rahn-ejare-word-billion-shop',
+      text: 'میخواستم تا سقف سرامیک باشه یک میلیارد رهن دارم ۱۰۰ میلیون اجاره',
+      expect: { rahnAmount: '1000000000', monthlyRent: '100000000' },
+    },
   ];
 
 function run(): { failed: string[] } {

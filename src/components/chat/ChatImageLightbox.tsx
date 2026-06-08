@@ -217,7 +217,7 @@ export function ChatImageLightbox({
           </Button>
         )}
 
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+        { }
         <img
           key={current.id}
           src={current.url}

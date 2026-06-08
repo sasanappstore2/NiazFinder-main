@@ -80,7 +80,7 @@ export function StepIdentity({
       lastAutoName.current = suggested;
       onChange({ name: suggested });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only react to job/city/person, not every name keystroke
+     
   }, [primarySlug, personName, values.city]);
 
   const suggestedPreview = buildSuggestion();

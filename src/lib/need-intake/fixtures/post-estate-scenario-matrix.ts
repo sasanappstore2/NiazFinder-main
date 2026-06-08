@@ -254,4 +254,280 @@ export const POST_ESTATE_SCENARIO_MATRIX: PostEstateScenario[] = [
       return null;
     },
   },
+  {
+    id: 'mashhad-sajjad-apartment-rent',
+    text: 'آپارتمان اجاره در سجاد مشهد',
+    preferredCityName: 'مشهد',
+    assert: (r) => (r.entities.city === 'مشهد' ? null : `city=${r.entities.city}`),
+  },
+  {
+    id: 'mashhad-sajjad-shop-rahn',
+    text: 'مغازه رهن و اجاره سجاد مشهد یک میلیارد رهن',
+    assert: (r) =>
+      r.entities.transactionType === 'DEPOSIT_AND_RENT'
+        ? null
+        : `tx=${r.entities.transactionType}`,
+  },
+  {
+    id: 'tehran-saadat-abad',
+    text: 'آپارتمان خرید سعادت آباد تهران',
+    assert: (r) => {
+      if (r.entities.city !== 'تهران') return `city=${r.entities.city}`;
+      if (r.entities.transactionType !== 'BUY') return `tx=${r.entities.transactionType}`;
+      return null;
+    },
+  },
+  {
+    id: 'tehran-poonak-rent',
+    text: 'آپارتمان اجاره پونک تهران',
+    assert: (r) => {
+      if (r.entities.city !== 'تهران') return `city=${r.entities.city}`;
+      return r.entities.transactionType === 'RENT' ? null : `tx=${r.entities.transactionType}`;
+    },
+  },
+  {
+    id: 'tehran-niavaran-rahn',
+    text: 'آپارتمان رهن کامل نیاوران تهران',
+    assert: (r) =>
+      r.entities.transactionType === 'FULL_DEPOSIT'
+        ? null
+        : `tx=${r.entities.transactionType}`,
+  },
+  {
+    id: 'tabriz-apartment',
+    text: 'آپارتمان اجاره تبریز',
+    assert: (r) => (r.entities.city === 'تبریز' ? null : `city=${r.entities.city}`),
+  },
+  {
+    id: 'kerman-villa',
+    text: 'ویلا خرید کرمان',
+    assert: (r) => {
+      if (r.entities.city !== 'کرمان') return `city=${r.entities.city}`;
+      const slug = r.entities.subcategorySlug ?? r.entities.categorySlug ?? '';
+      if (!slug.includes('villa') && !slug.includes('residential')) {
+        return `slug=${slug}`;
+      }
+      return null;
+    },
+  },
+  {
+    id: 'mashhad-land-parvaneh',
+    text: 'زمین ۴۰۰ متری با پروانه ساخت احمدآباد مشهد',
+    assert: (r) => {
+      const slug = r.entities.subcategorySlug ?? r.entities.categorySlug ?? '';
+      if (!slug.includes('land')) return `slug=${slug}`;
+      return r.entities.area === 400 ? null : `area=${r.entities.area}`;
+    },
+  },
+  {
+    id: 'mashhad-storage',
+    text: 'انبار اجاره در مشهد',
+    assert: (r) => {
+      if (r.entities.city !== 'مشهد') return `city=${r.entities.city}`;
+      if (r.entities.transactionType !== 'RENT') return `tx=${r.entities.transactionType}`;
+      return null;
+    },
+  },
+  {
+    id: 'mashhad-office-rent',
+    text: 'دفتر کار اجاره در مشهد',
+    assert: (r) =>
+      r.entities.transactionType === 'RENT' ? null : `tx=${r.entities.transactionType}`,
+  },
+  {
+    id: 'tehran-office-buy',
+    text: 'دفتر کار خرید در تهران',
+    assert: (r) => {
+      if (r.entities.city !== 'تهران') return `city=${r.entities.city}`;
+      return r.entities.transactionType === 'BUY' ? null : `tx=${r.entities.transactionType}`;
+    },
+  },
+  {
+    id: 'mashhad-shop-faramez-rahn',
+    text: 'مغازه رهن کامل فرامرز عباسی مشهد',
+    assert: (r) => {
+      if (r.entities.city !== 'مشهد') return `city=${r.entities.city}`;
+      return r.entities.transactionType === 'FULL_DEPOSIT'
+        ? null
+        : `tx=${r.entities.transactionType}`;
+    },
+  },
+  {
+    id: 'mashhad-apartment-3bed',
+    text: 'آپارتمان ۳ خواب در مشهد اجاره',
+    assert: (r) => (r.entities.rooms === 3 ? null : `rooms=${r.entities.rooms}`),
+  },
+  {
+    id: 'mashhad-apartment-150m',
+    text: 'آپارتمان ۱۵۰ متری در مشهد خرید',
+    assert: (r) => (r.entities.area === 150 ? null : `area=${r.entities.area}`),
+  },
+  {
+    id: 'tehran-apartment-budget',
+    text: 'آپارتمان خرید تهران تا ۱۵ میلیارد',
+    assert: (r) => {
+      if (r.entities.city !== 'تهران') return `city=${r.entities.city}`;
+      if (!r.entities.budgetMax || r.entities.budgetMax < 10_000_000_000) {
+        return `budget=${r.entities.budgetMax}`;
+      }
+      return null;
+    },
+  },
+  {
+    id: 'mashhad-villa-buy',
+    text: 'ویلا خرید در مشهد',
+    assert: (r) => {
+      if (r.entities.city !== 'مشهد') return `city=${r.entities.city}`;
+      return r.entities.transactionType === 'BUY' || r.entities.transactionType === 'SELL'
+        ? null
+        : `tx=${r.entities.transactionType}`;
+    },
+  },
+  {
+    id: 'mashhad-apartment-kohesangi-rent',
+    text: 'آپارتمان اجاره کوهسنگی مشهد',
+    assert: (r) => {
+      const hood = r.entities.neighborhood ?? r.locationHints?.areaLabel ?? '';
+      return /کوه|سنگی/.test(hood) ? null : `hood=${hood}`;
+    },
+  },
+  {
+    id: 'mashhad-apartment-jalal-buy',
+    text: 'آپارتمان خرید جلال آل احمد مشهد',
+    assert: (r) => {
+      const area = r.entities.neighborhood ?? r.locationHints?.areaLabel ?? '';
+      return /جلال/.test(area) ? null : `area=${area}`;
+    },
+  },
+  {
+    id: 'isfahan-apartment-rent',
+    text: 'آپارتمان اجاره اصفهان',
+    assert: (r) => (r.entities.city === 'اصفهان' ? null : `city=${r.entities.city}`),
+  },
+  {
+    id: 'shiraz-apartment-buy',
+    text: 'آپارتمان خرید شیراز',
+    assert: (r) => {
+      if (r.entities.city !== 'شیراز') return `city=${r.entities.city}`;
+      return r.entities.transactionType === 'BUY' ? null : `tx=${r.entities.transactionType}`;
+    },
+  },
+  {
+    id: 'mashhad-clinic-rent',
+    text: 'کلینیک اجاره در مشهد',
+    assert: (r) => {
+      if (r.entities.city !== 'مشهد') return `city=${r.entities.city}`;
+      return r.entities.transactionType === 'RENT' ? null : `tx=${r.entities.transactionType}`;
+    },
+  },
+  {
+    id: 'mashhad-penthouse',
+    text: 'پنت‌هاوس اجاره در مشهد',
+    assert: (r) =>
+      r.entities.transactionType === 'RENT' ? null : `tx=${r.entities.transactionType}`,
+  },
+  {
+    id: 'tehran-apartment-elahiyeh',
+    text: 'آپارتمان اجاره الهیه تهران',
+    assert: (r) => (r.entities.city === 'تهران' ? null : `city=${r.entities.city}`),
+  },
+  {
+    id: 'mashhad-apartment-sajjad-2bed',
+    text: 'آپارتمان دو خواب سجاد مشهد اجاره',
+    preferredCityName: 'مشهد',
+    assert: (r) => {
+      if (r.entities.rooms !== 2) return `rooms=${r.entities.rooms}`;
+      if (r.entities.city !== 'مشهد') return `city=${r.entities.city}`;
+      return null;
+    },
+  },
+  {
+    id: 'mashhad-land-sajjad-buy',
+    text: 'زمین خرید سجاد مشهد',
+    preferredCityName: 'مشهد',
+    assert: (r) => {
+      const slug = r.entities.subcategorySlug ?? r.entities.categorySlug ?? '';
+      if (!slug.includes('land')) return `slug=${slug}`;
+      return r.entities.transactionType === 'BUY' ? null : `tx=${r.entities.transactionType}`;
+    },
+  },
+  {
+    id: 'tehran-apartment-jordan',
+    text: 'آپارتمان اجاره جردن تهران',
+    assert: (r) => (r.entities.city === 'تهران' ? null : `city=${r.entities.city}`),
+  },
+  {
+    id: 'mashhad-apartment-rahne-ejare-text',
+    text: 'آپارتمان رهن و اجاره در مشهد ۵ میلیارد رهن',
+    assert: (r) =>
+      r.entities.transactionType === 'DEPOSIT_AND_RENT' ||
+      r.entities.transactionType === 'FULL_DEPOSIT'
+        ? null
+        : `tx=${r.entities.transactionType}`,
+  },
+  {
+    id: 'mashhad-shop-buy-faramez',
+    text: 'مغازه فروش فرامرز عباسی مشهد',
+    assert: (r) => {
+      if (r.entities.city !== 'مشهد') return `city=${r.entities.city}`;
+      return r.entities.transactionType === 'BUY' || r.entities.transactionType === 'SELL'
+        ? null
+        : `tx=${r.entities.transactionType}`;
+    },
+  },
+  {
+    id: 'mashhad-apartment-furnished',
+    text: 'آپارتمان مبله اجاره در مشهد',
+    assert: (r) =>
+      r.entities.transactionType === 'RENT' ? null : `tx=${r.entities.transactionType}`,
+  },
+  {
+    id: 'tehran-apartment-furnished-buy',
+    text: 'آپارتمان مبله خرید تهران',
+    assert: (r) => {
+      if (r.entities.city !== 'تهران') return `city=${r.entities.city}`;
+      return r.entities.transactionType === 'BUY' ? null : `tx=${r.entities.transactionType}`;
+    },
+  },
+  {
+    id: 'mashhad-apartment-new',
+    text: 'آپارتمان نوساز خرید مشهد',
+    assert: (r) =>
+      r.entities.transactionType === 'BUY' ? null : `tx=${r.entities.transactionType}`,
+  },
+  {
+    id: 'mashhad-apartment-old',
+    text: 'آپارتمان کلنگی خرید مشهد',
+    assert: (r) =>
+      r.entities.transactionType === 'BUY' ? null : `tx=${r.entities.transactionType}`,
+  },
+  {
+    id: 'mashhad-apartment-luxury',
+    text: 'آپارتمان لوکس اجاره مشهد',
+    assert: (r) =>
+      r.entities.transactionType === 'RENT' ? null : `tx=${r.entities.transactionType}`,
+  },
+  {
+    id: 'mashhad-villa-rahn',
+    text: 'ویلا رهن کامل مشهد',
+    assert: (r) =>
+      r.entities.transactionType === 'FULL_DEPOSIT'
+        ? null
+        : `tx=${r.entities.transactionType}`,
+  },
+  {
+    id: 'tehran-villa-rent',
+    text: 'ویلا اجاره تهران',
+    assert: (r) => {
+      if (r.entities.city !== 'تهران') return `city=${r.entities.city}`;
+      const slug = r.entities.subcategorySlug ?? r.entities.categorySlug ?? '';
+      return slug.includes('villa') ? null : `slug=${slug}`;
+    },
+  },
+  {
+    id: 'mashhad-apartment-corner',
+    text: 'آپارتمان نبش اجاره مشهد',
+    assert: (r) =>
+      r.entities.transactionType === 'RENT' ? null : `tx=${r.entities.transactionType}`,
+  },
 ];

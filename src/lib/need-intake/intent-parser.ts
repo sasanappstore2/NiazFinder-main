@@ -18,6 +18,7 @@ function withAsciiDigitRuns(text: string): string {
   return normalizeIntakeText(text).replace(/[۰-۹٠-٩0-9]+/g, (run) => toAsciiDigits(run));
 }
 import { buildPropertyTitle } from '@/lib/need-intake/property-title';
+import { extractPropertySlotsFromText } from '@/lib/need-intake/extract-property-slots';
 import {
   hasConcreteProductNoun,
   hasGamingProductPhrase,
@@ -253,6 +254,19 @@ function isDesireOnly(text: string): boolean {
 
 function parseBudget(text: string): { min?: number; max?: number } {
   const norm = withAsciiDigitRuns(text);
+  const hasRahn = /رهن|ودیعه/u.test(norm);
+  const hasRent = /اجاره/u.test(norm);
+
+  if (hasRahn) {
+    const slots = extractPropertySlotsFromText(text);
+    if (slots.rahnAmount) {
+      return { max: Number(slots.rahnAmount) };
+    }
+    if (hasRent) {
+      return {};
+    }
+  }
+
   const budgetLine = norm.match(/بودجه\s*(?:حدود|تا)?\s*(\d[\d,]*)\s*تومان/u);
   if (budgetLine) {
     const n = Number(budgetLine[1].replace(/,/g, ''));
@@ -699,6 +713,15 @@ export function parseIntentFromText(rawText: string): ParsedIntent {
   const urgent = URGENT_KEYWORDS.some((w) => text.includes(w));
   const entities = buildEntities(text, categorySlug, intentType);
   categorySlug = refinePropertyCategorySlug(categorySlug, entities, text);
+  if (
+    intentType.startsWith('property') ||
+    getCategoryPath(categorySlug)[0]?.slug === 'real-estate'
+  ) {
+    const slots = extractPropertySlotsFromText(rawText);
+    if (slots.areaMin && !entities.areaMin) entities.areaMin = slots.areaMin;
+    if (slots.areaMax && !entities.areaMax) entities.areaMax = slots.areaMax;
+    if (slots.rooms && !entities.rooms) entities.rooms = slots.rooms;
+  }
   const area = entities.area;
 
   let confidence = 0.5;

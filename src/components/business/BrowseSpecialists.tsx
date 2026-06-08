@@ -4,7 +4,7 @@ import { useNavigate } from '@/hooks/navigation/use-navigate';
 import Link from 'next/link';
 import { mapBusinessProfileToBrowseCard } from '@/services/business';
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Search,
   MapPin,
@@ -16,8 +16,10 @@ import {
   X,
   LayoutGrid,
   List,
+  Map,
   Copy,
 } from 'lucide-react';
+import { BusinessMapSplitView } from '@/components/business/map/BusinessMapSplitView';
 import { StarRating } from '@/components/shared/StarRating';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +30,7 @@ import type { SpecialistProfile } from '@/lib/types';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
 import { SpecialistAvailabilityBadge } from '@/components/business/SpecialistAvailabilityBadge';
 import { routeBuilder } from '@/config/routes';
+import { CANONICAL_CITIES, COUNTRY_SLUG } from '@/config/locations';
 
 function specialistProfileHref(
   specialist: SpecialistProfile,
@@ -73,6 +76,7 @@ const SPECIALIST_FILTER_DEFAULTS = {
 };
 
 const SPECIALISTS_PAGE_LIMIT = 6;
+const SPECIALISTS_MAP_LIST_LIMIT = 40;
 
 // ─── Skill level dots ─────────────────────────────────
 function SkillLevelDots({ level }: { level: number }) {
@@ -350,6 +354,7 @@ export function BrowseSpecialists({
 }: BrowseSpecialistsProps = {}) {
   const { navigateTo } = useNavigate();
   const pathname = usePathname();
+  const router = useRouter();
   const { openChat } = useStartChat();
   const { openBusinessContact, picker } = useBusinessContact();
 
@@ -366,7 +371,7 @@ export function BrowseSpecialists({
 
   const [query, setQuery] = useState(urlFilters?.q ?? '');
   const [currentPage, setCurrentPage] = useState(1);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
   const [isUrlReady, setIsUrlReady] = useState(true);
   const [specialists, setSpecialists] = useState<SpecialistProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -408,6 +413,20 @@ export function BrowseSpecialists({
   }, [urlFilters?.q]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const view = new URLSearchParams(window.location.search).get('view');
+    if (view === 'map' || view === 'list' || view === 'grid') {
+      setViewMode(view);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.documentElement.classList.toggle('browse-map-immersive', viewMode === 'map');
+    return () => document.documentElement.classList.remove('browse-map-immersive');
+  }, [viewMode]);
+
+  useEffect(() => {
     if (!isUrlReady) return;
     replaceBrowseUrl(
       currentPathname,
@@ -421,8 +440,11 @@ export function BrowseSpecialists({
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
-      params.set('page', String(currentPage));
-      params.set('limit', String(SPECIALISTS_PAGE_LIMIT));
+      params.set('page', String(viewMode === 'map' ? 1 : currentPage));
+      params.set(
+        'limit',
+        String(viewMode === 'map' ? SPECIALISTS_MAP_LIST_LIMIT : SPECIALISTS_PAGE_LIMIT)
+      );
       if (query.trim()) params.set('search', query.trim());
       if (categorySlug) params.set('category', categorySlug);
       if (urlFilters?.verified) params.set('verified', 'true');
@@ -474,7 +496,19 @@ export function BrowseSpecialists({
     query,
     urlFilters,
     neighborhoodTokens,
+    viewMode,
   ]);
+
+  const mapPinsQuery = useMemo(
+    () => ({
+      category: categorySlug,
+      search: query.trim() || undefined,
+      verified: urlFilters?.verified ?? undefined,
+      cities: hasLocationScope && citySlugs.length > 0 ? citySlugs.join(',') : undefined,
+      provinces: hasLocationScope && provinceSlugs.length > 0 ? provinceSlugs.join(',') : undefined,
+    }),
+    [categorySlug, query, urlFilters?.verified, hasLocationScope, citySlugs, provinceSlugs]
+  );
 
   useEffect(() => {
     if (!isUrlReady) return;
@@ -497,11 +531,46 @@ export function BrowseSpecialists({
     await navigator.clipboard?.writeText(`${window.location.origin}${currentShareUrl}`);
   };
 
+  const exitMapView = () => {
+    setViewMode('grid');
+    setCurrentPage(1);
+  };
+
+  const hasCityScope = citySlugs.length > 0;
+  const cityScopeLabel = useMemo(() => {
+    if (citySlugs.length === 1) {
+      return CANONICAL_CITIES.find((c) => c.slug === citySlugs[0])?.title ?? citySlugs[0];
+    }
+    if (citySlugs.length > 1) {
+      return `${citySlugs.length.toLocaleString('fa-IR')} شهر`;
+    }
+    return undefined;
+  }, [citySlugs]);
+
+  const clearCityScope = useCallback(() => {
+    router.replace(
+      routeBuilder.search({
+        market: 'business',
+        location: COUNTRY_SLUG,
+        category: categorySlug,
+      })
+    );
+  }, [categorySlug, router]);
+
   return (
-    <div className="w-full min-h-[50vh] bg-muted/20" dir="rtl">
-      <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <div
+      className={viewMode === 'map' ? 'w-full bg-background' : 'w-full min-h-[50vh] bg-muted/20'}
+      dir="rtl"
+    >
+      <div
+        className={
+          viewMode === 'map'
+            ? 'px-4 py-3 sm:px-6 max-lg:px-0 max-lg:py-0'
+            : 'px-4 py-6 sm:px-6 sm:py-8 lg:px-8'
+        }
+      >
         {/* Header */}
-        <div className="mb-8">
+        <div className={viewMode === 'map' ? 'mb-3 max-lg:hidden' : 'mb-8'}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1
@@ -510,9 +579,11 @@ export function BrowseSpecialists({
               >
                 {displayH1}
               </h1>
-              <p className="mt-1.5 text-sm text-muted-foreground">
-                {totalCount.toLocaleString('fa-IR')} کسب‌وکار یافت شد
-              </p>
+              {viewMode !== 'map' ? (
+                <p className="mt-1.5 text-sm text-muted-foreground">
+                  {totalCount.toLocaleString('fa-IR')} کسب‌وکار یافت شد
+                </p>
+              ) : null}
             </div>
             <div className="flex items-center gap-2 self-start sm:self-auto">
               {/* View toggle */}
@@ -543,6 +614,19 @@ export function BrowseSpecialists({
                 >
                   <List className="size-4" aria-hidden="true" />
                 </button>
+                <button
+                  onClick={() => {
+                    setViewMode('map');
+                    setCurrentPage(1);
+                  }}
+                  className={`flex items-center justify-center p-2 transition-colors ${viewMode === 'map' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+                  aria-label="نمای نقشه"
+                  role="radio"
+                  aria-checked={viewMode === 'map'}
+                  title="نمایش روی نقشه"
+                >
+                  <Map className="size-4" aria-hidden="true" />
+                </button>
               </div>
               <Button
                 onClick={copyCurrentLink}
@@ -559,36 +643,56 @@ export function BrowseSpecialists({
         </div>
 
         {/* Search bar */}
-        <div className="mb-6">
-          <div className="relative">
-            <Search className="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-            <Input
-              placeholder="جستجوی نام، تخصص یا مهارت..."
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setCurrentPage(1);
-              }}
-              aria-label="جستجوی کسب‌وکارها"
-              className="h-12 w-full rounded-xl border-border/50 bg-card/80 backdrop-blur-xs pr-10 text-sm shadow-md shadow-black/3 focus-visible:shadow-lg focus-visible:shadow-emerald-500/6 focus-visible:border-emerald-300/50 dark:focus-visible:border-emerald-700/50 transition-shadow"
-            />
-            {query && (
-              <button
-                onClick={() => {
-                  setQuery('');
+        {viewMode !== 'map' ? (
+          <div className="mb-6">
+            <div className="relative">
+              <Search className="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+              <Input
+                placeholder="جستجوی نام، تخصص یا مهارت..."
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                aria-label="پاک کردن جستجو"
-              >
-                <X className="size-4" aria-hidden="true" />
-              </button>
-            )}
+                aria-label="جستجوی کسب‌وکارها"
+                className="h-12 w-full rounded-xl border-border/50 bg-card/80 backdrop-blur-xs pr-10 text-sm shadow-md shadow-black/3 focus-visible:shadow-lg focus-visible:shadow-emerald-500/6 focus-visible:border-emerald-300/50 dark:focus-visible:border-emerald-700/50 transition-shadow"
+              />
+              {query && (
+                <button
+                  onClick={() => {
+                    setQuery('');
+                    setCurrentPage(1);
+                  }}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label="پاک کردن جستجو"
+                >
+                  <X className="size-4" aria-hidden="true" />
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        ) : null}
+
+        {/* Map + list split (Divar-style) */}
+        {viewMode === 'map' ? (
+          <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 max-lg:static max-lg:w-full max-lg:max-w-none max-lg:translate-x-0">
+            <BusinessMapSplitView
+              specialists={visibleSpecialists}
+              citySlugs={citySlugs}
+              provinceSlugs={provinceSlugs}
+              neighborhoodSlugs={urlFilters?.neighborhoods ?? []}
+              mapQuery={mapPinsQuery}
+              fromPathname={pathname}
+              onCloseMap={exitMapView}
+              hasCityScope={hasCityScope}
+              cityScopeLabel={cityScopeLabel}
+              onClearCityScope={clearCityScope}
+            />
+          </div>
+        ) : null}
 
         {/* Results */}
-        {isLoading ? (
+        {viewMode !== 'map' && isLoading ? (
           <div
             className={
               viewMode === 'grid'
@@ -600,7 +704,7 @@ export function BrowseSpecialists({
               <div key={i} className="h-64 rounded-xl bg-muted animate-pulse" />
             ))}
           </div>
-        ) : visibleSpecialists.length === 0 ? (
+        ) : viewMode !== 'map' && visibleSpecialists.length === 0 ? (
           <div className="py-20 text-center">
             <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-muted" aria-hidden="true">
               <Search className="size-8 text-muted-foreground/50" />
@@ -625,7 +729,7 @@ export function BrowseSpecialists({
               پاک کردن جستجو
             </Button>
           </div>
-        ) : (
+        ) : viewMode !== 'map' ? (
           <>
             <div
               key={`${query}-${viewMode}-${urlFilters?.sort ?? ''}`}
@@ -683,7 +787,7 @@ export function BrowseSpecialists({
               </div>
             )}
           </>
-        )}
+        ) : null}
       </div>
 
       <noscript>

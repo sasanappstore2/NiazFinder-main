@@ -1,8 +1,8 @@
 {
   "cityId": "dehgolan",
   "cityName": "دهگلان",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:52:05.726Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:44:06.422Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

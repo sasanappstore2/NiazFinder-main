@@ -56,7 +56,16 @@ export function seedAnswersFromParsed(
     answers.location = parsed.city;
   }
 
-  if (parsed.budgetMax && !answers.budget) answers.budget = parsed.budgetMax;
+  if (parsed.budgetMax && !answers.budget) {
+    const deal = String(e.dealType ?? '');
+    if (deal === 'rent_rahn_ejare' || deal === 'rent_rahn_full') {
+      if (!answers.rahnAmount && e.rahnAmount) {
+        answers.rahnAmount = Number(e.rahnAmount);
+      }
+    } else {
+      answers.budget = parsed.budgetMax;
+    }
+  }
   if (!answers.rahnAmount && e.rahnAmount) {
     answers.rahnAmount = Number(e.rahnAmount);
   }
@@ -64,10 +73,17 @@ export function seedAnswersFromParsed(
     !answers.rahnAmount &&
     parsed.budgetMax &&
     parsed.budgetMax >= 50_000_000 &&
-    (e.dealType === 'rent_rahn_full' || e.dealType === 'rent_rahn_ejare')
+    (e.dealType === 'rent_rahn_full' || e.dealType === 'rent_rahn_ejare') &&
+    answers.monthlyRent &&
+    parsed.budgetMax > Number(answers.monthlyRent) * 2
   ) {
     answers.rahnAmount = parsed.budgetMax;
-  } else if (parsed.budgetMax && e.dealType === 'rent_rahn_full' && !answers.rahnAmount) {
+  } else if (
+    parsed.budgetMax &&
+    e.dealType === 'rent_rahn_full' &&
+    !answers.rahnAmount &&
+    !answers.monthlyRent
+  ) {
     answers.rahnAmount = parsed.budgetMax;
   }
 

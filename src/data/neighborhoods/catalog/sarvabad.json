@@ -1,8 +1,8 @@
 {
   "cityId": "sarvabad",
   "cityName": "سروآباد",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:52:39.059Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:44:07.823Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

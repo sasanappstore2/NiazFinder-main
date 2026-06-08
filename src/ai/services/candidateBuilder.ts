@@ -34,6 +34,8 @@ export function buildIntakeCandidates(
       budgetMax: null,
       rooms: null,
       transactionType: null,
+      lat: null,
+      lng: null,
     },
     confidence: {},
     needType: 'general-seeking',

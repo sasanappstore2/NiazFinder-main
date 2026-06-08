@@ -1,8 +1,8 @@
 {
   "cityId": "bastak",
   "cityName": "بستک",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:36:21.518Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:42:44.348Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

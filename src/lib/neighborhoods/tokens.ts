@@ -13,13 +13,18 @@ type TextContainsFilter = {
   dynamicAnswers?: { contains: string };
 };
 
-/** Build Prisma AND clause for selected neighborhoods (OR across all tokens). */
+/** Build Prisma AND clause for selected neighborhoods (OR across all tokens + slug ids). */
 export function buildNeighborhoodWhereClauses(
   neighborhoods: ManagedNeighborhood[]
 ): { OR: TextContainsFilter[] }[] {
   const or: TextContainsFilter[] = [];
 
   for (const n of neighborhoods) {
+    or.push({ dynamicAnswers: { contains: `"_neighborhoodSlug":"${n.id}"` } });
+    or.push({ dynamicAnswers: { contains: `"neighborhoodSlug":"${n.id}"` } });
+    or.push({
+      dynamicAnswers: { contains: `"neighborhoodSlug": "${n.id}"` },
+    });
     for (const token of neighborhoodSearchTokens(n)) {
       or.push({ address: { contains: token } });
       or.push({ description: { contains: token } });

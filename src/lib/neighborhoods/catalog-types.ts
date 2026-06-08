@@ -1,10 +1,27 @@
 /** Catalog file shape (no Node/fs — safe to import types on client). */
 
+export type NeighborhoodGeoSource = 'osm' | 'divar' | 'synthetic' | 'manual';
+
+export interface NeighborhoodCentroid {
+  lat: number;
+  lng: number;
+}
+
+export interface NeighborhoodBbox {
+  south: number;
+  north: number;
+  west: number;
+  east: number;
+}
+
 export interface CatalogNeighborhood {
   id: string;
   name: string;
   nameEn?: string;
   areas?: string[];
+  centroid?: NeighborhoodCentroid;
+  bbox?: NeighborhoodBbox;
+  geoSource?: NeighborhoodGeoSource;
 }
 
 export interface CityNeighborhoodCatalog {

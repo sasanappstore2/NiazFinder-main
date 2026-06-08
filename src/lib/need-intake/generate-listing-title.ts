@@ -3,11 +3,14 @@ import {
   buildListingTitleContext,
 } from '@/lib/need-intake/listing-title-prompt';
 import {
+  finalizeListingTitle,
   isAcceptableListingTitle,
-  normalizeListingTitle,
-  truncateListingTitle,
+  type TitleQualityContext,
 } from '@/lib/need-intake/listing-title-sanitize';
-import { buildHeuristicListingTitle } from '@/lib/need-intake/vertical-title';
+import {
+  mergeListingTitleWithAi,
+  resolveDeterministicListingTitle,
+} from '@/lib/need-intake/resolve-listing-title';
 import {
   generateTitleViaQwen,
   isNeedIntakeLlmEnabled,
@@ -38,43 +41,26 @@ function logTitleResult(meta: {
   console.info('[listing-title]', meta);
 }
 
-function finalizeTemplateTitle(
-  draft: NeedDraft,
-  templateFallback: string,
-  qualityCtx: { sourceText?: string }
-): string {
-  const normalizedFallback = truncateListingTitle(
-    normalizeListingTitle(templateFallback) || 'ثبت نیاز'
-  );
-
-  if (isAcceptableListingTitle(normalizedFallback, qualityCtx)) {
-    return normalizedFallback;
-  }
-
-  const heuristic = buildHeuristicListingTitle(draft);
-  if (isAcceptableListingTitle(heuristic, qualityCtx)) {
-    return heuristic;
-  }
-
-  return truncateListingTitle(heuristic || normalizedFallback);
+function titleContext(draft: NeedDraft): TitleQualityContext {
+  const ctx = buildListingTitleContext(draft);
+  return { sourceText: draft.sourceText ?? ctx.sourceSummary };
 }
 
 /**
- * Generate a marketplace title: Qwen (intake-mlx) → vertical heuristic → template.
+ * Generate a marketplace title: deterministic base → optional Qwen overlay.
+ * AI never replaces a valid structured title with a worse copy.
  */
 export async function generateListingTitle(
   draft: NeedDraft,
-  templateFallback: string
+  _templateFallback?: string
 ): Promise<GenerateListingTitleResult> {
   const started = performance.now();
-  const ctx = buildListingTitleContext(draft);
-  const qualityCtx = { sourceText: draft.sourceText ?? ctx.sourceSummary };
-  const heuristicFallback = buildHeuristicListingTitle(draft);
-  const fallback = finalizeTemplateTitle(draft, templateFallback, qualityCtx);
+  const qualityCtx = titleContext(draft);
+  const deterministic = resolveDeterministicListingTitle(draft).title;
 
   if (!isTitleAiEnabled()) {
     const result: GenerateListingTitleResult = {
-      title: fallback,
+      title: deterministic,
       source: 'template',
       latencyMs: Math.round(performance.now() - started),
     };
@@ -89,20 +75,28 @@ export async function generateListingTitle(
   let rejectedReason: string | undefined;
 
   try {
+    const ctx = buildListingTitleContext(draft);
     const qwenResult = await generateTitleViaQwen(ctx, {
-      fallbackTitle: heuristicFallback,
+      fallbackTitle: deterministic,
       sourceText: qualityCtx.sourceText,
     });
     if (qwenResult?.title) {
+      const merged = mergeListingTitleWithAi(draft, qwenResult.title);
+      const usedAi = merged !== deterministic && isAcceptableListingTitle(
+        finalizeListingTitle(qwenResult.title, qualityCtx),
+        qualityCtx
+      );
       const result: GenerateListingTitleResult = {
-        title: qwenResult.title,
-        source: 'qwen',
+        title: merged,
+        source: usedAi ? 'qwen' : 'template',
         latencyMs: Math.round(performance.now() - started),
+        rejectedReason: usedAi ? undefined : 'qwen_not_better_than_deterministic',
       };
       logTitleResult({
         source: result.source,
         latencyMs: result.latencyMs,
         titleLength: result.title.length,
+        rejectedReason: result.rejectedReason,
       });
       return result;
     }
@@ -112,7 +106,7 @@ export async function generateListingTitle(
   }
 
   const result: GenerateListingTitleResult = {
-    title: fallback,
+    title: deterministic,
     source: 'template',
     latencyMs: Math.round(performance.now() - started),
     rejectedReason,

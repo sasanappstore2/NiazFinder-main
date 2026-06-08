@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from app.config import HOST, MODEL_ID, PORT
-from app.infer import chat_completion, generate_title, parse_text
+from app.infer import chat_completion, generate_listing_copy, generate_title, parse_text
 from app.model_loader import get_model_state
 from app.train_job import get_train_status, start_train_async
 app = FastAPI(title="NiazFinder Intake MLX", version="0.1.0")
@@ -60,6 +60,19 @@ class TitleResponse(BaseModel):
     modelId: str
 
 
+class ListingCopyRequest(BaseModel):
+    systemPrompt: str | None = None
+    userPrompt: str | None = None
+    context: dict | None = None
+
+
+class ListingCopyResponse(BaseModel):
+    title: str
+    description: str
+    raw: str
+    modelId: str
+
+
 class ChatMessage(BaseModel):
     role: str
     content: str
@@ -96,6 +109,7 @@ def root():
             "health": "GET /health",
             "parse": "POST /v1/parse",
             "title": "POST /v1/title",
+            "listingCopy": "POST /v1/listing-copy",
             "chatCompletions": "POST /v1/chat/completions",
             "docs": "GET /docs",
         },
@@ -131,6 +145,19 @@ def v1_title(body: TitleRequest):
         ctx = body.context.model_dump(exclude_none=True)
         title, raw = generate_title(ctx)
         return TitleResponse(title=title, raw=raw, modelId=MODEL_ID)
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
+
+
+@app.post("/v1/listing-copy", response_model=ListingCopyResponse)
+def v1_listing_copy(body: ListingCopyRequest):
+    try:
+        title, description, raw = generate_listing_copy(
+            system_prompt=body.systemPrompt,
+            user_prompt=body.userPrompt,
+            context=body.context,
+        )
+        return ListingCopyResponse(title=title, description=description, raw=raw, modelId=MODEL_ID)
     except Exception as e:
         raise HTTPException(status_code=503, detail=str(e)) from e
 

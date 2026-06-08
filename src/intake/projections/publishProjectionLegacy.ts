@@ -27,9 +27,6 @@ function answerBudget(answers: Record<string, unknown>, parsed: NeedDraft['parse
 }
 
 function buildIntakeTitle(parsed: NeedDraft['parsedIntent'], answers: Record<string, unknown>): string {
-  const existing = parsed.title?.trim();
-  if (existing && existing.length >= 8 && existing !== 'ثبت نیاز') return existing.slice(0, 120);
-
   const entities: Record<string, string> = {
     ...parsed.entities,
     ...(answers.propertyKind ? { propertyKind: String(answers.propertyKind) } : {}),
@@ -37,6 +34,17 @@ function buildIntakeTitle(parsed: NeedDraft['parsedIntent'], answers: Record<str
     ...(answers.areaMax != null ? { areaMax: String(answers.areaMax) } : {}),
     ...(answers.plotWidth ? { plotWidth: String(answers.plotWidth) } : {}),
   };
+
+  const hasAreaSize = Boolean(entities.areaMin || entities.areaMax);
+  const existing = parsed.title?.trim();
+  if (
+    existing &&
+    existing.length >= 8 &&
+    existing !== 'ثبت نیاز' &&
+    !(hasAreaSize && parsed.intentType.startsWith('property') && !existing.includes('متر'))
+  ) {
+    return existing.slice(0, 120);
+  }
 
   if (
     parsed.intentType === 'real_estate_service' ||

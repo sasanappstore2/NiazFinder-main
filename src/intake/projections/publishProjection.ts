@@ -1,17 +1,19 @@
 import type { NeedDraft } from '@/contracts/need-intake';
 import type { Priority } from '@prisma/client';
 import { LISTING_TITLE_MAX_LENGTH } from '@/lib/need-intake/listing-title';
-import { isGenericListingTitle, buildVerticalTitleFromDraft } from '@/lib/need-intake/vertical-title';
+import { resolveDeterministicListingTitle } from '@/lib/need-intake/resolve-listing-title';
 import {
   CANONICAL_CITIES,
   getCityBySlug,
   getProvinceBySlug,
 } from '@/config/locations';
 import { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
-import { truncateListingTitle } from '@/lib/need-intake/listing-title-sanitize';
+import { finalizeListingTitle } from '@/lib/need-intake/listing-title-sanitize';
+import { isGenericListingTitle } from '@/lib/need-intake/resolve-listing-title';
 import { toMatchProjection } from '@/intake/projections/matchProjection';
 import type { ProjectionMetadata } from '@/intake/projections/metadata';
 import { buildProjectionMetadata } from '@/intake/projections/metadata';
+import { flattenDraftAnswersForPublish } from '@/intake/projections/flatten-draft-answers-for-publish';
 
 export interface PublishCommand {
   projection: ProjectionMetadata;
@@ -24,6 +26,8 @@ export interface PublishCommand {
   budgetType: 'FIXED' | 'HOURLY' | 'NEGOTIABLE';
   city?: string;
   province?: string;
+  lat?: number;
+  lng?: number;
   priority: Priority;
   tags: string[];
   intentType: string;
@@ -43,17 +47,7 @@ function answerBudget(answers: Record<string, unknown>, parsed: NeedDraft['parse
 }
 
 function buildIntakeTitle(draft: NeedDraft): string {
-  const { parsedIntent: parsed } = draftToLegacyPayload(draft);
-  const existing = parsed.title?.trim();
-  if (
-    existing &&
-    existing.length >= 8 &&
-    existing !== 'ثبت نیاز' &&
-    !isGenericListingTitle(existing)
-  ) {
-    return existing.slice(0, LISTING_TITLE_MAX_LENGTH);
-  }
-  return buildVerticalTitleFromDraft(draft);
+  return resolveDeterministicListingTitle(draft).title;
 }
 
 function mapUrgency(parsed: NeedDraft['parsedIntent'], answers: Record<string, unknown>): Priority {
@@ -105,9 +99,9 @@ export function toPublishCommand(
   }
 
   let title = draft.listingPreview?.title?.trim() || buildIntakeTitle(draft);
-  title = truncateListingTitle(title);
+  title = finalizeListingTitle(title);
   if (title.length < 8 || isGenericListingTitle(title)) {
-    title = truncateListingTitle(buildIntakeTitle(draft));
+    title = finalizeListingTitle(buildIntakeTitle(draft));
   }
   if (title.length < 8) title = 'ثبت نیاز';
 
@@ -124,10 +118,26 @@ export function toPublishCommand(
   }
 
   const { city, province } = resolveCityAndProvince(String(answers.location ?? ''), parsed.city);
+  const entities = draft.entities as Record<string, unknown>;
+  const neighborhoodSlug =
+    typeof entities.neighborhoodSlug === 'string' ? entities.neighborhoodSlug.trim() : '';
+  const lat =
+    typeof entities.lat === 'number' && Number.isFinite(entities.lat) ? entities.lat : undefined;
+  const lng =
+    typeof entities.lng === 'number' && Number.isFinite(entities.lng) ? entities.lng : undefined;
+  const flatAnswers = flattenDraftAnswersForPublish(draft);
   const tags: string[] = [parsed.intentType, parsed.categorySlug];
   if (parsed.subcategorySlug) tags.push(parsed.subcategorySlug);
   if (answers.condition) tags.push(String(answers.condition));
   if (answers.dealType) tags.push(String(answers.dealType));
+
+  const neighborhoodName =
+    typeof entities.neighborhood === 'string' ? entities.neighborhood.trim() : '';
+  const locationLine =
+    String(flatAnswers.location ?? answers.location ?? '').trim() ||
+    (neighborhoodName && city
+      ? `${neighborhoodName}، ${city}`
+      : neighborhoodName || city || '');
 
   return {
     projection,
@@ -140,6 +150,8 @@ export function toPublishCommand(
     budgetType: budget.max || budget.min ? 'FIXED' : 'NEGOTIABLE',
     city,
     province,
+    lat,
+    lng,
     priority: mapUrgency(parsed, answers),
     tags,
     intentType: parsed.intentType,
@@ -149,11 +161,10 @@ export function toPublishCommand(
       schemaVersion: draft.schemaVersion,
       sourceText: draft.sourceText,
       entities: draft.entities,
-      location: answers.location,
-      details: answers.details,
-      rooms: answers.rooms,
-      familyCount: answers.familyCount,
-      amenities: answers.amenities,
+      ...flatAnswers,
+      location: locationLine || flatAnswers.location || answers.location,
+      ...(neighborhoodSlug ? { _neighborhoodSlug: neighborhoodSlug } : {}),
+      ...(lat != null && lng != null ? { _mapLat: lat, _mapLng: lng } : {}),
     },
     aiExtractedData: {
       projection,

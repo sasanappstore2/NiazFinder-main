@@ -4,9 +4,9 @@
  * Canonical app path:
  * - App code should call Next.js API routes (`/api/...`) via `apiFetch`.
  *
- * Legacy bridge:
- * - The `apiGet/apiPost/...` helpers route to backend port 4000 through Caddy
- *   and are kept for compatibility only.
+ * Legacy bridge (DEPRECATED — do not use in new code):
+ * - The `apiGet/apiPost/...` helpers targeted NestJS on port 4000.
+ * - Production uses Next.js `/api/*` only; Nest is behind docker profile `legacy`.
  */
 
 // ---------------------------------------------------------------------------

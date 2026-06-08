@@ -1,8 +1,8 @@
 {
   "cityId": "bandarlengeh",
   "cityName": "بندرلنگه",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:32:56.965Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:42:33.292Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

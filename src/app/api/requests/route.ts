@@ -14,6 +14,7 @@ import {
 } from '@/lib/filters/dynamic-answers-filter';
 import { resolveNeighborhoodSlugs } from '@/lib/neighborhoods/server';
 import { buildNeighborhoodWhereClauses } from '@/lib/neighborhoods/tokens';
+import { shouldAutoApproveNeed } from '@/lib/need-intake/auto-approve-policy';
 
 // ============ TYPES ============
 
@@ -147,6 +148,7 @@ export async function GET(request: NextRequest) {
     const province = searchParams.get('province') || undefined;
     const city = searchParams.get('city') || undefined;
     const statusParam = searchParams.get('status') || undefined;
+    const mine = searchParams.get('mine') === '1' || searchParams.get('mine') === 'true';
     const sort = searchParams.get('sort') || 'newest';
     const search = searchParams.get('search') || undefined;
     const budgetMin = searchParams.get('budgetMin');
@@ -161,12 +163,26 @@ export async function GET(request: NextRequest) {
     const where: Prisma.ServiceRequestWhereInput = {};
     const andFilters: Prisma.ServiceRequestWhereInput[] = [];
 
-    const status =
-      statusParam && REQUEST_STATUSES.includes(statusParam as (typeof REQUEST_STATUSES)[number])
-        ? statusParam
-        : 'OPEN';
-    where.status = status as Prisma.EnumRequestStatusFilter['equals'];
-    where.moderationStatus = 'APPROVED';
+    if (mine) {
+      const user = await getAuthUser(request);
+      if (!user) {
+        return NextResponse.json({ error: 'لطفاً ابتدا وارد حساب کاربری خود شوید' }, { status: 401 });
+      }
+      where.userId = user.id;
+      if (
+        statusParam &&
+        REQUEST_STATUSES.includes(statusParam as (typeof REQUEST_STATUSES)[number])
+      ) {
+        where.status = statusParam as Prisma.EnumRequestStatusFilter['equals'];
+      }
+    } else {
+      const status =
+        statusParam && REQUEST_STATUSES.includes(statusParam as (typeof REQUEST_STATUSES)[number])
+          ? statusParam
+          : 'OPEN';
+      where.status = status as Prisma.EnumRequestStatusFilter['equals'];
+      where.moderationStatus = 'APPROVED';
+    }
 
     if (categoryFilter) {
       const category = await db.category.findFirst({
@@ -190,7 +206,8 @@ export async function GET(request: NextRequest) {
           ],
         });
       } else {
-        where.categoryId = categoryFilter;
+        console.warn('[requests] unknown category slug/id — returning empty set:', categoryFilter);
+        andFilters.push({ categoryId: { in: [] } });
       }
     }
 
@@ -444,10 +461,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create request — dev defaults to auto-publish for easier local QA
-    const autoApproveDev =
-      process.env.NEED_AUTO_APPROVE_REQUESTS === 'true' ||
-      (process.env.NODE_ENV !== 'production' &&
-        process.env.NEED_AUTO_APPROVE_REQUESTS !== 'false');
+    const autoApproveDev = shouldAutoApproveNeed(source?.trim() || 'form');
 
     const serviceRequest = await db.serviceRequest.create({
       data: {

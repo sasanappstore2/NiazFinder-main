@@ -1,8 +1,8 @@
 {
   "cityId": "avaj",
   "cityName": "آوج",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:48:07.952Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:43:44.588Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

@@ -35,6 +35,16 @@ export async function PATCH(
         ...(body.city !== undefined ? { city: String(body.city) } : {}),
         ...(body.province !== undefined ? { province: body.province ? String(body.province) : null } : {}),
         ...(body.address !== undefined ? { address: body.address ? String(body.address) : null } : {}),
+        ...(body.lat === null || body.lat === ''
+          ? { lat: null }
+          : body.lat !== undefined
+            ? { lat: Number(body.lat) }
+            : {}),
+        ...(body.lng === null || body.lng === ''
+          ? { lng: null }
+          : body.lng !== undefined
+            ? { lng: Number(body.lng) }
+            : {}),
         ...(body.isPrimary !== undefined ? { isPrimary: Boolean(body.isPrimary) } : {}),
         ...(body.isPublished !== undefined ? { isPublished: Boolean(body.isPublished) } : {}),
       },

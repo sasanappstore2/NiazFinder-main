@@ -398,7 +398,7 @@ export function ProductImageLightbox({
           onDoubleClick={onDoubleClick}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <img
             key={url}
             src={url}
@@ -439,7 +439,7 @@ export function ProductImageLightbox({
                   i === index ? 'border-emerald-400 ring-2 ring-emerald-400/30' : 'border-transparent opacity-60 hover:opacity-100'
                 )}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+                { }
                 <img src={thumb} alt="" className="size-full object-contain p-0.5" />
               </button>
             ))}

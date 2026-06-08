@@ -1,5 +1,12 @@
 import type { Prisma } from '@prisma/client';
+import { citySlugToPersianName } from '@/lib/search/city-slugs';
 import { provinceSlugsToPersianNames } from '@/lib/search/province-slugs';
+
+function resolveCityFilterName(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return trimmed;
+  return citySlugToPersianName(trimmed) ?? trimmed;
+}
 
 /** Build Prisma filters for `city` and `province` columns from API query params. */
 export function buildGeoAndFilters(opts: {
@@ -23,10 +30,10 @@ export function buildGeoAndFilters(opts: {
   }
 
   if (provinceNames.length === 1) {
-    and.push({ province: { contains: provinceNames[0] } });
+    and.push({ province: provinceNames[0] });
   } else if (provinceNames.length > 1) {
     and.push({
-      OR: provinceNames.map((name) => ({ province: { contains: name } })),
+      OR: provinceNames.map((name) => ({ province: name })),
     });
   }
 
@@ -35,18 +42,18 @@ export function buildGeoAndFilters(opts: {
     cityNames.push(
       ...opts.citiesParam
         .split(',')
-        .map((s) => s.trim())
+        .map((s) => resolveCityFilterName(s))
         .filter(Boolean)
     );
   } else if (opts.legacyCity) {
-    cityNames.push(opts.legacyCity);
+    cityNames.push(resolveCityFilterName(opts.legacyCity));
   }
 
   if (cityNames.length === 1) {
-    and.push({ city: { contains: cityNames[0] } });
+    and.push({ city: cityNames[0] });
   } else if (cityNames.length > 1) {
     and.push({
-      OR: cityNames.map((name) => ({ city: { contains: name } })),
+      OR: cityNames.map((name) => ({ city: name })),
     });
   }
 

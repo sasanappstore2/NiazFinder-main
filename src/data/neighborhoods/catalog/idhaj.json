@@ -1,8 +1,8 @@
 {
   "cityId": "idhaj",
   "cityName": "ایجرود",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:25:07.505Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:41:56.037Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

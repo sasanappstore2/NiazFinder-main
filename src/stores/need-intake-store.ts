@@ -17,6 +17,7 @@ import type { IntakeAnalysisResult } from '@/intake/types';
 import {
   createNeedDraftFromAnalysis,
   patchNeedDraftEntities as patchDraftEntities,
+  projectNeedDraftFromForm,
   syncNeedDraftFromForm,
 } from '@/intake/aggregate/needDraftAggregate';
 import { warnLegacyWriteDetected } from '@/intake/legacy/legacy-guards';
@@ -54,7 +55,9 @@ interface NeedIntakeState {
   setParsedIntent: (parsed: ParsedIntent) => void;
   setCurrentQuestion: (q: NextQuestionResponse | null) => void;
   setSummary: (s: string) => void;
-  setListingPreview: (p: ListingPreview | null) => void;
+  setListingPreview: (
+    p: ListingPreview | null | ((prev: ListingPreview | null) => ListingPreview | null)
+  ) => void;
   setReadiness: (score: number, ready: boolean) => void;
   setLeadPhone: (phone: string | null) => void;
   setError: (e: string | null) => void;
@@ -77,7 +80,18 @@ interface NeedIntakeState {
     subcategorySlug: string;
     city: string;
     neighborhood: string;
+    neighborhoodSlug?: string | null;
   }) => NeedDraft | null;
+  /** Pure draft projection for live preview — does not write store. */
+  projectNeedDraftFromFormFields: (form: {
+    needText: string;
+    detailsText: string;
+    categorySlug: string;
+    subcategorySlug: string;
+    city: string;
+    neighborhood: string;
+    neighborhoodSlug?: string | null;
+  }) => NeedDraft;
   reset: () => void;
   getDraft: () => NeedDraft | null;
 }
@@ -135,10 +149,14 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
   setCurrentQuestion: (q) => set({ currentQuestion: q }),
   setSummary: (summary) => set({ summary }),
   setListingPreview: (listingPreview) =>
-    set((s) => ({
-      listingPreview,
-      needDraft: s.needDraft ? { ...s.needDraft, listingPreview: listingPreview ?? undefined } : null,
-    })),
+    set((s) => {
+      const next =
+        typeof listingPreview === 'function' ? listingPreview(s.listingPreview) : listingPreview;
+      return {
+        listingPreview: next,
+        needDraft: s.needDraft ? { ...s.needDraft, listingPreview: next ?? undefined } : null,
+      };
+    }),
   setReadiness: (readinessScore, readyToPreview) =>
     set({ readinessScore, readyToPreview }),
   setLeadPhone: (leadPhone) =>
@@ -177,6 +195,11 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
     const updated = syncNeedDraftFromForm(current, form);
     applyNeedDraft(set, updated);
     return updated;
+  },
+
+  projectNeedDraftFromFormFields: (form) => {
+    const current = get().needDraft;
+    return projectNeedDraftFromForm(current, form);
   },
 
   reset: () => set(initialState),

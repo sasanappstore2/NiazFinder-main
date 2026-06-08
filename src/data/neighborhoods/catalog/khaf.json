@@ -1,8 +1,8 @@
 {
   "cityId": "khaf",
   "cityName": "خاف",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:02:40.863Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:40:21.820Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

@@ -25,6 +25,7 @@ services:
       retries: 5
 
   backend:
+    profiles: ["legacy"]
     build:
       context: .
       dockerfile: mini-services/backend/Dockerfile

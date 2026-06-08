@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { ManagedNeighborhood } from '@/lib/neighborhoods/types';
+import { matchManagedNeighborhood } from '@/lib/neighborhoods/match-managed-neighborhood';
 
 interface IntakeNeighborhoodPickerProps {
   cityName: string;
@@ -19,7 +20,7 @@ interface IntakeNeighborhoodPickerProps {
   neighborhoods: ManagedNeighborhood[];
   isLoading?: boolean;
   disabled?: boolean;
-  onChange: (name: string, neighborhoodId: string | null) => void;
+  onChange: (name: string, neighborhoodId: string | null, opts?: { fromUser?: boolean }) => void;
   className?: string;
   /** Open picker when city is ready but neighborhood empty (after GPS). */
   autoOpenWhenEmpty?: boolean;
@@ -51,19 +52,20 @@ export function IntakeNeighborhoodPicker({
     const trimmed = value.trim();
     if (!trimmed) return null;
     return (
-      neighborhoods.find((n) => n.name === trimmed || n.id === trimmed) ?? null
+      neighborhoods.find((n) => n.name === trimmed || n.id === trimmed) ??
+      matchManagedNeighborhood(neighborhoods, trimmed, cityName)
     );
-  }, [value, neighborhoods]);
+  }, [value, neighborhoods, cityName]);
 
   const filtered = useMemo(
     () => neighborhoods.filter((n) => matchesQuery(n, query)),
     [neighborhoods, query]
   );
 
-  const displayLabel = selected?.name || value.trim() || 'انتخاب محله';
+  const displayLabel = selected?.name || 'انتخاب محله';
 
   const handleSelect = (n: ManagedNeighborhood) => {
-    onChange(n.name, n.id);
+    onChange(n.name, n.id, { fromUser: true });
     setOpen(false);
     setQuery('');
   };
@@ -76,6 +78,14 @@ export function IntakeNeighborhoodPicker({
     setOpen(true);
     onAutoOpenHandled?.();
   }, [autoOpenWhenEmpty, canOpenList, value, onAutoOpenHandled]);
+
+  useEffect(() => {
+    if (!selected || disabled || isLoading || !hasCatalog) return;
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    if (trimmed === selected.name || trimmed === selected.id) return;
+    onChange(selected.name, selected.id);
+  }, [selected, value, disabled, isLoading, hasCatalog, onChange]);
 
   if (!hasCatalog && cityName.trim() && !isLoading) {
     return (
@@ -125,6 +135,7 @@ export function IntakeNeighborhoodPicker({
           <DialogContent
             className="flex max-h-[92dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg"
             dir="rtl"
+            aria-describedby={undefined}
           >
             <DialogHeader className="flex flex-row items-center justify-between border-b px-4 py-3 space-y-0">
               <DialogTitle className="text-base font-bold">

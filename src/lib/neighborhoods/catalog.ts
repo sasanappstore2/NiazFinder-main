@@ -8,6 +8,7 @@ import type {
   CatalogNeighborhood,
   NeighborhoodManifest,
 } from '@/lib/neighborhoods/catalog-types';
+import { sanitizeAreaLabels } from '@/lib/neighborhoods/area-labels';
 
 const NEIGHBORHOODS_ROOT = path.join(process.cwd(), 'src', 'data', 'neighborhoods');
 const CATALOG_DIR = path.join(NEIGHBORHOODS_ROOT, 'catalog');
@@ -30,7 +31,12 @@ export function catalogNeighborhoodToManaged(
     id: n.id,
     name: n.name,
     nameEn: n.nameEn ?? n.id,
-    ...(n.areas?.length ? { areas: n.areas } : {}),
+    ...(n.areas?.length
+      ? { areas: sanitizeAreaLabels(n.areas, n.name) }
+      : {}),
+    ...(n.centroid ? { centroid: n.centroid } : {}),
+    ...(n.bbox ? { bbox: n.bbox } : {}),
+    ...(n.geoSource ? { geoSource: n.geoSource } : {}),
     isActive: true,
     order,
   };
@@ -42,6 +48,9 @@ export function managedToCatalogNeighborhood(n: ManagedNeighborhood): CatalogNei
     name: n.name,
     nameEn: n.nameEn,
     ...(n.areas?.length ? { areas: n.areas } : {}),
+    ...(n.centroid ? { centroid: n.centroid } : {}),
+    ...(n.bbox ? { bbox: n.bbox } : {}),
+    ...(n.geoSource ? { geoSource: n.geoSource } : {}),
   };
 }
 
@@ -146,12 +155,18 @@ export async function saveCityCatalog(
   return managed;
 }
 
+type NeighborhoodSeed = {
+  name: string;
+  areas?: string[];
+  centroid?: CatalogNeighborhood['centroid'];
+  bbox?: CatalogNeighborhood['bbox'];
+  geoSource?: CatalogNeighborhood['geoSource'];
+};
+
 /** Build unique slug ids for district names within a city. */
-export function slugifyNeighborhoodNames(
-  names: { name: string; areas?: string[] }[]
-): CatalogNeighborhood[] {
+export function slugifyNeighborhoodNames(names: NeighborhoodSeed[]): CatalogNeighborhood[] {
   const used = new Set<string>();
-  return names.map(({ name, areas }) => {
+  return names.map(({ name, areas, centroid, bbox, geoSource }) => {
     let base = makeLocationId(name);
     if (!base) base = `loc-${used.size + 1}`;
     let id = base;
@@ -166,6 +181,9 @@ export function slugifyNeighborhoodNames(
       name,
       nameEn: id,
       ...(areas?.length ? { areas } : {}),
+      ...(centroid ? { centroid } : {}),
+      ...(bbox ? { bbox } : {}),
+      ...(geoSource ? { geoSource } : {}),
     };
   });
 }

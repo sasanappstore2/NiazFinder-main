@@ -192,7 +192,10 @@ const SOCIAL_SIGNALS: { word: string; weight: number }[] = [
 ];
 
 /** Known Tehran neighborhoods for area extraction. */
-export const KNOWN_AREAS = [
+import { getKnownAreasForCity, KNOWN_AREAS_FROM_CATALOG } from '@/lib/neighborhoods/known-areas';
+
+/** @deprecated Prefer getKnownAreasForCity — legacy Tehran-only list kept as fallback. */
+const LEGACY_TEHRAN_AREAS = [
   'ولنجک',
   'سعادت‌آباد',
   'سعادت اباد',
@@ -218,6 +221,11 @@ export const KNOWN_AREAS = [
   'افسریه',
   'شهرری',
   'اندیشه',
+] as const;
+
+export const KNOWN_AREAS = [
+  ...KNOWN_AREAS_FROM_CATALOG,
+  ...LEGACY_TEHRAN_AREAS.filter((a) => !KNOWN_AREAS_FROM_CATALOG.includes(a)),
 ];
 
 function normalizeForClassifier(text: string): string {
@@ -418,12 +426,27 @@ export function categorySlugForVertical(
   }
 }
 
-export function parseAreaFromText(rawText: string): string | undefined {
+/** Avoid false positives like «ری» inside «متری». */
+function textContainsAreaName(text: string, area: string): boolean {
+  const normalized = area.replace(/\s+/g, ' ').trim();
+  if (!normalized) return false;
+  const idx = text.indexOf(normalized);
+  if (idx === -1) return false;
+  const isAdjacentLetter = (c: string | undefined) =>
+    c != null && /[\u0600-\u06FFa-zA-Z0-9]/.test(c);
+  const before = idx > 0 ? text[idx - 1] : undefined;
+  const after =
+    idx + normalized.length < text.length ? text[idx + normalized.length] : undefined;
+  return !isAdjacentLetter(before) && !isAdjacentLetter(after);
+}
+
+export function parseAreaFromText(rawText: string, cityId?: string | null): string | undefined {
   const text = rawText.trim();
   if (!text) return undefined;
-  for (const area of KNOWN_AREAS) {
-    if (text.includes(area)) return area.replace(/\s+/g, ' ').trim();
-  }
+
+  const rejectArea = new Set(['به', 'در', 'از', 'تا', 'حرم', 'مترو', 'بیمارستان']);
+  const drNonLocation = new Set(['حد', 'نو', 'اینجا', 'آنجا', 'کل', 'هر', 'بین', 'صورت']);
+
   const scopedPatterns = [
     /محدوده\s*[:：]?\s*([^،\n]+)/u,
     /منطقه\s*[:：]?\s*([^،\n]+)/u,
@@ -436,19 +459,46 @@ export function parseAreaFromText(rawText: string): string | undefined {
       if (area.length >= 2 && area.length <= 60) return area;
     }
   }
+
+  const knownAreas = getKnownAreasForCity(cityId);
+  const sorted = [...knownAreas].sort((a, b) => b.length - a.length);
+  for (const area of sorted) {
+    if (area.length < 5) continue;
+    if (textContainsAreaName(text, area)) return area.replace(/\s+/g, ' ').trim();
+  }
+
+  for (const area of KNOWN_AREAS) {
+    if (area.length < 5) continue;
+    if (textContainsAreaName(text, area)) return area.replace(/\s+/g, ' ').trim();
+  }
   const patterns = [
     /محدوده\s+([^\s،,.]+(?:\s+[^\s،,.]+){0,4})/u,
     /منطقه\s+([^\s،,.]+(?:\s+[^\s،,.]+){0,4})/u,
     /محله\s+([^\s،,.]+(?:\s+[^\s،,.]+){0,4})/u,
-    /نزدیک\s+([^\s،,.]+)/u,
+    /نزدیک\s+(?:به\s+)?([^\s،,.]+)/u,
   ];
   for (const re of patterns) {
     const m = text.match(re);
     if (m?.[1]) {
       const area = stripTrailingCityFromArea(m[1].trim());
+      if (rejectArea.has(area)) continue;
       if (area.length >= 2 && area.length <= 60) return area;
     }
   }
+
+  const fromDr = text.match(/در\s+([^\s،,.]+)/u);
+  if (fromDr?.[1]) {
+    const candidate = stripTrailingCityFromArea(fromDr[1].trim());
+    if (
+      candidate.length >= 2 &&
+      candidate.length <= 60 &&
+      !rejectArea.has(candidate) &&
+      !drNonLocation.has(candidate)
+    ) {
+      return candidate;
+    }
+  }
+
   return undefined;
 }
 

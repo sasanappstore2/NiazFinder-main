@@ -64,6 +64,31 @@ const GUEST_WORDS: Record<string, string> = {
   پنج: '5+',
 };
 
+const PERSIAN_WORD_NUMBERS: Record<string, number> = {
+  یک: 1,
+  دو: 2,
+  سه: 3,
+  چهار: 4,
+  پنج: 5,
+  شش: 6,
+  هفت: 7,
+  هشت: 8,
+  نه: 9,
+  ده: 10,
+};
+
+const AMOUNT_TOKEN = `(?:${Object.keys(PERSIAN_WORD_NUMBERS).join('|')}|\\d+(?:\\.\\d+)?)`;
+
+function parseAmountWithUnit(text: string, unit: 'میلیون' | 'میلیارد'): number | undefined {
+  const re = new RegExp(`(${AMOUNT_TOKEN})\\s*${unit}`, 'u');
+  const m = text.match(re);
+  if (!m?.[1]) return undefined;
+  const token = m[1];
+  const n = PERSIAN_WORD_NUMBERS[token] ?? Number(token);
+  if (!Number.isFinite(n) || n <= 0) return undefined;
+  return unit === 'میلیارد' ? parseMoneyBillion(String(n)) : parseMoneyMillion(String(n));
+}
+
 function parseMoneyMillion(millionStr: string): number | undefined {
   const n = Number(millionStr);
   if (!Number.isFinite(n) || n <= 0 || n > 5_000) return undefined;
@@ -94,6 +119,22 @@ function extractMonthlyRentToman(norm: string): number | undefined {
 }
 
 function extractRahnToman(norm: string): number | undefined {
+  const billionNearRahn = norm.match(
+    new RegExp(`${AMOUNT_TOKEN}\\s*میلیارد[^\\n]{0,50}رهن`, 'u')
+  );
+  if (billionNearRahn) {
+    const value = parseAmountWithUnit(billionNearRahn[0], 'میلیارد');
+    if (value != null) return value;
+  }
+
+  const rahnNearBillion = norm.match(
+    new RegExp(`رهن[^\\n]{0,50}${AMOUNT_TOKEN}\\s*میلیارد`, 'u')
+  );
+  if (rahnNearBillion) {
+    const value = parseAmountWithUnit(rahnNearBillion[0], 'میلیارد');
+    if (value != null) return value;
+  }
+
   const billionPatterns = [
     /(\d+(?:\.\d+)?)\s*میلیارد[^\n]{0,50}(?:رهن|ودیعه|بودجه)/u,
     /(?:رهن|ودیعه|بودجه)[^\n]{0,50}(\d+(?:\.\d+)?)\s*میلیارد/u,
@@ -105,6 +146,14 @@ function extractRahnToman(norm: string): number | undefined {
       const value = parseMoneyBillion(m[1]);
       if (value != null) return value;
     }
+  }
+
+  const wordBillionBudget = norm.match(
+    new RegExp(`${AMOUNT_TOKEN}\\s*میلیارد[^\\n]{0,40}(?:بودجه|رهن|ودیعه)`, 'u')
+  );
+  if (wordBillionBudget) {
+    const value = parseAmountWithUnit(wordBillionBudget[0], 'میلیارد');
+    if (value != null) return value;
   }
 
   const millionRahnAfter = norm.match(/رهن\s*(\d+(?:\.\d+)?)\s*میلیون/u);

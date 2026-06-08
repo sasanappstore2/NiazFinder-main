@@ -3,7 +3,6 @@
 import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useState, useEffect, useCallback, useRef, Suspense, useSyncExternalStore } from 'react';
 import {
-  LocateFixed,
   Bell,
   MessageSquare,
   User,
@@ -519,19 +518,16 @@ export function Header({ compact = false }: { compact?: boolean }) {
         isScrolled ? 'border-border/30' : 'border-border/20',
       )}>
         <div className="flex h-[52px] min-w-0 items-center gap-2 sm:gap-4">
-          {/* Logo — hidden on mobile to prioritize search */}
+          {/* Logo icon — right of search (RTL), links home */}
           <button
             type="button"
             data-href="/"
-            title="نیاز فایندر - صفحه اصلی"
+            title="صفحه اصلی"
             onClick={() => navigateTo('home')}
-            className="hidden shrink-0 items-center gap-2 transition-colors duration-150 hover:opacity-80 sm:flex"
-            aria-label={SITE_NAME}
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 active:scale-95"
+            aria-label={`${SITE_NAME} — صفحه اصلی`}
           >
-            <LocateFixed className="size-[24px] text-primary" />
-            <span className="text-lg font-bold tracking-tight text-primary sm:text-xl">
-              {SITE_NAME}
-            </span>
+            <img src="/logo.svg" alt="" width={28} height={28} className="size-7" />
           </button>
 
           {/* Search — full width on mobile */}

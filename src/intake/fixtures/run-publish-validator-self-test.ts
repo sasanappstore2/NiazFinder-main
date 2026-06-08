@@ -56,6 +56,9 @@ const completeEntities: IntakeEntities = {
   neighborhood: 'فرامرز عباسی',
   neighborhoodSlug: 'faramarz-abbasi',
   transactionType: 'RENT',
+  // Mashhad — required for mapPin publish gate when city/neighborhood are required
+  lat: 36.2972,
+  lng: 59.6067,
 };
 
 const completeDraft: NeedDraft = createNeedDraftFromAnalysis(

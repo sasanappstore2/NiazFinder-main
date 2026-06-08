@@ -10,6 +10,7 @@ import {
   readManifest,
   resolveCatalogCityIdCandidates,
 } from '../../src/lib/neighborhoods/catalog';
+import { loadCityGeoFile } from '../../src/lib/neighborhoods/geo';
 
 async function loadCatalogForAdminCity(cityId: string) {
   for (const candidate of resolveCatalogCityIdCandidates(cityId)) {
@@ -75,10 +76,32 @@ async function main() {
     }
 
     const ids = new Set<string>();
+    let catalogCityId = city.id;
+    for (const candidate of resolveCatalogCityIdCandidates(city.id)) {
+      const file = await loadCityCatalogFile(candidate);
+      if (file) {
+        catalogCityId = candidate;
+        break;
+      }
+    }
+    const geo = await loadCityGeoFile(catalogCityId);
+    const geoIds = new Set((geo?.features ?? []).map((f) => f.properties.id));
+
     for (const n of catalog.neighborhoods) {
       if (!n.name?.trim()) errors.push(`${city.id}: empty neighborhood name`);
       if (ids.has(n.id)) errors.push(`${city.id}: duplicate id ${n.id}`);
       ids.add(n.id);
+      if ((n.areas?.length ?? 0) < 3) {
+        errors.push(`${city.id}/${n.id}: expected >= 3 areas, got ${n.areas?.length ?? 0}`);
+      }
+      for (const area of n.areas ?? []) {
+        if (/\?{2,}/.test(area)) {
+          errors.push(`${city.id}/${n.id}: corrupted area label "${area.slice(0, 40)}"`);
+        }
+      }
+      if (!geoIds.has(n.id)) {
+        errors.push(`${city.id}/${n.id}: missing geo polygon`);
+      }
     }
 
     reports.push({ cityId: city.id, name: city.name, count, status: 'ok' });

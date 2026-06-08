@@ -53,12 +53,17 @@ export function buildPropertyTitle(
 
   let core = `${dealFa} ${kindFa}${roomPart}${sizePart}`.trim();
 
-  if (areaName && city) {
-    core = `${dealFa} ${kindFa}${roomPart} در ${areaName}، ${city}`;
-  } else if (areaName) {
-    core = `${dealFa} ${kindFa}${roomPart} در ${areaName}`;
-  } else if (city) {
-    core = `${dealFa} ${kindFa}${roomPart} در ${city}`;
+  const locationPart =
+    areaName && city
+      ? `در ${areaName}، ${city}`
+      : areaName
+        ? `در ${areaName}`
+        : city
+          ? `در ${city}`
+          : '';
+
+  if (locationPart) {
+    core = `${core} ${locationPart}`.trim();
   }
 
   return core.slice(0, 80) || 'جستجوی ملک';

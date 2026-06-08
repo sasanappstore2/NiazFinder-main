@@ -14,24 +14,35 @@ interface PageProps {
   params: Promise<{ path: string[] }>;
 }
 
-async function lookupTitle(id: string): Promise<string | null> {
+async function lookupTitle(id: string): Promise<{ title: string; publicVisible: boolean } | null> {
   const row = await db.serviceRequest.findUnique({
     where: { id },
-    select: { title: true },
+    select: { title: true, moderationStatus: true, status: true },
   });
-  return row?.title ?? null;
+  if (!row?.title) return null;
+  const publicVisible =
+    row.moderationStatus === 'APPROVED' &&
+    ['OPEN', 'IN_PROGRESS', 'COMPLETED', 'CLOSED'].includes(row.status);
+  return { title: row.title, publicVisible };
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { path } = await params;
   const id = path.length >= 2 ? path[1] : path[0];
-  const title = await lookupTitle(decodeURIComponent(id));
+  const lookup = await lookupTitle(decodeURIComponent(id));
 
-  if (!title) {
-    return { title: `آگهی | ${SITE_NAME}` };
+  if (!lookup) {
+    return { title: `آگهی | ${SITE_NAME}`, robots: { index: false, follow: false } };
   }
 
-  const slug = slugifyTitle(title);
+  if (!lookup.publicVisible) {
+    return {
+      title: `آگهی | ${SITE_NAME}`,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const title = lookup.title;
   const canonical = routeBuilder.listing(id, title);
   const fullTitle = `${title} | ${SITE_NAME}`;
 
@@ -56,16 +67,17 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
   if (path.length === 1) {
     const id = decodeURIComponent(path[0]);
-    const title = await lookupTitle(id);
-    if (!title) notFound();
-    permanentRedirect(routeBuilder.listing(id, title));
+    const lookup = await lookupTitle(id);
+    if (!lookup) notFound();
+    permanentRedirect(routeBuilder.listing(id, lookup.title));
   }
 
   const [rawSlug, rawId] = path;
   const id = decodeURIComponent(rawId);
-  const title = await lookupTitle(id);
-  if (!title) notFound();
+  const lookup = await lookupTitle(id);
+  if (!lookup) notFound();
 
+  const title = lookup.title;
   if (!isCanonicalSlug(rawSlug, title)) {
     permanentRedirect(routeBuilder.listing(id, title));
   }

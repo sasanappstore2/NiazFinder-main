@@ -11,6 +11,21 @@ export interface ResolvedCategoryIds {
   subcategorySlug: string | null;
 }
 
+export class CategoryResolveError extends Error {
+  readonly statusCode = 422;
+
+  constructor(
+    public readonly slug: string,
+    message?: string
+  ) {
+    super(
+      message ??
+        `دسته «${slug}» در پایگاه داده یافت نشد. دستور npm run categories:sync را اجرا کنید.`
+    );
+    this.name = 'CategoryResolveError';
+  }
+}
+
 async function findCategoryIdBySlug(slug: string): Promise<string | null> {
   const row = await db.category.findFirst({
     where: { slug, isActive: true },
@@ -19,8 +34,13 @@ async function findCategoryIdBySlug(slug: string): Promise<string | null> {
   return row?.id ?? null;
 }
 
+function missingSlug(slug: string): never {
+  throw new CategoryResolveError(slug);
+}
+
 /**
  * Resolve Prisma category + subcategory ids from canonical or legacy slugs.
+ * Fails loudly when slug is unknown in DB (no silent fallback).
  */
 export async function resolveCategoryIds(
   categorySlug: string,
@@ -28,17 +48,7 @@ export async function resolveCategoryIds(
 ): Promise<ResolvedCategoryIds> {
   const levels = resolveCategoryLevels(categorySlug, subcategorySlug);
   if (!levels) {
-    const fallback = await db.category.findFirst({
-      where: { isActive: true, parentId: null },
-      orderBy: { order: 'asc' },
-    });
-    if (!fallback) throw new Error('No active category in database');
-    return {
-      categoryId: fallback.id,
-      subcategoryId: null,
-      categorySlug: fallback.slug,
-      subcategorySlug: null,
-    };
+    missingSlug(categorySlug);
   }
 
   let categoryId = await findCategoryIdBySlug(levels.categorySlug);
@@ -46,26 +56,23 @@ export async function resolveCategoryIds(
 
   if (levels.subcategorySlug) {
     subcategoryId = await findCategoryIdBySlug(levels.subcategorySlug);
-    if (!categoryId) {
+    if (!categoryId && subcategoryId) {
       categoryId = subcategoryId;
       subcategoryId = null;
     }
   }
 
   if (!categoryId) {
-    const leafId = await findCategoryIdBySlug(levels.leafSlug);
-    if (leafId) {
-      categoryId = leafId;
-    }
+    categoryId = await findCategoryIdBySlug(levels.leafSlug);
   }
 
   if (!categoryId) {
-    const any = await db.category.findFirst({
-      where: { isActive: true },
-      orderBy: { order: 'asc' },
-    });
-    if (!any) throw new Error('No active category in database');
-    categoryId = any.id;
+    missingSlug(levels.leafSlug);
+  }
+
+  if (levels.subcategorySlug && !subcategoryId) {
+    const leafOnly = await findCategoryIdBySlug(levels.subcategorySlug);
+    if (leafOnly) subcategoryId = leafOnly;
   }
 
   return {

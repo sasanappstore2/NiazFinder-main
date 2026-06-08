@@ -1,8 +1,8 @@
 {
   "cityId": "sarbaz",
   "cityName": "سرباز",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:37:54.418Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:42:52.140Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

@@ -154,9 +154,16 @@ export function NeighborhoodSelectorModal({
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold leading-snug">{n.name}</p>
                     {n.areas && n.areas.length > 0 && (
-                      <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
-                        {n.areas.join('، ')}
-                      </p>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {n.areas.map((area) => (
+                          <span
+                            key={area}
+                            className="rounded-md bg-muted/60 px-2 py-0.5 text-xs text-muted-foreground"
+                          >
+                            {area}
+                          </span>
+                        ))}
+                      </div>
                     )}
                   </div>
                 </button>

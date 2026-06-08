@@ -1,8 +1,8 @@
 {
   "cityId": "ben",
   "cityName": "بن",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:42:25.081Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:43:08.721Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

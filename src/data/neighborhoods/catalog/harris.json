@@ -1,8 +1,8 @@
 {
   "cityId": "harris",
   "cityName": "هریس",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:06:34.645Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:40:38.697Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

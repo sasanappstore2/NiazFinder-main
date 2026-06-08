@@ -1,8 +1,8 @@
 {
   "cityId": "kahak",
   "cityName": "کهک",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:19:00.147Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:41:44.072Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

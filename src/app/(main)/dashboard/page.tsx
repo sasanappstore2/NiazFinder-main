@@ -9,7 +9,7 @@ import { UserDashboard } from '@/components/dashboard/UserDashboard';
 
 export default function DashboardRoute() {
   return (
-    <AuthGuard>
+    <AuthGuard routeView="dashboard">
       <PageContainer>
         <Breadcrumb />
         <Separator className="my-4" />

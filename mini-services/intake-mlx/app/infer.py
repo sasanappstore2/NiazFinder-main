@@ -7,7 +7,7 @@ from typing import Any
 
 from app.config import LISTING_TITLE_MAX_LENGTH, MAX_TOKENS, TITLE_MAX_TOKENS
 from app.model_loader import get_model_state
-from app.prompts import LISTING_TITLE_SYSTEM_PROMPT, NEED_INTAKE_SYSTEM_PROMPT
+from app.prompts import LISTING_COPY_SYSTEM_PROMPT, LISTING_TITLE_SYSTEM_PROMPT, NEED_INTAKE_SYSTEM_PROMPT
 
 
 def _strip_generation_leak(text: str) -> str:
@@ -123,3 +123,26 @@ def generate_title(context: dict[str, Any]) -> tuple[str, str]:
     if not title:
         raise RuntimeError(f"Empty title from model. Raw snippet: {raw_str[:500]}")
     return title, raw_str
+
+
+def generate_listing_copy(
+    *,
+    system_prompt: str | None = None,
+    user_prompt: str | None = None,
+    context: dict[str, Any] | None = None,
+) -> tuple[str, str, str]:
+    """Return (title, description, raw)."""
+    system = system_prompt or LISTING_COPY_SYSTEM_PROMPT
+    if user_prompt:
+        user = user_prompt
+    else:
+        user_payload = json.dumps(context or {}, ensure_ascii=False, indent=2)
+        user = f"بر اساس اطلاعات زیر title و description بنویس:\n{user_payload}"
+
+    raw_str = generate_with_prompt(system, user, max_tokens=MAX_TOKENS)
+    parsed = _extract_json(raw_str)
+    title = _normalize_title(str(parsed.get("title") or ""))
+    description = str(parsed.get("description") or "").strip()
+    if not title and not description:
+        raise RuntimeError(f"Empty listing copy from model. Raw snippet: {raw_str[:500]}")
+    return title, description, raw_str

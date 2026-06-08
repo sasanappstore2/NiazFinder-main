@@ -20,7 +20,7 @@ const TASKS: {
   {
     id: 'profile',
     label: 'معرفی و تماس',
-    hint: 'نام، توضیح و شماره تماس',
+    hint: 'نام، موقعیت روی نقشه و تماس',
     icon: UserRound,
   },
   {

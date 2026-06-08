@@ -9,17 +9,11 @@ import {
   CheckCircle,
   Star,
   Wallet,
-  ArrowDownLeft,
-  ArrowUpRight,
-  RefreshCcw,
-  Percent,
-  Plus,
   Save,
   User as UserIcon,
   Mail,
   Phone,
   MapPin,
-  FileText,
   Clock,
   DollarSign,
   BadgeCheck,
@@ -47,145 +41,22 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useAppStore } from '@/lib/store';
-import { formatPrice, formatBudgetRange, getStatusLabel, getTimeAgo } from '@/lib/constants';
-import type { ServiceRequest, Transaction } from '@/lib/types';
+import { apiFetch } from '@/lib/api-client';
+import { formatBudgetRange, getStatusLabel, getTimeAgo } from '@/lib/constants';
+import type { ServiceRequest } from '@/lib/types';
 import { SmartLeadsSection } from '@/components/dashboard/SmartLeadsSection';
 import { canManageBusinessProfile } from '@/lib/business/can-manage-business-profile';
 import { routeBuilder } from '@/config/routes';
 
-// ============ MOCK DATA ============
+// ============ MOCK DATA (wallet API not wired yet) ============
 
-const MOCK_USER_REQUESTS: ServiceRequest[] = [
-  {
-    id: 'ur1',
-    title: 'طراحی سایت فروشگاهی آنلاین',
-    slug: 'online-store-design',
-    description: 'طراحی سایت فروشگاهی حرفه‌ای با سبد خرید و درگاه پرداخت',
-    budgetMin: 15000000,
-    budgetMax: 30000000,
-    budgetType: 'FIXED',
-    deliveryTime: 30,
-    deliveryUnit: 'day',
-    city: 'تهران',
-    province: 'تهران',
-    categoryId: '1',
-    categoryName: 'طراحی و توسعه وب',
-    categoryIcon: '💻',
-    priority: 'HIGH',
-    status: 'OPEN',
-    tags: ['فروشگاهی', 'ریسپانسیو'],
-    viewCount: 234,
-    proposalCount: 12,
-    user: { id: 'u1', firstName: 'محمد', lastName: 'حسینی', avatar: '', city: 'تهران', createdAt: '2024-01-15' },
-    createdAt: '2024-06-10T10:30:00Z',
-    updatedAt: '2024-06-10T10:30:00Z',
-  },
-  {
-    id: 'ur2',
-    title: 'تعمیر گوشی سامسونگ S23',
-    slug: 'samsung-repair',
-    description: 'تعویض صفحه نمایش و باتری گوشی',
-    budgetMin: 2000000,
-    budgetMax: 4000000,
-    budgetType: 'NEGOTIABLE',
-    deliveryTime: 1,
-    deliveryUnit: 'day',
-    city: 'تهران',
-    province: 'تهران',
-    categoryId: '6',
-    categoryName: 'تعمیرات',
-    categoryIcon: '🔧',
-    priority: 'URGENT',
-    status: 'IN_PROGRESS',
-    tags: ['سامسونگ', 'صفحه نمایش'],
-    viewCount: 89,
-    proposalCount: 5,
-    user: { id: 'u1', firstName: 'محمد', lastName: 'حسینی', avatar: '', city: 'تهران', createdAt: '2024-01-15' },
-    createdAt: '2024-06-11T14:20:00Z',
-    updatedAt: '2024-06-12T09:00:00Z',
-  },
-  {
-    id: 'ur3',
-    title: 'تولید محتوای وبلاگ شرکت',
-    slug: 'blog-content',
-    description: '۲۰ مقاله سئو شده در حوزه فناوری',
-    budgetMin: 8000000,
-    budgetMax: 15000000,
-    budgetType: 'FIXED',
-    deliveryTime: 20,
-    deliveryUnit: 'day',
-    city: 'تهران',
-    province: 'تهران',
-    categoryId: '3',
-    categoryName: 'تولید محتوا',
-    categoryIcon: '✍️',
-    priority: 'NORMAL',
-    status: 'COMPLETED',
-    tags: ['وبلاگ', 'سئو'],
-    viewCount: 156,
-    proposalCount: 8,
-    user: { id: 'u1', firstName: 'محمد', lastName: 'حسینی', avatar: '', city: 'تهران', createdAt: '2024-01-15' },
-    createdAt: '2024-05-09T09:15:00Z',
-    updatedAt: '2024-05-30T16:00:00Z',
-  },
-  {
-    id: 'ur4',
-    title: 'طراحی لوگو و هویت بصری برند',
-    slug: 'logo-design',
-    description: 'طراحی لوگو و هویت بصری کامل برند استارتاپ',
-    budgetMin: 5000000,
-    budgetMax: 10000000,
-    budgetType: 'FIXED',
-    deliveryTime: 14,
-    deliveryUnit: 'day',
-    city: 'تهران',
-    province: 'تهران',
-    categoryId: '4',
-    categoryName: 'طراحی گرافیک',
-    categoryIcon: '🎨',
-    priority: 'NORMAL',
-    status: 'OPEN',
-    tags: ['لوگو', 'هویت بصری'],
-    viewCount: 198,
-    proposalCount: 15,
-    user: { id: 'u1', firstName: 'محمد', lastName: 'حسینی', avatar: '', city: 'تهران', createdAt: '2024-01-15' },
-    createdAt: '2024-06-08T16:45:00Z',
-    updatedAt: '2024-06-08T16:45:00Z',
-  },
-  {
-    id: 'ur5',
-    title: 'نظافت منزل',
-    slug: 'home-cleaning',
-    description: 'نظافت کامل منزل ۳ خوابه',
-    budgetMin: 1500000,
-    budgetMax: 2500000,
-    budgetType: 'FIXED',
-    deliveryTime: 1,
-    deliveryUnit: 'day',
-    city: 'تهران',
-    province: 'تهران',
-    categoryId: '5',
-    categoryName: 'خدمات خانگی',
-    categoryIcon: '🏠',
-    priority: 'NORMAL',
-    status: 'COMPLETED',
-    tags: ['نظافت', 'منزل'],
-    viewCount: 67,
-    proposalCount: 20,
-    user: { id: 'u1', firstName: 'محمد', lastName: 'حسینی', avatar: '', city: 'تهران', createdAt: '2024-01-15' },
-    createdAt: '2024-05-20T08:30:00Z',
-    updatedAt: '2024-05-21T18:00:00Z',
-  },
-];
-
-const MOCK_TRANSACTIONS: Transaction[] = [
-  { id: 't1', type: 'DEPOSIT', amount: 5000000, description: 'شارژ کیف پول از طریق درگاه بانکی', status: 'COMPLETED', createdAt: '2024-06-12T10:00:00Z' },
-  { id: 't2', type: 'PAYMENT', amount: 12000000, description: 'پرداخت به مینا حسینی - تولید محتوای وبلاگ', status: 'COMPLETED', createdAt: '2024-06-10T14:30:00Z' },
-  { id: 't3', type: 'REFUND', amount: 3500000, description: 'بازگشت مبلغ - لغو پروژه نظافت منزل', status: 'COMPLETED', createdAt: '2024-06-08T09:00:00Z' },
-  { id: 't4', type: 'COMMISSION', amount: 600000, description: 'کمیسیون پلتفرم - ۵٪ از پرداخت', status: 'COMPLETED', createdAt: '2024-06-10T14:30:00Z' },
-  { id: 't5', type: 'WITHDRAW', amount: 2000000, description: 'برداشت به حساب بانکی', status: 'COMPLETED', createdAt: '2024-06-07T11:00:00Z' },
-  { id: 't6', type: 'DEPOSIT', amount: 10000000, description: 'شارژ کیف پول از طریق درگاه بانکی', status: 'COMPLETED', createdAt: '2024-06-01T16:45:00Z' },
-];
+interface DashboardStats {
+  totalRequests: number;
+  activeRequests: number;
+  completedProjects: number;
+  pendingProposals: number;
+  avgRating: number;
+}
 
 // ============ HELPERS ============
 
@@ -199,17 +70,6 @@ function getStatusColor(status: string): string {
     case 'PENDING': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200';
     case 'REJECTED': return 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 border-rose-200';
     default: return 'bg-gray-100 text-gray-600 dark:bg-gray-800/40 dark:text-gray-400 border-gray-200';
-  }
-}
-
-function getTransactionTypeConfig(type: Transaction['type']) {
-  switch (type) {
-    case 'DEPOSIT': return { icon: ArrowDownLeft, label: 'واریز', color: 'text-emerald-600 dark:text-emerald-400', amountColor: 'text-emerald-600 dark:text-emerald-400', prefix: '+' };
-    case 'PAYMENT': return { icon: ArrowUpRight, label: 'پرداخت', color: 'text-rose-600 dark:text-rose-400', amountColor: 'text-rose-600 dark:text-rose-400', prefix: '-' };
-    case 'WITHDRAW': return { icon: ArrowUpRight, label: 'برداشت', color: 'text-rose-600 dark:text-rose-400', amountColor: 'text-rose-600 dark:text-rose-400', prefix: '-' };
-    case 'REFUND': return { icon: RefreshCcw, label: 'بازگشت وجه', color: 'text-cyan-600 dark:text-cyan-400', amountColor: 'text-cyan-600 dark:text-cyan-400', prefix: '+' };
-    case 'COMMISSION': return { icon: Percent, label: 'کمیسیون', color: 'text-amber-600 dark:text-amber-400', amountColor: 'text-amber-600 dark:text-amber-400', prefix: '-' };
-    default: return { icon: Wallet, label: type, color: 'text-gray-500', amountColor: 'text-gray-500', prefix: '' };
   }
 }
 
@@ -238,6 +98,42 @@ export function UserDashboard() {
   const tabFromUrl = searchParams.get('tab');
   const [activeTab, setActiveTab] = useState(() => resolveDashboardTab(tabFromUrl));
   const [requestFilter, setRequestFilter] = useState<string>('ALL');
+  const [userRequests, setUserRequests] = useState<ServiceRequest[]>([]);
+  const [requestsLoading, setRequestsLoading] = useState(true);
+  const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      setRequestsLoading(true);
+      try {
+        const res = await apiFetch<{ data: ServiceRequest[] }>('/api/requests?mine=1&limit=50');
+        if (!cancelled && res?.data) setUserRequests(res.data);
+      } catch {
+        if (!cancelled) toast.error('بارگذاری آگهی‌های شما ناموفق بود');
+      } finally {
+        if (!cancelled) setRequestsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await apiFetch<{ stats: DashboardStats }>('/api/dashboard');
+        if (!cancelled && res?.stats) setDashboardStats(res.stats);
+      } catch {
+        // stats are optional — requests tab still works
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     setActiveTab(resolveDashboardTab(tabFromUrl));
@@ -254,9 +150,9 @@ export function UserDashboard() {
   }, []);
 
   const filteredRequests = useMemo(() => {
-    if (requestFilter === 'ALL') return MOCK_USER_REQUESTS;
-    return MOCK_USER_REQUESTS.filter((r) => r.status === requestFilter);
-  }, [requestFilter]);
+    if (requestFilter === 'ALL') return userRequests;
+    return userRequests.filter((r) => r.status === requestFilter);
+  }, [requestFilter, userRequests]);
 
   const initialProfile = useMemo(() => ({
     firstName: currentUser?.firstName || '',
@@ -417,10 +313,37 @@ export function UserDashboard() {
         {/* ============ STATS CARDS ============ */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { icon: ClipboardList, label: 'نیازهای فعال', value: '۳', gradient: 'from-emerald-500 to-emerald-600', shadow: 'shadow-emerald-500/10' },
-            { icon: MessageSquare, label: 'پیشنهادهای دریافتی', value: '۸', gradient: 'from-amber-500 to-amber-600', shadow: 'shadow-amber-500/10' },
-            { icon: CheckCircle, label: 'پروژه‌های تکمیل شده', value: '۱۲', gradient: 'from-cyan-500 to-cyan-600', shadow: 'shadow-cyan-500/10' },
-            { icon: Star, label: 'امتیاز شما', value: '۴.۸', gradient: 'from-rose-500 to-rose-600', shadow: 'shadow-rose-500/10' },
+            {
+              icon: ClipboardList,
+              label: 'نیازهای فعال',
+              value: String(
+                dashboardStats?.activeRequests ??
+                  userRequests.filter((r) => r.status === 'OPEN' || r.status === 'IN_PROGRESS').length
+              ),
+              gradient: 'from-emerald-500 to-emerald-600',
+              shadow: 'shadow-emerald-500/10',
+            },
+            {
+              icon: MessageSquare,
+              label: 'پیشنهادهای دریافتی',
+              value: String(dashboardStats?.pendingProposals ?? '—'),
+              gradient: 'from-amber-500 to-amber-600',
+              shadow: 'shadow-amber-500/10',
+            },
+            {
+              icon: CheckCircle,
+              label: 'پروژه‌های تکمیل شده',
+              value: String(dashboardStats?.completedProjects ?? '—'),
+              gradient: 'from-cyan-500 to-cyan-600',
+              shadow: 'shadow-cyan-500/10',
+            },
+            {
+              icon: Star,
+              label: 'امتیاز شما',
+              value: dashboardStats?.avgRating ? String(dashboardStats.avgRating) : '—',
+              gradient: 'from-rose-500 to-rose-600',
+              shadow: 'shadow-rose-500/10',
+            },
           ].map((stat) => (
             <Card key={stat.label} className="relative overflow-hidden border-0 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-150" style={{ boxShadow: undefined }}>
               <div className={`absolute inset-0 bg-linear-to-bl ${stat.gradient}`} />
@@ -472,7 +395,14 @@ export function UserDashboard() {
                 ))}
               </div>
               <div className="space-y-4">
-                {filteredRequests.length === 0 ? (
+                {requestsLoading ? (
+                  <Card>
+                    <CardContent className="flex items-center justify-center gap-2 py-10 text-muted-foreground">
+                      <Loader2 className="size-5 animate-spin" />
+                      در حال بارگذاری آگهی‌ها…
+                    </CardContent>
+                  </Card>
+                ) : filteredRequests.length === 0 ? (
                   <Card className="py-12 border-dashed border-2 border-border/60 rounded-2xl">
                     <CardContent className="text-center text-muted-foreground">
                       <ClipboardList className="w-12 h-12 mx-auto mb-3 opacity-40" />
@@ -491,6 +421,15 @@ export function UserDashboard() {
                             </div>
                             <div className="flex flex-wrap items-center gap-2">
                               <Badge variant="outline" className={`text-xs ${getStatusColor(request.status)}`}>{getStatusLabel(request.status)}</Badge>
+                              {request.moderationStatus && request.moderationStatus !== 'APPROVED' ? (
+                                <Badge variant="outline" className="text-xs bg-amber-50 text-amber-800 border-amber-200">
+                                  {request.moderationStatus === 'PENDING'
+                                    ? 'در صف بازبینی'
+                                    : request.moderationStatus === 'REJECTED_SOFT'
+                                      ? 'نیاز به اصلاح'
+                                      : 'رد شده'}
+                                </Badge>
+                              ) : null}
                               <Badge variant="secondary" className="text-xs">
                                 {request.priority === 'URGENT' ? '🔴' : request.priority === 'HIGH' ? '🟠' : '🟢'}{' '}
                                 اولویت: {request.priority === 'URGENT' ? 'فوری' : request.priority === 'HIGH' ? 'زیاد' : 'عادی'}
@@ -521,59 +460,14 @@ export function UserDashboard() {
 
             {/* ============ TAB 2: WALLET & PAYMENTS ============ */}
             <TabsContent value="wallet">
-              <div className="space-y-6">
-                <Card className="relative overflow-hidden border-0 shadow-xl shadow-emerald-500/15 rounded-2xl">
-                  <div className="absolute inset-0 bg-linear-to-bl from-emerald-600 via-teal-600 to-emerald-700" />
-                  <div className="pointer-events-none absolute -top-12 -right-12 h-40 w-40 rounded-full bg-white/10" />
-                  <div className="pointer-events-none absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-white/5" />
-                  <CardContent className="relative p-6 sm:p-8">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-white/70 text-sm"><Wallet className="w-4 h-4" />موجودی کیف پول</div>
-                        <p className="text-white text-3xl sm:text-4xl font-bold tracking-tight">۵,۰۰۰,۰۰۰<span className="text-lg sm:text-xl font-normal mr-2 text-white/70">تومان</span></p>
-                      </div>
-                      <Button className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-xs gap-2" onClick={() => toast.info('افزایش موجودی در نسخه بعدی فعال می‌شود')} title="افزایش موجودی کیف پول">
-                        <Plus className="w-4 h-4" />افزایش موجودی
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="shadow-md border-border/50 hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg"><FileText className="w-5 h-5" />تاریخچه تراکنش‌ها</CardTitle>
-                    <CardDescription>لیست آخرین تراکنش‌های کیف پول شما</CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    <div className="divide-y">
-                      {MOCK_TRANSACTIONS.map((transaction) => {
-                        const typeConfig = getTransactionTypeConfig(transaction.type);
-                        const TypeIcon = typeConfig.icon;
-                        return (
-                          <div key={transaction.id} className="flex items-center gap-4 px-6 py-4 hover:bg-muted/50 transition-colors duration-150">
-                            <div className={`w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0 ${typeConfig.color}`}>
-                              <TypeIcon className="w-5 h-5" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground truncate">{transaction.description}</p>
-                              <div className="flex items-center gap-2 mt-0.5">
-                                <span className="text-xs text-muted-foreground">{typeConfig.label}</span>
-                                <span className="text-xs text-muted-foreground">•</span>
-                                <span className="text-xs text-muted-foreground">{getTimeAgo(transaction.createdAt)}</span>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-3 shrink-0">
-                              <div className="text-left">
-                                <p className={`text-sm font-bold ${typeConfig.amountColor}`}>{typeConfig.prefix}{formatPrice(transaction.amount)}</p>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+              <Card className="border-border/50 shadow-md">
+                <CardContent className="py-16 text-center space-y-3">
+                  <Wallet className="w-10 h-10 mx-auto text-muted-foreground/50" />
+                  <p className="text-sm text-muted-foreground">
+                    کیف پول و تراکنش‌ها به‌زودی از API واقعی متصل می‌شوند.
+                  </p>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             {/* ============ TAB 4: PROFILE ============ */}

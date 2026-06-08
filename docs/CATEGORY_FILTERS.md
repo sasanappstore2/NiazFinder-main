@@ -30,7 +30,7 @@ npm run test:intake-parser
 
 ## QA دستی
 
-1. `/s/tehran/real-estate/apartment-sale?dealType=buy&rooms=2` — pillها و لیست هم‌خوان
+1. `/n/tehran/real-estate/apartment-sale?dealType=buy&rooms=2` — pillها و لیست هم‌خوان
 2. ثبت نیاز املاک — همان فیلدهای dealType/rooms در intake
-3. `/s/tehran/vehicles/car-ride?condition=used` — فیلتر وضعیت
+3. `/n/tehran/vehicles/car-ride?condition=used` — فیلتر وضعیت
 4. `/post` — بدون نوار فیلتر category در هدر

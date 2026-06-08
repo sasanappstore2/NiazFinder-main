@@ -243,7 +243,8 @@ export function CitySelectorPopup({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-[480px] max-h-[85vh] p-0 gap-0 overflow-hidden rounded-2xl flex flex-col"
+        data-city-selector
+        className="max-w-[480px] max-h-[85vh] p-0 gap-0 overflow-hidden rounded-2xl flex flex-col sm:max-w-[480px]"
         dir="rtl"
       >
         {/* ─── Header ─── */}

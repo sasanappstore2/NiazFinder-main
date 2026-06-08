@@ -49,6 +49,8 @@ function mapApiToProfile(data: Record<string, unknown>): BusinessHubProfile {
     city: String(data.city ?? ''),
     province: String(data.province ?? ''),
     address: String(data.address ?? ''),
+    lat: typeof data.lat === 'number' ? data.lat : null,
+    lng: typeof data.lng === 'number' ? data.lng : null,
     phone: String(data.phone ?? ''),
     whatsapp: String(data.whatsapp ?? ''),
     email: String(data.email ?? ''),

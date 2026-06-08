@@ -1,8 +1,8 @@
 {
   "cityId": "javanrud",
   "cityName": "جوانرود",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:27:00.030Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:42:05.470Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

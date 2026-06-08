@@ -38,7 +38,8 @@ flowchart LR
 
 | Route | Purpose |
 |-------|---------|
-| `POST /api/need-intake/parse-intent` | Initial parse (Qwen + rules hybrid) |
+| `POST /api/intake/analyze` | Canonical intake analyze (rules + optional Qwen) |
+| ~~`POST /api/need-intake/parse-intent`~~ | **410 Gone** — use `/api/intake/analyze` |
 | `POST /api/intake/analyze` | Full entity analysis (Qwen + rules when MLX enabled) |
 | `POST /api/need-intake/next-question` | Next schema field |
 | `POST /api/need-intake/extract-slots` | Slot hints after each answer |
@@ -77,6 +78,52 @@ flowchart LR
 
 Pipeline: [`generateListingTitle`](src/lib/need-intake/generate-listing-title.ts) tries MLX `/v1/title`, then [`buildHeuristicListingTitle`](src/lib/need-intake/vertical-title.ts). Titles that fail [`rejectListingTitleReason`](src/lib/need-intake/listing-title-sanitize.ts) cannot be published (HTTP 422).
 
+## `/post` production gate
+
+Headless gate for the 4-step `/post` flow (`NeedIntakePanel`). MLX is **required** for the full gate (analyze + listing-copy + stream).
+
+### Env
+
+| Variable | Required for gate | Notes |
+|----------|-------------------|--------|
+| `NEED_INTAKE_LLM_ENABLED` | `true` | MLX analyze + copy |
+| `NEED_INTAKE_COPY_AI_ENABLED` | `true` | Stream preview uses MLX JSON copy |
+| `NEED_INTAKE_LLM_URL` | default `http://127.0.0.1:8100` | Start with `npm run dev:intake-mlx` |
+
+### Commands
+
+```bash
+npm run dev:intake-mlx              # MLX sidecar (required for mlx gate)
+npm run dev                         # Next.js (required for API smoke)
+
+npm run test:post-pipeline          # 150+ golden scenarios via post-pipeline-harness
+npm run test:post-mlx-gate          # MLX analyze + /v1/listing-copy + stream (FAIL if MLX down)
+npm run test:post-api-smoke         # HTTP smoke: /api/intake/analyze + preview-listing/stream
+npm run test:post-production-gate:smoke   # ~3–5 min CI gate
+npm run test:post-production-gate:full    # nightly: + 100k subset + estate-benchmark:llm
+npm run test:post-gate-baseline     # write data/need-intake-training/post-gate-baseline.json
+```
+
+### Smoke gate order
+
+1. `tsc --noEmit`
+2. `test:post-pipeline` (150+ golden, ~1200 assertions)
+3. `test:post-intake-scenarios` + `test:listing-title-scenarios`
+4. `test:post-estate-scenarios` (60+ LRE cases)
+5. `test:post-mlx-gate` (**required** — no skip)
+6. `test:post-api-smoke`
+7. `test:prefill-100k:smoke` (≥88%)
+
+`check:all` includes `test:post-pipeline` (rules-only). Run `test:post-production-gate:smoke` before sign-off.
+
+### Sign-off checklist (manual, ~5 min after gate green)
+
+- [ ] مغازه + ۱B رهن + ۱۰۰M اجاره + سجاد مشهد → عنوان «رهن و اجاره مغازه…» نه «فروش»
+- [ ] تغییر شهر/محله در مرحله location → re-analyze بدون overwrite دستی
+- [ ] Stream preview در details/location → baseline سپس عنوان
+- [ ] Publish با عنوان generic → 422
+- [ ] `npm run test:post-production-gate:smoke` → 0 failure
+
 ## Tests
 
 ```bash
@@ -85,6 +132,7 @@ npm run test:intake-flow      # end-to-end orchestrator per vertical
 npm run test:listing-title    # title sanitizer + template fallback (offline)
 npm run test:intake-dataset   # 58+ golden cases + accuracy report
 npm run test:typing-analysis  # typing strip rules
+npm run test:post-pipeline    # /post headless golden matrix
 npm run export:intake-dataset # JSONL for Unsloth (data/need-intake-training/)
 ```
 
@@ -104,6 +152,7 @@ On [`/post`](http://localhost:3000/post), collapse **آزمایشگاه ثبت �
 
 ## QA checklist
 
+- [ ] `npm run test:post-production-gate:smoke` green (MLX + API smoke)
 - [ ] Long seed → final title ≠ verbatim seed
 - [ ] After 2+ required answers → chat phase opens
 - [ ] Chat improves readiness; «ساخت پیش‌نمایش آگهی» works

@@ -58,6 +58,7 @@ async function main() {
   console.log('🗑️  همه داده‌های قبلی با موفقیت حذف شدند\n');
 
   // ========== ۲. ساخت دسته‌بندی‌ها ==========
+  // Legacy demo tree below; canonical marketplace categories come from syncCanonicalCategoriesToDb (SSOT).
   console.log('📁 ساخت دسته‌بندی‌ها...');
 
   const categories: Record<string, string> = {};

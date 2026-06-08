@@ -352,7 +352,7 @@ export const routeBuilder = {
   },
   needNew:            () => ROUTES.needNew,
   needIntake:         () => ROUTES.needIntake,
-  needPropose:        (id: string) => `/n/${encodeURIComponent(id)}/propose`,
+  needPropose:        (id: string) => `/propose/${encodeURIComponent(id)}`,
 
   /** Business profile by user id — callers should prefer businessProfile(slug). */
   business(id: string, opts?: { from?: string }): string {

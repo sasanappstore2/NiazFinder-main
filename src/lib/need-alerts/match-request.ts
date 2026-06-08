@@ -18,6 +18,7 @@ type RequestForMatch = Pick<
   | 'description'
   | 'city'
   | 'province'
+  | 'address'
   | 'budgetMin'
   | 'budgetMax'
   | 'priority'
@@ -79,6 +80,27 @@ function budgetToNumber(value: bigint | null | undefined): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+/** Same slug + text rules as browse neighborhood filter (phase 2 parity). */
+function requestMatchesNeighborhoodSlugs(
+  request: RequestForMatch,
+  slugs: string[]
+): boolean {
+  if (slugs.length === 0) return true;
+  const dyn = request.dynamicAnswers ?? '{}';
+  const address = request.address ?? '';
+  const description = request.description ?? '';
+
+  return slugs.some((slug) => {
+    const id = slug.trim().toLowerCase();
+    if (!id) return false;
+    if (dyn.includes(`"_neighborhoodSlug":"${id}"`)) return true;
+    if (dyn.includes(`"neighborhoodSlug":"${id}"`)) return true;
+    if (dyn.includes(`"neighborhoodSlug": "${id}"`)) return true;
+    if (address.includes(id) || description.includes(id)) return true;
+    return false;
+  });
+}
+
 export function requestMatchesBrowseAlert(
   request: RequestForMatch,
   ctx: AlertMatchContext
@@ -129,6 +151,10 @@ export function requestMatchesBrowseAlert(
       const prov = request.province ?? '';
       if (!provinceNames.some((n) => prov.includes(n))) return false;
     }
+  }
+
+  if (filters.neighborhoods?.length) {
+    if (!requestMatchesNeighborhoodSlugs(request, filters.neighborhoods)) return false;
   }
 
   if (filters.priceMin != null) {

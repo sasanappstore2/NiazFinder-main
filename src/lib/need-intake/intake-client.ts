@@ -27,7 +27,7 @@ export async function publishNeedApi(
   listingPreview?: ListingPreview,
   sessionId?: string | null,
   options?: { linkToBusinessProfile?: boolean }
-): Promise<{ id: string; slug: string; title: string; message?: string }> {
+): Promise<{ id: string; slug: string; title: string; message?: string; autoApproved?: boolean }> {
   const res = await fetch('/api/need-intake/publish', {
     method: 'POST',
     headers: {

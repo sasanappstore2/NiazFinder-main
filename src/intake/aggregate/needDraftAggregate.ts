@@ -12,6 +12,11 @@ import { resolveNeedType } from '@/intake/schema/needTypes';
 import { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
 import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
 import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
+import { composeIntakeSourceText } from '@/lib/need-intake/compose-source-text';
+import {
+  inferTransactionTypeFromSlug,
+  resolveTransactionType,
+} from '@/lib/need-intake/resolve-transaction-type';
 
 import { entitiesToRecord, recordToEntities } from '@/intake/entities/entityRecord';
 
@@ -43,7 +48,11 @@ function mergeAnalysisLocationIntoParsed(
 export function recomputeNeedDraft(draft: NeedDraft): NeedDraft {
   const entities = recordToEntities(draft.entities);
   const needTypeDef = resolveNeedType(entities);
-  const missingFields = buildPrioritizedMissingFields(entities);
+  const missingFields = buildPrioritizedMissingFields(entities, {
+    sourceText: draft.sourceText,
+    answers: draft.answers as Record<string, unknown>,
+    parsedUrgency: draft.parsedIntent?.urgency ?? null,
+  });
   const completionScore = computeCompletionScore(missingFields);
   const matchabilityScore = computeMatchabilityScore(entities);
   const completionState = completionStateFromScore(completionScore);
@@ -103,6 +112,17 @@ export function recomputeNeedDraft(draft: NeedDraft): NeedDraft {
     : legacyParsed;
 
   const answers: NeedDraft['answers'] = { ...legacyAnswers, ...draft.answers };
+  if (draft.answers._userSetDealType !== true) {
+    if (legacyAnswers.dealType != null) answers.dealType = legacyAnswers.dealType;
+    if (legacyAnswers.rahnAmount != null) answers.rahnAmount = legacyAnswers.rahnAmount;
+    if (legacyAnswers.monthlyRent != null) answers.monthlyRent = legacyAnswers.monthlyRent;
+    if (
+      legacyAnswers.dealType === 'rent_rahn_ejare' ||
+      legacyAnswers.dealType === 'rent_rahn_full'
+    ) {
+      delete answers.budget;
+    }
+  }
   if (lreBlocked && !String(draft.answers.location ?? '').trim()) {
     delete answers.location;
     delete answers._neighborhoodSlug;
@@ -127,7 +147,9 @@ export function recomputeNeedDraft(draft: NeedDraft): NeedDraft {
       intentType: preservedParsed.intentType ?? parsedIntent.intentType,
       entities: {
         ...parsedIntent.entities,
-        ...preservedParsed.entities,
+        ...(preservedParsed.entities?.propertyKind
+          ? { propertyKind: preservedParsed.entities.propertyKind }
+          : {}),
       },
     };
   }
@@ -197,13 +219,18 @@ export function createNeedDraftFromAnalysis(
   }
 
   const entityRecord = { ...entitiesToRecord(entities) };
-  if (!entityRecord.neighborhood && parsedIntent.neighborhoodSlug) {
-    entityRecord.neighborhoodSlug = parsedIntent.neighborhoodSlug;
-    const areaLabel = parsedIntent.entities?.area?.trim();
-    entityRecord.neighborhood =
-      areaLabel && /[^\d]/.test(areaLabel)
-        ? areaLabel
-        : parsedIntent.neighborhoodSlug.replace(/-/g, ' ');
+  if (parsedIntent.neighborhoodSlug?.trim()) {
+    entityRecord.neighborhoodSlug = parsedIntent.neighborhoodSlug.trim();
+    const catalogName =
+      entities.neighborhood?.trim() ||
+      parsedIntent.entities?.area?.trim() ||
+      analysis.locationHints?.areaLabel?.trim();
+    if (catalogName && /[^\d]/.test(catalogName)) {
+      entityRecord.neighborhood = catalogName;
+    } else {
+      entityRecord.neighborhood =
+        parsedIntent.neighborhoodSlug.replace(/-/g, ' ') || entityRecord.neighborhood;
+    }
   } else if (
     !entityRecord.neighborhood &&
     parsedIntent.entities?.area?.trim() &&
@@ -248,15 +275,12 @@ export function patchNeedDraftEntities(
   });
 }
 
-function inferTransactionTypeFromSlug(leafSlug: string): TransactionType | null {
-  if (leafSlug.includes('rent')) return 'RENT';
-  if (leafSlug.includes('sale')) return 'BUY';
-  return null;
-}
-
 function inferCategoryKeyFromSlug(leafSlug: string): string | null {
   if (leafSlug.includes('apartment')) return 'apartment';
   if (leafSlug.includes('villa')) return 'villa';
+  if (leafSlug.includes('shop') || leafSlug.includes('store')) return 'shop';
+  if (leafSlug.includes('office')) return 'office';
+  if (leafSlug.includes('land')) return 'land';
   if (leafSlug.includes('car') || leafSlug.includes('vehicle')) return 'car';
   if (leafSlug.includes('plumb')) return 'plumbing';
   return null;
@@ -265,7 +289,8 @@ function inferCategoryKeyFromSlug(leafSlug: string): string | null {
 /** Map UI category selection into intake entity fields. */
 export function inferEntitiesFromCategorySlugs(
   categorySlug: string,
-  subcategorySlug?: string | null
+  subcategorySlug?: string | null,
+  opts?: { sourceText?: string; userDealType?: string | null }
 ): Partial<Record<string, unknown>> {
   const normalized = normalizeCategoryPair(categorySlug, subcategorySlug ?? undefined);
   const leaf = normalized.subcategorySlug ?? normalized.categorySlug;
@@ -285,12 +310,21 @@ export function inferEntitiesFromCategorySlugs(
               ? 'products'
               : null;
 
+  const transactionType = opts?.sourceText
+    ? resolveTransactionType({
+        sourceText: opts.sourceText,
+        categorySlug: normalized.categorySlug,
+        subcategorySlug: normalized.subcategorySlug,
+        userDealType: opts.userDealType,
+      })
+    : inferTransactionTypeFromSlug(leaf);
+
   return {
     vertical,
     category: inferCategoryKeyFromSlug(leaf),
     categorySlug: normalized.categorySlug,
     subcategorySlug: normalized.subcategorySlug,
-    transactionType: inferTransactionTypeFromSlug(leaf),
+    transactionType,
   };
 }
 
@@ -303,11 +337,16 @@ export function syncNeedDraftFromForm(
     subcategorySlug: string;
     city: string;
     neighborhood: string;
+    neighborhoodSlug?: string | null;
   }
 ): NeedDraft {
-  const sourceText = `${form.needText.trim()}\n\n${form.detailsText.trim()}`.trim();
+  const sourceText = composeIntakeSourceText(form.needText, form.detailsText);
   const categoryPatch = form.categorySlug
-    ? inferEntitiesFromCategorySlugs(form.categorySlug, form.subcategorySlug || null)
+    ? inferEntitiesFromCategorySlugs(form.categorySlug, form.subcategorySlug || null, {
+        sourceText,
+        userDealType:
+          draft?.answers?.dealType != null ? String(draft.answers.dealType) : undefined,
+      })
     : {};
 
   const base =
@@ -331,12 +370,27 @@ export function syncNeedDraftFromForm(
       turns: [],
     });
 
+  const existingEntities = draft ? recordToEntities(draft.entities) : null;
+  const neighborhoodSlug =
+    form.neighborhoodSlug?.trim() ||
+    existingEntities?.neighborhoodSlug?.trim() ||
+    null;
+
   return recomputeNeedDraft({
     ...patchNeedDraftEntities(base, {
       ...categoryPatch,
       city: form.city.trim() || null,
       neighborhood: form.neighborhood.trim() || null,
+      neighborhoodSlug,
     }),
     sourceText,
   });
+}
+
+/** Pure projection — does not mutate external store (for live preview / summary). */
+export function projectNeedDraftFromForm(
+  draft: NeedDraft | null,
+  form: Parameters<typeof syncNeedDraftFromForm>[1]
+): NeedDraft {
+  return syncNeedDraftFromForm(draft, form);
 }

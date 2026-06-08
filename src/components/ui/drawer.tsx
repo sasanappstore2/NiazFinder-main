@@ -48,11 +48,16 @@ function DrawerOverlay({
 function DrawerContent({
   className,
   children,
+  overlay = true,
+  builtInHandle = true,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Content>) {
+}: React.ComponentProps<typeof DrawerPrimitive.Content> & {
+  overlay?: boolean;
+  builtInHandle?: boolean;
+}) {
   return (
     <DrawerPortal data-slot="drawer-portal">
-      <DrawerOverlay />
+      {overlay ? <DrawerOverlay /> : null}
       <DrawerPrimitive.Content
         data-slot="drawer-content"
         className={cn(
@@ -65,7 +70,9 @@ function DrawerContent({
         )}
         {...props}
       >
-        <div className="bg-muted mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
+        {builtInHandle ? (
+          <div className="bg-muted mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
+        ) : null}
         {children}
       </DrawerPrimitive.Content>
     </DrawerPortal>
@@ -108,6 +115,25 @@ function DrawerTitle({
   )
 }
 
+function DrawerHandle({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof DrawerPrimitive.Handle>) {
+  return (
+    <DrawerPrimitive.Handle
+      data-slot="drawer-handle"
+      className={cn(
+        'mx-auto my-0 block h-1.5 w-12 shrink-0 cursor-grab rounded-full bg-muted-foreground/35 active:cursor-grabbing',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </DrawerPrimitive.Handle>
+  )
+}
+
 function DrawerDescription({
   className,
   ...props
@@ -128,6 +154,7 @@ export {
   DrawerTrigger,
   DrawerClose,
   DrawerContent,
+  DrawerHandle,
   DrawerHeader,
   DrawerFooter,
   DrawerTitle,

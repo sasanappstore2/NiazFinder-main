@@ -11,6 +11,7 @@ import { SwitchWithIcon } from '@/components/ui/switch-with-icon';
 import { toast } from 'sonner';
 import { getClientAuthHeaders } from '@/lib/auth/client-auth';
 import { BusinessLocationPicker } from '@/components/business-profile/onboarding/BusinessLocationPicker';
+import { BusinessMapPinPicker } from '@/components/business/map/BusinessMapPinPickerLazy';
 import { useBusinessHub } from '../BusinessHubContext';
 
 export function BusinessProfileBasicsForm({
@@ -27,6 +28,8 @@ export function BusinessProfileBasicsForm({
     city: '',
     province: '',
     address: '',
+    lat: null as number | null,
+    lng: null as number | null,
     phone: '',
     whatsapp: '',
     email: '',
@@ -41,6 +44,8 @@ export function BusinessProfileBasicsForm({
       city: profile.city,
       province: profile.province,
       address: profile.address,
+      lat: profile.lat,
+      lng: profile.lng,
       phone: profile.phone,
       whatsapp: profile.whatsapp,
       email: profile.email,
@@ -52,6 +57,8 @@ export function BusinessProfileBasicsForm({
     profile?.city,
     profile?.province,
     profile?.address,
+    profile?.lat,
+    profile?.lng,
     profile?.phone,
     profile?.whatsapp,
     profile?.email,
@@ -99,7 +106,11 @@ export function BusinessProfileBasicsForm({
       const res = await fetch('/api/business/me', {
         method: 'PATCH',
         headers: getClientAuthHeaders(),
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          lat: form.lat,
+          lng: form.lng,
+        }),
       });
       const data = (await res.json()) as { error?: string; slug?: string; name?: string };
       if (!res.ok) {
@@ -113,6 +124,8 @@ export function BusinessProfileBasicsForm({
         city: form.city,
         province: form.province,
         address: form.address,
+        lat: form.lat,
+        lng: form.lng,
         phone: form.phone,
         whatsapp: form.whatsapp,
         email: form.email,
@@ -170,6 +183,20 @@ export function BusinessProfileBasicsForm({
               value={form.address}
               onChange={(e) => update({ address: e.target.value })}
               rows={2}
+            />
+          </div>
+          <div className="space-y-1">
+            <Label>موقعیت روی نقشه</Label>
+            <BusinessMapPinPicker
+              city={form.city}
+              lat={form.lat}
+              lng={form.lng}
+              onChange={(coords) =>
+                update({
+                  lat: coords?.lat ?? null,
+                  lng: coords?.lng ?? null,
+                })
+              }
             />
           </div>
         </CardContent>

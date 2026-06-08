@@ -1,8 +1,8 @@
 {
   "cityId": "qasreqand",
   "cityName": "قصرقند",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:38:52.964Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:42:55.101Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

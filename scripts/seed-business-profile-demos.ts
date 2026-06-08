@@ -27,6 +27,8 @@ type DemoSpec = {
   description: string;
   city: string;
   province: string;
+  lat?: number;
+  lng?: number;
   tags: string[];
   badges: string[];
   template: string;
@@ -67,6 +69,23 @@ const DEMOS: DemoSpec[] = [
     ],
   },
   {
+    slug: `${SLUG_PREFIX}realtor-tehran`,
+    name: 'آژانس املاک آتیه تهران',
+    role: 'SPECIALIST',
+    categorySlugs: ['agency-services', 'real-estate'],
+    description: 'خرید، فروش و اجاره آپارتمان و اداری در غرب تهران — مشاوره رایگان.',
+    city: 'تهران',
+    province: 'تهران',
+    lat: 35.7219,
+    lng: 51.3347,
+    tags: ['فروش', 'اجاره', 'اداری'],
+    badges: ['تأیید شده'],
+    template: 'real_estate',
+    offers: [
+      { title: 'مشاوره خرید ملک', description: 'بازدید و برآورد قیمت', priceRange: 'رایگان' },
+    ],
+  },
+  {
     slug: `${SLUG_PREFIX}realtor-mashhad`,
     name: 'آژانس املاک پارس مشهد',
     role: 'SPECIALIST',
@@ -74,6 +93,8 @@ const DEMOS: DemoSpec[] = [
     description: 'مشاوره خرید، فروش و اجاره ملک در مشهد — تخصص در آپارتمان و ویلایی.',
     city: 'مشهد',
     province: 'خراسان رضوی',
+    lat: 36.297,
+    lng: 59.606,
     tags: ['فروش', 'اجاره', 'مشاوره'],
     badges: ['تأیید شده'],
     template: 'real_estate',
@@ -231,6 +252,8 @@ async function upsertDemo(spec: DemoSpec) {
         description: spec.description,
         city: spec.city,
         province: spec.province,
+        lat: spec.lat ?? null,
+        lng: spec.lng ?? null,
         categorySlugs: toJson(spec.categorySlugs),
         tags: toJson(spec.tags),
         badges: toJson(spec.badges),
@@ -253,6 +276,8 @@ async function upsertDemo(spec: DemoSpec) {
         description: spec.description,
         city: spec.city,
         province: spec.province,
+        lat: spec.lat ?? null,
+        lng: spec.lng ?? null,
         categorySlugs: toJson(spec.categorySlugs),
         tags: toJson(spec.tags),
         badges: toJson(spec.badges),

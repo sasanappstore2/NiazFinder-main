@@ -1,8 +1,8 @@
 {
   "cityId": "shahrbabak",
   "cityName": "شهربابک",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:13:08.555Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:41:12.346Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

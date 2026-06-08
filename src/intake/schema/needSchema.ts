@@ -1,6 +1,6 @@
 import type { CompletionState, IntakeEntities, MissingFieldItem } from '@/intake/types';
 import { categoryNeedsTransactionType } from '@/intake/extractors/transactionExtractor';
-import { hasEntityValue } from '@/intake/entities/entityRegistry';
+import { hasEntityValue, type EntityValueContext } from '@/intake/entities/entityRegistry';
 import { resolveNeedType } from '@/intake/schema/needTypes';
 
 interface NeedSchemaDef {
@@ -65,12 +65,15 @@ function resolveNeedSchema(entities: IntakeEntities): NeedSchemaDef {
   return DEFAULT_SCHEMA;
 }
 
-export function buildPrioritizedMissingFields(entities: IntakeEntities): MissingFieldItem[] {
+export function buildPrioritizedMissingFields(
+  entities: IntakeEntities,
+  ctx?: EntityValueContext
+): MissingFieldItem[] {
   const schema = resolveNeedSchema(entities);
   const fields = new Map<string, MissingFieldItem>();
 
   for (const field of schema.required) {
-    if (!hasEntityValue(entities, field)) {
+    if (!hasEntityValue(entities, field, ctx)) {
       fields.set(field, {
         field,
         priority: schema.priority[field] ?? 50,
@@ -80,7 +83,7 @@ export function buildPrioritizedMissingFields(entities: IntakeEntities): Missing
   }
 
   for (const field of schema.optional) {
-    if (!hasEntityValue(entities, field)) {
+    if (!hasEntityValue(entities, field, ctx)) {
       fields.set(field, {
         field,
         priority: schema.priority[field] ?? 40,

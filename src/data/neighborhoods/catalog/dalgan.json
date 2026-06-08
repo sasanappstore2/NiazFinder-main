@@ -1,8 +1,8 @@
 {
   "cityId": "dalgan",
   "cityName": "دلگان",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:39:06.749Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:42:55.805Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

@@ -23,8 +23,8 @@ export const PARSER_FIXTURES: ParserFixture[] = [
     expectCity: f.expectCity,
   })),
   {
-    id: 'mashhad-sajjad-ambiguous',
-    text: 'منطقه سجاد مشهد آپارتمان میخواهم',
+    id: 'mashhad-ahmadabad-ambiguous',
+    text: 'آپارتمان در احمدآباد مشهد',
     expectIntentPrefix: 'property',
     expectCity: 'مشهد',
     expectLocationAmbiguous: true,

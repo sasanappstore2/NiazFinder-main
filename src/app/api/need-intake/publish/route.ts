@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { getAuthUser, createSlug } from '@/lib/auth';
 import { mapDraftToCreateRequest } from '@/lib/need-intake/map-to-request';
 import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
-import { resolveCategoryIds } from '@/lib/need-intake/resolve-category';
+import { resolveCategoryIds, CategoryResolveError } from '@/lib/need-intake/resolve-category';
 import { normalizeCategoryPair } from '@/config/categories';
 import type { NeedDraft } from '@/contracts/need-intake';
 import { validateNeedDraftForPublish } from '@/intake/validation/publishValidator';
@@ -20,6 +20,7 @@ import {
   rejectListingTitleReason,
   truncateListingTitle,
 } from '@/lib/need-intake/listing-title-sanitize';
+import { shouldAutoApproveNeed } from '@/lib/need-intake/auto-approve-policy';
 
 export async function POST(request: NextRequest) {
   try {
@@ -137,6 +138,8 @@ export async function POST(request: NextRequest) {
       if (bizProfile) businessProfileId = bizProfile.id;
     }
 
+    const autoApprove = shouldAutoApproveNeed(mapped.source);
+
     const serviceRequest = await db.serviceRequest.create({
       data: {
         title: mapped.title,
@@ -147,6 +150,8 @@ export async function POST(request: NextRequest) {
         budgetType: mapped.budgetType,
         city: mapped.city ?? null,
         province: mapped.province ?? null,
+        lat: mapped.lat ?? null,
+        lng: mapped.lng ?? null,
         address:
           typeof mapped.dynamicAnswers?.address === 'string'
             ? mapped.dynamicAnswers.address
@@ -166,15 +171,20 @@ export async function POST(request: NextRequest) {
         source: mapped.source,
         userId: user.id,
         businessProfileId,
-        status: 'PENDING_REVIEW',
-        moderationStatus: 'PENDING',
+        status: autoApprove ? 'OPEN' : 'PENDING_REVIEW',
+        moderationStatus: autoApprove ? 'APPROVED' : 'PENDING',
+        ...(autoApprove
+          ? { reviewedAt: new Date(), reviewedByUserId: user.id }
+          : {}),
       },
     });
 
     const sessionId =
       typeof body.sessionId === 'string' ? body.sessionId : undefined;
     void enqueueIntakeHeavyJob(serviceRequest.id, sessionId);
-    void enqueueRequestModerationJob(serviceRequest.id);
+    if (!autoApprove) {
+      void enqueueRequestModerationJob(serviceRequest.id);
+    }
 
     captureTrainingExampleAsync({
       draft,
@@ -216,12 +226,23 @@ export async function POST(request: NextRequest) {
       title: serviceRequest.title,
       status: serviceRequest.status,
       moderationStatus: serviceRequest.moderationStatus,
-      message: 'آگهی ثبت شد و در صف بازبینی قرار گرفت',
+      autoApproved: autoApprove,
+      message: autoApprove
+        ? 'آگهی منتشر شد و در جستجو قابل مشاهده است'
+        : 'آگهی ثبت شد و پس از تأیید در جستجو نمایش داده می‌شود',
     });
   } catch (error) {
     console.error('need-intake publish error:', error);
-    const message =
-      error instanceof Error ? error.message : 'خطای سرور';
+    if (error instanceof CategoryResolveError) {
+      return NextResponse.json(
+        {
+          success: false,
+          errors: [{ path: 'categorySlug', message: error.message }],
+        },
+        { status: 422 }
+      );
+    }
+    const message = error instanceof Error ? error.message : 'خطای سرور';
     return NextResponse.json(
       { error: message.includes('No active category') ? 'دسته‌بندی در سیستم یافت نشد' : 'خطای سرور' },
       { status: 500 }

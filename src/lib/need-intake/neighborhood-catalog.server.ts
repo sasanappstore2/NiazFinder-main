@@ -15,9 +15,19 @@ const catalogCache = new Map<string, NeighborhoodCatalogEntry[]>();
 
 function resolveCityId(city: string): string | null {
   const trimmed = city.trim();
-  const byName = ALL_LOCATION_CITIES.find((c) => c.name === trimmed);
-  if (byName) return byName.id;
+  const matches = ALL_LOCATION_CITIES.filter((c) => c.name === trimmed);
+  if (matches.length > 1) {
+    const byCatalogSlug = matches.find((c) => locationCityIdToSlug(c.id) === c.id);
+    const byKnownSlug = matches.find((c) => {
+      const slug = locationCityIdToSlug(c.id);
+      return existsSync(path.join(CATALOG_DIR, `${slug}.json`));
+    });
+    return (byCatalogSlug ?? byKnownSlug ?? matches[0])!.id;
+  }
+  if (matches.length === 1) return matches[0]!.id;
   if (existsSync(path.join(CATALOG_DIR, `${trimmed}.json`))) return trimmed;
+  const slug = locationCityIdToSlug(trimmed);
+  if (slug && existsSync(path.join(CATALOG_DIR, `${slug}.json`))) return slug;
   return null;
 }
 

@@ -2,26 +2,20 @@ import type { NeedDraft } from '@/contracts/need-intake';
 import { CANONICAL_CITIES } from '@/config/locations';
 import { getCategoryPath } from '@/config/categories';
 import { JOB_ROLE_LABELS, VEHICLE_DEAL_LABELS } from '@/config/need-schemas/labels';
-import { getRootCategorySlug } from '@/config/need-schemas/resolve-schema';
-import { isConstructionPartnershipText } from '@/lib/need-intake/intent-parser';
 import {
-  buildProductSearchTitle,
-  dealLabelForCategory,
   joinListingTitleParts,
   LISTING_TITLE_MAX_LENGTH,
 } from '@/lib/need-intake/listing-title';
 import { toAsciiDigits, toPersianDigits } from '@/lib/format/digits';
 import { normalizeIntakeText } from '@/lib/need-intake/normalize-intake-text';
 import {
-  buildPropertyTitle,
-  buildRealEstateServiceTitle,
-} from '@/lib/need-intake/property-title';
-import { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
-import { isAcceptableListingTitle, rejectListingTitleReason } from '@/lib/need-intake/listing-title-sanitize';
+  dedupeRedundantDealPhrases,
+  isAcceptableListingTitle,
+} from '@/lib/need-intake/listing-title-sanitize';
 
 const VEHICLE_TYPE_LABELS: { pattern: RegExp; label: string }[] = [
   { pattern: /کارواش/u, label: 'کارواش' },
-  { pattern: /ون/u, label: 'ون' },
+  { pattern: /(?:^|[\s،])ون(?:[\s،]|$)/u, label: 'ون' },
   { pattern: /پیکاپ/u, label: 'پیکاپ' },
   { pattern: /موتور|موتورسیکلت/u, label: 'موتور' },
   { pattern: /ماشین\s*سنگین|کامیون/u, label: 'کامیون' },
@@ -62,7 +56,11 @@ const INTENT_FILLER =
   /^(یک|یه|میخوام|می‌خوام|میخواهم|دنبال|نیاز\s*دارم|لطفا|لطفاً)\s+/u;
 
 /** City only for listing titles — not «محله، شهر». */
-function listingTitleCityFromDraft(draft: NeedDraft, parsedCity?: string, locationAnswer?: string): string {
+export function listingTitleCityFromDraft(
+  draft: NeedDraft,
+  parsedCity?: string,
+  locationAnswer?: string
+): string {
   if (parsedCity?.trim()) return parsedCity.trim();
   const loc = (locationAnswer ?? '').trim();
   if (loc) {
@@ -207,103 +205,6 @@ export function buildJobTitle(input: {
   return joinListingTitleParts(parts).slice(0, LISTING_TITLE_MAX_LENGTH);
 }
 
-function shortCategoryLabel(categorySlug: string | undefined): string | undefined {
-  if (!categorySlug) return undefined;
-  const path = getCategoryPath(categorySlug);
-  const leaf = path[path.length - 1];
-  return leaf?.title?.trim();
-}
-
-/** Rules-based title from draft — used by composer, publish, and fallback chain. */
-export function buildVerticalTitleFromDraft(draft: NeedDraft): string {
-  const { parsedIntent: parsed, answers } = draftToLegacyPayload(draft);
-  const rawText = (draft.sourceText ?? parsed.rawText ?? '').trim();
-  const city =
-    listingTitleCityFromDraft(draft, parsed.city, String(answers.location ?? '')) || undefined;
-  const root = getRootCategorySlug(parsed.categorySlug ?? '');
-  const deal = String(answers.dealType ?? parsed.entities?.dealType ?? '');
-
-  if (
-    parsed.intentType === 'real_estate_service' ||
-    parsed.entities?.serviceKind === 'partnership' ||
-    isConstructionPartnershipText(rawText)
-  ) {
-    return buildRealEstateServiceTitle(
-      { ...parsed.entities, ...answers } as Record<string, string>,
-      parsed.city
-    );
-  }
-
-  if (parsed.intentType.startsWith('property')) {
-    return buildPropertyTitle(
-      parsed.intentType,
-      { ...parsed.entities, ...answers } as Record<string, string>,
-      parsed.city,
-      parsed.entities?.area
-    );
-  }
-
-  if (
-    parsed.intentType === 'product_search' ||
-    root === 'personal-items' ||
-    root === 'electronics'
-  ) {
-    return buildProductSearchTitle(rawText, deal || 'buy', parsed.city);
-  }
-
-  if (root === 'vehicles' || parsed.intentType.startsWith('vehicle')) {
-    const budgetMax =
-      typeof answers.budget === 'number'
-        ? answers.budget
-        : parsed.budgetMax ?? undefined;
-    return buildVehicleTitle({
-      rawText,
-      deal,
-      brand: String(answers.brand ?? parsed.entities?.brand ?? '').trim() || undefined,
-      model: String(answers.model ?? parsed.entities?.model ?? '').trim() || undefined,
-      vehicleKind: String(answers.vehicleKind ?? parsed.entities?.vehicleKind ?? '').trim() || undefined,
-      city,
-      budgetMax,
-    });
-  }
-
-  if (root === 'jobs' || parsed.intentType.startsWith('job')) {
-    return buildJobTitle({
-      jobTitle: String(answers.jobTitle ?? '').trim() || undefined,
-      roleType: String(answers.roleType ?? parsed.entities?.roleType ?? '').trim() || undefined,
-      city,
-    });
-  }
-
-  if (root === 'services' || parsed.intentType.includes('service')) {
-    return buildServiceTitle({
-      serviceType: String(answers.serviceType ?? '').trim() || undefined,
-      deal,
-      city,
-      categoryShort: shortCategoryLabel(parsed.categorySlug),
-    });
-  }
-
-  const parts: string[] = [];
-  const dealFa = dealLabelForCategory(parsed.categorySlug, deal);
-  if (dealFa) parts.push(dealFa);
-  const productName = String(answers.productName ?? '').trim();
-  if (productName) parts.push(productName);
-  const serviceType = String(answers.serviceType ?? '').trim();
-  if (serviceType) parts.push(serviceType.slice(0, 40));
-  if (city) parts.push(city);
-  const joined = joinListingTitleParts(parts);
-  if (joined.length >= 10) return joined.slice(0, LISTING_TITLE_MAX_LENGTH);
-
-  const categoryShort = shortCategoryLabel(parsed.categorySlug);
-  if (categoryShort && city) {
-    return joinListingTitleParts(['نیاز', categoryShort, city]).slice(0, LISTING_TITLE_MAX_LENGTH);
-  }
-  if (categoryShort) return `نیاز ${categoryShort}`.slice(0, LISTING_TITLE_MAX_LENGTH);
-  if (city) return `نیاز — ${city}`.slice(0, LISTING_TITLE_MAX_LENGTH);
-  return 'ثبت نیاز';
-}
-
 /** Snippet from user text when vertical builder is still too generic. */
 export function extractTitleSnippetFromSourceText(
   sourceText: string,
@@ -334,6 +235,16 @@ export function extractTitleSnippetFromSourceText(
     .replace(/\s*مدلش\s+.*$/u, '')
     .trim();
 
+  if (options?.dealFa) {
+    const deal = options.dealFa.trim();
+    if (deal) {
+      snippet = snippet
+        .replace(new RegExp(`^${deal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s+`, 'u'), '')
+        .replace(/\s+برای\s+(اجاره(?:\s+روزانه)?|رهن(?:\s+و\s+اجاره)?|خرید|فروش)\s*$/u, '')
+        .trim();
+    }
+  }
+
   if (snippet.length > 42) {
     const cut = snippet.slice(0, 42);
     const space = cut.lastIndexOf(' ');
@@ -345,7 +256,10 @@ export function extractTitleSnippetFromSourceText(
   if (snippet.length >= 3) parts.push(snippet);
   if (options?.city) parts.push(options.city);
 
-  return joinListingTitleParts(parts).slice(0, LISTING_TITLE_MAX_LENGTH);
+  return dedupeRedundantDealPhrases(joinListingTitleParts(parts)).slice(
+    0,
+    LISTING_TITLE_MAX_LENGTH
+  );
 }
 
 /** Pick best acceptable title from candidates (first that passes quality gate). */
@@ -362,25 +276,11 @@ export function resolveListingTitleCandidate(
   return (last ?? 'ثبت نیاز').slice(0, LISTING_TITLE_MAX_LENGTH);
 }
 
-export function buildHeuristicListingTitle(draft: NeedDraft): string {
-  const ctx = { sourceText: draft.sourceText ?? '' };
-  const { parsedIntent: parsed, answers } = draftToLegacyPayload(draft);
-  const deal = String(answers.dealType ?? parsed.entities?.dealType ?? '');
-  const dealFa = dealLabelForCategory(parsed.categorySlug, deal);
-  const city =
-    listingTitleCityFromDraft(draft, parsed.city, String(answers.location ?? '')) || undefined;
-  const categoryShort = shortCategoryLabel(parsed.categorySlug);
-
-  const vertical = buildVerticalTitleFromDraft(draft);
-  const snippet = extractTitleSnippetFromSourceText(ctx.sourceText, {
-    dealFa: dealFa && dealFa.length <= 20 ? dealFa : undefined,
-    city,
-    categoryShort,
-  });
-
-  return resolveListingTitleCandidate([vertical, snippet], ctx);
-}
-
-export function isGenericListingTitle(title: string): boolean {
-  return rejectListingTitleReason(title) !== null;
-}
+export {
+  buildDeterministicListingTitle as buildVerticalTitleFromDraft,
+  buildDeterministicListingTitle,
+  buildHeuristicListingTitle,
+  isGenericListingTitle,
+  mergeListingTitleWithAi,
+  resolveDeterministicListingTitle,
+} from '@/lib/need-intake/resolve-listing-title';

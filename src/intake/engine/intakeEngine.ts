@@ -90,6 +90,8 @@ function buildEntities(
     budgetMax: null,
     rooms: null,
     transactionType: null,
+    lat: null,
+    lng: null,
   };
 
   const categoryHit = bestCategoryMatch(indexes, tokens, ngrams);
@@ -236,7 +238,9 @@ export function buildAnalysisFromEntities(
   normalizedText: string,
   started: number
 ): IntakeAnalysisResult {
-  const missingFields = buildPrioritizedMissingFields(entities);
+  const missingFields = buildPrioritizedMissingFields(entities, {
+    sourceText: normalizedText,
+  });
   const nextQuestion = buildNextQuestion(entities, missingFields);
   const completionScore = computeCompletionScore(missingFields);
   const matchabilityScore = computeMatchabilityScore(entities);

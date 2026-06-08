@@ -13,6 +13,7 @@ import {
   locationCityIdToSlug,
   slugsToCities,
   slugsToPersianNames,
+  ALL_LOCATION_CITIES,
 } from '@/lib/search/city-slugs';
 import {
   getProvinceByIdOrSlug,
@@ -80,6 +81,37 @@ export function scopeLabel(scope: LocationScope): string {
     default:
       return 'تمام ایران';
   }
+}
+
+/**
+ * Bridge: URL path slug or Persian city name → canonical browse city slug + Persian name.
+ * Single entry for intake, browse filters, and geo API (location-system SSOT via city-slugs).
+ */
+export function resolveCityForBrowse(
+  pathSlugOrId: string | null | undefined,
+  persianName?: string | null
+): { slug: string | null; persianName: string | null } {
+  const slugInput = pathSlugOrId?.trim().toLowerCase() || null;
+  if (slugInput) {
+    const city = cityFromSlug(slugInput);
+    if (city) {
+      return { slug: locationCityIdToSlug(city.id), persianName: city.name };
+    }
+  }
+
+  const name = persianName?.trim();
+  if (name) {
+    const byName = ALL_LOCATION_CITIES.find((c) => c.name === name);
+    if (byName) {
+      return { slug: locationCityIdToSlug(byName.id), persianName: byName.name };
+    }
+    if (slugInput) {
+      return { slug: slugInput, persianName: name };
+    }
+    return { slug: null, persianName: name };
+  }
+
+  return { slug: slugInput, persianName: null };
 }
 
 /** Human-readable location label for browse H1 / page title (comma-separated city names). */
@@ -408,9 +440,9 @@ export function isCityNameInScope(scope: LocationScope, cityName: string | null 
   const norm = cityName.trim();
 
   if (scope.mode === 'provinces') {
-    const city = slugsToCities(scopeCitySlugs(scope)).find((c) => c.name === norm);
-    if (city) return true;
-    return true;
+    const allowed = scopeCityPersianNames(scope);
+    if (allowed.length === 0) return true;
+    return allowed.some((n) => norm.includes(n) || n.includes(norm));
   }
 
   const allowed = scopeCityPersianNames(scope);

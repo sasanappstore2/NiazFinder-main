@@ -5,22 +5,10 @@ import type { IntakeEntities } from '@/intake/types';
 import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
 import { applyPropertySlotsToParsed } from '@/lib/need-intake/apply-property-slots-to-parsed';
 import { seedAnswersFromParsed } from '@/lib/need-intake/seed-answers';
-
-/** Map canonical transactionType → legacy dealType chip values. */
-function legacyDealTypeFromEntities(entities: IntakeEntities): string | undefined {
-  const raw = entities.transactionType;
-  if (!raw) return undefined;
-  const map: Record<string, string> = {
-    BUY: 'buy',
-    SELL: 'sell',
-    RENT: 'rent_monthly',
-    FULL_DEPOSIT: 'rent_rahn_full',
-    DEPOSIT_AND_RENT: 'rent_rahn_ejare',
-    DAILY_RENT: 'rent_short_term',
-    HOURLY_RENT: 'rent_short_term',
-  };
-  return map[raw] ?? raw.toLowerCase();
-}
+import {
+  resolveLegacyDealType,
+  resolveTransactionType,
+} from '@/lib/need-intake/resolve-transaction-type';
 
 export interface LegacyNeedPayload {
   parsedIntent: NeedDraft['parsedIntent'];
@@ -39,6 +27,25 @@ export function draftToLegacyPayload(draft: NeedDraft): LegacyNeedPayload {
     entities.subcategorySlug ?? parsedBase.subcategorySlug
   );
 
+  const resolvedTransaction = resolveTransactionType({
+    sourceText: draft.sourceText,
+    categorySlug: normalized.categorySlug,
+    subcategorySlug: normalized.subcategorySlug,
+    userDealType:
+      draft.answers._userSetDealType === true && draft.answers.dealType != null
+        ? String(draft.answers.dealType)
+        : undefined,
+    existingTransactionType: entities.transactionType,
+  });
+
+  const entitiesForLegacy: IntakeEntities = {
+    ...entities,
+    transactionType: resolvedTransaction ?? entities.transactionType,
+  };
+
+  const textDeal = parsedBase.entities?.dealType;
+  const legacyDeal = resolveLegacyDealType(textDeal, entitiesForLegacy.transactionType);
+
   const parsedIntent: NeedDraft['parsedIntent'] = applyPropertySlotsToParsed({
     ...parsedBase,
     categorySlug: normalized.categorySlug,
@@ -51,14 +58,12 @@ export function draftToLegacyPayload(draft: NeedDraft): LegacyNeedPayload {
     rawText: draft.sourceText,
     entities: {
       ...parsedBase.entities,
-      ...(entities.transactionType ? { dealType: entities.transactionType } : {}),
+      ...(legacyDeal ? { dealType: legacyDeal } : {}),
       ...(entities.area != null ? { areaMin: String(entities.area) } : {}),
       ...(entities.rooms != null ? { rooms: String(entities.rooms) } : {}),
       ...(entities.neighborhood ? { area: entities.neighborhood } : {}),
     },
   });
-
-  const legacyDealType = legacyDealTypeFromEntities(entities);
 
   const answers: NeedDraft['answers'] = {
     ...seedAnswersFromParsed(parsedIntent, draft.leadPhone),
@@ -67,10 +72,18 @@ export function draftToLegacyPayload(draft: NeedDraft): LegacyNeedPayload {
       : entities.city
         ? { location: entities.city }
         : {}),
-    ...(legacyDealType && draft.answers.dealType == null ? { dealType: legacyDealType } : {}),
+    ...(legacyDeal && draft.answers.dealType == null ? { dealType: legacyDeal } : {}),
     ...(entities.rooms != null ? { rooms: entities.rooms } : {}),
     ...(entities.area != null && draft.answers.areaMin == null ? { areaMin: entities.area } : {}),
-    ...(entities.budgetMax != null && draft.answers.budget == null ? { budget: entities.budgetMax } : {}),
+    ...(entities.budgetMax != null &&
+    draft.answers.budget == null &&
+    legacyDeal !== 'rent_rahn_ejare' &&
+    legacyDeal !== 'rent_rahn_full'
+      ? { budget: entities.budgetMax }
+      : {}),
+    ...(entities.neighborhoodSlug?.trim()
+      ? { _neighborhoodSlug: entities.neighborhoodSlug.trim() }
+      : {}),
     /* User chip/select answers (advanced filters) — must survive recompute */
     ...draft.answers,
   };

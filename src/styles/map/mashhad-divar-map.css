@@ -1,0 +1,72 @@
+/* Mashhad Divar-style test map (MapLibre + OSM vector) */
+
+.mashhad-divar-map {
+  --divar-map-bg: #181b22;
+  background: var(--divar-map-bg);
+}
+
+.mashhad-divar-map .maplibregl-map {
+  font-family: inherit;
+  background: var(--divar-map-bg);
+  width: 100%;
+  height: 100%;
+}
+
+.mashhad-divar-map .maplibregl-canvas-container,
+.mashhad-divar-map .maplibregl-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.business-browse-map--mashhad-divar .maplibregl-canvas {
+  filter: none !important;
+}
+
+.mashhad-divar-map .maplibregl-ctrl-attrib {
+  font-size: 10px;
+  background: rgb(24 27 34 / 0.88);
+  color: #9aa3b2;
+  border-radius: 6px;
+  margin: 8px;
+}
+
+.mashhad-divar-map .maplibregl-ctrl-attrib a {
+  color: #b8c0cc;
+}
+
+.mashhad-divar-map__badge {
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(24 27 34 / 0.92);
+  color: #e8edf3;
+  backdrop-filter: blur(8px);
+}
+
+.mashhad-divar-map .bm-control-stack {
+  top: 3.5rem;
+  left: 0.75rem;
+}
+
+.business-browse-map--mashhad-divar .bm-map-chrome {
+  border-color: rgb(255 255 255 / 0.12);
+  background: rgb(24 27 34 / 0.92);
+  color: #e8edf3;
+}
+
+.business-browse-map--mashhad-divar .bm-popup.maplibregl-popup .mapboxgl-popup-content,
+.business-browse-map--mashhad-divar .bm-popup.maplibregl-popup .maplibregl-popup-content {
+  border-radius: 14px;
+  padding: 0;
+  border: 1px solid #2e333d;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+  overflow: hidden;
+  background: #1f232b;
+  color: #e8edf3;
+  width: 260px;
+}
+
+.business-browse-map--mashhad-divar .bm-popup.maplibregl-popup .maplibregl-popup-tip {
+  border-top-color: #1f232b;
+}

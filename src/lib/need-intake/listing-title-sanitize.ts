@@ -19,6 +19,46 @@ export interface TitleQualityContext {
   sourceText?: string;
 }
 
+const LEADING_DEAL_RE =
+  /^(اجاره(?:\s+روزانه)?|رهن(?:\s+و\s+اجاره)?|رهن\s+کامل|خرید|فروش|جستجوی\s+ملک)\s+/u;
+const TRAILING_DEAL_PURPOSE_RE =
+  /\s+برای\s+(اجاره(?:\s+روزانه)?|رهن(?:\s+و\s+اجاره)?|خرید|فروش)\s*$/u;
+
+/** Drop duplicate deal wording (e.g. «اجاره … برای اجاره»). */
+const PROPERTY_STRUCTURED_TITLE =
+  /^(?:اجاره(?:\s+روزانه)?|رهن(?:\s+کامل|\s+و\s+اجاره)?|خرید|فروش|جستجوی\s+ملک)\s+(?:آپارتمان|خانه|زمین|ویلا|ملک|دفتر|مغازه|خانه\s+ویلایی)/u;
+
+/** Titles assembled from deal + subject + location — not lazy copies. */
+export function isStructuredListingTitle(title: string): boolean {
+  const t = title.trim();
+  if (PROPERTY_STRUCTURED_TITLE.test(t)) return true;
+  if (/^(?:خرید|فروش)\s+\S+/u.test(t) && /\s(?:—|-)\s/u.test(t)) return true;
+  return false;
+}
+
+export function dedupeRedundantDealPhrases(title: string): string {
+  let t = title.trim();
+  if (!t) return t;
+
+  const leading = t.match(LEADING_DEAL_RE)?.[1]?.replace(/\s+/g, ' ') ?? '';
+  const trailingMatch = t.match(TRAILING_DEAL_PURPOSE_RE);
+  if (!leading || !trailingMatch) return t;
+
+  const trailing = trailingMatch[1]!.replace(/\s+/g, ' ');
+  const sameRent =
+    leading.includes('اجاره') && trailing.includes('اجاره');
+  const sameBuy = leading === 'خرید' && trailing === 'خرید';
+  const sameSell = leading === 'فروش' && trailing === 'فروش';
+  const sameRahn =
+    leading.includes('رهن') && trailing.includes('رهن');
+
+  if (sameRent || sameBuy || sameSell || sameRahn) {
+    t = t.replace(TRAILING_DEAL_PURPOSE_RE, '').trim();
+  }
+
+  return t;
+}
+
 export function normalizeListingTitle(raw: string): string {
   let t = raw
     .trim()
@@ -27,7 +67,13 @@ export function normalizeListingTitle(raw: string): string {
     .replace(/\s+/g, ' ')
     .replace(/\n[\s\S]*/, '');
 
+  t = dedupeRedundantDealPhrases(t);
   return truncateListingTitle(t);
+}
+
+/** Always run before persisting or displaying a listing title. */
+export function finalizeListingTitle(raw: string, _ctx?: TitleQualityContext): string {
+  return normalizeListingTitle(raw);
 }
 
 export function truncateListingTitle(title: string, max = LISTING_TITLE_MAX_LENGTH): string {
@@ -69,6 +115,7 @@ export function rejectListingTitleReason(
     if (
       normTitle.length >= 15 &&
       !isStructuredSummary &&
+      !isStructuredListingTitle(t) &&
       normTitle.length > normSeed.length * 0.55 &&
       overlapRatio(normSeed, normTitle) > 0.85
     ) {
@@ -116,4 +163,19 @@ export function parseTitleFromModelOutput(raw: string): string {
 
   const firstLine = trimmed.split('\n')[0]?.trim() ?? trimmed;
   return normalizeListingTitle(firstLine);
+}
+
+/** Reject AI titles that flip rent/رهn deals into sale/buy without user saying so. */
+export function aiTitleConflictsDeterministicDeal(
+  deterministic: string,
+  aiTitle: string,
+  sourceText?: string
+): boolean {
+  const det = deterministic.trim();
+  const ai = aiTitle.trim();
+  const rentDeal = /^(?:رهن(?:\s+و\s+اجاره)?|رهن\s+کامل|اجاره)/u.test(det);
+  const saleDeal = /^(?:فروش|خرید)/u.test(ai);
+  if (!rentDeal || !saleDeal) return false;
+  const source = sourceText ?? '';
+  return /رهن|ودیعه|اجاره/u.test(source) && !/(?:فروش|خرید)/u.test(source);
 }

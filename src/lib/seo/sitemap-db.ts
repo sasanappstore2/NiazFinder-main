@@ -28,7 +28,10 @@ export async function fetchPublishedOfferEntries(): Promise<SitemapEntry[]> {
 
 export async function fetchOpenRequestEntries(): Promise<SitemapEntry[]> {
   const requests = await db.serviceRequest.findMany({
-    where: { status: { in: ['OPEN', 'IN_PROGRESS'] } },
+    where: {
+      status: { in: ['OPEN', 'IN_PROGRESS'] },
+      moderationStatus: 'APPROVED',
+    },
     select: { id: true, title: true, updatedAt: true },
     orderBy: { updatedAt: 'desc' },
     take: 5000,

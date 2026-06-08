@@ -84,6 +84,7 @@ model Category {
   description String?
   icon        String?
   image       String?
+  embedding   Json?
   parentId    String?
   order       Int        @default(0)
   isActive    Boolean    @default(true)

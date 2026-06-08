@@ -35,6 +35,11 @@ export interface DivarDistrict {
   name: string;
   slug?: string;
   tags?: { title: string; type: string }[];
+  centroid?: { latitude: number; longitude: number };
+  default_location?: { latitude: number; longitude: number };
+  bbox?: number[];
+  polygon_encoded?: string;
+  multi_polygon_encoded?: string[];
 }
 
 export interface AdminCityRef {
@@ -137,12 +142,18 @@ export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function parseArgs(argv: string[]): { city?: string; refreshCities?: boolean } {
+export function parseArgs(argv: string[]): {
+  city?: string;
+  refreshCities?: boolean;
+  force?: boolean;
+} {
   let city: string | undefined;
   let refreshCities = false;
+  let force = false;
   for (const arg of argv) {
     if (arg === '--refresh-cities') refreshCities = true;
+    if (arg === '--force') force = true;
     if (arg.startsWith('--city=')) city = arg.slice('--city='.length);
   }
-  return { city, refreshCities };
+  return { city, refreshCities, force };
 }

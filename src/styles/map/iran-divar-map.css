@@ -1,0 +1,212 @@
+/* Iran Divar-style vector map (self-hosted OSM) */
+
+@font-face {
+  font-family: 'Noto Nastaliq Urdu';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/noto-nastaliq-urdu/NotoNastaliqUrdu-Regular.ttf') format('truetype');
+}
+
+.business-browse-map--iran-divar:has(.iran-divar-map[data-map-theme='dark']),
+.iran-divar-map[data-map-theme='dark'] {
+  --divar-map-bg: #181b22;
+  --divar-gulf-label-color: #ffffff;
+  --divar-gulf-label-shadow: #245f82;
+  --divar-chrome-bg: oklch(0.14 0.005 160 / 0.92);
+  --divar-chrome-border: rgb(255 255 255 / 0.12);
+  --divar-chrome-text: #e8edf3;
+  --divar-chrome-muted: #94a3b8;
+  --divar-control-bg: oklch(0.14 0.005 160 / 0.92);
+  --divar-control-hover: oklch(0.51 0.12 165 / 0.14);
+  --divar-control-icon: #e8edf3;
+  --divar-control-divider: rgb(255 255 255 / 0.1);
+  --divar-chrome-shadow: 0 4px 20px rgb(0 0 0 / 0.28);
+}
+
+.business-browse-map--iran-divar:has(.iran-divar-map[data-map-theme='light']),
+.iran-divar-map[data-map-theme='light'] {
+  --divar-map-bg: #e8ecf2;
+  --divar-gulf-label-color: #ffffff;
+  --divar-gulf-label-shadow: #1d5f8f;
+  --divar-chrome-bg: oklch(0.99 0.001 120 / 0.94);
+  --divar-chrome-border: rgb(15 23 42 / 0.1);
+  --divar-chrome-text: #0f172a;
+  --divar-chrome-muted: #64748b;
+  --divar-control-bg: oklch(0.99 0.001 120 / 0.94);
+  --divar-control-hover: oklch(0.51 0.12 165 / 0.1);
+  --divar-control-icon: #334155;
+  --divar-control-divider: rgb(15 23 42 / 0.08);
+  --divar-chrome-shadow: 0 4px 18px rgb(15 23 42 / 0.1);
+}
+
+.iran-divar-map .niaz-persian-gulf-label {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  white-space: nowrap;
+  direction: rtl;
+  unicode-bidi: plaintext;
+  font-family: 'Noto Nastaliq Urdu', 'Noto Nastaliq Urdu Regular', serif;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--divar-gulf-label-color);
+  letter-spacing: 0.04em;
+  text-shadow:
+    0 0 2px var(--divar-gulf-label-shadow),
+    0 0 4px var(--divar-gulf-label-shadow),
+    0 0 8px color-mix(in srgb, var(--divar-gulf-label-shadow) 55%, transparent),
+    1px 1px 0 var(--divar-gulf-label-shadow),
+    -1px -1px 0 var(--divar-gulf-label-shadow);
+}
+
+.iran-divar-map .maplibregl-map {
+  font-family: inherit;
+  background: var(--divar-map-bg);
+  width: 100%;
+  height: 100%;
+}
+
+.iran-divar-map .maplibregl-canvas-container,
+.iran-divar-map .maplibregl-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.business-browse-map--iran-divar .maplibregl-canvas {
+  filter: none !important;
+}
+
+.iran-divar-map .maplibregl-ctrl-attrib,
+.iran-divar-map .maplibregl-ctrl-logo {
+  display: none !important;
+}
+
+/* Desktop split — top-right (full-bleed map panel clips physical left edge) */
+.business-browse-map--iran-divar:not(.business-browse-map--mobile) .iran-divar-map .bm-control-stack {
+  top: 0.75rem;
+  right: 0.75rem;
+  left: auto;
+  bottom: auto;
+}
+
+/* Mobile immersive — bottom stack only (never top+bottom stretch) */
+.business-browse-map--iran-divar.business-browse-map--mobile .iran-divar-map .bm-control-stack {
+  top: auto;
+  right: auto;
+  bottom: 0.75rem;
+  left: 0.75rem;
+}
+
+/* Shared map chrome — aligned with site header glass */
+.business-browse-map--iran-divar .bm-map-chrome,
+.iran-divar-map .bm-map-chrome {
+  border: 1px solid var(--divar-chrome-border);
+  background: var(--divar-chrome-bg);
+  color: var(--divar-chrome-text);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--divar-chrome-shadow);
+}
+
+.business-browse-map--iran-divar .bm-map-chrome .text-muted-foreground,
+.iran-divar-map .bm-map-chrome .text-muted-foreground {
+  color: var(--divar-chrome-muted);
+}
+
+.business-browse-map--iran-divar .bm-control-stack,
+.iran-divar-map .bm-control-stack {
+  border-radius: 0.75rem;
+  border: 1px solid var(--divar-chrome-border);
+  background: var(--divar-control-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--divar-chrome-shadow);
+  overflow: hidden;
+}
+
+.business-browse-map--iran-divar .bm-control-btn,
+.iran-divar-map .bm-control-btn {
+  background: transparent;
+  color: var(--divar-control-icon);
+  border-bottom-color: var(--divar-control-divider);
+}
+
+.business-browse-map--iran-divar .bm-control-btn:hover,
+.iran-divar-map .bm-control-btn:hover {
+  background: var(--divar-control-hover);
+  color: var(--divar-chrome-text);
+}
+
+.business-browse-map--iran-divar .bm-control-btn:focus-visible,
+.iran-divar-map .bm-control-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+.business-browse-map--iran-divar .bm-close-map--mobile,
+.iran-divar-map .bm-close-map--mobile {
+  border-radius: 0.75rem;
+  border: 1px solid var(--divar-chrome-border);
+  background: var(--divar-chrome-bg);
+  color: var(--divar-chrome-text);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--divar-chrome-shadow);
+}
+
+.business-browse-map--iran-divar .bm-close-map--mobile:hover,
+.iran-divar-map .bm-close-map--mobile:hover {
+  background: var(--divar-control-hover);
+  border-color: color-mix(in oklch, var(--primary) 40%, var(--divar-chrome-border));
+  color: var(--primary);
+}
+
+/* Dark chrome — popups */
+.iran-divar-map[data-map-theme='dark'] .bm-map-chrome {
+  border-color: var(--divar-chrome-border);
+  background: var(--divar-chrome-bg);
+  color: var(--divar-chrome-text);
+}
+
+.iran-divar-map[data-map-theme='dark'] .bm-popup.maplibregl-popup .mapboxgl-popup-content,
+.iran-divar-map[data-map-theme='dark'] .bm-popup.maplibregl-popup .maplibregl-popup-content {
+  border-radius: 14px;
+  padding: 0;
+  border: 1px solid #2e333d;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+  overflow: hidden;
+  background: #1f232b;
+  color: #e8edf3;
+  width: 260px;
+}
+
+.iran-divar-map[data-map-theme='dark'] .bm-popup.maplibregl-popup .maplibregl-popup-tip {
+  border-top-color: #1f232b;
+}
+
+/* Light chrome */
+.iran-divar-map[data-map-theme='light'] .bm-map-chrome {
+  border-color: rgb(15 23 42 / 0.1);
+  background: rgb(255 255 255 / 0.94);
+  color: #0f172a;
+}
+
+.iran-divar-map[data-map-theme='light'] .bm-popup.maplibregl-popup .mapboxgl-popup-content,
+.iran-divar-map[data-map-theme='light'] .bm-popup.maplibregl-popup .maplibregl-popup-content {
+  border-radius: 14px;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 28px rgb(15 23 42 / 0.12);
+  overflow: hidden;
+  background: #ffffff;
+  color: #0f172a;
+  width: 260px;
+}
+
+.iran-divar-map[data-map-theme='light'] .bm-popup.maplibregl-popup .maplibregl-popup-tip {
+  border-top-color: #ffffff;
+}

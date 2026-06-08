@@ -2,8 +2,8 @@
 
 import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { usePathname } from 'next/navigation';
-import { Search, X, Inbox } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Search, X, Inbox, List, Map } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,14 +31,26 @@ import { appendFromParam } from '@/lib/browse-trail';
 import type { BrowseFilters } from '@/lib/filters/parser';
 import { slugsToPersianNames } from '@/lib/search/city-slugs';
 import { useLocationScope } from '@/hooks/use-location-scope';
+import {
+  scopeCitySlugs,
+  scopeIsActive,
+  scopeProvinceSlugs,
+} from '@/lib/search/location-scope';
 import { buildScopedSearchUrl } from '@/lib/search/location-scope';
 import { useBrowsePageHeading } from '@/hooks/use-browse-page-heading';
 import { NeedBrowseAlertButton } from '@/components/need/NeedBrowseAlertButton';
+import { NeedMapSplitView } from '@/components/need/map/NeedMapSplitView';
+import { CANONICAL_CITIES, COUNTRY_SLUG } from '@/config/locations';
+import type { NeedMapPinsQuery } from '@/hooks/use-need-map-pins';
 
 const REQUEST_FILTER_DEFAULTS = {
   q: '',
   page: 1,
+  view: 'list',
 };
+
+const REQUEST_PAGE_LIMIT = 9;
+const REQUEST_MAP_LIST_LIMIT = 40;
 
 // ─── Main Component ───────────────────────────────────
 interface BrowseRequestsProps {
@@ -55,12 +67,14 @@ export function BrowseRequests({
   urlFilters,
 }: BrowseRequestsProps = {}) {
   const { navigateTo } = useNavigate();
+  const router = useRouter();
   const pathname = usePathname();
   const categories = useAppStore((s) => s.categories);
   const fetchCategories = useAppStore((s) => s.fetchCategories);
 
   const [query, setQuery] = useState(urlFilters?.q ?? '');
   const [currentPage, setCurrentPage] = useState(1);
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [isUrlReady, setIsUrlReady] = useState(true);
 
   // Data state
@@ -71,13 +85,28 @@ export function BrowseRequests({
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
-  const PAGE_LIMIT = 9;
   const currentPathname = basePath;
   const locationScope = useLocationScope();
   const { h1: pageH1, displayH1 } = useBrowsePageHeading('need');
   const urlCityNames = useMemo(() => slugsToPersianNames(citySlugs), [citySlugs]);
   const provinceSlugs = urlFilters?.provinces ?? [];
   const hasLocationScope = urlCityNames.length > 0 || provinceSlugs.length > 0;
+
+  /** Map uses URL scope first, then header/cookie location when path is country-wide. */
+  const effectiveMapCitySlugs = useMemo(() => {
+    if (citySlugs.length > 0) return citySlugs;
+    if (scopeIsActive(locationScope)) return scopeCitySlugs(locationScope);
+    return [];
+  }, [citySlugs, locationScope]);
+
+  const effectiveMapProvinceSlugs = useMemo(() => {
+    if (provinceSlugs.length > 0) return provinceSlugs;
+    if (scopeIsActive(locationScope)) return scopeProvinceSlugs(locationScope);
+    return [];
+  }, [provinceSlugs, locationScope]);
+
+  const hasMapLocationScope =
+    effectiveMapCitySlugs.length > 0 || effectiveMapProvinceSlugs.length > 0;
   const preservedFilters = useMemo(
     () => ({
       type: urlFilters?.type,
@@ -113,14 +142,30 @@ export function BrowseRequests({
   }, [urlFilters?.q]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const view = new URLSearchParams(window.location.search).get('view');
+    if (view === 'map') {
+      setViewMode('map');
+    } else if (view === 'list' || view === 'grid') {
+      setViewMode('list');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.documentElement.classList.toggle('browse-map-immersive', viewMode === 'map');
+    return () => document.documentElement.classList.remove('browse-map-immersive');
+  }, [viewMode]);
+
+  useEffect(() => {
     if (!isUrlReady) return;
     replaceBrowseUrl(
       currentPathname,
-      { q: query, page: currentPage },
+      { q: query, page: currentPage, view: viewMode },
       REQUEST_FILTER_DEFAULTS,
       { ...preservedFilters, q: query || null }
     );
-  }, [currentPage, currentPathname, isUrlReady, preservedFilters, query]);
+  }, [currentPage, currentPathname, isUrlReady, preservedFilters, query, viewMode]);
 
   // Fetch requests from API
   const fetchRequests = useCallback(
@@ -133,8 +178,8 @@ export function BrowseRequests({
 
       try {
         const params = buildRequestListParams(urlFilters, {
-          page,
-          limit: PAGE_LIMIT,
+          page: viewMode === 'map' ? 1 : page,
+          limit: viewMode === 'map' ? REQUEST_MAP_LIST_LIMIT : REQUEST_PAGE_LIMIT,
           search: query.trim() || undefined,
           category: categorySlug,
           cities: hasLocationScope && urlCityNames.length > 0 ? urlCityNames : undefined,
@@ -200,8 +245,75 @@ export function BrowseRequests({
         setLoadingMore(false);
       }
     },
-    [query, categorySlug, hasLocationScope, urlCityNames, provinceSlugs, citySlugs, urlFilters]
+    [query, categorySlug, hasLocationScope, urlCityNames, provinceSlugs, citySlugs, urlFilters, viewMode]
   );
+
+  const mapPinsQuery = useMemo((): NeedMapPinsQuery => {
+    const q: NeedMapPinsQuery = {
+      category: categorySlug,
+      search: query.trim() || undefined,
+      cities:
+        hasMapLocationScope && effectiveMapCitySlugs.length > 0
+          ? effectiveMapCitySlugs.join(',')
+          : undefined,
+      provinces:
+        hasMapLocationScope && effectiveMapProvinceSlugs.length > 0
+          ? effectiveMapProvinceSlugs.join(',')
+          : undefined,
+      neighborhoods:
+        urlFilters?.neighborhoods && urlFilters.neighborhoods.length > 0
+          ? urlFilters.neighborhoods.join(',')
+          : undefined,
+      neighborhoodCity: effectiveMapCitySlugs.length === 1 ? effectiveMapCitySlugs[0] : undefined,
+      budgetMin: urlFilters?.priceMin != null ? String(urlFilters.priceMin) : undefined,
+      budgetMax: urlFilters?.priceMax != null ? String(urlFilters.priceMax) : undefined,
+      priority: urlFilters?.urgent ? 'URGENT' : undefined,
+      hasPhoto: urlFilters?.hasPhoto ?? undefined,
+      recent: urlFilters?.recent ?? undefined,
+    };
+    return q;
+  }, [
+    categorySlug,
+    query,
+    hasMapLocationScope,
+    effectiveMapCitySlugs,
+    effectiveMapProvinceSlugs,
+    urlFilters?.neighborhoods,
+    urlFilters?.priceMin,
+    urlFilters?.priceMax,
+    urlFilters?.urgent,
+    urlFilters?.hasPhoto,
+    urlFilters?.recent,
+  ]);
+
+  const exitMapView = () => {
+    setViewMode('list');
+    setCurrentPage(1);
+  };
+
+  const hasCityScope = effectiveMapCitySlugs.length > 0;
+  const cityScopeLabel = useMemo(() => {
+    if (effectiveMapCitySlugs.length === 1) {
+      return (
+        CANONICAL_CITIES.find((c) => c.slug === effectiveMapCitySlugs[0])?.title ??
+        effectiveMapCitySlugs[0]
+      );
+    }
+    if (effectiveMapCitySlugs.length > 1) {
+      return `${effectiveMapCitySlugs.length.toLocaleString('fa-IR')} شهر`;
+    }
+    return undefined;
+  }, [effectiveMapCitySlugs]);
+
+  const clearCityScope = useCallback(() => {
+    router.replace(
+      routeBuilder.search({
+        market: 'need',
+        location: COUNTRY_SLUG,
+        category: categorySlug,
+      })
+    );
+  }, [categorySlug, router]);
 
   useEffect(() => {
     if (!isUrlReady) return;
@@ -224,10 +336,19 @@ export function BrowseRequests({
   };
 
   return (
-    <div className="w-full min-h-[50vh] bg-muted/20" dir="rtl">
-      <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <div
+      className={viewMode === 'map' ? 'w-full bg-background' : 'w-full min-h-[50vh] bg-muted/20'}
+      dir="rtl"
+    >
+      <div
+        className={
+          viewMode === 'map'
+            ? 'px-4 py-3 sm:px-6 max-lg:px-0 max-lg:py-0'
+            : 'px-4 py-6 sm:px-6 sm:py-8 lg:px-8'
+        }
+      >
         {/* Header */}
-        <div className="mb-8">
+        <div className={viewMode === 'map' ? 'mb-3 max-lg:hidden' : 'mb-8'}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1
@@ -236,13 +357,47 @@ export function BrowseRequests({
               >
                 {displayH1}
               </h1>
-              <p className="mt-1.5 text-sm text-muted-foreground">
-                {hasLoadedInitial
-                  ? `${totalCount.toLocaleString('fa-IR')} نیاز یافت شد`
-                  : 'در حال جستجو...'}
-              </p>
+              {viewMode !== 'map' ? (
+                <p className="mt-1.5 text-sm text-muted-foreground">
+                  {hasLoadedInitial
+                    ? `${totalCount.toLocaleString('fa-IR')} نیاز یافت شد`
+                    : 'در حال جستجو...'}
+                </p>
+              ) : null}
             </div>
             <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+              <div
+                className="flex overflow-hidden rounded-lg border border-border/40 shadow-sm"
+                role="radiogroup"
+                aria-label="نحوه نمایش"
+              >
+                <button
+                  onClick={() => {
+                    setViewMode('list');
+                    setCurrentPage(1);
+                  }}
+                  className={`flex items-center justify-center p-2 transition-colors ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+                  aria-label="نمای لیستی"
+                  role="radio"
+                  aria-checked={viewMode === 'list'}
+                  title="نمایش به صورت لیستی"
+                >
+                  <List className="size-4" aria-hidden="true" />
+                </button>
+                <button
+                  onClick={() => {
+                    setViewMode('map');
+                    setCurrentPage(1);
+                  }}
+                  className={`flex items-center justify-center p-2 transition-colors ${viewMode === 'map' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+                  aria-label="نمای نقشه"
+                  role="radio"
+                  aria-checked={viewMode === 'map'}
+                  title="نمایش روی نقشه"
+                >
+                  <Map className="size-4" aria-hidden="true" />
+                </button>
+              </div>
               <NeedBrowseAlertButton
                 browsePath={currentPathname}
                 categorySlug={categorySlug}
@@ -255,7 +410,8 @@ export function BrowseRequests({
           </div>
         </div>
 
-        {/* Search bar — always visible */}
+        {/* Search bar */}
+        {viewMode !== 'map' ? (
         <div className="mb-6">
           <div className="relative">
             <Search className="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -284,15 +440,33 @@ export function BrowseRequests({
             )}
           </div>
         </div>
+        ) : null}
+
+        {viewMode === 'map' ? (
+          <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 max-lg:static max-lg:w-full max-lg:max-w-none max-lg:translate-x-0">
+            <NeedMapSplitView
+              requests={requests}
+              citySlugs={effectiveMapCitySlugs}
+              provinceSlugs={effectiveMapProvinceSlugs}
+              neighborhoodSlugs={urlFilters?.neighborhoods ?? []}
+              mapQuery={mapPinsQuery}
+              fromPathname={pathname}
+              onCloseMap={exitMapView}
+              hasCityScope={hasCityScope}
+              cityScopeLabel={cityScopeLabel}
+              onClearCityScope={clearCityScope}
+            />
+          </div>
+        ) : null}
 
         {/* Results */}
-        {!hasLoadedInitial && isLoading ? (
+        {viewMode !== 'map' && !hasLoadedInitial && isLoading ? (
           <div className={NEED_LIST_CLASS} aria-label="در حال بارگذاری نیازها" role="status">
             {Array.from({ length: 6 }).map((_, i) => (
               <NeedBrowseCardSkeleton key={i} />
             ))}
           </div>
-        ) : requests.length === 0 ? (
+        ) : viewMode !== 'map' && requests.length === 0 ? (
           <div className="py-20 text-center">
             <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-muted/60">
               <Inbox className="size-8 text-muted-foreground/40" aria-hidden="true" />
@@ -305,7 +479,7 @@ export function BrowseRequests({
               پاک کردن جستجو
             </Button>
           </div>
-        ) : (
+        ) : viewMode !== 'map' ? (
           <>
             <div
               className={NEED_LIST_CLASS}
@@ -371,7 +545,7 @@ export function BrowseRequests({
               </div>
             )}
           </>
-        )}
+        ) : null}
       </div>
       <noscript>
         <div className="sr-only" itemScope itemType="https://schema.org/ItemList">

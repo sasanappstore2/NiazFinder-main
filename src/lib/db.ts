@@ -23,7 +23,7 @@ function createPrismaClient(): PrismaClient {
     bustPrismaModuleCache();
   }
   // Dynamic require so dev picks up `prisma generate` without a full restart.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+   
   const { PrismaClient: FreshClient } = require('@prisma/client') as typeof import('@prisma/client');
   return new FreshClient({
     log: process.env.NODE_ENV === 'production' ? [] : ['error'],

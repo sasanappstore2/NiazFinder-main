@@ -26,6 +26,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { HealthModule } from './modules/health/health.module';
 import { IntakeTypingModule } from './modules/intake-typing/intake-typing.module';
 import { InternalModule } from './modules/internal/internal.module';
+import { IntentParserModule } from './intent-parser/intent-parser.module';
 import { NotificationsGateway } from './gateways/notifications.gateway';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
@@ -124,6 +125,7 @@ const entities = [
     HealthModule,
     IntakeTypingModule,
     InternalModule,
+    IntentParserModule,
   ],
   providers: [
     // ─── WebSocket Gateways (ChatGateway is provided by ChatModule) ───

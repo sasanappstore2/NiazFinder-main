@@ -20,6 +20,7 @@ const FIELD_MESSAGES: Record<string, string> = {
   rooms: 'تعداد خواب الزامی است',
   description: 'توضیحات الزامی است',
   urgency: 'فوریت الزامی است',
+  mapPin: 'موقعیت روی نقشه را مشخص کنید',
 };
 
 /**
@@ -45,13 +46,27 @@ export function validateNeedDraftForPublish(draft: NeedDraft): PublishValidation
 
   const entities = recordToEntities(draft.entities);
 
+  const valueCtx = {
+    sourceText: draft.sourceText,
+    answers: draft.answers as Record<string, unknown>,
+    parsedUrgency: draft.parsedIntent?.urgency ?? null,
+  };
+
   for (const field of def.requiredFields) {
-    if (!hasEntityValue(entities, field)) {
+    if (!hasEntityValue(entities, field, valueCtx)) {
       errors.push({
         field,
         message: FIELD_MESSAGES[field] ?? `${field} required`,
       });
     }
+  }
+
+  // Map pin is required for real-estate listings (browse map); services can publish with neighborhood text only.
+  const needsMapPin =
+    def.vertical === 'real-estate' &&
+    def.requiredFields.some((f) => f === 'city' || f === 'neighborhood');
+  if (needsMapPin && !hasEntityValue(entities, 'mapPin', valueCtx)) {
+    errors.push({ field: 'mapPin', message: FIELD_MESSAGES.mapPin });
   }
 
   if (!entities.categorySlug) {

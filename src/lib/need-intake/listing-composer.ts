@@ -1,12 +1,11 @@
 import type { NeedDraft, ParsedIntent } from '@/contracts/need-intake';
 import type { NeedIntelligenceProfile } from '@/contracts/need-intelligence';
 import { JOB_ROLE_LABELS, PROPERTY_KIND_LABELS } from '@/config/need-schemas/labels';
-import { getRootCategorySlug } from '@/config/need-schemas/resolve-schema';
 import { formatMoneyToman } from '@/lib/format/money';
 import { dealLabelForCategory, LISTING_TITLE_MAX_LENGTH } from '@/lib/need-intake/listing-title';
-import { isGenericListingTitle, buildVerticalTitleFromDraft } from '@/lib/need-intake/vertical-title';
 import { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
 import { realEstateFilterSummaryLines } from '@/lib/need-intake/filter-answer-lines';
+import { resolveDeterministicListingTitle } from '@/lib/need-intake/resolve-listing-title';
 
 export interface ComposedListing {
   title: string;
@@ -29,38 +28,12 @@ function buildIntelligenceLines(profile?: NeedIntelligenceProfile): string[] {
   return lines;
 }
 
-function buildIntelligenceTitle(
-  draft: NeedDraft,
-  parsed: ParsedIntent,
-  answers: Record<string, unknown>
-): string | null {
-  const ip = draft.intelligenceProfile;
-  const deal = String(answers.dealType ?? ip?.transaction ?? parsed.entities?.dealType ?? '');
-  const kind = String(answers.propertyKind ?? parsed.entities?.propertyKind ?? '');
-  if (!deal && !kind) return null;
-
-  const dealFa = deal ? dealLabelForCategory(parsed.categorySlug, deal) : '';
-  const kindFa = kind ? (PROPERTY_KIND_LABELS[kind] ?? kind) : 'ملک';
-  const area = ip?.area?.min ?? answers.areaMin;
-  const approx = ip?.area?.approximate;
-  const sizePart =
-    area != null ? (approx ? ` ~${area}m` : ` ${area} متر`) : '';
-
-  const hood = ip?.location?.neighborhood;
-  const city = ip?.location?.city ?? parsed.city;
-  const locPart = hood && city ? `${hood} ${city}` : hood ?? city ?? '';
-  const core = `${dealFa} ${kindFa}${sizePart}`.trim();
-  return locPart ? `${core} — ${locPart}` : core || null;
-}
-
 function buildDescriptionLines(
   parsed: ParsedIntent,
   answers: Record<string, unknown>,
   profile?: NeedIntelligenceProfile
 ): string[] {
   const lines: string[] = [];
-  const root = getRootCategorySlug(parsed.categorySlug);
-
   const intro =
     parsed.description?.trim() ||
     String(answers.details ?? answers.serviceType ?? parsed.rawText).trim();
@@ -76,7 +49,7 @@ function buildDescriptionLines(
     if (kind) lines.push(`نوع ملک: ${PROPERTY_KIND_LABELS[String(kind)] ?? kind}`);
     if (answers.areaMin) lines.push(`متراژ زمین: ${answers.areaMin} متر`);
     if (answers.plotWidth) lines.push(`عرض زمین: ${answers.plotWidth} متر`);
-  } else if (root === 'real-estate') {
+  } else if (parsed.intentType.startsWith('property') || parsed.categorySlug?.includes('rent') || parsed.categorySlug?.includes('sale')) {
     const kind = answers.propertyKind ?? parsed.entities?.propertyKind;
     if (kind) lines.push(`نوع ملک: ${PROPERTY_KIND_LABELS[String(kind)] ?? kind}`);
     lines.push(...realEstateFilterSummaryLines(answers));
@@ -100,14 +73,14 @@ function buildDescriptionLines(
     if (answers.guestCount) lines.push(`تعداد نفرات: ${answers.guestCount}`);
   }
 
-  if (root === 'vehicles') {
+  if (parsed.intentType.startsWith('vehicle')) {
     const kind = answers.vehicleKind ?? parsed.entities?.vehicleKind;
     if (kind) lines.push(`نوع خودرو: ${kind}`);
     if (answers.brand) lines.push(`برند: ${answers.brand}`);
     if (answers.model) lines.push(`مدل: ${answers.model}`);
   }
 
-  if (root === 'jobs') {
+  if (parsed.intentType.startsWith('job')) {
     const role = answers.roleType ?? parsed.entities?.roleType;
     if (role) lines.push(`نقش: ${JOB_ROLE_LABELS[String(role)] ?? role}`);
     if (answers.jobTitle) lines.push(`عنوان شغلی: ${answers.jobTitle}`);
@@ -129,23 +102,10 @@ function buildDescriptionLines(
   return lines;
 }
 
-/** Template-based title/description polish — replaces LLM enrich. */
+/** Template-based title/description — title always from canonical resolver. */
 export function composeListingFromDraft(draft: NeedDraft): ComposedListing {
   const { parsedIntent: parsed, answers } = draftToLegacyPayload(draft);
-
-  const intelligenceTitle = buildIntelligenceTitle(draft, parsed, answers);
-  const parsedTitle = parsed.title?.trim();
-  let title =
-    parsedTitle &&
-    parsedTitle.length >= 8 &&
-    parsedTitle !== 'ثبت نیاز' &&
-    !isGenericListingTitle(parsedTitle)
-      ? parsedTitle
-      : intelligenceTitle ?? buildVerticalTitleFromDraft(draft);
-
-  if (title.length < 10 || title === 'ثبت نیاز' || isGenericListingTitle(title)) {
-    title = intelligenceTitle ?? buildVerticalTitleFromDraft(draft);
-  }
+  const title = resolveDeterministicListingTitle(draft).title;
 
   const bodyLines = buildDescriptionLines(parsed, answers, draft.intelligenceProfile);
   let description = bodyLines.join('\n').trim();

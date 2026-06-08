@@ -14,6 +14,8 @@ export type BusinessHubProfile = {
   city: string;
   province: string;
   address: string;
+  lat: number | null;
+  lng: number | null;
   phone: string;
   whatsapp: string;
   email: string;
@@ -47,6 +49,8 @@ export type BusinessHubProfilePatch = Partial<
     | 'city'
     | 'province'
     | 'address'
+    | 'lat'
+    | 'lng'
     | 'phone'
     | 'whatsapp'
     | 'email'

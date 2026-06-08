@@ -85,6 +85,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (serviceRequest.moderationStatus !== 'APPROVED') {
+      return NextResponse.json(
+        { error: 'این نیاز هنوز منتشر نشده و امکان ارسال پیشنهاد وجود ندارد' },
+        { status: 403 }
+      );
+    }
+
     // Prevent user from proposing on their own request
     if (serviceRequest.userId === user.id) {
       return NextResponse.json(
@@ -191,6 +198,14 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await getAuthUser(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'لطفاً ابتدا وارد حساب کاربری خود شوید' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const requestId = searchParams.get('requestId');
 
@@ -199,6 +214,19 @@ export async function GET(request: NextRequest) {
         { error: 'شناسه نیاز الزامی است' },
         { status: 400 }
       );
+    }
+
+    const serviceRequest = await db.serviceRequest.findUnique({
+      where: { id: requestId },
+      select: { userId: true },
+    });
+    if (!serviceRequest) {
+      return NextResponse.json({ error: 'نیاز مورد نظر یافت نشد' }, { status: 404 });
+    }
+    const isOwner = serviceRequest.userId === user.id;
+    const isAdmin = ['ADMIN', 'SUPER_ADMIN'].includes(user.role);
+    if (!isOwner && !isAdmin) {
+      return NextResponse.json({ error: 'دسترسی غیرمجاز' }, { status: 403 });
     }
 
     const proposals = await db.proposal.findMany({

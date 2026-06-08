@@ -3,6 +3,8 @@
 // Comprehensive SEO helpers for Persian (Farsi) marketplace
 // ═══════════════════════════════════════════════════════════════════
 
+import { CANONICAL_CATEGORIES } from '@/config/categories';
+
 export const SITE_URL = 'https://needfinder.ir';
 export const SITE_NAME = 'نیاز فایندر';
 export const SITE_NAME_EN = 'NeedFinder';
@@ -398,40 +400,12 @@ export interface CategoryRoute {
   parentSlug?: string;
 }
 
-export const CATEGORY_ROUTES: CategoryRoute[] = [
-  { slug: 'web-design-development', name: 'طراحی و توسعه وب' },
-  { slug: 'website-design', name: 'طراحی سایت', parentSlug: 'web-design-development' },
-  { slug: 'frontend-development', name: 'توسعه فرانت‌اند', parentSlug: 'web-design-development' },
-  { slug: 'backend-development', name: 'توسعه بک‌اند', parentSlug: 'web-design-development' },
-  { slug: 'mobile-app', name: 'اپلیکیشن موبایل' },
-  { slug: 'android', name: 'اندروید', parentSlug: 'mobile-app' },
-  { slug: 'ios', name: 'iOS', parentSlug: 'mobile-app' },
-  { slug: 'flutter', name: 'فلاتر', parentSlug: 'mobile-app' },
-  { slug: 'content-creation', name: 'تولید محتوا' },
-  { slug: 'copywriting', name: 'نویسندگی', parentSlug: 'content-creation' },
-  { slug: 'seo', name: 'سئو', parentSlug: 'content-creation' },
-  { slug: 'translation', name: 'ترجمه', parentSlug: 'content-creation' },
-  { slug: 'graphic-design', name: 'طراحی گرافیک' },
-  { slug: 'logo-design', name: 'طراحی لوگو', parentSlug: 'graphic-design' },
-  { slug: 'ui-ux-design', name: 'UI/UX', parentSlug: 'graphic-design' },
-  { slug: 'banner-poster', name: 'بنر و پوستر', parentSlug: 'graphic-design' },
-  { slug: 'home-services', name: 'خدمات خانگی' },
-  { slug: 'cleaning', name: 'نظافت منزل', parentSlug: 'home-services' },
-  { slug: 'plumbing', name: 'تاسیسات', parentSlug: 'home-services' },
-  { slug: 'electrical', name: 'برقکاری', parentSlug: 'home-services' },
-  { slug: 'repair-services', name: 'تعمیرات' },
-  { slug: 'mobile-repair', name: 'تعمیر موبایل', parentSlug: 'repair-services' },
-  { slug: 'laptop-repair', name: 'تعمیر لپ‌تاپ', parentSlug: 'repair-services' },
-  { slug: 'car-repair', name: 'تعمیر خودرو', parentSlug: 'repair-services' },
-  { slug: 'consulting-education', name: 'مشاوره و آموزش' },
-  { slug: 'immigration-consulting', name: 'مشاور مهاجرت', parentSlug: 'consulting-education' },
-  { slug: 'private-tutoring', name: 'آموزش خصوصی', parentSlug: 'consulting-education' },
-  { slug: 'legal-services', name: 'وکالت', parentSlug: 'consulting-education' },
-  { slug: 'ai-services', name: 'هوش مصنوعی' },
-  { slug: 'chatbot', name: 'چت‌بات', parentSlug: 'ai-services' },
-  { slug: 'image-processing', name: 'پردازش تصویر', parentSlug: 'ai-services' },
-  { slug: 'machine-learning', name: 'یادگیری ماشین', parentSlug: 'ai-services' },
-];
+/** @deprecated Use CANONICAL_CATEGORIES — kept for legacy SEO helpers. */
+export const CATEGORY_ROUTES: CategoryRoute[] = CANONICAL_CATEGORIES.map((cat) => ({
+  slug: cat.slug,
+  name: cat.title,
+  ...(cat.parentSlug ? { parentSlug: cat.parentSlug } : {}),
+}));
 
 // ═══════════════════════════════════════════════════════════════════
 // Internal Link Configuration

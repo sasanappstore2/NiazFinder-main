@@ -16,6 +16,7 @@ import {
   extractVehicleSubjectFromText,
   buildVerticalTitleFromDraft,
   buildHeuristicListingTitle,
+  extractTitleSnippetFromSourceText,
 } from '@/lib/need-intake/vertical-title';
 import {
   isAcceptableListingTitle,
@@ -23,6 +24,7 @@ import {
   parseTitleFromModelOutput,
   rejectListingTitleReason,
   truncateListingTitle,
+  dedupeRedundantDealPhrases,
 } from '@/lib/need-intake/listing-title-sanitize';
 import type { ParsedIntent } from '@/contracts/need-intake';
 
@@ -218,6 +220,35 @@ function testCarwashDraftCompose(): string[] {
   return failed.filter(Boolean);
 }
 
+function testPropertyRentTitleDedup(): string[] {
+  const failed: string[] = [];
+  const sourceText = 'اجاره آپارتمان ۱۹۰ متری در صیاد برای اجاره';
+
+  failed.push(
+    assert(
+      dedupeRedundantDealPhrases('اجاره آپارتمان ۱۹۰ متری در صیاد برای اجاره') ===
+        'اجاره آپارتمان ۱۹۰ متری در صیاد',
+      'dedupe: trailing برای اجاره'
+    ) ?? ''
+  );
+
+  const snippet = extractTitleSnippetFromSourceText(sourceText, { dealFa: 'اجاره' });
+  failed.push(assert(!snippet.includes('برای اجاره'), 'snippet: no duplicate deal suffix') ?? '');
+  failed.push(assert(snippet.startsWith('اجاره'), 'snippet: keeps deal prefix') ?? '');
+
+  const parsed = parseFromText(sourceText);
+  const answers = seedAnswersFromParsed(parsed);
+  let draft = draftFromParsed(parsed, answers, []);
+  draft.sourceText = sourceText;
+  draft = recomputeNeedDraft(draft);
+  const composed = composeListingFromDraft(draft);
+  failed.push(assert(composed.title.includes('190') || composed.title.includes('۱۹۰'), 'compose: includes size') ?? '');
+  failed.push(assert(composed.title.includes('صیاد'), 'compose: includes location fragment') ?? '');
+  failed.push(assert(!composed.title.includes('برای اجاره'), 'compose: no duplicate deal') ?? '');
+
+  return failed.filter(Boolean);
+}
+
 async function testTemplateFallback(): Promise<string[]> {
   const failed: string[] = [];
   const prev = process.env.NEED_INTAKE_TITLE_AI_ENABLED;
@@ -276,9 +307,10 @@ export async function runListingTitleSelfTest(): Promise<{ passed: number; faile
     ...testPeugeot207Draft(),
     ...testDaewooDraftTitle(),
     ...testCarwashDraftCompose(),
+    ...testPropertyRentTitleDedup(),
     ...(await testTemplateFallback()),
   ];
-  const total = 6 + 2 + 10 + 8 + 4 + 4 + 3 + 2;
+  const total = 6 + 2 + 10 + 8 + 4 + 4 + 5 + 3 + 2;
   return { passed: total - failed.length, failed };
 }
 

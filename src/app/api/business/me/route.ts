@@ -26,6 +26,8 @@ const PATCH_SELECT = {
   city: true,
   province: true,
   address: true,
+  lat: true,
+  lng: true,
   phone: true,
   whatsapp: true,
   email: true,
@@ -76,6 +78,8 @@ function mapProfileResponse(profile: BusinessProfile) {
     city: profile.city ?? '',
     province: profile.province ?? '',
     address: profile.address ?? '',
+    lat: profile.lat,
+    lng: profile.lng,
     phone: profile.phone ?? '',
     whatsapp: profile.whatsapp ?? '',
     email: profile.email ?? '',
@@ -176,6 +180,26 @@ export async function PATCH(request: NextRequest) {
 
     if (typeof body.chatEnabled === 'boolean') {
       data.chatEnabled = body.chatEnabled;
+    }
+
+    if (body.lat === null || body.lat === '') {
+      data.lat = null;
+    } else if (body.lat !== undefined) {
+      const lat = Number(body.lat);
+      if (!Number.isFinite(lat) || lat < -90 || lat > 90) {
+        return NextResponse.json({ error: 'عرض جغرافیایی نامعتبر است' }, { status: 400 });
+      }
+      data.lat = lat;
+    }
+
+    if (body.lng === null || body.lng === '') {
+      data.lng = null;
+    } else if (body.lng !== undefined) {
+      const lng = Number(body.lng);
+      if (!Number.isFinite(lng) || lng < -180 || lng > 180) {
+        return NextResponse.json({ error: 'طول جغرافیایی نامعتبر است' }, { status: 400 });
+      }
+      data.lng = lng;
     }
 
     if (Object.keys(data).length === 0) {

@@ -7,10 +7,25 @@ import {
   pickStreetOrHoodDisplay,
 } from '@/lib/need-intake/location-fragment';
 import {
+  findNeighborhoodInText,
   rankGlobalNeighborhoodCandidates,
   rankNeighborhoodCandidates,
   type GlobalNeighborhoodCandidate,
 } from '@/lib/need-intake/neighborhood-catalog.server';
+
+/** Prefer catalog sub-area (e.g. «جلال آل احمد») over parent hood name («سید رضی»). */
+function neighborhoodLabelForResolved(
+  city: string,
+  rawText: string,
+  slug: string,
+  catalogName: string
+): string {
+  const match = findNeighborhoodInText(city, rawText);
+  if (match?.slug === slug && match.matchedArea?.trim()) {
+    return match.matchedArea.trim();
+  }
+  return catalogName;
+}
 
 export type LocationResolutionStatus =
   | 'resolved'
@@ -222,7 +237,12 @@ function resolveNeighborhoodInCity(
         status: 'resolved',
         city: explicitCity,
         neighborhoodSlug: best.slug,
-        neighborhoodLabel: best.name,
+        neighborhoodLabel: neighborhoodLabelForResolved(
+          explicitCity,
+          rawText,
+          best.slug,
+          best.name
+        ),
         fragment,
         confidence: best.score,
         rejectAutoConfirm: false,
@@ -268,7 +288,9 @@ function resolveNeighborhoodInCity(
     status: confident ? 'resolved' : 'neighborhood_ambiguous',
     city: explicitCity,
     neighborhoodSlug: confident ? best.slug : undefined,
-    neighborhoodLabel: best.name,
+    neighborhoodLabel: confident
+      ? neighborhoodLabelForResolved(explicitCity, rawText, best.slug, best.name)
+      : best.name,
     fragment,
     confidence: best.score,
     rejectAutoConfirm: !confident,
@@ -314,8 +336,10 @@ function applyResolvedToParsed(
     next.neighborhoodCandidates = undefined;
     if (result.neighborhoodSlug) {
       next.neighborhoodSlug = result.neighborhoodSlug;
-      const displayArea = pickStreetOrHoodDisplay(result.fragment, result.neighborhoodLabel);
-      const areaLabel = displayArea || result.neighborhoodLabel;
+      const areaLabel =
+        result.neighborhoodLabel?.trim() ||
+        pickStreetOrHoodDisplay(result.fragment, result.neighborhoodLabel) ||
+        result.fragment?.trim();
       if (areaLabel) {
         next.entities = {
           ...next.entities,

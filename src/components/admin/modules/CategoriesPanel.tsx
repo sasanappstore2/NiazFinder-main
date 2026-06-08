@@ -205,6 +205,11 @@ export function CategoriesPanel() {
         </Button>
       }
     >
+      <div className="mb-4 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-950 dark:text-amber-100">
+        slug دسته‌ها باید با{' '}
+        <code className="rounded bg-amber-500/15 px-1">src/config/categories.ts</code> هماهنگ باشد.
+        پس از تغییر، <code className="rounded bg-amber-500/15 px-1">npm run categories:sync</code> را اجرا کنید.
+      </div>
       <div className="mb-4 flex flex-col gap-2 rounded-lg border border-sky-500/30 bg-sky-500/5 p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sky-900 dark:text-sky-100">
           این بخش فقط <strong>دسته‌بندی نیازها</strong> (آگهی/درخواست) است. برای مشاغل و حرفه‌های کسب‌وکار به بخش جدا بروید.

@@ -16,6 +16,8 @@ export function entitiesToRecord(entities: IntakeEntities): Record<string, unkno
     budgetMax: entities.budgetMax,
     rooms: entities.rooms,
     transactionType: entities.transactionType,
+    lat: entities.lat,
+    lng: entities.lng,
   };
 }
 
@@ -38,5 +40,7 @@ export function recordToEntities(record: Record<string, unknown>): IntakeEntitie
       typeof record.transactionType === 'string'
         ? (record.transactionType as IntakeEntities['transactionType'])
         : null,
+    lat: typeof record.lat === 'number' && Number.isFinite(record.lat) ? record.lat : null,
+    lng: typeof record.lng === 'number' && Number.isFinite(record.lng) ? record.lng : null,
   };
 }

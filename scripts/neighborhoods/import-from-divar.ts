@@ -24,12 +24,14 @@ import {
   sleep,
 } from './lib';
 import {
+  loadCityCatalogFile,
   rebuildManifestFromCatalog,
   saveCityCatalog,
   slugifyNeighborhoodNames,
   writeManifest,
 } from '../../src/lib/neighborhoods/catalog';
 import { adminSlugForCityId } from './lib';
+import { sanitizeAreaLabels } from '../../src/lib/neighborhoods/area-labels';
 
 const RATE_LIMIT_MS = 280;
 
@@ -39,11 +41,56 @@ interface CityMapEntry {
   matchMethod: string;
 }
 
-function streetAreas(district: DivarDistrict): string[] | undefined {
+const USEFUL_TAG_TYPES = new Set(['STREET', 'AREA', 'LANDMARK', 'POI', 'PLACE']);
+
+function districtAreas(district: DivarDistrict): string[] | undefined {
   const areas = (district.tags ?? [])
-    .filter((t) => t.type === 'STREET' && t.title?.trim())
+    .filter((t) => USEFUL_TAG_TYPES.has(t.type) && t.title?.trim())
     .map((t) => t.title.trim());
-  return areas.length ? areas : undefined;
+  const sanitized = sanitizeAreaLabels(areas, district.name.trim());
+  return sanitized.length ? sanitized : undefined;
+}
+
+function districtGeoFromDivar(district: DivarDistrict): {
+  centroid?: { lat: number; lng: number };
+  bbox?: { south: number; north: number; west: number; east: number };
+  geoSource?: 'divar';
+} {
+  const loc = district.centroid ?? district.default_location;
+  const out: {
+    centroid?: { lat: number; lng: number };
+    bbox?: { south: number; north: number; west: number; east: number };
+    geoSource?: 'divar';
+  } = {};
+
+  if (
+    loc &&
+    Number.isFinite(loc.latitude) &&
+    Number.isFinite(loc.longitude) &&
+    Math.abs(loc.latitude) <= 90 &&
+    Math.abs(loc.longitude) <= 180
+  ) {
+    out.centroid = { lat: loc.latitude, lng: loc.longitude };
+    out.geoSource = 'divar';
+  }
+
+  const raw = district.bbox;
+  if (raw?.length === 4) {
+    const [west, south, east, north] = raw;
+    if (
+      Number.isFinite(west) &&
+      Number.isFinite(south) &&
+      Number.isFinite(east) &&
+      Number.isFinite(north) &&
+      west < east &&
+      south < north
+    ) {
+      out.bbox = { west, south, east, north };
+      out.geoSource = 'divar';
+    }
+  }
+
+  return out;
 }
 
 async function fetchDistricts(divarCityId: number): Promise<DivarDistrict[]> {
@@ -56,17 +103,35 @@ async function fetchDistricts(divarCityId: number): Promise<DivarDistrict[]> {
 async function importCity(
   adminCity: AdminCityRef,
   divarCity: DivarCity,
-  matchMethod: string
+  matchMethod: string,
+  opts?: { force?: boolean }
 ): Promise<number> {
   const districts = await fetchDistricts(divarCity.id);
   const seeds = districts.map((d) => ({
     name: d.name.trim(),
-    areas: streetAreas(d),
+    areas: districtAreas(d),
+    ...districtGeoFromDivar(d),
   }));
 
   const neighborhoods = slugifyNeighborhoodNames(
     seeds.filter((s) => s.name.length > 0)
   );
+
+  const existing = await loadCityCatalogFile(adminCity.id);
+  const existingCount = existing?.neighborhoods?.length ?? 0;
+
+  if (neighborhoods.length === 0 && !opts?.force) {
+    if (existingCount > 0) {
+      console.log(
+        `  ↷ ${adminCity.name}: Divar empty — keeping existing ${existingCount} neighborhoods`
+      );
+      return existingCount;
+    }
+  }
+
+  if (opts?.force && existing?.source === 'osm' && neighborhoods.length > 0) {
+    console.log(`  ↻ ${adminCity.name}: replacing OSM catalog with Divar (${neighborhoods.length})`);
+  }
 
   await saveCityCatalog(adminCity.id, {
     cityName: adminCity.name,
@@ -103,7 +168,7 @@ async function writeUnmappedReport(rows: { id: string; name: string }[]) {
 }
 
 async function main() {
-  const { city: onlyCity, refreshCities } = parseArgs(process.argv.slice(2));
+  const { city: onlyCity, refreshCities, force } = parseArgs(process.argv.slice(2));
 
   if (refreshCities) {
     const cachePath = path.join(CACHE_DIR, 'divar-cities.json');
@@ -145,7 +210,7 @@ async function main() {
     };
 
     try {
-      const count = await importCity(adminCity, divarCity, method);
+      const count = await importCity(adminCity, divarCity, method, { force });
       imported += 1;
       totalNeighborhoods += count;
       if (count === 0) emptyOnDivar.push(adminCity.id);

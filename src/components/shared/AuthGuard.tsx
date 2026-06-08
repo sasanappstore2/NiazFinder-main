@@ -5,11 +5,22 @@ import { Loader2, Lock } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import { getClientAuthToken } from '@/lib/auth/client-auth';
+import { hasRoutePermission } from '@/lib/route-config';
 
-export function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, authHydrated, authToken, setAuthModalOpen } = useAppStore();
+export function AuthGuard({
+  children,
+  routeView,
+}: {
+  children: React.ReactNode;
+  /** Legacy route key for role checks (see ROUTE_PERMISSIONS). */
+  routeView?: string;
+}) {
+  const { isAuthenticated, authHydrated, authToken, currentUser, setAuthModalOpen } =
+    useAppStore();
 
   const hasToken = Boolean(authToken || getClientAuthToken());
+  const roleAllowed =
+    !routeView || hasRoutePermission(routeView, currentUser?.role);
 
   useEffect(() => {
     if (!authHydrated) return;
@@ -40,6 +51,20 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
         <Button type="button" onClick={() => setAuthModalOpen(true)}>
           ورود / ثبت‌نام
         </Button>
+      </div>
+    );
+  }
+
+  if (!roleAllowed) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32 text-center">
+        <div className="mb-4 flex size-16 items-center justify-center rounded-2xl bg-muted">
+          <Lock className="size-8 text-muted-foreground/50" />
+        </div>
+        <h2 className="mb-2 text-lg font-semibold">دسترسی مجاز نیست</h2>
+        <p className="mb-4 text-sm text-muted-foreground">
+          حساب شما اجازهٔ دسترسی به این بخش را ندارد.
+        </p>
       </div>
     );
   }

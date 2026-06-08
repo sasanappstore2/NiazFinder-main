@@ -1,8 +1,8 @@
 {
   "cityId": "charam",
   "cityName": "چرام",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:43:17.121Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:43:14.152Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

@@ -1,8 +1,8 @@
 {
   "cityId": "anbarabad",
   "cityName": "انبارآباد",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:14:10.631Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:41:14.969Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

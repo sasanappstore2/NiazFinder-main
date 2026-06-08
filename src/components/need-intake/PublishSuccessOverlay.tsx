@@ -6,9 +6,13 @@ import { playApplePaySuccessSound } from '@/lib/sounds/apple-pay-success';
 
 interface PublishSuccessOverlayProps {
   message?: string;
+  subtitle?: string;
 }
 
-export function PublishSuccessOverlay({ message = 'آگهی منتشر شد' }: PublishSuccessOverlayProps) {
+export function PublishSuccessOverlay({
+  message = 'آگهی منتشر شد',
+  subtitle = 'در حال انتقال به آگهی…',
+}: PublishSuccessOverlayProps) {
   useEffect(() => {
     playApplePaySuccessSound();
   }, []);
@@ -25,7 +29,7 @@ export function PublishSuccessOverlay({ message = 'آگهی منتشر شد' }: 
           <Check className="intake-success-check size-14 text-emerald-600" strokeWidth={3} aria-hidden />
         </div>
         <p className="text-center text-lg font-semibold text-foreground">{message}</p>
-        <p className="text-center text-sm text-muted-foreground">در حال انتقال به آگهی…</p>
+        <p className="text-center text-sm text-muted-foreground">{subtitle}</p>
       </div>
     </div>
   );

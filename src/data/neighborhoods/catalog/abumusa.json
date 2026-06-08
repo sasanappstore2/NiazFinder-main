@@ -1,8 +1,8 @@
 {
   "cityId": "abumusa",
   "cityName": "ابوموسی",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:33:54.843Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:42:38.675Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

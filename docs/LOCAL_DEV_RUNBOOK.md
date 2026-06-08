@@ -3,9 +3,11 @@
 This repo has 4 runtimes you may run locally:
 
 - **Next.js** (web + Next route handlers) on **:3000**
-- **Nest backend** (`mini-services/backend`) on **:4000** (default)
+- **Nest backend** (`mini-services/backend`) on **:4000** — **optional**, docker profile `legacy` only
 - **Chat service** (`mini-services/chat-service`) on **:3004** (default)
 - **Intake MLX** (`mini-services/intake-mlx`) on **:8100** — **required for Qwen intake AI** (Mac)
+
+> Location registry bridge: see [`docs/LOCATION_REGISTRY.md`](LOCATION_REGISTRY.md).
 
 > Note: `docs/DEBUG_PLAYBOOK.md` already contains “recovery when broken”. This file focuses on a clean local start.
 
@@ -49,16 +51,32 @@ Add to `.env.local`:
 NEED_INTAKE_LLM_ENABLED=true
 NEED_INTAKE_LLM_URL=http://127.0.0.1:8100
 NEED_INTAKE_LLM_TIMEOUT_MS=12000
+
+# Dev/staging: auto-approve published needs (production: false or unset)
+NEED_INTAKE_AUTO_APPROVE=true
+NEED_AUTO_APPROVE_REQUESTS=true
+
+# Required in production for internal moderation enqueue
+# INTERNAL_API_SECRET=generate-with-openssl-rand-hex-32
+
+# Browse maps + pin pickers (Mapbox GL JS — https://docs.mapbox.com/mapbox-gl-js/guides/)
+NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=pk.eyJ...
+# Optional vector style; omit to use Iran raster tiles via /api/map/tiles (memaps proxy)
+# NEXT_PUBLIC_MAPBOX_STYLE_URL=mapbox://styles/your-account/style-id
+
+# Mashhad Divar-style vector map (no Mapbox token): auto on browse when city=mashhad only
+# Dev preview: http://localhost:3000/dev/mashhad-map
 ```
 
-Backend (`:4000`) and Chat (`:3004`) are optional unless you need auth, chat, or typing WebSocket features.
+Backend (`:4000`, Nest) is **legacy** — use `docker compose --profile legacy up backend` only if you still need it. Chat (`:3004`) is optional unless you need auth, chat, or typing WebSocket features.
 
 ### Full stack (all features)
 
-Terminal A (backend):
+Nest backend (legacy profile):
 
 ```bash
-npm run dev:backend
+docker compose --profile legacy up -d backend
+# or: npm run dev:backend
 ```
 
 Terminal B (chat-service):
@@ -79,7 +97,7 @@ Terminal D (MLX on Mac — Qwen intake AI):
 npm run dev:intake-mlx
 ```
 
-Optional — show parse preview on the **home** «نیازتان را بگویید» box (calls the same `/api/need-intake/parse-intent` before navigating to `/post`; requires `npm run dev` restart):
+Optional — show parse preview on the **home** «نیازتان را بگویید» box (uses `POST /api/intake/analyze`; requires `npm run dev` restart):
 
 ```bash
 NEXT_PUBLIC_INTAKE_HOME_PREVIEW=1
@@ -116,7 +134,7 @@ Estate LLM benchmark (MLX + reconcile):
 NEED_INTAKE_LLM_ENABLED=true npm run test:estate-benchmark:llm
 ```
 
-Home landing → `parse-intent` (requires **Next dev** on `:3000`; sample املاک):
+Home landing → intake analyze (requires **Next dev** on `:3000`; sample املاک):
 
 ```bash
 npm run smoke:need-intake-home-parse

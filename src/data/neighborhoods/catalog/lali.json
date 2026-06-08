@@ -1,8 +1,8 @@
 {
   "cityId": "lali",
   "cityName": "لالی",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:11:20.884Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:41:01.289Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

@@ -27,6 +27,9 @@ export interface IntakeEntities {
   budgetMax: number | null;
   rooms: number | null;
   transactionType: TransactionType | null;
+  /** Map pin from intake location picker. */
+  lat?: number | null;
+  lng?: number | null;
 }
 
 /** Per-field confidence scores in [0, 1]. */

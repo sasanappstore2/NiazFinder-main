@@ -1,18 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { Search, Home, ArrowRight } from 'lucide-react';
+import { Search, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { routeBuilder } from '@/config/routes';
 
 const popularCategories = [
-  { name: 'طراحی وب', slug: '/requests?category=web-design' },
-  { name: 'برنامه‌نویسی', slug: '/requests?category=programming' },
-  { name: 'تولید محتوا', slug: '/requests?category=content' },
-  { name: 'گرافیک و طراحی', slug: '/requests?category=graphic-design' },
-  { name: 'بازاریابی دیجیتال', slug: '/requests?category=marketing' },
-  { name: 'ترجمه و تایپ', slug: '/requests?category=translation' },
+  { name: 'املاک', href: routeBuilder.search({ market: 'need', location: 'iran', category: 'real-estate' }) },
+  { name: 'آپارتمان اجاره', href: routeBuilder.search({ market: 'need', location: 'mashhad', category: 'apartment-rent' }) },
+  { name: 'خودرو', href: routeBuilder.search({ market: 'need', location: 'iran', category: 'car' }) },
+  { name: 'موبایل', href: routeBuilder.search({ market: 'need', location: 'iran', category: 'mobile-phone' }) },
+  { name: 'خدمات', href: routeBuilder.search({ market: 'need', location: 'iran', category: 'services' }) },
+  { name: 'ثبت نیاز', href: routeBuilder.needNew() },
 ];
 
 export default function NotFound() {
@@ -68,7 +69,7 @@ export default function NotFound() {
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             {popularCategories.map((cat) => (
-              <Link key={cat.slug} href={cat.slug}>
+              <Link key={cat.href} href={cat.href}>
                 <Badge
                   variant="outline"
                   className="cursor-pointer px-3 py-1.5 transition-colors hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-400 dark:hover:border-emerald-800"

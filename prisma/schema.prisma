@@ -256,6 +256,8 @@ model ServiceRequest {
   city          String?
   province      String?
   address       String?
+  lat           Float?
+  lng           Float?
   categoryId    String
   subcategoryId String?
   priority      Priority         @default(NORMAL)

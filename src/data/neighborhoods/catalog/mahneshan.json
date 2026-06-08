@@ -1,8 +1,8 @@
 {
   "cityId": "mahneshan",
   "cityName": "ماهنشان",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:24:43.152Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:41:54.482Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }

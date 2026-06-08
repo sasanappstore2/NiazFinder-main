@@ -24,6 +24,8 @@ export interface NeedListingPreviewProps {
   isLoading?: boolean;
   isRepublishing?: boolean;
   isTitleEnriching?: boolean;
+  isDescEnriching?: boolean;
+  publishDisabled?: boolean;
 }
 
 export function NeedListingPreview({
@@ -34,6 +36,8 @@ export function NeedListingPreview({
   isLoading,
   isRepublishing,
   isTitleEnriching,
+  isDescEnriching,
+  publishDisabled = false,
 }: NeedListingPreviewProps) {
   const [extraLine, setExtraLine] = useState('');
 
@@ -64,10 +68,10 @@ export function NeedListingPreview({
       </div>
       <p className="text-sm text-muted-foreground">
         {titlePending
-          ? 'در حال نوشتن عنوان آگهی بر اساس توضیحات شما…'
-          : isTitleEnriching
-            ? 'عنوان در حال بهینه‌سازی است؛ می‌توانید همین‌جا ویرایش کنید.'
-            : 'عنوان پیشنهادی قابل ویرایش است. متن توضیحات را هم بررسی کنید.'}
+          ? 'در حال نوشتن عنوان آگهی بر اساس تمام اطلاعات شما…'
+          : isTitleEnriching || isDescEnriching
+            ? 'عنوان و توضیحات در حال بهینه‌سازی هستند؛ می‌توانید همین‌جا ویرایش کنید.'
+            : 'عنوان و توضیحات پیشنهادی قابل ویرایش هستند.'}
       </p>
 
       <div className="space-y-2">
@@ -114,7 +118,14 @@ export function NeedListingPreview({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="preview-desc">توضیحات</Label>
+        <div className="flex items-center justify-between gap-2">
+          <Label htmlFor="preview-desc" className="flex items-center gap-2">
+            توضیحات
+            {isDescEnriching ? (
+              <Loader2 className="size-3.5 animate-spin text-primary" aria-hidden />
+            ) : null}
+          </Label>
+        </div>
         <Textarea
           id="preview-desc"
           value={preview.description}
@@ -202,7 +213,7 @@ export function NeedListingPreview({
           type="button"
           className="flex-1 h-12"
           onClick={onPublish}
-          disabled={isLoading || isRepublishing || isTitleEnriching || !preview.title.trim()}
+          disabled={isLoading || isRepublishing || isTitleEnriching || isDescEnriching || !preview.title.trim() || publishDisabled}
         >
           {isLoading ? (
             <Loader2 className="size-4 ml-2 animate-spin" />

@@ -1,8 +1,8 @@
 {
   "cityId": "chaldoran",
   "cityName": "چالدران",
-  "source": "osm",
-  "importedAt": "2026-05-28T19:09:32.491Z",
+  "source": "divar",
+  "importedAt": "2026-06-08T16:40:51.900Z",
   "emptyOnDivar": true,
   "neighborhoods": []
 }
