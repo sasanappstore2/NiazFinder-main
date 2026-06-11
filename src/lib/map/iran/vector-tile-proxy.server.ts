@@ -16,7 +16,7 @@ const CACHE_ROOT = path.join(process.cwd(), 'data', 'map-vector-cache');
 const IRAN_CACHE_DIR = path.join(CACHE_ROOT, 'iran');
 const LEGACY_MASHHAD_CACHE_DIR = path.join(CACHE_ROOT, 'mashhad');
 const GLYPH_CACHE_DIR = path.join(CACHE_ROOT, 'glyphs');
-const UPSTREAM_TIMEOUT_MS = 15_000;
+const UPSTREAM_TIMEOUT_MS = 6_000;
 
 /** Gzip-compressed empty MVT — no-data tiles at bbox edges. */
 export const EMPTY_VECTOR_TILE = Buffer.from(
@@ -84,8 +84,18 @@ async function fetchVectorTileUpstream(url: string): Promise<Buffer | null> {
     });
     if (res.status === 404) return EMPTY_VECTOR_TILE;
     if (!res.ok) return null;
+
+    const contentType = res.headers.get('content-type') ?? '';
+    if (contentType.includes('text/html') || contentType.includes('application/json')) {
+      return null;
+    }
+
     const buf = Buffer.from(await res.arrayBuffer());
-    return buf.byteLength > 0 ? buf : EMPTY_VECTOR_TILE;
+    if (buf.byteLength < 4) return EMPTY_VECTOR_TILE;
+    const isGzip = buf[0] === 0x1f && buf[1] === 0x8b;
+    const isProtobuf = buf[0] === 0x1a;
+    if (!isGzip && !isProtobuf) return null;
+    return buf;
   } catch {
     return null;
   } finally {

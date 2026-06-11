@@ -1,9 +1,8 @@
 'use client';
 
-import { useMemo } from 'react';
-import { NiazMapAdminBoundaries } from '@/components/map/mapbox/NiazMapAdminBoundaries';
-import { NiazMapPersianGulfLabel } from '@/components/map/mapbox/NiazMapPersianGulfLabel';
-import { NiazMapViewportScope } from '@/components/map/mapbox/NiazMapViewportScope';
+import { useCallback, useMemo, useState } from 'react';
+import { NiazIranRasterMapCore } from '@/components/map/maplibre/NiazIranRasterMapCore';
+import { IranDivarMapOverlays } from '@/components/map/iran/IranDivarMapOverlays';
 import { NiazMapLibreCore } from '@/components/map/maplibre/NiazMapLibreCore';
 import { IranMapThemeProvider } from '@/components/map/iran/IranMapThemeContext';
 import { useIranDivarMapTheme } from '@/components/map/iran/useIranDivarMapTheme';
@@ -36,19 +35,56 @@ export function NiazIranVectorMapCore({
   );
   const maxZoom = resolveMapMaxZoom(detail);
   const baseMapKey = mapKey ?? `iran-vector-${detail}`;
-  const { theme, ready, mapStyle, mapKey: themedMapKey, loadingColor } =
-    useIranDivarMapTheme(baseMapKey);
+  const [useRasterFallback, setUseRasterFallback] = useState(false);
+  const { theme, mapStyle, mapKey: themedMapKey, loadingColor } = useIranDivarMapTheme(baseMapKey);
 
-  if (!ready || !theme) {
+  const overlayProps = useMemo(
+    () => ({
+      provinceIds: config.provinceIds,
+      citySlugs: config.citySlugs.length > 0 ? config.citySlugs : citySlugs,
+      scopeKind: config.scopeKind,
+      viewportBounds: config.viewportBounds,
+      singleCitySlug: citySlugs.length === 1 ? citySlugs[0]! : null,
+    }),
+    [config, citySlugs]
+  );
+
+  const handleMapError = useCallback(
+    (error: unknown) => {
+      console.error('[map] vector failed, switching to raster', {
+        error,
+        mapKey: baseMapKey,
+        citySlugs,
+        provinceSlugs,
+        detail,
+      });
+      setUseRasterFallback(true);
+    },
+    [baseMapKey, citySlugs, provinceSlugs, detail]
+  );
+
+  const mapChildren = (
+    <>
+      <IranDivarMapOverlays {...overlayProps} />
+      {children}
+    </>
+  );
+
+  if (useRasterFallback) {
     return (
-      <div
-        data-map-theme="light"
-        className={cn(
-          'iran-divar-map business-browse-map business-browse-map--iran-divar relative h-full w-full animate-pulse',
-          className
-        )}
-        style={{ ...style, backgroundColor: loadingColor }}
-      />
+      <NiazIranRasterMapCore
+        center={center}
+        detail={detail}
+        interactive={interactive}
+        mapKey={`${mapKey ?? baseMapKey}-raster-fallback`}
+        className={className}
+        style={style}
+        onMoveEnd={onMoveEnd}
+        onMapClick={onMapClick}
+        overlay={overlay}
+      >
+        {mapChildren}
+      </NiazIranRasterMapCore>
     );
   }
 
@@ -74,20 +110,10 @@ export function NiazIranVectorMapCore({
         attribution={IRAN_DIVAR_ATTRIBUTION}
         onMoveEnd={onMoveEnd}
         onMapClick={onMapClick}
+        onError={handleMapError}
         overlay={overlay}
       >
-        <NiazMapAdminBoundaries
-          provinceIds={config.provinceIds}
-          citySlugs={config.citySlugs.length > 0 ? config.citySlugs : citySlugs}
-          scopeKind={config.scopeKind}
-        />
-        <NiazMapViewportScope
-          viewportBounds={config.viewportBounds}
-          scopeKind={config.scopeKind}
-          citySlugs={config.citySlugs}
-        />
-        <NiazMapPersianGulfLabel />
-        {children}
+        {mapChildren}
       </NiazMapLibreCore>
       </IranMapThemeProvider>
     </div>

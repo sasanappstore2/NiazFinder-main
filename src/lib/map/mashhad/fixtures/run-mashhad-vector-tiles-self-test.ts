@@ -28,7 +28,11 @@ function run(): void {
   const style = buildIranDivarStyle();
   assert.ok(String(style.glyphs).includes('/api/map/glyphs/'));
   const source = style.sources?.openmaptiles;
-  assert.ok(source && 'url' in source && String(source.url).includes('/api/map/vector/iran/tilejson'));
+  assert.ok(
+    source &&
+      'tiles' in source &&
+      source.tiles?.[0]?.includes('/api/map/vector/iran/{z}/{x}/{y}.pbf')
+  );
 
   console.log('[ok] mashhad vector tiles self-test');
 }

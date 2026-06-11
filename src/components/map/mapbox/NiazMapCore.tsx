@@ -14,7 +14,9 @@ import {
   resolveMapMinZoom,
   resolveMapStyle,
 } from '@/lib/map/mapbox/config';
+import { NiazIranRasterMapCore } from '@/components/map/maplibre/NiazIranRasterMapCore';
 import { NiazIranVectorMapCore } from '@/components/map/maplibre/NiazIranVectorMapCore';
+import { resolveIranMapSurface } from '@/lib/map/iran/map-surface';
 import { useResolvedThemeMode } from '@/hooks/use-resolved-theme-mode';
 import { cn } from '@/lib/utils';
 import '@/styles/business/business-map.css';
@@ -26,6 +28,8 @@ export type NiazMapCoreProps = {
   mapKey?: string;
   className?: string;
   style?: React.CSSProperties;
+  citySlugs?: string[];
+  provinceSlugs?: string[];
   onMoveEnd?: (map: MapRef) => void;
   onMapClick?: (lat: number, lng: number) => void;
   children?: React.ReactNode;
@@ -39,6 +43,8 @@ export function NiazMapCore({
   mapKey,
   className,
   style,
+  citySlugs = [],
+  provinceSlugs = [],
   onMoveEnd,
   onMapClick,
   children,
@@ -50,21 +56,27 @@ export function NiazMapCore({
   const mapStyle = useMemo(() => resolveMapStyle(theme), [theme]);
 
   if (resolveMapEngine() === 'maplibre') {
-    return (
-      <NiazIranVectorMapCore
-        center={center}
-        detail={detail}
-        interactive={interactive}
-        mapKey={mapKey}
-        className={className}
-        style={style}
-        onMoveEnd={onMoveEnd}
-        onMapClick={onMapClick}
-        overlay={overlay}
-      >
-        {children}
-      </NiazIranVectorMapCore>
-    );
+    const surface = resolveIranMapSurface(detail);
+    const shared = {
+      center,
+      detail,
+      interactive,
+      mapKey,
+      className,
+      style,
+      citySlugs,
+      provinceSlugs,
+      onMoveEnd,
+      onMapClick,
+      overlay,
+      children,
+    };
+
+    if (surface === 'raster') {
+      return <NiazIranRasterMapCore {...shared} />;
+    }
+
+    return <NiazIranVectorMapCore {...shared} />;
   }
 
   return (
@@ -91,7 +103,6 @@ export function NiazMapCore({
           pitchWithRotate={false}
           touchPitch={false}
           attributionControl={false}
-          reuseMaps
           onMoveEnd={() => {
             if (mapRef.current && onMoveEnd) onMoveEnd(mapRef.current);
           }}

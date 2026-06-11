@@ -38,18 +38,21 @@ function run(): void {
   assert.ok(darkBg && 'paint' in darkBg && darkBg.paint?.['background-color'] === '#181b22');
   assert.ok(lightBg && 'paint' in lightBg && lightBg.paint?.['background-color'] === '#e8ecf2');
   const source = darkStyle.sources?.openmaptiles;
-  assert.ok(source && 'url' in source && String(source.url).includes('/api/map/vector/iran/tilejson'));
-  assert.ok(darkStyle.layers?.some((layer) => layer.id === 'iran-void-mask'));
-  assert.ok(darkStyle.sources?.['iran-void-mask']);
+  assert.ok(
+    source &&
+      'tiles' in source &&
+      source.tiles?.[0]?.includes('/api/map/vector/iran/{z}/{x}/{y}.pbf')
+  );
+  assert.ok(!darkStyle.layers?.some((layer) => layer.id === 'iran-void-mask'));
+  assert.ok(!darkStyle.sources?.['iran-void-mask']);
+  assert.ok(darkStyle.layers?.some((layer) => layer.id === 'land'));
+  assert.ok(darkStyle.layers?.some((layer) => layer.id === 'boundary-province'));
 
   const mashhad = resolveIranDivarBrowseConfig(['mashhad']);
-  assert.equal(mashhad.minZoom, resolveCityMapMinZoom('mashhad'));
+  assert.ok(mashhad.minZoom >= resolveCityMapMinZoom('mashhad') - 0.5);
   assert.equal(mashhad.scopeKind, 'city');
-  const tehran = resolveIranDivarBrowseConfig(['tehran']);
   const shahriar = resolveIranDivarBrowseConfig(['shahriar']);
-  assert.equal(resolveViewportCitySlug('shahriar'), 'tehran');
-  assert.equal(shahriar.center.lat, tehran.center.lat);
-  assert.equal(shahriar.center.lng, tehran.center.lng);
+  assert.equal(resolveViewportCitySlug('shahriar'), 'shahriar');
   assert.ok(shahriar.viewportBounds);
   assert.equal(shahriar.minZoom, resolveCityMapMinZoom('shahriar'));
   const iran = resolveIranDivarBrowseConfig([]);

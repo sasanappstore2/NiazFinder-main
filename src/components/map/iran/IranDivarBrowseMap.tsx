@@ -1,12 +1,10 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { NiazIranRasterMapCore } from '@/components/map/maplibre/NiazIranRasterMapCore';
 import { NiazMapLibreCore } from '@/components/map/maplibre/NiazMapLibreCore';
 import { NiazMapControls } from '@/components/map/mapbox/NiazMapControls';
-import { NiazMapAdminBoundaries } from '@/components/map/mapbox/NiazMapAdminBoundaries';
-import { NiazMapNeighborhoodBoundaries } from '@/components/map/mapbox/NiazMapNeighborhoodBoundaries';
-import { NiazMapPersianGulfLabel } from '@/components/map/mapbox/NiazMapPersianGulfLabel';
-import { NiazMapViewportScope } from '@/components/map/mapbox/NiazMapViewportScope';
+import { IranDivarMapOverlays } from '@/components/map/iran/IranDivarMapOverlays';
 import { useNeighborhoodMapBounds } from '@/hooks/use-neighborhood-map-bounds';
 import { NiazMapFlyToPin } from '@/components/map/mapbox/NiazMapFlyToPin';
 import { NiazMapClusterLayerMaplibre } from '@/components/map/maplibre/NiazMapClusterLayerMaplibre';
@@ -78,16 +76,64 @@ export function IranDivarBrowseMap<T extends MapPoint>({
       : provinceSlugs.length > 0
         ? `p:${provinceSlugs.join(',')}`
         : 'iran-divar');
-  const { theme, ready, mapStyle, mapKey: themedMapKey, loadingColor } =
-    useIranDivarMapTheme(baseMapKey);
+  const [useRasterFallback, setUseRasterFallback] = useState(false);
+  const { theme, mapStyle, mapKey: themedMapKey, loadingColor } = useIranDivarMapTheme(baseMapKey);
 
-  if (!ready || !theme) {
-    return (
-      <div
-        data-map-theme="light"
-        className={cn('iran-divar-map relative h-full w-full animate-pulse', className)}
-        style={{ backgroundColor: loadingColor, minHeight: mobileMode ? 280 : 320 }}
+  const overlayProps = useMemo(
+    () => ({
+      provinceIds: config.provinceIds,
+      citySlugs: config.citySlugs.length > 0 ? config.citySlugs : citySlugs,
+      scopeKind: config.scopeKind,
+      viewportBounds: config.viewportBounds,
+      singleCitySlug,
+      neighborhoodSlugs,
+      neighborhoodBounds,
+    }),
+    [config, citySlugs, singleCitySlug, neighborhoodSlugs, neighborhoodBounds]
+  );
+
+  const handleMapError = useCallback(
+    (error: unknown) => {
+      console.error('[map] vector failed, switching to raster', {
+        error,
+        mapKey: baseMapKey,
+        citySlugs,
+        provinceSlugs,
+      });
+      setUseRasterFallback(true);
+    },
+    [baseMapKey, citySlugs, provinceSlugs]
+  );
+
+  const mapChildren = (
+    <>
+      <IranDivarMapOverlays {...overlayProps} />
+      <NiazMapFlyToPin pin={safeSelectedPin} />
+      <NiazMapClusterLayerMaplibre
+        points={pins}
+        selectedPinId={selectedPinId ?? null}
+        onSelectPin={onSelectPin}
+        showPopups={showPopups}
+        maxZoom={config.clusterMaxZoom}
+        getPinProps={getPinProps}
+        renderPopup={renderPopup}
       />
+    </>
+  );
+
+  if (useRasterFallback) {
+    return (
+      <NiazIranRasterMapCore
+        center={config.center}
+        detail="browse"
+        mapKey={`${baseMapKey}-raster-fallback`}
+        className={cn('iran-divar-map relative h-full w-full', className)}
+        style={{ minHeight: mobileMode ? 280 : 320 }}
+        onMoveEnd={reportBbox}
+        overlay={<MapControlsOverlay mobileMode={mobileMode} />}
+      >
+        {mapChildren}
+      </NiazIranRasterMapCore>
     );
   }
 
@@ -106,34 +152,10 @@ export function IranDivarBrowseMap<T extends MapPoint>({
         style={{ minHeight: mobileMode ? 280 : 320 }}
         attribution={IRAN_DIVAR_ATTRIBUTION}
         onMoveEnd={reportBbox}
+        onError={handleMapError}
         overlay={<MapControlsOverlay mobileMode={mobileMode} />}
       >
-        <NiazMapAdminBoundaries
-          provinceIds={config.provinceIds}
-          citySlugs={config.citySlugs.length > 0 ? config.citySlugs : citySlugs}
-          scopeKind={config.scopeKind}
-        />
-        <NiazMapNeighborhoodBoundaries
-          citySlug={singleCitySlug}
-          neighborhoodSlugs={neighborhoodSlugs}
-        />
-        <NiazMapViewportScope
-          viewportBounds={config.viewportBounds}
-          scopeKind={config.scopeKind}
-          citySlugs={config.citySlugs}
-          neighborhoodBounds={neighborhoodBounds}
-        />
-        <NiazMapPersianGulfLabel />
-        <NiazMapFlyToPin pin={safeSelectedPin} />
-        <NiazMapClusterLayerMaplibre
-          points={pins}
-          selectedPinId={selectedPinId ?? null}
-          onSelectPin={onSelectPin}
-          showPopups={showPopups}
-          maxZoom={config.clusterMaxZoom}
-          getPinProps={getPinProps}
-          renderPopup={renderPopup}
-        />
+        {mapChildren}
       </NiazMapLibreCore>
       </IranMapThemeProvider>
     </div>

@@ -1,26 +1,20 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useResolvedThemeModeWhenReady } from '@/hooks/use-resolved-theme-mode';
+import { useResolvedThemeMode } from '@/hooks/use-resolved-theme-mode';
 import { buildIranDivarStyle } from '@/lib/map/iran/divar-style';
 import { resolveIranDivarLoadingColor } from '@/lib/map/iran/divar-style-palette';
 
 export function useIranDivarMapTheme(baseMapKey: string) {
-  const theme = useResolvedThemeModeWhenReady();
+  const theme = useResolvedThemeMode();
 
-  const mapStyle = useMemo(
-    () => () => buildIranDivarStyle(theme ?? 'light'),
-    [theme]
-  );
-
-  const mapKey = theme ? `${baseMapKey}-${theme}` : baseMapKey;
-  const loadingColor = resolveIranDivarLoadingColor(theme ?? 'light');
+  const mapStyle = useMemo(() => () => buildIranDivarStyle(theme), [theme]);
 
   return {
     theme,
-    ready: theme !== null,
+    ready: true,
     mapStyle,
-    mapKey,
-    loadingColor,
+    mapKey: `${baseMapKey}-${theme}`,
+    loadingColor: resolveIranDivarLoadingColor(theme),
   };
 }

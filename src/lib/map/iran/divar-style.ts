@@ -1,12 +1,16 @@
 import type { LayerSpecification, StyleSpecification } from 'maplibre-gl';
 import type { BusinessMapThemeMode } from '@/lib/business/map-tiles';
-import { resolveIranGlyphsUrl, resolveIranTilejsonUrl } from '@/lib/map/iran/vector-config';
+import {
+  LOCAL_IRAN_VECTOR_TILE_TEMPLATE,
+  resolveIranGlyphsUrl,
+} from '@/lib/map/iran/vector-config';
 import {
   type IranDivarPalette,
   resolveIranDivarPalette,
 } from '@/lib/map/iran/divar-style-palette';
 import { IRAN_MAP_ZOOM } from '@/lib/map/iran/zoom-tiers';
-import { IRAN_VECTOR_SOURCE_BOUNDS, IRAN_VOID_MASK_GEOJSON } from '@/lib/map/iran/viewport-geo';
+import { IRAN_VECTOR_SOURCE_BOUNDS } from '@/lib/map/iran/viewport-geo';
+import { IRAN_VECTOR_TILE_MIN_ZOOM, IRAN_VECTOR_TILE_MAX_ZOOM } from '@/lib/map/iran/vector-bounds';
 
 const Z = IRAN_MAP_ZOOM;
 
@@ -48,6 +52,17 @@ function buildLayers(p: IranDivarPalette): LayerSpecification[] {
       paint: { 'background-color': p.void },
     },
     {
+      id: 'land',
+      type: 'fill',
+      source: 'openmaptiles',
+      'source-layer': 'landuse',
+      minzoom: 4,
+      paint: {
+        'fill-color': p.land,
+        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 5, 0.7, 8, 0.45, 11, 0.25],
+      },
+    },
+    {
       id: 'water',
       type: 'fill',
       source: 'openmaptiles',
@@ -71,11 +86,25 @@ function buildLayers(p: IranDivarPalette): LayerSpecification[] {
       },
     },
     {
+      id: 'boundary-province',
+      type: 'line',
+      source: 'openmaptiles',
+      'source-layer': 'boundary',
+      minzoom: 5,
+      maxzoom: 10,
+      filter: ['all', ['==', ['get', 'admin_level'], 4], ['!=', ['get', 'maritime'], 1]],
+      paint: {
+        'line-color': p.boundary,
+        'line-width': ['interpolate', ['linear'], ['zoom'], 5, 0.35, 8, 0.75, 10, 1],
+        'line-opacity': ['interpolate', ['linear'], ['zoom'], 5, 0.4, 7, 0.55, 9, 0.7],
+      },
+    },
+    {
       id: 'road-motorway-trunk',
       type: 'line',
       source: 'openmaptiles',
       'source-layer': 'transportation',
-      minzoom: Z.REGIONAL,
+      minzoom: 6,
       filter: ['in', 'class', 'motorway', 'trunk'],
       layout: { 'line-cap': 'round', 'line-join': 'round' },
       paint: {
@@ -203,6 +232,25 @@ function buildLayers(p: IranDivarPalette): LayerSpecification[] {
         'fill-color': p.buildingFill,
         'fill-opacity': 0.45,
         'fill-outline-color': p.buildingOutline,
+      },
+    },
+    {
+      id: 'place-state',
+      type: 'symbol',
+      source: 'openmaptiles',
+      'source-layer': 'place',
+      minzoom: 5,
+      maxzoom: 9,
+      filter: ['==', ['get', 'class'], 'state'],
+      layout: {
+        ...placeLabelLayoutBase,
+        'text-size': ['interpolate', ['linear'], ['zoom'], 5, 9, 7, 10, 9, 11],
+        'symbol-sort-key': ['-', ['get', 'rank']],
+      },
+      paint: {
+        'text-color': p.labelMid,
+        ...placeLabelHalo,
+        'text-opacity': ['interpolate', ['linear'], ['zoom'], 5, 0.75, 8, 0.9, 9, 0],
       },
     },
     {
@@ -401,15 +449,6 @@ function buildLayers(p: IranDivarPalette): LayerSpecification[] {
         'text-opacity': 0.85,
       },
     },
-    {
-      id: 'iran-void-mask',
-      type: 'fill',
-      source: 'iran-void-mask',
-      paint: {
-        'fill-color': p.void,
-        'fill-opacity': 1,
-      },
-    },
   ];
 }
 
@@ -424,13 +463,10 @@ export function buildIranDivarStyle(theme: BusinessMapThemeMode = 'dark'): Style
     sources: {
       openmaptiles: {
         type: 'vector',
-        url: resolveIranTilejsonUrl(),
+        tiles: [LOCAL_IRAN_VECTOR_TILE_TEMPLATE],
         bounds: IRAN_VECTOR_SOURCE_BOUNDS,
-        maxzoom: 14,
-      },
-      'iran-void-mask': {
-        type: 'geojson',
-        data: IRAN_VOID_MASK_GEOJSON,
+        minzoom: IRAN_VECTOR_TILE_MIN_ZOOM,
+        maxzoom: IRAN_VECTOR_TILE_MAX_ZOOM,
       },
     },
     layers: buildLayers(palette),

@@ -1,5 +1,7 @@
 ## Local dev runbook (fast start)
 
+> **Intake docs hub:** [`INTAKE_INDEX.md`](./INTAKE_INDEX.md) · **Execution plan:** [`INTAKE_EXECUTION.md`](./INTAKE_EXECUTION.md)
+
 This repo has 4 runtimes you may run locally:
 
 - **Next.js** (web + Next route handlers) on **:3000**
@@ -10,6 +12,22 @@ This repo has 4 runtimes you may run locally:
 > Location registry bridge: see [`docs/LOCATION_REGISTRY.md`](LOCATION_REGISTRY.md).
 
 > Note: `docs/DEBUG_PLAYBOOK.md` already contains “recovery when broken”. This file focuses on a clean local start.
+
+### `/post` need intake (minimal)
+
+| Step | Command |
+|------|---------|
+| 1. DB | `docker compose up -d postgres redis` + `npm run db:push` |
+| 2. MLX | `npm run dev:intake-mlx` |
+| 3. Next | `npm run dev` |
+| 4. Verify | `npm run test:post-pipeline` (rules) |
+| 5. MLX gate | `NEED_INTAKE_LLM_ENABLED=true npm run test:post-mlx-gate` |
+
+Open: http://localhost:3000/post — or from home with `?seed=` + `?city=`
+
+Full architecture: [`NEED_INTAKE.md`](./NEED_INTAKE.md)
+
+---
 
 ### Minimal stack (need intake with AI)
 
@@ -59,14 +77,27 @@ NEED_AUTO_APPROVE_REQUESTS=true
 # Required in production for internal moderation enqueue
 # INTERNAL_API_SECRET=generate-with-openssl-rand-hex-32
 
-# Browse maps + pin pickers (Mapbox GL JS — https://docs.mapbox.com/mapbox-gl-js/guides/)
-NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=pk.eyJ...
-# Optional vector style; omit to use Iran raster tiles via /api/map/tiles (memaps proxy)
+# Browse maps + pin pickers — default: local Iran Divar vector map (no Mapbox token required)
+# See docs/MAP_LOCAL_SETUP.md
+# NEXT_PUBLIC_MAP_SURFACE=vector
+# Optional Mapbox path (only if token set): NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=pk.eyJ...
 # NEXT_PUBLIC_MAPBOX_STYLE_URL=mapbox://styles/your-account/style-id
-
-# Mashhad Divar-style vector map (no Mapbox token): auto on browse when city=mashhad only
-# Dev preview: http://localhost:3000/dev/mashhad-map
 ```
+
+### Map (local Iran Divar)
+
+After clone or if the map looks empty:
+
+```bash
+npm run map:verify-cache    # disk cache health (no network)
+npm run map:prewarm-iran    # if verify fails (~1 GB)
+npm run dev
+npm run smoke:map           # vector + glyph + browse pages on :3000
+```
+
+Backup tiles before `rm -rf .next` or machine migration: `npm run map:backup-cache`
+
+Full guide: [`MAP_LOCAL_SETUP.md`](MAP_LOCAL_SETUP.md)
 
 Backend (`:4000`, Nest) is **legacy** — use `docker compose --profile legacy up backend` only if you still need it. Chat (`:3004`) is optional unless you need auth, chat, or typing WebSocket features.
 

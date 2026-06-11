@@ -1,10 +1,5 @@
-import { resolveBusinessMapCityBounds } from '@/lib/business/map-city-bounds';
-import { resolveBusinessMapCenter } from '@/lib/business/map-default-center';
-import {
-  resolveBusinessMapProvinceBounds,
-  resolveBusinessMapProvinceCenter,
-} from '@/lib/business/map-province-bounds';
 import type { BusinessMapBbox } from '@/lib/business/map-pins-types';
+import { resolveLocationMapViewportSync } from '@/lib/map/location-viewport-resolver';
 import { resolveProvinceIdForCitySlug } from '@/lib/map/iran/city-admin-boundaries';
 import { isKnownCitySlug } from '@/lib/search/city-slugs';
 import { isKnownProvinceSlug, provinceSlugToId } from '@/lib/search/province-slugs';
@@ -41,7 +36,6 @@ export function resolveMapViewportScope(
   citySlugs = normalized.citySlugs;
   provinceSlugs = normalized.provinceSlugs;
 
-  const cityBounds = resolveBusinessMapCityBounds(citySlugs);
   let provinceIds = provinceSlugs.map((slug) => provinceSlugToId(slug));
 
   if (citySlugs.length > 0 && provinceIds.length === 0) {
@@ -54,31 +48,68 @@ export function resolveMapViewportScope(
     ];
   }
 
-  if (cityBounds) {
-    return {
-      kind: 'city',
-      bounds: cityBounds,
-      center: resolveBusinessMapCenter(citySlugs),
-      provinceIds,
-      citySlugs,
-    };
+  if (citySlugs.length === 1) {
+    const viewport = resolveLocationMapViewportSync({
+      citySlug: citySlugs[0],
+      cityId: citySlugs[0],
+      provinceSlug: provinceSlugs[0],
+    });
+    if (viewport.scope === 'city') {
+      return {
+        kind: 'city',
+        bounds: viewport.bounds,
+        center: viewport.center,
+        provinceIds,
+        citySlugs,
+      };
+    }
   }
 
-  const provinceBounds = resolveBusinessMapProvinceBounds(provinceSlugs);
-  if (provinceBounds) {
-    return {
-      kind: 'province',
-      bounds: provinceBounds,
-      center: resolveBusinessMapProvinceCenter(provinceSlugs),
-      provinceIds,
-      citySlugs: [],
-    };
+  if (citySlugs.length > 1) {
+    const boxes: BusinessMapBbox[] = [];
+    const centers: { lat: number; lng: number; zoom: number }[] = [];
+    for (const slug of citySlugs) {
+      const viewport = resolveLocationMapViewportSync({ citySlug: slug, cityId: slug });
+      if (viewport.bounds) boxes.push(viewport.bounds);
+      centers.push(viewport.center);
+    }
+    if (boxes.length > 0) {
+      const bounds: BusinessMapBbox = {
+        south: Math.min(...boxes.map((b) => b.south)),
+        north: Math.max(...boxes.map((b) => b.north)),
+        west: Math.min(...boxes.map((b) => b.west)),
+        east: Math.max(...boxes.map((b) => b.east)),
+      };
+      const center = {
+        lat: centers.reduce((s, c) => s + c.lat, 0) / centers.length,
+        lng: centers.reduce((s, c) => s + c.lng, 0) / centers.length,
+        zoom: Math.min(...centers.map((c) => c.zoom)),
+      };
+      return { kind: 'city', bounds, center, provinceIds, citySlugs };
+    }
   }
 
+  if (provinceSlugs.length > 0) {
+    const viewport = resolveLocationMapViewportSync({
+      provinceSlug: provinceSlugs[0],
+      provinceId: provinceIds[0],
+    });
+    if (viewport.scope === 'province') {
+      return {
+        kind: 'province',
+        bounds: viewport.bounds,
+        center: viewport.center,
+        provinceIds,
+        citySlugs: [],
+      };
+    }
+  }
+
+  const national = resolveLocationMapViewportSync();
   return {
     kind: 'national',
-    bounds: null,
-    center: resolveBusinessMapCenter([]),
+    bounds: national.bounds,
+    center: national.center,
     provinceIds: [],
     citySlugs: [],
   };

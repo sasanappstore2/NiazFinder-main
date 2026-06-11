@@ -31,7 +31,11 @@ export function NiazIranRasterMapCore({
   const mapStyle = useMemo(() => buildIranRasterMapStyle(theme), [theme]);
 
   return (
-    <div data-map-theme={theme} className={cn('relative h-full w-full', className)} style={style}>
+    <div
+      data-map-theme={theme}
+      className={cn('business-browse-map relative h-full w-full', className)}
+      style={style}
+    >
       <NiazMapLibreCore
         center={center}
         mapStyle={mapStyle}
@@ -39,6 +43,7 @@ export function NiazIranRasterMapCore({
         maxZoom={resolveMapMaxZoom(detail)}
         maxBounds={IRAN_MAX_BOUNDS_LNG_LAT}
         mapKey={mapKey ?? `${theme}-${detail}`}
+        requireRtl={false}
         interactive={interactive}
         attribution={resolveBusinessMapTileAttribution()}
         onMoveEnd={onMoveEnd}

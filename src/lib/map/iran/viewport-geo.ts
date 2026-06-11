@@ -12,34 +12,6 @@ export const IRAN_VIEW_FIT_BOUNDS: [[number, number], [number, number]] = IRAN_V
 
 export const IRAN_VIEW_FIT_PADDING = 12;
 
-/** World shell with Iran-shaped hole — paints void outside the view. */
-export const IRAN_VOID_MASK_GEOJSON = {
-  type: 'Feature' as const,
-  properties: {},
-  geometry: {
-    type: 'Polygon' as const,
-    coordinates: [
-      [
-        [-180, -85],
-        [-180, 85],
-        [180, 85],
-        [180, -85],
-        [-180, -85],
-      ],
-      [
-        [west, south],
-        [west, north],
-        [east, north],
-        [east, south],
-        [west, south],
-      ],
-    ],
-  },
-};
-
-/** @deprecated Use `resolveIranDivarVoidColor(theme)` from `divar-style-palette`. */
-export const IRAN_VOID_COLOR = '#181b22';
-
 export const IRAN_VECTOR_SOURCE_BOUNDS: [number, number, number, number] = [
   west,
   south,

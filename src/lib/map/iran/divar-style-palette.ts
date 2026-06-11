@@ -2,6 +2,7 @@ import type { BusinessMapThemeMode } from '@/lib/business/map-tiles';
 
 export type IranDivarPalette = {
   void: string;
+  land: string;
   water: string;
   waterway: string;
   roadMotorway: string;
@@ -26,6 +27,7 @@ export type IranDivarPalette = {
 export const IRAN_DIVAR_PALETTES: Record<BusinessMapThemeMode, IranDivarPalette> = {
   dark: {
     void: '#181b22',
+    land: '#1f2430',
     water: '#1a2d42',
     waterway: '#2d455c',
     roadMotorway: '#8a9bb2',
@@ -48,6 +50,7 @@ export const IRAN_DIVAR_PALETTES: Record<BusinessMapThemeMode, IranDivarPalette>
   },
   light: {
     void: '#e8ecf2',
+    land: '#e0e5ec',
     water: '#9ec8e8',
     waterway: '#7eb5dc',
     roadMotorway: '#7a8799',

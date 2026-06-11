@@ -24,8 +24,11 @@ export type NiazMapLibreCoreProps = {
   style?: React.CSSProperties;
   attribution?: string;
   loadingBackground?: string;
+  /** Persian label shaping — skip for raster-only maps. */
+  requireRtl?: boolean;
   onMoveEnd?: (map: MapboxMapRef) => void;
   onMapClick?: (lat: number, lng: number) => void;
+  onError?: (error: unknown) => void;
   children?: React.ReactNode;
   overlay?: React.ReactNode;
 };
@@ -43,31 +46,47 @@ export function NiazMapLibreCore({
   style,
   attribution,
   loadingBackground = '#181b22',
+  requireRtl = true,
   onMoveEnd,
   onMapClick,
+  onError,
   children,
   overlay,
 }: NiazMapLibreCoreProps) {
   const mapRef = useRef<MapRef>(null);
-  const [rtlReady, setRtlReady] = useState(false);
+  const [rtlReady, setRtlReady] = useState(!requireRtl);
   const resolvedStyle = useMemo(
     () => (typeof mapStyle === 'function' ? mapStyle() : mapStyle),
     [mapStyle]
   );
 
   useEffect(() => {
+    if (!requireRtl) {
+      setRtlReady(true);
+      return;
+    }
+
     let cancelled = false;
+    const fallbackTimer = window.setTimeout(() => {
+      if (!cancelled) setRtlReady(true);
+    }, 2500);
+
     ensureMapLibreRtlPlugin()
       .then(() => {
         if (!cancelled) setRtlReady(true);
       })
       .catch(() => {
         if (!cancelled) setRtlReady(true);
+      })
+      .finally(() => {
+        window.clearTimeout(fallbackTimer);
       });
+
     return () => {
       cancelled = true;
+      window.clearTimeout(fallbackTimer);
     };
-  }, []);
+  }, [requireRtl]);
 
   if (!rtlReady) {
     return (
@@ -101,14 +120,24 @@ export function NiazMapLibreCore({
           pitchWithRotate={false}
           touchPitch={false}
           attributionControl={false}
-          reuseMaps
           onMoveEnd={() => {
             if (mapRef.current && onMoveEnd) {
               onMoveEnd(mapRef.current as unknown as MapboxMapRef);
             }
           }}
           onLoad={() => {
-            mapRef.current?.getMap()?.resize();
+            const map = mapRef.current?.getMap();
+            if (map) {
+              map.resize();
+              requestAnimationFrame(() => {
+                try {
+                  map.resize();
+                  map.triggerRepaint();
+                } catch {
+                  /* map may be unmounting */
+                }
+              });
+            }
             if (mapRef.current && onMoveEnd) {
               onMoveEnd(mapRef.current as unknown as MapboxMapRef);
             }
@@ -120,6 +149,7 @@ export function NiazMapLibreCore({
                 }
               : undefined
           }
+          onError={(e) => onError?.(e.error ?? e)}
         >
           <NiazMapResizeFix />
           {children}
