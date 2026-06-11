@@ -76,6 +76,17 @@ Typical bootstrap size: ~400 MB vector + ~20 MB raster after `map:prewarm-iran`.
 
 ## Troubleshooting
 
+### Light map on dark UI (mixed themes / ????? ?????)
+
+Usually caused by theme hydrating after the map painted light tiles, or memaps CSS filters on the Divar canvas.
+
+Fixes in code:
+- Map waits for `useResolvedThemeModeWhenReady` before first paint
+- Stable `mapKey` (no remount on theme toggle); `setStyle` swaps light/dark Divar palette
+- `.business-browse-map--iran-divar` excludes memaps canvas filters
+
+Hard refresh after pulling: `Cmd+Shift+R`
+
 ### Gray empty map box
 
 1. Check dev server: `curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/api/map/vector/iran/5/20/12`

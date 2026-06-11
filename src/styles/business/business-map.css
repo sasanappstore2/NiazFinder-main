@@ -1,5 +1,15 @@
 /* Business map — Persian memaps tiles + NiazFinder emerald chrome */
 
+/* Iran Divar vector — colors come from divar-style.ts; never apply memaps canvas filters */
+.business-browse-map.business-browse-map--iran-divar .maplibregl-map,
+.business-browse-map.business-browse-map--iran-divar .maplibregl-canvas,
+.business-browse-map.business-browse-map--iran-divar .mapboxgl-map,
+.business-browse-map.business-browse-map--iran-divar .mapboxgl-canvas,
+.business-browse-map--iran-divar:not([data-map-theme]) .maplibregl-canvas,
+.business-browse-map--iran-divar:not([data-map-theme]) .mapboxgl-canvas {
+  filter: none !important;
+}
+
 .business-browse-map {
   --bm-control-size: 2.75rem;
   --bm-radius: var(--golden-sm, 0.618rem);

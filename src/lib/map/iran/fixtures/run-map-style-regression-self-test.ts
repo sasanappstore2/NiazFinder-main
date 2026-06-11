@@ -29,6 +29,11 @@ function run(): void {
   assert.equal(resolveIranMapSurface('browse'), 'vector');
   assert.equal(resolveIranMapSurface('picker'), 'vector');
 
+  const darkBg = dark.layers?.find((l) => l.id === 'background');
+  const lightBg = light.layers?.find((l) => l.id === 'background');
+  assert.ok(darkBg && 'paint' in darkBg && darkBg.paint?.['background-color'] === '#181b22');
+  assert.ok(lightBg && 'paint' in lightBg && lightBg.paint?.['background-color'] === '#e8ecf2');
+
   console.log('[ok] map style regression self-test');
 }
 

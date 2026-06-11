@@ -77,7 +77,8 @@ export function IranDivarBrowseMap<T extends MapPoint>({
         ? `p:${provinceSlugs.join(',')}`
         : 'iran-divar');
   const [useRasterFallback, setUseRasterFallback] = useState(false);
-  const { theme, mapStyle, mapKey: themedMapKey, loadingColor } = useIranDivarMapTheme(baseMapKey);
+  const { theme, ready, mapStyle, mapKey: themedMapKey, loadingColor } =
+    useIranDivarMapTheme(baseMapKey);
 
   const overlayProps = useMemo(
     () => ({
@@ -120,6 +121,16 @@ export function IranDivarBrowseMap<T extends MapPoint>({
       />
     </>
   );
+
+  if (!ready || !mapStyle) {
+    return (
+      <div
+        data-map-theme={theme}
+        className={cn('iran-divar-map relative h-full w-full', className)}
+        style={{ minHeight: mobileMode ? 280 : 320, backgroundColor: loadingColor }}
+      />
+    );
+  }
 
   if (useRasterFallback) {
     return (

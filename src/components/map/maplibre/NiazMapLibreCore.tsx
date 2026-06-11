@@ -61,6 +61,18 @@ export function NiazMapLibreCore({
   );
 
   useEffect(() => {
+    const map = mapRef.current?.getMap();
+    if (!map?.isStyleLoaded()) return;
+    try {
+      if (map.getStyle()?.name !== resolvedStyle.name) {
+        map.setStyle(resolvedStyle);
+      }
+    } catch {
+      /* map may be unmounting */
+    }
+  }, [resolvedStyle]);
+
+  useEffect(() => {
     if (!requireRtl) {
       setRtlReady(true);
       return;

@@ -37,10 +37,6 @@ export function resolveMapMinZoom(): number {
 }
 
 function tileTemplateForTheme(theme: BusinessMapThemeMode): string {
-  if (typeof window !== 'undefined') {
-    const path = resolveBusinessMapTileUrl(theme);
-    return `${window.location.origin}${path}`;
-  }
   return resolveBusinessMapTileUrl(theme);
 }
 

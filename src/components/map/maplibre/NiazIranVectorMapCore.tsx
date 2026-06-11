@@ -36,7 +36,8 @@ export function NiazIranVectorMapCore({
   const maxZoom = resolveMapMaxZoom(detail);
   const baseMapKey = mapKey ?? `iran-vector-${detail}`;
   const [useRasterFallback, setUseRasterFallback] = useState(false);
-  const { theme, mapStyle, mapKey: themedMapKey, loadingColor } = useIranDivarMapTheme(baseMapKey);
+  const { theme, ready, mapStyle, mapKey: themedMapKey, loadingColor } =
+    useIranDivarMapTheme(baseMapKey);
 
   const overlayProps = useMemo(
     () => ({
@@ -69,6 +70,19 @@ export function NiazIranVectorMapCore({
       {children}
     </>
   );
+
+  if (!ready || !mapStyle) {
+    return (
+      <div
+        data-map-theme={theme}
+        className={cn(
+          'iran-divar-map business-browse-map business-browse-map--iran-divar relative h-full w-full',
+          className
+        )}
+        style={{ ...style, backgroundColor: loadingColor }}
+      />
+    );
+  }
 
   if (useRasterFallback) {
     return (

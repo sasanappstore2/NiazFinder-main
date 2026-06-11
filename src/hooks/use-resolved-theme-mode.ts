@@ -16,12 +16,12 @@ export function useResolvedThemeMode(): BusinessMapThemeMode {
  */
 export function useResolvedThemeModeWhenReady(): BusinessMapThemeMode | null {
   const { resolvedTheme } = useTheme();
-  const [ready, setReady] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setReady(true);
+    setMounted(true);
   }, []);
 
-  if (!ready || !resolvedTheme) return null;
+  if (!mounted) return null;
   return resolvedTheme === 'dark' ? 'dark' : 'light';
 }

@@ -9,7 +9,8 @@ import {
   resolveMapMinZoom,
 } from '@/lib/map/mapbox/config';
 import { resolveBusinessMapTileAttribution } from '@/lib/business/map-tiles';
-import { useResolvedThemeMode } from '@/hooks/use-resolved-theme-mode';
+import { useResolvedThemeModeWhenReady } from '@/hooks/use-resolved-theme-mode';
+import { resolveIranDivarLoadingColor } from '@/lib/map/iran/divar-style-palette';
 import { cn } from '@/lib/utils';
 import '@/styles/business/business-map.css';
 import type { NiazMapCoreProps } from '@/components/map/mapbox/NiazMapCore';
@@ -27,8 +28,22 @@ export function NiazIranRasterMapCore({
   children,
   overlay,
 }: NiazMapCoreProps) {
-  const theme = useResolvedThemeMode() ?? 'light';
-  const mapStyle = useMemo(() => buildIranRasterMapStyle(theme), [theme]);
+  const theme = useResolvedThemeModeWhenReady();
+  const mapStyle = useMemo(
+    () => (theme != null ? buildIranRasterMapStyle(theme) : null),
+    [theme]
+  );
+  const loadingColor = resolveIranDivarLoadingColor(theme ?? 'dark');
+
+  if (!theme || !mapStyle) {
+    return (
+      <div
+        data-map-theme={theme ?? 'dark'}
+        className={cn('business-browse-map relative h-full w-full', className)}
+        style={{ ...style, backgroundColor: loadingColor }}
+      />
+    );
+  }
 
   return (
     <div
@@ -42,9 +57,10 @@ export function NiazIranRasterMapCore({
         minZoom={resolveMapMinZoom()}
         maxZoom={resolveMapMaxZoom(detail)}
         maxBounds={IRAN_MAX_BOUNDS_LNG_LAT}
-        mapKey={mapKey ?? `${theme}-${detail}`}
+        mapKey={mapKey ?? `iran-raster-${detail}`}
         requireRtl={false}
         interactive={interactive}
+        loadingBackground={loadingColor}
         attribution={resolveBusinessMapTileAttribution()}
         onMoveEnd={onMoveEnd}
         onMapClick={onMapClick}

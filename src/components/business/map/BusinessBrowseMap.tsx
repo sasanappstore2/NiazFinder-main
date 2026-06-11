@@ -21,6 +21,7 @@ import { NiazMapClusterLayerMaplibre } from '@/components/map/maplibre/NiazMapCl
 import { useMapBboxReporter } from '@/components/map/mapbox/use-map-bbox-reporter';
 import { useNiazMapRef } from '@/components/map/mapbox/NiazMapContext';
 import { resolveMapEngine } from '@/lib/map/mapbox/config';
+import { useResolvedThemeModeWhenReady } from '@/hooks/use-resolved-theme-mode';
 import { cn } from '@/lib/utils';
 
 function MapPinPopup({ pin, profileHref }: { pin: BusinessMapPin; profileHref: string }) {
@@ -132,9 +133,11 @@ export function BusinessBrowseMap({
   const reportBbox = useMapBboxReporter(onBboxChange);
   const mapLibre = resolveMapEngine() === 'maplibre';
   const ClusterLayer = mapLibre ? NiazMapClusterLayerMaplibre : NiazMapClusterLayer;
+  const mapTheme = useResolvedThemeModeWhenReady();
 
   return (
     <div
+      data-map-theme={mapTheme ?? undefined}
       className={cn(
         'business-browse-map relative overflow-hidden',
         mapLibre && 'business-browse-map--iran-divar',
