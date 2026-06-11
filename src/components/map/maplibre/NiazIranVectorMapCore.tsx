@@ -1,13 +1,13 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
-import { NiazIranRasterMapCore } from '@/components/map/maplibre/NiazIranRasterMapCore';
+import { useCallback, useMemo } from 'react';
 import { IranDivarMapOverlays } from '@/components/map/iran/IranDivarMapOverlays';
 import { NiazMapLibreCore } from '@/components/map/maplibre/NiazMapLibreCore';
 import { IranMapThemeProvider } from '@/components/map/iran/IranMapThemeContext';
 import { useIranDivarMapTheme } from '@/components/map/iran/useIranDivarMapTheme';
 import { resolveIranDivarBrowseConfig } from '@/lib/map/iran/divar-browse-config';
 import { IRAN_DIVAR_ATTRIBUTION } from '@/lib/map/iran/divar-style';
+import { isFatalIranVectorMapError } from '@/lib/map/iran/map-error-utils';
 import { resolveMapMaxZoom } from '@/lib/map/mapbox/config';
 import { cn } from '@/lib/utils';
 import '@/styles/business/business-map.css';
@@ -35,7 +35,6 @@ export function NiazIranVectorMapCore({
   );
   const maxZoom = resolveMapMaxZoom(detail);
   const baseMapKey = mapKey ?? `iran-vector-${detail}`;
-  const [useRasterFallback, setUseRasterFallback] = useState(false);
   const { theme, ready, mapStyle, mapKey: themedMapKey, loadingColor } =
     useIranDivarMapTheme(baseMapKey);
 
@@ -52,14 +51,17 @@ export function NiazIranVectorMapCore({
 
   const handleMapError = useCallback(
     (error: unknown) => {
-      console.error('[map] vector failed, switching to raster', {
-        error,
-        mapKey: baseMapKey,
-        citySlugs,
-        provinceSlugs,
-        detail,
-      });
-      setUseRasterFallback(true);
+      if (isFatalIranVectorMapError(error)) {
+        console.error('[map] fatal vector style error', {
+          error,
+          mapKey: baseMapKey,
+          citySlugs,
+          provinceSlugs,
+          detail,
+        });
+      } else {
+        console.warn('[map] non-fatal vector tile/glyph issue (staying on local vector)', error);
+      }
     },
     [baseMapKey, citySlugs, provinceSlugs, detail]
   );
@@ -76,7 +78,7 @@ export function NiazIranVectorMapCore({
       <div
         data-map-theme={theme}
         className={cn(
-          'iran-divar-map business-browse-map business-browse-map--iran-divar relative h-full w-full',
+          'iran-divar-map business-browse-map business-browse-map--iran-divar relative h-full w-full overflow-hidden',
           className
         )}
         style={{ ...style, backgroundColor: loadingColor }}
@@ -84,29 +86,11 @@ export function NiazIranVectorMapCore({
     );
   }
 
-  if (useRasterFallback) {
-    return (
-      <NiazIranRasterMapCore
-        center={center}
-        detail={detail}
-        interactive={interactive}
-        mapKey={`${mapKey ?? baseMapKey}-raster-fallback`}
-        className={className}
-        style={style}
-        onMoveEnd={onMoveEnd}
-        onMapClick={onMapClick}
-        overlay={overlay}
-      >
-        {mapChildren}
-      </NiazIranRasterMapCore>
-    );
-  }
-
   return (
     <div
       data-map-theme={theme}
       className={cn(
-        'iran-divar-map business-browse-map business-browse-map--iran-divar relative h-full w-full',
+        'iran-divar-map business-browse-map business-browse-map--iran-divar relative h-full w-full overflow-hidden',
         className
       )}
       style={style}

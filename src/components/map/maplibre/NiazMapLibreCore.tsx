@@ -55,22 +55,25 @@ export function NiazMapLibreCore({
 }: NiazMapLibreCoreProps) {
   const mapRef = useRef<MapRef>(null);
   const [rtlReady, setRtlReady] = useState(!requireRtl);
+  const [tilesReady, setTilesReady] = useState(false);
   const resolvedStyle = useMemo(
     () => (typeof mapStyle === 'function' ? mapStyle() : mapStyle),
     [mapStyle]
   );
 
   useEffect(() => {
-    const map = mapRef.current?.getMap();
-    if (!map?.isStyleLoaded()) return;
-    try {
-      if (map.getStyle()?.name !== resolvedStyle.name) {
-        map.setStyle(resolvedStyle);
+    setTilesReady(false);
+  }, [mapKey, resolvedStyle.name]);
+
+  useEffect(() => {
+    return () => {
+      try {
+        mapRef.current?.getMap()?.remove();
+      } catch {
+        /* already removed */
       }
-    } catch {
-      /* map may be unmounting */
-    }
-  }, [resolvedStyle]);
+    };
+  }, [mapKey]);
 
   useEffect(() => {
     if (!requireRtl) {
@@ -100,6 +103,24 @@ export function NiazMapLibreCore({
     };
   }, [requireRtl]);
 
+  const bindIdleReady = () => {
+    const map = mapRef.current?.getMap();
+    if (!map) return;
+
+    const markReady = () => {
+      try {
+        map.resize();
+        map.triggerRepaint();
+      } catch {
+        /* unmounting */
+      }
+      setTilesReady(true);
+    };
+
+    if (map.areTilesLoaded()) markReady();
+    else map.once('idle', markReady);
+  };
+
   if (!rtlReady) {
     return (
       <div
@@ -110,68 +131,68 @@ export function NiazMapLibreCore({
   }
 
   return (
-    <div className={cn('relative h-full w-full', wrapperClassName, className)} style={style}>
-      <MapEngineContext.Provider value="maplibre">
-      <NiazMapRefContext.Provider value={mapRef as React.RefObject<MapboxMapRef | null>}>
-        <Map
-          key={mapKey ?? 'maplibre'}
-          ref={mapRef}
-          mapStyle={resolvedStyle}
-          initialViewState={{
-            longitude: center.lng,
-            latitude: center.lat,
-            zoom: center.zoom,
-          }}
-          style={{ width: '100%', height: '100%' }}
-          minZoom={minZoom}
-          maxZoom={maxZoom}
-          maxBounds={maxBounds}
-          scrollZoom={interactive}
-          dragPan={interactive}
-          dragRotate={false}
-          pitchWithRotate={false}
-          touchPitch={false}
-          attributionControl={false}
-          onMoveEnd={() => {
-            if (mapRef.current && onMoveEnd) {
-              onMoveEnd(mapRef.current as unknown as MapboxMapRef);
+    <div
+      className={cn('relative h-full w-full overflow-hidden', wrapperClassName, className)}
+      style={style}
+    >
+      <div
+        className="h-full w-full transition-opacity duration-150"
+        style={{
+          opacity: tilesReady ? 1 : 0,
+          backgroundColor: loadingBackground,
+        }}
+      >
+        <MapEngineContext.Provider value="maplibre">
+        <NiazMapRefContext.Provider value={mapRef as React.RefObject<MapboxMapRef | null>}>
+          <Map
+            key={mapKey ?? 'maplibre'}
+            ref={mapRef}
+            mapStyle={resolvedStyle}
+            initialViewState={{
+              longitude: center.lng,
+              latitude: center.lat,
+              zoom: center.zoom,
+            }}
+            style={{ width: '100%', height: '100%' }}
+            minZoom={minZoom}
+            maxZoom={maxZoom}
+            maxBounds={maxBounds}
+            scrollZoom={interactive}
+            dragPan={interactive}
+            dragRotate={false}
+            pitchWithRotate={false}
+            touchPitch={false}
+            attributionControl={false}
+            onMoveEnd={() => {
+              if (mapRef.current && onMoveEnd) {
+                onMoveEnd(mapRef.current as unknown as MapboxMapRef);
+              }
+            }}
+            onLoad={() => {
+              bindIdleReady();
+              if (mapRef.current && onMoveEnd) {
+                onMoveEnd(mapRef.current as unknown as MapboxMapRef);
+              }
+            }}
+            onClick={
+              onMapClick
+                ? (e) => {
+                    onMapClick(e.lngLat.lat, e.lngLat.lng);
+                  }
+                : undefined
             }
-          }}
-          onLoad={() => {
-            const map = mapRef.current?.getMap();
-            if (map) {
-              map.resize();
-              requestAnimationFrame(() => {
-                try {
-                  map.resize();
-                  map.triggerRepaint();
-                } catch {
-                  /* map may be unmounting */
-                }
-              });
-            }
-            if (mapRef.current && onMoveEnd) {
-              onMoveEnd(mapRef.current as unknown as MapboxMapRef);
-            }
-          }}
-          onClick={
-            onMapClick
-              ? (e) => {
-                  onMapClick(e.lngLat.lat, e.lngLat.lng);
-                }
-              : undefined
-          }
-          onError={(e) => onError?.(e.error ?? e)}
-        >
-          <NiazMapResizeFix />
-          {children}
-          {attribution ? (
-            <AttributionControl compact customAttribution={attribution} position="bottom-left" />
-          ) : null}
-        </Map>
-        {overlay}
-      </NiazMapRefContext.Provider>
-      </MapEngineContext.Provider>
+            onError={(e) => onError?.(e.error ?? e)}
+          >
+            <NiazMapResizeFix />
+            {children}
+            {attribution ? (
+              <AttributionControl compact customAttribution={attribution} position="bottom-left" />
+            ) : null}
+          </Map>
+          {overlay}
+        </NiazMapRefContext.Provider>
+        </MapEngineContext.Provider>
+      </div>
     </div>
   );
 }

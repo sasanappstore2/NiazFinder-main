@@ -1,7 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
-import { NiazIranRasterMapCore } from '@/components/map/maplibre/NiazIranRasterMapCore';
+import { useCallback, useMemo } from 'react';
 import { NiazMapLibreCore } from '@/components/map/maplibre/NiazMapLibreCore';
 import { NiazMapControls } from '@/components/map/mapbox/NiazMapControls';
 import { IranDivarMapOverlays } from '@/components/map/iran/IranDivarMapOverlays';
@@ -14,6 +13,7 @@ import { IranMapThemeProvider } from '@/components/map/iran/IranMapThemeContext'
 import { useIranDivarMapTheme } from '@/components/map/iran/useIranDivarMapTheme';
 import { resolveIranDivarBrowseConfig } from '@/lib/map/iran/divar-browse-config';
 import { IRAN_DIVAR_ATTRIBUTION } from '@/lib/map/iran/divar-style';
+import { isFatalIranVectorMapError } from '@/lib/map/iran/map-error-utils';
 import { isValidLatLng } from '@/lib/business/map-coords';
 import type { MapPoint } from '@/components/map/mapbox/use-map-clusters';
 import { cn } from '@/lib/utils';
@@ -76,7 +76,6 @@ export function IranDivarBrowseMap<T extends MapPoint>({
       : provinceSlugs.length > 0
         ? `p:${provinceSlugs.join(',')}`
         : 'iran-divar');
-  const [useRasterFallback, setUseRasterFallback] = useState(false);
   const { theme, ready, mapStyle, mapKey: themedMapKey, loadingColor } =
     useIranDivarMapTheme(baseMapKey);
 
@@ -95,13 +94,16 @@ export function IranDivarBrowseMap<T extends MapPoint>({
 
   const handleMapError = useCallback(
     (error: unknown) => {
-      console.error('[map] vector failed, switching to raster', {
-        error,
-        mapKey: baseMapKey,
-        citySlugs,
-        provinceSlugs,
-      });
-      setUseRasterFallback(true);
+      if (isFatalIranVectorMapError(error)) {
+        console.error('[map] fatal vector style error', {
+          error,
+          mapKey: baseMapKey,
+          citySlugs,
+          provinceSlugs,
+        });
+      } else {
+        console.warn('[map] non-fatal vector tile/glyph issue (staying on local vector)', error);
+      }
     },
     [baseMapKey, citySlugs, provinceSlugs]
   );
@@ -132,24 +134,11 @@ export function IranDivarBrowseMap<T extends MapPoint>({
     );
   }
 
-  if (useRasterFallback) {
-    return (
-      <NiazIranRasterMapCore
-        center={config.center}
-        detail="browse"
-        mapKey={`${baseMapKey}-raster-fallback`}
-        className={cn('iran-divar-map relative h-full w-full', className)}
-        style={{ minHeight: mobileMode ? 280 : 320 }}
-        onMoveEnd={reportBbox}
-        overlay={<MapControlsOverlay mobileMode={mobileMode} />}
-      >
-        {mapChildren}
-      </NiazIranRasterMapCore>
-    );
-  }
-
   return (
-    <div data-map-theme={theme} className={cn('iran-divar-map relative h-full w-full', className)}>
+    <div
+      data-map-theme={theme}
+      className={cn('iran-divar-map relative h-full w-full overflow-hidden', className)}
+    >
       <IranMapThemeProvider theme={theme}>
       <NiazMapLibreCore
         center={config.center}

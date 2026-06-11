@@ -11,8 +11,8 @@ export function useResolvedThemeMode(): BusinessMapThemeMode {
 }
 
 /**
- * Same as {@link useResolvedThemeMode} but returns `null` until next-themes has
- * hydrated. Use for map tiles so we never paint light tiles and then swap to dark.
+ * Returns `null` until next-themes has hydrated **and** `resolvedTheme` is known.
+ * Avoids painting light Divar tiles before dark mode is resolved.
  */
 export function useResolvedThemeModeWhenReady(): BusinessMapThemeMode | null {
   const { resolvedTheme } = useTheme();
@@ -22,6 +22,6 @@ export function useResolvedThemeModeWhenReady(): BusinessMapThemeMode | null {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted || resolvedTheme == null) return null;
   return resolvedTheme === 'dark' ? 'dark' : 'light';
 }

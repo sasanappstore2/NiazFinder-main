@@ -17,8 +17,8 @@ export function useIranDivarMapTheme(baseMapKey: string) {
     theme: theme ?? 'dark',
     ready: theme != null,
     mapStyle,
-    /** Stable key — theme swaps via mapStyle, not remount (avoids mixed tile canvases). */
-    mapKey: baseMapKey,
+    /** Remount per theme — clean canvas, no mixed light/dark vector tiles. */
+    mapKey: theme != null ? `${baseMapKey}-${theme}` : baseMapKey,
     loadingColor: resolveIranDivarLoadingColor(theme ?? 'dark'),
   };
 }

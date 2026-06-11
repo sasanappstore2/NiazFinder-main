@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { buildIranDivarStyle } from '@/lib/map/iran/divar-style';
 import { resolveIranMapSurface } from '@/lib/map/iran/map-surface';
+import { isFatalIranVectorMapError } from '@/lib/map/iran/map-error-utils';
 import {
   LOCAL_IRAN_GLYPHS_TEMPLATE,
   LOCAL_IRAN_VECTOR_TILE_TEMPLATE,
@@ -33,6 +34,10 @@ function run(): void {
   const lightBg = light.layers?.find((l) => l.id === 'background');
   assert.ok(darkBg && 'paint' in darkBg && darkBg.paint?.['background-color'] === '#181b22');
   assert.ok(lightBg && 'paint' in lightBg && lightBg.paint?.['background-color'] === '#e8ecf2');
+
+  assert.equal(isFatalIranVectorMapError(new Error('Failed to load style')), true);
+  assert.equal(isFatalIranVectorMapError(new Error('glyph loading failed')), false);
+  assert.equal(isFatalIranVectorMapError(new Error('tile fetch 404')), false);
 
   console.log('[ok] map style regression self-test');
 }

@@ -60,6 +60,11 @@
     -1px -1px 0 var(--divar-gulf-label-shadow);
 }
 
+.iran-divar-map {
+  overflow: hidden;
+  background: var(--divar-map-bg, #181b22);
+}
+
 .iran-divar-map .maplibregl-map {
   font-family: inherit;
   background: var(--divar-map-bg);
