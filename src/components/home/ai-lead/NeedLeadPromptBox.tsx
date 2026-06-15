@@ -22,7 +22,6 @@ import {
 import { useAutoResizeTextarea } from '@/hooks/use-auto-resize-textarea';
 import { useSpeechToText } from '@/hooks/use-speech-to-text';
 import { cn } from '@/lib/utils';
-import { fib } from './ai-lead-tokens';
 
 export interface NeedLeadPromptBoxProps {
   inputRef?: RefObject<HTMLTextAreaElement | null>;
@@ -51,6 +50,7 @@ function ToggleChip({
   icon,
   label,
   activeClassName,
+  iconOnly = false,
 }: {
   active: boolean;
   disabled?: boolean;
@@ -58,14 +58,20 @@ function ToggleChip({
   icon: ReactNode;
   label: string;
   activeClassName?: string;
+  iconOnly?: boolean;
 }) {
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
+      title={label}
+      aria-label={label}
       className={cn(
-        'flex h-8 items-center gap-1 rounded-full border px-2 py-1 transition-all',
+        'flex h-9 shrink-0 items-center gap-1 rounded-full border px-2.5 py-1 transition-all sm:h-8',
+        iconOnly
+          ? 'size-9 justify-center px-0 sm:size-8'
+          : 'min-w-0 max-w-[min(10rem,48vw)]',
         active
           ? cn(
               'border-primary/50 bg-primary/10 text-primary',
@@ -78,19 +84,21 @@ function ToggleChip({
       <span className="flex size-5 shrink-0 items-center justify-center">
         {icon}
       </span>
-      <AnimatePresence>
-        {active && (
-          <motion.span
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 'auto', opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden whitespace-nowrap text-xs"
-          >
-            {label}
-          </motion.span>
-        )}
-      </AnimatePresence>
+      {!iconOnly ? (
+        <AnimatePresence>
+          {active ? (
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="min-w-0 truncate text-xs"
+            >
+              {label}
+            </motion.span>
+          ) : null}
+        </AnimatePresence>
+      ) : null}
     </button>
   );
 }
@@ -128,8 +136,8 @@ export function NeedLeadPromptBox({
   const geoTriggeredRef = useRef(false);
 
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({
-    minHeight: fib.xl,
-    maxHeight: fib.xxl + fib.lg,
+    minHeight: 72,
+    maxHeight: 220,
   });
 
   const setRefs = useCallback(
@@ -161,26 +169,38 @@ export function NeedLeadPromptBox({
   });
 
   useEffect(() => {
+    if (!isListening) return;
     const spoken = [transcript, interimTranscript].filter(Boolean).join(' ').trim();
-    if (!spoken && !isListening) return;
+    if (!spoken) return;
 
     const base = speechBaseRef.current;
     const merged = base && spoken ? `${base} ${spoken}`.trim() : base || spoken;
-    if (merged !== value) {
-      onChange(merged);
-      adjustHeight();
-    }
-  }, [transcript, interimTranscript, isListening, value, onChange, adjustHeight]);
+    onChange(merged);
+    adjustHeight();
+  }, [transcript, interimTranscript, isListening, onChange, adjustHeight]);
 
   const handleSpeechToggle = () => {
     if (isListening) {
+      const spoken = [transcript, interimTranscript].filter(Boolean).join(' ').trim();
+      const base = speechBaseRef.current;
+      const merged = base && spoken ? `${base} ${spoken}`.trim() : base || spoken;
+      if (merged) {
+        onChange(merged);
+        speechBaseRef.current = merged;
+        adjustHeight();
+      }
       stopListening();
+      resetTranscript();
       return;
     }
     speechBaseRef.current = value.trim();
     resetTranscript();
     startListening();
   };
+
+  useEffect(() => {
+    adjustHeight();
+  }, [value, adjustHeight]);
 
   useEffect(() => {
     if (hasCity) setShowLocation(true);
@@ -218,30 +238,32 @@ export function NeedLeadPromptBox({
     <div
       dir="rtl"
       className={cn(
-        'rounded-3xl border border-border/60 bg-card/90 p-2 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] backdrop-blur-xl',
+        'overflow-hidden rounded-2xl border border-border/60 bg-card/90 p-1.5 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] backdrop-blur-xl sm:rounded-3xl sm:p-2',
         'transition-all duration-300 focus-within:border-primary/35',
         'dark:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.45)]',
         className
       )}
     >
-      <div className="px-1 pt-1">
+      <div className="min-w-0 px-0.5 pt-0.5">
         <Textarea
           ref={setRefs}
           data-ai-lead-input
           value={value}
           onChange={(e) => {
-            onChange(e.target.value);
+            const next = e.target.value;
+            speechBaseRef.current = next.trim();
+            onChange(next);
             adjustHeight();
           }}
           placeholder={placeholder}
           className={cn(
-            'min-h-[55px] resize-none border-0 bg-transparent px-3 py-2.5',
-            'text-base leading-[1.618] shadow-none',
+            'min-h-[4.5rem] resize-none border-0 bg-transparent px-3 py-3',
+            'text-[15px] leading-relaxed shadow-none sm:text-base sm:leading-[1.618]',
             'focus-visible:ring-0 focus-visible:ring-offset-0',
             'placeholder:text-muted-foreground/80',
-            'scrollbar-thin'
+            'scrollbar-thin overflow-y-auto'
           )}
-          style={{ overflow: 'hidden' }}
+          rows={3}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
@@ -275,8 +297,8 @@ export function NeedLeadPromptBox({
         )}
       </AnimatePresence>
 
-      <div className="flex items-center justify-between gap-2 px-1 pb-1 pt-2">
-        <div className="flex min-w-0 flex-1 items-center gap-0.5">
+      <div className="mt-1 flex items-center justify-between gap-2 border-t border-border/40 px-1 pb-0.5 pt-2.5 sm:mt-0 sm:border-t-0 sm:pt-2">
+        <div className="flex min-w-0 flex-1 items-center gap-1">
           <ToggleChip
             active={showLocation}
             disabled={isGeoDetecting && !hasCity}
@@ -314,6 +336,7 @@ export function NeedLeadPromptBox({
                       disabled={isSubmitting}
                       onClick={handleSpeechToggle}
                       label={isListening ? 'در حال شنیدن' : 'میکروفون'}
+                      iconOnly
                       activeClassName="border-destructive/40 bg-destructive/10 text-destructive"
                       icon={
                         isListening ? (
@@ -348,7 +371,7 @@ export function NeedLeadPromptBox({
               type="button"
               size="icon"
               className={cn(
-                'size-11 shrink-0 rounded-full transition-all duration-200',
+                'size-10 shrink-0 rounded-full transition-all duration-200 sm:size-11',
                 canSend
                   ? 'bg-emerald-600 text-white shadow-md hover:bg-emerald-500 hover:scale-[1.03] active:scale-[0.97]'
                   : 'bg-muted text-muted-foreground'

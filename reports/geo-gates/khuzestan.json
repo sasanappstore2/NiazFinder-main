@@ -1,0 +1,537 @@
+{
+  "provinceId": "khuzestan",
+  "provinceName": "خوزستان",
+  "generatedAt": "2026-06-12T21:20:02.620Z",
+  "cities": [
+    {
+      "cityId": "ahvaz",
+      "cityName": "اهواز",
+      "provinceId": "khuzestan",
+      "tier": "A",
+      "neighborhoodCount": 145,
+      "shares": {
+        "divar": 145,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 145
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khorramshahr",
+      "cityName": "خرمشهر",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 98,
+      "shares": {
+        "divar": 98,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 98
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dezful",
+      "cityName": "دزفول",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 63,
+      "shares": {
+        "divar": 63,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 63
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "abadan",
+      "cityName": "آبادان",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 94,
+      "shares": {
+        "divar": 94,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 94
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mahshahr",
+      "cityName": "ماهشهر",
+      "provinceId": "khuzestan",
+      "tier": "C",
+      "neighborhoodCount": 14,
+      "shares": {
+        "divar": 14,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 14
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "behbahan",
+      "cityName": "بهبهان",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 15,
+      "shares": {
+        "divar": 15,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 15
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shush",
+      "cityName": "شوش",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 14,
+      "shares": {
+        "divar": 14,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 14
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shushtar",
+      "cityName": "شوشتر",
+      "provinceId": "khuzestan",
+      "tier": "C",
+      "neighborhoodCount": 8,
+      "shares": {
+        "divar": 7,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 8
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "masjedsoleyman",
+      "cityName": "مسجدسلیمان",
+      "provinceId": "khuzestan",
+      "tier": "C",
+      "neighborhoodCount": 39,
+      "shares": {
+        "divar": 25,
+        "osm": 14,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 39
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "izeh",
+      "cityName": "ایذه",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "andimeshk",
+      "cityName": "اندیمشک",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 60,
+      "shares": {
+        "divar": 60,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 60
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gotvand",
+      "cityName": "گتوند",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "lali",
+      "cityName": "لالی",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "baghmalek",
+      "cityName": "باغ‌ملک",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ramhormoz",
+      "cityName": "رامهرمز",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 7,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ramshir",
+      "cityName": "رامشیر",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "omidieh",
+      "cityName": "امیدیه",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 29,
+      "shares": {
+        "divar": 10,
+        "osm": 19,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 29
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hoveyzeh",
+      "cityName": "هویزه",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 8,
+      "shares": {
+        "divar": 8,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 8
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "karun",
+      "cityName": "کارون",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 7,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bavi",
+      "cityName": "باوی",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 157,
+      "shares": {
+        "divar": 157,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 157
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "aghajari",
+      "cityName": "آغاجاری",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 25,
+      "shares": {
+        "divar": 25,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 25
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "andika",
+      "cityName": "اندیکا",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chamran-town",
+      "cityName": "چمران",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hamidiyeh",
+      "cityName": "حمیدیه",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dezpart",
+      "cityName": "دزپارت",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dasht-azadegan",
+      "cityName": "دشت آزادگان",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "susangerd",
+      "cityName": "سوسنگرد",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shadeghan",
+      "cityName": "شادگان",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "karkheh",
+      "cityName": "کرخه",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 7,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "haftgel",
+      "cityName": "هفتگل",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hendijan",
+      "cityName": "هندیجان",
+      "provinceId": "khuzestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 0,
+  "pass": true
+}

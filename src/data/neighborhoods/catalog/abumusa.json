@@ -1,8 +1,25 @@
 {
   "cityId": "abumusa",
   "cityName": "ابوموسی",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:38.675Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.642Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ابوموسی",
+      "name": "ابوموسی",
+      "nameEn": "abumusa",
+      "centroid": {
+        "lat": 25.878937210348546,
+        "lng": 55.09799600581172
+      },
+      "bbox": {
+        "south": 25.77245068501617,
+        "north": 25.98542373568092,
+        "west": 54.99344606853239,
+        "east": 55.20254594309105
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

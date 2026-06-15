@@ -42,9 +42,15 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    const neighborhoodsParam = searchParams.get('neighborhoods') ?? undefined;
+    const neighborhoodCity =
+      searchParams.get('neighborhoodCity') ?? searchParams.get('city') ?? undefined;
+
     const result = await listBusinesses({
       citiesParam,
       provincesParam,
+      neighborhoodsParam,
+      neighborhoodCityId: neighborhoodCity,
       city: legacyCity,
       category,
       search,

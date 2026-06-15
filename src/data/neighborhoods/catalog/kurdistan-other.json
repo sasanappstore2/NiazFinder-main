@@ -2,7 +2,7 @@
   "cityId": "kurdistan-other",
   "cityName": "باشت",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.859Z",
+  "importedAt": "2026-06-12T20:39:29.342Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 51.015317537911784,
         "east": 51.138915306138955
       },
-      "geoSource": "divar",
-      "areas": [
-        "پوزه سرنا مرکزی",
-        "شمال پوزه سرنا",
-        "جنوب پوزه سرنا",
-        "شرق پوزه سرنا"
-      ]
+      "geoSource": "divar"
     },
     {
       "id": "کوپن-وسطی",
@@ -41,13 +35,7 @@
         "west": 50.88693463248884,
         "east": 51.01053240071601
       },
-      "geoSource": "divar",
-      "areas": [
-        "کوپن وسطی مرکزی",
-        "شمال کوپن وسطی",
-        "جنوب کوپن وسطی",
-        "شرق کوپن وسطی"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

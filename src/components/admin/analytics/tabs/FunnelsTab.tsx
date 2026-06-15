@@ -11,10 +11,12 @@ type FunnelsData = {
   need: TrafficAnalyticsFunnel;
   business: TrafficAnalyticsFunnel;
   chat: TrafficAnalyticsFunnel;
+  intakeWizard?: TrafficAnalyticsFunnel;
 };
 
 const FUNNEL_TABS = [
   ['need', 'نیاز'],
+  ['intakeWizard', '/post'],
   ['business', 'کسب‌وکار'],
   ['chat', 'گفتگو'],
 ] as const;

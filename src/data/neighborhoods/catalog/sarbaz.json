@@ -1,8 +1,25 @@
 {
   "cityId": "sarbaz",
   "cityName": "سرباز",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:52.140Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.587Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سرباز",
+      "name": "سرباز",
+      "nameEn": "sarbaz",
+      "centroid": {
+        "lat": 26.80822238501617,
+        "lng": 61.13291593975534
+      },
+      "bbox": {
+        "south": 26.701735859683794,
+        "north": 26.914708910348544,
+        "west": 61.0263719691125,
+        "east": 61.23945991039818
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

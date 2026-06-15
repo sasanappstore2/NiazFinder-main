@@ -1,8 +1,25 @@
 {
   "cityId": "farur",
   "cityName": "فارور",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:41.530Z",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.002Z",
   "emptyOnDivar": true,
-  "neighborhoods": []
+  "neighborhoods": [
+    {
+      "id": "فارور",
+      "name": "فارور",
+      "nameEn": "farur",
+      "centroid": {
+        "lat": 26.117180356629536,
+        "lng": 54.50088847428357
+      },
+      "bbox": {
+        "south": 26.01069383129716,
+        "north": 26.22366688196191,
+        "west": 54.39288217228859,
+        "east": 54.60889477627856
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

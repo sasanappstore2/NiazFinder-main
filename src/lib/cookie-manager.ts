@@ -90,13 +90,18 @@ export class CookieManager {
       const cookieValue = this.getCookie(COOKIE_CONFIG.name);
       if (cookieValue) {
         const parsed = JSON.parse(decodeURIComponent(cookieValue)) as Partial<UserPreferences>;
+        const location = {
+          ...DEFAULT_PREFERENCES.location,
+          ...(parsed.location ?? {}),
+        };
+        if (location.lastDetectedSlug != null) {
+          location.lastDetectedSlug = String(location.lastDetectedSlug).trim() || undefined;
+        }
+
         this.preferences = {
           ...DEFAULT_PREFERENCES,
           ...parsed,
-          location: {
-            ...DEFAULT_PREFERENCES.location,
-            ...(parsed.location ?? {}),
-          },
+          location,
           filters: {
             ...DEFAULT_PREFERENCES.filters,
             ...(parsed.filters ?? {}),

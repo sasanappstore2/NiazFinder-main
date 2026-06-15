@@ -2,7 +2,7 @@
   "cityId": "garmsar",
   "cityName": "گرمسار",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.627Z",
+  "importedAt": "2026-06-12T20:39:28.158Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 52.189658048045224,
         "east": 52.26586366256113
       },
-      "geoSource": "divar",
-      "areas": [
-        "ماشین خانه مرکزی",
-        "شمال ماشین خانه",
-        "جنوب ماشین خانه",
-        "شرق ماشین خانه"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

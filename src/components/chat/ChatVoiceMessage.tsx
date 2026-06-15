@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useSpring, useTransform, type MotionValue } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Pause, Play } from 'lucide-react';
 import { ChatReadReceiptIcon } from '@/components/chat/bubble/ChatReadReceiptIcon';
 import { cn } from '@/lib/utils';
@@ -49,81 +49,93 @@ function barFillAt(i: number, p: number, count: number): number {
   return t * t * (3 - 2 * t);
 }
 
+/** WebM from chat storage often reports duration late; seekable/buffered ranges are earlier. */
+function resolveDuration(audio: HTMLAudioElement): number {
+  const direct = audio.duration;
+  if (Number.isFinite(direct) && direct > 0) return direct;
+  if (audio.seekable.length > 0) {
+    const end = audio.seekable.end(audio.seekable.length - 1);
+    if (Number.isFinite(end) && end > 0) return end;
+  }
+  if (audio.buffered.length > 0) {
+    const end = audio.buffered.end(audio.buffered.length - 1);
+    if (Number.isFinite(end) && end > 0) return end;
+  }
+  return 0;
+}
+
+function computeProgress(audio: HTMLAudioElement): number {
+  const duration = resolveDuration(audio);
+  return duration > 0 ? Math.min(1, audio.currentTime / duration) : 0;
+}
+
 export function ChatVoiceMessage({ url, isOwn, timeLabel, isRead }: ChatVoiceMessageProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [current, setCurrent] = useState(0);
+  const [progress, setProgress] = useState(0);
   const [playheadPulse, setPlayheadPulse] = useState(0);
-  const targetProgressRef = useRef(0);
-
-  const progressSpring = useSpring(0, { stiffness: 120, damping: 22, mass: 0.35 });
-  const smoothProgress = useTransform(progressSpring, (v) => Math.max(0, Math.min(1, v)));
 
   const waveform = useMemo(() => seedWaveform(url, BAR_COUNT), [url]);
+
+  const syncFromAudio = useCallback((audio: HTMLAudioElement) => {
+    const resolved = resolveDuration(audio);
+    if (resolved > 0) setDuration(resolved);
+    setCurrent(audio.currentTime);
+    setProgress(computeProgress(audio));
+  }, []);
 
   useEffect(() => {
     const audio = new Audio(url);
     audioRef.current = audio;
-    audio.preload = 'metadata';
+    audio.preload = 'auto';
 
-    const onMeta = () => setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
+    const refreshDuration = () => {
+      const resolved = resolveDuration(audio);
+      if (resolved > 0) setDuration(resolved);
+    };
     const onTime = () => {
-      setCurrent(audio.currentTime);
-      targetProgressRef.current = audio.duration ? audio.currentTime / audio.duration : 0;
-      if (audio.paused) {
-        progressSpring.set(targetProgressRef.current);
-      }
+      if (audio.paused) syncFromAudio(audio);
     };
     const onEnd = () => {
       setIsPlaying(false);
       setCurrent(0);
-      targetProgressRef.current = 0;
-      progressSpring.set(0);
+      setProgress(0);
     };
 
-    audio.addEventListener('loadedmetadata', onMeta);
-    audio.addEventListener('durationchange', onMeta);
+    audio.addEventListener('loadedmetadata', refreshDuration);
+    audio.addEventListener('durationchange', refreshDuration);
+    audio.addEventListener('progress', refreshDuration);
+    audio.addEventListener('canplay', refreshDuration);
     audio.addEventListener('timeupdate', onTime);
     audio.addEventListener('ended', onEnd);
+    void audio.load();
 
     return () => {
       audio.pause();
-      audio.removeEventListener('loadedmetadata', onMeta);
-      audio.removeEventListener('durationchange', onMeta);
+      audio.removeEventListener('loadedmetadata', refreshDuration);
+      audio.removeEventListener('durationchange', refreshDuration);
+      audio.removeEventListener('progress', refreshDuration);
+      audio.removeEventListener('canplay', refreshDuration);
       audio.removeEventListener('timeupdate', onTime);
       audio.removeEventListener('ended', onEnd);
       audioRef.current = null;
     };
-  }, [url, progressSpring]);
+  }, [url, syncFromAudio]);
 
   useEffect(() => {
     if (!isPlaying) return;
     let raf = 0;
     const tick = () => {
       const audio = audioRef.current;
-      if (audio?.duration) {
-        const p = audio.currentTime / audio.duration;
-        targetProgressRef.current = p;
-        progressSpring.set(p);
-        setCurrent(audio.currentTime);
-      }
+      if (audio) syncFromAudio(audio);
+      setPlayheadPulse(performance.now());
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [isPlaying, progressSpring]);
-
-  useEffect(() => {
-    if (!isPlaying) return;
-    let raf = 0;
-    const pulse = () => {
-      setPlayheadPulse(performance.now());
-      raf = requestAnimationFrame(pulse);
-    };
-    raf = requestAnimationFrame(pulse);
-    return () => cancelAnimationFrame(raf);
-  }, [isPlaying]);
+  }, [isPlaying, syncFromAudio]);
 
   const togglePlay = useCallback(() => {
     const audio = audioRef.current;
@@ -142,15 +154,13 @@ export function ChatVoiceMessage({ url, isOwn, timeLabel, isRead }: ChatVoiceMes
   const seekByClientX = useCallback(
     (clientX: number, rect: DOMRect) => {
       const audio = audioRef.current;
-      if (!audio?.duration) return;
+      const resolved = audio ? resolveDuration(audio) : 0;
+      if (!audio || resolved <= 0) return;
       const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-      audio.currentTime = ratio * audio.duration;
-      const p = ratio;
-      targetProgressRef.current = p;
-      progressSpring.set(p);
-      setCurrent(audio.currentTime);
+      audio.currentTime = ratio * resolved;
+      syncFromAudio(audio);
     },
-    [progressSpring]
+    [syncFromAudio]
   );
 
   const displaySeconds = isPlaying || current > 0 ? current : duration;
@@ -203,20 +213,21 @@ export function ChatVoiceMessage({ url, isOwn, timeLabel, isRead }: ChatVoiceMes
             onClick={(e) => seekByClientX(e.clientX, e.currentTarget.getBoundingClientRect())}
             onKeyDown={(e) => {
               const audio = audioRef.current;
-              if (!audio?.duration) return;
+              const resolved = audio ? resolveDuration(audio) : 0;
+              if (!audio || resolved <= 0) return;
               if (e.key === 'ArrowRight') {
-                audio.currentTime = Math.min(audio.duration, audio.currentTime + 1);
-                progressSpring.set(audio.currentTime / audio.duration);
+                audio.currentTime = Math.min(resolved, audio.currentTime + 1);
+                syncFromAudio(audio);
               }
               if (e.key === 'ArrowLeft') {
                 audio.currentTime = Math.max(0, audio.currentTime - 1);
-                progressSpring.set(audio.currentTime / audio.duration);
+                syncFromAudio(audio);
               }
             }}
           >
             <WaveformBars
               waveform={waveform}
-              smoothProgress={smoothProgress}
+              progress={progress}
               isPlaying={isPlaying}
               playheadPulse={playheadPulse}
               isOwn={isOwn}
@@ -262,28 +273,21 @@ export function ChatVoiceMessage({ url, isOwn, timeLabel, isRead }: ChatVoiceMes
 
 function WaveformBars({
   waveform,
-  smoothProgress,
+  progress,
   isPlaying,
   playheadPulse,
   isOwn,
 }: {
   waveform: number[];
-  smoothProgress: MotionValue<number>;
+  progress: number;
   isPlaying: boolean;
   playheadPulse: number;
   isOwn: boolean;
 }) {
-  const [p, setP] = useState(0);
-
-  useEffect(() => {
-    const unsub = smoothProgress.on('change', (v) => setP(v));
-    return () => unsub();
-  }, [smoothProgress]);
-
   return (
     <>
       {waveform.map((h, i) => {
-        const fill = barFillAt(i, p, BAR_COUNT);
+        const fill = barFillAt(i, progress, BAR_COUNT);
         const isHead = fill > 0.35 && fill < 0.98;
         const pulse =
           isPlaying && isHead ? 1 + 0.14 * Math.sin(playheadPulse / 140 + i * 0.55) : 1;
@@ -304,9 +308,11 @@ function WaveformBars({
               scaleX: 0.92 + fill * 0.08,
             }}
             transition={{
-              height: { type: 'spring', stiffness: 380, damping: 28, mass: 0.25 },
-              opacity: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
-              scaleX: { duration: 0.18, ease: 'easeOut' },
+              height: isPlaying
+                ? { duration: 0.06, ease: 'linear' }
+                : { type: 'spring', stiffness: 380, damping: 28, mass: 0.25 },
+              opacity: { duration: isPlaying ? 0.08 : 0.22, ease: [0.22, 1, 0.36, 1] },
+              scaleX: { duration: isPlaying ? 0.06 : 0.18, ease: 'easeOut' },
             }}
           />
         );

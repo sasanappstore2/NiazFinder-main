@@ -1,8 +1,25 @@
 {
   "cityId": "shahrbabak",
   "cityName": "شهربابک",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:41:12.346Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.769Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهربابک",
+      "name": "شهربابک",
+      "nameEn": "shahrbabak",
+      "centroid": {
+        "lat": 30.032315163923823,
+        "lng": 55.11749574111198
+      },
+      "bbox": {
+        "south": 29.925828638591447,
+        "north": 30.138801689256198,
+        "west": 55.002666408390155,
+        "east": 55.232325073833806
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

@@ -70,7 +70,7 @@ interface NeedIntakeState {
   setNeedDraftFromAnalysis: (
     analysis: IntakeAnalysisResult,
     sourceText: string,
-    intakeTrace?: import('@/intake/training/trainingExample').IntakeAnalysisTrace
+    intakeTrace?: import('@/intake/types/analysis-trace').IntakeAnalysisTrace
   ) => void;
   patchNeedDraftEntities: (patch: Partial<Record<string, unknown>>) => void;
   syncNeedDraftFromFormFields: (form: {

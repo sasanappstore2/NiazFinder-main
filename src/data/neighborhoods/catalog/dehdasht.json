@@ -2,7 +2,7 @@
   "cityId": "dehdasht",
   "cityName": "دهدشت",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.549Z",
+  "importedAt": "2026-06-12T20:39:27.785Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 50.56285575002042,
         "east": 50.65303173101882
       },
-      "geoSource": "divar",
-      "areas": [
-        "شهرک اکبر آباد مرکزی",
-        "شمال شهرک اکبر آباد",
-        "جنوب شهرک اکبر آباد",
-        "شرق شهرک اکبر آباد"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

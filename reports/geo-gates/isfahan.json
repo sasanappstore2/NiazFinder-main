@@ -1,0 +1,996 @@
+{
+  "provinceId": "isfahan",
+  "provinceName": "اصفهان",
+  "generatedAt": "2026-06-12T21:20:01.173Z",
+  "cities": [
+    {
+      "cityId": "isfahan-city",
+      "cityName": "اصفهان",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 272,
+      "shares": {
+        "divar": 268,
+        "osm": 4,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 272
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kashan",
+      "cityName": "کاشان",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 121,
+      "shares": {
+        "divar": 121,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 121
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khomeinishahr",
+      "cityName": "خمینی‌شهر",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 325,
+      "shares": {
+        "divar": 324,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 325
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "najafabad",
+      "cityName": "نجف‌آباد",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 66,
+      "shares": {
+        "divar": 66,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 66
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shahinshahr",
+      "cityName": "شاهین‌شهر",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 54,
+      "shares": {
+        "divar": 54,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 54
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mobarakeh",
+      "cityName": "مبارکه",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 58,
+      "shares": {
+        "divar": 58,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 58
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "falavarjan",
+      "cityName": "فلاورجان",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 178,
+      "shares": {
+        "divar": 178,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 178
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "lenjan",
+      "cityName": "لنجان",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 21,
+      "shares": {
+        "divar": 21,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 21
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "natanz",
+      "cityName": "نطنز",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 12,
+      "shares": {
+        "divar": 12,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 12
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ardestan",
+      "cityName": "اردستان",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 19,
+      "shares": {
+        "divar": 19,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 19
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khouzankola",
+      "cityName": "خوزانکلا",
+      "provinceId": "isfahan",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dehaqan",
+      "cityName": "دهاقان",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "semirom",
+      "cityName": "سمیرم",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "fereydan",
+      "cityName": "فریدن",
+      "provinceId": "isfahan",
+      "tier": "C",
+      "neighborhoodCount": 390,
+      "shares": {
+        "divar": 390,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 390
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "fereydunshahr",
+      "cityName": "فریدونشهر",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "golpayegan",
+      "cityName": "گلپایگان",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 43,
+      "shares": {
+        "divar": 43,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 43
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khansar",
+      "cityName": "خوانسار",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 15,
+      "shares": {
+        "divar": 15,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 15
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "tiranchi",
+      "cityName": "تیرانچی",
+      "provinceId": "isfahan",
+      "tier": "C",
+      "neighborhoodCount": 90,
+      "shares": {
+        "divar": 90,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 90
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bakhtiyar",
+      "cityName": "بختیار",
+      "provinceId": "isfahan",
+      "tier": "C",
+      "neighborhoodCount": 399,
+      "shares": {
+        "divar": 399,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 399
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "aran-va-bidgol",
+      "cityName": "آران و بیدگل",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 39,
+      "shares": {
+        "divar": 39,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 39
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "abrisham-isfahan",
+      "cityName": "ابریشم",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ezhye",
+      "cityName": "اژیه",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "anaarak",
+      "cityName": "انارک",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "badrood",
+      "cityName": "بادرود",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "baagh-bahadoraan",
+      "cityName": "باغ بهادران",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "barzak",
+      "cityName": "برزک",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "booyin-va-miyaandasht",
+      "cityName": "بوئین و میاندشت",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "paadnaa-olyaa",
+      "cityName": "پادنا علیا",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "pir-bakraan",
+      "cityName": "پیر بکران",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "tiraan",
+      "cityName": "تیران",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chaadgaan",
+      "cityName": "چادگان",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chenarood",
+      "cityName": "چنارود",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "habib-abaad",
+      "cityName": "حبیب آباد",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 62,
+      "shares": {
+        "divar": 62,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 62
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khour",
+      "cityName": "خور (اصفهان)",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 17,
+      "shares": {
+        "divar": 17,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 17
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "daran",
+      "cityName": "داران",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "raamesheh",
+      "cityName": "رامشه",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "roodasht",
+      "cityName": "رودشت (اصفهان)",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zendeh-rood",
+      "cityName": "زنده رود",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 57,
+      "shares": {
+        "divar": 57,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 57
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zavaareh",
+      "cityName": "زواره",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 15,
+      "shares": {
+        "divar": 15,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 15
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zibaashahr",
+      "cityName": "زیباشهر",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 45,
+      "shares": {
+        "divar": 45,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 45
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "seestaan",
+      "cityName": "سیستان",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shahreza-city",
+      "cityName": "شهرضا",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 9,
+      "shares": {
+        "divar": 8,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 9
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "asgaraan",
+      "cityName": "عسگران",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dehaq",
+      "cityName": "علویجه - دهق",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "foolad-shahr",
+      "cityName": "فولادشهر",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 31,
+      "shares": {
+        "divar": 31,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 31
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghamsar",
+      "cityName": "قمصر",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghahderijaan",
+      "cityName": "قهدریجان",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kerchambu",
+      "cityName": "کرچمبو",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "koohpaye",
+      "cityName": "کوهپایه",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kavirat",
+      "cityName": "کویرات",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mogouyi",
+      "cityName": "موگوئی",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mahabad-city",
+      "cityName": "مهاباد (اصفهان)",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "meymeh",
+      "cityName": "میمه",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "naaeein",
+      "cityName": "نائین",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "niasar",
+      "cityName": "نیاسر",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 7,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "vardasht",
+      "cityName": "وردشت",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "varzaneh",
+      "cityName": "ورزنه",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "harand",
+      "cityName": "هرند",
+      "provinceId": "isfahan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 0,
+  "pass": true
+}

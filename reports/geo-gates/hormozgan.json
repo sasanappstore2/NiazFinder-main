@@ -1,0 +1,894 @@
+{
+  "provinceId": "hormozgan",
+  "provinceName": "هرمزگان",
+  "generatedAt": "2026-06-12T21:20:04.734Z",
+  "cities": [
+    {
+      "cityId": "bandarabbas",
+      "cityName": "بندرعباس",
+      "provinceId": "hormozgan",
+      "tier": "A",
+      "neighborhoodCount": 130,
+      "shares": {
+        "divar": 129,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 130
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "minab",
+      "cityName": "میناب",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 78,
+      "shares": {
+        "divar": 78,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 78
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bandarlengeh",
+      "cityName": "بندرلنگه",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "qeshm",
+      "cityName": "قشم",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kish",
+      "cityName": "کیش",
+      "provinceId": "hormozgan",
+      "tier": "A",
+      "neighborhoodCount": 15,
+      "shares": {
+        "divar": 15,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 15
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hormuz",
+      "cityName": "هرمز",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hengam",
+      "cityName": "هنگام",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 124,
+      "shares": {
+        "divar": 124,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 124
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "lavan",
+      "cityName": "لاوان",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 125,
+      "shares": {
+        "divar": 125,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 125
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "larak",
+      "cityName": "لاک",
+      "provinceId": "hormozgan",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hendurabi",
+      "cityName": "هندورابی",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 15,
+      "shares": {
+        "divar": 15,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 15
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "abumusa",
+      "cityName": "ابوموسی",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "greatertunb",
+      "cityName": "تنب بزرگ",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "lessertunb",
+      "cityName": "تنب کوچک",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sirri",
+      "cityName": "سیری",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "farur",
+      "cityName": "فارور",
+      "provinceId": "hormozgan",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bani-forur",
+      "cityName": "بنی‌فارور",
+      "provinceId": "hormozgan",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "greaterandsmallerfarur",
+      "cityName": "فارور بزرگ و کوچک",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jask",
+      "cityName": "جاسک",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "rudan",
+      "cityName": "رودان",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 10,
+      "shares": {
+        "divar": 10,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 10
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bastak",
+      "cityName": "بستک",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bandarkhamir",
+      "cityName": "بندرخمیر",
+      "provinceId": "hormozgan",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hajiabad",
+      "cityName": "حاجی‌آباد",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 11,
+      "shares": {
+        "divar": 11,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 11
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "parsian",
+      "cityName": "پارسیان",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ahmadi-city",
+      "cityName": "احمدی",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bashagard",
+      "cityName": "بشاگرد",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bemani",
+      "cityName": "بمانی",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "band-zarak",
+      "cityName": "بند زرک",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bikah",
+      "cityName": "بیکاه",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 10,
+      "shares": {
+        "divar": 10,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 10
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "takht",
+      "cityName": "تخت",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 13,
+      "shares": {
+        "divar": 13,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 13
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "tookehur",
+      "cityName": "توکهور",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 10,
+      "shares": {
+        "divar": 10,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 10
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "joghin",
+      "cityName": "جغین",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 10,
+      "shares": {
+        "divar": 10,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 10
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "janah",
+      "cityName": "جناح",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khamir",
+      "cityName": "خمیر",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dargahan",
+      "cityName": "درگهان",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "rudkhaneh",
+      "cityName": "رودخانه",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ruydar",
+      "cityName": "رویدر",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sandarak",
+      "cityName": "سندرک",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sirik",
+      "cityName": "سیریک",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shamil",
+      "cityName": "شمیل",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shibkuh-city",
+      "cityName": "شیبکوه (هرمزگان)",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jazireh-shidvar",
+      "cityName": "شیدوار",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "fargan",
+      "cityName": "فارغان",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jazireh-forur",
+      "cityName": "فرور",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "fin",
+      "cityName": "فین",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghaleh-ghazi",
+      "cityName": "قلعه قاضی",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 13,
+      "shares": {
+        "divar": 13,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 13
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kookherd-hareng",
+      "cityName": "کوخرد هرنگ",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kushkenar",
+      "cityName": "کوشکنار",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gafar-va-parmun",
+      "cityName": "گافر و پارمون",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "goharan",
+      "cityName": "گوهران",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jazireh-larak",
+      "cityName": "لارک",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "lirdaf",
+      "cityName": "لیردف",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mehran-city",
+      "cityName": "مهران (هرمزگان)",
+      "provinceId": "hormozgan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 0,
+  "pass": true
+}

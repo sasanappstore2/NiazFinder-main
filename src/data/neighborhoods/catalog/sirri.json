@@ -1,8 +1,25 @@
 {
   "cityId": "sirri",
   "cityName": "سیری",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:40.807Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.941Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سیری",
+      "name": "سیری",
+      "nameEn": "sirri",
+      "centroid": {
+        "lat": 25.914400366582825,
+        "lng": 54.59060331406291
+      },
+      "bbox": {
+        "south": 25.80791384125045,
+        "north": 26.0208868919152,
+        "west": 54.48559975404167,
+        "east": 54.69560687408415
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

@@ -1,8 +1,25 @@
 {
   "cityId": "zarandiyeh",
   "cityName": "زرندیه",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:43:53.817Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.352Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زرندیه",
+      "name": "زرندیه",
+      "nameEn": "zarandiyeh",
+      "centroid": {
+        "lat": 35.30167400862379,
+        "lng": 50.64556012061111
+      },
+      "bbox": {
+        "south": 35.19518748329141,
+        "north": 35.40816053395617,
+        "west": 50.528600625862786,
+        "east": 50.76251961535943
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

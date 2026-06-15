@@ -18,10 +18,7 @@ export const DEFAULT_CHANGEFREQ = 'weekly' as const;
 export const DEFAULT_PRIORITY = 0.8;
 
 export const SITEMAP_STATIC_URLS: { url: string; changefreq: string; priority: number }[] = [
-  { url: '/',                       changefreq: 'daily',   priority: 1.0 },
   { url: '/n/iran',                 changefreq: 'hourly',  priority: 0.95 },
-  { url: '/b/iran',                 changefreq: 'hourly',  priority: 0.95 },
-  { url: '/post',                   changefreq: 'monthly', priority: 0.5 },
   { url: '/pricing',                changefreq: 'weekly',  priority: 0.7 },
   { url: '/help',                   changefreq: 'monthly', priority: 0.4 },
   { url: '/login',                  changefreq: 'monthly', priority: 0.3 },

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { apiFetch } from '@/lib/api-client';
+import { useAdmin } from '@/components/admin/context/AdminContext';
 import { AdminPageShell } from '@/components/admin/ui/AdminPageShell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,7 @@ type BlogRow = {
 };
 
 export function BlogPostsPanel() {
+  const { apiFetch } = useAdmin();
   const [rows, setRows] = useState<BlogRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState('');

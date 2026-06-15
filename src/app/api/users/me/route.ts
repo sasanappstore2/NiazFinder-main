@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { resolveSuperAdminRoleUpdate } from '@/lib/super-admin';
 
 // ============ GET handler ============
 
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const fullUser = await db.user.findUnique({
+    let fullUser = await db.user.findUnique({
       where: { id: user.id },
       include: {
         skills: {
@@ -47,6 +48,15 @@ export async function GET(request: NextRequest) {
         { error: 'کاربر یافت نشد' },
         { status: 404 }
       );
+    }
+
+    const roleUpdate = resolveSuperAdminRoleUpdate(fullUser.phone, fullUser.role);
+    if (roleUpdate) {
+      await db.user.update({
+        where: { id: fullUser.id },
+        data: { role: roleUpdate },
+      });
+      fullUser = { ...fullUser, role: roleUpdate };
     }
 
     // Compute rating

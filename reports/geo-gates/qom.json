@@ -1,0 +1,180 @@
+{
+  "provinceId": "qom",
+  "provinceName": "قم",
+  "generatedAt": "2026-06-12T21:20:03.548Z",
+  "cities": [
+    {
+      "cityId": "qom-city",
+      "cityName": "قم",
+      "provinceId": "qom",
+      "tier": "B",
+      "neighborhoodCount": 145,
+      "shares": {
+        "divar": 145,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 145
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kahak",
+      "cityName": "کهک",
+      "provinceId": "qom",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "salafchegan",
+      "cityName": "سلفچگان",
+      "provinceId": "qom",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghanavat",
+      "cityName": "قنوات",
+      "provinceId": "qom",
+      "tier": "B",
+      "neighborhoodCount": 93,
+      "shares": {
+        "divar": 93,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 93
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jafarabad",
+      "cityName": "جعفرباد",
+      "provinceId": "qom",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "veshnaveh",
+      "cityName": "وشنه",
+      "provinceId": "qom",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khalajestan",
+      "cityName": "خلجستان",
+      "provinceId": "qom",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "fordo",
+      "cityName": "فردو",
+      "provinceId": "qom",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghahan",
+      "cityName": "قاهان",
+      "provinceId": "qom",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "qamarud",
+      "cityName": "قمرود",
+      "provinceId": "qom",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 0,
+  "pass": true
+}

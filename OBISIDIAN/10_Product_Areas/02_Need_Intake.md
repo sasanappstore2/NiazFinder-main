@@ -8,71 +8,65 @@ status: live
 
 ## یک خط
 
-موتور ثبت هوشمند نیاز: از متن آزاد تا آگهی منتشرشده.
+موتور ثبت هوشمند نیاز: از متن آزاد تا آگهی منتشرشده — مسیر کاننیکال **`/post`**.
 
 ## برای چه کسی
 
-کارفرما
+کارفرما (CLIENT)
 
 ## مسیرهای سایت
 
 | URL | توضیح |
 |-----|--------|
-| `/post` | جریان اصلی |
-| `?seed=&city=&phone=` | پیش‌پر از خانه |
+| `/post` | wizard چهار مرحله (کاننیکال) |
+| `?seed=&city=&category=&phone=` | پیش‌پر از خانه |
+| `/v2` | redirect → `/post` (منسوخ) |
 
-## چه کار می‌کند
+## جریان فعلی (۲۰۲۶-۰۶)
 
-- parse-intent قوانین‌محور
-- سؤالات ساختاریافته
-- چت تکمیلی
-- پیش‌نمایش آگهی
-- publish
+1. **need** — متن نیاز (+ seed از خانه)
+2. **details** — جزئیات اگر لازم
+3. **location** — دسته، شهر، محله، پین (املاک)
+4. **preview** — عنوان + توضیح (AI stream)
+5. **publish** — `ServiceRequest` + moderation
+
+~~چت تکمیلی~~ و ~~سؤال‌وجواب conversational~~ **حذف از محصول** (فاز ۳ کد).
+
+## مستندات فنی (منبع حقیقت)
+
+| سند | محتوا |
+|-----|--------|
+| [docs/INTAKE_INDEX.md](../../docs/INTAKE_INDEX.md) | ایندکس مرکزی |
+| [docs/NEED_INTAKE.md](../../docs/NEED_INTAKE.md) | معماری + API |
+| [docs/INTAKE_EXECUTION.md](../../docs/INTAKE_EXECUTION.md) | برنامه ۵۰ فاز |
+| [docs/INTAKE_NEED_DRAFT.md](../../docs/INTAKE_NEED_DRAFT.md) | قرارداد داده |
 
 ## منطق و قوانین
 
-- بدون LLM روی هر keystroke (typing rules)
-- moderation پس از publish
-- شهر/دسته از parse
+- **Rules-First, AI-Enhance** — ADR-001
+- Publish gate: `validateNeedDraftForPublish` (نه completionState)
+- املاک: پین نقشه الزامی
+- moderation پس از publish (مگر auto-approve در dev)
 
 ## ویژگی‌های فعلی
 
-- [x] RealtimeNeedInput
-- [x] IntakeStepTimeline
-- [x] NeedListingPreview
-- [x] typing hints
-- [x] نمایش اعتماد تشخیص (CategoryConfidenceBadge)
-- [x] آزمایشگاه dev روی `/post` (IntakeLab — فقط development)
-- [x] دیتاست ۵۹+ کیس + export JSONL
-- [x] میکروسرویس MLX (`mini-services/intake-mlx`) — infer + LoRA train لوکال
-- [x] parse هیبرید (`NEED_INTAKE_LLM_ENABLED` + fallback قوانین)
+- [x] Wizard `/post` — `NeedIntakePanel`
+- [x] Analyze hybrid (MLX + rules)
+- [x] Listing copy stream
+- [x] Resume publish بعد از login (sessionStorage)
+- [x] Golden tests 153+ scenarios
+- [ ] Unified validation UX (فاز ۱۶)
+- [ ] Mobile fullscreen stepper (فاز ۲۶)
 
-## ارتباط با بخش‌های دیگر
+## Technical Appendix
 
-[[01_Home_Landing]]
-[[03_Need_Marketplace]]
-[[06_Matching_Leads]]
-[[15_Admin_SuperAdmin]]
+- Component: `src/components/need-intake/NeedIntakePanel.tsx`
+- Store: `src/stores/need-intake-store.ts`
+- Canonical: `src/intake/`
+- MLX: `mini-services/intake-mlx/`
 
-## ایده‌ها / آینده
+## ارتباط با بخش‌ها
 
-- [ ] #idea پیش‌نویس ذخیره در localStorage
-- [ ] #idea ضمیمه عکس در intake
-- [ ] فاین‌تیون LoRA روی مک و ارزیابی دقت بعد از train
-- [ ] Unsloth روی GPU (جایگزین اختیاری برای غیر-Mac)
-
-## پیاده‌سازی
-
-- [[../../docs/NEED_INTAKE.md|docs/NEED_INTAKE.md]]
-- [[../../docs/NEED_INTAKE_ML.md|docs/NEED_INTAKE_ML.md]]
-- [[../../docs/TYPING_ANALYSIS.md|docs/TYPING_ANALYSIS.md]]
-- `src/components/need-intake/`
-- Appendix: [[../90_Technical_Appendix/README|Technical Appendix]]
-
-## وضعیت
-
-`live`
-
-## Related
-
-- [[../00_Product_MOC/ProductMap|ProductMap]]
+- [[Browse_Needs]] — آگهی منتشرشده در `/n/*`
+- [[Home]] — seed از `HomeLeadLanding`
+- [[Moderation]] — صف پس از publish

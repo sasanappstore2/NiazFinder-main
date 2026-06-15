@@ -1,8 +1,25 @@
 {
   "cityId": "bilehsavar",
   "cityName": "بیله‌سوار",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:43:38.616Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.418Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بیلهسوار",
+      "name": "بیله‌سوار",
+      "nameEn": "bilehsavar",
+      "centroid": {
+        "lat": 39.312950814588575,
+        "lng": 48.211331478510225
+      },
+      "bbox": {
+        "south": 39.206464289256196,
+        "north": 39.419437339920954,
+        "west": 48.087020696268276,
+        "east": 48.335642260752174
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

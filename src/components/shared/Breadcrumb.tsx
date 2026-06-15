@@ -27,11 +27,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-
-interface Crumb {
-  label: string;
-  href: string;
-}
+import type { BreadcrumbCrumb as Crumb } from '@/lib/browse/breadcrumb-crumbs';
 
 function marketplacePrefix(pathname: string): RegExp | null {
   if (pathname === '/n' || pathname.startsWith('/n/')) return /^\/n\/?/;
@@ -267,13 +263,22 @@ function crumbsForPath(
   return [home, { label: 'صفحه', href: pathname }];
 }
 
-function BreadcrumbInner({ businessProfileLabel }: { businessProfileLabel?: string }) {
+function BreadcrumbInner({
+  businessProfileLabel,
+  initialCrumbs,
+}: {
+  businessProfileLabel?: string;
+  initialCrumbs?: Crumb[];
+}) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const crumbs = useMemo(
-    () => crumbsForPath(pathname, searchParams, businessProfileLabel),
-    [pathname, searchParams, businessProfileLabel]
-  );
+  const crumbs = useMemo(() => {
+    const computed = crumbsForPath(pathname, searchParams, businessProfileLabel);
+    if (initialCrumbs?.length && searchParams.toString() === '') {
+      return initialCrumbs;
+    }
+    return computed;
+  }, [pathname, searchParams, businessProfileLabel, initialCrumbs]);
 
   return (
     <BreadcrumbNav dir="rtl" itemScope itemType="https://schema.org/BreadcrumbList">
@@ -332,13 +337,18 @@ function BreadcrumbInner({ businessProfileLabel }: { businessProfileLabel?: stri
 
 export function Breadcrumb({
   businessProfileLabel,
+  initialCrumbs,
 }: {
   /** Persian business name for `/b/{slug}` (SEO-friendly breadcrumb label). */
   businessProfileLabel?: string;
+  initialCrumbs?: Crumb[];
 } = {}) {
   return (
     <Suspense fallback={null}>
-      <BreadcrumbInner businessProfileLabel={businessProfileLabel} />
+      <BreadcrumbInner
+        businessProfileLabel={businessProfileLabel}
+        initialCrumbs={initialCrumbs}
+      />
     </Suspense>
   );
 }

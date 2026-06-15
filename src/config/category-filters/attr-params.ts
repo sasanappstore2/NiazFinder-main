@@ -28,6 +28,9 @@ export const RESERVED_BROWSE_PARAMS = new Set([
   'priority',
   'dealType',
   'attrs',
+  'mine',
+  'hasPhoto',
+  'neighborhoodCity',
 ]);
 
 /** Range shorthand params → min/max attribute keys. */

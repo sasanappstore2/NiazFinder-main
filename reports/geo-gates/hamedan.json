@@ -1,0 +1,452 @@
+{
+  "provinceId": "hamedan",
+  "provinceName": "همدان",
+  "generatedAt": "2026-06-12T21:20:03.886Z",
+  "cities": [
+    {
+      "cityId": "hamedan-city",
+      "cityName": "همدان",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 134,
+      "shares": {
+        "divar": 134,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 134
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "malayer",
+      "cityName": "ملایر",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 51,
+      "shares": {
+        "divar": 51,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 51
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nahavand",
+      "cityName": "نهاوند",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 28,
+      "shares": {
+        "divar": 28,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 28
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "tuyserkan",
+      "cityName": "تویسرکان",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "asadabad",
+      "cityName": "اسدآباد",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bahar",
+      "cityName": "بهار",
+      "provinceId": "hamedan",
+      "tier": "C",
+      "neighborhoodCount": 86,
+      "shares": {
+        "divar": 86,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 86
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kabudarahang",
+      "cityName": "کبودرآهنگ",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "razan",
+      "cityName": "رزن",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "famenin",
+      "cityName": "فامنین",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "pir-solayman",
+      "cityName": "پیر سلیمان",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "pishkhor",
+      "cityName": "پیشخور",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jowkar",
+      "cityName": "جوکار",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 1,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khezel",
+      "cityName": "خزل",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dargazin",
+      "cityName": "درگزین",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zarrin-dasht-city",
+      "cityName": "زرین دشت (همدان)",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 26,
+      "shares": {
+        "divar": 26,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 26
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zend",
+      "cityName": "زند",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 130,
+      "shares": {
+        "divar": 130,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 130
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "samen-city",
+      "cityName": "سامن",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 31,
+      "shares": {
+        "divar": 31,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 31
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sardorud",
+      "cityName": "سردرود",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shahenjarin",
+      "cityName": "شاهنجرین",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shara",
+      "cityName": "شراء",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shirin-su",
+      "cityName": "شیرین‌سو",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "salehaabad",
+      "cityName": "صالح آباد",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gholghol-rud",
+      "cityName": "قلقل رود",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gol-tappeh",
+      "cityName": "گل تپه",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "giyan",
+      "cityName": "گیان",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 28,
+      "shares": {
+        "divar": 28,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 28
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "lalajin",
+      "cityName": "لالجین",
+      "provinceId": "hamedan",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 0,
+  "pass": true
+}

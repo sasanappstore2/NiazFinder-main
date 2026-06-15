@@ -2,7 +2,7 @@
   "cityId": "landeh",
   "cityName": "لنده",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.864Z",
+  "importedAt": "2026-06-12T20:39:29.380Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 50.25972460726932,
         "east": 50.49141008713823
       },
-      "geoSource": "divar",
-      "areas": [
-        "اردوگاه شرکت نفت مرکزی",
-        "شمال اردوگاه شرکت نفت",
-        "جنوب اردوگاه شرکت نفت",
-        "شرق اردوگاه شرکت نفت"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

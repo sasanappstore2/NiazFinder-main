@@ -1,8 +1,25 @@
 {
   "cityId": "delgan",
   "cityName": "دلگان",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:53.715Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.797Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دلگان",
+      "name": "دلگان",
+      "nameEn": "delgan",
+      "centroid": {
+        "lat": 27.694060149730507,
+        "lng": 59.40723790323725
+      },
+      "bbox": {
+        "south": 27.587573624398132,
+        "north": 27.800546675062883,
+        "west": 59.29949294218429,
+        "east": 59.51498286429022
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

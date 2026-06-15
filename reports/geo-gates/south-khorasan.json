@@ -1,0 +1,537 @@
+{
+  "provinceId": "south-khorasan",
+  "provinceName": "خراسان جنوبی",
+  "generatedAt": "2026-06-12T21:20:05.801Z",
+  "cities": [
+    {
+      "cityId": "birjand",
+      "cityName": "بیرجند",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 48,
+      "shares": {
+        "divar": 47,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 48
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "qaen",
+      "cityName": "قائن",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ferdows",
+      "cityName": "فردوس",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 37,
+      "shares": {
+        "divar": 37,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 37
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "tabas",
+      "cityName": "طبس",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 13,
+      "shares": {
+        "divar": 13,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 13
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "darmian",
+      "cityName": "دمیان",
+      "provinceId": "south-khorasan",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nehbandan",
+      "cityName": "نهبندان",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sarisabz",
+      "cityName": "سریسبز",
+      "provinceId": "south-khorasan",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khosf",
+      "cityName": "خوسف",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bashavard",
+      "cityName": "بشاورود",
+      "provinceId": "south-khorasan",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ayask",
+      "cityName": "آیسک",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "arsak",
+      "cityName": "ارسک",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "eslamiye",
+      "cityName": "اسلامیه",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 35,
+      "shares": {
+        "divar": 35,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 35
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "boshruuye",
+      "cityName": "بشروئیه",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jolgeh-majan",
+      "cityName": "جلگه ماژان",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "darh",
+      "cityName": "درح",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "darmiyan",
+      "cityName": "درمیان",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dastgerdan",
+      "cityName": "دستگردان",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dihook",
+      "cityName": "دیهوک",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zohan",
+      "cityName": "زهان",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zirkouh",
+      "cityName": "زیرکوه",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sede",
+      "cityName": "سده (خراسان جنوبی)",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "seh-ghaleh",
+      "cityName": "سرایان",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sarbisheh",
+      "cityName": "سربیشه",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sardaran",
+      "cityName": "سرداران",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shakhnat",
+      "cityName": "شاخنات",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shaskouh",
+      "cityName": "شاسکوه",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shusef",
+      "cityName": "شوسف",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghahestan",
+      "cityName": "قهستان",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gazik",
+      "cityName": "گزیک",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 7,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mud",
+      "cityName": "مود",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nimbuluk",
+      "cityName": "نیمبلوک",
+      "provinceId": "south-khorasan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 0,
+  "pass": true
+}

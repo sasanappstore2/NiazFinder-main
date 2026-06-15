@@ -2,7 +2,7 @@
   "cityId": "qeshm",
   "cityName": "قشم",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:23.063Z",
+  "importedAt": "2026-06-12T20:39:30.177Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 55.61346567650989,
         "east": 56.485223152081765
       },
-      "geoSource": "divar",
-      "areas": [
-        "شهرک مسکونی پرواز مرکزی",
-        "شمال شهرک مسکونی پرواز",
-        "جنوب شهرک مسکونی پرواز",
-        "شرق شهرک مسکونی پرواز"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

@@ -19,6 +19,15 @@ export const IRAN_VECTOR_SOURCE_BOUNDS: [number, number, number, number] = [
   north,
 ];
 
+/**
+ * Void mask — hides neighbor countries while keeping Iran land + Gulf + Caspian visible.
+ * Regenerate: `npx tsx scripts/geo/build-iran-map-void-mask.ts`
+ */
+export const IRAN_MAP_VOID_MASK_URL = '/geo/iran-map-void-mask.geojson';
+
+/** @deprecated Use {@link IRAN_MAP_VOID_MASK_URL}. */
+export const IRAN_VOID_MASK_GEOJSON = IRAN_MAP_VOID_MASK_URL;
+
 /** Persian Gulf label text — «خلیج همیشگی فارس». */
 export const PERSIAN_GULF_LABEL_TEXT = '\u062e\u0644\u06cc\u062c \u0647\u0645\u06cc\u0634\u06af\u06cc \u0641\u0627\u0631\u0633';
 

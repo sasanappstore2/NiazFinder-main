@@ -58,6 +58,7 @@ import { toVoiceCallPeer } from '@/lib/voice/voice-call-peer';
 import { useChatRealtime } from '@/hooks/useChatRealtime';
 import { useChatTypingEmitter } from '@/hooks/useChatTypingEmitter';
 import { ChatConversationList } from '@/components/chat/ChatConversationList';
+import { ChatPresenceDot } from '@/components/chat/ChatPresenceDot';
 import { useChatMessageScroll } from '@/hooks/useChatMessageScroll';
 import { tryJoinConversation } from '@/lib/chat/socket-bridge';
 import { markConversationRead } from '@/lib/chat/mark-conversation-read';
@@ -92,24 +93,6 @@ const formatTime = (dateStr: string) => {
       hour12: false,
     });
     return toPersianDigits(raw);
-  } catch {
-    return '';
-  }
-};
-
-const formatTimeAgo = (dateStr: string) => {
-  try {
-    const d = new Date(dateStr);
-    const now = new Date();
-    const diff = now.getTime() - d.getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'الان';
-    if (mins < 60) return `${mins} دقیقه پیش`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours} ساعت پیش`;
-    const days = Math.floor(hours / 24);
-    if (days < 7) return `${days} روز پیش`;
-    return d.toLocaleDateString('fa-IR');
   } catch {
     return '';
   }
@@ -158,6 +141,7 @@ import {
   formatCallDuration,
   formatCallLogLabel,
 } from '@/lib/voice/call-log-labels';
+import { formatTimeAgo, peerPresenceLabel } from '@/lib/chat/presence-label';
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -1102,9 +1086,10 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                         >
                           {initials}
                         </div>
-                        {user.online && (
-                          <span className="absolute bottom-0 left-0 h-3 w-3 rounded-full border-2 border-background bg-emerald-500" />
-                        )}
+                        <ChatPresenceDot
+                          online={user.online}
+                          className="absolute bottom-0 left-0"
+                        />
                       </div>
 
                       <div className="min-w-0 flex-1">
@@ -1317,9 +1302,10 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                     {getInitials(`${otherUser?.firstName ?? ''} ${otherUser?.lastName ?? ''}`.trim() || 'کاربر')}
                   </div>
                 )}
-                {otherUser?.online && (
-                  <span className="absolute bottom-0 left-0 h-3 w-3 rounded-full border-2 border-background bg-emerald-500" />
-                )}
+                <ChatPresenceDot
+                  online={otherUser?.online}
+                  className="absolute bottom-0 left-0"
+                />
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-semibold truncate">
@@ -1341,7 +1327,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                         : 'text-muted-foreground'
                     )}
                   >
-                    {otherUser?.online ? 'آنلاین' : 'آفلاین'}
+                    {peerPresenceLabel(otherUser)}
                   </p>
                 )}
               </div>

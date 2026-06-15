@@ -1,19 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { ChatReadReceiptIcon } from '@/components/chat/bubble/ChatReadReceiptIcon';
-
-const AUTO_DOWNLOAD_KEY_PREFIX = 'nf-chat-img-dl:';
-
-function filenameFromUrl(url: string): string {
-  try {
-    const base = url.split('/').pop() || 'image';
-    return base.includes('.') ? base : `${base}.jpg`;
-  } catch {
-    return 'chat-image.jpg';
-  }
-}
 
 interface ChatImageMessageProps {
   url: string;
@@ -30,38 +18,6 @@ export function ChatImageMessage({
   isRead,
   onOpen,
 }: ChatImageMessageProps) {
-  const didAutoDownload = useRef(false);
-
-  useEffect(() => {
-    if (isOwn || didAutoDownload.current) return;
-    const key = AUTO_DOWNLOAD_KEY_PREFIX + url;
-    if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(key)) return;
-
-    didAutoDownload.current = true;
-
-    const run = async () => {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) return;
-        const blob = await res.blob();
-        const objectUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = objectUrl;
-        a.download = filenameFromUrl(url);
-        a.rel = 'noopener';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(objectUrl);
-        sessionStorage.setItem(key, '1');
-      } catch {
-        // Browser may block programmatic download
-      }
-    };
-
-    void run();
-  }, [url, isOwn]);
-
   return (
     <button
       type="button"

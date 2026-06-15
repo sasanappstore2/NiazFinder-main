@@ -1,8 +1,25 @@
 {
   "cityId": "dehgolan",
   "cityName": "دهگلان",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:44:06.422Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.789Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دهگلان",
+      "name": "دهگلان",
+      "nameEn": "dehgolan",
+      "centroid": {
+        "lat": 35.40868722493712,
+        "lng": 47.4129288642669
+      },
+      "bbox": {
+        "south": 35.36822234531081,
+        "north": 35.449152104563424,
+        "west": 47.36668664888387,
+        "east": 47.45917107964994
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

@@ -20,6 +20,11 @@ node_modules
 # production
 /build
 
+# env (never commit secrets)
+.env
+.env.*
+!.env.example
+
 # misc
 .DS_Store
 *.pem
@@ -57,6 +62,17 @@ server.log
 
 # need-intake training exports + local MLX weights (never commit)
 data/
+exports/intake-finetune/need-intake-general-finetune.jsonl
+exports/intake-finetune/need-intake-general-finetune.json
+exports/intake-finetune/need-intake-clean-v1.jsonl
+exports/intake-finetune/need-intake-clean-v1.json
+exports/intake-finetune/need-intake-clean-v2.jsonl
+exports/intake-finetune/need-intake-clean-v2.json
+exports/intake-finetune/gemma4-intake-full.jsonl
+exports/intake-finetune/gemma4-intake-train-10k.jsonl
+exports/intake-finetune/gemma4-intake-holdout-500.jsonl
+exports/intake-finetune/gemma4-intake-full.json
+exports/intake-finetune/dataset-index-batches.jsonl
 models/
 mini-services/intake-mlx/.venv/
 # Local chat uploads (do not commit)

@@ -36,6 +36,12 @@ function assertMineRequiresAuthInSource(): void {
     /if\s*\(\s*mine\s*\)[\s\S]*?getAuthUser/.test(src),
     'mine branch must call getAuthUser'
   );
+
+  const reserved = readFileSync(
+    join(process.cwd(), 'src/config/category-filters/attr-params.ts'),
+    'utf8'
+  );
+  assert(reserved.includes("'mine'"), 'mine must be in RESERVED_BROWSE_PARAMS');
 }
 
 async function main(): Promise<void> {

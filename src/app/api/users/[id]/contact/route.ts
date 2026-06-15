@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { canAccessUserContact } from '@/lib/contact/can-access-contact';
 
 export async function GET(
   request: NextRequest,
@@ -20,6 +21,15 @@ export async function GET(
       return NextResponse.json(
         { error: 'نمی‌توانید با خودتان تماس بگیرید' },
         { status: 400 }
+      );
+    }
+
+    const requestId = new URL(request.url).searchParams.get('requestId') ?? undefined;
+    const allowed = await canAccessUserContact(user.id, targetUserId, { requestId });
+    if (!allowed) {
+      return NextResponse.json(
+        { error: 'دسترسی به اطلاعات تماس مجاز نیست' },
+        { status: 403 }
       );
     }
 

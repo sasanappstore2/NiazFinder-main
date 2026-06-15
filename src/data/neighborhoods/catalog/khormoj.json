@@ -1,8 +1,25 @@
 {
   "cityId": "khormoj",
   "cityName": "خورموج",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:30.120Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.133Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خورموج",
+      "name": "خورموج",
+      "nameEn": "khormoj",
+      "centroid": {
+        "lat": 28.568105905749192,
+        "lng": 51.38752401781899
+      },
+      "bbox": {
+        "south": 28.526221205785124,
+        "north": 28.60999060571326,
+        "west": 51.343487474038255,
+        "east": 51.431560561599724
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

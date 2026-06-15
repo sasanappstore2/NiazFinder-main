@@ -360,6 +360,10 @@ model IntakeTrainingExample {
   reviewedBy        String?
   reviewedAt        DateTime?
   correctedEntities Json?
+  qualityScore      Float?
+  qualityFlags      String[] @default([])
+  sourceTextHash    String?
+  moderationLabel   String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -369,6 +373,8 @@ model IntakeTrainingExample {
   @@index([publishedAt])
   @@index([needType])
   @@index([reviewed, publishedAt])
+  @@index([sourceTextHash])
+  @@index([moderationLabel])
 }
 
 /** Persisted validation reject events for analytics. */

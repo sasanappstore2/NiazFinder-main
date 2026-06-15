@@ -1,0 +1,569 @@
+{
+  "provinceId": "semnan",
+  "provinceName": "سمنان",
+  "generatedAt": "2026-06-12T21:20:06.230Z",
+  "cities": [
+    {
+      "cityId": "semnan-city",
+      "cityName": "سمنان",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 67,
+      "shares": {
+        "divar": 67,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 67
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shahrood",
+      "cityName": "شاهرود",
+      "provinceId": "semnan",
+      "tier": "C",
+      "neighborhoodCount": 30,
+      "shares": {
+        "divar": 30,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 30
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "البرز-شرقی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "باغ-زندان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "بعثت",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "بهارستان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "بیدآباد",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "چمران-و-رزمندگان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "سرچشمه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-آسمان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-البرز",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-امام-خمینی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-انقلاب",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-بهشتی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-پردیس",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-دانشگاه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-رضوی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-فدک",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-فرهنگیان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-کوثر",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-گلها",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهرک-ولیعصر",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شهنما",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "قلعه-نوروزخان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "کمیل",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "کوه-تپال",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "مغان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "میدان-آزادی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "میدان-مرکزی-اردیان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "میدان-ولایت",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "نواب-سیتی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "shahrood",
+          "neighborhoodId": "شاهرود-اردبیل",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "damghan",
+      "cityName": "دامغان",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 16,
+      "shares": {
+        "divar": 16,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 16
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "garmsar",
+      "cityName": "گرمسار",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mehdishahr",
+      "cityName": "مه‌دیشهر",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 57,
+      "shares": {
+        "divar": 57,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 57
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "aradan",
+      "cityName": "آرادان",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sorkheh",
+      "cityName": "سرخه",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 8,
+      "shares": {
+        "divar": 8,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 8
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bayat",
+      "cityName": "بایات",
+      "provinceId": "semnan",
+      "tier": "C",
+      "neighborhoodCount": 15,
+      "shares": {
+        "divar": 15,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 15
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "miandasht",
+      "cityName": "میاندشت",
+      "provinceId": "semnan",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "miandasht",
+          "neighborhoodId": "میاندشت",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "shahmirzad",
+      "cityName": "شاه‌میرزاد",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kalateh",
+      "cityName": "کلاته",
+      "provinceId": "semnan",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chashm",
+      "cityName": "چشمه‌علی",
+      "provinceId": "semnan",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "amirabad-city",
+      "cityName": "امیرآباد",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "eyvanaki",
+      "cityName": "ایوانکی",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bastam",
+      "cityName": "بسطام",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 28,
+      "shares": {
+        "divar": 28,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 28
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "biyarjamand",
+      "cityName": "بیارجمند",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kalpush",
+      "cityName": "کالپوش",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kohan-abad",
+      "cityName": "کهن آباد",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "miami",
+      "cityName": "میامی",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hafdar",
+      "cityName": "هفدر",
+      "provinceId": "semnan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 31,
+  "pass": true
+}

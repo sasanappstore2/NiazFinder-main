@@ -6,6 +6,8 @@ import { isTestOtpCode } from '@/lib/auth/test-otp';
 import { toAsciiDigits } from '@/lib/format/digits';
 import { isSuperAdminPhone, normalizePhone } from '@/lib/super-admin';
 import { issueAuthToken, mapDbUserToResponse } from '@/lib/auth/phone-auth-response';
+import { devAuthFallbackEnabled, devIssueAuth, devUserExists } from '@/lib/auth/dev-phone-auth';
+import { DATABASE_UNAVAILABLE_FA, isPrismaUnavailableError } from '@/lib/db-health';
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,17 +30,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existingUser = await db.user.findUnique({
-      where: { phone: normalizedPhone },
-    });
-
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'این شماره موبایل قبلاً ثبت شده است' },
-        { status: 409 }
-      );
-    }
-
     const otpRecord = await findValidOtp(normalizedPhone, code);
     const recentlyVerified = await findRecentlyVerifiedOtp(normalizedPhone, code);
     const acceptedTestOtp = isTestOtpCode(code);
@@ -54,43 +45,82 @@ export async function POST(request: NextRequest) {
       await markOtpVerified(normalizedPhone, code);
     }
 
-    const grantSuperAdmin = isSuperAdminPhone(normalizedPhone);
+    try {
+      const existingUser = await db.user.findUnique({
+        where: { phone: normalizedPhone },
+      });
 
-    const user = await db.$transaction(async (tx) => {
-      const newUser = await tx.user.create({
-        data: {
-          phone: normalizedPhone,
-          email: `${normalizedPhone}@needfinder.local`,
-          password: hashPassword(password),
-          role: grantSuperAdmin ? ('SUPER_ADMIN' as const) : ('CLIENT' as const),
-          isVerified: true,
-          phoneVerified: true,
+      if (existingUser) {
+        return NextResponse.json(
+          { error: 'این شماره موبایل قبلاً ثبت شده است' },
+          { status: 409 }
+        );
+      }
+
+      const grantSuperAdmin = isSuperAdminPhone(normalizedPhone);
+
+      const user = await db.$transaction(async (tx) => {
+        const newUser = await tx.user.create({
+          data: {
+            phone: normalizedPhone,
+            email: `${normalizedPhone}@needfinder.local`,
+            password: hashPassword(password),
+            role: grantSuperAdmin ? ('SUPER_ADMIN' as const) : ('CLIENT' as const),
+            isVerified: true,
+            phoneVerified: true,
+          },
+        });
+
+        await tx.wallet.create({
+          data: { userId: newUser.id },
+        });
+
+        return newUser;
+      });
+
+      const token = await issueAuthToken(user.id);
+
+      const { acceptBusinessInvitesForUser } = await import('@/lib/business/team/accept-invite');
+      await acceptBusinessInvitesForUser(user.id, normalizedPhone);
+
+      return NextResponse.json(
+        {
+          message: 'ثبت‌نام و ورود با موفقیت انجام شد',
+          user: mapDbUserToResponse(user),
+          token,
+          isNewUser: true,
         },
-      });
-
-      await tx.wallet.create({
-        data: { userId: newUser.id },
-      });
-
-      return newUser;
-    });
-
-    const token = await issueAuthToken(user.id);
-
-    const { acceptBusinessInvitesForUser } = await import('@/lib/business/team/accept-invite');
-    await acceptBusinessInvitesForUser(user.id, normalizedPhone);
-
-    return NextResponse.json(
-      {
-        message: 'ثبت‌نام و ورود با موفقیت انجام شد',
-        user: mapDbUserToResponse(user),
-        token,
-        isNewUser: true,
-      },
-      { status: 201 }
-    );
+        { status: 201 }
+      );
+    } catch (dbError) {
+      if (isPrismaUnavailableError(dbError) && devAuthFallbackEnabled()) {
+        if (devUserExists(normalizedPhone)) {
+          return NextResponse.json(
+            { error: 'این شماره موبایل قبلاً ثبت شده است' },
+            { status: 409 }
+          );
+        }
+        const { user, token } = devIssueAuth(normalizedPhone, true);
+        return NextResponse.json(
+          {
+            message: 'ثبت‌نام و ورود با موفقیت انجام شد (حالت تست بدون دیتابیس)',
+            user,
+            token,
+            isNewUser: true,
+          },
+          { status: 201 }
+        );
+      }
+      if (isPrismaUnavailableError(dbError)) {
+        return NextResponse.json({ error: DATABASE_UNAVAILABLE_FA }, { status: 503 });
+      }
+      throw dbError;
+    }
   } catch (error) {
     console.error('Phone register error:', error);
+    if (isPrismaUnavailableError(error)) {
+      return NextResponse.json({ error: DATABASE_UNAVAILABLE_FA }, { status: 503 });
+    }
     return NextResponse.json({ error: 'خطای سرور رخ داده است' }, { status: 500 });
   }
 }

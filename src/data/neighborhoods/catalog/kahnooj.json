@@ -1,8 +1,25 @@
 {
   "cityId": "kahnooj",
   "cityName": "کوهنج",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:41:14.100Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.782Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوهنج",
+      "name": "کوهنج",
+      "nameEn": "kahnooj",
+      "centroid": {
+        "lat": 27.80922965289256,
+        "lng": 57.71920344481636
+      },
+      "bbox": {
+        "south": 27.767344952928493,
+        "north": 27.85111435285663,
+        "west": 57.67588402753574,
+        "east": 57.76252286209698
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

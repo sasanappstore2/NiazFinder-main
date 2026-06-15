@@ -15,11 +15,13 @@ import {
 } from './lib';
 import {
   loadCityCatalogFile,
+  readManifest,
   resolveCatalogCityIdCandidates,
   saveCityCatalog,
   slugifyNeighborhoodNames,
   rebuildManifestFromCatalog,
 } from '../../src/lib/neighborhoods/catalog';
+import { makeLocationId } from '../../src/lib/admin-locations';
 
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
 const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
@@ -38,13 +40,16 @@ interface GeocodeHit {
 function parseOsmArgs(argv: string[]): {
   city?: string;
   force?: boolean;
+  gapsOnly?: boolean;
 } {
   const base = parseArgs(argv);
   let force = false;
+  let gapsOnly = false;
   for (const arg of argv) {
     if (arg === '--force') force = true;
+    if (arg === '--gaps-only') gapsOnly = true;
   }
-  return { city: base.city, force };
+  return { city: base.city, force, gapsOnly };
 }
 
 function radiusForPlace(type: string, importance: number): number {
@@ -153,7 +158,7 @@ async function loadExistingCount(cityId: string): Promise<number> {
   return 0;
 }
 
-async function importCityFromOsm(city: AdminCityRef): Promise<number> {
+export async function importCityFromOsm(city: AdminCityRef): Promise<number> {
   const geo = await geocodeCity(city);
   await sleep(NOMINATIM_DELAY_MS);
   if (!geo) {
@@ -177,12 +182,41 @@ async function importCityFromOsm(city: AdminCityRef): Promise<number> {
   return neighborhoods.length;
 }
 
+async function ensureFallbackCityNeighborhood(city: AdminCityRef): Promise<boolean> {
+  const existing = await loadExistingCount(city.id);
+  if (existing > 0) return false;
+
+  const id = makeLocationId(city.name);
+  await saveCityCatalog(city.id, {
+    cityName: city.name,
+    source: 'osm',
+    emptyOnDivar: false,
+    neighborhoods: [{ id, name: city.name, nameEn: city.id }],
+  });
+  return true;
+}
+
 async function main() {
-  const { city: onlyCity, force } = parseOsmArgs(process.argv.slice(2));
+  const { city: onlyCity, force, gapsOnly } = parseOsmArgs(process.argv.slice(2));
   const adminCities = await loadAdminCities();
-  const targets = onlyCity
+  const gapManifest = await readManifest();
+  const gapIds = new Set([
+    ...(gapManifest.emptyOnDivar ?? []),
+    ...(gapManifest.unmapped ?? []),
+  ]);
+
+  for (const city of adminCities) {
+    const count = await loadExistingCount(city.id);
+    if (count === 0) gapIds.add(city.id);
+  }
+
+  let targets = onlyCity
     ? adminCities.filter((c) => c.id === onlyCity)
     : adminCities;
+
+  if (gapsOnly && !onlyCity) {
+    targets = targets.filter((c) => gapIds.has(c.id));
+  }
 
   if (onlyCity && targets.length === 0) {
     console.error(`City "${onlyCity}" not found`);
@@ -195,7 +229,8 @@ async function main() {
 
   for (const adminCity of targets) {
     const existing = await loadExistingCount(adminCity.id);
-    if (!force && existing >= MIN_EXISTING_TO_SKIP) {
+    const isGap = gapIds.has(adminCity.id);
+    if (!force && !isGap && existing >= MIN_EXISTING_TO_SKIP) {
       skipped += 1;
       continue;
     }
@@ -207,7 +242,14 @@ async function main() {
         totalNeighborhoods += count;
         console.log(`✓ ${adminCity.name} (${adminCity.id}): ${count} neighborhoods [osm]`);
       } else {
-        console.log(`· ${adminCity.name} (${adminCity.id}): 0 neighborhoods [osm]`);
+        const fallback = await ensureFallbackCityNeighborhood(adminCity);
+        if (fallback) {
+          filled += 1;
+          totalNeighborhoods += 1;
+          console.log(`✓ ${adminCity.name} (${adminCity.id}): 1 neighborhood [fallback]`);
+        } else {
+          console.log(`· ${adminCity.name} (${adminCity.id}): 0 neighborhoods [osm]`);
+        }
       }
     } catch (err) {
       console.error(`✗ ${adminCity.name}:`, err instanceof Error ? err.message : err);

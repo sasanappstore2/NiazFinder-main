@@ -18,13 +18,14 @@ import { locationCityIdToSlug } from '../../src/lib/search/city-slugs';
 import {
   cityBboxFromConfig,
   ensureGeoDirs,
+  GEO_MANIFEST_PATH,
   makeGeoFeature,
   polygonFromCatalogNeighborhood,
 } from './geo-lib';
 
 const EMPTY_STATS = { divar: 0, osm: 0, synthetic: 0 };
 
-async function buildCity(cityId: string): Promise<{ count: number; stats: typeof EMPTY_STATS }> {
+export async function buildCity(cityId: string): Promise<{ count: number; stats: typeof EMPTY_STATS }> {
   const catalog = await loadCityCatalogFile(cityId);
   if (!catalog?.neighborhoods?.length) return { count: 0, stats: EMPTY_STATS };
 
@@ -64,14 +65,35 @@ async function buildCity(cityId: string): Promise<{ count: number; stats: typeof
 }
 
 async function main(): Promise<void> {
+  const cityArg = process.argv.find((a) => a.startsWith('--city='))?.slice('--city='.length);
   await ensureGeoDirs();
-  const cityIds = await listCatalogCityIds();
-  const cities: Record<string, { cityId: string; featureCount: number; osm: number; divar: number; synthetic: number; manual: number }> = {};
+
+  let existingManifest: {
+    cities: Record<string, { cityId: string; featureCount: number; osm: number; divar: number; synthetic: number; manual: number }>;
+    totalFeatures: number;
+  } | null = null;
+  try {
+    const { readFileSync } = await import('fs');
+    existingManifest = JSON.parse(
+      readFileSync(GEO_MANIFEST_PATH, 'utf8')
+    ) as typeof existingManifest;
+  } catch {
+    /* fresh */
+  }
+
+  const cityIds = cityArg ? [cityArg] : await listCatalogCityIds();
+  const cities = { ...(existingManifest?.cities ?? {}) };
   let total = 0;
+
+  for (const id of Object.values(cities)) {
+    total += id.featureCount;
+  }
 
   for (const cityId of cityIds) {
     const result = await buildCity(cityId);
     if (result.count > 0) {
+      const prev = cities[cityId];
+      if (prev) total -= prev.featureCount;
       cities[cityId] = {
         cityId,
         featureCount: result.count,

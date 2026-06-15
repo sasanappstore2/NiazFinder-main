@@ -2,7 +2,7 @@
   "cityId": "namin",
   "cityName": "نمین",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.994Z",
+  "importedAt": "2026-06-12T20:39:29.853Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 48.398658256617736,
         "east": 48.48998899876269
       },
-      "geoSource": "divar",
-      "areas": [
-        "جنگل فندقلو مرکزی",
-        "شمال جنگل فندقلو",
-        "جنوب جنگل فندقلو",
-        "شرق جنگل فندقلو"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

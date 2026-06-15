@@ -29,8 +29,8 @@ const PERSIAN_NORMALISE: Record<string, string> = {
   '\u0622': '\u0627', // ALEF WITH MADDA → ALEF
 };
 
-// Strip ranges: tatweel + Arabic harakat (vowel marks) + tashkeel.
-const STRIP_RE = /[\u0640\u064B-\u065F\u0670\u06D4\u06ED]/g;
+// Strip ranges: tatweel + Arabic harakat (vowel marks) + tashkeel + ZWNJ/ZWJ.
+const STRIP_RE = /[\u0640\u064B-\u065F\u0670\u06D4\u06ED\u200C\u200D]/g;
 
 /** Convert a free-form title into a SEO slug suitable for URL paths. */
 export function slugifyTitle(input: string | null | undefined): string {

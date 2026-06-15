@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { PageContainer } from '@/components/layout/PageContainer';
+import { PageHeading } from '@/components/layout/PageHeading';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Separator } from '@/components/ui/separator';
@@ -56,12 +57,13 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   };
 }
 
-export default async function BusinessSlugPage({ params }: PageProps) {
+export default async function BusinessSlugPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
 
   if (isMarketplaceLocationSegment(slug)) {
     return SearchMarketplacePage({
       params: Promise.resolve({ location: slug }),
+      searchParams,
       market: 'business',
     });
   }
@@ -87,6 +89,7 @@ export default async function BusinessSlugPage({ params }: PageProps) {
         >
           <div className="profile-surface rounded-xl px-3 py-2">
             <Breadcrumb businessProfileLabel={business.name} />
+            <PageHeading title={business.name} visuallyHidden />
           </div>
           <Separator className="my-3 bg-border/35 sm:my-4" />
           <UniversalBusinessProfile businessId={business.userId} />

@@ -1,6 +1,7 @@
 'use client';
 
 import { useNavigate } from '@/hooks/navigation/use-navigate';
+import Image from 'next/image';
 import { useState, useEffect, useCallback, useRef, Suspense, useSyncExternalStore } from 'react';
 import {
   Bell,
@@ -527,7 +528,14 @@ export function Header({ compact = false }: { compact?: boolean }) {
             className="flex size-9 shrink-0 items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 active:scale-95"
             aria-label={`${SITE_NAME} — صفحه اصلی`}
           >
-            <img src="/logo.svg" alt="" width={28} height={28} className="size-7" />
+            <Image
+              src="/logo.svg"
+              alt=""
+              width={28}
+              height={28}
+              className="size-7"
+              priority={false}
+            />
           </button>
 
           {/* Search — full width on mobile */}

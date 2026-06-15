@@ -2,6 +2,7 @@
  * Unified location scope: country | single city | multi-city | province(s).
  * URL is source of truth on browse; cookie persists selection for return visits.
  */
+import { formatCountFa } from '@/lib/format/digits';
 import type { City } from '@/lib/location-system';
 import { COUNTRY_SLUG, isCitySlug } from '@/config/locations';
 import { parseFilters, type BrowseFilters } from '@/lib/filters/parser';
@@ -77,7 +78,8 @@ export function scopeLabel(scope: LocationScope): string {
       if (scope.cities.length === 1) return scope.cities[0].name;
       return `${scope.cities.length} شهر`;
     case 'provinces':
-      return scope.label;
+      if (scope.slugs.length <= 2) return scope.label;
+      return `${formatCountFa(scope.slugs.length)} استان`;
     default:
       return 'تمام ایران';
   }

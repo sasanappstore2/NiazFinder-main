@@ -16,9 +16,11 @@ type NeighborhoodGeoCollection = FeatureCollection<
 export function NiazMapNeighborhoodBoundaries({
   citySlug,
   neighborhoodSlugs,
+  showFill = false,
 }: {
   citySlug: string | null;
   neighborhoodSlugs: string[];
+  showFill?: boolean;
 }) {
   const theme = useIranMapTheme();
   const selectedLineColor = theme === 'light' ? '#10b981' : '#39ff14';
@@ -60,6 +62,18 @@ export function NiazMapNeighborhoodBoundaries({
 
   return (
     <NiazMapSource id="neighborhood-boundaries" type="geojson" data={geo}>
+      {showFill ? (
+        <NiazMapLayer
+          id="neighborhood-fill-selected"
+          type="fill"
+          minzoom={IRAN_MAP_ZOOM.LOCAL}
+          filter={selectedFilter}
+          paint={{
+            'fill-color': selectedLineColor,
+            'fill-opacity': 0.18,
+          }}
+        />
+      ) : null}
       <NiazMapLayer
         id="neighborhood-line-selected"
         type="line"

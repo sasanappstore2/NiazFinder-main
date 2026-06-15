@@ -9,6 +9,13 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import {
+  loadCityCatalogFile,
+  resolveCatalogCityIdCandidates,
+  type CatalogNeighborhood,
+} from '../../src/lib/neighborhoods/catalog';
+import { computeCityGeoFromCatalogNeighborhoods } from '../../src/lib/map/city-geo-from-catalog';
+import { locationCityIdToSlug } from '../../src/lib/search/city-slugs';
 import { GEO_DIR, ROOT, loadAdminProvinces, readJson, writeJson } from './shared';
 
 type DivarCity = {
@@ -44,7 +51,7 @@ type CityMapEntry = {
   originCitySlug: string;
   viewportCitySlug: string;
   mapZoom: number;
-  source: 'divar' | 'centroid' | 'fallback';
+  source: 'divar' | 'centroid' | 'catalog' | 'fallback';
 };
 
 const MAX_HUB_RADIUS_M = 26_000;
@@ -118,7 +125,42 @@ function pickHubCity(
   });
 }
 
-function main() {
+async function resolveMergedCatalogNeighborhoods(
+  adminCityId: string
+): Promise<CatalogNeighborhood[]> {
+  const slug = locationCityIdToSlug(adminCityId);
+  const ids = new Set<string>(resolveCatalogCityIdCandidates(adminCityId));
+
+  try {
+    const divarMap = readJson<{ [key: string]: { divarSlug?: string } }>(
+      path.join(ROOT, 'src/data/neighborhoods/divar-city-map.json')
+    );
+    for (const [catalogCityId, meta] of Object.entries(divarMap)) {
+      if (
+        meta.divarSlug === slug ||
+        catalogCityId === adminCityId ||
+        catalogCityId === slug ||
+        catalogCityId.replace(/^alborz-/, '') === slug
+      ) {
+        ids.add(catalogCityId);
+      }
+    }
+  } catch {
+    /* optional */
+  }
+
+  const byId = new Map<string, CatalogNeighborhood>();
+  for (const catalogCityId of ids) {
+    const catalog = await loadCityCatalogFile(catalogCityId);
+    if (!catalog?.neighborhoods?.length) continue;
+    for (const n of catalog.neighborhoods) {
+      if (!byId.has(n.id)) byId.set(n.id, n);
+    }
+  }
+  return [...byId.values()];
+}
+
+async function main() {
   const divarCachePath = path.join(ROOT, 'src/data/neighborhoods/.cache/divar-cities.json');
   if (!fs.existsSync(divarCachePath)) {
     console.error('Missing divar-cities cache. Run: npm run neighborhoods:import');
@@ -208,6 +250,17 @@ function main() {
         }
       }
 
+      const catalogNeighborhoods = await resolveMergedCatalogNeighborhoods(city.id);
+      const catalogGeo = computeCityGeoFromCatalogNeighborhoods(catalogNeighborhoods);
+      let pinBboxDeltaOverride: { lat: number; lng: number } | null = null;
+      if (catalogGeo) {
+        lat = catalogGeo.lat;
+        lng = catalogGeo.lng;
+        pinBboxDeltaOverride = catalogGeo.pinBboxDelta;
+        if (source === 'divar') source = 'catalog';
+        else if (source === 'centroid') source = 'catalog';
+      }
+
       originByCityId.set(city.id, originCityId);
       const originCitySlug = cityIdToSlug(originCityId);
       const viewportCitySlug = originCityId === city.id ? slug : originCitySlug;
@@ -235,7 +288,7 @@ function main() {
       }
 
       const bboxDelta = radiusToBBoxDelta(viewportLat, viewportRadiusM);
-      const pinBboxDelta = radiusToBBoxDelta(lat, radiusM);
+      const pinBboxDelta = pinBboxDeltaOverride ?? radiusToBBoxDelta(lat, radiusM);
       const mapZoom = radiusToMapZoom(viewportRadiusM);
       const provinceId = provinceOverrides[city.id] ?? province.id;
 
@@ -317,4 +370,7 @@ function main() {
   console.log(`Wrote ${Object.keys(citiesBySlug).length} city map configs (${divarMatched} Divar-matched, ${satelliteCount} satellites → origin hub)`);
 }
 
-main();
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

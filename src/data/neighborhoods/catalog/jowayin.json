@@ -1,8 +1,25 @@
 {
   "cityId": "jowayin",
   "cityName": "جوین",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:40:24.815Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.744Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جوین",
+      "name": "جوین",
+      "nameEn": "jowayin",
+      "centroid": {
+        "lat": 36.59339971458858,
+        "lng": 57.464214493516465
+      },
+      "bbox": {
+        "south": 36.4869131892562,
+        "north": 36.69988623992096,
+        "west": 57.344991512152866,
+        "east": 57.58343747488006
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

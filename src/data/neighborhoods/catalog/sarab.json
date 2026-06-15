@@ -1,8 +1,25 @@
 {
   "cityId": "sarab",
   "cityName": "سراب",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:40:35.015Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.568Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سراب",
+      "name": "سراب",
+      "nameEn": "sarab",
+      "centroid": {
+        "lat": 37.95897220086238,
+        "lng": 47.584312012756655
+      },
+      "bbox": {
+        "south": 37.94122444664031,
+        "north": 37.97671995508444,
+        "west": 47.56388492129474,
+        "east": 47.60473910421856
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

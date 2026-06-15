@@ -24,6 +24,14 @@ function run(label: string, cmd: string): void {
 const stepsSmoke = [
   ['tsc', 'npx tsc --noEmit'],
   [
+    'client-server boundaries',
+    'npx --yes tsx scripts/ci/check-client-server-boundaries.ts',
+  ],
+  [
+    'post-queue-wizard',
+    'NEED_INTAKE_LLM_ENABLED=false INTAKE_QUEUE_SYNC_FALLBACK=true npx --yes tsx src/intake/fixtures/run-post-queue-wizard-self-test.ts',
+  ],
+  [
     'post-pipeline golden',
     'NEED_INTAKE_LLM_ENABLED=false npx --yes tsx src/lib/need-intake/fixtures/run-post-pipeline-self-test.ts',
   ],

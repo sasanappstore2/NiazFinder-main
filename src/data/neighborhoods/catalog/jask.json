@@ -2,7 +2,7 @@
   "cityId": "jask",
   "cityName": "جاسک",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.740Z",
+  "importedAt": "2026-06-12T20:39:28.657Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 57.92208211448647,
         "east": 58.13092899203051
       },
-      "geoSource": "divar",
-      "areas": [
-        "یک بنی مرکزی",
-        "شمال یک بنی",
-        "جنوب یک بنی",
-        "شرق یک بنی"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

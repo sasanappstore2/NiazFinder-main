@@ -1,8 +1,25 @@
 {
   "cityId": "jafarabad",
   "cityName": "جعفرباد",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:41:46.358Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.605Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جعفرباد",
+      "name": "جعفرباد",
+      "nameEn": "jafarabad",
+      "centroid": {
+        "lat": 34.75940662360762,
+        "lng": 50.6584571313324
+      },
+      "bbox": {
+        "south": 34.65292009827524,
+        "north": 34.865893148939996,
+        "west": 50.545068340876234,
+        "east": 50.77184592178857
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

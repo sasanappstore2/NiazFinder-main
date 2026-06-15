@@ -1,8 +1,25 @@
 {
   "cityId": "shahmirzad",
   "cityName": "شاه‌میرزاد",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:44:00.812Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.758Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شاهمیرزاد",
+      "name": "شاه‌میرزاد",
+      "nameEn": "shahmirzad",
+      "centroid": {
+        "lat": 35.943121559683796,
+        "lng": 53.49646391972357
+      },
+      "bbox": {
+        "south": 35.83663503435142,
+        "north": 36.049608085016175,
+        "west": 53.381356263964776,
+        "east": 53.61157157548236
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

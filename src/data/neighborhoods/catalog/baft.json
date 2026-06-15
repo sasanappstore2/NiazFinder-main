@@ -1,8 +1,25 @@
 {
   "cityId": "baft",
   "cityName": "بافت",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:41:17.846Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.072Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بافت",
+      "name": "بافت",
+      "nameEn": "baft",
+      "centroid": {
+        "lat": 29.245779468666907,
+        "lng": 56.57935813304678
+      },
+      "bbox": {
+        "south": 29.225192073769314,
+        "north": 29.2663668635645,
+        "west": 56.55795869879435,
+        "east": 56.60075756729922
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

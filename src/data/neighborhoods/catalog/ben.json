@@ -1,8 +1,25 @@
 {
   "cityId": "ben",
   "cityName": "بن",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:43:08.721Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.385Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بن",
+      "name": "بن",
+      "nameEn": "ben",
+      "centroid": {
+        "lat": 32.55038473819619,
+        "lng": 50.72278919838088
+      },
+      "bbox": {
+        "south": 32.443898212863814,
+        "north": 32.65687126352857,
+        "west": 50.60877749559369,
+        "east": 50.83680090116807
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

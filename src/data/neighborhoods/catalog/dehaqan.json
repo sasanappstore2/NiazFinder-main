@@ -1,8 +1,41 @@
 {
   "cityId": "dehaqan",
   "cityName": "دهاقان",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:39:56.992Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.778Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "centroid": {
+        "lat": 31.98159449615523,
+        "lng": 51.67116856654418
+      },
+      "bbox": {
+        "south": 31.92835123348904,
+        "north": 32.03483775882142,
+        "west": 51.60839861232696,
+        "east": 51.733938520761406
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "عطاآباد",
+      "name": "عطاآباد",
+      "nameEn": "عطاآباد",
+      "centroid": {
+        "lat": 32.03411437730572,
+        "lng": 51.5360157479286
+      },
+      "bbox": {
+        "south": 31.98087111463953,
+        "north": 32.087357639971906,
+        "west": 51.47324579371138,
+        "east": 51.598785702145825
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

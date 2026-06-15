@@ -123,12 +123,44 @@ export function bindChatSocketListeners(socket: Socket): void {
     useAppStore.setState((s) => ({
       conversations: s.conversations.map((c) =>
         c.otherUser?.id === data.userId
-          ? { ...c, otherUser: { ...c.otherUser, online: data.online } }
+          ? {
+              ...c,
+              otherUser: {
+                ...c.otherUser,
+                online: data.online,
+                lastSeenAt: data.lastSeenAt,
+              },
+            }
           : c
       ),
     }));
     window.dispatchEvent(new CustomEvent('chat:user-status', { detail: data }));
   });
+
+  socket.off('presence:bulk');
+  socket.on(
+    'presence:bulk',
+    (users: Array<{ userId: string; online: boolean; lastSeenAt?: string }>) => {
+      if (!Array.isArray(users) || users.length === 0) return;
+      const byId = new Map(users.map((entry) => [entry.userId, entry]));
+      useAppStore.setState((s) => ({
+        conversations: s.conversations.map((c) => {
+          const peerId = c.otherUser?.id;
+          if (!peerId) return c;
+          const entry = byId.get(peerId);
+          if (!entry) return c;
+          return {
+            ...c,
+            otherUser: {
+              ...c.otherUser,
+              online: entry.online,
+              lastSeenAt: entry.lastSeenAt ?? c.otherUser.lastSeenAt,
+            },
+          };
+        }),
+      }));
+    }
+  );
 
   socket.off('conversation:deleted');
   socket.on('conversation:deleted', (data: { conversationId: string }) => {

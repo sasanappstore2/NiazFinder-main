@@ -1,8 +1,25 @@
 {
   "cityId": "dalgan",
   "cityName": "دلگان",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:55.805Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.678Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دلگان",
+      "name": "دلگان",
+      "nameEn": "dalgan",
+      "centroid": {
+        "lat": 27.70029721764283,
+        "lng": 59.40715199791685
+      },
+      "bbox": {
+        "south": 27.593810692310456,
+        "north": 27.806783742975206,
+        "west": 59.29932113154348,
+        "east": 59.51498286429022
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

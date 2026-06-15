@@ -13,6 +13,11 @@ import {
 import { parseBrowsePath, type BrowsePathContext } from '@/lib/search/browse-path';
 import { getCityBySlug, COUNTRY_SLUG } from '@/config/locations';
 import type { BrowseListingType } from '@/lib/search/browse-entry-url';
+import {
+  buildCategorySeoDescription,
+  buildCategorySeoH1,
+  resolveCategorySeoSubject,
+} from '@/lib/browse/category-seo-heading';
 
 export interface BrowsePageTitles {
   h1: string;
@@ -65,44 +70,35 @@ export function buildBrowsePageH1(opts: {
   locationLabel: string;
   categoryTitle?: string | null;
   parentCategoryTitle?: string | null;
+  categorySlug?: string | null;
+  parentCategorySlug?: string | null;
 }): string {
-  const { listingType, locationLabel, categoryTitle, parentCategoryTitle } = opts;
-  const isBusiness = listingType === 'business';
-
-  if (categoryTitle && parentCategoryTitle) {
-    return isBusiness
-      ? `کسب‌وکارهای ${categoryTitle} در ${locationLabel}`
-      : `نیازهای ${categoryTitle} در ${locationLabel}`;
-  }
-
-  if (categoryTitle) {
-    return isBusiness
-      ? `کسب‌وکارهای ${categoryTitle} در ${locationLabel}`
-      : `نیازهای ${categoryTitle} در ${locationLabel}`;
-  }
-
-  return isBusiness ? `کسب‌وکارها در ${locationLabel}` : `نیازها در ${locationLabel}`;
+  return buildCategorySeoH1(opts);
 }
 
 function buildBrowseDescription(opts: {
   listingType: BrowseListingType;
   locationLabel: string;
   categoryTitle: string | null;
+  categorySlug?: string | null;
+  parentCategorySlug?: string | null;
+  parentCategoryTitle?: string | null;
   siteName: string;
 }): string {
-  const { listingType, locationLabel, categoryTitle, siteName } = opts;
-  const where =
-    locationLabel === 'سراسر ایران' ? 'سراسر ایران' : locationLabel;
+  const subject = resolveCategorySeoSubject({
+    listingType: opts.listingType,
+    categorySlug: opts.categorySlug,
+    parentCategorySlug: opts.parentCategorySlug,
+    categoryTitle: opts.categoryTitle,
+    parentCategoryTitle: opts.parentCategoryTitle,
+  });
 
-  if (listingType === 'business') {
-    return categoryTitle != null
-      ? `کسب‌وکارهای ${categoryTitle} در ${where} در ${siteName}.`
-      : `کسب‌وکارها در ${where} در ${siteName}.`;
-  }
-
-  return categoryTitle != null
-    ? `نیازها و کسب‌وکارهای ${categoryTitle} در ${where} در ${siteName}.`
-    : `جدیدترین نیازها و کسب‌وکارها در ${where} در ${siteName}.`;
+  return buildCategorySeoDescription({
+    listingType: opts.listingType,
+    locationLabel: opts.locationLabel,
+    siteName: opts.siteName,
+    subject,
+  });
 }
 
 export function buildBrowsePageTitlesFromContext(
@@ -130,18 +126,26 @@ export function buildBrowsePageTitlesFromContext(
 
   let categoryTitle: string | null = null;
   let parentCategoryTitle: string | null = null;
+  let categorySlug: string | null = null;
+  let parentCategorySlug: string | null = null;
 
   if (ctx.kind === 'category') {
     categoryTitle = ctx.category.title;
+    categorySlug = ctx.category.slug;
   } else if (ctx.kind === 'parent-child') {
     categoryTitle = ctx.category.title;
+    categorySlug = ctx.category.slug;
     parentCategoryTitle = ctx.parent.title;
+    parentCategorySlug = ctx.parent.slug;
   }
 
   const description = buildBrowseDescription({
     listingType,
     locationLabel,
     categoryTitle,
+    categorySlug,
+    parentCategorySlug,
+    parentCategoryTitle,
     siteName,
   });
 
@@ -150,6 +154,8 @@ export function buildBrowsePageTitlesFromContext(
     locationLabel,
     categoryTitle,
     parentCategoryTitle,
+    categorySlug,
+    parentCategorySlug,
   });
 
   return {
@@ -178,12 +184,17 @@ export function buildBrowsePageTitlesFromPath(
     locationLabel,
     categoryTitle,
     parentCategoryTitle: pathCtx.parentCategoryTitle ?? null,
+    categorySlug: pathCtx.categorySlug ?? null,
+    parentCategorySlug: pathCtx.parentCategorySlug ?? null,
   });
 
   const description = buildBrowseDescription({
     listingType,
     locationLabel,
     categoryTitle,
+    categorySlug: pathCtx.categorySlug ?? null,
+    parentCategorySlug: pathCtx.parentCategorySlug ?? null,
+    parentCategoryTitle: pathCtx.parentCategoryTitle ?? null,
     siteName,
   });
 

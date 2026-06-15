@@ -33,7 +33,7 @@ import { computeMatchabilityScore } from '@/intake/scoring/matchabilityEngine';
 import { resolveNeedType } from '@/intake/schema/needTypes';
 import { getAiSemanticConfig } from '@/ai/config/feature-flags';
 import { runSemanticResolver } from '@/ai/services/semanticResolver';
-import type { IntakeAnalysisTrace } from '@/intake/training/trainingExample';
+import type { IntakeAnalysisTrace } from '@/intake/types/analysis-trace';
 import { applyLaunchIntakeEntityPolicy } from '@/lib/need-intake/intake-launch-policy';
 
 export interface AnalyzeNeedTextOptions {

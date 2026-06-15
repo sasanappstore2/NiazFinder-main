@@ -56,8 +56,11 @@ export type AdminPermissionId =
   | 'ops:settings:write'
   | 'ops:system:write'
   | 'ops:intake-migration:read'
+  | 'ops:intake-ai-evaluation:read'
   | 'ops:intake-training:read'
   | 'ops:intake-training:write'
+  | 'ops:intake-field-specs:read'
+  | 'ops:intake-field-specs:write'
   // ─── Staff / RBAC ───────────────────────────────────────────────────
   | 'rbac:roles:read'
   | 'rbac:roles:write'
@@ -88,17 +91,6 @@ export type AdminPermission = {
 
 /**
  * Single source of truth for staff permission checkboxes.
- *
- * Notes (inventory-mapping):
- * - Current codebase has working APIs only for:
- *   - /api/super-admin/overview (read)
- *   - /api/super-admin/analytics (read)
- *   - /api/super-admin/categories (read/create)
- *   - /api/super-admin/categories/[id] (update/delete-or-deactivate)
- *   - /api/super-admin/locations (read/write)
- * - Current UI `SuperAdminDashboard` contains many sections (billing/files/workflow/...) that
- *   are mostly “dashboard shells” and not yet backed by dedicated admin APIs.
- * - “Chat review” requested by you will map to `comms:messages:*` and needs dedicated admin endpoints.
  */
 export const ADMIN_PERMISSIONS: readonly AdminPermission[] = [
   { id: 'superadmin:access', label: 'دسترسی به پنل سوپرادمین', group: 'Core' },
@@ -162,6 +154,11 @@ export const ADMIN_PERMISSIONS: readonly AdminPermission[] = [
     group: 'Ops',
   },
   {
+    id: 'ops:intake-ai-evaluation:read',
+    label: 'مشاهده ارزیابی AI Intake',
+    group: 'Ops',
+  },
+  {
     id: 'ops:intake-training:read',
     label: 'مشاهده داده آموزشی Intake',
     group: 'Ops',
@@ -169,6 +166,16 @@ export const ADMIN_PERMISSIONS: readonly AdminPermission[] = [
   {
     id: 'ops:intake-training:write',
     label: 'بازبینی و اصلاح نمونه‌های آموزشی',
+    group: 'Ops',
+  },
+  {
+    id: 'ops:intake-field-specs:read',
+    label: 'مشاهده فیلدهای Intake (Admin)',
+    group: 'Ops',
+  },
+  {
+    id: 'ops:intake-field-specs:write',
+    label: 'ویرایش فیلدهای Intake (Admin)',
     group: 'Ops',
   },
 

@@ -12,9 +12,21 @@ function run(): void {
   const light = buildIranDivarStyle('light');
 
   for (const style of [dark, light]) {
-    assert.ok(!style.layers?.some((l) => l.id === 'iran-void-mask'), 'void mask must stay removed');
-    assert.ok(!style.sources?.['iran-void-mask'], 'void mask source must stay removed');
+    assert.ok(style.layers?.some((l) => l.id === 'iran-neighbor-void'), 'neighbor void mask required');
+    assert.ok(style.layers?.some((l) => l.id === 'iran-world-void'), 'world void mask required');
+    assert.ok(style.sources?.['iran-void-mask'], 'void mask geojson source required');
+    const maskSource = style.sources?.['iran-void-mask'];
+    assert.ok(maskSource && 'data' in maskSource);
+    assert.equal(maskSource.data, '/geo/iran-map-void-mask.geojson');
+    const layers = style.layers ?? [];
+    const neighborIdx = layers.findIndex((l) => l.id === 'iran-neighbor-void');
+    const waterIdx = layers.findIndex((l) => l.id === 'water');
+    const worldIdx = layers.findIndex((l) => l.id === 'iran-world-void');
+    assert.ok(neighborIdx >= 0 && waterIdx > neighborIdx, 'water must render above neighbor void');
+    assert.equal(layers[worldIdx]?.id, 'iran-world-void', 'world void must be topmost');
+    assert.ok(style.layers?.some((l) => l.id === 'landcover'), 'landcover required for national zoom');
     assert.ok(style.layers?.some((l) => l.id === 'land'), 'land layer required for national zoom');
+    assert.ok(style.layers?.some((l) => l.id === 'water'), 'water layer required for national seas');
     assert.ok(
       style.layers?.some((l) => l.id === 'boundary-province'),
       'province boundaries required'

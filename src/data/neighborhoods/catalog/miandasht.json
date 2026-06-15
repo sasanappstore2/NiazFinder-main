@@ -1,8 +1,25 @@
 {
   "cityId": "miandasht",
   "cityName": "میاندشت",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:44:00.110Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.706Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "میاندشت",
+      "name": "میاندشت",
+      "nameEn": "miandasht",
+      "centroid": {
+        "lat": 33.1045975905857,
+        "lng": 50.20039133308023
+      },
+      "bbox": {
+        "south": 32.99811106525332,
+        "north": 33.21108411591808,
+        "west": 50.0865081570243,
+        "east": 50.31427450913616
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

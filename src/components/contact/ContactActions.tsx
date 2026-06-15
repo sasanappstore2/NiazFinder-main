@@ -122,7 +122,7 @@ export function ContactActions({
     }
     setCallLoading(true);
     try {
-      const contact = await fetchUserContact(otherUserId, authToken);
+      const contact = await fetchUserContact(otherUserId, authToken, { requestId });
       if (!contact.hasPhone) {
         toast.info('این کاربر شماره تماس ثبت نکرده — از چت استفاده کنید');
         return;

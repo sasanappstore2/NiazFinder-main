@@ -1,0 +1,503 @@
+{
+  "provinceId": "ardabil",
+  "provinceName": "اردبیل",
+  "generatedAt": "2026-06-12T21:20:05.936Z",
+  "cities": [
+    {
+      "cityId": "ardabil-city",
+      "cityName": "اردبیل",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 160,
+      "shares": {
+        "divar": 160,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 160
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "parsabad",
+      "cityName": "پارس‌آباد",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 39,
+      "shares": {
+        "divar": 39,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 39
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khalkhal",
+      "cityName": "خلخال",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 7,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "meshginshahr",
+      "cityName": "مشگین‌شهر",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "germi",
+      "cityName": "گرمی",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bilehsavar",
+      "cityName": "بیله‌سوار",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "namin",
+      "cityName": "نمین",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nir",
+      "cityName": "نیر",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kosar",
+      "cityName": "کوثر",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "arshagh",
+      "cityName": "ارشق",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "eslamabad-city",
+      "cityName": "اسلام آباد",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "aslandooz",
+      "cityName": "اصلاندوز",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "angoot",
+      "cityName": "انگوت",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "baran",
+      "cityName": "بران",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "samareen",
+      "cityName": "ثمرین",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khorsh-e-rostam",
+      "cityName": "خورش رستم",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "darreh-rud",
+      "cityName": "دره رود",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sabalan-city",
+      "cityName": "سبلان",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sarein",
+      "cityName": "سرعین",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 96,
+      "shares": {
+        "divar": 96,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 96
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "شاهرود-اردبیل",
+      "cityName": "شاهرود (اردبیل)",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "anbaran",
+      "cityName": "عنبران",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "firooz",
+      "cityName": "فیروز",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gheshlaq-dasht",
+      "cityName": "قشلاق دشت",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghasabeh",
+      "cityName": "قصابه",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "koraayim",
+      "cityName": "کوراییم",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "moradlu",
+      "cityName": "مرادلو",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "moran",
+      "cityName": "موران",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "vilkij",
+      "cityName": "ویلکیج",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hir",
+      "cityName": "هیر",
+      "provinceId": "ardabil",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 0,
+  "pass": true
+}

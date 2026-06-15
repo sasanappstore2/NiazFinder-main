@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "thresholds": {
+    "tierAMinRealShare": 0.8,
+    "tierBMinOsmShare": 0.5,
+    "centroidDriftWarnMeters": 500,
+    "overlapWarnShare": 0.3
+  },
+  "tierA": [
+    "tehran-city",
+    "mashhad",
+    "isfahan",
+    "shiraz",
+    "tabriz",
+    "karaj",
+    "ahvaz",
+    "qom",
+    "kerman",
+    "rasht",
+    "yazd",
+    "urmia",
+    "kermanshah",
+    "zahedan",
+    "hamadan",
+    "arak",
+    "bandarabbas",
+    "gorgan",
+    "sari",
+    "kish"
+  ],
+  "tierB": [],
+  "notes": "tierB is computed dynamically: mapped Divar cities not in tierA. All others are tierC."
+}

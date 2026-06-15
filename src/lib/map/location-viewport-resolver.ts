@@ -15,7 +15,7 @@ import {
 import { locationCityIdToSlug } from '@/lib/search/city-slugs';
 import { provinceSlugToId } from '@/lib/search/province-slugs';
 
-const INDEX = viewportsIndex as LocationViewportsIndex;
+const INDEX = viewportsIndex as unknown as LocationViewportsIndex;
 
 const NATIONAL_CENTER = { lat: 32.4279, lng: 53.688, zoom: 5.5 };
 
@@ -48,6 +48,15 @@ function lookupCityEntry(input: LocationViewportInput) {
     if (entry) return entry;
   }
   return null;
+}
+
+/** On-disk viewport chunk id (e.g. tehran → tehran-city.json). */
+export function resolveViewportChunkCityId(input: LocationViewportInput): string | null {
+  const entry = lookupCityEntry(input);
+  if (entry?.catalogCityId) return entry.catalogCityId;
+  if (entry?.cityId) return entry.cityId;
+  const keys = resolveCityKeys(input);
+  return keys[0] ?? null;
 }
 
 function makeViewport(
@@ -98,8 +107,9 @@ export async function resolveLocationMapViewport(
   const cityId = cityKeys[0];
 
   if (neighborhoodId && cityId) {
-    prefetchCityViewportChunk(cityId);
-    const chunk = await loadCityViewportChunk(cityId);
+    const chunkCityId = resolveViewportChunkCityId(input) ?? cityId;
+    prefetchCityViewportChunk(chunkCityId);
+    const chunk = await loadCityViewportChunk(chunkCityId);
     const neighborhood = findNeighborhoodInChunk(chunk, neighborhoodId);
     if (neighborhood) {
       const bounds = compactBboxToBusiness(neighborhood.b);

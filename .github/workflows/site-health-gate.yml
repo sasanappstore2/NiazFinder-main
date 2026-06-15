@@ -1,0 +1,59 @@
+name: Site Health Gate
+
+on:
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: '0 3 * * *'
+
+jobs:
+  offline-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - run: npm run health:gate:offline
+
+  smoke-gate:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: niazfinder
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/niazfinder
+      - run: npm run build
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/niazfinder
+      - run: npm run start &
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/niazfinder
+      - run: npx wait-on http://localhost:3000 -t 120000
+      - run: npm run health:gate:smoke
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/niazfinder
+          SMOKE_BASE_URL: http://localhost:3000
+          SKIP_SERVICES_HEALTH: '1'

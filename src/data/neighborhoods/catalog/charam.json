@@ -1,8 +1,25 @@
 {
   "cityId": "charam",
   "cityName": "چرام",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:43:14.152Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.594Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چرام",
+      "name": "چرام",
+      "nameEn": "charam",
+      "centroid": {
+        "lat": 30.70056896180381,
+        "lng": 50.96491461769171
+      },
+      "bbox": {
+        "south": 30.594082436471435,
+        "north": 30.807055487136186,
+        "west": 50.85670824603334,
+        "east": 51.07312098935008
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

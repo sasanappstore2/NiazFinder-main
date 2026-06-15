@@ -1,9 +1,9 @@
 'use client';
 
 import { useNavigate } from '@/hooks/navigation/use-navigate';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Search, X, Inbox, List, Map } from 'lucide-react';
+import { Search, X, Inbox, List, Map, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,6 +42,7 @@ import { NeedBrowseAlertButton } from '@/components/need/NeedBrowseAlertButton';
 import { NeedMapSplitView } from '@/components/need/map/NeedMapSplitView';
 import { CANONICAL_CITIES, COUNTRY_SLUG } from '@/config/locations';
 import type { NeedMapPinsQuery } from '@/hooks/use-need-map-pins';
+import { formatCountFa } from '@/lib/format/digits';
 
 const REQUEST_FILTER_DEFAULTS = {
   q: '',
@@ -58,6 +59,7 @@ interface BrowseRequestsProps {
   categorySlug?: string;
   citySlugs?: string[];
   urlFilters?: BrowseFilters;
+  serverRenderedHeading?: boolean;
 }
 
 export function BrowseRequests({
@@ -65,6 +67,7 @@ export function BrowseRequests({
   categorySlug,
   citySlugs = [],
   urlFilters,
+  serverRenderedHeading = false,
 }: BrowseRequestsProps = {}) {
   const { navigateTo } = useNavigate();
   const router = useRouter();
@@ -82,6 +85,7 @@ export function BrowseRequests({
   const [isLoading, setIsLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasLoadedInitial, setHasLoadedInitial] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -143,11 +147,16 @@ export function BrowseRequests({
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const view = new URLSearchParams(window.location.search).get('view');
+    const params = new URLSearchParams(window.location.search);
+    const view = params.get('view');
     if (view === 'map') {
       setViewMode('map');
     } else if (view === 'list' || view === 'grid') {
       setViewMode('list');
+    }
+    const pageParam = parseInt(params.get('page') || '1', 10);
+    if (Number.isFinite(pageParam) && pageParam >= 1) {
+      setCurrentPage(pageParam);
     }
   }, []);
 
@@ -167,9 +176,52 @@ export function BrowseRequests({
     );
   }, [currentPage, currentPathname, isUrlReady, preservedFilters, query, viewMode]);
 
+  const fetchAbortRef = useRef<AbortController | null>(null);
+
+  const filterResetKey = useMemo(
+    () =>
+      JSON.stringify({
+        categorySlug,
+        citySlugs,
+        provinceSlugs,
+        neighborhoods: urlFilters?.neighborhoods,
+        priceMin: urlFilters?.priceMin,
+        priceMax: urlFilters?.priceMax,
+        urgent: urlFilters?.urgent,
+        hasPhoto: urlFilters?.hasPhoto,
+        recent: urlFilters?.recent,
+      }),
+    [
+      categorySlug,
+      citySlugs,
+      provinceSlugs,
+      urlFilters?.neighborhoods,
+      urlFilters?.priceMin,
+      urlFilters?.priceMax,
+      urlFilters?.urgent,
+      urlFilters?.hasPhoto,
+      urlFilters?.recent,
+    ]
+  );
+  const prevFilterResetKeyRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (prevFilterResetKeyRef.current === null) {
+      prevFilterResetKeyRef.current = filterResetKey;
+      return;
+    }
+    if (prevFilterResetKeyRef.current !== filterResetKey) {
+      prevFilterResetKeyRef.current = filterResetKey;
+      setCurrentPage(1);
+    }
+  }, [filterResetKey]);
+
   // Fetch requests from API
   const fetchRequests = useCallback(
     async (page: number, append = false) => {
+      fetchAbortRef.current?.abort();
+      const controller = new AbortController();
+      fetchAbortRef.current = controller;
+
       if (append) {
         setLoadingMore(true);
       } else {
@@ -177,6 +229,7 @@ export function BrowseRequests({
       }
 
       try {
+        setFetchError(null);
         const params = buildRequestListParams(urlFilters, {
           page: viewMode === 'map' ? 1 : page,
           limit: viewMode === 'map' ? REQUEST_MAP_LIST_LIMIT : REQUEST_PAGE_LIMIT,
@@ -189,9 +242,18 @@ export function BrowseRequests({
           requestStatus: 'OPEN',
         });
 
-        const res = await fetch(`/api/requests?${params.toString()}`);
-        if (!res.ok) throw new Error('API error');
-        const json = await res.json();
+        const res = await fetch(`/api/requests?${params.toString()}`, {
+          signal: controller.signal,
+        });
+        const json = (await res.json().catch(() => ({}))) as {
+          data?: unknown[];
+          pagination?: { total: number; totalPages: number; page: number };
+          error?: string;
+        };
+        if (!res.ok) {
+          throw new Error(json.error || `خطا در دریافت لیست نیازها (${res.status})`);
+        }
+        if (controller.signal.aborted) return;
 
         const mappedRequests: ServiceRequest[] = (json.data || []).map((r: any) => ({
           id: r.id,
@@ -239,10 +301,16 @@ export function BrowseRequests({
         }
         setHasLoadedInitial(true);
       } catch (err) {
+        if ((err as Error).name === 'AbortError') return;
+        const message =
+          err instanceof Error ? err.message : 'خطا در دریافت لیست نیازها';
+        setFetchError(message);
         console.error('Error fetching requests:', err);
       } finally {
-        setIsLoading(false);
-        setLoadingMore(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+          setLoadingMore(false);
+        }
       }
     },
     [query, categorySlug, hasLocationScope, urlCityNames, provinceSlugs, citySlugs, urlFilters, viewMode]
@@ -300,7 +368,7 @@ export function BrowseRequests({
       );
     }
     if (effectiveMapCitySlugs.length > 1) {
-      return `${effectiveMapCitySlugs.length.toLocaleString('fa-IR')} شهر`;
+      return `${formatCountFa(effectiveMapCitySlugs.length)} شهر`;
     }
     return undefined;
   }, [effectiveMapCitySlugs]);
@@ -324,6 +392,8 @@ export function BrowseRequests({
 
     return () => clearTimeout(timer);
   }, [currentPage, fetchRequests, isUrlReady, urlFilters]);
+
+  useEffect(() => () => fetchAbortRef.current?.abort(), []);
 
   const setPage = (page: number) => {
     setCurrentPage(Math.min(Math.max(1, page), Math.max(totalPages, 1)));
@@ -351,16 +421,18 @@ export function BrowseRequests({
         <div className={viewMode === 'map' ? 'mb-3 max-lg:hidden' : 'mb-8'}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1
-                className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-linear-to-l from-foreground to-foreground/80 bg-clip-text"
-                title={displayH1 !== pageH1 ? pageH1 : undefined}
-              >
-                {displayH1}
-              </h1>
+              {!serverRenderedHeading ? (
+                <h1
+                  className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-linear-to-l from-foreground to-foreground/80 bg-clip-text"
+                  title={displayH1 !== pageH1 ? pageH1 : undefined}
+                >
+                  {displayH1}
+                </h1>
+              ) : null}
               {viewMode !== 'map' ? (
                 <p className="mt-1.5 text-sm text-muted-foreground">
                   {hasLoadedInitial
-                    ? `${totalCount.toLocaleString('fa-IR')} نیاز یافت شد`
+                    ? `${formatCountFa(totalCount)} نیاز یافت شد`
                     : 'در حال جستجو...'}
                 </p>
               ) : null}
@@ -466,6 +538,22 @@ export function BrowseRequests({
               <NeedBrowseCardSkeleton key={i} />
             ))}
           </div>
+        ) : viewMode !== 'map' && fetchError ? (
+          <div className="py-20 text-center">
+            <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-destructive/10">
+              <AlertTriangle className="size-8 text-destructive/70" aria-hidden="true" />
+            </div>
+            <h2 className="mb-2 text-lg font-semibold text-foreground">بارگذاری نیازها ناموفق بود</h2>
+            <p className="mx-auto max-w-md text-sm text-muted-foreground/70">{fetchError}</p>
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => fetchRequests(currentPage)}
+              title="تلاش مجدد"
+            >
+              تلاش مجدد
+            </Button>
+          </div>
         ) : viewMode !== 'map' && requests.length === 0 ? (
           <div className="py-20 text-center">
             <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-muted/60">
@@ -531,7 +619,7 @@ export function BrowseRequests({
                   صفحه قبلی
                 </Button>
                 <Badge variant="secondary" className="rounded-xl px-4 py-2">
-                  صفحه {currentPage.toLocaleString('fa-IR')} از {totalPages.toLocaleString('fa-IR')}
+                  صفحه {formatCountFa(currentPage)} از {formatCountFa(totalPages)}
                 </Badge>
                 <Button
                   variant="outline"

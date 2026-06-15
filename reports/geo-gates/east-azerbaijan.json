@@ -1,0 +1,843 @@
+{
+  "provinceId": "east-azerbaijan",
+  "provinceName": "آذربایجان شرقی",
+  "generatedAt": "2026-06-12T21:20:02.258Z",
+  "cities": [
+    {
+      "cityId": "tabriz",
+      "cityName": "تبریز",
+      "provinceId": "east-azerbaijan",
+      "tier": "A",
+      "neighborhoodCount": 323,
+      "shares": {
+        "divar": 274,
+        "osm": 49,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 323
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "maragheh",
+      "cityName": "مراغه",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 146,
+      "shares": {
+        "divar": 73,
+        "osm": 73,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 146
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mianeh",
+      "cityName": "میانه",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 17,
+      "shares": {
+        "divar": 17,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 17
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shabestar",
+      "cityName": "شبستر",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 9,
+      "shares": {
+        "divar": 9,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 9
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "marand",
+      "cityName": "مرند",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 11,
+      "shares": {
+        "divar": 11,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 11
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bonab",
+      "cityName": "بناب",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 37,
+      "shares": {
+        "divar": 37,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 37
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ahar",
+      "cityName": "اهر",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sarab",
+      "cityName": "سراب",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hashtrood",
+      "cityName": "هشتروود",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jolfa",
+      "cityName": "جلفا",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "malekan",
+      "cityName": "ملکان",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 8,
+      "shares": {
+        "divar": 8,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 8
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bostanabad",
+      "cityName": "بستان‌آباد",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "harris",
+      "cityName": "هریس",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "azarshahr",
+      "cityName": "آذرشهر",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 9,
+      "shares": {
+        "divar": 9,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 9
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "oskoo",
+      "cityName": "اسکو",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 28,
+      "shares": {
+        "divar": 25,
+        "osm": 3,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 28
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kaleybar",
+      "cityName": "کلیبر",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 0,
+        "osm": 3,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "abesh-ahmad",
+      "cityName": "آبش احمد",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ilkhchi",
+      "cityName": "ایلخچی",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 29,
+      "shares": {
+        "divar": 29,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 29
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "basmenj",
+      "cityName": "باسمنج",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 82,
+      "shares": {
+        "divar": 77,
+        "osm": 5,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 82
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "torkamanchay",
+      "cityName": "ترکمانچای",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "tasooj",
+      "cityName": "تسوج",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "tikmeh-dash",
+      "cityName": "تیکمه داش",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "charavimaq",
+      "cityName": "چاراویماق",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chahar-dangeh-city",
+      "cityName": "چهاردانگه (آذربایجان)",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kharvana",
+      "cityName": "خاروانا",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khoda-afarin",
+      "cityName": "خدا آفرین",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 38,
+      "shares": {
+        "divar": 38,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 38
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khosrowshah",
+      "cityName": "خسروشاه",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 32,
+      "shares": {
+        "divar": 25,
+        "osm": 7,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 32
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khajeh",
+      "cityName": "خواجه",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "serajoo",
+      "cityName": "سراجو",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sahand",
+      "cityName": "سهند",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 35,
+      "shares": {
+        "divar": 32,
+        "osm": 3,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 35
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "siah-rud",
+      "cityName": "سیه رود",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shadian",
+      "cityName": "شادیان",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "soofiyan",
+      "cityName": "صوفیان",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ajabshir",
+      "cityName": "عجب شیر",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "fandoghlu",
+      "cityName": "فندقلو",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghaleh-chay",
+      "cityName": "قلعه چای",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kaghazkenan",
+      "cityName": "کاغذکنان",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kashksaray",
+      "cityName": "کشکسرای",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kandovan",
+      "cityName": "کندوان",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "garmadooz",
+      "cityName": "گرمادوز",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 12,
+      "shares": {
+        "divar": 12,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 12
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gogan",
+      "cityName": "گوگان",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 9,
+      "shares": {
+        "divar": 6,
+        "osm": 3,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 9
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "leylan",
+      "cityName": "لیلان",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 10,
+      "shares": {
+        "divar": 10,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 10
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mamaqaan",
+      "cityName": "ممقان",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 15,
+      "shares": {
+        "divar": 12,
+        "osm": 3,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 15
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "minjavan",
+      "cityName": "منجوان",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mehraban",
+      "cityName": "مهربان",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nazar-kahrizi",
+      "cityName": "نظر کهریزی",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "varzeghan",
+      "cityName": "ورزقان",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "horand",
+      "cityName": "هوراند",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "yamchi",
+      "cityName": "یامچی",
+      "provinceId": "east-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 7,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 0,
+  "pass": true
+}

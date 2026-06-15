@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { fetchLivePresence } from '@/lib/chat/live-presence';
 
 // ============ TYPES ============
 
@@ -18,6 +19,7 @@ interface ConversationListItem {
     lastName: string;
     avatar: string | null;
     online: boolean;
+    lastSeenAt: string | null;
   };
   businessContext?: {
     businessName: string;
@@ -57,10 +59,24 @@ export async function GET(request: NextRequest) {
       orderBy: { lastMessageAt: 'desc' },
       include: {
         user1: {
-          select: { id: true, firstName: true, lastName: true, avatar: true, online: true },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+            online: true,
+            lastSeenAt: true,
+          },
         },
         user2: {
-          select: { id: true, firstName: true, lastName: true, avatar: true, online: true },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+            online: true,
+            lastSeenAt: true,
+          },
         },
         contactPoint: {
           include: { profile: { select: { name: true, logo: true } } },
@@ -93,6 +109,7 @@ export async function GET(request: NextRequest) {
           lastName: otherUser.lastName,
           avatar: otherUser.avatar,
           online: otherUser.online,
+          lastSeenAt: otherUser.lastSeenAt?.toISOString() ?? null,
         },
         businessContext: conv.contactPoint
           ? {
@@ -105,7 +122,18 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({ conversations: mappedConversations });
+    const livePresence = await fetchLivePresence(
+      mappedConversations.map((conversation) => conversation.otherUser.id)
+    );
+    const conversationsWithPresence = mappedConversations.map((conversation) => ({
+      ...conversation,
+      otherUser: {
+        ...conversation.otherUser,
+        online: livePresence[conversation.otherUser.id] ?? false,
+      },
+    }));
+
+    return NextResponse.json({ conversations: conversationsWithPresence });
   } catch (error) {
     console.error('Chat GET error:', error);
     return NextResponse.json(
@@ -201,10 +229,24 @@ export async function POST(request: NextRequest) {
       },
       include: {
         user1: {
-          select: { id: true, firstName: true, lastName: true, avatar: true, online: true },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+            online: true,
+            lastSeenAt: true,
+          },
         },
         user2: {
-          select: { id: true, firstName: true, lastName: true, avatar: true, online: true },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+            online: true,
+            lastSeenAt: true,
+          },
         },
         contactPoint: {
           include: { profile: { select: { name: true, logo: true } } },
@@ -222,6 +264,7 @@ export async function POST(request: NextRequest) {
     if (existingConv) {
       const isUser1 = existingConv.userId1 === user.id;
       const other = isUser1 ? existingConv.user2 : existingConv.user1;
+      const livePresence = await fetchLivePresence([other.id]);
 
       return NextResponse.json({
         message: 'این گفتگو قبلاً وجود دارد',
@@ -238,7 +281,8 @@ export async function POST(request: NextRequest) {
             firstName: other.firstName,
             lastName: other.lastName,
             avatar: other.avatar,
-            online: other.online,
+            online: livePresence[other.id] ?? false,
+            lastSeenAt: other.lastSeenAt?.toISOString() ?? null,
           },
           businessContext: existingConv.contactPoint
             ? {
@@ -262,10 +306,24 @@ export async function POST(request: NextRequest) {
       },
       include: {
         user1: {
-          select: { id: true, firstName: true, lastName: true, avatar: true, online: true },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+            online: true,
+            lastSeenAt: true,
+          },
         },
         user2: {
-          select: { id: true, firstName: true, lastName: true, avatar: true, online: true },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+            online: true,
+            lastSeenAt: true,
+          },
         },
       },
     });
@@ -288,6 +346,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    const livePresence = await fetchLivePresence([otherUserId]);
+
     return NextResponse.json(
       {
         message: 'گفتگو با موفقیت ایجاد شد',
@@ -304,7 +364,8 @@ export async function POST(request: NextRequest) {
             firstName: otherUser.firstName,
             lastName: otherUser.lastName,
             avatar: null,
-            online: false,
+            online: livePresence[otherUserId] ?? false,
+            lastSeenAt: null,
           },
           businessContext:
             contactLabel && businessName

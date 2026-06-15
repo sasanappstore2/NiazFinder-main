@@ -68,7 +68,7 @@ export function NiazIranVectorMapCore({
 
   const mapChildren = (
     <>
-      <IranDivarMapOverlays {...overlayProps} />
+      {detail !== 'picker' ? <IranDivarMapOverlays {...overlayProps} /> : null}
       {children}
     </>
   );

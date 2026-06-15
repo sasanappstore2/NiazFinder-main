@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { fetchLivePresence } from '@/lib/chat/live-presence';
 
 // ============ GET handler ============
 
@@ -69,12 +70,15 @@ export async function GET(request: NextRequest) {
         bio: true,
         city: true,
         online: true,
+        lastSeenAt: true,
         isVerified: true,
         role: true,
       },
       take: 20,
-      orderBy: [{ online: 'desc' }, { isVerified: 'desc' }, { createdAt: 'desc' }],
+      orderBy: [{ isVerified: 'desc' }, { createdAt: 'desc' }],
     });
+
+    const livePresence = await fetchLivePresence(users.map((user) => user.id));
 
     const results = users.map((u) => ({
       id: u.id,
@@ -85,7 +89,8 @@ export async function GET(request: NextRequest) {
       avatar: u.avatar,
       bio: u.bio,
       city: u.city,
-      online: u.online,
+      online: livePresence[u.id] ?? false,
+      lastSeenAt: u.lastSeenAt?.toISOString() ?? null,
       isVerified: u.isVerified,
       role: u.role,
     }));

@@ -25,12 +25,21 @@ export default function HelpPage() {
       </p>
 
       <div className="grid gap-4">
-        <section className="rounded-2xl border border-border/60 bg-card p-6">
-          <h2 className="font-semibold mb-2">ثبت نیاز</h2>
+        <section id="intake" className="rounded-2xl border border-border/60 bg-card p-6 scroll-mt-24">
+          <h2 className="font-semibold mb-2">ثبت نیاز (ویزارد /post)</h2>
           <p className="text-sm text-muted-foreground mb-4">
-            برای ثبت نیاز رایگان، از دکمه «ثبت نیاز» در صفحه اصلی استفاده کنید یا مستقیماً به
-            صفحه ثبت نیاز بروید.
+            فرم چهارمرحله‌ای ثبت نیاز: نیاز، توضیحات، دسته و مکان، پیش‌نمایش.
           </p>
+          <ul className="mb-4 space-y-2 text-sm text-muted-foreground">
+            <li id="intake-need"><strong>مرحله نیاز</strong> — متن اصلی نیاز را بنویسید.</li>
+            <li id="intake-details"><strong>توضیحات</strong> — جزئیات اختیاری.</li>
+            <li id="intake-location"><strong>دسته و مکان</strong> — دسته‌بندی، شهر و محله.</li>
+            <li id="intake-preview"><strong>پیش‌نمایش</strong> — بازبینی عنوان و انتشار.</li>
+            <li id="intake-real-estate"><strong>املاک</strong> — نوع معامله، متراژ، پین نقشه.</li>
+            <li id="intake-services"><strong>خدمات</strong> — نوع خدمت و شهر کافی است.</li>
+            <li id="intake-vehicles"><strong>خودرو</strong> — برند، مدل و بودجه.</li>
+            <li id="intake-jobs"><strong>استخدام</strong> — عنوان شغل و شهر.</li>
+          </ul>
           <Button asChild variant="outline" size="sm">
             <Link href={routeBuilder.needNew()}>ثبت نیاز</Link>
           </Button>

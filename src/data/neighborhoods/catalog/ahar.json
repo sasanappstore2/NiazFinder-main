@@ -2,7 +2,7 @@
   "cityId": "ahar",
   "cityName": "اهر",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.360Z",
+  "importedAt": "2026-06-12T20:39:26.680Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 47.054647892213566,
         "east": 47.11986844643582
       },
-      "geoSource": "divar",
-      "areas": [
-        "دیزج جالو مرکزی",
-        "شمال دیزج جالو",
-        "جنوب دیزج جالو",
-        "شرق دیزج جالو"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

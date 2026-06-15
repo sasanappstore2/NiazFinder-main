@@ -1,8 +1,25 @@
 {
   "cityId": "delijan",
   "cityName": "دلیجان",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:43:48.761Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.800Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دلیجان",
+      "name": "دلیجان",
+      "nameEn": "delijan",
+      "centroid": {
+        "lat": 34.01758131013295,
+        "lng": 50.76630873817416
+      },
+      "bbox": {
+        "south": 34.003028151670854,
+        "north": 34.03213446859504,
+        "west": 50.7506917777946,
+        "east": 50.781925698553714
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

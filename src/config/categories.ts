@@ -15,6 +15,8 @@
  *     /browse/{parent}/{category}    — nested (parent is parent-of-leaf)
  */
 
+import { REPAIR_SUBCATEGORIES } from '@/config/repair-subcategories';
+
 export interface CanonicalCategory {
   /** Short canonical slug used in URLs. Stable, language-independent. */
   slug: string;
@@ -103,8 +105,15 @@ export const CANONICAL_CATEGORIES: readonly CanonicalCategory[] = [
   { slug: 'building-industrial', parentSlug: 'home-appliances',    title: 'ابزار ساختمانی',                                    depth: 1 },
 
   { slug: 'services',            parentSlug: null,                 title: 'خدمات',          englishTitle: 'Services',        depth: 0 },
-  { slug: 'cleaning',            parentSlug: 'services',           title: 'نظافت',          englishTitle: 'Cleaning',        depth: 1 },
   { slug: 'repairs',             parentSlug: 'services',           title: 'تعمیرات',        englishTitle: 'Repairs',         depth: 1 },
+  ...REPAIR_SUBCATEGORIES.map((item) => ({
+    slug: item.slug,
+    parentSlug: 'repairs' as const,
+    title: item.title,
+    englishTitle: item.englishTitle,
+    depth: 2 as const,
+  })),
+  { slug: 'cleaning',            parentSlug: 'services',           title: 'نظافت',          englishTitle: 'Cleaning',        depth: 1 },
   { slug: 'plumbing',            parentSlug: 'services',           title: 'لوله‌کشی',       englishTitle: 'Plumbing',        depth: 1 },
   { slug: 'moving',              parentSlug: 'services',           title: 'اسباب‌کشی و باربری', englishTitle: 'Moving',      depth: 1 },
   { slug: 'electrical',          parentSlug: 'services',           title: 'برق‌کاری',       englishTitle: 'Electrical',      depth: 1 },

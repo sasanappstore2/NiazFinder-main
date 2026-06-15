@@ -328,6 +328,67 @@ export function inferEntitiesFromCategorySlugs(
   };
 }
 
+function intentTypeFromEntities(entities: ReturnType<typeof recordToEntities>): ParsedIntent['intentType'] {
+  const vertical = String(entities.vertical ?? 'general').replace(/-/g, '_');
+  if (vertical === 'real_estate') return 'property_search';
+  if (vertical === 'services') return 'service_request';
+  if (vertical === 'vehicles') return 'vehicle_search';
+  if (vertical === 'products') return 'product_search';
+  return 'general';
+}
+
+/** Build parsedIntent from wizard form fields (no free-text NLP). */
+export function buildParsedIntentFromForm(
+  form: {
+    needText: string;
+    detailsText: string;
+    categorySlug: string;
+    subcategorySlug: string;
+    city: string;
+    neighborhood: string;
+    neighborhoodSlug?: string | null;
+  },
+  existing?: ParsedIntent | null
+): ParsedIntent {
+  const sourceText = composeIntakeSourceText(form.needText, form.detailsText);
+  const base = existing ?? parseIntentFromText(sourceText);
+  const categorySlug =
+    form.subcategorySlug.trim() || form.categorySlug.trim() || base.categorySlug || 'general';
+  const categoryPatch = form.categorySlug
+    ? inferEntitiesFromCategorySlugs(form.categorySlug, form.subcategorySlug || null, { sourceText })
+    : {};
+  const mergedEntities = recordToEntities({
+    ...base.entities,
+    ...categoryPatch,
+  });
+  const city = form.city.trim() || undefined;
+  const neighborhood = form.neighborhood.trim() || undefined;
+  const neighborhoodSlug = form.neighborhoodSlug?.trim() || undefined;
+  const entities: Record<string, string> = { ...base.entities };
+  if (mergedEntities.vertical) entities.vertical = String(mergedEntities.vertical);
+  if (mergedEntities.category) entities.category = String(mergedEntities.category);
+  if (city) entities.city = city;
+  if (neighborhood) entities.area = neighborhood;
+
+  return {
+    ...base,
+    intentType: intentTypeFromEntities(mergedEntities),
+    categorySlug,
+    subcategorySlug: form.subcategorySlug.trim() || undefined,
+    city,
+    neighborhoodSlug,
+    entities,
+    rawText: sourceText,
+    confidence: base.confidence ?? 0.5,
+    budgetMin: base.budgetMin,
+    budgetMax: base.budgetMax,
+    urgency: base.urgency,
+    locationAmbiguous: false,
+    locationResolutionStatus: city ? 'resolved' : undefined,
+    rejectLocationAutoConfirm: false,
+  };
+}
+
 export function syncNeedDraftFromForm(
   draft: NeedDraft | null,
   form: {
@@ -349,6 +410,8 @@ export function syncNeedDraftFromForm(
       })
     : {};
 
+  const parsedIntent = buildParsedIntentFromForm(form, draft?.parsedIntent ?? null);
+
   const base =
     draft ??
     recomputeNeedDraft({
@@ -365,7 +428,7 @@ export function syncNeedDraftFromForm(
       nextQuestion: null,
       sourceText,
       updatedAt: new Date().toISOString(),
-      parsedIntent: parseIntentFromText(sourceText),
+      parsedIntent,
       answers: {},
       turns: [],
     });
@@ -384,6 +447,7 @@ export function syncNeedDraftFromForm(
       neighborhoodSlug,
     }),
     sourceText,
+    parsedIntent,
   });
 }
 

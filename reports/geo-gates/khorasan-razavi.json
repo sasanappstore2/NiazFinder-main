@@ -1,0 +1,1810 @@
+{
+  "provinceId": "khorasan-razavi",
+  "provinceName": "خراسان رضوی",
+  "generatedAt": "2026-06-12T21:20:02.026Z",
+  "cities": [
+    {
+      "cityId": "mashhad",
+      "cityName": "مشهد",
+      "provinceId": "khorasan-razavi",
+      "tier": "A",
+      "neighborhoodCount": 263,
+      "shares": {
+        "divar": 263,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 263
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nishapur",
+      "cityName": "نیشابور",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 94,
+      "shares": {
+        "divar": 92,
+        "osm": 2,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 94
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sabzevar",
+      "cityName": "سبزوار",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 67,
+      "shares": {
+        "divar": 67,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 67
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "torbatheydariyeh",
+      "cityName": "تربت حیدریه",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 58,
+      "shares": {
+        "divar": 58,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 58
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kashmar",
+      "cityName": "کاشمر",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gonabad",
+      "cityName": "گناباد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "quchan",
+      "cityName": "قوچان",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "torbatjam",
+      "cityName": "تربت جام",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 46,
+      "shares": {
+        "divar": 46,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 46
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chenaran",
+      "cityName": "چناران",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khaf",
+      "cityName": "خاف",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dargaz",
+      "cityName": "درگز",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "taybad",
+      "cityName": "تایباد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bajestan",
+      "cityName": "بجستان",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jowayin",
+      "cityName": "جوین",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kalat",
+      "cityName": "کلات",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "kalat",
+          "neighborhoodId": "کلات-ایلام",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "mehdishahr-khorasan",
+      "cityName": "مه‌دیشهر",
+      "provinceId": "khorasan-razavi",
+      "tier": "C",
+      "neighborhoodCount": 57,
+      "shares": {
+        "divar": 57,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 57
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "آپارتمانهای-استانداری",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "باغات-دربند",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "باغات-عباس-آباد",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "بالا-گنون",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "پارک-نسترن",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "پایین-گنون",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "پل-جهاد",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "دربند",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "دهکده-پارسیان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-اتحاد",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-المهدی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-الهیه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-انقلاب",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-بعثت",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-پامچال",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-پیامبر-اعظم",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-تعاون",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-جانبازان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-جمهوری",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-خاتم-الانبیاء",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-دردشت",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-دهخدا",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-دهکده-پارسیان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-رابند",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-روزیه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-زیارت",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-شهدا",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-شهید-شوکت-پور",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-طالب-آباد",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-فاطمیه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-فرهنگیان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-کلاهدوز",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-کوهسار",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-گلستان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-گلها",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-مدیران",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-مسکن-مهر-مصلی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-مهر-مدیران",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "شهرک-ولیعصر",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "صدو-ده-دستگاه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "کوه-چُغَندَرون",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "کوه-سردربند",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "کوه-گُل-رودبار",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "کوی-امام-زاده-علی-اکبر",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "کوی-اوقاف",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "کوی-رضوان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "مجتمع-پونه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "محله-پاپالو",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "مرز-محله",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "منازلسازمانی-تیپ-۱۲-قائم-آل-محمد-ص-سمنان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "منطقه-۱۱-هکتاری",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "منطقه-۲",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "منطقه-۳",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "میدان-الغدیر",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "میدان-امام-رضا",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "میدان-امام-علی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "mehdishahr-khorasan",
+          "neighborhoodId": "میدان-کارگر",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "golmakan",
+      "cityName": "گلمکان",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 2,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "fariman",
+      "cityName": "فریمان",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 27,
+      "shares": {
+        "divar": 27,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 27
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nishabur",
+      "cityName": "نیشابور",
+      "provinceId": "khorasan-razavi",
+      "tier": "C",
+      "neighborhoodCount": 157,
+      "shares": {
+        "divar": 154,
+        "osm": 3,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 157
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "abkuh-city",
+      "cityName": "آبکوه",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "es-haq-abad",
+      "cityName": "اسحاق آباد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "anabad",
+      "cityName": "انابد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bajgiran",
+      "cityName": "باجگیران",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bakhzar",
+      "cityName": "باخزر",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bashtin",
+      "cityName": "باشتین",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bala-velayat",
+      "cityName": "بالا ولایت",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 338,
+      "shares": {
+        "divar": 338,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 338
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bayk",
+      "cityName": "بایک",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 77,
+      "shares": {
+        "divar": 77,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 77
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bardaskan",
+      "cityName": "بردسکن",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "barrud",
+      "cityName": "بررود",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bozhgan",
+      "cityName": "بوژگان",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "paeen-jam",
+      "cityName": "پائین جام",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "joghatai",
+      "cityName": "جغتای",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jolge-rokh",
+      "cityName": "جلگه رخ",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jolgeh-zoozan",
+      "cityName": "جلگه زوزن",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "janat-abad",
+      "cityName": "جنت آباد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jangal",
+      "cityName": "جنگل",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chapeshlu",
+      "cityName": "چاپشلو",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khalil-abad-city",
+      "cityName": "خلیل آباد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khoshab",
+      "cityName": "خوشاب",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "davarzan",
+      "cityName": "داورزن",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "radkan",
+      "cityName": "رادکان",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "reshtkhar",
+      "cityName": "رشتخوار",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "razaviye-city",
+      "cityName": "رضویه",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 73,
+      "shares": {
+        "divar": 73,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 73
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "rudab",
+      "cityName": "روداب",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zaveh",
+      "cityName": "زاوه",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zavin",
+      "cityName": "زاوین",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zabarkhan",
+      "cityName": "زبرخان",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sarakhs",
+      "cityName": "سرخس",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sarvelayat",
+      "cityName": "سرولایت",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "salami",
+      "cityName": "سلامی",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "soleyman",
+      "cityName": "سلیمان",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sangan",
+      "cityName": "سنگان",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "seyyedabad",
+      "cityName": "سیدآباد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shadmehr",
+      "cityName": "شادمهر",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shamkan",
+      "cityName": "شامکان",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sheshtamad",
+      "cityName": "ششتمد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sheshtaraz",
+      "cityName": "ششطراز",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shahrabad",
+      "cityName": "شهرآباد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "saleh-abad",
+      "cityName": "صالح آباد (خراسان)",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 28,
+      "shares": {
+        "divar": 28,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 28
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "saleh-abad",
+          "neighborhoodId": "چقا-گلان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "saleh-abad",
+          "neighborhoodId": "سه-راه-جنداله",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "taghankooh",
+      "cityName": "طاغنکوه",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "atamalek",
+      "cityName": "عطاملک",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 26,
+      "shares": {
+        "divar": 26,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 26
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "farah-dasht",
+      "cityName": "فرح دشت",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "firuzeh",
+      "cityName": "فیروزه",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "qasemabad-khaf",
+      "cityName": "قاسم‌آباد (خواف)",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghalandar-abad",
+      "cityName": "قلندر آباد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 27,
+      "shares": {
+        "divar": 27,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 27
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kakhak",
+      "cityName": "کاخک",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kadkan",
+      "cityName": "کدکن",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "koohsorkh",
+      "cityName": "کوهسرخ",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "lotf-abad",
+      "cityName": "لطف آباد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "marzdaran-city",
+      "cityName": "مرزداران",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "moshkan",
+      "cityName": "مشکان",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "molkabad",
+      "cityName": "ملک‌آباد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mahvelat",
+      "cityName": "مه ولات",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mian-jolgeh",
+      "cityName": "میان جلگه",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mian-velayat",
+      "cityName": "میان ولایت",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nasr-abad-city",
+      "cityName": "نصر آباد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nokhandan",
+      "cityName": "نوخندان",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nodeh-enghelab",
+      "cityName": "نوده انقلاب",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hezar-masjed",
+      "cityName": "هزار مسجد",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "helali",
+      "cityName": "هلالی",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 113,
+      "shares": {
+        "divar": 113,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 113
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "younesi",
+      "cityName": "یونسی",
+      "provinceId": "khorasan-razavi",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 60,
+  "pass": true
+}

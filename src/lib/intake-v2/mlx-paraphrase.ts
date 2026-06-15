@@ -1,7 +1,7 @@
 import {
   getNeedIntakeLlmBaseUrl,
   isNeedIntakeLlmEnabled,
-} from '@/lib/need-intake/llm-parse-client';
+} from '@/lib/need-intake/intake-mlx-config';
 import { INTAKE_V2_PARAPHRASE_SYSTEM } from '@/lib/intake-v2/system-prompt';
 
 export interface ParaphraseContext {

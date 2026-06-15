@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Building2, Sparkles, Loader2 } from 'lucide-react';
@@ -13,6 +13,9 @@ import { useLocationSelection } from '@/hooks/use-location-selection';
 import { routeBuilder } from '@/config/routes';
 import { getBrowseUrl } from '@/lib/search/browse-entry-url';
 import { locationCityIdToSlug } from '@/lib/search/city-slugs';
+import { getLeadPhone } from '@/lib/lead-draft';
+import { buildHomeToPostSearchParams } from '@/lib/need-intake/home-post-seamless';
+import { trackAnalyticsEvent } from '@/lib/analytics/track';
 import { useAppStore } from '@/lib/store';
 import { toast } from 'sonner';
 
@@ -34,10 +37,12 @@ export function HomeLeadLanding() {
   } = useLocationSelection({ preservePathOnHome: true });
 
   const [needText, setNeedText] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const hasCity = selectedCities.length > 0 || selectedProvinceIds.length > 0;
   const primaryCity = selectedCities[0];
   const citySlug = primaryCity ? locationCityIdToSlug(primaryCity.id) : null;
+
 
   const focusComposer = useCallback(() => {
     requestAnimationFrame(() => composerInputRef.current?.focus());
@@ -45,9 +50,19 @@ export function HomeLeadLanding() {
 
   const navigateToPostForm = useCallback(
     (seed: string) => {
-      const params = new URLSearchParams();
-      params.set('seed', seed);
-      if (citySlug) params.set('city', citySlug);
+      const storedPhone = getLeadPhone();
+      const params = buildHomeToPostSearchParams({
+        seed,
+        citySlug,
+        phone: storedPhone || undefined,
+      });
+      trackAnalyticsEvent('intake_home_lead_submit', {
+        hasCity: Boolean(citySlug),
+        hasCategory: params.has('category'),
+        hasPhone: params.has('phone'),
+        seedLength: seed.length,
+      });
+      setIsSubmitting(true);
       router.push(`${routeBuilder.needNew()}?${params.toString()}`);
     },
     [router, citySlug]
@@ -119,7 +134,7 @@ export function HomeLeadLanding() {
     <div className="flex flex-col" dir="rtl">
       {/* AI hero — full viewport feel */}
       <section
-        className="relative flex min-h-viewport-content flex-col overflow-hidden lg:min-h-[calc(100dvh-var(--site-header-offset,6.5rem))]"
+        className="relative flex min-h-0 flex-col overflow-hidden sm:min-h-viewport-content lg:min-h-[calc(100dvh-var(--site-header-offset,6.5rem))]"
         aria-label="شروع گفتگو با دستیار هوشمند"
       >
         <div
@@ -138,9 +153,9 @@ export function HomeLeadLanding() {
           />
         </div>
 
-        <div className="container-default mx-auto flex flex-1 flex-col items-center justify-center px-5 py-10 md:px-8 md:py-14">
+        <div className="container-default mx-auto flex flex-1 flex-col items-center justify-center px-3 py-6 sm:px-5 sm:py-10 md:px-8 md:py-14">
           <motion.div
-            className="mb-[34px] w-full text-center"
+            className="mb-5 w-full text-center sm:mb-[34px]"
             style={{ maxWidth: COMPOSER_MAX_WIDTH }}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -153,9 +168,10 @@ export function HomeLeadLanding() {
             <h1 className="text-display text-balance-safe">
               نیازتان را بگویید
             </h1>
-            <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base">
-              نیاز ملکی خود را بنویسید — آپارتمان، زمین، رهن یا اجاره — فرم ثبت نیاز
-              پیشنهادها را پر می‌کند و شما قبل از انتشار بررسی می‌کنید.
+            <p className="mx-auto mt-2.5 max-w-lg px-1 text-[13px] leading-relaxed text-muted-foreground sm:mt-3 sm:px-0 sm:text-sm md:text-base">
+              ثبت نیاز رایگان در نیاز فایندر — خدمات، تعمیرات، املاک و هر حوزه‌ای دیگر.
+              کافی است بنویسید؛ فرم با هوش مصنوعی پر می‌شود و کسب‌وکارهای شهر شما پیشنهاد
+              می‌دهند.
             </p>
           </motion.div>
 
@@ -167,14 +183,14 @@ export function HomeLeadLanding() {
             transition={{ duration: 0.55, delay: 0.089, ease: [0.22, 1, 0.36, 1] }}
           >
             <div
-              className="relative rounded-[34px] p-[13px] sm:p-[21px]"
+              className="relative rounded-2xl p-2 sm:rounded-[34px] sm:p-[21px]"
               style={{
                 background:
                   'linear-gradient(145deg, oklch(var(--primary) / 0.06) 0%, transparent 61.8%)',
               }}
             >
               <div
-                className="pointer-events-none absolute -inset-px rounded-[34px] opacity-50"
+                className="pointer-events-none absolute -inset-px rounded-2xl opacity-50 sm:rounded-[34px]"
                 style={{
                   background:
                     'linear-gradient(135deg, oklch(var(--primary) / 0.12), transparent 50%, oklch(var(--primary) / 0.05))',
@@ -195,7 +211,7 @@ export function HomeLeadLanding() {
               isGeoDetecting={geo.isDetecting}
               onOpenCityPicker={() => setCityPickerOpen(true)}
               onDetectLocation={() => void geo.runDetection()}
-              isSubmitting={false}
+              isSubmitting={isSubmitting}
             />
 
             <LeadQuickChips
@@ -204,33 +220,6 @@ export function HomeLeadLanding() {
               isGeoDetecting={geo.isDetecting}
               onChipAction={handleChipAction}
             />
-
-            <div className="mt-[13px] space-y-[8px]">
-              <p className="text-center text-[11px] font-medium text-muted-foreground/90">
-                نمونه‌های املاک
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-[8px]">
-                {[
-                  'آپارتمان دو خواب در فرامرز عباسی مشهد',
-                  'زمین ۲۵۰ متری منطقه سجاد مشهد',
-                  'آپارتمان رهن کامل در ونک تهران',
-                  'ویلا اجاره در شیراز',
-                ].map((sample) => (
-                  <Button
-                    key={sample}
-                    type="button"
-                    variant="outline"
-                    className="h-auto min-h-[34px] max-w-full whitespace-normal rounded-[13px] px-[13px] py-[8px] text-xs font-medium"
-                    onClick={() => {
-                      setNeedText(sample);
-                      focusComposer();
-                    }}
-                  >
-                    {sample}
-                  </Button>
-                ))}
-              </div>
-            </div>
               </div>
             </div>
           </motion.div>

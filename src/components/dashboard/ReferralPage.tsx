@@ -31,6 +31,7 @@ import {
 import { toast } from 'sonner';
 import { formatPrice } from '@/lib/constants';
 import { cn } from '@/lib/utils';
+import { getClientAuthToken } from '@/lib/auth/client-auth';
 
 type ReferralStatus = 'success' | 'pending' | 'expired';
 
@@ -68,6 +69,7 @@ export function ReferralPage() {
   const [history, setHistory] = useState<ReferralRecord[]>([]);
 
   useEffect(() => {
+    if (!getClientAuthToken()) return;
     apiFetch<{
       code: string;
       url: string;

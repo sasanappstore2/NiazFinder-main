@@ -1,8 +1,25 @@
 {
   "cityId": "chaldoran",
   "cityName": "چالدران",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:40:51.900Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.567Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چالدران",
+      "name": "چالدران",
+      "nameEn": "chaldoran",
+      "centroid": {
+        "lat": 39.03045786007905,
+        "lng": 44.50487752742595
+      },
+      "bbox": {
+        "south": 38.923971334746675,
+        "north": 39.13694438541143,
+        "west": 44.38456528303079,
+        "east": 44.62518977182111
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

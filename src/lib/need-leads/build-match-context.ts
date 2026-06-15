@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { budgetToJson } from '@/lib/budget';
+import { extractNeedBudgetMetaFromDynamicAnswers } from '@/lib/need/extract-need-budget-meta';
 import type { NeedMatchContext } from '@/contracts/need-match';
 
 function parseJsonArray(raw: string): string[] {
@@ -50,6 +51,7 @@ export async function buildNeedMatchContextFromRequest(
     tags: parseJsonArray(r.tags),
     budgetMin: budgetToJson(r.budgetMin),
     budgetMax: budgetToJson(r.budgetMax),
+    dealType: extractNeedBudgetMetaFromDynamicAnswers(r.dynamicAnswers).dealType,
     dynamicAnswers: parseJsonObject(r.dynamicAnswers),
   };
 }

@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useTypingListRefresh } from '@/hooks/useTypingListRefresh';
+import { ChatPresenceDot } from '@/components/chat/ChatPresenceDot';
 
 type ChatConversationListProps = {
   enabled: boolean;
@@ -92,9 +93,10 @@ function ChatConversationListInner({
                   >
                     {getInitials(convName)}
                   </div>
-                  {conv.otherUser?.online && (
-                    <span className="absolute bottom-0 left-0 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-500" />
-                  )}
+                  <ChatPresenceDot
+                    online={conv.otherUser?.online}
+                    className="absolute bottom-0 left-0 h-3.5 w-3.5"
+                  />
                 </div>
 
                 <div className="min-w-0 flex-1">

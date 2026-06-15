@@ -2,7 +2,7 @@
   "cityId": "naqadeh",
   "cityName": "نقده",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.995Z",
+  "importedAt": "2026-06-12T20:39:29.864Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 45.3686166196045,
         "east": 45.41846665584821
       },
-      "geoSource": "divar",
-      "areas": [
-        "آپارتمان گلریز مرکزی",
-        "شمال آپارتمان گلریز",
-        "جنوب آپارتمان گلریز",
-        "شرق آپارتمان گلریز"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

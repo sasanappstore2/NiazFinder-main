@@ -1,7 +1,7 @@
 'use client';
 
 import { Clock, MapPin, Wallet } from 'lucide-react';
-import { formatBudgetRange } from '@/lib/constants';
+import { formatRequestBudget } from '@/lib/need/format-need-budget';
 import type { ServiceRequest } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { extractNeighborhoodLabel } from './need-brief-utils';
@@ -49,7 +49,7 @@ function FactCell({
 }
 
 export function NeedKeyFactsGrid({ request, className }: NeedKeyFactsGridProps) {
-  const budget = formatBudgetRange(request.budgetMin, request.budgetMax);
+  const budget = formatRequestBudget(request);
   const neighborhood = extractNeighborhoodLabel(request.address);
   const locationParts = [request.city, neighborhood].filter(Boolean);
   const location = locationParts.length > 0 ? locationParts.join(' · ') : 'نامشخص';

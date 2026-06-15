@@ -50,7 +50,7 @@ function ChipControl({
         disabled={disabled}
         onClick={onClick}
         className={cn(
-          'h-[34px] gap-2 rounded-[13px] px-[13px] text-xs font-medium transition-all duration-200',
+          'h-9 w-full gap-2 rounded-xl px-3 text-xs font-medium transition-all duration-200 sm:h-[34px] sm:w-auto sm:rounded-[13px] sm:px-[13px]',
           variant === 'location' &&
             'border-border/50 bg-background/70 hover:border-primary/30 hover:bg-primary/5',
           variant === 'primary' &&
@@ -64,7 +64,7 @@ function ChipControl({
         )}
       >
         <Icon className="size-3.5 shrink-0" />
-        <span>{label}</span>
+        <span className="truncate">{label}</span>
       </Button>
     </motion.div>
   );
@@ -89,14 +89,13 @@ export function LeadQuickChips({
   let chipIndex = 0;
 
   return (
-    <div className="mt-[21px] space-y-[13px]">
+    <div className="mt-4 space-y-3 sm:mt-[21px] sm:space-y-[13px]">
       <p className="text-center text-[11px] font-medium text-muted-foreground/90">
         میانبرها
       </p>
 
-      {/* Location row — lower cognitive load, grouped */}
       <div
-        className="flex flex-wrap items-center justify-center gap-[8px] rounded-[13px] border border-dashed border-border/40 bg-muted/15 px-[13px] py-[8px]"
+        className="grid grid-cols-2 gap-2 rounded-xl border border-dashed border-border/40 bg-muted/15 p-2.5 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-[8px] sm:rounded-[13px] sm:px-[13px] sm:py-[8px]"
         role="group"
         aria-label="تنظیم مکان"
       >
@@ -118,9 +117,8 @@ export function LeadQuickChips({
         })}
       </div>
 
-      {/* Conversion row — primary CTA stands out when city set */}
       <div
-        className="flex flex-wrap items-center justify-center gap-[13px]"
+        className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-[13px]"
         role="group"
         aria-label="ادامه مسیر"
       >

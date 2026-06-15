@@ -2,7 +2,7 @@
   "cityId": "chenaran",
   "cityName": "چناران",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.534Z",
+  "importedAt": "2026-06-12T20:39:27.631Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 59.040017635470896,
         "east": 59.079493079010504
       },
-      "geoSource": "divar",
-      "areas": [
-        "مسکن مهر مرکزی",
-        "شمال مسکن مهر",
-        "جنوب مسکن مهر",
-        "شرق مسکن مهر"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

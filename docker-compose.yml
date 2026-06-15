@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:15
+    image: postgres:15-alpine
     env_file: .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-needfinder}
@@ -9,20 +9,71 @@ services:
     ports: ["127.0.0.1:5432:5432"]
     volumes:
       - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL","pg_isready -U ${POSTGRES_USER:-needfinder}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-needfinder} -d ${POSTGRES_DB:-needfinder}"]
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 10s
+    command:
+      - postgres
+      - -c
+      - shared_buffers=256MB
+      - -c
+      - max_connections=100
 
   redis:
-    image: redis:7
+    image: redis:7-alpine
     ports: ["127.0.0.1:6379:6379"]
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
     healthcheck:
-      test: ["CMD","redis-cli","ping"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports: ["127.0.0.1:9000:9000", "127.0.0.1:9001:9001"]
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      interval: 15s
       timeout: 5s
       retries: 5
+      start_period: 15s
+
+  chat:
+    build:
+      context: .
+      dockerfile: mini-services/chat-service/Dockerfile
+    env_file: .env
+    environment:
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgresql://${POSTGRES_USER:-needfinder}:${POSTGRES_PASSWORD:-change_me}@postgres:5432/${POSTGRES_DB:-needfinder}?schema=public
+      PORT: "3004"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports: ["127.0.0.1:3004:3004"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3004/health | grep -q '\"ok\":true' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   backend:
     profiles: ["legacy"]
@@ -36,46 +87,11 @@ services:
       redis:
         condition: service_healthy
     ports: ["3001:3001"]
-    entrypoint: ["/bin/sh","/app/docker-entrypoint.sh","npm","run","start"]
-
-  minio:
-    image: minio/minio:latest
-    command: server /data --console-address ":9001"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
-    ports: ["127.0.0.1:9000:9000", "127.0.0.1:9001:9001"]
-    volumes:
-      - minio_data:/data
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
-
-  chat:
-    build:
-      context: ./mini-services/chat-service
-      dockerfile: Dockerfile
-    env_file: .env
-    environment:
-      REDIS_URL: redis://redis:6379
-      DATABASE_URL: ${DATABASE_URL}
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    ports: ["3004:3004"]
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3004/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    entrypoint: ["/bin/sh","/app/docker-entrypoint.sh","bun","run","index.ts"]
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "/app/docker-entrypoint.sh", "npm", "run", "start"]
 
   frontend:
+    profiles: ["legacy"]
     build:
       context: .
       dockerfile: Dockerfile
@@ -84,9 +100,11 @@ services:
       - backend
     expose:
       - "3000"
+    restart: unless-stopped
 
   caddy:
-    image: caddy:2
+    profiles: ["legacy"]
+    image: caddy:2-alpine
     ports:
       - "${CADDY_HTTP_PORT:-8080}:80"
       - "${CADDY_HTTPS_PORT:-8443}:443"
@@ -97,6 +115,7 @@ services:
     depends_on:
       - frontend
       - backend
+    restart: unless-stopped
 
 volumes:
   pgdata:

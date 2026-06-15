@@ -2,7 +2,7 @@
   "cityId": "gotvand",
   "cityName": "گتوند",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.659Z",
+  "importedAt": "2026-06-12T20:39:28.371Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 48.77049219483223,
         "east": 49.003211205816285
       },
-      "geoSource": "divar",
-      "areas": [
-        "روستای کایدان مرکزی",
-        "شمال روستای کایدان",
-        "جنوب روستای کایدان",
-        "شرق روستای کایدان"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

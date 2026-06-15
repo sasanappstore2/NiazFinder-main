@@ -1,0 +1,199 @@
+openapi: 3.1.0
+info:
+  title: NeedFinder Intake Public API
+  version: 1.0.0
+  description: Partner and mobile intake draft + publish API (Phase 49)
+servers:
+  - url: https://needfinder.ir
+    description: Production
+  - url: http://localhost:3000
+    description: Local dev
+tags:
+  - name: drafts
+    description: NeedDraft CRUD
+  - name: publish
+    description: Publish draft to listing
+security:
+  - ApiKeyAuth: []
+paths:
+  /api/v1/intake/drafts:
+    post:
+      tags: [drafts]
+      summary: Create intake draft
+      operationId: createIntakeDraft
+      parameters:
+        - $ref: '#/components/parameters/SchemaVersionHeader'
+        - $ref: '#/components/parameters/ClientHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDraftRequest'
+      responses:
+        '201':
+          description: Draft created
+          headers:
+            X-Intake-Api-Version:
+              schema: { type: string }
+            X-NeedDraft-Schema-Version:
+              schema: { type: integer }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /api/v1/intake/drafts/{id}:
+    get:
+      tags: [drafts]
+      summary: Get draft
+      operationId: getIntakeDraft
+      parameters:
+        - $ref: '#/components/parameters/DraftId'
+      responses:
+        '200':
+          description: Draft found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftResponse'
+        '404':
+          description: Not found
+    put:
+      tags: [drafts]
+      summary: Update draft
+      operationId: updateIntakeDraft
+      parameters:
+        - $ref: '#/components/parameters/DraftId'
+        - $ref: '#/components/parameters/SchemaVersionHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDraftRequest'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftResponse'
+    delete:
+      tags: [drafts]
+      summary: Delete draft
+      operationId: deleteIntakeDraft
+      parameters:
+        - $ref: '#/components/parameters/DraftId'
+      responses:
+        '200':
+          description: Deleted
+  /api/v1/intake/drafts/{id}/publish:
+    post:
+      tags: [publish]
+      summary: Publish draft
+      operationId: publishIntakeDraft
+      parameters:
+        - $ref: '#/components/parameters/DraftId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                listingPreview:
+                  $ref: '#/components/schemas/ListingPreview'
+      responses:
+        '200':
+          description: Published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishResponse'
+        '422':
+          description: Validation error
+        '409':
+          description: Duplicate blocked
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Intake-Api-Key
+  parameters:
+    DraftId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    SchemaVersionHeader:
+      name: X-NeedDraft-Schema-Version
+      in: header
+      schema:
+        type: integer
+        enum: [1, 2]
+    ClientHeader:
+      name: X-Intake-Client
+      in: header
+      schema:
+        type: string
+        enum: [mobile, partner]
+  schemas:
+    CreateDraftRequest:
+      type: object
+      required: [draft]
+      properties:
+        draft:
+          type: object
+          description: NeedDraft v1 or v2 payload
+        listingPreview:
+          $ref: '#/components/schemas/ListingPreview'
+        externalRef:
+          type: string
+    ListingPreview:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        budgetMin: { type: number }
+        budgetMax: { type: number }
+    DraftResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        schemaVersion: { type: integer }
+        draft: { type: object }
+        listingPreview:
+          $ref: '#/components/schemas/ListingPreview'
+        externalRef: { type: string }
+        shadowEqual: { type: boolean }
+        shadowDiffs:
+          type: array
+          items: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    PublishResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        id: { type: string }
+        slug: { type: string }
+        title: { type: string }
+        status: { type: string }
+        moderationStatus: { type: string }
+        draftId: { type: string }
+        schemaVersion: { type: integer }
+        message: { type: string }
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key
+    RateLimited:
+      description: Tier rate limit exceeded
+      headers:
+        Retry-After:
+          schema: { type: integer }

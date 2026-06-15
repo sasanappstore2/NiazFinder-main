@@ -25,6 +25,7 @@ export interface User {
   id: string;
   email: string;
   phone?: string;
+  phoneVerified?: boolean;
   username?: string;
   firstName: string;
   lastName: string;
@@ -90,6 +91,13 @@ export interface ServiceRequest {
   tags: string[];
   viewCount: number;
   proposalCount: number;
+  /** Parsed from published dynamicAnswers for budget/deal display. */
+  dealType?: string;
+  rahnAmount?: number;
+  monthlyRent?: number;
+  deposit?: number;
+  nightlyRent?: number;
+  dynamicAnswers?: Record<string, unknown>;
   user: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatar' | 'city' | 'createdAt'>;
   createdAt: string;
   updatedAt: string;
@@ -167,7 +175,9 @@ export interface Conversation {
   requestId?: string;
   contactPointId?: string | null;
   businessProfileId?: string | null;
-  otherUser: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatar' | 'online'>;
+  otherUser: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatar' | 'online'> & {
+    lastSeenAt?: string | null;
+  };
   lastMessage?: string;
   lastMessageAt?: string;
   unreadCount: number;

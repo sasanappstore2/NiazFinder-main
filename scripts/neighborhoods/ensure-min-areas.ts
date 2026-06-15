@@ -10,8 +10,11 @@ import {
   saveCityCatalog,
 } from '../../src/lib/neighborhoods/catalog';
 import { REPORTS_DIR } from './lib';
-import { sanitizeAreaLabels } from '../../src/lib/neighborhoods/area-labels';
-import { extraFallbackAreas, fallbackAreas } from './geo-lib';
+import {
+  extraFallbackAreas,
+  fallbackAreas,
+  isCorruptedAreaLabel,
+} from './geo-lib';
 
 const MIN_AREAS = 3;
 
@@ -25,7 +28,7 @@ function mergeAreas(existing: string[] | undefined, extra: string[]): string[] {
 }
 
 export function ensureAreas(name: string, areas: string[] | undefined): string[] {
-  let merged = sanitizeAreaLabels(areas, name);
+  let merged = (areas ?? []).filter((a) => !isCorruptedAreaLabel(a));
   if (merged.length >= MIN_AREAS) return merged;
 
   merged = mergeAreas(merged, fallbackAreas(name));
@@ -49,9 +52,12 @@ async function main(): Promise<void> {
     let cityPatched = 0;
     for (const hood of catalog.neighborhoods) {
       const before = hood.areas ?? [];
+      const hadCorruption = before.some(isCorruptedAreaLabel);
       const after = ensureAreas(hood.name, before);
       const changed =
-        after.length !== before.length || after.some((a, i) => a !== before[i]);
+        hadCorruption ||
+        after.length !== before.length ||
+        after.some((a, i) => a !== before[i]);
       if (!changed) continue;
       hood.areas = after;
       cityPatched += 1;

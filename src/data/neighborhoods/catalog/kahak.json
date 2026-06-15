@@ -1,8 +1,25 @@
 {
   "cityId": "kahak",
   "cityName": "کهک",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:41:44.072Z",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.774Z",
   "emptyOnDivar": true,
-  "neighborhoods": []
+  "neighborhoods": [
+    {
+      "id": "کهک",
+      "name": "کهک",
+      "nameEn": "kahak",
+      "centroid": {
+        "lat": 34.407674854904776,
+        "lng": 50.94687065738401
+      },
+      "bbox": {
+        "south": 34.3011883295724,
+        "north": 34.514161380237155,
+        "west": 50.826421119421646,
+        "east": 51.06732019534638
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

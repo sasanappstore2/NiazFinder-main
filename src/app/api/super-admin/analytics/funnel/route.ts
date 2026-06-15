@@ -10,6 +10,13 @@ const PRESETS: Record<string, string[]> = {
   need: ['page_view', 'need_created'],
   engagement: ['page_view', 'chat_started', 'proposal_sent'],
   business: ['business_profile_view', 'chat_started'],
+  'intake-wizard': [
+    'intake_wizard_step_need',
+    'intake_wizard_step_details',
+    'intake_wizard_step_location',
+    'intake_wizard_step_preview',
+    'intake_publish_success',
+  ],
 };
 
 export async function GET(request: NextRequest) {

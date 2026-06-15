@@ -1,0 +1,540 @@
+{
+  "provinceId": "golestan",
+  "provinceName": "گلستان",
+  "generatedAt": "2026-06-12T21:20:05.560Z",
+  "cities": [
+    {
+      "cityId": "gorgan",
+      "cityName": "گرگان",
+      "provinceId": "golestan",
+      "tier": "A",
+      "neighborhoodCount": 115,
+      "shares": {
+        "divar": 115,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 115
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "aliabadkatul",
+      "cityName": "علی‌آباد کتول",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "azadshahr",
+      "cityName": "آزادشهر",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kalaleh",
+      "cityName": "کلاله",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gonbadkavus",
+      "cityName": "گنبدکاووس",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 17,
+      "shares": {
+        "divar": 17,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 17
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "minudasht",
+      "cityName": "مینودشت",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kordkuy",
+      "cityName": "کردکوی",
+      "provinceId": "golestan",
+      "tier": "C",
+      "neighborhoodCount": 12,
+      "shares": {
+        "divar": 12,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 12
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bandarturkman",
+      "cityName": "بندرترکمن",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "galikash",
+      "cityName": "گالیکش",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 7,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ramian",
+      "cityName": "رامیان",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "aq-qala",
+      "cityName": "آق قلا",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 22,
+      "shares": {
+        "divar": 22,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 22
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "anbaralum",
+      "cityName": "انبارآلوم",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "inche-borun",
+      "cityName": "اینچه برون",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bandar-gaz",
+      "cityName": "بندر گز",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 8,
+      "shares": {
+        "divar": 7,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 8
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "bandar-gaz",
+          "neighborhoodId": "چهارراه-شهمیرزاد",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "bandar-gaz",
+          "neighborhoodId": "مسعود-محله",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "tatar-olya",
+      "cityName": "تاتار علیا",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 2,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jelin",
+      "cityName": "جلین",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khan-bin",
+      "cityName": "خان ببین",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "daland",
+      "cityName": "دلند",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dozin",
+      "cityName": "دوزین",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sorkhan-kalateh",
+      "cityName": "سرخنکلاته",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 81,
+      "shares": {
+        "divar": 81,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 81
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sangdovin",
+      "cityName": "سنگدوین",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "simin-shahr",
+      "cityName": "سیمین شهر",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "fazel-abad",
+      "cityName": "فاضل آباد",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "faragi",
+      "cityName": "فراغی",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gomishan",
+      "cityName": "گمیشان",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "maraveh-tapeh",
+      "cityName": "مراوه",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "negin-shahr",
+      "cityName": "نگین شهر",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nodeh-khandoz",
+      "cityName": "نوده خاندوز",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nokandeh",
+      "cityName": "نوکنده",
+      "provinceId": "golestan",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 4,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "nokandeh",
+          "neighborhoodId": "چهارراه-شهمیرزاد",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "nokandeh",
+          "neighborhoodId": "حاج-رضا",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "nokandeh",
+          "neighborhoodId": "مسعود-محله",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 5,
+  "pass": true
+}

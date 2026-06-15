@@ -18,8 +18,13 @@ import {
   listingTypeFromMarket,
 } from '@/config/market-routes';
 import type { BrowseListingType } from '@/lib/search/browse-entry-url';
+import { PageHeading } from '@/components/layout/PageHeading';
+import { crumbsFromJsonLd } from '@/lib/browse/breadcrumb-crumbs';
 import { SITE_NAME, SITE_URL } from '@/lib/seo';
-import { buildBrowsePageTitlesFromPath } from '@/lib/browse/page-heading';
+import {
+  buildBrowsePageTitlesFromPath,
+  truncateBrowsePageH1,
+} from '@/lib/browse/page-heading';
 
 type SearchParamsProp = Promise<Record<string, string | string[] | undefined>>;
 
@@ -75,8 +80,49 @@ export async function generateSearchMarketplaceMetadata(
   };
 }
 
-export async function SearchMarketplacePage({ params, market }: PageProps) {
+function marketplaceChrome(
+  market: BrowseMarket,
+  pathname: string,
+  searchParams: URLSearchParams,
+  breadcrumbJsonLd: {
+    itemListElement: { name: string; item: string }[];
+  },
+  categorySlug: string | undefined,
+  citySlug: string | undefined
+) {
+  const listingType = listingTypeFromMarket(market) as BrowseListingType;
+  const { h1 } = buildBrowsePageTitlesFromPath(
+    pathname,
+    searchParams,
+    SITE_NAME,
+    listingType
+  );
+  const initialCrumbs = crumbsFromJsonLd(breadcrumbJsonLd.itemListElement, SITE_URL);
+
+  return (
+    <>
+      <JsonLd id="search-breadcrumb-jsonld" data={breadcrumbJsonLd} />
+      <div data-browse-chrome>
+        <PageContainer noVerticalPadding className="pt-2 pb-0">
+          <Breadcrumb initialCrumbs={initialCrumbs} />
+          <PageHeading title={truncateBrowsePageH1(h1)} className="mt-2" />
+          <Separator className="my-4" />
+        </PageContainer>
+      </div>
+      <BrowseDispatcher
+        market={market}
+        categorySlug={categorySlug}
+        citySlug={citySlug}
+        serverRenderedHeading
+      />
+    </>
+  );
+}
+
+export async function SearchMarketplacePage({ params, searchParams, market }: PageProps) {
   const { location, segments = [] } = await params;
+  const rawSearchParams = searchParams ? await searchParams : {};
+  const urlSearchParams = toUrlSearchParams(rawSearchParams);
   const resolved = resolveMarketContext(market, location, segments);
 
   if (resolved.kind === 'business') {
@@ -141,18 +187,15 @@ export async function SearchMarketplacePage({ params, market }: PageProps) {
         ? bctx.categorySlug
         : undefined;
     const citySlug = bctx.location.kind === 'city' ? bctx.location.city.slug : undefined;
+    const pathname = canonicalMarketPath(market, locSlug, segments);
 
-    return (
-      <>
-        <JsonLd id="search-breadcrumb-jsonld" data={breadcrumbJsonLd} />
-        <div data-browse-chrome>
-          <PageContainer noVerticalPadding className="pt-2 pb-0">
-            <Breadcrumb />
-            <Separator className="my-4" />
-          </PageContainer>
-        </div>
-        <BrowseDispatcher market={market} categorySlug={categorySlug} citySlug={citySlug} />
-      </>
+    return marketplaceChrome(
+      market,
+      pathname,
+      urlSearchParams,
+      breadcrumbJsonLd,
+      categorySlug,
+      citySlug
     );
   }
 
@@ -196,17 +239,14 @@ export async function SearchMarketplacePage({ params, market }: PageProps) {
   const categorySlug =
     ctx.kind === 'category' || ctx.kind === 'parent-child' ? ctx.category.slug : undefined;
   const citySlug = ctx.location.kind === 'city' ? ctx.location.city.slug : undefined;
+  const pathname = canonicalMarketPath(market, locSlug, segments);
 
-  return (
-    <>
-      <JsonLd id="search-breadcrumb-jsonld" data={breadcrumbJsonLd} />
-      <div data-browse-chrome>
-        <PageContainer noVerticalPadding className="pt-2 pb-0">
-          <Breadcrumb />
-          <Separator className="my-4" />
-        </PageContainer>
-      </div>
-      <BrowseDispatcher market={market} categorySlug={categorySlug} citySlug={citySlug} />
-    </>
+  return marketplaceChrome(
+    market,
+    pathname,
+    urlSearchParams,
+    breadcrumbJsonLd,
+    categorySlug,
+    citySlug
   );
 }

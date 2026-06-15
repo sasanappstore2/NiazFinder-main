@@ -3,6 +3,7 @@ import {
   loadCityCatalogFile,
   resolveCatalogCityIdCandidates,
 } from '@/lib/neighborhoods/catalog';
+import { displayAreaLabels } from '@/lib/neighborhoods/area-labels';
 import { loadCityGeoFile, readGeoManifest } from '@/lib/neighborhoods/geo';
 
 const MASHHAD_AZAD_NAME = '\u0622\u0632\u0627\u062f\u0634\u0647\u0631';
@@ -21,9 +22,11 @@ async function assertCity(cityId: string, minHoods: number): Promise<void> {
   );
 
   for (const hood of catalog!.neighborhoods) {
+    const areas = displayAreaLabels(hood.areas, hood.name);
+    const hasGeo = Boolean(hood.bbox || hood.centroid);
     assert.ok(
-      (hood.areas?.length ?? 0) >= 3,
-      `${cityId}/${hood.id}: expected >= 3 areas`
+      areas.length > 0 || hasGeo,
+      `${cityId}/${hood.id}: expected real areas or geo`
     );
   }
 

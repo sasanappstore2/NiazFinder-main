@@ -1,8 +1,25 @@
 {
   "cityId": "javanrud",
   "cityName": "جوانرود",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:05.470Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.664Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جوانرود",
+      "name": "جوانرود",
+      "nameEn": "javanrud",
+      "centroid": {
+        "lat": 34.77412973475386,
+        "lng": 46.41880379836954
+      },
+      "bbox": {
+        "south": 34.76177729781531,
+        "north": 34.78648217169242,
+        "west": 46.40528043266493,
+        "east": 46.432327164074145
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

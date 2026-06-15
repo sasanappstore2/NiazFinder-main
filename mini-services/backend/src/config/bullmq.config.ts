@@ -3,7 +3,17 @@ import { BullModule } from '@nestjs/bullmq';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
 
-const QUEUE_NAMES = ['notification', 'email', 'cleanup', 'search-index', 'intake-heavy', 'request-moderation'] as const;
+const QUEUE_NAMES = [
+  'notification',
+  'email',
+  'cleanup',
+  'search-index',
+  'intake-heavy',
+  'request-moderation',
+  'intake-analyze',
+  'intake-listing-copy',
+  'intake-dead-letter',
+] as const;
 
 @Global()
 @Module({})

@@ -6,6 +6,7 @@
  * API stores `city` as Persian text.
  */
 
+import { getCityBySlug } from '@/config/locations';
 import { countries, dedupeCitiesById, type City } from '@/lib/location-system';
 
 const ID_OVERRIDES: Record<string, string> = {
@@ -37,8 +38,9 @@ for (const city of ALL_LOCATION_CITIES) {
 }
 
 /** Normalise a location-system city id to a URL slug. */
-export function locationCityIdToSlug(id: string): string {
-  return ID_OVERRIDES[id] ?? id;
+export function locationCityIdToSlug(id: string | number): string {
+  const key = String(id).trim();
+  return ID_OVERRIDES[key] ?? key;
 }
 
 /** Reverse lookup: URL slug or location-system city id → City (or null). */
@@ -49,12 +51,14 @@ export function cityFromSlug(slug: string): City | null {
 
 /** All known URL slugs (for filter validation). */
 export function isKnownCitySlug(slug: string): boolean {
-  return BY_SLUG.has(slug.toLowerCase());
+  const raw = slug.toLowerCase().trim();
+  return BY_SLUG.has(raw) || getCityBySlug(raw) != null;
 }
 
 /** Persian display name for API filtering. */
 export function citySlugToPersianName(slug: string): string | null {
-  return cityFromSlug(slug)?.name ?? null;
+  const raw = slug.toLowerCase().trim();
+  return cityFromSlug(raw)?.name ?? getCityBySlug(raw)?.title ?? null;
 }
 
 /** Map selected cities to URL slugs. */

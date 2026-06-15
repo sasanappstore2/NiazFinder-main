@@ -2,9 +2,7 @@
 export const TEST_OTP_CODE = '1234';
 
 export function isTestOtpMode(): boolean {
-  if (process.env.NODE_ENV === 'production') {
-    return process.env.ALLOW_TEST_OTP === 'true';
-  }
+  if (process.env.NODE_ENV === 'production') return false;
   return process.env.ALLOW_TEST_OTP !== 'false';
 }
 

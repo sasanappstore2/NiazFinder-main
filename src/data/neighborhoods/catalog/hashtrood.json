@@ -1,8 +1,35 @@
 {
   "cityId": "hashtrood",
   "cityName": "هشتروود",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:40:35.825Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.471Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "هشتروود",
+      "name": "هشتروود",
+      "nameEn": "hashtrood",
+      "centroid": {
+        "lat": 37.460460639525685,
+        "lng": 47.10531649249557
+      },
+      "bbox": {
+        "south": 37.353974114193306,
+        "north": 37.566947164858064,
+        "west": 46.98094429310463,
+        "east": 47.22968869188651
+      },
+      "geoSource": "divar",
+      "areas": [
+        "آزادراه پیامبر اعظم",
+        "شهریار",
+        "سهند",
+        "جاده سه راهی قویون قشلاق - آزادراه",
+        "صفا",
+        "دلگشا",
+        "گلستان",
+        "لاله"
+      ]
+    }
+  ]
 }

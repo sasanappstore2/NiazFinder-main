@@ -68,3 +68,66 @@ export function sanitizeAreaLabels(
 
   return out;
 }
+
+function normalizeNameKey(name: string): string {
+  return normSpaces(name).toLowerCase();
+}
+
+/** True when label is a pipeline-generated placeholder (not a real sub-area). */
+export function isSyntheticAreaLabel(area: string, neighborhoodName: string): boolean {
+  const label = normSpaces(area);
+  const name = normSpaces(neighborhoodName);
+  if (!label || !name) return false;
+
+  const labelKey = label.toLowerCase();
+  const nameKey = normalizeNameKey(name);
+
+  if (labelKey === `${nameKey} مرکزی` || labelKey === `${nameKey} \u0645\u0631\u06a9\u0632\u06cc`) {
+    return true;
+  }
+
+  const directions = ['شمال', 'جنوب', 'شرق', 'غرب'];
+  for (const dir of directions) {
+    if (labelKey === `${dir} ${nameKey}`) return true;
+  }
+
+  return false;
+}
+
+/** Real sub-area labels for UI display (no synthetic placeholders). */
+export function displayAreaLabels(
+  areas: string[] | undefined,
+  neighborhoodName: string
+): string[] {
+  return sanitizeAreaLabels(areas, neighborhoodName).filter(
+    (label) => !isSyntheticAreaLabel(label, neighborhoodName)
+  );
+}
+
+/** All searchable aliases: real labels plus optional extra aliases (never shown in UI). */
+export function searchAreaLabels(
+  areas: string[] | undefined,
+  neighborhoodName: string,
+  extraAliases?: string[]
+): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+
+  const add = (raw: string) => {
+    const label = sanitizeAreaLabel(raw, neighborhoodName);
+    if (!label) return;
+    const key = label.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.push(label);
+  };
+
+  for (const label of displayAreaLabels(areas, neighborhoodName)) {
+    add(label);
+  }
+  for (const alias of extraAliases ?? []) {
+    add(alias);
+  }
+
+  return out;
+}

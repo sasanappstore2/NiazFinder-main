@@ -143,19 +143,14 @@ function StepHowItWorks() {
 function StepGetStarted({
   dontShowAgain,
   setDontShowAgain,
+  onRegister,
+  onLater,
 }: {
   dontShowAgain: boolean;
   setDontShowAgain: (v: boolean) => void;
+  onRegister: () => void;
+  onLater: () => void;
 }) {
-  const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
-  const setAuthModalTab = useAppStore((s) => s.setAuthModalTab);
-
-  const handleRegister = () => {
-    localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
-    setAuthModalTab('register');
-    setAuthModalOpen(true);
-  };
-
   return (
     <div className="space-y-6 text-center">
       {/* Rocket icon */}
@@ -175,14 +170,14 @@ function StepGetStarted({
       {/* CTA Buttons */}
       <div className="flex flex-col gap-3 pt-1 sm:flex-row sm:justify-center">
         <Button
-          onClick={handleRegister}
+          onClick={onRegister}
           className="w-full bg-emerald-600 text-white hover:bg-emerald-700 sm:w-auto"
           size="lg"
         >
           <Sparkles className="ml-2 size-4" />
           ثبت‌نام رایگان
         </Button>
-        <Button variant="ghost" className="w-full sm:w-auto" size="lg">
+        <Button variant="ghost" className="w-full sm:w-auto" size="lg" onClick={onLater}>
           بعداً
         </Button>
       </div>
@@ -245,6 +240,8 @@ export function OnboardingWelcome() {
   const [dontShowAgain, setDontShowAgain] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const prevStepRef = useRef(0);
+  const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
+  const setAuthModalTab = useAppStore((s) => s.setAuthModalTab);
 
   const totalSteps = 3;
 
@@ -272,6 +269,17 @@ export function OnboardingWelcome() {
     }
     setIsVisible(false);
   }, [dontShowAgain]);
+
+  const handleRegister = useCallback(() => {
+    try {
+      localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
+    } catch {
+      // Silently fail
+    }
+    setIsVisible(false);
+    setAuthModalTab('register');
+    setAuthModalOpen(true);
+  }, [setAuthModalOpen, setAuthModalTab]);
 
   const goNext = useCallback(() => {
     if (step < totalSteps - 1 && !isTransitioning) {
@@ -360,6 +368,8 @@ export function OnboardingWelcome() {
             <StepGetStarted
               dontShowAgain={dontShowAgain}
               setDontShowAgain={setDontShowAgain}
+              onRegister={handleRegister}
+              onLater={handleClose}
             />
           )}
         </div>

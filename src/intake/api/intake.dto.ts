@@ -96,6 +96,6 @@ export type IntakeAnalyzeResponse = IntakeAnalysisResult & {
       qwenInvoked: boolean;
       qwenLatencyMs: number;
     };
-    trace?: import('@/intake/training/trainingExample').IntakeAnalysisTrace;
+    trace?: import('@/intake/types/analysis-trace').IntakeAnalysisTrace;
   };
 };

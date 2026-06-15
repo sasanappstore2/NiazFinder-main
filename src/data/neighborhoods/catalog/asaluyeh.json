@@ -2,7 +2,7 @@
   "cityId": "asaluyeh",
   "cityName": "عسلویه",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.408Z",
+  "importedAt": "2026-06-12T20:39:26.936Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 52.62373075471938,
         "east": 52.84744414407778
       },
-      "geoSource": "divar",
-      "areas": [
-        "شهرک خلیج فارس مرکزی",
-        "شمال شهرک خلیج فارس",
-        "جنوب شهرک خلیج فارس",
-        "شرق شهرک خلیج فارس"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

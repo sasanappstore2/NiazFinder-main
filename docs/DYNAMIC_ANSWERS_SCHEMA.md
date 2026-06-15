@@ -1,0 +1,47 @@
+# dynamicAnswers schema (publish ? browse)
+
+> ??? ?? ? ??? ???? JSON ????????? ?? `ServiceRequest.dynamicAnswers`
+
+## ?????? ???
+
+```json
+{
+  "projection": { "schemaVersion": 1, "needType": "...", "canonicalHash": "..." },
+  "needType": "apartment-rent-seeking",
+  "schemaVersion": "1.0",
+  "sourceText": "??? ???? ?????",
+  "entities": { "...": "NeedDraft.entities" },
+  "dealType": "rent_monthly",
+  "rooms": 2,
+  "areaMin": 90,
+  "location": "????? ???",
+  "_neighborhoodSlug": "slug-id",
+  "neighborhoodSlug": "slug-id",
+  "_mapLat": 36.2972,
+  "_mapLng": 59.6067,
+  "serviceRequestV2": { "...": "canonical snapshot at publish time" }
+}
+```
+
+## ??????
+
+| ???? | ???? | browse |
+|------|------|--------|
+| ???????? ???? (`dealType`, `rooms`, ?) | `flattenDraftAnswersForPublish` | `matchesDynamicAnswers` |
+| `_neighborhoodSlug` | `entities.neighborhoodSlug` | ????? ???? |
+| `_mapLat` / `_mapLng` | `entities.lat/lng` | ???? |
+| `location` | ???? + ??? | ?????? ???? |
+| `projection` | ???????? canonical | ? |
+
+## ?????
+
+1. `flattenDraftAnswersForPublish(draft)` ? answers + entity fallbacks
+2. `toPublishCommand(draft, categoryId, subcategoryId)` ? merge ?? `dynamicAnswers`
+3. Route publish ? `JSON.stringify({ ...dynamicAnswers, serviceRequestV2 })`
+
+## ???
+
+```bash
+npm run test:publish-browse-parity   # ??+ ??????
+npm run test:neighborhood-filter-parity
+```

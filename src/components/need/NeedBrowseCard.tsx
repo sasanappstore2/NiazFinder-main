@@ -12,7 +12,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
-import { formatBudgetRange, getTimeAgo, getPriorityLabel } from '@/lib/constants';
+import { formatRequestBudget } from '@/lib/need/format-need-budget';
+import { getTimeAgo, getPriorityLabel } from '@/lib/constants';
 import { routeBuilder } from '@/config/routes';
 import type { ServiceRequest } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -108,6 +109,10 @@ export interface NeedBrowseCardProps {
   dataHref?: string;
   categoryHref?: string;
   cityHref?: string;
+  /** Intake preview: no bookmark, no navigation affordance (phase 21). */
+  previewMode?: boolean;
+  /** Optional deal-type chip shown next to category (intake preview). */
+  extraFilterLabel?: string;
 }
 
 export function NeedBrowseCard({
@@ -116,34 +121,51 @@ export function NeedBrowseCard({
   dataHref,
   categoryHref,
   cityHref,
+  previewMode = false,
+  extraFilterLabel,
 }: NeedBrowseCardProps) {
   const detailHref = dataHref || routeBuilder.listing(request.id, request.title);
   const showPriorityBadge =
     request.priority === 'URGENT' || request.priority === 'HIGH';
-  const budgetLabel = formatBudgetRange(request.budgetMin, request.budgetMax);
+  const budgetLabel = formatRequestBudget(request);
   const neighborhoodLabel = extractNeighborhoodLabel(request.address);
   const proposalCount = request.proposalCount;
 
   return (
     <Card
-      onClick={onClick}
+      onClick={previewMode ? undefined : onClick}
       role="article"
-      data-href={detailHref}
-      className={cn(needCardSurfaceClass, priorityAccentClass(request.priority), 'gap-0! py-0!')}
+      data-href={previewMode ? undefined : detailHref}
+      className={cn(
+        needCardSurfaceClass,
+        priorityAccentClass(request.priority),
+        'gap-0! py-0!',
+        previewMode && 'pointer-events-none shadow-none'
+      )}
     >
       <CardContent className="p-4 sm:p-[1.125rem]">
-        <BookmarkButton
-          itemId={request.id}
-          itemType="request"
-          size="sm"
-          className="touch-target-min absolute left-3 top-3.5 z-10 sm:left-3.5 sm:top-4"
-        />
+        {!previewMode ? (
+          <BookmarkButton
+            itemId={request.id}
+            itemType="request"
+            size="sm"
+            className="touch-target-min absolute left-3 top-3.5 z-10 sm:left-3.5 sm:top-4"
+          />
+        ) : null}
 
-        <div className="flex flex-col gap-3 pl-10 sm:pl-11">
+        <div className={cn('flex flex-col gap-3', !previewMode && 'pl-10 sm:pl-11')}>
           {/* Row 1 — category + priority */}
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             {request.categoryName ? (
-              <CategoryPill name={request.categoryName} href={categoryHref} />
+              <CategoryPill
+                name={request.categoryName}
+                href={previewMode ? undefined : categoryHref}
+              />
+            ) : null}
+            {extraFilterLabel ? (
+              <span className="inline-flex max-w-[10rem] truncate rounded-full border border-border/60 bg-background px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+                {extraFilterLabel}
+              </span>
             ) : null}
             {showPriorityBadge ? <PriorityBadge priority={request.priority} /> : null}
           </div>

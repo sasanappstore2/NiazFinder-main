@@ -29,6 +29,8 @@ import { useAppStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import { toPersianDigits } from '@/lib/format/digits';
 import { toast } from 'sonner';
+import { peerPresenceLabel } from '@/lib/chat/presence-label';
+import { ChatPresenceDot } from '@/components/chat/ChatPresenceDot';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -281,14 +283,10 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
                         {getInitials(otherUserName)}
                       </AvatarFallback>
                     </Avatar>
-                    {/* Online indicator */}
-                    <span
-                      className={cn(
-                        'absolute bottom-1 right-1 h-4 w-4 rounded-full border-2 border-background',
-                        otherUser?.online
-                          ? 'bg-emerald-500 ring-2 ring-emerald-500/30'
-                          : 'bg-muted-foreground/40'
-                      )}
+                    <ChatPresenceDot
+                      online={otherUser?.online}
+                      size="md"
+                      className="absolute bottom-1 right-1"
                     />
                   </div>
 
@@ -314,7 +312,7 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
                             : 'bg-muted-foreground/40'
                         )}
                       />
-                      {otherUser?.online ? 'آنلاین' : 'آفلاین'}
+                      {peerPresenceLabel(otherUser ?? undefined)}
                     </Badge>
                   </div>
 

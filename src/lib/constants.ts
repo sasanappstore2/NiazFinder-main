@@ -1,4 +1,5 @@
 import type { Category, SpecialistProfile, ServiceRequest, Review } from './types';
+import { formatTomanAmount } from '@/lib/format/money';
 
 // ============ CATEGORIES ============
 export const CATEGORIES: Category[] = [
@@ -308,15 +309,13 @@ export const MOCK_REVIEWS: Review[] = [
 ];
 
 // ============ BUDGET LABELS ============
-export const formatPrice = (price: number): string => {
-  if (price >= 1000000) {
-    return `${(price / 1000000).toLocaleString('fa-IR')} میلیون تومان`;
-  }
-  return `${price.toLocaleString('fa-IR')} تومان`;
-};
+export const formatPrice = (price: number): string => formatTomanAmount(price);
 
 export const formatBudgetRange = (min?: number, max?: number): string => {
-  if (min && max) return `${formatPrice(min)} - ${formatPrice(max)}`;
+  if (min && max) {
+    if (min === max) return formatPrice(min);
+    return `${formatPrice(min)} - ${formatPrice(max)}`;
+  }
   if (min) return `از ${formatPrice(min)}`;
   if (max) return `تا ${formatPrice(max)}`;
   return 'توافقی';

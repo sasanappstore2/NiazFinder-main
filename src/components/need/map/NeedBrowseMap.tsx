@@ -6,6 +6,7 @@ import { DollarSign, Flame, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { NeedMapPin } from '@/lib/need/map-pins-types';
 import { formatBudgetRange } from '@/lib/constants';
+import { formatCountFa } from '@/lib/format/digits';
 import { resolveMapViewportScope } from '@/lib/business/map-viewport-scope';
 import { filterValidMapPins, isValidLatLng } from '@/lib/business/map-coords';
 import { routeBuilder } from '@/config/routes';
@@ -238,7 +239,7 @@ export function NeedBrowseMap({
 
       {!immersive ? (
         <div className="pointer-events-none absolute bottom-3 right-3 z-[500] rounded-lg bg-card/90 px-2.5 py-1 text-[11px] text-muted-foreground shadow-sm backdrop-blur-sm">
-          {validPins.length.toLocaleString('fa-IR')} {'\u0646\u06cc\u0627\u0632 \u062f\u0631 \u0627\u06cc\u0646 \u0645\u062d\u062f\u0648\u062f\u0647'}
+          {formatCountFa(validPins.length)} {'\u0646\u06cc\u0627\u0632 \u062f\u0631 \u0627\u06cc\u0646 \u0645\u062d\u062f\u0648\u062f\u0647'}
         </div>
       ) : null}
 
@@ -272,7 +273,7 @@ export function NeedBrowseMap({
 
       {mobileMode && !loading && !immersive ? (
         <div className="bm-map-chrome pointer-events-none absolute top-3 right-3 z-[500] rounded-full px-3 py-1.5 text-[13px] font-medium">
-          {validPins.length.toLocaleString('fa-IR')}{' '}
+          {formatCountFa(validPins.length)}{' '}
           <span className="text-muted-foreground">{'\u0646\u06cc\u0627\u0632'}</span>
         </div>
       ) : null}

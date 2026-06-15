@@ -1,8 +1,25 @@
 {
   "cityId": "boinnzahra",
   "cityName": "بوئین‌زهرا",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:43:43.864Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.443Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بوئینزهرا",
+      "name": "بوئین‌زهرا",
+      "nameEn": "boinnzahra",
+      "centroid": {
+        "lat": 35.73866193607618,
+        "lng": 50.08903265582782
+      },
+      "bbox": {
+        "south": 35.6321754107438,
+        "north": 35.845148461408556,
+        "west": 49.96665430086826,
+        "east": 50.211411010787394
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

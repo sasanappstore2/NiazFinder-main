@@ -1,8 +1,25 @@
 {
   "cityId": "sepidan",
   "cityName": "سپیدان",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:40:10.482Z",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.690Z",
   "emptyOnDivar": true,
-  "neighborhoods": []
+  "neighborhoods": [
+    {
+      "id": "سپیدان",
+      "name": "سپیدان",
+      "nameEn": "sepidan",
+      "centroid": {
+        "lat": 30.3374483986705,
+        "lng": 52.048307952281064
+      },
+      "bbox": {
+        "south": 30.230961873338124,
+        "north": 30.443934924002875,
+        "west": 51.93997336096101,
+        "east": 52.15664254360112
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

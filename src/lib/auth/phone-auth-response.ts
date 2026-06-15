@@ -20,7 +20,7 @@ export function mapDbUserToResponse(user: NonNullable<DbUser>): User {
     role: user.role as User['role'],
     isVerified: user.isVerified,
     isActive: user.isActive,
-    online: true,
+    online: user.online,
     rating: 0,
     projectCount: 0,
     completionRate: 0,
@@ -41,7 +41,7 @@ export async function issueAuthToken(userId: string): Promise<string> {
   });
   await db.user.update({
     where: { id: userId },
-    data: { lastSeenAt: new Date(), online: true },
+    data: { lastSeenAt: new Date() },
   });
   return token;
 }

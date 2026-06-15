@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { ManagedNeighborhood } from '@/lib/neighborhoods/types';
+import { displayAreaLabels } from '@/lib/neighborhoods/area-labels';
 
 function Checkable({ checked }: { checked: boolean }) {
   return (
@@ -42,11 +43,15 @@ function Checkable({ checked }: { checked: boolean }) {
   );
 }
 
+function neighborhoodAreas(n: ManagedNeighborhood): string[] {
+  return displayAreaLabels(n.areas, n.name);
+}
+
 function matchesQuery(n: ManagedNeighborhood, q: string): boolean {
   if (!q) return true;
   const norm = q.trim().toLowerCase();
   if (n.name.toLowerCase().includes(norm)) return true;
-  return n.areas?.some((a) => a.toLowerCase().includes(norm)) ?? false;
+  return neighborhoodAreas(n).some((a) => a.toLowerCase().includes(norm));
 }
 
 interface NeighborhoodSelectorModalProps {
@@ -153,9 +158,9 @@ export function NeighborhoodSelectorModal({
                   <Checkable checked={checked} />
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold leading-snug">{n.name}</p>
-                    {n.areas && n.areas.length > 0 && (
+                    {neighborhoodAreas(n).length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1.5">
-                        {n.areas.map((area) => (
+                        {neighborhoodAreas(n).map((area) => (
                           <span
                             key={area}
                             className="rounded-md bg-muted/60 px-2 py-0.5 text-xs text-muted-foreground"

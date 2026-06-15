@@ -1,0 +1,783 @@
+{
+  "provinceId": "west-azerbaijan",
+  "provinceName": "آذربایجان غربی",
+  "generatedAt": "2026-06-12T21:20:02.470Z",
+  "cities": [
+    {
+      "cityId": "urmia",
+      "cityName": "ارومیه",
+      "provinceId": "west-azerbaijan",
+      "tier": "A",
+      "neighborhoodCount": 172,
+      "shares": {
+        "divar": 171,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 172
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khoy",
+      "cityName": "خوی",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 28,
+      "shares": {
+        "divar": 28,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 28
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mahabad",
+      "cityName": "مهاباد",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "mahabad",
+          "neighborhoodId": "مهاباد-اصفهان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "sardasht",
+      "cityName": "سردشت",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 13,
+      "shares": {
+        "divar": 13,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 13
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "piranshahr",
+      "cityName": "پیرانشهر",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 7,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "miandoab",
+      "cityName": "میاندوآب",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 14,
+      "shares": {
+        "divar": 14,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 14
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bukan",
+      "cityName": "بوکان",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 12,
+      "shares": {
+        "divar": 12,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 12
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "salmas",
+      "cityName": "سلماس",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "naqadeh",
+      "cityName": "نقده",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "oshnavieh",
+      "cityName": "اشنویه",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "takab",
+      "cityName": "تکاب",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "maku",
+      "cityName": "ماکو",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shahindej",
+      "cityName": "شاهین‌دژ",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chaldoran",
+      "cityName": "چالدران",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "aras",
+      "cityName": "ارس",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 2,
+        "osm": 5,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "anzal",
+      "cityName": "انزل",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ivauqli",
+      "cityName": "ایواوغلی",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "baruq",
+      "cityName": "باروق",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bazargan",
+      "cityName": "بازرگان",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bektash",
+      "cityName": "بکتاش",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 9,
+      "shares": {
+        "divar": 9,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 9
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "poldasht",
+      "cityName": "پلدشت",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "takht-e-solayman",
+      "cityName": "تخت سلیمان",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chaharborj-city",
+      "cityName": "چهاربرج",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 7,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hajilar",
+      "cityName": "حاجیلار",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khalifan",
+      "cityName": "خلیفان",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dashtak",
+      "cityName": "دشتک",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "rabt",
+      "cityName": "ربط",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 0,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "silvaneh",
+      "cityName": "سیلوانه",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "simineh",
+      "cityName": "سیمینه",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shut",
+      "cityName": "شوط",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "safaaiyeh",
+      "cityName": "صفائیه",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sumay-baradust",
+      "cityName": "صومای برادوست",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "firuragh",
+      "cityName": "فیرورق",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 28,
+      "shares": {
+        "divar": 28,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 28
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "firuzabad-city",
+      "cityName": "فیروزآباد (آذربایجان)",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 7,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghare-ziyaoddin",
+      "cityName": "قره ضیاالدین",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghare-ghavin",
+      "cityName": "قره قوین",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghatur",
+      "cityName": "قطور",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "keshavarz-city",
+      "cityName": "کشاورز",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kuhsar-city",
+      "cityName": "کوهسار (آذربایجان)",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 171,
+      "shares": {
+        "divar": 171,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 171
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "lajan",
+      "cityName": "لاجان",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mohammadbar",
+      "cityName": "محمدیار",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nalus",
+      "cityName": "نالوس",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 1,
+        "osm": 4,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nakhtalu",
+      "cityName": "نختالو",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nushin-shahr",
+      "cityName": "نوشین شهر",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 122,
+      "shares": {
+        "divar": 122,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 122
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "vazine",
+      "cityName": "وزینه",
+      "provinceId": "west-azerbaijan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 1,
+  "pass": true
+}

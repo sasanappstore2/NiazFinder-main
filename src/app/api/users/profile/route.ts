@@ -153,7 +153,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body: UpdateProfileBody = await request.json();
-    const { firstName, lastName, displayName, username, bio, city, province, phone, avatar, coverImage, website } = body;
+    const { firstName, lastName, displayName, username, bio, city, province, phone: _phone, avatar, coverImage, website } = body;
 
     // Check username uniqueness if provided
     if (username !== undefined && username.trim()) {
@@ -176,27 +176,16 @@ export async function PUT(request: NextRequest) {
     if (bio !== undefined) updateData.bio = bio.trim() || null;
     if (city !== undefined) updateData.city = city.trim() || null;
     if (province !== undefined) updateData.province = province.trim() || null;
-    if (phone !== undefined) updateData.phone = phone.trim() || null;
+    if (_phone !== undefined) {
+      return NextResponse.json(
+        { error: 'تغییر شماره تلفن فقط از طریق تأیید پیامکی امکان‌پذیر است' },
+        { status: 400 }
+      );
+    }
     if (avatar !== undefined) updateData.avatar = avatar.trim() || null;
     if (coverImage !== undefined) updateData.coverImage = coverImage.trim() || null;
     if (username !== undefined) updateData.username = username.trim().toLowerCase() || null;
     if (website !== undefined) updateData.website = website.trim() || null;
-
-    // Check phone uniqueness if provided
-    if (phone !== undefined && phone.trim()) {
-      const existingPhone = await db.user.findFirst({
-        where: {
-          phone: phone.trim(),
-          id: { not: user.id },
-        },
-      });
-      if (existingPhone) {
-        return NextResponse.json(
-          { error: 'این شماره تلفن قبلاً ثبت شده است' },
-          { status: 409 }
-        );
-      }
-    }
 
     const updatedUser = await db.user.update({
       where: { id: user.id },

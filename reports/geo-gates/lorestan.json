@@ -1,0 +1,554 @@
+{
+  "provinceId": "lorestan",
+  "provinceName": "لرستان",
+  "generatedAt": "2026-06-12T21:20:04.206Z",
+  "cities": [
+    {
+      "cityId": "khorramabad",
+      "cityName": "خرم‌آباد",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 95,
+      "shares": {
+        "divar": 93,
+        "osm": 2,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 95
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "borujerd",
+      "cityName": "بروجرد",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 75,
+      "shares": {
+        "divar": 75,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 75
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dorud",
+      "cityName": "دورود",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kuhdasht",
+      "cityName": "کوهدشت",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "aligudarz",
+      "cityName": "الیگودرز",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 9,
+      "shares": {
+        "divar": 9,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 9
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "azna",
+      "cityName": "ازنا",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 3,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nourabad",
+      "cityName": "نورآباد",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 29,
+      "shares": {
+        "divar": 29,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 29
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "poldokhtar",
+      "cityName": "پلدختر",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "rumeshkan",
+      "cityName": "رومشکان",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 10,
+      "shares": {
+        "divar": 8,
+        "osm": 2,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 10
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "difful",
+      "cityName": "درفول",
+      "provinceId": "lorestan",
+      "tier": "C",
+      "neighborhoodCount": 52,
+      "shares": {
+        "divar": 52,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 52
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ashtarinan",
+      "cityName": "اشترینان",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "aleshtar",
+      "cityName": "الشتر",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "barbarud",
+      "cityName": "بربرود",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "beyranvand",
+      "cityName": "بیرانوند",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 93,
+      "shares": {
+        "divar": 93,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 93
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "papi",
+      "cityName": "پاپی",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 8,
+      "shares": {
+        "divar": 8,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 8
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chapalq",
+      "cityName": "جاپلق",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chegni",
+      "cityName": "چگنی",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 93,
+      "shares": {
+        "divar": 93,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 93
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khaveh",
+      "cityName": "خاوه",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "darb-gonbad",
+      "cityName": "درب گنبد",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zolqi",
+      "cityName": "ذلقی",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zaghah",
+      "cityName": "زاغه",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zazomahru",
+      "cityName": "ززوماهرو",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "suri",
+      "cityName": "سوری",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "silakhur",
+      "cityName": "سیلاخور",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shahivand",
+      "cityName": "شاهیوند",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shirvan-city",
+      "cityName": "شیروان (لرستان)",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 45,
+      "shares": {
+        "divar": 45,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 45
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "tarhan",
+      "cityName": "طرهان",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "firoozabad",
+      "cityName": "فیروزآباد (لرستان)",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kakavand",
+      "cityName": "کاکاوند",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 93,
+      "shares": {
+        "divar": 93,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 93
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kohnani",
+      "cityName": "کوهنانی",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mamulan",
+      "cityName": "معمولان",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "veysian",
+      "cityName": "ویسیان",
+      "provinceId": "lorestan",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 0,
+  "pass": true
+}

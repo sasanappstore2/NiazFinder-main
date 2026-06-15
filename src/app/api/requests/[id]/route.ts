@@ -3,6 +3,7 @@ import type { Prisma } from '@prisma/client';
 import { ProposalStatus } from '@prisma/client';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { extractNeedBudgetMetaFromDynamicAnswers } from '@/lib/need/extract-need-budget-meta';
 
 function budgetToJson(value: bigint | number | null | undefined): number | null {
   if (value == null) return null;
@@ -157,14 +158,23 @@ export async function GET(
       author: r.author,
     }));
 
+    const budgetMeta = extractNeedBudgetMetaFromDynamicAnswers(serviceRequest.dynamicAnswers);
+
     const result = {
       id: serviceRequest.id,
       title: serviceRequest.title,
       slug: serviceRequest.slug,
       description: serviceRequest.description,
+      address: serviceRequest.address,
       budgetMin: budgetToJson(serviceRequest.budgetMin),
       budgetMax: budgetToJson(serviceRequest.budgetMax),
       budgetType: serviceRequest.budgetType,
+      dealType: budgetMeta.dealType,
+      rahnAmount: budgetMeta.rahnAmount,
+      monthlyRent: budgetMeta.monthlyRent,
+      deposit: budgetMeta.deposit,
+      nightlyRent: budgetMeta.nightlyRent,
+      dynamicAnswers: budgetMeta.dynamicAnswers,
       deliveryTime: serviceRequest.deliveryTime,
       deliveryUnit: serviceRequest.deliveryUnit,
       city: serviceRequest.city,

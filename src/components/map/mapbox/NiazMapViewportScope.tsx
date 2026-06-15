@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { NiazMapLayer, NiazMapSource } from '@/components/map/maplibre/map-source-layer';
 import { useNiazMapRef } from '@/components/map/mapbox/NiazMapContext';
 import type { BusinessMapBbox } from '@/lib/business/map-pins-types';
 import type { MapViewportScopeKind } from '@/lib/business/map-viewport-scope';
@@ -46,38 +45,20 @@ export function NiazMapViewportScope({
       };
     }
 
-    const pad = scopeKind === 'city' ? 0.05 : 0.03;
-    const latPad = (activeBounds.north - activeBounds.south) * pad;
-    const lngPad = (activeBounds.east - activeBounds.west) * pad;
-    const maxBounds: [[number, number], [number, number]] = [
-      [activeBounds.west - lngPad, activeBounds.south - latPad],
-      [activeBounds.east + lngPad, activeBounds.north + latPad],
-    ];
-
     const apply = () => {
-      map.setMaxBounds(maxBounds);
+      map.setMaxBounds(IRAN_MAX_BOUNDS_LNG_LAT);
+      map.setMinZoom(resolveMapMinZoom());
       map.fitBounds(
         [
           [activeBounds.west, activeBounds.south],
           [activeBounds.east, activeBounds.north],
         ],
         {
-          padding: neighborhoodBounds ? 40 : 24,
-          maxZoom: neighborhoodBounds ? 15 : 14,
+          padding: neighborhoodBounds ? 40 : scopeKind === 'city' ? 48 : 32,
+          maxZoom: neighborhoodBounds ? 15 : scopeKind === 'city' ? 12 : 14,
           duration: 0,
         }
       );
-      const zoom = map.getZoom();
-      const needsLabelZoom =
-        scopeKind === 'city' || neighborhoodBounds != null;
-      if (Number.isFinite(zoom) && needsLabelZoom) {
-        const labelReadableZoom = 12;
-        const minZoom = Math.max(labelReadableZoom, zoom - 1);
-        map.setMinZoom(minZoom);
-        if (zoom < labelReadableZoom) {
-          map.setZoom(labelReadableZoom);
-        }
-      }
     };
 
     if (map.isStyleLoaded()) apply();
@@ -97,42 +78,5 @@ export function NiazMapViewportScope({
     scopeKind,
   ]);
 
-  if (!activeBounds) return null;
-
-  const geojson = {
-    type: 'Feature' as const,
-    properties: {},
-    geometry: {
-      type: 'Polygon' as const,
-      coordinates: [
-        [
-          [activeBounds.west, activeBounds.south],
-          [activeBounds.east, activeBounds.south],
-          [activeBounds.east, activeBounds.north],
-          [activeBounds.west, activeBounds.north],
-          [activeBounds.west, activeBounds.south],
-        ],
-      ],
-    },
-  };
-
-  return (
-    <NiazMapSource id="city-scope" type="geojson" data={geojson}>
-      <NiazMapLayer
-        id="city-scope-fill"
-        type="fill"
-        paint={{ 'fill-color': '#059669', 'fill-opacity': 0.05 }}
-      />
-      <NiazMapLayer
-        id="city-scope-line"
-        type="line"
-        paint={{
-          'line-color': '#059669',
-          'line-width': 2,
-          'line-dasharray': [2, 1.5],
-          'line-opacity': 0.5,
-        }}
-      />
-    </NiazMapSource>
-  );
+  return null;
 }

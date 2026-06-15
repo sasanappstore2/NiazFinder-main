@@ -108,6 +108,7 @@ export type AnalyticsTabId =
   | 'business'
   | 'conversions'
   | 'funnels'
+  | 'intake'
   | 'retention'
   | 'platform';
 

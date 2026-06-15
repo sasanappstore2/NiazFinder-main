@@ -26,6 +26,7 @@ export default async function BusinessSegmentsBrowsePage(props: PageProps) {
   if (!isMarketplaceLocationSegment(slug)) notFound();
   return SearchMarketplacePage({
     params: Promise.resolve({ location: slug, segments }),
+    searchParams: props.searchParams,
     market: 'business',
   });
 }

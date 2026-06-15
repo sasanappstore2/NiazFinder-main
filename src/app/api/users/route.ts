@@ -143,10 +143,14 @@ export async function GET(request: NextRequest) {
       ];
     }
 
+    const isStaff =
+      authUser.role === 'ADMIN' || authUser.role === 'SUPER_ADMIN';
+    const userSelect = isStaff ? USER_SELECT : USER_PUBLIC_SELECT;
+
     const [dbUsers, total] = await Promise.all([
       db.user.findMany({
         where,
-        select: USER_SELECT,
+        select: userSelect,
         orderBy,
         skip,
         take: limit,
@@ -164,7 +168,7 @@ export async function GET(request: NextRequest) {
       if (hasPersianVariants && dbUsers.length < total) {
         const allUsers = await db.user.findMany({
           where: {
-            ...(authUser.role === 'ADMIN' || authUser.role === 'SUPER_ADMIN' ? {} : { isActive: true }),
+            ...(isStaff ? {} : { isActive: true }),
             ...(role
               ? role.includes(',')
                 ? { role: { in: role.split(',') as UserRole[] } }
@@ -172,7 +176,7 @@ export async function GET(request: NextRequest) {
               : {}),
             ...(status === 'banned' ? { isBanned: true } : status === 'inactive' ? { isActive: false } : {}),
           },
-          select: USER_SELECT,
+          select: userSelect,
           orderBy,
           take: 100,
         });
@@ -183,8 +187,8 @@ export async function GET(request: NextRequest) {
         });
       } else if (!hasPersianVariants && dbUsers.length === 0 && qStr.length >= 1) {
         const allUsers = await db.user.findMany({
-          where: { ...(authUser.role === 'ADMIN' || authUser.role === 'SUPER_ADMIN' ? {} : { isActive: true }) },
-          select: USER_SELECT,
+          where: { ...(isStaff ? {} : { isActive: true }) },
+          select: userSelect,
           orderBy,
           take: 50,
         });

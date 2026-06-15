@@ -13,6 +13,7 @@ import { TechnologyTab } from '@/components/admin/analytics/tabs/TechnologyTab';
 import { BusinessTab } from '@/components/admin/analytics/tabs/BusinessTab';
 import { ConversionsTab } from '@/components/admin/analytics/tabs/ConversionsTab';
 import { FunnelsTab } from '@/components/admin/analytics/tabs/FunnelsTab';
+import { IntakeTelemetryTab } from '@/components/admin/analytics/tabs/IntakeTelemetryTab';
 import { RetentionTab } from '@/components/admin/analytics/tabs/RetentionTab';
 import { PlatformTab } from '@/components/admin/analytics/tabs/PlatformTab';
 import type { AnalyticsTabId } from '@/components/admin/modules/shared/types';
@@ -28,6 +29,7 @@ const TABS: Array<{ id: AnalyticsTabId; label: string; live?: boolean }> = [
   { id: 'business', label: 'کسب‌وکار' },
   { id: 'conversions', label: 'رویدادها' },
   { id: 'funnels', label: 'قیف' },
+  { id: 'intake', label: '/post' },
   { id: 'retention', label: 'نگهداری' },
   { id: 'platform', label: 'پلتفرم' },
 ];
@@ -86,6 +88,9 @@ export function AnalyticsShell() {
         </TabsContent>
         <TabsContent value="funnels">
           <FunnelsTab hub={hub} />
+        </TabsContent>
+        <TabsContent value="intake">
+          <IntakeTelemetryTab hub={hub} />
         </TabsContent>
         <TabsContent value="retention">
           <RetentionTab hub={hub} />

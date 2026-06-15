@@ -1,8 +1,25 @@
 {
   "cityId": "harris",
   "cityName": "هریس",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:40:38.697Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.453Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "هریس",
+      "name": "هریس",
+      "nameEn": "harris",
+      "centroid": {
+        "lat": 38.21085770729429,
+        "lng": 47.15340983137341
+      },
+      "bbox": {
+        "south": 38.10437118196191,
+        "north": 38.31734423262667,
+        "west": 47.03427160938087,
+        "east": 47.27254805336594
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

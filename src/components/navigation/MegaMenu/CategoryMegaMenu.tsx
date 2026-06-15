@@ -75,7 +75,9 @@ import {
   Scale,
   Code2,
   Package,
+  Fan,
 } from 'lucide-react';
+import { REPAIR_SUBCATEGORIES } from '@/config/repair-subcategories';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -123,6 +125,49 @@ export function getPostNeedHref(category: MegaMenuCategory, citySlug?: string) {
 }
 
 // ============ Categories data ============
+const REPAIR_MEGA_MENU_ICONS: Record<string, React.ElementType> = {
+  'ac-repair': Fan,
+  'refrigerator-repair': Refrigerator,
+  'laundry-dishwasher-repair': WashingMachine,
+  'cooking-appliance-repair': CookingPot,
+  'water-heater-boiler-repair': Droplets,
+  'small-appliance-repair': SprayCan,
+  'tv-audio-repair': Monitor,
+  'computer-laptop-repair': Laptop,
+  'mobile-tablet-repair': Smartphone,
+  'camera-cctv-repair': Camera,
+  'printer-office-repair': Monitor,
+  'vehicle-repair': Car,
+  'motorcycle-repair': Bike,
+  'bicycle-repair': Bike,
+  'door-window-glass-repair': HomeIcon,
+  'furniture-wood-repair': Sofa,
+  'carpet-rug-repair': Layers,
+  'roofing-waterproofing-repair': HardHat,
+  'elevator-repair': Building2,
+  'water-pump-repair': Droplets,
+  'generator-ups-repair': Zap,
+  'watch-jewelry-repair': Watch,
+  'locksmith-repair': KeyRound,
+  'sewing-machine-repair': Shirt,
+  'musical-instrument-repair': Music,
+  'medical-equipment-repair': Stethoscope,
+  'industrial-machinery-repair': HardHat,
+  'fitness-equipment-repair': Dumbbell,
+  'general-handyman-repair': Wrench,
+};
+
+function buildRepairMegaMenuSubcategories(): MegaMenuCategory[] {
+  return REPAIR_SUBCATEGORIES.map((item) => ({
+    id: item.slug,
+    name: item.title,
+    value: `services-repairs-${item.slug}`,
+    canonicalSlug: item.slug,
+    label: item.title.length > 22 ? `${item.title.slice(0, 20)}…` : item.title,
+    icon: REPAIR_MEGA_MENU_ICONS[item.slug] ?? Wrench,
+  }));
+}
+
 const addParentValue = (categories: MegaMenuCategory[], parentValue: string | null = null): MegaMenuCategory[] => {
   return categories.map(category => {
     const newCategory = { ...category, parent: parentValue };
@@ -320,8 +365,16 @@ const ALL_CATEGORIES_UNPROCESSED: MegaMenuCategory[] = [
     label: 'خدمات',
     icon: Wrench,
     subCategories: [
+      {
+        id: 'repairs',
+        name: 'تعمیرات',
+        value: 'services-repairs',
+        canonicalSlug: 'repairs',
+        label: 'تعمیرات',
+        icon: Wrench,
+        subCategories: buildRepairMegaMenuSubcategories(),
+      },
       { id: 'cleaning', name: 'نظافت', value: 'services-cleaning', canonicalSlug: 'cleaning', label: 'نظافت', icon: Sparkles },
-      { id: 'repairs', name: 'تعمیرات', value: 'services-repairs', canonicalSlug: 'repairs', label: 'تعمیرات', icon: Wrench },
       { id: 'plumbing', name: 'لوله‌کشی', value: 'services-plumbing', canonicalSlug: 'plumbing', label: 'لوله‌کشی', icon: Droplets },
       { id: 'moving', name: 'اسباب‌کشی و باربری', value: 'services-moving', canonicalSlug: 'moving', label: 'اسباب‌کشی', icon: Package },
       { id: 'electrical', name: 'برق‌کاری', value: 'services-electrical', canonicalSlug: 'electrical', label: 'برق‌کاری', icon: Zap },

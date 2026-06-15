@@ -1,1 +1,0 @@
-# NiazFinder intake MLX microservice

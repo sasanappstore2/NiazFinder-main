@@ -1,8 +1,25 @@
 {
   "cityId": "mahneshan",
   "cityName": "ماهنشان",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:41:54.482Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.500Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ماهنشان",
+      "name": "ماهنشان",
+      "nameEn": "mahneshan",
+      "centroid": {
+        "lat": 36.76650114854474,
+        "lng": 47.63956620099495
+      },
+      "bbox": {
+        "south": 36.66001462321236,
+        "north": 36.87298767387712,
+        "west": 47.51853662743296,
+        "east": 47.76059577455693
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

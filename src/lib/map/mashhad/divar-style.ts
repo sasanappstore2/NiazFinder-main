@@ -4,7 +4,11 @@ const OFM_TILES = 'https://tiles.openfreemap.org/planet';
 const OFM_GLYPHS = 'https://tiles.openfreemap.org/font/{fontstack}/{range}.pbf';
 
 /** Persian street label — prefer OSM `name:fa`, then `name`. */
-const STREET_NAME = ['coalesce', ['get', 'name:fa'], ['get', 'name']] as const;
+const STREET_NAME: ['coalesce', ['get', string], ['get', string]] = [
+  'coalesce',
+  ['get', 'name:fa'],
+  ['get', 'name'],
+];
 
 const ROAD_CASE = ['match', ['get', 'class'], ['motorway', 'trunk', 'primary'], 2, 1] as const;
 

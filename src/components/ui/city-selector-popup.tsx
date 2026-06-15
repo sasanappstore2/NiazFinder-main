@@ -40,6 +40,10 @@ interface CitySelectorPopupProps {
   onDetectLocation?: () => void;
   /** When set to 1, only one city can be selected (intake flows). */
   maxSelection?: number;
+  /** AI/rule guesses from intake text — strongest first, shown as quick picks (max 5). */
+  suggestedCities?: City[];
+  /** Extra classes on dialog content (intake mobile modal). */
+  contentClassName?: string;
 }
 
 // ─── Checkbox Component ───
@@ -90,6 +94,8 @@ export function CitySelectorPopup({
   isDetecting = false,
   onDetectLocation,
   maxSelection,
+  suggestedCities = [],
+  contentClassName,
 }: CitySelectorPopupProps) {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [tempSelection, setTempSelection] = React.useState<City[]>(selectedCities);
@@ -244,7 +250,10 @@ export function CitySelectorPopup({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         data-city-selector
-        className="max-w-[480px] max-h-[85vh] p-0 gap-0 overflow-hidden rounded-2xl flex flex-col sm:max-w-[480px]"
+        className={cn(
+          'max-w-[480px] max-h-[85vh] p-0 gap-0 overflow-hidden rounded-2xl flex flex-col sm:max-w-[480px]',
+          contentClassName
+        )}
         dir="rtl"
       >
         {/* ─── Header ─── */}
@@ -338,6 +347,37 @@ export function CitySelectorPopup({
                   +{tempSelection.length - 6} شهر دیگر
                 </span>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* ─── AI / intake city guesses (below selection summary) ─── */}
+        {suggestedCities.length > 0 && (
+          <div className="px-5 pb-2 shrink-0 space-y-1.5">
+            <p className="text-xs text-muted-foreground">
+              {'\u0634\u0647\u0631\u0647\u0627\u06CC \u067E\u06CC\u0634\u0646\u0647\u0627\u062F\u06CC \u0627\u0632 \u0645\u062A\u0646 \u0634\u0645\u0627'}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {suggestedCities.map((city, index) => {
+                const selected = isCitySelected(city.id);
+                return (
+                  <Button
+                    key={city.id}
+                    type="button"
+                    size="sm"
+                    variant={selected ? 'default' : 'outline'}
+                    className={cn(
+                      'h-8 rounded-full px-3 text-xs font-medium',
+                      index === 0 &&
+                        !selected &&
+                        'border-emerald-500/45 bg-emerald-500/10 text-emerald-800 hover:bg-emerald-500/15 dark:text-emerald-200'
+                    )}
+                    onClick={() => setTempSelection([city])}
+                  >
+                    {city.name}
+                  </Button>
+                );
+              })}
             </div>
           </div>
         )}

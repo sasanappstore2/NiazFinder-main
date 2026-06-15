@@ -2,7 +2,7 @@
   "cityId": "garmeh",
   "cityName": "گرمه",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.624Z",
+  "importedAt": "2026-06-12T20:39:28.150Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 56.19417576832304,
         "east": 56.43938074204359
       },
-      "geoSource": "divar",
-      "areas": [
-        "میدان ولیعصر مرکزی",
-        "شمال میدان ولیعصر",
-        "جنوب میدان ولیعصر",
-        "شرق میدان ولیعصر"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

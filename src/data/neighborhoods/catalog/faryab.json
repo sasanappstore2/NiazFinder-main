@@ -2,7 +2,7 @@
   "cityId": "faryab",
   "cityName": "فاریاب",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.593Z",
+  "importedAt": "2026-06-12T20:39:28.005Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 57.25749290360781,
         "east": 57.47401433628602
       },
-      "geoSource": "divar",
-      "areas": [
-        "اسلامآباد مرکزی",
-        "شمال اسلامآباد",
-        "جنوب اسلامآباد",
-        "شرق اسلامآباد"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

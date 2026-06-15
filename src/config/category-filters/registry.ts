@@ -122,7 +122,8 @@ function layersForSlug(categorySlug: string | null): CategoryFilterField[][] {
   const layers: CategoryFilterField[][] = [];
 
   const underRealEstateServices = path.some((p) => p.slug === 'real-estate-services');
-  if (root && ROOT_SPECS[root] && !underRealEstateServices) layers.push(ROOT_SPECS[root]);
+  const underRepairs = path.some((p) => p.slug === 'repairs');
+  if (root && ROOT_SPECS[root] && !underRealEstateServices && !underRepairs) layers.push(ROOT_SPECS[root]);
 
   for (const node of path) {
     if (node.slug === root) continue;
@@ -237,8 +238,8 @@ export function getFiltersForCategory(
   };
 }
 
-/** Intake schema fields for a category (replaces per-vertical hard-coded lists). */
-export function getIntakeFieldsForCategory(categorySlug: string): FieldSchema[] {
+/** Base intake fields from specs.ts layers (no admin overrides). */
+export function getIntakeFieldsForCategoryBase(categorySlug: string): FieldSchema[] {
   const root = getRootCategorySlug(categorySlug);
   const layers = layersForSlug(categorySlug);
   const path = getCategoryPath(categorySlug);
@@ -251,6 +252,41 @@ export function getIntakeFieldsForCategory(categorySlug: string): FieldSchema[] 
   return merged
     .filter((f) => f.intake !== false && !f.key.startsWith('_'))
     .map(filterFieldToSchema);
+}
+
+/** Phase 42 — merge runtime FieldSchema overrides (client API path). */
+export function mergeIntakeFieldSchemaOverrides(
+  base: FieldSchema[],
+  overrides: FieldSchema[]
+): FieldSchema[] {
+  if (!overrides.length) return base;
+  const byKey = new Map(base.map((f) => [f.key, f]));
+  for (const field of overrides) {
+    byKey.set(field.key, field);
+  }
+  return Array.from(byKey.values());
+}
+
+/** Phase 42 — merge admin CategoryFilterField overrides (server store path). */
+export function mergeIntakeFieldSpecOverrides(
+  base: FieldSchema[],
+  overrides: CategoryFilterField[]
+): FieldSchema[] {
+  if (!overrides.length) return base;
+  const byKey = new Map(base.map((f) => [f.key, f]));
+  for (const field of overrides) {
+    if (field.intake === false || field.key.startsWith('_')) {
+      byKey.delete(field.key);
+      continue;
+    }
+    byKey.set(field.key, filterFieldToSchema(field));
+  }
+  return Array.from(byKey.values());
+}
+
+/** Client-safe intake fields (specs only). Server admin overrides: `registry.server`. */
+export function getIntakeFieldsForCategory(categorySlug: string): FieldSchema[] {
+  return getIntakeFieldsForCategoryBase(categorySlug);
 }
 
 export function getAllowedAttributeKeys(categorySlug: string | null): Set<string> {

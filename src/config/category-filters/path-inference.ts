@@ -107,6 +107,11 @@ export function inferAttributesFromPath(categorySlug: string | null | undefined)
     hiddenKeys.add('serviceCategory');
   }
 
+  if (cat && cat.depth === 2 && slugs.includes('repairs')) {
+    values.serviceCategory = 'repairs';
+    hiddenKeys.add('serviceCategory');
+  }
+
   if (categorySlug === 'pre-sale-services') {
     hiddenKeys.add('propertyKind');
   }

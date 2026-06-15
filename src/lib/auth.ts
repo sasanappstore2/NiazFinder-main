@@ -1,11 +1,13 @@
 import crypto from 'crypto';
 import { db } from '@/lib/db';
 import type { Prisma } from '@prisma/client';
+import { devAuthFallbackEnabled, devGetUserByToken, isDevAuthToken } from '@/lib/auth/dev-phone-auth';
 
 export interface AuthUser {
   id: string;
   email: string;
   phone: string | null;
+  phoneVerified: boolean;
   firstName: string;
   lastName: string;
   displayName: string | null;
@@ -37,6 +39,31 @@ export async function getAuthUser(request: Request): Promise<AuthUser | null> {
       return null;
     }
 
+    if (isDevAuthToken(token) && devAuthFallbackEnabled()) {
+      const devUser = devGetUserByToken(token);
+      if (devUser) {
+        return {
+          id: devUser.id,
+          email: devUser.email ?? `${devUser.phone}@needfinder.local`,
+          phone: devUser.phone ?? null,
+          phoneVerified: true,
+          firstName: devUser.firstName ?? 'کاربر',
+          lastName: devUser.lastName ?? 'تست',
+          displayName: devUser.displayName ?? null,
+          avatar: devUser.avatar ?? null,
+          bio: devUser.bio ?? null,
+          city: devUser.city ?? null,
+          province: devUser.province ?? null,
+          role: (devUser.role ?? 'CLIENT') as AuthUser['role'],
+          isVerified: devUser.isVerified ?? true,
+          isActive: devUser.isActive ?? true,
+          isBanned: false,
+          createdAt: new Date(devUser.createdAt ?? Date.now()),
+        };
+      }
+      return null;
+    }
+
     const authToken = await db.authToken.findUnique({
       where: { token },
       include: { user: true },
@@ -60,16 +87,17 @@ export async function getAuthUser(request: Request): Promise<AuthUser | null> {
       return null;
     }
 
-    // Update last seen
+    // Touch last seen only — online is owned by chat-service socket presence.
     await db.user.update({
       where: { id: user.id },
-      data: { lastSeenAt: new Date(), online: true },
+      data: { lastSeenAt: new Date() },
     });
 
     return {
       id: user.id,
       email: user.email,
       phone: user.phone,
+      phoneVerified: user.phoneVerified,
       firstName: user.firstName,
       lastName: user.lastName,
       displayName: user.displayName,

@@ -258,6 +258,7 @@ function mapApiUserToLocal(apiUser: Record<string, unknown>): User {
     id: apiUser.id as string,
     email: apiUser.email as string,
     phone: (apiUser.phone as string | null) ?? undefined,
+    phoneVerified: Boolean(apiUser.phoneVerified),
     username: (apiUser.username as string | null) ?? undefined,
     firstName: apiUser.firstName as string,
     lastName: apiUser.lastName as string,
@@ -577,6 +578,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         id: user.id,
         email: user.email,
         phone: user.phone ?? undefined,
+        phoneVerified: Boolean(user.phoneVerified),
         username: user.username ?? undefined,
         firstName: user.firstName,
         lastName: user.lastName,
@@ -650,7 +652,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   mobileMenuOpen: false,
   setMobileMenuOpen: (open) => set({ mobileMenuOpen: open }),
   authModalOpen: false,
-  setAuthModalOpen: (open) => set({ authModalOpen: open, authModalTab: 'login' }),
+  setAuthModalOpen: (open) =>
+    set((state) => ({
+      authModalOpen: open,
+      authModalTab: open ? state.authModalTab : 'login',
+    })),
   authModalTab: 'login',
   setAuthModalTab: (tab) => set({ authModalTab: tab }),
 
@@ -1394,6 +1400,11 @@ export const useAppStore = create<AppState>((set, get) => ({
         budgetMin: r.budgetMin ?? undefined,
         budgetMax: r.budgetMax ?? undefined,
         budgetType: r.budgetType,
+        dealType: r.dealType ?? undefined,
+        rahnAmount: r.rahnAmount ?? undefined,
+        monthlyRent: r.monthlyRent ?? undefined,
+        deposit: r.deposit ?? undefined,
+        nightlyRent: r.nightlyRent ?? undefined,
         deliveryTime: r.deliveryTime ?? undefined,
         deliveryUnit: r.deliveryUnit,
         city: r.city ?? undefined,
@@ -1440,6 +1451,12 @@ export const useAppStore = create<AppState>((set, get) => ({
         budgetMin: r.budgetMin ?? undefined,
         budgetMax: r.budgetMax ?? undefined,
         budgetType: r.budgetType,
+        dealType: r.dealType ?? undefined,
+        rahnAmount: r.rahnAmount ?? undefined,
+        monthlyRent: r.monthlyRent ?? undefined,
+        deposit: r.deposit ?? undefined,
+        nightlyRent: r.nightlyRent ?? undefined,
+        dynamicAnswers: r.dynamicAnswers ?? undefined,
         deliveryTime: r.deliveryTime ?? undefined,
         deliveryUnit: r.deliveryUnit,
         city: r.city ?? undefined,
@@ -1713,13 +1730,32 @@ export const useAppStore = create<AppState>((set, get) => ({
   fetchTransactions: async () => {
     set({ isLoading: true, error: null });
     try {
-      const res = await apiFetch<{ data: any[] }>('/api/wallet/transactions');
-      const mapped: Transaction[] = res.data.map((t: any) => ({
+      const res = await apiFetch<{
+        wallet?: { balance: number; frozen: number };
+        transactions?: { data: Array<{
+          id: string;
+          type: string;
+          amount: number;
+          description?: string | null;
+          status: string;
+          createdAt: string;
+        }> };
+        data?: Array<{
+          id: string;
+          type: string;
+          amount: number;
+          description?: string | null;
+          status: string;
+          createdAt: string;
+        }>;
+      }>('/api/wallet');
+      const raw = res.transactions?.data ?? res.data ?? [];
+      const mapped: Transaction[] = raw.map((t) => ({
         id: t.id,
-        type: t.type,
+        type: t.type as Transaction['type'],
         amount: t.amount,
         description: t.description ?? undefined,
-        status: t.status,
+        status: t.status as Transaction['status'],
         createdAt: String(t.createdAt),
       }));
       set({ transactions: mapped });

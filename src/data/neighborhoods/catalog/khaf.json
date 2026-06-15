@@ -1,8 +1,25 @@
 {
   "cityId": "khaf",
   "cityName": "خاف",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:40:21.820Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.976Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خاف",
+      "name": "خاف",
+      "nameEn": "khaf",
+      "centroid": {
+        "lat": 34.58251226913403,
+        "lng": 60.176659239963115
+      },
+      "bbox": {
+        "south": 34.55598292612289,
+        "north": 34.60904161214517,
+        "west": 60.1472967749191,
+        "east": 60.20602170500714
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

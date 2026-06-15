@@ -18,20 +18,20 @@ const HEADING_CASES: HeadingCase[] = [
   {
     pathname: '/n/tehran/real-estate',
     listingType: 'need',
-    expectedH1: 'نیازهای املاک در تهران',
+    expectedH1: 'خرید، فروش و اجاره املاک در تهران',
     expectedLocationLabel: 'تهران',
   },
   {
     pathname: '/n/iran/real-estate',
     listingType: 'need',
-    expectedH1: 'نیازهای املاک در سراسر ایران',
+    expectedH1: 'خرید، فروش و اجاره املاک در سراسر ایران',
     expectedLocationLabel: 'سراسر ایران',
   },
   {
     pathname: '/n/iran/real-estate',
     search: { cities: 'tehran,mashhad' },
     listingType: 'need',
-    expectedH1: 'نیازهای املاک در تهران، مشهد',
+    expectedH1: 'خرید، فروش و اجاره املاک در تهران، مشهد',
     expectedLocationLabel: 'تهران، مشهد',
   },
   {
@@ -41,9 +41,33 @@ const HEADING_CASES: HeadingCase[] = [
     expectedLocationLabel: 'تهران',
   },
   {
+    pathname: '/n/tehran/repairs/ac-repair',
+    listingType: 'need',
+    expectedH1: 'تعمیرات کولر گازی و اسپلیت در تهران',
+    expectedLocationLabel: 'تهران',
+  },
+  {
+    pathname: '/n/iran/repairs/ac-repair',
+    listingType: 'need',
+    expectedH1: 'تعمیرات کولر گازی و اسپلیت در سراسر ایران',
+    expectedLocationLabel: 'سراسر ایران',
+  },
+  {
+    pathname: '/n/shiraz/repairs/watch-jewelry-repair',
+    listingType: 'need',
+    expectedH1: 'تعمیرات ساعت و جواهرات در شیراز',
+    expectedLocationLabel: 'شیراز',
+  },
+  {
+    pathname: '/n/tehran/plumbing',
+    listingType: 'need',
+    expectedH1: 'لوله‌کشی در تهران',
+    expectedLocationLabel: 'تهران',
+  },
+  {
     pathname: '/b/tehran/real-estate',
     listingType: 'business',
-    expectedH1: 'کسب‌وکارهای املاک در تهران',
+    expectedH1: 'کسب‌وکارهای خرید، فروش و اجاره املاک در تهران',
     expectedLocationLabel: 'تهران',
   },
 ];

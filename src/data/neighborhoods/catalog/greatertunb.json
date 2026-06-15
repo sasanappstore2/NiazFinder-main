@@ -1,8 +1,25 @@
 {
   "cityId": "greatertunb",
   "cityName": "تنب بزرگ",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:39.379Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.382Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "تنب-بزرگ",
+      "name": "تنب بزرگ",
+      "nameEn": "greatertunb",
+      "centroid": {
+        "lat": 26.266396655839024,
+        "lng": 55.36581759217841
+      },
+      "bbox": {
+        "south": 26.15991013050665,
+        "north": 26.3728831811714,
+        "west": 55.25708300707996,
+        "east": 55.474552177276856
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

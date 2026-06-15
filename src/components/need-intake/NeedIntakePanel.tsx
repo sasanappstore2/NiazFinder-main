@@ -33,7 +33,6 @@ import { buildSummary } from '@/lib/need-intake/question-engine';
 import { mapDealTypeToTransaction } from '@/lib/need-intake/deal-type-transaction';
 import { trackAnalyticsEvent } from '@/lib/analytics/track';
 import { publishNeedApi } from '@/lib/need-intake/intake-client';
-import { consumeListingCopyStream } from '@/hooks/use-listing-copy-stream';
 import { useIntakeFormProjection } from '@/hooks/use-intake-form-projection';
 import { useIntakeListingCopy } from '@/hooks/use-intake-listing-copy';
 import { useIntakeAnalyze } from '@/hooks/use-intake-analyze';
@@ -924,116 +923,24 @@ export function NeedIntakePanel({
       titleSource: 'template',
     });
     setStep('preview');
-
-    const runId = ++previewGenRef.current;
-    setTitleEnriching(true);
-    setDescEnriching(true);
-    let descStreamStarted = false;
-
-    void consumeListingCopyStream(
-      draft,
-      {
-        onBaseline: (title, description) => {
-          if (previewGenRef.current !== runId) return;
-          setListingPreview((prev) =>
-            prev
-              ? { ...prev, title, description }
-              : {
-                  title,
-                  description,
-                  budgetMin: draft.parsedIntent.budgetMin,
-                  budgetMax: draft.parsedIntent.budgetMax,
-                }
-          );
-        },
-        onTitle: (title, titleSource) => {
-          if (previewGenRef.current !== runId) return;
-          setTitleEnriching(false);
-          setListingPreview((prev) => (prev ? { ...prev, title, titleSource } : prev));
-        },
-        onDescriptionDelta: (text) => {
-          if (previewGenRef.current !== runId) return;
-          setListingPreview((prev) => {
-            if (!prev) return prev;
-            const base = descStreamStarted ? prev.description : '';
-            descStreamStarted = true;
-            return { ...prev, description: base + text };
-          });
-        },
-        onDone: (payload) => {
-          if (previewGenRef.current !== runId) return;
-          setListingPreview((prev) =>
-            prev
-              ? {
-                  ...prev,
-                  title: payload.title,
-                  description: payload.description,
-                  titleSource: payload.titleSource,
-                }
-              : prev
-          );
-        },
-        onError: (message) => {
-          if (previewGenRef.current !== runId) return;
-          toast.error(message);
-        },
-      }
-    )
-      .catch((e) => {
-        if (previewGenRef.current !== runId) return;
-        toast.error(e instanceof Error ? e.message : 'خطا');
-      })
-      .finally(() => {
-        if (previewGenRef.current === runId) {
-          setTitleEnriching(false);
-          setDescEnriching(false);
-        }
-      });
+    setTitleEnriching(false);
+    setDescEnriching(false);
   };
 
   const repolishPreview = async () => {
     const draft = getDraft();
     if (!draft || !listingPreview) return;
     setIsRepublishing(true);
-    setTitleEnriching(true);
-    setDescEnriching(true);
-    const runId = ++previewGenRef.current;
-    let descStreamStarted = false;
     try {
-      await consumeListingCopyStream(
-        draft,
-        {
-          onTitle: (title, titleSource) => {
-            if (previewGenRef.current !== runId) return;
-            setListingPreview((prev) => (prev ? { ...prev, title, titleSource } : prev));
-          },
-          onDescriptionDelta: (text) => {
-            if (previewGenRef.current !== runId) return;
-            setListingPreview((prev) => {
-              if (!prev) return prev;
-              const base = descStreamStarted ? prev.description : '';
-              descStreamStarted = true;
-              return { ...prev, description: base + text };
-            });
-          },
-          onDone: (payload) => {
-            if (previewGenRef.current !== runId) return;
-            setListingPreview((prev) =>
-              prev
-                ? {
-                    ...prev,
-                    title: payload.title,
-                    description: payload.description,
-                    titleSource: payload.titleSource,
-                  }
-                : prev
-            );
-          },
-        }
-      );
+      const composed = composeListingFromDraft(draft);
+      const deterministicTitle = resolveDeterministicListingTitle(draft).title;
+      setListingPreview({
+        ...listingPreview,
+        title: deterministicTitle,
+        description: composed.description,
+        titleSource: 'template',
+      });
       toast.success('پیش‌نمایش به‌روز شد');
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'خطا');
     } finally {
       setIsRepublishing(false);
       setTitleEnriching(false);
@@ -1683,7 +1590,7 @@ export function NeedIntakePanel({
                 </p>
               </div>
 
-              <IntakeAiShardBar status={aiShardStatus} active={aiEnriching} />
+              {null /* AI shard bar removed — manual wizard */}
 
               {intakeDisplaySections.length ? (
                 <IntakeSectionMenus

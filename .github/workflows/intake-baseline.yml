@@ -1,0 +1,39 @@
+name: Intake baseline
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'docs/INTAKE*.md'
+      - 'scripts/ci/run-intake-baseline.ts'
+      - 'reports/intake-baseline.json'
+  push:
+    branches: [main, master]
+    paths:
+      - 'src/**'
+      - 'scripts/ci/run-intake-baseline.ts'
+
+jobs:
+  intake-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SKIP_MLX_GATE: 'true'
+      CI_MLX_AVAILABLE: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Run intake baseline (rules-only)
+        run: npm run test:intake-baseline
+      - name: Verify phase 5 criteria
+        run: npx --yes tsx scripts/ci/verify-intake-phase.ts --phase 5
+      - name: Upload baseline report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: intake-baseline-report
+          path: reports/intake-baseline.json

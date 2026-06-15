@@ -8,7 +8,7 @@ import type {
   CatalogNeighborhood,
   NeighborhoodManifest,
 } from '@/lib/neighborhoods/catalog-types';
-import { sanitizeAreaLabels } from '@/lib/neighborhoods/area-labels';
+import { displayAreaLabels, sanitizeAreaLabels } from '@/lib/neighborhoods/area-labels';
 
 const NEIGHBORHOODS_ROOT = path.join(process.cwd(), 'src', 'data', 'neighborhoods');
 const CATALOG_DIR = path.join(NEIGHBORHOODS_ROOT, 'catalog');
@@ -32,7 +32,7 @@ export function catalogNeighborhoodToManaged(
     name: n.name,
     nameEn: n.nameEn ?? n.id,
     ...(n.areas?.length
-      ? { areas: sanitizeAreaLabels(n.areas, n.name) }
+      ? { areas: displayAreaLabels(n.areas, n.name) }
       : {}),
     ...(n.centroid ? { centroid: n.centroid } : {}),
     ...(n.bbox ? { bbox: n.bbox } : {}),
@@ -203,9 +203,14 @@ export async function rebuildManifestFromCatalog(): Promise<NeighborhoodManifest
   let total = 0;
   let withData = 0;
 
+  const emptyOnDivar: string[] = [];
+
   for (const cityId of ids) {
     const file = await loadCityCatalogFile(cityId);
     const n = file?.neighborhoods?.length ?? 0;
+    if (file?.emptyOnDivar || n === 0) {
+      emptyOnDivar.push(cityId);
+    }
     if (n > 0) {
       counts[cityId] = n;
       total += n;
@@ -219,7 +224,7 @@ export async function rebuildManifestFromCatalog(): Promise<NeighborhoodManifest
     citiesWithNeighborhoods: withData,
     totalNeighborhoods: total,
     counts,
-    emptyOnDivar: [],
+    emptyOnDivar,
     unmapped: [],
   };
 

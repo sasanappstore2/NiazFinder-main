@@ -16,7 +16,7 @@ export type CityMapConfigEntry = {
   originCitySlug: string;
   viewportCitySlug: string;
   mapZoom: number;
-  source: 'divar' | 'centroid' | 'fallback';
+  source: 'divar' | 'centroid' | 'catalog' | 'fallback';
 };
 
 const CITIES = (cityMapConfig.cities ?? {}) as Record<string, CityMapConfigEntry>;

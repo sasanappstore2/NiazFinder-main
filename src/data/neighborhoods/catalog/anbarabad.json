@@ -1,8 +1,25 @@
 {
   "cityId": "anbarabad",
   "cityName": "انبارآباد",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:41:14.969Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.801Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "انبارآباد",
+      "name": "انبارآباد",
+      "nameEn": "anbarabad",
+      "centroid": {
+        "lat": 28.407269547215236,
+        "lng": 58.21550442406651
+      },
+      "bbox": {
+        "south": 28.30078302188286,
+        "north": 28.51375607254761,
+        "west": 58.10935928518885,
+        "east": 58.32164956294417
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

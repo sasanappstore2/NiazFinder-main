@@ -1,8 +1,25 @@
 {
   "cityId": "dalahu",
   "cityName": "دالهو",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:12.283Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.667Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دالهو",
+      "name": "دالهو",
+      "nameEn": "dalahu",
+      "centroid": {
+        "lat": 34.345693258749556,
+        "lng": 46.24265961817317
+      },
+      "bbox": {
+        "south": 34.23920673341718,
+        "north": 34.452179784081935,
+        "west": 46.12916107227207,
+        "east": 46.35615816407427
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

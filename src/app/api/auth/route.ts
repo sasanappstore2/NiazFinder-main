@@ -11,7 +11,6 @@ interface AuthRequestBody {
   firstName?: string;
   lastName?: string;
   phone?: string;
-  role?: 'CLIENT' | 'SPECIALIST';
 }
 
 interface AuthResponseBody {
@@ -36,7 +35,7 @@ interface AuthResponseBody {
 export async function POST(request: NextRequest) {
   try {
     const body: AuthRequestBody = await request.json();
-    const { email, password, firstName, lastName, phone, role } = body;
+    const { email, password, firstName, lastName, phone } = body;
 
     // Validate required fields
     if (!email || !password) {
@@ -79,7 +78,7 @@ export async function POST(request: NextRequest) {
             firstName: firstName.trim(),
             lastName: lastName?.trim() || '',
             phone: phone?.trim() || null,
-            role: role || 'CLIENT',
+            role: 'CLIENT',
           },
         });
 
@@ -177,10 +176,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Update last seen
     await db.user.update({
       where: { id: user.id },
-      data: { lastSeenAt: new Date(), online: true },
+      data: { lastSeenAt: new Date() },
     });
 
     const responseBody: AuthResponseBody = {

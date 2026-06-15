@@ -2,7 +2,7 @@
   "cityId": "semirom",
   "cityName": "سمیرم",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:23.154Z",
+  "importedAt": "2026-06-12T20:39:30.682Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 51.64788060745786,
         "east": 51.7327421661758
       },
-      "geoSource": "divar",
-      "areas": [
-        "گردنه بانه مرکزی",
-        "شمال گردنه بانه",
-        "جنوب گردنه بانه",
-        "شرق گردنه بانه"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

@@ -1,24 +1,55 @@
 /**
- * Smoke-test key pages and APIs. Run: npx tsx scripts/health/smoke-routes.ts
- * Requires dev server on BASE_URL (default http://localhost:3000).
+ * Expanded route smoke using url-catalog sample + core pages.
+ * Run: npm run smoke:routes
  */
+import { buildCatalogUrls } from '../crawl/lib/url-catalog';
+
 const BASE = process.env.SMOKE_BASE_URL?.replace(/\/$/, '') || 'http://localhost:3000';
 
-type Check = { name: string; path: string; expect?: number };
-
-const PAGES: Check[] = [
-  { name: 'home', path: '/' },
-  { name: 'dashboard', path: '/dashboard' },
-  { name: 'business_market', path: '/b/iran' },
-  { name: 'need_market', path: '/n/iran' },
-  { name: 'login', path: '/login' },
-  { name: 'business_edit', path: '/pro/biz-demo-cleaning-karaj/edit' },
+const CORE_PAGES = [
+  '/',
+  '/dashboard',
+  '/login',
+  '/post',
+  '/chat',
+  '/my-business',
+  '/blog',
+  '/help',
+  '/privacy',
+  '/terms',
 ];
+
+function catalogSample(): string[] {
+  const all = buildCatalogUrls({
+    includeFilters: false,
+    includeCityCategories: true,
+    includeIranCategories: true,
+  });
+  const picks = [
+    '/n/iran',
+    '/b/iran',
+    '/n/tehran',
+    '/b/tehran',
+    '/n/tehran/repairs/ac-repair',
+    '/n/tehran/real-estate',
+    '/b/tehran',
+    '/search',
+    '/discover',
+    '/social-feed',
+  ];
+  return [...new Set([...CORE_PAGES, ...picks, ...all.filter((u) => u.startsWith('/n/tehran/')).slice(0, 5)])];
+}
+
+type Check = { name: string; path: string; expect?: number };
 
 const APIS: Check[] = [
   { name: 'locations', path: '/api/locations' },
   { name: 'categories', path: '/api/categories' },
   { name: 'business_me', path: '/api/business/me', expect: 401 },
+  { name: 'dashboard', path: '/api/dashboard', expect: 401 },
+  { name: 'wallet', path: '/api/wallet', expect: 401 },
+  { name: 'blog', path: '/api/blog' },
+  { name: 'search_unified', path: '/api/search/unified?q=test' },
 ];
 
 async function probe(check: Check): Promise<{
@@ -36,7 +67,7 @@ async function probe(check: Check): Promise<{
     const res = await fetch(url, {
       redirect: 'manual',
       headers: { Accept: 'text/html,application/json' },
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(12000),
     });
     const status = res.status;
     return {
@@ -59,8 +90,13 @@ async function probe(check: Check): Promise<{
 }
 
 async function main() {
+  const pages = catalogSample().map((path, i) => ({
+    name: `page_${i}_${path.replace(/\//g, '_').slice(0, 40)}`,
+    path,
+  }));
+
   const results = [];
-  for (const c of [...PAGES, ...APIS]) {
+  for (const c of [...pages, ...APIS]) {
     results.push(await probe(c));
   }
   const failed = results.filter((r) => !r.ok);

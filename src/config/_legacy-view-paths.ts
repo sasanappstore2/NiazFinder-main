@@ -11,7 +11,7 @@ export const LEGACY_VIEW_PATHS: Record<string, string> = {
   home: '/',
   login: '/login',
   register: '/register',
-  'post-need': '/post',
+  'post-need': '/',
   'browse-requests': '/n/iran',
   'browse-specialists': '/b/iran',
   dashboard: '/dashboard',

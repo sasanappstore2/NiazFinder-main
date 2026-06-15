@@ -9,6 +9,8 @@ import {
   seedReviewsFromLegacy,
 } from '@/lib/business/ensure-profile';
 import { buildBusinessGeoWhere } from '@/lib/business/browse-geo-filters';
+import { resolveNeighborhoodSlugs } from '@/lib/neighborhoods/server';
+import { buildNeighborhoodWhereClauses } from '@/lib/neighborhoods/tokens';
 import {
   categoryFilterToPrismaWhere,
   resolveBrowseCategoryFilter,
@@ -115,6 +117,8 @@ export async function listBusinesses(opts: {
   city?: string;
   citiesParam?: string;
   provincesParam?: string;
+  neighborhoodsParam?: string;
+  neighborhoodCityId?: string;
   category?: string;
   search?: string;
   verified?: boolean;
@@ -135,6 +139,19 @@ export async function listBusinesses(opts: {
     legacyCity: opts.city,
   });
   and.push(...geoClauses);
+
+  if (opts.neighborhoodsParam && opts.neighborhoodCityId) {
+    const slugs = opts.neighborhoodsParam
+      .split(',')
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+    if (slugs.length > 0) {
+      const resolved = await resolveNeighborhoodSlugs(opts.neighborhoodCityId, slugs);
+      if (resolved.length > 0) {
+        and.push(...buildNeighborhoodWhereClauses(resolved));
+      }
+    }
+  }
 
   const categoryWhere = categoryFilterToPrismaWhere(
     resolveBrowseCategoryFilter(opts.category)

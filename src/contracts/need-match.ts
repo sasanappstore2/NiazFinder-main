@@ -41,5 +41,6 @@ export interface NeedMatchContext {
   tags: string[];
   budgetMin?: number | null;
   budgetMax?: number | null;
+  dealType?: string | null;
   dynamicAnswers?: Record<string, unknown>;
 }

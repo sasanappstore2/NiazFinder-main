@@ -40,7 +40,46 @@ export function formatMoneyInputDisplay(digitString: string): string {
   return formatPersianInteger(digitString);
 }
 
-/** Display for summaries (number already in DB). */
+const TOMAN_MILLION = 1_000_000;
+const TOMAN_BILLION = 1_000_000_000;
+/** 1 hemmat = 1,000 billion Toman (هزار میلیارد تومان). */
+const TOMAN_HEMMAT = 1_000_000_000_000;
+
+function formatScaledTomanUnit(value: number, divisor: number): string {
+  const n = value / divisor;
+  if (!Number.isFinite(n)) return '';
+  if (Math.abs(n - Math.round(n)) < 1e-9) {
+    return Math.round(n).toLocaleString('fa-IR');
+  }
+  return n.toLocaleString('fa-IR', { maximumFractionDigits: 2 });
+}
+
+/**
+ * Compact Persian Toman label: million / billion / hemmat for large amounts.
+ * Stored values are plain integer Toman (e.g. 8_000_000_000).
+ */
+export function formatTomanAmount(
+  value: number,
+  options?: { includeSuffix?: boolean }
+): string {
+  if (!Number.isFinite(value)) return '';
+  const includeSuffix = options?.includeSuffix !== false;
+  const suffix = includeSuffix ? ' \u062A\u0648\u0645\u0627\u0646' : '';
+  const abs = Math.abs(value);
+
+  if (abs >= TOMAN_HEMMAT) {
+    return `${formatScaledTomanUnit(value, TOMAN_HEMMAT)} \u0647\u0645\u062A${suffix}`;
+  }
+  if (abs >= TOMAN_BILLION) {
+    return `${formatScaledTomanUnit(value, TOMAN_BILLION)} \u0645\u06CC\u0644\u06CC\u0627\u0631\u062F${suffix}`;
+  }
+  if (abs >= TOMAN_MILLION) {
+    return `${formatScaledTomanUnit(value, TOMAN_MILLION)} \u0645\u06CC\u0644\u06CC\u0648\u0646${suffix}`;
+  }
+  return `${value.toLocaleString('fa-IR')}${suffix}`;
+}
+
+/** Display for summaries (number already in DB) — raw grouping, no unit scaling. */
 export function formatMoneyToman(value: number): string {
   if (!Number.isFinite(value)) return '';
   return value.toLocaleString('fa-IR');

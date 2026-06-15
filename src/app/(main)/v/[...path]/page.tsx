@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { PageContainer } from '@/components/layout/PageContainer';
+import { PageHeading } from '@/components/layout/PageHeading';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Separator } from '@/components/ui/separator';
@@ -99,6 +100,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
       <JsonLd id="listing-breadcrumb-jsonld" data={jsonLd} />
       <PageContainer width="wide" className="max-lg:pb-4">
         <Breadcrumb />
+        <PageHeading title={title} visuallyHidden />
         <Separator className="my-4" />
         <RequestDetail id={id} />
       </PageContainer>

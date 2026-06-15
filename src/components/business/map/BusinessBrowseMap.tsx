@@ -8,6 +8,7 @@ import type { BusinessMapPin } from '@/lib/business/map-pins-types';
 import { resolveMapViewportScope } from '@/lib/business/map-viewport-scope';
 import { filterValidMapPins, isValidLatLng } from '@/lib/business/map-coords';
 import { routeBuilder } from '@/config/routes';
+import { formatCountFa } from '@/lib/format/digits';
 import { IranDivarBrowseMap } from '@/components/map/iran/IranDivarBrowseMap';
 import { NiazMapCore } from '@/components/map/mapbox/NiazMapCore';
 import { NiazMapControls } from '@/components/map/mapbox/NiazMapControls';
@@ -50,7 +51,7 @@ function MapPinPopup({ pin, profileHref }: { pin: BusinessMapPin; profileHref: s
           <Star className="size-3.5 fill-amber-400 text-amber-400" aria-hidden />
           {pin.rating.toLocaleString('fa-IR', { maximumFractionDigits: 1 })}
           <span className="text-muted-foreground/70">
-            ({pin.reviewCount.toLocaleString('fa-IR')})
+            ({formatCountFa(pin.reviewCount)})
           </span>
         </span>
         {pin.verified ? (
@@ -247,7 +248,7 @@ export function BusinessBrowseMap({
 
       {!immersive ? (
         <div className="pointer-events-none absolute bottom-3 right-3 z-[500] rounded-lg bg-card/90 px-2.5 py-1 text-[11px] text-muted-foreground shadow-sm backdrop-blur-sm">
-          {validPins.length.toLocaleString('fa-IR')} {'\u0645\u06a9\u0627\u0646 \u062f\u0631 \u0627\u06cc\u0646 \u0645\u062d\u062f\u0648\u062f\u0647'}
+          {formatCountFa(validPins.length)} {'\u0645\u06a9\u0627\u0646 \u062f\u0631 \u0627\u06cc\u0646 \u0645\u062d\u062f\u0648\u062f\u0647'}
         </div>
       ) : null}
 
@@ -281,7 +282,7 @@ export function BusinessBrowseMap({
 
       {mobileMode && !loading && !immersive ? (
         <div className="bm-map-chrome pointer-events-none absolute top-3 right-3 z-[500] rounded-full px-3 py-1.5 text-[13px] font-medium">
-          {validPins.length.toLocaleString('fa-IR')}{' '}
+          {formatCountFa(validPins.length)}{' '}
           <span className="text-muted-foreground">{'\u0645\u06a9\u0627\u0646'}</span>
         </div>
       ) : null}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ensureMapLibreRtlPlugin } from '@/lib/map/maplibre/ensure-rtl-plugin';
 import { NiazMapResizeFix } from '@/components/map/mapbox/NiazMapResizeFix';
 import Map, { AttributionControl, type MapRef } from 'react-map-gl/maplibre';
@@ -55,25 +55,18 @@ export function NiazMapLibreCore({
 }: NiazMapLibreCoreProps) {
   const mapRef = useRef<MapRef>(null);
   const [rtlReady, setRtlReady] = useState(!requireRtl);
-  const [tilesReady, setTilesReady] = useState(false);
   const resolvedStyle = useMemo(
     () => (typeof mapStyle === 'function' ? mapStyle() : mapStyle),
     [mapStyle]
   );
 
-  useEffect(() => {
-    setTilesReady(false);
-  }, [mapKey, resolvedStyle.name]);
-
-  useEffect(() => {
-    return () => {
-      try {
-        mapRef.current?.getMap()?.remove();
-      } catch {
-        /* already removed */
-      }
-    };
-  }, [mapKey]);
+  /** MapLibre workers cannot resolve root-relative tile/glyph URLs — same-origin absolute required. */
+  const transformRequest = useCallback((url: string) => {
+    if (url.startsWith('/') && typeof window !== 'undefined') {
+      return { url: `${window.location.origin}${url}` };
+    }
+    return { url };
+  }, []);
 
   useEffect(() => {
     if (!requireRtl) {
@@ -103,22 +96,27 @@ export function NiazMapLibreCore({
     };
   }, [requireRtl]);
 
-  const bindIdleReady = () => {
+  const refreshMapAfterLoad = () => {
     const map = mapRef.current?.getMap();
     if (!map) return;
 
-    const markReady = () => {
-      try {
-        map.resize();
-        map.triggerRepaint();
-      } catch {
-        /* unmounting */
-      }
-      setTilesReady(true);
-    };
+    try {
+      map.resize();
+      map.triggerRepaint();
+    } catch {
+      /* unmounting */
+    }
 
-    if (map.areTilesLoaded()) markReady();
-    else map.once('idle', markReady);
+    if (!map.areTilesLoaded()) {
+      map.once('idle', () => {
+        try {
+          map.resize();
+          map.triggerRepaint();
+        } catch {
+          /* unmounting */
+        }
+      });
+    }
   };
 
   if (!rtlReady) {
@@ -136,11 +134,8 @@ export function NiazMapLibreCore({
       style={style}
     >
       <div
-        className="h-full w-full transition-opacity duration-150"
-        style={{
-          opacity: tilesReady ? 1 : 0,
-          backgroundColor: loadingBackground,
-        }}
+        className="h-full w-full"
+        style={{ backgroundColor: loadingBackground }}
       >
         <MapEngineContext.Provider value="maplibre">
         <NiazMapRefContext.Provider value={mapRef as React.RefObject<MapboxMapRef | null>}>
@@ -163,13 +158,14 @@ export function NiazMapLibreCore({
             pitchWithRotate={false}
             touchPitch={false}
             attributionControl={false}
+            transformRequest={transformRequest}
             onMoveEnd={() => {
               if (mapRef.current && onMoveEnd) {
                 onMoveEnd(mapRef.current as unknown as MapboxMapRef);
               }
             }}
             onLoad={() => {
-              bindIdleReady();
+              refreshMapAfterLoad();
               if (mapRef.current && onMoveEnd) {
                 onMoveEnd(mapRef.current as unknown as MapboxMapRef);
               }

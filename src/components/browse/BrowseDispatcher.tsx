@@ -29,6 +29,8 @@ interface BrowseDispatcherProps {
   categorySlug?: string;
   /** City slug from the path (or undefined for country-wide /n|b/iran). */
   citySlug?: string;
+  /** H1 already rendered in SearchMarketplacePage server chrome. */
+  serverRenderedHeading?: boolean;
 }
 
 export function BrowseDispatcher(props: BrowseDispatcherProps) {
@@ -39,7 +41,12 @@ export function BrowseDispatcher(props: BrowseDispatcherProps) {
   );
 }
 
-function BrowseDispatcherInner({ market: marketProp, categorySlug, citySlug }: BrowseDispatcherProps) {
+function BrowseDispatcherInner({
+  market: marketProp,
+  categorySlug,
+  citySlug,
+  serverRenderedHeading,
+}: BrowseDispatcherProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   useSyncBrowseCityUrl(citySlug);
@@ -76,6 +83,7 @@ function BrowseDispatcherInner({ market: marketProp, categorySlug, citySlug }: B
     categorySlug,
     citySlugs,
     urlFilters: filters,
+    serverRenderedHeading,
   };
 
   const listingType = listingTypeFromMarket(market);

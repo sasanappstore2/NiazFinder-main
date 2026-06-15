@@ -1,8 +1,25 @@
 {
   "cityId": "avaj",
   "cityName": "آوج",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:43:44.588Z",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.997Z",
   "emptyOnDivar": true,
-  "neighborhoods": []
+  "neighborhoods": [
+    {
+      "id": "آوج",
+      "name": "آوج",
+      "nameEn": "avaj",
+      "centroid": {
+        "lat": 35.678534943370465,
+        "lng": 49.16759000905397
+      },
+      "bbox": {
+        "south": 35.57204841803809,
+        "north": 35.785021468702844,
+        "west": 49.047340327814254,
+        "east": 49.28783969029367
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

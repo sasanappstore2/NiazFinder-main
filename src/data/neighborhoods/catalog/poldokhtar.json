@@ -1,8 +1,25 @@
 {
   "cityId": "poldokhtar",
   "cityName": "پلدختر",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:18.412Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.135Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "پلدختر",
+      "name": "پلدختر",
+      "nameEn": "poldokhtar",
+      "centroid": {
+        "lat": 33.052017921487604,
+        "lng": 47.9332065051474
+      },
+      "bbox": {
+        "south": 33.011198086776865,
+        "north": 33.09283775619834,
+        "west": 47.89068098227692,
+        "east": 47.97573202801789
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

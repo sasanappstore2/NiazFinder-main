@@ -117,7 +117,12 @@ export const ADMIN_SECTION_PERMISSIONS: Record<AdminSectionId, AdminPermissionId
 };
 
 export function sectionFromPathname(pathname: string): AdminSectionId {
-  const segment = pathname.replace(/^\/super-admin\/?/, '').split('/')[0] ?? '';
+  const trimmed = pathname.replace(/^\/super-admin\/?/, '');
+  const parts = trimmed.split('/').filter(Boolean);
+  if (parts[0] === 'system' && parts[1]?.startsWith('intake-')) {
+    return 'system';
+  }
+  const segment = parts[0] ?? '';
   return ADMIN_ROUTE_TO_SECTION[segment] ?? 'overview';
 }
 
@@ -133,11 +138,17 @@ export function canAccessAdminNavItem(
   if (itemId === 'overview') {
     return hasPermission('superadmin:overview:read') || hasPermission('superadmin:analytics:read');
   }
-  if (itemId === 'intake-migration' || itemId === 'intake-ai-evaluation') {
+  if (itemId === 'intake-migration') {
     return hasPermission('ops:intake-migration:read');
+  }
+  if (itemId === 'intake-ai-evaluation') {
+    return hasPermission('ops:intake-ai-evaluation:read');
   }
   if (itemId === 'intake-training') {
     return hasPermission('ops:intake-training:read');
+  }
+  if (itemId === 'intake-field-specs') {
+    return hasPermission('ops:intake-field-specs:read');
   }
   const section = itemId as AdminSectionId;
   if (section in ADMIN_SECTION_PERMISSIONS) {

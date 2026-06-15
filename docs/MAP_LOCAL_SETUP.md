@@ -98,7 +98,7 @@ Hard refresh after pulling: `Cmd+Shift+R`
 
 - Dev server not running ? start `npm run dev`
 - `.next` cache stale ? restart dev (avoid deleting `data/`)
-- `iran-void-mask` regression ? run `npm run test:map-tiles` (guards against void mask)
+- `iran-void-mask` ? regenerate: `npx tsx scripts/geo/build-iran-map-void-mask.ts`; regression: `npm run test:map-tiles`
 
 ### Persian labels missing
 

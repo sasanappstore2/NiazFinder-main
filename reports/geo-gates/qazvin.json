@@ -1,0 +1,333 @@
+{
+  "provinceId": "qazvin",
+  "provinceName": "قزوین",
+  "generatedAt": "2026-06-12T21:20:06.026Z",
+  "cities": [
+    {
+      "cityId": "qazvin-city",
+      "cityName": "قزوین",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 104,
+      "shares": {
+        "divar": 104,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 104
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "takestan",
+      "cityName": "تاکستان",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 23,
+      "shares": {
+        "divar": 23,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 23
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "abyek",
+      "cityName": "آبیک",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 24,
+      "shares": {
+        "divar": 24,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 24
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "boinnzahra",
+      "cityName": "بوئین‌زهرا",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "avaj",
+      "cityName": "آوج",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "tarom-e-olfat",
+      "cityName": "طالارالعلفا",
+      "provinceId": "qazvin",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "alvand",
+      "cityName": "الوند",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 91,
+      "shares": {
+        "divar": 91,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 91
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "esfarvarin",
+      "cityName": "اسفرورین",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "abgarm",
+      "cityName": "آبگرم",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "eqbaliyeh",
+      "cityName": "اقبالیه",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 93,
+      "shares": {
+        "divar": 93,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 93
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "almot",
+      "cityName": "الموت",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bashayaat",
+      "cityName": "بشاریات",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khorramdasht-city",
+      "cityName": "خرمدشت",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dashtabi",
+      "cityName": "دشتابی",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ramand",
+      "cityName": "رامند",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shal",
+      "cityName": "شال",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ziaa-abad",
+      "cityName": "ضیاء آباد",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "tarem-city",
+      "cityName": "طارم (قزوین)",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kuhin",
+      "cityName": "کوهین",
+      "provinceId": "qazvin",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 0,
+  "pass": true
+}

@@ -16,7 +16,10 @@ import { Separator } from '@/components/ui/separator';
 import { useAppStore } from '@/lib/store';
 import { isBusinessProductDetailPath, isBusinessProfileAuraPath } from '@/config/routes';
 import { cn } from '@/lib/utils';
+import { getPageTitleForPath } from '@/config/page-titles';
+import { PageHeading } from '@/components/layout/PageHeading';
 import { useResumePendingContact } from '@/hooks/use-resume-pending-contact';
+import { useIntakeMobileChrome } from '@/hooks/use-intake-mobile-chrome';
 
 interface AppShellProps {
   children: ReactNode;
@@ -26,14 +29,17 @@ interface AppShellProps {
 
 export function AppShell({ children, minimalChrome = false }: AppShellProps) {
   const pathname = usePathname();
+  const intakeMobileChrome = useIntakeMobileChrome();
   const initializeFromStorage = useAppStore((state) => state.initializeFromStorage);
   const isHome = pathname === '/';
   const isChatView = pathname.startsWith('/chat');
   const isV2Intake = pathname.startsWith('/v2');
   const isProductDetail = isBusinessProductDetailPath(pathname);
   const businessProfileAura = isBusinessProfileAuraPath(pathname);
-  const effectiveMinimal = minimalChrome || isChatView || isV2Intake;
+  const effectiveMinimal = minimalChrome || isChatView || isV2Intake || intakeMobileChrome;
   const hideMobileNav = effectiveMinimal || isProductDetail;
+  const hideSiteHeader = intakeMobileChrome;
+  const staticPageTitle = getPageTitleForPath(pathname);
 
   useResumePendingContact();
 
@@ -52,7 +58,7 @@ export function AppShell({ children, minimalChrome = false }: AppShellProps) {
             effectiveMinimal ? 'h-dvh max-h-dvh overflow-hidden' : 'min-h-screen'
           )}
         >
-          <Header compact={effectiveMinimal} />
+          {!hideSiteHeader ? <Header compact={effectiveMinimal} /> : null}
           <main
             className={cn(
               'relative flex min-h-0 min-w-0 flex-col',
@@ -68,6 +74,9 @@ export function AppShell({ children, minimalChrome = false }: AppShellProps) {
             id="main-content"
             role="main"
           >
+            {staticPageTitle ? (
+              <PageHeading title={staticPageTitle} visuallyHidden />
+            ) : null}
             {children}
           </main>
           {!effectiveMinimal &&

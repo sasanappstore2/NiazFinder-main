@@ -1,8 +1,25 @@
 {
   "cityId": "idhaj",
   "cityName": "ایجرود",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:41:56.037Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.546Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ایجرود",
+      "name": "ایجرود",
+      "nameEn": "idhaj",
+      "centroid": {
+        "lat": 36.4155130811714,
+        "lng": 48.3738378774939
+      },
+      "bbox": {
+        "south": 36.30902655583902,
+        "north": 36.521999606503776,
+        "west": 48.258367503441576,
+        "east": 48.48930825154621
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

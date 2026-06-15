@@ -11,7 +11,7 @@
  *   NEXT_PUBLIC_CHAT_SOCKET_URL=off
  */
 
-const SOCKET_PATH = '/';
+const SOCKET_PATH = '/socket.io';
 
 export function getChatSocketConfig(): {
   url: string;

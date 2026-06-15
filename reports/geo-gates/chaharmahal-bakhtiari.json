@@ -1,0 +1,452 @@
+{
+  "provinceId": "chaharmahal-bakhtiari",
+  "provinceName": "چهارمحال و بختیاری",
+  "generatedAt": "2026-06-12T21:20:05.311Z",
+  "cities": [
+    {
+      "cityId": "shahrekord",
+      "cityName": "شهرکرد",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 42,
+      "shares": {
+        "divar": 30,
+        "osm": 12,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 42
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "borujen",
+      "cityName": "بروجن",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "farsan",
+      "cityName": "فارسان",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 8,
+      "shares": {
+        "divar": 8,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 8
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "lordegan",
+      "cityName": "لردگان",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ardehal",
+      "cityName": "اردل",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kouhrang",
+      "cityName": "کوهرنگ",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ben",
+      "cityName": "بن",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "samman",
+      "cityName": "سامان",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "C",
+      "neighborhoodCount": 22,
+      "shares": {
+        "divar": 10,
+        "osm": 12,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 22
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "junqan",
+      "cityName": "جونقان",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 23,
+      "shares": {
+        "divar": 22,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 23
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "armand",
+      "cityName": "ارمند",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "baba-heydar",
+      "cityName": "بابا حیدر",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 171,
+      "shares": {
+        "divar": 171,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 171
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bazfat",
+      "cityName": "بازفت",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "boldaji",
+      "cityName": "بلداجی",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khanmirza",
+      "cityName": "خانمیرزا",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "rudasht",
+      "cityName": "رودشت (چهارمحال و بختیاری)",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zayandeh-rud-city",
+      "cityName": "زاینده رود",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sheyda",
+      "cityName": "شیدا",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "samsami",
+      "cityName": "صمصامی",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "farrokhshahr",
+      "cityName": "فرخ‌شهر",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 15,
+      "shares": {
+        "divar": 15,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 15
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "falard",
+      "cityName": "فلارد",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kiar",
+      "cityName": "کیار",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gandoman",
+      "cityName": "گندمان",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "laran",
+      "cityName": "لاران",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "minj",
+      "cityName": "منج",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "miankuh",
+      "cityName": "میانکوه",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "naghan",
+      "cityName": "ناغان",
+      "provinceId": "chaharmahal-bakhtiari",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 0,
+  "pass": true
+}

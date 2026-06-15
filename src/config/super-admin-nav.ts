@@ -27,6 +27,7 @@ import {
   Gift,
   Ticket,
   Handshake,
+  SlidersHorizontal,
 } from 'lucide-react';
 import type { AdminPermissionId } from '@/config/admin-permissions';
 
@@ -207,6 +208,14 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
         icon: Star,
         permission: 'content:reviews:read',
       },
+      {
+        id: 'blog',
+        label: 'بلاگ',
+        description: 'مدیریت مقالات',
+        href: '/super-admin/blog',
+        icon: FileText,
+        permission: 'content:blog:read',
+      },
     ],
   },
   {
@@ -263,7 +272,7 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
         description: 'Accuracy و KPI مدل Gemma',
         href: '/super-admin/system/intake-ai-evaluation',
         icon: Bot,
-        permission: 'ops:intake-migration:read',
+        permission: 'ops:intake-ai-evaluation:read',
       },
       {
         id: 'intake-training',
@@ -272,6 +281,14 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
         href: '/super-admin/system/intake-training',
         icon: Bot,
         permission: 'ops:intake-training:read',
+      },
+      {
+        id: 'intake-field-specs',
+        label: 'فیلدهای Intake',
+        description: 'CRUD فیلد، نسخه، rollback، export',
+        href: '/super-admin/system/intake-field-specs',
+        icon: SlidersHorizontal,
+        permission: 'ops:intake-field-specs:read',
       },
       {
         id: 'referrals',

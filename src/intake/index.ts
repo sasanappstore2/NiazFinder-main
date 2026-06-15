@@ -64,7 +64,3 @@ export {
 export type { PublishShadowComparison, PublishShadowFieldDiff } from '@/intake/migration/shadow-publish';
 export { buildIntakeMigrationDashboard } from '@/intake/migration/dashboard-data';
 export type { IntakeMigrationDashboardData } from '@/intake/migration/dashboard-data';
-export { captureTrainingExample, captureTrainingExampleAsync } from '@/intake/training/trainingCapture';
-export type { IntakeTrainingExample, IntakeAnalysisTrace, GoldDatasetEntry } from '@/intake/training/trainingExample';
-export { buildGoldDatasetFromDb, exportGoldDataset } from '@/intake/training/trainingDatasetBuilder';
-export { buildIntakeTrainingDashboard } from '@/intake/training/dashboardData';

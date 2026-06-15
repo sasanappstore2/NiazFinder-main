@@ -2,7 +2,7 @@
 
 import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useRouter } from 'next/navigation';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu } from "@ark-ui/react/menu";
 import { Portal } from "@ark-ui/react/portal";
 import {
@@ -31,7 +31,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ThemeModeSelector } from "@/components/shared/ThemeToggle";
 import type { AppView } from "@/lib/types";
-import { SUPER_ADMIN_PHONE, isSuperAdminPhone } from "@/lib/super-admin";
+import { getClientAuthHeaders } from '@/lib/auth/client-auth';
 
 // ============ Shared helpers ============
 function getNotificationIcon(type: string) {
@@ -77,6 +77,7 @@ export function ArkUserMenu() {
   const {
     isAuthenticated,
     currentUser,
+    authHydrated,
     logout,
     setAuthModalOpen,
     notifications,
@@ -88,6 +89,7 @@ export function ArkUserMenu() {
   const router = useRouter();
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [canOpenSuperAdmin, setCanOpenSuperAdmin] = useState(false);
   const unreadMsgCount = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
   const recentNotifications = notifications.slice(0, 3);
   const totalBadges = unreadNotificationCount + unreadMsgCount;
@@ -100,8 +102,33 @@ export function ArkUserMenu() {
     setMenuOpen(details.open);
     if (details.open) {
       fetchNotifications();
+      if (authHydrated && isAuthenticated && currentUser) {
+        void fetch('/api/super-admin/me', { headers: getClientAuthHeaders() })
+          .then((res) => setCanOpenSuperAdmin(res.ok))
+          .catch(() => setCanOpenSuperAdmin(false));
+      }
     }
   };
+
+  useEffect(() => {
+    if (!authHydrated || !isAuthenticated || !currentUser) {
+      setCanOpenSuperAdmin(false);
+      return;
+    }
+
+    let cancelled = false;
+    void fetch('/api/super-admin/me', { headers: getClientAuthHeaders() })
+      .then((res) => {
+        if (!cancelled) setCanOpenSuperAdmin(res.ok);
+      })
+      .catch(() => {
+        if (!cancelled) setCanOpenSuperAdmin(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authHydrated, isAuthenticated, currentUser?.id, currentUser?.role]);
 
   const openMyBusinessManage = () => {
     setMenuOpen(false);
@@ -264,7 +291,7 @@ export function ArkUserMenu() {
                       : 'ثبت کسب‌وکار'}
                   </Menu.Item>
                 )}
-                {currentUser?.role === "SUPER_ADMIN" && isSuperAdminPhone(currentUser.phone) && (
+                {canOpenSuperAdmin && (
                   <Menu.Item
                     value="super-admin"
                     className={cn(menuItemBase, menuItemDefault)}

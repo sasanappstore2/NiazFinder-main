@@ -187,12 +187,18 @@ export function useAnalyticsHub(): AnalyticsHubContext {
           const events = await api<TrafficAnalyticsEvents>('/api/super-admin/analytics/events');
           setTabData((d) => ({ ...d, conversions: events }));
         } else if (tab === 'funnels') {
-          const [need, business, chat] = await Promise.all([
+          const [need, business, chat, intakeWizard] = await Promise.all([
             api<TrafficAnalyticsFunnel>('/api/super-admin/analytics/funnel', { preset: 'need' }),
             api<TrafficAnalyticsFunnel>('/api/super-admin/analytics/funnel', { preset: 'business' }),
             api<TrafficAnalyticsFunnel>('/api/super-admin/analytics/funnel', { preset: 'engagement' }),
+            api<TrafficAnalyticsFunnel>('/api/super-admin/analytics/funnel', { preset: 'intake-wizard' }),
           ]);
-          setTabData((d) => ({ ...d, funnels: { need, business, chat } }));
+          setTabData((d) => ({ ...d, funnels: { need, business, chat, intakeWizard } }));
+        } else if (tab === 'intake') {
+          const intake = await api<import('@/components/admin/analytics/tabs/IntakeTelemetryTab').IntakeTelemetryData>(
+            '/api/super-admin/analytics/intake'
+          );
+          setTabData((d) => ({ ...d, intake }));
         } else if (tab === 'retention') {
           const retention = await api<TrafficAnalyticsRetention>('/api/super-admin/analytics/retention', {
             weeks: '8',

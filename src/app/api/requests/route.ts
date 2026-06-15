@@ -15,6 +15,7 @@ import {
 import { resolveNeighborhoodSlugs } from '@/lib/neighborhoods/server';
 import { buildNeighborhoodWhereClauses } from '@/lib/neighborhoods/tokens';
 import { shouldAutoApproveNeed } from '@/lib/need-intake/auto-approve-policy';
+import { extractNeedBudgetMetaFromDynamicAnswers } from '@/lib/need/extract-need-budget-meta';
 
 // ============ TYPES ============
 
@@ -58,6 +59,11 @@ interface RequestListItem {
   categoryId: string;
   categoryName: string;
   categoryIcon: string | null;
+  dealType?: string;
+  rahnAmount?: number;
+  monthlyRent?: number;
+  deposit?: number;
+  nightlyRent?: number;
   user: {
     id: string;
     firstName: string;
@@ -345,7 +351,9 @@ export async function GET(request: NextRequest) {
       requests = filtered.slice(skip, skip + limit);
     }
 
-    const mappedRequests: RequestListItem[] = requests.map((r) => ({
+    const mappedRequests: RequestListItem[] = requests.map((r) => {
+      const budgetMeta = extractNeedBudgetMetaFromDynamicAnswers(r.dynamicAnswers);
+      return {
       id: r.id,
       title: r.title,
       slug: r.slug,
@@ -373,10 +381,16 @@ export async function GET(request: NextRequest) {
       categoryId: r.categoryId,
       categoryName: r.category.name,
       categoryIcon: r.category.icon,
+      dealType: budgetMeta.dealType,
+      rahnAmount: budgetMeta.rahnAmount,
+      monthlyRent: budgetMeta.monthlyRent,
+      deposit: budgetMeta.deposit,
+      nightlyRent: budgetMeta.nightlyRent,
       user: r.user,
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
-    }));
+    };
+    });
 
     const response: PaginatedResponse<RequestListItem> = {
       data: mappedRequests,

@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { isAllowedSuperAdmin, isSuperAdminPhone } from '@/lib/super-admin';
 
-// PATCH /api/admin/users/[id] - admin update user
+// PATCH /api/admin/users/[id] - deprecated; use /api/super-admin/users/[id]
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

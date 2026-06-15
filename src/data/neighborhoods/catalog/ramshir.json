@@ -1,8 +1,25 @@
 {
   "cityId": "ramshir",
   "cityName": "رامشیر",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:41:03.495Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.259Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "رامشیر",
+      "name": "رامشیر",
+      "nameEn": "ramshir",
+      "centroid": {
+        "lat": 30.942471447430833,
+        "lng": 49.42198831431811
+      },
+      "bbox": {
+        "south": 30.900941702551204,
+        "north": 30.984001192310462,
+        "west": 49.37666362955055,
+        "east": 49.467312999085664
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

@@ -3,7 +3,7 @@
 import { useNavigate } from '@/hooks/navigation/use-navigate';
 import Link from 'next/link';
 import { mapBusinessProfileToBrowseCard } from '@/services/business';
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Search,
@@ -47,9 +47,7 @@ import { replaceBrowseUrl } from '@/lib/filter-routing';
 import { serializeFilters, type BrowseFilters } from '@/lib/filters/parser';
 import { mapSortToBusinessApi } from '@/lib/browse/sort-map';
 import { useBrowsePageHeading } from '@/hooks/use-browse-page-heading';
-import { useCityNeighborhoods } from '@/hooks/use-city-neighborhoods';
-import { neighborhoodSearchTokens } from '@/lib/neighborhoods';
-
+import { formatCountFa } from '@/lib/format/digits';
 // ─── Avatar color generator ───────────────────────────
 const AVATAR_COLORS = [
   'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -344,6 +342,7 @@ interface BrowseSpecialistsProps {
   categorySlug?: string;
   citySlugs?: string[];
   urlFilters?: BrowseFilters;
+  serverRenderedHeading?: boolean;
 }
 
 export function BrowseSpecialists({
@@ -351,6 +350,7 @@ export function BrowseSpecialists({
   categorySlug,
   citySlugs = [],
   urlFilters,
+  serverRenderedHeading = false,
 }: BrowseSpecialistsProps = {}) {
   const { navigateTo } = useNavigate();
   const pathname = usePathname();
@@ -382,14 +382,6 @@ export function BrowseSpecialists({
   const provinceSlugs = urlFilters?.provinces ?? [];
   const hasLocationScope = citySlugs.length > 0 || provinceSlugs.length > 0;
   const singleCitySlug = citySlugs.length === 1 ? citySlugs[0] : null;
-  const { neighborhoods: cityNeighborhoods } = useCityNeighborhoods(singleCitySlug);
-  const neighborhoodTokens = useMemo(() => {
-    const slugs = new Set(urlFilters?.neighborhoods ?? []);
-    if (!slugs.size) return [];
-    return cityNeighborhoods
-      .filter((n) => slugs.has(n.id))
-      .flatMap((n) => neighborhoodSearchTokens(n));
-  }, [cityNeighborhoods, urlFilters?.neighborhoods]);
   const preservedFilters = useMemo(
     () => ({
       type: 'business' as const,
@@ -414,9 +406,14 @@ export function BrowseSpecialists({
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const view = new URLSearchParams(window.location.search).get('view');
+    const params = new URLSearchParams(window.location.search);
+    const view = params.get('view');
     if (view === 'map' || view === 'list' || view === 'grid') {
       setViewMode(view);
+    }
+    const pageParam = parseInt(params.get('page') || '1', 10);
+    if (Number.isFinite(pageParam) && pageParam >= 1) {
+      setCurrentPage(pageParam);
     }
   }, []);
 
@@ -436,7 +433,13 @@ export function BrowseSpecialists({
     );
   }, [currentPage, currentPathname, isUrlReady, preservedFilters, query, viewMode]);
 
+  const fetchAbortRef = useRef<AbortController | null>(null);
+
   const fetchSpecialists = useCallback(async () => {
+    fetchAbortRef.current?.abort();
+    const controller = new AbortController();
+    fetchAbortRef.current = controller;
+
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
@@ -455,37 +458,30 @@ export function BrowseSpecialists({
       if (hasLocationScope && provinceSlugs.length > 0) {
         params.set('provinces', provinceSlugs.join(','));
       }
+      if (singleCitySlug && urlFilters?.neighborhoods?.length) {
+        params.set('neighborhoods', urlFilters.neighborhoods.join(','));
+        params.set('neighborhoodCity', singleCitySlug);
+      }
 
-      const res = await fetch(`/api/business/browse?${params.toString()}`);
+      const res = await fetch(`/api/business/browse?${params.toString()}`, {
+        signal: controller.signal,
+      });
       if (!res.ok) throw new Error('fetch failed');
       const json = await res.json();
-      let rows: SpecialistProfile[] = (json.data ?? []).map(mapBusinessProfileToBrowseCard);
+      if (controller.signal.aborted) return;
 
-      if (neighborhoodTokens.length > 0) {
-        rows = rows.filter((s) => {
-          const hay = `${s.city ?? ''}`;
-          return neighborhoodTokens.some((token) => hay.includes(token));
-        });
-      }
-
-      if (neighborhoodTokens.length > 0) {
-        setTotalCount(rows.length);
-        setTotalPages(Math.max(1, Math.ceil(rows.length / SPECIALISTS_PAGE_LIMIT)));
-        const start = (currentPage - 1) * SPECIALISTS_PAGE_LIMIT;
-        rows = rows.slice(start, start + SPECIALISTS_PAGE_LIMIT);
-      } else {
-        setTotalCount(json.pagination?.total ?? rows.length);
-        setTotalPages(json.pagination?.totalPages ?? 1);
-      }
-
+      const rows: SpecialistProfile[] = (json.data ?? []).map(mapBusinessProfileToBrowseCard);
+      setTotalCount(json.pagination?.total ?? rows.length);
+      setTotalPages(json.pagination?.totalPages ?? 1);
       setSpecialists(rows);
     } catch (err) {
+      if ((err as Error).name === 'AbortError') return;
       console.error('Error fetching specialists:', err);
       setSpecialists([]);
       setTotalCount(0);
       setTotalPages(1);
     } finally {
-      setIsLoading(false);
+      if (!controller.signal.aborted) setIsLoading(false);
     }
   }, [
     categorySlug,
@@ -494,8 +490,8 @@ export function BrowseSpecialists({
     citySlugs,
     provinceSlugs,
     query,
+    singleCitySlug,
     urlFilters,
-    neighborhoodTokens,
     viewMode,
   ]);
 
@@ -510,6 +506,30 @@ export function BrowseSpecialists({
     [categorySlug, query, urlFilters?.verified, hasLocationScope, citySlugs, provinceSlugs]
   );
 
+  const filterResetKey = useMemo(
+    () =>
+      JSON.stringify({
+        categorySlug,
+        citySlugs,
+        provinceSlugs,
+        neighborhoods: urlFilters?.neighborhoods,
+        verified: urlFilters?.verified,
+        sort: urlFilters?.sort,
+      }),
+    [categorySlug, citySlugs, provinceSlugs, urlFilters?.neighborhoods, urlFilters?.verified, urlFilters?.sort]
+  );
+  const prevFilterResetKeyRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (prevFilterResetKeyRef.current === null) {
+      prevFilterResetKeyRef.current = filterResetKey;
+      return;
+    }
+    if (prevFilterResetKeyRef.current !== filterResetKey) {
+      prevFilterResetKeyRef.current = filterResetKey;
+      setCurrentPage(1);
+    }
+  }, [filterResetKey]);
+
   useEffect(() => {
     if (!isUrlReady) return;
     const timer = setTimeout(() => {
@@ -517,6 +537,8 @@ export function BrowseSpecialists({
     }, 300);
     return () => clearTimeout(timer);
   }, [fetchSpecialists, isUrlReady, urlFilters]);
+
+  useEffect(() => () => fetchAbortRef.current?.abort(), []);
 
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const visibleSpecialists = specialists;
@@ -542,7 +564,7 @@ export function BrowseSpecialists({
       return CANONICAL_CITIES.find((c) => c.slug === citySlugs[0])?.title ?? citySlugs[0];
     }
     if (citySlugs.length > 1) {
-      return `${citySlugs.length.toLocaleString('fa-IR')} شهر`;
+      return `${formatCountFa(citySlugs.length)} شهر`;
     }
     return undefined;
   }, [citySlugs]);
@@ -573,15 +595,17 @@ export function BrowseSpecialists({
         <div className={viewMode === 'map' ? 'mb-3 max-lg:hidden' : 'mb-8'}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1
-                className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-linear-to-l from-foreground to-foreground/80 bg-clip-text"
-                title={displayH1 !== pageH1 ? pageH1 : undefined}
-              >
-                {displayH1}
-              </h1>
+              {!serverRenderedHeading ? (
+                <h1
+                  className="text-2xl font-extrabold tracking-tight sm:text-3xl bg-linear-to-l from-foreground to-foreground/80 bg-clip-text"
+                  title={displayH1 !== pageH1 ? pageH1 : undefined}
+                >
+                  {displayH1}
+                </h1>
+              ) : null}
               {viewMode !== 'map' ? (
                 <p className="mt-1.5 text-sm text-muted-foreground">
-                  {totalCount.toLocaleString('fa-IR')} کسب‌وکار یافت شد
+                  {formatCountFa(totalCount)} کسب‌وکار یافت شد
                 </p>
               ) : null}
             </div>
@@ -773,7 +797,7 @@ export function BrowseSpecialists({
                   صفحه قبلی
                 </Button>
                 <Badge variant="secondary" className="rounded-xl px-4 py-2">
-                  صفحه {safeCurrentPage.toLocaleString('fa-IR')} از {totalPages.toLocaleString('fa-IR')}
+                  صفحه {formatCountFa(safeCurrentPage)} از {formatCountFa(totalPages)}
                 </Badge>
                 <Button
                   variant="outline"

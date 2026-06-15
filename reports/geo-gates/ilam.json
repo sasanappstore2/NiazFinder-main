@@ -1,0 +1,557 @@
+{
+  "provinceId": "ilam",
+  "provinceName": "ایلام",
+  "generatedAt": "2026-06-12T21:20:04.342Z",
+  "cities": [
+    {
+      "cityId": "ilam-city",
+      "cityName": "ایلام",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 19,
+      "shares": {
+        "divar": 12,
+        "osm": 7,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 19
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dehloran",
+      "cityName": "دهلران",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ivan",
+      "cityName": "ایوان",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 14,
+      "shares": {
+        "divar": 14,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 14
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mehran",
+      "cityName": "مهران",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 12,
+      "shares": {
+        "divar": 12,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 12
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "mehran",
+          "neighborhoodId": "مهران-هرمزگان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "abdanan",
+      "cityName": "آبدانان",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "darrehshahr",
+      "cityName": "دره‌شهر",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chardavol",
+      "cityName": "چرداول",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 1,
+        "osm": 6,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "malekshahi",
+      "cityName": "ملکشاهی",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 9,
+      "shares": {
+        "divar": 9,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 9
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "arkvaz",
+      "cityName": "ارکواز",
+      "provinceId": "ilam",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "badreh",
+      "cityName": "بدره",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "buli",
+      "cityName": "بولی",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jazman",
+      "cityName": "جزمان",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chavar",
+      "cityName": "چوار",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 19,
+      "shares": {
+        "divar": 18,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 19
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dasht-abbas",
+      "cityName": "دشت عباس",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zagros",
+      "cityName": "زاگرس",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 19,
+      "shares": {
+        "divar": 19,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 19
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zarneh",
+      "cityName": "زرنه",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zarrin-abad",
+      "cityName": "زرین آباد",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sarab-bagh",
+      "cityName": "سراب باغ",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sarab-meymeh",
+      "cityName": "سراب میمه",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sirvan",
+      "cityName": "سیروان",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 23,
+      "shares": {
+        "divar": 23,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 23
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "sirvan",
+          "neighborhoodId": "بەرامبەر",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "sirvan",
+          "neighborhoodId": "گەڕەکی-چڵانە",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "sirvan",
+          "neighborhoodId": "گەڕەکی-خانەقا",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "sirvan",
+          "neighborhoodId": "گەڕەکی-مالیدەر",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "sivan",
+      "cityName": "سیوان",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 19,
+      "shares": {
+        "divar": 19,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 19
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shabab",
+      "cityName": "شباب",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "saleh-abad-city",
+      "cityName": "صالح آباد (ایلام)",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "karzan",
+      "cityName": "کارزان",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kalat-city",
+      "cityName": "کلات (ایلام)",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gachi-city",
+      "cityName": "گچی",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mazhin",
+      "cityName": "ماژین",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "musian",
+      "cityName": "موسیان",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "halilan",
+      "cityName": "هلیلان",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "handemini",
+      "cityName": "هندمینی",
+      "provinceId": "ilam",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 5,
+  "pass": true
+}

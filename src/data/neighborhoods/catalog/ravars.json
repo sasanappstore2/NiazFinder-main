@@ -1,8 +1,25 @@
 {
   "cityId": "ravars",
   "cityName": "راور",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:41:18.532Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.279Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "راور",
+      "name": "راور",
+      "nameEn": "ravars",
+      "centroid": {
+        "lat": 31.51949943992095,
+        "lng": 57.10879270392858
+      },
+      "bbox": {
+        "south": 31.413012914588574,
+        "north": 31.625985965253324,
+        "west": 56.99804327877895,
+        "east": 57.21954212907821
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

@@ -39,44 +39,12 @@ function DimensionPanel({ data, label }: { data: TrafficAnalyticsDimensions; lab
         totalForShare={data.total}
       />
 
-      <AdminChartCard title="Heatmap (placeholder)" description="ماتریس بعد × زمان — به‌زودی">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-(--color-mainBorder)">
-                <th className="p-2 text-right">بعد</th>
-                {['هفته ۱', 'هفته ۲', 'هفته ۳', 'هفته ۴'].map((w) => (
-                  <th key={w} className="p-2 text-center">
-                    {w}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data.rows.slice(0, 6).map((row) => (
-                <tr key={row.key} className="border-b border-(--color-mainBorder)/50">
-                  <td className="p-2 font-medium">{row.label}</td>
-                  {[0, 1, 2, 3].map((ci) => {
-                    const fake = Math.round((row.value / (ci + 2)) % (row.value + 1));
-                    const intensity = row.value ? fake / row.value : 0;
-                    return (
-                      <td key={ci} className="p-1">
-                        <div
-                          className="rounded px-1 py-2 text-center tabular-nums"
-                          style={{
-                            background: `rgba(16, 185, 129, ${Math.max(0.1, intensity * 0.7)})`,
-                          }}
-                        >
-                          {fake.toLocaleString('fa-IR')}
-                        </div>
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <AdminChartCard title="توزیع زمانی (در دست توسعه)" description="ماتریس بعد × زمان از داده واقعی analytics">
+        <p className="py-6 text-center text-sm text-muted-foreground">
+          نمودار heatmap زمانی پس از اتصال به{' '}
+          <code dir="ltr" className="text-xs">/api/super-admin/analytics/timeline</code>{' '}
+          در اینجا نمایش داده می‌شود.
+        </p>
       </AdminChartCard>
     </div>
   );

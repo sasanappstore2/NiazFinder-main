@@ -1,8 +1,25 @@
 {
   "cityId": "qasreqand",
   "cityName": "قصرقند",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:55.101Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.164Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قصرقند",
+      "name": "قصرقند",
+      "nameEn": "qasreqand",
+      "centroid": {
+        "lat": 26.254628445885736,
+        "lng": 60.94120959156163
+      },
+      "bbox": {
+        "south": 26.14814192055336,
+        "north": 26.36111497121811,
+        "west": 60.83010652931326,
+        "east": 61.05231265380999
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

@@ -1,8 +1,25 @@
 {
   "cityId": "bandarlengeh",
   "cityName": "بندرلنگه",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:33.292Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.243Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بندرلنگه",
+      "name": "بندرلنگه",
+      "nameEn": "bandarlengeh",
+      "centroid": {
+        "lat": 26.727153323607617,
+        "lng": 54.780331730922455
+      },
+      "bbox": {
+        "south": 26.62066679827524,
+        "north": 26.833639848939992,
+        "west": 54.67124305898441,
+        "east": 54.8894204028605
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

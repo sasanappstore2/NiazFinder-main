@@ -1,8 +1,25 @@
 {
   "cityId": "fanooj",
   "cityName": "فنوج",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:56.672Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.950Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فنوج",
+      "name": "فنوج",
+      "nameEn": "fanooj",
+      "centroid": {
+        "lat": 26.713947845490477,
+        "lng": 59.74201069984521
+      },
+      "bbox": {
+        "south": 26.6074613201581,
+        "north": 26.820434370822852,
+        "west": 59.629932791842606,
+        "east": 59.85408860784782
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

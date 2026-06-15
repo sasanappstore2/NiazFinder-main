@@ -1,8 +1,25 @@
 {
   "cityId": "meshginshahr",
   "cityName": "مشگین‌شهر",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:43:37.042Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.680Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مشگینشهر",
+      "name": "مشگین‌شهر",
+      "nameEn": "meshginshahr",
+      "centroid": {
+        "lat": 38.43805907294287,
+        "lng": 47.76138083386441
+      },
+      "bbox": {
+        "south": 38.40611311534316,
+        "north": 38.47000503054258,
+        "west": 47.72457984591428,
+        "east": 47.798181821814545
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

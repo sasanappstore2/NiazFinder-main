@@ -3,6 +3,7 @@
  */
 
 import type { NeedIntelligenceProfile } from '@/contracts/need-intelligence';
+import type { IntakeAnalysisTrace } from '@/intake/types/analysis-trace';
 import type {
   CompletionState,
   MissingFieldItem,
@@ -105,9 +106,21 @@ export interface ParsedIntent {
   /** When true, do not auto-confirm location from catalog match alone. */
   rejectLocationAutoConfirm?: boolean;
   /** Cross-city disambiguation options when city is ambiguous. */
-  cityCandidates?: Array<{ cityId: string; label: string }>;
+  cityCandidates?: Array<{ cityId: string; label: string; score?: number }>;
+  /** MLX parse confidence (0–1) when from /v1/parse. */
+  parseConfidence?: number;
+  /** Inline listing from high-confidence parse JSON v2. */
+  inlineListingTitle?: string;
+  inlineListingDescription?: string;
   /** Intake field keys still needed (from question-engine). */
   missingFields?: string[];
+  /** MLX / rules parse gaps for wizard chips (v2.1). */
+  parseGaps?: Array<{
+    id: string;
+    kind?: 'missing' | 'contradictory' | 'uncertain';
+    messageFa?: string;
+    fieldKey?: string;
+  }>;
 }
 
 export type IntakeStep =
@@ -127,12 +140,24 @@ export interface ListingPreview {
   budgetMax?: number;
   /** How the title was generated (preview step). */
   titleSource?: 'qwen' | 'template';
+  /** How the description was generated (preview step). */
+  descriptionSource?: 'qwen' | 'template';
+  /** Cached quality score 0–1 (phase 35.3). */
+  qualityScore?: number;
 }
 
 export interface ConversationTurn {
   role: 'user' | 'assistant';
   content: string;
 }
+
+/**
+ * Canonical NeedDraft schema version (documented as v1.0).
+ * Bump only with migration + golden tests — see docs/intake-schema-versions.md.
+ */
+export const NEED_DRAFT_SCHEMA_VERSION = 1 as const;
+
+export type NeedDraftSchemaVersion = typeof NEED_DRAFT_SCHEMA_VERSION;
 
 export interface NeedDraft {
   /** Canonical intake aggregate — single source of truth for wizard + publish. */
@@ -161,11 +186,15 @@ export interface NeedDraft {
    * Do not write directly. Use `patchNeedDraftEntities()` instead.
    */
   answers: Record<string, string | number | boolean | string[]>;
+  /**
+   * @deprecated Conversational chat removed — kept for session restore only.
+   * Do not append turns in the /post wizard.
+   */
   turns: ConversationTurn[];
   leadPhone?: string;
   listingPreview?: ListingPreview;
-  /** Analysis trace for training capture — set during /api/intake/analyze. */
-  intakeTrace?: import('@/intake/training/trainingExample').IntakeAnalysisTrace;
+  /** @deprecated Training capture removed — optional session metadata. */
+  intakeTrace?: IntakeAnalysisTrace;
   /** Multi-layer Core / Decision / Smart extraction (v2). */
   intelligenceProfile?: NeedIntelligenceProfile;
 }

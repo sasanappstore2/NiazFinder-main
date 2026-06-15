@@ -2,7 +2,7 @@
   "cityId": "salafchegan",
   "cityName": "سلفچگان",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:23.123Z",
+  "importedAt": "2026-06-12T20:39:30.474Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 50.54948228605405,
         "east": 50.780108615876514
       },
-      "geoSource": "divar",
-      "areas": [
-        "مسکن مهر سلفچگان مرکزی",
-        "شمال مسکن مهر سلفچگان",
-        "جنوب مسکن مهر سلفچگان",
-        "شرق مسکن مهر سلفچگان"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

@@ -11,5 +11,8 @@ export async function register() {
     );
     const onlineStores = await warmOnlineStoresCache();
     setOnlineStoresCache(onlineStores);
+
+    const { getIntakeIndexes } = await import('@/intake/dictionaries/loader');
+    void getIntakeIndexes().catch(() => undefined);
   }
 }

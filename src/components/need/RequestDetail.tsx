@@ -133,9 +133,14 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
       description: request.description,
       city: request.city,
       province: request.province,
-      categorySlug: request.categoryName,
+      address: request.address,
+      categorySlug: request.categorySlug ?? request.categoryName,
       categoryName: request.categoryName,
       tags: request.tags,
+      budgetMin: request.budgetMin,
+      budgetMax: request.budgetMax,
+      dealType: request.dealType,
+      dynamicAnswers: request.dynamicAnswers,
     };
     return buildNeedBriefSummary(ctx);
   }, [request]);

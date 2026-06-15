@@ -1,8 +1,25 @@
 {
   "cityId": "lessertunb",
   "cityName": "تنب کوچک",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:40.094Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.423Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "تنب-کوچک",
+      "name": "تنب کوچک",
+      "nameEn": "lessertunb",
+      "centroid": {
+        "lat": 26.23900337678764,
+        "lng": 55.20832075243737
+      },
+      "bbox": {
+        "south": 26.132516851455264,
+        "north": 26.345489902120015,
+        "west": 55.10132433478686,
+        "east": 55.31531717008789
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

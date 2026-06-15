@@ -25,6 +25,7 @@ import { BookmarksModule } from './modules/bookmarks/bookmarks.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { HealthModule } from './modules/health/health.module';
 import { IntakeTypingModule } from './modules/intake-typing/intake-typing.module';
+import { IntakeQueueModule } from './modules/intake-queue/intake-queue.module';
 import { InternalModule } from './modules/internal/internal.module';
 import { IntentParserModule } from './intent-parser/intent-parser.module';
 import { NotificationsGateway } from './gateways/notifications.gateway';
@@ -124,6 +125,7 @@ const entities = [
     DashboardModule,
     HealthModule,
     IntakeTypingModule,
+    IntakeQueueModule,
     InternalModule,
     IntentParserModule,
   ],

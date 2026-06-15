@@ -1,8 +1,0 @@
-mlx>=0.22.0
-mlx-vlm>=0.3.12
-mlx-lm>=0.21.0
-fastapi>=0.115.0
-python-multipart>=0.0.9
-uvicorn[standard]>=0.32.0
-pydantic>=2.9.0
-huggingface-hub>=0.26.0

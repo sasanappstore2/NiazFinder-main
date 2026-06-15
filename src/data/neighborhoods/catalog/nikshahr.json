@@ -1,8 +1,25 @@
 {
   "cityId": "nikshahr",
   "cityName": "نیکشهر",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:51.431Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.930Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "نیکشهر",
+      "name": "نیکشهر",
+      "nameEn": "nikshahr",
+      "centroid": {
+        "lat": 26.2352716986705,
+        "lng": 60.13900981229608
+      },
+      "bbox": {
+        "south": 26.128785173338123,
+        "north": 26.341758224002874,
+        "west": 60.02832776066481,
+        "east": 60.249691863927346
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

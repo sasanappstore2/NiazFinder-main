@@ -2,7 +2,7 @@
   "cityId": "ravansar",
   "cityName": "روانسر",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:23.087Z",
+  "importedAt": "2026-06-12T20:39:30.275Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 46.56837889151691,
         "east": 46.80537772784416
       },
-      "geoSource": "divar",
-      "areas": [
-        "شهرک روانسر مرکزی",
-        "شمال شهرک روانسر",
-        "جنوب شهرک روانسر",
-        "شرق شهرک روانسر"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

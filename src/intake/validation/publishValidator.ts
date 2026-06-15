@@ -82,3 +82,11 @@ export function validateNeedDraftForPublish(draft: NeedDraft): PublishValidation
     errors,
   };
 }
+
+/** Alias used by wizard guards and client publish checks. */
+export function getPublishReadiness(draft: NeedDraft): PublishValidationResult & {
+  canPublish: boolean;
+} {
+  const result = validateNeedDraftForPublish(draft);
+  return { ...result, canPublish: result.success };
+}

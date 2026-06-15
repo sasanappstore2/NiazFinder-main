@@ -1,8 +1,25 @@
 {
   "cityId": "kouhrang",
   "cityName": "کوهرنگ",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:43:08.022Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.303Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوهرنگ",
+      "name": "کوهرنگ",
+      "nameEn": "kouhrang",
+      "centroid": {
+        "lat": 32.54601459575997,
+        "lng": 50.1217418039742
+      },
+      "bbox": {
+        "south": 32.43952807042759,
+        "north": 32.65250112109235,
+        "west": 50.00345394435005,
+        "east": 50.24002966359835
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

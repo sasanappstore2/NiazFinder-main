@@ -1,0 +1,358 @@
+{
+  "provinceId": "alborz",
+  "provinceName": "البرز",
+  "generatedAt": "2026-06-12T21:20:03.652Z",
+  "cities": [
+    {
+      "cityId": "alborz-karaj",
+      "cityName": "کرج",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 163,
+      "shares": {
+        "divar": 161,
+        "osm": 2,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 163
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "nazarabad",
+      "cityName": "نظرآباد",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 17,
+      "shares": {
+        "divar": 17,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 17
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "fardis",
+      "cityName": "فردیس",
+      "provinceId": "alborz",
+      "tier": "C",
+      "neighborhoodCount": 253,
+      "shares": {
+        "divar": 246,
+        "osm": 7,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 253
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mahdasht",
+      "cityName": "ماهدشت",
+      "provinceId": "alborz",
+      "tier": "C",
+      "neighborhoodCount": 88,
+      "shares": {
+        "divar": 84,
+        "osm": 4,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 88
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "taleghan",
+      "cityName": "طالقان",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 0,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "taleghan",
+          "neighborhoodId": "محله-شهرک",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "savojbolagh",
+      "cityName": "ساوجبلاغ",
+      "provinceId": "alborz",
+      "tier": "C",
+      "neighborhoodCount": 58,
+      "shares": {
+        "divar": 58,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 58
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hashtgerd",
+      "cityName": "هشتگرد",
+      "provinceId": "alborz",
+      "tier": "C",
+      "neighborhoodCount": 56,
+      "shares": {
+        "divar": 56,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 56
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "meshkinshahr",
+      "cityName": "مشن‌شهر",
+      "provinceId": "alborz",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kamalshahr",
+      "cityName": "کمالشهر",
+      "provinceId": "alborz",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mohammadiyeh",
+      "cityName": "محمدیه",
+      "provinceId": "alborz",
+      "tier": "C",
+      "neighborhoodCount": 16,
+      "shares": {
+        "divar": 16,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 16
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "asara",
+      "cityName": "آسارا",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "eshtehard",
+      "cityName": "اشتهارد",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "palangabad",
+      "cityName": "پلنگ آباد",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "tankaman",
+      "cityName": "تنکمان",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 45,
+      "shares": {
+        "divar": 45,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 45
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "charbagh-alborz",
+      "cityName": "چهارباغ",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 182,
+      "shares": {
+        "divar": 182,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 182
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ramjin",
+      "cityName": "رامجین",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "koohsar",
+      "cityName": "کوهسار (البرز)",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 50,
+      "shares": {
+        "divar": 50,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 50
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "garmdareh",
+      "cityName": "گرمدره",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 229,
+      "shares": {
+        "divar": 229,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 229
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mohammad-shahr",
+      "cityName": "محمدشهر",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 16,
+      "shares": {
+        "divar": 15,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 16
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "meshkindasht-city",
+      "cityName": "مشکین‌دشت",
+      "provinceId": "alborz",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 1,
+  "pass": true
+}

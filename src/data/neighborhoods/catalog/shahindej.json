@@ -1,8 +1,25 @@
 {
   "cityId": "shahindej",
   "cityName": "شاهین‌دژ",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:40:51.028Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.747Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شاهیندژ",
+      "name": "شاهین‌دژ",
+      "nameEn": "shahindej",
+      "centroid": {
+        "lat": 36.60837709209486,
+        "lng": 46.70005139444931
+      },
+      "bbox": {
+        "south": 36.58707978702839,
+        "north": 36.62967439716134,
+        "west": 46.675249801150166,
+        "east": 46.724852987748456
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

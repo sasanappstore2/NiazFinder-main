@@ -1,8 +1,25 @@
 {
   "cityId": "baghmalek",
   "cityName": "باغ‌ملک",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:41:02.007Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.091Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "باغملک",
+      "name": "باغ‌ملک",
+      "nameEn": "baghmalek",
+      "centroid": {
+        "lat": 31.485138083291414,
+        "lng": 49.970221958389274
+      },
+      "bbox": {
+        "south": 31.37865155795904,
+        "north": 31.59162460862379,
+        "west": 49.857329704072306,
+        "east": 50.08311421270625
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

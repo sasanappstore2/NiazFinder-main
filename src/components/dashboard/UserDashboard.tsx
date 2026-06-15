@@ -24,6 +24,7 @@ import {
   AlertCircle,
   Loader2,
   MapPinned,
+  Pencil,
 } from 'lucide-react';
 import {
   detectUserCity,
@@ -91,7 +92,7 @@ function resolveDashboardTab(param: string | null): DashboardTab {
 // ============ MAIN COMPONENT ============
 
 export function UserDashboard() {
-  const { currentUser, isAuthenticated, setAuthModalOpen, updateProfile, updateProfileAPI, isLoading } = useAppStore();
+  const { currentUser, isAuthenticated, authHydrated, setAuthModalOpen, updateProfile, updateProfileAPI, isLoading } = useAppStore();
   const searchParams = useSearchParams();
   const router = useRouter();
   const canManageBusiness = canManageBusinessProfile(currentUser?.role);
@@ -103,6 +104,12 @@ export function UserDashboard() {
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
 
   useEffect(() => {
+    if (!authHydrated || !isAuthenticated) {
+      setUserRequests([]);
+      setRequestsLoading(false);
+      return;
+    }
+
     let cancelled = false;
     void (async () => {
       setRequestsLoading(true);
@@ -118,9 +125,14 @@ export function UserDashboard() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [authHydrated, isAuthenticated, currentUser?.id]);
 
   useEffect(() => {
+    if (!authHydrated || !isAuthenticated) {
+      setDashboardStats(null);
+      return;
+    }
+
     let cancelled = false;
     void (async () => {
       try {
@@ -133,7 +145,7 @@ export function UserDashboard() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [authHydrated, isAuthenticated, currentUser?.id]);
 
   useEffect(() => {
     setActiveTab(resolveDashboardTab(tabFromUrl));
@@ -441,15 +453,27 @@ export function UserDashboard() {
                               <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" />{getTimeAgo(request.createdAt)}</span>
                             </div>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="shrink-0 text-muted-foreground hover:text-foreground"
-                            onClick={() => router.push(routeBuilder.listing(request.id, request.title))}
-                            title="مشاهده جزئیات نیاز"
-                          >
-                            مشاهده جزئیات<ChevronLeft className="w-4 h-4 mr-1" />
-                          </Button>
+                          <div className="flex shrink-0 items-center gap-1">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="gap-1"
+                              onClick={() => router.push(routeBuilder.needEdit(request.id))}
+                              title="ویرایش آگهی"
+                            >
+                              <Pencil className="w-4 h-4" />
+                              ویرایش
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-muted-foreground hover:text-foreground"
+                              onClick={() => router.push(routeBuilder.listing(request.id, request.title))}
+                              title="مشاهده جزئیات نیاز"
+                            >
+                              مشاهده<ChevronLeft className="w-4 h-4 mr-1" />
+                            </Button>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>

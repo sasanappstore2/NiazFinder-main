@@ -40,7 +40,17 @@ export function formatPersianInteger(digitString: string): string {
   if (!digitString) return '';
   const n = Number(digitString);
   if (!Number.isFinite(n)) return '';
-  return n.toLocaleString('fa-IR');
+  return formatCountFa(n);
+}
+
+/** SSR-safe Persian integer with thousands separator (no ICU locale drift). */
+export function formatCountFa(value: number): string {
+  if (!Number.isFinite(value)) return '';
+  const negative = value < 0;
+  const abs = Math.abs(Math.trunc(value));
+  const grouped = abs.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '٬');
+  const persian = toPersianDigits(grouped);
+  return negative ? `-${persian}` : persian;
 }
 
 /**

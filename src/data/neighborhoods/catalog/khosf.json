@@ -2,7 +2,7 @@
   "cityId": "khosf",
   "cityName": "خوسف",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.836Z",
+  "importedAt": "2026-06-12T20:39:29.158Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 58.54509566097219,
         "east": 58.769492362424856
       },
-      "geoSource": "divar",
-      "areas": [
-        "میدان امام خمینی مرکزی",
-        "شمال میدان امام خمینی",
-        "جنوب میدان امام خمینی",
-        "شرق میدان امام خمینی"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

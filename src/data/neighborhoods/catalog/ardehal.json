@@ -1,8 +1,25 @@
 {
   "cityId": "ardehal",
   "cityName": "اردل",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:43:07.325Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.887Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "اردل",
+      "name": "اردل",
+      "nameEn": "ardehal",
+      "centroid": {
+        "lat": 32.02537223435142,
+        "lng": 50.50509563023832
+      },
+      "bbox": {
+        "south": 31.918885709019047,
+        "north": 32.1318587596838,
+        "west": 50.386988667126396,
+        "east": 50.62320259335025
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

@@ -12,7 +12,8 @@ export interface UserContactInfo {
 
 export async function fetchUserContact(
   userId: string,
-  token: string | null
+  token: string | null,
+  opts?: { requestId?: string }
 ): Promise<UserContactInfo> {
   if (!token) {
     const intent: PendingContactIntent = {
@@ -23,9 +24,14 @@ export async function fetchUserContact(
     throw new ContactAuthRequiredError(intent);
   }
 
-  const res = await fetch(`/api/users/${encodeURIComponent(userId)}/contact`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const params = new URLSearchParams();
+  if (opts?.requestId) params.set('requestId', opts.requestId);
+
+  const qs = params.toString();
+  const res = await fetch(
+    `/api/users/${encodeURIComponent(userId)}/contact${qs ? `?${qs}` : ''}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
   const json = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new Error(json.error || 'خطا در دریافت اطلاعات تماس');

@@ -1,8 +1,25 @@
 {
   "cityId": "greaterandsmallerfarur",
   "cityName": "فارور بزرگ و کوچک",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:42.222Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.378Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فارور-بزرگ-و-کوچک",
+      "name": "فارور بزرگ و کوچک",
+      "nameEn": "greaterandsmallerfarur",
+      "centroid": {
+        "lat": 26.11695217121811,
+        "lng": 54.499215408190494
+      },
+      "bbox": {
+        "south": 26.010465645885734,
+        "north": 26.223438696550485,
+        "west": 54.389536040102435,
+        "east": 54.60889477627856
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

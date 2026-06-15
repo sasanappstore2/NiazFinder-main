@@ -170,6 +170,18 @@ const httpServer = createServer((req, res) => {
     res.end(JSON.stringify({ ok: true, service: 'chat-service', port: PORT }));
     return;
   }
+  if (req.url?.startsWith('/presence') && req.method === 'GET') {
+    const parsed = new URL(req.url, `http://127.0.0.1:${PORT}`);
+    const ids = parsed.searchParams.get('userIds')?.split(',').map((id) => id.trim()).filter(Boolean) ?? [];
+    const presence: Record<string, boolean> = {};
+    for (const id of ids) {
+      const sockets = onlineUsers.get(id);
+      presence[id] = Boolean(sockets && sockets.size > 0);
+    }
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ presence }));
+    return;
+  }
   if (req.url === '/metrics' && req.method === 'GET') {
     const activeSockets = [...onlineUsers.values()].reduce((n, set) => n + set.size, 0);
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -187,7 +199,7 @@ const httpServer = createServer((req, res) => {
 });
 
 const io = new Server(httpServer, {
-  path: '/',
+  path: '/socket.io',
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
@@ -387,6 +399,14 @@ io.on('connection', (socket: AuthenticatedSocket) => {
         lastSeenAt: new Date().toISOString(),
       });
     }
+
+    socket.emit(
+      'presence:bulk',
+      Array.from(contactIds).map((contactId) => ({
+        userId: contactId,
+        online: Boolean(onlineUsers.get(contactId)?.size),
+      }))
+    );
   }).catch(console.error);
 
   // Join user's personal room

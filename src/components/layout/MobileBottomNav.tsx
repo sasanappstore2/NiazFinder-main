@@ -3,7 +3,7 @@
 import { useNavigate } from '@/hooks/navigation/use-navigate';
 import React, { useCallback, useEffect, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { Home, Users, MessageCircle, User, Plus } from 'lucide-react';
+import { ClipboardList, Users, MessageCircle, User, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 import { routeBuilder, legacyViewToPath, isBusinessProductDetailPath } from '@/config/routes';
@@ -14,12 +14,18 @@ interface TabItem {
   label: string;
   shortLabel: string;
   title: string;
-  icon: typeof Home;
+  icon: typeof ClipboardList;
   view: AppView;
 }
 
 const TABS: TabItem[] = [
-  { label: 'خانه', shortLabel: 'خانه', title: 'صفحه اصلی - نیاز فایندر', icon: Home, view: 'home' },
+  {
+    label: 'نیازها',
+    shortLabel: 'نیازها',
+    title: 'مرور و جستجوی نیازها',
+    icon: ClipboardList,
+    view: 'browse-requests',
+  },
   { label: 'کسب‌وکارها', shortLabel: 'کسب‌وکار', title: 'مرور و جستجوی کسب‌وکارها', icon: Users, view: 'browse-specialists' },
   { label: 'پیام‌ها', shortLabel: 'پیام', title: 'پیام‌ها و مکاتبات', icon: MessageCircle, view: 'messages' },
   { label: 'پروفایل', shortLabel: 'پروفایل', title: 'داشبورد و پروفایل کاربری', icon: User, view: 'dashboard' },
@@ -30,7 +36,9 @@ function isTabActive(
   view: AppView,
   searchParams: URLSearchParams
 ): boolean {
-  if (view === 'home') return pathname === '/';
+  if (view === 'browse-requests') {
+    return pathname === '/n' || pathname.startsWith('/n/');
+  }
   if (view === 'browse-specialists') {
     if (isBusinessProductDetailPath(pathname)) return false;
     return pathname === '/b' || pathname.startsWith('/b/');
@@ -90,8 +98,15 @@ export function MobileBottomNav() {
     useAppStore();
   const { navigateTo } = useNavigate();
   const [missedCallCount, setMissedCallCount] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const businessHref = useBrowseUrl({ type: 'business' }, pathname);
+  const needsHref = useBrowseUrl({ type: 'need' }, pathname);
+  const isHomeActive = pathname === '/';
 
   const unreadMessages = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
   const hasUnreadMessages = unreadMessages > 0;
@@ -138,8 +153,11 @@ export function MobileBottomNav() {
     }
   }, [pathname, fetchMissedCalls]);
 
-  const tabHref = (view: AppView) =>
-    view === 'browse-specialists' ? businessHref : legacyViewToPath(view);
+  const tabHref = (view: AppView) => {
+    if (view === 'browse-specialists') return businessHref;
+    if (view === 'browse-requests') return needsHref;
+    return legacyViewToPath(view);
+  };
 
   const handleTabClick = (tab: TabItem) => {
     if ((tab.view === 'dashboard' || tab.view === 'messages') && !isAuthenticated) {
@@ -188,13 +206,15 @@ export function MobileBottomNav() {
                 {index === 2 && (
                   <button
                     type="button"
-                    data-href={routeBuilder.needNew()}
+                    data-href={routeBuilder.home()}
                     title="ثبت نیاز جدید"
-                    onClick={() => navigateTo('post-need')}
+                    onClick={() => navigateTo('home')}
                     className={cn(
                       'relative -mt-(--mobile-nav-fab-overhang) flex flex-col items-center justify-center shrink-0',
                       'min-w-13 group'
                     )}
+                    aria-current={isHomeActive ? 'page' : undefined}
+                    aria-label="ثبت نیاز"
                   >
                     <span
                       className={cn(
@@ -202,12 +222,18 @@ export function MobileBottomNav() {
                         'bg-linear-to-br from-emerald-500 to-emerald-600',
                         'shadow-[0_3px_12px_rgba(5,150,105,0.35),0_0_0_2px_oklch(0.51_0.12_165/0.08)]',
                         'transition-transform duration-200 ease-out',
-                        'group-hover:scale-[1.04] group-active:scale-95'
+                        'group-hover:scale-[1.04] group-active:scale-95',
+                        isHomeActive && 'ring-2 ring-primary/40 ring-offset-2 ring-offset-background'
                       )}
                     >
                       <Plus className="size-5 text-white" strokeWidth={2.5} aria-hidden />
                     </span>
-                    <span className="mt-0.5 text-[10px] leading-none font-medium text-primary max-[360px]:hidden">
+                    <span
+                      className={cn(
+                        'mt-0.5 text-[10px] leading-none font-medium max-[360px]:hidden',
+                        isHomeActive ? 'text-primary' : 'text-muted-foreground'
+                      )}
+                    >
                       ثبت نیاز
                     </span>
                   </button>
@@ -235,12 +261,12 @@ export function MobileBottomNav() {
                 >
                   <span className="relative flex items-center justify-center size-8">
                     <Icon className="size-4.5" strokeWidth={isActive ? 2.25 : 2} aria-hidden />
-                    {isMessagesTab && (
+                    {isMessagesTab && mounted ? (
                       <MobileNavChatAlert
                         hasUnread={hasUnreadMessages}
                         hasMissedCall={hasMissedCalls}
                       />
-                    )}
+                    ) : null}
                   </span>
                   <span className="truncate max-w-full px-0.5">
                     <span className="max-[380px]:hidden">{tab.label}</span>

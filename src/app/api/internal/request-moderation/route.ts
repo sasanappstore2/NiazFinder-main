@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { evaluateRequestModeration } from '@/lib/request-moderation/rules';
+import { passesIntakeAutoModerationGate } from '@/lib/need-intake/intake-auto-moderation-policy';
 import { applyModerationAction } from '@/lib/rbac/request-moderation';
 
 export const runtime = 'nodejs';
@@ -38,7 +39,12 @@ export async function POST(request: NextRequest) {
 
     const evaluation = await evaluateRequestModeration(requestId);
 
-    if (evaluation.pass) {
+    const governancePass = passesIntakeAutoModerationGate(
+      evaluation.score,
+      evaluation.flags
+    );
+
+    if (evaluation.pass && governancePass) {
       const systemUser = await db.user.findFirst({
         where: { role: 'SUPER_ADMIN' },
         select: { id: true },

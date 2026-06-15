@@ -8,7 +8,7 @@ import {
 import { buildIranVectorTilejson } from '@/lib/map/iran/vector-tile-proxy.server';
 import { buildIranDivarStyle } from '@/lib/map/iran/divar-style';
 import { resolveIranDivarBrowseConfig } from '@/lib/map/iran/divar-browse-config';
-import { resolveCityMapMinZoom, resolveViewportCitySlug } from '@/lib/map/city-map-config';
+import { resolveViewportCitySlug } from '@/lib/map/city-map-config';
 
 function run(): void {
   assert.equal(IRAN_VECTOR_TILE_MIN_ZOOM, 5);
@@ -43,18 +43,19 @@ function run(): void {
       'tiles' in source &&
       source.tiles?.[0]?.includes('/api/map/vector/iran/{z}/{x}/{y}.pbf')
   );
-  assert.ok(!darkStyle.layers?.some((layer) => layer.id === 'iran-void-mask'));
-  assert.ok(!darkStyle.sources?.['iran-void-mask']);
+  assert.ok(darkStyle.layers?.some((layer) => layer.id === 'iran-neighbor-void'));
+  assert.ok(darkStyle.layers?.some((layer) => layer.id === 'iran-world-void'));
+  assert.ok(darkStyle.sources?.['iran-void-mask']);
   assert.ok(darkStyle.layers?.some((layer) => layer.id === 'land'));
   assert.ok(darkStyle.layers?.some((layer) => layer.id === 'boundary-province'));
 
   const mashhad = resolveIranDivarBrowseConfig(['mashhad']);
-  assert.ok(mashhad.minZoom >= resolveCityMapMinZoom('mashhad') - 0.5);
+  assert.equal(mashhad.minZoom, 5);
   assert.equal(mashhad.scopeKind, 'city');
   const shahriar = resolveIranDivarBrowseConfig(['shahriar']);
   assert.equal(resolveViewportCitySlug('shahriar'), 'shahriar');
   assert.ok(shahriar.viewportBounds);
-  assert.equal(shahriar.minZoom, resolveCityMapMinZoom('shahriar'));
+  assert.equal(shahriar.minZoom, 5);
   const iran = resolveIranDivarBrowseConfig([]);
   assert.equal(iran.minZoom, 5);
   assert.equal(iran.scopeKind, 'national');

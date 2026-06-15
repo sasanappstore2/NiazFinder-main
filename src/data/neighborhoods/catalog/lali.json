@@ -1,8 +1,25 @@
 {
   "cityId": "lali",
   "cityName": "لالی",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:41:01.289Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.372Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "لالی",
+      "name": "لالی",
+      "nameEn": "lali",
+      "centroid": {
+        "lat": 32.42975637772189,
+        "lng": 49.24395465794292
+      },
+      "bbox": {
+        "south": 32.32326985238951,
+        "north": 32.536242903054266,
+        "west": 49.12849937946416,
+        "east": 49.35940993642168
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

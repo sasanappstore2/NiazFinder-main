@@ -1,0 +1,1967 @@
+{
+  "provinceId": "fars",
+  "provinceName": "فارس",
+  "generatedAt": "2026-06-12T21:20:01.645Z",
+  "cities": [
+    {
+      "cityId": "shiraz",
+      "cityName": "شیراز",
+      "provinceId": "fars",
+      "tier": "A",
+      "neighborhoodCount": 271,
+      "shares": {
+        "divar": 271,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 271
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kazerun",
+      "cityName": "کازرون",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 12,
+      "shares": {
+        "divar": 10,
+        "osm": 2,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 12
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "marvdasht",
+      "cityName": "مرودشت",
+      "provinceId": "fars",
+      "tier": "C",
+      "neighborhoodCount": 35,
+      "shares": {
+        "divar": 35,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 35
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jahrom",
+      "cityName": "جهرم",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 50,
+      "shares": {
+        "divar": 50,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 50
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "fasa",
+      "cityName": "فسا",
+      "provinceId": "fars",
+      "tier": "C",
+      "neighborhoodCount": 12,
+      "shares": {
+        "divar": 12,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 12
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "darab",
+      "cityName": "داراب",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 10,
+      "shares": {
+        "divar": 10,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 10
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "larestan",
+      "cityName": "لار",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 13,
+      "shares": {
+        "divar": 13,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 13
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "evaz",
+      "cityName": "اوز",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "gerash",
+      "cityName": "گراش",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 3,
+      "shares": {
+        "divar": 3,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 3
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "lar",
+      "cityName": "لار",
+      "provinceId": "fars",
+      "tier": "C",
+      "neighborhoodCount": 13,
+      "shares": {
+        "divar": 13,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 13
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khonj",
+      "cityName": "خنج",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mamasani",
+      "cityName": "ممسنی",
+      "provinceId": "fars",
+      "tier": "C",
+      "neighborhoodCount": 24,
+      "shares": {
+        "divar": 24,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 24
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sepidan",
+      "cityName": "سپیدان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "abadeh",
+      "cityName": "آباده",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 23,
+      "shares": {
+        "divar": 23,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 23
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "neyriz",
+      "cityName": "نی‌ریز",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "estehban",
+      "cityName": "استهبان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 6,
+      "shares": {
+        "divar": 6,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 6
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zarrindasht",
+      "cityName": "زرین‌دشت",
+      "provinceId": "fars",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "zarrindasht",
+          "neighborhoodId": "زریندشت",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "pasargad",
+      "cityName": "پاسارگاد",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 254,
+      "shares": {
+        "divar": 254,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 254
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ramjerd",
+      "cityName": "رمژرد",
+      "provinceId": "fars",
+      "tier": "C",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ard",
+      "cityName": "ارد",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "arzhan",
+      "cityName": "ارژن",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "arsanjan",
+      "cityName": "ارسنجان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "asir",
+      "cityName": "اسیر",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ashkanan",
+      "cityName": "اشکنان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "afzar",
+      "cityName": "افزر",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "eqlid",
+      "cityName": "اقلید",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "izadkhvast",
+      "cityName": "ایزدخواست",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bagh-safa",
+      "cityName": "باغ صفا",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "banesh",
+      "cityName": "بانش",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bakhtagan",
+      "cityName": "بختگان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 20,
+      "shares": {
+        "divar": 20,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 20
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "banaruyeh",
+      "cityName": "بنارویه",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bavanat",
+      "cityName": "بوانات",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bahman-soghad",
+      "cityName": "بهمن صغاد",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "bidshahr",
+      "cityName": "بیدشهر",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "beyram",
+      "cityName": "بیرم",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "beyza",
+      "cityName": "بیضا",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "poshtkuh",
+      "cityName": "پشتکوه (فارس)",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "poshtkuh",
+          "neighborhoodId": "پشتکوه-سیستان-و-بلوچستان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "jare-va-baladeh",
+      "cityName": "جره و بالاده",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jannat-city",
+      "cityName": "جنت",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 270,
+      "shares": {
+        "divar": 270,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 270
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "jouzar",
+      "cityName": "جوزار",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "juyom",
+      "cityName": "جویم",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "chah-varz",
+      "cityName": "چاه ورز",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hasanabad-city",
+      "cityName": "حسن آباد",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "hanna",
+      "cityName": "حنا",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kherameh",
+      "cityName": "خرامه",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 9,
+      "shares": {
+        "divar": 3,
+        "osm": 6,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 9
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khorram-bid",
+      "cityName": "خرم بید",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khesht",
+      "cityName": "خشت",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khafr",
+      "cityName": "خفر",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 4,
+      "shares": {
+        "divar": 4,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 4
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "khoour",
+      "cityName": "خور (فارس)",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 11,
+      "shares": {
+        "divar": 11,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 11
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kheyrgoo",
+      "cityName": "خیرگو",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "doroodzan",
+      "cityName": "درودزن",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "doshman-ziyari",
+      "cityName": "دشمن زیاری",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "dahram",
+      "cityName": "دهرم",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "rahgan",
+      "cityName": "راهگان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "rahmatabad-city",
+      "cityName": "رحمت‌آباد",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "rostaq",
+      "cityName": "رستاق",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "rostam",
+      "cityName": "رستم",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 32,
+      "shares": {
+        "divar": 32,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 32
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "roniz",
+      "cityName": "رونیز",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zarghan",
+      "cityName": "زرقان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "zarrin-dasht",
+      "cityName": "زرین دشت (فارس)",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 29,
+      "shares": {
+        "divar": 26,
+        "osm": 3,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 29
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "پای-قلعه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "جوادیه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "دو-خواهران",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "سرچشمه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "شهرک-حیدری",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "شهرک-دستغیب",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "شهرک-سید",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "شهرک-صفی-پور",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "شهرک-صنعتی-نهاوند",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "شهرک-طالقانی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "شهرک-مسکن-مهر",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "شهرک-نیروی-انتظامی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "فرمانداری",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "قلعه-نو",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "کاکلآباد",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "کوی-تعاون",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "کوی-حاجیان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "کوی-دکتر-حسابی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "کوی-سرباز",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "کوی-کشاورز",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "کوی-نبی-شیخ",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "گلشن",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "محله-چاله",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "محله-سرکوچه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "مهدیه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "zarrin-dasht",
+          "neighborhoodId": "میدان-سیدالشهدا",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "sedeh",
+      "cityName": "سده (فارس)",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sarchahan",
+      "cityName": "سرچهان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sarvestan-city",
+      "cityName": "سروستان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sorena",
+      "cityName": "سورنا",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 268,
+      "shares": {
+        "divar": 268,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 268
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "siyakh-darangoon",
+      "cityName": "سیاخ دارنگون",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "seydan",
+      "cityName": "سیدان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "simakan",
+      "cityName": "سیمکان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sheshdeh-va-qareh-bolagh",
+      "cityName": "ششده و قره بلاغ",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "shibkuh",
+      "cityName": "شیبکوه (فارس)",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "shibkuh",
+          "neighborhoodId": "شیبکوه-هرمزگان",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "sahraye-bagh",
+      "cityName": "صحرای باغ",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "sadra",
+      "cityName": "صدرا-فارس",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "tasuj",
+      "cityName": "طسوج",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "alamarudash",
+      "cityName": "علامرودشت",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "farashband",
+      "cityName": "فراشبند",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "fasarud",
+      "cityName": "فسارود",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "furg",
+      "cityName": "فورگ",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "firuzabad",
+      "cityName": "فیروزآباد (فارس)",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 8,
+      "shares": {
+        "divar": 8,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 8
+      },
+      "tierOk": true,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "firuzabad",
+          "neighborhoodId": "اوبره",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "firuzabad",
+          "neighborhoodId": "بازار",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "firuzabad",
+          "neighborhoodId": "چهار-راه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "firuzabad",
+          "neighborhoodId": "شهرک-گلخانه",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "firuzabad",
+          "neighborhoodId": "شهرک-ولیعصر",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "firuzabad",
+          "neighborhoodId": "کلانترلی",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        },
+        {
+          "level": "warn",
+          "cityId": "firuzabad",
+          "neighborhoodId": "میدان-الغدیر",
+          "code": "centroid_outside_province",
+          "message": "centroid outside province bbox"
+        }
+      ],
+      "pass": true
+    },
+    {
+      "cityId": "ghatruyeh",
+      "cityName": "قطرویه",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "ghirokarzi",
+      "cityName": "قیروکارزین",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kamfiruz",
+      "cityName": "کامفیروز",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kor",
+      "cityName": "کر",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 35,
+      "shares": {
+        "divar": 35,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 35
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "karbal",
+      "cityName": "کربال",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 1,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kardiyan",
+      "cityName": "کردیان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kenar-takhte-va-kamar",
+      "cityName": "کنار تخته و کمار",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kavar",
+      "cityName": "کوار",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kuh-chenar",
+      "cityName": "کوه چنار",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 10,
+      "shares": {
+        "divar": 10,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 10
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kuhmarreh",
+      "cityName": "کوهمره",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 5,
+      "shares": {
+        "divar": 5,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 5
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "kuhenjan",
+      "cityName": "کوهنجان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "geleh-dar",
+      "cityName": "گله دار",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "lamerd",
+      "cityName": "لامرد",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 7,
+      "shares": {
+        "divar": 5,
+        "osm": 2,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 7
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mahur-milati",
+      "cityName": "ماهورمیلاتی",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mahmaleh",
+      "cityName": "محمله",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mazayjan",
+      "cityName": "مزایجان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mashhad-marghab",
+      "cityName": "مشهد مرغاب",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mohr",
+      "cityName": "مهر",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "mimand",
+      "cityName": "میمند",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 2,
+      "shares": {
+        "divar": 2,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 2
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "noubandegan",
+      "cityName": "نوبندگان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "norabad",
+      "cityName": "نورآباد ممسنی",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 19,
+      "shares": {
+        "divar": 19,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 19
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "varavi",
+      "cityName": "وراوی",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 0,
+        "osm": 1,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    },
+    {
+      "cityId": "homayjan",
+      "cityName": "همایجان",
+      "provinceId": "fars",
+      "tier": "B",
+      "neighborhoodCount": 1,
+      "shares": {
+        "divar": 1,
+        "osm": 0,
+        "synthetic": 0,
+        "manual": 0,
+        "total": 1
+      },
+      "tierOk": true,
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "errors": 0,
+  "warnings": 36,
+  "pass": true
+}

@@ -82,6 +82,7 @@ export const ROUTES = {
   needDetail:                  '/n/[slug]/[id]',
   needDetailLegacy:            '/n/[id]',
   needNew:                     '/post',
+  needEdit:                    '/post/edit/[id]',
   needIntake:                  '/post',
   needPropose:                 '/n/[id]/propose',
 
@@ -351,6 +352,7 @@ export const routeBuilder = {
     return routeBuilder.listing(id, title);
   },
   needNew:            () => ROUTES.needNew,
+  needEdit:           (id: string) => `/post/edit/${encodeURIComponent(id)}`,
   needIntake:         () => ROUTES.needIntake,
   needPropose:        (id: string) => `/propose/${encodeURIComponent(id)}`,
 

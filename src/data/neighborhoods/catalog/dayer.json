@@ -1,8 +1,25 @@
 {
   "cityId": "dayer",
   "cityName": "دیر",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:28.703Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.771Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دیر",
+      "name": "دیر",
+      "nameEn": "dayer",
+      "centroid": {
+        "lat": 27.91575447064319,
+        "lng": 51.92758974176857
+      },
+      "bbox": {
+        "south": 27.87386977067912,
+        "north": 27.95763917060726,
+        "west": 51.884692974910195,
+        "east": 51.97048650862695
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

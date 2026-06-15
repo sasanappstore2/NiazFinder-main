@@ -2,7 +2,7 @@
   "cityId": "komijan",
   "cityName": "کمیجان",
   "source": "osm",
-  "importedAt": "2026-06-08T16:44:22.848Z",
+  "importedAt": "2026-06-12T20:39:29.250Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,13 +19,7 @@
         "west": 49.33024849499149,
         "east": 49.557306198979006
       },
-      "geoSource": "divar",
-      "areas": [
-        "باغ کریز مرکزی",
-        "شمال باغ کریز",
-        "جنوب باغ کریز",
-        "شرق باغ کریز"
-      ]
+      "geoSource": "divar"
     }
   ]
 }

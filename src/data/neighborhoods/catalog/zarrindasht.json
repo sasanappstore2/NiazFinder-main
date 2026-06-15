@@ -1,8 +1,25 @@
 {
   "cityId": "zarrindasht",
   "cityName": "زرین‌دشت",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:40:13.378Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.383Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زریندشت",
+      "name": "زرین‌دشت",
+      "nameEn": "zarrindasht",
+      "centroid": {
+        "lat": 34.21087387121811,
+        "lng": 48.25697282715416
+      },
+      "bbox": {
+        "south": 34.10438734588573,
+        "north": 34.31736039655049,
+        "west": 48.13912812031355,
+        "east": 48.37481753399477
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

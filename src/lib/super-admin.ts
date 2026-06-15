@@ -1,8 +1,8 @@
 import type { AuthUser } from '@/lib/auth';
 import { normalizeIranMobile, toAsciiDigits } from '@/lib/format/digits';
 
-/** @deprecated use getSuperAdminPhones() — kept for one release */
-export const SUPER_ADMIN_PHONE = process.env.SUPER_ADMIN_PHONE?.trim() || '09374333028';
+/** @deprecated use getSuperAdminPhones() — configure SUPER_ADMIN_PHONES in env */
+export const SUPER_ADMIN_PHONE = process.env.SUPER_ADMIN_PHONE?.trim() || '';
 
 function normalizePhone(phone?: string | null): string {
   if (!phone) return '';
@@ -20,7 +20,7 @@ export function getSuperAdminPhones(): string[] {
       .map((p) => normalizePhone(p.trim()))
       .filter(Boolean);
   }
-  const single = normalizePhone(process.env.SUPER_ADMIN_PHONE || SUPER_ADMIN_PHONE);
+  const single = normalizePhone(process.env.SUPER_ADMIN_PHONE?.trim() || SUPER_ADMIN_PHONE);
   return single ? [single] : [];
 }
 
@@ -34,4 +34,20 @@ export function isSuperAdminPhone(phone?: string | null): boolean {
 
 export function isAllowedSuperAdmin(user: AuthUser | null): user is AuthUser {
   return Boolean(user && user.role === 'SUPER_ADMIN' && isSuperAdminPhone(user.phone));
+}
+
+type AppUserRole = AuthUser['role'];
+
+/** Promote owner phone to SUPER_ADMIN; demote stale SUPER_ADMIN when phone is not owner. */
+export function resolveSuperAdminRoleUpdate(
+  phone: string | null | undefined,
+  currentRole: AppUserRole
+): AppUserRole | null {
+  if (isSuperAdminPhone(phone)) {
+    return currentRole === 'SUPER_ADMIN' ? null : 'SUPER_ADMIN';
+  }
+  if (currentRole === 'SUPER_ADMIN') {
+    return 'CLIENT';
+  }
+  return null;
 }

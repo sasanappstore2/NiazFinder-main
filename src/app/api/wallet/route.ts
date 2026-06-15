@@ -131,6 +131,13 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'deposit') {
+      if (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN') {
+        return NextResponse.json(
+          { error: 'واریز مستقیم به کیف پول از طریق درگاه پرداخت انجام می‌شود' },
+          { status: 403 }
+        );
+      }
+
       const transaction = await db.$transaction(async (tx) => {
         // Create transaction
         const txRecord = await tx.transaction.create({

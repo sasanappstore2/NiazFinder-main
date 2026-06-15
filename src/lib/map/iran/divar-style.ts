@@ -9,7 +9,7 @@ import {
   resolveIranDivarPalette,
 } from '@/lib/map/iran/divar-style-palette';
 import { IRAN_MAP_ZOOM } from '@/lib/map/iran/zoom-tiers';
-import { IRAN_VECTOR_SOURCE_BOUNDS } from '@/lib/map/iran/viewport-geo';
+import { IRAN_MAP_VOID_MASK_URL, IRAN_VECTOR_SOURCE_BOUNDS } from '@/lib/map/iran/viewport-geo';
 import { IRAN_VECTOR_TILE_MIN_ZOOM, IRAN_VECTOR_TILE_MAX_ZOOM } from '@/lib/map/iran/vector-bounds';
 
 const Z = IRAN_MAP_ZOOM;
@@ -52,6 +52,17 @@ function buildLayers(p: IranDivarPalette): LayerSpecification[] {
       paint: { 'background-color': p.void },
     },
     {
+      id: 'landcover',
+      type: 'fill',
+      source: 'openmaptiles',
+      'source-layer': 'landcover',
+      minzoom: 4,
+      paint: {
+        'fill-color': p.land,
+        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 5, 0.92, 8, 0.65, 11, 0.35, 14, 0.15],
+      },
+    },
+    {
       id: 'land',
       type: 'fill',
       source: 'openmaptiles',
@@ -59,30 +70,7 @@ function buildLayers(p: IranDivarPalette): LayerSpecification[] {
       minzoom: 4,
       paint: {
         'fill-color': p.land,
-        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 5, 0.7, 8, 0.45, 11, 0.25],
-      },
-    },
-    {
-      id: 'water',
-      type: 'fill',
-      source: 'openmaptiles',
-      'source-layer': 'water',
-      paint: {
-        'fill-color': p.water,
-        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 5, 0.96, 10, 0.9, 14, 0.85],
-      },
-    },
-    {
-      id: 'waterway',
-      type: 'line',
-      source: 'openmaptiles',
-      'source-layer': 'waterway',
-      minzoom: Z.PROVINCIAL,
-      layout: { 'line-cap': 'round', 'line-join': 'round' },
-      paint: {
-        'line-color': p.waterway,
-        'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.35, 11, 0.85, 14, 1.5],
-        'line-opacity': ['interpolate', ['linear'], ['zoom'], 8, 0.45, 10, 0.75, 12, 0.85],
+        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 5, 0.55, 8, 0.35, 11, 0.2],
       },
     },
     {
@@ -104,7 +92,7 @@ function buildLayers(p: IranDivarPalette): LayerSpecification[] {
       type: 'line',
       source: 'openmaptiles',
       'source-layer': 'transportation',
-      minzoom: 6,
+      minzoom: Z.REGIONAL,
       filter: ['in', 'class', 'motorway', 'trunk'],
       layout: { 'line-cap': 'round', 'line-join': 'round' },
       paint: {
@@ -178,7 +166,7 @@ function buildLayers(p: IranDivarPalette): LayerSpecification[] {
       type: 'line',
       source: 'openmaptiles',
       'source-layer': 'boundary',
-      minzoom: Z.REGIONAL,
+      minzoom: 5,
       filter: ['all', ['==', ['get', 'admin_level'], 2], ['!=', ['get', 'maritime'], 1]],
       paint: {
         'line-color': p.boundary,
@@ -348,26 +336,6 @@ function buildLayers(p: IranDivarPalette): LayerSpecification[] {
       },
     },
     {
-      id: 'water-name',
-      type: 'symbol',
-      source: 'openmaptiles',
-      'source-layer': 'water_name',
-      minzoom: Z.PROVINCIAL,
-      maxzoom: 12,
-      layout: {
-        'text-field': STREET_NAME,
-        'text-font': ['Noto Sans Regular'],
-        'symbol-placement': 'line',
-        'text-size': ['interpolate', ['linear'], ['zoom'], 8, 10, 11, 11],
-        'text-optional': true,
-      },
-      paint: {
-        'text-color': p.waterLabel,
-        ...placeLabelHalo,
-        'text-opacity': ['interpolate', ['linear'], ['zoom'], 8, 0.6, 10, 0.85],
-      },
-    },
-    {
       id: 'road-label-motorway',
       type: 'symbol',
       source: 'openmaptiles',
@@ -449,6 +417,69 @@ function buildLayers(p: IranDivarPalette): LayerSpecification[] {
         'text-opacity': 0.85,
       },
     },
+    {
+      id: 'iran-neighbor-void',
+      type: 'fill',
+      source: 'iran-void-mask',
+      filter: ['==', ['get', 'kind'], 'neighbor'],
+      paint: {
+        'fill-color': p.void,
+        'fill-opacity': 1,
+      },
+    },
+    {
+      id: 'water',
+      type: 'fill',
+      source: 'openmaptiles',
+      'source-layer': 'water',
+      paint: {
+        'fill-color': p.water,
+        'fill-opacity': ['interpolate', ['linear'], ['zoom'], 5, 0.96, 10, 0.9, 14, 0.85],
+      },
+    },
+    {
+      id: 'waterway',
+      type: 'line',
+      source: 'openmaptiles',
+      'source-layer': 'waterway',
+      minzoom: Z.REGIONAL,
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: {
+        'line-color': p.waterway,
+        'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.35, 11, 0.85, 14, 1.5],
+        'line-opacity': ['interpolate', ['linear'], ['zoom'], 8, 0.45, 10, 0.75, 12, 0.85],
+      },
+    },
+    {
+      id: 'water-name',
+      type: 'symbol',
+      source: 'openmaptiles',
+      'source-layer': 'water_name',
+      minzoom: 5,
+      maxzoom: 12,
+      layout: {
+        'text-field': STREET_NAME,
+        'text-font': ['Noto Sans Regular'],
+        'symbol-placement': 'line',
+        'text-size': ['interpolate', ['linear'], ['zoom'], 8, 10, 11, 11],
+        'text-optional': true,
+      },
+      paint: {
+        'text-color': p.waterLabel,
+        ...placeLabelHalo,
+        'text-opacity': ['interpolate', ['linear'], ['zoom'], 8, 0.6, 10, 0.85],
+      },
+    },
+    {
+      id: 'iran-world-void',
+      type: 'fill',
+      source: 'iran-void-mask',
+      filter: ['==', ['get', 'kind'], 'world'],
+      paint: {
+        'fill-color': p.void,
+        'fill-opacity': 1,
+      },
+    },
   ];
 }
 
@@ -467,6 +498,10 @@ export function buildIranDivarStyle(theme: BusinessMapThemeMode = 'dark'): Style
         bounds: IRAN_VECTOR_SOURCE_BOUNDS,
         minzoom: IRAN_VECTOR_TILE_MIN_ZOOM,
         maxzoom: IRAN_VECTOR_TILE_MAX_ZOOM,
+      },
+      'iran-void-mask': {
+        type: 'geojson',
+        data: IRAN_MAP_VOID_MASK_URL,
       },
     },
     layers: buildLayers(palette),

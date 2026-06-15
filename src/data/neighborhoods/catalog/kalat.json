@@ -1,8 +1,25 @@
 {
   "cityId": "kalat",
   "cityName": "کلات",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:40:25.686Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.813Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کلات",
+      "name": "کلات",
+      "nameEn": "kalat",
+      "centroid": {
+        "lat": 36.99986242227811,
+        "lng": 59.83464130071673
+      },
+      "bbox": {
+        "south": 36.893375896945734,
+        "north": 37.10634894761049,
+        "west": 59.713970941533965,
+        "east": 59.9553116598995
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

@@ -1,8 +1,25 @@
 {
   "cityId": "sarvabad",
   "cityName": "سروآباد",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:44:07.823Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.645Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سروآباد",
+      "name": "سروآباد",
+      "nameEn": "sarvabad",
+      "centroid": {
+        "lat": 35.23477258368667,
+        "lng": 46.504913326538414
+      },
+      "bbox": {
+        "south": 35.12828605835429,
+        "north": 35.34125910901905,
+        "west": 46.38948982010427,
+        "east": 46.62033683297257
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

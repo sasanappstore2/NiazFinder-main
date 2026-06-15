@@ -1,8 +1,25 @@
 {
   "cityId": "bastak",
   "cityName": "بستک",
-  "source": "divar",
-  "importedAt": "2026-06-08T16:42:44.348Z",
-  "emptyOnDivar": true,
-  "neighborhoods": []
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.322Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بستک",
+      "name": "بستک",
+      "nameEn": "bastak",
+      "centroid": {
+        "lat": 27.28290653302192,
+        "lng": 54.71424714477051
+      },
+      "bbox": {
+        "south": 27.176420007689543,
+        "north": 27.389393058354294,
+        "west": 54.60438083064932,
+        "east": 54.82411345889171
+      },
+      "geoSource": "divar"
+    }
+  ]
 }

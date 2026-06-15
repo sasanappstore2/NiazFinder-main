@@ -15,7 +15,6 @@ import { getIntakeMigrationFeatureFlags } from '@/intake/migration/feature-flags
 import { runPublishShadowMode } from '@/intake/migration/shadow-publish';
 import { enqueueIntakeHeavyJob } from '@/lib/need-intake/enqueue-heavy';
 import { enqueueRequestModerationJob } from '@/lib/request-moderation/enqueue';
-import { captureTrainingExampleAsync } from '@/intake/training/trainingCapture';
 import {
   rejectListingTitleReason,
   truncateListingTitle,
@@ -185,12 +184,6 @@ export async function POST(request: NextRequest) {
     if (!autoApprove) {
       void enqueueRequestModerationJob(serviceRequest.id);
     }
-
-    captureTrainingExampleAsync({
-      draft,
-      serviceRequestId: serviceRequest.id,
-      intakeTrace: draft.intakeTrace ?? null,
-    });
 
     void recordIntakeMigrationEvent('NeedDraftPublished', {
       requestId: serviceRequest.id,
