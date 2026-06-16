@@ -36,6 +36,10 @@ const stepsSmoke = [
     'NEED_INTAKE_LLM_ENABLED=false npx --yes tsx src/lib/need-intake/fixtures/run-post-pipeline-self-test.ts',
   ],
   [
+    'rules-coverage-gate',
+    'npm run test:rules-coverage-gate',
+  ],
+  [
     'post-intake-scenarios',
     'NEED_INTAKE_LLM_ENABLED=false npx --yes tsx src/lib/need-intake/fixtures/run-post-intake-scenarios-self-test.ts',
   ],

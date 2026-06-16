@@ -3,6 +3,7 @@ import { getAiSemanticConfig } from '@/ai/config/feature-flags';
 import { GeminiAiProvider } from '@/ai/providers/geminiProvider';
 import { MockAiProvider } from '@/ai/providers/mockProvider';
 import { OllamaAiProvider } from '@/ai/providers/ollamaProvider';
+import { LocalChatAiProvider } from '@/ai/providers/localChatProvider';
 import { OpenAiProvider } from '@/ai/providers/openaiProvider';
 
 let cachedProvider: AiProvider | null = null;
@@ -18,9 +19,12 @@ export function createAiProvider(providerName?: string): AiProvider {
       return new OpenAiProvider();
     case 'gemini':
       return new GeminiAiProvider();
+    case 'local-llm':
+      return new LocalChatAiProvider();
     case 'ollama':
-    default:
       return new OllamaAiProvider();
+    default:
+      return new LocalChatAiProvider();
   }
 }
 
@@ -37,8 +41,13 @@ export function resetAiProviderForTests(): void {
 
 export async function routeAiResolve(
   input: Parameters<AiProvider['resolveIntake']>[0],
-  providerOverride?: string
+  providerOverride?: string | AiProvider
 ): Promise<ReturnType<AiProvider['resolveIntake']>> {
-  const provider = providerOverride ? createAiProvider(providerOverride) : getAiProvider();
+  const provider =
+    typeof providerOverride === 'object' && providerOverride
+      ? providerOverride
+      : providerOverride
+        ? createAiProvider(providerOverride)
+        : getAiProvider();
   return provider.resolveIntake(input);
 }

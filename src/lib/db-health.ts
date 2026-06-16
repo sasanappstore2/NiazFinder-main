@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 
 /** Persian message when Postgres is not reachable (local dev). */
 export const DATABASE_UNAVAILABLE_FA =
-  '??????????? ?? ????? ????. Docker Desktop ?? ???? ????? ???: docker compose up postgres -d';
+  'اتصال پایگاه‌داده برقرار نیست. Docker Desktop را روشن کنید: docker compose up postgres -d';
 
 export function isPrismaUnavailableError(error: unknown): boolean {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {

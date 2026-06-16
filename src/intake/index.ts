@@ -25,8 +25,19 @@ export {
   intakeAnalyzeRequestSchema,
   intakeAnalyzeResponseSchema,
 } from '@/intake/api/intake.dto';
-export { NEED_TYPES, resolveNeedType, getNeedTypeDefinition } from '@/intake/schema/needTypes';
-export type { NeedTypeVersion } from '@/intake/schema/needTypes';
+export { resolveTemplate, resolveTemplateFromDraftEntities } from '@/intake/template';
+export { getAnalyticsSegment } from '@/intake/template/analyticsSegment';
+export type { PostIntakeEvent } from '@/intake/telemetry/postIntakeEvents';
+export {
+  trackEvent,
+  trackFieldChange,
+  trackStepChange,
+  trackValidationError,
+  trackPublishAttempt,
+  trackDropoff,
+  isPostIntakeTelemetryEnabled,
+} from '@/intake/telemetry/postIntakeTelemetry';
+export type { IntakeTemplate, ResolveTemplateInput } from '@/intake/template';
 export { ENTITY_FIELD_REGISTRY, hasEntityValue } from '@/intake/entities/entityRegistry';
 export { computeMatchabilityScore } from '@/intake/scoring/matchabilityEngine';
 export {

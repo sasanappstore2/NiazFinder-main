@@ -88,7 +88,10 @@ export interface IntakeLocationHints {
 export interface IntakeAnalysisResult {
   entities: IntakeEntities;
   confidence: IntakeConfidence;
-  needType: string;
+  templateId: string;
+  templateVersion: number;
+  rootSlug: string;
+  categoryPath: readonly string[];
   detectedVertical: string | null;
   detectedCategory: string | null;
   /** Sorted by priority desc, ready for wizard/question planners. */

@@ -27,7 +27,8 @@ const draft = createNeedDraftFromAnalysis(
   {
     entities,
     confidence: {},
-    needType: 'apartment-rent-seeking',
+    templateId: 'residential-rent',
+    templateVersion: 1,
     detectedVertical: 'real-estate',
     detectedCategory: 'apartment',
     missingFields: [],

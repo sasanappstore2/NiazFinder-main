@@ -80,10 +80,10 @@ function main(): void {
   assert(locationStep.includes('IntakeCategoryMegaMenuPicker'), 'location step category mega menu');
   checks += 2;
 
-  const needTypes = read('src/intake/schema/needTypes.ts');
+  const verticalPolicy = read('src/intake/template/verticalPolicy.ts');
   assert(
-    needTypes.includes("fields: ['category', 'description']"),
-    'service-seeking uses category field in service-type section'
+    verticalPolicy.includes("fields: ['category', 'description']"),
+    'services policy uses category field in service-type section'
   );
   checks += 1;
 

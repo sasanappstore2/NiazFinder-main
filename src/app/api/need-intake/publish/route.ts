@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { getAuthUser, createSlug } from '@/lib/auth';
 import { mapDraftToCreateRequest } from '@/lib/need-intake/map-to-request';
 import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
-import { resolveCategoryIds, CategoryResolveError } from '@/lib/need-intake/resolve-category';
+import { resolveCategoryIds } from '@/lib/need-intake/resolve-category';
 import { normalizeCategoryPair } from '@/config/categories';
 import type { NeedDraft } from '@/contracts/need-intake';
 import { validateNeedDraftForPublish } from '@/intake/validation/publishValidator';
@@ -20,6 +20,10 @@ import {
   truncateListingTitle,
 } from '@/lib/need-intake/listing-title-sanitize';
 import { shouldAutoApproveNeed } from '@/lib/need-intake/auto-approve-policy';
+import {
+  assertPublishDatabaseReady,
+  formatNeedIntakePublishError,
+} from '@/lib/need-intake/publish-error-message';
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,9 +39,11 @@ export async function POST(request: NextRequest) {
     const draft = body.draft as NeedDraft;
     const listingPreview = body.listingPreview ?? draft?.listingPreview;
 
-    if (!draft?.entities || !draft?.needType) {
+    if (!draft?.entities || !draft?.templateId) {
       return NextResponse.json({ error: 'پیش‌نویس نامعتبر' }, { status: 400 });
     }
+
+    await assertPublishDatabaseReady(() => db.$queryRaw`SELECT 1`);
 
     const validation = validateNeedDraftForPublish(draft);
     if (!validation.success) {
@@ -80,12 +86,13 @@ export async function POST(request: NextRequest) {
     void recordIntakeMigrationEvent('CanonicalDiffDetected', {
       equal: legacyCompare.equal,
       diffs: legacyCompare.diffs,
-      needType: draft.needType,
-      schemaVersion: draft.schemaVersion,
+      templateId: draft.templateId,
+      templateVersion: draft.templateVersion,
+      rootSlug: serviceRequestV2.rootSlug,
     });
     if (!legacyCompare.equal) {
       console.info('[LEGACY_CANONICAL_DIFF]', {
-        needType: draft.needType,
+        templateId: draft.templateId,
         diffs: legacyCompare.diffs,
       });
     }
@@ -187,8 +194,9 @@ export async function POST(request: NextRequest) {
 
     void recordIntakeMigrationEvent('NeedDraftPublished', {
       requestId: serviceRequest.id,
-      needType: draft.needType,
-      schemaVersion: draft.schemaVersion,
+      templateId: draft.templateId,
+      templateVersion: draft.templateVersion,
+      rootSlug: serviceRequestV2.rootSlug,
       canonicalHash: serviceRequestV2.canonicalHash,
       completionScore: draft.completionScore,
       matchabilityScore: draft.matchabilityScore,
@@ -199,7 +207,7 @@ export async function POST(request: NextRequest) {
     if (shadowComparison) {
       void recordIntakeMigrationEvent('ShadowPublishComparison', {
         requestId: serviceRequest.id,
-        needType: draft.needType,
+        templateId: draft.templateId,
         equal: shadowComparison.equal,
         diffs: shadowComparison.diffs,
         canonicalHash: serviceRequestV2.canonicalHash,
@@ -207,7 +215,7 @@ export async function POST(request: NextRequest) {
       if (!shadowComparison.equal) {
         console.info('[SHADOW_PUBLISH_DIFF]', {
           requestId: serviceRequest.id,
-          needType: draft.needType,
+          templateId: draft.templateId,
           diffs: shadowComparison.diffs,
         });
       }
@@ -226,19 +234,16 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('need-intake publish error:', error);
-    if (error instanceof CategoryResolveError) {
+    const formatted = formatNeedIntakePublishError(error);
+    if (formatted.status === 422 && formatted.code?.startsWith('category')) {
       return NextResponse.json(
-        {
-          success: false,
-          errors: [{ path: 'categorySlug', message: error.message }],
-        },
+        { success: false, errors: [{ path: 'categorySlug', message: formatted.message }] },
         { status: 422 }
       );
     }
-    const message = error instanceof Error ? error.message : 'خطای سرور';
     return NextResponse.json(
-      { error: message.includes('No active category') ? 'دسته‌بندی در سیستم یافت نشد' : 'خطای سرور' },
-      { status: 500 }
+      { error: formatted.message, code: formatted.code },
+      { status: formatted.status }
     );
   }
 }

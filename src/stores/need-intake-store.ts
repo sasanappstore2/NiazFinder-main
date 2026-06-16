@@ -2,7 +2,6 @@
 
 import { create } from 'zustand';
 import type {
-  ConversationTurn,
   IntakeStep,
   ListingPreview,
   NeedDraft,
@@ -19,6 +18,7 @@ import {
   patchNeedDraftEntities as patchDraftEntities,
   projectNeedDraftFromForm,
   syncNeedDraftFromForm,
+  type SyncNeedDraftFormOpts,
 } from '@/intake/aggregate/needDraftAggregate';
 import { warnLegacyWriteDetected } from '@/intake/legacy/legacy-guards';
 
@@ -30,7 +30,6 @@ interface NeedIntakeState {
   parsedIntent: ParsedIntent | null;
   /** @deprecated Derived read mirror — use needDraft.entities. */
   answers: Record<string, string | number | boolean | string[]>;
-  turns: ConversationTurn[];
   currentQuestion: NextQuestionResponse | null;
   summary: string;
   listingPreview: ListingPreview | null;
@@ -45,7 +44,6 @@ interface NeedIntakeState {
   typingSessionId: string | null;
 
   setSeedText: (text: string) => void;
-  addTurn: (turn: ConversationTurn) => void;
   /** @deprecated Use patchNeedDraftEntities(). Writes are logged as LEGACY_WRITE_DETECTED. */
   setAnswer: (key: string, value: string | number | boolean) => void;
   /** @deprecated Use patchNeedDraftEntities(). Writes are logged as LEGACY_WRITE_DETECTED. */
@@ -73,25 +71,31 @@ interface NeedIntakeState {
     intakeTrace?: import('@/intake/types/analysis-trace').IntakeAnalysisTrace
   ) => void;
   patchNeedDraftEntities: (patch: Partial<Record<string, unknown>>) => void;
-  syncNeedDraftFromFormFields: (form: {
-    needText: string;
-    detailsText: string;
-    categorySlug: string;
-    subcategorySlug: string;
-    city: string;
-    neighborhood: string;
-    neighborhoodSlug?: string | null;
-  }) => NeedDraft | null;
+  syncNeedDraftFromFormFields: (
+    form: {
+      needText: string;
+      detailsText: string;
+      categorySlug: string;
+      subcategorySlug: string;
+      city: string;
+      neighborhood: string;
+      neighborhoodSlug?: string | null;
+    },
+    opts?: SyncNeedDraftFormOpts
+  ) => NeedDraft | null;
   /** Pure draft projection for live preview — does not write store. */
-  projectNeedDraftFromFormFields: (form: {
-    needText: string;
-    detailsText: string;
-    categorySlug: string;
-    subcategorySlug: string;
-    city: string;
-    neighborhood: string;
-    neighborhoodSlug?: string | null;
-  }) => NeedDraft;
+  projectNeedDraftFromFormFields: (
+    form: {
+      needText: string;
+      detailsText: string;
+      categorySlug: string;
+      subcategorySlug: string;
+      city: string;
+      neighborhood: string;
+      neighborhoodSlug?: string | null;
+    },
+    opts?: SyncNeedDraftFormOpts
+  ) => NeedDraft;
   reset: () => void;
   getDraft: () => NeedDraft | null;
 }
@@ -102,7 +106,6 @@ const initialState = {
   needDraft: null as NeedDraft | null,
   parsedIntent: null,
   answers: {},
-  turns: [],
   currentQuestion: null,
   summary: '',
   listingPreview: null,
@@ -132,7 +135,6 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
   ...initialState,
 
   setSeedText: (text) => set({ seedText: text }),
-  addTurn: (turn) => set((s) => ({ turns: [...s.turns, turn] })),
   setAnswer: (key, value) => {
     warnLegacyWriteDetected('answers', `need-intake-store.setAnswer(${key})`);
     set((s) => ({ answers: { ...s.answers, [key]: value } }));
@@ -174,11 +176,11 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
   setNeedDraft: (draft) => applyNeedDraft(set, draft),
 
   setNeedDraftFromAnalysis: (analysis, sourceText, intakeTrace) => {
-    const { leadPhone, listingPreview, turns } = get();
+    const { leadPhone, listingPreview } = get();
     const draft = createNeedDraftFromAnalysis(analysis, sourceText, {
       leadPhone,
       intakeTrace,
-      existing: { listingPreview: listingPreview ?? undefined, turns },
+      existing: { listingPreview: listingPreview ?? undefined },
     });
     applyNeedDraft(set, draft);
   },
@@ -190,16 +192,16 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
     applyNeedDraft(set, updated);
   },
 
-  syncNeedDraftFromFormFields: (form) => {
+  syncNeedDraftFromFormFields: (form, opts) => {
     const current = get().needDraft;
-    const updated = syncNeedDraftFromForm(current, form);
+    const updated = syncNeedDraftFromForm(current, form, opts);
     applyNeedDraft(set, updated);
     return updated;
   },
 
-  projectNeedDraftFromFormFields: (form) => {
+  projectNeedDraftFromFormFields: (form, opts) => {
     const current = get().needDraft;
-    return projectNeedDraftFromForm(current, form);
+    return projectNeedDraftFromForm(current, form, opts);
   },
 
   reset: () => set(initialState),

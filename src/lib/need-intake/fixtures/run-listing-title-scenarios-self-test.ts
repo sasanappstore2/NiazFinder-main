@@ -80,7 +80,7 @@ function testDeterministicPaths(): string[] {
   const rentText = 'اجاره آپارتمان ۱۹۰ متری در صیاد برای اجاره';
   const parsed = enrichParsedIntent(parseIntentFromText(rentText));
   const answers = seedAnswersFromParsed(parsed);
-  let rentDraft = legacyNeedDraftFromParsed(parsed, answers, []);
+  let rentDraft = legacyNeedDraftFromParsed(parsed, answers);
   rentDraft.sourceText = rentText;
   rentDraft = recomputeNeedDraft(rentDraft);
   const rentTitle = resolveDeterministicListingTitle(rentDraft).title;
@@ -90,8 +90,7 @@ function testDeterministicPaths(): string[] {
   const carParsed = enrichParsedIntent(parseIntentFromText('یک کارواش در حد نو میخوام'));
   let carDraft = legacyNeedDraftFromParsed(
     { ...carParsed, city: 'مشهد', categorySlug: 'car-ride', intentType: 'vehicle_search' },
-    { dealType: 'buy', location: 'مشهد' },
-    []
+    { dealType: 'buy', location: 'مشهد' }
   );
   carDraft.sourceText = 'یک کارواش در حد نو میخوام';
   carDraft.entities = entitiesToRecord({
@@ -116,7 +115,7 @@ async function testAiNeverWorsensDeterministic(): Promise<string[]> {
   try {
     const text = 'آپارتمان دو خواب برای خرید در فرامرز عباسی مشهد بودجه ۱۰ میلیارد';
     const parsed = enrichParsedIntent(parseIntentFromText(text));
-    let draft = legacyNeedDraftFromParsed(parsed, seedAnswersFromParsed(parsed), []);
+    let draft = legacyNeedDraftFromParsed(parsed, seedAnswersFromParsed(parsed));
     draft.sourceText = text;
     draft = recomputeNeedDraft(draft);
     const deterministic = resolveDeterministicListingTitle(draft).title;

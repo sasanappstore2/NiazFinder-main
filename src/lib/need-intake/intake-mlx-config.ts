@@ -1,9 +1,2 @@
-/** MLX config stub ? intake-mlx service removed. */
-
-export function isNeedIntakeLlmEnabled(): boolean {
-  return false;
-}
-
-export function getNeedIntakeLlmBaseUrl(): string {
-  return '';
-}
+/** Local model config — OpenAI-compatible server at NEED_INTAKE_LLM_URL (default :1234). */
+export { getLocalModelConfig } from '@/lib/need-intake/local-model-config';

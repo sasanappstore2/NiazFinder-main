@@ -35,4 +35,5 @@ export {
 export type { AiCandidateRetrievalSet } from '@/ai/types';
 export { getAiMetricsSnapshot, resetAiMetricsForTests } from '@/ai/observability/metrics';
 export { OllamaAiProvider } from '@/ai/providers/ollamaProvider';
+export { LocalChatAiProvider } from '@/ai/providers/localChatProvider';
 export { MockAiProvider } from '@/ai/providers/mockProvider';

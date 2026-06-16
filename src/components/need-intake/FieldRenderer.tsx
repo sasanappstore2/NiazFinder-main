@@ -16,6 +16,7 @@ interface FieldRendererProps {
   disabled?: boolean;
 }
 
+/** Value-only field renderer for legacy category filter panel. */
 export function FieldRenderer({
   field,
   value,

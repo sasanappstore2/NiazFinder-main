@@ -110,6 +110,7 @@ export function NiazIranVectorMapCore({
         onMapClick={onMapClick}
         onError={handleMapError}
         overlay={overlay}
+        zoomAroundCenter={detail === 'picker'}
       >
         {mapChildren}
       </NiazMapLibreCore>

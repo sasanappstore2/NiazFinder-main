@@ -1,4 +1,4 @@
-import type { IntakeStepLocationProps } from '@/components/need-intake/wizard/steps/IntakeStepLocation';
+import type { IntakeStepLocationProps } from '@/lib/need-intake/intake-step-location-props';
 import {
   draftHasInferredCity,
   draftHasInferredNeighborhood,

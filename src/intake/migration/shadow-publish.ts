@@ -176,22 +176,22 @@ export function runPublishShadowMode(
 /** Flat diff rows for event log / analytics. */
 export function flattenShadowDiffs(
   requestId: string,
-  needType: string,
+  templateId: string,
   comparison: PublishShadowComparison
 ): Array<{
   requestId: string;
-  needType: string;
+  templateId: string;
   equal: boolean;
   field?: string;
   legacy?: unknown;
   canonical?: unknown;
 }> {
   if (comparison.equal) {
-    return [{ requestId, needType, equal: true }];
+    return [{ requestId, templateId, equal: true }];
   }
   return comparison.diffs.map((d) => ({
     requestId,
-    needType,
+    templateId,
     equal: false,
     field: d.field,
     legacy: d.legacy,

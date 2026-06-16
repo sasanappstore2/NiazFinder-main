@@ -1,0 +1,543 @@
+{
+  "generatedAt": "2026-06-15T16:36:29.017Z",
+  "options": {
+    "city": "karaj",
+    "divarOnly": true,
+    "applyDivar": true
+  },
+  "cities": [
+    {
+      "cityId": "karaj",
+      "cityName": "کرج",
+      "divarCityId": 2,
+      "divarDistrictCount": 163,
+      "neighborhoodCount": 37,
+      "divarMatched": 15,
+      "nominatimChecked": 0,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "آیگان",
+          "neighborhoodName": "آیگان",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "اشتراکی-شمالی",
+          "neighborhoodName": "اشتراکی شمالی",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "باغستان",
+          "neighborhoodName": "باغستان",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 7413m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.80805690841778,
+            "lng": 50.94672989838296
+          },
+          "divarCentroid": {
+            "lat": 35.8745575,
+            "lng": 50.9524803
+          },
+          "driftMetersDivar": 7412.673164378119
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "باغستان",
+          "neighborhoodName": "باغستان",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 7413m vs live Divar",
+          "driftMetersDivar": 7413.424246421417
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "بزنگ",
+          "neighborhoodName": "بزنگ",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "پل-خواب",
+          "neighborhoodName": "پل خواب",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "حسن-آباد",
+          "neighborhoodName": "حسن آباد",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 4888m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.81215477272171,
+            "lng": 50.98236065655185
+          },
+          "divarCentroid": {
+            "lat": 35.8529358,
+            "lng": 51.0026131
+          },
+          "driftMetersDivar": 4888.386609667753
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "حسن-آباد",
+          "neighborhoodName": "حسن آباد",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 4950m vs live Divar",
+          "driftMetersDivar": 4949.988416941571
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "دانشگاه-آزاد-اسلامی-واحد-کرج",
+          "neighborhoodName": "دانشگاه آزاد اسلامی واحد کرج",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "دانشگاه-پیام-نور-کرج",
+          "neighborhoodName": "دانشگاه پیام نور کرج",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "دانشگاه-علوم-پزشکی-البرز",
+          "neighborhoodName": "دانشگاه علوم پزشکی البرز",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "دانشگاه-هنر-تهران-پردیس-کرج",
+          "neighborhoodName": "دانشگاه هنر تهران (پردیس کرج)",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 9451m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.854065918767034,
+            "lng": 50.88470832873518
+          },
+          "divarCentroid": {
+            "lat": 35.8522949,
+            "lng": 50.9895515
+          },
+          "driftMetersDivar": 9451.123021483601
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "دانشگاه-هنر-تهران-پردیس-کرج",
+          "neighborhoodName": "دانشگاه هنر تهران (پردیس کرج)",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 9450m vs live Divar",
+          "driftMetersDivar": 9450.19931077409
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-امام-رضا",
+          "neighborhoodName": "شهرک امام رضا",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-اوج",
+          "neighborhoodName": "شهرک اوج",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 10252m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.809261711197465,
+            "lng": 50.890363707315856
+          },
+          "divarCentroid": {
+            "lat": 35.8469315,
+            "lng": 50.9941559
+          },
+          "driftMetersDivar": 10252.04127228315
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-اوج",
+          "neighborhoodName": "شهرک اوج",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 10233m vs live Divar",
+          "driftMetersDivar": 10233.056480212636
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-بهارستان",
+          "neighborhoodName": "شهرک بهارستان",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 7766m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.82210612760053,
+            "lng": 51.01798574299189
+          },
+          "divarCentroid": {
+            "lat": 35.8840179,
+            "lng": 50.978096
+          },
+          "driftMetersDivar": 7766.464894614784
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-بهارستان",
+          "neighborhoodName": "شهرک بهارستان",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 7812m vs live Divar",
+          "driftMetersDivar": 7811.728305048601
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-بیدار-چشمه",
+          "neighborhoodName": "شهرک بیدار چشمه",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-جهازیها",
+          "neighborhoodName": "شهرک جهازیها",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 2557m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.877928177099264,
+            "lng": 50.99467320997934
+          },
+          "divarCentroid": {
+            "lat": 35.8570824,
+            "lng": 50.9826851
+          },
+          "driftMetersDivar": 2557.301519612439
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-جهازیها",
+          "neighborhoodName": "شهرک جهازیها",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 2563m vs live Divar",
+          "driftMetersDivar": 2563.0217562450916
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-دانشگاه",
+          "neighborhoodName": "شهرک دانشگاه",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-سپهر",
+          "neighborhoodName": "شهرک سپهر",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 9104m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.78624291273823,
+            "lng": 50.99411805677301
+          },
+          "divarCentroid": {
+            "lat": 35.8673172,
+            "lng": 50.9800339
+          },
+          "driftMetersDivar": 9104.033513786215
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-سپهر",
+          "neighborhoodName": "شهرک سپهر",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 9107m vs live Divar",
+          "driftMetersDivar": 9106.972713552586
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-علی-ابن-ابیطالب-کوثر",
+          "neighborhoodName": "شهرک علی ابن ابیطالب (کوثر)",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 5939m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.90621994241192,
+            "lng": 50.93568144079094
+          },
+          "divarCentroid": {
+            "lat": 35.8723297,
+            "lng": 50.9866333
+          },
+          "driftMetersDivar": 5938.767956803221
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-علی-ابن-ابیطالب-کوثر",
+          "neighborhoodName": "شهرک علی ابن ابیطالب (کوثر)",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 5994m vs live Divar",
+          "driftMetersDivar": 5994.015920083239
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-فرهنگیان",
+          "neighborhoodName": "شهرک فرهنگیان",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 12045m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.78258348802077,
+            "lng": 50.88960488574196
+          },
+          "divarCentroid": {
+            "lat": 35.8419495,
+            "lng": 51.0013351
+          },
+          "driftMetersDivar": 12044.946012112
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-فرهنگیان",
+          "neighborhoodName": "شهرک فرهنگیان",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 12047m vs live Divar",
+          "driftMetersDivar": 12047.411435754395
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "شهرک-کیوانیه-معراج",
+          "neighborhoodName": "شهرک کیوانیه (معراج)",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "صدا-و-سیمای-استان-البرز",
+          "neighborhoodName": "صدا و سیمای استان البرز",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "عظیمیه",
+          "neighborhoodName": "عظیمیه",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 9879m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.758170505436574,
+            "lng": 50.96852223496071
+          },
+          "divarCentroid": {
+            "lat": 35.8375473,
+            "lng": 51.0177269
+          },
+          "driftMetersDivar": 9879.103856567373
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "عظیمیه",
+          "neighborhoodName": "عظیمیه",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 9895m vs live Divar",
+          "driftMetersDivar": 9894.93989185591
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "فاز-دو-گوهردشت",
+          "neighborhoodName": "فاز دو گوهردشت",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "فاز-یک-گوهردشت",
+          "neighborhoodName": "فاز یک گوهردشت",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "کوی-مدرس",
+          "neighborhoodName": "کوی مدرس",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 4820m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.801126415747234,
+            "lng": 51.02378920697215
+          },
+          "divarCentroid": {
+            "lat": 35.8380432,
+            "lng": 50.9957809
+          },
+          "driftMetersDivar": 4819.546432971607
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "کوی-مدرس",
+          "neighborhoodName": "کوی مدرس",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 4746m vs live Divar",
+          "driftMetersDivar": 4746.286443279723
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "گوهردشت",
+          "neighborhoodName": "گوهردشت",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 9849m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.91377113343435,
+            "lng": 50.89800215453329
+          },
+          "divarCentroid": {
+            "lat": 35.8519745,
+            "lng": 50.9763145
+          },
+          "driftMetersDivar": 9848.583829725147
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "گوهردشت",
+          "neighborhoodName": "گوهردشت",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 9827m vs live Divar",
+          "driftMetersDivar": 9826.753162151752
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "مرز-محله-شهرک-جهازیها",
+          "neighborhoodName": "مرز محله شهرک جهازیها",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "مرکز-تحقیقات-منطقه-البرز",
+          "neighborhoodName": "مرکز تحقیقات منطقه البرز",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "مطهری",
+          "neighborhoodName": "مطهری",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 13872m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.85526287880494,
+            "lng": 50.83101707519876
+          },
+          "divarCentroid": {
+            "lat": 35.8440132,
+            "lng": 50.9843
+          },
+          "driftMetersDivar": 13871.873336072475
+        },
+        {
+          "level": "error",
+          "cityId": "karaj",
+          "neighborhoodId": "مطهری",
+          "neighborhoodName": "مطهری",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 13775m vs live Divar",
+          "driftMetersDivar": 13775.19423647293
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "منطقه-۱",
+          "neighborhoodName": "منطقه ۱",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "منطقه-۱۰",
+          "neighborhoodName": "منطقه ۱۰",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "منطقه-۶",
+          "neighborhoodName": "منطقه ۶",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "منطقه-۷",
+          "neighborhoodName": "منطقه ۷",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "منطقه-۸",
+          "neighborhoodName": "منطقه ۸",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        },
+        {
+          "level": "warn",
+          "cityId": "karaj",
+          "neighborhoodId": "میدان-امیرکبیر",
+          "neighborhoodName": "میدان امیرکبیر",
+          "code": "missing_divar_match",
+          "message": "No matching Divar district by name"
+        }
+      ],
+      "fixesApplied": 14
+    }
+  ],
+  "summary": {
+    "cities": 1,
+    "neighborhoods": 37,
+    "errors": 26,
+    "warnings": 22,
+    "fixesApplied": 14
+  }
+}

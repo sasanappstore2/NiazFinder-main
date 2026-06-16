@@ -1,5 +1,5 @@
 /**
- * Need intake — conversational posting contracts.
+ * Need intake — form wizard contracts (`/post`).
  */
 
 import type { NeedIntelligenceProfile } from '@/contracts/need-intelligence';
@@ -45,6 +45,10 @@ export type FieldType =
   | 'chips'
   | 'date'
   | 'location'
+  | 'category'
+  | 'city'
+  | 'neighborhood'
+  | 'mapPin'
   | 'upload'
   | 'toggle'
   | 'slider';
@@ -146,11 +150,6 @@ export interface ListingPreview {
   qualityScore?: number;
 }
 
-export interface ConversationTurn {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
 /**
  * Canonical NeedDraft schema version (documented as v1.0).
  * Bump only with migration + golden tests — see docs/intake-schema-versions.md.
@@ -162,7 +161,8 @@ export type NeedDraftSchemaVersion = typeof NEED_DRAFT_SCHEMA_VERSION;
 export interface NeedDraft {
   /** Canonical intake aggregate — single source of truth for wizard + publish. */
   id?: string;
-  needType: string;
+  templateId: string;
+  templateVersion: number;
   schemaVersion: number;
   vertical: string;
   category: string;
@@ -186,17 +186,14 @@ export interface NeedDraft {
    * Do not write directly. Use `patchNeedDraftEntities()` instead.
    */
   answers: Record<string, string | number | boolean | string[]>;
-  /**
-   * @deprecated Conversational chat removed — kept for session restore only.
-   * Do not append turns in the /post wizard.
-   */
-  turns: ConversationTurn[];
   leadPhone?: string;
   listingPreview?: ListingPreview;
   /** @deprecated Training capture removed — optional session metadata. */
   intakeTrace?: IntakeAnalysisTrace;
-  /** Multi-layer Core / Decision / Smart extraction (v2). */
+  /** Optional enrichment for listing copy (future / rules extraction). */
   intelligenceProfile?: NeedIntelligenceProfile;
+  /** Per-field confidence + source from Intelligence Engine v1. */
+  fieldMeta?: Record<string, { value: unknown; confidence: number; source: string; evidence?: string }>;
 }
 
 export interface PublishValidationError {
@@ -207,14 +204,6 @@ export interface PublishValidationError {
 export interface PublishNeedValidationResponse {
   success: false;
   errors: PublishValidationError[];
-}
-
-export interface ChatTurnResponse {
-  assistantMessage: string;
-  slotUpdates?: Record<string, unknown>;
-  readinessScore: number;
-  readyToPreview: boolean;
-  suggestedChips?: FieldOption[];
 }
 
 export interface PreviewListingResponse {

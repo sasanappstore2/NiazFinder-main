@@ -1,13 +1,7 @@
-/**
- * Phase 48.2 ? load ServiceRequest ? NeedDraft for edit wizard.
- */
-import {
-  NEED_DRAFT_SCHEMA_VERSION,
-  type ListingPreview,
-  type NeedDraft,
-} from '@/contracts/need-intake';
+import type { NeedDraft, ListingPreview } from '@/contracts/need-intake';
 import { recomputeNeedDraft } from '@/intake/aggregate/needDraftAggregate';
 import type { ServiceRequestV2 } from '@/intake/projections/serviceRequestV2';
+import { resolveTemplateIdFromLegacyNeedType } from '@/intake/migration/legacy-need-type-map';
 import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
 
 export interface MappedIntakeEditPayload {
@@ -31,6 +25,31 @@ function toBudget(n: bigint | number | null | undefined): number | null {
   return Number.isFinite(v) ? v : null;
 }
 
+function resolveTemplateIdFromStoredDynamic(
+  v2: ServiceRequestV2 | undefined,
+  dynamic: Record<string, unknown>
+): { templateId: string; templateVersion: number } {
+  if (v2?.templateId) {
+    return {
+      templateId: v2.templateId,
+      templateVersion: v2.templateVersion ?? 1,
+    };
+  }
+  const legacyNeedType =
+    typeof dynamic.needType === 'string'
+      ? dynamic.needType
+      : typeof (v2 as { needType?: string } | undefined)?.needType === 'string'
+        ? (v2 as unknown as { needType: string }).needType
+        : null;
+  if (legacyNeedType) {
+    return {
+      templateId: resolveTemplateIdFromLegacyNeedType(legacyNeedType),
+      templateVersion: 1,
+    };
+  }
+  return { templateId: 'general', templateVersion: 1 };
+}
+
 export function mapServiceRequestToNeedDraft(row: {
   id: string;
   slug: string;
@@ -49,6 +68,7 @@ export function mapServiceRequestToNeedDraft(row: {
 }): MappedIntakeEditPayload {
   const dynamic = parseServiceRequestDynamicAnswers(row.dynamicAnswers);
   const v2 = dynamic.serviceRequestV2 as ServiceRequestV2 | undefined;
+  const { templateId, templateVersion } = resolveTemplateIdFromStoredDynamic(v2, dynamic);
   const budgetMin = toBudget(row.budgetMin);
   const budgetMax = toBudget(row.budgetMax);
 
@@ -89,8 +109,9 @@ export function mapServiceRequestToNeedDraft(row: {
 
   const draftBase: NeedDraft = {
     id: row.id,
-    needType: v2?.needType ?? 'general-seeking',
-    schemaVersion: v2?.schemaVersion ?? NEED_DRAFT_SCHEMA_VERSION,
+    templateId,
+    templateVersion,
+    schemaVersion: v2?.schemaVersion ?? 1,
     vertical: v2?.vertical ?? 'general',
     category: v2?.category ?? row.category?.slug ?? 'general',
     entities,
@@ -103,7 +124,6 @@ export function mapServiceRequestToNeedDraft(row: {
     updatedAt: new Date().toISOString(),
     parsedIntent: parseIntentFromText(sourceText),
     answers: answers as Record<string, string | number | boolean | string[]>,
-    turns: [],
     listingPreview,
   };
 

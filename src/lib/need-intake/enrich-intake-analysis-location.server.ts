@@ -1,9 +1,10 @@
-import type { IntakeAnalysisResult, IntakeLocationHints } from '@/intake/types';
-import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
-import { applyLocationResolutionToParsed } from '@/lib/need-intake/location-resolution-engine';
+import type { IntakeAnalysisResult, IntakeLocationHints, TransactionType } from '@/intake/types';
+import type { ParsedIntent } from '@/contracts/need-intake';
 import { applyLaunchIntakeEntityPolicy } from '@/lib/need-intake/intake-launch-policy';
+import { mapDealTypeToTransaction } from '@/lib/need-intake/deal-type-transaction';
+import { parseAndEnrichIntentFromText } from '@/lib/need-intake/parse-and-enrich-intent.server';
 
-function locationHintsFromParsed(parsed: ReturnType<typeof applyLocationResolutionToParsed>): IntakeLocationHints {
+function locationHintsFromParsed(parsed: ParsedIntent): IntakeLocationHints {
   return {
     locationAmbiguous: parsed.locationAmbiguous,
     neighborhoodSlug: parsed.neighborhoodSlug,
@@ -22,7 +23,26 @@ function locationHintsFromParsed(parsed: ReturnType<typeof applyLocationResoluti
   };
 }
 
-/** Run LRE on analyze text and merge neighborhood/city into intake entities (API-only). */
+const TX_RANK: Record<TransactionType, number> = {
+  HOURLY_RENT: 1,
+  DAILY_RENT: 2,
+  RENT: 3,
+  BUY: 3,
+  SELL: 3,
+  FULL_DEPOSIT: 4,
+  DEPOSIT_AND_RENT: 5,
+};
+
+function preferTransactionType(
+  current: TransactionType | null | undefined,
+  candidate: TransactionType | null | undefined
+): TransactionType | null {
+  if (!candidate) return current ?? null;
+  if (!current) return candidate;
+  return TX_RANK[candidate] >= TX_RANK[current] ? candidate : current;
+}
+
+/** Run full parse+enrich pipeline and merge location/deal into analyze entities (API-only). */
 export function enrichIntakeAnalysisLocation(
   analysis: IntakeAnalysisResult,
   sourceText: string,
@@ -34,7 +54,7 @@ export function enrichIntakeAnalysisLocation(
   const text = sourceText.trim();
   if (!text) return analysis;
 
-  const parsed = applyLocationResolutionToParsed(parseIntentFromText(text), {
+  const parsed = parseAndEnrichIntentFromText(text, {
     preferredCityId: opts?.preferredCitySlug ?? analysis.entities.citySlug,
     preferredCityName: opts?.preferredCityName ?? analysis.entities.city ?? undefined,
     locationText: text,
@@ -58,6 +78,9 @@ export function enrichIntakeAnalysisLocation(
       entities.neighborhood = area;
     }
   }
+
+  const fromParsedDeal = mapDealTypeToTransaction(parsed.entities?.dealType);
+  entities.transactionType = preferTransactionType(entities.transactionType, fromParsedDeal);
 
   return {
     ...analysis,

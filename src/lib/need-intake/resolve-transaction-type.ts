@@ -1,6 +1,7 @@
 import type { TransactionType } from '@/intake/types';
 import { normalizeCategoryPair } from '@/config/categories';
 import { mapDealTypeToTransaction } from '@/lib/need-intake/deal-type-transaction';
+import { isTenantSeekerRahnEjare, hasExplicitRahnAndRentAmounts } from '@/lib/need-intake/deal-type-helpers';
 import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
 
 const RENT_TRANSACTIONS = new Set<TransactionType>([
@@ -86,6 +87,12 @@ function isFineGrainedRent(tx: TransactionType): boolean {
   return FINE_GRAINED_RENT.includes(tx);
 }
 
+function depositAndRentFromTextSlots(sourceText: string): boolean {
+  if (isTenantSeekerRahnEjare(sourceText)) return true;
+  if (hasExplicitRahnAndRentAmounts(sourceText)) return true;
+  return false;
+}
+
 /**
  * Single resolver: text rent/رهن beats category *-sale slug; fine-grained rent beats coarse RENT slug.
  */
@@ -103,18 +110,24 @@ export function resolveTransactionType(input: ResolveTransactionTypeInput): Tran
     : null;
   const fromSlug = leaf ? inferTransactionTypeFromSlug(leaf) : null;
 
+  if (fromText && isSaleTransactionType(fromText) && depositAndRentFromTextSlots(input.sourceText)) {
+    return 'DEPOSIT_AND_RENT';
+  }
+
   if (fromText && fromSlug) {
     if (isRentTransactionType(fromText) && isSaleTransactionType(fromSlug)) {
       return fromText;
     }
     if (isSaleTransactionType(fromText) && isRentTransactionType(fromSlug)) {
-      return fromText;
+      if (depositAndRentFromTextSlots(input.sourceText)) return 'DEPOSIT_AND_RENT';
+      return fromSlug;
     }
     if (isFineGrainedRent(fromText) && fromSlug === 'RENT') {
       return fromText;
     }
     if (fromText === 'BUY' && fromSlug === 'RENT') {
-      return fromText;
+      if (depositAndRentFromTextSlots(input.sourceText)) return 'DEPOSIT_AND_RENT';
+      return fromSlug;
     }
   }
 

@@ -37,7 +37,7 @@ function main(): void {
   checks += 1;
 
   const form = {
-    needText: '???????? ?? ????',
+    needText: 'آپارتمان در فردوسی',
     setNeedText: () => {},
     detailsText: '',
     setDetailsText: () => {},
@@ -45,7 +45,7 @@ function main(): void {
     setSelectedCategory: () => {},
     selectedSubcategory: 'apartment-rent',
     setSelectedSubcategory: () => {},
-    selectedCity: '????',
+    selectedCity: 'مشهد',
     setSelectedCity: () => {},
     selectedNeighborhood: '',
     setSelectedNeighborhood: () => {},
@@ -67,13 +67,13 @@ function main(): void {
       listingPreview:
         step === 'preview'
           ? {
-              title: '???????? ?? ???? ?? ????',
-              description: '????? ???',
+              title: 'آپارتمان در فردوسی مشهد',
+              description: 'دو خواب',
               budgetMin: null,
               budgetMax: null,
             }
           : null,
-      liveListingCopy: step === 'details' ? { title: '??????? ????', description: '' } : null,
+      liveListingCopy: step === 'details' ? { title: 'پیش‌نمایش آگهی', description: '' } : null,
       goToDetails: noop,
       setSeedText: noop,
       setStep: noop,
@@ -130,7 +130,7 @@ function main(): void {
 
     assert(props.step === step, `builder step ${step}`);
     assert(typeof props.needText === 'string', `${step}: needText string`);
-    assert(props.location.selectedCity === '????', `${step}: city wired`);
+    assert(props.location.selectedCity === 'مشهد', `${step}: city wired`);
     if (step === 'preview') {
       assert(Boolean(props.listingPreview?.title), 'preview step has listing');
     }

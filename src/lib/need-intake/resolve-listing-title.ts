@@ -128,7 +128,9 @@ export function buildDeterministicListingTitle(draft: NeedDraft): string {
   if (
     parsed.intentType === 'product_search' ||
     root === 'personal-items' ||
-    root === 'electronics'
+    root === 'electronics' ||
+    root === 'entertainment' ||
+    root === 'home-appliances'
   ) {
     return buildProductSearchTitle(rawText, deal || 'buy', parsed.city ?? entities.city ?? undefined);
   }

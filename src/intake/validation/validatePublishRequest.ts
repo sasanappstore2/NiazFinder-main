@@ -17,7 +17,7 @@ export function validatePublishRequest(
   draft: NeedDraft | null | undefined,
   listingPreview?: ListingPreview | null
 ): PublishValidationResult {
-  if (!draft?.entities || !draft.needType) {
+  if (!draft?.entities || !draft.templateId) {
     return {
       success: false,
       errors: [{ field: 'needDraft', message: 'پیش‌نویس نامعتبر است' }],

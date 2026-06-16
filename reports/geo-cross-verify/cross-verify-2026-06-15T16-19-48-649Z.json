@@ -1,0 +1,1135 @@
+{
+  "generatedAt": "2026-06-15T16:19:48.649Z",
+  "options": {
+    "tier": "a",
+    "divarOnly": true,
+    "applyDivar": true
+  },
+  "cities": [
+    {
+      "cityId": "arak",
+      "cityName": "اراک",
+      "divarCityId": 15,
+      "divarDistrictCount": 0,
+      "neighborhoodCount": 94,
+      "divarMatched": 0,
+      "nominatimChecked": 0,
+      "issues": [],
+      "fixesApplied": 0
+    },
+    {
+      "cityId": "urmia",
+      "cityName": "ارومیه",
+      "divarCityId": 10,
+      "divarDistrictCount": 0,
+      "neighborhoodCount": 172,
+      "divarMatched": 0,
+      "nominatimChecked": 0,
+      "issues": [],
+      "fixesApplied": 0
+    },
+    {
+      "cityId": "isfahan-city",
+      "cityName": "اصفهان",
+      "divarCityId": 4,
+      "divarDistrictCount": 272,
+      "neighborhoodCount": 272,
+      "divarMatched": 272,
+      "nominatimChecked": 0,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "براآن-شمالی",
+          "neighborhoodName": "براآن شمالی",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1202m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.540426249999996,
+            "lng": 51.980743399999994
+          },
+          "divarCentroid": {
+            "lat": 32.5474129,
+            "lng": 51.9709549
+          },
+          "driftMetersDivar": 1202.245920697788
+        },
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "بهارستان",
+          "neighborhoodName": "بهارستان",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 517m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.506416349999995,
+            "lng": 51.75376895
+          },
+          "divarCentroid": {
+            "lat": 32.5062332,
+            "lng": 51.7482605
+          },
+          "driftMetersDivar": 516.9520934235177
+        },
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "رهنان",
+          "neighborhoodName": "رهنان",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 530m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.6933403,
+            "lng": 51.60655595
+          },
+          "divarCentroid": {
+            "lat": 32.6930466,
+            "lng": 51.6009
+          },
+          "driftMetersDivar": 530.2839714360076
+        },
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "زیار",
+          "neighborhoodName": "زیار",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1284m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.432672499999995,
+            "lng": 51.9394493
+          },
+          "divarCentroid": {
+            "lat": 32.4441643,
+            "lng": 51.9380608
+          },
+          "driftMetersDivar": 1284.4563928686155
+        },
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "سرشبادران",
+          "neighborhoodName": "سرشبادران",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1322m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.58207135,
+            "lng": 51.834001549999996
+          },
+          "divarCentroid": {
+            "lat": 32.5770226,
+            "lng": 51.821228
+          },
+          "driftMetersDivar": 1321.977129035009
+        },
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "شاهینشهر",
+          "neighborhoodName": "شاهین‌شهر",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 791m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.866251000000005,
+            "lng": 51.564657249999996
+          },
+          "divarCentroid": {
+            "lat": 32.8621864,
+            "lng": 51.5577126
+          },
+          "driftMetersDivar": 790.5594610498314
+        },
+        {
+          "level": "error",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "غدیر",
+          "neighborhoodName": "غدیر",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 25035m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.475880849999996,
+            "lng": 51.7951983
+          },
+          "divarCentroid": {
+            "lat": 32.6966553,
+            "lng": 51.7427826
+          },
+          "driftMetersDivar": 25035.372987855517
+        },
+        {
+          "level": "error",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "غدیر",
+          "neighborhoodName": "غدیر",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 25047m vs live Divar",
+          "driftMetersDivar": 25047.270101289967
+        },
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "فرودگاه",
+          "neighborhoodName": "فرودگاه",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 689m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.6078434,
+            "lng": 51.69987105
+          },
+          "divarCentroid": {
+            "lat": 32.6121826,
+            "lng": 51.6946144
+          },
+          "driftMetersDivar": 689.3698464499707
+        },
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "فرودگاه-شهید-بهشتی",
+          "neighborhoodName": "فرودگاه شهید بهشتی",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1261m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.759347899999995,
+            "lng": 51.8723602
+          },
+          "divarCentroid": {
+            "lat": 32.7670288,
+            "lng": 51.8624382
+          },
+          "driftMetersDivar": 1261.0264943517273
+        },
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "قهاب-جنوبی",
+          "neighborhoodName": "قهاب جنوبی",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1018m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.650699599999996,
+            "lng": 51.935257
+          },
+          "divarCentroid": {
+            "lat": 32.6419678,
+            "lng": 51.9385338
+          },
+          "driftMetersDivar": 1018.250936006481
+        },
+        {
+          "level": "error",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "قهجاورستان",
+          "neighborhoodName": "قهجاورستان",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1819m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.73148535,
+            "lng": 51.86697195
+          },
+          "divarCentroid": {
+            "lat": 32.7318497,
+            "lng": 51.8475342
+          },
+          "driftMetersDivar": 1818.6295597045867
+        },
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "کوی-شهید-کشوری",
+          "neighborhoodName": "کوی شهید کشوری",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 689m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.6032888,
+            "lng": 51.73113855
+          },
+          "divarCentroid": {
+            "lat": 32.5971146,
+            "lng": 51.7304916
+          },
+          "driftMetersDivar": 689.2094066096912
+        },
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "کوی-شهید-کشوری",
+          "neighborhoodName": "کوی شهید کشوری",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 887m vs live Divar",
+          "driftMetersDivar": 886.7089531407339
+        },
+        {
+          "level": "error",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "کوی-میلاد",
+          "neighborhoodName": "کوی میلاد",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 22253m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.47548705,
+            "lng": 51.7883845
+          },
+          "divarCentroid": {
+            "lat": 32.6717758,
+            "lng": 51.7420959
+          },
+          "driftMetersDivar": 22253.11607403161
+        },
+        {
+          "level": "error",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "کوی-میلاد",
+          "neighborhoodName": "کوی میلاد",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 22234m vs live Divar",
+          "driftMetersDivar": 22234.229168109407
+        },
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "محمودآباد",
+          "neighborhoodName": "محمودآباد",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1089m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.7818756,
+            "lng": 51.58852575
+          },
+          "divarCentroid": {
+            "lat": 32.7751656,
+            "lng": 51.5800362
+          },
+          "driftMetersDivar": 1089.3224883252667
+        },
+        {
+          "level": "warn",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "نصرآباد",
+          "neighborhoodName": "نصرآباد",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 791m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.6489315,
+            "lng": 51.5963549
+          },
+          "divarCentroid": {
+            "lat": 32.6486168,
+            "lng": 51.6048
+          },
+          "driftMetersDivar": 791.4498340678708
+        },
+        {
+          "level": "error",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "هوانیروز",
+          "neighborhoodName": "هوانیروز",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 21391m vs live Divar",
+          "catalogCentroid": {
+            "lat": 32.768502999999995,
+            "lng": 51.634140599999995
+          },
+          "divarCentroid": {
+            "lat": 32.584137,
+            "lng": 51.6994095
+          },
+          "driftMetersDivar": 21391.405733167878
+        },
+        {
+          "level": "error",
+          "cityId": "isfahan-city",
+          "neighborhoodId": "هوانیروز",
+          "neighborhoodName": "هوانیروز",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 21318m vs live Divar",
+          "driftMetersDivar": 21317.81592658429
+        }
+      ],
+      "fixesApplied": 65
+    },
+    {
+      "cityId": "ahvaz",
+      "cityName": "اهواز",
+      "divarCityId": 7,
+      "divarDistrictCount": 145,
+      "neighborhoodCount": 145,
+      "divarMatched": 145,
+      "nominatimChecked": 0,
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "ahvaz",
+          "neighborhoodId": "اسماعیلیه",
+          "neighborhoodName": "اسماعیلیه",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 5781m vs live Divar",
+          "catalogCentroid": {
+            "lat": 31.11905005,
+            "lng": 48.309112549999995
+          },
+          "divarCentroid": {
+            "lat": 31.1394672,
+            "lng": 48.2532539
+          },
+          "driftMetersDivar": 5781.229080908998
+        },
+        {
+          "level": "error",
+          "cityId": "ahvaz",
+          "neighborhoodId": "اهواز",
+          "neighborhoodName": "اهواز",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 2112m vs live Divar",
+          "catalogCentroid": {
+            "lat": 31.56307885,
+            "lng": 48.658248900000004
+          },
+          "divarCentroid": {
+            "lat": 31.5478077,
+            "lng": 48.645
+          },
+          "driftMetersDivar": 2111.7333950457646
+        },
+        {
+          "level": "warn",
+          "cityId": "ahvaz",
+          "neighborhoodId": "دغاغله",
+          "neighborhoodName": "دغاغله",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 561m vs live Divar",
+          "catalogCentroid": {
+            "lat": 31.382623700000003,
+            "lng": 48.687873800000006
+          },
+          "divarCentroid": {
+            "lat": 31.3873787,
+            "lng": 48.6858864
+          },
+          "driftMetersDivar": 561.3806358805452
+        },
+        {
+          "level": "error",
+          "cityId": "ahvaz",
+          "neighborhoodId": "غیزانیه",
+          "neighborhoodName": "غیزانیه",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1962m vs live Divar",
+          "catalogCentroid": {
+            "lat": 31.148838050000002,
+            "lng": 49.02783775
+          },
+          "divarCentroid": {
+            "lat": 31.1597919,
+            "lng": 49.0440025
+          },
+          "driftMetersDivar": 1962.0482328333233
+        }
+      ],
+      "fixesApplied": 25
+    },
+    {
+      "cityId": "bandarabbas",
+      "cityName": "بندرعباس",
+      "divarCityId": 18,
+      "divarDistrictCount": 0,
+      "neighborhoodCount": 130,
+      "divarMatched": 0,
+      "nominatimChecked": 0,
+      "issues": [],
+      "fixesApplied": 0
+    },
+    {
+      "cityId": "tabriz",
+      "cityName": "تبریز",
+      "divarCityId": 5,
+      "divarDistrictCount": 0,
+      "neighborhoodCount": 323,
+      "divarMatched": 0,
+      "nominatimChecked": 0,
+      "issues": [],
+      "fixesApplied": 0
+    },
+    {
+      "cityId": "tehran-city",
+      "cityName": "تهران",
+      "divarCityId": 1,
+      "divarDistrictCount": 421,
+      "neighborhoodCount": 421,
+      "divarMatched": 421,
+      "nominatimChecked": 0,
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "tehran-city",
+          "neighborhoodId": "سعیدآباد",
+          "neighborhoodName": "سعیدآباد",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 9065m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.67063175,
+            "lng": 51.18752335
+          },
+          "divarCentroid": {
+            "lat": 35.6533813,
+            "lng": 51.2855873
+          },
+          "driftMetersDivar": 9064.624563897747
+        },
+        {
+          "level": "error",
+          "cityId": "tehran-city",
+          "neighborhoodId": "سعیدآباد",
+          "neighborhoodName": "سعیدآباد",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 8890m vs live Divar",
+          "driftMetersDivar": 8889.51112616164
+        },
+        {
+          "level": "warn",
+          "cityId": "tehran-city",
+          "neighborhoodId": "شهرک-صدرا",
+          "neighborhoodName": "شهرک صدرا",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 606m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.72927665,
+            "lng": 51.25374795
+          },
+          "divarCentroid": {
+            "lat": 35.7238274,
+            "lng": 51.2539368
+          },
+          "driftMetersDivar": 606.1687148995826
+        },
+        {
+          "level": "warn",
+          "cityId": "tehran-city",
+          "neighborhoodId": "مبارکآباد-بهشتی",
+          "neighborhoodName": "مبارک‌آباد بهشتی",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 953m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.5713291,
+            "lng": 51.3879795
+          },
+          "divarCentroid": {
+            "lat": 35.564518,
+            "lng": 51.3943825
+          },
+          "driftMetersDivar": 953.4159450742767
+        },
+        {
+          "level": "error",
+          "cityId": "tehran-city",
+          "neighborhoodId": "نیلوفر",
+          "neighborhoodName": "نیلوفر",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 12746m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.7367123,
+            "lng": 51.2927655
+          },
+          "divarCentroid": {
+            "lat": 35.7362022,
+            "lng": 51.433979
+          },
+          "driftMetersDivar": 12745.810258728961
+        },
+        {
+          "level": "error",
+          "cityId": "tehran-city",
+          "neighborhoodId": "نیلوفر",
+          "neighborhoodName": "نیلوفر",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 12717m vs live Divar",
+          "driftMetersDivar": 12717.023645374311
+        }
+      ],
+      "fixesApplied": 86
+    },
+    {
+      "cityId": "rasht",
+      "cityName": "رشت",
+      "divarCityId": 12,
+      "divarDistrictCount": 120,
+      "neighborhoodCount": 120,
+      "divarMatched": 120,
+      "nominatimChecked": 0,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "rasht",
+          "neighborhoodId": "آب-آسیاب",
+          "neighborhoodName": "آب آسیاب",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 676m vs live Divar",
+          "catalogCentroid": {
+            "lat": 37.24940855,
+            "lng": 49.6219749
+          },
+          "divarCentroid": {
+            "lat": 37.2548714,
+            "lng": 49.6253204
+          },
+          "driftMetersDivar": 675.7690676554641
+        },
+        {
+          "level": "warn",
+          "cityId": "rasht",
+          "neighborhoodId": "آب-آسیاب",
+          "neighborhoodName": "آب آسیاب",
+          "code": "divar_bbox_drift",
+          "message": "BBox center drift 630m vs live Divar",
+          "driftMetersDivar": 630.4116207341397
+        },
+        {
+          "level": "warn",
+          "cityId": "rasht",
+          "neighborhoodId": "حومه-رشت",
+          "neighborhoodName": "حومه رشت",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 766m vs live Divar",
+          "catalogCentroid": {
+            "lat": 37.28884695000001,
+            "lng": 49.648761750000006
+          },
+          "divarCentroid": {
+            "lat": 37.293644,
+            "lng": 49.6549797
+          },
+          "driftMetersDivar": 766.2163153576539
+        },
+        {
+          "level": "error",
+          "cityId": "rasht",
+          "neighborhoodId": "لاکان",
+          "neighborhoodName": "لاکان",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1653m vs live Divar",
+          "catalogCentroid": {
+            "lat": 37.1534748,
+            "lng": 49.574918749999995
+          },
+          "divarCentroid": {
+            "lat": 37.1678085,
+            "lng": 49.569973
+          },
+          "driftMetersDivar": 1652.9951711326296
+        }
+      ],
+      "fixesApplied": 13
+    },
+    {
+      "cityId": "zahedan",
+      "cityName": "زاهدان",
+      "divarCityId": 11,
+      "divarDistrictCount": 0,
+      "neighborhoodCount": 18,
+      "divarMatched": 0,
+      "nominatimChecked": 0,
+      "issues": [],
+      "fixesApplied": 0
+    },
+    {
+      "cityId": "sari",
+      "cityName": "ساری",
+      "divarCityId": 22,
+      "divarDistrictCount": 0,
+      "neighborhoodCount": 96,
+      "divarMatched": 0,
+      "nominatimChecked": 0,
+      "issues": [],
+      "fixesApplied": 0
+    },
+    {
+      "cityId": "shiraz",
+      "cityName": "شیراز",
+      "divarCityId": 6,
+      "divarDistrictCount": 271,
+      "neighborhoodCount": 271,
+      "divarMatched": 271,
+      "nominatimChecked": 0,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "shiraz",
+          "neighborhoodId": "برمشور-علیا",
+          "neighborhoodName": "برمشور علیا",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1443m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.45432375,
+            "lng": 52.72961235
+          },
+          "divarCentroid": {
+            "lat": 29.4623775,
+            "lng": 52.7179222
+          },
+          "driftMetersDivar": 1443.2667004568402
+        },
+        {
+          "level": "error",
+          "cityId": "shiraz",
+          "neighborhoodId": "بید-زرد",
+          "neighborhoodName": "بید زرد",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1944m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.41663835,
+            "lng": 52.641000000000005
+          },
+          "divarCentroid": {
+            "lat": 29.3994865,
+            "lng": 52.6448669
+          },
+          "driftMetersDivar": 1943.6339561799607
+        },
+        {
+          "level": "warn",
+          "cityId": "shiraz",
+          "neighborhoodId": "جمال-آباد",
+          "neighborhoodName": "جمال آباد",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 644m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.4969387,
+            "lng": 52.47597695
+          },
+          "divarCentroid": {
+            "lat": 29.5016403,
+            "lng": 52.4720879
+          },
+          "driftMetersDivar": 644.1868555458888
+        },
+        {
+          "level": "error",
+          "cityId": "shiraz",
+          "neighborhoodId": "داریون",
+          "neighborhoodName": "داریون",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 2214m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.57589435,
+            "lng": 52.8361521
+          },
+          "divarCentroid": {
+            "lat": 29.5842552,
+            "lng": 52.856926
+          },
+          "driftMetersDivar": 2213.582025207941
+        },
+        {
+          "level": "warn",
+          "cityId": "shiraz",
+          "neighborhoodId": "ظفرآباد",
+          "neighborhoodName": "ظفرآباد",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 540m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.413842199999998,
+            "lng": 52.58439445
+          },
+          "divarCentroid": {
+            "lat": 29.4115238,
+            "lng": 52.5892944
+          },
+          "driftMetersDivar": 540.1141100741169
+        },
+        {
+          "level": "error",
+          "cityId": "shiraz",
+          "neighborhoodId": "قلات",
+          "neighborhoodName": "قلات",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1729m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.7758284,
+            "lng": 52.339448950000005
+          },
+          "divarCentroid": {
+            "lat": 29.7897339,
+            "lng": 52.3474617
+          },
+          "driftMetersDivar": 1728.8089546988022
+        },
+        {
+          "level": "warn",
+          "cityId": "shiraz",
+          "neighborhoodId": "کازرون",
+          "neighborhoodName": "کازرون",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 670m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.6167307,
+            "lng": 51.6535339
+          },
+          "divarCentroid": {
+            "lat": 29.6164513,
+            "lng": 51.6604614
+          },
+          "driftMetersDivar": 670.3845031064911
+        },
+        {
+          "level": "warn",
+          "cityId": "shiraz",
+          "neighborhoodId": "کفترک",
+          "neighborhoodName": "کفترک",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1051m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.515636450000002,
+            "lng": 52.802988049999996
+          },
+          "divarCentroid": {
+            "lat": 29.5072365,
+            "lng": 52.8079605
+          },
+          "driftMetersDivar": 1050.687819497184
+        },
+        {
+          "level": "warn",
+          "cityId": "shiraz",
+          "neighborhoodId": "کوشک-بیدک",
+          "neighborhoodName": "کوشک بیدک",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 506m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.4410009,
+            "lng": 52.557647700000004
+          },
+          "divarCentroid": {
+            "lat": 29.4448071,
+            "lng": 52.5547905
+          },
+          "driftMetersDivar": 505.6399466010499
+        },
+        {
+          "level": "warn",
+          "cityId": "shiraz",
+          "neighborhoodId": "گلستان",
+          "neighborhoodName": "گلستان",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 719m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.889266,
+            "lng": 52.28933335
+          },
+          "divarCentroid": {
+            "lat": 29.8953686,
+            "lng": 52.29179
+          },
+          "driftMetersDivar": 718.7174715882845
+        },
+        {
+          "level": "warn",
+          "cityId": "shiraz",
+          "neighborhoodId": "گویم",
+          "neighborhoodName": "گویم",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 618m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.8237686,
+            "lng": 52.3956623
+          },
+          "divarCentroid": {
+            "lat": 29.8202648,
+            "lng": 52.390686
+          },
+          "driftMetersDivar": 618.2656420624816
+        },
+        {
+          "level": "warn",
+          "cityId": "shiraz",
+          "neighborhoodId": "نجم-آباد",
+          "neighborhoodName": "نجم آباد",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 824m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.61601735,
+            "lng": 52.395338100000004
+          },
+          "divarCentroid": {
+            "lat": 29.6136265,
+            "lng": 52.4034042
+          },
+          "driftMetersDivar": 823.818196319388
+        },
+        {
+          "level": "warn",
+          "cityId": "shiraz",
+          "neighborhoodId": "وزیرآباد",
+          "neighborhoodName": "وزیرآباد",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 625m vs live Divar",
+          "catalogCentroid": {
+            "lat": 29.51034835,
+            "lng": 52.633266449999994
+          },
+          "divarCentroid": {
+            "lat": 29.5146408,
+            "lng": 52.6374359
+          },
+          "driftMetersDivar": 624.97904865743
+        }
+      ],
+      "fixesApplied": 59
+    },
+    {
+      "cityId": "qom-city",
+      "cityName": "قم",
+      "divarCityId": 8,
+      "divarDistrictCount": 145,
+      "neighborhoodCount": 145,
+      "divarMatched": 145,
+      "nominatimChecked": 0,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "qom-city",
+          "neighborhoodId": "پردیسان",
+          "neighborhoodName": "پردیسان",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 561m vs live Divar",
+          "catalogCentroid": {
+            "lat": 34.55524825,
+            "lng": 50.7932644
+          },
+          "divarCentroid": {
+            "lat": 34.5503349,
+            "lng": 50.7918587
+          },
+          "driftMetersDivar": 561.3017063603544
+        },
+        {
+          "level": "warn",
+          "cityId": "qom-city",
+          "neighborhoodId": "دوبرادر",
+          "neighborhoodName": "دوبرادر",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 527m vs live Divar",
+          "catalogCentroid": {
+            "lat": 34.56142045,
+            "lng": 50.85835075
+          },
+          "divarCentroid": {
+            "lat": 34.5570602,
+            "lng": 50.8606071
+          },
+          "driftMetersDivar": 527.0295578895185
+        }
+      ],
+      "fixesApplied": 21
+    },
+    {
+      "cityId": "kerman-city",
+      "cityName": "کرمان",
+      "divarCityId": 13,
+      "divarDistrictCount": 0,
+      "neighborhoodCount": 57,
+      "divarMatched": 0,
+      "nominatimChecked": 0,
+      "issues": [],
+      "fixesApplied": 0
+    },
+    {
+      "cityId": "kermanshah-city",
+      "cityName": "کرمانشاه",
+      "divarCityId": 9,
+      "divarDistrictCount": 0,
+      "neighborhoodCount": 173,
+      "divarMatched": 0,
+      "nominatimChecked": 0,
+      "issues": [],
+      "fixesApplied": 0
+    },
+    {
+      "cityId": "kish",
+      "cityName": "کیش",
+      "divarCityId": 33,
+      "divarDistrictCount": 0,
+      "neighborhoodCount": 15,
+      "divarMatched": 0,
+      "nominatimChecked": 0,
+      "issues": [],
+      "fixesApplied": 0
+    },
+    {
+      "cityId": "gorgan",
+      "cityName": "گرگان",
+      "divarCityId": 21,
+      "divarDistrictCount": 0,
+      "neighborhoodCount": 115,
+      "divarMatched": 0,
+      "nominatimChecked": 0,
+      "issues": [],
+      "fixesApplied": 0
+    },
+    {
+      "cityId": "mashhad",
+      "cityName": "مشهد",
+      "divarCityId": 3,
+      "divarDistrictCount": 263,
+      "neighborhoodCount": 263,
+      "divarMatched": 263,
+      "nominatimChecked": 0,
+      "issues": [
+        {
+          "level": "warn",
+          "cityId": "mashhad",
+          "neighborhoodId": "تبادکان",
+          "neighborhoodName": "تبادکان",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1294m vs live Divar",
+          "catalogCentroid": {
+            "lat": 36.54088975,
+            "lng": 59.78512955
+          },
+          "divarCentroid": {
+            "lat": 36.5523453,
+            "lng": 59.782589
+          },
+          "driftMetersDivar": 1293.8586467320104
+        },
+        {
+          "level": "warn",
+          "cityId": "mashhad",
+          "neighborhoodId": "تربت-حیدریه",
+          "neighborhoodName": "تربت حیدریه",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 757m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.2974548,
+            "lng": 59.215650600000004
+          },
+          "divarCentroid": {
+            "lat": 35.2908211,
+            "lng": 59.2175407
+          },
+          "driftMetersDivar": 757.3172796316632
+        },
+        {
+          "level": "error",
+          "cityId": "mashhad",
+          "neighborhoodId": "درزآب",
+          "neighborhoodName": "درزآب",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 2149m vs live Divar",
+          "catalogCentroid": {
+            "lat": 36.678463,
+            "lng": 59.4754753
+          },
+          "divarCentroid": {
+            "lat": 36.6628723,
+            "lng": 59.4897232
+          },
+          "driftMetersDivar": 2149.4545342259507
+        },
+        {
+          "level": "warn",
+          "cityId": "mashhad",
+          "neighborhoodId": "شترک",
+          "neighborhoodName": "شترک",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 534m vs live Divar",
+          "catalogCentroid": {
+            "lat": 36.310196000000005,
+            "lng": 59.726593
+          },
+          "divarCentroid": {
+            "lat": 36.3054733,
+            "lng": 59.7255135
+          },
+          "driftMetersDivar": 533.9746923896656
+        },
+        {
+          "level": "warn",
+          "cityId": "mashhad",
+          "neighborhoodId": "شیرحصار",
+          "neighborhoodName": "شیرحصار",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1114m vs live Divar",
+          "catalogCentroid": {
+            "lat": 36.35264205,
+            "lng": 59.7109545
+          },
+          "divarCentroid": {
+            "lat": 36.3458252,
+            "lng": 59.7200699
+          },
+          "driftMetersDivar": 1114.0060240843618
+        },
+        {
+          "level": "warn",
+          "cityId": "mashhad",
+          "neighborhoodId": "كنويست",
+          "neighborhoodName": "كنويست",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 1080m vs live Divar",
+          "catalogCentroid": {
+            "lat": 36.4071751,
+            "lng": 59.9273472
+          },
+          "divarCentroid": {
+            "lat": 36.4023056,
+            "lng": 59.9169044
+          },
+          "driftMetersDivar": 1080.098515861895
+        },
+        {
+          "level": "error",
+          "cityId": "mashhad",
+          "neighborhoodId": "کارده",
+          "neighborhoodName": "کارده",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 3031m vs live Divar",
+          "catalogCentroid": {
+            "lat": 36.79586985,
+            "lng": 59.5565891
+          },
+          "divarCentroid": {
+            "lat": 36.8070183,
+            "lng": 59.5876579
+          },
+          "driftMetersDivar": 3031.2962134978065
+        },
+        {
+          "level": "warn",
+          "cityId": "mashhad",
+          "neighborhoodId": "کاشمر",
+          "neighborhoodName": "کاشمر",
+          "code": "divar_centroid_drift",
+          "message": "Centroid drift 610m vs live Divar",
+          "catalogCentroid": {
+            "lat": 35.2545795,
+            "lng": 58.46362685
+          },
+          "divarCentroid": {
+            "lat": 35.2497,
+            "lng": 58.4666862
+          },
+          "driftMetersDivar": 609.5587323356687
+        }
+      ],
+      "fixesApplied": 66
+    },
+    {
+      "cityId": "yazd-city",
+      "cityName": "یزد",
+      "divarCityId": 16,
+      "divarDistrictCount": 0,
+      "neighborhoodCount": 175,
+      "divarMatched": 0,
+      "nominatimChecked": 0,
+      "issues": [],
+      "fixesApplied": 0
+    }
+  ],
+  "summary": {
+    "cities": 18,
+    "neighborhoods": 3005,
+    "errors": 20,
+    "warnings": 37,
+    "fixesApplied": 335
+  }
+}

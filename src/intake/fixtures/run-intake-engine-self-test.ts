@@ -155,8 +155,8 @@ export function runIntakeEngineSelfTest(): { passed: number; failed: string[] } 
     if (e.maxLatencyMs != null && result.latencyMs > e.maxLatencyMs) {
       failed.push(`${f.id}: latency ${result.latencyMs}ms exceeded ${e.maxLatencyMs}ms`);
     }
-    if (!result.needType) {
-      failed.push(`${f.id}: needType should be resolved`);
+    if (!result.templateId) {
+      failed.push(`${f.id}: templateId should be resolved`);
     }
     if (!result.completionState) {
       failed.push(`${f.id}: completionState should be present`);

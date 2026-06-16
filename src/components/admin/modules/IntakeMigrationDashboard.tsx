@@ -151,22 +151,22 @@ export function IntakeMigrationDashboard() {
             </div>
           </IntakeBlock>
 
-          {data.needTypeBreakdown.length > 0 ? (
-            <IntakeBlock title="Drift by NeedType (۷d)" icon={GitBranch}>
+          {data.templateIdBreakdown.length > 0 ? (
+            <IntakeBlock title="Drift by Template (۷d)" icon={GitBranch}>
               <IntakeTableWrap>
                 <table>
                   <thead>
                     <tr>
-                      <th>NeedType</th>
+                      <th>Template</th>
                       <th>Publish</th>
                       <th>Drift</th>
                       <th>Rate</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {data.needTypeBreakdown.map((row) => (
-                      <tr key={row.needType}>
-                        <td className="font-mono text-xs">{row.needType}</td>
+                    {data.templateIdBreakdown.map((row) => (
+                      <tr key={row.templateId}>
+                        <td className="font-mono text-xs">{row.templateId}</td>
                         <td>{row.publishCount}</td>
                         <td className="text-amber-500">{row.diffCount}</td>
                         <td>{(row.driftRate * 100).toFixed(2)}%</td>

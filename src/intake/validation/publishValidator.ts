@@ -1,7 +1,7 @@
 import type { NeedDraft, PublishValidationError } from '@/contracts/need-intake';
-import { getNeedTypeDefinition } from '@/intake/schema/needTypes';
 import { recordToEntities } from '@/intake/aggregate/needDraftAggregate';
 import { hasEntityValue } from '@/intake/entities/entityRegistry';
+import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
 
 export type { PublishValidationError };
 
@@ -30,21 +30,14 @@ const FIELD_MESSAGES: Record<string, string> = {
 export function validateNeedDraftForPublish(draft: NeedDraft): PublishValidationResult {
   const errors: PublishValidationError[] = [];
 
-  if (!draft.needType) {
-    errors.push({ field: 'needType', message: 'نوع نیاز مشخص نیست' });
-    return { success: false, errors };
-  }
-
-  const def = getNeedTypeDefinition(draft.needType, draft.schemaVersion);
-  if (!def) {
-    errors.push({
-      field: 'schemaVersion',
-      message: 'نسخه schema برای این نوع نیاز پشتیبانی نمی‌شود',
-    });
-    return { success: false, errors };
-  }
-
   const entities = recordToEntities(draft.entities);
+  const template = resolveTemplateFromDraftEntities(entities);
+  const publishRules = template.rules.publish;
+
+  if (!draft.templateId?.trim()) {
+    errors.push({ field: 'templateId', message: 'قالب فرم مشخص نیست' });
+    return { success: false, errors };
+  }
 
   const valueCtx = {
     sourceText: draft.sourceText,
@@ -52,7 +45,7 @@ export function validateNeedDraftForPublish(draft: NeedDraft): PublishValidation
     parsedUrgency: draft.parsedIntent?.urgency ?? null,
   };
 
-  for (const field of def.requiredFields) {
+  for (const field of publishRules.requiredFields) {
     if (!hasEntityValue(entities, field, valueCtx)) {
       errors.push({
         field,
@@ -61,11 +54,7 @@ export function validateNeedDraftForPublish(draft: NeedDraft): PublishValidation
     }
   }
 
-  // Map pin is required for real-estate listings (browse map); services can publish with neighborhood text only.
-  const needsMapPin =
-    def.vertical === 'real-estate' &&
-    def.requiredFields.some((f) => f === 'city' || f === 'neighborhood');
-  if (needsMapPin && !hasEntityValue(entities, 'mapPin', valueCtx)) {
+  if (publishRules.requiresMapPin && !hasEntityValue(entities, 'mapPin', valueCtx)) {
     errors.push({ field: 'mapPin', message: FIELD_MESSAGES.mapPin });
   }
 

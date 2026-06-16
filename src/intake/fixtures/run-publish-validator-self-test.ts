@@ -28,7 +28,8 @@ const incompleteDraft: NeedDraft = createNeedDraftFromAnalysis(
   {
     entities: apartmentRentEntities,
     confidence: {},
-    needType: 'apartment-rent-seeking',
+    templateId: 'residential-rent',
+    templateVersion: 1,
     detectedVertical: 'real-estate',
     detectedCategory: 'apartment',
     missingFields: [{ field: 'transactionType', priority: 100, required: true }],
@@ -65,7 +66,8 @@ const completeDraft: NeedDraft = createNeedDraftFromAnalysis(
   {
     entities: completeEntities,
     confidence: {},
-    needType: 'apartment-rent-seeking',
+    templateId: 'residential-rent',
+    templateVersion: 1,
     detectedVertical: 'real-estate',
     detectedCategory: 'apartment',
     missingFields: [],

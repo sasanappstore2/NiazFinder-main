@@ -5,9 +5,13 @@ import type { MatchabilityAnalysis } from '@/intake/projections/matchProjection'
 import { toMatchProjection } from '@/intake/projections/matchProjection';
 import { recordToEntities } from '@/intake/entities/entityRecord';
 import { computeCanonicalHash } from '@/intake/legacy/canonical-hash';
+import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
 
 export interface ServiceRequestV2 {
-  needType: string;
+  templateId: string;
+  templateVersion: number;
+  rootSlug: string;
+  categoryPath: readonly string[];
   schemaVersion: number;
   vertical: string;
   category: string;
@@ -24,9 +28,13 @@ export interface ServiceRequestV2 {
 
 export function toServiceRequestV2(draft: NeedDraft): ServiceRequestV2 {
   const entities = recordToEntities(draft.entities);
+  const template = resolveTemplateFromDraftEntities(entities);
   const match = toMatchProjection(draft);
   const core = {
-    needType: draft.needType,
+    templateId: draft.templateId,
+    templateVersion: draft.templateVersion,
+    rootSlug: template.rootSlug,
+    categoryPath: template.categoryPath,
     schemaVersion: draft.schemaVersion,
     vertical: draft.vertical,
     category: draft.category,

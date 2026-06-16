@@ -30,6 +30,51 @@
   font-family: inherit;
 }
 
+/* /post intake — fixed disc; map pans under the circle */
+.intake-map-pin-shell {
+  container-type: size;
+  height: 240px;
+}
+
+@media (min-width: 640px) {
+  .intake-map-pin-shell {
+    height: 320px;
+  }
+}
+
+.intake-map-area-circle-overlay {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intake-map-area-circle-overlay__disc {
+  width: calc(var(--intake-area-circle-ratio, 0.34) * 2 * 100cqmin);
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  border: 2px solid color-mix(in oklch, var(--primary) 58%, transparent);
+  background: color-mix(in oklch, var(--primary) 16%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--primary) 22%, transparent);
+}
+
+.intake-map-area-circle-overlay__dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  width: 0.625rem;
+  height: 0.625rem;
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  border: 2px solid var(--background, #fff);
+  background: var(--primary);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.28);
+}
+
 .business-browse-map [data-map-theme='light'] .mapboxgl-map,
 .business-browse-map:not([data-map-theme]) .mapboxgl-map {
   background: var(--bm-map-bg);

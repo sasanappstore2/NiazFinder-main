@@ -19,7 +19,8 @@ function assert(cond: boolean, msg: string): void {
 
 function baseDraft(overrides: Partial<NeedDraft> = {}): NeedDraft {
   return {
-    needType: 'property_search',
+    templateId: 'residential-rent',
+    templateVersion: 1,
     sourceText:
       '\u0622\u067E\u0627\u0631\u062A\u0645\u0627\u0646 \u062F\u0648 \u062E\u0648\u0627\u0628\u0647 \u062F\u0631 \u0645\u0634\u0647\u062F \u0633\u062C\u0627\u062F',
     entities: {

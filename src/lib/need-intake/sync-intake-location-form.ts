@@ -5,6 +5,27 @@ import type { City } from '@/lib/location-system';
 import { parseCity } from '@/lib/need-intake/intent-parser';
 import { parseAreaFromText } from '@/lib/need-intake/vertical-classifier';
 import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
+import { normalizeIntakeText } from '@/lib/need-intake/normalize-intake-text';
+
+function normalizeNeighborhoodMatchKey(label: string): string {
+  return normalizeIntakeText(label)
+    .replace(/^محله\s+/iu, '')
+    .replace(/^خیابان\s+/iu, '')
+    .replace(/^بلوار\s+/iu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** True when entity neighborhood label plausibly matches a text-derived fragment. */
+export function neighborhoodMatchesFragment(
+  entityNeighborhood: string,
+  fragment: string
+): boolean {
+  const a = normalizeNeighborhoodMatchKey(entityNeighborhood);
+  const b = normalizeNeighborhoodMatchKey(fragment);
+  if (!a || !b) return false;
+  return a.includes(b) || b.includes(a);
+}
 import { cityFromSlug, locationCityIdToSlug } from '@/lib/search/city-slugs';
 
 function stripStreetPrefix(label: string): string {
@@ -110,6 +131,17 @@ export function resolveIntakeCityNameFromDraft(draft: NeedDraft | null): string 
 export function resolveIntakeNeighborhoodFromDraft(draft: NeedDraft | null): string {
   if (!draft) return '';
   const entities = recordToEntities(draft.entities);
+  const raw = (draft.sourceText ?? draft.parsedIntent.rawText ?? '').trim();
+  const fragment = extractLocationFragment(raw);
+
+  if (fragment) {
+    const entityHood = entities.neighborhood?.trim();
+    if (entityHood && neighborhoodMatchesFragment(entityHood, fragment)) {
+      return stripStreetPrefix(entityHood);
+    }
+    return stripStreetPrefix(fragment);
+  }
+
   if (entities.neighborhood?.trim()) return entities.neighborhood.trim();
 
   const parsedArea = draft.parsedIntent.entities?.area?.trim();
@@ -130,10 +162,6 @@ export function resolveIntakeNeighborhoodFromDraft(draft: NeedDraft | null): str
     const fromLoc = parseAreaFromText(loc);
     if (fromLoc) return stripStreetPrefix(fromLoc);
   }
-
-  const raw = (draft.sourceText ?? draft.parsedIntent.rawText ?? '').trim();
-  const fragment = extractLocationFragment(raw);
-  if (fragment) return stripStreetPrefix(fragment);
 
   const fromRaw = parseAreaFromText(raw);
   return fromRaw ? stripStreetPrefix(fromRaw) : '';
@@ -159,4 +187,14 @@ export function extractIntakeLocationFromDraft(
   const neighborhood = resolveIntakeNeighborhoodFromDraft(draft);
 
   return { city, neighborhood };
+}
+
+/** True when parser/entities already inferred a city (no manual select yet). */
+export function draftHasInferredCity(draft: NeedDraft | null): boolean {
+  return Boolean(resolveIntakeCityNameFromDraft(draft).trim());
+}
+
+/** True when parser/entities already inferred a neighborhood. */
+export function draftHasInferredNeighborhood(draft: NeedDraft | null): boolean {
+  return Boolean(resolveIntakeNeighborhoodFromDraft(draft).trim());
 }

@@ -11,7 +11,8 @@ export interface IntakeNavigationCase {
 
 const baseDraft = {
   schemaVersion: NEED_DRAFT_SCHEMA_VERSION,
-  needType: 'apartment-rent-seeking',
+  templateId: 'residential-rent',
+  templateVersion: 1,
   vertical: 'real-estate',
   sourceText: 'آپارتمان دو خوابه در احمدآباد مشهد',
   entities: {
@@ -35,7 +36,6 @@ const baseDraft = {
   answers: {},
   completionScore: 100,
   completionState: 'READY_TO_PUBLISH',
-  turns: [],
 } as unknown as NeedDraft;
 
 export const INTAKE_NAVIGATION_CASES: IntakeNavigationCase[] = [

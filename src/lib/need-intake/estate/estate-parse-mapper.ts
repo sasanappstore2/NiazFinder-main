@@ -10,6 +10,11 @@ import {
   coerceParsedForEstate,
   parseEstateBudgetFromText,
 } from '@/lib/need-intake/estate/estate-parse-coerce';
+import {
+  isLandlordOfferRahn,
+  isLandlordOfferRent,
+  isTenantSeekerRahnEjare,
+} from '@/lib/need-intake/deal-type-helpers';
 import type {
   EstateClarification,
   EstateIntent,
@@ -72,11 +77,10 @@ function detectSpecialIntent(text: string, parsed: ParsedIntent): EstateIntent |
   ) {
     return 'investment';
   }
-  if (
-    text.includes('رهن بدم') ||
-    text.includes('رهن می‌دم') ||
-    text.includes('رهن میدم')
-  ) {
+  if (isLandlordOfferRent(text)) {
+    return 'lease_out';
+  }
+  if (!isTenantSeekerRahnEjare(text) && isLandlordOfferRahn(text)) {
     return 'lease_out';
   }
   if (

@@ -1,4 +1,5 @@
 import { db } from '@/lib/db';
+import { resolveTemplateIdFromLegacyNeedType } from '@/intake/migration/legacy-need-type-map';
 
 export type IntakeMigrationEventType =
   | 'NeedDraftPublished'
@@ -162,9 +163,9 @@ export async function getShadowPublishStats(since: Date): Promise<{
   }
 }
 
-export async function getShadowStatsByNeedType(since: Date): Promise<
+export async function getShadowStatsByTemplateId(since: Date): Promise<
   Array<{
-    needType: string;
+    templateId: string;
     publishCount: number;
     diffCount: number;
     driftRate: number;
@@ -176,25 +177,27 @@ export async function getShadowStatsByNeedType(since: Date): Promise<
       select: { payload: true },
     });
 
-    const byType = new Map<string, { total: number; diff: number }>();
+    const byTemplate = new Map<string, { total: number; diff: number }>();
 
     for (const event of events) {
-      let parsed: { needType?: string; equal?: boolean } = {};
+      let parsed: { templateId?: string; needType?: string; equal?: boolean } = {};
       try {
         parsed = JSON.parse(event.payload) as typeof parsed;
       } catch {
         continue;
       }
-      const needType = parsed.needType ?? 'unknown';
-      const row = byType.get(needType) ?? { total: 0, diff: 0 };
+      const templateId =
+        parsed.templateId ??
+        (parsed.needType ? resolveTemplateIdFromLegacyNeedType(parsed.needType) : 'unknown');
+      const row = byTemplate.get(templateId) ?? { total: 0, diff: 0 };
       row.total += 1;
       if (!parsed.equal) row.diff += 1;
-      byType.set(needType, row);
+      byTemplate.set(templateId, row);
     }
 
-    return [...byType.entries()]
-      .map(([needType, row]) => ({
-        needType,
+    return [...byTemplate.entries()]
+      .map(([templateId, row]) => ({
+        templateId,
         publishCount: row.total,
         diffCount: row.diff,
         driftRate: row.total > 0 ? row.diff / row.total : 0,
@@ -204,3 +207,6 @@ export async function getShadowStatsByNeedType(since: Date): Promise<
     return [];
   }
 }
+
+/** @deprecated Use getShadowStatsByTemplateId */
+export const getShadowStatsByNeedType = getShadowStatsByTemplateId;

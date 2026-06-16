@@ -53,7 +53,8 @@ assert(canProceedToIntakeLocation('x'.repeat(40), ''), 'skip details when need l
 assert(!canProceedToIntakeLocation('کوتاه', ''), 'require details when need short');
 
 const plumbingDraft: NeedDraft = {
-  needType: 'plumbing-service-seeking',
+  templateId: 'services',
+  templateVersion: 1,
   schemaVersion: 1,
   vertical: 'services',
   category: 'plumbing',
@@ -79,7 +80,6 @@ const plumbingDraft: NeedDraft = {
     entities: {},
   },
   answers: {},
-  turns: [],
 };
 
 assert(

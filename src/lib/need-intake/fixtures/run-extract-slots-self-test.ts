@@ -53,6 +53,11 @@ const CASES: { id: string; text: string; expect: Partial<ReturnType<typeof extra
       text: 'میخواستم تا سقف سرامیک باشه یک میلیارد رهن دارم ۱۰۰ میلیون اجاره',
       expect: { rahnAmount: '1000000000', monthlyRent: '100000000' },
     },
+    {
+      id: 'pon-sad-million-rahn',
+      text: 'مغازه ۱۰۰ متری پونصد میلیون رهن و دوازده میلیون اجاره',
+      expect: { rahnAmount: '500000000', monthlyRent: '12000000', areaMin: '100' },
+    },
   ];
 
 function run(): { failed: string[] } {

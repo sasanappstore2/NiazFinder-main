@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| **وضعیت** | پذیرفته‌شده (فاز ۲) |
-| **تاریخ** | ۲۰۲۶-۰۶-۰۹ |
+| **وضعیت** | پذیرفته‌شده (فاز ۲ + Rules Registry ۲۰۲۶-۰۶) |
+| **تاریخ** | ۲۰۲۶-۰۶-۰۹ (به‌روز ۲۰۲۶-۰۶-۱۶) |
 | **دامنه** | `/post` — analyze، title، listing copy |
 | **مالک** | فاز ۳۱ (abstraction provider)، فاز ۱۶ (validation) |
 
@@ -15,49 +15,61 @@
 
 فاز ۱ ثابت کرد: ۱۵۳/۱۵۳ golden با rules-only pass می‌شود؛ MLX gate جداگانه hybrid را پوشش می‌دهد.
 
+**به‌روزرسانی ۲۰۲۶-۰۶-۱۶:** Rules Registry یکپارچه (`src/intake/rules/`) با ~۱.۱۶M rule تولیدی (~۱۰k per category pack). AI به‌طور پیش‌فرض خاموش (`NEED_INTAKE_RULES_ONLY`).
+
 ---
 
 ## Decision
 
 ### ۱. Rules همیشه موجود و قطعی
 
-- `intakeEngine` (`src/intake/engine/intakeEngine.ts`) **canonical** استخراج ساخت‌یافته.
+- **Rules Registry** (`src/intake/rules/registry.ts`) منبع اول category/brand/scenario.
+- `intakeEngine` مکمل است؛ دیگر category را با confidence پایین‌تر از registry overwrite نمی‌کند.
 - Publish gate (`publishValidator`) **فقط** از `NeedDraft` + rules تبعیت می‌کند — بدون وابستگی به LLM.
 - CI gate `test:post-pipeline` بدون MLX **اجباری** است.
+- CI gate `test:rules-coverage-gate` هدف ≥۹۰٪ بدون AI.
 
-### ۲. AI فقط تقویت‌کننده اختیاری
+### ۲. AI فقط تقویت‌کننده اختیاری (fallback)
 
-- MLX (`NEED_INTAKE_LLM_ENABLED=true`): parse merge، title، copy stream.
-- Cloud AI: وقتی MLX off و `AI_SEMANTIC` enabled.
+- پیش‌فرض: `NEED_INTAKE_RULES_ONLY=true` / همه LLM flags خاموش.
+- وقتی فعال: MLX (`NEED_INTAKE_LLM_ENABLED=true`) فقط برای فیلدهای unresolved با confidence < 0.82.
+- AI **هرگز** category با rules confidence ≥ 0.85 را overwrite نمی‌کند.
 - AI **نباید** فیلدهای user-locked را overwrite کند (refs در panel).
 
-### ۳. ترتیب اجرای analyze
+### ۳. ترتیب اجرای analyze (Rules → AI → JSON → Question Engine)
 
 ```
-1. Rules parse (همیشه — client برای hints)
-2. POST /api/intake/analyze
-   a. MLX + reconcile (if NEED_INTAKE_LLM_ENABLED)
-   b. else Cloud semantic
-   c. else rules only
-3. enrichIntakeAnalysisLocation (LRE server-side)
+1. unifiedNormalize
+2. Rules Registry match (category, brand, scenario)
+3. Resolvers: budget, property, location, deal-type
+4. need-builder → NeedDraft JSON
+5. question-engine + wizardBuilder → next questions
+6. [optional] truth-verify / ai-resolver if AI enabled AND unresolved
 ```
 
 ### ۴. Fallback
 
 | حالت | رفتار |
 |------|--------|
-| MLX down | فاز ۳۴: circuit breaker → rules-only analyze؛ publish همچنان ممکن |
+| AI off / MLX down | rules-only analyze؛ `meta.engine=intake-intelligence` |
 | Copy stream fail | baseline template از `listing-composer` |
-| Title AI fail | heuristic → template (`vertical-title`) |
+| Title AI fail | heuristic → template (`vertical-title` + pack titleTemplates) |
 
 ### ۵. محیط‌ها
 
 | Env | سیاست |
 |-----|--------|
-| **Dev** | `NEED_INTAKE_LLM_ENABLED=true` + `dev:intake-mlx` |
-| **CI smoke** | `test:post-mlx-gate` با MLX |
-| **CI unit** | `test:post-pipeline` rules-only |
-| **Production** | MLX on توصیه‌شده؛ rules path همیشه resilience — runbook |
+| **Dev (default)** | `NEED_INTAKE_RULES_ONLY=true` — بدون LLM |
+| **CI unit** | `test:post-pipeline` + `test:rules-coverage-gate` rules-only |
+| **CI stress** | `test:intake-zero-defect-rules-only` |
+| **Staging AI** | MLX on فقط برای ارزیابی fallback |
+
+### ۶. Rule packs
+
+- مسیر: `src/intake/rules/packs/{slug}.pack.json`
+- تولید: `npm run rules:generate -- --target 10000`
+- انواع: keyword, phrase, brand, model, scenario, negative, deal, title
+- seeds: `src/intake/rules/seeds/category-seeds.ts`
 
 ---
 
@@ -66,31 +78,20 @@
 ### مثبت
 
 - Publish deterministic حتی بدون MLX
-- سناریوهای golden پایدار
-- outage MLX تجربه را نابود نمی‌کند (فقط AI hints کمتر)
+- ~۱.۱۶M rule قابل نگهداری با generator (نه دستی)
+- piano/musical-instruments و collisionها با negative rules
 
-### منفی / ریسک
+### منفی / ریسk
 
-- دو مسیر رفتار (rules vs hybrid) — باید در gate پوشش داده شود
-- merge logic پیچیده — فاز ۳۱ facade یکپارچه می‌کند
-
----
-
-## Out of scope (فازهای بعد — بدون تداخل)
-
-| موضوع | فاز |
-|--------|-----|
-| حذف API/chat مرده | ۳ |
-| Unified validation | ۱۶ |
-| `IntakeAiProvider` interface | ۳۱ |
-| Training flywheel automation | ۳۸ |
-| Queue async analyze | ۴۷ |
+- حجم packها (~۱۵۰MB JSON) — lazy load per slug در آینده
+- collision بین دسته‌های generic (فروش/میفروشم) — negative rules ongoing
 
 ---
 
 ## Compliance checklist
 
 - [x] مستند در `NEED_INTAKE.md`
-- [x] env در `.env.example`
-- [x] پیاده‌سازی circuit breaker (فاز ۳۴)
-- [x] `getPublishReadiness` واحد (فاز ۱۶ ✅)
+- [x] env در `.env.example` (Rules-only block)
+- [x] `isIntakeAiGloballyDisabled()` در orchestrator
+- [x] `test:rules-coverage-gate`
+- [x] `npm run rules:generate`

@@ -23,7 +23,8 @@ export interface UseIntakeFormProjectionOptions {
   resolvedNeighborhoodSlug: string | null;
   step: IntakeStep;
   projectNeedDraftFromFormFields: (
-    fields: IntakeFormProjectionFields
+    fields: IntakeFormProjectionFields,
+    opts?: { categoryLockedByUser?: boolean }
   ) => NeedDraft | null;
 }
 
@@ -39,21 +40,24 @@ export function useIntakeFormProjection({
   step,
   projectNeedDraftFromFormFields,
 }: UseIntakeFormProjectionOptions) {
+  const useFormLocation = step === 'location' || step === 'preview';
+
   const intakeFormProjection = useMemo(
     (): IntakeFormProjectionFields => ({
       needText,
       detailsText,
       categorySlug: selectedCategory,
       subcategorySlug: selectedSubcategory,
-      city: selectedCity,
-      neighborhood: selectedNeighborhood,
-      neighborhoodSlug: resolvedNeighborhoodSlug,
+      city: useFormLocation ? selectedCity : '',
+      neighborhood: useFormLocation ? selectedNeighborhood : '',
+      neighborhoodSlug: useFormLocation ? resolvedNeighborhoodSlug : null,
     }),
     [
       needText,
       detailsText,
       selectedCategory,
       selectedSubcategory,
+      useFormLocation,
       selectedCity,
       selectedNeighborhood,
       resolvedNeighborhoodSlug,
@@ -62,7 +66,9 @@ export function useIntakeFormProjection({
 
   const projectedDraft = useMemo(() => {
     if (!needText.trim()) return null;
-    return projectNeedDraftFromFormFields(intakeFormProjection);
+    return projectNeedDraftFromFormFields(intakeFormProjection, {
+      categoryLockedByUser: false,
+    });
   }, [needText, projectNeedDraftFromFormFields, intakeFormProjection]);
 
   const liveDraftForCopy = useMemo(() => {

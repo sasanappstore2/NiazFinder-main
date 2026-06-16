@@ -30,7 +30,10 @@ const draft = createNeedDraftFromAnalysis(
   {
     entities,
     confidence: {},
-    needType: 'apartment-rent-seeking',
+    templateId: 'residential-rent',
+    templateVersion: 1,
+    rootSlug: 'real-estate',
+    categoryPath: ['real-estate', 'apartment-rent'],
     detectedVertical: 'real-estate',
     detectedCategory: 'apartment',
     missingFields: [],
@@ -51,13 +54,16 @@ assert(aligned.equal === true, `expected aligned draft, diffs=${JSON.stringify(a
 
 const drifted = {
   ...draft,
-  answers: { ...draft.answers, dealType: '' },
+  parsedIntent: {
+    ...draft.parsedIntent!,
+    city: 'تهران',
+  },
 };
 const drift = compareLegacyAndCanonical(drifted);
 assert(drift.equal === false, 'expected drift detection');
 assert(
-  drift.diffs.some((d) => d.field === 'answers.dealType'),
-  'expected answers.dealType diff'
+  drift.diffs.some((d) => d.field === 'parsedIntent.city'),
+  'expected parsedIntent.city diff'
 );
 
 const withAdvancedFilters = recomputeNeedDraft({

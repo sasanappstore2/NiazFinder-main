@@ -5,6 +5,7 @@ import {
   VEHICLE_DEAL_LABELS,
 } from '@/config/need-schemas/labels';
 import { extractProductSubjectFromText } from '@/lib/need-intake/product-buy-hints';
+import { matchCategoryFromLegacyRules } from '@/intake/rules/registry-legacy';
 
 /** Max chars for marketplace need titles (browse cards + SEO). */
 export const LISTING_TITLE_MAX_LENGTH = 70;
@@ -34,7 +35,11 @@ export function buildProductSearchTitle(
   city?: string
 ): string {
   const dealFa = deal ? (PRODUCT_DEAL_LABELS[deal] ?? 'خرید') : 'خرید';
-  const subject = extractProductSubjectFromText(rawText);
+  const registry = matchCategoryFromLegacyRules(rawText);
+  const subject =
+    registry?.titleSubject?.trim() ||
+    extractProductSubjectFromText(rawText) ||
+    undefined;
   const parts = [dealFa];
   if (subject) parts.push(subject);
   if (city?.trim()) parts.push(city.trim());

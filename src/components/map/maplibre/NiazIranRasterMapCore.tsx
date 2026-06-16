@@ -65,6 +65,7 @@ export function NiazIranRasterMapCore({
         onMoveEnd={onMoveEnd}
         onMapClick={onMapClick}
         overlay={overlay}
+        zoomAroundCenter={detail === 'picker'}
       >
         {children}
       </NiazMapLibreCore>

@@ -1,6 +1,6 @@
 /** Minimal parse-gap types (manual wizard ? no MLX). */
 
-export type IntakeParseGapKind = 'missing' | 'uncertain' | 'clarify';
+export type IntakeParseGapKind = 'missing' | 'uncertain' | 'clarify' | 'contradictory';
 
 export interface IntakeParseGap {
   id: string;

@@ -62,7 +62,7 @@ async function main(): Promise<void> {
   const analyzeRecord = getIntakeQueueJob(analyzeRes.jobId);
   assert(analyzeRecord?.status === 'completed', 'analyze completed');
   const analyzeResult = analyzeRecord?.result as IntakeAnalyzeResponse | undefined;
-  assert(Boolean(analyzeResult?.draft || analyzeResult?.needType), 'analyze result');
+  assert(Boolean(analyzeResult?.draft || analyzeResult?.templateId), 'analyze result');
 
   const copyRes = await enqueueIntakeQueueSyncFallback({
     jobName: INTAKE_JOB_LISTING_COPY,

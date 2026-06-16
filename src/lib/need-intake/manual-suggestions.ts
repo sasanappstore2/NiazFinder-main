@@ -47,14 +47,9 @@ export function buildManualSuggestionChips(
 
   if (parsed.neighborhoodCandidates?.length) {
     for (const n of parsed.neighborhoodCandidates.slice(0, 5)) {
-      opts.push({ value: `neighborhood:${n.slug}`, label: `محله: ${n.label}` });
+      opts.push({ value: `neighborhood:${n.slug}`, label: n.label.trim() });
     }
     opts.push({ value: 'neighborhood:__other__', label: 'محله دیگری مدنظر دارم' });
-  } else if (parsed.entities?.area?.trim()) {
-    opts.push({
-      value: `area:${parsed.entities.area.trim()}`,
-      label: `محله/محدوده: ${parsed.entities.area.trim()}`,
-    });
   }
 
   return uniqueByValue(opts);

@@ -9,6 +9,35 @@ import {
   resolveLegacyDealType,
   resolveTransactionType,
 } from '@/lib/need-intake/resolve-transaction-type';
+import { isCategoryVerticalCoherent } from '@/lib/need-intake/parse-coherence';
+import {
+  classifyVertical,
+  isVerticalConfident,
+} from '@/lib/need-intake/vertical-classifier';
+
+function resolveLegacyCategorySlug(
+  draft: NeedDraft,
+  entities: ReturnType<typeof recordToEntities>,
+  parsedBase: ReturnType<typeof parseIntentFromText>
+): string {
+  const userSetCategory = draft.answers._userSetCategory === true;
+  const entityCat = entities.categorySlug?.trim();
+  const parsedCat = parsedBase.categorySlug?.trim();
+
+  if (!entityCat) return parsedCat ?? 'general';
+  if (!parsedCat || entityCat === parsedCat || userSetCategory) return entityCat;
+
+  const classification = classifyVertical(draft.sourceText);
+  if (
+    isVerticalConfident(classification) &&
+    isCategoryVerticalCoherent(parsedCat, classification.vertical) &&
+    !isCategoryVerticalCoherent(entityCat, classification.vertical)
+  ) {
+    return parsedCat;
+  }
+
+  return entityCat;
+}
 
 export interface LegacyNeedPayload {
   parsedIntent: NeedDraft['parsedIntent'];
@@ -22,10 +51,13 @@ export interface LegacyNeedPayload {
 export function draftToLegacyPayload(draft: NeedDraft): LegacyNeedPayload {
   const entities = recordToEntities(draft.entities);
   const parsedBase = parseIntentFromText(draft.sourceText);
-  const normalized = normalizeCategoryPair(
-    entities.categorySlug ?? parsedBase.categorySlug,
-    entities.subcategorySlug ?? parsedBase.subcategorySlug
-  );
+  const categorySlug = resolveLegacyCategorySlug(draft, entities, parsedBase);
+  const parsedCategorySlug = parsedBase.categorySlug?.trim() ?? '';
+  const subcategorySlug =
+    categorySlug === parsedCategorySlug
+      ? parsedBase.subcategorySlug
+      : entities.subcategorySlug ?? parsedBase.subcategorySlug;
+  const normalized = normalizeCategoryPair(categorySlug, subcategorySlug);
 
   const resolvedTransaction = resolveTransactionType({
     sourceText: draft.sourceText,

@@ -22,19 +22,12 @@ import {
 } from '@/intake/extractors/transactionExtractor';
 import { simplifiedCategoryKey } from '@/intake/dictionaries/categoryIndex';
 import { getCategoryPath, normalizeCategoryPair } from '@/config/categories';
-import { buildNextQuestion } from '@/intake/wizard/wizardBuilder';
-import {
-  buildPrioritizedMissingFields,
-  completionStateFromScore,
-  computeCompletionScore,
-} from '@/intake/schema/needSchema';
-import { clampConfidence, overallConfidence } from '@/intake/scoring/confidenceEngine';
-import { computeMatchabilityScore } from '@/intake/scoring/matchabilityEngine';
-import { resolveNeedType } from '@/intake/schema/needTypes';
+import { buildAnalysisFromEntities } from '@/intake/engine/buildAnalysisFromTemplate';
 import { getAiSemanticConfig } from '@/ai/config/feature-flags';
 import { runSemanticResolver } from '@/ai/services/semanticResolver';
 import type { IntakeAnalysisTrace } from '@/intake/types/analysis-trace';
 import { applyLaunchIntakeEntityPolicy } from '@/lib/need-intake/intake-launch-policy';
+import { clampConfidence, overallConfidence } from '@/intake/scoring/confidenceEngine';
 
 export interface AnalyzeNeedTextOptions {
   /** City slug from home picker / URL — neighborhoods resolve in this city first. */
@@ -231,43 +224,7 @@ export function analyzeNeedText(
   return buildAnalysisFromEntities(policyEntities, confidence, normalizedText, started);
 }
 
-/** Build full analysis from pre-extracted entities (used by Qwen merge path). */
-export function buildAnalysisFromEntities(
-  entities: IntakeEntities,
-  confidence: IntakeConfidence,
-  normalizedText: string,
-  started: number
-): IntakeAnalysisResult {
-  const missingFields = buildPrioritizedMissingFields(entities, {
-    sourceText: normalizedText,
-  });
-  const nextQuestion = buildNextQuestion(entities, missingFields);
-  const completionScore = computeCompletionScore(missingFields);
-  const matchabilityScore = computeMatchabilityScore(entities);
-  const completionState = completionStateFromScore(completionScore);
-  const needType = resolveNeedType(entities);
-
-  return {
-    entities,
-    confidence,
-    needType: needType.key,
-    detectedVertical: entities.vertical,
-    detectedCategory: entities.category,
-    missingFields,
-    nextQuestion,
-    recommendedQuestions: missingFields.map((f) => f.field),
-    completionScore,
-    matchabilityScore,
-    completionState,
-    sections: needType.sections.map((s) => ({
-      key: s.key,
-      label: s.label,
-      fields: [...s.fields],
-    })),
-    normalizedText,
-    latencyMs: Math.round(performance.now() - started),
-  };
-}
+export { buildAnalysisFromEntities } from '@/intake/engine/buildAnalysisFromTemplate';
 
 export interface AnalyzeNeedTextAsyncMeta {
   engine: 'intake-rules' | 'intake-rules+ai';

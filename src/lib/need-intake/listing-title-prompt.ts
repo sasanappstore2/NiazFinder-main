@@ -11,7 +11,8 @@ export type { ListingCopyContext };
 
 /** MLX title endpoint payload (subset of copy context). */
 export interface ListingTitleContext {
-  needType: string;
+  templateId: string;
+  rootSlug: string;
   intentType: string;
   categorySlug?: string;
   categoryPathFa: string;
@@ -38,7 +39,8 @@ export interface ListingTitleContext {
 
 function titleContextFromCopy(copy: ListingCopyContext): ListingTitleContext {
   return {
-    needType: copy.needType,
+    templateId: copy.templateId,
+    rootSlug: copy.rootSlug,
     intentType: copy.intentType,
     categorySlug: copy.categorySlug,
     categoryPathFa: copy.categoryPathFa,
@@ -77,7 +79,8 @@ export function buildListingTitleSystemPrompt(): string {
 
 export function buildListingTitleUserPrompt(ctx: ListingTitleContext): string {
   const copy: ListingCopyContext = {
-    needType: ctx.needType,
+    templateId: ctx.templateId,
+    rootSlug: ctx.rootSlug,
     intentType: ctx.intentType,
     categorySlug: ctx.categorySlug,
     categoryPathFa: ctx.categoryPathFa,

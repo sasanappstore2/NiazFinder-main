@@ -38,7 +38,7 @@ function runFixture(f: FlowFixture): string | null {
     ...(slots as NeedDraft['answers']),
   };
 
-  const draft = legacyNeedDraftFromParsed(parsed, mergedAnswers, []);
+  const draft = legacyNeedDraftFromParsed(parsed, mergedAnswers);
 
   const step = getNextStep(draft);
   if (!step.progress || step.progress.total < 1) {

@@ -20,7 +20,6 @@ status: live
 |-----|--------|
 | `/post` | wizard چهار مرحله (کاننیکال) |
 | `?seed=&city=&category=&phone=` | پیش‌پر از خانه |
-| `/v2` | redirect → `/post` (منسوخ) |
 
 ## جریان فعلی (۲۰۲۶-۰۶)
 

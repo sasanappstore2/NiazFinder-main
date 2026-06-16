@@ -27,6 +27,8 @@ node_modules
 
 # misc
 .DS_Store
+data/telemetry/post-intake/
+data/evolution/
 *.pem
 
 # debug

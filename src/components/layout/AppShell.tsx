@@ -33,10 +33,9 @@ export function AppShell({ children, minimalChrome = false }: AppShellProps) {
   const initializeFromStorage = useAppStore((state) => state.initializeFromStorage);
   const isHome = pathname === '/';
   const isChatView = pathname.startsWith('/chat');
-  const isV2Intake = pathname.startsWith('/v2');
   const isProductDetail = isBusinessProductDetailPath(pathname);
   const businessProfileAura = isBusinessProfileAuraPath(pathname);
-  const effectiveMinimal = minimalChrome || isChatView || isV2Intake || intakeMobileChrome;
+  const effectiveMinimal = minimalChrome || isChatView || intakeMobileChrome;
   const hideMobileNav = effectiveMinimal || isProductDetail;
   const hideSiteHeader = intakeMobileChrome;
   const staticPageTitle = getPageTitleForPath(pathname);

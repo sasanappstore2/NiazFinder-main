@@ -6,7 +6,6 @@
 |----------|------------|---------|-----------|
 | `NEED_INTAKE_LLM_ENABLED` | **`false`** | **`false`** | `true` (optional MLX) |
 | `NEED_INTAKE_TITLE_AI_ENABLED` | **`false`** | `false` | optional |
-| `NEXT_PUBLIC_V2_INTAKE_CANARY` | **`false`** | **`false`** | `false` (V2 frozen) |
 
 Production `/post` uses **`intake-rules`** engine only. Qwen/MLX is for local evaluation and post-launch experiments.
 

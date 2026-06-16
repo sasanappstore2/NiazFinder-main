@@ -1,33 +1,45 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { NiazMapMarker as Marker } from '@/components/map/maplibre/map-marker';
-import { MapPin, Navigation, X } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { NiazMapCore } from '@/components/map/mapbox/NiazMapCore';
-import { NiazMapRecenter } from '@/components/map/mapbox/NiazMapRecenter';
-import { NiazMapViewportScope } from '@/components/map/mapbox/NiazMapViewportScope';
-import { MapPinMarker } from '@/components/map/mapbox/MapPinMarker';
+import { IntakeMapAreaCircleOverlay } from '@/components/map/mapbox/IntakeMapAreaCircleOverlay';
+import { NiazMapIntakeAreaFrame } from '@/components/map/mapbox/NiazMapIntakeAreaFrame';
+import { NiazMapIntakeCenterSync } from '@/components/map/mapbox/NiazMapIntakeCenterSync';
 import { resolveMapCenterFromCityLabel } from '@/lib/map/default-center';
-import { getCategoryColor } from '@/lib/categories/category-colors';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import {
+  INTAKE_AREA_RADIUS_DEFAULT_M,
+  intakeAreaFromBbox,
+  intakeZoomForRadiusM,
+} from '@/lib/map/intake-area-circle';
+import {
+  resolveIntakeCitySlug,
+  resolveIntakeMapFrameBounds,
+} from '@/lib/need-intake/intake-map-viewport';
+import type { ManagedNeighborhood } from '@/lib/locations/managed-types';
+import {
+  lookupManagedNeighborhoodBySlug,
+  matchManagedNeighborhood,
+} from '@/lib/neighborhoods/match-managed-neighborhood';
+import { SuggestionChips } from '@/components/need-intake/SuggestionChips';
 import { cn } from '@/lib/utils';
 
 const DEFAULT_HINT =
-  '\u0631\u0648\u06cc \u0646\u0642\u0634\u0647 \u06a9\u0644\u06cc\u06a9 \u06a9\u0646\u06cc\u062f \u06cc\u0627 \u0645\u0627\u0631\u06a9\u0631 \u0631\u0627 \u0628\u06a9\u0634\u06cc\u062f \u062a\u0627 \u0645\u0648\u0642\u0639\u06cc\u062a \u062f\u0642\u06cc\u0642 \u0646\u06cc\u0627\u0632 \u0634\u0645\u0627 \u0631\u0648\u06cc \u0646\u0642\u0634\u0647 \u062b\u0628\u062a \u0634\u0648\u062f.';
-const MY_LOCATION_LABEL = '\u0645\u0648\u0642\u0639\u06cc\u062a \u0645\u0646';
-const NO_PIN_YET =
-  '\u0647\u0646\u0648\u0632 \u0645\u0648\u0642\u0639\u06cc\u062a \u0631\u0648\u06cc \u0646\u0642\u0634\u0647 \u062b\u0628\u062a \u0646\u0634\u062f\u0647 \u0627\u0633\u062a.';
-const CLEAR_PIN = '\u062d\u0630\u0641 \u0645\u0648\u0642\u0639\u06cc\u062a \u0627\u0632 \u0646\u0642\u0634\u0647';
-const MAP_PIN_LABEL = '\u0645\u0648\u0642\u0639\u06cc\u062a \u0631\u0648\u06cc \u0646\u0642\u0634\u0647';
+  '\u0645\u062d\u0644\u0647 \u0627\u0646\u062a\u062e\u0627\u0628 \u0634\u062f\u061f \u0646\u0642\u0634\u0647 \u0631\u0627 \u0628\u06a9\u0634\u06cc\u062f \u062a\u0627 \u0645\u0648\u0642\u0639\u06cc\u062a \u062f\u0642\u06cc\u0642 \u0631\u0627 \u062a\u0639\u06cc\u06cc\u0646 \u06a9\u0646\u06cc\u062f \u2014 \u0628\u0627 \u0632\u0648\u0645 \u0641\u0642\u0637 \u0628\u0648\u0632 \u0645\u062d\u062f\u0648\u062f\u0647 \u0628\u0632\u0631\u06af\u062a\u0631 \u0645\u06cc\u200c\u0634\u0648\u062f.';
+
+const DISAMBIGUATION_PROMPT =
+  '\u0627\u06cc\u0646 \u0646\u0627\u0645 \u062f\u0631 \u0686\u0646\u062f \u0646\u0642\u0637\u0647\u200c\u06cc \u0634\u0647\u0631 \u0648\u062c\u0648\u062f \u062f\u0627\u0631\u062f \u2014 \u0645\u062d\u0644\u0647\u200c\u06cc \u0645\u062f\u0646\u0638\u0631 \u0631\u0627 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646\u06cc\u062f:';
 
 export function NeedMapPinPicker({
   city,
-  categorySlug,
+  categorySlug: _categorySlug,
   lat,
   lng,
   onChange,
   className,
+  neighborhoodDisambiguation,
+  neighborhoodSlug,
+  neighborhoodName,
+  neighborhoods = [],
 }: {
   city: string;
   categorySlug?: string | null;
@@ -35,101 +47,151 @@ export function NeedMapPinPicker({
   lng: number | null;
   onChange: (coords: { lat: number; lng: number } | null) => void;
   className?: string;
+  neighborhoodDisambiguation?: {
+    options: Array<{ value: string; label: string }>;
+    selectedValue?: string;
+    onSelect: (value: string) => void;
+  };
+  neighborhoodSlug?: string | null;
+  neighborhoodName?: string | null;
+  neighborhoods?: ManagedNeighborhood[];
 }) {
-  const center = useMemo(() => resolveMapCenterFromCityLabel(city), [city]);
-  const pinColor = getCategoryColor(categorySlug);
-  const [position, setPosition] = useState<{ lat: number; lng: number } | null>(
-    lat != null && lng != null ? { lat, lng } : null
+  const cityCenter = useMemo(() => resolveMapCenterFromCityLabel(city), [city]);
+  const citySlug = useMemo(() => resolveIntakeCitySlug(city), [city]);
+  const selectedNeighborhood = useMemo(() => {
+    const slug = neighborhoodSlug?.trim();
+    if (slug) {
+      return lookupManagedNeighborhoodBySlug(neighborhoods, slug);
+    }
+    const name = neighborhoodName?.trim();
+    if (name) {
+      return (
+        neighborhoods.find((n) => n.name === name) ??
+        matchManagedNeighborhood(neighborhoods, name, city)
+      );
+    }
+    return null;
+  }, [city, neighborhoodName, neighborhoodSlug, neighborhoods]);
+
+  const mapFrame = useMemo(
+    () => resolveIntakeMapFrameBounds(city, selectedNeighborhood),
+    [city, selectedNeighborhood]
   );
 
-  useEffect(() => {
-    if (lat != null && lng != null) setPosition({ lat, lng });
-  }, [lat, lng]);
-
-  useEffect(() => {
-    if (!city.trim()) {
-      setPosition(null);
-      onChange(null);
+  const areaSelection = useMemo(() => {
+    const centroid = selectedNeighborhood?.centroid;
+    const center = centroid ?? { lat: cityCenter.lat, lng: cityCenter.lng };
+    const bbox = selectedNeighborhood?.bbox ?? mapFrame.neighborhoodBounds;
+    if (bbox) {
+      return intakeAreaFromBbox(bbox, center);
     }
-  }, [city, onChange]);
+    return {
+      lat: center.lat,
+      lng: center.lng,
+      radiusM: INTAKE_AREA_RADIUS_DEFAULT_M,
+    };
+  }, [
+    cityCenter.lat,
+    cityCenter.lng,
+    mapFrame.neighborhoodBounds,
+    selectedNeighborhood?.bbox,
+    selectedNeighborhood?.centroid,
+  ]);
 
-  const setCoords = (next: { lat: number; lng: number } | null) => {
-    setPosition(next);
-    onChange(next);
-  };
+  const mapFrameKey = `${city}-${selectedNeighborhood?.id ?? 'city'}`;
 
-  const locateMe = () => {
-    if (!navigator.geolocation) {
-      toast.error(
-        '\u062f\u0633\u062a\u06af\u0627\u0647 \u0634\u0645\u0627 \u0627\u0632 \u0645\u0648\u0642\u0639\u06cc\u062a\u200c\u06cc\u0627\u0628 \u067e\u0634\u062a\u06cc\u0628\u0627\u0646\u06cc \u0646\u0645\u06cc\u200c\u06a9\u0646\u062f.'
-      );
-      return;
+  const mapCenter = useMemo(() => {
+    if (selectedNeighborhood?.centroid) {
+      return { lat: areaSelection.lat, lng: areaSelection.lng };
     }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () =>
-        toast.error(
-          '\u062f\u0633\u062a\u0631\u0633\u06cc \u0628\u0647 \u0645\u0648\u0642\u0639\u06cc\u062a \u0631\u062f \u0634\u062f \u06cc\u0627 \u0645\u0648\u0642\u0639\u06cc\u062a \u062f\u0631 \u062f\u0633\u062a\u0631\u0633 \u0646\u06cc\u0633\u062a.'
-        ),
-      { enableHighAccuracy: true, timeout: 12000 }
-    );
-  };
+    if (lat != null && lng != null && Number.isFinite(lat) && Number.isFinite(lng)) {
+      return { lat, lng };
+    }
+    return { lat: cityCenter.lat, lng: cityCenter.lng };
+  }, [
+    areaSelection.lat,
+    areaSelection.lng,
+    cityCenter.lat,
+    cityCenter.lng,
+    lat,
+    lng,
+    selectedNeighborhood?.centroid,
+  ]);
+
+  const mapZoom = useMemo(() => {
+    if (selectedNeighborhood?.centroid) {
+      return intakeZoomForRadiusM(mapCenter.lat, areaSelection.radiusM, {
+        width: 400,
+        height: 300,
+      });
+    }
+    return mapFrame.center.zoom;
+  }, [
+    areaSelection.radiusM,
+    mapCenter.lat,
+    mapFrame.center.zoom,
+    selectedNeighborhood?.centroid,
+  ]);
+
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  const handleLocationChange = useCallback((coords: { lat: number; lng: number }) => {
+    onChangeRef.current(coords);
+  }, []);
+
+  useEffect(() => {
+    const centroid = selectedNeighborhood?.centroid;
+    if (!centroid || !Number.isFinite(centroid.lat) || !Number.isFinite(centroid.lng)) return;
+    onChangeRef.current({ lat: centroid.lat, lng: centroid.lng });
+  }, [
+    selectedNeighborhood?.id,
+    selectedNeighborhood?.centroid?.lat,
+    selectedNeighborhood?.centroid?.lng,
+  ]);
 
   if (!city.trim()) return null;
 
   return (
     <div className={cn('space-y-2', className)}>
-      <div className="flex items-center justify-between gap-2">
-        <label className="text-sm font-medium">{MAP_PIN_LABEL}</label>
-        <div className="flex gap-1">
-          <Button type="button" variant="outline" size="sm" className="h-8 gap-1 text-xs" onClick={locateMe}>
-            <Navigation className="size-3.5" aria-hidden />
-            {MY_LOCATION_LABEL}
-          </Button>
-          {position ? (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-8 gap-1 text-xs"
-              onClick={() => setCoords(null)}
-            >
-              <X className="size-3.5" aria-hidden />
-              {CLEAR_PIN}
-            </Button>
-          ) : null}
+      {neighborhoodDisambiguation && neighborhoodDisambiguation.options.length >= 2 ? (
+        <div className="space-y-2 rounded-xl border border-amber-500/25 bg-amber-500/5 px-3 py-2">
+          <p className="text-xs font-medium text-amber-800 dark:text-amber-300">
+            {DISAMBIGUATION_PROMPT}
+          </p>
+          <SuggestionChips
+            options={neighborhoodDisambiguation.options}
+            value={neighborhoodDisambiguation.selectedValue}
+            onSelect={(v) => {
+              const value = typeof v === 'string' ? v : (v[0] ?? '');
+              if (value) neighborhoodDisambiguation.onSelect(value);
+            }}
+          />
         </div>
-      </div>
+      ) : null}
       <p className="text-xs text-muted-foreground">{DEFAULT_HINT}</p>
-      <div className="business-browse-map overflow-hidden rounded-xl border border-border/50">
+      <div className="business-browse-map intake-map-pin-shell overflow-hidden rounded-xl border border-border/50">
         <NiazMapCore
-          key={city}
-          center={center}
+          key={mapFrameKey}
+          center={{
+            lat: mapCenter.lat,
+            lng: mapCenter.lng,
+            zoom: mapZoom,
+          }}
           detail="picker"
-          className="h-[240px] sm:h-[320px]"
-          onMapClick={(la, ln) => setCoords({ lat: la, lng: ln })}
+          className="h-full w-full"
+          citySlugs={citySlug ? [citySlug] : []}
+          overlay={<IntakeMapAreaCircleOverlay />}
         >
-          <NiazMapViewportScope viewportBounds={null} scopeKind="national" />
-          <NiazMapRecenter center={center} zoom={center.zoom} />
-          {position ? (
-            <Marker
-              longitude={position.lng}
-              latitude={position.lat}
-              anchor="bottom"
-              draggable
-              onDragEnd={(e) => setCoords({ lat: e.lngLat.lat, lng: e.lngLat.lng })}
-            >
-              <MapPinMarker selected color={pinColor} />
-            </Marker>
-          ) : null}
+          <NiazMapIntakeAreaFrame
+            center={{ lat: mapCenter.lat, lng: mapCenter.lng }}
+            radiusM={areaSelection.radiusM}
+            frameKey={mapFrameKey}
+            onFramed={handleLocationChange}
+          />
+          <NiazMapIntakeCenterSync onCenterChange={handleLocationChange} />
         </NiazMapCore>
       </div>
-      {!position ? (
-        <p className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400">
-          <MapPin className="size-3.5 shrink-0" aria-hidden />
-          {NO_PIN_YET}
-        </p>
-      ) : null}
     </div>
   );
 }

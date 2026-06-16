@@ -43,7 +43,7 @@ export function runPrefillFlowSelfTest(): string | null {
     return `first question should not be ${firstKey}, got: ${step.question}`;
   }
 
-  const draft = legacyNeedDraftFromParsed(parsed, answers, []);
+  const draft = legacyNeedDraftFromParsed(parsed, answers);
   if (draft.answers.location !== 'شهید فرامرز عباسی، مشهد' && !String(draft.answers.location).includes('مشهد')) {
     return `location seed: ${draft.answers.location}`;
   }

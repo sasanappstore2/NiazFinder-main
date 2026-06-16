@@ -4,6 +4,7 @@ import { PROPERTY_KIND_LABELS, PROPERTY_DEAL_LABELS } from '@/config/need-schema
 import type { NeedDraft } from '@/contracts/need-intake';
 import { recordToEntities } from '@/intake/entities/entityRecord';
 import { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
+import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
 import { formatMoneyToman } from '@/lib/format/money';
 import { realEstateFilterSummaryLines } from '@/lib/need-intake/filter-answer-lines';
 import { dealLabelForCategory, LISTING_TITLE_MAX_LENGTH } from '@/lib/need-intake/listing-title';
@@ -17,7 +18,8 @@ import {
 
 /** Payload sent to intake-mlx for title + description generation. */
 export interface ListingCopyContext {
-  needType: string;
+  templateId: string;
+  rootSlug: string;
   intentType: string;
   categorySlug?: string;
   categoryPathFa: string;
@@ -197,8 +199,11 @@ export function buildListingCopyContext(draft: NeedDraft): ListingCopyContext {
   const composed = composeListingFromDraft(draft);
   const baselineTitle = resolveDeterministicListingTitle(draft).title;
 
+  const template = resolveTemplateFromDraftEntities(entities);
+
   return {
-    needType: draft.needType,
+    templateId: draft.templateId,
+    rootSlug: template.rootSlug,
     intentType: parsed.intentType,
     categorySlug: parsed.categorySlug ?? leafSlug ?? undefined,
     categoryPathFa,

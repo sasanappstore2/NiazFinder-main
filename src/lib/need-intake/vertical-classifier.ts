@@ -141,6 +141,14 @@ const PRODUCT_SIGNALS: { word: string; weight: number }[] = [
   { word: 'کت و شلوار', weight: 4 },
   { word: 'دوربین', weight: 4 },
   { word: 'تبلت', weight: 3 },
+  { word: 'پیانو', weight: 6 },
+  { word: 'piano', weight: 6 },
+  { word: 'گیتار', weight: 5 },
+  { word: 'ویولن', weight: 5 },
+  { word: 'سنتور', weight: 5 },
+  { word: 'کمانچه', weight: 5 },
+  { word: 'آلات موسیقی', weight: 6 },
+  { word: 'ساز', weight: 3 },
   { word: 'ساعت', weight: 5 },
   { word: 'رولکس', weight: 6 },
   { word: 'rolex', weight: 6 },
@@ -193,6 +201,7 @@ const SOCIAL_SIGNALS: { word: string; weight: number }[] = [
 
 /** Known Tehran neighborhoods for area extraction. */
 import { getKnownAreasForCity, KNOWN_AREAS_FROM_CATALOG } from '@/lib/neighborhoods/known-areas';
+import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
 
 /** @deprecated Prefer getKnownAreasForCity — legacy Tehran-only list kept as fallback. */
 const LEGACY_TEHRAN_AREAS = [
@@ -408,6 +417,17 @@ export function categorySlugForVertical(
       if (t.includes('گوشی') || t.includes('آیفون') || t.includes('iphone')) {
         return 'mobile-phone';
       }
+      if (
+        t.includes('پیانو') ||
+        t.includes('piano') ||
+        t.includes('گیتار') ||
+        t.includes('ویولن') ||
+        t.includes('سنتور') ||
+        t.includes('کمانچه') ||
+        t.includes('آلات موسیقی')
+      ) {
+        return 'musical-instruments';
+      }
       return 'electronics';
     case 'jobs':
       return 'it';
@@ -471,10 +491,26 @@ export function parseAreaFromText(rawText: string, cityId?: string | null): stri
     if (area.length < 5) continue;
     if (textContainsAreaName(text, area)) return area.replace(/\s+/g, ' ').trim();
   }
+
+  const fromFragment = extractLocationFragment(text);
+  if (fromFragment) {
+    const area = stripTrailingCityFromArea(fromFragment);
+    const lead = area.split(/\s+/)[0] ?? area;
+    if (
+      area.length >= 2 &&
+      area.length <= 60 &&
+      !rejectArea.has(lead) &&
+      !drNonLocation.has(lead)
+    ) {
+      return area;
+    }
+  }
+
   const patterns = [
     /محدوده\s+([^\s،,.]+(?:\s+[^\s،,.]+){0,4})/u,
     /منطقه\s+([^\s،,.]+(?:\s+[^\s،,.]+){0,4})/u,
     /محله\s+([^\s،,.]+(?:\s+[^\s،,.]+){0,4})/u,
+    /حاشیه\s+([^\s،,.]+(?:\s+[^\s،,.]+){0,4})/u,
     /نزدیک\s+(?:به\s+)?([^\s،,.]+)/u,
   ];
   for (const re of patterns) {

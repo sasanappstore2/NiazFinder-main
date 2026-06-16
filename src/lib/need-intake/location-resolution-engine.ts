@@ -1,5 +1,6 @@
 import type { ParsedIntent } from '@/contracts/need-intake';
 import { parseCity } from '@/lib/need-intake/intent-parser';
+import { parseAreaFromText } from '@/lib/need-intake/vertical-classifier';
 import {
   extractLocationAnchor,
   extractLocationFragment,
@@ -173,13 +174,15 @@ function deriveFragmentFromLeadingCity(rawText: string, explicitCity: string): s
 function resolveFragment(
   rawText: string,
   explicitCity?: string,
-  parsedArea?: string
+  parsedArea?: string,
+  preferredCityId?: string | null
 ): string | undefined {
   return (
     extractLocationFragment(rawText) ??
     parsedArea?.trim() ??
     (explicitCity ? deriveFragmentFromLeadingCity(rawText, explicitCity) : undefined) ??
-    (explicitCity ? deriveFragmentFromExplicitCity(rawText, explicitCity) : undefined)
+    (explicitCity ? deriveFragmentFromExplicitCity(rawText, explicitCity) : undefined) ??
+    parseAreaFromText(rawText, preferredCityId ?? undefined)
   );
 }
 
@@ -405,7 +408,8 @@ export function resolveLocation(
   const fragment = resolveFragment(
     rawText,
     explicitCity,
-    opts?.parsed?.entities?.area
+    opts?.parsed?.entities?.area,
+    opts?.preferredCityId
   );
 
   const landmark = tryResolveLandmark(rawText, fragment);

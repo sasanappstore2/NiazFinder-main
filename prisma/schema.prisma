@@ -181,6 +181,82 @@ model AdminAuditLog {
   @@index([createdAt])
 }
 
+// ============ INTAKE LOCATION CATALOG (Intelligence Engine v1) ============
+
+model IntakeProvince {
+  id        String       @id @default(cuid())
+  slug      String       @unique
+  name      String
+  nameEn    String?
+  isActive  Boolean      @default(true)
+  cities    IntakeCity[]
+  aliases   IntakeLocationAlias[] @relation("ProvinceAliases")
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([slug])
+  @@map("intake_provinces")
+}
+
+model IntakeCity {
+  id            String              @id @default(cuid())
+  slug          String              @unique
+  name          String
+  nameEn        String?
+  provinceId    String
+  province      IntakeProvince      @relation(fields: [provinceId], references: [id], onDelete: Cascade)
+  isActive      Boolean             @default(true)
+  lat           Float?
+  lng           Float?
+  neighborhoods IntakeNeighborhood[]
+  aliases       IntakeLocationAlias[] @relation("CityAliases")
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@index([provinceId])
+  @@index([slug])
+  @@map("intake_cities")
+}
+
+model IntakeNeighborhood {
+  id        String   @id @default(cuid())
+  slug      String
+  name      String
+  nameEn    String?
+  cityId    String
+  city      IntakeCity @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  areas     String[] @default([])
+  lat       Float?
+  lng       Float?
+  bbox      Json?
+  isActive  Boolean  @default(true)
+  aliases   IntakeLocationAlias[] @relation("NeighborhoodAliases")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cityId, slug])
+  @@index([cityId])
+  @@index([slug])
+  @@map("intake_neighborhoods")
+}
+
+model IntakeLocationAlias {
+  id             String              @id @default(cuid())
+  alias          String
+  aliasRaw       String?
+  neighborhoodId String?
+  cityId         String?
+  provinceId     String?
+  neighborhood   IntakeNeighborhood? @relation("NeighborhoodAliases", fields: [neighborhoodId], references: [id], onDelete: Cascade)
+  city           IntakeCity?         @relation("CityAliases", fields: [cityId], references: [id], onDelete: Cascade)
+  province       IntakeProvince?     @relation("ProvinceAliases", fields: [provinceId], references: [id], onDelete: Cascade)
+  source         String              @default("import")
+  createdAt      DateTime            @default(now())
+
+  @@index([alias])
+  @@map("intake_location_aliases")
+}
+
 // ============ CATEGORIES & SKILLS ============
 
 model Category {

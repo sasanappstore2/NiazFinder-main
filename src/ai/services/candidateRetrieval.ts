@@ -10,7 +10,7 @@ import { CategoryMatcher } from '@/intake/matchers/categoryMatcher';
 import { CityMatcher } from '@/intake/matchers/cityMatcher';
 import { NeighborhoodMatcher } from '@/intake/matchers/neighborhoodMatcher';
 import { getCategoryBySlug } from '@/config/categories';
-import { NEED_TYPES } from '@/intake/schema/needTypes';
+import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
 import { extractTransactionType } from '@/intake/extractors/transactionExtractor';
 
 const TOP_CATEGORIES = 5;
@@ -79,16 +79,13 @@ function boostFromRuleEntities(
   return boost;
 }
 
-function relatedNeedTypeCategorySlugs(entities: IntakeEntities): string[] {
-  const vertical = entities.vertical;
-  if (!vertical) return [];
-  return NEED_TYPES.filter((t) => t.vertical === vertical)
-    .map((t) => {
-      const parts = t.key.replace(/-seeking$/, '').split('-');
-      if (parts.length >= 2) return `${parts.slice(0, -1).join('-')}-${parts[parts.length - 1]}`;
-      return t.key.replace(/-seeking$/, '');
-    })
-    .filter(Boolean);
+function relatedTemplateCategorySlugs(entities: IntakeEntities): string[] {
+  const template = resolveTemplateFromDraftEntities(entities);
+  const leaf = entities.subcategorySlug ?? entities.categorySlug;
+  const slugs = new Set<string>();
+  if (leaf) slugs.add(leaf);
+  if (template.id && template.id !== leaf) slugs.add(template.id);
+  return [...slugs];
 }
 
 /**
@@ -126,7 +123,7 @@ export function retrieveIntakeCandidates(
     });
   }
 
-  for (const slug of relatedNeedTypeCategorySlugs(entities)) {
+  for (const slug of relatedTemplateCategorySlugs(entities)) {
     if (categoryMap.size >= TOP_CATEGORIES + 2) break;
     if (categoryMap.has(slug)) continue;
     const entry = indexes.categories.get(slug);

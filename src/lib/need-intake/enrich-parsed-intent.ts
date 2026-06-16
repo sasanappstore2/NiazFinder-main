@@ -1,27 +1,26 @@
+import 'server-only';
+
 import type { ParsedIntent } from '@/contracts/need-intake';
-import { getCategoryPath } from '@/config/categories';
 import { computeMissingIntakeFields } from '@/lib/need-intake/compute-missing-fields';
 import { applyPropertySlotsToParsed } from '@/lib/need-intake/apply-property-slots-to-parsed';
-import { isConstructionPartnershipText, parseCity } from '@/lib/need-intake/intent-parser';
+import { parseCity } from '@/lib/need-intake/intent-parser';
 import { buildPropertyTitle, buildRealEstateServiceTitle } from '@/lib/need-intake/property-title';
 import { applyLocationResolutionToParsed } from '@/lib/need-intake/location-resolution-engine';
 import { findNeighborhoodInText } from '@/lib/need-intake/neighborhood-catalog.server';
 import { extractVehicleSubjectFromText } from '@/lib/need-intake/vertical-title';
 import { parseAreaFromText } from '@/lib/need-intake/vertical-classifier';
+import {
+  isPropertyParsedIntent,
+  isVehicleParsedIntent,
+  shouldSkipNeighborhoodAutoResolve,
+} from '@/lib/need-intake/enrich-parsed-intent-core';
 
 function isPropertyParsed(parsed: ParsedIntent): boolean {
-  if (parsed.intentType.startsWith('property')) return true;
-  if (parsed.intentType === 'real_estate_service') return true;
-  if (parsed.categorySlug === 'construction-partnership') return true;
-  if (parsed.rawText && isConstructionPartnershipText(parsed.rawText)) return true;
-  const root = getCategoryPath(parsed.categorySlug)[0]?.slug;
-  return root === 'real-estate';
+  return isPropertyParsedIntent(parsed);
 }
 
 function isVehicleParsed(parsed: ParsedIntent): boolean {
-  if (parsed.intentType.startsWith('vehicle')) return true;
-  const root = getCategoryPath(parsed.categorySlug)[0]?.slug;
-  return root === 'vehicles';
+  return isVehicleParsedIntent(parsed);
 }
 
 /** Attach neighborhood slug, slot extraction, optional disambiguation, and missingFields. */
@@ -34,13 +33,9 @@ export function enrichParsedIntent(
   }
 ): ParsedIntent {
   let next: ParsedIntent = applyPropertySlotsToParsed(parsed);
-  const partnership = isConstructionPartnershipText(next.rawText ?? '');
   const raw = next.rawText?.trim() ?? '';
 
-  const skipNeighborhoodAuto =
-    partnership ||
-    next.categorySlug === 'construction-partnership' ||
-    next.intentType === 'real_estate_service';
+  const skipNeighborhoodAuto = shouldSkipNeighborhoodAutoResolve(next);
 
   if (isPropertyParsed(next) && raw && !skipNeighborhoodAuto) {
     const locationText = opts?.locationText ?? raw;
@@ -94,7 +89,7 @@ export function enrichParsedIntent(
     }
   }
 
-  if (partnership || next.intentType === 'real_estate_service') {
+  if (skipNeighborhoodAuto || next.intentType === 'real_estate_service') {
     next = {
       ...next,
       title: buildRealEstateServiceTitle(next.entities, next.city),

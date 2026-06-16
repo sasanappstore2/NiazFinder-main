@@ -1,6 +1,8 @@
 import type { ParsedIntent } from '@/contracts/need-intake';
 import type { DatasetLabels } from '@/lib/need-intake/dataset/schema';
 import { enrichParsedIntent } from '@/lib/need-intake/enrich-parsed-intent';
+import { parseLabelsViaLocalChat } from '@/lib/need-intake/local-parse-bridge';
+import { checkLocalModelHealth } from '@/lib/need-intake/local-chat-client';
 import { INTENT_REGISTRY } from '@/config/need-intents';
 import { CANONICAL_CATEGORIES } from '@/config/categories';
 import { CANONICAL_CITIES } from '@/config/locations';
@@ -96,7 +98,7 @@ export function isNeedIntakeLlmEnabled(): boolean {
 }
 
 export function getNeedIntakeLlmBaseUrl(): string {
-  return (process.env.NEED_INTAKE_LLM_URL ?? 'http://127.0.0.1:8100').replace(/\/$/, '');
+  return (process.env.NEED_INTAKE_LLM_URL ?? 'http://127.0.0.1:1234').replace(/\/$/, '');
 }
 
 function labelsToParsedIntent(text: string, labels: DatasetLabels): ParsedIntent {
@@ -122,11 +124,42 @@ export interface LlmParseResult {
 }
 
 /**
- * Call local intake-mlx microservice. Returns null on failure (caller uses rules).
+ * Call local model API. Tries legacy /v1/parse then OpenAI-compatible /v1/chat/completions.
  */
 export async function parseIntentViaLlm(text: string): Promise<LlmParseResult | null> {
   if (!isNeedIntakeLlmEnabled()) return null;
 
+  const mlxResult = await parseIntentViaLegacyMlx(text);
+  if (mlxResult) return mlxResult;
+
+  const chatResult = await parseLabelsViaLocalChat(text);
+  if (!chatResult?.labels.categorySlug || !chatResult.labels.intentType) {
+    return null;
+  }
+
+  const intentType = mapIntentType(chatResult.labels.intentType);
+  const categorySlug = mapCategorySlug(chatResult.labels.categorySlug);
+  if (!intentType || !categorySlug) return null;
+
+  const parsedLabels: DatasetLabels = {
+    intentType,
+    categorySlug,
+    subcategorySlug: chatResult.labels.subcategorySlug,
+    entities: chatResult.labels.entities ?? {},
+    city: normalizeCity(chatResult.labels.city),
+    budgetMin: chatResult.labels.budgetMin,
+    budgetMax: chatResult.labels.budgetMax,
+    urgency: chatResult.labels.urgency,
+    neighborhoodSlug: chatResult.labels.neighborhoodSlug,
+  };
+
+  return {
+    parsed: labelsToParsedIntent(text, parsedLabels),
+    raw: chatResult.raw,
+  };
+}
+
+async function parseIntentViaLegacyMlx(text: string): Promise<LlmParseResult | null> {
   const timeoutMs = Number(process.env.NEED_INTAKE_LLM_TIMEOUT_MS ?? 8000);
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -188,6 +221,21 @@ export async function parseIntentViaLlm(text: string): Promise<LlmParseResult | 
 }
 
 export async function checkIntakeMlxHealth(): Promise<{
+  ok: boolean;
+  modelId?: string;
+  loadError?: string | null;
+}> {
+  const legacy = await checkLegacyMlxHealth();
+  if (legacy.ok) return legacy;
+  const local = await checkLocalModelHealth();
+  return {
+    ok: local.ok,
+    modelId: local.modelId,
+    loadError: local.loadError,
+  };
+}
+
+async function checkLegacyMlxHealth(): Promise<{
   ok: boolean;
   modelId?: string;
   loadError?: string | null;

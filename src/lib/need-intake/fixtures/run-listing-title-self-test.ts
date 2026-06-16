@@ -258,7 +258,7 @@ async function testTemplateFallback(): Promise<string[]> {
     const text = 'آپارتمان دو خواب برای خرید در فرامرز عباسی مشهد بودجه ۱۰ میلیارد';
     const parsed = parseFromText(text);
     const answers = seedAnswersFromParsed(parsed);
-    const draft = legacyNeedDraftFromParsed(parsed, answers, []);
+    const draft = legacyNeedDraftFromParsed(parsed, answers);
     const composed = composeListingFromDraft(draft);
     const result = await generateListingTitle(draft, composed.title);
 

@@ -29,7 +29,7 @@
 | `listingPreview` | `ListingPreview?` | preview step | ✅ title/desc |
 | `leadPhone` | `string?` | lead draft / URL | optional |
 | `intakeTrace` | trace object | analyze API | training |
-| `intelligenceProfile` | optional | v2 extraction | future |
+| `intelligenceProfile` | optional | rules/listing enrichment | future |
 | `updatedAt` | ISO string | recompute | ✅ |
 
 ---

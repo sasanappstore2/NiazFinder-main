@@ -31,6 +31,8 @@ export type NiazMapLibreCoreProps = {
   onError?: (error: unknown) => void;
   children?: React.ReactNode;
   overlay?: React.ReactNode;
+  /** Wheel/pinch zoom anchored on viewport center (intake picker). */
+  zoomAroundCenter?: boolean;
 };
 
 export function NiazMapLibreCore({
@@ -52,6 +54,7 @@ export function NiazMapLibreCore({
   onError,
   children,
   overlay,
+  zoomAroundCenter = false,
 }: NiazMapLibreCoreProps) {
   const mapRef = useRef<MapRef>(null);
   const [rtlReady, setRtlReady] = useState(!requireRtl);
@@ -152,7 +155,7 @@ export function NiazMapLibreCore({
             minZoom={minZoom}
             maxZoom={maxZoom}
             maxBounds={maxBounds}
-            scrollZoom={interactive}
+            scrollZoom={interactive ? (zoomAroundCenter ? { around: 'center' } : true) : false}
             dragPan={interactive}
             dragRotate={false}
             pitchWithRotate={false}

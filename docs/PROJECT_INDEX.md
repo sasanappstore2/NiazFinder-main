@@ -87,8 +87,7 @@
 | `/b/{location}/[...segments]` | `(main)/b/...` | مرور **کسب‌وکارها** |
 | `/v/{...path}` | `(main)/v/[...path]` | جزئیات آگهی نیاز |
 | `/b/{slug}` | `(main)/b/[slug]` | پروفایل عمومی کسب‌وکار |
-| `/post` | `(main)/post` | ثبت نیاز (intake) |
-| `/v2` | `(main)/v2` | intake نسخه ۲ |
+| `/post` | `(main)/post` | ثبت نیاز (intake) — wizard فرم‌محور |
 | `/dashboard` | `(main)/dashboard` | داشبورد کاربر |
 | `/my-business` | `(main)/my-business` | مدیریت کسب‌وکار |
 | `/search` | `(main)/search` | جستجو |
@@ -207,7 +206,6 @@ internal/request-moderation
 | ماژول | نقش | نقطه ورود کلیدی |
 |-------|-----|-----------------|
 | `need-intake/` | موتور ثبت نیاز، orchestrator، listing composer | `orchestrator.ts`, `intake-client.ts` |
-| `intake-v2/` | intake مکالمه‌ای نسخه ۲ | `engine/`, `fixtures/` |
 | `typing-analysis/` | پیشنهاد real-time هنگام تایپ | `analyzer.ts` |
 | `business/` | onboarding، map pins، occupation | `onboarding/`, `map-pins-query.ts` |
 | `need/` | browse filters، map pins | `request-browse-filters.ts`, `map-pins-query.ts` |
@@ -291,7 +289,6 @@ internal/request-moderation
 | `business/` | BrowseSpecialists، `map/` (Leaflet) |
 | `business-profile/` | Hub مدیریت پروفایل، فرم‌ها، sections |
 | `chat/` | bubble، attachment، read receipt |
-| `intake-v2/` | UI intake نسخه ۲ |
 | `browse/` | SearchMarketplacePage |
 | `dashboard/` | UserDashboard |
 | `admin/` | کامپوننت‌های admin |
@@ -307,7 +304,7 @@ internal/request-moderation
 | `contracts/` | TypeScript contracts (need-card، business-profile، …) |
 | `data/` | geo JSON، neighborhoods supplements |
 | `hooks/` | use-need-map-pins، use-voice-call، use-intake-analyze، … |
-| `stores/` | Zustand: `need-intake-store.ts`, `intake-v2-store.ts` |
+| `stores/` | Zustand: `need-intake-store.ts` |
 | `services/business/` | سرویس‌های business |
 | `styles/` | CSS تخصصی (business-map، chat، auth، admin) |
 | `content/` | legal، seo content |
@@ -351,7 +348,6 @@ internal/request-moderation
 | `geo/` | import boundaries، SVG paths، hex layout |
 | `analytics/` | rollup روزانه، retention cleanup |
 | `business/` | migrate category→occupation، backfill |
-| `v2-conv-qa/` | batch QA برای intake v2 |
 | root | seed demos، security smoke، sync-categories |
 
 ---

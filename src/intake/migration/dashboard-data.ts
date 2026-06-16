@@ -4,7 +4,7 @@ import {
   countPublishedToday,
   getDriftStatsToday,
   getShadowPublishStats,
-  getShadowStatsByNeedType,
+  getShadowStatsByTemplateId,
 } from '@/intake/migration/events';
 import { getIntakeMigrationFeatureFlags } from '@/intake/migration/feature-flags';
 import { computeMigrationReadiness } from '@/intake/migration/readiness';
@@ -17,13 +17,13 @@ function sinceDays(days: number): Date {
 
 export async function buildIntakeMigrationDashboard() {
   const shadow7dSince = sinceDays(7);
-  const [legacyWrites, driftToday, publishedToday, shadow7d, needTypeBreakdown] =
+  const [legacyWrites, driftToday, publishedToday, shadow7d, templateIdBreakdown] =
     await Promise.all([
       countLegacyWritesWindow(),
       getDriftStatsToday(),
       countPublishedToday(),
       getShadowPublishStats(shadow7dSince),
-      getShadowStatsByNeedType(shadow7dSince),
+      getShadowStatsByTemplateId(shadow7dSince),
     ]);
 
   const readiness = computeMigrationReadiness({
@@ -50,7 +50,7 @@ export async function buildIntakeMigrationDashboard() {
       ...shadow7d,
       driftPercent: Math.round(shadow7d.driftRate * 10000) / 100,
     },
-    needTypeBreakdown,
+    templateIdBreakdown,
     featureFlags,
     exitCriteria: {
       legacyWritesZero: legacyWrites.h24 === 0 && legacyWrites.d7 === 0,

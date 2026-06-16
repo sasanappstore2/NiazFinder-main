@@ -1,98 +1,47 @@
 import type { CompletionState, IntakeEntities, MissingFieldItem } from '@/intake/types';
 import { categoryNeedsTransactionType } from '@/intake/extractors/transactionExtractor';
 import { hasEntityValue, type EntityValueContext } from '@/intake/entities/entityRegistry';
-import { resolveNeedType } from '@/intake/schema/needTypes';
+import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
 
-interface NeedSchemaDef {
-  key: string;
-  required: readonly string[];
-  optional: readonly string[];
-  priority: Readonly<Record<string, number>>;
-}
-
-const SCHEMAS: readonly NeedSchemaDef[] = [
-  {
-    key: 'apartment',
-    required: ['transactionType', 'neighborhood'],
-    optional: ['area', 'budget', 'rooms'],
-    priority: {
-      transactionType: 100,
-      neighborhood: 95,
-      budget: 90,
-      area: 80,
-      rooms: 70,
-    },
-  },
-  {
-    key: 'plumbing',
-    required: ['description', 'neighborhood'],
-    optional: ['urgency', 'budget'],
-    priority: {
-      description: 100,
-      neighborhood: 95,
-      urgency: 90,
-      budget: 60,
-    },
-  },
-  {
-    key: 'car',
-    required: ['city'],
-    optional: ['budget'],
-    priority: {
-      city: 100,
-      budget: 85,
-    },
-  },
-];
-
-const DEFAULT_SCHEMA: NeedSchemaDef = {
-  key: 'default',
-  required: ['category', 'city'],
-  optional: ['budget', 'neighborhood'],
-  priority: {
-    category: 100,
-    city: 95,
-    neighborhood: 88,
-    budget: 70,
-  },
-};
-
-function resolveNeedSchema(entities: IntakeEntities): NeedSchemaDef {
-  const needType = resolveNeedType(entities);
-  if (needType.key.includes('apartment')) return SCHEMAS[0]!;
-  if (needType.key.includes('plumbing')) return SCHEMAS[1]!;
-  if (needType.key.includes('car')) return SCHEMAS[2]!;
-  return DEFAULT_SCHEMA;
+function fieldPriority(
+  requiredFields: readonly string[],
+  optionalFields: readonly string[],
+  field: string
+): number {
+  const reqIdx = requiredFields.indexOf(field);
+  if (reqIdx >= 0) return 100 - reqIdx * 5;
+  const optIdx = optionalFields.indexOf(field);
+  if (optIdx >= 0) return 70 - optIdx * 5;
+  return 50;
 }
 
 export function buildPrioritizedMissingFields(
   entities: IntakeEntities,
   ctx?: EntityValueContext
 ): MissingFieldItem[] {
-  const schema = resolveNeedSchema(entities);
+  const template = resolveTemplateFromDraftEntities(entities);
   const fields = new Map<string, MissingFieldItem>();
 
-  for (const field of schema.required) {
+  for (const field of template.requiredFields) {
     if (!hasEntityValue(entities, field, ctx)) {
       fields.set(field, {
         field,
-        priority: schema.priority[field] ?? 50,
+        priority: fieldPriority(template.requiredFields, template.optionalFields, field),
         required: true,
       });
     }
   }
 
-  for (const field of schema.optional) {
+  for (const field of template.optionalFields) {
     if (!hasEntityValue(entities, field, ctx)) {
       fields.set(field, {
         field,
-        priority: schema.priority[field] ?? 40,
+        priority: fieldPriority(template.requiredFields, template.optionalFields, field),
         required: false,
       });
     }
   }
 
-  // Cross-category hard rule: property flows require explicit transaction type.
   if (categoryNeedsTransactionType(entities.categorySlug) && !entities.transactionType) {
     fields.set('transactionType', {
       field: 'transactionType',
@@ -116,4 +65,3 @@ export function completionStateFromScore(score: number): CompletionState {
   if (score < 90) return 'ALMOST_READY';
   return 'READY_TO_PUBLISH';
 }
-

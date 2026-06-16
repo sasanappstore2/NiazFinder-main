@@ -1,7 +1,9 @@
 /** Client-safe location fragment extraction (no Node fs / catalog deps). */
 
+import { parseCity } from '@/lib/need-intake/intent-parser';
+
 const FRAGMENT_STOP_RE =
-  /(?:\s+لازم\s*دار(?:م|یم)|\s+نیاز\s*دار(?:م|یم)|\s+دنبال|\s+می[\s‌]?خو(?:ام|واه|اهم)|\s+میخو(?:ام|واه|اهم)|\s+برای|\s+اجاره|\s+رهن|\s+فروش|\s+خرید)\s*$/i;
+  /(?:\s+لازم\s*دار(?:م|یم)|\s+نیاز\s*دار(?:م|یم)|\s+دنبال|\s+می[\s‌]?خو(?:ام|واه|اهم)|\s+میخو(?:ام|واه|اهم)|\s+برای|\s+بودجه|\s+اجاره|\s+رهن|\s+فروش|\s+خرید|\s+زندگی\s*می|\s+اگر\s+موردی|\s+پیام\s*بدید)\s*$/i;
 
 function cleanLocationFragment(frag: string): string {
   return frag
@@ -58,10 +60,32 @@ export function pickStreetOrHoodDisplay(
   return f;
 }
 
+function stripTrailingCityFromFragment(frag: string): string {
+  const parts = frag.trim().split(/\s+/).filter(Boolean);
+  if (parts.length < 2) return frag.trim();
+  const city = parseCity(frag);
+  if (!city) return frag.trim();
+  const idx = parts.findIndex((p) => p === city);
+  if (idx > 0) return parts.slice(0, idx).join(' ');
+  return frag.trim();
+}
+
 function stripTrailingAreaFromFragment(frag: string): string {
   return frag
     .replace(/\s+\d[\d۰-۹]*\s*مت(?:ر|ری)?(?:\s+.*)?$/iu, '')
     .replace(/\s+حد(?:اق|اک)ثر\s*$/iu, '')
+    .trim();
+}
+
+/** Drop budget / money tails accidentally captured after a hood name. */
+function stripTrailingMoneyFromFragment(frag: string): string {
+  return frag
+    .replace(/\s+بودجه(?:\s+.*)?$/iu, '')
+    .replace(/\s+\d[\d۰-۹,\s]*\s*میلی(?:ون|ارد)(?:\s+.*)?$/iu, '')
+    .replace(
+      /\s+[\u0600-\u06FF\u200c\-]+(?:\s+[\u0600-\u06FF\u200c\-]+)*\s*میلی(?:ون|ارد)(?:\s+.*)?$/iu,
+      ''
+    )
     .trim();
 }
 
@@ -72,18 +96,23 @@ export function extractLocationFragment(rawText: string): string | undefined {
 
   const normalized = normalizeDigits(text);
   const stopSuffix =
-    '(?:\\s+لازم\\s*دار(?:م|یم)|\\s+نیاز\\s*دار(?:م|یم)|\\s+دنبال|\\s+می[\\s‌]?خو(?:ام|واه|اهم)|\\s+میخو(?:ام|واه|اهم)|\\s+برای|\\s+اجاره|\\s+رهن|\\s+فروش|\\s+خرید|$)';
+    '(?:\\s+لازم\\s*دار(?:م|یم)|\\s+نیاز\\s*دار(?:م|یم)|\\s+دنبال|\\s+می[\\s‌]?خو(?:ام|واه|اهم)|\\s+میخو(?:ام|واه|اهم)|\\s+برای|\\s+بودجه|\\s+اجاره|\\s+رهن|\\s+فروش|\\s+خرید|\\s+زندگی\\s*می|\\s+اگر\\s+موردی|\\s+پیام\\s*بدید)';
   const patterns = [
     new RegExp(`(?:در|تو|توی|داخل)\\s+([\\u0600-\\u06FF\\u200c\\s\\-]+?)${stopSuffix}`, 'i'),
     /(?:در|تو|توی|داخل)\s+([\u0600-\u06FF\u200c\s\-]+?)(?:،|\s+و\s+)/i,
     /(?:در|تو|توی|داخل)\s+([\u0600-\u06FF\u200c\s\-]+?)(?=\s+\d[\d۰-۹]*\s*مت|\s+حد(?:اق|اک)ثر|$)/iu,
     /(?:محله|منطقه|محدوده)\s+([\u0600-\u06FF\u200c\s\-]+?)(?:\s|$)/i,
+    /(?:حاشیه|اطراف|حوالی)\s+([\u0600-\u06FF\u200c\s\-]+?)(?:\s+ده\s+|\s+صد\s+|\s+\d|$)/iu,
   ];
 
   for (const re of patterns) {
     const m = normalized.match(re);
     const raw = m?.[1] ? cleanLocationFragment(m[1]) : undefined;
-    const frag = raw ? stripTrailingAreaFromFragment(raw) : undefined;
+    const frag = raw
+      ? stripTrailingCityFromFragment(
+          stripTrailingMoneyFromFragment(stripTrailingAreaFromFragment(raw))
+        )
+      : undefined;
     if (frag && frag.length >= 2) return frag;
   }
 

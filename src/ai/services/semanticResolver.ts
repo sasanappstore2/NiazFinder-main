@@ -12,46 +12,7 @@ import {
   validateConstrainedSelection,
 } from '@/ai/schema/validationSchema';
 import { overallConfidence } from '@/intake/scoring/confidenceEngine';
-import {
-  buildPrioritizedMissingFields,
-  completionStateFromScore,
-  computeCompletionScore,
-} from '@/intake/schema/needSchema';
-import { computeMatchabilityScore } from '@/intake/scoring/matchabilityEngine';
-import { resolveNeedType } from '@/intake/schema/needTypes';
-import { buildNextQuestion } from '@/intake/wizard/wizardBuilder';
-
-function finalizeAnalysis(
-  entities: IntakeEntities,
-  confidence: IntakeConfidence,
-  normalizedText: string,
-  started: number
-): IntakeAnalysisResult {
-  const missingFields = buildPrioritizedMissingFields(entities);
-  const needType = resolveNeedType(entities);
-  const completionScore = computeCompletionScore(missingFields);
-
-  return {
-    entities,
-    confidence,
-    needType: needType.key,
-    detectedVertical: entities.vertical,
-    detectedCategory: entities.category,
-    missingFields,
-    nextQuestion: buildNextQuestion(entities, missingFields),
-    recommendedQuestions: missingFields.map((f) => f.field),
-    completionScore,
-    matchabilityScore: computeMatchabilityScore(entities),
-    completionState: completionStateFromScore(completionScore),
-    sections: needType.sections.map((s) => ({
-      key: s.key,
-      label: s.label,
-      fields: [...s.fields],
-    })),
-    normalizedText,
-    latencyMs: Math.round(performance.now() - started),
-  };
-}
+import { buildAnalysisFromEntities } from '@/intake/engine/buildAnalysisFromTemplate';
 
 export interface SemanticResolverOptions {
   forceAi?: boolean;
@@ -146,7 +107,7 @@ export async function runSemanticResolver(
       : {}),
   };
 
-  const mergedResult = finalizeAnalysis(
+  const mergedResult = buildAnalysisFromEntities(
     mergedEntities,
     mergedConfidence,
     ruleResult.normalizedText,

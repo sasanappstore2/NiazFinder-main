@@ -11,6 +11,7 @@ import {
 import { normalizeCategoryPair } from '@/config/categories';
 import { recomputeNeedDraft } from '@/intake/aggregate/needDraftAggregate';
 import type { IntakeAiShardKey, IntakeAiShardStatus } from '@/components/need-intake/IntakeAiShardBar';
+import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
 
 export interface UseIntakeAnalyzeOptions {
   needText: string;
@@ -28,16 +29,20 @@ export interface UseIntakeAnalyzeOptions {
   setError: (msg: string | null) => void;
   setSelectedCategory: (v: string) => void;
   setSelectedSubcategory: (v: string) => void;
+  setSelectedNeighborhood: (v: string) => void;
   setNeedDraft: (draft: NeedDraft) => void;
-  syncNeedDraftFromFormFields: (fields: {
-    needText: string;
-    detailsText: string;
-    categorySlug: string;
-    subcategorySlug: string;
-    city: string;
-    neighborhood: string;
-    neighborhoodSlug?: string | null;
-  }) => NeedDraft | null;
+  syncNeedDraftFromFormFields: (
+    fields: {
+      needText: string;
+      detailsText: string;
+      categorySlug: string;
+      subcategorySlug: string;
+      city: string;
+      neighborhood: string;
+      neighborhoodSlug?: string | null;
+    },
+    opts?: { categoryLockedByUser?: boolean }
+  ) => NeedDraft | null;
   getDraft: () => NeedDraft | null;
   patchNeedDraftEntities: (patch: Record<string, unknown>) => void;
   applyDetectedLocationFromDraft: (draft: NeedDraft) => void;
@@ -67,30 +72,50 @@ export function useIntakeAnalyze(opts: UseIntakeAnalyzeOptions) {
     opts.setError(null);
 
     const parsed = opts.buildParsedFromForm();
-    const categorySlug = parsed.categorySlug;
-    const normalized = categorySlug ? normalizeCategoryPair(categorySlug) : null;
-    if (normalized) {
+    const sourceText = composeIntakeSourceText(opts.needText, opts.detailsText);
+    const fragment = extractLocationFragment(sourceText)?.trim() ?? '';
+    const parsedNeighborhood = parsed.entities?.area?.trim() || fragment;
+    const categoryLocked = opts.categoryLockedByUserRef.current;
+    const neighborhoodLocked = opts.neighborhoodLockedByUserRef.current;
+
+    const normalized = parsed.categorySlug ? normalizeCategoryPair(parsed.categorySlug) : null;
+    if (normalized && !categoryLocked) {
       opts.setSelectedCategory(normalized.categorySlug);
       opts.setSelectedSubcategory(normalized.subcategorySlug ?? '');
     }
 
-    const instantDraft = opts.syncNeedDraftFromFormFields({
-      needText: opts.needText,
-      detailsText: opts.detailsText,
-      categorySlug: normalized?.categorySlug ?? opts.selectedCategory,
-      subcategorySlug: normalized?.subcategorySlug ?? opts.selectedSubcategory,
-      city:
-        opts.resolveIntakeCitySelectValue(opts.sortedCities, {
-          cityName: opts.selectedCity || parsed.city,
-        }) ?? '',
-      neighborhood: opts.selectedNeighborhood || parsed.entities?.area || '',
-      neighborhoodSlug: opts.resolvedNeighborhoodSlug,
-    });
+    const neighborhood = neighborhoodLocked
+      ? opts.selectedNeighborhood
+      : parsedNeighborhood || opts.selectedNeighborhood;
+
+    if (!neighborhoodLocked && neighborhood && neighborhood !== opts.selectedNeighborhood) {
+      opts.setSelectedNeighborhood(neighborhood);
+    }
+
+    const instantDraft = opts.syncNeedDraftFromFormFields(
+      {
+        needText: opts.needText,
+        detailsText: opts.detailsText,
+        categorySlug: categoryLocked
+          ? normalized?.categorySlug ?? opts.selectedCategory
+          : normalized?.categorySlug ?? '',
+        subcategorySlug: categoryLocked
+          ? normalized?.subcategorySlug ?? opts.selectedSubcategory
+          : normalized?.subcategorySlug ?? '',
+        city:
+          opts.resolveIntakeCitySelectValue(opts.sortedCities, {
+            cityName: opts.selectedCity || parsed.city,
+          }) ?? '',
+        neighborhood,
+        neighborhoodSlug: opts.resolvedNeighborhoodSlug,
+      },
+      { categoryLockedByUser: categoryLocked }
+    );
 
     if (instantDraft) {
       const draft = recomputeNeedDraft(instantDraft);
       opts.setNeedDraft(draft);
-      if (!opts.cityLockedByUserRef.current && !opts.neighborhoodLockedByUserRef.current) {
+      if (!opts.cityLockedByUserRef.current && !neighborhoodLocked) {
         opts.applyDetectedLocationFromDraft(draft);
       }
       if (draft.sections?.length) {

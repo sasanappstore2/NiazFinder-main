@@ -16,6 +16,10 @@ import {
   type LlmParseResult,
 } from '@/lib/need-intake/llm-parse-client';
 import {
+  generateListingCopyViaLocalChat,
+  generateTitleViaLocalChat,
+} from '@/lib/need-intake/local-copy-bridge';
+import {
   isAcceptableListingTitle,
   parseTitleFromModelOutput,
   rejectListingTitleReason,
@@ -52,7 +56,8 @@ export interface QwenListingCopyResult {
 
 function mlxTitlePayload(context: ListingTitleContext) {
   return {
-    needType: context.needType,
+    templateId: context.templateId,
+    rootSlug: context.rootSlug,
     intentType: context.intentType,
     categorySlug: context.categorySlug,
     categoryPathFa: context.categoryPathFa,
@@ -107,7 +112,7 @@ export async function generateListingCopyViaQwen(
 
     if (!res.ok) {
       console.warn('intake-mlx listing-copy failed:', res.status, await res.text().catch(() => ''));
-      return null;
+      return generateListingCopyViaLocalChat(context);
     }
 
     const data = (await res.json()) as { title?: string; description?: string; raw?: string };
@@ -122,7 +127,7 @@ export async function generateListingCopyViaQwen(
     };
   } catch (err) {
     console.warn('intake-mlx listing-copy unreachable:', err);
-    return null;
+    return generateListingCopyViaLocalChat(context);
   } finally {
     clearTimeout(timer);
   }
@@ -151,7 +156,7 @@ export async function generateTitleViaQwen(
 
     if (!res.ok) {
       console.warn('intake-mlx title failed:', res.status, await res.text().catch(() => ''));
-      return null;
+      return generateTitleViaLocalChat(context, options);
     }
 
     const data = (await res.json()) as { title?: string; raw?: string };
@@ -169,7 +174,7 @@ export async function generateTitleViaQwen(
     return { title, raw: data.raw ?? rawTitle };
   } catch (err) {
     console.warn('intake-mlx title unreachable:', err);
-    return null;
+    return generateTitleViaLocalChat(context, options);
   } finally {
     clearTimeout(timer);
   }

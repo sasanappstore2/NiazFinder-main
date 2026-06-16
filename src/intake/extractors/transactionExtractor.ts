@@ -1,4 +1,11 @@
 import type { TransactionType } from '@/intake/types';
+import {
+  hasExplicitRahnAndRentAmounts,
+  isSeekerRahnEjareDeal,
+  isTenantSeekerRahnEjare,
+  textHasRahnSignal,
+  textHasRentSignal,
+} from '@/lib/need-intake/deal-type-helpers';
 
 interface TransactionHit {
   type: TransactionType;
@@ -13,7 +20,7 @@ const RULES: Array<{ type: TransactionType; patterns: RegExp[]; confidence: numb
   },
   {
     type: 'DEPOSIT_AND_RENT',
-    patterns: [/رهن\s*و\s*اجاره/u, /ودیعه\s*و\s*اجاره/u, /ودیعه/u],
+    patterns: [/رهن\s*و\s*اجاره/u, /ودیعه\s*و\s*اجاره/u],
     confidence: 0.9,
   },
   {
@@ -47,6 +54,20 @@ const RULES: Array<{ type: TransactionType; patterns: RegExp[]; confidence: numb
  * Detect transaction intent. Does NOT infer BUY from vague «میخوام» alone.
  */
 export function extractTransactionType(normalizedText: string): TransactionHit | null {
+  if (isSeekerRahnEjareDeal(normalizedText)) {
+    return { type: 'DEPOSIT_AND_RENT', confidence: 0.93 };
+  }
+  if (hasExplicitRahnAndRentAmounts(normalizedText) && textHasRahnSignal(normalizedText) && textHasRentSignal(normalizedText)) {
+    return { type: 'DEPOSIT_AND_RENT', confidence: 0.92 };
+  }
+  if (
+    textHasRahnSignal(normalizedText) &&
+    textHasRentSignal(normalizedText) &&
+    /رهن\s*و\s*اجاره/u.test(normalizedText)
+  ) {
+    return { type: 'DEPOSIT_AND_RENT', confidence: 0.91 };
+  }
+
   for (const rule of RULES) {
     for (const re of rule.patterns) {
       if (re.test(normalizedText)) {

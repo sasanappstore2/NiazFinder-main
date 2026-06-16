@@ -2,6 +2,7 @@
  * Post /post estate scenario matrix — rules + LRE path (no V2 chat).
  */
 import type { IntakeAnalysisResult } from '@/intake/types';
+import { extractPropertySlotsFromText } from '@/lib/need-intake/extract-property-slots';
 
 export interface PostEstateScenario {
   id: string;
@@ -56,6 +57,32 @@ export const POST_ESTATE_SCENARIO_MATRIX: PostEstateScenario[] = [
       const area = r.entities.neighborhood ?? r.locationHints?.areaLabel ?? '';
       if (!/جلال/.test(area)) return `area=${area}`;
       if (r.entities.area !== 130) return `areaM2=${r.entities.area}`;
+      return null;
+    },
+  },
+  {
+    id: 'mashhad-jalal-rahn-ejare',
+    text:
+      'من یک آپارتمان ۲ خواب در جلال آل احمد میخوام ۱۸۰ متر باشه میتونم صد و سی میلیون رهن بدم و ده میلیون اجاره',
+    preferredCityName: 'مشهد',
+    assert: (r) => {
+      const text =
+        'من یک آپارتمان ۲ خواب در جلال آل احمد میخوام ۱۸۰ متر باشه میتونم صد و سی میلیون رهن بدم و ده میلیون اجاره';
+      if (r.entities.transactionType !== 'DEPOSIT_AND_RENT') {
+        return `tx=${r.entities.transactionType}`;
+      }
+      if (r.entities.area !== 180) return `areaM2=${r.entities.area}`;
+      const slots = extractPropertySlotsFromText(text);
+      const rahn = Number(slots.rahnAmount ?? 0);
+      if (rahn < 120_000_000) return `rahn=${rahn}`;
+      const rent = Number(slots.monthlyRent ?? 0);
+      if (rent < 9_000_000) return `rent=${rent}`;
+      const hood =
+        r.entities.neighborhood ??
+        r.locationHints?.areaLabel ??
+        r.entities.neighborhoodSlug ??
+        '';
+      if (!/جلال|سید/.test(String(hood))) return `hood=${hood}`;
       return null;
     },
   },

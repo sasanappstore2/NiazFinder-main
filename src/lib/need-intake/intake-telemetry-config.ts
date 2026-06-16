@@ -1,6 +1,6 @@
 /** Phase 36 ? intake telemetry sampling and env. */
 
-export const INTAKE_WIZARD_STEPS = ['need', 'location', 'preview'] as const;
+export const INTAKE_WIZARD_STEPS = ['need', 'details', 'location', 'preview'] as const;
 
 export type IntakeWizardTelemetryStep = (typeof INTAKE_WIZARD_STEPS)[number];
 

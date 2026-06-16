@@ -496,13 +496,18 @@ export function rankNeighborhoodCandidates(
 
   const top = scored[0].score;
   const second = scored[1].score;
-  const topEntry = catalog.find((e) => e.slug === scored[0].slug);
-  const exactAreaMatch =
-    topEntry &&
-    (topEntry.areas ?? []).some((a) => compactMatchText(a) === compactMatchText(frag)) &&
-    top >= 90;
+  const compactFrag = compactMatchText(frag);
+  const exactAreaMatches = scored.filter((c) => {
+    if (c.score < 90) return false;
+    const entry = catalog.find((e) => e.slug === c.slug);
+    return (entry?.areas ?? []).some((a) => compactMatchText(a) === compactFrag);
+  });
 
-  if (exactAreaMatch) {
+  if (exactAreaMatches.length >= 2) {
+    return { candidates: exactAreaMatches, ambiguous: true };
+  }
+
+  if (exactAreaMatches.length === 1) {
     return { candidates: scored, ambiguous: false };
   }
 

@@ -5,7 +5,7 @@
 import { PrismaClient } from '@prisma/client';
 import { recordToEntities } from '@/intake/entities/entityRecord';
 import { flattenDraftAnswersForPublish } from '@/intake/projections/flatten-draft-answers-for-publish';
-import type { NeedDraft } from '@/contracts/need-intake';
+import { resolveTemplateIdFromLegacyNeedType } from '@/intake/migration/legacy-need-type-map';
 import { recomputeNeedDraft } from '@/intake/aggregate/needDraftAggregate';
 
 const dryRun = process.argv.includes('--dry-run');
@@ -36,12 +36,20 @@ async function main() {
 
     const sourceText =
       typeof parsed.sourceText === 'string' ? parsed.sourceText : row.title;
-    const needType = typeof parsed.needType === 'string' ? parsed.needType : 'general-seeking';
+    const legacyNeedType =
+      typeof parsed.needType === 'string' ? parsed.needType : 'general-seeking';
+    const templateId =
+      typeof parsed.templateId === 'string'
+        ? parsed.templateId
+        : resolveTemplateIdFromLegacyNeedType(legacyNeedType);
+    const templateVersion =
+      typeof parsed.templateVersion === 'number' ? parsed.templateVersion : 1;
     const schemaVersion =
       typeof parsed.schemaVersion === 'number' ? parsed.schemaVersion : 1;
 
     const draft = recomputeNeedDraft({
-      needType,
+      templateId,
+      templateVersion,
       schemaVersion,
       vertical: 'general',
       category: 'general',
@@ -62,7 +70,6 @@ async function main() {
         entities: {},
       },
       answers: {},
-      turns: [],
     } as NeedDraft);
 
     const flat = flattenDraftAnswersForPublish(draft);

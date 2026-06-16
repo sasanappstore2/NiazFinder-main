@@ -35,6 +35,31 @@ export const DATASET_FIXTURES: DatasetFixture[] = [
     expectVertical: 'real-estate',
   }),
   caseRow({
+    id: 'property-tenant-rahn-word-tehran',
+    input:
+      'آپارتمان در تهران میتونم صد و بیست میلیون رهن بدم و پانزده میلیون اجاره',
+    expectIntentPrefix: 'property',
+    expectDealType: 'rent_rahn_ejare',
+    expectCity: 'تهران',
+    expectVertical: 'real-estate',
+  }),
+  caseRow({
+    id: 'property-tenant-rahn-bedam-isfahan',
+    input:
+      'من در اصفهان دنبال آپارتمان هستم میتونم نهصد و پنجاه میلیون رهن بدم و بیست میلیون اجاره',
+    expectIntentPrefix: 'property',
+    expectDealType: 'rent_rahn_ejare',
+    expectCity: 'اصفهان',
+    expectVertical: 'real-estate',
+  }),
+  caseRow({
+    id: 'property-multiword-location-tehran',
+    input: 'آپارتمان دو خواب در خیابان گاندی جنوبی تهران برای اجاره',
+    expectIntentPrefix: 'property',
+    expectCity: 'تهران',
+    expectVertical: 'real-estate',
+  }),
+  caseRow({
     id: 'property-buy-mashhad',
     input: 'میخوام آپارتمان ۱۰۰ متری در مشهد بخرم',
     expectIntentPrefix: 'property',

@@ -13,11 +13,11 @@ interface IntakeTelemetryTabProps {
 /** Placeholder ? intake AI telemetry removed with manual wizard. */
 export function IntakeTelemetryTab({ hub }: IntakeTelemetryTabProps) {
   if (hub.isTabLoading('intake')) {
-    return <p className="text-sm text-muted-foreground">?? ??? ?????????</p>;
+    return <p className="text-sm text-muted-foreground">در حال بارگذاری…</p>;
   }
   return (
     <p className="text-sm text-muted-foreground">
-      ???? intake ?????? ??????? ??? ? ?????? ???? `/post` ???? ?????? MLX.
+      دادهٔ telemetry ثبت نیاز هنوز جمع‌آوری نشده؛ پس از چند جلسه `/post` اینجا نمایش داده می‌شود.
     </p>
   );
 }

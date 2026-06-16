@@ -14,6 +14,8 @@ import { toMatchProjection } from '@/intake/projections/matchProjection';
 import type { ProjectionMetadata } from '@/intake/projections/metadata';
 import { buildProjectionMetadata } from '@/intake/projections/metadata';
 import { flattenDraftAnswersForPublish } from '@/intake/projections/flatten-draft-answers-for-publish';
+import { recordToEntities } from '@/intake/entities/entityRecord';
+import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
 
 export interface PublishCommand {
   projection: ProjectionMetadata;
@@ -157,8 +159,9 @@ export function toPublishCommand(
     intentType: parsed.intentType,
     dynamicAnswers: {
       projection,
-      needType: draft.needType,
-      schemaVersion: draft.schemaVersion,
+      templateId: draft.templateId,
+      templateVersion: draft.templateVersion,
+      rootSlug: resolveTemplateFromDraftEntities(recordToEntities(draft.entities)).rootSlug,
       sourceText: draft.sourceText,
       entities: draft.entities,
       ...flatAnswers,

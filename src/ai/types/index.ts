@@ -2,6 +2,7 @@ import type { IntakeAnalysisResult, IntakeConfidence, IntakeEntities } from '@/i
 
 export type AiProviderName =
   | 'ollama'
+  | 'local-llm'
   | 'openai'
   | 'gemini'
   | 'claude'

@@ -4,7 +4,7 @@
  */
 import type { NeedDraft } from '@/contracts/need-intake';
 import { NEED_DRAFT_SCHEMA_VERSION } from '@/contracts/need-intake';
-import type { IntakeStepLocationProps } from '@/components/need-intake/wizard/steps/IntakeStepLocation';
+import type { IntakeStepLocationProps } from '@/lib/need-intake/intake-step-location-props';
 import {
   refineHasSelectedCity,
   refineNeedsCity,
@@ -18,7 +18,8 @@ function assert(cond: boolean, msg: string): void {
 
 const baseDraft = {
   schemaVersion: NEED_DRAFT_SCHEMA_VERSION,
-  needType: 'service-seeking',
+  templateId: 'services',
+  templateVersion: 1,
   vertical: 'services',
   sourceText: 'ویولون نو در طالقانی تهران',
   entities: {
@@ -37,7 +38,6 @@ const baseDraft = {
   answers: {},
   completionScore: 50,
   completionState: 'NEEDS_INFO',
-  turns: [],
 } as unknown as NeedDraft;
 
 function minimalProps(

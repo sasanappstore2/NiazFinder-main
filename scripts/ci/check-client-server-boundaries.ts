@@ -15,7 +15,8 @@ const FORBIDDEN = [
   /from ['"]@\/lib\/need-intake\/llm-parse-client['"]/,
   /from ['"]@\/intake\/assessment\/need-assessment-engine['"]/,
   /from ['"]@\/intake\/assessment\/assess-before-publish['"]/,
-  /from ['"]@\/lib\/need-intake\/preview-listing-stream\.server['"]/,
+  /from ['"]@\/intake\/rules\/registry['"]/,
+  /from ['"]@\/intake\/rules\/registry\.server['"]/,
 ];
 
 function walk(dir: string, out: string[] = []): string[] {

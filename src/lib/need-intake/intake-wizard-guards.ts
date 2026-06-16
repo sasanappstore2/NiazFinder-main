@@ -8,8 +8,8 @@ import { canProceedToIntakeLocation } from '@/lib/need-intake/compose-source-tex
 const WIZARD_ORDER: readonly IntakeWizardStepKey[] = ['need', 'location', 'preview'];
 
 function wizardStepIndex(step: IntakeStep): number {
+  if (step === 'publishing' || step === 'done') return WIZARD_ORDER.length - 1;
   const normalized = normalizeIntakeWizardStep(step);
-  if (normalized === 'publishing' || normalized === 'done') return WIZARD_ORDER.length - 1;
   const idx = WIZARD_ORDER.indexOf(normalized);
   return idx >= 0 ? idx : 0;
 }

@@ -28,7 +28,10 @@ export const intakeAnalyzeResponseSchema = z.object({
     transactionType: z.string().nullable(),
   }),
   confidence: z.record(z.string(), z.number()),
-  needType: z.string(),
+  templateId: z.string(),
+  templateVersion: z.number(),
+  rootSlug: z.string(),
+  categoryPath: z.array(z.string()),
   detectedVertical: z.string().nullable(),
   detectedCategory: z.string().nullable(),
   missingFields: z.array(

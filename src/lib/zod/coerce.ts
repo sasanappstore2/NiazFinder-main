@@ -19,19 +19,19 @@ export const zRequiredCoercedString = z.preprocess(
 );
 
 /** Map Zod issues to user-facing Persian (avoid raw English in toasts). */
-export function formatZodErrorFa(error: z.ZodError, fallback = '??????? ??????? ???'): string {
+export function formatZodErrorFa(error: z.ZodError, fallback = 'اطلاعات واردشده معتبر نیست'): string {
   const issue = error.issues[0];
   if (!issue) return fallback;
 
   if (issue.code === 'too_small' && 'minimum' in issue) {
     return typeof issue.message === 'string' && /[\u0600-\u06FF]/.test(issue.message)
       ? issue.message
-      : '??? ??????? ????? ???';
+      : 'مقدار واردشده کوتاه است';
   }
 
   if (issue.code === 'invalid_type') {
     if (issue.expected === 'string') {
-      return '???? ???? ??????? ??? ? ????? ???? ?? ???? ???? ? ?????? ???? ????';
+      return 'این فیلد باید متن باشد؛ لطفاً دوباره با حروف فارسی تلاش کنید';
     }
     return fallback;
   }

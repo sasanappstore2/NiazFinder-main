@@ -7,6 +7,7 @@ import type {
 import { getCategoryPath } from '@/config/categories';
 import { getIntentDefinition } from '@/config/need-intents';
 import { getEffectiveIntakeSchema } from '@/lib/need-intake/essential-intake-schema';
+import { getPackRequiredFields } from '@/intake/rules/pack-required-fields';
 import {
   JOB_ROLE_LABELS,
   PRODUCT_DEAL_LABELS,
@@ -107,12 +108,24 @@ export function getNextQuestion(
   parsed: ParsedIntent,
   answers: Record<string, unknown>
 ): NextQuestionResponse {
-  const schema = getEffectiveIntakeSchema(intentType, parsed.categorySlug, parsed, answers);
+  const categoryForSchema = String(parsed.subcategorySlug ?? parsed.categorySlug);
+  const packRequired = getPackRequiredFields(categoryForSchema);
+  const schema = getEffectiveIntakeSchema(intentType, categoryForSchema, parsed, answers);
   const visible = schema.fields.filter((f) => fieldVisible(f, answers));
   const pending = sortPendingByPriority(
     visible.filter((f) => !isIntakeFieldAnswered(f, answers, parsed)),
     parsed
   );
+  if (packRequired.length > 0 && pending.length > 1) {
+    pending.sort((a, b) => {
+      const ai = packRequired.indexOf(a.key);
+      const bi = packRequired.indexOf(b.key);
+      if (ai === -1 && bi === -1) return 0;
+      if (ai === -1) return 1;
+      if (bi === -1) return -1;
+      return ai - bi;
+    });
+  }
   const total = visible.length;
   const answered = total - pending.length;
 

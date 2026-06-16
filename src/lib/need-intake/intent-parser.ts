@@ -38,8 +38,15 @@ const WANT_KEYWORDS = ['میخوام', 'میخواهم', 'نیاز دارم', '�
 const BUY_KEYWORDS = ['می‌خرم', 'میخرم', 'بخرم', 'خرید', 'میخرم'];
 const ALL_BUY_HINT_KEYWORDS = [...WANT_KEYWORDS, ...BUY_KEYWORDS];
 const SELL_KEYWORDS = ['می‌فروشم', 'میفروشم', 'فروش', 'آگهی', 'فروشنده'];
-const NEED_SEEKER_OPENER =
-  /(?:^|[\s،])?(?:می\s*خو(?:ام|اهم|واه)|دنبال|نیاز\s*دار(?:م|یم)|به\s*دنبال|لازم\s*دار(?:م|یم))/u;
+import {
+  isLandlordOfferRent,
+  isLandlordOfferRahn,
+  isSeekerRahnEjareDeal,
+  isTenantSeekerRahnEjare,
+  TENANT_SEEKER_OPENER,
+} from '@/lib/need-intake/deal-type-helpers';
+
+const NEED_SEEKER_OPENER = TENANT_SEEKER_OPENER;
 const RENT_KEYWORDS = ['اجاره', 'رنت', 'اجاره‌ای', 'مستاجر'];
 const REPAIR_KEYWORDS = ['تعمیر', 'تعمیرکار', 'نصب'];
 const URGENT_KEYWORDS = ['فوری', 'سریع', 'امروز', 'الان'];
@@ -129,6 +136,32 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
   { slug: 'clothing', words: ['کت و شلوار', 'پوشاک', 'لباس'], priority: 10 },
   { slug: 'camera', words: ['دوربین', 'کانن', 'نیکون'], priority: 10 },
   {
+    slug: 'musical-instruments',
+    words: [
+      'پیانو',
+      'piano',
+      'گیتار',
+      'گیتار الکتریک',
+      'ویولن',
+      'ویولون',
+      'violon',
+      'violin',
+      'سنتور',
+      'کمانچه',
+      'تار',
+      'آلات موسیقی',
+      'ساز موسیقی',
+      'درام',
+      'drum',
+      'سازدهنی',
+      'هارمونیکا',
+      'ساکسیفون',
+      'clarinet',
+      'کلارinet',
+    ],
+    priority: 11,
+  },
+  {
     slug: 'jewelry-watches',
     words: [
       'ساعت',
@@ -212,6 +245,9 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
     priority: 7,
   },
 ];
+
+/** @deprecated Use rules registry packs; kept for migration and generator import. */
+export const LEGACY_CATEGORY_KEYWORDS = CATEGORY_KEYWORDS;
 
 export interface SuggestedCategoryCandidate {
   slug: string;
@@ -369,14 +405,14 @@ function detectCategorySlug(text: string, classification: VerticalClassification
     return 'jewelry-watches';
   }
 
+  const fromKeywords = detectCategorySlugFromKeywords(text);
+  if (fromKeywords) return fromKeywords;
+
   if (isLikelyProductPurchase(text) || hasGamingProductPhrase(text)) {
     return categorySlugForVertical('products', text);
   }
 
   if (isDesireOnly(text)) return 'services';
-
-  const fromKeywords = detectCategorySlugFromKeywords(text);
-  if (fromKeywords) return fromKeywords;
 
   if (text.includes('اجاره') && !text.includes('خودرو') && !text.includes('ماشین')) {
     if (text.includes('مغازه')) return 'shop-rent';
@@ -409,6 +445,15 @@ function parsePropertyDealType(text: string): string | undefined {
     const sellerExplicit =
       /می\s*فروش|میفروش|فروشنده|فروش\s*دم|اجاره\s*بدم|رهن\s*بدم|آگهی\s*فروش/u.test(text);
     if (!sellerExplicit) return 'buy';
+  }
+  if (isLandlordOfferRent(text)) {
+    return 'sell';
+  }
+  if (isTenantSeekerRahnEjare(text) || isSeekerRahnEjareDeal(text)) {
+    return 'rent_rahn_ejare';
+  }
+  if (isLandlordOfferRahn(text)) {
+    return 'sell';
   }
   if (text.includes('اجاره بدم') || text.includes('اجاره دادن') || text.includes('اجاره دادنی')) {
     return 'sell';

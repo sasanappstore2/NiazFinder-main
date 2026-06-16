@@ -8,19 +8,29 @@ import {
   computeCompletionScore,
 } from '@/intake/schema/needSchema';
 import { computeMatchabilityScore } from '@/intake/scoring/matchabilityEngine';
-import { resolveNeedType } from '@/intake/schema/needTypes';
+import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
 import { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
 import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
+import { parseAndEnrichIntentFromText } from '@/lib/need-intake/parse-and-enrich-intent.client';
 import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
 import { composeIntakeSourceText } from '@/lib/need-intake/compose-source-text';
+import { ALL_LOCATION_CITIES, locationCityIdToSlug } from '@/lib/search/city-slugs';
 import {
   inferTransactionTypeFromSlug,
   resolveTransactionType,
 } from '@/lib/need-intake/resolve-transaction-type';
+import { resolveIntakeCategory } from '@/lib/need-intake/resolve-intake-category';
 
 import { entitiesToRecord, recordToEntities } from '@/intake/entities/entityRecord';
 
 export { entitiesToRecord, recordToEntities } from '@/intake/entities/entityRecord';
+
+function preferredCityIdFromName(cityName: string): string | null {
+  const trimmed = cityName.trim();
+  if (!trimmed) return null;
+  const meta = ALL_LOCATION_CITIES.find((c) => c.name === trimmed || c.id === trimmed);
+  return meta ? locationCityIdToSlug(meta.id) : null;
+}
 
 function mergeAnalysisLocationIntoParsed(
   parsed: ParsedIntent,
@@ -47,7 +57,7 @@ function mergeAnalysisLocationIntoParsed(
 /** Recompute canonical fields and derive legacy read models on demand. */
 export function recomputeNeedDraft(draft: NeedDraft): NeedDraft {
   const entities = recordToEntities(draft.entities);
-  const needTypeDef = resolveNeedType(entities);
+  const template = resolveTemplateFromDraftEntities(entities);
   const missingFields = buildPrioritizedMissingFields(entities, {
     sourceText: draft.sourceText,
     answers: draft.answers as Record<string, unknown>,
@@ -62,15 +72,16 @@ export function recomputeNeedDraft(draft: NeedDraft): NeedDraft {
 
   const next: NeedDraft = {
     ...draft,
-    needType: needTypeDef.key,
-    schemaVersion: needTypeDef.schemaVersion,
-    vertical: entities.vertical ?? needTypeDef.vertical,
-    category: entities.category ?? needTypeDef.category,
+    templateId: template.id,
+    templateVersion: template.schemaVersion,
+    schemaVersion: draft.schemaVersion,
+    vertical: entities.vertical ?? template.vertical,
+    category: entities.category ?? template.category,
     entities: entitiesToRecord(entities),
     completionScore,
     matchabilityScore,
     completionState,
-    sections: needTypeDef.sections.map((s) => ({
+    sections: template.sections.map((s) => ({
       key: s.key,
       label: s.label,
       fields: [...s.fields],
@@ -164,11 +175,11 @@ export function recomputeNeedDraft(draft: NeedDraft): NeedDraft {
 
 export function legacyNeedDraftFromParsed(
   parsedIntent: ParsedIntent,
-  answers: NeedDraft['answers'],
-  turns: NeedDraft['turns'] = []
+  answers: NeedDraft['answers']
 ): NeedDraft {
   return recomputeNeedDraft({
-    needType: 'general-seeking',
+    templateId: 'general',
+    templateVersion: 1,
     schemaVersion: 1,
     vertical: 'general',
     category: 'general',
@@ -183,7 +194,6 @@ export function legacyNeedDraftFromParsed(
     updatedAt: new Date().toISOString(),
     parsedIntent,
     answers,
-    turns,
   });
 }
 
@@ -197,7 +207,7 @@ export function createNeedDraftFromAnalysis(
   }
 ): NeedDraft {
   const entities = analysis.entities;
-  const needTypeDef = resolveNeedType(entities);
+  const template = resolveTemplateFromDraftEntities(entities);
   const sourceParsed = parseIntentFromText(sourceText);
   let parsedIntent = mergeAnalysisLocationIntoParsed(sourceParsed, entities, sourceText);
 
@@ -240,10 +250,11 @@ export function createNeedDraftFromAnalysis(
   }
 
   const base: NeedDraft = {
-    needType: analysis.needType ?? needTypeDef.key,
-    schemaVersion: needTypeDef.schemaVersion,
-    vertical: analysis.detectedVertical ?? entities.vertical ?? needTypeDef.vertical,
-    category: analysis.detectedCategory ?? entities.category ?? needTypeDef.category,
+    templateId: analysis.templateId ?? template.id,
+    templateVersion: analysis.templateVersion ?? template.schemaVersion,
+    schemaVersion: 1,
+    vertical: analysis.detectedVertical ?? entities.vertical ?? template.vertical,
+    category: analysis.detectedCategory ?? entities.category ?? template.category,
     entities: entityRecord,
     completionScore: analysis.completionScore,
     matchabilityScore: analysis.matchabilityScore,
@@ -255,7 +266,6 @@ export function createNeedDraftFromAnalysis(
     updatedAt: new Date().toISOString(),
     parsedIntent,
     answers: {},
-    turns: opts?.existing?.turns ?? [],
     leadPhone: opts?.leadPhone ?? opts?.existing?.leadPhone,
     listingPreview: opts?.existing?.listingPreview,
     intakeTrace: opts?.intakeTrace ?? opts?.existing?.intakeTrace,
@@ -337,6 +347,10 @@ function intentTypeFromEntities(entities: ReturnType<typeof recordToEntities>): 
   return 'general';
 }
 
+export interface SyncNeedDraftFormOpts {
+  categoryLockedByUser?: boolean;
+}
+
 /** Build parsedIntent from wizard form fields (no free-text NLP). */
 export function buildParsedIntentFromForm(
   form: {
@@ -348,44 +362,46 @@ export function buildParsedIntentFromForm(
     neighborhood: string;
     neighborhoodSlug?: string | null;
   },
-  existing?: ParsedIntent | null
+  existing?: ParsedIntent | null,
+  opts?: SyncNeedDraftFormOpts
 ): ParsedIntent {
   const sourceText = composeIntakeSourceText(form.needText, form.detailsText);
-  const base = existing ?? parseIntentFromText(sourceText);
-  const categorySlug =
-    form.subcategorySlug.trim() || form.categorySlug.trim() || base.categorySlug || 'general';
-  const categoryPatch = form.categorySlug
-    ? inferEntitiesFromCategorySlugs(form.categorySlug, form.subcategorySlug || null, { sourceText })
-    : {};
-  const mergedEntities = recordToEntities({
-    ...base.entities,
-    ...categoryPatch,
+  const resolved = resolveIntakeCategory({
+    sourceText,
+    formCategorySlug: form.categorySlug,
+    formSubcategorySlug: form.subcategorySlug,
+    categoryLockedByUser: opts?.categoryLockedByUser,
   });
+  const categorySlug = resolved.categorySlug;
+  const subcategorySlug = resolved.subcategorySlug;
+  const categoryPatch = inferEntitiesFromCategorySlugs(categorySlug, subcategorySlug ?? null, {
+    sourceText,
+  });
+  const mergedEntities = recordToEntities(categoryPatch);
   const city = form.city.trim() || undefined;
   const neighborhood = form.neighborhood.trim() || undefined;
   const neighborhoodSlug = form.neighborhoodSlug?.trim() || undefined;
-  const entities: Record<string, string> = { ...base.entities };
-  if (mergedEntities.vertical) entities.vertical = String(mergedEntities.vertical);
-  if (mergedEntities.category) entities.category = String(mergedEntities.category);
-  if (city) entities.city = city;
-  if (neighborhood) entities.area = neighborhood;
+
+  const enriched = parseAndEnrichIntentFromText(sourceText, {
+    preferredCityName: city ?? null,
+    preferredCityId: preferredCityIdFromName(form.city),
+    locationText: sourceText,
+  });
 
   return {
-    ...base,
+    ...enriched,
     intentType: intentTypeFromEntities(mergedEntities),
     categorySlug,
-    subcategorySlug: form.subcategorySlug.trim() || undefined,
-    city,
-    neighborhoodSlug,
-    entities,
-    rawText: sourceText,
-    confidence: base.confidence ?? 0.5,
-    budgetMin: base.budgetMin,
-    budgetMax: base.budgetMax,
-    urgency: base.urgency,
-    locationAmbiguous: false,
-    locationResolutionStatus: city ? 'resolved' : undefined,
-    rejectLocationAutoConfirm: false,
+    subcategorySlug,
+    city: city ?? enriched.city,
+    neighborhoodSlug: neighborhoodSlug ?? enriched.neighborhoodSlug,
+    entities: {
+      ...enriched.entities,
+      ...(mergedEntities.vertical ? { vertical: String(mergedEntities.vertical) } : {}),
+      ...(mergedEntities.category ? { category: String(mergedEntities.category) } : {}),
+      ...(city ? { city } : {}),
+      ...(neighborhood ? { area: neighborhood } : {}),
+    },
   };
 }
 
@@ -399,23 +415,33 @@ export function syncNeedDraftFromForm(
     city: string;
     neighborhood: string;
     neighborhoodSlug?: string | null;
-  }
+  },
+  opts?: SyncNeedDraftFormOpts
 ): NeedDraft {
   const sourceText = composeIntakeSourceText(form.needText, form.detailsText);
-  const categoryPatch = form.categorySlug
-    ? inferEntitiesFromCategorySlugs(form.categorySlug, form.subcategorySlug || null, {
-        sourceText,
-        userDealType:
-          draft?.answers?.dealType != null ? String(draft.answers.dealType) : undefined,
-      })
-    : {};
+  const resolved = resolveIntakeCategory({
+    sourceText,
+    formCategorySlug: form.categorySlug,
+    formSubcategorySlug: form.subcategorySlug,
+    categoryLockedByUser: opts?.categoryLockedByUser,
+  });
+  const categoryPatch = inferEntitiesFromCategorySlugs(
+    resolved.categorySlug,
+    resolved.subcategorySlug ?? null,
+    {
+      sourceText,
+      userDealType:
+        draft?.answers?.dealType != null ? String(draft.answers.dealType) : undefined,
+    }
+  );
 
-  const parsedIntent = buildParsedIntentFromForm(form, draft?.parsedIntent ?? null);
+  const parsedIntent = buildParsedIntentFromForm(form, draft?.parsedIntent ?? null, opts);
 
   const base =
     draft ??
     recomputeNeedDraft({
-      needType: 'general-seeking',
+      templateId: 'general',
+      templateVersion: 1,
       schemaVersion: 1,
       vertical: 'general',
       category: 'general',
@@ -430,7 +456,6 @@ export function syncNeedDraftFromForm(
       updatedAt: new Date().toISOString(),
       parsedIntent,
       answers: {},
-      turns: [],
     });
 
   const existingEntities = draft ? recordToEntities(draft.entities) : null;
@@ -454,7 +479,8 @@ export function syncNeedDraftFromForm(
 /** Pure projection — does not mutate external store (for live preview / summary). */
 export function projectNeedDraftFromForm(
   draft: NeedDraft | null,
-  form: Parameters<typeof syncNeedDraftFromForm>[1]
+  form: Parameters<typeof syncNeedDraftFromForm>[1],
+  opts?: SyncNeedDraftFormOpts
 ): NeedDraft {
-  return syncNeedDraftFromForm(draft, form);
+  return syncNeedDraftFromForm(draft, form, opts);
 }
