@@ -188,6 +188,8 @@ export interface Conversation {
   };
   /** طرف مقابل در این گفتگو در حال تایپ است */
   isPeerTyping?: boolean;
+  /** گفتگوی ثابت با ربات/دستیار پلتفرم */
+  isPlatformBot?: boolean;
 }
 
 // ============ Notification ============

@@ -129,6 +129,28 @@ export function getNextQuestion(
   const total = visible.length;
   const answered = total - pending.length;
 
+  if (
+    !parsed.categorySlug &&
+    !parsed.subcategorySlug &&
+    (parsed.categoryCandidates?.length ?? 0) >= 2
+  ) {
+    const totalSteps = Math.max(total, 1);
+    return {
+      done: false,
+      disambiguation: {
+        kind: 'category',
+        question: 'کدام دسته‌بندی به نیاز شما نزدیک‌تر است؟',
+        options: [...(parsed.categoryCandidates ?? [])]
+          .sort((a, b) => b.confidence - a.confidence)
+          .map((c) => ({
+            value: c.slug,
+            label: c.label,
+          })),
+      },
+      progress: { current: 1, total: totalSteps },
+    };
+  }
+
   if (parsed.locationAmbiguous === true && parsed.neighborhoodCandidates?.length) {
     const totalSteps = Math.max(total, 1);
     return {

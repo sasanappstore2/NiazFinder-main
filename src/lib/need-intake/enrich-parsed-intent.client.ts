@@ -13,7 +13,7 @@ import {
 } from '@/lib/need-intake/enrich-parsed-intent-core';
 
 /**
- * Browser-safe enrich: slots, multi-word location fragment, titles ? no fs/catalog LRE.
+ * Browser-safe enrich: slots, multi-word location fragment, titles — no fs/catalog LRE.
  * Managed-neighborhood resolution runs in `use-intake-location` on the client.
  */
 export function enrichParsedIntentClient(

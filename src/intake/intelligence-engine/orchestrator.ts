@@ -1,6 +1,6 @@
 import { unifiedNormalize } from '@/intake/intelligence-engine/normalizer/unified-normalizer';
 import { extractEntities } from '@/intake/intelligence-engine/extractors/entity-extractor';
-import { resolveLocation } from '@/intake/intelligence-engine/resolvers/location-resolver';
+import { resolveLocationViaLre } from '@/intake/intelligence-engine/resolvers/location-lre-bridge';
 import { resolveCategory } from '@/intake/intelligence-engine/resolvers/category-resolver';
 import { resolveBudget } from '@/intake/intelligence-engine/resolvers/budget-resolver';
 import { resolveProperty } from '@/intake/intelligence-engine/resolvers/property-resolver';
@@ -39,6 +39,8 @@ import { getNextQuestion } from '@/lib/need-intake/question-engine';
 import { isIntakeAiGloballyDisabled } from '@/intake/rules/config';
 import type { NeedDraft } from '@/contracts/need-intake';
 import { REGISTRY_CATEGORY_OVERRIDE_THRESHOLD } from '@/intake/rules/config';
+import { isHybridIntakeEnabled } from '@/intake/intelligence-engine/hybrid/config';
+import { inferCriticalFilterSuggestions } from '@/intake/intelligence-engine/suggestions/critical-filter-suggestions';
 
 const AI_CONFIDENCE_THRESHOLD = 0.6;
 
@@ -104,7 +106,7 @@ export async function runIntakeIntelligence(
     throw new Error('text too short');
   }
 
-  const cacheKey = buildParseCacheKey(text, input.citySlug, input.cityName);
+  const cacheKey = buildParseCacheKey(text, input.citySlug, input.cityName, input.formHints);
   if (!opts?.skipCache) {
     const cached = await getIntelligenceCache(cacheKey);
     if (cached) {
@@ -112,6 +114,15 @@ export async function runIntakeIntelligence(
       cached.meta.latencyMs = Math.round(performance.now() - started);
       return cached;
     }
+  }
+
+  if (isHybridIntakeEnabled()) {
+    const { runHybridIntakePipeline } = await import(
+      '@/intake/intelligence-engine/hybrid/hybrid-pipeline'
+    );
+    const result = await runHybridIntakePipeline(input, { existingDraft: opts?.existingDraft });
+    await setIntelligenceCache(cacheKey, result);
+    return result;
   }
 
   const steps: IntakeIntelligenceStepTrace[] = [];
@@ -127,16 +138,19 @@ export async function runIntakeIntelligence(
   steps.push(createStepTrace('property-budget-category', t, 'resolvers'));
 
   t = performance.now();
-  const engineAnalysis = extractEntities(norm.lookupKey, text);
+  const engineAnalysis = extractEntities(norm.lookupKey, text, {
+    preferredCityName: input.cityName,
+  });
   steps.push(createStepTrace('entity-extractor', t, 'intakeEngine'));
 
   t = performance.now();
-  const locationResult = await resolveLocation(norm.lookupKey, text, input);
-  steps.push(createStepTrace('location', t, 'fuse+prisma', locationResult.status));
+  const locationResult = await resolveLocationViaLre(norm.lookupKey, text, input);
+  steps.push(createStepTrace('location', t, 'lre+scope', locationResult.status));
 
   let bag = createEmptyFieldBag();
-  bag = mergeFieldBags(bag, categoryPartial, budgetPartial, propertyPartial, locationResult.fields);
+  bag = mergeFieldBags(bag, categoryPartial, budgetPartial, propertyPartial);
   mergeEngineEntities(bag, engineAnalysis);
+  bag = mergeFieldBags(bag, locationResult.fields);
 
   t = performance.now();
   const dealPartial = resolveDealTypeFields(text, bag);
@@ -232,6 +246,8 @@ export async function runIntakeIntelligence(
     gaps: [],
     formHints: input.formHints,
     existingDraft: opts?.existingDraft,
+    locationScope: { citySlug: input.citySlug, cityName: input.cityName },
+    parsedLocationPatch: locationResult.parsedLocationPatch,
   });
   const gaps = detectGaps(bag, built.parsedIntent, built.missingFields, text);
   const draft = buildNeedFromFields({
@@ -240,6 +256,8 @@ export async function runIntakeIntelligence(
     gaps,
     formHints: input.formHints,
     existingDraft: opts?.existingDraft,
+    locationScope: { citySlug: input.citySlug, cityName: input.cityName },
+    parsedLocationPatch: locationResult.parsedLocationPatch,
   }).draft;
   steps.push(createStepTrace('need-builder', t, 'need-builder'));
 
@@ -257,7 +275,7 @@ export async function runIntakeIntelligence(
           '',
       ].filter(Boolean);
 
-  const trace = buildIntelligenceTrace({
+  const intelligenceTrace = buildIntelligenceTrace({
     inputText: text,
     normalizedText: norm.lookupKey,
     steps,
@@ -268,15 +286,22 @@ export async function runIntakeIntelligence(
     truthVerification,
   });
 
+  const suggestedFilters = inferCriticalFilterSuggestions({
+    categorySlug: String(bag.subcategorySlug?.value ?? bag.categorySlug?.value ?? ''),
+    fieldBag: bag,
+    existingAnswers: draft.answers as Record<string, unknown>,
+  });
+
   const result: IntakeIntelligenceResult = {
     fields: bag,
     gaps,
-    trace,
+    trace: intelligenceTrace,
     draft,
     missingFields: draft.missingFields,
     nextQuestion: draft.nextQuestion ?? null,
     recommendedQuestions,
     parsedIntent: draft.parsedIntent,
+    suggestedFilters,
     meta: {
       engine: truthVerification?.invoked
         ? 'intake-intelligence+truth-verify'

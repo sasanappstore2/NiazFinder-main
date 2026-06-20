@@ -92,7 +92,7 @@ async function generateNeeds(total: number): Promise<string[]> {
 
     const batchNeeds = await generateNeedBatch(batch, size);
     if (batchNeeds.length === 0) {
-      console.warn(`\nWARN batch ${batch} empty ? using fallbacks`);
+      console.warn(`\nWARN batch ${batch} empty — using fallbacks`);
       for (let i = 0; i < size && out.length < total; i++) {
         out.push(FALLBACK_NEEDS[(out.length + i) % FALLBACK_NEEDS.length]!);
       }
@@ -128,7 +128,7 @@ async function main(): Promise<void> {
 
   const health = await checkLocalModelHealth();
   if (!health.ok) {
-    console.error('FAIL: Gemma not reachable at NEED_INTAKE_LLM_URL ? start LM Studio on :1234');
+    console.error('FAIL: Gemma not reachable at NEED_INTAKE_LLM_URL — start LM Studio on :1234');
     console.error('  ', health.loadError);
     process.exit(1);
   }

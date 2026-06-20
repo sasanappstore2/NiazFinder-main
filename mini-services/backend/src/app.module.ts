@@ -29,6 +29,8 @@ import { IntakeQueueModule } from './modules/intake-queue/intake-queue.module';
 import { IntakeIntelligenceModule } from './modules/intake-intelligence/intake-intelligence.module';
 import { InternalModule } from './modules/internal/internal.module';
 import { IntentParserModule } from './intent-parser/intent-parser.module';
+import { SmartMatchingModule } from './modules/smart-matching/smart-matching.module';
+import { AiAgentModule } from './modules/ai-agent/ai-agent.module';
 import { NotificationsGateway } from './gateways/notifications.gateway';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
@@ -41,6 +43,7 @@ import { AnalyticsProcessor } from './common/processors/analytics.processor';
 import { RequestModerationProcessor } from './common/processors/request-moderation.processor';
 import { BullMQConfigModule } from './config/bullmq.config';
 import { DatabaseModule } from './config/database.module';
+import { OllamaHttpModule } from './common/http/ollama-http.module';
 
 // ─── Entities (TypeORM) ───
 import { User } from './entities/user.entity';
@@ -84,6 +87,9 @@ const entities = [
 
     // ─── Redis ───
     RedisModule.forRoot(),
+
+    // ─── Ollama HTTP (keep-alive pool, parallel inference client) ───
+    OllamaHttpModule,
 
     // ─── BullMQ Queues ───
     BullMQConfigModule.forRoot(),
@@ -130,6 +136,8 @@ const entities = [
     IntakeIntelligenceModule,
     InternalModule,
     IntentParserModule,
+    SmartMatchingModule,
+    AiAgentModule,
   ],
   providers: [
     // ─── WebSocket Gateways (ChatGateway is provided by ChatModule) ───

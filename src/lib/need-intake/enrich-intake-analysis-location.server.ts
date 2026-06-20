@@ -66,16 +66,25 @@ export function enrichIntakeAnalysisLocation(
   if (parsed.city?.trim()) {
     entities.city = parsed.city.trim();
   }
-  if (parsed.neighborhoodSlug?.trim()) {
-    entities.neighborhoodSlug = parsed.neighborhoodSlug.trim();
-    const catalogName = parsed.entities?.area?.trim();
-    if (catalogName && /[^\d]/.test(catalogName)) {
-      entities.neighborhood = catalogName;
+
+  const areaLabel = parsed.entities?.area?.trim();
+  const resolvedSlug = parsed.neighborhoodSlug?.trim();
+  const locationAmbiguous = Boolean(
+    parsed.locationAmbiguous || parsed.rejectLocationAutoConfirm || parsed.locationResolutionStatus === 'neighborhood_ambiguous'
+  );
+
+  if (resolvedSlug && !locationAmbiguous) {
+    entities.neighborhoodSlug = resolvedSlug;
+    if (areaLabel && /[^\d]/.test(areaLabel)) {
+      entities.neighborhood = areaLabel;
     }
-  } else if (parsed.entities?.area?.trim() && !entities.neighborhood?.trim()) {
-    const area = parsed.entities.area.trim();
-    if (/[^\d]/.test(area)) {
-      entities.neighborhood = area;
+  } else {
+    entities.neighborhoodSlug = resolvedSlug || null;
+    if (areaLabel && /[^\d]/.test(areaLabel)) {
+      entities.neighborhood = areaLabel;
+    } else if (locationAmbiguous) {
+      entities.neighborhoodSlug = null;
+      if (!areaLabel) entities.neighborhood = null;
     }
   }
 

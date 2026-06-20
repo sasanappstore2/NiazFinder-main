@@ -5,6 +5,49 @@ import type {
   PublishNeedValidationResponse,
 } from '@/contracts/need-intake';
 
+export type PublishNeedResult = {
+  id: string;
+  slug: string;
+  title: string;
+  message?: string;
+  autoApproved?: boolean;
+  status?: string;
+  moderationStatus?: string;
+};
+
+async function pollPublishStatus(
+  requestId: string,
+  token?: string | null,
+  maxAttempts = 60,
+  intervalMs = 1500
+): Promise<PublishNeedResult> {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const res = await fetch(`/api/need-intake/publish/status/${encodeURIComponent(requestId)}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    const data = (await res.json()) as PublishNeedResult & {
+      ready?: boolean;
+      error?: string;
+    };
+    if (!res.ok) {
+      throw new Error(data.error || 'خطا در پیگیری وضعیت انتشار');
+    }
+    if (data.ready) {
+      return {
+        id: data.id,
+        slug: data.slug,
+        title: data.title,
+        message: data.message,
+        autoApproved: data.autoApproved,
+        status: data.status,
+        moderationStatus: data.moderationStatus,
+      };
+    }
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+  }
+  throw new Error('پردازش آگهی بیش از حد طول کشید؛ لطفاً بعداً از داشبورد پیگیری کنید');
+}
+
 export async function previewListingApi(
   draft: NeedDraft,
   extras?: string[]
@@ -27,7 +70,7 @@ export async function publishNeedApi(
   listingPreview?: ListingPreview,
   sessionId?: string | null,
   options?: { linkToBusinessProfile?: boolean }
-): Promise<{ id: string; slug: string; title: string; message?: string; autoApproved?: boolean }> {
+): Promise<PublishNeedResult> {
   const res = await fetch('/api/need-intake/publish', {
     method: 'POST',
     headers: {
@@ -50,5 +93,11 @@ export async function publishNeedApi(
     }
     throw new Error(validation.error || 'خطا در ثبت نیاز');
   }
-  return data as { id: string; slug: string; title: string; message?: string };
+
+  if (res.status === 202) {
+    const accepted = data as { id: string; slug: string; title: string; message?: string };
+    return pollPublishStatus(accepted.id, token);
+  }
+
+  return data as PublishNeedResult;
 }

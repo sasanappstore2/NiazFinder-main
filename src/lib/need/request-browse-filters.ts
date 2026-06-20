@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { Prisma, RequestStatus } from '@prisma/client';
 import { db } from '@/lib/db';
 import { buildGeoAndFilters } from '@/lib/search/geo-api-filters';
 import { resolveNeighborhoodSlugs } from '@/lib/neighborhoods/server';
@@ -8,6 +8,17 @@ import {
   parseRangeShorthand,
   RANGE_PARAM_MAP,
 } from '@/config/category-filters/attr-params';
+
+/** Public browse — hide in-flight AI queue without referencing enum values the client may lack. */
+const PUBLIC_REQUEST_STATUSES: RequestStatus[] = [
+  'PENDING_REVIEW',
+  'OPEN',
+  'IN_PROGRESS',
+  'CLOSED',
+  'COMPLETED',
+  'CANCELLED',
+  'REJECTED',
+];
 
 function recentCutoff(recent: string): Date | null {
   const now = Date.now();
@@ -38,6 +49,11 @@ export async function buildRequestBrowseAndFilters(
   input: RequestBrowseFilterInput
 ): Promise<Prisma.ServiceRequestWhereInput[]> {
   const andFilters: Prisma.ServiceRequestWhereInput[] = [];
+
+  andFilters.push({ status: { in: PUBLIC_REQUEST_STATUSES } });
+  andFilters.push({ moderationStatus: 'APPROVED' });
+  andFilters.push({ needAccessStatus: { in: ['PUBLIC', 'RESOLVED'] } });
+  andFilters.push({ status: 'OPEN' });
 
   if (input.category) {
     const category = await db.category.findFirst({

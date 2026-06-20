@@ -46,6 +46,10 @@ import { apiFetch } from '@/lib/api-client';
 import { formatBudgetRange, getStatusLabel, getTimeAgo } from '@/lib/constants';
 import type { ServiceRequest } from '@/lib/types';
 import { SmartLeadsSection } from '@/components/dashboard/SmartLeadsSection';
+import { PrivateLeadsPanel } from '@/components/dashboard/PrivateLeadsPanel';
+import { NeedResolveWizard } from '@/components/need/NeedResolveWizard';
+import { WalletHistory } from '@/components/dashboard/WalletHistory';
+import { PageContainer } from '@/components/layout/PageContainer';
 import { canManageBusinessProfile } from '@/lib/business/can-manage-business-profile';
 import { routeBuilder } from '@/config/routes';
 
@@ -102,6 +106,8 @@ export function UserDashboard() {
   const [userRequests, setUserRequests] = useState<ServiceRequest[]>([]);
   const [requestsLoading, setRequestsLoading] = useState(true);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
+  const [resolveRequestId, setResolveRequestId] = useState<string | null>(null);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
 
   useEffect(() => {
     if (!authHydrated || !isAuthenticated) {
@@ -126,6 +132,27 @@ export function UserDashboard() {
       cancelled = true;
     };
   }, [authHydrated, isAuthenticated, currentUser?.id]);
+
+  const reloadRequests = useCallback(async () => {
+    try {
+      const res = await apiFetch<{ data: ServiceRequest[] }>('/api/requests?mine=1&limit=50');
+      if (res?.data) setUserRequests(res.data);
+    } catch {
+      toast.error('بارگذاری آگهی\u200cهای شما ناموفق بود');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!authHydrated || !isAuthenticated || activeTab !== 'wallet') return;
+    void (async () => {
+      try {
+        const res = await apiFetch<{ wallet: { balance: number } }>('/api/wallet');
+        setWalletBalance(res.wallet?.balance ?? 0);
+      } catch {
+        setWalletBalance(0);
+      }
+    })();
+  }, [authHydrated, isAuthenticated, activeTab, currentUser?.id]);
 
   useEffect(() => {
     if (!authHydrated || !isAuthenticated) {
@@ -289,14 +316,14 @@ export function UserDashboard() {
 
   return (
     <div dir="rtl" className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+      <PageContainer width="wide" className="py-6 space-y-8" noVerticalPadding>
         {/* ============ WELCOME HEADER ============ */}
         <div className="relative overflow-hidden rounded-2xl bg-linear-to-l from-emerald-600 via-teal-600 to-emerald-700 p-6 sm:p-8 text-white shadow-xl shadow-emerald-600/20">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-white" />
             <div className="absolute -bottom-32 -right-20 w-96 h-96 rounded-full bg-white" />
           </div>
-          <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-5">
+          <div className="relative flex flex-col md:flex-row items-start md:items-center gap-5">
             <Avatar className="w-16 h-16 sm:w-20 sm:h-20 border-4 border-white/30 shadow-lg">
               <AvatarImage src={currentUser.avatar} alt={currentUser.firstName} />
               <AvatarFallback className="text-xl sm:text-2xl bg-white/20 text-white font-bold">
@@ -323,7 +350,7 @@ export function UserDashboard() {
         </div>
 
         {/* ============ STATS CARDS ============ */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             {
               icon: ClipboardList,
@@ -376,20 +403,21 @@ export function UserDashboard() {
         {canManageBusiness && (
           <div className="mb-6">
             <SmartLeadsSection />
+            {canManageBusiness ? <PrivateLeadsPanel /> : null}
           </div>
         )}
 
         {/* ============ MAIN TABS ============ */}
         <div>
           <Tabs value={activeTab} onValueChange={handleTabChange} dir="rtl" className="w-full">
-            <TabsList className="mb-6 flex h-auto w-full gap-1 overflow-x-auto rounded-xl border border-border/40 bg-muted/60 p-1.5 shadow-sm backdrop-blur-xs flex-nowrap sm:flex-wrap">
-              <TabsTrigger value="requests" className="flex-1 min-w-[100px] data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
+            <TabsList className="mb-6 flex h-auto w-full gap-1 overflow-x-auto rounded-xl border border-border/40 bg-muted/60 p-1.5 shadow-sm backdrop-blur-xs flex-nowrap md:flex-wrap">
+              <TabsTrigger value="requests" className="flex-1 min-w-0 shrink-0 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
                 <ClipboardList className="w-4 h-4 ml-1.5" />نیازهای من
               </TabsTrigger>
-              <TabsTrigger value="wallet" className="flex-1 min-w-[100px] data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
+              <TabsTrigger value="wallet" className="flex-1 min-w-0 shrink-0 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
                 <Wallet className="w-4 h-4 ml-1.5" />کیف پول
               </TabsTrigger>
-              <TabsTrigger value="profile" className="flex-1 min-w-[100px] data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
+              <TabsTrigger value="profile" className="flex-1 min-w-0 shrink-0 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
                 <UserIcon className="w-4 h-4 ml-1.5" />پروفایل
               </TabsTrigger>
             </TabsList>
@@ -425,7 +453,7 @@ export function UserDashboard() {
                   filteredRequests.map((request) => (
                     <Card key={request.id} className="hover:border-emerald-300/50 dark:hover:border-emerald-700/50 transition-all duration-150 hover:shadow-md hover:shadow-emerald-500/5">
                       <CardContent className="p-4 sm:p-6">
-                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
                           <div className="flex-1 min-w-0 space-y-3">
                             <div className="flex flex-wrap items-center gap-2">
                               <h3 className="font-semibold text-base text-foreground truncate max-w-full">{request.categoryIcon} {request.title}</h3>
@@ -454,6 +482,17 @@ export function UserDashboard() {
                             </div>
                           </div>
                           <div className="flex shrink-0 items-center gap-1">
+                            {(request.status === 'OPEN' || request.status === 'IN_PROGRESS') ? (
+                              <Button
+                                variant="default"
+                                size="sm"
+                                className="bg-emerald-600 hover:bg-emerald-700"
+                                onClick={() => setResolveRequestId(request.id)}
+                              >
+                                <CheckCircle className="w-4 h-4 ml-1" />
+                                نیازم رفع شد
+                              </Button>
+                            ) : null}
                             <Button
                               variant="outline"
                               size="sm"
@@ -484,14 +523,7 @@ export function UserDashboard() {
 
             {/* ============ TAB 2: WALLET & PAYMENTS ============ */}
             <TabsContent value="wallet">
-              <Card className="border-border/50 shadow-md">
-                <CardContent className="py-16 text-center space-y-3">
-                  <Wallet className="w-10 h-10 mx-auto text-muted-foreground/50" />
-                  <p className="text-sm text-muted-foreground">
-                    کیف پول و تراکنش‌ها به‌زودی از API واقعی متصل می‌شوند.
-                  </p>
-                </CardContent>
-              </Card>
+              <WalletHistory balance={walletBalance ?? undefined} />
             </TabsContent>
 
             {/* ============ TAB 4: PROFILE ============ */}
@@ -596,7 +628,15 @@ export function UserDashboard() {
             </TabsContent>
           </Tabs>
         </div>
-      </div>
+      </PageContainer>
+      {resolveRequestId ? (
+        <NeedResolveWizard
+          requestId={resolveRequestId}
+          open={!!resolveRequestId}
+          onOpenChange={(open) => { if (!open) setResolveRequestId(null); }}
+          onResolved={() => void reloadRequests()}
+        />
+      ) : null}
       <noscript>
         <div className="sr-only">
           <h1>داشبورد کاربری - نیاز فایندر</h1>

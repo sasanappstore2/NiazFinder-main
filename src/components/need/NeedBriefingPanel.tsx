@@ -63,7 +63,7 @@ export function NeedBriefingPanel({
       <div className="space-y-5 px-4 py-4 sm:px-6 sm:py-5">
         {/* سرتیتر */}
         <header className="space-y-3">
-          <h1 className="text-h2 leading-snug text-foreground">{request.title}</h1>
+          <h1 className="overflow-guard text-h2 leading-snug text-foreground">{request.title}</h1>
           <NeedBriefMetaRow request={request} />
           <NeedKeyFactsGrid request={request} />
         </header>
@@ -84,7 +84,7 @@ export function NeedBriefingPanel({
           </p>
         </section>
 
-        <NeedBriefTags tags={request.tags} />
+        <NeedBriefTags request={request} />
 
         <NeedActionFooter
           request={request}

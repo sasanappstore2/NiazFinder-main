@@ -2,7 +2,7 @@
   "cityId": "nehbandan",
   "cityName": "نهبندان",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:29.915Z",
+  "importedAt": "2026-06-16T23:36:28.427Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,7 @@
         "west": 59.642861022193976,
         "east": 59.76752505887948
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "پل-بنگی-آباد",
@@ -35,7 +35,7 @@
         "west": 59.52638450588944,
         "east": 59.65104854257494
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "عاشورا-خانه",
@@ -51,7 +51,49 @@
         "west": 59.60220951720572,
         "east": 59.726873553891224
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابراهیم-آباد",
+      "name": "ابراهیم آباد",
+      "nameEn": "ابراهیم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارویز",
+      "name": "ارویز",
+      "nameEn": "ارویز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسدآباد",
+      "name": "اسدآباد",
+      "nameEn": "اسدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خوان-شرف",
+      "name": "خوان شرف",
+      "nameEn": "خوان-شرف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-سیدعلی",
+      "name": "کلاته سیدعلی",
+      "nameEn": "کلاته-سیدعلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوند",
+      "name": "گوند",
+      "nameEn": "گوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نهبندان",
+      "name": "نهبندان",
+      "nameEn": "نهبندان",
+      "geoSource": "osm"
     }
   ]
 }

@@ -15,6 +15,7 @@ import {
   categoryFilterToPrismaWhere,
   resolveBrowseCategoryFilter,
 } from '@/lib/business/resolve-browse-category-filter';
+import { searchBusinessProfilesTypesense } from '@/lib/search/typesense-business-search';
 import type { Business } from '@/contracts/business-profile';
 
 const profileInclude = {
@@ -126,12 +127,63 @@ export async function listBusinesses(opts: {
   minRating?: number;
   page?: number;
   limit?: number;
+  lat?: number;
+  lng?: number;
+  radiusKm?: number;
+}) {
+  const useNeighborhoodFilter = Boolean(
+    opts.neighborhoodsParam?.trim() && opts.neighborhoodCityId
+  );
+
+  if (!useNeighborhoodFilter) {
+    const typesenseResult = await searchBusinessProfilesTypesense({
+      search: opts.search,
+      category: opts.category,
+      citiesParam: opts.citiesParam,
+      provincesParam: opts.provincesParam,
+      legacyCity: opts.city,
+      verified: opts.verified,
+      sort: opts.sort,
+      minRating: opts.minRating,
+      page: opts.page,
+      limit: opts.limit,
+      lat: opts.lat,
+      lng: opts.lng,
+      radiusKm: opts.radiusKm,
+    });
+    if (typesenseResult) {
+      return typesenseResult;
+    }
+  }
+
+  return listBusinessesFromDb(opts);
+}
+
+async function listBusinessesFromDb(opts: {
+  city?: string;
+  citiesParam?: string;
+  provincesParam?: string;
+  neighborhoodsParam?: string;
+  neighborhoodCityId?: string;
+  category?: string;
+  search?: string;
+  verified?: boolean;
+  sort?: BusinessBrowseSort;
+  minRating?: number;
+  page?: number;
+  limit?: number;
+  lat?: number;
+  lng?: number;
+  radiusKm?: number;
 }) {
   const page = Math.max(1, opts.page ?? 1);
   const limit = Math.min(50, Math.max(1, opts.limit ?? 12));
   const skip = (page - 1) * limit;
 
-  const and: Prisma.BusinessProfileWhereInput[] = [{ status: 'ACTIVE' }];
+  const and: Prisma.BusinessProfileWhereInput[] = [
+    { status: 'ACTIVE' },
+    { user: { isActive: true } },
+  ];
 
   const geoClauses = buildBusinessGeoWhere({
     citiesParam: opts.citiesParam,
@@ -160,6 +212,22 @@ export async function listBusinesses(opts: {
 
   if (opts.minRating) and.push({ rating: { gte: opts.minRating } });
   if (opts.verified) and.push({ verified: true });
+
+  if (
+    opts.lat !== undefined &&
+    opts.lng !== undefined &&
+    opts.radiusKm !== undefined &&
+    Number.isFinite(opts.lat) &&
+    Number.isFinite(opts.lng) &&
+    opts.radiusKm > 0
+  ) {
+    const latDelta = opts.radiusKm / 111;
+    const lngDelta = opts.radiusKm / (111 * Math.cos((opts.lat * Math.PI) / 180));
+    and.push({
+      lat: { gte: opts.lat - latDelta, lte: opts.lat + latDelta },
+      lng: { gte: opts.lng - lngDelta, lte: opts.lng + lngDelta },
+    });
+  }
 
   const q = opts.search?.trim();
   if (q) {

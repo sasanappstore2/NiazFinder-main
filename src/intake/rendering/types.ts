@@ -11,6 +11,10 @@ export interface IntakeRenderContext {
   selectedCity: string;
   selectedNeighborhood: string;
   categorySuggestions: Array<{ value: string; label: string }>;
+  /** True when shop-rent vs office-rent must be chosen via chips (no auto-fill). */
+  commercialCategoryAmbiguous?: boolean;
+  /** True when rule-ranked category candidates need user pick. */
+  categoryAmbiguous?: boolean;
   neighborhoodOptions: ManagedNeighborhood[];
   neighborhoodsLoading: boolean;
   promptNeighborhoodPick: boolean;
@@ -18,6 +22,10 @@ export interface IntakeRenderContext {
   neighborhoodDisambiguationChips: Array<{ value: string; label: string }>;
   locationSuggestionChips?: Array<{ value: string; label: string }>;
   onLocationSuggestionSelect?: (value: string) => void;
+  /** AI/rules suggestions for critical optional filters (chip-only, no auto-fill). */
+  filterSuggestions?: Record<string, Array<{ value: string; label: string; confidence?: number }>>;
+  criticalFieldKeys?: ReadonlySet<string>;
+  onFilterSuggestionSelect?: (fieldKey: string, value: string | number | string[]) => void;
   onCategoryChange: (
     payload:
       | string

@@ -6,7 +6,7 @@ from typing import Any
 
 import httpx
 
-from app.config import EXTRACT_ARTICLE_SYSTEM, INTAKE_MLX_CHAT_URL, INTAKE_MLX_URL
+from app.config import EXTRACT_ARTICLE_SYSTEM, INTAKE_LLM_MODEL, INTAKE_MLX_CHAT_URL, INTAKE_MLX_URL
 
 
 def mlx_health_ok() -> bool:
@@ -32,7 +32,7 @@ def _extract_json_blob(text: str) -> dict[str, Any]:
 
 def chat_completion(system: str, user: str, *, max_tokens: int = 900) -> str:
     payload = {
-        "model": "qwen3.5-2b",
+        "model": INTAKE_LLM_MODEL,
         "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": user},

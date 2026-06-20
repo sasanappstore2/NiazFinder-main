@@ -62,6 +62,22 @@ export function isBusinessProfilePath(pathname: string): boolean {
   return !isMarketplaceLocationSegment(parsed.parts[0].toLowerCase());
 }
 
+/**
+ * True on a single-business surface (/b/{slug}, product, review, invite) — not marketplace browse.
+ */
+export function isBusinessEntityPath(pathname: string): boolean {
+  const parsed = parseMarketplacePath(pathname);
+  if (!parsed || parsed.market !== 'business' || parsed.parts.length === 0) {
+    return false;
+  }
+  return !isMarketplaceLocationSegment(parsed.parts[0].toLowerCase());
+}
+
+/** Browse filter bar + category row — marketplace listing pages only. */
+export function shouldShowBrowseHeaderChrome(pathname: string): boolean {
+  return isBrowsePath(pathname) && !isBusinessEntityPath(pathname);
+}
+
 function parseFromBusinessMarketPath(pathname: string): BrowsePathContext {
   const market: BrowseMarket = 'business';
   const parsed = parseMarketplacePath(pathname);

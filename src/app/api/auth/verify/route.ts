@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { findValidOtp, markOtpVerified } from '@/lib/otp-store';
-import { isTestOtpCode } from '@/lib/auth/test-otp';
 import { issueAuthToken, mapDbUserToResponse } from '@/lib/auth/phone-auth-response';
 import { toAsciiDigits } from '@/lib/format/digits';
 import { clientIp } from '@/lib/security/rate-limit';
@@ -51,17 +50,11 @@ export async function POST(request: NextRequest) {
     }
 
     const otpRecord = await findValidOtp(normalizedPhone, otpCode);
-    const acceptedTestOtp = isTestOtpCode(otpCode);
-
-    if (!otpRecord && !acceptedTestOtp) {
+    if (!otpRecord) {
       return NextResponse.json(
         { error: 'کد تایید نامعتبر یا منقضی شده است' },
         { status: 401 }
       );
-    }
-
-    if (otpRecord) {
-      await markOtpVerified(normalizedPhone, code);
     }
 
     try {
@@ -77,6 +70,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
+        await markOtpVerified(normalizedPhone, otpCode);
         return NextResponse.json({
           message: 'کد تایید تأیید شد',
           needsPassword: true,
@@ -97,6 +91,8 @@ export async function POST(request: NextRequest) {
           { status: 403 }
         );
       }
+
+      await markOtpVerified(normalizedPhone, otpCode);
 
       const roleUpdate = resolveSuperAdminRoleUpdate(normalizedPhone, user.role);
 
@@ -130,12 +126,14 @@ export async function POST(request: NextRequest) {
           );
         }
         if (!exists) {
+          await markOtpVerified(normalizedPhone, otpCode);
           return NextResponse.json({
             message: 'کد تایید تأیید شد',
             needsPassword: true,
             phone: normalizedPhone,
           });
         }
+        await markOtpVerified(normalizedPhone, otpCode);
         const { user, token } = devIssueAuth(normalizedPhone, false);
         return NextResponse.json({
           message: 'ورود با موفقیت انجام شد (حالت تست بدون دیتابیس)',

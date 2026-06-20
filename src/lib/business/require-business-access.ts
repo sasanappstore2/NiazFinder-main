@@ -5,16 +5,22 @@ import { canManageBusinessProfile } from '@/lib/business/can-manage-business-pro
 
 type AuthUser = NonNullable<Awaited<ReturnType<typeof getAuthUser>>>;
 
+export type BusinessAccessOptions = {
+  /** Promote CLIENT → SPECIALIST only after onboarding is completed. */
+  promoteToSpecialist?: boolean;
+};
+
 export type BusinessAccessResult =
   | { user: AuthUser; roleUpgraded: boolean }
   | { error: NextResponse };
 
 /**
  * Authenticated users may manage a business profile.
- * CLIENT → SPECIALIST on first access (onboarding / my-business).
+ * CLIENT users can access onboarding APIs without automatic role promotion.
  */
 export async function requireBusinessAccess(
-  request: NextRequest
+  request: NextRequest,
+  options?: BusinessAccessOptions
 ): Promise<BusinessAccessResult> {
   const user = await getAuthUser(request);
   if (!user) {
@@ -22,14 +28,17 @@ export async function requireBusinessAccess(
   }
 
   if (user.role === 'CLIENT') {
-    await db.user.update({
-      where: { id: user.id },
-      data: { role: 'SPECIALIST' },
-    });
-    return {
-      user: { ...user, role: 'SPECIALIST' },
-      roleUpgraded: true,
-    };
+    if (options?.promoteToSpecialist) {
+      await db.user.update({
+        where: { id: user.id },
+        data: { role: 'SPECIALIST' },
+      });
+      return {
+        user: { ...user, role: 'SPECIALIST' },
+        roleUpgraded: true,
+      };
+    }
+    return { user, roleUpgraded: false };
   }
 
   if (!canManageBusinessProfile(user.role)) {

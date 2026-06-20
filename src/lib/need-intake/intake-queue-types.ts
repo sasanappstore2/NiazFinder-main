@@ -17,6 +17,13 @@ export interface IntakeAnalyzeJobPayload {
   text: string;
   citySlug?: string;
   cityName?: string;
+  formHints?: {
+    categorySlug?: string;
+    subcategorySlug?: string;
+    city?: string;
+    neighborhood?: string;
+    categoryLockedByUser?: boolean;
+  };
   fastParse?: boolean;
 }
 

@@ -2,6 +2,10 @@ import type { ParsedIntent } from '@/contracts/need-intake';
 import { getCategoryPath } from '@/config/categories';
 import { normalizeIntakeText } from '@/lib/need-intake/normalize-intake-text';
 import {
+  isAmbiguousCommercialSubtype,
+  isBusinessCommercialPropertyIntent,
+} from '@/lib/need-intake/business-commercial-property-intent';
+import {
   isConstructionPartnershipText,
   parseCity,
   refinePropertyCategorySlug,
@@ -88,6 +92,25 @@ export function isEstateDomainText(text: string): boolean {
 }
 
 function inferPropertyKind(text: string): string | undefined {
+  const norm = normalizeIntakeText(text);
+  if (isBusinessCommercialPropertyIntent(norm)) {
+    if (norm.includes('مغازه') || norm.includes('غرفه') || norm.includes('فروشگاه')) {
+      return 'shop';
+    }
+    if (norm.includes('دفتر') || norm.includes('مطب') || norm.includes('کلینیک')) {
+      return 'office';
+    }
+    if (norm.includes('سوله') || norm.includes('انبار')) return 'industrial';
+    if (isAmbiguousCommercialSubtype(norm)) return undefined;
+    if (
+      norm.includes('سالن') ||
+      norm.includes('مزون') ||
+      norm.includes('بوتیک') ||
+      norm.includes('کافه')
+    ) {
+      return 'shop';
+    }
+  }
   if (text.includes('تجاری-مسکونی') || text.includes('تجاری مسکونی')) return 'shop';
   if (text.includes('زندگی') && text.includes('کار')) return 'shop';
   if (text.includes('بهم‌پیوسته') || text.includes('بهم پیوسته')) return 'apartment';

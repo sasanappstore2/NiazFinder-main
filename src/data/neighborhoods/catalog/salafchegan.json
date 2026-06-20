@@ -2,7 +2,7 @@
   "cityId": "salafchegan",
   "cityName": "سلفچگان",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:30.474Z",
+  "importedAt": "2026-06-16T21:23:25.180Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,193 @@
         "west": 50.54948228605405,
         "east": 50.780108615876514
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اللهقلی",
+      "name": "الله‌قلی",
+      "nameEn": "اللهقلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-یک",
+      "name": "باغ یک",
+      "nameEn": "باغ-یک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بشارت-آباد",
+      "name": "بشارت آباد",
+      "nameEn": "بشارت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تاج-خاتون",
+      "name": "تاج خاتون",
+      "nameEn": "تاج-خاتون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جنداب",
+      "name": "جنداب",
+      "nameEn": "جنداب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-علی",
+      "name": "چشمه علی",
+      "nameEn": "چشمه-علی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حصارسرخ",
+      "name": "حصارسرخ",
+      "nameEn": "حصارسرخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خدیجه-خاتون",
+      "name": "خدیجه خاتون",
+      "nameEn": "خدیجه-خاتون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرم-آباد",
+      "name": "خرم آباد",
+      "nameEn": "خرم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خلج-آباد",
+      "name": "خلج آباد",
+      "nameEn": "خلج-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیزیجان",
+      "name": "دیزیجان",
+      "nameEn": "دیزیجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "راهجرد",
+      "name": "راهجرد",
+      "nameEn": "راهجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زواریان",
+      "name": "زواریان",
+      "nameEn": "زواریان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سفت",
+      "name": "سفت",
+      "nameEn": "سفت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلفچگان",
+      "name": "سلفچگان",
+      "nameEn": "سلفچگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سناوند",
+      "name": "سناوند",
+      "nameEn": "سناوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنجگان",
+      "name": "سنجگان",
+      "nameEn": "سنجگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهر-جدید-پرنیان",
+      "name": "شهر جدید پرنیان",
+      "nameEn": "شهر-جدید-پرنیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طینوج",
+      "name": "طینوج",
+      "nameEn": "طینوج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عنایت-بیک",
+      "name": "عنایت بیک",
+      "nameEn": "عنایت-بیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاضی-سفلی",
+      "name": "قاضی سفلی",
+      "nameEn": "قاضی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاضی-علیا",
+      "name": "قاضی علیا",
+      "nameEn": "قاضی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-چم",
+      "name": "قلعه چم",
+      "nameEn": "قلعه-چم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مجید-آباد",
+      "name": "مجید آباد",
+      "nameEn": "مجید-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمد-بیگ",
+      "name": "محمد بیگ",
+      "nameEn": "محمد-بیگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نیجه",
+      "name": "نیجه",
+      "nameEn": "نیجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورزنه",
+      "name": "ورزنه",
+      "nameEn": "ورزنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یکه-باغ",
+      "name": "یکه باغ",
+      "nameEn": "یکه-باغ",
+      "geoSource": "osm"
     }
   ]
 }

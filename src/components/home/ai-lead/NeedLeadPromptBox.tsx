@@ -246,6 +246,8 @@ export function NeedLeadPromptBox({
     >
       <div className="min-w-0 px-0.5 pt-0.5">
         <Textarea
+          id="home-need-prompt"
+          name="needDescription"
           ref={setRefs}
           data-ai-lead-input
           value={value}
@@ -285,6 +287,8 @@ export function NeedLeadPromptBox({
             <div className="relative pb-2">
               <Phone className="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <PersianDigitInput
+                id="home-need-phone"
+                name="phone"
                 variant="phone"
                 dir="ltr"
                 className="h-10 rounded-xl border-border/50 bg-muted/30 pr-10 text-left text-sm"

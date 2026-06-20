@@ -94,7 +94,7 @@ Task: Read the user's original text carefully. The rules engine produced hypothe
 For EACH listed field, decide if the hypothesis is CORRECT, INCORRECT, or MISSING (not extracted but present in text).
 
 Rules:
-- Compare against the USER TEXT only ? not world knowledge.
+- Compare against the USER TEXT only — not world knowledge.
 - For money amounts: read Persian words (e.g. \u067E\u0646\u062C\u0627\u0647 \u0645\u06CC\u0644\u06CC\u0648\u0646 = 50M, \u0633\u06CC\u0635\u062F \u0645\u06CC\u0644\u06CC\u0648\u0646 = 300M).
 - If intake is wrong, set status="incorrect" and provide the correct "value".
 - If intake missed a value present in text, set status="missing" and provide "value".

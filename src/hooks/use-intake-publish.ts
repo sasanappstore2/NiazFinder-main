@@ -21,6 +21,7 @@ import {
   trackPublishAttempt,
   trackValidationError,
 } from '@/intake/telemetry/postIntakeTelemetry';
+import { getSessionId } from '@/lib/analytics/collector';
 
 export interface UseIntakePublishFormFields {
   needText: string;
@@ -141,7 +142,7 @@ export function useIntakePublish({
     setError(null);
     try {
       const token = getClientAuthToken();
-      const data = await publishNeedApi(draft, token, listingPreview, null, {
+      const data = await publishNeedApi(draft, token, listingPreview, getSessionId(), {
         linkToBusinessProfile,
       });
       setStep('done');

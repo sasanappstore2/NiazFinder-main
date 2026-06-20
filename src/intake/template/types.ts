@@ -40,6 +40,8 @@ export interface IntakeTemplate {
   requiredFields: readonly string[];
   optionalFields: readonly string[];
   mandatorySectionKeys: ReadonlySet<string>;
+  criticalFields: readonly string[];
+  criticalSectionKeys: ReadonlySet<string>;
   fieldMap: Readonly<Record<string, IntakeFieldMeta>>;
   rules: TemplateRules;
 }

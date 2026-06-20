@@ -1,5 +1,9 @@
 import type { FieldSchema } from '@/contracts/need-intake';
 import type { IntakeFieldMeta } from '@/intake/template/types';
+import {
+  INTAKE_URGENCY_OPTIONS,
+  INTAKE_WHEN_OPTIONS,
+} from '@/lib/need-intake/intake-timing-options';
 
 const TRANSACTION_OPTIONS = [
   { value: 'RENT', label: 'اجاره' },
@@ -77,8 +81,17 @@ export const WIZARD_SLOT_SCHEMAS: Record<string, FieldSchema> = {
   urgency: {
     key: 'urgency',
     type: 'chips',
-    label: 'فوریت',
+    label: 'درجه فوریت',
     required: false,
+    options: [...INTAKE_URGENCY_OPTIONS],
+  },
+  when: {
+    key: 'when',
+    type: 'chips',
+    label: 'تا چه زمانی نیاز دارید؟',
+    helpText: 'برای ارائه‌دهندگان مشخص می‌شود چقدر فوری است و چه مهلتی دارید.',
+    required: false,
+    options: [...INTAKE_WHEN_OPTIONS],
   },
 };
 

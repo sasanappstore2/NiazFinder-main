@@ -2,6 +2,7 @@
 
 import { Clock, MapPin, Wallet } from 'lucide-react';
 import { formatRequestBudget } from '@/lib/need/format-need-budget';
+import { formatDeliveryDeadlineLabel } from '@/lib/need-intake/intake-timing-options';
 import type { ServiceRequest } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { extractNeighborhoodLabel } from './need-brief-utils';
@@ -50,12 +51,31 @@ function FactCell({
 
 export function NeedKeyFactsGrid({ request, className }: NeedKeyFactsGridProps) {
   const budget = formatRequestBudget(request);
-  const neighborhood = extractNeighborhoodLabel(request.address);
-  const locationParts = [request.city, neighborhood].filter(Boolean);
+  const neighborhood = extractNeighborhoodLabel(request.address, request.dynamicAnswers);
+  const locationParts = [request.province, request.city, neighborhood].filter(
+    (part, index, arr) => part && arr.indexOf(part) === index
+  );
   const location = locationParts.length > 0 ? locationParts.join(' · ') : 'نامشخص';
-  const delivery = request.deliveryTime
-    ? `${request.deliveryTime.toLocaleString('fa-IR')} روز`
-    : 'نامشخص';
+
+  let whenAnswer: string | undefined;
+  if (request.dynamicAnswers) {
+    try {
+      const parsed =
+        typeof request.dynamicAnswers === 'string'
+          ? (JSON.parse(request.dynamicAnswers) as Record<string, unknown>)
+          : (request.dynamicAnswers as Record<string, unknown>);
+      const when = parsed.when;
+      if (typeof when === 'string' && when.trim()) whenAnswer = when.trim();
+    } catch {
+      /* ignore malformed dynamicAnswers */
+    }
+  }
+
+  const delivery = formatDeliveryDeadlineLabel({
+    deliveryTime: request.deliveryTime,
+    when: whenAnswer,
+    priority: request.priority,
+  });
 
   return (
     <div className={cn('grid grid-cols-3 gap-2 sm:gap-3', className)} aria-label="اطلاعات کلیدی">

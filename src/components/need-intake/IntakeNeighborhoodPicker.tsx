@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { ManagedNeighborhood } from '@/lib/neighborhoods/types';
+import { findManagedNeighborhoodAmbiguity } from '@/lib/neighborhoods/find-managed-neighborhood-ambiguity';
 import { matchManagedNeighborhood } from '@/lib/neighborhoods/match-managed-neighborhood';
 
 interface IntakeNeighborhoodPickerProps {
@@ -84,8 +85,9 @@ export function IntakeNeighborhoodPicker({
     const trimmed = value.trim();
     if (!trimmed) return;
     if (trimmed === selected.name || trimmed === selected.id) return;
+    if (findManagedNeighborhoodAmbiguity(neighborhoods, trimmed, cityName).length >= 2) return;
     onChange(selected.name, selected.id);
-  }, [selected, value, disabled, isLoading, hasCatalog, onChange]);
+  }, [selected, value, disabled, isLoading, hasCatalog, neighborhoods, cityName, onChange]);
 
   if (!hasCatalog && cityName.trim() && !isLoading) {
     return (

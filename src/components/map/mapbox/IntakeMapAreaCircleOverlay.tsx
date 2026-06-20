@@ -3,7 +3,7 @@
 import { INTAKE_AREA_CIRCLE_RADIUS_RATIO } from '@/lib/map/intake-area-circle';
 import { cn } from '@/lib/utils';
 
-/** Fixed on-screen search disc ? map pans underneath (Divar-style intake picker). */
+/** Fixed on-screen search disc — map pans underneath (Divar-style intake picker). */
 export function IntakeMapAreaCircleOverlay({ className }: { className?: string }) {
   return (
     <div

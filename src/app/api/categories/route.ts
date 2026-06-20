@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { apiErrorFromUnknown } from '@/lib/db-health';
 
 // ============ TYPES ============
 
@@ -91,9 +92,7 @@ export async function GET() {
     return NextResponse.json({ categories: tree });
   } catch (error) {
     console.error('Categories GET error:', error);
-    return NextResponse.json(
-      { error: 'خطای سرور رخ داده است' },
-      { status: 500 }
-    );
+    const { error: message, status } = apiErrorFromUnknown(error);
+    return NextResponse.json({ error: message }, { status });
   }
 }

@@ -104,6 +104,7 @@ export function NeighborhoodSelectorModal({
       <DialogContent
         className="flex max-h-[92dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg"
         dir="rtl"
+        showCloseButton={false}
       >
         <DialogHeader className="flex flex-row items-center justify-between border-b px-4 py-3 space-y-0">
           <DialogTitle className="text-base font-bold">انتخاب محله</DialogTitle>

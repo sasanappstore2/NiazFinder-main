@@ -1,8 +1,8 @@
 # NiazFinder Wiring Matrix
 
-Generated: 2026-06-12T23:07:39.258Z
+Generated: 2026-06-19T14:26:03.924Z
 
-API routes: 215 | User sections: 10 | Admin panels: 30
+API routes: 212 | User sections: 10 | Admin panels: 30
 
 ## User-facing sections
 
@@ -10,16 +10,16 @@ API routes: 215 | User sections: 10 | Admin panels: 30
 |---------|--------|----------|-------------|
 | home | /, /en |  | analytics |
 | browse-need | /n/iran, /n/{city}, /n/{city}/{category} | /api/requests, /api/requests/map-pins | requests |
-| browse-business | /b/iran, /b/{city}, /b/{profileSlug} | /api/business/browse, /api/business/map-pins? | businesses |
-| need-detail | /v/{slug}/{id}, /propose/{id} | /api/requests/{id}, /api/requests/{id}/matched-businesses? | requests |
-| intake | /post, /post/edit/{id} | /api/intake/analyze, /api/need-intake/publish? | intake-field-specs |
-| user-dashboard | /dashboard, /dashboard/referral | /api/dashboard, /api/requests?mine=1? | users |
+| browse-business | /b/iran, /b/{city}, /b/{profileSlug} | /api/business/browse, /api/business/map-pins… | businesses |
+| need-detail | /v/{slug}/{id}, /propose/{id} | /api/requests/{id}, /api/requests/{id}/matched-businesses… | requests |
+| intake | /post, /post/edit/{id} | /api/intake/analyze, /api/need-intake/publish… | intake-field-specs |
+| user-dashboard | /dashboard, /dashboard/referral | /api/dashboard, /api/requests?mine=1… | users |
 | business-hub | /my-business, /pro/{id}/edit | /api/business/me, /api/business/me/* | businesses |
-| chat | /chat, /chat/{id}, /messages | /api/chat, /api/chat/{id}? | messages |
+| chat | /chat, /chat/{id}, /messages | /api/chat, /api/chat/{id}… | messages |
 | super-admin | /super-admin/* | /api/super-admin/* | overview |
 | blog-seo | /blog, /blog/{slug}, /sitemap.xml | /api/blog | blog |
 
-## Super-admin panel ? API mapping
+## Super-admin panel → API mapping
 
 ### overview
 - GET /api/super-admin/overview

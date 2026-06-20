@@ -1,6 +1,11 @@
 import { getCategoryPath, normalizeCategoryPair } from '@/config/categories';
 import type { IntakeTemplate, ResolveTemplateInput } from '@/intake/template/types';
+import {
+  getCriticalIntakeFields,
+  getCriticalSectionKeys,
+} from '@/intake/template/critical-intake-catalog';
 import { buildFieldMapFromSections } from '@/intake/template/buildFieldMap';
+import { buildIntakeSections } from '@/intake/template/buildIntakeSections';
 import {
   DEFAULT_VERTICAL_POLICY,
   resolveVerticalPolicy,
@@ -47,14 +52,17 @@ export function resolveTemplate(input: ResolveTemplateInput = {}): IntakeTemplat
     transactionType: input.transactionType,
   });
 
-  const sections = policy.sections.map((s) => ({
-    ...s,
-    fields: [...s.fields],
-  }));
+  const categorySlugForSections = leafSlug ?? templateId;
+  const sections = buildIntakeSections(
+    categorySlugForSections,
+    rootSlug,
+    policy.sections
+  );
 
-  const fieldMap = leafSlug
-    ? buildFieldMapFromSections(leafSlug, sections)
-    : buildFieldMapFromSections(templateId, sections);
+  const fieldMap = buildFieldMapFromSections(categorySlugForSections, sections);
+
+  const criticalFields = getCriticalIntakeFields(categorySlugForSections);
+  const criticalSectionKeys = getCriticalSectionKeys(categorySlugForSections, criticalFields);
 
   const requiresMapPin =
     policy.vertical === 'real-estate' &&
@@ -72,6 +80,8 @@ export function resolveTemplate(input: ResolveTemplateInput = {}): IntakeTemplat
     requiredFields: policy.requiredFields,
     optionalFields: policy.optionalFields,
     mandatorySectionKeys: new Set(policy.mandatorySectionKeys),
+    criticalFields,
+    criticalSectionKeys,
     fieldMap,
     rules: {
       publish: {

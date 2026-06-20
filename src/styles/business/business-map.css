@@ -467,11 +467,16 @@ html.browse-map-immersive header[role='banner'] {
 html.browse-map-immersive [data-slot='dialog-overlay'],
 html.browse-map-immersive [data-slot='dialog-content'],
 html.browse-map-immersive [data-slot='sheet-overlay'],
-html.browse-map-immersive [data-slot='sheet-content'] {
-  z-index: 750;
-}
-
-html.browse-map-immersive [data-scope='menu'][data-part='positioner'] {
+html.browse-map-immersive [data-slot='sheet-content'],
+html.browse-map-immersive [data-slot='popover-content'],
+html.browse-map-immersive [data-slot='dropdown-menu-content'],
+html.browse-map-immersive [data-slot='dropdown-menu-sub-content'],
+html.browse-map-immersive [data-slot='select-content'],
+html.browse-map-immersive [data-slot='hover-card-content'],
+html.browse-map-immersive [data-slot='context-menu-content'],
+html.browse-map-immersive [data-slot='menubar-content'],
+html.browse-map-immersive [data-scope='menu'][data-part='positioner'],
+html.browse-map-immersive [data-scope='menu'][data-part='content'] {
   z-index: 750;
 }
 

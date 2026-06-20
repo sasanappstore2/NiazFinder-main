@@ -1,51 +1,77 @@
 import type { NeedDraft } from '@/contracts/need-intake';
-import { getCategoryPath } from '@/config/categories';
-import { recordToEntities } from '@/intake/aggregate/needDraftAggregate';
-import { hasEntityValue } from '@/intake/entities/entityRegistry';
 import type { IntakeAiShardKey, IntakeAiShardStatus } from '@/components/need-intake/IntakeAiShardBar';
-import { extractVehicleSubjectFromText } from '@/lib/need-intake/vertical-title';
-import { resolveIntakeNeighborhoodFromDraft } from '@/lib/need-intake/sync-intake-location-form';
+import {
+  buildIntakeProgressSnapshot,
+  type BuildIntakeProgressOpts,
+  type IntakeProgressSnapshot,
+} from '@/lib/need-intake/intake-progress-tracker';
 
+export type { IntakeProgressSnapshot, BuildIntakeProgressOpts };
+
+export function intakeProgressSnapshotFromDraft(
+  draft: NeedDraft | null,
+  opts?: BuildIntakeProgressOpts
+): IntakeProgressSnapshot {
+  return buildIntakeProgressSnapshot(draft, opts);
+}
+
+/** Legacy shard map for analyze hooks (cascade-aware). */
 export function shardStatusFromNeedDraft(
   draft: NeedDraft | null,
-  enriching: boolean
+  enriching: boolean,
+  opts?: Omit<BuildIntakeProgressOpts, 'enriching'>
 ): Partial<Record<IntakeAiShardKey, IntakeAiShardStatus>> {
-  const entities = draft ? recordToEntities(draft.entities) : null;
-  const statusFor = (filled: boolean): IntakeAiShardStatus =>
-    filled ? 'done' : enriching ? 'running' : 'pending';
+  const snapshot = buildIntakeProgressSnapshot(draft, { ...opts, enriching });
 
-  const raw = (draft?.sourceText ?? draft?.parsedIntent.rawText ?? '').trim();
-  const root = draft?.parsedIntent.categorySlug
-    ? getCategoryPath(draft.parsedIntent.categorySlug)[0]?.slug
-    : null;
-  const isVehicle =
-    draft?.parsedIntent.intentType.startsWith('vehicle') || root === 'vehicles';
+  const mapCore = (key: 'need' | 'category' | 'city' | 'neighborhood'): IntakeAiShardStatus => {
+    const s = snapshot.core[key];
+    if (s === 'done') return 'done';
+    if (s === 'running') return 'running';
+    return 'pending';
+  };
 
-  const needFilled = Boolean(
-    entities?.categorySlug &&
-      (isVehicle
-        ? extractVehicleSubjectFromText(raw) ||
-          draft?.parsedIntent.entities?.brand?.trim() ||
-          String(draft?.answers?.brand ?? '').trim()
-        : root === 'services'
-          ? String(
-              draft?.answers?.serviceType ?? draft?.parsedIntent.entities?.serviceCategory ?? ''
-            ).trim()
-          : root === 'jobs'
-            ? String(draft?.answers?.jobTitle ?? '').trim()
-            : raw.length >= 12)
+  const budgetField = snapshot.fields.find(
+    (f) => f.key === 'budget' || f.key === 'budgetMax' || f.key === 'budgetMin'
   );
-
-  const neighborhoodFilled = Boolean(
-    resolveIntakeNeighborhoodFromDraft(draft) ||
-      (typeof draft?.answers?.location === 'string' && draft.answers.location.trim().length >= 2)
-  );
+  const budgetStatus: IntakeAiShardStatus = budgetField
+    ? budgetField.status === 'done'
+      ? 'done'
+      : budgetField.status === 'running'
+        ? 'running'
+        : 'pending'
+    : mapCore('category');
 
   return {
-    category: statusFor(Boolean(entities?.categorySlug)),
-    need: statusFor(needFilled),
-    city: statusFor(Boolean(entities?.city?.trim() || draft?.parsedIntent.city?.trim())),
-    neighborhood: statusFor(neighborhoodFilled),
-    budget: statusFor(entities ? hasEntityValue(entities, 'budget') : false),
+    need: mapCore('need'),
+    category: mapCore('category'),
+    city: mapCore('city'),
+    neighborhood: mapCore('neighborhood'),
+    budget: budgetStatus,
   };
+}
+
+/** Only the shard currently running (for analyze transition UI). */
+export function cascadeRunningShardsFromDraft(
+  draft: NeedDraft | null,
+  enriching: boolean,
+  opts?: Omit<BuildIntakeProgressOpts, 'enriching'>
+): Partial<Record<IntakeAiShardKey, IntakeAiShardStatus>> {
+  const base = shardStatusFromNeedDraft(draft, enriching, opts);
+  const runningKey = (Object.entries(base) as [IntakeAiShardKey, IntakeAiShardStatus][]).find(
+    ([, s]) => s === 'running'
+  )?.[0];
+
+  if (!runningKey) {
+    return Object.fromEntries(
+      (Object.keys(base) as IntakeAiShardKey[]).map((k) => [k, base[k] === 'done' ? 'done' : 'pending'])
+    ) as Partial<Record<IntakeAiShardKey, IntakeAiShardStatus>>;
+  }
+
+  const out: Partial<Record<IntakeAiShardKey, IntakeAiShardStatus>> = {};
+  for (const key of Object.keys(base) as IntakeAiShardKey[]) {
+    if (base[key] === 'done') out[key] = 'done';
+    else if (key === runningKey) out[key] = 'running';
+    else out[key] = 'pending';
+  }
+  return out;
 }

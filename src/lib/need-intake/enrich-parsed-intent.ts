@@ -1,5 +1,3 @@
-import 'server-only';
-
 import type { ParsedIntent } from '@/contracts/need-intake';
 import { computeMissingIntakeFields } from '@/lib/need-intake/compute-missing-fields';
 import { applyPropertySlotsToParsed } from '@/lib/need-intake/apply-property-slots-to-parsed';

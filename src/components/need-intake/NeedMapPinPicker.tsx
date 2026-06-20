@@ -1,7 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, type RefObject } from 'react';
 import { NiazMapCore } from '@/components/map/mapbox/NiazMapCore';
+import { useNiazMapRef } from '@/components/map/mapbox/NiazMapContext';
+import { NiazMapResizeFix } from '@/components/map/mapbox/NiazMapResizeFix';
 import { IntakeMapAreaCircleOverlay } from '@/components/map/mapbox/IntakeMapAreaCircleOverlay';
 import { NiazMapIntakeAreaFrame } from '@/components/map/mapbox/NiazMapIntakeAreaFrame';
 import { NiazMapIntakeCenterSync } from '@/components/map/mapbox/NiazMapIntakeCenterSync';
@@ -28,6 +30,36 @@ const DEFAULT_HINT =
 
 const DISAMBIGUATION_PROMPT =
   '\u0627\u06cc\u0646 \u0646\u0627\u0645 \u062f\u0631 \u0686\u0646\u062f \u0646\u0642\u0637\u0647\u200c\u06cc \u0634\u0647\u0631 \u0648\u062c\u0648\u062f \u062f\u0627\u0631\u062f \u2014 \u0645\u062d\u0644\u0647\u200c\u06cc \u0645\u062f\u0646\u0638\u0631 \u0631\u0627 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646\u06cc\u062f:';
+
+/** Resize map when accordion/shell dimensions change (e.g. details open). */
+function IntakeMapPinShellResizeFix({
+  shellRef,
+}: {
+  shellRef: RefObject<HTMLDivElement | null>;
+}) {
+  const mapRef = useNiazMapRef();
+
+  useEffect(() => {
+    const shell = shellRef.current;
+    if (!shell) return;
+
+    const resize = () => {
+      try {
+        mapRef.current?.getMap()?.resize();
+      } catch {
+        // Map may be tearing down.
+      }
+    };
+
+    const observer = new ResizeObserver(() => resize());
+    observer.observe(shell);
+    resize();
+
+    return () => observer.disconnect();
+  }, [shellRef, mapRef]);
+
+  return null;
+}
 
 export function NeedMapPinPicker({
   city,
@@ -56,6 +88,7 @@ export function NeedMapPinPicker({
   neighborhoodName?: string | null;
   neighborhoods?: ManagedNeighborhood[];
 }) {
+  const shellRef = useRef<HTMLDivElement>(null);
   const cityCenter = useMemo(() => resolveMapCenterFromCityLabel(city), [city]);
   const citySlug = useMemo(() => resolveIntakeCitySlug(city), [city]);
   const selectedNeighborhood = useMemo(() => {
@@ -134,7 +167,9 @@ export function NeedMapPinPicker({
   ]);
 
   const onChangeRef = useRef(onChange);
-  onChangeRef.current = onChange;
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
 
   const handleLocationChange = useCallback((coords: { lat: number; lng: number }) => {
     onChangeRef.current(coords);
@@ -170,7 +205,10 @@ export function NeedMapPinPicker({
         </div>
       ) : null}
       <p className="text-xs text-muted-foreground">{DEFAULT_HINT}</p>
-      <div className="business-browse-map intake-map-pin-shell overflow-hidden rounded-xl border border-border/50">
+      <div
+        ref={shellRef}
+        className="business-browse-map intake-map-pin-shell overflow-hidden rounded-xl border border-border/50"
+      >
         <NiazMapCore
           key={mapFrameKey}
           center={{
@@ -183,6 +221,8 @@ export function NeedMapPinPicker({
           citySlugs={citySlug ? [citySlug] : []}
           overlay={<IntakeMapAreaCircleOverlay />}
         >
+          <NiazMapResizeFix />
+          <IntakeMapPinShellResizeFix shellRef={shellRef} />
           <NiazMapIntakeAreaFrame
             center={{ lat: mapCenter.lat, lng: mapCenter.lng }}
             radiusM={areaSelection.radiusM}

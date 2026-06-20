@@ -87,11 +87,11 @@ export default async function BusinessSlugPage({ params, searchParams }: PagePro
           noVerticalPadding
           className="relative bg-transparent pb-12 sm:pb-14"
         >
-          <div className="profile-surface rounded-xl px-3 py-2">
+          <div className="overflow-guard min-w-0 py-3 sm:py-4">
             <Breadcrumb businessProfileLabel={business.name} />
             <PageHeading title={business.name} visuallyHidden />
           </div>
-          <Separator className="my-3 bg-border/35 sm:my-4" />
+          <Separator className="my-4 bg-border/35 sm:my-5" />
           <UniversalBusinessProfile businessId={business.userId} />
         </PageContainer>
       </BusinessProfileAuraScope>

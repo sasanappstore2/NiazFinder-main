@@ -2,7 +2,7 @@
   "cityId": "fanooj",
   "cityName": "فنوج",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:27.950Z",
+  "importedAt": "2026-06-16T22:54:26.090Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,67 @@
         "west": 59.629932791842606,
         "east": 59.85408860784782
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "پتکان",
+      "name": "پتکان",
+      "nameEn": "پتکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاتی",
+      "name": "چاتی",
+      "nameEn": "چاتی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیرآباد",
+      "name": "خیرآباد",
+      "nameEn": "خیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دنگراب",
+      "name": "دنگراب",
+      "nameEn": "دنگراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رانک",
+      "name": "رانک",
+      "nameEn": "رانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سبیلان",
+      "name": "سبیلان",
+      "nameEn": "سبیلان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کسکان",
+      "name": "کسکان",
+      "nameEn": "کسکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمبکان",
+      "name": "کمبکان",
+      "nameEn": "کمبکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گواش",
+      "name": "گواش",
+      "nameEn": "گواش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرآباد",
+      "name": "میرآباد",
+      "nameEn": "میرآباد",
+      "geoSource": "osm"
     }
   ]
 }

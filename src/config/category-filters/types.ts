@@ -40,7 +40,7 @@ export interface CategoryFilterField {
    * `extended`: kept in merged registry/browse but omitted from minimal real-estate
    * `/post` intake path unless we widen the matrix again.
    */
-  intakeTier?: 'essential' | 'extended';
+  intakeTier?: 'essential' | 'critical' | 'extended';
 }
 
 export interface ResolvedCategoryFilters {

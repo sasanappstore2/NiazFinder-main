@@ -5,6 +5,10 @@ import { resolveIntakeCategory } from '@/lib/need-intake/resolve-intake-category
 import { inferPropertyKindFromCategory } from '@/lib/need-intake/listing-copy-prompt';
 import { REGISTRY_CATEGORY_OVERRIDE_THRESHOLD } from '@/intake/rules/config';
 import { matchCategoryFromRules } from '@/intake/rules/registry.server';
+import { detectRepairServiceCategory } from '@/lib/need-intake/service-repair-intent';
+import {
+  isAmbiguousCommercialSubtype,
+} from '@/lib/need-intake/business-commercial-property-intent';
 import {
   createEmptyFieldBag,
   setField,
@@ -42,6 +46,28 @@ export function resolveRulesCategory(
       source: 'form',
       confidence: 0.95,
       matchedRules: [],
+    };
+  }
+
+  const repairCategory = detectRepairServiceCategory(sourceText);
+  if (repairCategory) {
+    const pair = normalizeCategoryPair(repairCategory);
+    return {
+      categorySlug: pair.categorySlug,
+      subcategorySlug: pair.subcategorySlug,
+      source: 'legacy',
+      confidence: 0.94,
+      matchedRules: ['repair-service-intent'],
+    };
+  }
+
+  if (isAmbiguousCommercialSubtype(sourceText) && !locked) {
+    return {
+      categorySlug: '',
+      subcategorySlug: undefined,
+      source: 'legacy',
+      confidence: 0.55,
+      matchedRules: ['business-commercial-ambiguous'],
     };
   }
 
@@ -105,10 +131,39 @@ export function rulesCategoryToFieldBag(
   input: IntakeIntelligenceInput
 ): Partial<IntakeFieldBag> {
   const bag = createEmptyFieldBag();
+  const locked = input.formHints?.categoryLockedByUser ?? false;
+  const commercialAmbiguous = isAmbiguousCommercialSubtype(sourceText) && !locked;
+
+  if (commercialAmbiguous) {
+    setField(bag, 'vertical', {
+      value: 'real-estate',
+      confidence: 0.82,
+      source: 'rule',
+      evidence: 'business-commercial-ambiguous',
+    });
+    const t = sourceText;
+    const deal =
+      t.includes('رهن') && t.includes('اجاره')
+        ? 'rent_rahn_ejare'
+        : t.includes('رهن') || t.includes('ودیعه')
+          ? 'rent_rahn_full'
+          : t.includes('اجاره')
+            ? 'rent_monthly'
+            : undefined;
+    if (deal) {
+      setField(bag, 'dealType', {
+        value: deal,
+        confidence: 0.8,
+        source: 'rule',
+        evidence: 'business-commercial-rent',
+      });
+    }
+    return bag;
+  }
+
   const resolved = resolveRulesCategory(sourceText, input);
   const vertical = classifyVertical(sourceText);
   const leaf = resolved.subcategorySlug ?? resolved.categorySlug;
-  const locked = input.formHints?.categoryLockedByUser ?? false;
 
   const root = getCategoryPath(leaf)[0]?.slug;
   const verticalValue =

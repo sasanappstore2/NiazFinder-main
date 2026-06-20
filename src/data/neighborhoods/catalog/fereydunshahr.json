@@ -2,7 +2,7 @@
   "cityId": "fereydunshahr",
   "cityName": "فریدونشهر",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:28.046Z",
+  "importedAt": "2026-06-16T18:34:39.091Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,7 @@
         "west": 50.109122552084536,
         "east": 50.23585103060973
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "خمسلو",
@@ -35,7 +35,205 @@
         "west": 49.98160640521013,
         "east": 50.108334883735324
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "ازون-بلاغ",
+      "name": "ازون بلاغ",
+      "nameEn": "ازون-بلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اغچه",
+      "name": "اغچه",
+      "nameEn": "اغچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "افوس",
+      "name": "افوس",
+      "nameEn": "افوس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بادجان",
+      "name": "بادجان",
+      "nameEn": "بادجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برف-انبار",
+      "name": "برف انبار",
+      "nameEn": "برف-انبار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بزمه",
+      "name": "بزمه",
+      "nameEn": "بزمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنه-کمر",
+      "name": "بنه کمر",
+      "nameEn": "بنه-کمر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوئین",
+      "name": "بوئین",
+      "nameEn": "بوئین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوئین-و-میاندشت",
+      "name": "بوئین و میاندشت",
+      "nameEn": "بوئین-و-میاندشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیج-گرد",
+      "name": "بیج گرد",
+      "nameEn": "بیج-گرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چقادر",
+      "name": "چقادر",
+      "nameEn": "چقادر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چقیورت",
+      "name": "چقیورت",
+      "nameEn": "چقیورت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خلیل-آباد",
+      "name": "خلیل آباد",
+      "nameEn": "خلیل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خویگان-علیا-روستای-محسن-علایی",
+      "name": "خویگان علیا روستای محسن علایی",
+      "nameEn": "خویگان-علیا-روستای-محسن-علایی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داش-کسن",
+      "name": "داش کسن",
+      "nameEn": "داش-کسن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دربند",
+      "name": "دربند",
+      "nameEn": "دربند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-سور-سفلی",
+      "name": "ده سور سفلی",
+      "nameEn": "ده-سور-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-سور-علیا",
+      "name": "ده سور علیا",
+      "nameEn": "ده-سور-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-دهق-فریدن",
+      "name": "روستای دهق (فریدن)",
+      "nameEn": "روستای-دهق-فریدن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرداب-پائین",
+      "name": "سرداب پائین",
+      "nameEn": "سرداب-پائین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگباران",
+      "name": "سنگباران",
+      "nameEn": "سنگباران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سورشجان",
+      "name": "سورشجان",
+      "nameEn": "سورشجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیبک",
+      "name": "سیبک",
+      "nameEn": "سیبک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شش-جوان",
+      "name": "شش جوان",
+      "nameEn": "شش-جوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صادقیه",
+      "name": "صادقیه",
+      "nameEn": "صادقیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صفدرآباد",
+      "name": "صفدرآباد",
+      "nameEn": "صفدرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فریدونشهر",
+      "name": "فریدونشهر",
+      "nameEn": "فریدونشهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قودجانک",
+      "name": "قودجانک",
+      "nameEn": "قودجانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میاندشت",
+      "name": "میاندشت",
+      "nameEn": "میاندشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدانک-اول",
+      "name": "میدانک اول",
+      "nameEn": "میدانک-اول",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میلاگرد",
+      "name": "میلاگرد",
+      "nameEn": "میلاگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نهضت-آباد",
+      "name": "نهضت آباد",
+      "nameEn": "نهضت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وحدت-آباد",
+      "name": "وحدت آباد",
+      "nameEn": "وحدت-آباد",
+      "geoSource": "osm"
     }
   ]
 }

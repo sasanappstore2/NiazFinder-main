@@ -67,7 +67,7 @@ export function GallerySection({ business }: SectionProps) {
       </div>
 
       <Dialog open={lightboxIndex != null} onOpenChange={(o) => !o && setLightboxIndex(null)}>
-        <DialogContent className="max-w-3xl border-none bg-black/95 p-2 sm:p-4">
+        <DialogContent className="max-w-3xl border-none bg-black/95 p-2 sm:p-4" showCloseButton={false}>
           {current && (
             <div className="relative">
               <Button

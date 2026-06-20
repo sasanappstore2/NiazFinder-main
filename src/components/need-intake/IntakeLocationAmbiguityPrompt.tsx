@@ -52,6 +52,35 @@ export interface IntakeLocationAmbiguityPromptProps {
   ) => void;
 }
 
+export function IntakeNeighborhoodDisambiguationChips({
+  options,
+  selectedValue,
+  onSelect,
+}: {
+  options: LocationAmbiguityOption[];
+  selectedValue?: string;
+  onSelect: (value: string) => void;
+}) {
+  if (options.length < 2) return null;
+
+  return (
+    <div className="space-y-2 rounded-xl border border-amber-500/25 bg-amber-500/5 px-3 py-2">
+      <p className="text-xs font-medium text-amber-800 dark:text-amber-300 flex items-center gap-1">
+        <MapPin className="size-3.5 shrink-0" aria-hidden />
+        این نام در چند نقطهٔ شهر وجود دارد — محلهٔ مدنظر را انتخاب کنید:
+      </p>
+      <SuggestionChips
+        options={options}
+        value={selectedValue}
+        onSelect={(v) => {
+          const value = typeof v === 'string' ? v : (v[0] ?? '');
+          if (value) onSelect(value);
+        }}
+      />
+    </div>
+  );
+}
+
 /** Phase 33.4 — single ambiguity question for city / neighborhood. */
 export function IntakeLocationAmbiguityPrompt({
   needDraft,

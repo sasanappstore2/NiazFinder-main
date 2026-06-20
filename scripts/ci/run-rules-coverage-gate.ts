@@ -7,11 +7,21 @@
  */
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { runIntakeIntelligence } from '@/intake/intelligence-engine';
 import { clearIntelligenceCache } from '@/lib/need-intake/intake-parse-cache-store';
 import { resolveDeterministicListingTitle } from '@/lib/need-intake/resolve-listing-title';
-import { countLoadedRules } from '@/intake/rules/registry.server';
 import { getCategoryPath } from '@/config/categories';
+
+async function stubServerOnly(): Promise<void> {
+  const { createRequire } = await import('node:module');
+  const require = createRequire(import.meta.url);
+  const p = require.resolve('server-only');
+  require.cache[p] = {
+    id: p,
+    filename: p,
+    loaded: true,
+    exports: {},
+  } as NodeModule;
+}
 
 process.env.NEED_INTAKE_RULES_ONLY = 'true';
 process.env.NEED_INTAKE_LLM_ENABLED = 'false';
@@ -44,7 +54,7 @@ const CASES: Case[] = [
     id: 'iphone-shiraz',
     text: '\u06AF\u0648\u0634\u06CC \u0622\u06CC\u0641\u0648\u0646 \u06F1\u06F3 \u067E\u0631\u0648 \u062F\u0633\u062A \u062F\u0648\u0645 \u0634\u06CC\u0631\u0627\u0632',
     expectedSlug: 'mobile-phone',
-    acceptParents: ['mobile-tablet'],
+    acceptParents: ['mobile-tablet', 'mobile-tablet-repair'],
     cityName: '\u0634\u06CC\u0631\u0627\u0632',
   },
   {
@@ -102,6 +112,10 @@ function titleBad(title: string, source: string): boolean {
 }
 
 async function main(): Promise<void> {
+  await stubServerOnly();
+  const { runIntakeIntelligence } = await import('@/intake/intelligence-engine');
+  const { countLoadedRules } = await import('@/intake/rules/registry.server');
+
   clearIntelligenceCache();
   console.log(`rules loaded: ${countLoadedRules()}`);
 

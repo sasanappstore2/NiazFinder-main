@@ -4,6 +4,7 @@ import { requirePermission } from '@/lib/rbac/authz';
 import { isAllowedSuperAdmin, isSuperAdminPhone } from '@/lib/super-admin';
 import { getAuthUser } from '@/lib/auth';
 import { logAdminAction } from '@/lib/audit/admin-audit';
+import { queueBusinessProfileTypesenseSyncByUserId } from '@/lib/search/typesense-sync';
 
 export const runtime = 'nodejs';
 
@@ -161,6 +162,10 @@ export async function PATCH(
     await logAdminAction(request, authUser.id, 'crm.user.update', 'User', targetId, {
       updates: updateData,
     });
+
+    if (typeof updateData.isActive === 'boolean') {
+      queueBusinessProfileTypesenseSyncByUserId(targetId);
+    }
 
     return NextResponse.json({ user });
   } catch (error) {

@@ -6,7 +6,7 @@ export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   try {
-    const authz = await requirePermission(request, 'ops:intake-migration:read');
+    const authz = await requirePermission(request, 'ops:intake-ai-evaluation:read');
     if (!authz.ok) return authz.response;
 
     const data = await buildIntakeAiEvaluationDashboard();

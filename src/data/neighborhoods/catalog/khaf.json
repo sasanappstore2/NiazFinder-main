@@ -2,7 +2,7 @@
   "cityId": "khaf",
   "cityName": "خاف",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:28.976Z",
+  "importedAt": "2026-06-16T19:27:57.617Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -20,6 +20,168 @@
         "east": 60.20602170500714
       },
       "geoSource": "divar"
+    },
+    {
+      "id": "ارزنه",
+      "name": "ارزنه",
+      "nameEn": "ارزنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسدآباد",
+      "name": "اسدآباد",
+      "nameEn": "اسدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بازگوی",
+      "name": "بازگوی",
+      "nameEn": "بازگوی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغچه",
+      "name": "باغچه",
+      "nameEn": "باغچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برآباد",
+      "name": "برآباد",
+      "nameEn": "برآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بقسانی",
+      "name": "بقسانی",
+      "nameEn": "بقسانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیاس-آباد-نوسازی",
+      "name": "بیاس آباد نوسازی",
+      "nameEn": "بیاس-آباد-نوسازی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشت-آباد",
+      "name": "پشت آباد",
+      "nameEn": "پشت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تیزاب",
+      "name": "تیزاب",
+      "nameEn": "تیزاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-مزار",
+      "name": "چشمه مزار",
+      "nameEn": "چشمه-مزار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حفیظ-آباد",
+      "name": "حفیظ آباد",
+      "nameEn": "حفیظ-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرکرد",
+      "name": "خرکرد",
+      "nameEn": "خرکرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خواجه",
+      "name": "خواجه",
+      "nameEn": "خواجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خواف",
+      "name": "خواف",
+      "nameEn": "خواف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشت",
+      "name": "دشت",
+      "nameEn": "دشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رزان",
+      "name": "رزان",
+      "nameEn": "رزان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-ولیعصر",
+      "name": "شهرک ولیعصر",
+      "nameEn": "شهرک-ولیعصر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرازی",
+      "name": "گرازی",
+      "nameEn": "گرازی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لاج",
+      "name": "لاج",
+      "nameEn": "لاج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدآباد",
+      "name": "محمدآباد",
+      "nameEn": "محمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهاباد",
+      "name": "مهاباد",
+      "nameEn": "مهاباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآباد",
+      "name": "مهرآباد",
+      "nameEn": "مهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-معلم",
+      "name": "میدان معلم",
+      "nameEn": "میدان-معلم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نشتیفان",
+      "name": "نشتیفان",
+      "nameEn": "نشتیفان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نقاب",
+      "name": "نقاب",
+      "nameEn": "نقاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورو",
+      "name": "ورو",
+      "nameEn": "ورو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هرشی",
+      "name": "هرشی",
+      "nameEn": "هرشی",
+      "geoSource": "osm"
     }
   ]
 }

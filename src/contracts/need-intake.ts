@@ -3,6 +3,7 @@
  */
 
 import type { NeedIntelligenceProfile } from '@/contracts/need-intelligence';
+import type { IntakeAnalysisSnapshot } from '@/intake/training/types';
 import type { IntakeAnalysisTrace } from '@/intake/types/analysis-trace';
 import type {
   CompletionState,
@@ -58,6 +59,14 @@ export interface FieldOption {
   label: string;
 }
 
+/** Rule-ranked category options when intake text matches multiple slugs. */
+export interface CategoryCandidateOption {
+  slug: string;
+  label: string;
+  confidence: number;
+  matchedRules?: string[];
+}
+
 export interface FieldSchema {
   key: string;
   type: FieldType;
@@ -111,6 +120,8 @@ export interface ParsedIntent {
   rejectLocationAutoConfirm?: boolean;
   /** Cross-city disambiguation options when city is ambiguous. */
   cityCandidates?: Array<{ cityId: string; label: string; score?: number }>;
+  /** Rule-ranked category options when slug is ambiguous. */
+  categoryCandidates?: CategoryCandidateOption[];
   /** MLX parse confidence (0–1) when from /v1/parse. */
   parseConfidence?: number;
   /** Inline listing from high-confidence parse JSON v2. */
@@ -188,8 +199,10 @@ export interface NeedDraft {
   answers: Record<string, string | number | boolean | string[]>;
   leadPhone?: string;
   listingPreview?: ListingPreview;
-  /** @deprecated Training capture removed — optional session metadata. */
+  /** Optional analyze session metadata for training flywheel. */
   intakeTrace?: IntakeAnalysisTrace;
+  /** Snapshot of last analyze (AI/rules predictions) at publish time. */
+  analysisSnapshot?: IntakeAnalysisSnapshot;
   /** Optional enrichment for listing copy (future / rules extraction). */
   intelligenceProfile?: NeedIntelligenceProfile;
   /** Per-field confidence + source from Intelligence Engine v1. */
@@ -222,7 +235,7 @@ export interface NextQuestionResponse {
   chips?: FieldOption[];
   /** When set, client should show option chips before continuing schema questions. */
   disambiguation?: {
-    kind: 'neighborhood';
+    kind: 'neighborhood' | 'category';
     question: string;
     options: FieldOption[];
   };

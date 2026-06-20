@@ -44,7 +44,7 @@ export interface TruthReconcileResult {
   skipped: string[];
 }
 
-/** Apply AI truth verdicts ? override intake when incorrect/missing and confident enough. */
+/** Apply AI truth verdicts — override intake when incorrect/missing and confident enough. */
 export function applyTruthVerdicts(
   bag: IntakeFieldBag,
   verdicts: TruthVerdict[],

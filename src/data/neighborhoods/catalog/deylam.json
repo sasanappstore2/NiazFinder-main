@@ -2,7 +2,7 @@
   "cityId": "deylam",
   "cityName": "دیلم",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:27.804Z",
+  "importedAt": "2026-06-16T22:26:41.448Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,7 @@
         "west": 50.327381989402035,
         "east": 50.45045261162948
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "مسکن-مهر",
@@ -35,7 +35,115 @@
         "west": 50.18491002536141,
         "east": 50.307980647588856
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "بابا-حسنی",
+      "name": "بابا حسنی",
+      "nameEn": "بابا-حسنی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندر-حماد",
+      "name": "بندر حماد",
+      "nameEn": "بندر-حماد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندر-دیلم",
+      "name": "بندر دیلم",
+      "nameEn": "بندر-دیلم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنه-احمد",
+      "name": "بنه احمد",
+      "nameEn": "بنه-احمد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنه-اسماعیل",
+      "name": "بنه اسماعیل",
+      "nameEn": "بنه-اسماعیل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنه-خاطر",
+      "name": "بنه خاطر",
+      "nameEn": "بنه-خاطر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بویرات",
+      "name": "بویرات",
+      "nameEn": "بویرات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیدو",
+      "name": "بیدو",
+      "nameEn": "بیدو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنوب",
+      "name": "تنوب",
+      "nameEn": "تنوب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خواجه-گیر",
+      "name": "خواجه گیر",
+      "nameEn": "خواجه-گیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-سیامکان",
+      "name": "روستای سیامکان",
+      "nameEn": "روستای-سیامکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاه-عبدالله",
+      "name": "شاه عبدالله",
+      "nameEn": "شاه-عبدالله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخ-زنگی",
+      "name": "شیخ زنگی",
+      "nameEn": "شیخ-زنگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عامری",
+      "name": "عامری",
+      "nameEn": "عامری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنارکوه",
+      "name": "کنارکوه",
+      "nameEn": "کنارکوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گزلوری",
+      "name": "گزلوری",
+      "nameEn": "گزلوری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لیلتین",
+      "name": "لیلتین",
+      "nameEn": "لیلتین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مال-شهاب",
+      "name": "مال شهاب",
+      "nameEn": "مال-شهاب",
+      "geoSource": "osm"
     }
   ]
 }

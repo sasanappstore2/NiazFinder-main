@@ -2,7 +2,7 @@
   "cityId": "bandarlengeh",
   "cityName": "بندرلنگه",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:27.243Z",
+  "importedAt": "2026-06-16T22:40:02.543Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -20,6 +20,54 @@
         "east": 54.8894204028605
       },
       "geoSource": "divar"
+    },
+    {
+      "id": "بریسمو",
+      "name": "بریسمو",
+      "nameEn": "بریسمو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندر-بستانه",
+      "name": "بندر بستانه",
+      "nameEn": "بندر-بستانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندر-شناس",
+      "name": "بندر شناس",
+      "nameEn": "بندر-شناس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندرملو",
+      "name": "بندرملو",
+      "nameEn": "بندرملو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خورشناس",
+      "name": "خورشناس",
+      "nameEn": "خورشناس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیوان",
+      "name": "دیوان",
+      "nameEn": "دیوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مغویه",
+      "name": "مغویه",
+      "nameEn": "مغویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هیروند",
+      "name": "هیروند",
+      "nameEn": "هیروند",
+      "geoSource": "osm"
     }
   ]
 }

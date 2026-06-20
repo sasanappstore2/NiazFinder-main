@@ -59,7 +59,7 @@ export function buildResidentialRentTelemetryFixture(): PostIntakeEvent[] {
       timeSpentOnFieldMs: 3000,
     });
 
-    // Observed but not in all schema snapshots ? parking candidate
+    // Observed but not in all schema snapshots — parking candidate
     if (i % 2 === 0) {
       events.push({
         type: 'field_change',

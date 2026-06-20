@@ -2,7 +2,7 @@
   "cityId": "semirom",
   "cityName": "سمیرم",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:30.682Z",
+  "importedAt": "2026-06-16T18:34:02.007Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,103 @@
         "west": 51.64788060745786,
         "east": 51.7327421661758
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "بردکان",
+      "name": "بردکان",
+      "nameEn": "بردکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنگ-تیر",
+      "name": "تنگ تیر",
+      "nameEn": "تنگ-تیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلال-آباد",
+      "name": "جلال آباد",
+      "nameEn": "جلال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیابان-جلال",
+      "name": "خیابان جلال",
+      "nameEn": "خیابان-جلال",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولتقرین",
+      "name": "دولت‌قرین",
+      "nameEn": "دولتقرین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سبزآباد",
+      "name": "سبزآباد",
+      "nameEn": "سبزآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سمیرم",
+      "name": "سمیرم",
+      "nameEn": "سمیرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صادق-آباد",
+      "name": "صادق آباد",
+      "nameEn": "صادق-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قدمگاه-شاه-جعفر",
+      "name": "قدمگاه شاه جعفر",
+      "nameEn": "قدمگاه-شاه-جعفر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-قاچ",
+      "name": "قره قاچ",
+      "nameEn": "قره-قاچ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-قدم",
+      "name": "قلعه قدم",
+      "nameEn": "قلعه-قدم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرکرستان",
+      "name": "کرکرستان",
+      "nameEn": "کرکرستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرموک",
+      "name": "گرموک",
+      "nameEn": "گرموک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرگرد",
+      "name": "مهرگرد",
+      "nameEn": "مهرگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هست",
+      "name": "هست",
+      "nameEn": "هست",
+      "geoSource": "osm"
     }
   ]
 }

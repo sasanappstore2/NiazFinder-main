@@ -10,7 +10,7 @@ import { PriceInput } from '@/components/need-intake/PriceInput';
 import { IntakeCategoryMegaMenuPicker } from '@/components/need-intake/IntakeCategoryMegaMenuPicker';
 import { IntakeCityPicker } from '@/components/need-intake/IntakeCityPicker';
 import { IntakeNeighborhoodPicker } from '@/components/need-intake/IntakeNeighborhoodPicker';
-import { NeedMapPinPicker } from '@/components/need-intake/NeedMapPinPicker';
+import { NeedMapPinPicker } from '@/components/need-intake/NeedMapPinPickerLazy';
 import { Shapes } from 'lucide-react';
 import type { IntakeRenderContext } from '@/intake/rendering/types';
 
@@ -194,11 +194,16 @@ function PriceField({ field, value, onChange, disabled }: FieldRendererProps) {
 
 export function CategorySuggestions({ context }: { context: IntakeRenderContext }) {
   if (!context.categorySuggestions.length) return null;
+  const hint = context.categoryAmbiguous
+    ? 'کدام دسته‌بندی به نیاز شما نزدیک‌تر است؟'
+    : context.commercialCategoryAmbiguous
+      ? 'کدام نوع ملک تجاری مدنظر شماست؟'
+      : 'پیشنهاد دسته‌بندی (اختیاری)';
   return (
     <div className="space-y-2">
       <p className="text-xs text-muted-foreground flex items-center gap-1">
         <Shapes className="size-3.5" />
-        پیشنهاد دسته‌بندی (اختیاری)
+        {hint}
       </p>
       <SuggestionChips
         value={context.selectedLeafCategorySlug}

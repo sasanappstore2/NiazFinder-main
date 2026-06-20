@@ -33,7 +33,7 @@ export interface UsePostIntakeTelemetryOptions {
 
 /**
  * Binds /post wizard lifecycle to post-intake telemetry (step transitions + drop-off).
- * Does not alter wizard state ? observation only.
+ * Does not alter wizard state — observation only.
  */
 export function usePostIntakeTelemetry({
   step,
@@ -46,8 +46,10 @@ export function usePostIntakeTelemetry({
   const stepRef = useRef(step);
   const needDraftRef = useRef(needDraft);
 
-  stepRef.current = step;
-  needDraftRef.current = needDraft;
+  useEffect(() => {
+    stepRef.current = step;
+    needDraftRef.current = needDraft;
+  }, [step, needDraft]);
 
   useEffect(() => {
     setPostIntakeTelemetryContext({

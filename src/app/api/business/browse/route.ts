@@ -46,6 +46,13 @@ export async function GET(request: NextRequest) {
     const neighborhoodCity =
       searchParams.get('neighborhoodCity') ?? searchParams.get('city') ?? undefined;
 
+    const latRaw = searchParams.get('lat');
+    const lngRaw = searchParams.get('lng');
+    const radiusRaw = searchParams.get('radius_km') ?? searchParams.get('radiusKm');
+    const lat = latRaw ? Number(latRaw) : undefined;
+    const lng = lngRaw ? Number(lngRaw) : undefined;
+    const radiusKm = radiusRaw ? Number(radiusRaw) : undefined;
+
     const result = await listBusinesses({
       citiesParam,
       provincesParam,
@@ -58,6 +65,9 @@ export async function GET(request: NextRequest) {
       sort,
       page,
       limit,
+      lat: Number.isFinite(lat) ? lat : undefined,
+      lng: Number.isFinite(lng) ? lng : undefined,
+      radiusKm: Number.isFinite(radiusKm) ? radiusKm : undefined,
     });
 
     return NextResponse.json(result);

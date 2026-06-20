@@ -89,7 +89,7 @@ export function buildEvolutionProposal(insights: SchemaInsights): SchemaEvolutio
           to: firstSection,
         });
         rationale.push(
-          `${signal.fieldKey} has high friction (${(friction * 100).toFixed(0)}%) ? consider moving earlier`
+          `${signal.fieldKey} has high friction (${(friction * 100).toFixed(0)}%) — consider moving earlier`
         );
       }
     }

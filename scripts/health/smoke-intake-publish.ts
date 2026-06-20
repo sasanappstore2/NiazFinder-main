@@ -11,6 +11,28 @@ import { validateNeedDraftForPublish } from '@/intake/validation/publishValidato
 import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
 import { resolveDeterministicListingTitle } from '@/lib/need-intake/resolve-listing-title';
 
+async function pollPublishStatus(
+  baseUrl: string,
+  requestId: string,
+  token: string,
+  maxAttempts = 40,
+  intervalMs = 1500
+): Promise<void> {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const res = await fetch(
+      `${baseUrl}/api/need-intake/publish/status/${encodeURIComponent(requestId)}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const data = (await res.json()) as { ready?: boolean; error?: string };
+    if (!res.ok) {
+      throw new Error(data.error || `status poll failed (${res.status})`);
+    }
+    if (data.ready) return;
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+  }
+  throw new Error('publish status did not become ready in time');
+}
+
 async function main(): Promise<void> {
   const baseUrl = process.env.SMOKE_BASE_URL ?? 'http://localhost:3000';
   const email = `smoke-publish-${Date.now()}@example.com`;
@@ -68,6 +90,15 @@ async function main(): Promise<void> {
   if (!pub.ok) {
     console.error('publish failed', pub.status, pubData);
     process.exit(1);
+  }
+
+  if (!pubData.id) {
+    console.error('publish missing id', pubData);
+    process.exit(1);
+  }
+
+  if (pub.status === 202) {
+    await pollPublishStatus(baseUrl, pubData.id, regData.token);
   }
 
   console.log('smoke-intake-publish OK:', pubData.id);

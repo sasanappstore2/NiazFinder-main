@@ -2,7 +2,7 @@
   "cityId": "jajarm",
   "cityName": "جاجرم",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:28.613Z",
+  "importedAt": "2026-06-16T23:32:01.288Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,31 @@
         "west": 56.404728314546105,
         "east": 56.639527905712946
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایور",
+      "name": "ایور",
+      "nameEn": "ایور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جاجرم",
+      "name": "جاجرم",
+      "nameEn": "جاجرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درق",
+      "name": "درق",
+      "nameEn": "درق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرمه",
+      "name": "گرمه",
+      "nameEn": "گرمه",
+      "geoSource": "osm"
     }
   ]
 }

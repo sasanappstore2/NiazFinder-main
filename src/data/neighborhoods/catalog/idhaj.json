@@ -2,7 +2,7 @@
   "cityId": "idhaj",
   "cityName": "ایجرود",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:28.546Z",
+  "importedAt": "2026-06-16T21:31:56.980Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -20,6 +20,228 @@
         "east": 48.48930825154621
       },
       "geoSource": "divar"
+    },
+    {
+      "id": "ارکووین",
+      "name": "ارکووین",
+      "nameEn": "ارکووین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایج",
+      "name": "ایج",
+      "nameEn": "ایج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلوبین",
+      "name": "بلوبین",
+      "nameEn": "بلوبین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پاشا-چای",
+      "name": "پاشا چای",
+      "nameEn": "پاشا-چای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چسب",
+      "name": "چسب",
+      "nameEn": "چسب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چولچه-قشلاق",
+      "name": "چولچه قشلاق",
+      "nameEn": "چولچه-قشلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاج-قشلاق",
+      "name": "حاج قشلاق",
+      "nameEn": "حاج-قشلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حلب",
+      "name": "حلب",
+      "nameEn": "حلب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانجین",
+      "name": "خانجین",
+      "nameEn": "خانجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانقاه",
+      "name": "خانقاه",
+      "nameEn": "خانقاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خویین",
+      "name": "خویین",
+      "nameEn": "خویین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرین-آباد",
+      "name": "زرین آباد",
+      "nameEn": "زرین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراب",
+      "name": "سراب",
+      "nameEn": "سراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سعید-آباد",
+      "name": "سعید آباد",
+      "nameEn": "سعید-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سفیدکمر",
+      "name": "سفیدکمر",
+      "nameEn": "سفیدکمر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوراب",
+      "name": "شوراب",
+      "nameEn": "شوراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک",
+      "name": "شهرک",
+      "nameEn": "شهرک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-بلاغ",
+      "name": "قره بلاغ",
+      "nameEn": "قره-بلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-داغ",
+      "name": "قره داغ",
+      "nameEn": "قره-داغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-درق",
+      "name": "قره درق",
+      "nameEn": "قره-درق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزلجه",
+      "name": "قزلجه",
+      "nameEn": "قزلجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قل-قاطی",
+      "name": "قل قاطی",
+      "nameEn": "قل-قاطی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قمچقای",
+      "name": "قمچقای",
+      "nameEn": "قمچقای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قنبرلک",
+      "name": "قنبرلک",
+      "nameEn": "قنبرلک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قندی-بلاغ",
+      "name": "قندی بلاغ",
+      "nameEn": "قندی-بلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوریه",
+      "name": "قوریه",
+      "nameEn": "قوریه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوشچی",
+      "name": "قوشچی",
+      "nameEn": "قوشچی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرنه",
+      "name": "گرنه",
+      "nameEn": "گرنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلابر",
+      "name": "گلابر",
+      "nameEn": "گلابر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملاپیری",
+      "name": "ملاپیری",
+      "nameEn": "ملاپیری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نجم-الشیخان",
+      "name": "نجم الشیخان",
+      "nameEn": "نجم-الشیخان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نکتو",
+      "name": "نکتو",
+      "nameEn": "نکتو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هلیل-آباد",
+      "name": "هلیل آباد",
+      "nameEn": "هلیل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یدی-بلاغ",
+      "name": "یدی بلاغ",
+      "nameEn": "یدی-بلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ینکی-کندمیرزاالماسی",
+      "name": "ینکی کندمیرزاالماسی",
+      "nameEn": "ینکی-کندمیرزاالماسی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ینگی-کند-جامع-سرا",
+      "name": "ینگی کند جامع سرا",
+      "nameEn": "ینگی-کند-جامع-سرا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ینگی-کند-سیدلر",
+      "name": "ینگی کند سیدلر",
+      "nameEn": "ینگی-کند-سیدلر",
+      "geoSource": "osm"
     }
   ]
 }

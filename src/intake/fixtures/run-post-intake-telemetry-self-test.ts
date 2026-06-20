@@ -1,5 +1,5 @@
 /**
- * Post intake telemetry ? event schema, adapters, PII sanitize, enable flag.
+ * Post intake telemetry — event schema, adapters, PII sanitize, enable flag.
  * Run: npm run test:post-intake-telemetry
  */
 import {

@@ -116,5 +116,15 @@ export function extractLocationFragment(rawText: string): string | undefined {
     if (frag && frag.length >= 2) return frag;
   }
 
+  const streetLead = normalized.match(
+    /(?:^|\s)(?:بلوار|خیابان|کوچه)\s+([\u0600-\u06FF\u200c\s\-]+?)(?:\s|$|[،,])/iu
+  );
+  if (streetLead?.[1]) {
+    const frag = stripTrailingCityFromFragment(
+      stripTrailingMoneyFromFragment(stripTrailingAreaFromFragment(cleanLocationFragment(streetLead[1])))
+    );
+    if (frag && frag.length >= 2) return frag;
+  }
+
   return undefined;
 }

@@ -36,7 +36,24 @@ Output:
 npm run dev:estate-scrape
 # POST http://127.0.0.1:8200/v1/build-dataset
 # POST http://127.0.0.1:8200/v1/scrape-url  {"url":"..."}
+# POST http://127.0.0.1:8200/v1/business-import/preview
+#   {"url":"https://example.com","hintBlueprintId":"online_store","occupationSlugs":[]}
 ```
+
+### Business site import preview
+
+Requires `intake-mlx` (Qwen on port 8100). The Next.js app proxies authenticated requests to this endpoint via `ESTATE_SCRAPE_URL` (default `http://127.0.0.1:8200`).
+
+```bash
+curl -s http://127.0.0.1:8200/health | jq
+curl -s -X POST http://127.0.0.1:8200/v1/business-import/preview \
+  -H 'Content-Type: application/json' \
+  -d '{"url":"https://example.com"}' | jq
+```
+
+Returns `siteType`, `blueprintId` (`online_store` | `company`), `confidence`, `pagesScraped`, and `suggestions[]` for user review before apply.
+
+Optional: set `ESTATE_SCRAPE_SECRET` in both Next.js (`.env.local`) and the estate-scrape process; Next sends `x-estate-scrape-secret` on preview requests.
 
 ## Merge with real-estate need dataset
 

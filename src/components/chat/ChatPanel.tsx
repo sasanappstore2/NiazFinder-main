@@ -8,6 +8,7 @@ import {
   buildChatContactShareContent,
   CHAT_CONTACT_SHARE_PREFIX,
 } from '@/lib/chat/contact-share';
+import { buildChatLocationShareContent } from '@/lib/chat/location-share';
 import { extFromChatMime, fileTypeForVoiceUpload } from '@/lib/chat/attachment-mime';
 import {
   MessageSquare,
@@ -54,6 +55,7 @@ import {
   type ChatGalleryImage,
 } from '@/components/chat/ChatImageLightbox';
 import { ChatComposer } from '@/components/chat/ChatComposer';
+import { ChatLocationPickerDialog } from '@/components/chat/ChatLocationPickerDialog';
 import { toVoiceCallPeer } from '@/lib/voice/voice-call-peer';
 import { useChatRealtime } from '@/hooks/useChatRealtime';
 import { useChatTypingEmitter } from '@/hooks/useChatTypingEmitter';
@@ -170,6 +172,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   const fetchConversations = useAppStore((s) => s.fetchConversations);
   const fetchConversationMessages = useAppStore((s) => s.fetchConversationMessages);
   const sendMessage = useAppStore((s) => s.sendMessage);
+  const sendPlatformAgentMessage = useAppStore((s) => s.sendPlatformAgentMessage);
   const reactToMessage = useAppStore((s) => s.reactToMessage);
   const deleteChatMessage = useAppStore((s) => s.deleteChatMessage);
   const editChatMessage = useAppStore((s) => s.editChatMessage);
@@ -256,8 +259,10 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [callHistory, setCallHistory] = useState<VoiceCallRecord[]>([]);
   const [callsLoading, setCallsLoading] = useState(false);
+  const [locationPickerOpen, setLocationPickerOpen] = useState(false);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const userSearchInputRef = useRef<HTMLInputElement>(null);
+  const platformBotAutoOpenedRef = useRef(false);
 
   // ── Derived state ───────────────────────────────────────────────────────
   const selectedConversation = conversations.find((c) => c.id === activeConversationId) ?? null;
@@ -457,6 +462,22 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     [setActiveConversationId, router]
   );
 
+  // Auto-open platform bot chat when entering /chat without a selected thread
+  useEffect(() => {
+    if (initialConversationId || platformBotAutoOpenedRef.current) return;
+    if (!isAuthenticated || isLoading) return;
+    const bot = conversations.find((c) => c.isPlatformBot);
+    if (!bot) return;
+    platformBotAutoOpenedRef.current = true;
+    handleSelectConversation(bot.id);
+  }, [
+    initialConversationId,
+    isAuthenticated,
+    isLoading,
+    conversations,
+    handleSelectConversation,
+  ]);
+
   // ── Create / select conversation from search result ─────────────────────
   const handleSelectSearchUser = useCallback(
     async (user: SearchedUser) => {
@@ -608,6 +629,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
 
     const savedReply = replyTo;
     const convId = activeConversationId;
+    const isPlatformBot = selectedConversation?.isPlatformBot === true;
 
     setNewMessage('');
     setReplyTo(null);
@@ -615,6 +637,36 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     setIsSendingMessage(true);
 
     void (async () => {
+      if (isPlatformBot) {
+        const result = await sendPlatformAgentMessage(convId, text, {
+          replyToId: savedReply?.messageId,
+          platformBotUserId: selectedConversation?.otherUser?.id,
+        });
+
+        if (!result.ok) {
+          setNewMessage(text);
+          if (savedReply) setReplyTo(savedReply);
+          if (result.code === 'INSUFFICIENT_BALANCE') {
+            toast.error('موجودی کیف پول کافی نیست', {
+              description: 'برای استفاده از دستیار هوشمند، کیف پول خود را شارژ کنید.',
+              action: {
+                label: 'کیف پول',
+                onClick: () => router.push(routeBuilder.dashboardTab('wallet')),
+              },
+            });
+          } else {
+            const errMsg = useAppStore.getState().error;
+            toast.error(errMsg || 'پاسخ دستیار هوشمند دریافت نشد');
+            useAppStore.getState().clearError();
+          }
+        }
+
+        setIsSendingMessage(false);
+        inputRef.current?.focus();
+        scrollToBottomForced();
+        return;
+      }
+
       const success = await sendMessage(convId, text, 'TEXT', {
         replyToId: savedReply?.messageId,
       });
@@ -639,6 +691,10 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     isSendingMessage,
     attachmentBusy,
     sendMessage,
+    sendPlatformAgentMessage,
+    selectedConversation?.isPlatformBot,
+    selectedConversation?.otherUser?.id,
+    router,
     editChatMessage,
     stopTyping,
     scrollToBottomForced,
@@ -751,40 +807,35 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
 
   const shareGeolocation = useCallback(() => {
     if (!activeConversationId) return;
-    if (typeof navigator === 'undefined' || !navigator.geolocation) {
-      toast.error('مرورگر از موقعیت مکانی پشتیبانی نمی‌کند');
-      return;
-    }
-    const loadingId = toast.loading('در حال دریافت موقعیت…');
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        try {
-          const { latitude, longitude } = pos.coords;
-          const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-          const text = `📍 موقعیت من روی نقشه\n${mapsUrl}`;
-          setIsSendingMessage(true);
-          let ok = false;
-          try {
-            ok = await sendMessage(activeConversationId, text, 'TEXT');
-          } finally {
-            setIsSendingMessage(false);
-          }
-          toast.dismiss(loadingId);
-          if (ok) toast.success('موقعیت ارسال شد');
-          else toast.error('ارسال موقعیت ناموفق بود');
-        } catch {
-          setIsSendingMessage(false);
-          toast.dismiss(loadingId);
-          toast.error('خطا در ارسال');
-        }
-      },
-      () => {
-        toast.dismiss(loadingId);
-        toast.error('دسترسی به موقعیت داده نشد یا در دسترس نیست');
-      },
-      { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 }
-    );
-  }, [activeConversationId, sendMessage]);
+    setLocationPickerOpen(true);
+  }, [activeConversationId]);
+
+  const sendSharedLocation = useCallback(
+    async (coords: { lat: number; lng: number }) => {
+      if (!activeConversationId) return;
+      setIsSendingMessage(true);
+      let ok = false;
+      try {
+        const content = buildChatLocationShareContent({
+          v: 1,
+          lat: coords.lat,
+          lng: coords.lng,
+        });
+        ok = await sendMessage(activeConversationId, content, 'TEXT');
+      } finally {
+        setIsSendingMessage(false);
+      }
+      if (ok) {
+        setLocationPickerOpen(false);
+        toast.success('موقعیت ارسال شد');
+      } else {
+        toast.error('ارسال موقعیت ناموفق بود');
+      }
+    },
+    [activeConversationId, sendMessage]
+  );
+
+  const locationPickerCity = currentUser?.city?.trim() || 'تهران';
 
   const shareMyContactCard = useCallback(async () => {
     if (!activeConversationId || !currentUser) {
@@ -1512,6 +1563,13 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
           </div>
         )}
       </div>
+      <ChatLocationPickerDialog
+        open={locationPickerOpen}
+        onOpenChange={setLocationPickerOpen}
+        city={locationPickerCity}
+        onConfirm={sendSharedLocation}
+        busy={isSendingMessage}
+      />
       <AlertDialog
         open={Boolean(deleteConfirmMsgId)}
         onOpenChange={(open) => !open && setDeleteConfirmMsgId(null)}

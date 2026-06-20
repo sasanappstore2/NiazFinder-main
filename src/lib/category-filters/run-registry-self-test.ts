@@ -2,7 +2,7 @@
  * Self-test: category filter registry resolution.
  * Run: npx tsx src/lib/category-filters/run-registry-self-test.ts
  */
-import { getFiltersForCategory } from '@/config/category-filters/registry';
+import { getFiltersForCategory, getIntakeFieldsForCategory } from '@/config/category-filters/registry';
 import { parseFilters, serializeFilters } from '@/lib/filters/parser';
 
 const CASES = [
@@ -10,6 +10,7 @@ const CASES = [
   { slug: 'suite-apartment-rent', expectBrowseKeys: ['guestCount', 'nightlyRent'] },
   { slug: 'car-ride', expectBrowseKeys: ['condition', 'yearMin'] },
   { slug: 'mobile-phone', expectBrowseKeys: ['storage', 'condition'] },
+  { slug: 'musical-instruments', expectIntakeKeys: ['brand', 'condition', 'dealType', 'budget'] },
   { slug: 'plumbing', expectHidden: ['serviceCategory'] },
   { slug: 'jobs', expectBrowseKeys: ['roleType'] },
 ] as const;
@@ -33,6 +34,16 @@ for (const c of CASES) {
     for (const k of c.expectHidden) {
       if (keys.has(k)) {
         console.error(`FAIL ${c.slug}: should hide ${k}`);
+        failed++;
+      }
+    }
+  }
+
+  if ('expectIntakeKeys' in c) {
+    const intakeKeys = new Set(getIntakeFieldsForCategory(c.slug).map((f) => f.key));
+    for (const k of c.expectIntakeKeys) {
+      if (!intakeKeys.has(k)) {
+        console.error(`FAIL ${c.slug}: missing intake key ${k}`);
         failed++;
       }
     }

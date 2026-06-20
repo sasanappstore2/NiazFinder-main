@@ -29,6 +29,8 @@ export function buildIntelligenceTrace(opts: {
   aiLatencyMs?: number;
   cacheHit?: boolean;
   truthVerification?: IntakeIntelligenceTrace['truthVerification'];
+  intentGist?: string | null;
+  intentGistProvider?: string | null;
 }): IntakeIntelligenceTrace {
   return {
     traceId: buildTraceId(opts.inputText),
@@ -41,5 +43,7 @@ export function buildIntelligenceTrace(opts: {
     cacheHit: opts.cacheHit,
     fieldMeta: opts.fieldMeta,
     truthVerification: opts.truthVerification,
+    intentGist: opts.intentGist ?? null,
+    intentGistProvider: opts.intentGistProvider ?? null,
   };
 }

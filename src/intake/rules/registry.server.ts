@@ -4,8 +4,21 @@ import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { RULES_PACKS_DIR } from '@/intake/rules/config';
 import { buildLegacyIntakeRules } from '@/intake/rules/legacy-bridge';
-import { matchCategoryFromRuleSet } from '@/intake/rules/registry-match';
-import type { CategoryMatchResult, IntakeRule, RulePack } from '@/intake/rules/types';
+import {
+  candidateToCategoryMatchResult,
+  isCategoryAmbiguous,
+  matchCategoryCandidatesFromRuleSet,
+  matchCategoryFromRuleSet,
+  pickCategoryIfClear,
+} from '@/intake/rules/registry-match';
+import type { CategoryMatchCandidate, CategoryMatchResult, IntakeRule, RulePack } from '@/intake/rules/types';
+import type { ClassifierVertical } from '@/lib/need-intake/vertical-classifier';
+import { slugBelongsToAnyVertical } from '@/intake/intelligence-engine/hybrid/vertical-slug-index';
+
+export interface MatchCategoryOptions {
+  verticalFilter?: readonly ClassifierVertical[];
+  slugHints?: readonly string[];
+}
 
 let packRulesCache: IntakeRule[] | null = null;
 let negativeRulesCache: IntakeRule[] | null = null;
@@ -72,8 +85,52 @@ export function getPackRequiredFields(slug: string): string[] {
   return pack?.meta.requiredFields ?? [];
 }
 
-export function matchCategoryFromRules(text: string): CategoryMatchResult | null {
-  return matchCategoryFromRuleSet(text, positiveRules(), allNegativeRules());
+function filterPositiveRules(rules: IntakeRule[], opts?: MatchCategoryOptions): IntakeRule[] {
+  if (!opts?.verticalFilter?.length && !opts?.slugHints?.length) return rules;
+
+  const hintSet = opts.slugHints?.length ? new Set(opts.slugHints) : null;
+
+  return rules.filter((r) => {
+    if (hintSet?.has(r.slug)) return true;
+    if (opts.verticalFilter?.length) {
+      return slugBelongsToAnyVertical(r.slug, opts.verticalFilter);
+    }
+    return true;
+  });
+}
+
+export function matchCategoryFromRules(
+  text: string,
+  opts?: MatchCategoryOptions
+): CategoryMatchResult | null {
+  const positive = filterPositiveRules(positiveRules(), opts);
+  if (!positive.length) {
+    return matchCategoryFromRuleSet(text, positiveRules(), allNegativeRules());
+  }
+  return matchCategoryFromRuleSet(text, positive, allNegativeRules());
+}
+
+export function matchCategoryCandidatesFromRules(
+  text: string,
+  opts?: MatchCategoryOptions & { limit?: number }
+): CategoryMatchCandidate[] {
+  const positive = filterPositiveRules(positiveRules(), opts);
+  const rules = positive.length ? positive : positiveRules();
+  return matchCategoryCandidatesFromRuleSet(text, rules, allNegativeRules(), {
+    limit: opts?.limit,
+  });
+}
+
+export { isCategoryAmbiguous, pickCategoryIfClear, candidateToCategoryMatchResult };
+
+export function pickClearCategoryFromRules(
+  text: string,
+  opts?: MatchCategoryOptions
+): CategoryMatchResult | null {
+  const positive = filterPositiveRules(positiveRules(), opts);
+  const rules = positive.length ? positive : positiveRules();
+  const candidates = matchCategoryCandidatesFromRuleSet(text, rules, allNegativeRules());
+  return pickCategoryIfClear(text, candidates, rules);
 }
 
 export function clearRulesRegistryCache(): void {

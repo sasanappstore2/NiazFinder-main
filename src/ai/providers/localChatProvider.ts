@@ -12,6 +12,8 @@ import {
   type ChatMessage,
 } from '@/lib/need-intake/local-chat-client';
 import { getLocalModelConfig } from '@/lib/need-intake/local-model-config';
+import { geminiChatCompletions } from '@/lib/gemini/chat-completions';
+import { isGeminiFallbackEnabled } from '@/lib/gemini/config';
 
 /** OpenAI-compatible local server (LM Studio / llama.cpp on :1234). */
 export class LocalChatAiProvider implements AiProvider {
@@ -33,7 +35,14 @@ export class LocalChatAiProvider implements AiProvider {
       { role: 'user', content: prompt },
     ];
 
-    const chat = await localChatCompletions(messages, { config: this.config });
+    let chat = await localChatCompletions(messages, { config: this.config });
+    let providerUsed: 'local-llm' | 'gemini' = 'local-llm';
+
+    if (!chat && isGeminiFallbackEnabled()) {
+      chat = await geminiChatCompletions(messages, { jsonMode: true, temperature: 0.1 });
+      providerUsed = 'gemini';
+    }
+
     if (!chat) {
       return {
         ok: false,
@@ -42,7 +51,9 @@ export class LocalChatAiProvider implements AiProvider {
         validatedEntities: null,
         error: {
           code: 'UNAVAILABLE',
-          message: `Local LLM unreachable at ${this.config.baseUrl}`,
+          message: isGeminiFallbackEnabled()
+            ? `Local LLM unreachable at ${this.config.baseUrl} and Gemini fallback failed`
+            : `Local LLM unreachable at ${this.config.baseUrl}`,
           retryable: true,
         },
         latencyMs: Math.round(performance.now() - started),
@@ -53,12 +64,12 @@ export class LocalChatAiProvider implements AiProvider {
     if (!parsed) {
       return {
         ok: false,
-        provider: 'local-llm',
+        provider: providerUsed,
         extraction: null,
         validatedEntities: null,
         error: {
           code: 'PARSE_ERROR',
-          message: 'Local LLM response was not valid JSON',
+          message: `${providerUsed === 'gemini' ? 'Gemini' : 'Local LLM'} response was not valid JSON`,
           retryable: false,
         },
         latencyMs: Math.round(performance.now() - started),
@@ -80,7 +91,7 @@ export class LocalChatAiProvider implements AiProvider {
 
     return {
       ok: hasAccepted,
-      provider: 'local-llm',
+      provider: providerUsed,
       extraction,
       validatedEntities: validation.patch,
       validationRejects: validation.rejects,
@@ -89,7 +100,7 @@ export class LocalChatAiProvider implements AiProvider {
         ? null
         : {
             code: 'INVALID_RESPONSE',
-            message: 'All local LLM selections rejected by candidate validation',
+            message: `All ${providerUsed === 'gemini' ? 'Gemini' : 'local LLM'} selections rejected by candidate validation`,
             retryable: false,
           },
       latencyMs: Math.round(performance.now() - started),

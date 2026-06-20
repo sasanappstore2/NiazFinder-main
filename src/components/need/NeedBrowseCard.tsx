@@ -62,42 +62,58 @@ function CategoryPill({
 }
 
 function LocationLine({
+  province,
   city,
   neighborhood,
   cityHref,
 }: {
+  province?: string;
   city?: string;
   neighborhood?: string | null;
   cityHref?: string;
 }) {
-  if (!city && !neighborhood) return null;
+  if (!province && !city && !neighborhood) return null;
 
-  const cityNode = city ? (
-    cityHref ? (
-      <Link
-        href={cityHref}
-        onClick={(e) => e.stopPropagation()}
-        className="truncate transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
-      >
-        {city}
-      </Link>
-    ) : (
-      <span className="truncate">{city}</span>
-    )
-  ) : null;
+  const segments: Array<{ key: string; text: string; href?: string }> = [];
+  if (province?.trim()) segments.push({ key: 'province', text: province.trim() });
+  if (city?.trim() && city.trim() !== province?.trim()) {
+    segments.push({ key: 'city', text: city.trim(), href: cityHref });
+  }
+  if (
+    neighborhood?.trim() &&
+    neighborhood.trim() !== city?.trim() &&
+    neighborhood.trim() !== province?.trim()
+  ) {
+    segments.push({ key: 'neighborhood', text: neighborhood.trim() });
+  }
+
+  if (!segments.length) return null;
 
   return (
     <p className="flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground">
       <MapPin className="size-3.5 shrink-0 opacity-60" aria-hidden />
       <span className="min-w-0 truncate">
-        {cityNode}
-        {city && neighborhood ? (
-          <span className="text-muted-foreground/50" aria-hidden>
-            {' '}
-            ·{' '}
+        {segments.map((segment, index) => (
+          <span key={segment.key}>
+            {index > 0 ? (
+              <span className="text-muted-foreground/50" aria-hidden>
+                {' '}
+                ·{' '}
+              </span>
+            ) : null}
+            {segment.href ? (
+              <Link
+                href={segment.href}
+                onClick={(e) => e.stopPropagation()}
+                className="truncate transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
+              >
+                {segment.text}
+              </Link>
+            ) : (
+              <span className="truncate">{segment.text}</span>
+            )}
           </span>
-        ) : null}
-        {neighborhood ? <span className="truncate">{neighborhood}</span> : null}
+        ))}
       </span>
     </p>
   );
@@ -128,7 +144,7 @@ export function NeedBrowseCard({
   const showPriorityBadge =
     request.priority === 'URGENT' || request.priority === 'HIGH';
   const budgetLabel = formatRequestBudget(request);
-  const neighborhoodLabel = extractNeighborhoodLabel(request.address);
+  const neighborhoodLabel = extractNeighborhoodLabel(request.address, request.dynamicAnswers);
   const proposalCount = request.proposalCount;
 
   return (
@@ -177,6 +193,7 @@ export function NeedBrowseCard({
 
           {/* Row 3 — location */}
           <LocationLine
+            province={request.province}
             city={request.city}
             neighborhood={neighborhoodLabel}
             cityHref={cityHref}

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { sanitizeMessageContentForClient } from '@/lib/persian-encoding-guard';
 
 // ============ GET handler — conversation with messages ============
 
@@ -91,7 +92,7 @@ export async function GET(
     const mappedMessages = conversation.messages.map((m) => ({
       id: m.id,
       senderId: m.senderId,
-      content: m.content,
+      content: sanitizeMessageContentForClient(m.content, m.type),
       type: m.type,
       attachmentUrls: JSON.parse(m.attachmentUrls),
       isRead: m.isRead,
@@ -105,7 +106,9 @@ export async function GET(
       requestId: conversation.requestId,
       userId1: conversation.userId1,
       userId2: conversation.userId2,
-      lastMessage: conversation.lastMessage,
+      lastMessage: conversation.lastMessage
+        ? sanitizeMessageContentForClient(conversation.lastMessage, 'TEXT')
+        : conversation.lastMessage,
       lastMessageAt: conversation.lastMessageAt?.toISOString() || null,
       createdAt: conversation.createdAt.toISOString(),
       updatedAt: conversation.updatedAt.toISOString(),

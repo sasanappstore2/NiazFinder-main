@@ -41,8 +41,9 @@ export async function ensureConversation(params: {
   userId1: string;
   userId2: string;
   requestId?: string;
+  businessProfileId?: string;
 }) {
-  const { userId1, userId2, requestId } = params;
+  const { userId1, userId2, requestId, businessProfileId } = params;
   const [a, b] = userId1 < userId2 ? [userId1, userId2] : [userId2, userId1];
 
   const existing = await db.conversation.findFirst({
@@ -50,6 +51,7 @@ export async function ensureConversation(params: {
       userId1: a,
       userId2: b,
       ...(requestId ? { requestId } : {}),
+      ...(businessProfileId ? { businessProfileId } : {}),
     },
   });
 
@@ -60,6 +62,7 @@ export async function ensureConversation(params: {
       userId1: a,
       userId2: b,
       requestId: requestId ?? null,
+      businessProfileId: businessProfileId ?? null,
     },
   });
 }

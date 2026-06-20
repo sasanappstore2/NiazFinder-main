@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { BusinessImageUpload } from '@/components/business-profile/onboarding/BusinessImageUpload';
+import { SiteImportWizard } from '@/components/business-profile/site-import/SiteImportWizard';
 
 export type StepBrandValues = {
   logo: string;
@@ -37,10 +38,14 @@ export function StepBrand({
   values,
   errors,
   onChange,
+  occupationSlugs = [],
+  onSiteImportApplied,
 }: {
   values: StepBrandValues;
   errors: Partial<Record<keyof StepBrandValues, string>>;
   onChange: (patch: Partial<StepBrandValues>) => void;
+  occupationSlugs?: string[];
+  onSiteImportApplied?: () => void;
 }) {
   return (
     <div className="space-y-[21px]">
@@ -61,10 +66,10 @@ export function StepBrand({
 
       <BusinessImageUpload
         label="تصویر کاور"
-        hint="افقی — حداکثر ۶ مگابایت"
+        hint="افقی ۲:۱ — تصویر تمیز؛ بدون اسکرین‌شات منو"
         value={values.coverImage}
         kind="cover"
-        aspectClass="aspect-[1.618/1] w-full"
+        aspectClass="aspect-[21/9] w-full"
         onChange={(url) => onChange({ coverImage: url })}
         error={errors.coverImage}
       />
@@ -93,6 +98,13 @@ export function StepBrand({
               {errors[key] && <p className="text-xs text-destructive">{errors[key]}</p>}
             </div>
           ))}
+          <div className="sm:col-span-2 pt-1">
+            <SiteImportWizard
+              websiteUrl={values.website}
+              occupationSlugs={occupationSlugs}
+              onApplied={() => onSiteImportApplied?.()}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -2,15 +2,25 @@
 
 import Image from 'next/image';
 import { BadgeCheck, MapPin, Star } from 'lucide-react';
-import { StarRating } from '@/components/shared/StarRating';
-import { BookmarkButton } from '@/components/shared/BookmarkButton';
+import { BusinessStarButton } from '@/components/shared/BusinessStarButton';
 import { ShareButton } from '@/components/shared/ShareButton';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { ContactActions } from '@/components/contact/ContactActions';
 import { HeroCoverAurora } from '@/components/business-profile/HeroCoverAurora';
+import {
+  PROFILE_ACTION_TOOLBAR,
+  PROFILE_COVER,
+  PROFILE_COVER_IMAGE,
+  PROFILE_HERO,
+  PROFILE_IDENTITY_BODY,
+  PROFILE_IDENTITY_SHEET,
+  PROFILE_LOGO,
+  PROFILE_TOOLBAR_BTN,
+} from '@/components/business-profile/profile-layout-tokens';
 import { BusinessProfileLocationMap } from '@/components/business/map/BusinessMapPinPickerLazy';
+import { Separator } from '@/components/ui/separator';
 import { routeBuilder } from '@/config/routes';
+import { cn } from '@/lib/utils';
 import type { SectionProps } from './types';
 
 export function HeroSection({ business, requestId }: SectionProps) {
@@ -19,96 +29,109 @@ export function HeroSection({ business, requestId }: SectionProps) {
       ? window.location.href
       : business.seo.canonicalUrl ?? routeBuilder.pro(business.id);
 
+  const hasCover = Boolean(business.identity.coverImage);
+
   return (
-    <section
-      id="section-hero"
-      className="profile-surface relative z-0 overflow-hidden rounded-2xl shadow-sm"
-    >
-      <div className="relative h-40 sm:h-52 md:h-60">
-        {business.identity.coverImage ? (
+    <section id="section-hero" className={PROFILE_HERO}>
+      <div className={PROFILE_COVER}>
+        {hasCover ? (
           <Image
-            src={business.identity.coverImage}
+            src={business.identity.coverImage!}
             alt=""
             fill
-            className="object-cover"
+            className={PROFILE_COVER_IMAGE}
             priority
           />
         ) : (
           <HeroCoverAurora className="absolute inset-0" />
         )}
         <div
-          className={
-            business.identity.coverImage
-              ? 'absolute inset-0 bg-linear-to-t from-black/75 via-black/35 to-black/5 sm:from-black/65'
-              : 'absolute inset-0 bg-linear-to-t from-black/55 via-black/20 to-transparent'
-          }
+          className={cn(
+            'profile-hero__scrim',
+            !hasCover && 'profile-hero__scrim--aurora'
+          )}
+          aria-hidden
         />
       </div>
 
-      <div className="relative z-10 px-4 pb-5 sm:px-6">
-        <div className="-mt-10 flex flex-col gap-4 sm:-mt-12 sm:flex-row sm:items-start">
-          <div className="size-20 shrink-0 self-start overflow-hidden rounded-2xl border-4 border-background bg-muted shadow-lg ring-1 ring-border/40 sm:size-28">
-            {business.identity.logo ? (
-              <Image
-                src={business.identity.logo}
-                alt=""
-                width={112}
-                height={112}
-                className="size-full object-cover"
+      <div className={PROFILE_IDENTITY_SHEET}>
+        <div className={PROFILE_LOGO}>
+          {business.identity.logo ? (
+            <Image
+              src={business.identity.logo}
+              alt=""
+              width={112}
+              height={112}
+              className="size-full object-cover"
+            />
+          ) : (
+            <div className="flex size-full items-center justify-center text-xl font-bold text-muted-foreground sm:text-2xl">
+              {business.name.slice(0, 2)}
+            </div>
+          )}
+        </div>
+
+        <div className={PROFILE_IDENTITY_BODY}>
+          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+            <h1 className="overflow-guard min-w-0 max-w-none flex-1 text-lg font-bold leading-snug tracking-tight text-foreground sm:text-xl md:text-2xl lg:text-3xl">
+              {business.name}
+            </h1>
+            {business.trust.verified && (
+              <BadgeCheck
+                className="size-6 shrink-0 text-emerald-600 dark:text-emerald-400"
+                aria-label="تأیید شده"
               />
-            ) : (
-              <div className="flex size-full items-center justify-center text-xl font-bold text-muted-foreground sm:text-2xl">
-                {business.name.slice(0, 2)}
-              </div>
             )}
           </div>
 
-          <div className="min-w-0 flex-1">
-            <div className="profile-surface rounded-xl p-4 shadow-md">
-              <div className="flex flex-wrap items-start gap-2">
-                <h1 className="min-w-0 flex-1 text-xl font-bold leading-snug tracking-tight text-foreground sm:text-2xl md:text-3xl">
-                  {business.name}
-                </h1>
-                {business.trust.verified && (
-                  <BadgeCheck
-                    className="size-6 shrink-0 text-emerald-600 dark:text-emerald-400"
-                    aria-label="تأیید شده"
-                  />
-                )}
-              </div>
-              <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-foreground">
-                  <StarRating rating={business.trust.rating} size="sm" />
-                  <span className="font-semibold">{business.trust.rating.toFixed(1)}</span>
-                  <span className="text-muted-foreground">
-                    ({business.trust.reviewCount.toLocaleString('fa-IR')})
-                  </span>
+          <div className="mt-[13px] flex flex-wrap items-center gap-2 text-sm">
+            {business.trust.reviewCount > 0 && business.trust.rating > 0 && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-foreground">
+                <span className="font-semibold">{business.trust.rating.toFixed(1)}</span>
+                <span className="text-muted-foreground">
+                  ({business.trust.reviewCount.toLocaleString('fa-IR')})
                 </span>
-                {business.identity.location.city && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-muted-foreground">
-                    <MapPin className="size-3.5 shrink-0" />
-                    {business.identity.location.city}
-                  </span>
-                )}
-              </div>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {business.trust.badges.slice(0, 4).map((b) => (
-                  <Badge key={b} variant="secondary" className="text-xs">
-                    {b}
-                  </Badge>
-                ))}
-                {business.trust.yearsActive > 0 && (
-                  <Badge variant="outline" className="text-xs">
-                    {business.trust.yearsActive.toLocaleString('fa-IR')}+ سال فعالیت
-                  </Badge>
-                )}
-              </div>
-            </div>
+              </span>
+            )}
+            {business.identity.location.city && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-muted-foreground">
+                <MapPin className="size-3.5 shrink-0" />
+                {business.identity.location.city}
+              </span>
+            )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:mt-2 sm:shrink-0">
-            <BookmarkButton itemId={business.id} itemType="specialist" />
-            <ShareButton title={business.name} description={business.identity.description} url={shareUrl} />
+          {(business.trust.badges.length > 0 || business.trust.yearsActive > 0) && (
+            <div className="mt-[13px] flex flex-wrap gap-1.5">
+              {business.trust.badges.slice(0, 4).map((b) => (
+                <Badge key={b} variant="secondary" className="text-xs">
+                  {b}
+                </Badge>
+              ))}
+              {business.trust.yearsActive > 0 && (
+                <Badge variant="outline" className="text-xs">
+                  {business.trust.yearsActive.toLocaleString('fa-IR')}+ سال فعالیت
+                </Badge>
+              )}
+            </div>
+          )}
+
+          <Separator className="my-[21px] bg-border/50" />
+
+          <div className={PROFILE_ACTION_TOOLBAR}>
+            <BusinessStarButton
+              businessUserId={business.id}
+              initialCount={business.analytics.saves}
+              size="toolbar"
+              className={PROFILE_TOOLBAR_BTN}
+            />
+            <ShareButton
+              title={business.name}
+              description={business.identity.description}
+              url={shareUrl}
+              variant="toolbar"
+              className={PROFILE_TOOLBAR_BTN}
+            />
             <ContactActions
               otherUserId={business.userId}
               requestId={requestId}
@@ -116,7 +139,8 @@ export function HeroSection({ business, requestId }: SectionProps) {
               hasPhone={Boolean(business.contact.phone)}
               chatEnabled={business.contact.chatEnabled}
               showProfile={false}
-              variant="compact"
+              variant="toolbar"
+              className="col-span-2 w-full md:col-span-1 md:w-auto"
             />
           </div>
         </div>
@@ -156,11 +180,11 @@ export function HighlightsSection({ business }: SectionProps) {
   if (items.length === 0) return null;
 
   return (
-    <section id="section-highlights" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+    <section id="section-highlights" className="grid grid-cols-2 gap-[13px] sm:grid-cols-4">
       {items.map((item) => (
         <div
           key={item.label}
-          className="profile-surface rounded-xl px-4 py-3 text-center shadow-sm transition hover:border-emerald-500/20"
+          className="profile-surface rounded-2xl px-4 py-3 text-center shadow-sm transition hover:border-emerald-500/20"
         >
           <p className="text-xl font-bold">{item.value}</p>
           <p className="text-xs text-muted-foreground">{item.label}</p>
@@ -263,7 +287,10 @@ export function ContactSidebarCard({ business, requestId }: SectionProps) {
         variant="default"
       />
       <div className="mt-4 flex justify-center">
-        <BookmarkButton itemId={business.id} itemType="specialist" />
+        <BusinessStarButton
+          businessUserId={business.id}
+          initialCount={business.analytics.saves}
+        />
       </div>
     </div>
   );

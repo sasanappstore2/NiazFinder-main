@@ -19,6 +19,8 @@ interface IntakeSectionMenusProps {
   renderSectionFields: (section: IntakeSectionDef) => React.ReactNode;
   /** Sections that cannot be removed (category, location, …). */
   mandatoryKeys?: ReadonlySet<string>;
+  /** Sections with business-critical optional filters (auto-opened). */
+  criticalKeys?: ReadonlySet<string>;
   className?: string;
 }
 
@@ -29,9 +31,11 @@ export function IntakeSectionMenus({
   isSectionFilled,
   renderSectionFields,
   mandatoryKeys,
+  criticalKeys,
   className,
 }: IntakeSectionMenusProps) {
   const mandatory = mandatoryKeys ?? new Set<string>();
+  const critical = criticalKeys ?? new Set<string>();
 
   const availableToAdd = useMemo(
     () => sections.filter((s) => !mandatory.has(s.key) && !enabledKeys.has(s.key)),
@@ -72,10 +76,14 @@ export function IntakeSectionMenus({
   }, [enabledKeys]);
 
   return (
-    <div className={cn('flex flex-col gap-3', className)}>
+    <div className={cn('intake-section-menus flex flex-col gap-3', className)}>
       {enabledSections.length === 0 && availableToAdd.length > 0 ? (
         <p className="rounded-xl border border-dashed bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
           با زدن + می‌توانید فیلدهای اضافی نیاز را اضافه و تکمیل کنید.
+        </p>
+      ) : critical.size > 0 ? (
+        <p className="rounded-xl border border-amber-500/25 bg-amber-500/5 px-3 py-2 text-xs text-muted-foreground">
+          بخش‌های «مهم برای تطبیق» به کسب‌وکارها کمک می‌کند دقیق‌تر پاسخ دهند — پر کردنشان اختیاری است.
         </p>
       ) : null}
 
@@ -83,6 +91,7 @@ export function IntakeSectionMenus({
         {enabledSections.map((section) => {
           const filled = isSectionFilled(section);
           const isMandatory = mandatory.has(section.key);
+          const isCritical = critical.has(section.key);
           return (
             <details
               key={section.key}
@@ -105,6 +114,10 @@ export function IntakeSectionMenus({
                   {isMandatory ? (
                     <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">
                       ضروری
+                    </span>
+                  ) : isCritical && !filled ? (
+                    <span className="shrink-0 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] text-amber-700 dark:text-amber-400">
+                      مهم برای تطبیق
                     </span>
                   ) : filled ? (
                     <span className="shrink-0 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-600">

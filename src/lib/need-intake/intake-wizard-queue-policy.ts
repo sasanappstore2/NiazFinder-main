@@ -5,7 +5,7 @@ export function isIntakeWizardQueueEnabled(): boolean {
     if (pub === 'true' || pub === '1') return true;
     if (pub === 'false' || pub === '0') return false;
   }
-  return false;
+  return true;
 }
 
 export function getIntakeQueueJobTimeoutMs(): number {

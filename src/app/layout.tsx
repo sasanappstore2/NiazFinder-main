@@ -4,6 +4,7 @@ import { vazirmatn } from "@/lib/fonts/vazirmatn";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import { GlobalVoiceCallLayer } from "@/components/voice/GlobalVoiceCallLayer";
+import { DeferredChatSocketBootstrap } from "@/components/voice/DeferredChatSocketBootstrap";
 import {
   SITE_URL,
   SITE_NAME,
@@ -183,6 +184,7 @@ export default function RootLayout({
 
         <ThemeProvider>
           {children}
+          <DeferredChatSocketBootstrap />
           <GlobalVoiceCallLayer />
           <Toaster position="top-center" richColors dir="rtl" closeButton />
         </ThemeProvider>

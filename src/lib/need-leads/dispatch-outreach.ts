@@ -3,6 +3,7 @@ import { buildNeedMatchContextFromRequest } from './build-match-context';
 import { qualifyBusinessesForOutreach } from './qualify-outreach';
 import { sendLeadToBusiness } from './send-lead-to-business';
 import { isLeadOutreachEnabled, getLeadMaxPerRequest } from './env';
+import { isSmartMatchingEnabled } from '@/lib/smart-matching/env';
 
 export interface DispatchOutreachResult {
   requestId: string;
@@ -24,7 +25,7 @@ export async function dispatchNeedLeadOutreach(
     errors: 0,
   };
 
-  if (!isLeadOutreachEnabled()) {
+  if (!isLeadOutreachEnabled() || isSmartMatchingEnabled()) {
     return result;
   }
 

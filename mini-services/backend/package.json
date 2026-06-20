@@ -12,6 +12,7 @@
     "typeorm:run": "typeorm-ts-node-commonjs migration:run -d src/config/data-source.ts"
   },
   "dependencies": {
+    "@nestjs/axios": "^3.1.2",
     "@nestjs/bullmq": "^10.2.1",
     "@nestjs/cache-manager": "^2.2.2",
     "@nestjs/common": "^10.4.6",
@@ -26,6 +27,7 @@
     "@nestjs/throttler": "^6.5.0",
     "@nestjs/websockets": "^10.4.6",
     "@prisma/client": "^6.11.1",
+    "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bullmq": "^5.30.6",
     "cache-manager": "^5.2.4",

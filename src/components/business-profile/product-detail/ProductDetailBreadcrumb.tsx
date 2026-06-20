@@ -42,7 +42,7 @@ export function ProductDetailBreadcrumb({
         </>
       )}
       <ChevronLeft className="size-3.5 shrink-0 text-muted-foreground/60" aria-hidden />
-      <span className="line-clamp-1 font-medium text-foreground">{productTitle}</span>
+      <span className="line-clamp-1 overflow-guard font-medium text-foreground">{productTitle}</span>
     </nav>
   );
 }

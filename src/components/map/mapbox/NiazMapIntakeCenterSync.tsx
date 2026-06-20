@@ -13,7 +13,9 @@ export function NiazMapIntakeCenterSync({
 }) {
   const mapRef = useNiazMapRef();
   const onCenterChangeRef = useRef(onCenterChange);
-  onCenterChangeRef.current = onCenterChange;
+  useEffect(() => {
+    onCenterChangeRef.current = onCenterChange;
+  }, [onCenterChange]);
 
   useEffect(() => {
     if (!enabled || !mapRef?.current) return;

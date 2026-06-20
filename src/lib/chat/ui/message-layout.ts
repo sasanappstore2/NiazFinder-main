@@ -1,5 +1,6 @@
 import type { Message } from '@/lib/types';
 import { CHAT_CONTACT_SHARE_PREFIX } from '@/lib/chat/contact-share';
+import { CHAT_LOCATION_SHARE_PREFIX } from '@/lib/chat/location-share';
 import {
   CHAT_PRODUCT_CARD_PREFIX,
   parseLegacyProductIntroText,
@@ -14,7 +15,8 @@ export type MessageContentKind =
   | 'offer_card'
   | 'need_card'
   | 'proposal'
-  | 'contact_share';
+  | 'contact_share'
+  | 'location_share';
 
 export type MessageLayoutHints = {
   kind: MessageContentKind;
@@ -52,6 +54,9 @@ export function classifyMessageContent(msg: Message): MessageLayoutHints {
   if (msg.type === 'TEXT' && typeof msg.content === 'string') {
     if (msg.content.startsWith(CHAT_CONTACT_SHARE_PREFIX)) {
       return { kind: 'contact_share', isMedia: false, isCard: false, useUnbrokenWrap: false };
+    }
+    if (msg.content.startsWith(CHAT_LOCATION_SHARE_PREFIX)) {
+      return { kind: 'location_share', isMedia: false, isCard: false, useUnbrokenWrap: false };
     }
     if (
       msg.content.startsWith(CHAT_PRODUCT_CARD_PREFIX) ||

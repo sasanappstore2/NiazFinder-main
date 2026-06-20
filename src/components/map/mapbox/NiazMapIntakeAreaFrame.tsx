@@ -19,7 +19,9 @@ export function NiazMapIntakeAreaFrame({
 }) {
   const mapRef = useNiazMapRef();
   const onFramedRef = useRef(onFramed);
-  onFramedRef.current = onFramed;
+  useEffect(() => {
+    onFramedRef.current = onFramed;
+  }, [onFramed]);
 
   useEffect(() => {
     if (!mapRef?.current || radiusM <= 0) return;

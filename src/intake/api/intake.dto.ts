@@ -1,11 +1,23 @@
 import { z } from 'zod';
 import type { IntakeAnalysisResult } from '@/intake/types';
 
+export const intakeFormHintsSchema = z.object({
+  categorySlug: z.string().trim().optional(),
+  subcategorySlug: z.string().trim().optional(),
+  city: z.string().trim().optional(),
+  neighborhood: z.string().trim().optional(),
+  categoryLockedByUser: z.boolean().optional(),
+});
+
 export const intakeAnalyzeRequestSchema = z.object({
   text: z.string().trim().min(3, 'متن باید حداقل ۳ کاراکتر باشد').max(4000),
   /** Optional city hint from cookie/URL to boost neighborhood matching. */
   citySlug: z.string().trim().optional(),
   cityName: z.string().trim().optional(),
+  /** User-locked form fields — must influence analyze + cache key. */
+  formHints: intakeFormHintsSchema.optional(),
+  /** Step-1 AI-first: invoke semantic AI even when rules confidence is high. */
+  forceAi: z.boolean().optional(),
 });
 
 export type IntakeAnalyzeRequest = z.infer<typeof intakeAnalyzeRequestSchema>;

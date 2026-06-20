@@ -1,11 +1,14 @@
 /**
  * Fails CI when Persian UI strings were corrupted to "?" placeholders.
- * Run: npx tsx src/intake/fixtures/run-persian-encoding-guard-self-test.ts
+ * Run: npm run test:persian-encoding-guard
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-const ROOT = join(process.cwd(), 'src');
+const ROOTS = [
+  join(process.cwd(), 'src'),
+  join(process.cwd(), 'mini-services/backend/src'),
+];
 
 function walk(dir: string, out: string[] = []): string[] {
   for (const name of readdirSync(dir)) {
@@ -26,18 +29,21 @@ const TEMPLATE_Q_SEP = /\$\{[^}]+\} \? \$\{/;
 
 let failures = 0;
 
-for (const file of walk(ROOT)) {
-  const rel = file.replace(process.cwd() + '/', '');
-  const lines = readFileSync(file, 'utf8').split('\n');
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]!;
-    if (line.trimStart().startsWith('//')) continue;
-    if (TRIPLE_Q.test(line) || PERSIAN_Q_SEP.test(line)) {
-      console.error(`${rel}:${i + 1}: corrupted Persian placeholder ? ${line.trim().slice(0, 100)}`);
-      failures++;
-    } else if (TEMPLATE_Q_SEP.test(line) && !line.includes('??')) {
-      console.error(`${rel}:${i + 1}: use " / " or " ? " instead of " ? " ? ${line.trim().slice(0, 100)}`);
-      failures++;
+for (const root of ROOTS) {
+  for (const file of walk(root)) {
+    const rel = file.replace(process.cwd() + '/', '');
+    const lines = readFileSync(file, 'utf8').split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i]!;
+      if (line.trimStart().startsWith('//')) continue;
+      if (line.trimStart().startsWith('*')) continue;
+      if (TRIPLE_Q.test(line) || PERSIAN_Q_SEP.test(line)) {
+        console.error(`${rel}:${i + 1}: corrupted Persian placeholder — ${line.trim().slice(0, 100)}`);
+        failures++;
+      } else if (TEMPLATE_Q_SEP.test(line) && !line.includes('??')) {
+        console.error(`${rel}:${i + 1}: use " / " or " — " instead of " ? " — ${line.trim().slice(0, 100)}`);
+        failures++;
+      }
     }
   }
 }

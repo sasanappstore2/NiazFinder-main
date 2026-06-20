@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { recordIntakeMigrationEvent } from '@/intake/migration/events';
+import { guardIntakePublicApi } from '@/lib/need-intake/intake-api-guard';
 
 const ALLOWED_TYPES = new Set(['LegacyWriteDetected']);
 
 export async function POST(request: NextRequest) {
+  const rateLimited = guardIntakePublicApi(request, 'telemetry', 30);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const type = typeof body.type === 'string' ? body.type : '';

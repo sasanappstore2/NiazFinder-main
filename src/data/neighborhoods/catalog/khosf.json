@@ -2,7 +2,7 @@
   "cityId": "khosf",
   "cityName": "خوسف",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:29.158Z",
+  "importedAt": "2026-06-16T23:36:47.274Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,163 @@
         "west": 58.54509566097219,
         "east": 58.769492362424856
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "باتجگ",
+      "name": "باتجگ",
+      "nameEn": "باتجگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پی-گدار",
+      "name": "پی گدار",
+      "nameEn": "پی-گدار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تقاب",
+      "name": "تقاب",
+      "nameEn": "تقاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تک-گیسه",
+      "name": "تک گیسه",
+      "nameEn": "تک-گیسه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنگل-علی-بیک",
+      "name": "تنگل علی بیک",
+      "nameEn": "تنگل-علی-بیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جومیان",
+      "name": "جومیان",
+      "nameEn": "جومیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خوسف",
+      "name": "خوسف",
+      "nameEn": "خوسف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خونیک",
+      "name": "خونیک",
+      "nameEn": "خونیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رچ",
+      "name": "رچ",
+      "nameEn": "رچ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رکات-سفلی",
+      "name": "رکات سفلی",
+      "nameEn": "رکات-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رکات-علیا",
+      "name": "رکات علیا",
+      "nameEn": "رکات-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زمان-آباد",
+      "name": "زمان آباد",
+      "nameEn": "زمان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرپرچ",
+      "name": "سرپرچ",
+      "nameEn": "سرپرچ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیوجان",
+      "name": "سیوجان",
+      "nameEn": "سیوجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاه-زیله-مهدیه-کلات-ملک",
+      "name": "شاه زیله مهدیه کلات ملک",
+      "nameEn": "شاه-زیله-مهدیه-کلات-ملک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-گلخانه",
+      "name": "شهرک گلخانه",
+      "nameEn": "شهرک-گلخانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-گود",
+      "name": "علی گود",
+      "nameEn": "علی-گود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فخرآباد",
+      "name": "فخرآباد",
+      "nameEn": "فخرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فدشک",
+      "name": "فدشک",
+      "nameEn": "فدشک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-شور",
+      "name": "کلاته شور",
+      "nameEn": "کلاته-شور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-ملک",
+      "name": "کلاته ملک",
+      "nameEn": "کلاته-ملک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلبرگان",
+      "name": "گلبرگان",
+      "nameEn": "گلبرگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوشه-علیا-کوشه-علیا",
+      "name": "گوشه علیا کوشه علیا",
+      "nameEn": "گوشه-علیا-کوشه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مساوری",
+      "name": "مساوری",
+      "nameEn": "مساوری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "معصوم-آباد",
+      "name": "معصوم آباد",
+      "nameEn": "معصوم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرآباد",
+      "name": "نصرآباد",
+      "nameEn": "نصرآباد",
+      "geoSource": "osm"
     }
   ]
 }

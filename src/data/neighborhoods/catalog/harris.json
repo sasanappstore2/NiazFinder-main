@@ -2,7 +2,7 @@
   "cityId": "harris",
   "cityName": "هریس",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:28.453Z",
+  "importedAt": "2026-06-16T20:05:17.832Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,223 @@
         "west": 47.03427160938087,
         "east": 47.27254805336594
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "اربطان",
+      "name": "اربطان",
+      "nameEn": "اربطان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسبخان",
+      "name": "اسبخان",
+      "nameEn": "اسبخان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اندیس",
+      "name": "اندیس",
+      "nameEn": "اندیس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایلکده",
+      "name": "ایلکده",
+      "nameEn": "ایلکده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باروق",
+      "name": "باروق",
+      "nameEn": "باروق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برازین",
+      "name": "برازین",
+      "nameEn": "برازین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پارام",
+      "name": "پارام",
+      "nameEn": "پارام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تازا-کند",
+      "name": "تازا کند",
+      "nameEn": "تازا-کند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ترکایش",
+      "name": "ترکایش",
+      "nameEn": "ترکایش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمال-آباد",
+      "name": "جمال آباد",
+      "nameEn": "جمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانقاه",
+      "name": "خانقاه",
+      "nameEn": "خانقاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خشکناب",
+      "name": "خشکناب",
+      "nameEn": "خشکناب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خضرکندی",
+      "name": "خضرکندی",
+      "nameEn": "خضرکندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داشلوجه",
+      "name": "داشلوجه",
+      "nameEn": "داشلوجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-کغالق",
+      "name": "روستای کغالق",
+      "nameEn": "روستای-کغالق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرگر",
+      "name": "زرگر",
+      "nameEn": "زرگر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرنق",
+      "name": "زرنق",
+      "nameEn": "زرنق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرای",
+      "name": "سرای",
+      "nameEn": "سرای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیران",
+      "name": "شیران",
+      "nameEn": "شیران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-بلاغی",
+      "name": "علی بلاغی",
+      "nameEn": "علی-بلاغی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزلجه-زرین",
+      "name": "قزلجه زرین",
+      "nameEn": "قزلجه-زرین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کقالق",
+      "name": "کقالق",
+      "nameEn": "کقالق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوراوان-کندی",
+      "name": "گوراوان کندی",
+      "nameEn": "گوراوان-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گیلدیر",
+      "name": "گیلدیر",
+      "nameEn": "گیلدیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مقصودلو",
+      "name": "مقصودلو",
+      "nameEn": "مقصودلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موسی-لو",
+      "name": "موسی لو",
+      "nameEn": "موسی-لو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرام-کندی",
+      "name": "مهرام کندی",
+      "nameEn": "مهرام-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مینق",
+      "name": "مینق",
+      "nameEn": "مینق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناحا-کندی",
+      "name": "ناحا کندی",
+      "nameEn": "ناحا-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نمرور",
+      "name": "نمرور",
+      "nameEn": "نمرور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوجه-ده",
+      "name": "نوجه ده",
+      "nameEn": "نوجه-ده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نهران",
+      "name": "نهران",
+      "nameEn": "نهران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هرزه-ورز",
+      "name": "هرزه ورز",
+      "nameEn": "هرزه-ورز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یاورکندی",
+      "name": "یاورکندی",
+      "nameEn": "یاورکندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ینگجه",
+      "name": "ینگجه",
+      "nameEn": "ینگجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یوزبنده",
+      "name": "یوزبنده",
+      "nameEn": "یوزبنده",
+      "geoSource": "osm"
     }
   ]
 }

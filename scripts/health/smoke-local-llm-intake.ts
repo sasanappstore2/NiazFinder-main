@@ -2,6 +2,7 @@
  * Smoke test: local OpenAI-compatible model (:1234) + Intelligence Engine AI gate.
  * Run: NEED_INTAKE_LLM_ENABLED=true npx tsx scripts/health/smoke-local-llm-intake.ts
  */
+import '../stress/intake-marathon/stub-server-only';
 import { checkLocalModelHealth, localChatCompletions } from '@/lib/need-intake/local-chat-client';
 import { parseLabelsViaLocalChat } from '@/lib/need-intake/local-parse-bridge';
 import { runIntakeIntelligence } from '@/intake/intelligence-engine';
@@ -24,7 +25,7 @@ async function main(): Promise<void> {
 
   const ping = await localChatCompletions(
     [{ role: 'user', content: 'Reply with JSON: {"ok":true}' }],
-    { maxTokens: 32 }
+    { maxTokens: 128 }
   );
   if (!ping) {
     console.error('FAIL chat ping');

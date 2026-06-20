@@ -12,6 +12,8 @@ import {
   resolveDefaultProfileTab,
   tabHasContent,
 } from '@/lib/business/profile-tabs';
+import { PROFILE_TABS_TO_CONTENT } from '@/components/business-profile/profile-layout-tokens';
+import { cn } from '@/lib/utils';
 import { renderProfileSection } from './ProfileShell';
 import { ProfileTabEmpty } from './ProfilePrimaryTabs';
 
@@ -85,7 +87,10 @@ export function ProfileTabbedContent({
   );
 
   const sectionProps = { business, requestId, onOfferAction };
-  const gridCols = tabSpecs.length <= 3 ? 'grid-cols-3' : 'grid-cols-4';
+  const tabCount = tabSpecs.length;
+  const useScrollableTabs = tabCount > 3;
+  const gridColsClass =
+    tabCount <= 1 ? 'grid-cols-1' : tabCount === 2 ? 'grid-cols-2' : 'grid-cols-3';
   const vitrineCategoryId =
     searchParams.get('vitrineCategory') ?? searchParams.get('category');
 
@@ -118,7 +123,11 @@ export function ProfileTabbedContent({
     <Tabs value={activeTab} onValueChange={(v) => handleTabChange(v as ProfileTabId)} className="w-full">
       <TabsList
         dir="ltr"
-        className={`profile-primary-tabs profile-surface sticky top-(--site-header-offset,6.5rem) z-[calc(var(--z-header)-1)] grid h-auto w-full ${gridCols} gap-1 rounded-xl p-1 shadow-sm`}
+        className={
+          useScrollableTabs
+            ? 'profile-primary-tabs profile-surface sticky top-(--site-header-offset,6.5rem) z-[calc(var(--z-header)-1)] flex h-auto w-full min-w-0 gap-1 overflow-x-auto rounded-xl p-1.5 shadow-sm [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+            : `profile-primary-tabs profile-surface sticky top-(--site-header-offset,6.5rem) z-[calc(var(--z-header)-1)] grid h-auto w-full min-w-0 ${gridColsClass} gap-1 rounded-xl p-1.5 shadow-sm`
+        }
       >
         {displayOrder.map((tabId) => {
           const spec = tabSpecs.find((t) => t.id === tabId);
@@ -127,7 +136,11 @@ export function ProfileTabbedContent({
             <TabsTrigger
               key={tabId}
               value={tabId}
-              className="rounded-lg py-2.5 text-sm font-medium transition-all data-[state=active]:bg-background/75 data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:backdrop-blur-sm"
+              className={
+                useScrollableTabs
+                  ? 'min-h-11 min-w-[5.5rem] shrink-0 truncate rounded-lg px-2 py-2 text-xs font-medium transition-all sm:min-w-[6.5rem] sm:px-3 sm:text-sm data-[state=active]:bg-background/75 data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:backdrop-blur-sm'
+                  : 'min-h-11 min-w-0 truncate rounded-lg px-2 py-2 text-xs font-medium transition-all sm:px-3 sm:text-sm data-[state=active]:bg-background/75 data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:backdrop-blur-sm'
+              }
             >
               {spec.labelFa}
             </TabsTrigger>
@@ -135,13 +148,13 @@ export function ProfileTabbedContent({
         })}
       </TabsList>
 
-      <div className="min-w-0 pt-6">
+      <div className={cn('min-w-0', PROFILE_TABS_TO_CONTENT)}>
         {tabSpecs.map((tab) => {
           const sectionIds = getSectionsForTab(tab.id, business, layout);
           const hasContent = tabHasContent(tab.id, business, layout);
 
           return (
-            <TabsContent key={tab.id} value={tab.id} className="mt-0 space-y-8 focus-visible:outline-hidden">
+            <TabsContent key={tab.id} value={tab.id} className="mt-0 space-y-[34px] focus-visible:outline-hidden">
               {!hasContent && EMPTY_MESSAGES[tab.id] && (
                 <ProfileTabEmpty message={EMPTY_MESSAGES[tab.id]!} />
               )}

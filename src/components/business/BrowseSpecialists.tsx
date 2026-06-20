@@ -20,14 +20,13 @@ import {
   Copy,
 } from 'lucide-react';
 import { BusinessMapSplitView } from '@/components/business/map/BusinessMapSplitView';
-import { StarRating } from '@/components/shared/StarRating';
+import { BusinessStarButton } from '@/components/shared/BusinessStarButton';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAppStore } from '@/lib/store';
 import type { SpecialistProfile } from '@/lib/types';
-import { BookmarkButton } from '@/components/shared/BookmarkButton';
 import { SpecialistAvailabilityBadge } from '@/components/business/SpecialistAvailabilityBadge';
 import { routeBuilder } from '@/config/routes';
 import { CANONICAL_CITIES, COUNTRY_SLUG } from '@/config/locations';
@@ -108,7 +107,7 @@ function SpecialistCard({
 
   return (
     <Card className="group border-border/50 bg-card overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-emerald-500/[0.07] hover:border-emerald-300/60 dark:hover:border-emerald-700/60 ring-0 hover:ring-1 hover:ring-emerald-200/40 dark:hover:ring-emerald-800/40" data-href={profileHref}>
-      <CardContent className="p-6">
+      <CardContent className="p-4 max-[380px]:p-3 sm:p-6">
         {/* Top: Avatar + Name + Actions */}
         <div className="mb-4 flex items-start gap-3">
           <div className="relative">
@@ -140,13 +139,12 @@ function SpecialistCard({
             </div>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <BookmarkButton itemId={specialist.id} itemType="specialist" size="sm" />
+            <BusinessStarButton businessUserId={specialist.id} size="sm" readOnly />
           </div>
         </div>
 
-        {/* Rating + Projects */}
-        <div className="mb-4 flex items-center justify-between">
-          <StarRating rating={specialist.rating} size="sm" showValue />
+        {/* Projects */}
+        <div className="mb-4 flex items-center justify-end">
           <span className="text-xs text-muted-foreground">
             {specialist.projectCount.toLocaleString('fa-IR')} پروژه
           </span>
@@ -240,8 +238,8 @@ function SpecialistListCard({
 
   return (
     <Card className="group border-border/50 bg-card overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/[0.07] hover:border-emerald-300/60 dark:hover:border-emerald-700/60 ring-0 hover:ring-1 hover:ring-emerald-200/40 dark:hover:ring-emerald-800/40" data-href={profileHref}>
-      <CardContent className="p-4">
-        <div className="flex items-center gap-4 sm:gap-6">
+      <CardContent className="p-4 max-[380px]:p-3">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
           {/* Avatar on right */}
           <div className="relative shrink-0">
             <div className={`size-14 rounded-full flex items-center justify-center text-base font-bold ring-2 ring-primary/20 ${colorClass}`} aria-hidden="true">
@@ -285,9 +283,6 @@ function SpecialistListCard({
 
           {/* Stats column - hidden on small screens */}
           <div className="hidden shrink-0 flex-col items-center gap-2 lg:flex">
-            <div className="text-center">
-              <StarRating rating={specialist.rating} size="xs" showValue />
-            </div>
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Briefcase className="size-3" aria-hidden="true" />
@@ -306,7 +301,7 @@ function SpecialistListCard({
 
           {/* CTA buttons on left */}
           <div className="flex shrink-0 items-center gap-2">
-            <BookmarkButton itemId={specialist.id} itemType="specialist" size="sm" />
+            <BusinessStarButton businessUserId={specialist.id} size="sm" readOnly />
             <Button asChild variant="outline" className="h-9 rounded-lg px-3 text-xs font-medium">
               <Link
                 href={profileHref}
@@ -593,7 +588,7 @@ export function BrowseSpecialists({
       >
         {/* Header */}
         <div className={viewMode === 'map' ? 'mb-3 max-lg:hidden' : 'mb-8'}>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               {!serverRenderedHeading ? (
                 <h1

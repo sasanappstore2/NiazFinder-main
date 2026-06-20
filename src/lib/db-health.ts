@@ -14,3 +14,10 @@ export function isPrismaUnavailableError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
   return /can't reach database|ECONNREFUSED|connection refused/i.test(message);
 }
+
+export function apiErrorFromUnknown(error: unknown): { error: string; status: number } {
+  if (isPrismaUnavailableError(error)) {
+    return { error: DATABASE_UNAVAILABLE_FA, status: 503 };
+  }
+  return { error: 'خطای سرور رخ داده است', status: 500 };
+}

@@ -36,22 +36,29 @@ function PostNeedContent() {
 
   return (
     <>
-      <PageContainer width="intake" noVerticalPadding className="pt-2 pb-1 sm:pt-3 sm:pb-2 lg:pt-2 lg:pb-0">
-        <Breadcrumb />
+      <PageContainer width="intake" noVerticalPadding className="pt-2 pb-0 sm:pt-3 lg:pt-2">
+        <div className="intake-page-breadcrumb--mobile-collapse">
+          <Breadcrumb />
+        </div>
       </PageContainer>
-      <PageContainer width="intake" as="section" className="intake-page--compact pb-6 sm:pb-8 lg:pb-6">
+      <PageContainer
+        width="intake"
+        as="section"
+        className="intake-page--compact pb-[calc(var(--mobile-nav-offset)+0.5rem)] sm:pb-8 lg:pb-6"
+      >
         <Separator className="intake-page-separator my-2 sm:my-3 lg:my-2" />
-        <div className="intake-page-head">
+        <div className="intake-page-head intake-page-head--slim">
           <h1 className="intake-page-head__title min-w-0">ثبت نیاز جدید</h1>
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="sm"
-            className="shrink-0 gap-1.5"
+            className="shrink-0 gap-1.5 text-muted-foreground hover:text-foreground"
             onClick={handleClearForm}
           >
             <Eraser className="size-4" />
-            پاک کردن فرم
+            <span className="hidden sm:inline">پاک کردن فرم</span>
+            <span className="sm:hidden">پاک کردن</span>
           </Button>
         </div>
         <NeedIntakePanel

@@ -180,29 +180,41 @@ body {
   padding-bottom: var(--section-pad-y, 3.25rem);
 }
 
-/* Container padding — phone / tablet / laptop */
+/* Container padding — phone / tablet / laptop (shared by .page-container and PageContainer) */
 .container-default,
-.page-container {
-  padding-inline: max(1rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+.page-container,
+.page-padding {
+  padding-inline: max(0.75rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+}
+
+@media (min-width: 380px) {
+  .container-default,
+  .page-container,
+  .page-padding {
+    padding-inline: max(1rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  }
 }
 
 @media (min-width: 640px) {
   .container-default,
-  .page-container {
+  .page-container,
+  .page-padding {
     padding-inline: max(1.5rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .container-default,
-  .page-container {
+  .page-container,
+  .page-padding {
     padding-inline: max(1.75rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   }
 }
 
 @media (min-width: 1024px) {
   .container-default,
-  .page-container {
+  .page-container,
+  .page-padding {
     padding-inline: 2rem;
   }
 }

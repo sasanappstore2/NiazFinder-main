@@ -13,6 +13,7 @@ import { hasCompletedOnboarding, needsOnboarding } from '@/lib/business/onboardi
 import { isPickableProfileCategorySlug } from '@/lib/business/business-category';
 import { parseStorefrontExtension } from '@/lib/business/storefront';
 import type { BusinessProfile } from '@prisma/client';
+import { queueBusinessProfileTypesenseSync } from '@/lib/search/typesense-sync';
 
 export const runtime = 'nodejs';
 
@@ -211,6 +212,8 @@ export async function PATCH(request: NextRequest) {
       data,
       select: PATCH_SELECT,
     });
+
+    queueBusinessProfileTypesenseSync(profile.id);
 
     const onboardingCompletedAt = profile.onboardingCompletedAt;
     const merged = { ...profile, ...updated, onboardingCompletedAt } as BusinessProfile;

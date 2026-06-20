@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,20 +21,9 @@ import {
 import { formatPrice, getTimeAgo } from '@/lib/constants';
 import type { Transaction } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { apiFetch } from '@/lib/api-client';
 
-// ============ Mock Data ============
-const MOCK_TRANSACTIONS: (Transaction & { description: string })[] = [
-  { id: 't1', type: 'DEPOSIT', amount: 5000000, description: 'شارژ کیف پول از درگاه زرین‌پال', status: 'COMPLETED', createdAt: new Date(Date.now() - 86400000).toISOString() },
-  { id: 't2', type: 'PAYMENT', amount: 3500000, description: 'پرداخت به علی محمدی - طراحی سایت فروشگاهی', status: 'COMPLETED', createdAt: new Date(Date.now() - 172800000).toISOString() },
-  { id: 't3', type: 'COMMISSION', amount: 175000, description: 'کمیسیون پروژه #1234', status: 'COMPLETED', createdAt: new Date(Date.now() - 259200000).toISOString() },
-  { id: 't4', type: 'REFUND', amount: 1000000, description: 'بازگشت وجه - لغو پروژه توسط کارفرما', status: 'COMPLETED', createdAt: new Date(Date.now() - 432000000).toISOString() },
-  { id: 't5', type: 'WITHDRAW', amount: 2000000, description: 'برداشت به حساب بانکی ملت', status: 'PENDING', createdAt: new Date(Date.now() - 518400000).toISOString() },
-  { id: 't6', type: 'BONUS', amount: 500000, description: 'جایزه ثبت‌نام اولیه', status: 'COMPLETED', createdAt: new Date(Date.now() - 604800000).toISOString() },
-  { id: 't7', type: 'PAYMENT', amount: 8000000, description: 'پرداخت به سارا احمدی - طراحی لوگو برند', status: 'COMPLETED', createdAt: new Date(Date.now() - 864000000).toISOString() },
-  { id: 't8', type: 'DEPOSIT', amount: 10000000, description: 'شارژ کیف پول - انتقال بانکی', status: 'COMPLETED', createdAt: new Date(Date.now() - 1209600000).toISOString() },
-  { id: 't9', type: 'WITHDRAW', amount: 5000000, description: 'برداشت به حساب بانکی ملی', status: 'FAILED', createdAt: new Date(Date.now() - 1296000000).toISOString() },
-  { id: 't10', type: 'COMMISSION', amount: 400000, description: 'کمیسیون پروژه #5678', status: 'COMPLETED', createdAt: new Date(Date.now() - 1440000000).toISOString() },
-];
+// ============ Mock Data (removed from runtime — empty state shown when no transactions) ============
 
 // ============ Transaction Type Config ============
 const TRANSACTION_TYPE_CONFIG: Record<
@@ -107,28 +96,42 @@ const FILTER_MAP: Record<FilterTab, Transaction['type'][]> = {
 };
 
 // ============ Component ============
-export function WalletHistory() {
+export function WalletHistory({ balance }: { balance?: number }) {
   const [activeTab, setActiveTab] = useState<FilterTab>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
+  const [transactions, setTransactions] = useState<(Transaction & { description: string })[]>([]);
+  const [frozenAmount, setFrozenAmount] = useState(0);
 
-  // Computed wallet data
-  const walletData = useMemo(() => {
-    const totalBalance = 12500000;
-    const frozenAmount = 2000000;
-    const availableBalance = totalBalance - frozenAmount;
-    return { totalBalance, frozenAmount, availableBalance };
+  useEffect(() => {
+    void (async () => {
+      try {
+        const res = await apiFetch<{
+          wallet: { balance: number; frozen: number };
+          transactions: { data: Array<Transaction & { description: string }> };
+        }>('/api/wallet?limit=20');
+        setFrozenAmount(res.wallet?.frozen ?? 0);
+        setTransactions(res.transactions?.data ?? []);
+      } catch {
+        setTransactions([]);
+      }
+    })();
   }, []);
 
-  // Filtered transactions
+  const walletData = useMemo(() => {
+    const totalBalance = balance ?? 0;
+    const availableBalance = totalBalance - frozenAmount;
+    return { totalBalance, frozenAmount, availableBalance };
+  }, [balance, frozenAmount]);
+
   const filteredTransactions = useMemo(() => {
-    return MOCK_TRANSACTIONS.filter((tx) => {
+    return transactions.filter((tx) => {
       const matchesTab = FILTER_MAP[activeTab].includes(tx.type);
       const matchesSearch =
         searchQuery.trim() === '' ||
         tx.description.toLowerCase().includes(searchQuery.trim().toLowerCase());
       return matchesTab && matchesSearch;
     });
-  }, [activeTab, searchQuery]);
+  }, [activeTab, searchQuery, transactions]);
 
   return (
     <div className="space-y-6" dir="rtl">
@@ -157,7 +160,7 @@ export function WalletHistory() {
               </div>
 
               {/* Balance Display */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div className="space-y-3">
                   <div>
                     <p className="text-sm font-medium text-emerald-100/80">موجودی کل</p>
@@ -212,7 +215,7 @@ export function WalletHistory() {
       <div className="rounded-2xl">
         <Card className="rounded-2xl shadow-lg shadow-emerald-500/5 border border-border/50">
           <CardHeader className="pb-4">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <CardTitle className="text-xl font-bold">تاریخچه تراکنش‌ها</CardTitle>
               {/* Search */}
               <div className="relative w-full sm:w-72">

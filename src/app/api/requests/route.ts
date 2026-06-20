@@ -16,6 +16,7 @@ import { resolveNeighborhoodSlugs } from '@/lib/neighborhoods/server';
 import { buildNeighborhoodWhereClauses } from '@/lib/neighborhoods/tokens';
 import { shouldAutoApproveNeed } from '@/lib/need-intake/auto-approve-policy';
 import { extractNeedBudgetMetaFromDynamicAnswers } from '@/lib/need/extract-need-budget-meta';
+import { apiErrorFromUnknown } from '@/lib/db-health';
 
 // ============ TYPES ============
 
@@ -76,7 +77,7 @@ interface RequestListItem {
   updatedAt: Date;
 }
 
-const REQUEST_STATUSES = ['PENDING_REVIEW', 'OPEN', 'IN_PROGRESS', 'CLOSED', 'COMPLETED', 'CANCELLED', 'REJECTED'] as const;
+const REQUEST_STATUSES = ['PENDING_AI_REVIEW', 'PENDING_REVIEW', 'OPEN', 'IN_PROGRESS', 'CLOSED', 'COMPLETED', 'CANCELLED', 'REJECTED'] as const;
 
 function budgetToJson(value: bigint | number | null | undefined): number | null {
   if (value == null) return null;
@@ -405,10 +406,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response);
   } catch (error) {
     console.error('Requests GET error:', error);
-    return NextResponse.json(
-      { error: 'خطای سرور رخ داده است' },
-      { status: 500 }
-    );
+    const { error: message, status } = apiErrorFromUnknown(error);
+    return NextResponse.json({ error: message }, { status });
   }
 }
 

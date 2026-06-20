@@ -40,7 +40,7 @@ import {
   BusinessBrowseCategoryMenuMobile,
 } from '@/components/browse/BusinessBrowseCategoryMenu';
 import { usePathname, useRouter } from 'next/navigation';
-import { isBrowsePath } from '@/lib/search/browse-path';
+import { shouldShowBrowseHeaderChrome } from '@/lib/search/browse-path';
 import { BrowseFilterBar } from '@/components/browse/BrowseFilterBar';
 
 import { Button } from '@/components/ui/button';
@@ -352,7 +352,7 @@ function NeedHeaderCategoryMenuDesktop() {
             aria-haspopup="true"
           >
             <LayoutGrid className="size-4" />
-            <span>همه دسته‌بندی‌ها</span>
+            <span>دسته‌بندی نیازها</span>
             <ChevronDown
               className={cn('size-3 transition-transform duration-200', isOpen && 'rotate-180')}
             />
@@ -406,7 +406,7 @@ function NeedHeaderCategoryMenuMobile() {
             className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-accent hover:text-foreground border border-transparent transition-all duration-200"
           >
             <LayoutGrid className="size-4" />
-            <span>همه دسته‌بندی‌ها</span>
+            <span>دسته‌بندی نیازها</span>
             <ChevronLeft className="size-3" />
           </button>
         </SheetTrigger>
@@ -436,7 +436,7 @@ function HeaderCategoryMenuMobile() {
 // ============ Header Component ============
 function HeaderFilterRow() {
   const pathname = usePathname();
-  if (!isBrowsePath(pathname)) return null;
+  if (!shouldShowBrowseHeaderChrome(pathname)) return null;
   return (
     <div className="min-w-0 flex-1">
       <Suspense fallback={null}>
@@ -466,6 +466,7 @@ export function Header({ compact = false }: { compact?: boolean }) {
   const { navigateTo } = useNavigate();
   const isHome = pathname === '/';
   const useSolidHeader = !isHome || isScrolled;
+  const showBrowseChrome = shouldShowBrowseHeaderChrome(pathname);
 
   useEffect(() => {
     const el = headerRef.current;
@@ -495,7 +496,7 @@ export function Header({ compact = false }: { compact?: boolean }) {
       window.clearTimeout(t1);
       window.clearTimeout(t2);
     };
-  }, [compact, pathname, isScrolled, useSolidHeader]);
+  }, [compact, pathname, isScrolled, useSolidHeader, showBrowseChrome]);
 
   return (
     <header
@@ -551,11 +552,11 @@ export function Header({ compact = false }: { compact?: boolean }) {
           </div>
         </div>
 
-        {!compact && (
-          <div className="flex min-w-0 flex-wrap items-center gap-2 py-2">
+        {!compact && showBrowseChrome && (
+          <div className="flex min-w-0 flex-wrap items-center gap-2 py-2 md:flex-nowrap">
             <HeaderCategoryMenuDesktop />
             <HeaderCategoryMenuMobile />
-            <div className="min-w-0 flex-1 basis-full overflow-x-auto sm:basis-auto">
+            <div className="min-w-0 w-full flex-1 basis-full overflow-x-auto md:basis-auto md:overflow-visible">
               <HeaderFilterRow />
             </div>
           </div>

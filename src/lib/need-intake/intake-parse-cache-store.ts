@@ -1,7 +1,7 @@
 import { createHash } from 'crypto';
 import type { IntakeIntelligenceResult } from '@/intake/intelligence-engine/types';
 
-const INTAKE_PARSE_CACHE_VERSION = 'v1';
+const INTAKE_PARSE_CACHE_VERSION = 'v2';
 
 interface CacheEntry {
   result: IntakeIntelligenceResult;
@@ -19,10 +19,36 @@ function redisEnabled(): boolean {
   return process.env.NEED_INTAKE_PARSE_CACHE_REDIS === 'true' && Boolean(process.env.REDIS_URL?.trim());
 }
 
+function serializeFormHints(
+  formHints?: {
+    categorySlug?: string;
+    subcategorySlug?: string;
+    city?: string;
+    neighborhood?: string;
+    categoryLockedByUser?: boolean;
+  } | null
+): string {
+  if (!formHints) return '';
+  return [
+    formHints.categorySlug ?? '',
+    formHints.subcategorySlug ?? '',
+    formHints.city ?? '',
+    formHints.neighborhood ?? '',
+    formHints.categoryLockedByUser ? '1' : '0',
+  ].join(':');
+}
+
 export function buildParseCacheKey(
   text: string,
   citySlug?: string | null,
-  cityName?: string | null
+  cityName?: string | null,
+  formHints?: {
+    categorySlug?: string;
+    subcategorySlug?: string;
+    city?: string;
+    neighborhood?: string;
+    categoryLockedByUser?: boolean;
+  } | null
 ): string {
   const payload = [
     INTAKE_PARSE_CACHE_VERSION,
@@ -30,6 +56,7 @@ export function buildParseCacheKey(
     text.trim().toLowerCase(),
     citySlug ?? '',
     cityName ?? '',
+    serializeFormHints(formHints),
   ].join('|');
   return createHash('sha256').update(payload).digest('hex');
 }

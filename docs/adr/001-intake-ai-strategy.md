@@ -71,6 +71,40 @@
 - انواع: keyword, phrase, brand, model, scenario, negative, deal, title
 - seeds: `src/intake/rules/seeds/category-seeds.ts`
 
+### ۷. Hybrid Cascade — Rules hypothesis + targeted disambiguation (۲۰۲۶-۰۶)
+
+وقتی `NEED_INTAKE_HYBRID_ENABLED=true`:
+
+```
+1. unifiedNormalize
+2. rules top-K category hypotheses → pickCategoryIfClear (fast-path)
+3. اگر ambiguous && NEED_INTAKE_DISAMBIG_AI_ENABLED:
+   - AI pick: یک slug از کاندیدهای رول (constrained)
+   - اگر null → AI suggest یک slug → matchCategoryFromRules(slugHints) revalidate
+4. scoped rules / rulesCategoryToFieldBag با نتیجه نهایی
+5. resolvers: budget, property, deal-type (بدون AI)
+6. location: LRE + city hypothesis → city disambiguation همان الگو
+7. detectPackRequiredGaps + need-builder
+8. categoryCandidates / cityCandidates در ParsedIntent برای UI
+```
+
+- `NEED_INTAKE_INTENT_SLICE_ENABLED=false` (پیش‌فرض) — vertical از رول‌ها، نه LLM intent-slice
+- `runScopedFieldFill` دیگر مسیر پیش‌فرض نیست؛ جایگزین با disambiguation تخصصی category/city
+- AI **هرگز** full catalog در prompt نمی‌بیند — فقط top-K از رول‌ها / CityMatcher
+- `NEED_INTAKE_RULES_ONLY=true` → hybrid بدون هیچ call LLM (فقط rules + UI candidates)
+- Publish gate همچنان rules-only
+
+**Env پیشنهادی (dev با Ollama):**
+
+```bash
+NEED_INTAKE_HYBRID_ENABLED=true
+NEED_INTAKE_LLM_ENABLED=true
+NEED_INTAKE_INTENT_SLICE_ENABLED=false
+NEED_INTAKE_DISAMBIG_AI_ENABLED=true
+```
+
+**تست‌ها:** `test:hybrid-intake-golden`, `test:rules-disambiguation-golden`, `test:rules-hypothesis`, `smoke:disambig-intake`
+
 ---
 
 ## Consequences

@@ -7,6 +7,8 @@ const INDEX = viewportsIndex as unknown as LocationViewportsIndex;
 const chunkCache = new Map<string, CityViewportChunk>();
 const inflight = new Map<string, Promise<CityViewportChunk | null>>();
 
+const VIEWPORT_API = '/api/geo/viewport';
+
 function resolveChunkId(cityId: string): string {
   const keys = [...new Set([cityId, locationCityIdToSlug(cityId)].filter(Boolean))];
   for (const key of keys) {
@@ -34,7 +36,15 @@ function chunkCacheKey(cityId: string): string {
   return resolveChunkId(cityId);
 }
 
-/** Lazy-load per-city neighborhood viewport chunk (webpack context chunk). */
+async function fetchViewportChunk(chunkId: string): Promise<CityViewportChunk | null> {
+  const res = await fetch(`${VIEWPORT_API}/${encodeURIComponent(chunkId)}`, {
+    cache: 'force-cache',
+  });
+  if (!res.ok) return null;
+  return (await res.json()) as CityViewportChunk;
+}
+
+/** Lazy-load per-city neighborhood viewport chunk via API (no webpack context chunk). */
 export async function loadCityViewportChunk(cityId: string): Promise<CityViewportChunk | null> {
   const chunkId = chunkCacheKey(cityId);
   const cached = chunkCache.get(chunkId);
@@ -45,8 +55,8 @@ export async function loadCityViewportChunk(cityId: string): Promise<CityViewpor
 
   const promise = (async () => {
     try {
-      const mod = await import(`@/data/geo/viewports/cities/${chunkId}.json`);
-      const chunk = (mod.default ?? mod) as CityViewportChunk;
+      const chunk = await fetchViewportChunk(chunkId);
+      if (!chunk) return null;
       chunkCache.set(chunkId, chunk);
       if (chunkId !== cityId) chunkCache.set(cityId, chunk);
       return chunk;

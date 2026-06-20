@@ -24,6 +24,7 @@ import type { Notification } from '@/lib/types';
 import { NEED_BROWSE_ALERT_NOTIFICATION_TYPE } from '@/lib/need-alerts/types';
 import type { NeedBrowseAlertNotificationData } from '@/lib/need-alerts/types';
 import { NeedBrowseNotificationCard } from '@/components/notifications/NeedBrowseNotificationCard';
+import { sanitizeUserFacingPersianText } from '@/lib/persian-encoding-guard';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -263,7 +264,7 @@ export function NotificationsPanel() {
                       : 'hover:bg-muted/50'
                   )}
                   role="listitem"
-                  aria-label={`${notification.title}: ${notification.message}${!notification.isRead ? '، خوانده نشده' : ''}`}
+                  aria-label={`${sanitizeUserFacingPersianText(notification.title)}: ${sanitizeUserFacingPersianText(notification.message)}${!notification.isRead ? '، خوانده نشده' : ''}`}
                 >
                   <div className="flex items-start gap-3">
                     <div className="relative shrink-0">
@@ -287,7 +288,7 @@ export function NotificationsPanel() {
                       <div>
                         <div className="flex items-center gap-2">
                           <h4 className="text-sm font-semibold leading-relaxed truncate">
-                            {notification.title}
+                            {sanitizeUserFacingPersianText(notification.title)}
                           </h4>
                           {typeLabel && (
                             <span
@@ -301,7 +302,7 @@ export function NotificationsPanel() {
                           )}
                         </div>
                         <p className="mt-0.5 text-sm text-muted-foreground leading-relaxed">
-                          {notification.message}
+                          {sanitizeUserFacingPersianText(notification.message)}
                         </p>
                         <p className="mt-1.5 text-caption text-muted-foreground/60">
                           {persianTimeAgo(notification.createdAt)}

@@ -2,7 +2,7 @@
   "cityId": "evaz",
   "cityName": "اوز",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:27.918Z",
+  "importedAt": "2026-06-16T18:48:20.670Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,7 @@
         "west": 53.925766530405475,
         "east": 54.04616749063532
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "شهرک-فردوس",
@@ -35,7 +35,43 @@
         "west": 53.810164274130976,
         "east": 53.93056523436082
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوز",
+      "name": "اوز",
+      "nameEn": "اوز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیر-برزگو",
+      "name": "پیر برزگو",
+      "nameEn": "پیر-برزگو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-رزمندگان",
+      "name": "شهرک رزمندگان",
+      "nameEn": "شهرک-رزمندگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهنه",
+      "name": "کهنه",
+      "nameEn": "کهنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهنه-جدید",
+      "name": "کهنه جدید",
+      "nameEn": "کهنه-جدید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گراش",
+      "name": "گراش",
+      "nameEn": "گراش",
+      "geoSource": "osm"
     }
   ]
 }

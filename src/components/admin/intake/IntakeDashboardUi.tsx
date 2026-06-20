@@ -162,10 +162,18 @@ export function IntakeTableWrap({ children }: { children: ReactNode }) {
   return <div className="admin-intake-table-wrap">{children}</div>;
 }
 
-export function IntakeNote({ title, children }: { title: string; children: ReactNode }) {
+export function IntakeNote({
+  title,
+  children,
+  className,
+}: {
+  title?: string;
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <section className="admin-intake-note">
-      <p className="admin-intake-note__title">{title}</p>
+    <section className={cn('admin-intake-note', className)}>
+      {title ? <p className="admin-intake-note__title">{title}</p> : null}
       <div className="admin-intake-note__body">{children}</div>
     </section>
   );

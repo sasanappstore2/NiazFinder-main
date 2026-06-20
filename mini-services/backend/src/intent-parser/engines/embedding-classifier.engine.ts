@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { OllamaClientService } from '../../common/http/ollama-client.service';
 import { ClassifierResult } from '../types/intent.types';
 
 interface CachedEmbedding {
@@ -14,11 +15,19 @@ export class EmbeddingClassifierEngine implements OnModuleInit {
   private readonly logger = new Logger(EmbeddingClassifierEngine.name);
   private cache: CachedEmbedding[] = [];
   private readonly embedModel = process.env.EMBED_MODEL || 'nomic-embed-text';
-  private readonly ollamaUrl = process.env.OLLAMA_URL || 'http://localhost:11434';
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly ollama: OllamaClientService,
+  ) {}
 
   async onModuleInit() {
+    if (process.env.LOCAL_LLM_ONLY !== 'false') {
+      this.logger.warn(
+        'Embedding classifier disabled: LOCAL_LLM_ONLY uses chat-only GGUF gateway (no embeddings API).',
+      );
+      return;
+    }
     await this.warmUp();
   }
 
@@ -84,24 +93,7 @@ export class EmbeddingClassifierEngine implements OnModuleInit {
   }
 
   private async embed(text: string): Promise<number[] | null> {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 5000);
-
-      const res = await fetch(`${this.ollamaUrl}/api/embeddings`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: this.embedModel, prompt: text }),
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-
-      if (!res.ok) return null;
-      const data = (await res.json()) as { embedding?: number[] };
-      return data.embedding ?? null;
-    } catch {
-      return null;
-    }
+    return this.ollama.embeddings(text, this.embedModel, 5000);
   }
 
   private cosine(a: number[], b: number[]): number {

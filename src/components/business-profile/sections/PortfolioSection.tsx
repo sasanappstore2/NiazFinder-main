@@ -17,7 +17,7 @@ function BeforeAfterTile({ item }: { item: BusinessPortfolioItem }) {
     <figure className="relative col-span-2 overflow-hidden rounded-xl border bg-muted aspect-2/1">
       <div className="grid h-full grid-cols-2">
         <div className="relative border-l">
-          <Image src={before} alt={`${item.title} — قبل`} fill className="object-cover" />
+          <Image src={before} alt={`${item.title} — قبل`} fill sizes="50vw" className="object-cover" />
           <span className="absolute bottom-2 right-2 rounded bg-black/60 px-2 py-0.5 text-xs text-white">قبل</span>
         </div>
         <div className="relative">
@@ -72,7 +72,7 @@ export function PortfolioSection({ business }: SectionProps) {
       </div>
 
       <Dialog open={lightboxIndex != null} onOpenChange={(o) => !o && setLightboxIndex(null)}>
-        <DialogContent className="max-w-3xl border-none bg-black/95 p-2 sm:p-4">
+        <DialogContent className="max-w-3xl border-none bg-black/95 p-2 sm:p-4" showCloseButton={false}>
           {current && (
             <div className="relative">
               <Button

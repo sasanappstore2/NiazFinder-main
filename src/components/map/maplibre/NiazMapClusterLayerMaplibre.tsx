@@ -1,12 +1,18 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { NiazMapMarker as Marker } from '@/components/map/maplibre/map-marker';
 import { NiazMapPopup as Popup } from '@/components/map/maplibre/map-popup';
-import { useNiazMapRef } from '@/components/map/mapbox/NiazMapContext';
-import { MapClusterMarker, MapPinMarker } from '@/components/map/mapbox/MapPinMarker';
-import { useMapClusters, type MapPoint } from '@/components/map/mapbox/use-map-clusters';
+import { NiazMapGpuClusterLayer } from '@/components/map/maplibre/NiazMapGpuClusterLayer';
+import { MapPinMarker } from '@/components/map/mapbox/MapPinMarker';
+import type { MapPoint } from '@/components/map/mapbox/use-map-clusters';
 import { isValidLatLng } from '@/lib/business/map-coords';
+import {
+  BROWSE_CLUSTER_COLORS,
+  BROWSE_CLUSTER_MAX_ZOOM,
+  BROWSE_CLUSTER_RADIUS,
+  BROWSE_CLUSTER_THRESHOLDS,
+} from '@/lib/map/cluster-config';
 
 export function NiazMapClusterLayerMaplibre<T extends MapPoint>({
   points,
@@ -30,20 +36,12 @@ export function NiazMapClusterLayerMaplibre<T extends MapPoint>({
   };
   renderPopup: (pin: T) => React.ReactNode;
 }) {
-  const mapRef = useNiazMapRef();
-  const { clusters, refresh, index } = useMapClusters(mapRef, points, { maxZoom });
+  const clusterMaxZoom = maxZoom ?? BROWSE_CLUSTER_MAX_ZOOM;
+  const [unclusteredPins, setUnclusteredPins] = useState<T[]>([]);
 
-  useEffect(() => {
-    const map = mapRef.current?.getMap();
-    if (!map) return;
-    const handler = () => refresh();
-    map.on('moveend', handler);
-    map.on('zoomend', handler);
-    return () => {
-      map.off('moveend', handler);
-      map.off('zoomend', handler);
-    };
-  }, [mapRef, refresh]);
+  const handleUnclusteredChange = useCallback((pins: T[]) => {
+    setUnclusteredPins(pins);
+  }, []);
 
   const popupPin =
     showPopups && selectedPinId
@@ -52,41 +50,25 @@ export function NiazMapClusterLayerMaplibre<T extends MapPoint>({
 
   return (
     <>
-      {clusters.map((feature) => {
-        const [lng, lat] = feature.geometry.coordinates;
-        if (!isValidLatLng(lat, lng)) return null;
-        const props = feature.properties;
-        const isCluster = Boolean(props.cluster);
+      <NiazMapGpuClusterLayer
+        points={points}
+        clusterMaxZoom={clusterMaxZoom}
+        clusterRadius={BROWSE_CLUSTER_RADIUS}
+        clusterColors={BROWSE_CLUSTER_COLORS}
+        clusterThresholds={BROWSE_CLUSTER_THRESHOLDS}
+        clustersOnly
+        onUnclusteredChange={handleUnclusteredChange}
+      />
 
-        if (isCluster) {
-          const count = props.point_count ?? 0;
-          return (
-            <Marker
-              key={`c-${feature.id}`}
-              longitude={lng}
-              latitude={lat}
-              anchor="center"
-              onClick={(e) => {
-                e.originalEvent.stopPropagation();
-                const map = mapRef.current?.getMap();
-                if (!map) return;
-                const expansion = index.getClusterExpansionZoom(feature.id as number);
-                map.easeTo({ center: [lng, lat], zoom: expansion, duration: 300 });
-              }}
-            >
-              <MapClusterMarker count={count} />
-            </Marker>
-          );
-        }
-
-        const pin = props as T;
+      {unclusteredPins.map((pin) => {
+        if (!isValidLatLng(pin.lat, pin.lng)) return null;
         const pinProps = getPinProps(pin);
 
         return (
           <Marker
             key={pin.id}
-            longitude={lng}
-            latitude={lat}
+            longitude={pin.lng}
+            latitude={pin.lat}
             anchor="bottom"
             onClick={(e) => {
               e.originalEvent.stopPropagation();

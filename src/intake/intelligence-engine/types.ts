@@ -1,6 +1,7 @@
-import type { NeedDraft, ParsedIntent } from '@/contracts/need-intake';
+import type { NeedDraft, ParsedIntent, CategoryCandidateOption } from '@/contracts/need-intake';
 import type { MissingFieldItem, TransactionType, WizardQuestion } from '@/intake/types';
 import type { IntakeParseGap } from '@/lib/need-intake/intake-parse-schema';
+import type { CriticalFilterSuggestion } from '@/intake/intelligence-engine/suggestions/critical-filter-suggestions';
 
 export type FieldSource = 'rule' | 'dictionary' | 'resolver' | 'ai' | 'user' | 'form';
 
@@ -76,6 +77,9 @@ export interface IntakeIntelligenceTrace {
     skipped: string[];
     latencyMs: number;
   };
+  /** ≤10-word AI summary of user need (rules enrichment). */
+  intentGist?: string | null;
+  intentGistProvider?: string | null;
 }
 
 export interface IntakeIntelligenceResult {
@@ -87,8 +91,16 @@ export interface IntakeIntelligenceResult {
   nextQuestion: WizardQuestion | null;
   recommendedQuestions: string[];
   parsedIntent: ParsedIntent;
+  /** Ambiguous category hypotheses from rules registry. */
+  categoryCandidates?: CategoryCandidateOption[];
+  suggestedFilters?: CriticalFilterSuggestion[];
   meta: {
-    engine: 'intake-intelligence' | 'intake-intelligence+ai' | 'intake-intelligence+truth-verify';
+    engine:
+      | 'intake-intelligence'
+      | 'intake-intelligence+ai'
+      | 'intake-intelligence+truth-verify'
+      | 'hybrid-intake+gemma4'
+      | 'hybrid-intake-rules';
     aiInvoked: boolean;
     latencyMs: number;
     truthVerifyCorrected?: string[];

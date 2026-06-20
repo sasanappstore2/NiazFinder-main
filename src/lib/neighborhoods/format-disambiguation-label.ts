@@ -28,7 +28,7 @@ export function formatNeighborhoodDisambiguationLabel(
       return `${base} (${hit.nameEn.trim()})`;
     }
     const slugHint = humanizeSlug(candidate.slug);
-    if (slugHint && slugHint !== base) return `${base} ? ${slugHint}`;
+    if (slugHint && slugHint !== base) return `${base} — ${slugHint}`;
     if (candidate.city?.trim() && candidate.city.trim() !== base) {
       return `${base} (${candidate.city.trim()})`;
     }

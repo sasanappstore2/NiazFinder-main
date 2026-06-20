@@ -28,7 +28,7 @@ export function BrowseFilterBar() {
 
   return (
     <>
-      <div className="-mx-4 flex min-w-0 flex-1 items-center gap-2 overflow-x-auto px-4 pb-0.5 scrollbar-none sm:mx-0 sm:px-0">
+      <div className="-mx-4 flex min-w-0 flex-1 items-center gap-2 overflow-x-auto px-4 pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 md:flex-nowrap [&::-webkit-scrollbar]:hidden">
         <BrowseFilterPill
           label={
             <span className="inline-flex items-center gap-1">

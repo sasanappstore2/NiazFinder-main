@@ -1,10 +1,12 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
 }
 
 // ============ USERS & AUTH ============
@@ -257,6 +259,114 @@ model IntakeLocationAlias {
   @@map("intake_location_aliases")
 }
 
+// ============ AGENT RAG LOCATION HIERARCHY (pgvector) ============
+
+enum LocationType {
+  PROVINCE
+  CITY
+  NEIGHBORHOOD
+}
+
+model Location {
+  id           String       @id @default(cuid())
+  slug         String
+  name         String
+  nameEn       String?
+  type         LocationType
+  parentId     String?
+  parent       Location?    @relation("LocationTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children     Location[]   @relation("LocationTree")
+
+  semanticPath String?
+  areas        String[]     @default([])
+  lat          Float?
+  lng          Float?
+
+  embedding      Unsupported("vector(384)")?
+  embeddingModel String?
+  embeddedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([slug])
+  @@index([parentId])
+  @@map("locations")
+}
+
+// ============ INTAKE AGENT RAG (tiered pgvector) ============
+
+enum IntakeDomain {
+  NEEDS
+  BUSINESS
+}
+
+/** Level 1: semantic routing — categories & occupations (~500 rows). */
+model IntakeCategoryRoute {
+  id                   String       @id @default(cuid())
+  domain               IntakeDomain
+  slug                 String
+  parentSlug           String?
+  title                String
+  depth                Int          @default(0)
+  categoryId           String?
+  category             Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  description          String
+  semanticPath         String?
+  technicalConstraints Json         @default("{}")
+  ruleCount            Int          @default(0)
+
+  embedding            Unsupported("vector(384)")?
+  embeddingModel       String?
+  embeddedAt           DateTime?
+
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  ruleDocuments        IntakeRuleDocument[]
+
+  @@unique([domain, slug])
+  @@index([domain])
+  @@index([categoryId])
+  @@index([parentSlug])
+  @@map("intake_category_routes")
+}
+
+/** Level 2: intake rules & business capabilities (up to ~2M rows). */
+model IntakeRuleDocument {
+  id                   String              @id @default(cuid())
+  domain               IntakeDomain
+  categorySlug         String
+  categoryRouteId      String?
+  categoryRoute        IntakeCategoryRoute? @relation(fields: [categoryRouteId], references: [id], onDelete: SetNull)
+
+  ruleKey              String
+  ruleKind             String
+  pattern              String
+  bundleType           String              @default("match")
+
+  description          String
+  technicalConstraints Json                @default("{}")
+
+  searchText           String?
+  embedding            Unsupported("vector(384)")?
+  embeddingModel       String?
+  embeddedAt           DateTime?
+  priority             Int                 @default(0)
+  weight               Float               @default(1)
+
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+
+  @@unique([domain, ruleKey])
+  @@index([domain, categorySlug])
+  @@index([categoryRouteId])
+  @@index([bundleType])
+  @@map("intake_rule_documents")
+}
+
 // ============ CATEGORIES & SKILLS ============
 
 model Category {
@@ -277,6 +387,7 @@ model Category {
   requests    ServiceRequest[]
   subcategoryRequests ServiceRequest[] @relation("SubcategoryRequest")
   skills      Skill[]
+  intakeCategoryRoutes IntakeCategoryRoute[]
 
   @@index([slug])
   @@index([parentId])
@@ -370,7 +481,20 @@ model ServiceRequest {
   proposals         Proposal[]
   reviews           Review[]
   leadOutreach      NeedLeadOutreach[]
+  needChatSessions  NeedChatSession[]
+  resolutionDisputes NeedResolutionDispute[]
   intakeTrainingExample IntakeTrainingExample?
+
+  needAccessStatus NeedAccessStatus @default(PRIVATE)
+  vipExpiresAt     DateTime?
+  resolvedBusinessProfileId String?
+  resolvedAt       DateTime?
+  pendingVerificationBusinessProfileId String?
+
+  searchText      String?
+  searchEmbedding Unsupported("vector(384)")?
+  embeddingModel  String?
+  embeddedAt      DateTime?
 
   @@index([userId])
   @@index([businessProfileId])
@@ -386,6 +510,8 @@ model ServiceRequest {
   @@index([moderationStatus, createdAt])
   @@index([assignedToUserId, moderationStatus])
   @@index([reviewedByUserId])
+  @@index([needAccessStatus])
+  @@index([vipExpiresAt])
 }
 
 enum ModerationStatus {
@@ -440,6 +566,9 @@ model IntakeTrainingExample {
   qualityFlags      String[] @default([])
   sourceTextHash    String?
   moderationLabel   String?
+  sessionId         String?
+  hasUserCorrections Boolean @default(false)
+  correctionFields  String[] @default([])
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -451,6 +580,8 @@ model IntakeTrainingExample {
   @@index([reviewed, publishedAt])
   @@index([sourceTextHash])
   @@index([moderationLabel])
+  @@index([sessionId])
+  @@index([hasUserCorrections])
 }
 
 /** Persisted validation reject events for analytics. */
@@ -499,6 +630,7 @@ enum Priority {
 }
 
 enum RequestStatus {
+  PENDING_AI_REVIEW
   PENDING_REVIEW
   OPEN
   IN_PROGRESS
@@ -506,6 +638,24 @@ enum RequestStatus {
   COMPLETED
   CANCELLED
   REJECTED
+}
+
+enum NeedAccessStatus {
+  PRIVATE
+  PUBLIC
+  PENDING_VERIFICATION
+  RESOLVED
+  EXPIRED
+}
+
+enum NeedChatSessionStatus {
+  ACTIVE
+  CLOSED
+}
+
+enum NeedAccessPhase {
+  PRIVATE
+  PUBLIC
 }
 
 // ============ PROPOSALS ============
@@ -608,6 +758,7 @@ model BusinessProfile {
   aiAssistantConfig String @default("{}")
   extensions        String @default("{}")
   leadAlertsEnabled Boolean @default(true)
+  trustScore        Float   @default(5)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -617,6 +768,7 @@ model BusinessProfile {
   portfolioItems BusinessPortfolioItem[]
   profileReviews BusinessProfileReview[]
   leadOutreach   NeedLeadOutreach[]
+  needChatSessions NeedChatSession[]
   linkedRequests ServiceRequest[]
   members        BusinessMember[]
   contactPoints  BusinessContactPoint[]
@@ -962,6 +1114,14 @@ model NeedLeadOutreach {
   conversationId    String?
   introMessageId    String?
   cardMessageId     String?
+  accessPhase       NeedAccessPhase        @default(PRIVATE)
+  idempotencyKey    String                 @unique
+  feeDeductedAt     DateTime?
+  walletTransactionId String?
+  refundTransactionId String?
+  refundedAt        DateTime?
+  leadFeeAmount     Int                    @default(0)
+  acceptedAt        DateTime?
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt
 
@@ -970,9 +1130,47 @@ model NeedLeadOutreach {
 
   @@unique([requestId, businessUserId])
   @@index([businessUserId])
+  @@index([businessProfileId])
   @@index([requestId])
   @@index([status])
+  @@index([accessPhase])
   @@index([createdAt])
+}
+
+model NeedChatSession {
+  id                   String                @id @default(cuid())
+  requestId            String
+  businessProfileId    String
+  businessUserId       String
+  customerUserId       String
+  conversationId       String?
+  status               NeedChatSessionStatus @default(ACTIVE)
+  acceptIdempotencyKey String?               @unique
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+
+  request  ServiceRequest  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  business BusinessProfile @relation(fields: [businessProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([requestId, businessProfileId])
+  @@index([requestId])
+  @@index([businessUserId])
+  @@index([customerUserId])
+  @@index([conversationId])
+  @@index([status])
+}
+
+model NeedResolutionDispute {
+  id                        String   @id @default(cuid())
+  requestId                 String
+  claimantBusinessProfileId String
+  selectedBusinessProfileId String?
+  outcome                   String
+  createdAt                 DateTime @default(now())
+
+  request ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
 }
 
 // ============ REVIEWS & RATINGS ============
@@ -989,6 +1187,7 @@ model Review {
   authorId      String
   userId        String
   requestId     String
+  businessProfileId String?
   author        User           @relation("ReviewAuthor", fields: [authorId], references: [id])
   user          User           @relation(fields: [userId], references: [id])
   request       ServiceRequest @relation(fields: [requestId], references: [id])

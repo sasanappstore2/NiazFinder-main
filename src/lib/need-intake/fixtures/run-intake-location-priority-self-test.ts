@@ -1,0 +1,44 @@
+import assert from 'node:assert/strict';
+import {
+  citiesForUserReview,
+  extractCitiesMentionedInText,
+  textMentionsCityOtherThan,
+} from '@/lib/need-intake/extract-cities-from-text';
+import { buildManualSuggestionChips } from '@/lib/need-intake/manual-suggestions';
+import type { ParsedIntent } from '@/contracts/need-intake';
+
+function testExtractCities() {
+  const text = '\u0622\u067E\u0627\u0631\u062A\u0645\u0627\u0646 \u062F\u0648 \u062E\u0648\u0627\u0628\u0647 \u062F\u0631 \u0648\u0646\u06A9 \u062A\u0647\u0631\u0627\u0646';
+  const cities = extractCitiesMentionedInText(text);
+  assert.ok(cities.includes('\u062A\u0647\u0631\u0627\u0646'));
+  assert.equal(textMentionsCityOtherThan(text, '\u0645\u0634\u0647\u062F'), true);
+  assert.equal(textMentionsCityOtherThan(text, '\u062A\u0647\u0631\u0627\u0646'), false);
+}
+
+function testManualSuggestionsRespectUserCity() {
+  const parsed: ParsedIntent = {
+    intentType: 'buy',
+    confidence: 0.8,
+    entities: {},
+    rawText:
+      '\u0622\u067E\u0627\u0631\u062A\u0645\u0627\u0646 \u062F\u0648 \u062E\u0648\u0627\u0628\u0647 \u062F\u0631 \u0648\u0646\u06A9 \u062A\u0647\u0631\u0627\u0646',
+    city: '\u0645\u0634\u0647\u062F',
+    neighborhoodCandidates: [
+      { slug: 'vanak', label: '\u0648\u0646\u06A9', city: '\u062A\u0647\u0631\u0627\u0646' },
+    ],
+  };
+
+  const chips = buildManualSuggestionChips(parsed, '\u0645\u0634\u0647\u062F');
+  const cityChips = chips.filter((c) => c.value.startsWith('city:'));
+  assert.equal(cityChips.length, 1);
+  assert.match(cityChips[0]!.label, /\u062A\u0647\u0631\u0627\u0646/);
+  assert.equal(citiesForUserReview(parsed.rawText, { userCity: '\u0645\u0634\u0647\u062F' }).length, 1);
+
+  const hood = chips.find((c) => c.value.startsWith('neighborhood:vanak'));
+  assert.ok(hood);
+  assert.match(hood!.label, /\u062A\u0647\u0631\u0627\u0646/);
+}
+
+testExtractCities();
+testManualSuggestionsRespectUserCity();
+console.log('test:intake-location-priority OK');

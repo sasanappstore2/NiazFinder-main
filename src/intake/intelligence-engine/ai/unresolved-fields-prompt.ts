@@ -50,7 +50,7 @@ function candidateBlock(
   return lines.join('\n\n');
 }
 
-/** Prompt scoped to unresolved fields only ? never asks for full NeedDraft. */
+/** Prompt scoped to unresolved fields only — never asks for full NeedDraft. */
 export function buildUnresolvedFieldsPrompt(
   text: string,
   unresolvedFields: string[],

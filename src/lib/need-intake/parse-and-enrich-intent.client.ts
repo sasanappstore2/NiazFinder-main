@@ -8,7 +8,7 @@ export type ParseAndEnrichIntentOptions = {
   locationText?: string;
 };
 
-/** Client/wizard intake path ? no Node fs or neighborhood catalog. */
+/** Client/wizard intake path — no Node fs or neighborhood catalog. */
 export function parseAndEnrichIntentFromText(
   rawText: string,
   opts?: ParseAndEnrichIntentOptions

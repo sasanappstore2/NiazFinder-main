@@ -2,7 +2,7 @@
   "cityId": "dargaz",
   "cityName": "درگز",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:27.717Z",
+  "importedAt": "2026-06-16T19:28:16.160Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,7 @@
         "west": 58.92000336222868,
         "east": 59.05410161147902
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "میدان-صیاد-شیرازی",
@@ -35,7 +35,7 @@
         "west": 58.806493730185665,
         "east": 58.94059197943601
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "میدان-مادر",
@@ -51,7 +51,247 @@
         "west": 58.89021210877504,
         "east": 59.02431035802538
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارتیان",
+      "name": "ارتیان",
+      "nameEn": "ارتیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوتانلو",
+      "name": "اوتانلو",
+      "nameEn": "اوتانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بشدره",
+      "name": "بشدره",
+      "nameEn": "بشدره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرکند",
+      "name": "پرکند",
+      "nameEn": "پرکند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تاج-الدین",
+      "name": "تاج الدین",
+      "nameEn": "تاج-الدین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تپه-لیک",
+      "name": "تپه لیک",
+      "nameEn": "تپه-لیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "توقی",
+      "name": "توقی",
+      "nameEn": "توقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جشن-آباد-شهیدآباد",
+      "name": "جشن آباد شهیدآباد",
+      "nameEn": "جشن-آباد-شهیدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاپشلو",
+      "name": "چاپشلو",
+      "nameEn": "چاپشلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چقر",
+      "name": "چقر",
+      "nameEn": "چقر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد-صداقت",
+      "name": "حسین آباد صداقت",
+      "nameEn": "حسین-آباد-صداقت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حضرت-سلطان",
+      "name": "حضرت سلطان",
+      "nameEn": "حضرت-سلطان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حق-وردی",
+      "name": "حق وردی",
+      "nameEn": "حق-وردی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خاخیان",
+      "name": "خاخیان",
+      "nameEn": "خاخیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خنلانلو",
+      "name": "خنلانلو",
+      "nameEn": "خنلانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داغدار",
+      "name": "داغدار",
+      "nameEn": "داغدار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درگز",
+      "name": "درگز",
+      "nameEn": "درگز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دودانلو",
+      "name": "دودانلو",
+      "nameEn": "دودانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رمضان-قلعه",
+      "name": "رمضان قلعه",
+      "nameEn": "رمضان-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سادات",
+      "name": "سادات",
+      "nameEn": "سادات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سعدآباد",
+      "name": "سعدآباد",
+      "nameEn": "سعدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگبر",
+      "name": "سنگبر",
+      "nameEn": "سنگبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدآباد",
+      "name": "سیدآباد",
+      "nameEn": "سیدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورکال",
+      "name": "شورکال",
+      "nameEn": "شورکال",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صفرقلعه",
+      "name": "صفرقلعه",
+      "nameEn": "صفرقلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-قلعه",
+      "name": "عباس قلعه",
+      "nameEn": "عباس-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فضل-آباد",
+      "name": "فضل آباد",
+      "nameEn": "فضل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-قویونلو",
+      "name": "قره قویونلو",
+      "nameEn": "قره-قویونلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزلق",
+      "name": "قزلق",
+      "nameEn": "قزلق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاهو",
+      "name": "کاهو",
+      "nameEn": "کاهو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلخندان",
+      "name": "گلخندان",
+      "nameEn": "گلخندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلریز",
+      "name": "گلریز",
+      "nameEn": "گلریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرقلعه",
+      "name": "میرقلعه",
+      "nameEn": "میرقلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میناقلعه",
+      "name": "میناقلعه",
+      "nameEn": "میناقلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرت-آباد",
+      "name": "نصرت آباد",
+      "nameEn": "نصرت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوخندان",
+      "name": "نوخندان",
+      "nameEn": "نوخندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یاقول",
+      "name": "یاقول",
+      "nameEn": "یاقول",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یانبلاق",
+      "name": "یانبلاق",
+      "nameEn": "یانبلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ینگی-قلعه",
+      "name": "ینگی قلعه",
+      "nameEn": "ینگی-قلعه",
+      "geoSource": "osm"
     }
   ]
 }

@@ -26,14 +26,12 @@ const WIDTH_CLASS: Record<PageContainerWidth, string> = {
   full: 'max-w-full',
 };
 
-/** Shared horizontal padding for page content (matches `.page-container` in globals). */
-export const PAGE_PADDING_CLASS =
-  'px-4 sm:px-6 md:px-7 lg:px-8 max-[380px]:px-3';
+/** Shared horizontal padding (CSS: `.page-padding` in responsive-golden.css). */
+export const PAGE_PADDING_CLASS = 'page-padding';
 
 /** Reusable max-width + padding for header/footer alignment. */
 export const PAGE_CONTAINER_CLASS = cn(
-  'mx-auto w-full max-w-7xl',
-  PAGE_PADDING_CLASS
+  'page-container mx-auto w-full max-w-7xl'
 );
 
 export interface PageContainerProps {

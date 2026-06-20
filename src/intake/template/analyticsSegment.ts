@@ -8,7 +8,7 @@ export interface AnalyticsSegment {
   vertical: string;
 }
 
-/** Canonical analytics grouping key ? use instead of legacy needType. */
+/** Canonical analytics grouping key — use instead of legacy needType. */
 export function getAnalyticsSegment(template: IntakeTemplate): AnalyticsSegment {
   return {
     templateId: template.id,

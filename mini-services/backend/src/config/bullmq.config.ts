@@ -13,6 +13,7 @@ const QUEUE_NAMES = [
   'intake-analyze',
   'intake-listing-copy',
   'intake-dead-letter',
+  'need-expiry',
 ] as const;
 
 @Global()

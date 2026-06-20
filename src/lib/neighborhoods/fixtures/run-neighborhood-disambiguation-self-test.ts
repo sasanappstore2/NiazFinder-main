@@ -1,5 +1,5 @@
 import { getNeighborhoodCatalogForCity, rankNeighborhoodCandidates } from '@/lib/need-intake/neighborhood-catalog.server';
-import { enrichParsedIntent } from '@/lib/need-intake/enrich-parsed-intent';
+import { applyLocationResolutionToParsed } from '@/lib/need-intake/location-resolution-engine';
 import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
 import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
 import { findManagedNeighborhoodAmbiguity } from '@/lib/neighborhoods/find-managed-neighborhood-ambiguity';
@@ -20,7 +20,7 @@ const rank = rankNeighborhoodCandidates(MASHHAD, BAN, text, 8);
 assert(rank.ambiguous === true, 'rank: shared sub-area is ambiguous');
 assert(rank.candidates.length === 5, `rank: expected 5 matches, got ${rank.candidates.length}`);
 
-const enriched = enrichParsedIntent(parseIntentFromText(text), {
+const enriched = applyLocationResolutionToParsed(parseIntentFromText(text), {
   preferredCityId: 'mashhad',
   preferredCityName: MASHHAD,
   locationText: text,
@@ -64,4 +64,65 @@ for (const h of jalalHits) {
   );
 }
 
+const SAJAD = '\u0633\u062C\u0627\u062F';
+const SAJAD_SHAHR = '\u0633\u062C\u0627\u062F \u0634\u0647\u0631';
+const sajadHits = findManagedNeighborhoodAmbiguity(neighborhoods, SAJAD, '');
+assert(sajadHits.length >= 3, `sajad hits: ${sajadHits.length}`);
+assert(
+  sajadHits.some((h) => h.neighborhood.name === SAJAD_SHAHR),
+  'sajad should include \u0633\u062C\u0627\u062F \u0634\u0647\u0631'
+);
+assert(sajadHits[0]!.neighborhood.name === SAJAD_SHAHR, `sajad top: ${sajadHits[0]!.neighborhood.name}`);
+
 console.log('neighborhood-disambiguation self-test OK');
+
+const FERDOWSI = '\u0641\u0631\u062F\u0648\u0633\u06CC';
+const BOULEVARD_FERDOWSI = `\u0628\u0644\u0648\u0627\u0631 ${FERDOWSI}`;
+const SAFAIIYE = '\u0635\u0641\u0627\u0626\u06CC\u0647 (\u0641\u0631\u062F\u0648\u0633\u06CC\u0647)';
+const BEHRAMAN = '\u0628\u0647\u0631\u0645\u0627\u0646';
+
+assert(
+  extractLocationFragment(BOULEVARD_FERDOWSI) === FERDOWSI,
+  `boulevard fragment: ${extractLocationFragment(BOULEVARD_FERDOWSI)}`
+);
+
+const ferdowsiScoped = applyLocationResolutionToParsed(parseIntentFromText(BOULEVARD_FERDOWSI), {
+  preferredCityId: 'mashhad',
+  preferredCityName: MASHHAD,
+  locationText: BOULEVARD_FERDOWSI,
+});
+assert(ferdowsiScoped.city === MASHHAD, `ferdowsi scoped city: ${ferdowsiScoped.city}`);
+assert(
+  ferdowsiScoped.neighborhoodSlug || (ferdowsiScoped.neighborhoodCandidates?.length ?? 0) >= 1,
+  'ferdowsi scoped should resolve or offer candidates'
+);
+if (ferdowsiScoped.neighborhoodSlug) {
+  const hoodName =
+    catalog.find((n) => n.slug === ferdowsiScoped.neighborhoodSlug)?.name ?? '';
+  assert(
+    hoodName.includes('\u0641\u0631\u062F\u0648\u0633\u06CC') || hoodName === SAFAIIYE,
+    `ferdowsi hood: ${hoodName}`
+  );
+}
+
+const ferdowsiGlobal = applyLocationResolutionToParsed(parseIntentFromText(BOULEVARD_FERDOWSI), {
+  locationText: BOULEVARD_FERDOWSI,
+});
+assert(
+  ferdowsiGlobal.city === MASHHAD || ferdowsiGlobal.cityCandidates?.some((c) => c.label === MASHHAD),
+  `ferdowsi global city: ${ferdowsiGlobal.city}`
+);
+
+const behramanScopedText = `\u0622\u067E\u0627\u0631\u062A\u0645\u0627\u0646 \u062F\u0631 ${BEHRAMAN} \u0645\u06CC\u062E\u0648\u0627\u0645`;
+const behramanScoped = applyLocationResolutionToParsed(parseIntentFromText(behramanScopedText), {
+  preferredCityId: 'mashhad',
+  preferredCityName: MASHHAD,
+  locationText: behramanScopedText,
+});
+assert(behramanScoped.city === MASHHAD, `behraman scoped city: ${behramanScoped.city}`);
+assert(behramanScoped.city !== BEHRAMAN, 'behraman scoped must not pick behraman city');
+
+const ferdowsiHits = findManagedNeighborhoodAmbiguity(neighborhoods, BOULEVARD_FERDOWSI, '');
+assert(ferdowsiHits.length >= 1, `ferdowsi ambiguity hits: ${ferdowsiHits.length}`);
+
+console.log('neighborhood-disambiguation ferdowsi/behraman scenarios OK');

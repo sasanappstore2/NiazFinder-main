@@ -4,6 +4,7 @@ import { uniqueRandomBusinessSlug } from '@/lib/business/profile-slug';
 import { parseJsonArray, toJson } from '@/lib/business/json-fields';
 import { migrateSlugToOccupation } from '@/config/need-to-occupation-map';
 import { isOccupationSlug } from '@/config/business-occupations';
+import { queueBusinessProfileTypesenseSync } from '@/lib/search/typesense-sync';
 import type { BusinessProfile, User } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 
@@ -80,6 +81,7 @@ export async function ensureBusinessProfile(user: UserForProfile): Promise<Busin
     await syncCategorySlugsFromSkills(profile.id, user.id);
     const { seedBusinessTeamDefaults } = await import('@/lib/business/team/seed-defaults');
     await seedBusinessTeamDefaults(profile.id, user.id);
+    queueBusinessProfileTypesenseSync(profile.id);
     return profile;
   } catch (error) {
     if (!isUniqueConstraintError(error)) throw error;
@@ -104,6 +106,7 @@ export async function ensureBusinessProfile(user: UserForProfile): Promise<Busin
         await syncCategorySlugsFromSkills(profile.id, user.id);
         const { seedBusinessTeamDefaults } = await import('@/lib/business/team/seed-defaults');
         await seedBusinessTeamDefaults(profile.id, user.id);
+        queueBusinessProfileTypesenseSync(profile.id);
         return profile;
       } catch (retryError) {
         if (isUniqueConstraintError(retryError)) {
@@ -153,6 +156,7 @@ export async function syncCategorySlugsFromSkills(profileId: string, userId: str
     where: { id: profileId },
     data: { categorySlugs: toJson([...slugs]) },
   });
+  queueBusinessProfileTypesenseSync(profileId);
 }
 
 /** Hydrate offers from user skills when profile has none. */

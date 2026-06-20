@@ -2,7 +2,7 @@
   "cityId": "mahneshan",
   "cityName": "ماهنشان",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:29.500Z",
+  "importedAt": "2026-06-16T21:30:53.171Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -20,6 +20,180 @@
         "east": 47.76059577455693
       },
       "geoSource": "divar"
+    },
+    {
+      "id": "آقبلاغ-حسن-آباد",
+      "name": "آقبلاغ حسن آباد",
+      "nameEn": "آقبلاغ-حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آقکند",
+      "name": "آقکند",
+      "nameEn": "آقکند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آلمالو",
+      "name": "آلمالو",
+      "nameEn": "آلمالو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایستی-فوق",
+      "name": "ایستی فوق",
+      "nameEn": "ایستی-فوق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اینچه-علیا",
+      "name": "اینچه علیا",
+      "nameEn": "اینچه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغچه",
+      "name": "باغچه",
+      "nameEn": "باغچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلندپرچین",
+      "name": "بلندپرچین",
+      "nameEn": "بلندپرچین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیاملو",
+      "name": "بیاملو",
+      "nameEn": "بیاملو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشتوک",
+      "name": "پشتوک",
+      "nameEn": "پشتوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تک-آغاج",
+      "name": "تک آغاج",
+      "nameEn": "تک-آغاج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهره-تپه",
+      "name": "چهره تپه",
+      "nameEn": "چهره-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دام-لار",
+      "name": "دام لار",
+      "nameEn": "دام-لار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رز",
+      "name": "رز",
+      "nameEn": "رز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساری-اغل",
+      "name": "ساری اغل",
+      "nameEn": "ساری-اغل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سریک",
+      "name": "سریک",
+      "nameEn": "سریک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرین-دره",
+      "name": "سرین دره",
+      "nameEn": "سرین-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهندسفلی",
+      "name": "سهندسفلی",
+      "nameEn": "سهندسفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهندعلیا",
+      "name": "سهندعلیا",
+      "nameEn": "سهندعلیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عوج-موسی",
+      "name": "عوج موسی",
+      "nameEn": "عوج-موسی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاضی-کندی",
+      "name": "قاضی کندی",
+      "nameEn": "قاضی-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-ناس",
+      "name": "قره ناس",
+      "nameEn": "قره-ناس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزلجه-علیا",
+      "name": "قزلجه علیا",
+      "nameEn": "قزلجه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کردی",
+      "name": "کردی",
+      "nameEn": "کردی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنگرلو",
+      "name": "کنگرلو",
+      "nameEn": "کنگرلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گندی",
+      "name": "گندی",
+      "nameEn": "گندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ماه-نشان",
+      "name": "ماه نشان",
+      "nameEn": "ماه-نشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میاندره",
+      "name": "میاندره",
+      "nameEn": "میاندره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میر-آخور",
+      "name": "میر آخور",
+      "nameEn": "میر-آخور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ینگجه",
+      "name": "ینگجه",
+      "nameEn": "ینگجه",
+      "geoSource": "osm"
     }
   ]
 }

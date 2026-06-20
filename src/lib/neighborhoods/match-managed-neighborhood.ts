@@ -1,3 +1,4 @@
+import { findManagedNeighborhoodAmbiguity } from '@/lib/neighborhoods/find-managed-neighborhood-ambiguity';
 import type { ManagedNeighborhood } from '@/lib/neighborhoods/types';
 
 function normalize(text: string): string {
@@ -52,6 +53,14 @@ export function matchManagedNeighborhood(
 
     const cn = compact(n.name);
     if (cn === compactQ || cn === compactRaw) return n;
+  }
+
+  const ambiguityHits = findManagedNeighborhoodAmbiguity(neighborhoods, withoutCity || raw);
+  if (ambiguityHits.length >= 2) return null;
+  if (ambiguityHits.length === 1) return ambiguityHits[0].neighborhood;
+
+  for (const n of neighborhoods) {
+    const cn = compact(n.name);
     if (compactQ.length >= 4 && (cn.includes(compactQ) || compactQ.includes(cn))) return n;
 
     for (const area of n.areas ?? []) {

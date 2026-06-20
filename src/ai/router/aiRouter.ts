@@ -5,12 +5,26 @@ import { MockAiProvider } from '@/ai/providers/mockProvider';
 import { OllamaAiProvider } from '@/ai/providers/ollamaProvider';
 import { LocalChatAiProvider } from '@/ai/providers/localChatProvider';
 import { OpenAiProvider } from '@/ai/providers/openaiProvider';
+import { isLocalLlmOnly } from '@/lib/local-llm/config';
 
 let cachedProvider: AiProvider | null = null;
 
-export function createAiProvider(providerName?: string): AiProvider {
+function resolveProviderName(providerName?: string): string {
   const config = getAiSemanticConfig();
-  const name = providerName ?? config.provider;
+  const requested = providerName ?? config.provider;
+  if (isLocalLlmOnly() && requested !== 'local-llm') {
+    if (providerName && providerName !== 'local-llm') {
+      console.warn(
+        `[aiRouter] LOCAL_LLM_ONLY=true — ignoring provider "${providerName}", using local-llm`,
+      );
+    }
+    return 'local-llm';
+  }
+  return requested;
+}
+
+export function createAiProvider(providerName?: string): AiProvider {
+  const name = resolveProviderName(providerName);
 
   switch (name) {
     case 'mock':

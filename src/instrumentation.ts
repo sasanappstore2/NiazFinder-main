@@ -14,5 +14,8 @@ export async function register() {
 
     const { getIntakeIndexes } = await import('@/intake/dictionaries/loader');
     void getIntakeIndexes().catch(() => undefined);
+
+    const { initRabbitMQ } = await import('@/lib/queue/rabbitmq-client');
+    void initRabbitMQ().catch(() => undefined);
   }
 }

@@ -6,6 +6,7 @@ import type { Business, OfferCtaType, ProfileSectionId } from '@/contracts/busin
 import type { ResolvedProfileLayout } from '@/contracts/business-profile';
 import { profileNavSections } from '@/lib/business/resolve-profile-sections';
 import { trackAnalyticsEvent } from '@/lib/analytics/track';
+import { PROFILE_HERO_TO_TABS } from '@/components/business-profile/profile-layout-tokens';
 import { cn } from '@/lib/utils';
 import {
   HeroSection,
@@ -135,7 +136,7 @@ export function ProfileShell({
   return (
     <div>
       {renderProfileSection('hero', { business, requestId })}
-      <div className="mt-5 sm:mt-6">{children}</div>
+      <div className={PROFILE_HERO_TO_TABS}>{children}</div>
     </div>
   );
 }

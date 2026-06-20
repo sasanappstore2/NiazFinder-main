@@ -2,7 +2,7 @@
   "cityId": "kouhrang",
   "cityName": "کوهرنگ",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:29.303Z",
+  "importedAt": "2026-06-16T23:09:55.757Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -20,6 +20,180 @@
         "east": 50.24002966359835
       },
       "geoSource": "divar"
+    },
+    {
+      "id": "افسر-آباد",
+      "name": "افسر آباد",
+      "nameEn": "افسر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "افسرآباد",
+      "name": "افسرآباد",
+      "nameEn": "افسرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امید-آباد-سراب",
+      "name": "امید آباد سراب",
+      "nameEn": "امید-آباد-سراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهمن-آباد",
+      "name": "بهمن آباد",
+      "nameEn": "بهمن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیدامین",
+      "name": "بیدامین",
+      "nameEn": "بیدامین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیدکل",
+      "name": "بیدکل",
+      "nameEn": "بیدکل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-جلیل",
+      "name": "حاجی جلیل",
+      "nameEn": "حاجی-جلیل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دزک-سفلی",
+      "name": "دزک سفلی",
+      "nameEn": "دزک-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشتک",
+      "name": "دشتک",
+      "nameEn": "دشتک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دم-تنگ",
+      "name": "دم تنگ",
+      "nameEn": "دم-تنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنونده",
+      "name": "دهنونده",
+      "nameEn": "دهنونده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رزگه",
+      "name": "رزگه",
+      "nameEn": "رزگه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سپیدانه",
+      "name": "سپیدانه",
+      "nameEn": "سپیدانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرپیر",
+      "name": "سرپیر",
+      "nameEn": "سرپیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاوش-آباد-چندار",
+      "name": "سیاوش آباد چندار",
+      "nameEn": "سیاوش-آباد-چندار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاوش-آباد-گردو",
+      "name": "سیاوش آباد گردو",
+      "nameEn": "سیاوش-آباد-گردو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیف-آباد",
+      "name": "سیف آباد",
+      "nameEn": "سیف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهریاری",
+      "name": "شهریاری",
+      "nameEn": "شهریاری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صفاآباد",
+      "name": "صفاآباد",
+      "nameEn": "صفاآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صمصامی",
+      "name": "صمصامی",
+      "nameEn": "صمصامی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فخرآباد",
+      "name": "فخرآباد",
+      "nameEn": "فخرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوفی",
+      "name": "کوفی",
+      "nameEn": "کوفی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-آباد",
+      "name": "گل آباد",
+      "nameEn": "گل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-سرخ",
+      "name": "گل سرخ",
+      "nameEn": "گل-سرخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مالک-آباد",
+      "name": "مالک آباد",
+      "nameEn": "مالک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موردل",
+      "name": "موردل",
+      "nameEn": "موردل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نیسیاق",
+      "name": "نیسیاق",
+      "nameEn": "نیسیاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یاورآباد",
+      "name": "یاورآباد",
+      "nameEn": "یاورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یوسف-آباد",
+      "name": "یوسف آباد",
+      "nameEn": "یوسف-آباد",
+      "geoSource": "osm"
     }
   ]
 }

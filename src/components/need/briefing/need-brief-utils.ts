@@ -1,13 +1,65 @@
 import { Clock, Flame } from 'lucide-react';
 import type { ServiceRequest } from '@/lib/types';
 
-export function extractNeighborhoodLabel(address?: string): string | null {
-  if (!address) return null;
-  const cleaned = address.trim();
-  if (!cleaned) return null;
-  const head = cleaned.split(/[،,\-|–—]/)[0]?.trim();
-  if (!head) return null;
-  return head;
+const ADDRESS_PART_SEP = /[،,؟?\-\|–—·]+/u;
+
+function parseDynamicAnswers(
+  raw?: string | Record<string, unknown> | null
+): Record<string, unknown> | null {
+  if (!raw) return null;
+  if (typeof raw === 'object') return raw;
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, unknown>) : null;
+  } catch {
+    return null;
+  }
+}
+
+function neighborhoodFromDynamicAnswers(
+  dynamicAnswers?: string | Record<string, unknown> | null
+): string | null {
+  const parsed = parseDynamicAnswers(dynamicAnswers);
+  if (!parsed) return null;
+  const direct = parsed.neighborhood ?? parsed._neighborhood;
+  return typeof direct === 'string' && direct.trim() ? direct.trim() : null;
+}
+
+function splitAddressParts(address: string): string[] {
+  return address
+    .trim()
+    .split(ADDRESS_PART_SEP)
+    .map((part) => part.replace(/^محله\s+/u, '').trim())
+    .filter(Boolean);
+}
+
+/** Neighborhood label for cards/detail (prefers dynamicAnswers, then last address segment). */
+export function extractNeighborhoodLabel(
+  address?: string,
+  dynamicAnswers?: string | Record<string, unknown> | null
+): string | null {
+  const fromDynamic = neighborhoodFromDynamicAnswers(dynamicAnswers);
+  if (fromDynamic) return fromDynamic;
+
+  if (!address?.trim()) return null;
+  const parts = splitAddressParts(address);
+  if (!parts.length) return null;
+  if (parts.length === 1) return parts[0]!;
+  return parts[parts.length - 1]!;
+}
+
+/** Single-line location for browse cards (province · city · neighborhood). */
+export function formatNeedLocationLabel(
+  request: Pick<ServiceRequest, 'province' | 'city' | 'address' | 'dynamicAnswers'>
+): string | null {
+  const province = request.province?.trim();
+  const city = request.city?.trim();
+  const neighborhood = extractNeighborhoodLabel(request.address, request.dynamicAnswers);
+  const parts: string[] = [];
+  if (province) parts.push(province);
+  if (city && city !== province) parts.push(city);
+  if (neighborhood && neighborhood !== city && neighborhood !== province) parts.push(neighborhood);
+  return parts.length ? parts.join(' · ') : null;
 }
 
 export function getPriorityConfig(priority: string) {

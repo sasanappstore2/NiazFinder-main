@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { hashPassword } from '@/lib/auth/password';
 import { findValidOtp, findRecentlyVerifiedOtp, markOtpVerified } from '@/lib/otp-store';
-import { isTestOtpCode } from '@/lib/auth/test-otp';
 import { toAsciiDigits } from '@/lib/format/digits';
 import { isSuperAdminPhone, normalizePhone } from '@/lib/super-admin';
 import { issueAuthToken, mapDbUserToResponse } from '@/lib/auth/phone-auth-response';
@@ -32,17 +31,12 @@ export async function POST(request: NextRequest) {
 
     const otpRecord = await findValidOtp(normalizedPhone, code);
     const recentlyVerified = await findRecentlyVerifiedOtp(normalizedPhone, code);
-    const acceptedTestOtp = isTestOtpCode(code);
 
-    if (!otpRecord && !recentlyVerified && !acceptedTestOtp) {
+    if (!otpRecord && !recentlyVerified) {
       return NextResponse.json(
         { error: 'کد تایید نامعتبر یا منقضی شده است' },
         { status: 401 }
       );
-    }
-
-    if (otpRecord) {
-      await markOtpVerified(normalizedPhone, code);
     }
 
     try {
@@ -55,6 +49,10 @@ export async function POST(request: NextRequest) {
           { error: 'این شماره موبایل قبلاً ثبت شده است' },
           { status: 409 }
         );
+      }
+
+      if (otpRecord) {
+        await markOtpVerified(normalizedPhone, code);
       }
 
       const grantSuperAdmin = isSuperAdminPhone(normalizedPhone);

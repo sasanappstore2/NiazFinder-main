@@ -2,7 +2,7 @@
   "cityId": "zarandiyeh",
   "cityName": "زرندیه",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:31.352Z",
+  "importedAt": "2026-06-16T23:51:35.406Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -20,6 +20,108 @@
         "east": 50.76251961535943
       },
       "geoSource": "divar"
+    },
+    {
+      "id": "اغذی-گنگ",
+      "name": "اغذی گنگ",
+      "nameEn": "اغذی-گنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بربر",
+      "name": "بربر",
+      "nameEn": "بربر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تقلید-آباد",
+      "name": "تقلید آباد",
+      "nameEn": "تقلید-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خان-آباد",
+      "name": "خان آباد",
+      "nameEn": "خان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خشکرود",
+      "name": "خشکرود",
+      "nameEn": "خشکرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رضی-آباد",
+      "name": "رضی آباد",
+      "nameEn": "رضی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-حسین-آباد",
+      "name": "روستای حسین آباد",
+      "nameEn": "روستای-حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدآباد",
+      "name": "سیدآباد",
+      "nameEn": "سیدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شکرآباد",
+      "name": "شکرآباد",
+      "nameEn": "شکرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-آباد-پیازی",
+      "name": "عباس آباد پیازی",
+      "nameEn": "عباس-آباد-پیازی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاسم-آباد-علیا",
+      "name": "قاسم آباد علیا",
+      "nameEn": "قاسم-آباد-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کریم-آباد",
+      "name": "کریم آباد",
+      "nameEn": "کریم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملارد",
+      "name": "ملارد",
+      "nameEn": "ملارد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نجف-آباد",
+      "name": "نجف آباد",
+      "nameEn": "نجف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصیرآباد",
+      "name": "نصیرآباد",
+      "nameEn": "نصیرآباد",
+      "geoSource": "osm"
     }
   ]
 }

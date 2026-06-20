@@ -1,5 +1,6 @@
 import { displayAreaLabels } from '@/lib/neighborhoods/area-labels';
 import type { ManagedNeighborhood } from '@/lib/locations/managed-types';
+import { normalizeHoodFragment } from '@/lib/need-intake/location-fragment';
 
 export interface ManagedNeighborhoodAmbiguityHit {
   neighborhood: ManagedNeighborhood;
@@ -18,9 +19,13 @@ function compact(text: string): string {
 function phraseTokens(phrase: string): string[] {
   return phrase
     .replace(/\u200c/g, ' ')
-    .split(/[\s?,.]+/)
+    .split(/[\s،,.]+/)
     .map((t) => t.trim())
     .filter((t) => t.length >= 2);
+}
+
+function firstNameToken(name: string): string {
+  return phraseTokens(name)[0] ?? name.trim();
 }
 
 function countSubAreaPhraseMatches(
@@ -62,7 +67,7 @@ export function findManagedNeighborhoodAmbiguity(
   locationPhrase: string,
   _rawText?: string
 ): ManagedNeighborhoodAmbiguityHit[] {
-  const phrase = locationPhrase.trim();
+  const phrase = normalizeHoodFragment(locationPhrase.trim()) || locationPhrase.trim();
   if (!phrase || neighborhoods.length === 0) return [];
 
   const compactPhrase = compact(phrase);
@@ -91,6 +96,17 @@ export function findManagedNeighborhoodAmbiguity(
     const compactName = compact(name);
 
     if (compactName.length >= 3 && compactPhrase === compactName) {
+      add(n, name);
+      continue;
+    }
+
+    const firstTok = compact(firstNameToken(name));
+    if (
+      compactPhrase.length >= 2 &&
+      (firstTok === compactPhrase ||
+        compactName.startsWith(compactPhrase) ||
+        compactPhrase.startsWith(firstTok))
+    ) {
       add(n, name);
       continue;
     }
@@ -133,13 +149,32 @@ export function findManagedNeighborhoodAmbiguity(
   let results = [...hits.values()];
 
   if (isSharedSubAreaPhrase) {
-    results = results.filter((h) => compact(h.matchedLabel) === compactPhrase);
+    results = results.filter((h) => {
+      const cm = compact(h.matchedLabel);
+      const cn = compact(h.neighborhood.name);
+      const firstTok = compact(firstNameToken(h.neighborhood.name));
+      return (
+        cm === compactPhrase ||
+        cn === compactPhrase ||
+        cn.startsWith(compactPhrase) ||
+        firstTok === compactPhrase
+      );
+    });
   }
 
   return results.sort((a, b) => {
     const aName = compact(a.neighborhood.name);
     const bName = compact(b.neighborhood.name);
     const phraseLead = compact(tokens[0] ?? phrase);
+    const aNameLead =
+      aName.startsWith(phraseLead) || compact(firstNameToken(a.neighborhood.name)) === phraseLead
+        ? 2
+        : 0;
+    const bNameLead =
+      bName.startsWith(phraseLead) || compact(firstNameToken(b.neighborhood.name)) === phraseLead
+        ? 2
+        : 0;
+    if (aNameLead !== bNameLead) return bNameLead - aNameLead;
     const aExact = compact(a.matchedLabel) === phraseLead ? 1 : 0;
     const bExact = compact(b.matchedLabel) === phraseLead ? 1 : 0;
     if (aExact !== bExact) return bExact - aExact;

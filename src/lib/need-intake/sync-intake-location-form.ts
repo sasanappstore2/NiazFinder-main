@@ -110,8 +110,8 @@ export function resolveIntakeCityNameFromDraft(draft: NeedDraft | null): string 
   if (!draft) return '';
   const entities = recordToEntities(draft.entities);
   const parsed = draft.parsedIntent;
-  if (parsed.city?.trim()) return parsed.city.trim();
   if (entities.city?.trim()) return entities.city.trim();
+  if (parsed.city?.trim()) return parsed.city.trim();
 
   const loc = String(draft.answers?.location ?? '').trim();
   if (loc) {
@@ -176,7 +176,11 @@ export function extractIntakeLocationFromDraft(
   const entities = recordToEntities(draft.entities);
   const parsed = draft.parsedIntent;
 
-  const cityName = resolveIntakeCityNameFromDraft(draft);
+  const cityName =
+    entities.city?.trim() ||
+    resolveIntakeCityNameFromDraft(draft) ||
+    parsed.city?.trim() ||
+    '';
   const city =
     resolveIntakeCitySelectValue(managedCities, {
       cityName: cityName || entities.city || parsed.city,

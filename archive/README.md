@@ -1,6 +1,6 @@
 # Archive
 
-Frozen artifacts kept for reference only ? not built, tested, or imported by the app.
+Frozen artifacts kept for reference only — not built, tested, or imported by the app.
 
 ## `intake-v2-golden/`
 

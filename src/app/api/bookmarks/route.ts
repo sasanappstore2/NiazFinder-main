@@ -4,6 +4,7 @@ import { getAuthUser } from '@/lib/auth';
 import { budgetToJson } from '@/lib/budget';
 import type { BookmarkProposalStatus } from '@/lib/bookmarks/types';
 import { buildEngagement } from '@/lib/bookmarks/types';
+import { syncBusinessSaveCount } from '@/lib/business/stars';
 
 interface ToggleBookmarkBody {
   type: 'request' | 'specialist';
@@ -232,11 +233,14 @@ export async function POST(request: NextRequest) {
 
     if (existing) {
       await db.bookmark.delete({ where: { id: existing.id } });
+      const starCount =
+        type === 'specialist' ? await syncBusinessSaveCount(id) : undefined;
       return NextResponse.json({
-        message: 'از علاقه‌مندی‌ها حذف شد',
+        message: type === 'specialist' ? 'ستاره برداشته شد' : 'از علاقه‌مندی‌ها حذف شد',
         isBookmarked: false,
         type,
         targetId: id,
+        ...(starCount !== undefined ? { starCount } : {}),
       });
     }
 
@@ -248,12 +252,16 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    const starCount =
+      type === 'specialist' ? await syncBusinessSaveCount(id) : undefined;
+
     return NextResponse.json(
       {
-        message: 'به علاقه‌مندی‌ها اضافه شد',
+        message: type === 'specialist' ? 'ستاره داده شد' : 'به علاقه‌مندی‌ها اضافه شد',
         isBookmarked: true,
         type,
         targetId: id,
+        ...(starCount !== undefined ? { starCount } : {}),
       },
       { status: 201 }
     );

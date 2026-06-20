@@ -1,7 +1,11 @@
 import type { ParseVertical } from '@/lib/need-intake/parse-vertical';
 import { CANONICAL_CITIES } from '@/config/locations';
-import { hasBuyIntentPhrase } from '@/lib/need-intake/product-buy-hints';
+import { hasBuyIntentPhrase, hasPetProductPhrase } from '@/lib/need-intake/product-buy-hints';
 import { normalizeIntakeText } from '@/lib/need-intake/normalize-intake-text';
+import {
+  detectRepairServiceCategory,
+  isVehicleRepairServiceIntent,
+} from '@/lib/need-intake/service-repair-intent';
 
 function stripTrailingCityFromArea(area: string): string {
   const trimmed = area.trim();
@@ -304,6 +308,11 @@ export function classifyVertical(rawText: string): VerticalClassification {
     scores.services += 4;
     scores.products = Math.max(0, scores.products - 2);
   }
+  if (isVehicleRepairServiceIntent(text)) {
+    scores.services += 12;
+    scores.vehicles = 0;
+    scores.products = Math.max(0, scores.products - 6);
+  }
   if (text.includes('استخدام') || text.includes('نیاز به نیرو')) {
     scores.jobs += 4;
   }
@@ -388,6 +397,7 @@ export function categorySlugForVertical(
       if (t.includes('یدکی') || t.includes('قطعه')) return 'spare-parts';
       return 'car';
     case 'products':
+      if (hasPetProductPhrase(text)) return 'pets';
       if (
         t.includes('ساعت') ||
         t.includes('رولکس') ||
@@ -435,7 +445,9 @@ export function categorySlugForVertical(
       if (t.includes('گم')) return 'lost-found';
       return 'social';
     case 'services':
-    default:
+    default: {
+      const repairSlug = detectRepairServiceCategory(text);
+      if (repairSlug) return repairSlug;
       if (t.includes('تعمیر') || t.includes('کولر')) return 'repairs';
       if (t.includes('نظافت')) return 'cleaning';
       if (t.includes('لوله')) return 'plumbing';
@@ -443,6 +455,7 @@ export function categorySlugForVertical(
       if (t.includes('برق')) return 'electrical';
       if (t.includes('نقاش')) return 'painting';
       return 'services';
+    }
   }
 }
 

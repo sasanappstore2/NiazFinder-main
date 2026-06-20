@@ -11,6 +11,7 @@ import {
   buildBusinessSeoTitle,
   resolveBusinessDisplayName,
 } from '@/lib/business/suggest-display-name';
+import { queueBusinessProfileTypesenseSync } from '@/lib/search/typesense-sync';
 
 export const runtime = 'nodejs';
 
@@ -21,7 +22,7 @@ function emptyToNull(v: string | undefined): string | null {
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireBusinessAccess(request);
+    const auth = await requireBusinessAccess(request, { promoteToSpecialist: true });
     if ('error' in auth) return auth.error;
 
     const body = await request.json().catch(() => ({}));
@@ -109,12 +110,15 @@ export async function POST(request: NextRequest) {
       select: { slug: true, name: true, status: true },
     });
 
+    queueBusinessProfileTypesenseSync(profile.id);
+
     return NextResponse.json({
       message: 'پروفایل کسب‌وکار منتشر شد',
       slug: updated?.slug,
       name: updated?.name,
       onboardingCompleted: true,
       status: updated?.status,
+      roleUpgraded: auth.roleUpgraded,
     });
   } catch (error) {
     console.error('Business onboarding POST error:', error);

@@ -1,3 +1,4 @@
+import './lib/load-env';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
@@ -81,6 +82,14 @@ async function loadConversationParticipants(conversationId: string) {
   map.set(conv.userId2, conv.userId1);
   setConversationCache(conversationId, map);
   return map;
+}
+
+async function canJoinNeedChatSession(userId: string, conversationId: string): Promise<boolean> {
+  const session = await db.needChatSession.findFirst({
+    where: { conversationId, status: 'ACTIVE' },
+  });
+  if (!session) return true;
+  return userId === session.customerUserId || userId === session.businessUserId;
 }
 
 function invalidateConversationCache(conversationId: string) {
@@ -218,12 +227,17 @@ async function setupRedisScaling() {
   const url = process.env.REDIS_URL?.trim();
   if (!url) return;
   try {
-    const pub = new Redis(url, { maxRetriesPerRequest: null });
+    const pub = new Redis(url, {
+      maxRetriesPerRequest: null,
+      retryStrategy: (times) => (times > 3 ? null : Math.min(times * 500, 2000)),
+    });
+    pub.on('error', () => {});
     const sub = pub.duplicate();
+    sub.on('error', () => {});
     io.adapter(createAdapter(pub, sub));
     console.log('[chat-service] Socket.io Redis adapter enabled');
   } catch (e) {
-    console.warn('[chat-service] Redis adapter failed:', e);
+    console.warn('[chat-service] Redis adapter unavailable (single-instance mode):', e);
   }
 }
 
@@ -417,16 +431,20 @@ io.on('connection', (socket: AuthenticatedSocket) => {
     const conversationId = payload;
     if (!conversationId) return;
 
-    const cached = conversationCache.get(conversationId);
-    if (cached?.has(userId)) {
-      socket.join(`conv:${conversationId}`);
-      return;
-    }
+    void (async () => {
+      const cached = conversationCache.get(conversationId);
+      if (cached?.has(userId)) {
+        const allowed = await canJoinNeedChatSession(userId, conversationId);
+        if (allowed) socket.join(`conv:${conversationId}`);
+        return;
+      }
 
-    void loadConversationParticipants(conversationId).then((participants) => {
+      const participants = await loadConversationParticipants(conversationId);
       if (!participants?.has(userId)) return;
+      const allowed = await canJoinNeedChatSession(userId, conversationId);
+      if (!allowed) return;
       socket.join(`conv:${conversationId}`);
-    });
+    })();
   });
 
   // ─── Event: leave:conversation ───────────────────────────────────────
@@ -933,6 +951,17 @@ io.on('connection', (socket: AuthenticatedSocket) => {
 // ─── Health check handled via Socket.io middleware ─────────────────────────
 
 // ─── Start Server ────────────────────────────────────────────────────────
+
+if (!process.env.DATABASE_URL?.trim()) {
+  console.error('[chat-service] DATABASE_URL is missing — load repo-root .env (npm run dev:chat from project root)');
+} else {
+  console.log('[chat-service] DATABASE_URL loaded');
+}
+if (process.env.REDIS_URL?.trim()) {
+  console.log('[chat-service] REDIS_URL loaded — pub/sub fanout enabled');
+} else {
+  console.warn('[chat-service] REDIS_URL not set — use HTTP /internal/fanout from Next.js');
+}
 
 httpServer.listen(PORT, () => {
   console.log(`💬 NeedFinder Chat Service running on port ${PORT}`);

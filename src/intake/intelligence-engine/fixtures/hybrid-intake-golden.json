@@ -1,0 +1,406 @@
+{
+  "version": 1,
+  "description": "Hybrid intake golden — vertical + categorySlug (rules-scoped)",
+  "cases": [
+    {
+      "id": "estate-rent-tehran",
+      "text": "آپارتمان دو خوابه در تهران برای اجاره ماهانه",
+      "expect": {
+        "vertical": "real-estate",
+        "categorySlug": "apartment-rent"
+      }
+    },
+    {
+      "id": "estate-buy-mashhad",
+      "text": "خرید آپارتمان ۱۰۰ متری در مشهد",
+      "expect": {
+        "vertical": "real-estate",
+        "categorySlug": "apartment-sale"
+      }
+    },
+    {
+      "id": "estate-villa-shiraz",
+      "text": "ویلا در شیراز برای خرید",
+      "expect": {
+        "vertical": "real-estate",
+        "categorySlug": "villa-sale"
+      }
+    },
+    {
+      "id": "estate-shop-rahn",
+      "text": "مغازه در تهران رهن و اجاره",
+      "expect": {
+        "vertical": "real-estate",
+        "categorySlug": "shop-rent"
+      }
+    },
+    {
+      "id": "estate-land",
+      "text": "زمین مسکونی در کرج",
+      "expect": {
+        "vertical": "real-estate",
+        "categorySlug": "land-sale"
+      }
+    },
+    {
+      "id": "vehicle-buy-pride",
+      "text": "پراید مدل ۹۹ در اصفهان می‌خوام",
+      "expect": {
+        "vertical": "vehicles",
+        "categorySlug": "car"
+      }
+    },
+    {
+      "id": "vehicle-sell-peugeot",
+      "text": "پژو ۲۰۶ کارکرده می‌فروشم",
+      "expect": {
+        "vertical": "vehicles",
+        "categorySlug": "car-ride"
+      }
+    },
+    {
+      "id": "vehicle-motor",
+      "text": "موتور هوندا در تبریز",
+      "expect": {
+        "vertical": "vehicles",
+        "categorySlug": "motorcycle"
+      }
+    },
+    {
+      "id": "vehicle-repair",
+      "text": "تعمیر گیربکس ماشین در مشهد",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "repairs"
+      }
+    },
+    {
+      "id": "service-plumber",
+      "text": "لوله‌کش برای رفع نشتی در تهران",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "plumbing"
+      }
+    },
+    {
+      "id": "service-electric",
+      "text": "برقکار برای سیم‌کشی آپارتمان",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "electrical"
+      }
+    },
+    {
+      "id": "service-moving",
+      "text": "اسباب‌کشی از تهران به کرج",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "moving"
+      }
+    },
+    {
+      "id": "service-cleaning",
+      "text": "نظافت منزل در اهواز",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "cleaning"
+      }
+    },
+    {
+      "id": "service-paint",
+      "text": "نقاش ساختمان در رشت",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "painting"
+      }
+    },
+    {
+      "id": "job-it",
+      "text": "استخدام برنامه‌نویس فرانت در تهران",
+      "expect": {
+        "vertical": "jobs",
+        "categorySlug": "it"
+      }
+    },
+    {
+      "id": "job-driver",
+      "text": "نیاز به راننده پایه یک",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "repairs"
+      }
+    },
+    {
+      "id": "job-accountant",
+      "text": "حسابدار با سابقه کار",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "repairs"
+      }
+    },
+    {
+      "id": "product-phone",
+      "text": "آیفون ۱۳ دست دوم در اصفهان",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "mobile-phone"
+      }
+    },
+    {
+      "id": "product-laptop",
+      "text": "لپ‌تاپ گیمینگ می‌خوام",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "laptop"
+      }
+    },
+    {
+      "id": "product-tv",
+      "text": "تلویزیون سامسونگ ۵۵ اینچ",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "mobile-phone"
+      }
+    },
+    {
+      "id": "product-fridge",
+      "text": "یخچال ساید بای ساید",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "refrigerator"
+      }
+    },
+    {
+      "id": "social-lost",
+      "text": "گوشی‌ام را در مترو گم کردم",
+      "expect": {
+        "vertical": "social",
+        "categorySlug": "lost-found"
+      }
+    },
+    {
+      "id": "social-event",
+      "text": "بلیت کنسرت در تهران",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "tickets"
+      }
+    },
+    {
+      "id": "estate-office-rent",
+      "text": "دفتر کار در ونک اجاره",
+      "expect": {
+        "vertical": "real-estate",
+        "categorySlug": "office-rent"
+      }
+    },
+    {
+      "id": "estate-warehouse",
+      "text": "انبار در جنوب تهران",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "repairs"
+      }
+    },
+    {
+      "id": "vehicle-truck",
+      "text": "کامیونت ایسوزو برای باربری",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "moving"
+      }
+    },
+    {
+      "id": "service-ac",
+      "text": "تعمیر کولر گازی",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "repairs"
+      }
+    },
+    {
+      "id": "service-carpet",
+      "text": "قالیشویی در مشهد",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "repairs"
+      }
+    },
+    {
+      "id": "job-nurse",
+      "text": "پرستار سالمند در منزل",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "musical-instruments"
+      }
+    },
+    {
+      "id": "product-sofa",
+      "text": "مبل راحتی دست دوم",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "sofa-chair"
+      }
+    },
+    {
+      "id": "estate-penthouse",
+      "text": "پنت‌هاوس در شمال تهران",
+      "expect": {
+        "vertical": "real-estate",
+        "categorySlug": "residential-sale"
+      }
+    },
+    {
+      "id": "estate-short-rent",
+      "text": "اجاره روزانه سوئیت در کیش",
+      "expect": {
+        "vertical": "real-estate",
+        "categorySlug": "suite-apartment-rent"
+      }
+    },
+    {
+      "id": "vehicle-bicycle",
+      "text": "دوچرخه کوهستان",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "bicycle-repair"
+      }
+    },
+    {
+      "id": "service-garden",
+      "text": "باغبانی و هرس درخت",
+      "expect": {
+        "vertical": "real-estate",
+        "categorySlug": "residential-sale"
+      }
+    },
+    {
+      "id": "service-locksmith",
+      "text": "کلیدساز برای در آپارتمان",
+      "expect": {
+        "vertical": "real-estate",
+        "categorySlug": "apartment-sale"
+      }
+    },
+    {
+      "id": "job-teacher",
+      "text": "معلم ریاضی پایه دهم",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "education"
+      }
+    },
+    {
+      "id": "product-camera",
+      "text": "دوربین کانن دست دوم",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "camera"
+      }
+    },
+    {
+      "id": "product-watch",
+      "text": "ساعت مچی رولکس",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "jewelry-watches"
+      }
+    },
+    {
+      "id": "social-volunteer",
+      "text": "داوطلب کمک به سالمندان",
+      "expect": {
+        "vertical": "social",
+        "categorySlug": "social-events"
+      }
+    },
+    {
+      "id": "estate-clinic-rent",
+      "text": "کلینیک دندانپزشکی برای اجاره",
+      "expect": {
+        "vertical": "real-estate",
+        "categorySlug": "apartment-rent"
+      }
+    },
+    {
+      "id": "vehicle-rent",
+      "text": "اجاره خودرو در فرودگاه امام",
+      "expect": {
+        "vertical": "vehicles",
+        "categorySlug": "car"
+      }
+    },
+    {
+      "id": "service-pest",
+      "text": "سمپاشی منزل",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "repairs"
+      }
+    },
+    {
+      "id": "service-welding",
+      "text": "جوشکاری درب آهنی",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "repairs"
+      }
+    },
+    {
+      "id": "job-sales",
+      "text": "کارشناس فروش با حقوق ثابت",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "repairs"
+      }
+    },
+    {
+      "id": "product-playstation",
+      "text": "پلی‌استیشن ۵ نو",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "game-console"
+      }
+    },
+    {
+      "id": "estate-parking",
+      "text": "جای پارک در پارکینگ مجتمع",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "repairs"
+      }
+    },
+    {
+      "id": "vehicle-scooter",
+      "text": "اسکوتر برقی",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "electrical"
+      }
+    },
+    {
+      "id": "service-tutor",
+      "text": "معلم خصوصی زبان انگلیسی",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "education"
+      }
+    },
+    {
+      "id": "product-washing",
+      "text": "ماشین لباسشویی ال‌جی",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "washing-machine"
+      }
+    },
+    {
+      "id": "social-conference",
+      "text": "ثبت‌نام همایش فناوری",
+      "expect": {
+        "vertical": "social",
+        "categorySlug": "conference"
+      }
+    }
+  ]
+}

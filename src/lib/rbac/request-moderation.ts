@@ -2,6 +2,8 @@ import type { NextRequest } from 'next/server';
 import { db } from '@/lib/db';
 import type { ModerationStatus, RequestStatus } from '@prisma/client';
 import { scheduleNeedLeadOutreach } from '@/lib/need-leads/schedule';
+import { enqueueVipBroadcast } from '@/lib/smart-matching/enqueue-vip-broadcast';
+import { isSmartMatchingEnabled } from '@/lib/smart-matching/env';
 import { logModerationAudit } from '@/lib/rbac/moderation-audit';
 import { notifyNeedBrowseAlertsForRequest } from '@/lib/need-alerts/notify';
 export type ModerationAction = 'approve' | 'reject_soft' | 'reject_final';
@@ -76,7 +78,11 @@ export async function applyModerationAction(
   });
 
   if (action === 'approve') {
-    scheduleNeedLeadOutreach(requestId);
+    if (isSmartMatchingEnabled()) {
+      void enqueueVipBroadcast(requestId);
+    } else {
+      scheduleNeedLeadOutreach(requestId);
+    }
     void notifyNeedBrowseAlertsForRequest(requestId).catch((err) =>
       console.error('need browse alert notify failed', err)
     );

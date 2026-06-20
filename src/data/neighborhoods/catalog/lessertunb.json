@@ -2,7 +2,7 @@
   "cityId": "lessertunb",
   "cityName": "تنب کوچک",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:29.423Z",
+  "importedAt": "2026-06-16T22:43:33.524Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -20,6 +20,12 @@
         "east": 55.31531717008789
       },
       "geoSource": "divar"
+    },
+    {
+      "id": "جزیره-تنب-بزرگ",
+      "name": "جزیره تنب بزرگ",
+      "nameEn": "جزیره-تنب-بزرگ",
+      "geoSource": "osm"
     }
   ]
 }

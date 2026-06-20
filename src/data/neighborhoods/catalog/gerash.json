@@ -2,7 +2,7 @@
   "cityId": "gerash",
   "cityName": "گراش",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:28.185Z",
+  "importedAt": "2026-06-16T18:48:43.567Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,7 @@
         "west": 53.6575454252485,
         "east": 53.77772182800561
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "شهرک-رزمندگان",
@@ -35,7 +35,7 @@
         "west": 53.56496215598618,
         "east": 53.68513855874329
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "شهرک-فرهنگیان",
@@ -51,7 +51,61 @@
         "west": 53.626812554278764,
         "east": 53.746988957035875
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوز",
+      "name": "اوز",
+      "nameEn": "اوز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باین",
+      "name": "باین",
+      "nameEn": "باین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خضری",
+      "name": "خضری",
+      "nameEn": "خضری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خلور",
+      "name": "خلور",
+      "nameEn": "خلور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهمیان",
+      "name": "دهمیان",
+      "nameEn": "دهمیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهر-جدید",
+      "name": "شهر جدید",
+      "nameEn": "شهر-جدید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-بهارستان",
+      "name": "شهرک بهارستان",
+      "nameEn": "شهرک-بهارستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلات-خانی",
+      "name": "قلات خانی",
+      "nameEn": "قلات-خانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گراش",
+      "name": "گراش",
+      "nameEn": "گراش",
+      "geoSource": "osm"
     }
   ]
 }

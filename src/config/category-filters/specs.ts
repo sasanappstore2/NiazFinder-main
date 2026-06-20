@@ -23,6 +23,7 @@ import {
 } from './options';
 
 const G = { browse: true, intake: true } as const;
+const C = { browse: true, intake: true, intakeTier: 'critical' as const };
 
 const SALE_RESIDENTIAL_SPEC: CategoryFilterSpec = [
   { key: 'budget', label: 'بودجه / قیمت (تومان)', kind: 'range', browse: true, intake: true },
@@ -54,7 +55,7 @@ const SALE_RESIDENTIAL_SPEC: CategoryFilterSpec = [
     urlParam: 'pricePerMeter',
     ...G,
   },
-  { key: 'rooms', label: 'تعداد خواب', kind: 'chips', options: [...ROOMS], ...G },
+  { key: 'rooms', label: 'تعداد خواب', kind: 'chips', options: [...ROOMS], ...C },
   {
     key: 'yearMin',
     label: 'حداقل سن بنا (سال)',
@@ -76,7 +77,7 @@ const SALE_RESIDENTIAL_SPEC: CategoryFilterSpec = [
     label: 'امکانات',
     kind: 'multi',
     options: [...AMENITIES],
-    ...G,
+    ...C,
   },
   {
     key: 'deedType',
@@ -113,7 +114,7 @@ const RENT_BUILT_SPEC: CategoryFilterSpec = [
     urlParam: 'area',
     ...G,
   },
-  { key: 'rooms', label: 'تعداد خواب', kind: 'chips', options: [...ROOMS], ...G },
+  { key: 'rooms', label: 'تعداد خواب', kind: 'chips', options: [...ROOMS], ...C },
   {
     key: 'yearMin',
     label: 'حداقل سن بنا (سال)',
@@ -135,7 +136,7 @@ const RENT_BUILT_SPEC: CategoryFilterSpec = [
     label: 'امکانات',
     kind: 'multi',
     options: [...AMENITIES],
-    ...G,
+    ...C,
   },
 ];
 
@@ -306,27 +307,30 @@ export const ROOT_SPECS: Record<string, CategoryFilterSpec> = {
   vehicles: [
     { key: 'dealType', label: 'نوع معامله', kind: 'chips', options: [...DEAL_TYPE_VEHICLE], required: true, ...G },
     { key: 'vehicleKind', label: 'نوع وسیله', kind: 'chips', options: [...VEHICLE_KIND], showIf: { field: 'dealType', in: ['buy', 'sell', 'rent'] }, ...G },
-    { key: 'condition', label: 'وضعیت', kind: 'chips', options: [...CONDITION], showIf: { field: 'dealType', in: ['buy', 'sell'] }, ...G },
-    { key: 'yearMin', label: 'سال ساخت', kind: 'range', urlParam: 'year', showIf: { field: 'dealType', in: ['buy', 'rent'] }, ...G },
-    { key: 'mileageMax', label: 'حداکثر کارکرد (کیلومتر)', kind: 'range', urlParam: 'mileage', showIf: { field: 'dealType', in: ['buy', 'sell'] }, browse: true, intake: true },
-    { key: 'brand', label: 'برند / مدل', kind: 'text', placeholder: 'مثلاً پژو ۲۰۶', browse: false, intake: true },
-    { key: 'budget', label: 'بودجه / قیمت', kind: 'range', showIf: { field: 'dealType', in: ['buy', 'sell', 'rent', 'parts'] }, browse: false, intake: true },
+    { key: 'condition', label: 'وضعیت', kind: 'chips', options: [...CONDITION], showIf: { field: 'dealType', in: ['buy', 'sell'] }, ...C },
+    { key: 'yearMin', label: 'سال ساخت', kind: 'range', urlParam: 'year', showIf: { field: 'dealType', in: ['buy', 'rent'] }, ...C },
+    { key: 'mileageMax', label: 'حداکثر کارکرد (کیلومتر)', kind: 'range', urlParam: 'mileage', showIf: { field: 'dealType', in: ['buy', 'sell'] }, ...C },
+    { key: 'brand', label: 'برند / مدل', kind: 'text', placeholder: 'مثلاً پژو ۲۰۶', browse: false, intake: true, intakeTier: 'critical' },
+    { key: 'budget', label: 'بودجه / قیمت', kind: 'range', showIf: { field: 'dealType', in: ['buy', 'sell', 'rent', 'parts'] }, browse: false, intake: true, intakeTier: 'critical' },
     { key: 'serviceType', label: 'شرح خدمات', kind: 'text', showIf: { field: 'dealType', equals: 'service' }, browse: false, intake: true },
     { key: '_recent', label: 'بازه زمانی', kind: 'select', globalKey: 'recent', browse: true, intake: false },
   ],
   electronics: [
     { key: 'dealType', label: 'خرید / فروش', kind: 'chips', options: [...DEAL_TYPE_PRODUCT], required: true, ...G },
     { key: 'productName', label: 'نام کالا', kind: 'text', required: true, browse: false, intake: true },
-    { key: 'condition', label: 'وضعیت', kind: 'chips', options: [...CONDITION], ...G },
-    { key: 'budget', label: 'بودجه / قیمت', kind: 'range', browse: false, intake: true },
-    { key: 'storage', label: 'حافظه', kind: 'chips', options: [...STORAGE_MOBILE], browse: true, intake: true },
+    { key: 'condition', label: 'وضعیت', kind: 'chips', options: [...CONDITION], ...C },
+    { key: 'budget', label: 'بودجه / قیمت', kind: 'range', browse: false, intake: true, intakeTier: 'critical' },
+    { key: 'storage', label: 'حافظه', kind: 'chips', options: [...STORAGE_MOBILE], browse: true, intake: true, intakeTier: 'critical' },
     { key: 'ram', label: 'رم', kind: 'chips', options: [...RAM_OPTIONS], browse: true, intake: true },
     { key: '_urgent', label: 'فوری', kind: 'toggle', globalKey: 'urgent', browse: true, intake: false },
     { key: '_recent', label: 'بازه زمانی', kind: 'select', globalKey: 'recent', browse: true, intake: false },
   ],
   'home-appliances': [
     { key: 'dealType', label: 'خرید / فروش', kind: 'chips', options: [...DEAL_TYPE_PRODUCT], ...G },
-    { key: 'condition', label: 'وضعیت', kind: 'chips', options: [...CONDITION], ...G },
+    { key: 'productName', label: 'نام کالا', kind: 'text', browse: false, intake: true },
+    { key: 'brand', label: 'برند', kind: 'text', browse: false, intake: true, intakeTier: 'critical' },
+    { key: 'condition', label: 'وضعیت', kind: 'chips', options: [...CONDITION], ...C },
+    { key: 'budget', label: 'بودجه / قیمت', kind: 'range', browse: false, intake: true, intakeTier: 'critical' },
     { key: '_recent', label: 'بازه زمانی', kind: 'select', globalKey: 'recent', browse: true, intake: false },
   ],
   services: [
@@ -343,18 +347,18 @@ export const ROOT_SPECS: Record<string, CategoryFilterSpec> = {
       { value: 'it', label: 'فناوری' },
       { value: 'other', label: 'سایر' },
     ], required: true, browse: false, intake: true },
-    { key: 'serviceType', label: 'شرح خدمت', kind: 'text', required: true, browse: false, intake: true },
-    { key: 'when', label: 'زمان', kind: 'chips', options: [...SERVICE_WHEN], ...G },
-    { key: 'budget', label: 'بودجه تقریبی', kind: 'range', browse: false, intake: true },
+    { key: 'serviceType', label: 'شرح خدمت', kind: 'text', required: true, browse: false, intake: true, intakeTier: 'critical' },
+    { key: 'when', label: 'زمان', kind: 'chips', options: [...SERVICE_WHEN], ...C },
+    { key: 'budget', label: 'بودجه تقریبی', kind: 'range', browse: false, intake: true, intakeTier: 'critical' },
     { key: '_urgent', label: 'فوری', kind: 'toggle', globalKey: 'urgent', browse: true, intake: false },
     { key: '_recent', label: 'بازه زمانی', kind: 'select', globalKey: 'recent', browse: true, intake: false },
   ],
   jobs: [
     { key: 'roleType', label: 'نوع آگهی', kind: 'chips', options: [...ROLE_TYPE], required: true, ...G },
     { key: 'jobTitle', label: 'عنوان شغل', kind: 'text', required: true, browse: false, intake: true },
-    { key: 'employmentType', label: 'نوع همکاری', kind: 'chips', options: [...EMPLOYMENT_TYPE], ...G },
-    { key: 'salaryMin', label: 'حقوق', kind: 'range', urlParam: 'salary', showIf: { field: 'roleType', equals: 'hiring' }, ...G },
-    { key: 'experience', label: 'سابقه', kind: 'chips', options: [...EXPERIENCE], showIf: { field: 'roleType', equals: 'seeking' }, ...G },
+    { key: 'employmentType', label: 'نوع همکاری', kind: 'chips', options: [...EMPLOYMENT_TYPE], ...C },
+    { key: 'salaryMin', label: 'حقوق', kind: 'range', urlParam: 'salary', showIf: { field: 'roleType', equals: 'hiring' }, ...C },
+    { key: 'experience', label: 'سابقه', kind: 'chips', options: [...EXPERIENCE], showIf: { field: 'roleType', equals: 'seeking' }, ...C },
     { key: '_recent', label: 'بازه زمانی', kind: 'select', globalKey: 'recent', browse: true, intake: false },
   ],
   social: [
@@ -364,12 +368,18 @@ export const ROOT_SPECS: Record<string, CategoryFilterSpec> = {
   ],
   'personal-items': [
     { key: 'dealType', label: 'خرید / فروش', kind: 'chips', options: [...DEAL_TYPE_PRODUCT], ...G },
+    { key: 'productName', label: 'نام کالا', kind: 'text', browse: false, intake: true },
+    { key: 'brand', label: 'برند', kind: 'text', placeholder: 'مثلاً نایک، آدیداس', browse: false, intake: true },
     { key: 'condition', label: 'وضعیت', kind: 'chips', options: [...CONDITION], ...G },
+    { key: 'budget', label: 'بودجه / قیمت', kind: 'range', browse: false, intake: true },
     { key: '_recent', label: 'بازه زمانی', kind: 'select', globalKey: 'recent', browse: true, intake: false },
   ],
   entertainment: [
     { key: 'dealType', label: 'خرید / فروش', kind: 'chips', options: [...DEAL_TYPE_PRODUCT], ...G },
+    { key: 'productName', label: 'نام کالا', kind: 'text', browse: false, intake: true },
+    { key: 'brand', label: 'برند', kind: 'text', placeholder: 'مثلاً یاماها، رولند', browse: false, intake: true },
     { key: 'condition', label: 'وضعیت', kind: 'chips', options: [...CONDITION], ...G },
+    { key: 'budget', label: 'بودجه / قیمت', kind: 'range', browse: false, intake: true },
     { key: '_recent', label: 'بازه زمانی', kind: 'select', globalKey: 'recent', browse: true, intake: false },
   ],
 };
@@ -415,6 +425,18 @@ export const PARENT_SPECS: Record<string, CategoryFilterSpec> = {
   'short-term-rent': [...SHORT_TERM_SPEC],
   pets: [
     { key: 'petType', label: 'نوع حیوان', kind: 'chips', options: [...PET_TYPE], browse: true, intake: true },
+  ],
+  'musical-instruments': [
+    { key: 'brand', label: 'برند', kind: 'text', placeholder: 'مثلاً یاماها، رولند', browse: false, intake: true },
+  ],
+  'game-console': [
+    { key: 'brand', label: 'برند / مدل', kind: 'text', placeholder: 'مثلاً پلی‌استیشن ۵', browse: false, intake: true },
+  ],
+  motorcycle: [
+    { key: 'brand', label: 'برند / مدل', kind: 'text', placeholder: 'مثلاً هوندا سی‌بی‌آر', browse: false, intake: true },
+  ],
+  'kitchen-appliances': [
+    { key: 'brand', label: 'برند', kind: 'text', browse: false, intake: true },
   ],
   repairs: [
     {

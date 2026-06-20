@@ -12,6 +12,8 @@ import { NeighborhoodMatcher } from '@/intake/matchers/neighborhoodMatcher';
 import { getCategoryBySlug } from '@/config/categories';
 import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
 import { extractTransactionType } from '@/intake/extractors/transactionExtractor';
+import type { ClassifierVertical } from '@/lib/need-intake/vertical-classifier';
+import { slugBelongsToAnyVertical } from '@/intake/intelligence-engine/hybrid/vertical-slug-index';
 
 const TOP_CATEGORIES = 5;
 const TOP_CITIES = 5;
@@ -92,11 +94,17 @@ function relatedTemplateCategorySlugs(entities: IntakeEntities): string[] {
  * Retrieve ranked candidate sets for constrained AI selection.
  * Never returns full registry — only top-N from matchers + rule hints.
  */
+export interface CandidateRetrievalOptions {
+  verticalFilter?: readonly ClassifierVertical[];
+  maxCategories?: number;
+}
+
 export function retrieveIntakeCandidates(
   indexes: IntakeIndexes,
   tokens: readonly string[],
   ngrams: readonly string[],
-  ruleResult: IntakeAnalysisResult
+  ruleResult: IntakeAnalysisResult,
+  opts?: CandidateRetrievalOptions
 ): AiCandidateRetrievalSet {
   const entities = ruleResult.entities;
   const ruleConfidence = ruleResult.confidence;
@@ -148,8 +156,12 @@ export function retrieveIntakeCandidates(
   }
 
   const categories = dedupeCategories([...categoryMap.values()])
+    .filter((c) => {
+      if (!opts?.verticalFilter?.length) return true;
+      return slugBelongsToAnyVertical(c.slug, opts.verticalFilter);
+    })
     .sort((a, b) => (b.rankScore ?? 0) - (a.rankScore ?? 0))
-    .slice(0, TOP_CATEGORIES);
+    .slice(0, opts?.maxCategories ?? TOP_CATEGORIES);
 
   const cityMap = new Map<string, AiCandidateCity>();
   for (const hit of cityHits.slice(0, TOP_CITIES)) {

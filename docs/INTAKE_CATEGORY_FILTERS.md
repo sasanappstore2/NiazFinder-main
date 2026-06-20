@@ -2,9 +2,10 @@
 
 > Registry: [`src/config/category-filters/registry.ts`](../src/config/category-filters/registry.ts)  
 > Specs: [`src/config/category-filters/specs.ts`](../src/config/category-filters/specs.ts)  
-> UI: [`IntakeCategoryFilterFields.tsx`](../src/components/need-intake/IntakeCategoryFilterFields.tsx)
+> Section builder: [`src/intake/template/buildIntakeSections.ts`](../src/intake/template/buildIntakeSections.ts)  
+> UI pills: [`IntakeSectionMenus.tsx`](../src/components/need-intake/IntakeSectionMenus.tsx)
 
-فیلدهای اضافی دسته در مرحله **location** از registry بارگذاری می‌شوند و **فقط در UI intake** per vertical نمایش داده می‌شوند (نه همه browse filters).
+فیلدهای اضافی دسته در مرحله **location** از registry بارگذاری می‌شوند و در بخش **«افزودن اطلاعات (اختیاری)»** به‌صورت pill نمایش داده می‌شوند (مثلاً «مشخصات ملک»، «بودجه» برای املاک).
 
 ---
 
@@ -15,6 +16,19 @@ ROOT_SPECS → PARENT_SPECS → LEAF_SPECS → INTAKE_TAIL
 ```
 
 ورودی: `getIntakeFieldsForCategory(categorySlug)` — فقط `audience: need | both` برای intake.
+
+`resolveTemplate()` فیلدها را با `buildIntakeSections()` در sectionهای معنادار گروه‌بندی می‌کند (`sectionGroups.ts` + `pack-intake-manifest.ts`).
+
+---
+
+## فیلترهای حیاتی اختیاری (Critical)
+
+کاتالوگ: [`critical-intake-catalog.ts`](../src/intake/template/critical-intake-catalog.ts) (تولید: `npm run generate:critical-intake-catalog`)
+
+- `intakeTier: 'critical'` در `specs.ts` — فیلدهای اختیاری مهم برای تطبیق کسب‌وکار
+- `IntakeTemplate.criticalFields` / `criticalSectionKeys` — بخش‌های مرتبط **پیش‌فرض باز** با برچسب «مهم برای تطبیق»
+- AI فقط **چیپ پیشنهادی** می‌دهد (`suggestedFilters`) — بدون auto-fill در `answers`
+- تست: `npm run test:critical-intake-catalog` و `npm run test:critical-suggestions`
 
 ---
 
@@ -33,18 +47,22 @@ ROOT_SPECS → PARENT_SPECS → LEAF_SPECS → INTAKE_TAIL
 }
 ```
 
-### ۲. Entity در draft
+### ۲. Section group (اگر section جدید لازم است)
+
+در [`sectionGroups.ts`](../src/intake/template/sectionGroups.ts) فیلد را به `fieldToSection` ریشه مربوطه اضافه کنید (مثلاً `buildingAge` → `property-specs`).
+
+### ۳. Entity در draft
 
 مقدار در `draft.answers.buildingAge` یا entities — از projection و publish در `flatten-draft-answers-for-publish.ts` به browse منتقل می‌شود.
 
-### ۳. Publish (اگر required)
+### ۴. Publish (اگر required)
 
 - اضافه به `requiredFields` در [`needTypes.ts`](../src/intake/schema/needTypes.ts) **فقط** اگر gate لازم است
 - وگرنه optional در spec (بدون validator)
 
 **فاز ۱۶:** `showIf` fields در validator شرطی می‌شوند.
 
-### ۴. Golden scenario
+### ۵. Golden scenario
 
 سناریو در [`post-golden-matrix.ts`](../src/lib/need-intake/fixtures/post-golden-matrix.ts):
 
@@ -52,10 +70,18 @@ ROOT_SPECS → PARENT_SPECS → LEAF_SPECS → INTAKE_TAIL
 { suffix: 'building-age', need: 'آپارتمان دو خوابه نوساز با پارکینگ', expect: { buildingAge: 5 } }
 ```
 
-### ۵. Browse parity
+### ۶. Browse parity
 
 ```bash
 npm run test:publish-browse-parity
+```
+
+### ۷. Pack manifest (اختیاری)
+
+اگر فیلد در rule pack `optionalFields` / `requiredFields` است:
+
+```bash
+npx tsx scripts/generate/build-pack-intake-manifest.ts
 ```
 
 ---
@@ -95,9 +121,19 @@ Client: `fieldVisible()` در registry — **هنوز** هم‌راستا با `
 
 ---
 
+## تست‌ها
+
+```bash
+npm run test:category-filters
+npx tsx src/intake/template/fixtures/run-intake-sections-self-test.ts
+```
+
+---
+
 ## چک‌لیست PR فیلد جدید
 
 - [ ] spec در `specs.ts`
+- [ ] mapping در `sectionGroups.ts` (اگر section مشخص لازم است)
 - [ ] browse parity (اگر روی URL تأثیر دارد)
 - [ ] golden scenario در post-pipeline
 - [ ] `entityRegistry.hasEntityValue` اگر publish required

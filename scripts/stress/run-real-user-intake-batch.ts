@@ -342,9 +342,9 @@ async function main(): Promise<void> {
   for (const r of results) {
     const mark = r.ok ? 'OK' : 'FAIL';
     console.log(`[${mark}] ${r.id}`);
-    console.log(`  text: ${r.text.slice(0, 70)}${r.text.length > 70 ? '?' : ''}`);
+    console.log(`  text: ${r.text.slice(0, 70)}${r.text.length > 70 ? '…' : ''}`);
     console.log(`  category: ${r.got} (expected ${r.expected})`);
-    console.log(`  title: ${r.title || '?'}`);
+    console.log(`  title: ${r.title || '—'}`);
     if (r.issues.length) console.log(`  issues: ${r.issues.join(', ')}`);
   }
 

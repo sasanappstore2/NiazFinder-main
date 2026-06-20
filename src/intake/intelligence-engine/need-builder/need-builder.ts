@@ -8,6 +8,7 @@ import {
 import { getIntentsForCategory } from '@/config/need-intents';
 import { getEffectiveIntakeSchema } from '@/lib/need-intake/essential-intake-schema';
 import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
+import { isAmbiguousCommercialSubtype } from '@/lib/need-intake/business-commercial-property-intent';
 import { extractPropertySlotsFromText } from '@/lib/need-intake/extract-property-slots';
 import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
 import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
@@ -18,6 +19,12 @@ import type { IntakeParseGap } from '@/lib/need-intake/intake-parse-schema';
 import type { MissingFieldItem, WizardQuestion } from '@/intake/types';
 import { buildNextQuestion } from '@/intake/wizard/wizardBuilder';
 import { recordToEntities } from '@/intake/entities/entityRecord';
+import { enrichParsedIntent } from '@/lib/need-intake/enrich-parsed-intent';
+
+export interface NeedBuilderLocationScope {
+  citySlug?: string | null;
+  cityName?: string | null;
+}
 
 export interface NeedBuilderInput {
   sourceText: string;
@@ -25,6 +32,8 @@ export interface NeedBuilderInput {
   gaps: IntakeParseGap[];
   formHints?: IntakeIntelligenceInput['formHints'];
   existingDraft?: NeedDraft | null;
+  locationScope?: NeedBuilderLocationScope;
+  parsedLocationPatch?: Partial<ParsedIntent>;
 }
 
 export interface NeedBuilderOutput {
@@ -49,7 +58,7 @@ function fieldBagToAnswers(fields: IntakeFieldBag): Record<string, string | numb
   set('budget', fields.budgetMax?.value);
   set('rooms', fields.rooms?.value);
   if (fields.neighborhood?.value && fields.city?.value) {
-    answers.location = `${fields.neighborhood.value}? ${fields.city.value}`;
+    answers.location = `${fields.neighborhood.value}، ${fields.city.value}`;
   } else if (fields.city?.value) {
     answers.location = String(fields.city.value);
   }
@@ -144,14 +153,18 @@ function entitiesForLockedCategory(
 
 /** Sole module allowed to produce parsedIntent, listingPreview, completion scores. */
 export function buildNeedFromFields(input: NeedBuilderInput): NeedBuilderOutput {
-  const { sourceText, fields, formHints, existingDraft } = input;
+  const { sourceText, fields, formHints, existingDraft, locationScope, parsedLocationPatch } =
+    input;
   const parsedBase = parseIntentFromText(sourceText);
   const categoryLocked = formHints?.categoryLockedByUser ?? false;
+  const commercialAmbiguous = !categoryLocked && isAmbiguousCommercialSubtype(sourceText);
 
-  const categorySlug = String(fields.categorySlug?.value ?? parsedBase.categorySlug ?? '');
-  const subcategorySlug = String(
-    fields.subcategorySlug?.value ?? parsedBase.subcategorySlug ?? ''
-  );
+  const categorySlug = commercialAmbiguous
+    ? ''
+    : String(fields.categorySlug?.value ?? parsedBase.categorySlug ?? '');
+  const subcategorySlug = commercialAmbiguous
+    ? ''
+    : String(fields.subcategorySlug?.value ?? parsedBase.subcategorySlug ?? '');
   const leafSlug = subcategorySlug || categorySlug;
 
   const form = {
@@ -246,6 +259,48 @@ export function buildNeedFromFields(input: NeedBuilderInput): NeedBuilderOutput 
       titleSource: 'template',
       descriptionSource: 'template',
     },
+  });
+
+  const scopedCityName = locationScope?.cityName?.trim() || undefined;
+  const scopedCitySlug = locationScope?.citySlug?.trim() || undefined;
+  let enrichedParsed = enrichParsedIntent(
+    {
+      ...draft.parsedIntent,
+      rawText: sourceText,
+      ...(parsedLocationPatch ?? {}),
+    },
+    {
+      preferredCityId: scopedCitySlug,
+      preferredCityName: scopedCityName,
+      locationText: sourceText,
+    }
+  );
+
+  if (scopedCityName) {
+    enrichedParsed = { ...enrichedParsed, city: scopedCityName };
+  }
+
+  const enrichedEntities: Record<string, unknown> = {
+    ...(draft.entities as Record<string, unknown>),
+    ...(enrichedParsed.entities ?? {}),
+  };
+  if (scopedCityName) {
+    enrichedEntities.city = scopedCityName;
+  }
+  if (enrichedParsed.neighborhoodSlug) {
+    enrichedEntities.neighborhoodSlug = enrichedParsed.neighborhoodSlug;
+  }
+  const hoodArea = enrichedParsed.entities?.area?.trim();
+  if (hoodArea) {
+    enrichedEntities.neighborhood = hoodArea;
+  } else if (fields.neighborhood?.value) {
+    enrichedEntities.neighborhood = String(fields.neighborhood.value);
+  }
+
+  draft = recomputeNeedDraft({
+    ...draft,
+    parsedIntent: enrichedParsed,
+    entities: enrichedEntities,
   });
 
   const entities = recordToEntities(draft.entities);

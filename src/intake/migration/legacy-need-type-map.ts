@@ -1,6 +1,6 @@
 /**
- * One-time migration mapping: legacy needType string ? canonical templateId.
- * @deprecated Runtime forbidden ? DB backfill, analytics historical dashboards only.
+ * One-time migration mapping: legacy needType string → canonical templateId.
+ * @deprecated Runtime forbidden — DB backfill, analytics historical dashboards only.
  */
 export const LEGACY_NEED_TYPE_TO_TEMPLATE_ID: Readonly<Record<string, string>> = {
   'apartment-rent-seeking': 'residential-rent',

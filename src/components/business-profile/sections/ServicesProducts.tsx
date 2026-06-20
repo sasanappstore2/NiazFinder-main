@@ -38,7 +38,7 @@ function ServiceCard({
     <Card className="flex h-full flex-col overflow-hidden">
       {offer.images[0] && (
         <div className="relative aspect-16/10 bg-muted">
-          <Image src={offer.images[0]} alt="" fill className="object-cover" />
+          <Image src={offer.images[0]} alt="" fill sizes="(max-width: 640px) 100vw, 400px" className="object-cover" />
         </div>
       )}
       <CardHeader className="pb-2">

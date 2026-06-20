@@ -28,12 +28,13 @@ import {
   matchManagedNeighborhood,
 } from '@/lib/neighborhoods/match-managed-neighborhood';
 import { buildManualSuggestionChips } from '@/lib/need-intake/manual-suggestions';
+import { textMentionsCityOtherThan } from '@/lib/need-intake/extract-cities-from-text';
 import {
   formatNeighborhoodDisambiguationLabel,
   neighborhoodCandidatesNeedDistinctLabels,
 } from '@/lib/neighborhoods/format-disambiguation-label';
 import { findManagedNeighborhoodAmbiguity } from '@/lib/neighborhoods/find-managed-neighborhood-ambiguity';
-import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
+import { extractLocationFragment, normalizeHoodFragment } from '@/lib/need-intake/location-fragment';
 
 export interface UseIntakeLocationOptions {
   initialCity?: string | null;
@@ -374,14 +375,26 @@ export function useIntakeLocation({
       const slug =
         entities.neighborhoodSlug?.trim() || draft.parsedIntent.neighborhoodSlug?.trim() || '';
       const patch: Record<string, unknown> = {};
+      const sourceText = draft.sourceText ?? draft.parsedIntent.rawText ?? '';
 
-      if (!cityLockedByUserRef.current && city) {
-        setSelectedCity(city);
-        patch.city = city;
+      const scopedCity = selectedCity.trim();
+      const inferredCity = city?.trim() ?? '';
+      const crossCityInText =
+        scopedCity.length > 0 && textMentionsCityOtherThan(sourceText, scopedCity);
+
+      if (!cityLockedByUserRef.current && inferredCity) {
+        if (!scopedCity || inferredCity === scopedCity) {
+          setSelectedCity(inferredCity);
+          patch.city = inferredCity;
+        } else if (scopedCity) {
+          patch.city = scopedCity;
+        }
+      } else if (scopedCity) {
+        patch.city = scopedCity;
       }
 
-      if (!neighborhoodLockedByUserRef.current) {
-        const cityForMatch = city || selectedCity;
+      if (!neighborhoodLockedByUserRef.current && !crossCityInText) {
+        const cityForMatch = scopedCity || inferredCity;
         const bySlug = slug ? lookupManagedNeighborhoodBySlug(neighborhoods, slug) : null;
         if (bySlug) {
           setSelectedNeighborhood(bySlug.name);
@@ -414,26 +427,40 @@ export function useIntakeLocation({
   const neighborhoodDisambiguationChips = useMemo(() => {
     const parsed = needDraft?.parsedIntent;
     const source = needDraft?.sourceText ?? parsed?.rawText ?? '';
-    const disambiguationPhrase =
-      extractLocationFragment(source)?.trim() ||
-      parsed?.entities?.area?.trim() ||
-      (needDraft ? resolveIntakeNeighborhoodFromDraft(needDraft) : '') ||
-      '';
+    const draftNeighborhood = needDraft ? resolveIntakeNeighborhoodFromDraft(needDraft) : '';
+    const userNeighborhood = selectedNeighborhood.trim();
+    const isCanonicalSelection = neighborhoods.some(
+      (n) => n.name === userNeighborhood || n.id === userNeighborhood
+    );
+    const resolvedSlug = needDraft
+      ? recordToEntities(needDraft.entities).neighborhoodSlug?.trim()
+      : '';
+    if (resolvedSlug) {
+      const resolved = lookupManagedNeighborhoodBySlug(neighborhoods, resolvedSlug);
+      if (resolved && resolved.name === userNeighborhood) return [];
+    }
+
+    const phraseCandidates = [
+      extractLocationFragment(source)?.trim(),
+      parsed?.entities?.area?.trim(),
+      draftNeighborhood.trim(),
+      !isCanonicalSelection ? userNeighborhood : '',
+    ]
+      .filter((p): p is string => Boolean(p && p.length >= 2))
+      .map((p) => normalizeHoodFragment(p) || p);
+
     let candidates = parsed?.neighborhoodCandidates ?? [];
 
-    if (candidates.length < 2 && selectedCity.trim() && needDraft) {
-      if (disambiguationPhrase.length >= 2 && neighborhoods.length > 0) {
-        const hits = findManagedNeighborhoodAmbiguity(
-          neighborhoods,
-          disambiguationPhrase,
-          source
-        );
+    if (candidates.length < 2 && selectedCity.trim() && neighborhoods.length > 0) {
+      for (const phrase of phraseCandidates) {
+        const hits = findManagedNeighborhoodAmbiguity(neighborhoods, phrase, source);
         if (hits.length >= 2) {
           candidates = hits.slice(0, 6).map((h) => ({
             slug: h.neighborhood.id,
             label: h.neighborhood.name,
             city: selectedCity,
           }));
+          break;
         }
       }
     }
@@ -446,7 +473,7 @@ export function useIntakeLocation({
       value: `neighborhood:${n.slug}`,
       label: formatNeighborhoodDisambiguationLabel(n, neighborhoods, { distinct }),
     }));
-  }, [needDraft, neighborhoods, selectedCity]);
+  }, [needDraft, neighborhoods, selectedCity, selectedNeighborhood]);
 
   const manualSuggestionChips = needDraft
     ? buildManualSuggestionChips(needDraft.parsedIntent, selectedCity || initialCity)
@@ -479,19 +506,26 @@ export function useIntakeLocation({
 
   const handleLocationSuggestion = useCallback(
     (value: string) => {
-      if (value.startsWith('city:')) applyCity(value.slice('city:'.length));
-      else if (value.startsWith('neighborhood:')) {
+      if (value.startsWith('city:')) {
+        applyCity(value.slice('city:'.length));
+        return;
+      }
+      if (value.startsWith('neighborhood:')) {
         const slug = value.slice('neighborhood:'.length);
         if (slug === '__other__') return;
         const hit = needDraft?.parsedIntent.neighborhoodCandidates?.find((n) => n.slug === slug);
         const hood = lookupManagedNeighborhoodBySlug(neighborhoods, slug);
+        const hoodCity = hit?.city?.trim();
+        if (hoodCity && hoodCity !== selectedCity.trim()) {
+          applyCity(hoodCity);
+        }
         const label = hood?.name ?? hit?.label?.trim() ?? slug;
         if (label !== selectedNeighborhood.trim()) {
           applyNeighborhood(label, slug, { fromUser: true });
         }
       }
     },
-    [applyCity, applyNeighborhood, needDraft, neighborhoods, selectedNeighborhood]
+    [applyCity, applyNeighborhood, needDraft, neighborhoods, selectedCity, selectedNeighborhood]
   );
 
   useEffect(() => {
@@ -505,6 +539,14 @@ export function useIntakeLocation({
     if (!needDraft || neighborhoods.length === 0 || neighborhoodLockedByUserRef.current) return;
 
     const parsed = needDraft.parsedIntent;
+    const sourceText = needDraft.sourceText ?? parsed?.rawText ?? '';
+    if (
+      selectedCity.trim() &&
+      textMentionsCityOtherThan(sourceText, selectedCity)
+    ) {
+      return;
+    }
+
     const parsedCandidates = parsed?.neighborhoodCandidates ?? [];
     if (parsedCandidates.length >= 2 && !parsed?.neighborhoodSlug?.trim()) return;
 
@@ -538,6 +580,16 @@ export function useIntakeLocation({
     const isCanonical = neighborhoods.some((n) => n.name === candidate || n.id === candidate);
     if (isCanonical) return;
 
+    if (
+      findManagedNeighborhoodAmbiguity(
+        neighborhoods,
+        candidate,
+        needDraft.sourceText ?? parsed?.rawText ?? ''
+      ).length >= 2
+    ) {
+      return;
+    }
+
     const hit = matchManagedNeighborhood(neighborhoods, candidate, selectedCity);
     if (hit) applyNeighborhood(hit.name, hit.id);
   }, [
@@ -558,14 +610,27 @@ export function useIntakeLocation({
           citySlug: initialCity,
         }) ?? initialCity.trim();
       setSelectedCity(resolved);
+      cityLockedByUserRef.current = true;
       return;
     }
     const scope = scopeFromCookie();
     if (scope.mode === 'city' || scope.mode === 'cities') {
       const cityName = scope.cities[0]?.name?.trim();
-      if (cityName) setSelectedCity(cityName);
+      if (cityName) {
+        setSelectedCity(cityName);
+        cityLockedByUserRef.current = true;
+      }
     }
   }, [selectedCity, initialCity, sortedCities]);
+
+  const resetLocationLocks = useCallback(() => {
+    cityLockedByUserRef.current = false;
+    neighborhoodLockedByUserRef.current = false;
+  }, []);
+
+  const lockCityByUser = useCallback(() => {
+    cityLockedByUserRef.current = true;
+  }, []);
 
   return {
     selectedCity,
@@ -587,6 +652,8 @@ export function useIntakeLocation({
     applyMyLocation,
     applyDetectedLocationFromDraft,
     handleLocationSuggestion,
+    resetLocationLocks,
+    lockCityByUser,
     cityLockedByUserRef,
     neighborhoodLockedByUserRef,
   };

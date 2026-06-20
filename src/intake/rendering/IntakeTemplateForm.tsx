@@ -83,6 +83,7 @@ export function IntakeTemplateForm({
           sections={sections.filter((s) => s.key !== 'specs')}
           enabledKeys={enabledSections}
           mandatoryKeys={template.mandatorySectionKeys}
+          criticalKeys={template.criticalSectionKeys}
           onEnabledKeysChange={onEnabledSectionsChange}
           isSectionFilled={isSectionFilled}
           renderSectionFields={(section) => {

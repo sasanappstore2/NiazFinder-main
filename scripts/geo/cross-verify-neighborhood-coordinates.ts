@@ -559,7 +559,7 @@ async function verifyCity(
       emptyOnDivar: catalog.emptyOnDivar,
       neighborhoods: [...byId.values()],
     });
-    console.log(`  ? Applied ${fixesApplied} Divar centroid fixes ? ${catalogCityId}`);
+    console.log(`  ✓ Applied ${fixesApplied} Divar centroid fixes → ${catalogCityId}`);
   }
 
   return {
@@ -630,7 +630,7 @@ function summarizeReport(report: CrossVerifyReport): void {
     console.log('\nTop errors:');
     for (const issue of topIssues) {
       console.log(
-        `  ? ${issue.cityId}/${issue.neighborhoodName}: ${issue.code} ? ${issue.message}`
+        `  • ${issue.cityId}/${issue.neighborhoodName}: ${issue.code} — ${issue.message}`
       );
     }
   }
@@ -645,7 +645,7 @@ function summarizeReport(report: CrossVerifyReport): void {
     console.log('\nLargest Divar centroid drifts:');
     for (const issue of divarDrifts) {
       console.log(
-        `  ? ${issue.cityId}/${issue.neighborhoodName}: ${Math.round(issue.driftMetersDivar ?? 0)}m`
+        `  • ${issue.cityId}/${issue.neighborhoodName}: ${Math.round(issue.driftMetersDivar ?? 0)}m`
       );
     }
   }
@@ -668,7 +668,7 @@ async function main(): Promise<void> {
   const cities: CityCrossVerifyReport[] = [];
 
   for (const { admin, divarCityId } of targets) {
-    console.log(`\n? ${admin.name} (${admin.id}) divarCityId=${divarCityId}`);
+    console.log(`\n→ ${admin.name} (${admin.id}) divarCityId=${divarCityId}`);
     const cityReport = await verifyCity(admin, divarCityId, opts);
     cities.push(cityReport);
     const errs = cityReport.issues.filter((i) => i.level === 'error').length;
@@ -703,7 +703,7 @@ async function main(): Promise<void> {
   const jsonPath = path.join(REPORTS_DIR, `cross-verify-${stamp}.json`);
   writeJson(jsonPath, report);
   writeJson(path.join(REPORTS_DIR, 'latest.json'), report);
-  console.log(`\nReport ? ${jsonPath}`);
+  console.log(`\nReport → ${jsonPath}`);
 
   summarizeReport(report);
 }

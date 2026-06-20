@@ -282,7 +282,7 @@ function BreadcrumbInner({
 
   return (
     <BreadcrumbNav dir="rtl" itemScope itemType="https://schema.org/BreadcrumbList">
-      <BreadcrumbList className="flex flex-wrap items-center gap-1.5 text-sm sm:gap-2">
+      <BreadcrumbList className="flex min-w-0 flex-wrap items-center gap-1.5 text-sm sm:gap-2">
         {crumbs.map((crumb, index) => {
           const isLast = index === crumbs.length - 1;
           const showSeparator = index < crumbs.length - 1;
@@ -290,13 +290,13 @@ function BreadcrumbInner({
           return (
             <Fragment key={`${crumb.href}-${index}`}>
               <BreadcrumbItem
-                className="inline-flex items-center gap-1.5"
+                className="inline-flex min-w-0 max-w-full items-center gap-1.5"
                 itemProp="itemListElement"
                 itemScope
                 itemType="https://schema.org/ListItem"
               >
                 {isLast ? (
-                  <BreadcrumbPage className="text-primary font-medium">
+                  <BreadcrumbPage className="overflow-guard line-clamp-1 max-w-[min(100%,14rem)] text-primary font-medium sm:max-w-[min(100%,20rem)]">
                     <span itemProp="name">{crumb.label}</span>
                     <meta itemProp="position" content={String(index + 1)} />
                   </BreadcrumbPage>

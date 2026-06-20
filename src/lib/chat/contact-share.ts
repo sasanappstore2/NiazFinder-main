@@ -1,6 +1,10 @@
 import { CHAT_PRODUCT_CARD_PREFIX, parseLegacyProductIntroText } from '@/contracts/product-card-snapshot';
 import { callLogListPreview, parseCallLogSnapshot } from '@/lib/voice/call-log-labels';
 import { normalizeIranMobile, toAsciiDigits } from '@/lib/format/digits';
+import {
+  CHAT_LOCATION_LIST_PREVIEW,
+  parseChatLocationShareContent,
+} from '@/lib/chat/location-share';
 
 /** Marker for v1 structured contact-share payloads inside message `content` (type TEXT). */
 export const CHAT_CONTACT_SHARE_PREFIX = '__NF_CONTACT_V1__:' as const;
@@ -74,6 +78,7 @@ export function chatMessageListPreview(content: string, type?: string): string {
   if (legacyProduct?.title) return `محصول: ${legacyProduct.title}`;
   if (legacyProduct) return 'محصول';
   if (parseChatContactShareContent(content)) return 'شمارهٔ تماس';
+  if (parseChatLocationShareContent(content)) return CHAT_LOCATION_LIST_PREVIEW;
   return content;
 }
 

@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Supercluster from 'supercluster';
 import type { MapRef } from 'react-map-gl/mapbox';
-import { MAP_BROWSE_MAX_ZOOM } from '@/lib/map/tile-config';
+import {
+  BROWSE_CLUSTER_MAX_ZOOM,
+  BROWSE_CLUSTER_RADIUS,
+} from '@/lib/map/cluster-config';
 
 export type MapPoint = {
   id: string;
@@ -22,8 +25,8 @@ export function useMapClusters<T extends MapPoint>(
   opts?: { radius?: number; maxZoom?: number }
 ) {
   const [clusters, setClusters] = useState<ClusterFeature<T>[]>([]);
-  const radius = opts?.radius ?? 56;
-  const maxZoom = opts?.maxZoom ?? MAP_BROWSE_MAX_ZOOM;
+  const radius = opts?.radius ?? BROWSE_CLUSTER_RADIUS;
+  const maxZoom = opts?.maxZoom ?? BROWSE_CLUSTER_MAX_ZOOM;
 
   const index = useMemo(() => {
     const sc = new Supercluster<T>({ radius, maxZoom });

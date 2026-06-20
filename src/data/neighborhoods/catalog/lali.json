@@ -2,7 +2,7 @@
   "cityId": "lali",
   "cityName": "لالی",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:29.372Z",
+  "importedAt": "2026-06-16T20:34:41.877Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,199 @@
         "west": 49.12849937946416,
         "east": 49.35940993642168
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "آب-زالو-عرب",
+      "name": "آب زالو عرب",
+      "nameEn": "آب-زالو-عرب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبکاسه",
+      "name": "آبکاسه",
+      "nameEn": "آبکاسه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آهنگری",
+      "name": "آهنگری",
+      "nameEn": "آهنگری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اب-مایک-گلزاری",
+      "name": "اب مایک گلزاری",
+      "nameEn": "اب-مایک-گلزاری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابجدان-قلی-آباد",
+      "name": "ابجدان قلی آباد",
+      "nameEn": "ابجدان-قلی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنه-سرخی",
+      "name": "بنه سرخی",
+      "nameEn": "بنه-سرخی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرزرد",
+      "name": "پرزرد",
+      "nameEn": "پرزرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پلی",
+      "name": "پلی",
+      "nameEn": "پلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تراز",
+      "name": "تراز",
+      "nameEn": "تراز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنباکوکار",
+      "name": "تنباکوکار",
+      "nameEn": "تنباکوکار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چال-گوراب",
+      "name": "چال گوراب",
+      "nameEn": "چال-گوراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چم-لوند",
+      "name": "چم لوند",
+      "nameEn": "چم-لوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خواجه-آباد",
+      "name": "خواجه آباد",
+      "nameEn": "خواجه-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره-بوری",
+      "name": "دره بوری",
+      "nameEn": "دره-بوری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دژ-میدان",
+      "name": "دژ میدان",
+      "nameEn": "دژ-میدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرمه",
+      "name": "سرمه",
+      "nameEn": "سرمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سه-کمری",
+      "name": "سه کمری",
+      "nameEn": "سه-کمری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیکوند",
+      "name": "سیکوند",
+      "nameEn": "سیکوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاه-آباد-سادات",
+      "name": "شاه آباد سادات",
+      "nameEn": "شاه-آباد-سادات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهید-سراج",
+      "name": "شهید سراج",
+      "nameEn": "شهید-سراج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ططر",
+      "name": "ططر",
+      "nameEn": "ططر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عنبر",
+      "name": "عنبر",
+      "nameEn": "عنبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرج-آباد",
+      "name": "فرج آباد",
+      "nameEn": "فرج-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-چنگایی",
+      "name": "قلعه چنگایی",
+      "nameEn": "قلعه-چنگایی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-میدان",
+      "name": "قلعه میدان",
+      "nameEn": "قلعه-میدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کفت-گله-وری",
+      "name": "کفت گله وری",
+      "nameEn": "کفت-گله-وری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنجد-کار",
+      "name": "کنجد کار",
+      "nameEn": "کنجد-کار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کیارس",
+      "name": "کیارس",
+      "nameEn": "کیارس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گچ-گرسا",
+      "name": "گچ گرسا",
+      "nameEn": "گچ-گرسا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهدی-آباد",
+      "name": "مهدی آباد",
+      "nameEn": "مهدی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهدی-آباد-کالک-شوران",
+      "name": "مهدی آباد کالک شوران",
+      "nameEn": "مهدی-آباد-کالک-شوران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ولی-آباد",
+      "name": "ولی آباد",
+      "nameEn": "ولی-آباد",
+      "geoSource": "osm"
     }
   ]
 }

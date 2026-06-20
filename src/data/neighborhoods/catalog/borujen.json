@@ -2,7 +2,7 @@
   "cityId": "borujen",
   "cityName": "بروجن",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:27.471Z",
+  "importedAt": "2026-06-16T23:08:03.655Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,7 @@
         "west": 51.247737139982156,
         "east": 51.30182470114904
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "میدان-انقلاب",
@@ -35,7 +35,43 @@
         "west": 51.192502089500174,
         "east": 51.246589650667055
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "بروجن",
+      "name": "بروجن",
+      "nameEn": "بروجن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرادنبه",
+      "name": "فرادنبه",
+      "nameEn": "فرادنبه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گندمان",
+      "name": "گندمان",
+      "nameEn": "گندمان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محله-صادقیه-اسلام-آباد",
+      "name": "محله صادقیه - اسلام آباد",
+      "nameEn": "محله-صادقیه-اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "معموره",
+      "name": "معموره",
+      "nameEn": "معموره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نقنه",
+      "name": "نقنه",
+      "nameEn": "نقنه",
+      "geoSource": "osm"
     }
   ]
 }

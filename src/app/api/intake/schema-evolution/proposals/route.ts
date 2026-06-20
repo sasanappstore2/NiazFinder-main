@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requirePermission } from '@/lib/rbac/authz';
 import { getSchemaEvolutionProposals } from '@/intake/evolution/schemaEvolutionService';
 import type { SchemaEvolutionProposalsResponse } from '@/intake/evolution/proposalTypes';
 
@@ -24,10 +25,15 @@ function cacheKey(templateId: string, categorySlug: string | null, sinceDays: nu
   return `${templateId}|${categorySlug ?? ''}|${sinceDays}`;
 }
 
-/** Read-only schema evolution proposals (human review only ? no auto-apply). */
+/** Read-only schema evolution proposals (human review only — no auto-apply). */
 export async function GET(request: NextRequest) {
   if (!isPostIntakeSchemaEvolutionEnabled()) {
     return NextResponse.json({ error: 'schema_evolution_disabled' }, { status: 404 });
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    const authz = await requirePermission(request, 'ops:intake-migration:read');
+    if (!authz.ok) return authz.response;
   }
 
   const templateId = request.nextUrl.searchParams.get('templateId')?.trim();

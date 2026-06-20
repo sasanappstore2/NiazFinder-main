@@ -102,7 +102,12 @@ export function BusinessImageUpload({
   const cropDescription =
     kind === 'logo'
       ? 'لوگوی افقی را جابه‌جا کنید؛ پس‌زمینهٔ عکس حفظ می‌شود.'
-      : 'کادر افقی؛ پس‌زمینهٔ عکس در نواحی خالی تکرار می‌شود.';
+      : 'کادر افقی ۲:۱ (۲۱:۹)؛ فقط بخش مناسب کاور را انتخاب کنید — از اسکرین‌شات منو یا متن استفاده نکنید.';
+
+  const coverHint =
+    kind === 'cover'
+      ? 'افقی ۲:۱ — تصویر تمیز از فروشگاه یا محصول؛ بدون اسکرین‌شات رابط کاربری'
+      : hint;
 
   return (
     <div className="space-y-2">
@@ -118,7 +123,7 @@ export function BusinessImageUpload({
           </button>
         )}
       </div>
-      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+      {coverHint && <p className="text-xs text-muted-foreground">{coverHint}</p>}
       <div
         className={cn(
           'relative overflow-hidden rounded-xl border border-dashed border-emerald-500/30 bg-muted/30',

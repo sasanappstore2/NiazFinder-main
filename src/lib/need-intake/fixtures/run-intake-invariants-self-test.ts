@@ -1,5 +1,5 @@
 /**
- * Cross-cutting intake invariants ? not tied to one neighborhood or ad text.
+ * Cross-cutting intake invariants — not tied to one neighborhood or ad text.
  * Run: npm run test:intake-invariants
  */
 import { extractLocationFragment } from '@/lib/need-intake/location-fragment';

@@ -4,8 +4,16 @@ import { ClassifierResult } from '../types/intent.types';
 
 @Injectable()
 export class LLMClassifierEngine {
-  private readonly ollamaUrl = process.env.OLLAMA_URL || 'http://localhost:11434';
-  private readonly model = process.env.NLP_MODEL || 'qwen2:1.5b';
+  private readonly localLlmUrl = (
+    process.env.NEED_INTAKE_LLM_URL ??
+    process.env.AGENT_LLM_BASE_URL ??
+    'http://127.0.0.1:1234'
+  ).replace(/\/$/, '').replace(/\/v1$/, '');
+
+  private readonly model =
+    process.env.NEED_INTAKE_LLM_MODEL ??
+    process.env.AGENT_LLM_MODEL ??
+    'gemma-4-E2B_q4_0-it.gguf';
 
   constructor(private prisma: PrismaService) {}
 
@@ -19,8 +27,10 @@ export class LLMClassifierEngine {
 
     const categoryList = categories.map((c) => `${c.slug}|${c.name}`).join('\n');
 
-    const prompt = [
-      'You classify Iranian marketplace needs into exactly one category slug from the list below.',
+    const systemPrompt =
+      'You classify Iranian marketplace needs into exactly one category slug from the allowed list. Reply with JSON only.';
+
+    const userPrompt = [
       'Allowed categories (format slug|name):',
       categoryList,
       `User need text: "${text}"`,
@@ -30,17 +40,19 @@ export class LLMClassifierEngine {
 
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 8000);
+      const timeout = setTimeout(() => controller.abort(), 15000);
 
-      const response = await fetch(`${this.ollamaUrl}/api/generate`, {
+      const response = await fetch(`${this.localLlmUrl}/v1/chat/completions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: this.model,
-          prompt,
-          stream: false,
-          format: 'json',
-          options: { temperature: 0.1, top_p: 0.9 },
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
+          ],
+          max_tokens: 256,
+          temperature: 0.1,
         }),
         signal: controller.signal,
       });
@@ -48,8 +60,12 @@ export class LLMClassifierEngine {
 
       if (!response.ok) return this.fallback();
 
-      const data = (await response.json()) as { response?: string };
-      const parsed = JSON.parse(data.response ?? '{}') as {
+      const data = (await response.json()) as {
+        choices?: Array<{ message?: { content?: string } }>;
+      };
+      const raw = data.choices?.[0]?.message?.content ?? '';
+      const jsonMatch = raw.match(/\{[\s\S]*\}/);
+      const parsed = JSON.parse(jsonMatch?.[0] ?? '{}') as {
         category_id?: string;
         confidence?: number;
         alternatives?: Array<{ id?: string; confidence?: number }>;

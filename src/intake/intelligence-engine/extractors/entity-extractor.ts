@@ -10,7 +10,13 @@ export function getEntityExtractorIndexes() {
 }
 
 /** Rules-first entity extraction via canonical intake engine. */
-export function extractEntities(normalizedText: string, rawText: string): IntakeAnalysisResult {
+export function extractEntities(
+  normalizedText: string,
+  rawText: string,
+  opts?: { preferredCityName?: string | null }
+): IntakeAnalysisResult {
   const indexes = getEntityExtractorIndexes();
-  return analyzeNeedText(rawText, indexes, { preferredCityName: undefined });
+  return analyzeNeedText(rawText, indexes, {
+    preferredCityName: opts?.preferredCityName ?? undefined,
+  });
 }

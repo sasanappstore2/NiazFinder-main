@@ -2,7 +2,7 @@
   "cityId": "khormoj",
   "cityName": "خورموج",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:29.133Z",
+  "importedAt": "2026-06-16T22:26:57.796Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,121 @@
         "west": 51.343487474038255,
         "east": 51.431560561599724
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "بادام-زار",
+      "name": "بادام زار",
+      "nameEn": "بادام-زار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برکت",
+      "name": "برکت",
+      "nameEn": "برکت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنیان",
+      "name": "بنیان",
+      "nameEn": "بنیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوحیری",
+      "name": "بوحیری",
+      "nameEn": "بوحیری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چارک",
+      "name": "چارک",
+      "nameEn": "چارک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاوشی",
+      "name": "چاوشی",
+      "nameEn": "چاوشی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهله",
+      "name": "چهله",
+      "nameEn": "چهله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درازی",
+      "name": "درازی",
+      "nameEn": "درازی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-یخ",
+      "name": "روستای یخ",
+      "nameEn": "روستای-یخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عالی-حسینی",
+      "name": "عالی حسینی",
+      "nameEn": "عالی-حسینی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عربی",
+      "name": "عربی",
+      "nameEn": "عربی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلل",
+      "name": "کلل",
+      "nameEn": "کلل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گشی",
+      "name": "گشی",
+      "nameEn": "گشی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لنگک",
+      "name": "لنگک",
+      "nameEn": "لنگک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدآباد",
+      "name": "محمدآباد",
+      "nameEn": "محمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مل-گاودان",
+      "name": "مل گاودان",
+      "nameEn": "مل-گاودان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مل-گل",
+      "name": "مل گل",
+      "nameEn": "مل-گل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میان-خره-بالا",
+      "name": "میان خره بالا",
+      "nameEn": "میان-خره-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وراوی",
+      "name": "وراوی",
+      "nameEn": "وراوی",
+      "geoSource": "osm"
     }
   ]
 }

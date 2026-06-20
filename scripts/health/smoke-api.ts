@@ -28,8 +28,8 @@ const MANUAL_CHECKS: ApiCheck[] = [
   { name: 'requests_list', path: '/api/requests?limit=1', expect: 200 },
   { name: 'business_browse', path: '/api/business/browse?limit=1', expect: 200 },
   { name: 'search_unified', path: '/api/search/unified?q=test', expect: 200 },
-  { name: 'neighborhoods', path: '/api/locations/neighborhoods?city=tehran', expect: 200 },
-  { name: 'auth_get', path: '/api/auth', method: 'POST', expect: 405 },
+  { name: 'neighborhoods', path: '/api/locations/neighborhoods?cityId=tehran', expect: 200 },
+  { name: 'auth_get', path: '/api/auth', method: 'POST', expect: 400, body: '{}' },
   { name: 'intake_analyze', path: '/api/intake/analyze', method: 'POST', expect: 400, body: '{}' },
   { name: 'super_admin_overview_unauth', path: '/api/super-admin/overview', expect: 401 },
 ];

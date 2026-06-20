@@ -2,7 +2,7 @@
   "cityId": "bajestan",
   "cityName": "بجستان",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:27.158Z",
+  "importedAt": "2026-06-16T19:29:14.656Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,7 @@
         "west": 58.032742356893586,
         "east": 58.16193989803103
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "شهرک-فرهنگیان",
@@ -35,7 +35,7 @@
         "west": 57.910922674175026,
         "east": 58.04012021531247
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "شهرک-کارمندان",
@@ -51,7 +51,121 @@
         "west": 57.9947653064828,
         "east": 58.12396284762024
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "امیریه-پایین",
+      "name": "امیریه پایین",
+      "nameEn": "امیریه-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بجستان",
+      "name": "بجستان",
+      "nameEn": "بجستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیکو",
+      "name": "بیکو",
+      "nameEn": "بیکو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-فایز",
+      "name": "چاه فایز",
+      "nameEn": "چاه-فایز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرفه-روزی",
+      "name": "خرفه روزی",
+      "nameEn": "خرفه-روزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درچاق",
+      "name": "درچاق",
+      "nameEn": "درچاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درزاب",
+      "name": "درزاب",
+      "nameEn": "درزاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رضائیه",
+      "name": "رضائیه",
+      "nameEn": "رضائیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روسنگ",
+      "name": "روسنگ",
+      "nameEn": "روسنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زین-آباد",
+      "name": "زین آباد",
+      "nameEn": "زین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سریده",
+      "name": "سریده",
+      "nameEn": "سریده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ششتوک",
+      "name": "ششتوک",
+      "nameEn": "ششتوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صلح-آباد",
+      "name": "صلح آباد",
+      "nameEn": "صلح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کامه",
+      "name": "کامه",
+      "nameEn": "کامه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-مغری",
+      "name": "کلاته مغری",
+      "nameEn": "کلاته-مغری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لیرم",
+      "name": "لیرم",
+      "nameEn": "لیرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزار",
+      "name": "مزار",
+      "nameEn": "مزار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مطرآباد",
+      "name": "مطرآباد",
+      "nameEn": "مطرآباد",
+      "geoSource": "osm"
     }
   ]
 }

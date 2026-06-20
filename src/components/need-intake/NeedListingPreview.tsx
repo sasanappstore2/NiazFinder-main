@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, Loader2 } from 'lucide-react';
+import { MapPin, Sparkles, Loader2, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import type { ListingPreview } from '@/contracts/need-intake';
 import { formatMoneyToman } from '@/lib/format/money';
 import { cn } from '@/lib/utils';
@@ -15,6 +16,7 @@ import {
   truncateListingTitle,
 } from '@/lib/need-intake/listing-title-sanitize';
 import { toPersianDigits } from '@/lib/format/digits';
+import { intakePrimaryCta } from './intake-ui-tokens';
 
 export interface NeedListingPreviewProps {
   preview: ListingPreview;
@@ -26,6 +28,9 @@ export interface NeedListingPreviewProps {
   isTitleEnriching?: boolean;
   isDescEnriching?: boolean;
   publishDisabled?: boolean;
+  categoryLabel?: string;
+  cityLabel?: string;
+  nested?: boolean;
 }
 
 export function NeedListingPreview({
@@ -38,6 +43,9 @@ export function NeedListingPreview({
   isTitleEnriching,
   isDescEnriching,
   publishDisabled = false,
+  categoryLabel,
+  cityLabel,
+  nested = false,
 }: NeedListingPreviewProps) {
   const [extraLine, setExtraLine] = useState('');
 
@@ -61,18 +69,69 @@ export function NeedListingPreview({
     : null;
 
   return (
-    <div className="intake-form-card">
-      <div className="flex items-center gap-2">
-        <Sparkles className="size-5 text-primary" />
-        <h3 className="text-lg font-semibold">پیش‌نمایش آگهی</h3>
+    <div
+      className={cn(
+        'intake-form-card intake-form-card--composer',
+        nested && 'intake-form-card--nested'
+      )}
+    >
+      {nested ? (
+        <h2 className="intake-form-card__title">پیش‌نمایش</h2>
+      ) : (
+        <>
+          <div className="flex items-center gap-2">
+            <Sparkles className="size-5 text-primary" />
+            <h3 className="text-lg font-semibold">پیش‌نمایش آگهی</h3>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            {titlePending
+              ? 'در حال نوشتن عنوان آگهی بر اساس تمام اطلاعات شما…'
+              : isTitleEnriching || isDescEnriching
+                ? 'عنوان و توضیحات در حال بهینه‌سازی هستند؛ می‌توانید همین‌جا ویرایش کنید.'
+                : 'این شکلی در لیست نیازها نمایش داده می‌شود.'}
+          </p>
+        </>
+      )}
+
+      <div className="intake-listing-preview-card">
+        <div className="intake-listing-preview-card__media" aria-hidden>
+          پیش‌نمایش تصویر
+        </div>
+        <div className="intake-listing-preview-card__body">
+          {(categoryLabel || cityLabel) && (
+            <div className="flex flex-wrap gap-1.5">
+              {categoryLabel ? (
+                <Badge variant="secondary" className="gap-1 text-xs font-normal">
+                  <Tag className="size-3" />
+                  {categoryLabel}
+                </Badge>
+              ) : null}
+              {cityLabel ? (
+                <Badge variant="outline" className="gap-1 text-xs font-normal">
+                  <MapPin className="size-3" />
+                  {cityLabel}
+                </Badge>
+              ) : null}
+            </div>
+          )}
+          <p className="text-base font-semibold leading-snug">
+            {preview.title.trim() || (titlePending ? '…' : 'عنوان آگهی')}
+          </p>
+          <p className="line-clamp-4 text-sm leading-relaxed text-muted-foreground">
+            {preview.description.trim() || 'توضیحات آگهی'}
+          </p>
+          {(preview.budgetMax || preview.budgetMin) && (
+            <p className="text-sm font-medium text-foreground">
+              بودجه:{' '}
+              {preview.budgetMax
+                ? formatMoneyToman(preview.budgetMax)
+                : preview.budgetMin
+                  ? formatMoneyToman(preview.budgetMin)
+                  : '—'}
+            </p>
+          )}
+        </div>
       </div>
-      <p className="text-sm text-muted-foreground">
-        {titlePending
-          ? 'در حال نوشتن عنوان آگهی بر اساس تمام اطلاعات شما…'
-          : isTitleEnriching || isDescEnriching
-            ? 'عنوان و توضیحات در حال بهینه‌سازی هستند؛ می‌توانید همین‌جا ویرایش کنید.'
-            : 'عنوان و توضیحات پیشنهادی قابل ویرایش هستند.'}
-      </p>
 
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
@@ -90,6 +149,7 @@ export function NeedListingPreview({
         </div>
         <Input
           id="preview-title"
+          name="previewTitle"
           value={preview.title}
           maxLength={LISTING_TITLE_MAX_LENGTH}
           placeholder={titlePending ? 'در حال نوشتن عنوان…' : 'عنوان آگهی'}
@@ -118,16 +178,15 @@ export function NeedListingPreview({
       </div>
 
       <div className="space-y-2">
-        <div className="flex items-center justify-between gap-2">
-          <Label htmlFor="preview-desc" className="flex items-center gap-2">
-            توضیحات
-            {isDescEnriching ? (
-              <Loader2 className="size-3.5 animate-spin text-primary" aria-hidden />
-            ) : null}
-          </Label>
-        </div>
+        <Label htmlFor="preview-desc" className="flex items-center gap-2">
+          توضیحات
+          {isDescEnriching ? (
+            <Loader2 className="size-3.5 animate-spin text-primary" aria-hidden />
+          ) : null}
+        </Label>
         <Textarea
           id="preview-desc"
+          name="previewDescription"
           value={preview.description}
           onChange={(e) => onChange({ ...preview, description: e.target.value })}
           className={cn(
@@ -142,23 +201,12 @@ export function NeedListingPreview({
         ) : null}
       </div>
 
-      {(preview.budgetMax || preview.budgetMin) && (
-        <div className="rounded-lg bg-muted/40 px-3 py-2 text-sm">
-          بودجه تقریبی:{' '}
-          <span className="font-medium text-foreground">
-            {preview.budgetMax
-              ? formatMoneyToman(preview.budgetMax)
-              : preview.budgetMin
-                ? formatMoneyToman(preview.budgetMin)
-                : '—'}
-          </span>
-        </div>
-      )}
-
       <div className="space-y-2">
-        <Label>گزینه‌های اضافه (اختیاری)</Label>
+        <Label htmlFor="preview-extra">گزینه‌های اضافه (اختیاری)</Label>
         <div className="flex gap-2">
           <Input
+            id="preview-extra"
+            name="previewExtra"
             value={extraLine}
             onChange={(e) => setExtraLine(e.target.value)}
             placeholder="مثلاً: مصالح با کارفرما"
@@ -194,7 +242,7 @@ export function NeedListingPreview({
         )}
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className="intake-sticky-actions intake-actions flex flex-col gap-2 sm:flex-row">
         <Button
           type="button"
           variant="outline"
@@ -211,13 +259,18 @@ export function NeedListingPreview({
         </Button>
         <Button
           type="button"
-          className="flex-1 h-12"
+          className={cn('flex-1 h-12', intakePrimaryCta)}
           onClick={onPublish}
-          disabled={isLoading || isRepublishing || isTitleEnriching || isDescEnriching || !preview.title.trim() || publishDisabled}
+          disabled={
+            isLoading ||
+            isRepublishing ||
+            isTitleEnriching ||
+            isDescEnriching ||
+            !preview.title.trim() ||
+            publishDisabled
+          }
         >
-          {isLoading ? (
-            <Loader2 className="size-4 ml-2 animate-spin" />
-          ) : null}
+          {isLoading ? <Loader2 className="size-4 ml-2 animate-spin" /> : null}
           تأیید و ثبت نیاز
         </Button>
       </div>

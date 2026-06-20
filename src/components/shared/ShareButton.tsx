@@ -23,6 +23,8 @@ interface ShareButtonProps {
   /** Optional accessible label override */
   label?: string;
   size?: 'sm' | 'md' | 'lg';
+  /** Rectangular toolbar control aligned with profile CTAs */
+  variant?: 'icon' | 'toolbar';
   className?: string;
 }
 
@@ -65,6 +67,7 @@ export function ShareButton({
   description = '',
   label,
   size = 'md',
+  variant = 'icon',
   className,
 }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
@@ -144,18 +147,27 @@ export function ShareButton({
         <button
           type="button"
           className={cn(
-            'inline-flex items-center justify-center rounded-full',
-            'bg-background text-foreground/80 ring-2 ring-border/60 shadow-sm',
-            'transition-all duration-200',
-            'hover:bg-accent hover:text-foreground hover:ring-border',
-            'dark:bg-card dark:text-foreground/85 dark:ring-border/70 dark:hover:bg-accent/80',
-            'active:scale-95',
-            sizeConfig.trigger,
+            variant === 'toolbar'
+              ? cn(
+                  'profile-toolbar-share inline-flex h-11 min-h-11 items-center justify-center gap-1.5 rounded-md',
+                  'border border-border bg-background px-3 text-sm font-medium text-foreground shadow-sm',
+                  'transition-colors hover:bg-muted/80 active:scale-[0.99]'
+                )
+              : cn(
+                  'inline-flex items-center justify-center rounded-full',
+                  'bg-background text-foreground/80 ring-2 ring-border/60 shadow-sm',
+                  'transition-all duration-200',
+                  'hover:bg-accent hover:text-foreground hover:ring-border',
+                  'dark:bg-card dark:text-foreground/85 dark:ring-border/70 dark:hover:bg-accent/80',
+                  'active:scale-95',
+                  sizeConfig.trigger
+                ),
             className
           )}
           aria-label={label ?? 'اشتراک‌گذاری'}
         >
-          <Share2 className={sizeConfig.icon} />
+          <Share2 className={variant === 'toolbar' ? 'size-4 shrink-0' : sizeConfig.icon} />
+          {variant === 'toolbar' && <span>اشتراک</span>}
         </button>
       </PopoverTrigger>
       <PopoverContent

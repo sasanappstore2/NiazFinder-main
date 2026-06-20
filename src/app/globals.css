@@ -1406,13 +1406,27 @@
 }
 
 /* Ark UI menus / popovers must sit above sticky page chrome */
-[data-scope='menu'][data-part='positioner'] {
+[data-slot='popover-content'],
+[data-slot='dropdown-menu-content'],
+[data-slot='dropdown-menu-sub-content'],
+[data-slot='select-content'],
+[data-slot='hover-card-content'],
+[data-slot='context-menu-content'],
+[data-slot='context-menu-sub-content'],
+[data-slot='menubar-content'],
+[data-slot='menubar-sub-content'],
+[data-slot='tooltip-content'],
+[data-scope='menu'][data-part='positioner'],
+[data-scope='menu'][data-part='content'] {
   z-index: var(--z-popover) !important;
 }
 
 /* Business profile tab bar — sticks flush below site header */
 .profile-primary-tabs {
-  background: var(--background);
+  background: color-mix(in srgb, var(--background) 90%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
   border-bottom: 1px solid var(--border);
 }
 
@@ -1500,6 +1514,59 @@ html[data-business-profile-page] #footer {
   background: color-mix(in srgb, var(--background) 82%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+/* ── Business profile hero: cover + identity sheet ── */
+.profile-hero__cover {
+  isolation: isolate;
+}
+
+.profile-hero__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    oklch(0 0 0 / 0.8) 0%,
+    oklch(0 0 0 / 0.35) 45%,
+    oklch(0 0 0 / 0.05) 100%
+  );
+  pointer-events: none;
+}
+
+.profile-hero__scrim--aurora {
+  background: linear-gradient(
+    to top,
+    oklch(0 0 0 / 0.55) 0%,
+    oklch(0 0 0 / 0.2) 50%,
+    transparent 100%
+  );
+}
+
+.profile-identity-sheet {
+  margin-top: -34px;
+  padding-top: calc(2.75rem + 21px);
+}
+
+@media (min-width: 640px) {
+  .profile-identity-sheet {
+    padding-top: calc(3rem + 21px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .profile-identity-sheet {
+    padding-top: calc(3.5rem + 21px);
+  }
+}
+
+.profile-action-toolbar .profile-toolbar-share {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .profile-action-toolbar .profile-toolbar-share {
+    width: auto;
+  }
 }
 
 /* ── Business profile: restrained brand atmosphere (logo accent + neutral) ── */

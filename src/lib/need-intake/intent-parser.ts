@@ -22,9 +22,17 @@ import { extractPropertySlotsFromText } from '@/lib/need-intake/extract-property
 import {
   hasConcreteProductNoun,
   hasGamingProductPhrase,
+  hasPetProductPhrase,
   hasWatchOrLuxuryProductPhrase,
   isLikelyProductPurchase,
 } from '@/lib/need-intake/product-buy-hints';
+import {
+  detectBusinessCommercialCategory,
+  getBusinessCommercialPropertyCandidates,
+  isAmbiguousCommercialSubtype,
+  isBusinessCommercialPropertyIntent,
+} from '@/lib/need-intake/business-commercial-property-intent';
+import { detectRepairServiceCategory } from '@/lib/need-intake/service-repair-intent';
 import { extractVehicleSubjectFromText } from '@/lib/need-intake/vertical-title';
 import {
   categorySlugForVertical,
@@ -125,14 +133,20 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
     priority: 12,
   },
   { slug: 'agency-services', words: ['آژانس املاک', 'اژانس املاک', 'مشاور املاک'], priority: 10 },
-  { slug: 'pre-sale-services', words: ['پیش فروش', 'پیش‌فروش', 'پیشفروش', 'پیش‌خرید', 'پیش خرید', 'پروژه'], priority: 10 },
+  {
+    slug: 'pre-sale-services',
+    words: ['پیش فروش', 'پیش‌فروش', 'پیشفروش', 'پیش‌خرید', 'پیش خرید', 'پیش فروش پروژه', 'پیش‌فروش پروژه', 'پروژه مسکن'],
+    priority: 10,
+  },
+  { slug: 'shop-sale', words: ['فروش مغازه', 'فروش غرفه', 'میفروشم مغازه', 'فروش یک مغازه'], priority: 12 },
+  { slug: 'decorative-art', words: ['گلدان', 'گلدون', 'دکوراسیون', 'قاب عکس', 'دکور خونه'], priority: 12 },
   { slug: 'conference', words: ['همایش', 'سمینار', 'کنفرانس'], priority: 10 },
-  { slug: 'motorcycle', words: ['موتور', 'موتورسیکلت', 'هوندا 125'], priority: 10 },
+  { slug: 'motorcycle', words: ['موتورسیکلت', 'موتور سیکلت', 'موتوسیکلت', 'هوندا 125'], priority: 10 },
   { slug: 'boat', words: ['قایق', 'قایق تفریحی'], priority: 10 },
   { slug: 'refrigerator', words: ['یخچال', 'ساید بای ساید'], priority: 10 },
   { slug: 'sofa-chair', words: ['مبل', 'مبلمان', 'کاناپه'], priority: 10 },
   { slug: 'tickets', words: ['بلیط', 'بلیت'], priority: 10 },
-  { slug: 'pets', words: ['گربه', 'سگ', 'حیوان خانگی'], priority: 10 },
+  { slug: 'pets', words: ['گربه', 'سگ', 'حیوان خانگی', 'اکسلوتل', 'آکسلوتل', 'axolotl', 'حیوان آبی', 'آکواریوم', 'ماهی', 'پرنده', 'همستر', 'hamster', 'خرگوش', 'طوطی', 'قناری'], priority: 12 },
   { slug: 'clothing', words: ['کت و شلوار', 'پوشاک', 'لباس'], priority: 10 },
   { slug: 'camera', words: ['دوربین', 'کانن', 'نیکون'], priority: 10 },
   {
@@ -200,15 +214,18 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
   {
     slug: 'game-console',
     words: [
-      'ps5',
-      'ps4',
-      'ps3',
-      'playstation',
-      'play station',
-      'پلی استیشن',
-      'پلی‌استیشن',
-      'پلیستیشن',
-      'xbox',
+  'ps5',
+  'ps4',
+  'ps3',
+  'playstation',
+  'play station',
+  'پلی استیشن',
+  'پلی‌استیشن',
+  'پلیستیشن',
+  'پی اس فایو',
+  'پی‌اس‌فایو',
+  'پی اس 5',
+  'xbox',
       'کنسول',
       'کنسول بازی',
       'دسته پلی',
@@ -227,6 +244,17 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
   { slug: 'engineering', words: ['مهندس برق', 'مهندس مکانیک', 'مهندس صنایع'], priority: 9 },
   { slug: 'it', words: ['استخدام برنامه', 'برنامه نویس', 'فرانت', 'بک اند', 'فناوری اطلاعات'], priority: 9 },
   { slug: 'repairs', words: ['تعمیرکار', 'تعمیر', 'کولر', 'یخچال فوری'], priority: 8 },
+  {
+    slug: 'vehicle-repair',
+    words: [
+      'تعمیرکار خودرو',
+      'تعمیرکار ماشین',
+      'مکانیک خودرو',
+      'تعمیر خودرو',
+      'تعمیر موتور',
+    ],
+    priority: 16,
+  },
   { slug: 'cleaning', words: ['نظافت', 'نظافتچی'], priority: 8 },
   { slug: 'plumbing', words: ['لوله', 'لوله‌کشی', 'تاسیسات', 'نشتی آب'], priority: 8 },
   { slug: 'moving', words: ['اسباب کشی', 'اسباب‌کشی', 'باربری', 'اسبابکشی', 'وانت باربری'], priority: 8 },
@@ -354,12 +382,34 @@ export function parseCity(text: string): string | undefined {
   return undefined;
 }
 
+function categoryKeywordMatches(text: string, word: string): boolean {
+  const w = normalizeIntakeText(word);
+  if (!w) return false;
+  if (w.length > 3) return text.includes(w);
+  const idx = text.indexOf(w);
+  if (idx < 0) return false;
+  const before = idx > 0 ? text[idx - 1] : ' ';
+  const after = idx + w.length < text.length ? text[idx + w.length] : ' ';
+  const letter = /[\u0600-\u06FFa-z]/i;
+  if (letter.test(before) || letter.test(after)) return false;
+  return true;
+}
+
 function detectCategorySlugFromKeywords(text: string): string | null {
-  if (text.includes('تعمیر') || text.includes('تعمیرکار')) return 'repairs';
+  const repairSlug = detectRepairServiceCategory(text);
+  if (repairSlug) return repairSlug;
+
+  if (isAmbiguousCommercialSubtype(text)) return null;
+
+  const businessCommercialSlug = detectBusinessCommercialCategory(text);
+  if (businessCommercialSlug) return businessCommercialSlug;
+
   if (text.includes('نقاش') && !text.includes('فروش')) return 'painting';
   if (text.includes('وکیل')) return 'legal-services';
   if (text.includes('معلم') || text.includes('تدریس')) return 'education';
-  if (text.includes('آرایشگر')) return 'beauty-health';
+  if (text.includes('آرایشگر') && !isBusinessCommercialPropertyIntent(text)) {
+    return 'beauty-health';
+  }
 
   if (text.includes('استخدام') && text.includes('نظافت')) {
     return 'admin-management';
@@ -382,7 +432,13 @@ function detectCategorySlugFromKeywords(text: string): string | null {
 
   let best: { slug: string; priority: number } | null = null;
   for (const row of CATEGORY_KEYWORDS) {
-    if (row.words.some((w) => text.includes(w))) {
+    if (
+      isBusinessCommercialPropertyIntent(text) &&
+      (row.slug === 'beauty-health' || row.slug === 'apartment-rent')
+    ) {
+      continue;
+    }
+    if (row.words.some((w) => categoryKeywordMatches(text, w))) {
       if (!best || row.priority > best.priority) {
         best = { slug: row.slug, priority: row.priority };
       }
@@ -396,6 +452,16 @@ function detectCategorySlugFromKeywords(text: string): string | null {
   return null;
 }
 
+function isLikelyMotorcycleVehicleText(text: string): boolean {
+  const t = normalizeIntakeText(text);
+  if (!t.includes('موتور') && !t.includes('موتورسیکلت') && !t.includes('موتوسیکلت')) {
+    return false;
+  }
+  if (REPAIR_KEYWORDS.some((w) => t.includes(w)) || t.includes('تعمیر موتور')) return false;
+  if (t.includes('خودرو') || t.includes('ماشین')) return false;
+  return true;
+}
+
 function detectCategorySlug(text: string, classification: VerticalClassification): string {
   if (isConstructionPartnershipText(text)) {
     return 'construction-partnership';
@@ -403,6 +469,14 @@ function detectCategorySlug(text: string, classification: VerticalClassification
 
   if (hasWatchOrLuxuryProductPhrase(text)) {
     return 'jewelry-watches';
+  }
+
+  if (hasPetProductPhrase(text)) {
+    return 'pets';
+  }
+
+  if (isLikelyMotorcycleVehicleText(text)) {
+    return 'motorcycle';
   }
 
   const fromKeywords = detectCategorySlugFromKeywords(text);
@@ -415,6 +489,10 @@ function detectCategorySlug(text: string, classification: VerticalClassification
   if (isDesireOnly(text)) return 'services';
 
   if (text.includes('اجاره') && !text.includes('خودرو') && !text.includes('ماشین')) {
+    if (isAmbiguousCommercialSubtype(text)) return 'commercial-rent';
+    const businessRent = detectBusinessCommercialCategory(text);
+    if (businessRent) return businessRent;
+    if (isBusinessCommercialPropertyIntent(text)) return 'commercial-rent';
     if (text.includes('مغازه')) return 'shop-rent';
     if (text.includes('ویلا') || text.includes('خانه')) return 'villa-rent';
     if (text.includes('زمین') || text.includes('کلنگی')) return 'land-rent';
@@ -428,6 +506,7 @@ function detectCategorySlug(text: string, classification: VerticalClassification
   }
 
   if (ALL_BUY_HINT_KEYWORDS.some((w) => text.includes(w))) {
+    if (hasPetProductPhrase(text)) return 'pets';
     return categorySlugForVertical('products', text);
   }
 
@@ -554,6 +633,24 @@ export function refinePropertyCategorySlug(
 
 function parsePropertyKind(text: string): string | undefined {
   const norm = withAsciiDigitRuns(text);
+  if (isBusinessCommercialPropertyIntent(norm)) {
+    if (norm.includes('مغازه') || norm.includes('غرفه') || norm.includes('فروشگاه')) {
+      return 'shop';
+    }
+    if (norm.includes('دفتر') || norm.includes('مطب') || norm.includes('کلینیک')) {
+      return 'office';
+    }
+    if (norm.includes('سوله') || norm.includes('انبار')) return 'industrial';
+    if (isAmbiguousCommercialSubtype(norm)) return undefined;
+    if (
+      norm.includes('سالن') ||
+      norm.includes('مزون') ||
+      norm.includes('بوتیک') ||
+      norm.includes('کافه')
+    ) {
+      return 'shop';
+    }
+  }
   if (norm.includes('مجرد') || norm.includes('سوئیت')) return 'apartment';
   if (norm.includes('پنت') || norm.includes('برج')) return 'apartment';
   if (norm.includes('آپارتمانی') || norm.includes('آپارتمان') || norm.includes('آپارت')) {
@@ -751,8 +848,10 @@ function buildDescription(rawText: string, entities: Record<string, string>, cit
 export function parseIntentFromText(rawText: string): ParsedIntent {
   const text = normalizeIntakeText(rawText);
   const classification = classifyVertical(rawText);
+  const commercialAmbiguous = isAmbiguousCommercialSubtype(text);
   let categorySlug = detectCategorySlug(text, classification);
-  const intentType = detectIntent(text, categorySlug, classification);
+  const intentCategorySlug = commercialAmbiguous ? 'commercial-rent' : categorySlug;
+  const intentType = detectIntent(text, intentCategorySlug, classification);
   const budget = parseBudget(text);
   const city = parseCity(text);
   const urgent = URGENT_KEYWORDS.some((w) => text.includes(w));
@@ -784,8 +883,8 @@ export function parseIntentFromText(rawText: string): ParsedIntent {
 
   return {
     intentType,
-    categorySlug: pair.categorySlug,
-    subcategorySlug: pair.subcategorySlug,
+    categorySlug: commercialAmbiguous ? '' : pair.categorySlug,
+    subcategorySlug: commercialAmbiguous ? undefined : pair.subcategorySlug,
     title: buildTitle(intentType, entities, city, area),
     description: buildDescription(rawText, entities, city),
     budgetMin: budget.min,
@@ -823,7 +922,33 @@ export function suggestNeedCategoriesFromText(
   const candidates: SuggestedCategoryCandidate[] = [];
   const seen = new Set<string>();
 
+  const repairSlug = detectRepairServiceCategory(text);
+  if (repairSlug) {
+    candidates.push({ slug: repairSlug, score: 200 });
+    seen.add(repairSlug);
+  }
+
+  const commercialCandidates = getBusinessCommercialPropertyCandidates(text);
+  for (const slug of commercialCandidates) {
+    if (!seen.has(slug)) {
+      candidates.push({ slug, score: 210 });
+      seen.add(slug);
+    }
+  }
+  const commercialIntent = commercialCandidates.length > 0;
+
   for (const row of CATEGORY_KEYWORDS) {
+    if (
+      (repairSlug || commercialIntent) &&
+      (row.slug === 'car' ||
+        row.slug === 'car-ride' ||
+        row.slug === 'motorcycle' ||
+        row.slug === 'spare-parts' ||
+        row.slug === 'apartment-rent' ||
+        row.slug === 'beauty-health')
+    ) {
+      continue;
+    }
     let hits = 0;
     for (const w of row.words) {
       if (text.includes(w)) hits += 1;
@@ -838,7 +963,7 @@ export function suggestNeedCategoriesFromText(
 
   const classification = classifyVertical(rawText);
   const fallback = categorySlugForVertical(classification.vertical, text);
-  if (fallback && !seen.has(fallback)) {
+  if (fallback && !seen.has(fallback) && !repairSlug) {
     candidates.push({ slug: fallback, score: 40 + Math.round(classification.score * 10) });
   }
 

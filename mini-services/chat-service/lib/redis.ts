@@ -13,22 +13,40 @@ export async function startCommRedisSubscriber(onEvent: CommEventHandler): Promi
     return;
   }
 
-  subscriber = new Redis(url, { maxRetriesPerRequest: null });
-  subscriber.on('error', (err) => console.warn('[chat-service] Redis sub error:', err.message));
-
-  await subscriber.subscribe(CHANNEL);
-  console.log(`[chat-service] Subscribed to Redis channel: ${CHANNEL}`);
-
-  subscriber.on('message', (_channel, raw) => {
-    try {
-      const parsed = JSON.parse(raw) as { type?: string; payload?: Record<string, unknown> };
-      if (parsed.type && parsed.payload) {
-        onEvent(parsed.type, parsed.payload);
+  try {
+    subscriber = new Redis(url, {
+      maxRetriesPerRequest: null,
+      retryStrategy: (times) => (times > 3 ? null : Math.min(times * 500, 2000)),
+    });
+    subscriber.on('error', (err) => {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('[chat-service] Redis sub error:', err.message);
       }
-    } catch (e) {
-      console.warn('[chat-service] Invalid Redis message:', e);
+    });
+
+    await subscriber.subscribe(CHANNEL);
+    console.log(`[chat-service] Subscribed to Redis channel: ${CHANNEL}`);
+
+    subscriber.on('message', (_channel, raw) => {
+      try {
+        const parsed = JSON.parse(raw) as { type?: string; payload?: Record<string, unknown> };
+        if (parsed.type && parsed.payload) {
+          onEvent(parsed.type, parsed.payload);
+        }
+      } catch (e) {
+        console.warn('[chat-service] Invalid Redis message:', e);
+      }
+    });
+  } catch (e) {
+    console.warn(
+      '[chat-service] Redis subscriber unavailable — realtime fanout via HTTP /internal/fanout only:',
+      e instanceof Error ? e.message : e
+    );
+    if (subscriber) {
+      await subscriber.quit().catch(() => {});
+      subscriber = null;
     }
-  });
+  }
 }
 
 export async function stopCommRedisSubscriber(): Promise<void> {

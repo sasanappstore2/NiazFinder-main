@@ -50,8 +50,8 @@ export function IntakeAiEvaluationDashboard() {
   }, [load]);
 
   if (authLoading) return <IntakeAuthLoading />;
-  if (!me || !hasPermission('ops:intake-migration:read')) {
-    return <IntakeAccessDenied permission="ops:intake-migration:read" />;
+  if (!me || !hasPermission('ops:intake-ai-evaluation:read')) {
+    return <IntakeAccessDenied permission="ops:intake-ai-evaluation:read" />;
   }
 
   const lastRun = data?.lastRun;
@@ -60,7 +60,7 @@ export function IntakeAiEvaluationDashboard() {
   return (
     <IntakeDashboardFrame
       title="ارزیابی AI Intake"
-      description="Accuracy و KPI مدل Gemma/Ollama — Candidate Constrained Extraction"
+      description="Accuracy و KPI مدل Gemma/LM Studio — Candidate Constrained Extraction"
       loading={loading}
       error={error}
       showData={Boolean(data)}
@@ -73,7 +73,7 @@ export function IntakeAiEvaluationDashboard() {
               {(
                 [
                   ['Provider', data.config.provider],
-                  ['Model', data.config.ollamaModel],
+                  ['Model', data.config.localLlmModel],
                   ['Enabled', data.config.enabled ? 'ON' : 'OFF'],
                   ['Confidence Threshold', String(data.config.confidenceThreshold)],
                 ] as const

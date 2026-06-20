@@ -34,6 +34,7 @@ import {
   tryReactToMessage,
 } from '@/lib/chat/socket-bridge';
 import { canEditChatMessage } from '@/lib/chat/message-edit';
+import { streamAiAgentChat } from '@/lib/ai-agent/stream-client';
 
 // ============ Store Interface ============
 
@@ -192,6 +193,11 @@ interface AppState {
     type?: string,
     options?: { replyToId?: string }
   ) => Promise<boolean>;
+  sendPlatformAgentMessage: (
+    conversationId: string,
+    content: string,
+    options?: { replyToId?: string; platformBotUserId?: string }
+  ) => Promise<{ ok: boolean; code?: string }>;
 
   // Bookmarks
   bookmarkedRequests: string[];
@@ -1148,12 +1154,19 @@ export const useAppStore = create<AppState>((set, get) => ({
             unreadCount: c.unreadCount ?? 0,
             businessContext: c.businessContext,
             isPeerTyping: isTyping,
+            isPlatformBot: Boolean(c.isPlatformBot),
           };
         });
-        return { conversations: mapped };
+        return { conversations: mapped, error: null };
       });
-    } catch {
-      // Silent fail
+    } catch (err: unknown) {
+      const message =
+        err instanceof ApiClientError
+          ? err.message
+          : err instanceof Error
+            ? err.message
+            : 'بارگذاری گفتگوها ناموفق بود';
+      set({ error: message });
     }
   },
 
@@ -1299,6 +1312,153 @@ export const useAppStore = create<AppState>((set, get) => ({
         messages: state.messages.filter((m) => m.clientTempId !== clientTempId),
       }));
       return false;
+    }
+  },
+
+  sendPlatformAgentMessage: async (conversationId, content, options) => {
+    const clientTempId =
+      typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `tmp-${Date.now()}`;
+    const userId = get().currentUser?.id;
+    const token = get().authToken;
+    if (!userId || !token) return { ok: false, code: 'UNAUTHORIZED' };
+
+    const conv = get().conversations.find((c) => c.id === conversationId);
+    const botUserId = options?.platformBotUserId ?? conv?.otherUser?.id;
+    if (!botUserId) return { ok: false, code: 'NO_BOT' };
+
+    const replySource = options?.replyToId
+      ? get().messages.find((m) => m.id === options.replyToId)
+      : undefined;
+    const replyTo = replySource
+      ? buildReplyToQuote(replySource, userId, conv?.otherUser)
+      : undefined;
+
+    const agentStreamId = `agent-stream-${clientTempId}`;
+    const now = new Date().toISOString();
+
+    const optimisticUser: Message = {
+      id: clientTempId,
+      clientTempId,
+      conversationId,
+      senderId: userId,
+      content,
+      type: 'TEXT',
+      attachmentUrls: [],
+      isRead: false,
+      createdAt: now,
+      replyToId: options?.replyToId,
+      replyTo,
+    };
+
+    const streamingAssistant: Message = {
+      id: agentStreamId,
+      conversationId,
+      senderId: botUserId,
+      content: '',
+      type: 'TEXT',
+      attachmentUrls: [],
+      isRead: false,
+      createdAt: now,
+    };
+
+    set((state) => ({
+      messages: [...state.messages, optimisticUser, streamingAssistant],
+    }));
+
+    const streamState: { error: { code: string; message: string } | null } = { error: null };
+    let finalAssistant: Message | null = null;
+    let finalUserId = clientTempId;
+
+    try {
+      await streamAiAgentChat({
+        conversationId,
+        content,
+        clientTempId,
+        replyToId: options?.replyToId,
+        authToken: token,
+        onEvent: (event) => {
+          if (event.type === 'token' && typeof event.data.delta === 'string') {
+            set((state) => ({
+              messages: state.messages.map((m) =>
+                m.id === agentStreamId
+                  ? { ...m, content: m.content + event.data.delta }
+                  : m
+              ),
+            }));
+          } else if (event.type === 'done') {
+            finalAssistant = {
+              id: String(event.data.messageId),
+              conversationId,
+              senderId: botUserId,
+              content: String(event.data.content ?? ''),
+              type: 'TEXT',
+              attachmentUrls: [],
+              isRead: false,
+              createdAt: new Date().toISOString(),
+            };
+            finalUserId = String(event.data.userMessageId ?? clientTempId);
+          } else if (event.type === 'error') {
+            streamState.error = {
+              code: String(event.data.code ?? 'AGENT_ERROR'),
+              message: String(event.data.message ?? 'خطا در دستیار هوشمند'),
+            };
+          }
+        },
+      });
+
+      if (streamState.error) {
+        set((state) => ({
+          messages: state.messages.filter(
+            (m) => m.id !== agentStreamId && m.clientTempId !== clientTempId
+          ),
+          error: streamState.error!.message,
+        }));
+        return { ok: false, code: streamState.error.code };
+      }
+
+      if (finalAssistant) {
+        const replyKey = `agent-reply:${clientTempId}`;
+        set((state) => ({
+          messages: state.messages
+            .filter(
+              (m) =>
+                m.id !== agentStreamId &&
+                m.id !== finalAssistant!.id &&
+                m.clientTempId !== replyKey,
+            )
+            .map((m) =>
+              m.clientTempId === clientTempId ? { ...m, id: finalUserId } : m,
+            )
+            .concat(finalAssistant!),
+          conversations: state.conversations.map((c) =>
+            c.id === conversationId
+              ? {
+                  ...c,
+                  lastMessage: chatMessageListPreview(finalAssistant!.content, 'TEXT'),
+                  lastMessageAt: finalAssistant!.createdAt,
+                }
+              : c
+          ),
+        }));
+        return { ok: true };
+      }
+
+      set((state) => ({
+        messages: state.messages.filter((m) => m.id !== agentStreamId),
+        error: 'پاسخ دستیار هوشمند دریافت نشد. لطفاً دوباره تلاش کنید.',
+      }));
+      return { ok: false, code: 'NO_RESPONSE' };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'خطا در دستیار هوشمند';
+      set((state) => ({
+        messages: state.messages.filter(
+          (m) => m.id !== agentStreamId && m.clientTempId !== clientTempId
+        ),
+        error: message,
+      }));
+      return { ok: false, code: 'AGENT_ERROR' };
     }
   },
 

@@ -1,6 +1,6 @@
 import { getCategoryBySlug } from '@/config/categories';
 
-/** Breadcrumb-style label for category suggestion chips (e.g. ????? / ????? ??????). */
+/** Breadcrumb-style label for category suggestion chips (e.g. املاک / اجاره مسکونی). */
 export function formatCategorySuggestionLabel(parentTitle: string, leafTitle: string): string {
   return `${parentTitle} / ${leafTitle}`;
 }

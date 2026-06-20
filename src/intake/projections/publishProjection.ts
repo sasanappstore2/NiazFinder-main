@@ -16,6 +16,11 @@ import { buildProjectionMetadata } from '@/intake/projections/metadata';
 import { flattenDraftAnswersForPublish } from '@/intake/projections/flatten-draft-answers-for-publish';
 import { recordToEntities } from '@/intake/entities/entityRecord';
 import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
+import {
+  whenToDeliveryDays,
+  whenToUrgency,
+} from '@/lib/need-intake/intake-timing-options';
+import { buildPublishNeedTags } from '@/lib/need/format-need-brief-tags';
 
 export interface PublishCommand {
   projection: ProjectionMetadata;
@@ -31,6 +36,8 @@ export interface PublishCommand {
   lat?: number;
   lng?: number;
   priority: Priority;
+  deliveryTime?: number;
+  deliveryUnit?: string;
   tags: string[];
   intentType: string;
   dynamicAnswers: Record<string, unknown>;
@@ -53,11 +60,30 @@ function buildIntakeTitle(draft: NeedDraft): string {
 }
 
 function mapUrgency(parsed: NeedDraft['parsedIntent'], answers: Record<string, unknown>): Priority {
+  const when = String(answers.when ?? '').trim();
+  const fromWhen = whenToUrgency(when);
+  if (fromWhen) return fromWhen;
   if (parsed.urgency === 'URGENT') return 'URGENT';
+  if (parsed.urgency === 'HIGH') return 'HIGH';
+  if (parsed.urgency === 'LOW') return 'LOW';
+  const urgencyAnswer = String(answers.urgency ?? '').trim();
+  if (urgencyAnswer === 'URGENT') return 'URGENT';
+  if (urgencyAnswer === 'HIGH') return 'HIGH';
+  if (urgencyAnswer === 'LOW') return 'LOW';
   const u = answers.urgent ?? answers.when;
   if (u === 'urgent' || u === 'today') return 'URGENT';
   if (u === 'week') return 'HIGH';
   return 'NORMAL';
+}
+
+function resolveDeliveryTime(answers: Record<string, unknown>): number | undefined {
+  const when = String(answers.when ?? '').trim();
+  const fromWhen = whenToDeliveryDays(when);
+  if (fromWhen != null) return fromWhen;
+  const raw = answers.deliveryTime ?? answers.deliveryDays;
+  if (typeof raw === 'number' && Number.isFinite(raw) && raw > 0) return raw;
+  if (typeof raw === 'string' && /^\d+$/.test(raw.trim())) return Number(raw.trim());
+  return undefined;
 }
 
 function resolveCityAndProvince(locationRaw: string | undefined, parsedCity?: string) {
@@ -128,10 +154,11 @@ export function toPublishCommand(
   const lng =
     typeof entities.lng === 'number' && Number.isFinite(entities.lng) ? entities.lng : undefined;
   const flatAnswers = flattenDraftAnswersForPublish(draft);
-  const tags: string[] = [parsed.intentType, parsed.categorySlug];
-  if (parsed.subcategorySlug) tags.push(parsed.subcategorySlug);
-  if (answers.condition) tags.push(String(answers.condition));
-  if (answers.dealType) tags.push(String(answers.dealType));
+  const tags = buildPublishNeedTags({
+    parsed,
+    answers,
+    entities: draft.entities as Record<string, unknown>,
+  });
 
   const neighborhoodName =
     typeof entities.neighborhood === 'string' ? entities.neighborhood.trim() : '';
@@ -155,6 +182,8 @@ export function toPublishCommand(
     lat,
     lng,
     priority: mapUrgency(parsed, answers),
+    deliveryTime: resolveDeliveryTime(answers),
+    deliveryUnit: resolveDeliveryTime(answers) != null ? 'day' : undefined,
     tags,
     intentType: parsed.intentType,
     dynamicAnswers: {

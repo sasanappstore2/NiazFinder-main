@@ -1,4 +1,5 @@
 import { resolveMapViewportScope } from '@/lib/business/map-viewport-scope';
+import { BROWSE_CLUSTER_MAX_ZOOM } from '@/lib/map/cluster-config';
 import { IRAN_MAP_MAX_BOUNDS } from '@/lib/map/iran-bounds';
 import {
   IRAN_DIVAR_BROWSE_MAX_ZOOM,
@@ -21,6 +22,6 @@ export function resolveIranDivarBrowseConfig(
     maxBounds: IRAN_MAP_MAX_BOUNDS,
     minZoom: IRAN_DIVAR_NATIONAL_MIN_ZOOM,
     maxZoom: IRAN_DIVAR_BROWSE_MAX_ZOOM,
-    clusterMaxZoom: IRAN_DIVAR_BROWSE_MAX_ZOOM,
+    clusterMaxZoom: BROWSE_CLUSTER_MAX_ZOOM,
   };
 }

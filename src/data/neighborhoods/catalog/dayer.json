@@ -2,7 +2,7 @@
   "cityId": "dayer",
   "cityName": "دیر",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:27.771Z",
+  "importedAt": "2026-06-16T22:25:48.037Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -20,6 +20,60 @@
         "east": 51.97048650862695
       },
       "geoSource": "divar"
+    },
+    {
+      "id": "اشکوری",
+      "name": "اشکوری",
+      "nameEn": "اشکوری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دمی-گز",
+      "name": "دمی گز",
+      "nameEn": "دمی-گز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوپلنگو",
+      "name": "دوپلنگو",
+      "nameEn": "دوپلنگو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیدون",
+      "name": "زیدون",
+      "nameEn": "زیدون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیبرم",
+      "name": "شیبرم",
+      "nameEn": "شیبرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کالی",
+      "name": "کالی",
+      "nameEn": "کالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گزخون",
+      "name": "گزخون",
+      "nameEn": "گزخون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مله-سوخته",
+      "name": "مله سوخته",
+      "nameEn": "مله-سوخته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نرکوه",
+      "name": "نرکوه",
+      "nameEn": "نرکوه",
+      "geoSource": "osm"
     }
   ]
 }

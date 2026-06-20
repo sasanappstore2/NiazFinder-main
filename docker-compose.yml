@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:15-alpine
+    image: pgvector/pgvector:pg15
     env_file: .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-needfinder}
@@ -9,6 +9,7 @@ services:
     ports: ["127.0.0.1:5432:5432"]
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./scripts/db/init-pgvector.sql:/docker-entrypoint-initdb.d/01-pgvector.sql:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-needfinder} -d ${POSTGRES_DB:-needfinder}"]
@@ -27,7 +28,7 @@ services:
     image: redis:7-alpine
     ports: ["127.0.0.1:6379:6379"]
     restart: unless-stopped
-    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+    command: ["redis-server", "--save", "", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -52,6 +53,156 @@ services:
       retries: 5
       start_period: 15s
 
+  typesense:
+    image: typesense/typesense:27.1
+    ports:
+      - "127.0.0.1:8108:8108"
+    volumes:
+      - ./data/typesense:/data
+    environment:
+      TYPESENSE_API_KEY: ${TYPESENSE_API_KEY:-niazfinder_typesense_dev_key}
+    command:
+      - --data-dir
+      - /data
+      - --api-key=${TYPESENSE_API_KEY:-niazfinder_typesense_dev_key}
+      - --enable-cors
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8108/health | grep -q ok || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 15s
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-niazfinder}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-change_me}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  gemma4-intake:
+    profiles: ["ai"]
+    build:
+      context: ./mini-services/gemma4-intake
+    ports:
+      - "127.0.0.1:8100:8100"
+    volumes:
+      - ./models/GEMMA:/models/GEMMA:ro
+    environment:
+      MODEL_PATH: /models/GEMMA/gemma-4-E2B_q4_0-it.gguf
+      NEED_INTAKE_LLM_MODEL: ${NEED_INTAKE_LLM_MODEL:-gemma-4-e2b-q4_0-it}
+      GEMMA4_DEVICE: ${GEMMA4_DEVICE:-auto}
+      LLAMA_N_CTX: ${LLAMA_N_CTX:-8192}
+      LLAMA_N_GPU_LAYERS: ${LLAMA_N_GPU_LAYERS:--1}
+    restart: unless-stopped
+
+  # Ollama LLM — Docker-only; use native Ollama on host (:11434) for local dev.
+  ollama:
+    profiles: ["ai-docker"]
+    image: ollama/ollama:latest
+    container_name: niazfinder-ollama
+    ports:
+      - "127.0.0.1:8101:11434"
+    volumes:
+      - ollama_storage:/root/.ollama
+      - ./models/GEMMA:/models/GEMMA:ro
+    environment:
+      OLLAMA_NUM_PARALLEL: "4"
+      OLLAMA_MAX_QUEUE: "50"
+      OLLAMA_KEEP_ALIVE: "30m"
+    restart: always
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  # Registers gemma4-e2b-it from mounted GGUF on first boot (see scripts/ollama/init-model.sh).
+  ollama-init:
+    profiles: ["ai-docker"]
+    image: ollama/ollama:latest
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4-e2b-it}
+      OLLAMA_GGUF_PATH: ${OLLAMA_GGUF_PATH:-/models/GEMMA/gemma-4-E2B_q4_0-it.gguf}
+      OLLAMA_USE_LOCAL_GGUF: ${OLLAMA_USE_LOCAL_GGUF:-auto}
+      OLLAMA_NUM_CTX: ${OLLAMA_NUM_CTX:-8192}
+    volumes:
+      - ./scripts/ollama/init-model.sh:/init-model.sh:ro
+      - ./scripts/ollama/Modelfile.gemma4-e2b-it:/modelfiles/gemma4-e2b-it:ro
+      - ./models/GEMMA:/models/GEMMA:ro
+    entrypoint: ["/bin/sh", "/init-model.sh"]
+    restart: "no"
+
+  embed-intake:
+    profiles: ["ai"]
+    build:
+      context: ./mini-services/embed-intake
+    ports:
+      - "127.0.0.1:8102:8101"
+    volumes:
+      - ./models/EMBED:/models/EMBED:ro
+    environment:
+      EMBED_MODEL_PATH: /models/EMBED/multilingual-e5-small-q8_0.gguf
+      EMBED_MODEL_ID: ${EMBED_MODEL:-multilingual-e5-small}
+      EMBED_DEVICE: ${EMBED_DEVICE:-auto}
+      LLAMA_N_THREADS: ${EMBED_LLAMA_N_THREADS:-4}
+    restart: unless-stopped
+
+  worker-go:
+    build:
+      context: ./mini-services/worker-go
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-needfinder}:${POSTGRES_PASSWORD:-change_me}@postgres:5432/${POSTGRES_DB:-needfinder}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-niazfinder}:${RABBITMQ_PASSWORD:-change_me}@rabbitmq:5672/
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE:-niazfinder_topic}
+      INTAKE_QUEUE: ${INTAKE_QUEUE:-intake_ai_processing}
+      ANALYTICS_QUEUE: ${ANALYTICS_QUEUE:-analytics_telemetry}
+      MATCHING_QUEUE: ${MATCHING_QUEUE:-business_matching}
+      DLX_EXCHANGE: ${RABBITMQ_DLX:-dlx_niazfinder}
+      DLQ_QUEUE: ${RABBITMQ_DLQ:-dlq_failed_tasks}
+      MLX_INTAKE_URL: ${MLX_INTAKE_URL:-http://gemma4-intake:8100/analyze}
+      MLX_TIMEOUT_SECONDS: ${MLX_TIMEOUT_SECONDS:-120}
+      WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-100}
+      RABBITMQ_PREFETCH: ${RABBITMQ_PREFETCH:-100}
+      ANALYTICS_BATCH_SIZE: ${ANALYTICS_BATCH_SIZE:-1000}
+      ANALYTICS_FLUSH_INTERVAL: ${ANALYTICS_FLUSH_INTERVAL:-5s}
+      REDIS_URL: redis://redis:6379
+      APP_URL: ${APP_URL:-http://host.docker.internal:3000}
+      INTERNAL_API_SECRET: ${INTERNAL_API_SECRET:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8081:8081"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8081/health | grep -q '\"ok\":true' || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
   chat:
     build:
       context: .
@@ -59,7 +210,7 @@ services:
     env_file: .env
     environment:
       REDIS_URL: redis://redis:6379
-      DATABASE_URL: postgresql://${POSTGRES_USER:-needfinder}:${POSTGRES_PASSWORD:-change_me}@postgres:5432/${POSTGRES_DB:-needfinder}?schema=public
+      DATABASE_URL: postgresql://${POSTGRES_USER:-needfinder}:${POSTGRES_PASSWORD:-change_me}@postgres:5432/${POSTGRES_DB:-needfinder}
       PORT: "3004"
     depends_on:
       postgres:
@@ -81,6 +232,10 @@ services:
       context: .
       dockerfile: mini-services/backend/Dockerfile
     env_file: .env
+    environment:
+      OLLAMA_URL: http://host.docker.internal:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gemma4-e2b-it}
+      EMBED_LLM_URL: http://embed-intake:8101
     depends_on:
       postgres:
         condition: service_healthy
@@ -120,5 +275,7 @@ services:
 volumes:
   pgdata:
   minio_data:
+  rabbitmq_data:
   caddy_data:
   caddy_config:
+  ollama_storage:

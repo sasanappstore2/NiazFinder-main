@@ -2,7 +2,7 @@
   "cityId": "asaluyeh",
   "cityName": "عسلویه",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:26.936Z",
+  "importedAt": "2026-06-16T22:24:31.711Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,103 @@
         "west": 52.62373075471938,
         "east": 52.84744414407778
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "اخند",
+      "name": "اخند",
+      "nameEn": "اخند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بزباز",
+      "name": "بزباز",
+      "nameEn": "بزباز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بساتین",
+      "name": "بساتین",
+      "nameEn": "بساتین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیدخون",
+      "name": "بیدخون",
+      "nameEn": "بیدخون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیارو",
+      "name": "خیارو",
+      "nameEn": "خیارو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زبار",
+      "name": "زبار",
+      "nameEn": "زبار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صدف",
+      "name": "صدف",
+      "nameEn": "صدف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صفیه",
+      "name": "صفیه",
+      "nameEn": "صفیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عسکری",
+      "name": "عسکری",
+      "nameEn": "عسکری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عسلویه",
+      "name": "عسلویه",
+      "nameEn": "عسلویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لاور-ده",
+      "name": "لاور ده",
+      "nameEn": "لاور-ده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مجتمع-مسکونی-عرفان",
+      "name": "مجتمع مسکونی عرفان",
+      "nameEn": "مجتمع-مسکونی-عرفان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مجتمع-مسکونی-متین",
+      "name": "مجتمع مسکونی متین",
+      "nameEn": "مجتمع-مسکونی-متین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نخل-تقی",
+      "name": "نخل تقی",
+      "nameEn": "نخل-تقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هاله",
+      "name": "هاله",
+      "nameEn": "هاله",
+      "geoSource": "osm"
     }
   ]
 }

@@ -3,15 +3,29 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { ArrowRight, Info, Loader2, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { NeedListingPreview } from './NeedListingPreview';
 import type { IntakeAiShardKey, IntakeAiShardStatus } from './IntakeAiShardBar';
-import { isRulesOnlyIntakeMode } from '@/lib/intake/rules-only-mode';
+import { IntakeAiShardBar } from './IntakeAiShardBar';
+import {
+  shardStatusFromNeedDraft,
+} from './intake-shard-status';
+import { buildIntakeProgressSnapshot } from '@/lib/need-intake/intake-progress-tracker';
 import { IntakeStepTimeline } from './IntakeStepTimeline';
 import { PublishSuccessOverlay } from './PublishSuccessOverlay';
+import { IntakeStepShell } from './IntakeStepShell';
+import { IntakeComposerTextarea } from './IntakeComposerTextarea';
+import { IntakeAiUnderstandingCard } from './IntakeAiUnderstandingCard';
+import { IntakeLiveListingSnippet } from './IntakeLiveListingSnippet';
+import { IntakeLiveSummaryAside } from './IntakeLiveSummaryAside';
+import { IntakeMobileSummarySheet } from './IntakeMobileSummarySheet';
+import { IntakePublishingOverlay } from './IntakePublishingOverlay';
+import { intakePrimaryCta } from './intake-ui-tokens';
+import { INTAKE_COPY } from './intake-copy';
+import { cn } from '@/lib/utils';
+import type { IntakeWizardGuardContext } from '@/lib/need-intake/intake-wizard-guards';
 import { useNeedIntakeStore } from '@/stores/need-intake-store';
 import { getLeadPhone, setLeadPhone as persistLeadPhone } from '@/lib/lead-draft';
 import { buildSummary } from '@/lib/need-intake/question-engine';
@@ -26,6 +40,7 @@ import {
   canProceedToIntakeLocation,
   composeIntakeSourceText,
 } from '@/lib/need-intake/compose-source-text';
+import { isAmbiguousCommercialSubtype } from '@/lib/need-intake/business-commercial-property-intent';
 import { buildParsedIntentFromForm, recordToEntities } from '@/intake/aggregate/needDraftAggregate';
 import { resolveIntakeCategory } from '@/lib/need-intake/resolve-intake-category';
 import {
@@ -217,6 +232,41 @@ export function NeedIntakePanel({
   ];
   const activeStepIndex = Math.max(0, steps.findIndex((s) => s.key === step));
   const progress = ((activeStepIndex + 1) / steps.length) * 100;
+  const stepTitleRef = useRef<HTMLHeadingElement | null>(null);
+  const homeSeedHighlight = Boolean(initialSeed.trim()) && step === 'details';
+
+  const wizardGuardContext = useMemo<IntakeWizardGuardContext>(
+    () => ({
+      currentStep: step,
+      needText,
+      detailsText,
+      needDraft,
+      selectedCategory,
+      selectedSubcategory,
+      selectedCity: location.selectedCity,
+    }),
+    [
+      step,
+      needText,
+      detailsText,
+      needDraft,
+      selectedCategory,
+      selectedSubcategory,
+      location.selectedCity,
+    ]
+  );
+
+  const previewCategoryLabel =
+    selectedSubcategory || selectedCategory || initialCategory?.trim() || '';
+  const previewCityLabel = location.selectedCity.trim() || initialCity?.trim() || '';
+
+  useEffect(() => {
+    if (step === 'done' || step === 'publishing') return;
+    const id = window.requestAnimationFrame(() => {
+      stepTitleRef.current?.focus();
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, [step]);
 
   const intakeAnalyzeCityHint = useMemo(() => {
     const resolvedName =
@@ -257,65 +307,132 @@ export function NeedIntakePanel({
   const intelligenceLiveEnabled =
     Boolean(composedSourceText.trim()) && (step === 'need' || step === 'details');
 
+  const intakeAnalyzeFormHints = useMemo(() => {
+    if (!draft.categoryLockedByUser) return undefined;
+    return {
+      categorySlug: selectedCategory || undefined,
+      subcategorySlug: selectedSubcategory || undefined,
+      categoryLockedByUser: true as const,
+    };
+  }, [selectedCategory, selectedSubcategory, draft.categoryLockedByUser]);
+
   const intakeIntelligence = useIntakeIntelligence({
     text: composedSourceText,
     enabled: intelligenceLiveEnabled,
     citySlug: intakeAnalyzeCityHint.citySlug,
     cityName: intakeAnalyzeCityHint.cityName,
+    formHints: intakeAnalyzeFormHints,
+    debounceMs: step === 'details' ? 500 : 600,
+    forceAi: step === 'need',
     onDraft: (d) => {
       setNeedDraft(d);
       if (!draft.categoryLockedByUserRef.current) {
+        const ambiguousCommercial = isAmbiguousCommercialSubtype(composedSourceText);
         const entities = d.entities as Record<string, unknown> | undefined;
         const leaf =
           (typeof entities?.subcategorySlug === 'string' && entities.subcategorySlug) ||
           (typeof entities?.categorySlug === 'string' && entities.categorySlug) ||
           d.parsedIntent?.subcategorySlug ||
           d.parsedIntent?.categorySlug;
-        if (leaf) {
+        if (leaf && !ambiguousCommercial) {
           draft.applyCategorySlug(leaf);
         }
       }
-      location.applyDetectedLocationFromDraft(d);
+      if (
+        !location.cityLockedByUserRef.current ||
+        !location.neighborhoodLockedByUserRef.current
+      ) {
+        location.applyDetectedLocationFromDraft(d);
+      }
     },
   });
+
+  const intakeFormContext = useMemo(
+    () => ({
+      ...draft.intakeRenderContext,
+      filterSuggestions: intakeIntelligence.filterSuggestionChips,
+      criticalFieldKeys: new Set(draft.intakeTemplate.criticalFields),
+      onFilterSuggestionSelect: (fieldKey: string, value: string | number | string[]) => {
+        const parsed =
+          typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : value;
+        draft.patchIntakeField(fieldKey, parsed as string | number | string[]);
+      },
+    }),
+    [
+      draft.intakeRenderContext,
+      draft.intakeTemplate.criticalFields,
+      draft.patchIntakeField,
+      intakeIntelligence.filterSuggestionChips,
+    ]
+  );
 
   useEffect(() => {
     setError(null);
   }, [step, setError]);
 
   useEffect(() => {
-    if (isRulesOnlyIntakeMode()) {
+    if (step !== 'need' && step !== 'details' && step !== 'location') return;
+    const draftForShards = needDraft ?? projectedDraft;
+    const progressOpts = { needText, detailsText };
+    setAiShardStatus(
+      shardStatusFromNeedDraft(draftForShards, intakeIntelligence.analyzing || aiEnriching, progressOpts)
+    );
+    if (step === 'need' || step === 'details') {
       setAiEnriching(intakeIntelligence.analyzing);
-      return;
     }
-    setAiEnriching(intakeIntelligence.analyzing);
-    if (intakeIntelligence.aiInvoked && !intakeIntelligence.analyzing) {
-      setAiShardStatus((prev) => ({ ...prev, need: 'done' }));
-    } else if (intakeIntelligence.analyzing) {
-      setAiShardStatus((prev) => ({ ...prev, need: 'running' }));
-    }
-  }, [intakeIntelligence.analyzing, intakeIntelligence.aiInvoked]);
+  }, [
+    step,
+    needText,
+    detailsText,
+    needDraft,
+    projectedDraft,
+    intakeIntelligence.analyzing,
+    aiEnriching,
+  ]);
+
+  const intakeProgressSnapshot = useMemo(
+    () =>
+      buildIntakeProgressSnapshot(needDraft ?? projectedDraft, {
+        enriching: intakeIntelligence.analyzing || aiEnriching,
+        needText,
+        detailsText,
+      }),
+    [
+      needDraft,
+      projectedDraft,
+      intakeIntelligence.analyzing,
+      aiEnriching,
+      needText,
+      detailsText,
+    ]
+  );
+
+  const showAiShardBar = composedSourceText.trim().length >= 3;
+
+  useEffect(() => {
+    if (step !== 'details' || !composedSourceText.trim()) return;
+    if (intakeIntelligence.isFreshForText(composedSourceText)) return;
+    void intakeIntelligence.analyzeNow();
+  }, [step, composedSourceText, intakeIntelligence.analyzeNow, intakeIntelligence.isFreshForText]);
 
   const liveListingCopy = useIntakeListingCopy(liveDraftForCopy, liveCopyStreamEnabled);
 
+  const pendingInitialCityRef = useRef<string | null>(null);
+
   useEffect(() => {
     reset();
-    location.cityLockedByUserRef.current = false;
-    location.neighborhoodLockedByUserRef.current = false;
-    draft.categoryLockedByUserRef.current = false;
+    location.resetLocationLocks();
+    draft.resetCategoryLocks();
     setSelectedCategory('');
     setSelectedSubcategory('');
     location.setSelectedNeighborhood('');
     const seed = initialSeed.trim();
     setNeedText(seed);
     if (initialCity?.trim()) {
-      const resolved =
-        resolveIntakeCitySelectValue(location.sortedCities, {
-          cityName: initialCity,
-          citySlug: initialCity,
-        }) ?? initialCity.trim();
-      location.setSelectedCity(resolved);
+      pendingInitialCityRef.current = initialCity.trim();
+      location.lockCityByUser();
     } else {
+      pendingInitialCityRef.current = null;
       location.setSelectedCity('');
     }
     const phone = initialPhone?.trim() || getLeadPhone();
@@ -335,18 +452,28 @@ export function NeedIntakePanel({
     setStep,
     setLeadPhone,
     setSeedText,
-    location.sortedCities,
     location.setSelectedCity,
-    location.cityLockedByUserRef,
-    location.neighborhoodLockedByUserRef,
-    draft.categoryLockedByUserRef,
+    location.resetLocationLocks,
+    location.lockCityByUser,
+    draft.resetCategoryLocks,
   ]);
 
   useEffect(() => {
-    if (draft.initialCategoryAppliedRef.current || !initialCategory?.trim()) return;
-    draft.initialCategoryAppliedRef.current = true;
-    draft.applyCategorySlug(initialCategory.trim());
-  }, [initialCategory, draft]);
+    const pending = pendingInitialCityRef.current;
+    if (!pending || location.sortedCities.length === 0) return;
+    const resolved =
+      resolveIntakeCitySelectValue(location.sortedCities, {
+        cityName: pending,
+        citySlug: pending,
+      }) ?? pending;
+    location.setSelectedCity(resolved);
+    pendingInitialCityRef.current = null;
+  }, [initialCity, location.sortedCities, location.setSelectedCity]);
+
+  useEffect(() => {
+    if (!initialCategory?.trim()) return;
+    draft.applyInitialCategoryIfNeeded(initialCategory.trim());
+  }, [initialCategory, draft.applyInitialCategoryIfNeeded]);
 
   useEffect(() => {
     if (step !== 'need' && step !== 'details') return;
@@ -402,6 +529,7 @@ export function NeedIntakePanel({
         categoryLockedByUser: false,
       });
       if (resolved.source !== 'text' || !resolved.categorySlug) return;
+      if (isAmbiguousCommercialSubtype(sourceText)) return;
       const normalized = normalizeCategoryPair(resolved.categorySlug, resolved.subcategorySlug);
       const nextLeaf = normalized.subcategorySlug ?? normalized.categorySlug;
       const currentLeaf = selectedSubcategory || selectedCategory;
@@ -425,6 +553,10 @@ export function NeedIntakePanel({
 
   useEffect(() => {
     const composed = composeIntakeSourceText(needText, detailsText).trim();
+    if ((step === 'need' || step === 'details') && intakeIntelligence.intentGist) {
+      setLiveSummary(intakeIntelligence.intentGist);
+      return;
+    }
     let d = needDraft ?? projectedDraft;
     if (step === 'need' || step === 'details') {
       if (projectedDraft) {
@@ -438,7 +570,14 @@ export function NeedIntakePanel({
       return;
     }
     setLiveSummary(buildSummary(d.parsedIntent, d.answers, d.sourceText));
-  }, [needDraft, projectedDraft, needText, detailsText, step]);
+  }, [
+    needDraft,
+    projectedDraft,
+    needText,
+    detailsText,
+    step,
+    intakeIntelligence.intentGist,
+  ]);
 
   const buildParsedFromForm = useCallback((): ParsedIntent => {
     const categoryLocked = draft.categoryLockedByUserRef.current;
@@ -471,16 +610,28 @@ export function NeedIntakePanel({
     draft.categoryLockedByUserRef,
   ]);
 
-  const goToDetails = () => {
+  const goToDetails = async () => {
     if (!needText.trim()) {
       toast.info('ابتدا نیاز خود را بنویسید');
       return;
     }
-    setSeedText(needText.trim());
-    setStep('details');
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await intakeIntelligence.analyzeNow();
+      if (!res && needText.trim().length >= 3) {
+        toast.warning('تحلیل هوش مصنوعی کامل نشد؛ می‌توانید ادامه دهید');
+      }
+      setSeedText(needText.trim());
+      setStep('details');
+    } catch {
+      toast.error('خطا در تحلیل نیاز');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const { goToLocation } = useIntakeAnalyze({
+  const { goToLocation, prefetchLocationAnalyze } = useIntakeAnalyze({
     needText,
     detailsText,
     step,
@@ -511,6 +662,10 @@ export function NeedIntakePanel({
     neighborhoodLockedByUserRef: location.neighborhoodLockedByUserRef,
     categoryLockedByUserRef: draft.categoryLockedByUserRef,
     resolveIntakeCitySelectValue,
+    isFreshForText: intakeIntelligence.isFreshForText,
+    analyzing: intakeIntelligence.analyzing,
+    analyzeNow: intakeIntelligence.analyzeNow,
+    waitForAnalysis: intakeIntelligence.waitForAnalysis,
   });
 
   const goToPreview = () => {
@@ -565,6 +720,86 @@ export function NeedIntakePanel({
     setDescEnriching(false);
   };
 
+  const canGoToPreview =
+    Boolean(selectedCategory || selectedSubcategory) && Boolean(location.selectedCity.trim());
+  const previewDisabledReason =
+    !selectedCategory && !selectedSubcategory
+      ? 'دسته‌بندی را انتخاب کنید'
+      : !location.selectedCity.trim()
+        ? 'شهر را انتخاب کنید'
+        : undefined;
+
+  useEffect(() => {
+    if (step !== 'location' || !needDraft) return;
+    if (draft.categoryLockedByUserRef.current) return;
+
+    const entities = recordToEntities(needDraft.entities);
+    const leaf = entities.subcategorySlug || entities.categorySlug;
+    if (leaf && !selectedCategory && !selectedSubcategory && !isAmbiguousCommercialSubtype(composedSourceText)) {
+      draft.applyCategorySlug(leaf);
+    }
+
+    if (!location.selectedCity.trim() && entities.city?.trim()) {
+      location.applyDetectedLocationFromDraft(needDraft);
+    }
+
+    if (draft.enabledSections.size === 0 && needDraft.sections?.length) {
+      draft.setEnabledSections(computeEnabledSectionsForLocation(needDraft));
+    }
+  }, [
+    step,
+    needDraft,
+    composedSourceText,
+    selectedCategory,
+    selectedSubcategory,
+    location.selectedCity,
+    location.applyDetectedLocationFromDraft,
+    draft,
+  ]);
+
+  const showLiveSummary =
+    step === 'need' ||
+    step === 'details' ||
+    step === 'location' ||
+    step === 'preview';
+  const liveSnippet =
+    liveListingCopy &&
+    (liveListingCopy.title || liveListingCopy.description || liveListingCopy.streaming) ? (
+      <IntakeLiveListingSnippet
+        title={liveListingCopy.title}
+        description={liveListingCopy.description}
+        streaming={liveListingCopy.streaming}
+      />
+    ) : null;
+
+  const stepCount = steps.length;
+  const stepOrdinal = Math.min(activeStepIndex + 1, stepCount);
+
+  const panelChrome = (
+    <>
+      <div className="intake-panel-card__meta">
+        <Badge variant="outline" className="gap-1 shrink-0 px-2 py-0.5 text-[10px] sm:text-xs">
+          <Sparkles className="size-3" />
+          {INTAKE_COPY.stagedBadge}
+        </Badge>
+        <span className="text-xs tabular-nums text-muted-foreground">
+          {INTAKE_COPY.stepOf(stepOrdinal, stepCount)}
+        </span>
+        {showLiveSummary ? (
+          <div className="ms-auto lg:hidden">
+            <IntakeMobileSummarySheet summary={liveSummary} inline />
+          </div>
+        ) : null}
+      </div>
+      <IntakeStepTimeline
+        step={step}
+        progressPercent={progress}
+        onStepSelect={setStep}
+        guardContext={wizardGuardContext}
+      />
+    </>
+  );
+
   return (
     <>
       {step === 'done' && publishState.publishRedirect ? (
@@ -573,165 +808,183 @@ export function NeedIntakePanel({
           subtitle={publishState.publishSuccessCopy.subtitle}
         />
       ) : null}
-      <div className="intake-flow intake-flow--compact layout-golden-split layout-golden-split--intake overflow-guard">
+      {step === 'publishing' ? <IntakePublishingOverlay /> : null}
+      <div
+        className={cn(
+          'intake-flow intake-flow--compact overflow-guard pb-[calc(var(--mobile-nav-offset)+0.5rem)] lg:pb-0',
+          showLiveSummary && 'layout-golden-split layout-golden-split--intake'
+        )}
+      >
         <div className="layout-golden-main flex min-h-0 flex-1 flex-col min-w-0">
-          <header className="intake-hero-card">
-            <div className="intake-hero-card__meta">
-              <Badge variant="outline" className="gap-1.5 text-caption shrink-0 px-2.5 py-1">
-                <Sparkles className="size-3.5" />
-                ثبت نیاز مرحله‌ای
-              </Badge>
-              <span className="text-xs tabular-nums text-muted-foreground">
-                مرحله {Math.min(activeStepIndex + 1, steps.length)} از {steps.length}
-              </span>
-            </div>
-            <p className="intake-hero-card__subtitle">
-              {steps[Math.min(activeStepIndex, steps.length - 1)]?.subtitle}
-            </p>
-            <IntakeStepTimeline step={step} progressPercent={progress} onStepSelect={setStep} />
-          </header>
-
           <div className="intake-steps-stack">
             {step === 'need' && (
-              <section className="intake-form-card">
-                <div className="intake-form-card__head">
-                  <h2 className="intake-form-card__title">مرحله ۱: نیاز</h2>
-                  <p className="intake-form-card__desc">
-                    جمله اصلی‌تان را کوتاه و واضح بنویسید؛ مثل چیزی که در ذهن‌تان می‌گویید.
-                  </p>
-                </div>
-                <Textarea
+              <IntakeStepShell
+                stepNumber={1}
+                title="نیاز"
+                titleRef={stepTitleRef}
+                header={panelChrome}
+                description={INTAKE_COPY.stepNeedDescription}
+                actions={
+                  <Button
+                    className={`w-full sm:w-auto ${intakePrimaryCta}`}
+                    onClick={() => void goToDetails()}
+                    disabled={
+                      isLoading ||
+                      !needText.trim() ||
+                      (intelligenceLiveEnabled && intakeIntelligence.analyzing)
+                    }
+                  >
+                    {intelligenceLiveEnabled && intakeIntelligence.analyzing
+                      ? 'در حال تحلیل…'
+                      : 'ادامه به توضیحات'}
+                  </Button>
+                }
+              >
+                <IntakeComposerTextarea
+                  id="intake-need-text"
+                  name="needText"
                   value={needText}
-                  onChange={(e) => setNeedText(e.target.value)}
+                  onChange={setNeedText}
                   placeholder="مثلاً: یک آپارتمان در فرامرز عباسی میخوام"
-                  className="intake-textarea min-h-24 text-sm leading-6 sm:min-h-28 sm:text-base sm:leading-7"
+                  disabled={isLoading}
+                  analyzing={intelligenceLiveEnabled && intakeIntelligence.analyzing}
                 />
-                <div className="intake-hint-row flex items-center justify-between gap-2 text-xs text-muted-foreground">
-                  <span>هرچه دقیق‌تر بنویسید، فرم بعدی سریع‌تر کامل می‌شود.</span>
-                  <span>{needText.trim().length} کاراکتر</span>
-                </div>
-                <Button
-                  className="w-full sm:w-auto"
-                  onClick={goToDetails}
-                  disabled={isLoading || !needText.trim()}
-                >
-                  ادامه به توضیحات
-                </Button>
-              </section>
+                {needText.trim().length >= 3 ? (
+                  <IntakeAiUnderstandingCard
+                    intentGist={intakeIntelligence.intentGist}
+                    fieldMeta={intakeIntelligence.fieldMeta}
+                    analyzing={intelligenceLiveEnabled && intakeIntelligence.analyzing}
+                    aiInvoked={intakeIntelligence.aiInvoked}
+                    className="mt-3"
+                  />
+                ) : null}
+                {showAiShardBar ? (
+                  <IntakeAiShardBar
+                    snapshot={intakeProgressSnapshot}
+                    active={aiEnriching || intakeIntelligence.analyzing}
+                  />
+                ) : null}
+              </IntakeStepShell>
             )}
 
             {step === 'details' && (
-              <section className="intake-form-card">
-                <div className="intake-form-card__head">
-                  <h2 className="intake-form-card__title">مرحله ۲: توضیحات</h2>
-                  <p className="intake-form-card__desc">
-                    محدودیت بودجه، شرایط خاص، و اولویت‌ها را بنویسید. اگر در مرحله قبل متن کامل
-                    نوشتید، می‌توانید مستقیم ادامه دهید.
-                  </p>
-                </div>
-                <Textarea
+              <IntakeStepShell
+                stepNumber={2}
+                title="توضیحات"
+                titleRef={stepTitleRef}
+                header={panelChrome}
+                description="بودجه، شرایط خاص و اولویت‌ها را بنویسید."
+                actions={
+                  <>
+                    <Button className="w-full sm:w-auto" variant="outline" onClick={() => setStep('need')}>
+                      <ArrowRight className="size-4 ml-1" />
+                      بازگشت
+                    </Button>
+                    <Button
+                      className={`w-full sm:w-auto ${intakePrimaryCta}`}
+                      onClick={() => goToLocation()}
+                      onMouseEnter={prefetchLocationAnalyze}
+                      onFocus={prefetchLocationAnalyze}
+                      disabled={!canProceedToIntakeLocation(needText, detailsText) || isLoading}
+                    >
+                      ادامه به دسته و مکان
+                    </Button>
+                  </>
+                }
+              >
+                <IntakeComposerTextarea
+                  id="intake-details-text"
+                  name="detailsText"
                   value={detailsText}
-                  onChange={(e) => setDetailsText(e.target.value)}
-                  placeholder="مثلاً: صاحب‌خانه حیوان خانگی بپذیرد، رهن کم و اجاره بیشتر..."
-                  className="intake-textarea intake-textarea--details min-h-24 text-sm leading-6 sm:min-h-32 sm:text-base sm:leading-7"
+                  onChange={setDetailsText}
+                  placeholder="مثلاً: ۱۰ میلیارد بودجه، دو خواب، نزدیک مترو..."
+                  showCharProgress
+                  highlightFromHome={homeSeedHighlight}
+                  disabled={isLoading}
+                  analyzing={intelligenceLiveEnabled && intakeIntelligence.analyzing}
                 />
-                <div className="intake-hint-row flex flex-wrap items-center gap-2 rounded-xl border border-dashed bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
-                  <Info className="size-3.5" />
-                  مثال: «۱۰ میلیارد بودجه دارم»، «دو خواب و نورگیر مهم است»، «دسترسی مترو».
-                </div>
-                {liveListingCopy ? (
-                  <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-sm space-y-1">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Sparkles className="size-3.5 text-primary" />
-                      پیش‌نمایش زندهٔ عنوان
-                      {liveListingCopy.streaming ? (
-                        <Loader2 className="size-3 animate-spin text-primary" aria-hidden />
-                      ) : null}
-                    </div>
-                    <p className="font-medium leading-snug">{liveListingCopy.title || '—'}</p>
-                    {liveListingCopy.description ? (
-                      <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
-                        {liveListingCopy.description}
-                      </p>
-                    ) : null}
-                  </div>
+                {composedSourceText.trim().length >= 3 ? (
+                  <IntakeAiUnderstandingCard
+                    intentGist={intakeIntelligence.intentGist}
+                    fieldMeta={intakeIntelligence.fieldMeta}
+                    analyzing={intelligenceLiveEnabled && intakeIntelligence.analyzing}
+                    aiInvoked={intakeIntelligence.aiInvoked}
+                    className="mt-3"
+                  />
                 ) : null}
-                <div className="intake-actions flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
-                  <Button className="w-full sm:w-auto" variant="outline" onClick={() => setStep('need')}>
-                    <ArrowRight className="size-4 ml-1" />
-                    بازگشت
-                  </Button>
-                  <Button
-                    className="w-full sm:w-auto"
-                    onClick={goToLocation}
-                    disabled={!canProceedToIntakeLocation(needText, detailsText)}
-                  >
-                    ادامه به دسته و مکان
-                  </Button>
-                </div>
-              </section>
+                {liveSnippet}
+                {showAiShardBar ? (
+                  <IntakeAiShardBar
+                    snapshot={intakeProgressSnapshot}
+                    active={aiEnriching || intakeIntelligence.analyzing}
+                  />
+                ) : null}
+              </IntakeStepShell>
             )}
 
             {step === 'location' && (
-              <section className="intake-form-card">
-                <div className="intake-form-card__head">
-                  <h2 className="intake-form-card__title">مرحله ۳: دسته‌بندی، شهر و محله</h2>
-                  <p className="intake-form-card__desc">
-                    پیشنهادها را انتخاب کنید یا مقادیر دلخواه را دستی وارد کنید.
-                  </p>
-                </div>
-
+              <IntakeStepShell
+                stepNumber={3}
+                title="دسته و مکان"
+                titleRef={stepTitleRef}
+                header={panelChrome}
+                description="دسته، شهر و محله را انتخاب یا ویرایش کنید."
+                actions={
+                  <>
+                    <Button className="w-full sm:w-auto" variant="outline" onClick={() => setStep('details')}>
+                      <ArrowRight className="size-4 ml-1" />
+                      بازگشت
+                    </Button>
+                    <Button
+                      className={`w-full sm:w-auto ${intakePrimaryCta}`}
+                      onClick={goToPreview}
+                      disabled={!canGoToPreview}
+                      title={previewDisabledReason}
+                    >
+                      {needDraft?.completionState === 'READY_TO_PUBLISH'
+                        ? 'ادامه به پیش‌نمایش'
+                        : 'تکمیل اطلاعات و ادامه'}
+                    </Button>
+                  </>
+                }
+              >
                 <IntakeTemplateForm
                   template={draft.intakeTemplate}
-                  context={draft.intakeRenderContext}
+                  context={intakeFormContext}
                   enabledSections={draft.enabledSections}
                   onEnabledSectionsChange={draft.setEnabledSections}
                 />
-
-                {liveListingCopy ? (
-                  <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-sm space-y-1">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Sparkles className="size-3.5 text-primary" />
-                      پیش‌نمایش زندهٔ عنوان
-                      {liveListingCopy.streaming ? (
-                        <Loader2 className="size-3 animate-spin text-primary" aria-hidden />
-                      ) : null}
-                    </div>
-                    <p className="font-medium leading-snug">{liveListingCopy.title || '—'}</p>
-                    {liveListingCopy.description ? (
-                      <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
-                        {liveListingCopy.description}
-                      </p>
-                    ) : null}
-                  </div>
+                {liveSnippet}
+                {showAiShardBar ? (
+                  <IntakeAiShardBar
+                    snapshot={intakeProgressSnapshot}
+                    active={aiEnriching || intakeIntelligence.analyzing}
+                    compact
+                  />
                 ) : null}
-
-                <div className="intake-actions flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
-                  <Button className="w-full sm:w-auto" variant="outline" onClick={() => setStep('details')}>
-                    <ArrowRight className="size-4 ml-1" />
-                    بازگشت
-                  </Button>
-                  <Button className="w-full sm:w-auto" onClick={goToPreview}>
-                    {needDraft?.completionState === 'READY_TO_PUBLISH'
-                      ? 'ادامه به پیش‌نمایش'
-                      : 'تکمیل اطلاعات و ادامه'}
-                  </Button>
-                </div>
-              </section>
+              </IntakeStepShell>
             )}
 
             {step === 'preview' && listingPreview && (
-              <NeedListingPreview
-                preview={listingPreview}
-                onChange={setListingPreview}
-                onRepolish={() => void publishState.repolishPreview()}
-                onPublish={() => void publishState.publish()}
-                isLoading={isLoading}
-                isRepublishing={publishState.isRepublishing}
-                isTitleEnriching={titleEnriching}
-                isDescEnriching={descEnriching}
-                publishDisabled={!publishState.canPublish}
-              />
+              <section className="intake-panel-card">
+                <div className="intake-panel-card__chrome">{panelChrome}</div>
+                <div className="intake-panel-card__body">
+                  <NeedListingPreview
+                    preview={listingPreview}
+                    onChange={setListingPreview}
+                    onRepolish={() => void publishState.repolishPreview()}
+                    onPublish={() => void publishState.publish()}
+                    isLoading={isLoading}
+                    isRepublishing={publishState.isRepublishing}
+                    isTitleEnriching={titleEnriching}
+                    isDescEnriching={descEnriching}
+                    publishDisabled={!publishState.canPublish}
+                    categoryLabel={previewCategoryLabel}
+                    cityLabel={previewCityLabel}
+                    nested
+                  />
+                </div>
+              </section>
             )}
 
             {error && (
@@ -741,15 +994,7 @@ export function NeedIntakePanel({
             )}
           </div>
         </div>
-        <aside className="layout-golden-aside hidden lg:block">
-          <div className="intake-aside-card sticky-below-header">
-            <h3 className="intake-aside-card__title">خلاصه زنده</h3>
-            <p className="intake-aside-card__hint">این بخش با هر تغییر شما به‌روز می‌شود.</p>
-            <p className="intake-aside-card__body">
-              {liveSummary || 'پس از تکمیل مرحله‌ها، خلاصه نمایش داده می‌شود.'}
-            </p>
-          </div>
-        </aside>
+        {showLiveSummary ? <IntakeLiveSummaryAside summary={liveSummary} /> : null}
       </div>
     </>
   );

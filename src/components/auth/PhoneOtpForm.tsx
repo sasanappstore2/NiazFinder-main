@@ -28,43 +28,16 @@ import {
   toAsciiDigits,
   toPersianDigits,
 } from '@/lib/format/digits';
+import {
+  AUTH_OTP_DEMO_CODE,
+  AUTH_OTP_LENGTH,
+  isAuthTestOtpModeClient,
+} from '@/lib/auth/otp-client-config';
 
-const OTP_LENGTH = 4;
+const OTP_LENGTH = AUTH_OTP_LENGTH;
 const COUNTDOWN_SECONDS = 120;
-const DEMO_OTP = '1234';
 
-const showTestOtpHint =
-  process.env.NEXT_PUBLIC_ALLOW_TEST_OTP === 'true' ||
-  process.env.NODE_ENV !== 'production';
-
-const MOCK_NOTIFICATIONS = [
-  {
-    id: 'notif-mock-1',
-    type: 'new_proposal' as const,
-    title: 'پیشنهاد جدید',
-    message: 'کسب‌وکاری برای نیاز «طراحی سایت فروشگاهی» پیشنهادی ارسال کرده است.',
-    isRead: false,
-    createdAt: new Date(Date.now() - 1800000).toISOString(),
-    data: { requestId: 'r1' },
-  },
-  {
-    id: 'notif-mock-2',
-    type: 'message' as const,
-    title: 'پیام جدید',
-    message: 'شما یک پیام جدید از «علی محمدی» دریافت کرده‌اید.',
-    isRead: false,
-    createdAt: new Date(Date.now() - 7200000).toISOString(),
-    data: { conversationId: 'conv-1' },
-  },
-  {
-    id: 'notif-mock-3',
-    type: 'system' as const,
-    title: 'خوش آمدید!',
-    message: 'به نیاز فایندر خوش آمدید. پروفایل خود را تکمیل کنید تا بهترین کسب‌وکارها را پیدا کنید.',
-    isRead: true,
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-  },
-];
+const showTestOtpHint = isAuthTestOtpModeClient();
 
 export type PhoneOtpStep = 'phone' | 'password' | 'otp' | 'set-password' | 'welcome';
 type OtpMode = 'login' | 'register';
@@ -77,7 +50,6 @@ export function PhoneOtpForm({
   const loginWithPhone = useAppStore((s) => s.loginWithPhone);
   const loginWithPhonePassword = useAppStore((s) => s.loginWithPhonePassword);
   const registerWithPhonePassword = useAppStore((s) => s.registerWithPhonePassword);
-  const setNotifications = useAppStore((s) => s.setNotifications);
 
   const [step, setStep] = useState<PhoneOtpStep>('phone');
   const [phone, setPhone] = useState('');
@@ -203,6 +175,7 @@ export function PhoneOtpForm({
       }
 
       setPhone(cleaned);
+      setOtpMode('login');
 
       if (!data.exists) {
         setOtpMode('register');
@@ -282,7 +255,6 @@ export function PhoneOtpForm({
       }
 
       if (result.success) {
-        setNotifications(MOCK_NOTIFICATIONS);
         setOtpStatus('success');
 
         await new Promise((resolve) => setTimeout(resolve, OTP_SUCCESS_ANIMATION_MS));
@@ -314,7 +286,7 @@ export function PhoneOtpForm({
       setOtpDigits(Array(OTP_LENGTH).fill(''));
       verifyTriggeredRef.current = false;
     }
-  }, [otpDigits, phone, loginWithPhone, otpMode, otpStatus, setNotifications]);
+  }, [otpDigits, phone, loginWithPhone, otpMode, otpStatus]);
 
   useEffect(() => {
     if (step !== 'otp' || otpStatus !== 'idle') return;
@@ -340,7 +312,6 @@ export function PhoneOtpForm({
     try {
       const result = await loginWithPhonePassword(phone, password);
       if (result.success) {
-        setNotifications(MOCK_NOTIFICATIONS);
         toast.success('ورود موفقیت‌آمیز!', { description: 'خوش آمدید' });
         return;
       }
@@ -350,7 +321,7 @@ export function PhoneOtpForm({
     } finally {
       setIsLoading(false);
     }
-  }, [phone, password, loginWithPhonePassword, setNotifications]);
+  }, [phone, password, loginWithPhonePassword]);
 
   const handleSmsLogin = useCallback(async () => {
     setPasswordError('');
@@ -375,7 +346,6 @@ export function PhoneOtpForm({
       const code = otpDigits.join('');
       const result = await registerWithPhonePassword(phone, password, code);
       if (result.success) {
-        setNotifications(MOCK_NOTIFICATIONS);
         trackAnalyticsEvent('signup_completed', { phone });
         setStep('welcome');
         toast.success('ثبت‌نام و ورود موفق!', {
@@ -395,7 +365,6 @@ export function PhoneOtpForm({
     confirmPassword,
     otpDigits,
     registerWithPhonePassword,
-    setNotifications,
   ]);
 
   const handleBackToPhone = useCallback(() => {
@@ -474,7 +443,7 @@ export function PhoneOtpForm({
             <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-center dark:bg-amber-950/30 dark:border-amber-900">
               <p className="text-xs text-amber-700 dark:text-amber-300">
                 محیط تست — کد تایید:{' '}
-                <span className="font-bold tabular-nums">{toPersianDigits(DEMO_OTP)}</span>
+                <span className="font-bold tabular-nums">{toPersianDigits(AUTH_OTP_DEMO_CODE ?? '')}</span>
               </p>
             </div>
           )}
@@ -575,8 +544,8 @@ export function PhoneOtpForm({
             onChangePhone={handleBackToPhone}
             isResending={isLoading}
             devHint={
-              showTestOtpHint
-                ? `کد تست: ${toPersianDigits(DEMO_OTP)}`
+              showTestOtpHint && AUTH_OTP_DEMO_CODE
+                ? `کد تست: ${toPersianDigits(AUTH_OTP_DEMO_CODE)}`
                 : undefined
             }
           />

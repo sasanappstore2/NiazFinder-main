@@ -27,8 +27,8 @@ export class OllamaAiProvider implements AiProvider {
   readonly name = 'ollama' as const;
 
   constructor(
-    private readonly baseUrl = getAiSemanticConfig().ollamaUrl,
-    private readonly model = getAiSemanticConfig().ollamaModel,
+    private readonly baseUrl = getAiSemanticConfig().localLlmUrl,
+    private readonly model = getAiSemanticConfig().localLlmModel,
     private readonly timeoutMs = getAiSemanticConfig().timeoutMs,
     private readonly maxRetries = getAiSemanticConfig().maxRetries
   ) {}

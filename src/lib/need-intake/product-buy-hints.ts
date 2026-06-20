@@ -1,5 +1,33 @@
 import { normalizeIntakeText } from '@/lib/need-intake/normalize-intake-text';
 
+/** Aquatic / pet purchase phrases (Persian + Latin). */
+const PET_PRODUCT_PHRASES = [
+  'اکسلوتل',
+  'آکسلوتل',
+  'axolotl',
+  'گربه',
+  'سگ',
+  'حیوان خانگی',
+  'حیوان آبی',
+  'ماهی',
+  'آکواریوم',
+  'پرنده',
+  'همستر',
+  'خرگوش',
+  'لاک‌پشت',
+  'لاک پشت',
+  'طوطی',
+  'قناری',
+  'جونده',
+  'پت',
+  'pet',
+];
+
+export function hasPetProductPhrase(text: string): boolean {
+  const t = normalizeIntakeText(text);
+  return PET_PRODUCT_PHRASES.some((p) => t.includes(normalizeIntakeText(p)));
+}
+
 /** Gaming / console product phrases (Persian + Latin). */
 const GAMING_PRODUCT_PHRASES = [
   'پلی استیشن',
@@ -10,6 +38,9 @@ const GAMING_PRODUCT_PHRASES = [
   'ps5',
   'ps4',
   'ps3',
+  'پی اس فایو',
+  'پی‌اس‌فایو',
+  'پی اس 5',
   'xbox',
   'nintendo',
   'نینتندو',
@@ -82,12 +113,46 @@ export function hasBuyIntentPhrase(text: string): boolean {
   return BUY_HINTS.some((w) => t.includes(w));
 }
 
+const ELECTRONICS_PRODUCT_PHRASES = [
+  'گوشی',
+  'موبایل',
+  'تبلت',
+  'لپ تاپ',
+  'لپتاپ',
+  'کامپیوتر',
+  'آیفون',
+  'iphone',
+  'ipad',
+  'آیپد',
+  'مک بوک',
+  'macbook',
+];
+
+export function hasElectronicsProductPhrase(text: string): boolean {
+  const t = normalizeIntakeText(text);
+  if (hasPetProductPhrase(text)) return false;
+  return ELECTRONICS_PRODUCT_PHRASES.some((p) => {
+    const phrase = normalizeIntakeText(p);
+    if (phrase.length <= 3) {
+      const idx = t.indexOf(phrase);
+      if (idx < 0) return false;
+      const before = idx > 0 ? t[idx - 1] : ' ';
+      const after = idx + phrase.length < t.length ? t[idx + phrase.length] : ' ';
+      const letter = /[\u0600-\u06FFa-z]/i;
+      return !letter.test(before) && !letter.test(after);
+    }
+    return t.includes(phrase);
+  });
+}
+
 /** Concrete product noun in text (watch, phone, console, …) — not generic «میخوام» only. */
 export function hasConcreteProductNoun(text: string): boolean {
   return (
     hasGamingProductPhrase(text) ||
     hasWatchOrLuxuryProductPhrase(text) ||
-    hasMusicalProductPhrase(text)
+    hasMusicalProductPhrase(text) ||
+    hasElectronicsProductPhrase(text) ||
+    hasPetProductPhrase(text)
   );
 }
 

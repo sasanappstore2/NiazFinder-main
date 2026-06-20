@@ -404,7 +404,9 @@ export function HeaderSearchBar({ data = [], onSelect, compact = false }: Header
       <div className="relative flex-1">
         <Input
           ref={inputRef}
-          type="text"
+          id="header-search"
+          name="q"
+          type="search"
           placeholder={compact ? 'جستجو…' : 'جستجوی کاربر، کسب‌وکار، نیاز...'}
           className={cn(
             'w-full rounded-xl border-border/60 bg-muted/50 pe-10 ps-4 text-sm backdrop-blur-xs transition-all duration-200',

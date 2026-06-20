@@ -8,7 +8,13 @@ import {
   normalizeCategoryPair,
 } from '@/config/categories';
 import { suggestNeedCategoriesFromText } from '@/lib/need-intake/intent-parser';
+import { hasCategoryAmbiguity } from '@/components/need-intake/IntakeCategoryAmbiguityPrompt';
+import {
+  getBusinessCommercialPropertyCandidates,
+  isAmbiguousCommercialSubtype,
+} from '@/lib/need-intake/business-commercial-property-intent';
 import { composeIntakeSourceText } from '@/lib/need-intake/compose-source-text';
+import { whenToUrgency } from '@/lib/need-intake/intake-timing-options';
 import { mapDealTypeToTransaction } from '@/lib/need-intake/deal-type-transaction';
 import {
   inferEntitiesFromCategorySlugs,
@@ -19,6 +25,7 @@ import {
 import { resolveTemplate } from '@/intake/template/resolveTemplate';
 import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
 import { entityPatchForField } from '@/intake/state/updateDraftField';
+import { isFieldFilled } from '@/intake/state/isFieldFilled';
 import type { IntakeRenderContext } from '@/intake/rendering/types';
 import type { IntakeTemplate } from '@/intake/template/types';
 import { trackFieldChange } from '@/intake/telemetry/postIntakeTelemetry';
@@ -35,11 +42,39 @@ export function computeEnabledSectionsForLocation(draft: NeedDraft): Set<string>
   const entities = recordToEntities(draft.entities);
   const template = resolveTemplateFromDraftEntities(entities);
   const next = new Set<string>();
-  for (const section of draft.sections ?? []) {
+
+  const filledCtx = {
+    entities,
+    answers: draft.answers ?? {},
+    selectedCategory: entities.categorySlug ?? undefined,
+    selectedSubcategory: entities.subcategorySlug ?? undefined,
+    selectedCity: entities.city ?? undefined,
+    selectedNeighborhood: entities.neighborhood ?? undefined,
+    sourceText: draft.sourceText,
+    parsedBrand: draft.parsedIntent?.entities?.brand,
+  };
+
+  for (const section of template.sections) {
+    if (section.key === 'specs') continue;
+    if (section.key === 'timing') {
+      next.add('timing');
+      continue;
+    }
     if (template.mandatorySectionKeys.has(section.key)) {
       next.add(section.key);
+      continue;
     }
+    if (template.criticalSectionKeys.has(section.key)) {
+      next.add(section.key);
+      continue;
+    }
+    const hasFilled = section.fields.some((key) => {
+      const meta = template.fieldMap[key];
+      return meta ? isFieldFilled(meta, filledCtx) : false;
+    });
+    if (hasFilled) next.add(section.key);
   }
+
   return next;
 }
 
@@ -90,6 +125,7 @@ export function useIntakeDraft({
 }: UseIntakeDraftOptions) {
   const [enabledSections, setEnabledSections] = useState<Set<string>>(() => new Set());
   const categoryLockedByUserRef = useRef(false);
+  const [categoryLockedByUser, setCategoryLockedByUser] = useState(false);
   const initialCategoryAppliedRef = useRef(false);
 
   const selectedLeafCategorySlug = selectedSubcategory || selectedCategory;
@@ -113,14 +149,37 @@ export function useIntakeDraft({
     [categorySourceText, getDraft]
   );
 
+  const draftEntities = needDraft ? recordToEntities(needDraft.entities) : null;
+
   const categorySuggestions = useMemo(() => {
-    const candidates = suggestNeedCategoriesFromText(`${needText}\n${detailsText}`, 8);
+    const ruleCandidates = needDraft?.parsedIntent?.categoryCandidates;
+    if (ruleCandidates && ruleCandidates.length >= 2 && !draftEntities?.categorySlug) {
+      return ruleCandidates
+        .sort((a, b) => b.confidence - a.confidence)
+        .slice(0, 6)
+        .map((c) => c.slug);
+    }
+
+    const source = `${needText}\n${detailsText}`;
+    const commercialCandidates = getBusinessCommercialPropertyCandidates(source);
+    const commercialAmbiguous = isAmbiguousCommercialSubtype(source);
+    const candidates = suggestNeedCategoriesFromText(source, 8);
     const slugs: string[] = [];
+
+    if (commercialCandidates.length > 0) {
+      for (const slug of commercialCandidates) {
+        if (!slugs.includes(slug)) slugs.push(slug);
+      }
+    }
+
     const rootFallback: string[] = [];
     for (const candidate of candidates) {
       const pair = normalizeCategoryPair(candidate.slug);
       const leaf = pair.subcategorySlug ?? pair.categorySlug;
       if (!leaf || slugs.includes(leaf) || rootFallback.includes(leaf)) continue;
+      if (commercialAmbiguous && (leaf === 'beauty-health' || leaf === 'apartment-rent')) {
+        continue;
+      }
       const cat = getCategoryBySlug(leaf);
       if (cat?.depth === 0) {
         rootFallback.push(leaf);
@@ -136,16 +195,34 @@ export function useIntakeDraft({
       }
     }
     return slugs.slice(0, 3);
-  }, [needText, detailsText]);
+  }, [needDraft?.parsedIntent?.categoryCandidates, needText, detailsText, draftEntities?.categorySlug]);
+
+  const categoryAmbiguous = useMemo(
+    () => hasCategoryAmbiguity(needDraft?.parsedIntent),
+    [needDraft?.parsedIntent]
+  );
+
+  const commercialCategoryAmbiguous = useMemo(
+    () => categoryAmbiguous || isAmbiguousCommercialSubtype(`${needText}\n${detailsText}`),
+    [categoryAmbiguous, needText, detailsText]
+  );
 
   const categorySuggestionOptions = useMemo(() => {
+    const ruleCandidates = needDraft?.parsedIntent?.categoryCandidates;
+    if (ruleCandidates && ruleCandidates.length >= 2) {
+      return ruleCandidates
+        .sort((a, b) => b.confidence - a.confidence)
+        .slice(0, 6)
+        .map((c) => ({
+          value: c.slug,
+          label: c.label || categorySuggestionLabelFromSlug(c.slug),
+        }));
+    }
     return categorySuggestions.map((slug) => ({
       value: slug,
       label: categorySuggestionLabelFromSlug(slug),
     }));
-  }, [categorySuggestions]);
-
-  const draftEntities = needDraft ? recordToEntities(needDraft.entities) : null;
+  }, [categorySuggestions, needDraft?.parsedIntent?.categoryCandidates]);
 
   const intakeTemplate: IntakeTemplate = useMemo(() => {
     const base = resolveTemplate({
@@ -183,6 +260,7 @@ export function useIntakeDraft({
     (slug: string, opts?: { userInitiated?: boolean }) => {
       if (opts?.userInitiated) {
         categoryLockedByUserRef.current = true;
+        setCategoryLockedByUser(true);
       }
       if (!slug.trim()) {
         onCategoryChange?.('', '');
@@ -218,6 +296,7 @@ export function useIntakeDraft({
       subcategorySlug: string | null;
     }) => {
       categoryLockedByUserRef.current = true;
+      setCategoryLockedByUser(true);
       onCategoryChange?.(payload.categorySlug, payload.subcategorySlug ?? '');
       patchNeedDraftEntities(
         inferCategoryEntities(payload.categorySlug, payload.subcategorySlug)
@@ -260,6 +339,14 @@ export function useIntakeDraft({
 
       const answerValue = Array.isArray(value) ? value : String(value);
 
+      const scalarAnswer = Array.isArray(value) ? value[0] ?? '' : String(value);
+      const urgencyFromWhen =
+        key === 'when'
+          ? whenToUrgency(scalarAnswer)
+          : key === 'urgency'
+            ? scalarAnswer
+            : undefined;
+
       setNeedDraft(
         recomputeNeedDraft({
           ...base,
@@ -268,6 +355,14 @@ export function useIntakeDraft({
             [key]: answerValue,
             ...(key === 'dealType' ? { _userSetDealType: true } : {}),
           },
+          ...(urgencyFromWhen
+            ? {
+                parsedIntent: {
+                  ...base.parsedIntent,
+                  urgency: urgencyFromWhen as NeedDraft['parsedIntent']['urgency'],
+                },
+              }
+            : {}),
         })
       );
     },
@@ -313,6 +408,8 @@ export function useIntakeDraft({
       selectedCity,
       selectedNeighborhood,
       categorySuggestions: categorySuggestionOptions,
+      commercialCategoryAmbiguous,
+      categoryAmbiguous,
       onCategoryChange: (payload, opts) => {
         if (typeof payload === 'string') {
           applyCategorySlug(payload, opts);
@@ -330,6 +427,8 @@ export function useIntakeDraft({
       selectedCity,
       selectedNeighborhood,
       categorySuggestionOptions,
+      commercialCategoryAmbiguous,
+      categoryAmbiguous,
       applyCategorySlug,
       applyCategoryFromMegaMenu,
       patchIntakeField,
@@ -338,24 +437,28 @@ export function useIntakeDraft({
   );
 
   const intakeSectionKeysSig = needDraft?.sections?.map((s) => s.key).join('|') ?? '';
+  const intakeFilledSig = [
+    needDraft?.entities?.categorySlug,
+    needDraft?.entities?.subcategorySlug,
+    JSON.stringify(needDraft?.answers ?? {}),
+  ].join('|');
 
   useEffect(() => {
     if (!needDraft?.sections?.length || step !== 'location') return;
     const template = resolveTemplateFromDraftEntities(recordToEntities(needDraft.entities));
-    const validKeys = new Set(needDraft.sections.map((s) => s.key));
+    const validKeys = new Set(template.sections.map((s) => s.key));
+    const computed = computeEnabledSectionsForLocation(needDraft);
     setEnabledSections((prev) => {
       const next = new Set<string>();
       for (const key of prev) {
         if (validKeys.has(key)) next.add(key);
       }
-      for (const section of needDraft.sections) {
-        if (template.mandatorySectionKeys.has(section.key)) {
-          next.add(section.key);
-        }
+      for (const key of computed) {
+        next.add(key);
       }
       return sectionKeysEqual(prev, next) ? prev : next;
     });
-  }, [intakeSectionKeysSig, step, needDraft]);
+  }, [intakeSectionKeysSig, intakeFilledSig, step, needDraft]);
 
   const locationSectionFieldsSig =
     needDraft?.sections?.find((s) => s.key === 'location')?.fields.join(',') ?? '';
@@ -367,13 +470,30 @@ export function useIntakeDraft({
     setNeedDraft(recomputeNeedDraft(needDraft));
   }, [step, locationSectionFieldsSig, needDraft, setNeedDraft]);
 
+  const resetCategoryLocks = useCallback(() => {
+    categoryLockedByUserRef.current = false;
+    setCategoryLockedByUser(false);
+  }, []);
+
+  const applyInitialCategoryIfNeeded = useCallback(
+    (slug: string) => {
+      if (initialCategoryAppliedRef.current || !slug.trim()) return;
+      initialCategoryAppliedRef.current = true;
+      applyCategorySlug(slug.trim(), { userInitiated: true });
+    },
+    [applyCategorySlug]
+  );
+
   return {
     intakeTemplate,
     intakeRenderContext,
     enabledSections,
     setEnabledSections,
     applyCategorySlug,
+    resetCategoryLocks,
+    applyInitialCategoryIfNeeded,
     categoryLockedByUserRef,
+    categoryLockedByUser,
     initialCategoryAppliedRef,
     patchIntakeAnswer,
     patchIntakeField,

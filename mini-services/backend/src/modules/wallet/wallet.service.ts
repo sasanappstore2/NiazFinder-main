@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { PaymentRequiredException } from '../ai-agent/exceptions/payment-required.exception';
 import { ChargeDto } from './dto/charge.dto';
 import { WithdrawDto } from './dto/withdraw.dto';
 import { QueryTransactionsDto } from './dto/query-transactions.dto';
@@ -653,5 +655,93 @@ export class WalletService {
 
   private formatAmount(amount: number): string {
     return new Intl.NumberFormat('fa-IR').format(amount);
+  }
+
+  /**
+   * Deduct pay-per-message AI agent fee inside an existing transaction (FOR UPDATE).
+   */
+  async deductAgentMessageFee(
+    tx: Prisma.TransactionClient,
+    params: {
+      userId: string;
+      amount: number;
+      idempotencyKey: string;
+      referenceId: string;
+    },
+  ) {
+    const existing = await tx.transaction.findFirst({
+      where: { referenceId: params.idempotencyKey, type: 'PAYMENT', status: 'COMPLETED' },
+    });
+    if (existing) return { transaction: existing, duplicate: true as const };
+
+    await tx.$executeRaw`SELECT id FROM "Wallet" WHERE "userId" = ${params.userId} FOR UPDATE`;
+
+    let wallet = await tx.wallet.findUnique({ where: { userId: params.userId } });
+    if (!wallet) wallet = await tx.wallet.create({ data: { userId: params.userId } });
+
+    const available = wallet.balance - wallet.frozen;
+    if (available < params.amount) {
+      throw new PaymentRequiredException('INSUFFICIENT_BALANCE');
+    }
+
+    const updated = await tx.wallet.update({
+      where: { userId: params.userId },
+      data: { balance: { decrement: params.amount } },
+    });
+
+    const transaction = await tx.transaction.create({
+      data: {
+        walletId: updated.id,
+        userId: params.userId,
+        type: 'PAYMENT',
+        amount: params.amount,
+        status: 'COMPLETED',
+        referenceId: params.idempotencyKey,
+        description: `agent-message:${params.referenceId}`,
+      },
+    });
+    return { transaction, duplicate: false as const };
+  }
+
+  /**
+   * Refund AI agent message fee on LLM hard failure (idempotent).
+   */
+  async refundAgentMessageFee(
+    tx: Prisma.TransactionClient,
+    params: {
+      userId: string;
+      amount: number;
+      idempotencyKey: string;
+      referenceId: string;
+    },
+  ) {
+    const refundKey = `${params.idempotencyKey}:refund`;
+    const existing = await tx.transaction.findFirst({
+      where: { referenceId: refundKey, type: 'REFUND', status: 'COMPLETED' },
+    });
+    if (existing) return { transaction: existing, duplicate: true as const };
+
+    await tx.$executeRaw`SELECT id FROM "Wallet" WHERE "userId" = ${params.userId} FOR UPDATE`;
+
+    let wallet = await tx.wallet.findUnique({ where: { userId: params.userId } });
+    if (!wallet) wallet = await tx.wallet.create({ data: { userId: params.userId } });
+
+    const updated = await tx.wallet.update({
+      where: { userId: params.userId },
+      data: { balance: { increment: params.amount } },
+    });
+
+    const transaction = await tx.transaction.create({
+      data: {
+        walletId: updated.id,
+        userId: params.userId,
+        type: 'REFUND',
+        amount: params.amount,
+        status: 'COMPLETED',
+        referenceId: refundKey,
+        description: `agent-message-refund:${params.referenceId}`,
+      },
+    });
+    return { transaction, duplicate: false as const };
   }
 }

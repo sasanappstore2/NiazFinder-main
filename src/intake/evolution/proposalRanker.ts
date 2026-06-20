@@ -23,7 +23,7 @@ function rankScore(proposal: SchemaEvolutionProposal): number {
   );
 }
 
-/** Rank proposals by impact ? does not mutate schema or proposals in place. */
+/** Rank proposals by impact — does not mutate schema or proposals in place. */
 export function rankProposals(
   proposals: readonly SchemaEvolutionProposal[]
 ): SchemaEvolutionProposal[] {

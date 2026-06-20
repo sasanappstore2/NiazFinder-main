@@ -39,6 +39,7 @@ import { routeBuilder } from '@/config/routes';
 import { useStartChat } from '@/hooks/use-start-chat';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
+import { ProfileStarredBusinesses } from '@/components/social/ProfileStarredBusinesses';
 import type { ServiceRequest } from '@/lib/types';
 
 // ─── Animation variants ───────────────────────────────
@@ -324,6 +325,7 @@ export function UserProfile() {
     isFollowing: false,
   });
   const [posts, setPosts] = useState<ServiceRequest[]>([]);
+  const [starredCount, setStarredCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [followLoading, setFollowLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -396,15 +398,31 @@ export function UserProfile() {
     }
   }, [isOwnProfile, isAuthenticated, currentUser?.id, targetId]);
 
+  const fetchStarredCount = useCallback(async () => {
+    const userId = isOwnProfile && isAuthenticated ? currentUser?.id : targetId;
+    if (!userId) return;
+    try {
+      const res = await fetch(`/api/users/${userId}/stars`, {
+        signal: AbortSignal.timeout(5000),
+      });
+      if (res.ok) {
+        const data = (await res.json()) as { starCount?: number };
+        setStarredCount(Number(data.starCount ?? 0));
+      }
+    } catch {
+      // Silently fail
+    }
+  }, [isOwnProfile, isAuthenticated, currentUser?.id, targetId]);
+
   // ── Load all data ──────────────────────────────────
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await Promise.all([fetchProfile(), fetchFollowData(), fetchPosts()]);
+      await Promise.all([fetchProfile(), fetchFollowData(), fetchPosts(), fetchStarredCount()]);
       setLoading(false);
     };
     loadData();
-  }, [fetchProfile, fetchFollowData, fetchPosts]);
+  }, [fetchProfile, fetchFollowData, fetchPosts, fetchStarredCount]);
 
   // ── Build profile display object ───────────────────
   const profile = profileData
@@ -594,7 +612,7 @@ export function UserProfile() {
           {/* Profile info card overlapping cover */}
           <div className="relative bg-card px-6 pb-6 pt-0 dark:bg-card sm:px-10">
             {/* Avatar positioned on the gradient */}
-            <div className="-mt-16 mb-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="-mt-16 mb-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div className="flex items-end gap-4">
                 {/* Avatar with gradient border */}
                 <div className="relative">
@@ -778,7 +796,7 @@ export function UserProfile() {
         <motion.div
           {...fadeIn}
           transition={{ delay: 0.1 }}
-          className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-5"
+          className="mb-6 grid grid-cols-1 gap-3 xs:grid-cols-2 sm:grid-cols-5"
         >
           <StatPill
             icon={Users}
@@ -804,7 +822,7 @@ export function UserProfile() {
             value={Number(profile.projectCount) || 0}
             iconColor="text-violet-500"
           />
-          <div className="col-span-2 sm:col-span-1">
+          <div className="col-span-1 xs:col-span-2 sm:col-span-1">
             <div className="flex items-center gap-3 rounded-xl bg-white/60 px-4 py-3 backdrop-blur-xs dark:bg-card/60">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-900/20">
                 <Star className="size-4 text-amber-500" />
@@ -829,19 +847,26 @@ export function UserProfile() {
           <Tabs defaultValue="posts" className="w-full">
             <Card className="border-border/60 bg-card">
               <CardHeader className="pb-0">
-                <TabsList className="w-full">
-                  <TabsTrigger value="posts" className="flex-1 gap-1.5">
+                <TabsList className="flex w-full gap-1 overflow-x-auto flex-nowrap">
+                  <TabsTrigger value="posts" className="min-w-0 flex-1 shrink-0 gap-1 text-xs sm:text-sm sm:gap-1.5">
                     <FileText className="size-3.5" />
                     پست‌ها
                     <Badge variant="secondary" className="rounded-md px-1.5 text-caption">
                       {(profile.postCount || posts.length).toLocaleString('fa-IR')}
                     </Badge>
                   </TabsTrigger>
-                  <TabsTrigger value="about" className="flex-1 gap-1.5">
+                  <TabsTrigger value="about" className="min-w-0 flex-1 shrink-0 gap-1 text-xs sm:text-sm sm:gap-1.5">
                     <UserPlus className="size-3.5" />
                     درباره
                   </TabsTrigger>
-                  <TabsTrigger value="projects" className="flex-1 gap-1.5">
+                  <TabsTrigger value="stars" className="min-w-0 flex-1 shrink-0 gap-1 text-xs sm:text-sm sm:gap-1.5">
+                    <Star className="size-3.5" />
+                    {'\u0633\u062a\u0627\u0631\u0647\u200c\u0647\u0627'}
+                    <Badge variant="secondary" className="rounded-md px-1.5 text-caption">
+                      {starredCount.toLocaleString('fa-IR')}
+                    </Badge>
+                  </TabsTrigger>
+                  <TabsTrigger value="projects" className="min-w-0 flex-1 shrink-0 gap-1 text-xs sm:text-sm sm:gap-1.5">
                     <Briefcase className="size-3.5" />
                     پروژه‌ها
                     <Badge variant="secondary" className="rounded-md px-1.5 text-caption">
@@ -999,6 +1024,11 @@ export function UserProfile() {
                       </motion.div>
                     )}
                   </motion.div>
+                </TabsContent>
+
+                {/* ─── Stars Tab ────────────────────── */}
+                <TabsContent value="stars">
+                  <ProfileStarredBusinesses userId={profile.id} />
                 </TabsContent>
 
                 {/* ─── Projects Tab ─────────────────── */}

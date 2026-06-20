@@ -34,7 +34,7 @@ export interface ContactActionsProps {
   needPreview?: Omit<NeedChatPreview, 'id'>;
   /** Override chat button label (e.g. primary CTA on need detail aside). */
   chatLabel?: string;
-  variant?: 'compact' | 'default' | 'sticky' | 'stacked';
+  variant?: 'compact' | 'default' | 'sticky' | 'stacked' | 'toolbar';
   className?: string;
 }
 
@@ -154,10 +154,12 @@ export function ContactActions({
       ? 'flex gap-2 px-3 py-2'
       : variant === 'stacked'
         ? 'flex flex-col gap-3'
-        : variant === 'compact'
-          ? 'flex flex-wrap gap-1.5'
-          : 'flex flex-wrap gap-2';
-  const fullWidthBtn = variant === 'sticky' || variant === 'stacked';
+        : variant === 'toolbar'
+          ? 'flex w-full flex-wrap gap-2 md:w-auto'
+          : variant === 'compact'
+            ? 'flex flex-wrap gap-1.5'
+            : 'flex flex-wrap gap-2';
+  const fullWidthBtn = variant === 'sticky' || variant === 'stacked' || variant === 'toolbar';
 
   return (
     <>
@@ -181,6 +183,8 @@ export function ContactActions({
           className={cn(
             fullWidthBtn && 'w-full flex-1',
             variant === 'sticky' && 'h-10 min-h-10 text-sm',
+            variant === 'toolbar' &&
+              'h-11 min-h-11 flex-1 rounded-md text-sm font-medium md:min-w-[7.5rem]',
             variant === 'stacked' &&
               'h-12 min-h-12 rounded-xl text-base font-semibold shadow-sm transition-[box-shadow,transform] hover:shadow-md active:scale-[0.99]'
           )}
@@ -192,8 +196,14 @@ export function ContactActions({
           ) : (
             <MessageCircle className="size-4 ml-1" />
           )}
-          <span className="max-[360px]:hidden">{chatLabel}</span>
-          <span className="hidden max-[360px]:inline">پیام</span>
+          {variant === 'toolbar' ? (
+            chatLabel
+          ) : (
+            <>
+              <span className="max-[360px]:hidden">{chatLabel}</span>
+              <span className="hidden max-[360px]:inline">پیام</span>
+            </>
+          )}
         </Button>
       )}
       {hasPhone && (
@@ -204,6 +214,8 @@ export function ContactActions({
           className={cn(
             fullWidthBtn && 'w-full flex-1',
             variant === 'sticky' && 'h-10 min-h-10 text-sm',
+            variant === 'toolbar' &&
+              'h-11 min-h-11 flex-1 rounded-md text-sm font-medium md:min-w-[7.5rem]',
             variant === 'stacked' &&
               'h-12 min-h-12 rounded-xl border-2 text-base font-medium bg-background/80 hover:bg-muted/40'
           )}

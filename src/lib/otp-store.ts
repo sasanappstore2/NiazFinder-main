@@ -68,6 +68,11 @@ async function writePhoneRecord(record: OtpRecord): Promise<void> {
     await redis.set(redisKey(record.phone), serialize(record), 'EX', ttlSec).catch(() => {});
     return;
   }
+  for (let i = memoryStore.length - 1; i >= 0; i--) {
+    if (memoryStore[i].phone === record.phone) {
+      memoryStore.splice(i, 1);
+    }
+  }
   memoryStore.push(record);
 }
 

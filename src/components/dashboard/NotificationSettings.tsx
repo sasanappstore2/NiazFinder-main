@@ -183,7 +183,7 @@ export function NotificationSettings() {
   return (
     <div className="space-y-6" dir="rtl">
       {/* ============ Page Header ============ */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/40 shadow-sm">
             <Settings2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
@@ -231,7 +231,7 @@ export function NotificationSettings() {
           return (
             <Card key={category.id} className="overflow-hidden rounded-2xl border border-border/50 transition-all duration-150 hover:shadow-lg hover:shadow-emerald-500/5">
               <CardHeader className="pb-0">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div className="flex items-center gap-3">
                     <div className={cn('flex h-11 w-11 shrink-0 items-center justify-center rounded-xl', category.bgColor)}>
                       <CategoryIcon className={cn('h-5 w-5', category.color)} />

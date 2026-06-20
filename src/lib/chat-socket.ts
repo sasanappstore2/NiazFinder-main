@@ -1,9 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useCallback, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { io, Socket } from 'socket.io-client';
 import { useAppStore } from '@/lib/store';
 import { getChatSocketConfig } from '@/lib/chat-socket-config';
+import {
+  isChatSocketConnectAllowed,
+  subscribeChatSocketConnectPolicy,
+} from '@/lib/chat/socket-connect-policy';
 import {
   registerChatSocketBridge,
   unregisterChatSocketBridge,
@@ -17,6 +22,17 @@ let lastConnectErrorLogAt = 0;
 let socketConsumerCount = 0;
 const MAX_RECONNECT_ATTEMPTS = 10;
 const CONNECT_ERROR_LOG_INTERVAL_MS = 20_000;
+
+function shouldSkipChatSocketAuth(_token: string): boolean {
+  return false;
+}
+
+function isAuthConnectError(message: string): boolean {
+  return (
+    message === 'Authentication failed' ||
+    message.startsWith('Authentication required')
+  );
+}
 
 export interface ChatSocketAPI {
   socket: Socket | null;
@@ -45,6 +61,7 @@ export interface ChatSocketAPI {
 }
 
 export function useChatSocket(): ChatSocketAPI {
+  const pathname = usePathname();
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const currentUser = useAppStore((s) => s.currentUser);
   const authToken = useAppStore((s) => s.authToken);
@@ -55,9 +72,36 @@ export function useChatSocket(): ChatSocketAPI {
   const typingTimeoutRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const [isConnected, setIsConnected] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [connectPolicyAllowed, setConnectPolicyAllowed] = useState(false);
+
+  useEffect(() => {
+    const syncPolicy = () => {
+      setConnectPolicyAllowed(isChatSocketConnectAllowed(pathname));
+    };
+    syncPolicy();
+    return subscribeChatSocketConnectPolicy(syncPolicy);
+  }, [pathname]);
+
+  const handleAuthFailure = useCallback(() => {
+    const active = socketRef.current ?? socketInstance;
+    if (active) {
+      active.io.reconnection(false);
+      active.removeAllListeners();
+      active.disconnect();
+    }
+    socketRef.current = null;
+    socketInstance = null;
+    listenersBoundRef.current = false;
+    delete (window as unknown as { __chatSocket?: Socket }).__chatSocket;
+    setIsConnected(false);
+    setChatSocketConnected(false);
+    setSocket(null);
+  }, [authToken]);
 
   const connect = useCallback(() => {
     if (!currentUser || !isAuthenticated || !authToken) return;
+    if (!isChatSocketConnectAllowed(pathname)) return;
+    if (shouldSkipChatSocketAuth(authToken)) return;
 
     const { url, path, enabled, useNestNamespace } = getChatSocketConfig();
     if (!enabled || !url) return;
@@ -141,6 +185,18 @@ export function useChatSocket(): ChatSocketAPI {
     socketInstance.on('connect_error', (error) => {
       reconnectAttempts++;
       const now = Date.now();
+
+      if (isAuthConnectError(error.message)) {
+        if (now - lastConnectErrorLogAt >= CONNECT_ERROR_LOG_INTERVAL_MS) {
+          lastConnectErrorLogAt = now;
+          console.warn(
+            '[chat] نشست منقضی شده — لطفاً دوباره وارد شوید. برای چت realtime در dev: npm run dev:chat'
+          );
+        }
+        handleAuthFailure();
+        return;
+      }
+
       if (now - lastConnectErrorLogAt < CONNECT_ERROR_LOG_INTERVAL_MS) return;
       lastConnectErrorLogAt = now;
 
@@ -152,7 +208,7 @@ export function useChatSocket(): ChatSocketAPI {
         console.warn('[chat] خطای اتصال:', error.message);
       }
     });
-  }, [currentUser, isAuthenticated, authToken]);
+  }, [currentUser, isAuthenticated, authToken, pathname, handleAuthFailure]);
 
   const disconnect = useCallback(() => {
     socketConsumerCount = Math.max(0, socketConsumerCount - 1);
@@ -282,14 +338,21 @@ export function useChatSocket(): ChatSocketAPI {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated && currentUser && authToken) {
+    if (isAuthenticated && currentUser && authToken && connectPolicyAllowed) {
       socketConsumerCount += 1;
       connect();
     }
     return () => {
       disconnect();
     };
-  }, [isAuthenticated, currentUser, authToken, connect, disconnect]);
+  }, [
+    isAuthenticated,
+    currentUser,
+    authToken,
+    connectPolicyAllowed,
+    connect,
+    disconnect,
+  ]);
 
   useEffect(() => {
     return () => {

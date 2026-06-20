@@ -1,134 +1,111 @@
 'use client';
 
-import { Check } from 'lucide-react';
+import { toast } from 'sonner';
 import type { IntakeStep } from '@/contracts/need-intake';
-import { cn } from '@/lib/utils';
+import {
+  canNavigateToIntakeStep,
+  type IntakeWizardGuardContext,
+} from '@/lib/need-intake/intake-wizard-guards';
+import { toPersianDigits } from '@/lib/format/digits';
+import { INTAKE_COPY } from './intake-copy';
 
-const STEPS: { key: IntakeStep | 'detect'; label: string }[] = [
+const CONTENT_STEPS: { key: IntakeStep; label: string }[] = [
   { key: 'need', label: 'نیاز' },
   { key: 'details', label: 'توضیحات' },
   { key: 'location', label: 'دسته و مکان' },
   { key: 'preview', label: 'پیش‌نمایش' },
-  { key: 'done', label: 'انتشار' },
 ];
 
-function stepIndex(step: IntakeStep): number {
+const STEP_COUNT = CONTENT_STEPS.length;
+
+function contentStepIndex(step: IntakeStep): number {
   if (step === 'need') return 0;
   if (step === 'details') return 1;
   if (step === 'location') return 2;
-  if (step === 'preview') return 3;
-  if (step === 'publishing' || step === 'done') return 4;
+  if (step === 'preview' || step === 'publishing' || step === 'done') return 3;
   return 0;
-}
-
-function connectorState(
-  segmentIndex: number,
-  active: number
-): 'complete' | 'active' | 'idle' {
-  if (segmentIndex < active) return 'complete';
-  if (segmentIndex === active) return 'active';
-  return 'idle';
-}
-
-function timelineIndexToStep(index: number): IntakeStep | null {
-  if (index === 4) return null;
-  const map: IntakeStep[] = ['need', 'details', 'location', 'preview'];
-  return map[index] ?? null;
-}
-
-function canNavigateToStep(
-  index: number,
-  active: number,
-  step: IntakeStep
-): boolean {
-  if (step === 'publishing') return false;
-  if (index > active) return false;
-  if (index === active) return false;
-  return timelineIndexToStep(index) !== null;
 }
 
 interface IntakeStepTimelineProps {
   step: IntakeStep;
   progressPercent: number;
   onStepSelect?: (step: IntakeStep) => void;
+  guardContext?: IntakeWizardGuardContext;
 }
 
 export function IntakeStepTimeline({
   step,
   progressPercent,
   onStepSelect,
+  guardContext,
 }: IntakeStepTimelineProps) {
-  const active = stepIndex(step);
+  const active = contentStepIndex(step);
+  const currentLabel = CONTENT_STEPS[active]?.label ?? 'ثبت نیاز';
 
   const handleStepClick = (index: number) => {
-    if (!onStepSelect || !canNavigateToStep(index, active, step)) return;
-    const target = timelineIndexToStep(index);
-    if (target) onStepSelect(target);
+    if (!onStepSelect || step === 'publishing') return;
+    if (index >= active) return;
+    const target = CONTENT_STEPS[index]?.key;
+    if (!target) return;
+
+    if (guardContext) {
+      const result = canNavigateToIntakeStep(target, guardContext);
+      if (!result.ok) {
+        if (result.message) toast.info(result.message);
+        return;
+      }
+    }
+
+    onStepSelect(target);
   };
 
   return (
-    <nav
-      className="intake-step-track"
-      aria-label="مراحل ثبت نیاز"
-    >
+    <nav className="intake-step-track" aria-label={INTAKE_COPY.timelineAria}>
       <div
         className="sr-only"
         role="progressbar"
-        aria-label="پیشرفت مراحل ثبت نیاز"
+        aria-label={INTAKE_COPY.progressAria}
         aria-valuenow={Math.round(progressPercent)}
         aria-valuemin={0}
         aria-valuemax={100}
       />
-      <ol className="intake-step-track__list">
-        {STEPS.map((s, i) => {
-          const done = i < active;
-          const current = i === active;
-          const navigable = canNavigateToStep(i, active, step);
-          const hasConnector = i < STEPS.length - 1;
-          const segmentState = hasConnector ? connectorState(i, active) : null;
 
-          return (
-            <li
-              key={s.key}
-              className={cn(
-                'intake-step-track__segment',
-                hasConnector && 'intake-step-track__segment--grow'
-              )}
-            >
-              <button
-                type="button"
-                className={cn(
-                  'intake-step-track__item',
-                  navigable && 'intake-step-track__item--clickable'
-                )}
-                data-done={done ? 'true' : undefined}
-                data-current={current ? 'true' : undefined}
-                aria-current={current ? 'step' : undefined}
-                disabled={!navigable}
-                onClick={() => handleStepClick(i)}
-              >
-                <div className="intake-step-track__node">
-                  {done ? (
-                    <Check className="size-4 shrink-0" aria-hidden />
-                  ) : (
-                    <span aria-hidden>{i + 1}</span>
-                  )}
-                </div>
-                <span className="intake-step-track__label">{s.label}</span>
-              </button>
-              {segmentState ? (
-                <div className="intake-step-track__connector" aria-hidden>
-                  <span className="intake-step-track__connector-track" />
-                  <span
-                    className="intake-step-track__connector-fill"
-                    data-state={segmentState}
-                  />
-                </div>
-              ) : null}
-            </li>
-          );
-        })}
-      </ol>
+      <div className="intake-step-mobile">
+        <div className="intake-step-mobile__meta">
+          <span className="intake-step-mobile__label">{currentLabel}</span>
+          <span className="intake-step-mobile__count">
+            {toPersianDigits(String(active + 1))} از {toPersianDigits(String(STEP_COUNT))}
+          </span>
+        </div>
+        <div className="intake-step-mobile__bar">
+          <div
+            className="intake-step-mobile__bar-fill"
+            style={{ width: `${((active + 1) / STEP_COUNT) * 100}%` }}
+          />
+        </div>
+        <ol className="intake-step-mobile__chips" aria-label={INTAKE_COPY.timelineAria}>
+          {CONTENT_STEPS.map((s, i) => {
+            const done = i < active;
+            const current = i === active;
+            const navigable = i < active && step !== 'publishing';
+            return (
+              <li key={s.key}>
+                <button
+                  type="button"
+                  className="intake-step-mobile__chip"
+                  data-done={done ? 'true' : undefined}
+                  data-current={current ? 'true' : undefined}
+                  aria-current={current ? 'step' : undefined}
+                  disabled={!navigable}
+                  onClick={() => handleStepClick(i)}
+                >
+                  {s.label}
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
     </nav>
   );
 }

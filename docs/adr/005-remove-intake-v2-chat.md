@@ -1,4 +1,4 @@
-# ADR-005: Remove conversational Intake V2 ? canonical `/post` form wizard
+# ADR-005: Remove conversational Intake V2 — canonical `/post` form wizard
 
 | | |
 |---|---|
@@ -13,7 +13,7 @@
 
 Intake V2 was a conversational chat layer (`IntakeChatV2`, `orchestrateIntakeV2Turn`) built on top of the same `NeedDraft` and category-filter schemas as `/post`. It was frozen earlier: `/v2` redirected to `/post`, and `POST /api/v2/intake-chat` returned 503.
 
-Product direction: **form-oriented need intake** at `/post` ? free-text seed + category-specific fields from `category-filters/specs.ts`, not a chat turn loop.
+Product direction: **form-oriented need intake** at `/post` — free-text seed + category-specific fields from `category-filters/specs.ts`, not a chat turn loop.
 
 ---
 
@@ -28,15 +28,15 @@ Product direction: **form-oriented need intake** at `/post` ? free-text seed + c
 
 2. **Archive** golden conversation fixtures to `archive/intake-v2-golden/` (reference only; no runner).
 
-3. **Keep** `/v2` ? `/post` redirect in `next.config.ts` for old bookmarks.
+3. **Keep** `/v2` → `/post` redirect in `next.config.ts` for old bookmarks.
 
 4. **Canonical intake** remains:
-   - `/post` ? `NeedIntakePanel` (4-step wizard)
+   - `/post` → `NeedIntakePanel` (4-step wizard)
    - Per-category forms via `getIntakeFieldsForCategory()` + `needTypes` sections
    - Rules-first parse (`intent-parser`, `extract-slots-rules`) for text seeding
    - Publish gate: `validateNeedDraftForPublish`
 
-5. **Not in scope:** `serviceRequestV2.ts`, `NEED_DRAFT_V2.md` (publish API schema v2 ? unrelated naming).
+5. **Not in scope:** `serviceRequestV2.ts`, `NEED_DRAFT_V2.md` (publish API schema v2 — unrelated naming).
 
 ---
 

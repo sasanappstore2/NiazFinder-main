@@ -2,7 +2,7 @@
   "cityId": "darrehshahr",
   "cityName": "دره‌شهر",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:27.738Z",
+  "importedAt": "2026-06-16T22:14:24.709Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,7 @@
         "west": 47.33408213758235,
         "east": 47.461253705455086
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "شهرک-هزارانی",
@@ -35,7 +35,7 @@
         "west": 47.23379349059645,
         "east": 47.36096505846918
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
     },
     {
       "id": "کوی-فرهنگیان",
@@ -51,7 +51,241 @@
         "west": 47.29938029973325,
         "east": 47.42655186760599
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبدانان",
+      "name": "آبدانان",
+      "nameEn": "آبدانان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارمو",
+      "name": "ارمو",
+      "nameEn": "ارمو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باباخوارزم-کریم",
+      "name": "باباخوارزم کریم",
+      "nameEn": "باباخوارزم-کریم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-سفلی",
+      "name": "باغ سفلی",
+      "nameEn": "باغ-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-علیا",
+      "name": "باغ علیا",
+      "nameEn": "باغ-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بان-زرکه",
+      "name": "بان زرکه",
+      "nameEn": "بان-زرکه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بن-باباجان",
+      "name": "بن باباجان",
+      "nameEn": "بن-باباجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشت-قلعه",
+      "name": "پشت قلعه",
+      "nameEn": "پشت-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جابر-انصار",
+      "name": "جابر انصار",
+      "nameEn": "جابر-انصار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاله",
+      "name": "چاله",
+      "nameEn": "چاله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چم-ژاب",
+      "name": "چم ژاب",
+      "nameEn": "چم-ژاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چم-قلا",
+      "name": "چم قلا",
+      "nameEn": "چم-قلا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چم-کبود",
+      "name": "چم کبود",
+      "nameEn": "چم-کبود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چم-مهر-پایین",
+      "name": "چم مهر پایین",
+      "nameEn": "چم-مهر-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوکوهه-رشنو",
+      "name": "دوکوهه رشنو",
+      "nameEn": "دوکوهه-رشنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحیم-آباد",
+      "name": "رحیم آباد",
+      "nameEn": "رحیم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ژیور",
+      "name": "ژیور",
+      "nameEn": "ژیور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراب-باغ",
+      "name": "سراب باغ",
+      "nameEn": "سراب-باغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراب-حمام",
+      "name": "سراب حمام",
+      "nameEn": "سراب-حمام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرپله",
+      "name": "سرپله",
+      "nameEn": "سرپله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شمشیر-آباد",
+      "name": "شمشیر آباد",
+      "nameEn": "شمشیر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخ-مکان",
+      "name": "شیخ مکان",
+      "nameEn": "شیخ-مکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ططرآباد",
+      "name": "ططرآباد",
+      "nameEn": "ططرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طلور",
+      "name": "طلور",
+      "nameEn": "طلور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کل-سفید",
+      "name": "کل سفید",
+      "nameEn": "کل-سفید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کله-جوب-علیا",
+      "name": "کله جوب علیا",
+      "nameEn": "کله-جوب-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کناربلوط",
+      "name": "کناربلوط",
+      "nameEn": "کناربلوط",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرز-لنگر",
+      "name": "گرز لنگر",
+      "nameEn": "گرز-لنگر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گری-بلمک",
+      "name": "گری بلمک",
+      "nameEn": "گری-بلمک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-گل-علیا",
+      "name": "گل گل علیا",
+      "nameEn": "گل-گل-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ماهوته",
+      "name": "ماهوته",
+      "nameEn": "ماهوته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرادآباد",
+      "name": "مرادآباد",
+      "nameEn": "مرادآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهتابی",
+      "name": "مهتابی",
+      "nameEn": "مهتابی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-بزرگ",
+      "name": "میدان بزرگ",
+      "nameEn": "میدان-بزرگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرآباد",
+      "name": "میرآباد",
+      "nameEn": "میرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وچکاب",
+      "name": "وچکاب",
+      "nameEn": "وچکاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وچکبود-سفلی",
+      "name": "وچکبود سفلی",
+      "nameEn": "وچکبود-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هفت-چشمه",
+      "name": "هفت چشمه",
+      "nameEn": "هفت-چشمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هلوش",
+      "name": "هلوش",
+      "nameEn": "هلوش",
+      "geoSource": "osm"
     }
   ]
 }

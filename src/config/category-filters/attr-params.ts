@@ -31,6 +31,10 @@ export const RESERVED_BROWSE_PARAMS = new Set([
   'mine',
   'hasPhoto',
   'neighborhoodCity',
+  'west',
+  'south',
+  'east',
+  'north',
 ]);
 
 /** Range shorthand params → min/max attribute keys. */

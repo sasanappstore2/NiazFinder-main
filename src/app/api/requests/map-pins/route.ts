@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { normalizeMapBbox } from '@/lib/business/map-bbox';
 import { listNeedMapPins } from '@/lib/need/map-pins-query';
 import { citySlugToPersianName } from '@/lib/search/city-slugs';
+import { apiErrorFromUnknown } from '@/lib/db-health';
 
 export const runtime = 'nodejs';
 
@@ -54,6 +55,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (err) {
     console.error('[GET /api/requests/map-pins]', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const { error, status } = apiErrorFromUnknown(err);
+    return NextResponse.json({ error }, { status });
   }
 }

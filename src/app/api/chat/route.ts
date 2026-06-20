@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { fetchLivePresence } from '@/lib/chat/live-presence';
+import {
+  ensurePlatformAiConversationForUser,
+  isPlatformAiUserId,
+} from '@/lib/platform-ai/conversation';
+import { getPlatformAiUserId } from '@/lib/platform-ai/user';
+import { sanitizeMessageContentForClient } from '@/lib/persian-encoding-guard';
 
 // ============ TYPES ============
 
@@ -26,6 +32,7 @@ interface ConversationListItem {
     contactLabel: string;
     logo: string | null;
   };
+  isPlatformBot?: boolean;
   createdAt: Date;
 }
 
@@ -47,6 +54,10 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
+
+    // Ensure platform bot thread exists for every authenticated user
+    const platformAiUserId = await getPlatformAiUserId();
+    await ensurePlatformAiConversationForUser(user.id);
 
     // Find all conversations where the current user is a participant
     const conversations = await db.conversation.findMany({
@@ -94,13 +105,16 @@ export async function GET(request: NextRequest) {
     const mappedConversations: ConversationListItem[] = conversations.map((conv) => {
       const isUser1 = conv.userId1 === user.id;
       const otherUser = isUser1 ? conv.user2 : conv.user1;
+      const isPlatformBot = isPlatformAiUserId(otherUser.id, platformAiUserId);
 
       return {
         id: conv.id,
         requestId: conv.requestId,
         contactPointId: conv.contactPointId,
         businessProfileId: conv.businessProfileId,
-        lastMessage: conv.lastMessage,
+        lastMessage: conv.lastMessage
+          ? sanitizeMessageContentForClient(conv.lastMessage, 'TEXT')
+          : conv.lastMessage,
         lastMessageAt: conv.lastMessageAt,
         unreadCount: conv.messages.length,
         otherUser: {
@@ -118,14 +132,23 @@ export async function GET(request: NextRequest) {
               logo: conv.contactPoint.profile.logo,
             }
           : undefined,
+        isPlatformBot,
         createdAt: conv.createdAt,
       };
     });
 
+    const sortedConversations = [...mappedConversations].sort((a, b) => {
+      if (a.isPlatformBot && !b.isPlatformBot) return -1;
+      if (!a.isPlatformBot && b.isPlatformBot) return 1;
+      const aTime = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
+      const bTime = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
+      return bTime - aTime;
+    });
+
     const livePresence = await fetchLivePresence(
-      mappedConversations.map((conversation) => conversation.otherUser.id)
+      sortedConversations.map((conversation) => conversation.otherUser.id)
     );
-    const conversationsWithPresence = mappedConversations.map((conversation) => ({
+    const conversationsWithPresence = sortedConversations.map((conversation) => ({
       ...conversation,
       otherUser: {
         ...conversation.otherUser,

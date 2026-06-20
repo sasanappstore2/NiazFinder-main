@@ -220,7 +220,7 @@ export function ArkUserMenu() {
           <Menu.Content
             dir="rtl"
             className={cn(
-              "min-w-[300px] max-w-[340px] rounded-xl border border-border/50 p-1.5",
+              "z-(--z-popover) w-[min(340px,calc(100vw-1rem))] min-w-0 rounded-xl border border-border/50 p-1.5",
               "bg-popover/95 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]",
               "max-h-[85vh] overflow-y-auto outline-hidden",
               "focus-visible:outline-hidden"

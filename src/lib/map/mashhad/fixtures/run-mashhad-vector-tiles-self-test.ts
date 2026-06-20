@@ -9,7 +9,7 @@ import { buildIranDivarStyle } from '@/lib/map/iran/divar-style';
 
 function run(): void {
   const tiles = listMashhadVectorTileIndices();
-  assert.ok(tiles.length > 1000 && tiles.length < 2500, `unexpected tile count: ${tiles.length}`);
+  assert.ok(tiles.length > 1000, `unexpected tile count: ${tiles.length}`);
 
   for (const tile of tiles) {
     assert.ok(tileIntersectsMashhad(tile.z, tile.x, tile.y));

@@ -3,7 +3,7 @@
  * Run: npm run crawl:seed
  */
 import { PrismaClient } from '@prisma/client';
-import { CANONICAL_CITIES } from '@/config/locations';
+import { CANONICAL_CITIES, CANONICAL_PROVINCES } from '@/config/locations';
 import { CANONICAL_CATEGORIES } from '@/config/categories';
 import { DEFAULT_BUSINESS_OCCUPATIONS } from '@/config/business-occupations-defaults';
 import { resolveCategoryIds } from '@/lib/need-intake/resolve-category';
@@ -12,6 +12,7 @@ import { toJson } from '@/lib/business/json-fields';
 const prisma = new PrismaClient();
 const NEED_PREFIX = 'crawl-need-';
 const BIZ_PREFIX = 'crawl-biz-';
+const PROVINCE_TITLE_BY_SLUG = new Map(CANONICAL_PROVINCES.map((p) => [p.slug, p.title]));
 
 const LEAF_CATEGORIES = CANONICAL_CATEGORIES.filter((c) => c.depth === 2 && c.parentSlug);
 const PICKABLE_OCCUPATIONS = DEFAULT_BUSINESS_OCCUPATIONS.filter((o) => o.depth === 1);
@@ -19,20 +20,20 @@ const PICKABLE_OCCUPATIONS = DEFAULT_BUSINESS_OCCUPATIONS.filter((o) => o.depth 
 async function ensureCrawlUser() {
   const email = 'crawl-tester@niazyab.local';
   let user = await prisma.user.findFirst({ where: { email } });
+  const data = {
+    phone: '09990000001',
+    firstName: 'Crawl',
+    lastName: 'Tester',
+    displayName: 'Crawl Tester',
+    role: 'CLIENT' as const,
+    city: 'تهران',
+    province: 'تهران',
+    isVerified: true,
+  };
   if (!user) {
-    user = await prisma.user.create({
-      data: {
-        email,
-        phone: '09990000001',
-        firstName: 'Crawl',
-        lastName: 'Tester',
-        displayName: 'Crawl Tester',
-        role: 'CLIENT',
-        city: 'تهران',
-        province: 'تهران',
-        isVerified: true,
-      },
-    });
+    user = await prisma.user.create({ data: { email, ...data } });
+  } else {
+    user = await prisma.user.update({ where: { id: user.id }, data });
   }
   return user;
 }
@@ -44,6 +45,7 @@ async function seedNeeds(userId: string): Promise<number> {
   for (let i = 0; i < CANONICAL_CITIES.length; i++) {
     const city = CANONICAL_CITIES[i];
     const cat = LEAF_CATEGORIES[i % LEAF_CATEGORIES.length];
+    const provinceTitle = PROVINCE_TITLE_BY_SLUG.get(city.provinceSlug) ?? city.provinceSlug;
     const slug = `${NEED_PREFIX}${city.slug}-${cat.slug}`;
     try {
       const { categoryId, subcategoryId } = await resolveCategoryIds(cat.parentSlug!, cat.slug);
@@ -53,7 +55,7 @@ async function seedNeeds(userId: string): Promise<number> {
           slug,
           description: `آگهی تست خودکار خزش سایت برای شهر ${city.title} و دسته ${cat.title}.`,
           city: city.title,
-          province: city.provinceSlug,
+          province: provinceTitle,
           categoryId,
           subcategoryId,
           userId,
@@ -79,13 +81,19 @@ async function seedNeeds(userId: string): Promise<number> {
 async function purgeCrawlBusinesses(): Promise<void> {
   const profiles = await prisma.businessProfile.findMany({
     where: { slug: { startsWith: BIZ_PREFIX } },
-    select: { id: true },
+    select: { id: true, userId: true },
   });
   for (const p of profiles) {
     await prisma.businessOffer.deleteMany({ where: { profileId: p.id } });
     await prisma.businessPortfolioItem.deleteMany({ where: { profileId: p.id } });
     await prisma.businessProfileReview.deleteMany({ where: { profileId: p.id } });
     await prisma.businessProfile.delete({ where: { id: p.id } });
+  }
+  const userIds = [...new Set(profiles.map((p) => p.userId))];
+  if (userIds.length) {
+    await prisma.user.deleteMany({
+      where: { id: { in: userIds }, email: { endsWith: '@crawl.niazyab.local' } },
+    });
   }
 }
 
@@ -96,26 +104,32 @@ async function seedBusinesses(): Promise<number> {
   for (let i = 0; i < PICKABLE_OCCUPATIONS.length; i++) {
     const occ = PICKABLE_OCCUPATIONS[i];
     const city = CANONICAL_CITIES[i % CANONICAL_CITIES.length];
+    const provinceTitle = PROVINCE_TITLE_BY_SLUG.get(city.provinceSlug) ?? city.provinceSlug;
     const slug = `${BIZ_PREFIX}${occ.slug}-${city.slug}`;
     const email = `${slug}@crawl.niazyab.local`;
     const phone = `0998${String(i).padStart(7, '0')}`;
 
     try {
-      let user = await prisma.user.findFirst({ where: { email } });
+      let user = await prisma.user.findFirst({ where: { OR: [{ email }, { phone }] } });
+      const userData = {
+        phone,
+        firstName: occ.title.split(' ')[0] ?? 'کسب',
+        lastName: 'تست',
+        displayName: `${occ.title} — ${city.title}`,
+        city: city.title,
+        province: provinceTitle,
+        isVerified: true,
+      };
       if (!user) {
         user = await prisma.user.create({
           data: {
             email,
-            phone,
-            firstName: occ.title.split(' ')[0] ?? 'کسب',
-            lastName: 'تست',
-            displayName: `${occ.title} — ${city.title}`,
+            ...userData,
             role: 'SPECIALIST',
-            city: city.title,
-            province: city.provinceSlug,
-            isVerified: true,
           },
         });
+      } else {
+        user = await prisma.user.update({ where: { id: user.id }, data: userData });
       }
 
       await prisma.businessProfile.create({
@@ -125,7 +139,7 @@ async function seedBusinesses(): Promise<number> {
           slug,
           description: `پروفایل تست خودکار خزش — ${occ.title} در ${city.title}`,
           city: city.title,
-          province: city.provinceSlug,
+          province: provinceTitle,
           categorySlugs: toJson(['services']),
           tags: toJson([occ.slug, city.slug]),
           badges: toJson(['crawl-seed']),

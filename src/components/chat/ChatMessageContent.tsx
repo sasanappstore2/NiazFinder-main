@@ -11,9 +11,12 @@ import {
 import { NeedLeadCard } from '@/components/need/NeedLeadCard';
 import { ProductChatCard } from '@/components/chat/ProductChatCard';
 import { parseChatContactShareContent } from '@/lib/chat/contact-share';
+import { parseChatLocationShareContent } from '@/lib/chat/location-share';
 import { ChatContactShareCard } from '@/components/chat/ChatContactShareCard';
+import { ChatLocationShareCard } from '@/components/chat/ChatLocationShareCard';
 import { ChatImageMessage } from '@/components/chat/ChatImageMessage';
 import { ChatVoiceMessage } from '@/components/chat/ChatVoiceMessage';
+import { sanitizeUserFacingPersianText } from '@/lib/persian-encoding-guard';
 
 interface ChatMessageContentProps {
   message: Message;
@@ -63,13 +66,13 @@ export function ChatMessageContent({
       if (data.price) price = data.price;
       else if (typeof data.amount === 'number') price = `${data.amount.toLocaleString('fa-IR')} تومان`;
     } catch {
-      title = message.content.slice(0, 120);
+      title = sanitizeUserFacingPersianText(message.content.slice(0, 120));
     }
     return (
       <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-sm">
         <p className="font-semibold text-emerald-800 dark:text-emerald-200">پیشنهاد</p>
-        <p className="mt-1">{title}</p>
-        {price ? <p className="mt-1 text-muted-foreground">{price}</p> : null}
+        <p className="mt-1">{sanitizeUserFacingPersianText(title)}</p>
+        {price ? <p className="mt-1 text-muted-foreground">{sanitizeUserFacingPersianText(price)}</p> : null}
       </div>
     );
   }
@@ -130,7 +133,19 @@ export function ChatMessageContent({
         <ChatContactShareCard phone={shared.phone} avatarSrc={shared.avatar} isOwn={isOwn} />
       );
     }
+
+    const sharedLocation = parseChatLocationShareContent(message.content);
+    if (sharedLocation) {
+      return (
+        <ChatLocationShareCard
+          lat={sharedLocation.lat}
+          lng={sharedLocation.lng}
+          label={sharedLocation.label}
+          isOwn={isOwn}
+        />
+      );
+    }
   }
 
-  return <p className={textClassName}>{message.content}</p>;
+  return <p className={textClassName}>{sanitizeUserFacingPersianText(message.content)}</p>;
 }

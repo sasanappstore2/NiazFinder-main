@@ -3,11 +3,13 @@
 import { Loader2, MapPinned } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SuggestionChips } from '@/components/need-intake/SuggestionChips';
+import { IntakeNeighborhoodDisambiguationChips } from '@/components/need-intake/IntakeLocationAmbiguityPrompt';
 import type { IntakeFieldMeta, TemplateSection } from '@/intake/template/types';
 import { FieldRenderer } from '@/intake/rendering/FieldRenderer';
 import { CategorySuggestions } from '@/intake/rendering/fieldRegistry';
 import type { IntakeRenderContext } from '@/intake/rendering/types';
 import { buildShowIfContext, fieldVisible, resolveFieldValue } from '@/intake/state/resolveFieldValue';
+import { isFieldFilled } from '@/intake/state/isFieldFilled';
 import { cn } from '@/lib/utils';
 
 export interface SectionRendererProps {
@@ -81,7 +83,22 @@ function LocationSectionLayout({
     <div className="intake-location-row flex flex-col gap-2">
       <div className="grid grid-cols-1 items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         {cityField ? renderField(cityField) : null}
-        {neighborhoodField ? renderField(neighborhoodField) : null}
+        {neighborhoodField ? (
+          <div className="space-y-2 min-w-0">
+            {renderField(neighborhoodField)}
+            {context.neighborhoodDisambiguationChips.length >= 2 ? (
+              <IntakeNeighborhoodDisambiguationChips
+                options={context.neighborhoodDisambiguationChips}
+                selectedValue={
+                  context.entities?.neighborhoodSlug?.trim()
+                    ? `neighborhood:${context.entities.neighborhoodSlug.trim()}`
+                    : undefined
+                }
+                onSelect={(value) => context.onLocationSuggestionSelect?.(value)}
+              />
+            ) : null}
+          </div>
+        ) : null}
         <Button
           type="button"
           variant="outline"
@@ -147,7 +164,28 @@ export function SectionRenderer({ section, fieldMap, context }: SectionRendererP
     <div className="intake-section-fields flex flex-col gap-3">
       {section.layout === 'category' ? <CategorySuggestions context={context} /> : null}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {fields.map((meta) => (
+        {fields.map((meta) => {
+          const fieldValue = resolveFieldValue(
+            meta,
+            context.answers,
+            context.entities,
+            context.needDraft?.sourceText,
+            context.needDraft?.parsedIntent?.entities?.brand
+          );
+          const filled = isFieldFilled(meta, {
+            entities: context.entities ?? null,
+            answers: context.answers,
+            selectedCategory: context.selectedLeafCategorySlug,
+            selectedCity: context.selectedCity,
+            selectedNeighborhood: context.selectedNeighborhood,
+            sourceText: context.needDraft?.sourceText,
+            parsedBrand: context.needDraft?.parsedIntent?.entities?.brand,
+          });
+          const isCritical = context.criticalFieldKeys?.has(meta.key);
+          const suggestions =
+            isCritical && !filled ? context.filterSuggestions?.[meta.key] : undefined;
+
+          return (
           <div
             key={meta.key}
             className={cn(
@@ -160,22 +198,29 @@ export function SectionRenderer({ section, fieldMap, context }: SectionRendererP
             {meta.label ? <label className="text-sm font-medium">{meta.label}</label> : null}
             <FieldRenderer
               field={meta}
-              value={resolveFieldValue(
-                meta,
-                context.answers,
-                context.entities,
-                context.needDraft?.sourceText,
-                context.needDraft?.parsedIntent?.entities?.brand
-              )}
+              value={fieldValue}
               onChange={(v) => context.onFieldChange(meta.key, v)}
               context={context}
               disabled={context.disabled}
             />
+            {suggestions && suggestions.length > 0 ? (
+              <div className="space-y-1.5">
+                <p className="text-xs text-muted-foreground">پیشنهاد از متن نیاز</p>
+                <SuggestionChips
+                  options={suggestions}
+                  onSelect={(v) => {
+                    const value = typeof v === 'string' ? v : (v[0] ?? '');
+                    if (value) context.onFilterSuggestionSelect?.(meta.key, value);
+                  }}
+                />
+              </div>
+            ) : null}
             {meta.helpText ? (
               <p className="text-xs text-muted-foreground">{meta.helpText}</p>
             ) : null}
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

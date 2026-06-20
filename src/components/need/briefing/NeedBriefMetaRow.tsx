@@ -16,7 +16,7 @@ export function NeedBriefMetaRow({ request, className }: NeedBriefMetaRowProps) 
   const showPriorityBadge = request.priority === 'URGENT' || request.priority === 'HIGH';
   const priorityConfig = getPriorityConfig(request.priority);
   const PriorityIcon = priorityConfig.icon;
-  const neighborhoodLabel = extractNeighborhoodLabel(request.address);
+  const neighborhoodLabel = extractNeighborhoodLabel(request.address, request.dynamicAnswers);
 
   return (
     <div className={cn('space-y-2.5', className)}>

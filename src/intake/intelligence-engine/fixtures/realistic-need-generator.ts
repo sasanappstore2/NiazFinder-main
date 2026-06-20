@@ -24,7 +24,8 @@ const TEMPLATE_BY_VERTICAL: Record<string, (p: CategoryTestProfile) => string> =
   },
   electronics: (p) => {
     const city = p.locationHints?.[0] ?? '\u062A\u0647\u0631\u0627\u0646';
-    return `\u062E\u0631\u06CC\u062F ${p.titleFa} \u062F\u0631 ${city} \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u062A\u0645\u06CC\u0632`;
+    const title = p.titleFa.replace(/^\u062E\u0631\u06CC\u062F\s+/u, '');
+    return `\u062E\u0631\u06CC\u062F ${title} \u062F\u0631 ${city} \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u062A\u0645\u06CC\u0632`;
   },
   'home-appliances': (p) => {
     const city = p.locationHints?.[0] ?? '\u062A\u0647\u0631\u0627\u0646';
@@ -32,6 +33,9 @@ const TEMPLATE_BY_VERTICAL: Record<string, (p: CategoryTestProfile) => string> =
   },
   services: (p) => {
     const city = p.locationHints?.[0] ?? '\u062A\u0647\u0631\u0627\u0646';
+    if (p.categorySlug.endsWith('-repair')) {
+      return `\u0646\u06CC\u0627\u0632 \u0628\u0647 \u062A\u0639\u0645\u06CC\u0631\u06A9\u0627\u0631 ${p.titleFa} \u062F\u0631 ${city} \u0647\u0645\u06CC\u0646 \u0647\u0641\u062A\u0647`;
+    }
     return `\u0646\u06CC\u0627\u0632 \u0628\u0647 ${p.titleFa} \u062F\u0631 ${city} \u0647\u0645\u06CC\u0646 \u0647\u0641\u062A\u0647`;
   },
   jobs: (p) => {

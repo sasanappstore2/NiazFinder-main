@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { getClientAuthHeaders } from '@/lib/auth/client-auth';
 import { normalizeWebPresence } from '@/lib/business/normalize-web-presence';
 import { BusinessImageUpload } from '@/components/business-profile/onboarding/BusinessImageUpload';
+import { SiteImportWizard } from '@/components/business-profile/site-import/SiteImportWizard';
 import { useBusinessHub } from '../BusinessHubContext';
 
 const CHANNELS = [
@@ -22,7 +23,7 @@ const CHANNELS = [
 ];
 
 export function BusinessBrandPanel() {
-  const { profile, patchProfile, refresh } = useBusinessHub();
+  const { profile, patchProfile, refresh, setActiveTask } = useBusinessHub();
   const [saving, setSaving] = useState(false);
   const [logo, setLogo] = useState('');
   const [coverImage, setCoverImage] = useState('');
@@ -114,10 +115,10 @@ export function BusinessBrandPanel() {
         />
         <BusinessImageUpload
           label="تصویر کاور"
-          hint="افقی ۲:۱ — بعد از انتخاب، برش دلخواه"
+          hint="افقی ۲:۱ — تصویر تمیز؛ بدون اسکرین‌شات منو"
           value={coverImage}
           kind="cover"
-          aspectClass="aspect-[2/1] w-full"
+          aspectClass="aspect-[21/9] w-full"
           onChange={setCoverImage}
         />
       </div>
@@ -129,7 +130,7 @@ export function BusinessBrandPanel() {
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           {CHANNELS.map(({ key, label, placeholder }) => (
-            <div key={key} className="space-y-1">
+            <div key={key} className={key === 'website' ? 'space-y-1 sm:col-span-2' : 'space-y-1'}>
               <Label>{label}</Label>
               <Input
                 dir="ltr"
@@ -139,6 +140,16 @@ export function BusinessBrandPanel() {
               />
             </div>
           ))}
+          <div className="sm:col-span-2">
+            <SiteImportWizard
+              websiteUrl={links.website}
+              occupationSlugs={profile.occupationSlugs}
+              onApplied={() => {
+                void refresh();
+                setActiveTask('storefront');
+              }}
+            />
+          </div>
         </CardContent>
       </Card>
 

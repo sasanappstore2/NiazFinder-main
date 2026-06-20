@@ -1,0 +1,26 @@
+/** Centralized Persian UI strings for need intake (UTF-8). */
+
+export const INTAKE_COPY = {
+  stepOf: (current: number, total: number) => `مرحله ${current} از ${total}`,
+  stagedBadge: 'ثبت نیاز مرحله‌ای',
+  charUnit: 'کاراکتر',
+  charsRemaining: (n: string | number) => `${n} کاراکتر مانده`,
+  charsEnough: 'کافی است',
+  composerHint: 'هوش مصنوعی در حال استخراج intent و جزئیات نیاز شماست…',
+  analyzingNeed: 'در حال تحلیل نیاز شما…',
+  aiUnderstandingTitle: 'درک هوش مصنوعی از نیاز شما',
+  aiUnderstandingLoading: 'در حال استخراج intent، دسته، مکان و بودجه از متن…',
+  aiUnderstandingFootnote: 'این خلاصه به سیستم کمک می‌کند فرم بعدی را دقیق‌تر پیشنهاد دهد.',
+  aiUnderstandingEmpty: 'متن نیاز را بنویسید تا هوش مصنوعی آن را تحلیل کند.',
+  stepNeedDescription: 'نیازتان را بنویسید؛ هوش مصنوعی intent و خواسته‌های اصلی را استخراج می‌کند.',
+  homeSeedBanner: 'متن شما از صفحه اصلی منتقل شد',
+  liveListingTitle: 'پیش‌نمایش زندهٔ عنوان',
+  liveSummaryTitle: 'خلاصه زنده',
+  liveSummaryEmpty: 'پس از نوشتن نیاز، خلاصه هوش مصنوعی اینجا نمایش داده می‌شود.',
+  liveSummaryAria: 'مشاهده خلاصه زنده',
+  publishingAria: 'در حال انتشار نیاز',
+  publishingTitle: 'در حال انتشار آگهی',
+  publishingSubtitle: 'لطفاً چند لحظه صبر کنید',
+  timelineAria: 'مراحل ثبت نیاز',
+  progressAria: 'پیشرفت مراحل ثبت نیاز',
+} as const;

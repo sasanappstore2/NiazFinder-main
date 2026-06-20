@@ -59,5 +59,6 @@
   "git.autofetch": true,
   "git.showPushSuccessNotification": true,
   "git.replaceTagsWhenPull": true,
-  "git.pullBeforeCheckout": false
+  "git.pullBeforeCheckout": false,
+  "git.ignoreLimitWarning": true
 }

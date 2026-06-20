@@ -86,7 +86,7 @@ export async function buildIntakeAiEvaluationDashboard() {
       enabled: config.enabled,
       provider: config.provider,
       confidenceThreshold: config.confidenceThreshold,
-      ollamaModel: config.ollamaModel,
+      localLlmModel: config.localLlmModel,
     },
     runtimeMetrics,
     lastRun,

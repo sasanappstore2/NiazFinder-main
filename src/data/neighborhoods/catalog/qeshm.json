@@ -2,7 +2,7 @@
   "cityId": "qeshm",
   "cityName": "قشم",
   "source": "osm",
-  "importedAt": "2026-06-12T20:39:30.177Z",
+  "importedAt": "2026-06-16T22:40:57.513Z",
   "emptyOnDivar": false,
   "neighborhoods": [
     {
@@ -19,7 +19,199 @@
         "west": 55.61346567650989,
         "east": 56.485223152081765
       },
-      "geoSource": "divar"
+      "geoSource": "osm"
+    },
+    {
+      "id": "باکوه",
+      "name": "باکوه",
+      "nameEn": "باکوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بند-جهود",
+      "name": "بند جهود",
+      "nameEn": "بند-جهود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندر-لافت",
+      "name": "بندر لافت",
+      "nameEn": "بندر-لافت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنگالی",
+      "name": "بنگالی",
+      "nameEn": "بنگالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پی-پشت",
+      "name": "پی پشت",
+      "nameEn": "پی-پشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنب-پارسان",
+      "name": "تنب پارسان",
+      "nameEn": "تنب-پارسان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "توریان",
+      "name": "توریان",
+      "nameEn": "توریان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جی-جیان",
+      "name": "جی جیان",
+      "nameEn": "جی-جیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خالدین",
+      "name": "خالدین",
+      "nameEn": "خالدین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوربنی",
+      "name": "دوربنی",
+      "nameEn": "دوربنی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهخدا",
+      "name": "دهخدا",
+      "nameEn": "دهخدا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیرستان",
+      "name": "دیرستان",
+      "nameEn": "دیرستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زینبی",
+      "name": "زینبی",
+      "nameEn": "زینبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلخ",
+      "name": "سلخ",
+      "nameEn": "سلخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سوزا",
+      "name": "سوزا",
+      "nameEn": "سوزا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهیلی",
+      "name": "سهیلی",
+      "nameEn": "سهیلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیب-دِراز",
+      "name": "شیب دِراز",
+      "nameEn": "شیب-دِراز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طبل",
+      "name": "طبل",
+      "nameEn": "طبل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قیل",
+      "name": "قیل",
+      "nameEn": "قیل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاروان",
+      "name": "کاروان",
+      "nameEn": "کاروان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کردوا",
+      "name": "کردوا",
+      "nameEn": "کردوا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کورزین",
+      "name": "کورزین",
+      "nameEn": "کورزین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوشه-قشم",
+      "name": "کوشه (قشم)",
+      "nameEn": "کوشه-قشم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گاچو",
+      "name": "گاچو",
+      "nameEn": "گاچو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گامبرون",
+      "name": "گامبرون",
+      "nameEn": "گامبرون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گربه-دان",
+      "name": "گربه دان",
+      "nameEn": "گربه-دان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مسن",
+      "name": "مسن",
+      "nameEn": "مسن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملکی",
+      "name": "ملکی",
+      "nameEn": "ملکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نقاشه",
+      "name": "نقاشه",
+      "nameEn": "نقاشه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هفت-رنگو",
+      "name": "هفت رنگو",
+      "nameEn": "هفت-رنگو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هنگام-جدید",
+      "name": "هنگام جدید",
+      "nameEn": "هنگام-جدید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هنگام-قدیم",
+      "name": "هنگام قدیم",
+      "nameEn": "هنگام-قدیم",
+      "geoSource": "osm"
     }
   ]
 }

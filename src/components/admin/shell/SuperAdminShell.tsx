@@ -113,7 +113,7 @@ export function SuperAdminShell({ children }: { children: React.ReactNode }) {
           </div>
         </aside>
 
-        <section className="min-w-0 flex-1 px-4 pb-10 pt-6 lg:px-10">
+        <section className="page-padding min-w-0 flex-1 pb-10 pt-6">
           {children}
         </section>
       </div>

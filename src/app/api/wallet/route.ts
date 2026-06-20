@@ -176,10 +176,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // WITHDRAW
-    if (wallet.balance < amount) {
+    // WITHDRAW — only available (non-frozen) balance may be withdrawn
+    const availableBalance = wallet.balance - wallet.frozen;
+    if (availableBalance < amount) {
       return NextResponse.json(
-        { error: 'موجودی کافی نیست' },
+        { error: 'موجودی قابل برداشت کافی نیست' },
         { status: 400 }
       );
     }

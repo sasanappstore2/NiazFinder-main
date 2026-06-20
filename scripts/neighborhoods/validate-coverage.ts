@@ -16,6 +16,10 @@ import {
   displayAreaLabels,
   isSyntheticAreaLabel,
 } from '../../src/lib/neighborhoods/area-labels';
+import {
+  DEFAULT_SPARSE_MAX_COUNT,
+  isSparseCityCatalog,
+} from './sparse-city';
 
 async function loadCatalogForAdminCity(cityId: string) {
   for (const candidate of resolveCatalogCityIdCandidates(cityId)) {
@@ -66,7 +70,7 @@ interface CityReport {
   cityId: string;
   name: string;
   count: number;
-  status: 'ok' | 'missing' | 'empty' | 'unmapped';
+  status: 'ok' | 'missing' | 'empty' | 'unmapped' | 'sparse';
 }
 
 async function loadCityMap(): Promise<Record<string, unknown>> {
@@ -161,7 +165,13 @@ async function main() {
       }
     }
 
-    reports.push({ cityId: city.id, name: city.name, count, status: 'ok' });
+    const sparse = isSparseCityCatalog(catalog, city.name, DEFAULT_SPARSE_MAX_COUNT);
+    reports.push({
+      cityId: city.id,
+      name: city.name,
+      count,
+      status: sparse ? 'sparse' : 'ok',
+    });
   }
 
   const mashhad = await loadCityCatalogFile('mashhad');
@@ -198,6 +208,7 @@ async function main() {
         summary: {
           totalCities: adminCities.length,
           ok: reports.filter((r) => r.status === 'ok').length,
+          sparse: reports.filter((r) => r.status === 'sparse').length,
           missing: reports.filter((r) => r.status === 'missing').length,
           empty: reports.filter((r) => r.status === 'empty').length,
           unmapped: reports.filter((r) => r.status === 'unmapped').length,
@@ -212,12 +223,19 @@ async function main() {
   );
 
   console.log(`Report → ${reportPath}`);
+  const sparseCount = reports.filter((r) => r.status === 'sparse').length;
   console.log('Summary:', {
     ok: reports.filter((r) => r.status === 'ok').length,
+    sparse: sparseCount,
     missing: reports.filter((r) => r.status === 'missing').length,
     empty: reports.filter((r) => r.status === 'empty').length,
     unmapped: reports.filter((r) => r.status === 'unmapped').length,
   });
+  if (sparseCount > 0) {
+    console.warn(
+      `\n${sparseCount} cities still sparse (≤${DEFAULT_SPARSE_MAX_COUNT} neighborhoods). Run: npm run neighborhoods:import:sparse`
+    );
+  }
 
   if (errors.length) {
     console.error('\nValidation errors:');

@@ -37,4 +37,11 @@ export const PARSER_FIXTURES: ParserFixture[] = [
     expectCategoryIncludes: 'jewelry-watches',
     expectDealType: 'buy',
   },
+  {
+    id: 'pet-axolotl-buy',
+    text: 'من یک اکسلوتل میخوام سرحال و غذاخور باشه',
+    expectIntentPrefix: 'product',
+    expectCategoryIncludes: 'pets',
+    expectDealType: 'buy',
+  },
 ];

@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser, createSlug } from '@/lib/auth';
@@ -13,8 +14,6 @@ import { compareLegacyAndCanonical } from '@/intake/legacy/compareLegacyAndCanon
 import { recordIntakeMigrationEvent } from '@/intake/migration/events';
 import { getIntakeMigrationFeatureFlags } from '@/intake/migration/feature-flags';
 import { runPublishShadowMode } from '@/intake/migration/shadow-publish';
-import { enqueueIntakeHeavyJob } from '@/lib/need-intake/enqueue-heavy';
-import { enqueueRequestModerationJob } from '@/lib/request-moderation/enqueue';
 import {
   rejectListingTitleReason,
   truncateListingTitle,
@@ -24,6 +23,38 @@ import {
   assertPublishDatabaseReady,
   formatNeedIntakePublishError,
 } from '@/lib/need-intake/publish-error-message';
+import { isIntakeQueueSyncFallbackEnabled } from '@/lib/need-intake/intake-queue-policy';
+import {
+  completeSyncPublish,
+  syncPublishUserMessage,
+} from '@/lib/need-intake/publish-sync-fallback';
+import { publishRequestSchema } from '@/lib/queue/schemas/intake-publish';
+import { publishIntakeAiTask, rabbitMQEnabled } from '@/lib/queue/rabbitmq-client';
+
+function enqueueTrainingCapture(
+  draft: NeedDraft,
+  serviceRequestId: string,
+  sessionId?: string
+): void {
+  captureTrainingExampleAsync({
+    draft: {
+      templateId: draft.templateId,
+      templateVersion: draft.templateVersion,
+      sourceText: draft.sourceText,
+      entities: draft.entities,
+      analysisSnapshot: draft.analysisSnapshot,
+      intakeTrace: draft.intakeTrace,
+      fieldMeta: draft.fieldMeta,
+      parsedIntent: draft.parsedIntent as unknown as Record<string, unknown>,
+      listingPreview: draft.listingPreview,
+      completionScore: draft.completionScore,
+      matchabilityScore: draft.matchabilityScore,
+      leadPhone: draft.leadPhone,
+    },
+    serviceRequestId,
+    sessionId,
+  });
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,13 +66,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const draft = body.draft as NeedDraft;
-    const listingPreview = body.listingPreview ?? draft?.listingPreview;
-
-    if (!draft?.entities || !draft?.templateId) {
+    const rawBody = await request.json();
+    const parsed = publishRequestSchema.safeParse(rawBody);
+    if (!parsed.success) {
       return NextResponse.json({ error: 'پیش‌نویس نامعتبر' }, { status: 400 });
     }
+
+    const body = parsed.data;
+    const draft = body.draft as unknown as NeedDraft;
+    const listingPreview = body.listingPreview ?? draft?.listingPreview;
 
     await assertPublishDatabaseReady(() => db.$queryRaw`SELECT 1`);
 
@@ -78,8 +111,14 @@ export async function POST(request: NextRequest) {
       draft.listingPreview = {
         ...listingPreview,
         title: previewTitle,
+        description: listingPreview.description ?? draft.listingPreview?.description ?? '',
+        titleSource:
+          listingPreview.titleSource === 'qwen' || listingPreview.titleSource === 'template'
+            ? listingPreview.titleSource
+            : draft.listingPreview?.titleSource,
       };
     }
+
     const entities = recordToEntities(draft.entities);
     const serviceRequestV2 = toServiceRequestV2(draft);
     const legacyCompare = compareLegacyAndCanonical(draft);
@@ -90,12 +129,6 @@ export async function POST(request: NextRequest) {
       templateVersion: draft.templateVersion,
       rootSlug: serviceRequestV2.rootSlug,
     });
-    if (!legacyCompare.equal) {
-      console.info('[LEGACY_CANONICAL_DIFF]', {
-        templateId: draft.templateId,
-        diffs: legacyCompare.diffs,
-      });
-    }
 
     const normalized = normalizeCategoryPair(
       entities.categorySlug ?? draft.parsedIntent.categorySlug,
@@ -145,6 +178,21 @@ export async function POST(request: NextRequest) {
     }
 
     const autoApprove = shouldAutoApproveNeed(mapped.source);
+    mapped.aiExtractedData = {
+      ...mapped.aiExtractedData,
+      autoApprove,
+    };
+
+    const useAsyncQueue = rabbitMQEnabled();
+    if (!useAsyncQueue && !isIntakeQueueSyncFallbackEnabled()) {
+      return NextResponse.json(
+        { error: 'سرویس صف پیام در دسترس نیست', code: 'queue_unavailable' },
+        { status: 503 }
+      );
+    }
+
+    const finalStatus = autoApprove ? 'OPEN' : 'PENDING_REVIEW';
+    const finalModerationStatus = autoApprove ? 'APPROVED' : 'PENDING';
 
     const serviceRequest = await db.serviceRequest.create({
       data: {
@@ -167,6 +215,8 @@ export async function POST(request: NextRequest) {
         categoryId: mapped.categoryId,
         subcategoryId: mapped.subcategoryId ?? null,
         priority: mapped.priority,
+        deliveryTime: mapped.deliveryTime ?? null,
+        deliveryUnit: mapped.deliveryUnit ?? 'day',
         tags: JSON.stringify(mapped.tags),
         intentType: mapped.intentType,
         dynamicAnswers: JSON.stringify({
@@ -177,19 +227,100 @@ export async function POST(request: NextRequest) {
         source: mapped.source,
         userId: user.id,
         businessProfileId,
-        status: autoApprove ? 'OPEN' : 'PENDING_REVIEW',
-        moderationStatus: autoApprove ? 'APPROVED' : 'PENDING',
-        ...(autoApprove
-          ? { reviewedAt: new Date(), reviewedByUserId: user.id }
-          : {}),
+        status: useAsyncQueue ? 'PENDING_AI_REVIEW' : finalStatus,
+        moderationStatus: useAsyncQueue ? 'PENDING' : finalModerationStatus,
       },
     });
 
-    const sessionId =
-      typeof body.sessionId === 'string' ? body.sessionId : undefined;
-    void enqueueIntakeHeavyJob(serviceRequest.id, sessionId);
-    if (!autoApprove) {
-      void enqueueRequestModerationJob(serviceRequest.id);
+    if (!useAsyncQueue) {
+      completeSyncPublish(serviceRequest.id, {
+        autoApprove,
+        sessionId: body.sessionId,
+      });
+
+      void recordIntakeMigrationEvent('NeedDraftPublished', {
+        requestId: serviceRequest.id,
+        templateId: draft.templateId,
+        templateVersion: draft.templateVersion,
+        rootSlug: serviceRequestV2.rootSlug,
+        canonicalHash: serviceRequestV2.canonicalHash,
+        completionScore: draft.completionScore,
+        matchabilityScore: draft.matchabilityScore,
+        legacyEqual: legacyCompare.equal,
+        shadowEqual: shadowComparison?.equal ?? null,
+        asyncAi: false,
+        syncFallback: true,
+      });
+
+      enqueueTrainingCapture(draft, serviceRequest.id, body.sessionId);
+
+      return NextResponse.json({
+        id: serviceRequest.id,
+        slug: serviceRequest.slug,
+        title: serviceRequest.title,
+        status: serviceRequest.status,
+        moderationStatus: serviceRequest.moderationStatus,
+        autoApproved: autoApprove,
+        syncFallback: true,
+        message: syncPublishUserMessage(autoApprove),
+      });
+    }
+
+    const jobId = randomUUID();
+    const sourceText =
+      String(draft.sourceText ?? '').trim() ||
+      String(listingPreview?.description ?? mapped.description ?? '').trim();
+
+    const citySlugFromIntent =
+      draft.parsedIntent && typeof draft.parsedIntent === 'object'
+        ? (draft.parsedIntent as { citySlug?: string }).citySlug
+        : undefined;
+
+    try {
+      await publishIntakeAiTask(
+        {
+          jobId,
+          serviceRequestId: serviceRequest.id,
+          text: sourceText,
+          citySlug:
+            typeof entities.citySlug === 'string' ? entities.citySlug : citySlugFromIntent,
+          cityName:
+            typeof entities.city === 'string' ? entities.city : mapped.city ?? undefined,
+          userId: user.id,
+        },
+        { messageId: jobId, correlationId: serviceRequest.id }
+      );
+    } catch (queueError) {
+      console.error('[publish] rabbitmq publish failed', queueError);
+      if (isIntakeQueueSyncFallbackEnabled()) {
+        const updated = await db.serviceRequest.update({
+          where: { id: serviceRequest.id },
+          data: {
+            status: finalStatus,
+            moderationStatus: finalModerationStatus,
+          },
+        });
+        completeSyncPublish(serviceRequest.id, {
+          autoApprove,
+          sessionId: body.sessionId,
+        });
+        enqueueTrainingCapture(draft, serviceRequest.id, body.sessionId);
+        return NextResponse.json({
+          id: updated.id,
+          slug: updated.slug,
+          title: updated.title,
+          status: updated.status,
+          moderationStatus: updated.moderationStatus,
+          autoApproved: autoApprove,
+          syncFallback: true,
+          message: syncPublishUserMessage(autoApprove),
+        });
+      }
+      await db.serviceRequest.delete({ where: { id: serviceRequest.id } }).catch(() => undefined);
+      return NextResponse.json(
+        { error: 'سرویس صف پیام در دسترس نیست', code: 'queue_publish_failed' },
+        { status: 503 }
+      );
     }
 
     void recordIntakeMigrationEvent('NeedDraftPublished', {
@@ -202,6 +333,8 @@ export async function POST(request: NextRequest) {
       matchabilityScore: draft.matchabilityScore,
       legacyEqual: legacyCompare.equal,
       shadowEqual: shadowComparison?.equal ?? null,
+      asyncAi: true,
+      jobId,
     });
 
     if (shadowComparison) {
@@ -212,26 +345,29 @@ export async function POST(request: NextRequest) {
         diffs: shadowComparison.diffs,
         canonicalHash: serviceRequestV2.canonicalHash,
       });
-      if (!shadowComparison.equal) {
-        console.info('[SHADOW_PUBLISH_DIFF]', {
-          requestId: serviceRequest.id,
-          templateId: draft.templateId,
-          diffs: shadowComparison.diffs,
-        });
-      }
     }
 
-    return NextResponse.json({
-      id: serviceRequest.id,
-      slug: serviceRequest.slug,
-      title: serviceRequest.title,
-      status: serviceRequest.status,
-      moderationStatus: serviceRequest.moderationStatus,
-      autoApproved: autoApprove,
-      message: autoApprove
-        ? 'آگهی منتشر شد و در جستجو قابل مشاهده است'
-        : 'آگهی ثبت شد و پس از تأیید در جستجو نمایش داده می‌شود',
-    });
+    enqueueTrainingCapture(draft, serviceRequest.id, body.sessionId);
+
+    return NextResponse.json(
+      {
+        accepted: true,
+        jobId,
+        id: serviceRequest.id,
+        slug: serviceRequest.slug,
+        title: serviceRequest.title,
+        status: serviceRequest.status,
+        moderationStatus: serviceRequest.moderationStatus,
+        autoApproved: autoApprove,
+        message: 'آگهی در صف پردازش هوش مصنوعی قرار گرفت',
+      },
+      {
+        status: 202,
+        headers: {
+          Location: `/api/need-intake/publish/status/${serviceRequest.id}`,
+        },
+      }
+    );
   } catch (error) {
     console.error('need-intake publish error:', error);
     const formatted = formatNeedIntakePublishError(error);

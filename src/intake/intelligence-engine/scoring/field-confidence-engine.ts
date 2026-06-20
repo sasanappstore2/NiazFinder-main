@@ -14,6 +14,7 @@ export function mergeFieldBags(...partials: Partial<IntakeFieldBag>[]): IntakeFi
       if (!v) continue;
       const key = k as IntakeFieldKey;
       const prev = base[key];
+      if (prev?.lockedByUser) continue;
       if (!prev || (v.confidence ?? 0) >= (prev.confidence ?? 0)) {
         base[key] = v as IntakeFieldBag[IntakeFieldKey];
       }

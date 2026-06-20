@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requirePermission } from '@/lib/rbac/authz';
 import { logAdminAction } from '@/lib/audit/admin-audit';
+import { queueBusinessProfileTypesenseSync } from '@/lib/search/typesense-sync';
 
 export const runtime = 'nodejs';
 
@@ -45,6 +46,8 @@ export async function POST(
       where: { id },
       data,
     });
+
+    queueBusinessProfileTypesenseSync(id);
 
     await logAdminAction(request, authz.user.id, `market.business.moderate.${action}`, 'BusinessProfile', id, {
       reason: reason || undefined,

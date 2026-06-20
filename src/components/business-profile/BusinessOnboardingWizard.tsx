@@ -97,6 +97,31 @@ export function BusinessOnboardingWizard({
     [persistDraft, step]
   );
 
+  const refreshFormAfterSiteImport = useCallback(async () => {
+    try {
+      const res = await fetch('/api/business/me', { headers: getClientAuthHeaders() });
+      if (!res.ok) return;
+      const api = (await res.json()) as Record<string, unknown>;
+      patchForm({
+        name: (api.name as string) || form.name,
+        description: (api.description as string) || form.description,
+        phone: (api.phone as string) || form.phone,
+        email: (api.email as string) || form.email,
+        logo: (api.logo as string) || form.logo,
+        coverImage: (api.coverImage as string) || form.coverImage,
+        website: (api.website as string) || form.website,
+        instagram: (api.instagram as string) || form.instagram,
+        telegram: (api.telegram as string) || form.telegram,
+        bale: (api.bale as string) || form.bale,
+        rubika: (api.rubika as string) || form.rubika,
+        eitaa: (api.eitaa as string) || form.eitaa,
+      });
+      toast.success('اطلاعات واردشده از سایت به فرم اضافه شد');
+    } catch {
+      /* ignore */
+    }
+  }, [form, patchForm]);
+
   useEffect(() => {
     if (!authHydrated) return;
     let cancelled = false;
@@ -349,6 +374,8 @@ export function BusinessOnboardingWizard({
               values={form}
               errors={errors}
               onChange={patchForm}
+              occupationSlugs={form.occupationSlugs}
+              onSiteImportApplied={() => void refreshFormAfterSiteImport()}
             />
           )}
           {step === 3 && (

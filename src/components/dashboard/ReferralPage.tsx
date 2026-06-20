@@ -174,11 +174,11 @@ export function ReferralPage() {
           {/* Full Invite URL */}
           <div>
             <label className="mb-2 block text-sm font-medium text-muted-foreground">لینک کامل دعوت</label>
-            <div className="flex items-center gap-3">
-              <div className="flex-1 truncate rounded-xl border border-border/60 bg-muted/40 px-4 py-3">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center">
+              <div className="min-w-0 flex-1 truncate rounded-xl border border-border/60 bg-muted/40 px-4 py-3">
                 <span className="text-sm text-foreground" dir="ltr">{url || '—'}</span>
               </div>
-              <Button onClick={handleCopyLink} className="gap-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 active:scale-95 transition-all duration-150" aria-label="کپی لینک دعوت" title="کپی لینک دعوت به کلیپ‌بورد">
+              <Button onClick={handleCopyLink} className="shrink-0 gap-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 active:scale-95 transition-all duration-150" aria-label="کپی لینک دعوت" title="کپی لینک دعوت به کلیپ‌بورد">
                 {copiedLink ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}{copiedLink ? 'کپی شد' : 'کپی لینک'}
               </Button>
             </div>

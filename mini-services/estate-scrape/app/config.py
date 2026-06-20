@@ -1,4 +1,5 @@
-"""Estate scrape service — ScrapeGraphAI + Qwen 3.5-2B (intake-mlx)."""
+"""Estate scrape service — ScrapeGraphAI + local GGUF gateway (gemma4-intake)."""
+import os
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -9,8 +10,9 @@ CHUNKS_DIR = DATA_DIR / "chunks"
 JSONL_PATH = REPO_ROOT / "data" / "need-intake-training" / "estate-knowledge-10k.jsonl"
 MANIFEST_PATH = DATA_DIR / "manifest.json"
 
-INTAKE_MLX_URL = __import__("os").environ.get("NEED_INTAKE_LLM_URL", "http://127.0.0.1:8100")
+INTAKE_MLX_URL = os.environ.get("NEED_INTAKE_LLM_URL", "http://127.0.0.1:8100")
 INTAKE_MLX_CHAT_URL = f"{INTAKE_MLX_URL.rstrip('/')}/v1/chat/completions"
+INTAKE_LLM_MODEL = os.environ.get("NEED_INTAKE_LLM_MODEL", "gemma-4-e2b-q4_0-it")
 
 DEFAULT_TARGET = 10_000
 DEFAULT_HOLDOUT = 200

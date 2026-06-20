@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "نیاز فایندر - Communication Gateway (Socket.io)",
   "scripts": {
-    "dev": "bun --hot index.ts",
+    "dev": "cd ../.. && bun --env-file=.env --hot mini-services/chat-service/index.ts",
     "start": "bun run index.ts",
     "predev": "cd ../.. && npx prisma generate",
     "prestart": "cd ../.. && npx prisma generate"
