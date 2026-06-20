@@ -76,7 +76,7 @@ exports/intake-finetune/gemma4-intake-holdout-500.jsonl
 exports/intake-finetune/gemma4-intake-full.json
 exports/intake-finetune/dataset-index-batches.jsonl
 models/
-mini-services/intake-mlx/.venv/
+mini-services/*/.venv/
 # Local chat uploads (do not commit)
 public/uploads/chat/
 
@@ -88,4 +88,5 @@ mini-services/intake-mlx/.env
 mini-services/backend/dist/
 reports/*.json
 reports/*.csv
+reports/*.jsonl
 !reports/.gitkeep
