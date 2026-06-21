@@ -20,8 +20,8 @@ export function CohortHeatmap({
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-xs">
+    <div className="min-w-0 max-w-full overflow-x-auto" role="region" aria-label="ماتریس نگهداشت">
+      <table className="w-full min-w-[520px] text-xs">
         <thead>
           <tr>
             <th className="p-2 text-right">هفته cohort</th>

@@ -42,6 +42,21 @@ export interface UseLocationSelectionOptions {
   preservePathOnHome?: boolean;
 }
 
+type SearchParamsLike = ReturnType<typeof useSearchParams>;
+
+function readSelectionFromScope(
+  pathname: string,
+  searchParams: SearchParamsLike
+): LocationSelection {
+  try {
+    const urlScope = scopeFromUrl(pathname, searchParams);
+    const scope = scopeIsActive(urlScope) ? urlScope : scopeFromCookie();
+    return scopeToCookieSelection(scope);
+  } catch {
+    return { cities: [], provinceIds: [] };
+  }
+}
+
 export function useLocationSelection(options: UseLocationSelectionOptions = {}) {
   const { preservePathOnHome = false } = options;
   const { toast } = useToast();
@@ -53,6 +68,7 @@ export function useLocationSelection(options: UseLocationSelectionOptions = {}) 
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedCities, setSelectedCities] = React.useState<City[]>([]);
   const [selectedProvinceIds, setSelectedProvinceIds] = React.useState<string[]>([]);
+  /** false on SSR and first client paint — avoids hydration mismatch; set true in useLayoutEffect. */
   const [isInitialized, setIsInitialized] = React.useState(false);
 
   const applySelection = React.useCallback(
@@ -124,20 +140,24 @@ export function useLocationSelection(options: UseLocationSelectionOptions = {}) 
     onDetected: handleGeoDetected,
   });
 
-  React.useEffect(() => {
-    const urlScope = scopeFromUrl(pathname, searchParams);
-    if (scopeIsActive(urlScope)) {
-      const sel = scopeToCookieSelection(urlScope);
-      setSelectedCities(sel.cities);
-      setSelectedProvinceIds(sel.provinceIds);
-      persistScopeToCookie(urlScope);
-    } else {
-      const cookieScope = scopeFromCookie();
-      const sel = scopeToCookieSelection(cookieScope);
-      setSelectedCities(sel.cities);
-      setSelectedProvinceIds(sel.provinceIds);
+  React.useLayoutEffect(() => {
+    try {
+      const urlScope = scopeFromUrl(pathname, searchParams);
+      if (scopeIsActive(urlScope)) {
+        const sel = scopeToCookieSelection(urlScope);
+        setSelectedCities(sel.cities);
+        setSelectedProvinceIds(sel.provinceIds);
+        persistScopeToCookie(urlScope);
+      } else {
+        const sel = readSelectionFromScope(pathname, searchParams);
+        setSelectedCities(sel.cities);
+        setSelectedProvinceIds(sel.provinceIds);
+      }
+    } catch (error) {
+      console.warn('[location-selection] failed to hydrate scope', error);
+    } finally {
+      setIsInitialized(true);
     }
-    setIsInitialized(true);
   }, [pathname, searchParams]);
 
   const getLocationDisplayText = () => {

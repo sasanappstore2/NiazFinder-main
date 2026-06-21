@@ -3,7 +3,7 @@ import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.
 import { clearPendingContact, loadPendingContact } from './pending-contact';
 import { fetchUserContact } from './fetch-contact';
 import {
-  navigateToConversation,
+  syncAndNavigateToConversation,
   startConversation,
   ContactAuthRequiredError,
 } from './start-conversation';
@@ -29,7 +29,7 @@ export async function resumePendingContact(deps: ResumeDeps): Promise<boolean> {
 
   try {
     if (intent.action === 'chat') {
-      const { conversationId } = await startConversation(
+      const result = await startConversation(
         {
           otherUserId: intent.otherUserId,
           requestId: intent.requestId,
@@ -38,7 +38,7 @@ export async function resumePendingContact(deps: ResumeDeps): Promise<boolean> {
         },
         deps.authToken
       );
-      navigateToConversation(deps.router, conversationId);
+      syncAndNavigateToConversation(deps.router, result);
       toast.success('گفتگو باز شد');
       clearPendingContact();
       return true;

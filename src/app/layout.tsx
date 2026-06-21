@@ -172,7 +172,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${vazirmatn.variable} font-sans antialiased bg-background text-foreground persian-nums`}
+        className={`${vazirmatn.variable} ${vazirmatn.className} font-sans antialiased bg-background text-foreground persian-nums`}
       >
         {/* Skip to main content link for accessibility */}
         <a

@@ -63,6 +63,8 @@ import { ChatConversationList } from '@/components/chat/ChatConversationList';
 import { ChatPresenceDot } from '@/components/chat/ChatPresenceDot';
 import { useChatMessageScroll } from '@/hooks/useChatMessageScroll';
 import { tryJoinConversation } from '@/lib/chat/socket-bridge';
+import { useChatPollingFallback } from '@/hooks/useChatPollingFallback';
+import { usePeerPresenceRefresh } from '@/hooks/usePeerPresenceRefresh';
 import { markConversationRead } from '@/lib/chat/mark-conversation-read';
 import { ChatPeerTyping, ChatTypingHeaderStatus } from '@/components/chat/ChatPeerTyping';
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -183,6 +185,10 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
 
   const { peerTyping } = useChatRealtime(activeConversationId);
   const { onDraftChange, stopTyping } = useChatTypingEmitter(activeConversationId);
+  useChatPollingFallback(activeConversationId);
+  usePeerPresenceRefresh(activeConversationId);
+
+  const threadActive = Boolean(activeConversationId);
 
   useEffect(() => {
     if (activeConversationId) tryJoinConversation(activeConversationId);
@@ -234,6 +240,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   useEffect(() => {
     if (initialConversationId) {
       setActiveConversationId(initialConversationId);
+      setShowMessages(true);
     }
   }, [initialConversationId, setActiveConversationId]);
 
@@ -262,7 +269,6 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   const [locationPickerOpen, setLocationPickerOpen] = useState(false);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const userSearchInputRef = useRef<HTMLInputElement>(null);
-  const platformBotAutoOpenedRef = useRef(false);
 
   // ── Derived state ───────────────────────────────────────────────────────
   const selectedConversation = conversations.find((c) => c.id === activeConversationId) ?? null;
@@ -353,21 +359,6 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     }
     return () => stopTyping();
   }, [activeConversationId, authToken, fetchConversationMessages, stopTyping]);
-
-  // فقط وقتی مکالمه در لیست موجود است صفحهٔ چت را نشان بده (موبایل)
-  useEffect(() => {
-    if (!activeConversationId) {
-      setShowMessages(false);
-      return;
-    }
-    if (selectedConversation) {
-      setShowMessages(true);
-      return;
-    }
-    if (!isLoading) {
-      setShowMessages(false);
-    }
-  }, [activeConversationId, selectedConversation, isLoading]);
 
   // ── Debounced user search ──────────────────────────────────────────────
   useEffect(() => {
@@ -461,22 +452,6 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     },
     [setActiveConversationId, router]
   );
-
-  // Auto-open platform bot chat when entering /chat without a selected thread
-  useEffect(() => {
-    if (initialConversationId || platformBotAutoOpenedRef.current) return;
-    if (!isAuthenticated || isLoading) return;
-    const bot = conversations.find((c) => c.isPlatformBot);
-    if (!bot) return;
-    platformBotAutoOpenedRef.current = true;
-    handleSelectConversation(bot.id);
-  }, [
-    initialConversationId,
-    isAuthenticated,
-    isLoading,
-    conversations,
-    handleSelectConversation,
-  ]);
 
   // ── Create / select conversation from search result ─────────────────────
   const handleSelectSearchUser = useCallback(
@@ -637,6 +612,11 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     setIsSendingMessage(true);
 
     void (async () => {
+      const sendTimeout = window.setTimeout(() => {
+        setIsSendingMessage(false);
+      }, 30_000);
+
+      try {
       if (isPlatformBot) {
         const result = await sendPlatformAgentMessage(convId, text, {
           replyToId: savedReply?.messageId,
@@ -661,7 +641,6 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
           }
         }
 
-        setIsSendingMessage(false);
         inputRef.current?.focus();
         scrollToBottomForced();
         return;
@@ -679,9 +658,12 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
         useAppStore.getState().clearError();
       }
 
-      setIsSendingMessage(false);
       inputRef.current?.focus();
       scrollToBottomForced();
+      } finally {
+        window.clearTimeout(sendTimeout);
+        setIsSendingMessage(false);
+      }
     })();
   }, [
     newMessage,
@@ -992,7 +974,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
       <div
         className={cn(
           'flex w-full min-h-0 flex-col overflow-hidden border-l md:w-[min(380px,35vw)] md:max-w-[420px] md:border-l',
-          selectedConversation && showMessages ? 'hidden md:flex' : 'flex'
+          activeConversationId && showMessages ? 'hidden md:flex' : 'flex'
         )}
         role="navigation"
         aria-label="لیست مکالمات"
@@ -1315,14 +1297,14 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
       <div
         className={cn(
           'flex min-h-0 flex-1 flex-col overflow-hidden',
-          selectedConversation
+          threadActive
             ? showMessages
               ? 'flex'
               : 'hidden md:flex'
             : 'hidden md:flex'
         )}
       >
-        {selectedConversation ? (
+        {threadActive ? (
           <>
             {/* Chat Header */}
             <div className="flex items-center gap-3 border-b px-4 py-3">
@@ -1346,40 +1328,54 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                     className={cn(
                       'flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white',
                       getAvatarColor(
-                        `${otherUser?.firstName ?? ''} ${otherUser?.lastName ?? ''}`.trim() || 'کاربر'
+                        otherUser
+                          ? `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر'
+                          : 'کاربر'
                       )
                     )}
                   >
-                    {getInitials(`${otherUser?.firstName ?? ''} ${otherUser?.lastName ?? ''}`.trim() || 'کاربر')}
+                    {otherUser ? (
+                      getInitials(
+                        `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر'
+                      )
+                    ) : (
+                      <Loader2 className="size-4 animate-spin text-white/90" aria-hidden />
+                    )}
                   </div>
                 )}
-                <ChatPresenceDot
-                  online={otherUser?.online}
-                  className="absolute bottom-0 left-0"
-                />
+                {otherUser ? (
+                  <ChatPresenceDot
+                    online={otherUser.online}
+                    className="absolute bottom-0 left-0"
+                  />
+                ) : null}
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-semibold truncate">
-                  {`${otherUser?.firstName ?? ''} ${otherUser?.lastName ?? ''}`.trim() || 'کاربر'}
+                  {otherUser
+                    ? `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر'
+                    : 'در حال بارگذاری…'}
                 </h3>
                 {peerTyping.isTyping ? (
                   <ChatTypingHeaderStatus visible />
-                ) : selectedConversation.businessContext ? (
+                ) : selectedConversation?.businessContext ? (
                   <p className="text-xs text-muted-foreground truncate">
                     {selectedConversation.businessContext.contactLabel} ·{' '}
                     {selectedConversation.businessContext.businessName}
                   </p>
-                ) : (
+                ) : otherUser ? (
                   <p
                     className={cn(
                       'text-xs transition-colors',
-                      otherUser?.online
+                      otherUser.online
                         ? 'text-emerald-600 dark:text-emerald-400'
                         : 'text-muted-foreground'
                     )}
                   >
                     {peerPresenceLabel(otherUser)}
                   </p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">گفتگو</p>
                 )}
               </div>
               {/* Call button */}
@@ -1403,9 +1399,10 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                   if (!otherUser) return;
                   openVoiceCall(
                     toVoiceCallPeer(otherUser),
-                    selectedConversation.requestId ?? undefined
+                    activeConversationId ?? undefined
                   );
                 }}
+                disabled={!otherUser}
               >
                 <Phone className="h-4 w-4" />
               </Button>
@@ -1477,7 +1474,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                     : undefined),
               }}
               needBanner={
-                selectedConversation.requestId ? (
+                selectedConversation?.requestId ? (
                   <ConversationNeedContextBanner
                     requestId={selectedConversation.requestId}
                     embedded

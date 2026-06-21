@@ -111,7 +111,7 @@ export function QuickActions() {
   return (
     <div
       ref={containerRef}
-      className="fixed bottom-24 left-4 z-(--z-overlay) lg:bottom-6 lg:left-6"
+      className="fixed bottom-[calc(var(--mobile-nav-offset)+4.5rem)] left-4 z-(--z-overlay) lg:left-6"
       dir="rtl"
     >
       {/* Radial action buttons */}
@@ -156,7 +156,7 @@ export function QuickActions() {
                 'bg-background/70 backdrop-blur-md',
                 'border border-border/40',
                 'shadow-md',
-                'opacity-0 group-hover:opacity-100',
+                'hover-reveal',
                 'transition-opacity duration-150',
               )}
             >

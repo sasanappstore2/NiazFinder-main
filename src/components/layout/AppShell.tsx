@@ -20,22 +20,31 @@ import { getPageTitleForPath } from '@/config/page-titles';
 import { PageHeading } from '@/components/layout/PageHeading';
 import { useResumePendingContact } from '@/hooks/use-resume-pending-contact';
 import { useIntakeMobileChrome } from '@/hooks/use-intake-mobile-chrome';
+import { useHandheldViewport } from '@/hooks/use-device-tier';
 
 interface AppShellProps {
   children: ReactNode;
-  /** Hide footer and bottom nav (e.g. chat fullscreen) */
+  /** Hide footer and bottom nav (e.g. chat fullscreen on mobile) */
   minimalChrome?: boolean;
+  /** Minimal chrome only on phone/tablet; desktop keeps header + bottom nav */
+  minimalChromeHandheldOnly?: boolean;
 }
 
-export function AppShell({ children, minimalChrome = false }: AppShellProps) {
+export function AppShell({
+  children,
+  minimalChrome = false,
+  minimalChromeHandheldOnly = false,
+}: AppShellProps) {
   const pathname = usePathname();
+  const handheld = useHandheldViewport();
   const intakeMobileChrome = useIntakeMobileChrome();
   const initializeFromStorage = useAppStore((state) => state.initializeFromStorage);
   const isHome = pathname === '/';
-  const isChatView = pathname.startsWith('/chat');
   const isProductDetail = isBusinessProductDetailPath(pathname);
   const businessProfileAura = isBusinessProfileAuraPath(pathname);
-  const effectiveMinimal = minimalChrome || isChatView || intakeMobileChrome;
+  const useMinimalChrome =
+    minimalChrome && (!minimalChromeHandheldOnly || handheld);
+  const effectiveMinimal = useMinimalChrome || intakeMobileChrome;
   const hideMobileNav = effectiveMinimal || isProductDetail;
   const hideSiteHeader = intakeMobileChrome;
   const staticPageTitle = getPageTitleForPath(pathname);

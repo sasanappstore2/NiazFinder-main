@@ -76,7 +76,7 @@ export function BusinessAssistantPanel({ business, className }: Props) {
       <Button
         size="lg"
         className={cn(
-          'fixed-above-mobile-nav left-4 z-40 rounded-full shadow-lg gap-2 lg:bottom-6',
+          'fixed-above-mobile-nav left-4 z-40 rounded-full shadow-lg gap-2 lg:left-6',
           className
         )}
         onClick={() => setOpen(true)}

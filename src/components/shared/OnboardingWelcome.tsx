@@ -37,7 +37,7 @@ function StepWelcome() {
 
       {/* Title */}
       <div className="space-y-2">
-        <h2 className="text-2xl font-extrabold text-gradient sm:text-3xl">
+        <h2 id="onboarding-step-title-0" className="text-2xl font-extrabold text-gradient sm:text-3xl">
           به نیاز فایندر خوش آمدید!
         </h2>
         <p className="text-base font-semibold text-emerald-600 dark:text-emerald-400 sm:text-lg">
@@ -102,7 +102,7 @@ function StepHowItWorks() {
   return (
     <div className="space-y-6 text-center">
       {/* Title */}
-      <h2 className="text-2xl font-extrabold text-gradient sm:text-3xl">
+      <h2 id="onboarding-step-title-1" className="text-2xl font-extrabold text-gradient sm:text-3xl">
         چطور کار می‌کنه؟
       </h2>
 
@@ -159,7 +159,7 @@ function StepGetStarted({
       </div>
 
       {/* Title */}
-      <h2 className="text-2xl font-extrabold text-gradient sm:text-3xl">
+      <h2 id="onboarding-step-title-2" className="text-2xl font-extrabold text-gradient sm:text-3xl">
         شروع کنید!
       </h2>
 
@@ -240,6 +240,7 @@ export function OnboardingWelcome() {
   const [dontShowAgain, setDontShowAgain] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const prevStepRef = useRef(0);
+  const modalRef = useRef<HTMLDivElement>(null);
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
   const setAuthModalTab = useAppStore((s) => s.setAuthModalTab);
 
@@ -320,6 +321,37 @@ export function OnboardingWelcome() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isVisible, handleClose, goNext, goPrev]);
 
+  // Focus trap when modal is open
+  useEffect(() => {
+    if (!isVisible || !modalRef.current) return;
+    const root = modalRef.current;
+    const getFocusables = () =>
+      Array.from(
+        root.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      );
+    const focusables = getFocusables();
+    focusables[0]?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      const items = getFocusables();
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    root.addEventListener('keydown', onKeyDown);
+    return () => root.removeEventListener('keydown', onKeyDown);
+  }, [isVisible, step]);
+
   if (!isVisible) return null;
 
   return (
@@ -328,7 +360,7 @@ export function OnboardingWelcome() {
       dir="rtl"
       role="dialog"
       aria-modal="true"
-      aria-label="راهنمای شروع کار با نیاز فایندر"
+      aria-labelledby={`onboarding-step-title-${step}`}
     >
       {/* Dark overlay + blur */}
       <div
@@ -339,7 +371,8 @@ export function OnboardingWelcome() {
 
       {/* Modal card */}
       <div
-        className="gradient-mesh-card relative z-10 w-full max-w-[520px] overflow-hidden rounded-2xl border border-border/40 bg-background/80 shadow-[0_16px_70px_rgba(0,0,0,0.18)] backdrop-blur-xl"
+        ref={modalRef}
+        className="gradient-mesh-card relative z-10 w-full max-w-[520px] max-h-[min(92dvh,calc(100dvh-2rem))] overflow-y-auto rounded-2xl border border-border/40 bg-background/80 shadow-[0_16px_70px_rgba(0,0,0,0.18)] backdrop-blur-xl"
       >
         {/* Decorative gradient blurs */}
         <div className="pointer-events-none absolute -top-24 -left-24 size-48 rounded-full bg-emerald-500/8 blur-3xl" />
@@ -348,7 +381,7 @@ export function OnboardingWelcome() {
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute left-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground/60 transition-colors duration-150 hover:bg-muted/80 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
+          className="absolute left-3 top-3 z-20 flex size-11 items-center justify-center rounded-full text-muted-foreground/60 transition-colors duration-150 hover:bg-muted/80 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary touch-target-min"
           aria-label="بستن"
         >
           <X className="size-4" />

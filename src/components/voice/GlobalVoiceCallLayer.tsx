@@ -30,10 +30,15 @@ function VoiceCallOverlayWhenActive() {
   );
 }
 
-/** Global voice layer — chat socket connects only after socket-connect-policy allows. */
+/** Global voice layer — socket connects when authenticated (see DeferredChatSocketBootstrap). */
 export function GlobalVoiceCallLayer() {
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   useChatSocket();
   useVoiceCallSignaling();
+
+  useEffect(() => {
+    if (isAuthenticated) allowChatSocketConnect();
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const onChatIntent = () => allowChatSocketConnect();

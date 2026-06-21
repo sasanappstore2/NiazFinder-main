@@ -44,7 +44,8 @@ async function main() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ requestId: 'test' }),
     });
-    return res.status === 503;
+    // 503 when secret unset on server; 401/403 when secret set but caller unauthenticated
+    return res.status === 503 || res.status === 401 || res.status === 403;
   });
 
   await run('Check-phone rate limit shape', async () => {

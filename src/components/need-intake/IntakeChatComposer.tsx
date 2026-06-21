@@ -39,7 +39,7 @@ export function IntakeChatComposer({
         }}
         placeholder={placeholder}
         disabled={disabled}
-        className="min-h-[44px] flex-1 resize-none border-0 bg-transparent py-2.5 shadow-none focus-visible:ring-0"
+        className="min-h-[44px] flex-1 resize-none border-0 bg-transparent py-2.5 text-base shadow-none focus-visible:ring-0 md:text-sm"
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -51,7 +51,7 @@ export function IntakeChatComposer({
         type="button"
         size="icon"
         className={cn(
-          'size-10 shrink-0 rounded-full',
+          'size-11 shrink-0 rounded-full',
           canSend
             ? 'bg-emerald-600 text-white hover:bg-emerald-500'
             : 'bg-muted text-muted-foreground'

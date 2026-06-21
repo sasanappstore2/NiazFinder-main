@@ -10,7 +10,7 @@ import { useAppStore } from '@/lib/store';
 import { routeBuilder } from '@/config/routes';
 import {
   startConversation,
-  navigateToConversation,
+  syncAndNavigateToConversation,
   ContactAuthRequiredError,
 } from '@/lib/contact/start-conversation';
 import { fetchUserContact } from '@/lib/contact/fetch-contact';
@@ -98,11 +98,11 @@ export function ContactActions({
       if (requestId) {
         ensureNeedChatPreview(requestId, needPreview);
       }
-      const { conversationId } = await startConversation(
+      const result = await startConversation(
         { otherUserId, requestId },
         authToken
       );
-      navigateToConversation(router, conversationId);
+      syncAndNavigateToConversation(router, result);
     } catch (e) {
       if (e instanceof ContactAuthRequiredError) {
         setAuthModalOpen(true);

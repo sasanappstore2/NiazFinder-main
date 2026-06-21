@@ -7,6 +7,65 @@
   --intake-gap: var(--golden-md);
   --intake-pad: var(--golden-lg);
   --intake-radius: 1rem;
+
+  /* Depth ladder (LIGHT defaults) — clean white cards on a soft canvas;
+     elevation comes from shadow + a hairline border, not lightness. */
+  --intake-surface: var(--card);
+  --intake-surface-2: color-mix(in oklch, var(--card) 92%, var(--foreground) 5%);
+  --intake-surface-inset: var(--muted);
+  --intake-border: var(--border);
+  --intake-border-strong: color-mix(in oklch, var(--foreground) 16%, transparent);
+  --intake-highlight: color-mix(in oklch, white 65%, transparent);
+  --intake-shadow:
+    0 1px 0 var(--intake-highlight) inset,
+    0 1px 2px color-mix(in oklch, var(--foreground) 5%, transparent),
+    0 14px 30px -20px color-mix(in oklch, var(--foreground) 22%, transparent);
+  --intake-glow: 0 0 0 1px color-mix(in oklch, var(--primary) 30%, transparent),
+    0 6px 22px -10px color-mix(in oklch, var(--primary) 22%, transparent);
+  --intake-aura: color-mix(in oklch, var(--primary) 6%, transparent);
+}
+
+/* Depth ladder (DARK) — lift surfaces toward white; deeper shadows + sheen. */
+:where(.dark) .intake-flow {
+  --intake-surface: color-mix(in oklch, var(--card) 90%, var(--foreground) 7%);
+  --intake-surface-2: color-mix(in oklch, var(--card) 78%, var(--foreground) 14%);
+  --intake-surface-inset: color-mix(in oklch, var(--background) 84%, var(--foreground) 6%);
+  --intake-border: color-mix(in oklch, var(--foreground) 13%, transparent);
+  --intake-border-strong: color-mix(in oklch, var(--foreground) 22%, transparent);
+  --intake-highlight: color-mix(in oklch, white 7%, transparent);
+  --intake-shadow:
+    0 1px 0 var(--intake-highlight) inset,
+    0 22px 48px -30px color-mix(in oklch, black 72%, transparent),
+    0 4px 14px -10px color-mix(in oklch, black 50%, transparent);
+  --intake-glow: 0 0 0 1px color-mix(in oklch, var(--primary) 22%, transparent),
+    0 0 28px -6px color-mix(in oklch, var(--primary) 28%, transparent);
+  --intake-aura: color-mix(in oklch, var(--primary) 11%, transparent);
+}
+
+/* Soft primary aura behind the flow so the canvas isn't flat black. */
+.intake-flow {
+  position: relative;
+}
+
+.intake-flow::before {
+  content: '';
+  position: absolute;
+  inset-block-start: -6rem;
+  inset-inline: -10%;
+  height: 26rem;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    60% 100% at 50% 0%,
+    var(--intake-aura, color-mix(in oklch, var(--primary) 10%, transparent)),
+    transparent 70%
+  );
+  filter: blur(8px);
+}
+
+.intake-flow > * {
+  position: relative;
+  z-index: 1;
 }
 
 @media (min-width: 1024px) {
@@ -31,6 +90,12 @@
     flex: unset;
     max-width: none;
   }
+
+  /* Keep the live-summary aside in view instead of stranding empty space. */
+  .layout-golden-split--intake > .layout-golden-aside {
+    position: sticky;
+    top: 1.25rem;
+  }
 }
 
 /* Progress / hero card */
@@ -40,9 +105,9 @@
   gap: var(--golden-md);
   padding: var(--intake-pad);
   border-radius: var(--intake-radius);
-  border: 1px solid color-mix(in oklch, var(--border) 65%, transparent);
-  background: color-mix(in oklch, var(--card) 55%, transparent);
-  box-shadow: 0 1px 0 color-mix(in oklch, var(--foreground) 4%, transparent);
+  border: 1px solid var(--intake-border);
+  background: var(--intake-surface);
+  box-shadow: var(--intake-shadow);
 }
 
 .intake-hero-card__meta {
@@ -322,11 +387,9 @@ html[dir='ltr'] .intake-step-track__connector-fill[data-state='active']::after {
   gap: var(--golden-lg);
   padding: var(--intake-pad);
   border-radius: var(--intake-radius);
-  border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
-  background: color-mix(in oklch, var(--card) 72%, transparent);
-  box-shadow:
-    0 1px 0 color-mix(in oklch, var(--foreground) 4%, transparent),
-    0 0.618rem 1.618rem -0.75rem color-mix(in oklch, black 20%, transparent);
+  border: 1px solid var(--intake-border);
+  background: var(--intake-surface);
+  box-shadow: var(--intake-shadow);
 }
 
 .intake-form-card__head {
@@ -363,8 +426,9 @@ html[dir='ltr'] .intake-step-track__connector-fill[data-state='active']::after {
 .intake-aside-card {
   padding: var(--golden-lg);
   border-radius: var(--intake-radius);
-  border: 1px solid color-mix(in oklch, var(--border) 65%, transparent);
-  background: color-mix(in oklch, var(--card) 50%, transparent);
+  border: 1px solid var(--intake-border);
+  background: var(--intake-surface);
+  box-shadow: var(--intake-shadow);
 }
 
 @media (min-width: 1024px) {
@@ -600,10 +664,10 @@ html[dir='ltr'] .intake-step-track__connector-fill[data-state='active']::after {
 .intake-panel-card {
   display: flex;
   flex-direction: column;
-  border-radius: var(--intake-radius);
-  border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
-  background: color-mix(in oklch, var(--card) 88%, transparent);
-  box-shadow: 0 8px 30px -12px color-mix(in oklch, black 12%, transparent);
+  border-radius: calc(var(--intake-radius) + 0.25rem);
+  border: 1px solid var(--intake-border);
+  background: var(--intake-surface);
+  box-shadow: var(--intake-shadow);
   overflow: hidden;
 }
 
@@ -611,9 +675,14 @@ html[dir='ltr'] .intake-step-track__connector-fill[data-state='active']::after {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 0.625rem 0.875rem 0.5rem;
-  border-bottom: 1px solid color-mix(in oklch, var(--border) 55%, transparent);
-  background: color-mix(in oklch, var(--muted) 25%, transparent);
+  padding: 0.75rem 1rem 0.625rem;
+  border-bottom: 1px solid var(--intake-border);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--primary) 6%, transparent),
+    transparent
+  ),
+  color-mix(in oklch, var(--foreground) 4%, transparent);
 }
 
 .intake-panel-card__meta {
@@ -676,17 +745,25 @@ html[dir='ltr'] .intake-step-track__connector-fill[data-state='active']::after {
   box-shadow: 0 8px 30px -12px color-mix(in oklch, black 15%, transparent);
 }
 
-/* Sticky step actions on mobile */
+/* Sticky step actions on mobile — float just above the fixed bottom nav.
+   The card body gets bottom room equal to the nav clearance so the CTA
+   (and the last detection card) are never hidden behind MobileBottomNav. */
 @media (max-width: 767px) {
+  .intake-panel-card__body {
+    padding-block-end: calc(
+      var(--mobile-nav-offset) + env(safe-area-inset-bottom, 0px) + 0.75rem
+    );
+  }
+
   .intake-sticky-actions {
     position: sticky;
-    bottom: var(--mobile-nav-offset);
+    bottom: calc(var(--mobile-nav-offset) + env(safe-area-inset-bottom, 0px) + 0.5rem);
     z-index: 20;
     margin-inline: calc(-1 * 0.875rem);
-    margin-bottom: calc(-1 * 0.75rem);
+    margin-block-start: 0.25rem;
     padding: 0.625rem 0.875rem;
-    border-top: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
-    background: color-mix(in oklch, var(--background) 92%, transparent);
+    border-top: 1px solid var(--intake-border);
+    background: color-mix(in oklch, var(--background) 88%, transparent);
     backdrop-filter: blur(12px);
   }
 }

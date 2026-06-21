@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { Suspense, useState, useCallback, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Building2, Sparkles, Loader2 } from 'lucide-react';
@@ -10,6 +10,8 @@ import { NeedLeadPromptBox, LeadQuickChips } from '@/components/home/ai-lead';
 import { COMPOSER_MAX_WIDTH } from '@/components/home/ai-lead/ai-lead-tokens';
 import type { LeadChipId } from '@/components/home/ai-lead';
 import { useLocationSelection } from '@/hooks/use-location-selection';
+import { useManagedLocations } from '@/lib/use-managed-locations';
+import type { City } from '@/lib/location-system';
 import { routeBuilder } from '@/config/routes';
 import { getBrowseUrl } from '@/lib/search/browse-entry-url';
 import { locationCityIdToSlug } from '@/lib/search/city-slugs';
@@ -19,7 +21,54 @@ import { trackAnalyticsEvent } from '@/lib/analytics/track';
 import { useAppStore } from '@/lib/store';
 import { toast } from 'sonner';
 
-export function HomeLeadLanding() {
+/** Normalize Persian for matching (unify ي/ی, ك/ک, drop ZWNJ, collapse spaces). */
+function normFa(s: string): string {
+  return s
+    .replace(/ي/g, 'ی')
+    .replace(/ك/g, 'ک')
+    .replace(/‌/g, ' ')
+    .replace(/[،.,؛:()«»"'\/\-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Guess up to `max` cities explicitly mentioned in the need text (1–2 word names). */
+function guessCitiesFromText(text: string, cities: City[], max = 3): City[] {
+  if (!text.trim() || !cities.length) return [];
+  const byName = new Map<string, City>();
+  for (const c of cities) {
+    const key = normFa(c.name);
+    if (key.length >= 3 && !byName.has(key)) byName.set(key, c);
+  }
+  const words = normFa(text).split(' ').filter(Boolean);
+  const out: City[] = [];
+  const seen = new Set<string>();
+  for (let i = 0; i < words.length && out.length < max; i++) {
+    for (let n = 2; n >= 1; n--) {
+      if (i + n > words.length) continue;
+      const gram = words.slice(i, i + n).join(' ');
+      if (gram.length < 3) continue;
+      const c = byName.get(gram);
+      if (c && !seen.has(c.id)) {
+        seen.add(c.id);
+        out.push(c);
+        i += n - 1;
+        break;
+      }
+    }
+  }
+  return out;
+}
+
+export function HomeLeadLandingFallback() {
+  return (
+    <div className="flex min-h-[60vh] items-center justify-center" aria-busy="true">
+      <Loader2 className="size-8 animate-spin text-primary" />
+    </div>
+  );
+}
+
+function HomeLeadLandingContent() {
   const router = useRouter();
   const composerInputRef = useRef<HTMLTextAreaElement>(null);
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
@@ -38,6 +87,12 @@ export function HomeLeadLanding() {
 
   const [needText, setNeedText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { cities } = useManagedLocations();
+  const suggestedCities = useMemo(
+    () => guessCitiesFromText(needText, cities, 3),
+    [needText, cities]
+  );
 
   const hasCity = selectedCities.length > 0 || selectedProvinceIds.length > 0;
   const primaryCity = selectedCities[0];
@@ -123,11 +178,7 @@ export function HomeLeadLanding() {
   );
 
   if (!isInitialized) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-primary" />
-      </div>
-    );
+    return <HomeLeadLandingFallback />;
   }
 
   return (
@@ -263,7 +314,17 @@ export function HomeLeadLanding() {
         detectedCity={geo.detectedCity}
         isDetecting={geo.isDetecting}
         onDetectLocation={() => void geo.runDetection()}
+        suggestedCities={suggestedCities}
       />
     </div>
+  );
+}
+
+/** Home AI lead hero — Suspense required for useSearchParams in location hook. */
+export function HomeLeadLanding() {
+  return (
+    <Suspense fallback={<HomeLeadLandingFallback />}>
+      <HomeLeadLandingContent />
+    </Suspense>
   );
 }

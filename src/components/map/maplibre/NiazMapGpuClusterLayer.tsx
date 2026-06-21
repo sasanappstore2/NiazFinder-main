@@ -117,7 +117,24 @@ export function NiazMapGpuClusterLayer<T extends MapPoint>({
   const clusterCountLayerId = `niaz-cluster-count-${reactId}`;
   const unclusteredLayerId = `niaz-unclustered-${reactId}`;
 
-  const map = (mapRef.current?.getMap() ?? null) as MapLibreMap | null;
+  const [map, setMap] = useState<MapLibreMap | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    let raf = 0;
+    const resolveMap = () => {
+      if (cancelled) return;
+      const next = (mapRef.current?.getMap() ?? null) as MapLibreMap | null;
+      setMap((prev) => (prev === next ? prev : next));
+      if (!next) raf = requestAnimationFrame(resolveMap);
+    };
+    resolveMap();
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
+  }, [mapRef]);
+
   const isLoaded = useMapStyleLoaded(map);
 
   const geoJson = useMemo(() => pointsToGeoJson(points), [points]);
@@ -129,7 +146,10 @@ export function NiazMapGpuClusterLayer<T extends MapPoint>({
   });
 
   const callbacksRef = useRef({ onClusterClick, onUnclusteredChange, points });
-  callbacksRef.current = { onClusterClick, onUnclusteredChange, points };
+
+  useEffect(() => {
+    callbacksRef.current = { onClusterClick, onUnclusteredChange, points };
+  }, [onClusterClick, onUnclusteredChange, points]);
 
   // Mount source + layers
   useEffect(() => {

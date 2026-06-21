@@ -73,6 +73,7 @@ export interface MessageBroadcast {
   clientTempId?: string;
   replyToId?: string;
   replyTo?: ReplyInfo;
+  recipientUserId?: string;
 }
 
 export interface UserStatus {

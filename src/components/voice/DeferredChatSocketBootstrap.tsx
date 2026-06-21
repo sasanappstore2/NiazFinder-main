@@ -3,12 +3,19 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { allowChatSocketConnect } from '@/lib/chat/socket-connect-policy';
+import { useAppStore } from '@/lib/store';
 
-/** Defers chat socket until chat routes or browser idle (after LCP). */
+/** Connect chat socket: immediately when logged in; defer for guests (LCP). */
 export function DeferredChatSocketBootstrap() {
   const pathname = usePathname();
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
 
   useEffect(() => {
+    if (isAuthenticated) {
+      allowChatSocketConnect();
+      return;
+    }
+
     if (pathname.startsWith('/chat') || pathname.startsWith('/messages')) {
       allowChatSocketConnect();
       return;
@@ -35,7 +42,7 @@ export function DeferredChatSocketBootstrap() {
         clearTimeout(idleId as number);
       }
     };
-  }, [pathname]);
+  }, [pathname, isAuthenticated]);
 
   return null;
 }

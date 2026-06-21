@@ -167,7 +167,10 @@ export const Map = forwardRef<MapRef, MapProps>(function Map(
   const resolvedTheme = useResolvedTheme(themeProp);
   const isControlled = viewport !== undefined && onViewportChange !== undefined;
   const onViewportChangeRef = useRef(onViewportChange);
-  onViewportChangeRef.current = onViewportChange;
+
+  useEffect(() => {
+    onViewportChangeRef.current = onViewportChange;
+  }, [onViewportChange]);
 
   const mapStyles = useMemo(
     () => ({
@@ -488,7 +491,11 @@ export function MapPopup({
   const { map } = useMap();
   const popupOptionsRef = useRef(popupOptions);
   const onCloseRef = useRef(onClose);
-  onCloseRef.current = onClose;
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   const container = useMemo(() => document.createElement('div'), []);
 
   const popup = useMemo(() => {

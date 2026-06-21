@@ -38,7 +38,7 @@ function GalleryTile({
         />
       )}
       {item.title && (
-        <span className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 to-transparent p-2 text-xs font-medium text-white opacity-0 transition group-hover:opacity-100">
+        <span className="hover-reveal absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 to-transparent p-2 text-xs font-medium text-white">
           {item.title}
         </span>
       )}

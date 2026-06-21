@@ -18,7 +18,10 @@ const VIEWPORTS = [
 const PATHS = [
   '/',
   '/b/iran?type=business',
+  '/post',
   '/post-need',
+  '/browse',
+  '/chat',
   '/search',
   '/dashboard',
 ] as const;

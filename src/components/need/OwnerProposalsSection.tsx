@@ -23,7 +23,7 @@ import { formatPrice, getTimeAgo } from '@/lib/constants';
 import { routeBuilder } from '@/config/routes';
 import {
   startConversation,
-  navigateToConversation,
+  syncAndNavigateToConversation,
 } from '@/lib/contact/start-conversation';
 import type { Proposal } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -183,11 +183,11 @@ export function OwnerProposalsSection({ requestId, defaultOpen = false }: OwnerP
     );
     if (result.proposerUserId && authToken) {
       try {
-        const { conversationId } = await startConversation(
+        const chatResult = await startConversation(
           { otherUserId: result.proposerUserId, requestId },
           authToken
         );
-        navigateToConversation(router, conversationId);
+        syncAndNavigateToConversation(router, chatResult);
         toast.success('گفتگو با کسب‌وکار باز شد');
       } catch {
         toast.info('پیشنهاد پذیرفته شد — از دکمه چت استفاده کنید');

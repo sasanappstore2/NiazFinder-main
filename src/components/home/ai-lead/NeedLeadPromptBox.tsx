@@ -68,9 +68,9 @@ function ToggleChip({
       title={label}
       aria-label={label}
       className={cn(
-        'flex h-9 shrink-0 items-center gap-1 rounded-full border px-2.5 py-1 transition-all sm:h-8',
+        'flex min-h-11 shrink-0 items-center gap-1 rounded-full border px-2.5 py-1 transition-all sm:h-8',
         iconOnly
-          ? 'size-9 justify-center px-0 sm:size-8'
+          ? 'size-11 justify-center px-0 sm:size-8'
           : 'min-w-0 max-w-[min(10rem,48vw)]',
         active
           ? cn(

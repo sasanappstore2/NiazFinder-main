@@ -66,7 +66,7 @@ function Checkable({
       onClick={onClick}
       onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); onClick(e as unknown as React.MouseEvent); }}}
       className={cn(
-        'flex size-[18px] items-center justify-center rounded-[5px] border-[1.5px] shrink-0 cursor-pointer select-none transition-all duration-150',
+        'flex size-[18px] max-lg:size-6 items-center justify-center rounded-[5px] border-[1.5px] shrink-0 cursor-pointer select-none transition-all duration-150 touch-target-min',
         checked
           ? 'bg-emerald-600 border-emerald-600 shadow-[0_0_0_2px_rgba(5,150,105,0.15)]'
           : partial
@@ -275,7 +275,7 @@ export function CitySelectorPopup({
               type="button"
               size="sm"
               variant="secondary"
-              className="h-7 text-xs shrink-0"
+              className="h-9 min-h-11 text-xs shrink-0"
               onClick={applySuggestedCity}
             >
               اعمال

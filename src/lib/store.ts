@@ -30,9 +30,13 @@ import {
 import {
   tryDeleteMessage,
   tryEditMessage,
+  tryJoinConversation,
+  tryJoinConversations,
   tryPinMessage,
   tryReactToMessage,
 } from '@/lib/chat/socket-bridge';
+import { mapApiConversationItem } from '@/lib/chat/map-conversation-item';
+import { mergeOtherUserPresence } from '@/lib/chat/merge-presence';
 import { canEditChatMessage } from '@/lib/chat/message-edit';
 import { streamAiAgentChat } from '@/lib/ai-agent/stream-client';
 
@@ -792,9 +796,13 @@ export const useAppStore = create<AppState>((set, get) => ({
     set((state) => {
       const exists = state.conversations.find((c) => c.id === conv.id);
       if (exists) {
+        const otherUser =
+          conv.otherUser && exists.otherUser
+            ? mergeOtherUserPresence(conv.otherUser, exists.otherUser)
+            : conv.otherUser ?? exists.otherUser;
         return {
           conversations: state.conversations.map((c) =>
-            c.id === conv.id ? { ...c, ...conv } : c
+            c.id === conv.id ? { ...c, ...conv, otherUser } : c
           ),
         };
       }
@@ -802,6 +810,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         conversations: [conv as Conversation, ...state.conversations],
       };
     });
+    tryJoinConversation(conv.id);
   },
   activeConversationId: null,
   setActiveConversationId: (id) =>
@@ -1137,18 +1146,23 @@ export const useAppStore = create<AppState>((set, get) => ({
   fetchConversations: async () => {
     try {
       const res = await apiFetch<{ conversations: any[] }>('/api/chat');
+      let mapped: Conversation[] = [];
       set((state) => {
         const now = Date.now();
-        const mapped: Conversation[] = res.conversations.map((c: any) => {
+        mapped = res.conversations.map((c: any) => {
           const typingAt = state.typingActivityByConvId[c.id];
           const isTyping =
             typingAt != null && now - typingAt < 3500;
+          const prev = state.conversations.find((p) => p.id === c.id);
+          const otherUser = prev?.otherUser
+            ? mergeOtherUserPresence(c.otherUser, prev.otherUser)
+            : c.otherUser;
           return {
             id: c.id,
             requestId: c.requestId,
             contactPointId: c.contactPointId,
             businessProfileId: c.businessProfileId,
-            otherUser: c.otherUser,
+            otherUser,
             lastMessage: c.lastMessage,
             lastMessageAt: c.lastMessageAt ? String(c.lastMessageAt) : undefined,
             unreadCount: c.unreadCount ?? 0,
@@ -1159,6 +1173,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         });
         return { conversations: mapped, error: null };
       });
+      tryJoinConversations(mapped.map((c) => c.id));
     } catch (err: unknown) {
       const message =
         err instanceof ApiClientError
@@ -1173,7 +1188,14 @@ export const useAppStore = create<AppState>((set, get) => ({
   fetchConversationMessages: async (id: string) => {
     set({ isLoading: true });
     try {
-      const res = await apiFetch<{ data: any[]; pagination: any }>(`/api/chat/${id}`);
+      const res = await apiFetch<{
+        data: any[];
+        pagination: any;
+        conversation?: Parameters<typeof mapApiConversationItem>[0];
+      }>(`/api/chat/${id}`);
+      if (res.conversation) {
+        get().addOrUpdateConversation(mapApiConversationItem(res.conversation));
+      }
       const mapped: Message[] = res.data.map((m: any) => ({
         id: m.id,
         conversationId: id,

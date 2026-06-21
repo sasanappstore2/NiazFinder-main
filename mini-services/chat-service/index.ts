@@ -245,8 +245,11 @@ void setupRedisScaling();
 
 function handleCommRedisEvent(type: string, payload: Record<string, unknown>) {
   if (type === 'message:new') {
-    const p = payload as MessageBroadcast;
+    const p = payload as MessageBroadcast & { recipientUserId?: string };
     io.to(`conv:${p.conversationId}`).emit('message:new', p);
+    if (p.recipientUserId) {
+      io.to(`user:${p.recipientUserId}`).emit('message:new', p);
+    }
     return;
   }
   if (type === 'message:read-receipt') {
@@ -287,15 +290,23 @@ function handleCommRedisEvent(type: string, payload: Record<string, unknown>) {
   }
   if (type === 'message:react') {
     const conversationId = payload.conversationId as string;
+    const eventType =
+      (payload.eventType as string) || 'message:reaction-added';
     if (conversationId) {
-      io.to(`conv:${conversationId}`).emit('message:react', payload);
+      io.to(`conv:${conversationId}`).emit(eventType, payload);
     }
     return;
   }
   if (type === 'message:edit') {
     const conversationId = payload.conversationId as string;
     if (conversationId) {
-      io.to(`conv:${conversationId}`).emit('message:edited', payload);
+      const messageId =
+        (payload.messageId as string | undefined) ??
+        (payload.id as string | undefined);
+      io.to(`conv:${conversationId}`).emit('message:edited', {
+        ...payload,
+        messageId,
+      });
     }
     return;
   }
@@ -310,6 +321,13 @@ function handleCommRedisEvent(type: string, payload: Record<string, unknown>) {
     const conversationId = payload.conversationId as string;
     if (conversationId) {
       io.to(`conv:${conversationId}`).emit('message:pin-changed', payload);
+    }
+    return;
+  }
+  if (type === 'conversation:unread-update') {
+    const conversationId = payload.conversationId as string;
+    if (conversationId) {
+      io.to(`conv:${conversationId}`).emit('conversation:unread-update', payload);
     }
     return;
   }
@@ -457,18 +475,22 @@ io.on('connection', (socket: AuthenticatedSocket) => {
     if (!payload.conversationId || !payload.content?.trim() || !payload.clientTempId) return;
     const participants = conversationCache.get(payload.conversationId);
     if (!participants?.has(userId)) return;
+    const recipientUserId = participants.get(userId);
     fanoutMessageNew(
       io,
-      buildInstantBroadcast(
-        {
-          conversationId: payload.conversationId,
-          content: payload.content,
-          type: payload.type,
-          clientTempId: payload.clientTempId,
-        },
-        userId,
-        payload.clientTempId
-      )
+      {
+        ...buildInstantBroadcast(
+          {
+            conversationId: payload.conversationId,
+            content: payload.content,
+            type: payload.type,
+            clientTempId: payload.clientTempId,
+          },
+          userId,
+          payload.clientTempId
+        ),
+        recipientUserId,
+      }
     );
   });
 
@@ -491,10 +513,11 @@ io.on('connection', (socket: AuthenticatedSocket) => {
 
     const cached = conversationCache.get(conversationId);
     if (cached?.has(userId)) {
-      fanoutMessageNew(
-        io,
-        buildInstantBroadcast(instantPayload, userId, tempId, instantReplyTo)
-      );
+      const recipientUserId = cached.get(userId);
+      fanoutMessageNew(io, {
+        ...buildInstantBroadcast(instantPayload, userId, tempId, instantReplyTo),
+        recipientUserId,
+      });
       void persistMessageSend(io, userId, instantPayload, replyToId, cached);
       return;
     }
@@ -509,10 +532,11 @@ io.on('connection', (socket: AuthenticatedSocket) => {
         socket.emit('error', { message: 'Access denied to conversation' });
         return;
       }
-      fanoutMessageNew(
-        io,
-        buildInstantBroadcast(instantPayload, userId, tempId, instantReplyTo)
-      );
+      const recipientUserId = resolved.map.get(userId);
+      fanoutMessageNew(io, {
+        ...buildInstantBroadcast(instantPayload, userId, tempId, instantReplyTo),
+        recipientUserId,
+      });
       await persistMessageSend(io, userId, instantPayload, replyToId, resolved.map);
     })();
   });
@@ -591,7 +615,7 @@ io.on('connection', (socket: AuthenticatedSocket) => {
 
       const convId = message.conversationId;
       io.to(`conv:${convId}`).emit('message:edited', {
-        id: updated.id,
+        messageId: updated.id,
         conversationId: convId,
         content: updated.content,
         editedAt: updated.editedAt?.toISOString(),

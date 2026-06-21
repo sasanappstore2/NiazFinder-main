@@ -811,7 +811,7 @@ export function NeedIntakePanel({
       {step === 'publishing' ? <IntakePublishingOverlay /> : null}
       <div
         className={cn(
-          'intake-flow intake-flow--compact overflow-guard pb-[calc(var(--mobile-nav-offset)+0.5rem)] lg:pb-0',
+          'intake-flow intake-flow--compact overflow-guard',
           showLiveSummary && 'layout-golden-split layout-golden-split--intake'
         )}
       >

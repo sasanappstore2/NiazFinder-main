@@ -3,7 +3,7 @@ import { toAsciiDigits } from '@/lib/need-intake/extract-property-slots';
 
 /** Whether an intake field is already satisfied from answers or parsed slots. */
 export function isIntakeFieldAnswered(
-  field: FieldSchema,
+  field: Pick<FieldSchema, 'key'>,
   answers: Record<string, unknown>,
   parsed: ParsedIntent
 ): boolean {

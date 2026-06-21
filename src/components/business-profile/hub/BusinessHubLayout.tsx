@@ -31,7 +31,7 @@ function BusinessHubBody({
   const { activeTask, refreshing } = useBusinessHub();
 
   return (
-    <div className="space-y-6 pb-24 sm:pb-8">
+    <div className="space-y-6 pb-24 lg:pb-8">
       <BusinessHubHeader />
       <BusinessHubProgress />
       <BusinessHubTaskGrid />

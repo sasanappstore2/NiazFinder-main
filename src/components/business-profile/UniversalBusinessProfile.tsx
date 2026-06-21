@@ -71,7 +71,7 @@ function UniversalBusinessProfileInner({ businessId: businessIdProp }: Props) {
       return;
     }
     if (cta === 'chat' || cta === 'book' || cta === 'quote') {
-      const { startConversation, navigateToConversation } = await import(
+      const { startConversation, syncAndNavigateToConversation } = await import(
         '@/lib/contact/start-conversation'
       );
       if (!isAuthenticated || !authToken) {
@@ -79,11 +79,11 @@ function UniversalBusinessProfileInner({ businessId: businessIdProp }: Props) {
         return;
       }
       try {
-        const { conversationId } = await startConversation(
+        const result = await startConversation(
           { otherUserId: business.userId, requestId },
           authToken
         );
-        navigateToConversation(router, conversationId);
+        syncAndNavigateToConversation(router, result);
       } catch {
         const { toast } = await import('sonner');
         toast.error('خطا در باز کردن چت');

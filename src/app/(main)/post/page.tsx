@@ -44,7 +44,7 @@ function PostNeedContent() {
       <PageContainer
         width="intake"
         as="section"
-        className="intake-page--compact pb-[calc(var(--mobile-nav-offset)+0.5rem)] sm:pb-8 lg:pb-6"
+        className="intake-page--compact sm:pb-8"
       >
         <Separator className="intake-page-separator my-2 sm:my-3 lg:my-2" />
         <div className="intake-page-head intake-page-head--slim">

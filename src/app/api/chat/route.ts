@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { fetchLivePresence } from '@/lib/chat/live-presence';
+import { resolveUserOnline } from '@/lib/chat/resolve-online';
 import {
   ensurePlatformAiConversationForUser,
   isPlatformAiUserId,
@@ -152,7 +153,14 @@ export async function GET(request: NextRequest) {
       ...conversation,
       otherUser: {
         ...conversation.otherUser,
-        online: livePresence[conversation.otherUser.id] ?? false,
+        online: resolveUserOnline(
+          conversation.otherUser.id,
+          livePresence,
+          {
+            online: conversation.otherUser.online,
+            lastSeenAt: conversation.otherUser.lastSeenAt,
+          }
+        ),
       },
     }));
 
@@ -304,7 +312,7 @@ export async function POST(request: NextRequest) {
             firstName: other.firstName,
             lastName: other.lastName,
             avatar: other.avatar,
-            online: livePresence[other.id] ?? false,
+            online: livePresence[other.id] ?? other.online ?? false,
             lastSeenAt: other.lastSeenAt?.toISOString() ?? null,
           },
           businessContext: existingConv.contactPoint

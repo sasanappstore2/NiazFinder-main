@@ -53,9 +53,41 @@ body {
   width: 100%;
 }
 
-/* Bottom nav padding when main shell shows mobile nav */
+/* Bottom nav padding when main shell shows app bottom nav (mobile/tablet only) */
 .has-mobile-nav {
   padding-bottom: var(--mobile-nav-offset);
+}
+
+@media (min-width: 1024px) {
+  .has-mobile-nav {
+    padding-bottom: 0;
+  }
+}
+
+/* Sheet/drawer bottom safe area */
+.sheet-safe-area {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+}
+
+.sheet-safe-area-lg {
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+}
+
+/* Hover-only reveal with touch fallback — always visible on coarse pointer */
+.hover-reveal {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hover-reveal {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .group:hover .hover-reveal,
+  .group:focus-within .hover-reveal {
+    opacity: 1;
+  }
 }
 
 /* Extra padding when a fixed contact bar sits above the bottom nav (need detail) */

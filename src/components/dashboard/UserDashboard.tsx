@@ -411,13 +411,13 @@ export function UserDashboard() {
         <div>
           <Tabs value={activeTab} onValueChange={handleTabChange} dir="rtl" className="w-full">
             <TabsList className="mb-6 flex h-auto w-full gap-1 overflow-x-auto rounded-xl border border-border/40 bg-muted/60 p-1.5 shadow-sm backdrop-blur-xs flex-nowrap md:flex-wrap">
-              <TabsTrigger value="requests" className="flex-1 min-w-0 shrink-0 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
+              <TabsTrigger value="requests" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
                 <ClipboardList className="w-4 h-4 ml-1.5" />نیازهای من
               </TabsTrigger>
-              <TabsTrigger value="wallet" className="flex-1 min-w-0 shrink-0 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
+              <TabsTrigger value="wallet" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
                 <Wallet className="w-4 h-4 ml-1.5" />کیف پول
               </TabsTrigger>
-              <TabsTrigger value="profile" className="flex-1 min-w-0 shrink-0 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
+              <TabsTrigger value="profile" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
                 <UserIcon className="w-4 h-4 ml-1.5" />پروفایل
               </TabsTrigger>
             </TabsList>

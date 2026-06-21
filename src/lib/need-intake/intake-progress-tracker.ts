@@ -145,7 +145,7 @@ function isDraftFieldFilled(draft: NeedDraft | null, fieldKey: string): boolean 
   const categorySlug = entities.subcategorySlug || entities.categorySlug || '';
   const meta = getMergedFieldsForCategory(categorySlug, 'need').find((f) => f.key === fieldKey);
   if (meta) {
-    return isIntakeFieldAnswered(meta as FieldSchema, answers, parsed);
+    return isIntakeFieldAnswered(meta, answers, parsed);
   }
 
   const ans = answers[fieldKey];

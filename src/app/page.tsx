@@ -1,5 +1,3 @@
-'use client';
-
 import { AppShell } from '@/components/layout/AppShell';
 import { HomeLeadLanding } from '@/components/home/HomeLeadLanding';
 

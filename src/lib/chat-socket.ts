@@ -15,6 +15,7 @@ import {
   setChatSocketConnected,
 } from '@/lib/chat/socket-bridge';
 import { bindChatSocketListeners } from '@/lib/chat/chat-socket-listeners';
+import { fetchAndDispatchPendingIncomingCall } from '@/lib/voice/fetch-pending-incoming-call';
 
 let socketInstance: Socket | null = null;
 let reconnectAttempts = 0;
@@ -128,12 +129,12 @@ export function useChatSocket(): ChatSocketAPI {
     }
 
     if (socketRef.current || socketInstance) {
-      const existing = socketRef.current ?? socketInstance!;
-      existing.auth = { token: authToken };
-      socketRef.current = existing;
-      socketInstance = existing;
-      existing.connect();
-      return;
+      const stale = socketRef.current ?? socketInstance!;
+      stale.removeAllListeners();
+      stale.disconnect();
+      socketRef.current = null;
+      socketInstance = null;
+      listenersBoundRef.current = false;
     }
 
     const namespaceUrl =
@@ -172,7 +173,15 @@ export function useChatSocket(): ChatSocketAPI {
       const activeId = useAppStore.getState().activeConversationId;
       if (activeId) {
         socketInstance!.emit('join:conversation', activeId);
+        void useAppStore.getState().fetchConversationMessages(activeId).catch(() => {});
       }
+
+      const convIds = useAppStore.getState().conversations.map((c) => c.id);
+      for (const convId of convIds) {
+        socketInstance!.emit('join:conversation', convId);
+      }
+
+      void fetchAndDispatchPendingIncomingCall();
     });
 
     socketInstance.on('disconnect', (reason) => {

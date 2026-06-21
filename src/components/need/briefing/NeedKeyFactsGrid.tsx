@@ -78,7 +78,7 @@ export function NeedKeyFactsGrid({ request, className }: NeedKeyFactsGridProps) 
   });
 
   return (
-    <div className={cn('grid grid-cols-3 gap-2 sm:gap-3', className)} aria-label="اطلاعات کلیدی">
+    <div className={cn('grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3', className)} aria-label="اطلاعات کلیدی">
       <FactCell icon={Wallet} label="بودجه" value={budget} highlight />
       <FactCell icon={MapPin} label="مکان" value={location} />
       <FactCell icon={Clock} label="مهلت تحویل" value={delivery} />

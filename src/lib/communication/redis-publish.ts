@@ -100,6 +100,8 @@ export type MessageNewPayload = {
     senderFirstName: string;
     senderLastName: string;
   };
+  /** Peer user id — fanout to user room for inbox realtime when not in conv room */
+  recipientUserId?: string;
 };
 
 export async function publishMessageNew(payload: MessageNewPayload): Promise<void> {

@@ -1,40 +1,33 @@
-# Mobile Shell (فاز ۲۶)
+# Intake Mobile Layout (وضعیت فعلی)
 
-ویزارد `/post` در موبایل (< 768px) تمام‌صفحه با header/footer ثابت.
+> **توجه:** shell تمام‌صفحه موبایل (`IntakeMobileShell`) حذف شده است. `/post` از AppShell استاندارد استفاده می‌کند.
 
-## ساختار
+## رفتار فعلی
 
-```
-IntakeMobileShell
-  ├── header (back + title + مرحله N/4)
-  ├── body (scroll)
-  └── footer (CTA 56px)
-```
+| عنصر | موبایل |
+|------|--------|
+| Header سایت | visible |
+| Bottom nav | visible (`lg:hidden`) |
+| Padding پایین | `intake-panel-card__body` + `--mobile-nav-offset` |
+| Sticky CTA | `.intake-sticky-actions` بالای nav |
+| خلاصه زنده | `IntakeMobileSummarySheet` (bottom sheet) |
 
-## AppShell
-
-در `/post` + موبایل:
-- هدر سایت پنهان
-- فوتر و bottom nav پنهان
-- `h-dvh` fullscreen
-
-## میانبرها
-
-- **بازگشت header** → مرحله قبل (need → خانه)
-- **سوایپ/دکمه back مرورگر** → `useIntakeSwipeBackGuard`
-
-## فایل‌ها
+## فایل‌های کلیدی
 
 | فایل | نقش |
 |------|-----|
-| `IntakeMobileShell.tsx` | UI shell |
-| `intake-mobile-cta.ts` | برچسب/وضعیت CTA |
-| `use-intake-mobile-chrome.ts` | تشخیص fullscreen |
-| `use-intake-swipe-back-guard.ts` | guard popstate |
+| [`NeedIntakePanel.tsx`](../src/components/need-intake/NeedIntakePanel.tsx) | layout اصلی + `pb-[calc(var(--mobile-nav-offset)+0.5rem)]` |
+| [`intake-golden.css`](../src/styles/intake-golden.css) | sticky actions، padding موبایل |
+| [`use-intake-mobile-chrome.ts`](../src/hooks/use-intake-mobile-chrome.ts) | همیشه `false` — fullscreen غیرفعال |
+| [`IntakeMobileSummarySheet.tsx`](../src/components/need-intake/IntakeMobileSummarySheet.tsx) | sheet خلاصه |
 
-## تست
+## QA
+
+[`INTAKE_MOBILE_QA.md`](INTAKE_MOBILE_QA.md) — چک‌لیست ۴۰ موردی (بدون انتظار fullscreen).
+
+## تست smoke
 
 ```bash
-npm run test:mobile-shell
-npm run verify:intake-phase -- --phase 26
+npm run smoke:viewport-overflow   # شامل /post
+npm run smoke:mobile-a11y
 ```

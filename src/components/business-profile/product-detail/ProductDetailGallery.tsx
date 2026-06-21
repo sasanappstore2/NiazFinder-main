@@ -64,7 +64,7 @@ export function ProductDetailGallery({
               sizes="(max-width: 1024px) 100vw, 61vw"
               priority
             />
-            <span className="absolute bottom-[13px] left-[13px] flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-xs text-muted-foreground opacity-0 shadow-sm backdrop-blur transition group-hover:opacity-100">
+            <span className="hover-reveal absolute bottom-[13px] left-[13px] flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur">
               <ZoomIn className="size-3.5" aria-hidden />
               بزرگ‌نمایی
             </span>

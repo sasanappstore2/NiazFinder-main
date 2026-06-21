@@ -1,5 +1,11 @@
 import type { NextConfig } from "next";
 import { buildContentSecurityPolicy } from "./src/lib/security/content-security-policy";
+import {
+  logAllowedDevOriginsIfConfigured,
+  parseAllowedDevOrigins,
+} from "./src/lib/dev/allowed-dev-origins";
+
+logAllowedDevOriginsIfConfigured();
 
 /**
  * Legacy → canonical 301 redirects.
@@ -71,10 +77,7 @@ function buildMinioRemotePatterns(): NonNullable<NextConfig["images"]>["remotePa
 const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: false,
-  allowedDevOrigins: [
-    "localhost:3000",
-    "127.0.0.1:3000",
-  ],
+  allowedDevOrigins: parseAllowedDevOrigins(),
   async headers() {
     const commonHeaders = [
       { key: "X-Frame-Options", value: "SAMEORIGIN" },

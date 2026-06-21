@@ -30,6 +30,7 @@ import {
 } from '@/lib/need-intake/publish-sync-fallback';
 import { publishRequestSchema } from '@/lib/queue/schemas/intake-publish';
 import { publishIntakeAiTask, rabbitMQEnabled } from '@/lib/queue/rabbitmq-client';
+import { captureTrainingExampleAsync } from '@/intake/training/captureTrainingExample';
 
 function enqueueTrainingCapture(
   draft: NeedDraft,

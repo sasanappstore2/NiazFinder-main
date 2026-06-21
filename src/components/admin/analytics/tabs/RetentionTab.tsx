@@ -64,30 +64,50 @@ export function RetentionTab({ hub }: { hub: AnalyticsHubContext }) {
             {explorer.results.length === 0 ? (
               <p className="py-4 text-center text-sm text-(--color-secondaryText)">نتیجه‌ای یافت نشد</p>
             ) : (
-              <div className="overflow-x-auto rounded-lg border border-(--color-mainBorder)">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="border-b border-(--color-mainBorder) bg-muted/40 text-right">
-                      {Object.keys(explorer.results[0] ?? {}).map((k) => (
-                        <th key={k} className="p-2 font-medium">
-                          {k}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {explorer.results.map((row, i) => (
-                      <tr key={i} className="border-b border-(--color-mainBorder)/50">
-                        {Object.values(row).map((v, j) => (
-                          <td key={j} className="p-2 font-mono">
-                            {String(v ?? '—')}
-                          </td>
+              <>
+                <div className="hidden lg:block overflow-x-auto rounded-lg border border-(--color-mainBorder)">
+                  <table className="w-full min-w-[480px] text-xs">
+                    <thead>
+                      <tr className="border-b border-(--color-mainBorder) bg-muted/40 text-right">
+                        {Object.keys(explorer.results[0] ?? {}).map((k) => (
+                          <th key={k} className="p-2 font-medium">
+                            {k}
+                          </th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {explorer.results.map((row, i) => (
+                        <tr key={i} className="border-b border-(--color-mainBorder)/50">
+                          {Object.values(row).map((v, j) => (
+                            <td key={j} className="p-2 font-mono">
+                              {String(v ?? '—')}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="space-y-3 lg:hidden">
+                  {explorer.results.map((row, i) => (
+                    <div
+                      key={i}
+                      className="min-w-0 overflow-guard rounded-lg border border-(--color-mainBorder) bg-card p-3 text-sm"
+                    >
+                      {Object.entries(row).map(([key, value]) => (
+                        <div
+                          key={key}
+                          className="flex items-start justify-between gap-3 border-b border-(--color-mainBorder)/40 py-2 last:border-0"
+                        >
+                          <span className="shrink-0 text-(--color-secondaryText)">{key}</span>
+                          <span className="min-w-0 truncate font-mono text-end">{String(value ?? '—')}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         )}

@@ -47,7 +47,7 @@ export interface CategoryMatchCandidate {
   score: number;
   confidence: number;
   matchedRules: string[];
-  source: 'registry';
+  source: 'registry' | 'semantic';
 }
 
 export interface CategoryMatchResult {

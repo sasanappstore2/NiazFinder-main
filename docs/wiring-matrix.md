@@ -1,8 +1,8 @@
 # NiazFinder Wiring Matrix
 
-Generated: 2026-06-19T14:26:03.924Z
+Generated: 2026-06-21T18:48:25.037Z
 
-API routes: 212 | User sections: 10 | Admin panels: 30
+API routes: 218 | User sections: 10 | Admin panels: 30
 
 ## User-facing sections
 

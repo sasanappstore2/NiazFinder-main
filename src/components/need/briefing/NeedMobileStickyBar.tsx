@@ -49,11 +49,11 @@ export function NeedMobileStickyBar({
             variant="default"
             hasPhone={false}
             showProfile={false}
-            className="min-w-0 flex-1 gap-2 [&>button]:h-10 [&>button]:min-h-10 [&>button]:flex-1 [&>button]:text-sm"
+            className="min-w-0 flex-1 gap-2 [&>button]:h-11 [&>button]:min-h-11 [&>button]:flex-1 [&>button]:text-sm"
           />
           <Button
             variant="outline"
-            className="h-10 min-h-10 flex-1 text-sm"
+            className="h-11 min-h-11 flex-1 text-sm"
             asChild
           >
             <Link href={routeBuilder.needPropose(requestId)}>

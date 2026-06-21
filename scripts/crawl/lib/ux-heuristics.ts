@@ -5,6 +5,10 @@ const CONSOLE_NOISE = [
   /favicon\.ico/i,
   /webpack-hmr/i,
   /chrome-extension:/i,
+  /contentscript\.js/i,
+  /ObjectMultiplex/i,
+  /MaxListenersExceededWarning/i,
+  /preloaded using link preload but not used/i,
   /Download the React DevTools/i,
   /\[Fast Refresh\]/i,
   /sourceMappingURL/i,
@@ -45,9 +49,15 @@ export async function runUxHeuristics(
       }
     });
     const emptyButtons: string[] = [];
+    const smallTouchTargets: string[] = [];
     document.querySelectorAll('button').forEach((btn) => {
       const label = (btn.textContent ?? '').trim() || btn.getAttribute('aria-label') || '';
       if (!label && !btn.querySelector('svg, img')) emptyButtons.push(btn.outerHTML.slice(0, 80));
+      const rect = btn.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0 && (rect.width < 40 || rect.height < 40)) {
+        const hint = label || btn.getAttribute('title') || btn.outerHTML.slice(0, 60);
+        smallTouchTargets.push(hint);
+      }
     });
     return {
       horizontalOverflow: doc.scrollWidth > doc.clientWidth + 2,
@@ -59,6 +69,7 @@ export async function runUxHeuristics(
       h1Text: (h1?.textContent ?? '').trim(),
       brokenImages,
       emptyButtons: emptyButtons.slice(0, 5),
+      smallTouchTargets: smallTouchTargets.slice(0, 8),
       title: document.title,
     };
   });
@@ -127,6 +138,20 @@ export async function runUxHeuristics(
       kind: 'ux-empty-button',
       message: `${layout.emptyButtons.length} button(s) without label`,
       details: { samples: layout.emptyButtons },
+      timestamp: ts,
+    });
+  }
+
+  const smallTargets = (layout as { smallTouchTargets?: string[] }).smallTouchTargets ?? [];
+  if (smallTargets.length > 0) {
+    issues.push({
+      id: makeId(),
+      round,
+      url,
+      severity: 'info',
+      kind: 'ux-small-touch-target',
+      message: `${smallTargets.length} interactive control(s) below 40px`,
+      details: { samples: smallTargets },
       timestamp: ts,
     });
   }

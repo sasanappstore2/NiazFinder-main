@@ -9,7 +9,7 @@ import { NotificationsPanel } from '@/components/chat/NotificationsPanel';
 export default function NotificationsRoute() {
   return (
     <AuthGuard>
-      <PageContainer width="medium">
+      <PageContainer width="medium" className="min-w-0">
         <Breadcrumb />
         <Separator className="my-4" />
         <NotificationsPanel />

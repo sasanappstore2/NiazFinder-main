@@ -6,7 +6,9 @@ export { fib, COMPOSER_MAX_WIDTH } from '@/components/home/ai-lead/ai-lead-token
 export const intakeComposerSurface = cn(
   'overflow-hidden rounded-2xl border border-border/60 bg-card/90 p-1.5',
   'shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] backdrop-blur-xl',
-  'transition-all duration-300 focus-within:border-primary/35',
+  'transition-all duration-300 focus-within:border-primary/45',
+  'focus-within:ring-2 focus-within:ring-primary/15',
+  'focus-within:shadow-[0_10px_34px_-14px_color-mix(in_oklch,var(--primary)_30%,transparent)]',
   'dark:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.45)]',
   'sm:rounded-3xl sm:p-2'
 );

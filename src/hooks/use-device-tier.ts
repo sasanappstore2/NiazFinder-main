@@ -34,7 +34,7 @@ export function useDeviceTier(): DeviceTier {
   return tier;
 }
 
-/** Viewport below laptop breakpoint (mobile bottom nav visible). */
+/** Viewport below laptop breakpoint (legacy handheld-only UI). */
 export function useHandheldViewport(): boolean {
   const tier = useDeviceTier();
   return tier === 'phone' || tier === 'tablet';

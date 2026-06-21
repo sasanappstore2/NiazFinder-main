@@ -4,6 +4,8 @@ import { getAuthUser } from '@/lib/auth';
 import { canUsersVoiceCall } from '@/lib/voice/can-call';
 import { buildIceServersFromEnv } from '@/lib/voice/turn-credentials';
 import { persistCallLogMessage } from '@/lib/voice/call-log-message';
+import { fetchLivePresence } from '@/lib/chat/live-presence';
+import { resolveUserOnline } from '@/lib/chat/resolve-online';
 
 const STALE_RINGING_MS = 2 * 60 * 1000;
 
@@ -103,14 +105,13 @@ export async function POST(request: NextRequest) {
 
     const callee = await db.user.findUnique({
       where: { id: calleeId },
-      select: { online: true },
+      select: { online: true, lastSeenAt: true },
     });
-    if (!callee?.online) {
-      return NextResponse.json(
-        { error: 'کاربر آفلاین است یا در دسترس نیست', unavailableReason: 'offline' as const },
-        { status: 422 }
-      );
-    }
+    const livePresence = await fetchLivePresence([calleeId]);
+    const calleeOnline = resolveUserOnline(calleeId, livePresence, {
+      online: callee?.online,
+      lastSeenAt: callee?.lastSeenAt?.toISOString() ?? null,
+    });
 
     const calleeBusy = await db.voiceCall.findFirst({
       where: {
@@ -143,6 +144,8 @@ export async function POST(request: NextRequest) {
       callId: call.id,
       conversationId: call.conversationId,
       iceServers,
+      /** Hint for UI — call is always attempted; callee may still miss ring if socket is down. */
+      calleePresence: calleeOnline ? ('online' as const) : ('offline' as const),
     });
   } catch (error) {
     console.error('POST /api/calls error:', error);

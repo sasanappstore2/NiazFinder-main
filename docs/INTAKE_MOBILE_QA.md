@@ -1,15 +1,17 @@
 # چک‌لیست QA موبایل — ثبت نیاز (/post)
 
-۴۰ مورد برای flow کامل موبایل (< 768px) — فاز ۳۰.۱.
+۴۰ مورد برای flow کامل موبایل (< 768px). **shell استاندارد AppShell** (header + bottom nav visible) — نه fullscreen wizard.
+
+مرجع: [`INTAKE_MOBILE_SHELL.md`](INTAKE_MOBILE_SHELL.md)، [`MOBILE_UX_ROADMAP.md`](MOBILE_UX_ROADMAP.md)
 
 ## Shell و ناوبری
 
-- [ ] **01.** هدر سایت پنهان در /post موبایل
-- [ ] **02.** bottom nav پنهان
-- [ ] **03.** shell: back + عنوان + مرحله N/4
-- [ ] **04.** footer CTA ۵۶px ثابت
-- [ ] **05.** swipe/back مرورگر → مرحله قبل
-- [ ] **06.** 100dvh بدون پرش کیبورد
+- [ ] **01.** هدر سایت visible و readable در /post موبایل
+- [ ] **02.** bottom nav visible و CTA intake زیر آن پنهان نمی‌شود
+- [ ] **03.** padding پایین panel (`--mobile-nav-offset`) کافی است
+- [ ] **04.** sticky actions بالای bottom nav
+- [ ] **05.** back مرورگر رفتار منطقی (خروج از /post)
+- [ ] **06.** scroll بدون پرش با باز شدن کیبورد
 
 ## مرحله نیاز
 

@@ -17,6 +17,8 @@ import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 import {
   startConversation,
+  syncAndNavigateToConversation,
+  syncConversationAfterStart,
   navigateToConversation,
   ContactAuthRequiredError,
 } from '@/lib/contact/start-conversation';
@@ -50,7 +52,7 @@ export function BusinessContactPickerSheet({
       if (!authToken) return;
       setLoadingId(point.id);
       try {
-        const { conversationId } = await startConversation(
+        const result = await startConversation(
           {
             otherUserId: point.assignee.id,
             requestId,
@@ -60,9 +62,10 @@ export function BusinessContactPickerSheet({
           },
           authToken
         );
+        syncConversationAfterStart(result);
         onOpenChange(false);
-        if (onSelect) onSelect(conversationId);
-        else navigateToConversation(router, conversationId);
+        if (onSelect) onSelect(result.conversationId);
+        else navigateToConversation(router, result.conversationId);
       } catch (e) {
         toast.error(e instanceof Error ? e.message : 'خطا در شروع گفتگو');
       } finally {
@@ -76,7 +79,7 @@ export function BusinessContactPickerSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="max-h-[85vh] rounded-t-2xl px-4 pb-8">
+      <SheetContent side="bottom" className="max-h-[85vh] rounded-t-2xl px-4 sheet-safe-area-lg">
         <SheetHeader className="text-right">
           <div className="flex items-center gap-3">
             {data.business.logo ? (
@@ -171,7 +174,7 @@ export function useBusinessContact() {
       params: OpenBusinessContactParams
     ) => {
       if (!authToken) return;
-      const { conversationId } = await startConversation(
+      const result = await startConversation(
         {
           otherUserId: point.assignee.id,
           requestId: params.requestId,
@@ -181,7 +184,7 @@ export function useBusinessContact() {
         },
         authToken
       );
-      navigateToConversation(router, conversationId);
+      syncAndNavigateToConversation(router, result);
     },
     [authToken, router]
   );

@@ -6,6 +6,6 @@ export const vazirmatn = localFont({
   variable: '--font-vazirmatn',
   weight: '100 900',
   display: 'swap',
-  preload: true,
+  preload: false,
   fallback: ['Tahoma', 'Arial', 'sans-serif'],
 });

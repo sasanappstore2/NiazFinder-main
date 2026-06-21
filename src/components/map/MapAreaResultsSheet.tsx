@@ -99,8 +99,9 @@ export function MapAreaResultsSheet({
       <section
         role="region"
         aria-label={sheetTitle}
+        aria-modal={!peek}
         className={cn(
-          'map-area-results-sheet business-map-mobile-sheet',
+          'map-area-results-sheet business-map-mobile-sheet sheet-safe-area',
           'fixed inset-x-0 bottom-0 z-[701] flex flex-col overflow-hidden',
           'rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.18)]',
           isDragging ? 'transition-none' : 'transition-[height] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]',

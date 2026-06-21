@@ -1,6 +1,10 @@
 import { routeBuilder } from '@/config/routes';
 import type { ProductChatIntro } from '@/lib/chat/product-chat-intro';
 import { sendProductChatIntroMessage } from '@/lib/chat/product-chat-intro';
+import { mapApiConversationItem } from '@/lib/chat/map-conversation-item';
+import { tryJoinConversation } from '@/lib/chat/socket-bridge';
+import { useAppStore } from '@/lib/store';
+import type { Conversation } from '@/lib/types';
 import type { PendingContactIntent } from './constants';
 import { clearPendingContact, savePendingContact } from './pending-contact';
 
@@ -17,6 +21,7 @@ export interface StartConversationParams {
 export interface StartConversationResult {
   conversationId: string;
   existed: boolean;
+  conversation?: Conversation;
 }
 
 export class ContactAuthRequiredError extends Error {
@@ -90,7 +95,18 @@ export async function startConversation(
   return {
     conversationId,
     existed: Boolean(json.message?.includes('قبلاً')),
+    conversation: json.conversation
+      ? mapApiConversationItem(json.conversation)
+      : undefined,
   };
+}
+
+/** Add conversation to store and join socket room before navigation. */
+export function syncConversationAfterStart(result: StartConversationResult): void {
+  if (result.conversation) {
+    useAppStore.getState().addOrUpdateConversation(result.conversation);
+  }
+  tryJoinConversation(result.conversationId);
 }
 
 export function navigateToConversation(
@@ -98,6 +114,14 @@ export function navigateToConversation(
   conversationId: string
 ): void {
   router.push(routeBuilder.chatConversation(conversationId));
+}
+
+export function syncAndNavigateToConversation(
+  router: { push: (url: string) => void },
+  result: StartConversationResult
+): void {
+  syncConversationAfterStart(result);
+  navigateToConversation(router, result.conversationId);
 }
 
 export function requestChatWithAuthGate(

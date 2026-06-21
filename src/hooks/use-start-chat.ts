@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { useAppStore } from '@/lib/store';
 import {
   startConversation,
-  navigateToConversation,
+  syncAndNavigateToConversation,
   ContactAuthRequiredError,
 } from '@/lib/contact/start-conversation';
 import { savePendingContact } from '@/lib/contact/pending-contact';
@@ -28,11 +28,11 @@ export function useStartChat() {
       return;
     }
     try {
-      const { conversationId } = await startConversation(
+      const result = await startConversation(
         { otherUserId, requestId },
         authToken
       );
-      navigateToConversation(router, conversationId);
+      syncAndNavigateToConversation(router, result);
     } catch (e) {
       if (e instanceof ContactAuthRequiredError) {
         setAuthModalOpen(true);

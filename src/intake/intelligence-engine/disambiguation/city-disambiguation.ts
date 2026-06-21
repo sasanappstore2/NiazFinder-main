@@ -112,7 +112,7 @@ async function validateCitySlug(slug: string, candidates: CityCandidate[]): Prom
   const fuseHits = await searchLocationIndex(slug, { limit: 3 });
   const cityHit = fuseHits.find((h) => h.record.type === 'city' && h.record.slug === slug);
   if (cityHit) {
-    return { slug: cityHit.record.slug, name: cityHit.record.label, score: 0.7 };
+    return { slug: cityHit.record.slug, name: cityHit.record.name, score: 0.7 };
   }
   return null;
 }

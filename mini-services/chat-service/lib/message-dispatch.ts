@@ -45,6 +45,9 @@ export function buildInstantBroadcast(
 
 export function fanoutMessageNew(io: Server, broadcast: MessageBroadcast): void {
   io.to(`conv:${broadcast.conversationId}`).emit('message:new', broadcast);
+  if (broadcast.recipientUserId) {
+    io.to(`user:${broadcast.recipientUserId}`).emit('message:new', broadcast);
+  }
 }
 
 export async function persistMessageSideEffects(

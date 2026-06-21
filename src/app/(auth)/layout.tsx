@@ -13,7 +13,7 @@ export default function AuthLayout({
   return (
     <div
       dir="rtl"
-      className="min-h-screen flex items-center justify-center p-4 bg-linear-to-br from-emerald-50 via-background to-emerald-50 dark:from-emerald-950/20 dark:via-background dark:to-emerald-950/20"
+      className="min-h-screen flex items-center justify-center p-4 pb-[max(1rem,env(safe-area-inset-bottom))] bg-linear-to-br from-emerald-50 via-background to-emerald-50 dark:from-emerald-950/20 dark:via-background dark:to-emerald-950/20"
     >
       {/* Decorative background blobs */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
@@ -21,7 +21,7 @@ export default function AuthLayout({
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl" />
       </div>
 
-      <div className="w-full max-w-md">{children}</div>
+      <div className="w-full min-w-0 max-w-md">{children}</div>
     </div>
   );
 }

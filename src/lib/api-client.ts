@@ -21,6 +21,7 @@ function getApiUrl(path: string): string {
 }
 
 import { clearClientAuthTokens, getClientAuthToken } from '@/lib/auth/client-auth';
+import { useAppStore } from '@/lib/store';
 
 // ---------------------------------------------------------------------------
 // Core HTTP helpers
@@ -85,6 +86,7 @@ async function handleErrorResponse(response: Response): Promise<never> {
   // On 401 — clear any stored token so the app can redirect to login
   if (status === 401) {
     clearClientAuthTokens();
+    useAppStore.getState().logout();
   }
 
   throw new ApiClientError(

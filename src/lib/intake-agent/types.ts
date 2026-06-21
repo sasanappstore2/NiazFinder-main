@@ -57,10 +57,13 @@ export type ValidateIntakeResult = {
 export type TechnicalConstraints = {
   requiredFields?: string[];
   optionalFields?: string[];
+  brandDictionary?: string[];
+  exclusions?: Array<{ pattern: string; unless: string[] }>;
   fieldTypes?: Record<string, string>;
   validators?: Record<string, string[]>;
   kind?: string;
   pattern?: string;
   set?: Record<string, string | number>;
   unless?: string[];
+  titleTemplate?: string;
 };

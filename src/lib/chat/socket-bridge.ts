@@ -89,6 +89,12 @@ export function tryJoinConversation(conversationId: string): void {
   joinConversationFn?.(conversationId);
 }
 
+export function tryJoinConversations(conversationIds: string[]): void {
+  for (const id of conversationIds) {
+    if (id) joinConversationFn?.(id);
+  }
+}
+
 export function isChatSocketConnected(): boolean {
   return socketConnectedFlag || (isConnectedFn?.() ?? false);
 }

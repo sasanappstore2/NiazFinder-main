@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function HelpPage() {
   return (
-    <PageContainer width="medium" className="pb-16">
+    <PageContainer width="medium" className="min-w-0 pb-16">
       <Breadcrumb />
       <Separator className="my-4" />
 
@@ -25,7 +25,7 @@ export default function HelpPage() {
       </p>
 
       <div className="grid gap-4">
-        <section id="intake" className="rounded-2xl border border-border/60 bg-card p-6 scroll-mt-24">
+        <section id="intake" className="min-w-0 overflow-guard rounded-2xl border border-border/60 bg-card p-4 sm:p-6 scroll-mt-24">
           <h2 className="font-semibold mb-2">ثبت نیاز (ویزارد /post)</h2>
           <p className="text-sm text-muted-foreground mb-4">
             فرم چهارمرحله‌ای ثبت نیاز: نیاز، توضیحات، دسته و مکان، پیش‌نمایش.

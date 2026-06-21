@@ -33,7 +33,7 @@ export function IntakeMobileSummarySheet({
           size="sm"
           className={cn(
             'gap-1.5',
-            inline ? 'h-7 px-2 text-xs' : 'gap-2 shadow-md',
+            inline ? 'min-h-11 px-3 text-xs' : 'min-h-11 gap-2 shadow-md',
             className
           )}
           aria-label={INTAKE_COPY.liveSummaryAria}
@@ -42,7 +42,7 @@ export function IntakeMobileSummarySheet({
           {INTAKE_COPY.liveSummaryTitle}
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="max-h-[70vh] rounded-t-2xl">
+      <SheetContent side="bottom" className="max-h-[70vh] rounded-t-2xl sheet-safe-area-lg">
         <SheetHeader className="text-right">
           <SheetTitle>{INTAKE_COPY.liveSummaryTitle}</SheetTitle>
         </SheetHeader>

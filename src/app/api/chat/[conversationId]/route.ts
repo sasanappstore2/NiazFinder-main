@@ -12,6 +12,7 @@ import {
   findMessageByClientTempId,
 } from '@/lib/chat/prisma-message';
 import { mapDbMessageToClient, type DbMessageRow } from '@/lib/chat/message-map';
+import { getConversationDetailForUser } from '@/lib/chat/conversation-detail';
 import type { Message } from '@/lib/types';
 
 // ============ TYPES ============
@@ -53,21 +54,12 @@ export async function GET(
     }
 
     // Check conversation exists and user is a participant
-    const conversation = await db.conversation.findUnique({
-      where: { id: conversationId },
-    });
+    const conversationDetail = await getConversationDetailForUser(conversationId, user.id);
 
-    if (!conversation) {
+    if (!conversationDetail) {
       return NextResponse.json(
-        { error: 'گفتگو مورد نظر یافت نشد' },
+        { error: 'گفتگو مورد نظر یافت نشد یا دسترسی ندارید' },
         { status: 404 }
-      );
-    }
-
-    if (conversation.userId1 !== user.id && conversation.userId2 !== user.id) {
-      return NextResponse.json(
-        { error: 'شما دسترسی به این گفتگو ندارید' },
-        { status: 403 }
       );
     }
 
@@ -124,7 +116,10 @@ export async function GET(
       },
     };
 
-    return NextResponse.json(response);
+    return NextResponse.json({
+      conversation: conversationDetail,
+      ...response,
+    });
   } catch (error) {
     console.error('Chat messages GET error:', error);
     return NextResponse.json(
@@ -353,6 +348,7 @@ export async function POST(
       clientTempId,
       replyToId: replyToMeta?.id,
       replyTo: replyToMeta,
+      recipientUserId: otherUserId,
     };
 
     void publishMessageNew(fanoutPayload);

@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/lib/store';
 import {
   startConversation,
+  syncConversationAfterStart,
   navigateToConversation,
 } from '@/lib/contact/start-conversation';
 import { trackAnalyticsEvent } from '@/lib/analytics/track';
@@ -79,14 +80,15 @@ export function ProposalSubmitSheet({ requestId, requestTitle }: ProposalSubmitS
           const detail = await fetchRequestDetail(requestId);
           const ownerId = detail?.user?.id;
           if (ownerId && ownerId !== currentUser.id) {
-            const { conversationId } = await startConversation(
+            const result = await startConversation(
               { otherUserId: ownerId, requestId },
               authToken
             );
+            syncConversationAfterStart(result);
             toast.info('می‌خواهید به کارفرما پیام دهید؟', {
               action: {
                 label: 'باز کردن چت',
-                onClick: () => navigateToConversation(router, conversationId),
+                onClick: () => navigateToConversation(router, result.conversationId),
               },
             });
           }

@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import {
   startConversation,
-  navigateToConversation,
+  syncAndNavigateToConversation,
   ContactAuthRequiredError,
 } from '@/lib/contact/start-conversation';
 import { savePendingContact } from '@/lib/contact/pending-contact';
@@ -39,8 +39,8 @@ function NewChatContent() {
 
     let cancelled = false;
     void startConversation({ otherUserId: userId, requestId }, authToken)
-      .then(({ conversationId }) => {
-        if (!cancelled) navigateToConversation(router, conversationId);
+      .then((result) => {
+        if (!cancelled) syncAndNavigateToConversation(router, result);
       })
       .catch((e) => {
         if (cancelled) return;

@@ -18,7 +18,7 @@ export function BusinessHubMobileNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 pb-[max(0px,env(safe-area-inset-bottom))] backdrop-blur lg:hidden"
       aria-label="منوی کسب‌وکار"
     >
       <div className="mx-auto flex max-w-lg">
@@ -30,7 +30,7 @@ export function BusinessHubMobileNav() {
               type="button"
               onClick={() => setActiveTask(id)}
               className={cn(
-                'flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-medium',
+                'flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium touch-target-min',
                 active ? 'text-emerald-700 dark:text-emerald-400' : 'text-muted-foreground'
               )}
             >

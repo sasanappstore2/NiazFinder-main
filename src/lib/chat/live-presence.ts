@@ -17,7 +17,7 @@ export async function fetchLivePresence(
 
   try {
     const res = await fetch(url, {
-      signal: AbortSignal.timeout(1500),
+      signal: AbortSignal.timeout(4000),
       cache: 'no-store',
     });
     if (!res.ok) return {};

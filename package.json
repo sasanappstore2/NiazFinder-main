@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "dev": "prisma generate && next dev -p 3000 2>&1 | tee dev.log",
+    "dev": "prisma generate && next dev -H 0.0.0.0 -p 3000 2>&1 | tee dev.log",
     "postinstall": "prisma generate",
     "dev:chat": "bun --env-file=.env --hot mini-services/chat-service/index.ts",
     "dev:comm": "npm run dev:chat",
@@ -41,6 +41,8 @@
     "test:blog-slug": "npx --yes tsx src/lib/blog/fixtures/run-blog-slug-self-test.ts",
     "smoke:map-browser": "npx --yes tsx scripts/health/smoke-map-browser.ts",
     "smoke:viewport-overflow": "npx --yes tsx scripts/health/smoke-viewport-overflow.ts",
+    "smoke:mobile-a11y": "npx --yes tsx scripts/health/smoke-mobile-a11y.ts",
+    "health:gate:mobile": "npm run smoke:viewport-overflow && npm run smoke:mobile-a11y",
     "smoke:chat-attachment-mime": "npx --yes tsx scripts/health/smoke-chat-attachment-mime.ts",
     "test:post-pipeline": "NEED_INTAKE_LLM_ENABLED=false npx --yes tsx src/lib/need-intake/fixtures/run-post-pipeline-self-test.ts",
     "test:post-api-smoke": "NEED_INTAKE_LLM_ENABLED=true npx --yes tsx scripts/health/smoke-post-intake-api.ts",

@@ -57,7 +57,7 @@ export function BrowseFilterSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="max-h-[85vh] rounded-t-2xl" dir="rtl">
+      <SheetContent side="bottom" className="max-h-[85vh] rounded-t-2xl sheet-safe-area-lg" dir="rtl">
         <SheetHeader>
           <SheetTitle>فیلترها</SheetTitle>
         </SheetHeader>

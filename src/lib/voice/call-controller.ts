@@ -604,6 +604,7 @@ export async function startOutgoingCall(
     const data = (await res.json()) as {
       callId: string;
       iceServers: RTCIceServer[];
+      calleePresence?: 'online' | 'offline';
     };
 
     s.setState({
@@ -635,6 +636,13 @@ export async function startOutgoingCall(
 
     startOutgoingRingtone();
     scheduleOutgoingRingTimeout(data.callId);
+
+    if (data.calleePresence === 'offline') {
+      const { toast } = await import('sonner');
+      toast.message('در حال زنگ خوردن…', {
+        description: 'اگر طرف مقابل اپ را باز نداشته باشد ممکن است پاسخ ندهد.',
+      });
+    }
   } catch (e) {
     stopCallTones();
     clearOutgoingRingTimeout();

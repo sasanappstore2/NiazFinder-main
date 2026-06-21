@@ -1,11 +1,20 @@
 'use client';
 
+import { Suspense } from 'react';
 import { MapPin, ChevronLeft } from 'lucide-react';
 import { CitySelectorPopup } from '@/components/ui/city-selector-popup';
 import { cn } from '@/lib/utils';
 import { useLocationSelection } from '@/hooks/use-location-selection';
 
 export function MobileLocationSelector() {
+  return (
+    <Suspense fallback={null}>
+      <MobileLocationSelectorInner />
+    </Suspense>
+  );
+}
+
+function MobileLocationSelectorInner() {
   const {
     isOpen,
     setIsOpen,
@@ -27,8 +36,11 @@ export function MobileLocationSelector() {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
+        aria-label={`انتخاب شهر — ${getLocationDisplayText()}`}
         className={cn(
-          'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150',
+          'flex w-full min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150 touch-target-min',
           hasLocationScope
             ? 'bg-primary/10 text-primary'
             : 'text-muted-foreground hover:bg-accent hover:text-foreground'

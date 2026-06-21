@@ -37,6 +37,8 @@ Breakpoints align with [`src/styles/responsive-golden.css`](../src/styles/respon
 
 Test at: 320, 375, 390, 428, 640, 768, 1024, 1280, 1536 px.
 
-Critical routes: `/`, business profile `/b/{slug}`, business browse, `/post-need`, `/profile/{id}`, `/dashboard`, `/super-admin`, `/messages`.
+Critical routes: `/`, business profile `/b/{slug}`, business browse, `/post`, `/post-need`, `/profile/{id}`, `/dashboard`, `/super-admin`, `/chat`.
+
+Mobile UX roadmap and QA gates: [`MOBILE_UX_ROADMAP.md`](MOBILE_UX_ROADMAP.md).
 
 Assert: `#main-content` has no horizontal overflow (`scrollWidth <= clientWidth`).

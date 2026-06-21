@@ -50,7 +50,7 @@ function ChipControl({
         disabled={disabled}
         onClick={onClick}
         className={cn(
-          'h-9 w-full gap-2 rounded-xl px-3 text-xs font-medium transition-all duration-200 sm:h-[34px] sm:w-auto sm:rounded-[13px] sm:px-[13px]',
+          'h-11 w-full gap-2 rounded-xl px-3 text-xs font-medium transition-all duration-200 sm:h-[34px] sm:w-auto sm:rounded-[13px] sm:px-[13px]',
           variant === 'location' &&
             'border-border/50 bg-background/70 hover:border-primary/30 hover:bg-primary/5',
           variant === 'primary' &&
@@ -90,7 +90,7 @@ export function LeadQuickChips({
 
   return (
     <div className="mt-4 space-y-3 sm:mt-[21px] sm:space-y-[13px]">
-      <p className="text-center text-[11px] font-medium text-muted-foreground/90">
+      <p className="text-center text-xs font-medium text-muted-foreground/90">
         میانبرها
       </p>
 
@@ -146,7 +146,7 @@ export function LeadQuickChips({
         })}
       </div>
 
-      <p className="text-center text-[11px] leading-relaxed text-muted-foreground/75">
+      <p className="text-center text-xs leading-relaxed text-muted-foreground/75">
         رایگان · بدون تعهد · پاسخ از کسب‌وکارهای همان شهر
       </p>
     </div>

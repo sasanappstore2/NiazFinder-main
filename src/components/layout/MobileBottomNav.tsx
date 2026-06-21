@@ -169,13 +169,13 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-(--z-mobile-nav) pointer-events-none"
+      className="fixed inset-x-0 bottom-0 z-(--z-mobile-nav) pointer-events-none lg:hidden"
       dir="rtl"
       role="navigation"
       aria-label="ناوبری پایین صفحه"
     >
       <div
-        className="mx-auto w-full max-w-md lg:max-w-xl px-2.5 lg:px-4 pointer-events-auto"
+        className="mx-auto w-full max-w-md sm:max-w-lg lg:max-w-2xl xl:max-w-3xl px-2.5 lg:px-6 pointer-events-auto"
         style={{
           paddingBottom: 'max(var(--mobile-nav-float-gap), env(safe-area-inset-bottom, 0px))',
         }}
@@ -230,7 +230,7 @@ export function MobileBottomNav() {
                     </span>
                     <span
                       className={cn(
-                        'mt-0.5 text-[10px] leading-none font-medium max-[360px]:hidden',
+                        'mt-0.5 text-xs leading-none font-medium max-[360px]:hidden',
                         isHomeActive ? 'text-primary' : 'text-muted-foreground'
                       )}
                     >
@@ -245,9 +245,9 @@ export function MobileBottomNav() {
                   onClick={() => handleTabClick(tab)}
                   className={cn(
                     'relative flex flex-1 flex-col items-center justify-center gap-0.5',
-                    'rounded-xl px-0.5 py-1 min-h-10 min-w-0',
-                    'text-[10px] leading-tight font-medium transition-colors duration-200',
-                    'touch-manipulation',
+                    'rounded-xl px-0.5 py-1 min-h-11 min-w-0',
+                    'text-xs leading-tight font-medium transition-colors duration-200',
+                    'touch-manipulation touch-target-min',
                     isActive
                       ? 'text-primary bg-primary/10'
                       : 'text-muted-foreground active:bg-accent/60'

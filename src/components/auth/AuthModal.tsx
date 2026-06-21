@@ -59,7 +59,7 @@ export function AuthModal() {
 
   return (
     <Dialog open={authModalOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[440px] p-0 gap-0 overflow-hidden">
+      <DialogContent className="max-h-[min(90dvh,calc(100dvh-2rem))] overflow-y-auto sm:max-w-[440px] p-0 gap-0">
         <DialogHeader className="p-6 pb-2">
           <DialogTitle className="text-right text-xl font-bold">{title}</DialogTitle>
           {description && (

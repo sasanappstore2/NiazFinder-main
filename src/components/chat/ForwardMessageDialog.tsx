@@ -24,7 +24,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAppStore } from '@/lib/store';
-import { useChatSocket } from '@/lib/chat-socket';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -98,8 +97,7 @@ export function ForwardMessageDialog({
   onOpenChange,
   message,
 }: ForwardMessageDialogProps) {
-  const { conversations } = useAppStore();
-  const { sendMessage } = useChatSocket();
+  const { conversations, sendMessage } = useAppStore();
 
   // ─── Local State ──────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState('');
@@ -129,17 +127,21 @@ export function ForwardMessageDialog({
 
   // ─── Handle Forward ──────────────────────────────────────────────────
   const handleForward = useCallback(
-    (conversationId: string) => {
+    async (conversationId: string) => {
       if (!message || forwarding) return;
 
       setForwarding(conversationId);
 
-      const success = sendMessage(conversationId, message.content, message.type);
-
-      if (success) {
-        toast.success('پیام با موفقیت منتقل شد');
-        handleClose(false);
-      } else {
+      try {
+        const success = await sendMessage(conversationId, message.content, message.type);
+        if (success) {
+          toast.success('پیام با موفقیت منتقل شد');
+          handleClose(false);
+        } else {
+          toast.error('خطا در انتقال پیام. لطفاً دوباره تلاش کنید.');
+          setForwarding(null);
+        }
+      } catch {
         toast.error('خطا در انتقال پیام. لطفاً دوباره تلاش کنید.');
         setForwarding(null);
       }

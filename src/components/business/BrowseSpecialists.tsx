@@ -588,7 +588,7 @@ export function BrowseSpecialists({
       >
         {/* Header */}
         <div className={viewMode === 'map' ? 'mb-3 max-lg:hidden' : 'mb-8'}>
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               {!serverRenderedHeading ? (
                 <h1
@@ -612,7 +612,7 @@ export function BrowseSpecialists({
                     setViewMode('grid');
                     setCurrentPage(1);
                   }}
-                  className={`flex items-center justify-center p-2 transition-colors ${viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+                  className={`flex min-h-11 min-w-11 items-center justify-center p-2 transition-colors ${viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`}
                   aria-label="نمای شبکه‌ای"
                   role="radio"
                   aria-checked={viewMode === 'grid'}
@@ -625,7 +625,7 @@ export function BrowseSpecialists({
                     setViewMode('list');
                     setCurrentPage(1);
                   }}
-                  className={`flex items-center justify-center p-2 transition-colors ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+                  className={`flex min-h-11 min-w-11 items-center justify-center p-2 transition-colors ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`}
                   aria-label="نمای لیستی"
                   role="radio"
                   aria-checked={viewMode === 'list'}
@@ -638,7 +638,7 @@ export function BrowseSpecialists({
                     setViewMode('map');
                     setCurrentPage(1);
                   }}
-                  className={`flex items-center justify-center p-2 transition-colors ${viewMode === 'map' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+                  className={`flex min-h-11 min-w-11 items-center justify-center p-2 transition-colors ${viewMode === 'map' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'}`}
                   aria-label="نمای نقشه"
                   role="radio"
                   aria-checked={viewMode === 'map'}
@@ -694,7 +694,7 @@ export function BrowseSpecialists({
 
         {/* Map + list split (Divar-style) */}
         {viewMode === 'map' ? (
-          <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 max-lg:static max-lg:w-full max-lg:max-w-none max-lg:translate-x-0">
+          <div className="relative left-1/2 w-full max-w-full -translate-x-1/2 overflow-x-clip max-lg:static max-lg:w-full max-lg:max-w-none max-lg:translate-x-0">
             <BusinessMapSplitView
               specialists={visibleSpecialists}
               citySlugs={citySlugs}
