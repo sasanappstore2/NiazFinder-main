@@ -200,6 +200,75 @@
   }
 }
 
+/* ── iOS zoom-on-focus guard ──
+   On iOS Safari/Chrome, focusing a form control whose font-size is < 16px
+   auto-zooms the page, after which the user can pan it sideways — the root of
+   the "keyboard opens and the screen drifts left/right" bug. Force ≥16px on
+   touch/phone viewports only (desktop keeps the designed dense sizes). The
+   !important is required to beat utility classes (text-sm / text-[15px]). */
+@media (max-width: 639px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Never let the document itself scroll sideways on phones — a stray wide child
+   should clip, not turn the whole page into a horizontal pan surface. `clip`
+   (unlike `hidden`) creates no scroll container, so it won't break sticky. */
+@media (max-width: 639px) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+}
+
+/* ── Native-app feel (safe on desktop too) ── */
+html {
+  /* Don't let iOS reflow text on rotation; no grey tap flash. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Horizontal scrollers (chip rows, tab strips, carousels, category rails) must
+   not chain their overscroll to the document: a sideways swipe past the end
+   would otherwise fire the browser's back/forward gesture and yank the whole
+   page sideways — exactly the "screen pans left/right on interaction" bug. */
+.overflow-x-auto,
+.overflow-x-scroll,
+.no-scrollbar {
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Vertical scroll regions (sheets, dialogs, chat panes, dropdown lists) keep
+   their bounce to themselves so the page behind them never moves. */
+[data-radix-scroll-area-viewport],
+[role='dialog'] [data-scrollable],
+.overscroll-contain {
+  overscroll-behavior: contain;
+}
+
+/* Interactive chrome behaves like native controls: no 300ms tap delay / no
+   double-tap zoom, no accidental text selection or iOS callout on long-press.
+   Scoped to controls — body text stays selectable. */
+button,
+a,
+label,
+summary,
+[role='button'],
+[role='tab'],
+[role='menuitem'],
+[role='option'],
+[role='switch'] {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
 /* ── Layout (Fibonacci + golden — padding in responsive-golden.css) ── */
 .container-narrow {
   max-width: min(100%, var(--content-readable, 38.2rem));

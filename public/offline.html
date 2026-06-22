@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>آفلاین — نیاز فایندر</title>
+    <style>
+      :root { color-scheme: light dark; }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; margin: 0; }
+      body {
+        font-family: Vazirmatn, system-ui, -apple-system, "Segoe UI", sans-serif;
+        display: flex; align-items: center; justify-content: center;
+        padding: max(1.5rem, env(safe-area-inset-top)) 1.5rem max(1.5rem, env(safe-area-inset-bottom));
+        background: #f6faf8; color: #0f1f1a; text-align: center;
+      }
+      @media (prefers-color-scheme: dark) {
+        body { background: #06100c; color: #e6f4ee; }
+      }
+      .card { max-width: 22rem; }
+      .badge {
+        width: 84px; height: 84px; margin: 0 auto 1.25rem; border-radius: 22px;
+        background: #059669; display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 10px 30px -10px rgba(5, 150, 105, 0.6);
+      }
+      .badge svg { width: 48px; height: 48px; }
+      h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
+      p { margin: 0 0 1.5rem; line-height: 1.8; opacity: 0.75; font-size: 0.95rem; }
+      button {
+        font: inherit; font-weight: 600; color: #fff; background: #059669;
+        border: 0; border-radius: 14px; padding: 0.75rem 1.5rem; cursor: pointer;
+        min-height: 48px; transition: background 0.15s;
+      }
+      button:active { background: #047857; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12.55a11 11 0 0 1 14.08 0" /><path d="M1.42 9a16 16 0 0 1 21.16 0" />
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" /><line x1="12" y1="20" x2="12.01" y2="20" />
+        </svg>
+      </div>
+      <h1>اتصال اینترنت قطع است</h1>
+      <p>به نظر می‌رسد آفلاین هستید. لطفاً اتصال خود را بررسی کنید و دوباره تلاش کنید.</p>
+      <button onclick="location.reload()">تلاش دوباره</button>
+    </div>
+  </body>
+</html>

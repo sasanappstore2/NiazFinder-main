@@ -25,6 +25,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   viewportFit: "cover",
+  // Keyboard resizes the layout viewport so fixed bottom bars (composers,
+  // CTAs, the mobile nav) rise above the on-screen keyboard instead of hiding
+  // behind it — core to the app-like feel on Android.
+  interactiveWidget: "resizes-content",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#059669" },
     { media: "(prefers-color-scheme: dark)", color: "#047857" },
@@ -71,8 +75,10 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/logo.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
     ],
-    apple: "/logo.svg",
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.json",
 
