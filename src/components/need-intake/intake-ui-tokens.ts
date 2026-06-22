@@ -25,7 +25,23 @@ export const intakeHintSurface = cn(
 );
 
 export const intakePrimaryCta = cn(
-  'bg-emerald-600 hover:bg-emerald-700 text-white'
+  // Depth via gradient + colored emerald shadow so the CTA reads as elevated,
+  // matching the depth language of the surrounding cards (not a flat slab).
+  'rounded-xl font-semibold text-white border border-emerald-400/30',
+  'bg-linear-to-b from-emerald-500 to-emerald-600',
+  'shadow-lg shadow-emerald-600/35 ring-1 ring-inset ring-white/10',
+  'transition-all duration-200 ease-out motion-reduce:transition-none',
+  // Tactile hover/active micro-interaction
+  'hover:from-emerald-500 hover:to-emerald-700 hover:-translate-y-px',
+  'hover:shadow-xl hover:shadow-emerald-600/45',
+  'active:translate-y-0 active:shadow-md active:shadow-emerald-600/30',
+  'motion-reduce:hover:translate-y-0',
+  'focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-0',
+  // Intentional, cohesive disabled look — a calm neutral, not a washed-out green
+  'disabled:opacity-100 disabled:bg-none disabled:bg-muted disabled:text-muted-foreground/70',
+  'disabled:border-border/60 disabled:shadow-none disabled:ring-0',
+  'dark:from-emerald-500 dark:to-emerald-700 dark:border-emerald-400/20',
+  'dark:disabled:bg-muted/40 dark:disabled:text-muted-foreground/60'
 );
 
 export const INTAKE_DETAILS_MIN_CHARS = 40;

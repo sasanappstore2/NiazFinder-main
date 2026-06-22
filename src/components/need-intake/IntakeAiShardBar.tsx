@@ -64,7 +64,7 @@ export function IntakeAiShardBar({
   return (
     <div
       className={cn(
-        'rounded-xl border border-primary/15 bg-primary/5',
+        'rounded-xl border border-primary/20 bg-primary/[0.07] shadow-[0_6px_22px_-16px_color-mix(in_oklch,var(--primary)_45%,black)]',
         compact ? 'px-2.5 py-2' : 'px-3 py-2.5 sticky bottom-0 z-10 backdrop-blur-sm'
       )}
       role="status"

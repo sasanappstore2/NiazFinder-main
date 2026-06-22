@@ -30,14 +30,22 @@ export function IntakeAiUnderstandingCard({
   return (
     <section
       className={cn(
-        'rounded-2xl border border-primary/20 bg-primary/[0.04] p-4 shadow-sm',
+        'relative overflow-hidden rounded-2xl border border-primary/25 p-4',
+        'bg-gradient-to-br from-primary/[0.10] via-primary/[0.045] to-transparent',
+        'shadow-[0_12px_34px_-18px_color-mix(in_oklch,var(--primary)_40%,black)] ring-1 ring-inset ring-primary/10',
         className
       )}
       aria-live="polite"
       aria-busy={analyzing}
     >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-l from-transparent via-primary/40 to-transparent"
+      />
       <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">
-        <Sparkles className="size-4 shrink-0" aria-hidden />
+        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/15 ring-1 ring-primary/25">
+          <Sparkles className="size-3.5" aria-hidden />
+        </span>
         <span>{INTAKE_COPY.aiUnderstandingTitle}</span>
         {analyzing ? <TypingIndicator status="analyzing" className="mr-auto" /> : null}
       </div>
@@ -55,7 +63,7 @@ export function IntakeAiUnderstandingCard({
           {view.highlights.map((h) => (
             <li
               key={h.key}
-              className="rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs text-foreground"
+              className="rounded-full border border-primary/20 bg-background/50 px-3 py-1 text-xs text-foreground backdrop-blur-sm"
             >
               <span className="text-muted-foreground">{h.label}: </span>
               {h.value}

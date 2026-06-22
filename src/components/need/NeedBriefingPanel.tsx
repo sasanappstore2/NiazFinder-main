@@ -1,9 +1,11 @@
 'use client';
 
-import { ArrowRight, Flag } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowRight, Flag, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
 import { RequestShare } from '@/components/shared/RequestShare';
+import { routeBuilder } from '@/config/routes';
 import type { ServiceRequest } from '@/lib/types';
 import { NeedBriefMetaRow } from './briefing/NeedBriefMetaRow';
 import { NeedKeyFactsGrid } from './briefing/NeedKeyFactsGrid';
@@ -46,6 +48,19 @@ export function NeedBriefingPanel({
           بازگشت
         </Button>
         <div className="flex shrink-0 items-center gap-0.5">
+          {isOwner && (
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="me-1 h-9 gap-1.5 rounded-full border-primary/30 px-3 text-primary hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
+            >
+              <Link href={routeBuilder.needEdit(request.id)} aria-label="ویرایش آگهی">
+                <Pencil className="size-4" />
+                ویرایش
+              </Link>
+            </Button>
+          )}
           <BookmarkButton itemId={request.id} itemType="request" size="sm" />
           <RequestShare requestTitle={request.title} requestId={request.id} />
           <Button
