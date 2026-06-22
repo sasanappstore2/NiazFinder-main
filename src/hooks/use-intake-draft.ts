@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { NeedDraft } from '@/contracts/need-intake';
+import { createLockRef, useNeedIntakeStore } from '@/stores/need-intake-store';
 import { categorySuggestionLabelFromSlug } from '@/lib/categories/format-category-suggestion-label';
 import {
   getCategoryBySlug,
@@ -124,8 +125,10 @@ export function useIntakeDraft({
   locationContext,
 }: UseIntakeDraftOptions) {
   const [enabledSections, setEnabledSections] = useState<Set<string>>(() => new Set());
-  const categoryLockedByUserRef = useRef(false);
-  const [categoryLockedByUser, setCategoryLockedByUser] = useState(false);
+  // Store-backed lock: `.current` shim for imperative reads/writes, plus a
+  // reactive selector for render. Single source of truth lives in the store.
+  const categoryLockedByUserRef = useMemo(() => createLockRef('category'), []);
+  const categoryLockedByUser = useNeedIntakeStore((s) => s.locks.category);
   const initialCategoryAppliedRef = useRef(false);
 
   const selectedLeafCategorySlug = selectedSubcategory || selectedCategory;
@@ -260,7 +263,6 @@ export function useIntakeDraft({
     (slug: string, opts?: { userInitiated?: boolean }) => {
       if (opts?.userInitiated) {
         categoryLockedByUserRef.current = true;
-        setCategoryLockedByUser(true);
       }
       if (!slug.trim()) {
         onCategoryChange?.('', '');
@@ -296,7 +298,6 @@ export function useIntakeDraft({
       subcategorySlug: string | null;
     }) => {
       categoryLockedByUserRef.current = true;
-      setCategoryLockedByUser(true);
       onCategoryChange?.(payload.categorySlug, payload.subcategorySlug ?? '');
       patchNeedDraftEntities(
         inferCategoryEntities(payload.categorySlug, payload.subcategorySlug)
@@ -472,8 +473,7 @@ export function useIntakeDraft({
 
   const resetCategoryLocks = useCallback(() => {
     categoryLockedByUserRef.current = false;
-    setCategoryLockedByUser(false);
-  }, []);
+  }, [categoryLockedByUserRef]);
 
   const applyInitialCategoryIfNeeded = useCallback(
     (slug: string) => {

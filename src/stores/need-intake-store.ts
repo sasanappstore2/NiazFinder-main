@@ -42,6 +42,12 @@ interface NeedIntakeState {
   analysisStatus: TypingAnalysisStatus;
   typingPreloading: boolean;
   typingSessionId: string | null;
+  /**
+   * User-intent locks — true once the user has manually chosen a field, so AI
+   * re-parsing must not overwrite it. Previously held in mutable refs scattered
+   * across hooks; now reactive store state (single source of truth).
+   */
+  locks: { category: boolean; city: boolean; neighborhood: boolean };
 
   setSeedText: (text: string) => void;
   /** @deprecated Use patchNeedDraftEntities(). Writes are logged as LEGACY_WRITE_DETECTED. */
@@ -96,9 +102,13 @@ interface NeedIntakeState {
     },
     opts?: SyncNeedDraftFormOpts
   ) => NeedDraft;
+  setLock: (key: 'category' | 'city' | 'neighborhood', value: boolean) => void;
+  resetLocks: () => void;
   reset: () => void;
   getDraft: () => NeedDraft | null;
 }
+
+const NO_LOCKS = { category: false, city: false, neighborhood: false };
 
 const initialState = {
   step: 'need' as IntakeStep,
@@ -118,6 +128,7 @@ const initialState = {
   analysisStatus: 'idle' as TypingAnalysisStatus,
   typingPreloading: false,
   typingSessionId: null,
+  locks: { ...NO_LOCKS },
 };
 
 function applyNeedDraft(set: (partial: Partial<NeedIntakeState>) => void, draft: NeedDraft | null) {
@@ -204,7 +215,31 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
     return projectNeedDraftFromForm(current, form, opts);
   },
 
-  reset: () => set(initialState),
+  setLock: (key, value) => set((s) => ({ locks: { ...s.locks, [key]: value } })),
+  resetLocks: () => set({ locks: { ...NO_LOCKS } }),
+
+  reset: () => set({ ...initialState, locks: { ...NO_LOCKS } }),
 
   getDraft: () => get().needDraft,
 }));
+
+/**
+ * A `{ current }` view over a store lock flag — a drop-in replacement for the
+ * mutable `useRef(false)` lock refs the intake hooks used to hold. Reads/writes
+ * go straight to the store (single source of truth, reactive, inspectable) while
+ * preserving the `.current` interface so existing call sites are untouched.
+ * Wrap in `useMemo(() => createLockRef(key), [])` for a stable identity.
+ */
+export interface LockRef {
+  current: boolean;
+}
+export function createLockRef(key: 'category' | 'city' | 'neighborhood'): LockRef {
+  return {
+    get current() {
+      return useNeedIntakeStore.getState().locks[key];
+    },
+    set current(value: boolean) {
+      useNeedIntakeStore.getState().setLock(key, value);
+    },
+  };
+}

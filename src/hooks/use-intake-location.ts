@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createLockRef } from '@/stores/need-intake-store';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import type { City } from '@/lib/location-system';
@@ -54,8 +55,10 @@ export function useIntakeLocation({
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
   const [myLocationLoading, setMyLocationLoading] = useState(false);
   const [promptNeighborhoodPick, setPromptNeighborhoodPick] = useState(false);
-  const cityLockedByUserRef = useRef(false);
-  const neighborhoodLockedByUserRef = useRef(false);
+  // Store-backed `.current` shims (single source of truth) — drop-in for the
+  // former mutable refs; all reads/writes below are unchanged.
+  const cityLockedByUserRef = useMemo(() => createLockRef('city'), []);
+  const neighborhoodLockedByUserRef = useMemo(() => createLockRef('neighborhood'), []);
 
   const { cities: managedCities } = useManagedLocations();
   const sortedCities = useMemo(
