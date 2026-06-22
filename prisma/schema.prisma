@@ -467,6 +467,9 @@ model ServiceRequest {
   dynamicAnswers    String           @default("{}")
   aiExtractedData   String           @default("{}")
   source            String           @default("form")
+  /// Publish idempotency: repeated submits with the same key reuse this row
+  /// instead of creating a duplicate need. Nullable — legacy rows have none.
+  idempotencyKey    String?
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
@@ -511,6 +514,8 @@ model ServiceRequest {
   @@index([assignedToUserId, moderationStatus])
   @@index([reviewedByUserId])
   @@index([needAccessStatus])
+  // Dedupe double-submits per user. NULL keys don't collide under Postgres.
+  @@unique([userId, idempotencyKey])
   @@index([vipExpiresAt])
 }
 

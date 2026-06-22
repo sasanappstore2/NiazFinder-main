@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { NeedDraft } from '@/contracts/need-intake';
-import { buildListingPreview } from '@/lib/need-intake/preview-listing';
+import { parseJsonBody } from '@/intake/server/validation/parseRequest';
+import { previewListingRequestSchema } from '@/intake/server/validation/requestSchemas';
+import { previewListingService } from '@/intake/server/intakeQueryService';
 import {
   checkNeedIntakeRateLimit,
   rateLimitKeyFromRequest,
 } from '@/lib/need-intake/rate-limit';
+import { intakeLog } from '@/intake/server/logger';
 
 export async function POST(request: NextRequest) {
   const rateKey = rateLimitKeyFromRequest(request);
@@ -12,33 +14,19 @@ export async function POST(request: NextRequest) {
   if (!limited.ok) {
     return NextResponse.json(
       { error: 'تعداد درخواست زیاد است. لطفاً کمی صبر کنید.' },
-      { status: 429 }
+      { status: 429 },
     );
   }
 
+  const parsed = await parseJsonBody(request, previewListingRequestSchema, {
+    invalidMessage: 'پیش‌نویس نامعتبر',
+  });
+  if (!parsed.ok) return parsed.response;
+
   try {
-    const body = await request.json();
-    const draft = body.draft as NeedDraft;
-    const extras = Array.isArray(body.extras)
-      ? (body.extras as string[]).filter((e) => typeof e === 'string' && e.trim())
-      : undefined;
-
-    if (!draft?.entities || !draft?.templateId) {
-      return NextResponse.json({ error: 'پیش‌نویس نامعتبر' }, { status: 400 });
-    }
-
-    const preview = await buildListingPreview(draft, extras);
-
-    return NextResponse.json({
-      title: preview.title,
-      description: preview.description,
-      budgetMin: preview.budgetMin,
-      budgetMax: preview.budgetMax,
-      suggestedExtras: preview.extras,
-      titleSource: preview.titleSource,
-    });
+    return NextResponse.json(await previewListingService(parsed.data));
   } catch (error) {
-    console.error('preview-listing error:', error);
+    intakeLog.error('preview_listing.failed', { err: error });
     return NextResponse.json({ error: 'خطای سرور' }, { status: 500 });
   }
 }

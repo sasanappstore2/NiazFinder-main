@@ -78,6 +78,7 @@
     "db:reset": "prisma migrate reset",
     "test:intake-engine": "npx --yes tsx src/intake/fixtures/run-intake-engine-self-test.ts",
     "test:publish-validator": "npx --yes tsx src/intake/fixtures/run-publish-validator-self-test.ts",
+    "test:publish-idempotency": "npx --yes tsx src/intake/server/fixtures/run-publish-idempotency-self-test.ts",
     "test:publish-readiness": "npx --yes tsx src/intake/fixtures/run-publish-readiness-self-test.ts",
     "test:listing-title-guards": "npx --yes tsx src/lib/need-intake/fixtures/run-listing-title-guards-self-test.ts",
     "test:listing-description-polish": "npx --yes tsx src/lib/need-intake/fixtures/run-listing-description-polish-self-test.ts",

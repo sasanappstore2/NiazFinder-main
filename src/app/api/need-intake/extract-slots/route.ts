@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { ParsedIntent } from '@/contracts/need-intake';
-import { extractSlotsFromRules } from '@/lib/need-intake/extract-slots-rules';
+import { parseJsonBody } from '@/intake/server/validation/parseRequest';
+import { extractSlotsRequestSchema } from '@/intake/server/validation/requestSchemas';
+import { extractSlotsService } from '@/intake/server/intakeQueryService';
 import {
   checkNeedIntakeRateLimit,
   rateLimitKeyFromRequest,
 } from '@/lib/need-intake/rate-limit';
+import { intakeLog } from '@/intake/server/logger';
 
 export async function POST(request: NextRequest) {
   const rateKey = rateLimitKeyFromRequest(request);
@@ -12,30 +14,19 @@ export async function POST(request: NextRequest) {
   if (!limited.ok) {
     return NextResponse.json(
       { error: 'تعداد درخواست زیاد است. لطفاً کمی صبر کنید.' },
-      { status: 429 }
+      { status: 429 },
     );
   }
 
+  const parsed = await parseJsonBody(request, extractSlotsRequestSchema, {
+    invalidMessage: 'پارامتر نامعتبر',
+  });
+  if (!parsed.ok) return parsed.response;
+
   try {
-    const body = await request.json();
-    const parsed = body.parsedIntent as ParsedIntent | undefined;
-    const answers = (body.answers ?? {}) as Record<string, unknown>;
-    const lastAnswer = body.lastAnswer as
-      | { fieldKey: string; value: string | number }
-      | undefined;
-
-    if (!parsed?.intentType || !parsed.categorySlug) {
-      return NextResponse.json({ error: 'پارامتر نامعتبر' }, { status: 400 });
-    }
-
-    const slots = extractSlotsFromRules(parsed, answers, lastAnswer);
-
-    return NextResponse.json({
-      slots,
-      meta: { engine: 'internal' },
-    });
+    return NextResponse.json(extractSlotsService(parsed.data));
   } catch (error) {
-    console.error('extract-slots error:', error);
+    intakeLog.error('extract_slots.failed', { err: error });
     return NextResponse.json({ error: 'خطای سرور' }, { status: 500 });
   }
 }

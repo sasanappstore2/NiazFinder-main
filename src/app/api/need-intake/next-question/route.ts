@@ -1,23 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getNextQuestion } from '@/lib/need-intake/question-engine';
-import type { IntentType, ParsedIntent } from '@/contracts/need-intake';
-import { isIntentType } from '@/config/need-intents';
+import { parseJsonBody } from '@/intake/server/validation/parseRequest';
+import { nextQuestionRequestSchema } from '@/intake/server/validation/requestSchemas';
+import { getNextQuestionService } from '@/intake/server/intakeQueryService';
+import { intakeLog } from '@/intake/server/logger';
 
 export async function POST(request: NextRequest) {
+  const parsed = await parseJsonBody(request, nextQuestionRequestSchema, {
+    invalidMessage: 'داده نامعتبر',
+  });
+  if (!parsed.ok) return parsed.response;
+
   try {
-    const body = await request.json();
-    const intentType = String(body.intentType ?? '') as IntentType;
-    const parsed = body.parsedIntent as ParsedIntent;
-    const answers = (body.answers ?? {}) as Record<string, unknown>;
-
-    if (!isIntentType(intentType) || !parsed) {
-      return NextResponse.json({ error: 'داده نامعتبر' }, { status: 400 });
-    }
-
-    const result = getNextQuestion(intentType, parsed, answers);
-    return NextResponse.json(result);
+    return NextResponse.json(getNextQuestionService(parsed.data));
   } catch (error) {
-    console.error('next-question error:', error);
+    intakeLog.error('next_question.failed', { err: error });
     return NextResponse.json({ error: 'خطای سرور' }, { status: 500 });
   }
 }

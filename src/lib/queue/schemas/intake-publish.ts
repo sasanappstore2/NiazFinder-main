@@ -3,7 +3,10 @@ import { z } from 'zod';
 /** Minimal draft shape for publish request validation at the API boundary. */
 const needDraftSchema = z.object({
   templateId: z.string().min(1),
-  templateVersion: z.string().optional(),
+  // NeedDraft.templateVersion is a number in the contract; tolerate a string too
+  // for any legacy caller that stringifies it. (Was z.string() — which rejected
+  // every real numeric-version draft at the publish boundary.)
+  templateVersion: z.union([z.number(), z.string()]).optional(),
   sourceText: z.string().optional(),
   entities: z.record(z.string(), z.unknown()),
   parsedIntent: z
