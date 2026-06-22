@@ -9,6 +9,14 @@ export function isSemanticLocationEnabled(): boolean {
   return process.env.NEED_INTAKE_SEMANTIC_LOCATION_ENABLED === 'true';
 }
 
+/**
+ * RAG fallback for location grounding (bge-m3 embeddings over the province/city/
+ * neighborhood corpus). Used ONLY when the deterministic resolver finds no city.
+ */
+export function isLocationRagEnabled(): boolean {
+  return process.env.NEED_INTAKE_LOCATION_RAG_ENABLED === 'true';
+}
+
 /** Embedding prefix convention: bge-m3 = none, e5 = query/passage, nomic = search_*. */
 export type EmbedPrefixStyle = 'none' | 'e5' | 'nomic';
 

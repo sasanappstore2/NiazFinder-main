@@ -36,7 +36,7 @@ import {
   setIntelligenceCache,
 } from '@/lib/need-intake/intake-parse-cache-store';
 import { getNextQuestion } from '@/lib/need-intake/question-engine';
-import { isIntakeAiGloballyDisabled } from '@/intake/rules/config';
+import { isIntakeAiGloballyDisabled, isProposeValidateEnabled } from '@/intake/rules/config';
 import type { NeedDraft } from '@/contracts/need-intake';
 import { REGISTRY_CATEGORY_OVERRIDE_THRESHOLD } from '@/intake/rules/config';
 import { isHybridIntakeEnabled } from '@/intake/intelligence-engine/hybrid/config';
@@ -114,6 +114,15 @@ export async function runIntakeIntelligence(
       cached.meta.latencyMs = Math.round(performance.now() - started);
       return cached;
     }
+  }
+
+  if (isProposeValidateEnabled()) {
+    const { runProposeValidatePipeline } = await import(
+      '@/intake/intelligence-engine/propose-validate/propose-validate-pipeline'
+    );
+    const result = await runProposeValidatePipeline(input, { existingDraft: opts?.existingDraft });
+    await setIntelligenceCache(cacheKey, result);
+    return result;
   }
 
   if (isHybridIntakeEnabled()) {

@@ -42,3 +42,29 @@ export function isDisambigAiEnabled(): boolean {
     process.env.NEED_INTAKE_HYBRID_ENABLED === 'true'
   );
 }
+
+/**
+ * Propose→Validate pipeline: the LLM proposes top-5 category + neighborhood
+ * candidates, then the real category tree + location catalog validate them.
+ * Coexists with the global AI kill-switch — requires an AI-enable flag.
+ */
+export function isProposeValidateEnabled(): boolean {
+  if (isIntakeAiGloballyDisabled()) return false;
+  return process.env.NEED_INTAKE_PROPOSE_VALIDATE_ENABLED === 'true';
+}
+
+function pvNum(key: string, fallback: number): number {
+  const raw = process.env[key];
+  if (!raw) return fallback;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+/** Confidence gates for propose→validate finalization (env-overridable). */
+export function proposeValidateThresholds() {
+  return {
+    categoryClearMin: pvNum('PV_CATEGORY_CLEAR_MIN', 0.55),
+    categoryClearMargin: pvNum('PV_CATEGORY_CLEAR_MARGIN', 0.08),
+    cityCrossCheckMin: pvNum('PV_CITY_CROSSCHECK_MIN', 0.6),
+  };
+}

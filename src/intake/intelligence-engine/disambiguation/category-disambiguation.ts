@@ -10,6 +10,8 @@ import {
   matchCategoryCandidatesFromRules,
   matchCategoryFromRules,
   pickClearCategoryFromRules,
+  matchCandidatesWithinSlugs,
+  buildMatchResultForSlug,
 } from '@/intake/rules/registry.server';
 import { isCategoryAmbiguous } from '@/intake/rules/registry-match';
 import {
@@ -22,6 +24,16 @@ import {
   buildCategorySuggestPrompt,
 } from '@/intake/intelligence-engine/disambiguation/disambiguation-prompt';
 import { constrainedSelectionSchema } from '@/ai/schema/extractionSchema';
+import { semanticCategoryCandidates } from '@/intake/intelligence-engine/semantic/category-embedding-index';
+import {
+  isSemanticRetrievalEnabled,
+  semanticTopK,
+  fusionParams,
+} from '@/intake/intelligence-engine/semantic/config';
+import {
+  detectQueryIntent,
+  intentMultiplier,
+} from '@/intake/intelligence-engine/semantic/intent-rerank';
 
 export interface CategoryDisambiguationResult {
   match: CategoryMatchResult | null;
@@ -30,7 +42,15 @@ export interface CategoryDisambiguationResult {
   aiInvoked: boolean;
   aiProvider: string | null;
   aiLatencyMs: number;
-  method: 'rules-clear' | 'rules-ambiguous' | 'ai-pick' | 'ai-suggest-revalidate' | 'unresolved';
+  method:
+    | 'rules-clear'
+    | 'rules-ambiguous'
+    | 'ai-pick'
+    | 'ai-suggest-revalidate'
+    | 'unresolved'
+    | 'semantic-fused-clear'
+    | 'semantic-fused-ai'
+    | 'semantic-fused-top';
 }
 
 function toAiCategories(candidates: CategoryMatchCandidate[]): AiCandidateCategory[] {
@@ -84,6 +104,138 @@ function parseCategorySlug(content: string | null): string | null {
 }
 
 export async function runCategoryDisambiguation(
+  text: string,
+  opts?: { slugHints?: string[] }
+): Promise<CategoryDisambiguationResult> {
+  if (isSemanticRetrievalEnabled()) {
+    const fused = await runFusedCategoryDisambiguation(text, opts);
+    if (fused) return fused;
+    // semantic gateway unavailable → fall through to the rules-only path
+  }
+  return runRulesCategoryDisambiguation(text, opts);
+}
+
+/**
+ * Fusion path: semantic top-K narrows the field (fast, language-aware), keyword
+ * rules are scored ONLY within those candidates (no full-registry scan), and
+ * Gemma disambiguates when the fused ranking is close. Returns null if the
+ * embedding gateway is unavailable so the caller can fall back to rules.
+ */
+async function runFusedCategoryDisambiguation(
+  text: string,
+  opts?: { slugHints?: string[] }
+): Promise<CategoryDisambiguationResult | null> {
+  const started = performance.now();
+  const sem = await semanticCategoryCandidates(text, semanticTopK());
+  if (!sem.length) return null;
+
+  const { semWeight, ruleWeight, clearMin, clearMargin, aiPickTopN } = fusionParams();
+  const semSlugs = sem.map((s) => s.slug);
+  const ruleCands = matchCandidatesWithinSlugs(text, semSlugs);
+  const ruleBySlug = new Map(ruleCands.map((c) => [c.slug, c]));
+  const intent = detectQueryIntent(text);
+
+  const fused = sem
+    .map((s) => {
+      const rc = ruleBySlug.get(s.slug);
+      const ruleSignal = rc ? rc.confidence : 0;
+      const base = semWeight * s.score + ruleWeight * ruleSignal;
+      return {
+        slug: s.slug,
+        semScore: s.score,
+        ruleSignal,
+        ruleCand: rc,
+        fusedScore: base * intentMultiplier(s.slug, intent),
+      };
+    })
+    .sort((a, b) => b.fusedScore - a.fusedScore);
+
+  const candidates: CategoryMatchCandidate[] = fused.map((f) => ({
+    slug: f.slug,
+    score: Math.round(f.fusedScore * 1000),
+    confidence: Math.min(0.98, Number(f.fusedScore.toFixed(4))),
+    matchedRules: f.ruleCand?.matchedRules ?? [],
+    source: f.ruleCand ? 'registry' : 'semantic',
+  }));
+
+  const top = fused[0]!;
+  const second = fused[1];
+
+  // Clear winner — confident and well ahead of #2.
+  if (top.fusedScore >= clearMin && (!second || top.fusedScore - second.fusedScore >= clearMargin)) {
+    return {
+      match: buildMatchResultForSlug(text, top.slug, top.fusedScore),
+      candidates,
+      ambiguous: false,
+      aiInvoked: false,
+      aiProvider: null,
+      aiLatencyMs: 0,
+      method: 'semantic-fused-clear',
+    };
+  }
+
+  // Ambiguous — let Gemma pick among the fused top-N (constrained).
+  if (isDisambigAiEnabled()) {
+    const aiCategories = toAiCategories(candidates.slice(0, aiPickTopN));
+    const retrieval = emptyRetrieval(aiCategories);
+    const pickContent = await callLlmPick(buildCategoryPickPrompt(text, aiCategories));
+    const pickSlug = parseCategorySlug(pickContent);
+    if (pickSlug) {
+      const validation = validateConstrainedSelection(
+        {
+          category: pickSlug,
+          city: null,
+          neighborhood: null,
+          transactionType: null,
+          budget: null,
+          area: null,
+          rooms: null,
+          confidence: 0.75,
+        },
+        retrieval
+      );
+      const accepted = validation.acceptedSlugs.categorySlug;
+      if (accepted && semSlugs.includes(accepted)) {
+        const chosen = fused.find((f) => f.slug === accepted) ?? top;
+        return {
+          match: buildMatchResultForSlug(text, accepted, Math.max(chosen.fusedScore, 0.7)),
+          candidates,
+          ambiguous: true,
+          aiInvoked: true,
+          aiProvider: 'local-llm',
+          aiLatencyMs: Math.round(performance.now() - started),
+          method: 'semantic-fused-ai',
+        };
+      }
+    }
+  }
+
+  // No clear winner and no AI pick — take the fused top if it's reasonable,
+  // otherwise surface candidates for the user to choose.
+  if (top.fusedScore >= 0.5) {
+    return {
+      match: buildMatchResultForSlug(text, top.slug, top.fusedScore),
+      candidates,
+      ambiguous: true,
+      aiInvoked: false,
+      aiProvider: null,
+      aiLatencyMs: 0,
+      method: 'semantic-fused-top',
+    };
+  }
+
+  return {
+    match: null,
+    candidates,
+    ambiguous: true,
+    aiInvoked: false,
+    aiProvider: null,
+    aiLatencyMs: 0,
+    method: 'unresolved',
+  };
+}
+
+async function runRulesCategoryDisambiguation(
   text: string,
   opts?: { slugHints?: string[] }
 ): Promise<CategoryDisambiguationResult> {

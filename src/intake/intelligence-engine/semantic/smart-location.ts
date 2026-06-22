@@ -77,6 +77,9 @@ const STOP_TOKENS = new Set(
     'خریدارم', 'فروشنده', 'کهنه', 'حلقه', 'صفحه', 'عدد', 'اگر', 'یک', 'یه',
     'من', 'تو', 'ما', 'برای', 'واسه', 'لطفا', 'سلام', 'ممنون', 'هم', 'تا',
     'خوب', 'عالی', 'سالم', 'تعمیر', 'تعمیرکار', 'نیاز', 'دنبال', 'سراغ',
+    // common business / job words that are ALSO (accidental) neighborhood names
+    'شرکت', 'استخدام', 'حسابدار', 'کارمند', 'کارفرما', 'اداره', 'سازمان', 'موسسه',
+    'کارگر', 'منشی', 'فروشگاه', 'کارگاه', 'پرستار', 'معلم', 'راننده',
   ].map((w) => normalizeIntakeText(w))
 );
 
@@ -130,6 +133,19 @@ function buildIndex(): LocationIndex {
 
 export function resetSmartLocationIndex(): void {
   indexCache = null;
+}
+
+/**
+ * Resolve a city NAME (e.g. "کرمانشاه" from the form/UI) to the catalog's own
+ * citySlug (catalog filename, e.g. "kermanshah-city"). This is the single
+ * source of truth for catalog slugs — do NOT use other city-slug schemes
+ * (e.g. the fuse/location-index search) to scope a catalog lookup, since
+ * their slug spaces don't match this one and even mismatch cities entirely.
+ */
+export function resolveCatalogCitySlugByName(cityName: string): string | null {
+  const idx = buildIndex();
+  const key = normalizeIntakeText(cityName);
+  return idx.cities.get(key)?.citySlug ?? null;
 }
 
 function rank(citySlug: string, prominence: Map<string, number>): number {
@@ -282,3 +298,41 @@ const EMPTY: SmartLocationResult = {
   citySlug: null, cityName: null, neighborhoodSlug: null,
   neighborhoodName: null, method: 'none', confidence: 0,
 };
+
+/**
+ * Strict scoped lookup — for when the city is ALREADY known/locked (e.g. the
+ * user picked it explicitly). Returns a neighborhood ONLY if it's a real,
+ * cataloged entry belonging to exactly that city; never a different city,
+ * never a raw unvalidated text fragment. Returns null (→ leave the field
+ * empty for the user to pick) when no real neighborhood is mentioned.
+ */
+export function findNeighborhoodInScopedCity(
+  rawText: string,
+  citySlug: string
+): { slug: string; name: string } | null {
+  if (!citySlug) return null;
+  const idx = buildIndex();
+  const norm = normalizeLocationText(rawText);
+  if (!norm) return null;
+  const words = norm.split(' ').filter(Boolean);
+
+  let best: NbEntry | null = null;
+  let bestScore = -Infinity;
+  for (let start = 0; start < words.length; start++) {
+    for (let n = Math.min(3, words.length - start); n >= 1; n--) {
+      const g = words.slice(start, start + n).join(' ');
+      if (n === 1 && (STOP_TOKENS.has(g) || g.length < 3)) continue;
+      const arr = idx.neighborhoods.get(g);
+      if (!arr?.length) continue;
+      for (const e of arr) {
+        if (e.citySlug !== citySlug) continue; // never leak another city
+        const score = (n > 1 ? 1000 : 0) + g.length;
+        if (score > bestScore) {
+          bestScore = score;
+          best = e;
+        }
+      }
+    }
+  }
+  return best ? { slug: best.nbSlug, name: best.nbName } : null;
+}

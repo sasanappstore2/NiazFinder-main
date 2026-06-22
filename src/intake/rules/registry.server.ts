@@ -23,6 +23,7 @@ export interface MatchCategoryOptions {
 let packRulesCache: IntakeRule[] | null = null;
 let negativeRulesCache: IntakeRule[] | null = null;
 let packsBySlug: Map<string, RulePack> | null = null;
+let positiveRulesBySlugCache: Map<string, IntakeRule[]> | null = null;
 
 function projectRoot(): string {
   return process.cwd();
@@ -133,10 +134,75 @@ export function pickClearCategoryFromRules(
   return pickCategoryIfClear(text, candidates, rules);
 }
 
+/** Positive rules grouped by slug — built once, enables fast scoped scoring. */
+function positiveRulesBySlug(): Map<string, IntakeRule[]> {
+  if (positiveRulesBySlugCache) return positiveRulesBySlugCache;
+  const map = new Map<string, IntakeRule[]>();
+  for (const r of positiveRules()) {
+    const arr = map.get(r.slug);
+    if (arr) arr.push(r);
+    else map.set(r.slug, [r]);
+  }
+  positiveRulesBySlugCache = map;
+  return map;
+}
+
+/**
+ * Score rules for ONLY the given candidate slugs — avoids the full ~1.16M-rule
+ * scan. Used by the semantic-fusion path: semantic narrows to top-K slugs, then
+ * we apply the keyword/brand rules within just those packs.
+ */
+export function matchCandidatesWithinSlugs(
+  text: string,
+  slugs: readonly string[],
+  opts?: { limit?: number }
+): CategoryMatchCandidate[] {
+  if (!slugs.length) return [];
+  const bySlug = positiveRulesBySlug();
+  const scoped: IntakeRule[] = [];
+  for (const slug of slugs) {
+    const arr = bySlug.get(slug);
+    if (arr) scoped.push(...arr);
+  }
+  if (!scoped.length) return [];
+  return matchCategoryCandidatesFromRuleSet(text, scoped, allNegativeRules(), {
+    limit: opts?.limit,
+  });
+}
+
+/**
+ * Build a full CategoryMatchResult for one slug, scoring + extracting fields
+ * (brand/model/condition) from ONLY that slug's rules. Used by the semantic
+ * fusion path once a winning category is chosen. Returns a minimal result if
+ * the slug's rules don't fire on the text.
+ */
+export function buildMatchResultForSlug(
+  text: string,
+  slug: string,
+  confidence: number
+): CategoryMatchResult {
+  const scoped = positiveRulesBySlug().get(slug) ?? [];
+  const candidates = scoped.length
+    ? matchCategoryCandidatesFromRuleSet(text, scoped, allNegativeRules(), { limit: 1 })
+    : [];
+  const top = candidates[0];
+  if (top) {
+    const result = candidateToCategoryMatchResult(text, top, scoped);
+    return { ...result, confidence: Math.max(result.confidence, confidence) };
+  }
+  return {
+    categorySlug: slug,
+    confidence,
+    score: 0,
+    matchedRules: [],
+  };
+}
+
 export function clearRulesRegistryCache(): void {
   packRulesCache = null;
   negativeRulesCache = null;
   packsBySlug = null;
+  positiveRulesBySlugCache = null;
 }
 
 export function countLoadedRules(): number {

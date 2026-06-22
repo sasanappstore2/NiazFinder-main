@@ -100,7 +100,8 @@ export interface IntakeIntelligenceResult {
       | 'intake-intelligence+ai'
       | 'intake-intelligence+truth-verify'
       | 'hybrid-intake+gemma4'
-      | 'hybrid-intake-rules';
+      | 'hybrid-intake-rules'
+      | 'propose-validate+gemma';
     aiInvoked: boolean;
     latencyMs: number;
     truthVerifyCorrected?: string[];
