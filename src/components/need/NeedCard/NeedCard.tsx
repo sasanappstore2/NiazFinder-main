@@ -43,7 +43,7 @@ export function NeedCard({ need, href, onClick, variant = 'grid', className }: N
   }
 
   return (
-    <Link href={linkHref} className="block">
+    <Link href={linkHref} prefetch className="block">
       {content}
     </Link>
   );

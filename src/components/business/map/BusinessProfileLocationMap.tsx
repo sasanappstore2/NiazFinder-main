@@ -4,6 +4,7 @@ import { NiazMapMarker as Marker } from '@/components/map/maplibre/map-marker';
 import { NiazMapCore } from '@/components/map/mapbox/NiazMapCore';
 import { NiazMapViewportScope } from '@/components/map/mapbox/NiazMapViewportScope';
 import { MapPinMarker } from '@/components/map/mapbox/MapPinMarker';
+import { DeferredMapShell } from '@/components/map/DeferredMapShell';
 import { cn } from '@/lib/utils';
 
 export function BusinessProfileLocationMap({
@@ -19,21 +20,27 @@ export function BusinessProfileLocationMap({
   title?: string;
 }) {
   return (
-    <div
-      className={cn('business-browse-map overflow-hidden rounded-xl border border-border/50', className)}
-      aria-label={title}
+    <DeferredMapShell
+      className={cn(
+        'business-browse-map overflow-hidden rounded-xl border border-border/50',
+        className
+      )}
+      placeholderClassName="h-52 sm:h-60"
+      loadingLabel={title}
     >
-      <NiazMapCore
-        center={{ lat, lng, zoom: 15 }}
-        detail="picker"
-        interactive={false}
-        className="h-52 sm:h-60"
-      >
-        <NiazMapViewportScope viewportBounds={null} scopeKind="national" />
-        <Marker longitude={lng} latitude={lat} anchor="bottom">
-          <MapPinMarker selected verified />
-        </Marker>
-      </NiazMapCore>
-    </div>
+      <div aria-label={title}>
+        <NiazMapCore
+          center={{ lat, lng, zoom: 15 }}
+          detail="picker"
+          interactive={false}
+          className="h-52 sm:h-60"
+        >
+          <NiazMapViewportScope viewportBounds={null} scopeKind="national" />
+          <Marker longitude={lng} latitude={lat} anchor="bottom">
+            <MapPinMarker selected verified />
+          </Marker>
+        </NiazMapCore>
+      </div>
+    </DeferredMapShell>
   );
 }

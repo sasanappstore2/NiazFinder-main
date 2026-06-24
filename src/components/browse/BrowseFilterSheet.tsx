@@ -27,6 +27,8 @@ interface BrowseFilterSheetProps {
   onApplyGlobal: (patch: Partial<BrowseFilters>) => void;
   onApplyAttributes: (patch: Record<string, string | null | undefined>) => void;
   onClearAll: () => void;
+  /** Number of active query filters — gates the "clear all" affordance. */
+  activeCount?: number;
 }
 
 function fieldVisible(field: CategoryFilterField, ctx: Record<string, string>): boolean {
@@ -47,6 +49,7 @@ export function BrowseFilterSheet({
   onApplyGlobal,
   onApplyAttributes,
   onClearAll,
+  activeCount = 0,
 }: BrowseFilterSheetProps) {
   const sortOptions = isBusiness ? SORT_OPTIONS_BUSINESS : SORT_OPTIONS_NEED;
   const ctx = { ...filters.attributes };
@@ -57,11 +60,12 @@ export function BrowseFilterSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="max-h-[85vh] rounded-t-2xl sheet-safe-area-lg" dir="rtl">
-        <SheetHeader>
+      <SheetContent side="bottom" className="max-h-[88vh] rounded-t-2xl sheet-safe-area-lg" dir="rtl">
+        <div className="mx-auto -mb-2 mt-1 h-1.5 w-10 rounded-full bg-border" aria-hidden />
+        <SheetHeader className="pb-0">
           <SheetTitle>فیلترها</SheetTitle>
         </SheetHeader>
-        <div className="mt-4 max-h-[60vh] space-y-5 overflow-y-auto pb-6">
+        <div className="max-h-[58vh] space-y-5 overflow-y-auto px-4 pb-2">
           {browseFields.some((f) => f.globalKey === 'price') && (
             <div className="space-y-2">
               <Label>قیمت / بودجه (تومان)</Label>
@@ -182,8 +186,20 @@ export function BrowseFilterSheet({
             )}
           </div>
 
-          <Button variant="ghost" className="w-full text-destructive" onClick={onClearAll}>
-            حذف همه فیلترها
+        </div>
+
+        <div className="flex items-center gap-3 border-t bg-background px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3">
+          {activeCount > 0 && (
+            <Button
+              variant="ghost"
+              onClick={onClearAll}
+              className="shrink-0 text-muted-foreground hover:text-foreground"
+            >
+              پاک کردن همه
+            </Button>
+          )}
+          <Button size="lg" className="flex-1" onClick={() => onOpenChange(false)}>
+            نمایش نتایج
           </Button>
         </div>
       </SheetContent>

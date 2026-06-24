@@ -4,6 +4,7 @@
 import { Store } from 'lucide-react';
 import {
   getAllOnlineStoreMenuLeaves,
+  getOnlineStoreMegaMenuTree,
   getOnlineStoreSectorColor,
   filterOnlineStoreMegaMenu,
 } from '@/lib/business/online-store-mega-menu';
@@ -16,7 +17,7 @@ import {
 
 const ONLINE_STORES_BROWSE_ROOT_ID = 'online-stores-browse-root';
 
-function buildOnlineStoresBrowseRoot(): OccupationMegaMenuNode {
+function buildOnlineStoresBrowseRoot(leaves = getAllOnlineStoreMenuLeaves()): OccupationMegaMenuNode {
   return {
     id: ONLINE_STORES_BROWSE_ROOT_ID,
     slug: ONLINE_STORES_BROWSE_ROOT_ID,
@@ -27,14 +28,18 @@ function buildOnlineStoresBrowseRoot(): OccupationMegaMenuNode {
     color: '#2563eb',
     parent: null,
     pickable: false,
-    subCategories: getAllOnlineStoreMenuLeaves(),
+    subCategories: leaves,
   };
 }
 
 export function buildUnifiedBusinessBrowseMegaMenuTree(
-  occupationTree: OccupationMegaMenuNode[] = getOccupationMegaMenuTree()
+  occupationTree: OccupationMegaMenuNode[] = getOccupationMegaMenuTree(),
+  onlineStoreTree: OccupationMegaMenuNode[] = getOnlineStoreMegaMenuTree()
 ): OccupationMegaMenuNode[] {
-  return [buildOnlineStoresBrowseRoot(), ...occupationTree];
+  const onlineLeaves = getAllOnlineStoreMenuLeaves(onlineStoreTree);
+  const roots: OccupationMegaMenuNode[] =
+    onlineLeaves.length > 0 ? [buildOnlineStoresBrowseRoot(onlineLeaves)] : [];
+  return [...roots, ...occupationTree];
 }
 
 export function getUnifiedBusinessBrowseMegaMenuTree(): OccupationMegaMenuNode[] {
@@ -46,23 +51,25 @@ export const UNIFIED_BUSINESS_BROWSE_MEGA_MENU_TREE = buildUnifiedBusinessBrowse
 
 export function filterUnifiedBusinessBrowseMegaMenu(
   query: string,
-  tree: OccupationMegaMenuNode[] = getUnifiedBusinessBrowseMegaMenuTree()
+  tree: OccupationMegaMenuNode[] = getUnifiedBusinessBrowseMegaMenuTree(),
+  onlineStoreTree: OccupationMegaMenuNode[] = getOnlineStoreMegaMenuTree(),
+  occupationTree: OccupationMegaMenuNode[] = getOccupationMegaMenuTree()
 ): { sectors: OccupationMegaMenuNode[]; flatJobs: OccupationMegaMenuNode[] } {
   const q = query.trim();
   if (!q) {
     return { sectors: tree, flatJobs: [] };
   }
 
-  const online = filterOnlineStoreMegaMenu(q);
-  const occupation = filterOccupationMegaMenu(q, tree.slice(1));
+  const hasOnlineRoot = tree[0]?.id === ONLINE_STORES_BROWSE_ROOT_ID;
+  const occupationSlice = hasOnlineRoot ? tree.slice(1) : tree;
+
+  const online = filterOnlineStoreMegaMenu(q, onlineStoreTree);
+  const occupation = filterOccupationMegaMenu(q, occupationSlice.length ? occupationSlice : occupationTree);
   const flatJobs = [...online.flatJobs, ...occupation.flatJobs];
 
   const sectors: OccupationMegaMenuNode[] = [];
   if (online.flatJobs.length > 0) {
-    sectors.push({
-      ...buildOnlineStoresBrowseRoot(),
-      subCategories: online.flatJobs,
-    });
+    sectors.push(buildOnlineStoresBrowseRoot(online.flatJobs));
   }
   sectors.push(...occupation.sectors);
 

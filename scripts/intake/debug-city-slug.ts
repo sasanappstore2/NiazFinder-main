@@ -6,12 +6,26 @@ async function stub(): Promise<void> {
 }
 async function main(): Promise<void> {
   await stub();
-  const { searchLocationIndex } = await import('@/intake/intelligence-engine/indexes/location-fuse-index');
-  const hits = await searchLocationIndex('کرمانشاه', { limit: 5 });
-  console.log('searchLocationIndex(کرمانشاه):', JSON.stringify(hits.map((h) => ({ slug: h.record.slug, type: h.record.type, label: h.record.label }))));
+  const { smartResolveLocation, resolveCatalogCitySlugByName } = await import(
+    '@/intake/intelligence-engine/semantic/smart-location'
+  );
 
-  const { readdirSync } = await import('node:fs');
-  const files = readdirSync('src/data/neighborhoods/catalog').filter((f) => /kerman/i.test(f));
-  console.log('catalog files matching kerman:', files);
+  console.log('direct catalog lookup "تبریز":', resolveCatalogCitySlugByName('تبریز'));
+  console.log(
+    'smartResolveLocation full text:',
+    JSON.stringify(
+      smartResolveLocation(
+        'استخدام مهندس برق قدرت در تبریز، تمام‌وقت حضوری، حقوق ۳۰ میلیون، مسلط به طراحی تابلو برق صنعتی و PLC، دارای مدرک کارشناسی برق و حداقل ۳ سال سابقه کار در کارخانه',
+      ),
+    ),
+  );
+  console.log('smartResolveLocation "در تبریز":', JSON.stringify(smartResolveLocation('در تبریز')));
+  console.log(
+    'smartResolveLocation "سابقه کار در کارخانه":',
+    JSON.stringify(smartResolveLocation('سابقه کار در کارخانه')),
+  );
 }
-main().catch((e) => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

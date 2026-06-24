@@ -14,6 +14,7 @@ import { isPickableProfileCategorySlug } from '@/lib/business/business-category'
 import { parseStorefrontExtension } from '@/lib/business/storefront';
 import type { BusinessProfile } from '@prisma/client';
 import { queueBusinessProfileTypesenseSync } from '@/lib/search/typesense-sync';
+import { deleteBusinessProfileComplete } from '@/lib/business/delete-business-profile';
 
 export const runtime = 'nodejs';
 
@@ -38,6 +39,7 @@ const PATCH_SELECT = {
   verified: true,
   viewCount: true,
   status: true,
+  tags: true,
 } as const;
 
 function readWebPresence(profile: BusinessProfile): WebPresenceExtension {
@@ -92,6 +94,7 @@ function mapProfileResponse(profile: BusinessProfile) {
     status: profile.status,
     onboardingCompleted: hasCompletedOnboarding(profile),
     needsOnboarding: needsOnboarding(profile),
+    tags: parseJsonArray<string>(profile.tags),
     publicUrl: routeBuilder.businessProfile(profile.slug),
     editUrl: routeBuilder.myBusiness(),
     suggestedProfileSlug: suggestProfileSlugFromWebPresence(web) ?? null,
@@ -203,6 +206,18 @@ export async function PATCH(request: NextRequest) {
       data.lng = lng;
     }
 
+    if (body.tags !== undefined) {
+      if (!Array.isArray(body.tags)) {
+        return NextResponse.json({ error: 'برچسب‌ها باید آرایه باشند' }, { status: 400 });
+      }
+      const tags = body.tags
+        .filter((t: unknown): t is string => typeof t === 'string')
+        .map((t) => t.trim())
+        .filter((t) => t.length > 0 && t.length <= 50)
+        .slice(0, 20);
+      data.tags = JSON.stringify(tags);
+    }
+
     if (Object.keys(data).length === 0) {
       return NextResponse.json({ error: 'فیلدی برای بروزرسانی ارسال نشده' }, { status: 400 });
     }
@@ -224,6 +239,49 @@ export async function PATCH(request: NextRequest) {
     });
   } catch (error) {
     console.error('Business me PATCH error:', error);
+    return NextResponse.json({ error: 'خطای سرور' }, { status: 500 });
+  }
+}
+
+/**
+ * DELETE — permanently remove the owner's business profile and all related data.
+ * Requires `{ confirmName }` matching the current business name (owner-only).
+ */
+export async function DELETE(request: NextRequest) {
+  try {
+    const auth = await requireBusinessAccess(request);
+    if ('error' in auth) return auth.error;
+
+    const body = await request.json().catch(() => ({}));
+    const confirmName = typeof body.confirmName === 'string' ? body.confirmName.trim() : '';
+
+    const profile = await loadMyBusinessProfile(auth.user);
+
+    if (profile.userId !== auth.user.id) {
+      return NextResponse.json(
+        { error: 'فقط مالک حساب می‌تواند کسب‌وکار را حذف کند' },
+        { status: 403 }
+      );
+    }
+
+    if (!confirmName || confirmName !== profile.name.trim()) {
+      return NextResponse.json(
+        { error: 'نام کسب‌وکار برای تأیید حذف صحیح نیست' },
+        { status: 400 }
+      );
+    }
+
+    const result = await deleteBusinessProfileComplete(profile.id, auth.user.id);
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: result.status });
+    }
+
+    return NextResponse.json({
+      ok: true,
+      message: 'کسب‌وکار و تمام اطلاعات مرتبط حذف شد',
+    });
+  } catch (error) {
+    console.error('Business me DELETE error:', error);
     return NextResponse.json({ error: 'خطای سرور' }, { status: 500 });
   }
 }

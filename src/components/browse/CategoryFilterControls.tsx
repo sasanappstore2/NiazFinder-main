@@ -77,9 +77,13 @@ export function CategoryFilterControls({
         <RecentControl filters={filters} onPatchGlobal={onPatchGlobal} />
       )}
 
-      {fields.some((f) => f.globalKey === 'sort') && (
-        <SortControl filters={filters} isBusiness={isBusiness} onPatchGlobal={onPatchGlobal} />
-      )}
+      {/* Sort surfaces in the bar only when it differs from the default — the
+          default ("جدیدترین"/"rating") would just clutter the row and force an
+          awkward wrap. Default sort is always available inside the filter sheet. */}
+      {fields.some((f) => f.globalKey === 'sort') &&
+        filters.sort !== (isBusiness ? 'rating' : 'newest') && (
+          <SortControl filters={filters} isBusiness={isBusiness} onPatchGlobal={onPatchGlobal} />
+        )}
     </>
   );
 }

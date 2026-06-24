@@ -114,6 +114,7 @@ import {
 /** Semantic icon per occupation slug (Iran market jobs). */
 const OCCUPATION_JOB_ICONS: Record<string, LucideIcon> = {
   'real-estate-agent': Building2,
+  'real-estate-office': Store,
   'interior-designer': Sofa,
   architect: PenTool,
   'property-manager': Building,

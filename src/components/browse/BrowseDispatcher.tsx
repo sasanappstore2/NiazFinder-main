@@ -8,6 +8,7 @@ import { BrowseSpecialists } from '@/components/business/BrowseSpecialists';
 import { parseFilters } from '@/lib/filters/parser';
 import { routeBuilder } from '@/config/routes';
 import { getCategoryBySlug } from '@/config/categories';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   type BrowseMarket,
   getBrowseMarketFromPathname,
@@ -35,7 +36,15 @@ interface BrowseDispatcherProps {
 
 export function BrowseDispatcher(props: BrowseDispatcherProps) {
   return (
-    <Suspense fallback={null}>
+    <Suspense
+      fallback={
+        <div className="grid gap-4 px-4 pb-8 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-44 rounded-xl" />
+          ))}
+        </div>
+      }
+    >
       <BrowseDispatcherInner {...props} />
     </Suspense>
   );

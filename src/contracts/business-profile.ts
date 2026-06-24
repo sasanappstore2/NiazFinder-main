@@ -140,6 +140,12 @@ export interface PropertyListing {
   area?: string;
   rooms?: number;
   image?: string;
+  /** Optional neighborhood / area label shown on listing cards. */
+  location?: string;
+  /** Lifecycle status — drives Active vs Sold widgets. Defaults to `active`. */
+  status?: 'active' | 'sold' | 'rented';
+  /** Sale vs rent — drives the Rental Properties widget. */
+  dealType?: 'sale' | 'rent';
 }
 
 export interface RestaurantExtension {

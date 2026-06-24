@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { BadgeCheck, Loader2, Star, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { BusinessMapPin } from '@/lib/business/map-pins-types';
@@ -30,7 +31,14 @@ function MapPinPopup({ pin, profileHref }: { pin: BusinessMapPin; profileHref: s
     <div className="p-3 text-right" dir="rtl">
       <div className="flex items-start gap-2">
         {pin.logo ? (
-          <img src={pin.logo} alt="" className="size-10 shrink-0 rounded-lg object-cover" />
+          <Image
+            src={pin.logo}
+            alt=""
+            width={40}
+            height={40}
+            sizes="40px"
+            className="size-10 shrink-0 rounded-lg object-cover"
+          />
         ) : (
           <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-sm font-bold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
             {pin.name.charAt(0)}

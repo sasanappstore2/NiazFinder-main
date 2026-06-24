@@ -10,6 +10,7 @@ import {
 import { BusinessProfileTabSettings } from '@/components/business-profile/BusinessProfileTabSettings';
 import { BusinessCategoryPicker } from '@/components/business-profile/BusinessCategoryPicker';
 import { BusinessProfileAdvancedForm } from './forms/BusinessProfileAdvancedForm';
+import { BusinessDeletePanel } from './panels/BusinessDeletePanel';
 import { useBusinessHub } from './BusinessHubContext';
 
 export function BusinessHubAdvanced({
@@ -44,6 +45,8 @@ export function BusinessHubAdvanced({
           <p className="text-sm font-medium">تب پیش‌فرض صفحه عمومی</p>
           <BusinessProfileTabSettings />
         </div>
+
+        <BusinessDeletePanel />
       </CollapsibleContent>
     </Collapsible>
   );

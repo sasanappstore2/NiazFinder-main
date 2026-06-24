@@ -3,6 +3,10 @@ import {
   legacyValueToSlug,
   resolveCategoryLevels,
 } from '@/config/categories';
+import {
+  assertCategoryAvailable,
+  getPublicCategoryWhere,
+} from '@/lib/categories/category-status';
 
 export interface ResolvedCategoryIds {
   categoryId: string;
@@ -28,10 +32,19 @@ export class CategoryResolveError extends Error {
 
 async function findCategoryIdBySlug(slug: string): Promise<string | null> {
   const row = await db.category.findFirst({
-    where: { slug, isActive: true },
-    select: { id: true },
+    where: getPublicCategoryWhere({ slug }),
+    select: { id: true, status: true },
   });
-  return row?.id ?? null;
+  if (row) return row.id;
+
+  const inactive = await db.category.findFirst({
+    where: { slug },
+    select: { status: true },
+  });
+  if (inactive) {
+    assertCategoryAvailable(slug, inactive.status);
+  }
+  return null;
 }
 
 function missingSlug(slug: string): never {

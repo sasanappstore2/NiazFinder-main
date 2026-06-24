@@ -122,3 +122,7 @@ export async function setIntelligenceCache(
 export function clearIntelligenceCache(): void {
   memoryStore.clear();
 }
+
+export function getIntelligenceCacheMemorySize(): number {
+  return memoryStore.size;
+}

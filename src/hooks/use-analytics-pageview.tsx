@@ -21,13 +21,19 @@ export function useAnalyticsPageview() {
   useEffect(() => {
     enteredAtRef.current = Date.now();
 
-    if (consentRef.current) {
+    const trackWhenIdle = () => {
+      if (!consentRef.current) return;
       trackPageView({
         path: pathname,
         consent: true,
         userId: currentUser?.id,
       });
-    }
+    };
+
+    const idleId =
+      typeof requestIdleCallback !== 'undefined'
+        ? requestIdleCallback(trackWhenIdle, { timeout: 3000 })
+        : window.setTimeout(trackWhenIdle, 1500);
 
     const flushDuration = () => {
       if (!consentRef.current) return;
@@ -48,6 +54,11 @@ export function useAnalyticsPageview() {
     window.addEventListener('pagehide', flushDuration);
 
     return () => {
+      if (typeof cancelIdleCallback !== 'undefined' && typeof idleId === 'number') {
+        cancelIdleCallback(idleId);
+      } else {
+        clearTimeout(idleId as number);
+      }
       flushDuration();
       document.removeEventListener('visibilitychange', onHide);
       window.removeEventListener('pagehide', flushDuration);

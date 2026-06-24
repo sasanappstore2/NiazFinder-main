@@ -70,10 +70,19 @@ export function appendIncomingMessageToStore(
     return [...withoutTemp, merged];
   }
   if (messages.some((m) => m.id === incoming.id)) return messages;
-  const merged = [...messages, incoming];
-  return merged.sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-  );
+
+  const incomingTs = new Date(incoming.createdAt).getTime();
+  const last = messages[messages.length - 1];
+  // Fast path (the overwhelming common case): the new message is at/after the
+  // tail, so just append — no O(n log n) re-sort of the whole thread per message.
+  if (!last || incomingTs >= new Date(last.createdAt).getTime()) {
+    return [...messages, incoming];
+  }
+  // Out-of-order arrival (late socket delivery / backfill): splice it into the
+  // correct chronological slot instead of re-sorting everything.
+  const at = messages.findIndex((m) => new Date(m.createdAt).getTime() > incomingTs);
+  const idx = at === -1 ? messages.length : at;
+  return [...messages.slice(0, idx), incoming, ...messages.slice(idx)];
 }
 
 export function previewFromIncoming(data: IncomingMessagePayload): string {

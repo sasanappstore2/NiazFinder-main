@@ -4,10 +4,13 @@
  */
 import { PrismaClient } from '@prisma/client';
 import { CANONICAL_CATEGORIES } from '@/config/categories';
+import { getLaunchStatusForSlug } from '@/lib/categories/category-status';
 
 const prisma = new PrismaClient();
 
 const CANONICAL_SLUG_SET = new Set(CANONICAL_CATEGORIES.map((c) => c.slug));
+
+export { getLaunchStatusForSlug };
 
 export async function syncCanonicalCategoriesToDb(): Promise<{
   upserted: number;
@@ -18,6 +21,7 @@ export async function syncCanonicalCategoriesToDb(): Promise<{
   // Pass 1: upsert without parentId (roots and orphans)
   for (let i = 0; i < CANONICAL_CATEGORIES.length; i++) {
     const cat = CANONICAL_CATEGORIES[i];
+    const launchStatus = getLaunchStatusForSlug(cat.slug);
     const row = await prisma.category.upsert({
       where: { slug: cat.slug },
       create: {
@@ -25,13 +29,12 @@ export async function syncCanonicalCategoriesToDb(): Promise<{
         slug: cat.slug,
         description: cat.englishTitle ?? cat.title,
         order: i,
-        isActive: true,
+        status: launchStatus,
       },
       update: {
         name: cat.title,
         description: cat.englishTitle ?? cat.title,
         order: i,
-        isActive: true,
       },
     });
     slugToId.set(cat.slug, row.id);
@@ -49,7 +52,7 @@ export async function syncCanonicalCategoriesToDb(): Promise<{
     });
   }
 
-  // Deactivate legacy categories not in canonical registry
+  // Disable legacy categories not in canonical registry
   const legacy = await prisma.category.findMany({
     where: { slug: { notIn: [...CANONICAL_SLUG_SET] } },
     select: { id: true },
@@ -57,10 +60,9 @@ export async function syncCanonicalCategoriesToDb(): Promise<{
   if (legacy.length > 0) {
     await prisma.category.updateMany({
       where: { id: { in: legacy.map((c) => c.id) } },
-      data: { isActive: false },
+      data: { status: 'DISABLED' },
     });
   }
 
   return { upserted: CANONICAL_CATEGORIES.length, deactivated: legacy.length };
 }
-

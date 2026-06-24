@@ -10,6 +10,10 @@ import {
   normalizeTelegramUrl,
   normalizeWebsiteUrl,
 } from '@/lib/business/normalize-web-presence';
+import {
+  serviceAreaEntrySchema,
+  specializationsSchema,
+} from '@/lib/business/ecosystem/validation';
 
 const IRAN_MOBILE_ASCII = /^09[0-9]{9}$/;
 
@@ -99,9 +103,28 @@ export const businessOnboardingStep3Schema = z.object({
   eitaa: optionalEitaa,
 });
 
+export const realEstateDetailsSchema = z.object({
+  serviceAreas: z.array(serviceAreaEntrySchema).max(12).optional().default([]),
+  specializations: specializationsSchema.optional().default([]),
+  designStyles: z.array(z.string().trim().max(50)).max(12).optional().default([]),
+});
+
+export type RealEstateOnboardingDetails = z.infer<typeof realEstateDetailsSchema>;
+
+export const EMPTY_REAL_ESTATE_ONBOARDING_DETAILS: RealEstateOnboardingDetails = {
+  serviceAreas: [],
+  specializations: [],
+  designStyles: [],
+};
+
+export const businessOnboardingRealEstateStepSchema = z.object({
+  realEstateDetails: realEstateDetailsSchema.optional().default(EMPTY_REAL_ESTATE_ONBOARDING_DETAILS),
+});
+
 export const businessOnboardingPayloadSchema = businessOnboardingStep1Schema
   .merge(businessOnboardingStep2Schema)
   .merge(businessOnboardingStep3Schema)
+  .merge(businessOnboardingRealEstateStepSchema)
   .transform((d) => ({
     ...d,
     primaryCategorySlug: d.occupationSlugs[0],
@@ -112,6 +135,7 @@ export type BusinessOnboardingPayload = z.infer<typeof businessOnboardingPayload
 const businessOnboardingPayloadBaseSchema = businessOnboardingStep1Schema
   .merge(businessOnboardingStep2Schema)
   .merge(businessOnboardingStep3Schema)
+  .merge(businessOnboardingRealEstateStepSchema)
   .extend({
     primaryCategorySlug: z.string().optional(),
   });

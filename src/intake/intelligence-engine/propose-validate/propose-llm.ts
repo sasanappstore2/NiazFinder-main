@@ -27,8 +27,9 @@ export async function proposeCategoriesAndLocation(text: string): Promise<Propos
       { role: 'system', content: PROPOSE_SYSTEM_PROMPT },
       { role: 'user', content: buildProposePrompt(text, buildLeafCatalogLines()) },
     ],
-    // maxRetries:1 caps worst-case latency on the analyze critical path.
-    { maxTokens: 384, temperature: 0.1, maxRetries: 1 },
+    // maxRetries:1 caps worst-case latency on the analyze critical path; the
+    // schema is small so 220 tokens is ample headroom for the completion.
+    { maxTokens: 220, temperature: 0.1, maxRetries: 1 },
   );
   const latencyMs = Date.now() - t0;
   if (!chat?.content) return { proposal: null, latencyMs, provider: null };

@@ -15,6 +15,7 @@ type WorkflowData = {
     pendingProposals: number;
     bannedUsers: number;
     unreadMessages: number;
+    inactiveBusinesses: number;
   };
 };
 
@@ -24,6 +25,11 @@ const LINKS = [
   { key: 'failedOutreach' as const, label: 'Outreach ناموفق', href: ADMIN_SECTION_ROUTES.outreach },
   { key: 'pendingProposals' as const, label: 'پیشنهاد در انتظار', href: ADMIN_SECTION_ROUTES.proposals },
   { key: 'unreadMessages' as const, label: 'پیام خوانده‌نشده', href: ADMIN_SECTION_ROUTES.messages },
+  {
+    key: 'inactiveBusinesses' as const,
+    label: 'کسب‌وکار در انتظار',
+    href: `${ADMIN_SECTION_ROUTES.businesses}?status=INACTIVE&verified=false`,
+  },
 ];
 
 export function WorkflowPanel() {

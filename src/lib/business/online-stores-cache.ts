@@ -1,5 +1,6 @@
 import type { OnlineStoreCategory } from '@/config/online-store-types';
 import { DEFAULT_ONLINE_STORE_CATEGORIES } from '@/config/online-stores-defaults';
+import { getLaunchIsActiveForOnlineStore } from '@/lib/business/online-store-status';
 
 export type ManagedOnlineStoreCategory = OnlineStoreCategory & {
   isActive: boolean;
@@ -13,7 +14,10 @@ let cache: ManagedOnlineStoreCategory[] | null = null;
 let cacheAt = 0;
 
 export function getDefaultManagedOnlineStores(): ManagedOnlineStoreCategory[] {
-  return DEFAULT_ONLINE_STORE_CATEGORIES.map(normalizeCategory);
+  return DEFAULT_ONLINE_STORE_CATEGORIES.map((c) => ({
+    ...normalizeCategory(c),
+    isActive: getLaunchIsActiveForOnlineStore(c),
+  }));
 }
 
 export function getCachedOnlineStoresSync(): ManagedOnlineStoreCategory[] {

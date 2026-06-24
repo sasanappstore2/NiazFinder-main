@@ -81,7 +81,7 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
       {
         id: 'categories',
         label: 'دسته‌بندی نیازها',
-        description: 'taxonomy آگهی و درخواست',
+        description: 'نمایش mega menu نیازها (Header، Intake، مرور)',
         href: '/super-admin/categories',
         icon: FolderTree,
         permission: 'taxonomy:categories:read',
@@ -89,7 +89,7 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
       {
         id: 'business-occupations',
         label: 'دسته‌بندی کسب‌وکار',
-        description: 'شغل‌ها و حرفه‌های متخصص',
+        description: 'نمایش منوی مرور کسب‌وکار و حرفه‌ها',
         href: '/super-admin/business-occupations',
         icon: Briefcase,
         permission: 'taxonomy:business-occupations:read',
@@ -97,7 +97,7 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
       {
         id: 'online-stores',
         label: 'فروشگاه‌های اینترنتی',
-        description: 'حوزه‌های فروش آنلاین',
+        description: 'نمایش ریشه فروشگاه آنلاین در مرور کسب‌وکار',
         href: '/super-admin/online-stores',
         icon: ShoppingBag,
         permission: 'taxonomy:online-stores:read',

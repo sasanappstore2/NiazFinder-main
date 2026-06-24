@@ -37,6 +37,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { invalidateBusinessTaxonomyCache } from '@/hooks/invalidate-business-taxonomy';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 type StoreRow = {
   slug: string;
@@ -104,6 +115,16 @@ export function OnlineStoresPanel() {
   const [sectors, setSectors] = useState<Array<{ slug: string; title: string }>>([]);
   const [form, setForm] = useState<FormState>(initialForm);
   const [search, setSearch] = useState('');
+  const [selectedSlugs, setSelectedSlugs] = useState<Set<string>>(new Set());
+  const [pendingDeactivate, setPendingDeactivate] = useState<{
+    slug: string;
+    isActive: boolean;
+  } | null>(null);
+  const [impact, setImpact] = useState<{
+    profileCount: number;
+    activeChildren: number;
+    totalChildren: number;
+  } | null>(null);
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -200,6 +221,7 @@ export function OnlineStoresPanel() {
         toast.success('مورد جدید ساخته شد');
       }
       setForm(initialForm);
+      invalidateBusinessTaxonomyCache();
       await load();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'خطا در ذخیره');
@@ -213,11 +235,75 @@ export function OnlineStoresPanel() {
         { method: 'DELETE' }
       );
       toast.success(result.deactivated ? 'غیرفعال شد (در پروفایل استفاده شده)' : 'حذف شد');
+      invalidateBusinessTaxonomyCache();
       if (form.editingSlug === slug) setForm(initialForm);
       await load();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'خطا در حذف');
     }
+  };
+
+  const applyActiveChange = async (slug: string, isActive: boolean) => {
+    try {
+      await apiFetch(`/api/super-admin/online-stores/${encodeURIComponent(slug)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ isActive }),
+      });
+      toast.success(isActive ? 'فعال شد' : 'غیرفعال شد');
+      invalidateBusinessTaxonomyCache();
+      if (form.editingSlug === slug) setForm((f) => ({ ...f, isActive }));
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'خطا');
+    }
+  };
+
+  const requestActiveChange = async (slug: string, isActive: boolean) => {
+    if (isActive) {
+      await applyActiveChange(slug, true);
+      return;
+    }
+    const row = categories.find((c) => c.slug === slug);
+    if (!row || row.profileCount === 0) {
+      await applyActiveChange(slug, false);
+      return;
+    }
+    try {
+      const res = await apiFetch<{
+        profileCount: number;
+        activeChildren: number;
+        totalChildren: number;
+      }>(`/api/super-admin/online-stores/${encodeURIComponent(slug)}/impact`);
+      setImpact(res);
+      setPendingDeactivate({ slug, isActive: false });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'خطا');
+    }
+  };
+
+  const bulkSetActive = async (isActive: boolean) => {
+    if (selectedSlugs.size === 0) return;
+    try {
+      await apiFetch('/api/super-admin/online-stores/bulk', {
+        method: 'POST',
+        body: JSON.stringify({ slugs: [...selectedSlugs], isActive }),
+      });
+      toast.success('به‌روزرسانی گروهی انجام شد');
+      invalidateBusinessTaxonomyCache();
+      setSelectedSlugs(new Set());
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'خطا');
+    }
+  };
+
+  const toggleSelected = (slug: string) => {
+    setSelectedSlugs((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) next.delete(slug);
+      else next.add(slug);
+      return next;
+    });
   };
 
   return (
@@ -240,7 +326,8 @@ export function OnlineStoresPanel() {
     >
       <div className="mb-4 flex flex-col gap-2 rounded-lg border border-violet-500/30 bg-violet-500/5 p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
         <p className="text-violet-900 dark:text-violet-100">
-          این بخش فقط <strong>فروشگاه‌های اینترنتی</strong> (حوزه محصول) است. slugها باید با پیشوند <code dir="ltr">online-</code> باشند.
+          این taxonomy ریشه <strong>فروشگاه‌های اینترنتی</strong> در منوی مرور و onboarding را کنترل می‌کند.
+          حالت راه‌اندازی: همه غیرفعال — فقط <strong>املاک</strong> در مشاغل ACTIVE است.
         </p>
         <div className="flex shrink-0 flex-wrap gap-2">
           <Link
@@ -276,6 +363,15 @@ export function OnlineStoresPanel() {
             <AdminKpiCard title="زیردسته" value={formatNumber(jobCount)} icon={<GitBranch className="size-5" />} accent="blue" />
             <AdminKpiCard title="غیرفعال" value={formatNumber(inactiveCount)} icon={<Layers3 className="size-5" />} accent="amber" />
           </div>
+
+          {selectedSlugs.size > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2 rounded-lg border border-(--color-mainBorder) bg-(--color-secondaryBg)/50 p-3">
+              <span className="text-sm">{selectedSlugs.size.toLocaleString('fa-IR')} انتخاب شده</span>
+              <Button size="sm" onClick={() => void bulkSetActive(true)}>فعال‌سازی گروهی</Button>
+              <Button size="sm" variant="outline" onClick={() => void bulkSetActive(false)}>غیرفعال‌سازی گروهی</Button>
+              <Button size="sm" variant="ghost" onClick={() => setSelectedSlugs(new Set())}>لغو انتخاب</Button>
+            </div>
+          )}
 
           <div className="mt-4 grid gap-5 xl:grid-cols-[minmax(280px,340px)_1fr]">
             <aside
@@ -406,7 +502,14 @@ export function OnlineStoresPanel() {
                       className="group rounded-xl border border-(--color-mainBorder) bg-(--color-secondaryBg)/40 transition-colors hover:border-(--color-coloredText)/30 hover:bg-(--color-navItemBgHover)"
                     >
                       <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="min-w-0 flex-1">
+                        <div className="flex min-w-0 flex-1 items-start gap-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedSlugs.has(sector.slug)}
+                            onChange={() => toggleSelected(sector.slug)}
+                            className="mt-1"
+                          />
+                          <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
                             <Store className="size-4 shrink-0 text-(--color-coloredText)" />
                             <h3 className="font-bold text-(--color-primaryText)">{sector.title}</h3>
@@ -424,8 +527,16 @@ export function OnlineStoresPanel() {
                             {formatNumber(sector.profileCount)} پروفایل · {formatNumber(sector.jobs.length)} زیردسته
                             {sector.englishTitle ? ` · ${sector.englishTitle}` : ''}
                           </p>
+                          </div>
                         </div>
-                        <div className="flex shrink-0 gap-2 opacity-90 transition-opacity group-hover:opacity-100">
+                        <div className="flex shrink-0 flex-wrap items-center gap-2 opacity-90 transition-opacity group-hover:opacity-100">
+                          <div className="flex items-center gap-2 rounded-lg border border-(--color-mainBorder) px-2 py-1">
+                            <span className="text-xs">نمایش</span>
+                            <Switch
+                              checked={sector.isActive !== false}
+                              onCheckedChange={(v) => void requestActiveChange(sector.slug, v)}
+                            />
+                          </div>
                           <Button
                             size="sm"
                             variant="outline"
@@ -454,7 +565,14 @@ export function OnlineStoresPanel() {
                                 key={job.slug}
                                 className="flex items-center justify-between gap-2 rounded-lg border border-(--color-mainBorder) bg-(--color-primaryBg) px-3 py-2.5 transition-colors hover:border-(--color-coloredText)/25"
                               >
-                                <div className="min-w-0">
+                                <div className="flex min-w-0 flex-1 items-start gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedSlugs.has(job.slug)}
+                                    onChange={() => toggleSelected(job.slug)}
+                                    className="mt-1"
+                                  />
+                                  <div className="min-w-0">
                                   <div className="flex flex-wrap items-center gap-2">
                                     <Layers3 className="size-3.5 shrink-0 text-(--color-secondaryText)" />
                                     <span className="truncate text-sm font-medium">{job.title}</span>
@@ -468,8 +586,13 @@ export function OnlineStoresPanel() {
                                       {formatNumber(job.profileCount)} پروفایل
                                     </p>
                                   )}
+                                  </div>
                                 </div>
-                                <div className="flex shrink-0 gap-1">
+                                <div className="flex shrink-0 items-center gap-1">
+                                  <Switch
+                                    checked={job.isActive !== false}
+                                    onCheckedChange={(v) => void requestActiveChange(job.slug, v)}
+                                  />
                                   <button
                                     type="button"
                                     className="admin-icon-btn size-7"
@@ -500,6 +623,49 @@ export function OnlineStoresPanel() {
           </div>
         </>
       )}
+
+      <AlertDialog
+        open={Boolean(pendingDeactivate)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPendingDeactivate(null);
+            setImpact(null);
+          }
+        }}
+      >
+        <AlertDialogContent className="admin-content-zone">
+          <AlertDialogHeader>
+            <AlertDialogTitle>تأیید غیرفعال‌سازی</AlertDialogTitle>
+            <AlertDialogDescription>
+              {impact ? (
+                <>
+                  این مورد در {impact.profileCount.toLocaleString('fa-IR')} پروفایل استفاده شده
+                  {impact.totalChildren > 0
+                    ? ` و ${impact.activeChildren.toLocaleString('fa-IR')} زیرمجموعه فعال دارد`
+                    : ''}
+                  . از منوی مرور کسب‌وکار مخفی می‌شود.
+                </>
+              ) : (
+                'ادامه می‌دهید؟'
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>انصراف</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (pendingDeactivate) {
+                  void applyActiveChange(pendingDeactivate.slug, pendingDeactivate.isActive);
+                }
+                setPendingDeactivate(null);
+                setImpact(null);
+              }}
+            >
+              تأیید
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminPageShell>
   );
 }

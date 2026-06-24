@@ -8,20 +8,13 @@ import {
   BusinessBrowseCategoryMenuMobile,
 } from '@/components/browse/BusinessBrowseCategoryMenu';
 import { useState } from 'react';
-import {
-  LayoutGrid,
-  ChevronDown,
-  ChevronLeft,
-} from 'lucide-react';
+import { LayoutGrid, ChevronDown, ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAppStore } from '@/lib/store';
 import {
   CategorySelector,
-  ALL_CATEGORIES,
   getCategoryIcon,
 } from '@/components/navigation/MegaMenu/CategoryMegaMenu';
 import type { MegaMenuCategory } from '@/components/navigation/MegaMenu/CategoryMegaMenu';
-import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverTrigger,
@@ -32,12 +25,13 @@ import {
   SheetTrigger,
   SheetContent,
 } from '@/components/ui/sheet';
+import { useFilteredNeedMegaMenu } from '@/hooks/use-filtered-need-mega-menu';
 
-// ============ Desktop Category Bar ============
 function NeedDesktopCategoryBar() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const listingType = useBrowseListingType();
+  const nestedCategories = useFilteredNeedMegaMenu();
 
   const handleSelect = (category: MegaMenuCategory) => {
     router.push(getCategoryBrowseUrl(category, { type: listingType }));
@@ -66,12 +60,7 @@ function NeedDesktopCategoryBar() {
           >
             <LayoutGrid className="size-4" />
             <span>همه دسته‌بندی‌ها</span>
-            <ChevronDown
-              className={cn(
-                'size-3.5 transition-transform duration-200',
-                isOpen && 'rotate-180'
-              )}
-            />
+            <ChevronDown className={cn('size-3.5 transition-transform duration-200', isOpen && 'rotate-180')} />
           </button>
         </PopoverTrigger>
         <PopoverContent
@@ -82,7 +71,7 @@ function NeedDesktopCategoryBar() {
         >
           <CategorySelector
             isDesktop={true}
-            nestedCategories={ALL_CATEGORIES}
+            nestedCategories={nestedCategories}
             onSelect={handleSelect}
             onClose={() => setIsOpen(false)}
             getIcon={getCategoryIcon}
@@ -102,11 +91,11 @@ function DesktopCategoryBar() {
   return <NeedDesktopCategoryBar />;
 }
 
-// ============ Mobile Category Bar ============
 function NeedMobileCategoryBar() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const listingType = useBrowseListingType();
+  const nestedCategories = useFilteredNeedMegaMenu();
 
   const handleSelect = (category: MegaMenuCategory) => {
     router.push(getCategoryBrowseUrl(category, { type: listingType }));
@@ -129,7 +118,7 @@ function NeedMobileCategoryBar() {
         <SheetContent side="right" showCloseButton={false} className="w-[min(340px,calc(100vw-1.5rem))] p-0 sm:w-[min(400px,calc(100vw-2rem))]">
           <CategorySelector
             isDesktop={false}
-            nestedCategories={ALL_CATEGORIES}
+            nestedCategories={nestedCategories}
             onSelect={handleSelect}
             onClose={() => setIsOpen(false)}
             getIcon={getCategoryIcon}
@@ -149,7 +138,6 @@ function MobileCategoryBar() {
   return <NeedMobileCategoryBar />;
 }
 
-// ============ CategoryBar (Sub-Header) ============
 export function CategoryBar() {
   return (
     <div
@@ -157,7 +145,6 @@ export function CategoryBar() {
       role="toolbar"
       aria-label="نوار دسته‌بندی‌ها"
     >
-      {/* Gradient bottom line */}
       <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-l from-transparent via-primary/15 to-transparent" />
       <div className="container-default">
         <div className="flex h-11 items-center gap-2 overflow-x-auto scrollbar-none">

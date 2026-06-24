@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, LayoutGrid } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   CategorySelector,
-  ALL_CATEGORIES,
   getCategoryIcon,
   type MegaMenuCategory,
 } from '@/components/navigation/MegaMenu/CategoryMegaMenu';
@@ -20,12 +19,14 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { getCategoryPath } from '@/config/categories';
+import { getCategoryPath, normalizeCategoryPair } from '@/config/categories';
 import {
   findMegaMenuCategoryForSlug,
   getMegaMenuBreadcrumb,
   resolveIntakeCategoryFromMegaMenu,
 } from '@/lib/need-intake/mega-menu-category-utils';
+import { useFilteredNeedMegaMenu } from '@/hooks/use-filtered-need-mega-menu';
+import { useActiveCategorySlugs } from '@/hooks/use-active-category-slugs';
 
 interface IntakeCategoryMegaMenuPickerProps {
   value: string;
@@ -65,6 +66,17 @@ function resolveDisplayLabel(slug: string): string {
   return path[0]?.title ?? slug;
 }
 
+function slugIsActive(slug: string, activeSlugs: ReadonlySet<string>): boolean {
+  if (!slug) return true;
+  const normalized = normalizeCategoryPair(slug);
+  const candidates = [
+    slug,
+    normalized.categorySlug,
+    normalized.subcategorySlug,
+  ].filter(Boolean) as string[];
+  return candidates.some((s) => activeSlugs.has(s));
+}
+
 export function IntakeCategoryMegaMenuPicker({
   value,
   onChange,
@@ -73,7 +85,23 @@ export function IntakeCategoryMegaMenuPicker({
 }: IntakeCategoryMegaMenuPickerProps) {
   const [open, setOpen] = useState(false);
   const isDesktop = useIsDesktopMegaMenu();
+  const nestedCategories = useFilteredNeedMegaMenu();
+  const activeSlugs = useActiveCategorySlugs();
+  const inactiveResetRef = useRef<string | null>(null);
   const displayLabel = useMemo(() => resolveDisplayLabel(value), [value]);
+
+  useEffect(() => {
+    if (!value || slugIsActive(value, activeSlugs)) return;
+    if (inactiveResetRef.current === value) return;
+    inactiveResetRef.current = value;
+    toast.message('دسته انتخاب‌شده دیگر فعال نیست؛ لطفاً دسته دیگری انتخاب کنید.');
+    onChange({
+      slug: '',
+      categorySlug: '',
+      subcategorySlug: null,
+      label: '',
+    });
+  }, [value, activeSlugs, onChange]);
 
   const handleSelect = (category: MegaMenuCategory) => {
     const resolved = resolveIntakeCategoryFromMegaMenu(category);
@@ -88,7 +116,7 @@ export function IntakeCategoryMegaMenuPicker({
   const menu = (
     <CategorySelector
       isDesktop={isDesktop}
-      nestedCategories={ALL_CATEGORIES}
+      nestedCategories={nestedCategories}
       onSelect={handleSelect}
       onClose={() => setOpen(false)}
       getIcon={getCategoryIcon}

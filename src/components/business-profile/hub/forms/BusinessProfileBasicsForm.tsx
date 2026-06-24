@@ -13,6 +13,7 @@ import { getClientAuthHeaders } from '@/lib/auth/client-auth';
 import { BusinessLocationPicker } from '@/components/business-profile/onboarding/BusinessLocationPicker';
 import { BusinessMapPinPicker } from '@/components/business/map/BusinessMapPinPickerLazy';
 import { useBusinessHub } from '../BusinessHubContext';
+import { IncompleteFieldHighlight } from '../real-estate/IncompleteFieldHighlight';
 
 export function BusinessProfileBasicsForm({
   onSaved,
@@ -149,20 +150,24 @@ export function BusinessProfileBasicsForm({
           <CardTitle className="text-base">معرفی کسب‌وکار</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <div className="space-y-1">
-            <Label>نام کسب‌وکار</Label>
-            <Input value={form.name} onChange={(e) => update({ name: e.target.value })} />
-          </div>
-          <div className="space-y-1">
-            <Label>توضیحات</Label>
-            <Textarea
-              value={form.description}
-              onChange={(e) => update({ description: e.target.value })}
-              rows={4}
-              placeholder="به زبان ساده بنویسید مشتری چرا باید شما را انتخاب کند..."
-            />
-            <p className="text-xs text-muted-foreground">حداقل ۲۰ کاراکتر برای تکمیل پروفایل</p>
-          </div>
+          <IncompleteFieldHighlight itemId="name">
+            <div className="space-y-1">
+              <Label>نام کسب‌وکار</Label>
+              <Input value={form.name} onChange={(e) => update({ name: e.target.value })} />
+            </div>
+          </IncompleteFieldHighlight>
+          <IncompleteFieldHighlight itemId="description">
+            <div className="space-y-1">
+              <Label>توضیحات</Label>
+              <Textarea
+                value={form.description}
+                onChange={(e) => update({ description: e.target.value })}
+                rows={4}
+                placeholder="به زبان ساده بنویسید مشتری چرا باید شما را انتخاب کند..."
+              />
+              <p className="text-xs text-muted-foreground">حداقل ۲۰ کاراکتر برای تکمیل پروفایل</p>
+            </div>
+          </IncompleteFieldHighlight>
         </CardContent>
       </Card>
 
@@ -202,41 +207,43 @@ export function BusinessProfileBasicsForm({
         </CardContent>
       </Card>
 
-      <Card className="border-border/60 shadow-sm">
-        <CardHeader className="flex flex-row items-center gap-2 pb-2">
-          <Phone className="size-4 text-emerald-600" />
-          <CardTitle className="text-base">تماس</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1">
-            <Label>تلفن</Label>
-            <Input dir="ltr" value={form.phone} onChange={(e) => update({ phone: e.target.value })} />
-          </div>
-          <div className="space-y-1">
-            <Label>واتساپ</Label>
-            <Input
-              dir="ltr"
-              value={form.whatsapp}
-              onChange={(e) => update({ whatsapp: e.target.value })}
+      <IncompleteFieldHighlight itemId="contact">
+        <Card className="border-border/60 shadow-sm">
+          <CardHeader className="flex flex-row items-center gap-2 pb-2">
+            <Phone className="size-4 text-emerald-600" />
+            <CardTitle className="text-base">تماس</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1">
+              <Label>تلفن</Label>
+              <Input dir="ltr" value={form.phone} onChange={(e) => update({ phone: e.target.value })} />
+            </div>
+            <div className="space-y-1">
+              <Label>واتساپ</Label>
+              <Input
+                dir="ltr"
+                value={form.whatsapp}
+                onChange={(e) => update({ whatsapp: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1 sm:col-span-2">
+              <Label>ایمیل (اختیاری)</Label>
+              <Input dir="ltr" value={form.email} onChange={(e) => update({ email: e.target.value })} />
+            </div>
+            <SwitchWithIcon
+              id="hub-chat-enabled"
+              className="sm:col-span-2"
+              checked={form.chatEnabled}
+              disabled={chatSaving || saving}
+              onCheckedChange={(checked) => void saveChatEnabled(checked)}
+              title="پیام آنلاین در نیازفایندر"
+              description="مشتریان می‌توانند از صفحه شما پیام بفرستند"
+              iconOn={<BellOff className="size-4" />}
+              iconOff={<BellRing className="size-4" />}
             />
-          </div>
-          <div className="space-y-1 sm:col-span-2">
-            <Label>ایمیل (اختیاری)</Label>
-            <Input dir="ltr" value={form.email} onChange={(e) => update({ email: e.target.value })} />
-          </div>
-          <SwitchWithIcon
-            id="hub-chat-enabled"
-            className="sm:col-span-2"
-            checked={form.chatEnabled}
-            disabled={chatSaving || saving}
-            onCheckedChange={(checked) => void saveChatEnabled(checked)}
-            title="پیام آنلاین در نیازفایندر"
-            description="مشتریان می‌توانند از صفحه شما پیام بفرستند"
-            iconOn={<BellOff className="size-4" />}
-            iconOff={<BellRing className="size-4" />}
-          />
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </IncompleteFieldHighlight>
 
       <div className="flex justify-end">
         <Button onClick={() => void save()} disabled={saving} className="min-h-11 gap-2">

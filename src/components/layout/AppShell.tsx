@@ -5,11 +5,13 @@ import { Suspense, useEffect, type ReactNode } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
-import { AuthModal } from '@/components/auth/AuthModal';
-import { BackToTop } from '@/components/shared/BackToTop';
-import { CookieConsent } from '@/components/shared/CookieConsent';
+import {
+  AuthModal,
+  OnboardingWelcome,
+  CookieConsent,
+  BackToTop,
+} from '@/components/layout/AppShellDeferredChrome';
 import { AnalyticsProvider } from '@/hooks/use-analytics-pageview';
-import { OnboardingWelcome } from '@/components/shared/OnboardingWelcome';
 import ErrorBoundary from '@/components/shared/ErrorBoundary';
 import { QueryProvider } from '@/components/providers/QueryProvider';
 import { Separator } from '@/components/ui/separator';

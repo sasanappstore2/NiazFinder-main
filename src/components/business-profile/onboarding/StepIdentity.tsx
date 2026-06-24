@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import { getBusinessCategoryTitle } from '@/lib/business/business-category';
 import { BusinessProfileCategoryTabs } from '@/components/business-profile/BusinessProfileCategoryTabs';
+import { useOccupationMegaMenuTree } from '@/hooks/use-occupation-mega-menu';
+import { useOnlineStoreMegaMenuTree } from '@/hooks/use-online-store-mega-menu';
 import {
   getDisplayNamePlaceholder,
   isGenericBusinessName,
@@ -39,6 +41,17 @@ export function StepIdentity({
   const lastAutoName = useRef<string | null>(null);
 
   const primarySlug = values.occupationSlugs[0] ?? values.primaryCategorySlug;
+
+  const { tree: occupationTree } = useOccupationMegaMenuTree();
+  const { tree: onlineStoreTree } = useOnlineStoreMegaMenuTree();
+  const showOccupations = occupationTree.length > 0;
+  const showOnlineStores = onlineStoreTree.length > 0;
+  const categoryLabel =
+    showOccupations && showOnlineStores
+      ? 'شغل یا حوزهٔ فروشگاه اینترنتی *'
+      : showOnlineStores
+        ? 'حوزهٔ فروشگاه اینترنتی *'
+        : 'شغل *';
 
   const buildSuggestion = () =>
     primarySlug
@@ -89,12 +102,16 @@ export function StepIdentity({
   return (
     <div className="space-y-[21px]">
       <div className="rounded-xl border border-emerald-500/15 bg-emerald-500/5 px-4 py-3 text-sm text-muted-foreground">
-        تا ۳ مورد از زبانهٔ مشاغل یا فروشگاه اینترنتی انتخاب کنید (اولین = اصلی). اگر نام
-        تجاری ندارید، نام خودتان یا پیشنهاد سیستم برای نمایش در پروفایل و جستجو کافی است.
+        تا ۳ شغل از دسته‌های فعال انتخاب کنید (اولین = اصلی). در حالت راه‌اندازی فقط
+        حوزهٔ <strong>املاک و ساختمان</strong> فعال است.
+        <br />
+        <strong>مشاور املاک شخصی</strong> برای فعالیت مستقل (بدون دفتر)؛{' '}
+        <strong>دفتر و آژانس املاک</strong> برای شرکت یا دفتر ثبت‌شده. اگر نام تجاری ندارید،
+        نام خودتان کافی است.
       </div>
 
       <div className="space-y-2">
-        <Label>شغل یا حوزهٔ فروشگاه اینترنتی *</Label>
+        <Label>{categoryLabel}</Label>
         <BusinessProfileCategoryTabs
           selectedSlugs={values.occupationSlugs}
           onChange={handleOccupationsChange}

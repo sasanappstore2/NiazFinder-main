@@ -93,12 +93,16 @@ export async function GET(request: NextRequest) {
         contactPoint: {
           include: { profile: { select: { name: true, logo: true } } },
         },
-        messages: {
-          where: {
-            senderId: { not: user.id },
-            isRead: false,
+        // Unread badge as an indexed COUNT, not a fetch of every unread row.
+        _count: {
+          select: {
+            messages: {
+              where: {
+                senderId: { not: user.id },
+                isRead: false,
+              },
+            },
           },
-          select: { id: true },
         },
       },
     });
@@ -117,7 +121,7 @@ export async function GET(request: NextRequest) {
           ? sanitizeMessageContentForClient(conv.lastMessage, 'TEXT')
           : conv.lastMessage,
         lastMessageAt: conv.lastMessageAt,
-        unreadCount: conv.messages.length,
+        unreadCount: conv._count.messages,
         otherUser: {
           id: otherUser.id,
           firstName: otherUser.firstName,
@@ -282,12 +286,15 @@ export async function POST(request: NextRequest) {
         contactPoint: {
           include: { profile: { select: { name: true, logo: true } } },
         },
-        messages: {
-          where: {
-            senderId: { not: user.id },
-            isRead: false,
+        _count: {
+          select: {
+            messages: {
+              where: {
+                senderId: { not: user.id },
+                isRead: false,
+              },
+            },
           },
-          select: { id: true },
         },
       },
     });
@@ -306,7 +313,7 @@ export async function POST(request: NextRequest) {
           businessProfileId: existingConv.businessProfileId,
           lastMessage: existingConv.lastMessage,
           lastMessageAt: existingConv.lastMessageAt,
-          unreadCount: existingConv.messages.length,
+          unreadCount: existingConv._count.messages,
           otherUser: {
             id: other.id,
             firstName: other.firstName,

@@ -168,17 +168,19 @@ export function useChatSocket(): ChatSocketAPI {
 
       (window as unknown as { __chatSocket?: Socket }).__chatSocket = socketInstance!;
 
+      // Catch up on anything missed while disconnected (beyond Socket.io's
+      // connection-state-recovery window).
       void useAppStore.getState().fetchConversations().catch(() => {});
 
+      // Only the ACTIVE conversation needs an explicit client-side join (so its
+      // conv-scoped events — typing, reactions, read receipts — arrive promptly).
+      // The server already auto-joins the user to ALL their conversation rooms on
+      // connect, so looping join:conversation over every conversation here was
+      // pure redundancy (N extra emits + N participant DB checks per reconnect).
       const activeId = useAppStore.getState().activeConversationId;
       if (activeId) {
         socketInstance!.emit('join:conversation', activeId);
         void useAppStore.getState().fetchConversationMessages(activeId).catch(() => {});
-      }
-
-      const convIds = useAppStore.getState().conversations.map((c) => c.id);
-      for (const convId of convIds) {
-        socketInstance!.emit('join:conversation', convId);
       }
 
       void fetchAndDispatchPendingIncomingCall();

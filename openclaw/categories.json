@@ -1,0 +1,751 @@
+[
+  {
+    "slug": "apartment-sale",
+    "parentSlug": "residential-sale",
+    "rootSlug": "real-estate",
+    "title": "آپارتمان",
+    "label": "املاک › فروش مسکونی › آپارتمان"
+  },
+  {
+    "slug": "villa-sale",
+    "parentSlug": "residential-sale",
+    "rootSlug": "real-estate",
+    "title": "خانه و ویلا",
+    "label": "املاک › فروش مسکونی › خانه و ویلا"
+  },
+  {
+    "slug": "land-sale",
+    "parentSlug": "residential-sale",
+    "rootSlug": "real-estate",
+    "title": "زمین و کلنگی",
+    "label": "املاک › فروش مسکونی › زمین و کلنگی"
+  },
+  {
+    "slug": "apartment-rent",
+    "parentSlug": "residential-rent",
+    "rootSlug": "real-estate",
+    "title": "آپارتمان",
+    "label": "املاک › اجاره مسکونی › آپارتمان"
+  },
+  {
+    "slug": "villa-rent",
+    "parentSlug": "residential-rent",
+    "rootSlug": "real-estate",
+    "title": "خانه و ویلا",
+    "label": "املاک › اجاره مسکونی › خانه و ویلا"
+  },
+  {
+    "slug": "land-rent",
+    "parentSlug": "residential-rent",
+    "rootSlug": "real-estate",
+    "title": "زمین و کلنگی",
+    "label": "املاک › اجاره مسکونی › زمین و کلنگی"
+  },
+  {
+    "slug": "office-sale",
+    "parentSlug": "commercial-sale",
+    "rootSlug": "real-estate",
+    "title": "دفتر کار",
+    "label": "املاک › فروش اداری و تجاری › دفتر کار"
+  },
+  {
+    "slug": "shop-sale",
+    "parentSlug": "commercial-sale",
+    "rootSlug": "real-estate",
+    "title": "مغازه و غرفه",
+    "label": "املاک › فروش اداری و تجاری › مغازه و غرفه"
+  },
+  {
+    "slug": "industrial-sale",
+    "parentSlug": "commercial-sale",
+    "rootSlug": "real-estate",
+    "title": "صنعتی",
+    "label": "املاک › فروش اداری و تجاری › صنعتی"
+  },
+  {
+    "slug": "office-rent",
+    "parentSlug": "commercial-rent",
+    "rootSlug": "real-estate",
+    "title": "دفتر کار",
+    "label": "املاک › اجاره اداری و تجاری › دفتر کار"
+  },
+  {
+    "slug": "shop-rent",
+    "parentSlug": "commercial-rent",
+    "rootSlug": "real-estate",
+    "title": "مغازه و غرفه",
+    "label": "املاک › اجاره اداری و تجاری › مغازه و غرفه"
+  },
+  {
+    "slug": "industrial-rent",
+    "parentSlug": "commercial-rent",
+    "rootSlug": "real-estate",
+    "title": "صنعتی",
+    "label": "املاک › اجاره اداری و تجاری › صنعتی"
+  },
+  {
+    "slug": "suite-apartment-rent",
+    "parentSlug": "short-term-rent",
+    "rootSlug": "real-estate",
+    "title": "آپارتمان و سوئیت",
+    "label": "املاک › اجاره کوتاه‌مدت › آپارتمان و سوئیت"
+  },
+  {
+    "slug": "villa-short-rent",
+    "parentSlug": "short-term-rent",
+    "rootSlug": "real-estate",
+    "title": "ویلا و باغ",
+    "label": "املاک › اجاره کوتاه‌مدت › ویلا و باغ"
+  },
+  {
+    "slug": "workspace-short-rent",
+    "parentSlug": "short-term-rent",
+    "rootSlug": "real-estate",
+    "title": "دفتر و فضای آموزشی",
+    "label": "املاک › اجاره کوتاه‌مدت › دفتر و فضای آموزشی"
+  },
+  {
+    "slug": "agency-services",
+    "parentSlug": "real-estate-services",
+    "rootSlug": "real-estate",
+    "title": "آژانس املاک",
+    "label": "املاک › خدمات املاک › آژانس املاک"
+  },
+  {
+    "slug": "construction-partnership",
+    "parentSlug": "real-estate-services",
+    "rootSlug": "real-estate",
+    "title": "مشارکت در ساخت",
+    "label": "املاک › خدمات املاک › مشارکت در ساخت"
+  },
+  {
+    "slug": "pre-sale-services",
+    "parentSlug": "real-estate-services",
+    "rootSlug": "real-estate",
+    "title": "پیش‌فروش",
+    "label": "املاک › خدمات املاک › پیش‌فروش"
+  },
+  {
+    "slug": "car-ride",
+    "parentSlug": "car",
+    "rootSlug": "vehicles",
+    "title": "سواری",
+    "label": "وسایل نقلیه › خودرو › سواری"
+  },
+  {
+    "slug": "car-heavy",
+    "parentSlug": "car",
+    "rootSlug": "vehicles",
+    "title": "سنگین",
+    "label": "وسایل نقلیه › خودرو › سنگین"
+  },
+  {
+    "slug": "car-classic",
+    "parentSlug": "car",
+    "rootSlug": "vehicles",
+    "title": "کلاسیک",
+    "label": "وسایل نقلیه › خودرو › کلاسیک"
+  },
+  {
+    "slug": "car-rental",
+    "parentSlug": "car",
+    "rootSlug": "vehicles",
+    "title": "اجاره‌ای",
+    "label": "وسایل نقلیه › خودرو › اجاره‌ای"
+  },
+  {
+    "slug": "mobile-phone",
+    "parentSlug": "mobile-tablet",
+    "rootSlug": "electronics",
+    "title": "گوشی موبایل",
+    "label": "لوازم الکترونیکی › موبایل و تبلت › گوشی موبایل"
+  },
+  {
+    "slug": "tablet",
+    "parentSlug": "mobile-tablet",
+    "rootSlug": "electronics",
+    "title": "تبلت",
+    "label": "لوازم الکترونیکی › موبایل و تبلت › تبلت"
+  },
+  {
+    "slug": "mobile-accessories",
+    "parentSlug": "mobile-tablet",
+    "rootSlug": "electronics",
+    "title": "لوازم جانبی",
+    "label": "لوازم الکترونیکی › موبایل و تبلت › لوازم جانبی"
+  },
+  {
+    "slug": "desktop-computer",
+    "parentSlug": "computer",
+    "rootSlug": "electronics",
+    "title": "رومیزی",
+    "label": "لوازم الکترونیکی › رایانه › رومیزی"
+  },
+  {
+    "slug": "laptop",
+    "parentSlug": "computer",
+    "rootSlug": "electronics",
+    "title": "لپ‌تاپ",
+    "label": "لوازم الکترونیکی › رایانه › لپ‌تاپ"
+  },
+  {
+    "slug": "computer-parts",
+    "parentSlug": "computer",
+    "rootSlug": "electronics",
+    "title": "قطعات",
+    "label": "لوازم الکترونیکی › رایانه › قطعات"
+  },
+  {
+    "slug": "refrigerator",
+    "parentSlug": "kitchen-appliances",
+    "rootSlug": "home-appliances",
+    "title": "یخچال",
+    "label": "لوازم خانگی › آشپزخانه › یخچال"
+  },
+  {
+    "slug": "washing-machine",
+    "parentSlug": "kitchen-appliances",
+    "rootSlug": "home-appliances",
+    "title": "ماشین شستشو",
+    "label": "لوازم خانگی › آشپزخانه › ماشین شستشو"
+  },
+  {
+    "slug": "stove-microwave",
+    "parentSlug": "kitchen-appliances",
+    "rootSlug": "home-appliances",
+    "title": "اجاق و مایکروویو",
+    "label": "لوازم خانگی › آشپزخانه › اجاق و مایکروویو"
+  },
+  {
+    "slug": "cooking-utensils",
+    "parentSlug": "kitchen-appliances",
+    "rootSlug": "home-appliances",
+    "title": "ظروف",
+    "label": "لوازم خانگی › آشپزخانه › ظروف"
+  },
+  {
+    "slug": "sofa-chair",
+    "parentSlug": "furniture-decor",
+    "rootSlug": "home-appliances",
+    "title": "مبلمان",
+    "label": "لوازم خانگی › مبلمان و دکوراسیون › مبلمان"
+  },
+  {
+    "slug": "table-closet",
+    "parentSlug": "furniture-decor",
+    "rootSlug": "home-appliances",
+    "title": "میز و کمد",
+    "label": "لوازم خانگی › مبلمان و دکوراسیون › میز و کمد"
+  },
+  {
+    "slug": "lighting",
+    "parentSlug": "furniture-decor",
+    "rootSlug": "home-appliances",
+    "title": "روشنایی",
+    "label": "لوازم خانگی › مبلمان و دکوراسیون › روشنایی"
+  },
+  {
+    "slug": "decorative-art",
+    "parentSlug": "furniture-decor",
+    "rootSlug": "home-appliances",
+    "title": "تزیینی",
+    "label": "لوازم خانگی › مبلمان و دکوراسیون › تزیینی"
+  },
+  {
+    "slug": "ac-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "کولر گازی و اسپلیت",
+    "label": "خدمات › تعمیرات › کولر گازی و اسپلیت"
+  },
+  {
+    "slug": "refrigerator-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "یخچال و فریزر",
+    "label": "خدمات › تعمیرات › یخچال و فریزر"
+  },
+  {
+    "slug": "laundry-dishwasher-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "ماشین لباسشویی و ظرفشویی",
+    "label": "خدمات › تعمیرات › ماشین لباسشویی و ظرفشویی"
+  },
+  {
+    "slug": "cooking-appliance-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "اجاق، فر و مایکروویو",
+    "label": "خدمات › تعمیرات › اجاق، فر و مایکروویو"
+  },
+  {
+    "slug": "water-heater-boiler-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "آبگرم‌کن، پکیج و شوفاژ",
+    "label": "خدمات › تعمیرات › آبگرم‌کن، پکیج و شوفاژ"
+  },
+  {
+    "slug": "small-appliance-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "جاروبرقی و لوازم کوچک خانگی",
+    "label": "خدمات › تعمیرات › جاروبرقی و لوازم کوچک خانگی"
+  },
+  {
+    "slug": "tv-audio-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "تلویزیون و صوتی",
+    "label": "خدمات › تعمیرات › تلویزیون و صوتی"
+  },
+  {
+    "slug": "computer-laptop-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "کامپیوتر و لپ‌تاپ",
+    "label": "خدمات › تعمیرات › کامپیوتر و لپ‌تاپ"
+  },
+  {
+    "slug": "mobile-tablet-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "موبایل و تابلت",
+    "label": "خدمات › تعمیرات › موبایل و تابلت"
+  },
+  {
+    "slug": "camera-cctv-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "دوربین و دزدگیر",
+    "label": "خدمات › تعمیرات › دوربین و دزدگیر"
+  },
+  {
+    "slug": "printer-office-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "پرینتر و ماشین‌های اداری",
+    "label": "خدمات › تعمیرات › پرینتر و ماشین‌های اداری"
+  },
+  {
+    "slug": "vehicle-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "خودرو",
+    "label": "خدمات › تعمیرات › خودرو"
+  },
+  {
+    "slug": "motorcycle-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "موتورسیکلت",
+    "label": "خدمات › تعمیرات › موتورسیکلت"
+  },
+  {
+    "slug": "bicycle-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "دوچرخه",
+    "label": "خدمات › تعمیرات › دوچرخه"
+  },
+  {
+    "slug": "door-window-glass-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "در، پنجره و شیشه",
+    "label": "خدمات › تعمیرات › در، پنجره و شیشه"
+  },
+  {
+    "slug": "furniture-wood-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "مبلمان و چوب",
+    "label": "خدمات › تعمیرات › مبلمان و چوب"
+  },
+  {
+    "slug": "carpet-rug-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "فرش و گلیم",
+    "label": "خدمات › تعمیرات › فرش و گلیم"
+  },
+  {
+    "slug": "roofing-waterproofing-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "سقف و ایزوگام",
+    "label": "خدمات › تعمیرات › سقف و ایزوگام"
+  },
+  {
+    "slug": "elevator-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "آسانسور",
+    "label": "خدمات › تعمیرات › آسانسور"
+  },
+  {
+    "slug": "water-pump-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "پمپ آب و موتورآلات",
+    "label": "خدمات › تعمیرات › پمپ آب و موتورآلات"
+  },
+  {
+    "slug": "generator-ups-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "موتور برق و برق اضطراری",
+    "label": "خدمات › تعمیرات › موتور برق و برق اضطراری"
+  },
+  {
+    "slug": "watch-jewelry-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "ساعت و جواهرات",
+    "label": "خدمات › تعمیرات › ساعت و جواهرات"
+  },
+  {
+    "slug": "locksmith-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "قفل‌سازی و کلید",
+    "label": "خدمات › تعمیرات › قفل‌سازی و کلید"
+  },
+  {
+    "slug": "sewing-machine-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "چرخ خیاطی",
+    "label": "خدمات › تعمیرات › چرخ خیاطی"
+  },
+  {
+    "slug": "musical-instrument-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "آلات موسیقی",
+    "label": "خدمات › تعمیرات › آلات موسیقی"
+  },
+  {
+    "slug": "medical-equipment-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "تجهیزات پزشکی",
+    "label": "خدمات › تعمیرات › تجهیزات پزشکی"
+  },
+  {
+    "slug": "industrial-machinery-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "ماشین‌آلات صنعتی",
+    "label": "خدمات › تعمیرات › ماشین‌آلات صنعتی"
+  },
+  {
+    "slug": "fitness-equipment-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "تجهیزات ورزشی",
+    "label": "خدمات › تعمیرات › تجهیزات ورزشی"
+  },
+  {
+    "slug": "general-handyman-repair",
+    "parentSlug": "repairs",
+    "rootSlug": "services",
+    "title": "تعمیرات عمومی و چندمنظوره",
+    "label": "خدمات › تعمیرات › تعمیرات عمومی و چندمنظوره"
+  },
+  {
+    "slug": "cultural-artistic",
+    "parentSlug": "social-events",
+    "rootSlug": "social",
+    "title": "فرهنگی",
+    "label": "اجتماعی › رویدادها › فرهنگی"
+  },
+  {
+    "slug": "conference",
+    "parentSlug": "social-events",
+    "rootSlug": "social",
+    "title": "همایش",
+    "label": "اجتماعی › رویدادها › همایش"
+  },
+  {
+    "slug": "sporting",
+    "parentSlug": "social-events",
+    "rootSlug": "social",
+    "title": "ورزشی",
+    "label": "اجتماعی › رویدادها › ورزشی"
+  },
+  {
+    "slug": "motorcycle",
+    "parentSlug": "vehicles",
+    "rootSlug": "vehicles",
+    "title": "موتورسیکلت",
+    "label": "وسایل نقلیه › موتورسیکلت"
+  },
+  {
+    "slug": "spare-parts",
+    "parentSlug": "vehicles",
+    "rootSlug": "vehicles",
+    "title": "قطعات یدکی",
+    "label": "وسایل نقلیه › قطعات یدکی"
+  },
+  {
+    "slug": "boat",
+    "parentSlug": "vehicles",
+    "rootSlug": "vehicles",
+    "title": "قایق",
+    "label": "وسایل نقلیه › قایق"
+  },
+  {
+    "slug": "game-console",
+    "parentSlug": "electronics",
+    "rootSlug": "electronics",
+    "title": "کنسول و بازی",
+    "label": "لوازم الکترونیکی › کنسول و بازی"
+  },
+  {
+    "slug": "audio-video",
+    "parentSlug": "electronics",
+    "rootSlug": "electronics",
+    "title": "صوتی و تصویری",
+    "label": "لوازم الکترونیکی › صوتی و تصویری"
+  },
+  {
+    "slug": "camera",
+    "parentSlug": "electronics",
+    "rootSlug": "electronics",
+    "title": "دوربین",
+    "label": "لوازم الکترونیکی › دوربین"
+  },
+  {
+    "slug": "rugs",
+    "parentSlug": "home-appliances",
+    "rootSlug": "home-appliances",
+    "title": "فرش و گلیم",
+    "label": "لوازم خانگی › فرش و گلیم"
+  },
+  {
+    "slug": "building-industrial",
+    "parentSlug": "home-appliances",
+    "rootSlug": "home-appliances",
+    "title": "ابزار ساختمانی",
+    "label": "لوازم خانگی › ابزار ساختمانی"
+  },
+  {
+    "slug": "cleaning",
+    "parentSlug": "services",
+    "rootSlug": "services",
+    "title": "نظافت",
+    "label": "خدمات › نظافت"
+  },
+  {
+    "slug": "plumbing",
+    "parentSlug": "services",
+    "rootSlug": "services",
+    "title": "لوله‌کشی",
+    "label": "خدمات › لوله‌کشی"
+  },
+  {
+    "slug": "moving",
+    "parentSlug": "services",
+    "rootSlug": "services",
+    "title": "اسباب‌کشی و باربری",
+    "label": "خدمات › اسباب‌کشی و باربری"
+  },
+  {
+    "slug": "electrical",
+    "parentSlug": "services",
+    "rootSlug": "services",
+    "title": "برق‌کاری",
+    "label": "خدمات › برق‌کاری"
+  },
+  {
+    "slug": "painting",
+    "parentSlug": "services",
+    "rootSlug": "services",
+    "title": "نقاشی و کاغذدیواری",
+    "label": "خدمات › نقاشی و کاغذدیواری"
+  },
+  {
+    "slug": "medical-health",
+    "parentSlug": "services",
+    "rootSlug": "services",
+    "title": "خدمات درمانی و پزشکی",
+    "label": "خدمات › خدمات درمانی و پزشکی"
+  },
+  {
+    "slug": "legal-services",
+    "parentSlug": "services",
+    "rootSlug": "services",
+    "title": "مشاوره حقوقی",
+    "label": "خدمات › مشاوره حقوقی"
+  },
+  {
+    "slug": "it-services",
+    "parentSlug": "services",
+    "rootSlug": "services",
+    "title": "خدمات فناوری",
+    "label": "خدمات › خدمات فناوری"
+  },
+  {
+    "slug": "transportation",
+    "parentSlug": "services",
+    "rootSlug": "services",
+    "title": "حمل و نقل",
+    "label": "خدمات › حمل و نقل"
+  },
+  {
+    "slug": "beauty-health",
+    "parentSlug": "services",
+    "rootSlug": "services",
+    "title": "زیبایی",
+    "label": "خدمات › زیبایی"
+  },
+  {
+    "slug": "events-catering",
+    "parentSlug": "services",
+    "rootSlug": "services",
+    "title": "مراسم",
+    "label": "خدمات › مراسم"
+  },
+  {
+    "slug": "education",
+    "parentSlug": "services",
+    "rootSlug": "services",
+    "title": "آموزش",
+    "label": "خدمات › آموزش"
+  },
+  {
+    "slug": "clothing",
+    "parentSlug": "personal-items",
+    "rootSlug": "personal-items",
+    "title": "پوشاک",
+    "label": "وسایل شخصی › پوشاک"
+  },
+  {
+    "slug": "jewelry-watches",
+    "parentSlug": "personal-items",
+    "rootSlug": "personal-items",
+    "title": "جواهرات",
+    "label": "وسایل شخصی › جواهرات"
+  },
+  {
+    "slug": "cosmetics-health",
+    "parentSlug": "personal-items",
+    "rootSlug": "personal-items",
+    "title": "آرایشی",
+    "label": "وسایل شخصی › آرایشی"
+  },
+  {
+    "slug": "kids-baby",
+    "parentSlug": "personal-items",
+    "rootSlug": "personal-items",
+    "title": "کودک",
+    "label": "وسایل شخصی › کودک"
+  },
+  {
+    "slug": "books",
+    "parentSlug": "entertainment",
+    "rootSlug": "entertainment",
+    "title": "کتاب",
+    "label": "سرگرمی › کتاب"
+  },
+  {
+    "slug": "tickets",
+    "parentSlug": "entertainment",
+    "rootSlug": "entertainment",
+    "title": "بلیط",
+    "label": "سرگرمی › بلیط"
+  },
+  {
+    "slug": "tours",
+    "parentSlug": "entertainment",
+    "rootSlug": "entertainment",
+    "title": "تور",
+    "label": "سرگرمی › تور"
+  },
+  {
+    "slug": "sports-fitness",
+    "parentSlug": "entertainment",
+    "rootSlug": "entertainment",
+    "title": "ورزش",
+    "label": "سرگرمی › ورزش"
+  },
+  {
+    "slug": "pets",
+    "parentSlug": "entertainment",
+    "rootSlug": "entertainment",
+    "title": "حیوانات",
+    "label": "سرگرمی › حیوانات"
+  },
+  {
+    "slug": "musical-instruments",
+    "parentSlug": "entertainment",
+    "rootSlug": "entertainment",
+    "title": "موسیقی",
+    "label": "سرگرمی › موسیقی"
+  },
+  {
+    "slug": "volunteering",
+    "parentSlug": "social",
+    "rootSlug": "social",
+    "title": "داوطلبانه",
+    "label": "اجتماعی › داوطلبانه"
+  },
+  {
+    "slug": "lost-found",
+    "parentSlug": "social",
+    "rootSlug": "social",
+    "title": "گم‌شده‌ها",
+    "label": "اجتماعی › گم‌شده‌ها"
+  },
+  {
+    "slug": "admin-management",
+    "parentSlug": "jobs",
+    "rootSlug": "jobs",
+    "title": "اداری",
+    "label": "استخدام › اداری"
+  },
+  {
+    "slug": "it",
+    "parentSlug": "jobs",
+    "rootSlug": "jobs",
+    "title": "فناوری اطلاعات",
+    "label": "استخدام › فناوری اطلاعات"
+  },
+  {
+    "slug": "finance-legal",
+    "parentSlug": "jobs",
+    "rootSlug": "jobs",
+    "title": "مالی و حقوقی",
+    "label": "استخدام › مالی و حقوقی"
+  },
+  {
+    "slug": "marketing-sales",
+    "parentSlug": "jobs",
+    "rootSlug": "jobs",
+    "title": "بازاریابی",
+    "label": "استخدام › بازاریابی"
+  },
+  {
+    "slug": "engineering",
+    "parentSlug": "jobs",
+    "rootSlug": "jobs",
+    "title": "فنی و مهندسی",
+    "label": "استخدام › فنی و مهندسی"
+  },
+  {
+    "slug": "art-media",
+    "parentSlug": "jobs",
+    "rootSlug": "jobs",
+    "title": "هنر و رسانه",
+    "label": "استخدام › هنر و رسانه"
+  },
+  {
+    "slug": "health-beauty",
+    "parentSlug": "jobs",
+    "rootSlug": "jobs",
+    "title": "درمانی و زیبایی",
+    "label": "استخدام › درمانی و زیبایی"
+  }
+]

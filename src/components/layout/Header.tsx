@@ -26,9 +26,9 @@ import { ArkUserMenu } from '@/components/ui/ark-user-menu';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 import { SITE_NAME } from '@/lib/constants';
+import { useFilteredNeedMegaMenu } from '@/hooks/use-filtered-need-mega-menu';
 import {
   CategorySelector,
-  ALL_CATEGORIES,
   getCategoryIcon,
 } from '@/components/navigation/MegaMenu/CategoryMegaMenu';
 import type { MegaMenuCategory } from '@/components/navigation/MegaMenu/CategoryMegaMenu';
@@ -325,6 +325,7 @@ function NeedHeaderCategoryMenuDesktop() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const listingType = useBrowseListingType();
+  const nestedCategories = useFilteredNeedMegaMenu();
 
   const handleSelect = (category: MegaMenuCategory) => {
     router.push(getCategoryBrowseUrl(category, { type: listingType }));
@@ -366,7 +367,7 @@ function NeedHeaderCategoryMenuDesktop() {
         >
           <CategorySelector
             isDesktop={true}
-            nestedCategories={ALL_CATEGORIES}
+            nestedCategories={nestedCategories}
             onSelect={handleSelect}
             onClose={() => setIsOpen(false)}
             getIcon={getCategoryIcon}
@@ -391,6 +392,7 @@ function NeedHeaderCategoryMenuMobile() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const listingType = useBrowseListingType();
+  const nestedCategories = useFilteredNeedMegaMenu();
 
   const handleSelect = (category: MegaMenuCategory) => {
     router.push(getCategoryBrowseUrl(category, { type: listingType }));
@@ -413,7 +415,7 @@ function NeedHeaderCategoryMenuMobile() {
         <SheetContent side="right" showCloseButton={false} className="w-[min(340px,calc(100vw-1.5rem))] p-0 sm:w-[min(400px,calc(100vw-2rem))]">
           <CategorySelector
             isDesktop={false}
-            nestedCategories={ALL_CATEGORIES}
+            nestedCategories={nestedCategories}
             onSelect={handleSelect}
             onClose={() => setIsOpen(false)}
             getIcon={getCategoryIcon}
@@ -535,7 +537,7 @@ export function Header({ compact = false }: { compact?: boolean }) {
               width={28}
               height={28}
               className="size-7"
-              priority={false}
+              priority={isHome}
             />
           </button>
 

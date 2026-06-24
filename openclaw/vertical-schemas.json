@@ -1,0 +1,50 @@
+{
+  "real-estate": {
+    "requiredFields": ["transactionType", "city", "propertyKind"],
+    "optionalFields": ["area", "rooms", "budgetMin", "budgetMax", "rahnAmount", "monthlyRent", "deposit", "floorMin", "yearMin", "neighborhood"],
+    "examples": [
+      { "text": "آپارتمان ۷۰ متری دو خواب در سعادت‌آباد تهران، رهن کامل ۵۰۰ میلیون", "vertical": "real-estate", "subcategorySlug": "apartment-rent", "transactionType": "FULL_DEPOSIT", "city": "تهران", "neighborhood": "سعادت‌آباد", "area": 70, "rooms": 2, "rahnAmount": 500000000, "propertyKind": "apartment" },
+      { "text": "خرید ویلا ۳۰۰ متری در لواسان با باغ، بودجه ۵ میلیارد", "vertical": "real-estate", "subcategorySlug": "villa-sale", "transactionType": "BUY", "city": "لواسان", "area": 300, "budgetMax": 5000000000, "propertyKind": "villa" },
+      { "text": "مغازه ۴۰ متر اجاره در بازار بزرگ اصفهان، رهن ۲۰۰ میلیون اجاره ۱۵ میلیون", "vertical": "real-estate", "subcategorySlug": "shop-rent", "transactionType": "DEPOSIT_AND_RENT", "city": "اصفهان", "area": 40, "rahnAmount": 200000000, "monthlyRent": 15000000, "propertyKind": "shop" }
+    ]
+  },
+  "vehicles": {
+    "requiredFields": ["transactionType", "city"],
+    "optionalFields": ["budgetMin", "budgetMax", "neighborhood"],
+    "examples": [
+      { "text": "خرید پژو ۲۰۶ دنده‌ای مدل ۱۴۰۰ در شیراز، بودجه ۸۰۰ میلیون", "vertical": "vehicles", "subcategorySlug": "car-ride", "transactionType": "BUY", "city": "شیراز", "budgetMax": 800000000 },
+      { "text": "فروش تویوتا کرولا ۲۰۱۹ صاف و بدون رنگ، تهران", "vertical": "vehicles", "subcategorySlug": "car-ride", "transactionType": "SELL", "city": "تهران" }
+    ]
+  },
+  "services": {
+    "requiredFields": ["city"],
+    "optionalFields": ["budgetMax", "neighborhood"],
+    "examples": [
+      { "text": "تعمیر کولر گازی ال جی در کرج، فوری", "vertical": "services", "subcategorySlug": "ac-repair", "city": "کرج" },
+      { "text": "نظافت منزل ۱۰۰ متری در مشهد، هفتگی", "vertical": "services", "subcategorySlug": "cleaning", "city": "مشهد", "area": 100 },
+      { "text": "تعمیر لوله آشپزخانه، منطقه responseified زیبا تهران", "vertical": "services", "subcategorySlug": "plumbing", "city": "تهران" }
+    ]
+  },
+  "electronics": {
+    "requiredFields": ["transactionType", "city"],
+    "optionalFields": ["budgetMax", "neighborhood"],
+    "examples": [
+      { "text": "خرید آیفون ۱۵ پرو مکس ۲۵۶ گیگ تهران", "vertical": "electronics", "subcategorySlug": "mobile-phone", "transactionType": "BUY", "city": "تهران" },
+      { "text": "فروش لپتاپ ایسوس ROG تهران بودجه ۶۰ میلیون", "vertical": "electronics", "subcategorySlug": "laptop", "transactionType": "SELL", "city": "تهران", "budgetMax": 60000000 }
+    ]
+  },
+  "home-appliances": {
+    "requiredFields": ["transactionType", "city"],
+    "optionalFields": ["budgetMax", "neighborhood"],
+    "examples": [
+      { "text": "خرید یخچال ساید بای ساید سامسونگ در اصفهان", "vertical": "home-appliances", "subcategorySlug": "refrigerator", "transactionType": "BUY", "city": "اصفهان" }
+    ]
+  },
+  "jobs": {
+    "requiredFields": ["city"],
+    "optionalFields": ["budgetMin", "budgetMax", "neighborhood"],
+    "examples": [
+      { "text": "استخدام برنامه‌نویس فرانت‌اند در تهران حقوق ۳۰ تا ۵۰ میلیون", "vertical": "jobs", "subcategorySlug": "it", "city": "تهران", "budgetMin": 30000000, "budgetMax": 50000000 }
+    ]
+  }
+}

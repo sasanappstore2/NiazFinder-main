@@ -4,13 +4,14 @@ import { buildCityIndex } from '@/intake/dictionaries/cityIndex';
 import { buildNeighborhoodIndex } from '@/intake/dictionaries/neighborhoodIndex';
 import { listCatalogCityIds, loadCityCatalogFile } from '@/lib/neighborhoods/catalog';
 import { db } from '@/lib/db';
+import { getPublicCategoryWhere } from '@/lib/categories/category-status';
 
 let indexesPromise: Promise<IntakeIndexes> | null = null;
 
 async function loadExtraCategorySynonyms(): Promise<Record<string, readonly string[]>> {
   try {
     const rows = await db.category.findMany({
-      where: { isActive: true },
+      where: getPublicCategoryWhere(),
       select: { slug: true, name: true, description: true },
     });
     const extra: Record<string, string[]> = {};

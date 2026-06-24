@@ -1,5 +1,6 @@
 import type { Prisma, RequestStatus } from '@prisma/client';
 import { db } from '@/lib/db';
+import { getPublicCategoryWhere } from '@/lib/categories/category-status';
 import { buildGeoAndFilters } from '@/lib/search/geo-api-filters';
 import { resolveNeighborhoodSlugs } from '@/lib/neighborhoods/server';
 import { buildNeighborhoodWhereClauses } from '@/lib/neighborhoods/tokens';
@@ -57,10 +58,15 @@ export async function buildRequestBrowseAndFilters(
 
   if (input.category) {
     const category = await db.category.findFirst({
-      where: {
+      where: getPublicCategoryWhere({
         OR: [{ id: input.category }, { slug: input.category }],
+      }),
+      include: {
+        children: {
+          where: getPublicCategoryWhere(),
+          select: { id: true },
+        },
       },
-      include: { children: { select: { id: true } } },
     });
     if (category) {
       const categoryIds = [category.id, ...category.children.map((c) => c.id)];

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { BadgeCheck, MapPin, Star } from 'lucide-react';
 import type { BusinessMapPin } from '@/lib/business/map-pins-types';
 import type { SpecialistProfile } from '@/lib/types';
@@ -52,8 +53,14 @@ export function BusinessMapListCard({
     >
       <div className="relative size-[72px] shrink-0 overflow-hidden rounded-lg bg-muted">
         {logo ? (
-           
-          <img src={logo} alt="" className="size-full object-cover" />
+          <Image
+            src={logo}
+            alt=""
+            width={72}
+            height={72}
+            sizes="72px"
+            className="size-full object-cover"
+          />
         ) : (
           <div className="flex size-full items-center justify-center bg-emerald-100 text-lg font-bold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
             {name.charAt(0)}
@@ -86,7 +93,8 @@ export function BusinessMapListCard({
             </span>
           </span>
           <Link
-            href={href}
+            prefetch
+        href={href}
             onClick={(e) => e.stopPropagation()}
             className="text-xs font-medium text-primary hover:underline"
           >

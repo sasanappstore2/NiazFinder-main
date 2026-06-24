@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { toast } from 'sonner';
 import { useAdmin } from '@/components/admin/context/AdminContext';
 import {
@@ -11,6 +12,7 @@ import {
   AdminPagination,
   type AdminColumn,
 } from '@/components/admin/ui';
+import { ADMIN_SECTION_ROUTES } from '@/config/admin-routes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -80,7 +82,15 @@ export function OutreachPanel() {
 
   const columns: AdminColumn<OutreachRow>[] = [
     { id: 'request', header: 'نیاز', cell: (r) => r.request.title },
-    { id: 'business', header: 'کسب‌وکار', cell: (r) => r.business.name },
+    { id: 'business', header: 'کسب‌وکار', cell: (r) => (
+      <Link
+        href={`${ADMIN_SECTION_ROUTES.businesses}?id=${r.business.id}`}
+        className="text-(--color-coloredText) hover:underline"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {r.business.name}
+      </Link>
+    ) },
     { id: 'score', header: 'امتیاز', cell: (r) => r.matchScore.toFixed(2) },
     { id: 'status', header: 'وضعیت', cell: (r) => <AdminBadge variant={r.status === 'FAILED' ? 'danger' : 'neutral'}>{r.status}</AdminBadge> },
     { id: 'at', header: 'تاریخ', cell: (r) => new Date(r.createdAt).toLocaleDateString('fa-IR') },

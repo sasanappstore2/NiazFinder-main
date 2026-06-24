@@ -169,7 +169,7 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-(--z-mobile-nav) pointer-events-none lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-(--z-mobile-nav) pointer-events-none"
       dir="rtl"
       role="navigation"
       aria-label="ناوبری پایین صفحه"

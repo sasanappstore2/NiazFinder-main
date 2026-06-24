@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { apiErrorFromUnknown } from '@/lib/db-health';
+import { getPublicCategoryWhere } from '@/lib/categories/category-status';
 
 // ============ TYPES ============
 
@@ -23,10 +24,10 @@ export async function GET() {
   try {
     // Fetch all active categories
     const categories = await db.category.findMany({
-      where: { isActive: true },
+      where: getPublicCategoryWhere(),
       include: {
         children: {
-          where: { isActive: true },
+          where: getPublicCategoryWhere(),
           orderBy: { order: 'asc' },
         },
         requests: {

@@ -3,6 +3,8 @@ import { db } from '@/lib/db';
 import { createSlug } from '@/lib/auth';
 import { requirePermission } from '@/lib/rbac/authz';
 import { logAdminAction } from '@/lib/audit/admin-audit';
+import { parseCategoryStatus } from '@/lib/categories/category-status';
+import type { CategoryStatus } from '@prisma/client';
 
 interface CategoryPayload {
   name?: string;
@@ -12,7 +14,7 @@ interface CategoryPayload {
   image?: string | null;
   parentId?: string | null;
   order?: number;
-  isActive?: boolean;
+  status?: CategoryStatus;
 }
 
 async function makeUniqueSlug(baseValue: string) {
@@ -70,7 +72,7 @@ export async function GET(request: NextRequest) {
         name: category.name,
         slug: category.slug,
         parentId: category.parentId,
-        isActive: category.isActive,
+        status: category.status,
         order: category.order,
       })),
     });
@@ -112,6 +114,8 @@ export async function POST(request: NextRequest) {
       ? await makeUniqueSlug(body.slug)
       : await makeUniqueSlug(name);
 
+    const status = parseCategoryStatus(body.status) ?? 'DISABLED';
+
     const category = await db.category.create({
       data: {
         name,
@@ -121,7 +125,7 @@ export async function POST(request: NextRequest) {
         image: body.image?.trim() || null,
         parentId: body.parentId || null,
         order: Number.isFinite(body.order) ? Number(body.order) : 0,
-        isActive: typeof body.isActive === 'boolean' ? body.isActive : true,
+        status,
       },
     });
 
@@ -129,7 +133,7 @@ export async function POST(request: NextRequest) {
       name: category.name,
       slug: category.slug,
       parentId: category.parentId,
-      isActive: category.isActive,
+      status: category.status,
     });
 
     return NextResponse.json({ category }, { status: 201 });

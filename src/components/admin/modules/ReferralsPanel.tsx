@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useAdmin } from '@/components/admin/context/AdminContext';
 import {
+  AdminBadge,
   AdminDataTable,
   AdminKpiCard,
   AdminPageShell,
@@ -55,7 +56,12 @@ export function ReferralsPanel() {
   ];
 
   return (
-    <AdminPageShell section="referrals" layout="table" description="آمار ارجاع‌ها (read-only)">
+    <AdminPageShell
+      section="referrals"
+      layout="table"
+      description="آمار و لیست کدهای ارجاع"
+      actions={<AdminBadge variant="neutral">فقط مشاهده</AdminBadge>}
+    >
       <div className="mb-4 grid gap-3 sm:grid-cols-2">
         <AdminKpiCard title="مجموع پاداش" value={stats.totalReward.toLocaleString('fa-IR')} accent="green" />
         <AdminKpiCard title="دریافت‌شده" value={stats.claimed.toLocaleString('fa-IR')} accent="sky" />

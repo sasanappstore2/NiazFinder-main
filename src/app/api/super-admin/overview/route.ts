@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       db.serviceRequest.count({ where: { status: 'OPEN' } }),
       db.proposal.count(),
       db.category.count(),
-      db.category.count({ where: { isActive: false } }),
+      db.category.count({ where: { status: { not: 'ACTIVE' } } }),
       db.review.count(),
       db.transaction.count(),
       readManagedLocationData(),

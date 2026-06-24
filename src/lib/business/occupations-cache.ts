@@ -1,5 +1,6 @@
 import type { BusinessOccupation } from '@/config/business-occupation-types';
 import { DEFAULT_BUSINESS_OCCUPATIONS } from '@/config/business-occupations-defaults';
+import { getLaunchIsActiveForOccupation } from '@/lib/business/occupation-status';
 
 export type ManagedBusinessOccupation = BusinessOccupation & {
   isActive: boolean;
@@ -16,7 +17,10 @@ let cache: ManagedBusinessOccupation[] | null = null;
 let cacheAt = 0;
 
 export function getDefaultManagedOccupations(): ManagedBusinessOccupation[] {
-  return DEFAULT_BUSINESS_OCCUPATIONS.map(normalizeOccupation);
+  return DEFAULT_BUSINESS_OCCUPATIONS.map((o) => ({
+    ...normalizeOccupation(o),
+    isActive: getLaunchIsActiveForOccupation(o),
+  }));
 }
 
 export function getCachedOccupationsSync(): ManagedBusinessOccupation[] {

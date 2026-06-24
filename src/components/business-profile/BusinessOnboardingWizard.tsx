@@ -13,16 +13,23 @@ import {
   businessOnboardingStep1Schema,
   businessOnboardingStep2Schema,
   businessOnboardingStep3Schema,
+  businessOnboardingRealEstateStepSchema,
+  EMPTY_REAL_ESTATE_ONBOARDING_DETAILS,
   type BusinessOnboardingPayload,
 } from '@/lib/business/onboarding-schema';
-import { ONBOARDING_DRAFT_KEY, WIZARD_STEPS } from '@/components/business-profile/onboarding/constants';
+import { ONBOARDING_DRAFT_KEY, getWizardSteps } from '@/components/business-profile/onboarding/constants';
 import { StepIdentity } from '@/components/business-profile/onboarding/StepIdentity';
 import { StepContact } from '@/components/business-profile/onboarding/StepContact';
 import { StepBrand } from '@/components/business-profile/onboarding/StepBrand';
+import { StepRealEstateDetails } from '@/components/business-profile/onboarding/StepRealEstateDetails';
 import { StepReview } from '@/components/business-profile/onboarding/StepReview';
 import { getClientAuthHeaders, getClientAuthJsonHeaders } from '@/lib/auth/client-auth';
 import { trackAnalyticsEvent } from '@/lib/analytics/track';
 import { normalizeIranMobile } from '@/lib/format/digits';
+import {
+  getPrimaryRealEstateSubtypeFromSlugs,
+  isRealEstateBusiness,
+} from '@/lib/business/is-real-estate-business';
 
 const EMPTY: BusinessOnboardingPayload = {
   name: '',
@@ -43,6 +50,7 @@ const EMPTY: BusinessOnboardingPayload = {
   bale: '',
   rubika: '',
   eitaa: '',
+  realEstateDetails: EMPTY_REAL_ESTATE_ONBOARDING_DETAILS,
 };
 
 type Draft = BusinessOnboardingPayload & { step?: number };
@@ -78,6 +86,13 @@ export function BusinessOnboardingWizard({
 
   const publicUrl = useMemo(() => routeBuilder.businessProfile(slug), [slug]);
 
+  const isRealEstate = isRealEstateBusiness(form.occupationSlugs);
+  const reSubtype = getPrimaryRealEstateSubtypeFromSlugs(form.occupationSlugs);
+  const wizardSteps = useMemo(
+    () => getWizardSteps(isRealEstate, reSubtype),
+    [isRealEstate, reSubtype]
+  );
+
   const persistDraft = useCallback((data: Draft) => {
     try {
       sessionStorage.setItem(ONBOARDING_DRAFT_KEY, JSON.stringify(data));
@@ -90,6 +105,13 @@ export function BusinessOnboardingWizard({
     (patch: Partial<BusinessOnboardingPayload>) => {
       setForm((prev) => {
         const next = { ...prev, ...patch };
+        if (patch.occupationSlugs) {
+          const prevSubtype = getPrimaryRealEstateSubtypeFromSlugs(prev.occupationSlugs);
+          const nextSubtype = getPrimaryRealEstateSubtypeFromSlugs(patch.occupationSlugs);
+          if (prevSubtype !== nextSubtype) {
+            next.realEstateDetails = EMPTY_REAL_ESTATE_ONBOARDING_DETAILS;
+          }
+        }
         persistDraft({ ...next, step });
         return next;
       });
@@ -185,6 +207,8 @@ export function BusinessOnboardingWizard({
             bale: (draft?.bale || (api.bale as string) || '') as string,
             rubika: (draft?.rubika || (api.rubika as string) || '') as string,
             eitaa: (draft?.eitaa || (api.eitaa as string) || '') as string,
+            realEstateDetails:
+              draft?.realEstateDetails ?? EMPTY_REAL_ESTATE_ONBOARDING_DETAILS,
           };
           setForm(merged);
           if (typeof draft?.step === 'number' && draft.step >= 0 && draft.step <= 3) {
@@ -232,6 +256,15 @@ export function BusinessOnboardingWizard({
       return true;
     }
     if (s === 2) {
+      if (isRealEstateBusiness(form.occupationSlugs)) {
+        const r = businessOnboardingRealEstateStepSchema.safeParse(form);
+        if (!r.success) {
+          setErrors(zodFieldErrors(r));
+          return false;
+        }
+        setForm((prev) => ({ ...prev, ...r.data }));
+        return true;
+      }
       const r = businessOnboardingStep3Schema.safeParse(form);
       if (!r.success) {
         setErrors(zodFieldErrors(r));
@@ -275,7 +308,12 @@ export function BusinessOnboardingWizard({
         return;
       }
       sessionStorage.removeItem(ONBOARDING_DRAFT_KEY);
-      toast.success(data.message ?? 'پروفایل منتشر شد — حالا ویترین و محصولات را تکمیل کنید');
+      toast.success(
+        data.message ??
+          (isRealEstate
+            ? 'پروفایل منتشر شد — لوگو، آگهی‌ها و مدارک را از پیشخوان املاک تکمیل کنید'
+            : 'پروفایل منتشر شد — حالا ویترین و محصولات را تکمیل کنید')
+      );
       if (!skipSlugRedirect && data.slug && data.slug !== slug) {
         router.replace(routeBuilder.businessEdit(data.slug));
       }
@@ -297,7 +335,7 @@ export function BusinessOnboardingWizard({
     );
   }
 
-  const progressPct = (step / (WIZARD_STEPS.length - 1)) * 100;
+  const progressPct = (step / (wizardSteps.length - 1)) * 100;
 
   return (
     <div className="mx-auto w-full max-w-[610px] space-y-[34px] pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))]">
@@ -320,7 +358,7 @@ export function BusinessOnboardingWizard({
           style={{ width: `calc((100% - 68px) * ${progressPct / 100})` }}
         />
         <ol className="relative flex justify-between">
-          {WIZARD_STEPS.map((s) => {
+          {wizardSteps.map((s) => {
             const done = step > s.id;
             const active = step === s.id;
             return (
@@ -351,7 +389,7 @@ export function BusinessOnboardingWizard({
 
       <Card>
         <CardHeader className="pb-[13px]">
-          <CardTitle className="text-base">{WIZARD_STEPS[step]?.label}</CardTitle>
+          <CardTitle className="text-base">{wizardSteps[step]?.label}</CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
           {step === 0 && (
@@ -367,22 +405,32 @@ export function BusinessOnboardingWizard({
               values={form}
               errors={errors}
               onChange={patchForm}
+              variant={isRealEstate ? 'real-estate' : 'default'}
             />
           )}
-          {step === 2 && (
-            <StepBrand
-              values={form}
-              errors={errors}
-              onChange={patchForm}
-              occupationSlugs={form.occupationSlugs}
-              onSiteImportApplied={() => void refreshFormAfterSiteImport()}
-            />
-          )}
+          {step === 2 &&
+            (isRealEstate ? (
+              <StepRealEstateDetails
+                occupationSlugs={form.occupationSlugs}
+                cityName={form.city}
+                values={form.realEstateDetails ?? EMPTY_REAL_ESTATE_ONBOARDING_DETAILS}
+                onChange={(realEstateDetails) => patchForm({ realEstateDetails })}
+              />
+            ) : (
+              <StepBrand
+                values={form}
+                errors={errors}
+                onChange={patchForm}
+                occupationSlugs={form.occupationSlugs}
+                onSiteImportApplied={() => void refreshFormAfterSiteImport()}
+              />
+            ))}
           {step === 3 && (
             <StepReview
               values={form}
               publicUrl={publicUrl}
               publishing={publishing}
+              isRealEstate={isRealEstate}
               onPublish={() => void handlePublish()}
             />
           )}

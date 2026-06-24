@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { BadgeCheck, ChevronLeft, DollarSign, Flame, MapPin, Star } from 'lucide-react';
 import type { BusinessMapPin } from '@/lib/business/map-pins-types';
 import type { NeedMapPin } from '@/lib/need/map-pins-types';
@@ -37,7 +38,14 @@ export function MapAreaBusinessPeekRow({
     >
       <div className="relative size-10 shrink-0 overflow-hidden rounded-lg bg-muted">
         {logo ? (
-          <img src={logo} alt="" className="size-full object-cover" />
+          <Image
+            src={logo}
+            alt=""
+            width={40}
+            height={40}
+            sizes="40px"
+            className="size-full object-cover"
+          />
         ) : (
           <div className="flex size-full items-center justify-center bg-emerald-100 text-sm font-bold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
             {name.charAt(0)}

@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useCallback, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { Eraser } from 'lucide-react';
@@ -8,9 +9,19 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { NeedIntakePanel } from '@/components/need-intake';
 import { useNeedIntakeStore } from '@/stores/need-intake-store';
 import { clearLeadPhone } from '@/lib/lead-draft';
+
+const NeedIntakePanel = dynamic(
+  () => import('@/components/need-intake/NeedIntakePanel').then((m) => m.NeedIntakePanel),
+  {
+    loading: () => (
+      <div className="flex min-h-[320px] items-center justify-center rounded-xl border border-border/40 bg-muted/20 text-sm text-muted-foreground">
+        بارگذاری فرم ثبت نیاز…
+      </div>
+    ),
+  }
+);
 
 /** Canonical URL for need intake is `/post` (see next.config redirects). */
 function PostNeedContent() {

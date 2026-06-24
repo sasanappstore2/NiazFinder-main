@@ -225,7 +225,7 @@ async function main() {
   );
 
   const canonicalRows = await prisma.category.findMany({
-    where: { slug: { in: ['services', 'cleaning', 'plumbing', 'mobile-phone', 'apartment-rent', 'car'] }, isActive: true },
+    where: { slug: { in: ['services', 'cleaning', 'plumbing', 'mobile-phone', 'apartment-rent', 'car'] }, status: 'ACTIVE' },
   });
   for (const row of canonicalRows) {
     categories[row.slug] = row.id;

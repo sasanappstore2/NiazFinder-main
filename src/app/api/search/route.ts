@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import type { Prisma } from '@prisma/client';
+import { getPublicCategoryWhere } from '@/lib/categories/category-status';
 
 // ============ GET handler ============
 // Returns popular categories + recent searches + matching suggestions
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest) {
 
     // 1. Fetch popular categories (always returned)
     const popularCategories = await db.category.findMany({
-      where: { isActive: true, parentId: null },
+      where: getPublicCategoryWhere({ parentId: null }),
       orderBy: { order: 'asc' },
       take: 8,
       select: { id: true, name: true, slug: true, icon: true, _count: { select: { requests: true } } },
@@ -40,21 +41,15 @@ export async function GET(request: NextRequest) {
         ],
       };
 
-      const whereCategories: Prisma.CategoryWhereInput = {
-        isActive: true,
+      const whereCategories: Prisma.CategoryWhereInput = getPublicCategoryWhere({
         parentId: null,
-        OR: [
-          { name: { contains: q } },
-        ],
-      };
+        OR: [{ name: { contains: q } }],
+      });
 
-      const whereSubcategories: Prisma.CategoryWhereInput = {
-        isActive: true,
+      const whereSubcategories: Prisma.CategoryWhereInput = getPublicCategoryWhere({
         parentId: { not: null },
-        OR: [
-          { name: { contains: q } },
-        ],
-      };
+        OR: [{ name: { contains: q } }],
+      });
 
       const [matchingRequests, matchingCategories, matchingSubcategories] = await Promise.all([
         db.serviceRequest.findMany({

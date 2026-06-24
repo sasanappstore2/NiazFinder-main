@@ -63,64 +63,58 @@ export async function persistMessageSideEffects(
   }
 ): Promise<void> {
   const { conversationId, senderId, otherUserId, content, messageId, userId1, userId2 } = args;
+  const preview = content.slice(0, 200);
+  const lastMessageAtIso = new Date().toISOString();
 
-  await Promise.all([
-    db.conversation.update({
-      where: { id: conversationId },
-      data: {
-        lastMessage: content.slice(0, 200),
-        lastMessageAt: new Date(),
-      },
-    }),
-    db.notification.create({
-      data: {
-        userId: otherUserId,
-        type: 'NEW_MESSAGE',
-        title: 'پیام جدید',
-        message: content.slice(0, 100),
-        data: JSON.stringify({
-          conversationId,
-          messageId,
-          senderId,
-        }),
-      },
-    }),
-  ]).catch(console.error);
-
-  const unreadCount = await db.message
-    .count({
-      where: {
-        conversationId,
-        senderId: { not: otherUserId },
-        isRead: false,
-      },
-    })
-    .catch(() => 0);
-
-  io.to(`user:${otherUserId}`).emit('conversation:unread-update', {
-    conversationId,
-    unreadCount,
-    totalUnread: unreadCount,
-  });
-
-  for (const uid of [userId1, userId2]) {
-    const other = uid === userId1 ? userId2 : userId1;
-    const unread = await db.message
-      .count({
-        where: {
-          conversationId,
-          senderId: { not: uid },
-          isRead: false,
+  // Run every independent DB op concurrently: bump the conversation, notify the
+  // recipient, and compute BOTH participants' unread counts (each participant's
+  // unread = messages from the OTHER party still unread). This replaces the old
+  // path of 3 *sequential* count queries (one of which duplicated a loop one).
+  const [, , unread1, unread2] = await Promise.all([
+    db.conversation
+      .update({
+        where: { id: conversationId },
+        data: { lastMessage: preview, lastMessageAt: new Date() },
+      })
+      .catch((e) => {
+        console.error(e);
+        return null;
+      }),
+    db.notification
+      .create({
+        data: {
+          userId: otherUserId,
+          type: 'NEW_MESSAGE',
+          title: 'پیام جدید',
+          message: content.slice(0, 100),
+          data: JSON.stringify({ conversationId, messageId, senderId }),
         },
       })
-      .catch(() => 0);
+      .catch((e) => {
+        console.error(e);
+        return null;
+      }),
+    db.message
+      .count({ where: { conversationId, senderId: { not: userId1 }, isRead: false } })
+      .catch(() => 0),
+    db.message
+      .count({ where: { conversationId, senderId: { not: userId2 }, isRead: false } })
+      .catch(() => 0),
+  ]);
 
+  const unreadByUser: Record<string, number> = { [userId1]: unread1, [userId2]: unread2 };
+
+  // One coherent `conversation:updated` per participant. Its unreadCount already
+  // carries the new count, so a separate `conversation:unread-update` emit (which
+  // the client handles identically) would be redundant on the new-message path.
+  for (const uid of [userId1, userId2]) {
+    const other = uid === userId1 ? userId2 : userId1;
     io.to(`user:${uid}`).emit('conversation:updated', {
       id: conversationId,
-      lastMessage: content.slice(0, 200),
-      lastMessageAt: new Date().toISOString(),
+      lastMessage: preview,
+      lastMessageAt: lastMessageAtIso,
       otherUser: { id: other },
-      unreadCount: unread,
+      unreadCount: unreadByUser[uid] ?? 0,
     });
   }
 }

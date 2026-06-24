@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { BadgeCheck, ChevronLeft, MapPin, Star, X } from 'lucide-react';
 import type { BusinessMapPin } from '@/lib/business/map-pins-types';
 import type { SpecialistProfile } from '@/lib/types';
@@ -45,8 +46,14 @@ export function BusinessMapPinPreview({
       >
         <div className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-muted">
           {logo ? (
-             
-            <img src={logo} alt="" className="size-full object-cover" />
+            <Image
+              src={logo}
+              alt=""
+              width={56}
+              height={56}
+              sizes="56px"
+              className="size-full object-cover"
+            />
           ) : (
             <div className="flex size-full items-center justify-center bg-emerald-100 text-lg font-bold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
               {name.charAt(0)}

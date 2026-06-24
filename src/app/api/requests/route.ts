@@ -17,6 +17,7 @@ import { buildNeighborhoodWhereClauses } from '@/lib/neighborhoods/tokens';
 import { shouldAutoApproveNeed } from '@/lib/need-intake/auto-approve-policy';
 import { extractNeedBudgetMetaFromDynamicAnswers } from '@/lib/need/extract-need-budget-meta';
 import { apiErrorFromUnknown } from '@/lib/db-health';
+import { getPublicCategoryWhere, isCategoryAvailable } from '@/lib/categories/category-status';
 
 // ============ TYPES ============
 
@@ -193,14 +194,14 @@ export async function GET(request: NextRequest) {
 
     if (categoryFilter) {
       const category = await db.category.findFirst({
-        where: {
-          OR: [
-            { id: categoryFilter },
-            { slug: categoryFilter },
-          ],
-        },
+        where: getPublicCategoryWhere({
+          OR: [{ id: categoryFilter }, { slug: categoryFilter }],
+        }),
         include: {
-          children: { select: { id: true } },
+          children: {
+            where: getPublicCategoryWhere(),
+            select: { id: true },
+          },
         },
       });
 
@@ -457,9 +458,9 @@ export async function POST(request: NextRequest) {
       where: { id: categoryId },
     });
 
-    if (!category || !category.isActive) {
+    if (!category || !isCategoryAvailable(category.status)) {
       return NextResponse.json(
-        { error: 'دسته‌بندی معتبر نیست' },
+        { error: 'دسته‌بندی معتبر نیست یا غیرفعال است' },
         { status: 400 }
       );
     }

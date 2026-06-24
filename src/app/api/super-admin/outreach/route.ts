@@ -14,10 +14,12 @@ export async function GET(request: NextRequest) {
     const { page, limit, skip, q, status } = parseAdminListQuery(request);
     const { searchParams } = new URL(request.url);
     const requestId = searchParams.get('requestId')?.trim() || '';
+    const businessProfileId = searchParams.get('businessProfileId')?.trim() || '';
 
     const where: Prisma.NeedLeadOutreachWhereInput = {};
     if (status) where.status = status as NeedLeadOutreachStatus;
     if (requestId) where.requestId = requestId;
+    if (businessProfileId) where.businessProfileId = businessProfileId;
     if (q) {
       where.OR = [
         { matchReasonFa: { contains: q } },

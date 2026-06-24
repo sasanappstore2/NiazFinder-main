@@ -7,15 +7,16 @@ import type { BusinessOccupation } from './business-occupation-types';
 export const DEFAULT_BUSINESS_OCCUPATIONS: readonly BusinessOccupation[] = [
   // ── real-estate-facility
   { slug: 'real-estate-facility', parentSlug: null, title: 'املاک و ساختمان', englishTitle: 'Real Estate', depth: 0, sortOrder: 100 },
-  { slug: 'real-estate-agent', parentSlug: 'real-estate-facility', title: 'مشاور املاک', englishTitle: 'Real Estate Agent', depth: 1, sortOrder: 101 },
-  { slug: 'interior-designer', parentSlug: 'real-estate-facility', title: 'طراحی داخلی و دکوراسیون', englishTitle: 'Interior Designer', depth: 1, sortOrder: 102 },
-  { slug: 'architect', parentSlug: 'real-estate-facility', title: 'معمار', englishTitle: 'Architect', depth: 1, sortOrder: 103 },
-  { slug: 'property-manager', parentSlug: 'real-estate-facility', title: 'مدیریت ساختمان و مجتمع', englishTitle: 'Property Manager', depth: 1, sortOrder: 104 },
-  { slug: 'facility-maintenance', parentSlug: 'real-estate-facility', title: 'نگهداری و تعمیرات ساختمان', englishTitle: 'Facility Maintenance', depth: 1, sortOrder: 105 },
-  { slug: 'elevator-technician', parentSlug: 'real-estate-facility', title: 'تعمیر و نگهداری آسانسور', englishTitle: 'Elevator Technician', depth: 1, sortOrder: 106 },
-  { slug: 'land-surveyor', parentSlug: 'real-estate-facility', title: 'کارشناس نقشه‌برداری و ملک', englishTitle: 'Land Surveyor', depth: 1, sortOrder: 107 },
-  { slug: 'official-appraiser', parentSlug: 'real-estate-facility', title: 'کارشناس رسمی و قیمت‌گذاری', englishTitle: 'Official Appraiser', depth: 1, sortOrder: 108 },
-  { slug: 'gate-automation', parentSlug: 'real-estate-facility', title: 'درب اتوماتیک و شیشه‌ای', englishTitle: 'Gate Automation', depth: 1, sortOrder: 109 },
+  { slug: 'real-estate-agent', parentSlug: 'real-estate-facility', title: 'مشاور املاک شخصی', englishTitle: 'Independent Real Estate Agent', depth: 1, sortOrder: 101 },
+  { slug: 'real-estate-office', parentSlug: 'real-estate-facility', title: 'دفتر و آژانس املاک', englishTitle: 'Real Estate Office', depth: 1, sortOrder: 102 },
+  { slug: 'interior-designer', parentSlug: 'real-estate-facility', title: 'طراحی داخلی و دکوراسیون', englishTitle: 'Interior Designer', depth: 1, sortOrder: 103 },
+  { slug: 'architect', parentSlug: 'real-estate-facility', title: 'معمار', englishTitle: 'Architect', depth: 1, sortOrder: 104 },
+  { slug: 'property-manager', parentSlug: 'real-estate-facility', title: 'مدیریت ساختمان و مجتمع', englishTitle: 'Property Manager', depth: 1, sortOrder: 105 },
+  { slug: 'facility-maintenance', parentSlug: 'real-estate-facility', title: 'نگهداری و تعمیرات ساختمان', englishTitle: 'Facility Maintenance', depth: 1, sortOrder: 106 },
+  { slug: 'elevator-technician', parentSlug: 'real-estate-facility', title: 'تعمیر و نگهداری آسانسور', englishTitle: 'Elevator Technician', depth: 1, sortOrder: 107 },
+  { slug: 'land-surveyor', parentSlug: 'real-estate-facility', title: 'کارشناس نقشه‌برداری و ملک', englishTitle: 'Land Surveyor', depth: 1, sortOrder: 108 },
+  { slug: 'official-appraiser', parentSlug: 'real-estate-facility', title: 'کارشناس رسمی و قیمت‌گذاری', englishTitle: 'Official Appraiser', depth: 1, sortOrder: 109 },
+  { slug: 'gate-automation', parentSlug: 'real-estate-facility', title: 'درب اتوماتیک و شیشه‌ای', englishTitle: 'Gate Automation', depth: 1, sortOrder: 110 },
 
   // ── home-personal-services
   { slug: 'home-personal-services', parentSlug: null, title: 'خدمات منزل و شخصی', englishTitle: 'Home Services', depth: 0, sortOrder: 200 },

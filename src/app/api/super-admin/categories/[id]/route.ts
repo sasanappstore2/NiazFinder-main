@@ -3,6 +3,8 @@ import { db } from '@/lib/db';
 import { createSlug } from '@/lib/auth';
 import { requirePermission } from '@/lib/rbac/authz';
 import { logAdminAction } from '@/lib/audit/admin-audit';
+import { parseCategoryStatus } from '@/lib/categories/category-status';
+import type { CategoryStatus } from '@prisma/client';
 
 interface CategoryPayload {
   name?: string;
@@ -12,7 +14,7 @@ interface CategoryPayload {
   image?: string | null;
   parentId?: string | null;
   order?: number;
-  isActive?: boolean;
+  status?: CategoryStatus;
 }
 
 async function makeUniqueSlug(baseValue: string, excludeId: string) {
@@ -83,16 +85,29 @@ export async function PATCH(
     if (body.image !== undefined) data.image = body.image?.trim() || null;
     if (body.parentId !== undefined) data.parentId = body.parentId || null;
     if (body.order !== undefined) data.order = Number(body.order) || 0;
-    if (typeof body.isActive === 'boolean') data.isActive = body.isActive;
+
+    const nextStatus = body.status !== undefined ? parseCategoryStatus(body.status) : null;
+    if (body.status !== undefined && !nextStatus) {
+      return NextResponse.json({ error: 'وضعیت نامعتبر است' }, { status: 400 });
+    }
+    if (nextStatus) data.status = nextStatus;
 
     const category = await db.category.update({
       where: { id },
       data,
     });
 
+    if (nextStatus && nextStatus !== existing.status) {
+      await logAdminAction(request, authz.user.id, 'taxonomy.category.status.update', 'Category', category.id, {
+        oldStatus: existing.status,
+        newStatus: nextStatus,
+        slug: category.slug,
+      });
+    }
+
     await logAdminAction(request, authz.user.id, 'category.update', 'Category', category.id, {
-      before: { id: existing.id, name: existing.name, slug: existing.slug, isActive: existing.isActive, parentId: existing.parentId },
-      after: { id: category.id, name: category.name, slug: category.slug, isActive: category.isActive, parentId: category.parentId },
+      before: { id: existing.id, name: existing.name, slug: existing.slug, status: existing.status, parentId: existing.parentId },
+      after: { id: category.id, name: category.name, slug: category.slug, status: category.status, parentId: category.parentId },
     });
 
     return NextResponse.json({ category });
@@ -131,10 +146,12 @@ export async function DELETE(
     if (existing._count.children > 0 || existing._count.requests > 0 || existing._count.skills > 0) {
       const category = await db.category.update({
         where: { id },
-        data: { isActive: false },
+        data: { status: 'DISABLED' },
       });
 
-      await logAdminAction(request, authz.user.id, 'category.deactivate', 'Category', category.id, {
+      await logAdminAction(request, authz.user.id, 'taxonomy.category.status.update', 'Category', category.id, {
+        oldStatus: existing.status,
+        newStatus: 'DISABLED',
         reason: 'has_dependencies',
         counts: existing._count,
       });

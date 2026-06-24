@@ -46,11 +46,18 @@ interface LocationIndex {
 }
 
 /** Major cities first — used to disambiguate same-named neighborhoods/cities. */
-const PROMINENCE_ORDER = [
-  'tehran-city', 'tehran', 'mashhad', 'isfahan', 'karaj', 'shiraz', 'tabriz',
-  'ahvaz', 'qom', 'kermanshah', 'urmia', 'rasht', 'zahedan', 'hamadan', 'kerman',
-  'yazd', 'ardabil', 'bandar-abbas', 'arak', 'eslamshahr', 'zanjan', 'sanandaj',
-  'qazvin', 'khorramabad', 'gorgan', 'sari', 'shahrekord', 'bushehr', 'birjand', 'ilam',
+// Persian NAMES, not slugs — resolved to the catalog's actual slug at index-build
+// time (see buildIndex), instead of hand-maintaining a parallel slug list. That
+// parallel list previously drifted from reality (the catalog freely uses
+// "-city"/region suffixes to disambiguate, e.g. زنجان → "zanjan-city", کرج →
+// "alborz-karaj") — 17 of 30 entries were silently wrong, so prominence
+// tie-breaking (e.g. a same-named obscure village beating the real city) was
+// broken for the majority of "major" cities. Resolving by name self-corrects.
+const PROMINENT_CITY_NAMES = [
+  'تهران', 'مشهد', 'اصفهان', 'کرج', 'شیراز', 'تبریز',
+  'اهواز', 'قم', 'کرمانشاه', 'ارومیه', 'رشت', 'زاهدان', 'همدان', 'کرمان',
+  'یزد', 'اردبیل', 'بندرعباس', 'اراک', 'اسلامشهر', 'زنجان', 'سنندج',
+  'قزوین', 'خرم آباد', 'گرگان', 'ساری', 'شهرکرد', 'بوشهر', 'بیرجند', 'ایلام',
 ];
 
 let indexCache: LocationIndex | null = null;
@@ -58,7 +65,16 @@ let indexCache: LocationIndex | null = null;
 /** Normalize a place string: Finglish→Persian, then standard intake normalize. */
 export function normalizeLocationText(s: string): string {
   const base = looksFinglish(s) ? transliterateFinglish(s) : s;
-  return normalizeIntakeText(base).replace(/\s+/g, ' ').trim();
+  return normalizeIntakeText(base)
+    // normalizeIntakeText strips no punctuation at all, so a city/neighborhood
+    // immediately followed by punctuation with no space (extremely common in
+    // Persian — "تهران، ..." / "تبریز،") survives as one glued token ("تبریز،")
+    // that can never exact-match the catalog's clean name and silently loses
+    // to an unrelated word's neighborhood match elsewhere in the text. Strip
+    // ASCII + Persian/Arabic punctuation (، ؛ ٫ etc.) before tokenizing.
+    .replace(/[.,!?؟؛:«»"'()\-/،٫]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 // Common words that are ALSO neighborhood names — never infer a location from
@@ -125,7 +141,13 @@ function buildIndex(): LocationIndex {
     }
   }
 
-  PROMINENCE_ORDER.forEach((slug, i) => prominence.set(slug, i));
+  // Resolve each prominent city by NAME through the just-built `cities` index
+  // (the single source of truth for name->slug), so prominence ranking can
+  // never drift from the catalog's actual slugs again.
+  PROMINENT_CITY_NAMES.forEach((name, i) => {
+    const hit = cities.get(normalizeIntakeText(name));
+    if (hit && !prominence.has(hit.citySlug)) prominence.set(hit.citySlug, i);
+  });
 
   indexCache = { cities, cityNames: [...cities.keys()], neighborhoods, prominence };
   return indexCache;

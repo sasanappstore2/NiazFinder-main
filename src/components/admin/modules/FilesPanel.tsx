@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useAdmin } from '@/components/admin/context/AdminContext';
 import {
+  AdminBadge,
   AdminDataTable,
   AdminFilterBar,
   AdminPageShell,
@@ -45,7 +46,12 @@ export function FilesPanel() {
   ];
 
   return (
-    <AdminPageShell section="files" layout="table" description="مرور فایل‌های آپلود شده">
+    <AdminPageShell
+      section="files"
+      layout="table"
+      description="مرور فایل‌های آپلود شده در سرور"
+      actions={<AdminBadge variant="neutral">فقط مرور</AdminBadge>}
+    >
       <AdminFilterBar search={q} onSearchChange={setQ} searchPlaceholder="جستجو مسیر..." />
       <AdminDataTable columns={columns} rows={rows.map((f, i) => ({ ...f, id: `${i}-${f.path}` }))} isLoading={isLoading} />
     </AdminPageShell>

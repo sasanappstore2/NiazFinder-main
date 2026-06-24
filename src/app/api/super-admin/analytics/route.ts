@@ -277,7 +277,7 @@ export async function GET(request: NextRequest) {
         id: category.id,
         name: category.name,
         slug: category.slug,
-        isActive: category.isActive,
+        status: category.status,
         requests: category._count.requests,
         skills: category._count.skills,
         children: category._count.children,
@@ -422,7 +422,7 @@ export async function GET(request: NextRequest) {
           description: 'بررسی دسته‌های غیرفعال و وابستگی‌ها',
           date: isoDateOffset(2),
           tone: 'amber',
-          count: categories.filter((item) => !item.isActive).length,
+          count: categories.filter((item) => item.status !== 'ACTIVE').length,
         },
         {
           id: 'security-review',

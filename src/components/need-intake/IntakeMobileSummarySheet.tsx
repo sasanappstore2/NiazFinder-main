@@ -11,9 +11,10 @@ import {
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { INTAKE_COPY } from './intake-copy';
+import { IntakeLiveSummaryCard, type LiveSummaryCardData } from './IntakeLiveSummaryCard';
 
 export interface IntakeMobileSummarySheetProps {
-  summary: string;
+  summary: LiveSummaryCardData;
   /** Inline chip in panel header (not fixed FAB). */
   inline?: boolean;
   className?: string;
@@ -46,9 +47,11 @@ export function IntakeMobileSummarySheet({
         <SheetHeader className="text-right">
           <SheetTitle>{INTAKE_COPY.liveSummaryTitle}</SheetTitle>
         </SheetHeader>
-        <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
-          {summary || INTAKE_COPY.liveSummaryEmpty}
-        </p>
+        <IntakeLiveSummaryCard
+          data={summary}
+          emptyHint={INTAKE_COPY.liveSummaryEmpty}
+          className="mt-2"
+        />
       </SheetContent>
     </Sheet>
   );

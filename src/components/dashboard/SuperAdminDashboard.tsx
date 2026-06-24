@@ -156,7 +156,7 @@ interface AdminCategory {
   image: string | null;
   parentId: string | null;
   order: number;
-  isActive: boolean;
+  status: 'ACTIVE' | 'DISABLED' | 'COMING_SOON';
   requestCount: number;
   skillCount: number;
   childCount: number;
@@ -168,7 +168,7 @@ interface FlatCategory {
   name: string;
   slug: string;
   parentId: string | null;
-  isActive: boolean;
+  status: 'ACTIVE' | 'DISABLED' | 'COMING_SOON';
   order: number;
 }
 
@@ -240,7 +240,7 @@ interface AnalyticsTopCategory {
   id: string;
   name: string;
   slug: string;
-  isActive: boolean;
+  status: string;
   requests: number;
   skills: number;
   children: number;
@@ -312,7 +312,7 @@ interface CategoryFormState {
   image: string;
   parentId: string;
   order: string;
-  isActive: boolean;
+  status: 'ACTIVE' | 'DISABLED' | 'COMING_SOON';
 }
 
 interface LocationFormState {
@@ -338,7 +338,7 @@ const initialCategoryForm: CategoryFormState = {
   image: '',
   parentId: 'root',
   order: '0',
-  isActive: true,
+  status: 'DISABLED',
 };
 
 const initialLocationForm: LocationFormState = {
@@ -1636,7 +1636,7 @@ function WorkflowBoardPage({
 }) {
   const inactiveCategories = categories
     .flatMap((category) => [category, ...category.children])
-    .filter((category) => !category.isActive)
+    .filter((category) => category.status !== 'ACTIVE')
     .slice(0, 4);
   const columns = [
     {
@@ -2066,7 +2066,7 @@ export function SuperAdminDashboard({
       image: categoryForm.image,
       parentId: categoryForm.parentId === 'root' ? null : categoryForm.parentId,
       order: Number(categoryForm.order) || 0,
-      isActive: categoryForm.isActive,
+      status: categoryForm.status,
     };
 
     try {
@@ -2107,7 +2107,7 @@ export function SuperAdminDashboard({
       image: fullCategory.image || '',
       parentId: fullCategory.parentId || 'root',
       order: String(fullCategory.order ?? 0),
-      isActive: fullCategory.isActive,
+      status: fullCategory.status,
     });
   };
 
@@ -2228,8 +2228,8 @@ export function SuperAdminDashboard({
   const rootCategoryCount = categories.length;
   const childCategoryCount = categories.reduce((sum, category) => sum + category.children.length, 0);
   const inactiveCategoryCount = categories.reduce((sum, category) => {
-    const inactiveChildren = category.children.filter((child) => !child.isActive).length;
-    return sum + (!category.isActive ? 1 : 0) + inactiveChildren;
+    const inactiveChildren = category.children.filter((child) => child.status !== 'ACTIVE').length;
+    return sum + (category.status !== 'ACTIVE' ? 1 : 0) + inactiveChildren;
   }, 0);
   const activeUserRatio = ratio(overview?.activeUsers, overview?.totalUsers);
   const openRequestRatio = ratio(overview?.openRequests, overview?.totalRequests);
@@ -2726,7 +2726,14 @@ export function SuperAdminDashboard({
                   <Textarea value={categoryForm.description} onChange={(event) => setCategoryForm({ ...categoryForm, description: event.target.value })} />
                 </Field>
                 <AdminToggleRow label="فعال باشد">
-                  <Switch checked={categoryForm.isActive} onCheckedChange={(checked) => setCategoryForm({ ...categoryForm, isActive: checked })} />
+                  <Select value={categoryForm.status} onValueChange={(value) => setCategoryForm({ ...categoryForm, status: value as CategoryFormState['status'] })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ACTIVE">ACTIVE</SelectItem>
+                      <SelectItem value="DISABLED">DISABLED</SelectItem>
+                      <SelectItem value="COMING_SOON">COMING_SOON</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </AdminToggleRow>
                 <AdminPanelActions>
                   <Button onClick={saveCategory} className="admin-btn-save flex-1">
@@ -2757,7 +2764,7 @@ export function SuperAdminDashboard({
                       <div>
                         <div className="flex items-center gap-2">
                           <h3 className="font-black">{category.name}</h3>
-                          <StatusPill active={category.isActive} />
+                          <StatusPill active={category.status === 'ACTIVE'} />
                         </div>
                         <p className="mt-1 text-xs text-muted-foreground" dir="ltr">{category.slug}</p>
                         <p className="mt-2 text-xs text-muted-foreground">
@@ -2777,7 +2784,7 @@ export function SuperAdminDashboard({
                               <div className="flex items-center gap-2 text-sm font-bold">
                                 <Layers3 className="size-4 text-muted-foreground" />
                                 <span className="truncate">{child.name}</span>
-                                {!child.isActive && <Badge variant="secondary">غیرفعال</Badge>}
+                                {child.status !== 'ACTIVE' && <Badge variant="secondary">غیرفعال</Badge>}
                               </div>
                               <p className="mt-1 text-caption text-muted-foreground" dir="ltr">{child.slug}</p>
                             </div>

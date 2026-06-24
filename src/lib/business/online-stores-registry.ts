@@ -13,9 +13,15 @@ import {
 
 export type { ManagedOnlineStoreCategory } from '@/lib/business/online-stores-cache';
 
+import {
+  applyLaunchPolicyToOnlineStores,
+  BUSINESS_TAXONOMY_LAUNCH_POLICY_VERSION,
+} from '@/lib/business/taxonomy-launch-policy';
+
 export type ManagedOnlineStoresData = {
   categories: ManagedOnlineStoreCategory[];
   updatedAt: string;
+  launchPolicyVersion?: number;
 };
 
 const filePath = path.join(process.cwd(), 'src', 'data', 'online-stores.json');
@@ -48,7 +54,19 @@ export async function readManagedOnlineStores(): Promise<ManagedOnlineStoreCateg
   try {
     const raw = await fs.readFile(filePath, 'utf8');
     const parsed = JSON.parse(raw) as unknown;
-    const data = parseManagedData(parsed);
+    const envelope =
+      parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+        ? (parsed as ManagedOnlineStoresData)
+        : null;
+    const fileVersion = envelope?.launchPolicyVersion ?? 0;
+    let data = parseManagedData(parsed);
+
+    if (fileVersion < BUSINESS_TAXONOMY_LAUNCH_POLICY_VERSION) {
+      data = applyLaunchPolicyToOnlineStores(data);
+      await writeManagedOnlineStores(data);
+      return data;
+    }
+
     setOnlineStoresCache(data);
     return data;
   } catch {
@@ -64,6 +82,7 @@ export async function writeManagedOnlineStores(
   const next: ManagedOnlineStoresData = {
     categories: categories.map(normalizeCategory),
     updatedAt: new Date().toISOString(),
+    launchPolicyVersion: BUSINESS_TAXONOMY_LAUNCH_POLICY_VERSION,
   };
 
   await fs.mkdir(path.dirname(filePath), { recursive: true });

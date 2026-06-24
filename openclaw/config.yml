@@ -1,0 +1,42 @@
+# OpenClaw Intake Agent Configuration
+# این فایل پیکربندی skill را برای OpenClaw تعریف می‌کند
+
+agent:
+  name: "niazfinder-intake"
+  description: "ایجنت هوشمند intake برای نیازفایندر"
+  model: "gemma-4-e2b-q4_0-it"
+  provider: "local-llm"
+  endpoint: "http://127.0.0.1:8100"
+  api_path: "/v1/chat/completions"
+  temperature: 0.1
+  max_tokens: 1024
+  timeout_ms: 30000
+  max_retries: 1
+  parallel_slots: 4
+
+# مسیرهای فایل‌های مرجع (نسبت به پوشه skill)
+references:
+  system_prompt: "system-prompt.md"
+  prompt_template: "prompt-template.md"
+  categories: "categories.json"
+  intake_fields: "intake-fields.json"
+  vertical_schemas: "vertical-schemas.json"
+  examples: "examples.json"
+  # cities.json در زمان اجرا از DB تولید می‌شود
+
+# متغیرهای محیطی مورد نیاز
+env:
+  OPENCLAW_INTAKE_AGENT_ENABLED: "true"
+  NEED_INTAKE_LLM_ENABLED: "true"
+  NEED_INTAKE_LLM_URL: "http://127.0.0.1:8100"
+  NEED_INTAKE_LLM_MODEL: "gemma-4-e2b-q4_0-it"
+  NEED_INTAKE_HYBRID_ENABLED: "false"
+  NEED_INTAKE_PROPOSE_VALIDATE_ENABLED: "false"
+
+#トリガー: چه زمانی این skill فعال شود
+triggers:
+  - path: "/api/intake/analyze"
+  - path: "/api/need-intake/parse-intent"
+  - keyword: "intake"
+  - keyword: "نیاز"
+  - keyword: "فرم"

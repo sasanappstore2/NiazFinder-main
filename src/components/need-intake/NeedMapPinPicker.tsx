@@ -23,6 +23,7 @@ import {
   matchManagedNeighborhood,
 } from '@/lib/neighborhoods/match-managed-neighborhood';
 import { SuggestionChips } from '@/components/need-intake/SuggestionChips';
+import { DeferredMapShell } from '@/components/map/DeferredMapShell';
 import { cn } from '@/lib/utils';
 
 const DEFAULT_HINT =
@@ -205,10 +206,11 @@ export function NeedMapPinPicker({
         </div>
       ) : null}
       <p className="text-xs text-muted-foreground">{DEFAULT_HINT}</p>
-      <div
-        ref={shellRef}
+      <DeferredMapShell
         className="business-browse-map intake-map-pin-shell overflow-hidden rounded-xl border border-border/50"
+        placeholderClassName="h-[280px] sm:h-[320px]"
       >
+        <div ref={shellRef} className="h-full w-full">
         <NiazMapCore
           key={mapFrameKey}
           center={{
@@ -231,7 +233,8 @@ export function NeedMapPinPicker({
           />
           <NiazMapIntakeCenterSync onCenterChange={handleLocationChange} />
         </NiazMapCore>
-      </div>
+        </div>
+      </DeferredMapShell>
     </div>
   );
 }

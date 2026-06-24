@@ -21,16 +21,21 @@ export function StepContact({
   values,
   errors,
   onChange,
+  variant = 'default',
 }: {
   values: StepContactValues;
   errors: Partial<Record<keyof StepContactValues, string>>;
   onChange: (patch: Partial<StepContactValues>) => void;
+  variant?: 'default' | 'real-estate';
 }) {
   return (
     <div className="space-y-[21px]">
       <div className="rounded-xl border border-border/60 bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
         شمارهٔ تماس برای مشتریان و پیام‌های سیستم نمایش داده می‌شود. می‌توانید همان شمارهٔ ورود
         خود را وارد کنید.
+        {variant === 'real-estate' && (
+          <> شهر فعالیت را در مرحله بعد هم می‌توانید ثبت کنید.</>
+        )}
       </div>
 
       <PhoneField

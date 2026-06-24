@@ -57,7 +57,12 @@ export function CouponsPanel() {
   ];
 
   return (
-    <AdminPageShell section="coupons" layout="table" description="لیست کوپن‌ها (read-only)">
+    <AdminPageShell
+      section="coupons"
+      layout="table"
+      description="مشاهده کوپن‌های فعال و تاریخچه استفاده"
+      actions={<AdminBadge variant="neutral">فقط مشاهده</AdminBadge>}
+    >
       <AdminDataTable columns={columns} rows={rows} isLoading={isLoading} />
       <AdminPagination page={page} totalPages={totalPages} total={total} onPageChange={setPage} />
     </AdminPageShell>

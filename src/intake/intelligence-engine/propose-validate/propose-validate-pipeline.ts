@@ -63,6 +63,13 @@ export async function runProposeValidatePipeline(
   const text = input.text.trim();
 
   // ── Stage 1: LLM proposal (the only LLM call) ──
+  // NOTE: pre-filtering the catalog via semantic shortlist BEFORE this call was
+  // tried and reverted — it added a sequential embedding round-trip ahead of
+  // the LLM call, which on a cold index build made things much WORSE (the
+  // build cost used to overlap with the LLM call instead of stacking before
+  // it). Measured net effect: a wash on warm calls, a regression on cold
+  // start. Full catalog it is; semantic candidates still run in parallel
+  // below, where they actually only add value (OOV recall) at no extra cost.
   const proposeOutcome = await proposeCategoriesAndLocation(text);
   if (!proposeOutcome.proposal) {
     // Graceful degradation → proven deterministic/hybrid engine.

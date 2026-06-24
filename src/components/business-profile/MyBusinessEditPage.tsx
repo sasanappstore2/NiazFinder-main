@@ -10,7 +10,8 @@ import { getClientAuthHeaders, getClientAuthToken } from '@/lib/auth/client-auth
 import { Button } from '@/components/ui/button';
 import { BusinessOnboardingWizard } from '@/components/business-profile/BusinessOnboardingWizard';
 import { BusinessHubProvider } from '@/components/business-profile/hub/BusinessHubContext';
-import { BusinessHubLayout } from '@/components/business-profile/hub/BusinessHubLayout';
+import { BusinessHubInitializer } from '@/components/business-profile/hub/BusinessHubInitializer';
+import { BusinessHubRouter } from '@/components/business-profile/hub/BusinessHubRouter';
 
 type LoadState = 'loading' | 'ready' | 'unauthorized' | 'forbidden' | 'error';
 
@@ -183,8 +184,10 @@ export function MyBusinessEditPage({
   }
 
   return (
-    <BusinessHubProvider initialTask="storefront">
-      <BusinessHubLayout onProfileSaved={handleProfileSaved} />
+    <BusinessHubProvider initialTask="profile">
+      <BusinessHubInitializer>
+        <BusinessHubRouter onProfileSaved={handleProfileSaved} />
+      </BusinessHubInitializer>
     </BusinessHubProvider>
   );
 }

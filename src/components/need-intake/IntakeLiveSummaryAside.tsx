@@ -1,9 +1,10 @@
 'use client';
 
 import { INTAKE_COPY } from './intake-copy';
+import { IntakeLiveSummaryCard, type LiveSummaryCardData } from './IntakeLiveSummaryCard';
 
 export interface IntakeLiveSummaryAsideProps {
-  summary: string;
+  summary: LiveSummaryCardData;
 }
 
 export function IntakeLiveSummaryAside({ summary }: IntakeLiveSummaryAsideProps) {
@@ -11,9 +12,7 @@ export function IntakeLiveSummaryAside({ summary }: IntakeLiveSummaryAsideProps)
     <aside className="layout-golden-aside hidden lg:block">
       <div className="intake-aside-card intake-aside-card--compact sticky-below-header">
         <h3 className="intake-aside-card__title">{INTAKE_COPY.liveSummaryTitle}</h3>
-        <p className="intake-aside-card__body">
-          {summary || INTAKE_COPY.liveSummaryEmpty}
-        </p>
+        <IntakeLiveSummaryCard data={summary} emptyHint={INTAKE_COPY.liveSummaryEmpty} />
       </div>
     </aside>
   );

@@ -42,7 +42,7 @@ export interface AnalyticsTopCategory {
   id: string;
   name: string;
   slug: string;
-  isActive: boolean;
+  status: string;
   requests: number;
   skills: number;
   children: number;
@@ -79,7 +79,7 @@ export interface AdminCategory {
   image: string | null;
   parentId: string | null;
   order: number;
-  isActive: boolean;
+  status: 'ACTIVE' | 'DISABLED' | 'COMING_SOON';
   requestCount: number;
   skillCount: number;
   childCount: number;
@@ -91,7 +91,7 @@ export interface FlatCategory {
   name: string;
   slug: string;
   parentId: string | null;
-  isActive: boolean;
+  status: 'ACTIVE' | 'DISABLED' | 'COMING_SOON';
   order: number;
 }
 

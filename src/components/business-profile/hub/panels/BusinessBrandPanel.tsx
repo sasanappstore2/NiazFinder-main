@@ -11,6 +11,7 @@ import { getClientAuthHeaders } from '@/lib/auth/client-auth';
 import { normalizeWebPresence } from '@/lib/business/normalize-web-presence';
 import { BusinessImageUpload } from '@/components/business-profile/onboarding/BusinessImageUpload';
 import { SiteImportWizard } from '@/components/business-profile/site-import/SiteImportWizard';
+import { IncompleteFieldHighlight } from '../real-estate/IncompleteFieldHighlight';
 import { useBusinessHub } from '../BusinessHubContext';
 
 const CHANNELS = [
@@ -104,24 +105,26 @@ export function BusinessBrandPanel() {
         عکس پروفایل و کاور اختیاری است. لینک فروشگاه و شبکه‌های اجتماعی را وارد کنید.
       </p>
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <BusinessImageUpload
-          label="عکس پروفایل (لوگو)"
-          hint="مربعی — بعد از انتخاب، برش دلخواه"
-          value={logo}
-          kind="logo"
-          aspectClass="aspect-square max-w-[140px]"
-          onChange={setLogo}
-        />
-        <BusinessImageUpload
-          label="تصویر کاور"
-          hint="افقی ۲:۱ — تصویر تمیز؛ بدون اسکرین‌شات منو"
-          value={coverImage}
-          kind="cover"
-          aspectClass="aspect-[21/9] w-full"
-          onChange={setCoverImage}
-        />
-      </div>
+      <IncompleteFieldHighlight itemId="brandImage">
+        <div className="grid gap-6 sm:grid-cols-2">
+          <BusinessImageUpload
+            label="عکس پروفایل (لوگو)"
+            hint="مربعی — بعد از انتخاب، برش دلخواه"
+            value={logo}
+            kind="logo"
+            aspectClass="aspect-square max-w-[140px]"
+            onChange={setLogo}
+          />
+          <BusinessImageUpload
+            label="تصویر کاور"
+            hint="افقی ۲:۱ — تصویر تمیز؛ بدون اسکرین‌شات منو"
+            value={coverImage}
+            kind="cover"
+            aspectClass="aspect-[21/9] w-full"
+            onChange={setCoverImage}
+          />
+        </div>
+      </IncompleteFieldHighlight>
 
       <Card className="border-border/60 shadow-sm">
         <CardHeader className="flex flex-row items-center gap-2 pb-2">

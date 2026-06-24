@@ -14,11 +14,14 @@ export async function GET(request: NextRequest) {
     const { page, limit, skip, q, status } = parseAdminListQuery(request);
     const { searchParams } = new URL(request.url);
     const verified = searchParams.get('verified')?.trim() || '';
+    const onboarding = searchParams.get('onboarding')?.trim() || '';
 
     const where: Prisma.BusinessProfileWhereInput = {};
     if (status) where.status = status as BusinessStatus;
     if (verified === 'true') where.verified = true;
     if (verified === 'false') where.verified = false;
+    if (onboarding === 'pending') where.onboardingCompletedAt = null;
+    if (onboarding === 'complete') where.onboardingCompletedAt = { not: null };
     if (q) {
       where.OR = [
         { name: { contains: q } },

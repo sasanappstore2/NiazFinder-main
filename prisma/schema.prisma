@@ -369,18 +369,24 @@ model IntakeRuleDocument {
 
 // ============ CATEGORIES & SKILLS ============
 
+enum CategoryStatus {
+  ACTIVE
+  DISABLED
+  COMING_SOON
+}
+
 model Category {
-  id          String     @id @default(cuid())
+  id          String         @id @default(cuid())
   name        String
-  slug        String     @unique
+  slug        String         @unique
   description String?
   icon        String?
   image       String?
   parentId    String?
-  order       Int        @default(0)
-  isActive    Boolean    @default(true)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  order       Int            @default(0)
+  status      CategoryStatus @default(ACTIVE)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 
   parent      Category?       @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children    Category[]      @relation("CategoryHierarchy")
@@ -391,7 +397,7 @@ model Category {
 
   @@index([slug])
   @@index([parentId])
-  @@index([isActive])
+  @@index([status])
 }
 
 model Skill {

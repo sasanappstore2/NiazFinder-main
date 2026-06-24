@@ -77,7 +77,22 @@ function buildMinioRemotePatterns(): NonNullable<NextConfig["images"]>["remotePa
 const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: false,
+  compress: true,
   allowedDevOrigins: parseAllowedDevOrigins(),
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "framer-motion",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-popover",
+      "@radix-ui/react-select",
+      "@radix-ui/react-tabs",
+      "@radix-ui/react-tooltip",
+      "react-map-gl",
+      "date-fns",
+    ],
+  },
   async headers() {
     const commonHeaders = [
       { key: "X-Frame-Options", value: "SAMEORIGIN" },
@@ -106,6 +121,9 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: buildMinioRemotePatterns(),
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // ProgressiveImage uses 20 (placeholder) and 86 (full); ProductDetailGallery uses 78.
     qualities: [20, 75, 78, 86],
   },

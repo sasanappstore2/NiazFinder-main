@@ -18,13 +18,13 @@ import {
   DollarSign,
   BadgeCheck,
   ChevronLeft,
-  Shield,
   Check,
   AtSign,
   AlertCircle,
   Loader2,
   MapPinned,
   Pencil,
+  Plus,
 } from 'lucide-react';
 import {
   detectUserCity,
@@ -52,6 +52,8 @@ import { WalletHistory } from '@/components/dashboard/WalletHistory';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { canManageBusinessProfile } from '@/lib/business/can-manage-business-profile';
 import { routeBuilder } from '@/config/routes';
+import { toPersianDigits } from '@/lib/format/digits';
+import { cn } from '@/lib/utils';
 
 // ============ MOCK DATA (wallet API not wired yet) ============
 
@@ -80,6 +82,58 @@ function getStatusColor(status: string): string {
 
 function getInitials(firstName: string, lastName: string): string {
   return `${firstName.charAt(0)}${lastName.charAt(0)}`;
+}
+
+/** Profile completeness over a stable 6-field set — drives the momentum ring. */
+interface CompletenessUser {
+  avatar?: string | null;
+  bio?: string | null;
+  city?: string | null;
+  phone?: string | null;
+  username?: string | null;
+  isVerified?: boolean | null;
+}
+function computeProfileCompleteness(u: CompletenessUser | null | undefined): number {
+  if (!u) return 0;
+  const checks = [
+    Boolean(u.avatar),
+    Boolean(u.bio?.trim()),
+    Boolean(u.city?.trim()),
+    Boolean(u.phone?.trim()),
+    Boolean(u.username?.trim()),
+    Boolean(u.isVerified),
+  ];
+  const filled = checks.filter(Boolean).length;
+  return Math.round((filled / checks.length) * 100);
+}
+
+/** Lightweight SVG completeness ring — neutral track, emerald progress. */
+function ProgressRing({ value, size = 56 }: { value: number; size?: number }) {
+  const stroke = 5;
+  const r = (size - stroke) / 2;
+  const circ = 2 * Math.PI * r;
+  const clamped = Math.min(100, Math.max(0, value));
+  const offset = circ - (clamped / 100) * circ;
+  return (
+    <div className="relative grid shrink-0 place-items-center" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="-rotate-90" aria-hidden>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="stroke-border" />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          className="stroke-primary transition-[stroke-dashoffset] duration-700 ease-out"
+          style={{ strokeDasharray: circ, strokeDashoffset: offset }}
+        />
+      </svg>
+      <span className="absolute text-[11px] font-bold tabular-nums text-primary">
+        {toPersianDigits(clamped)}٪
+      </span>
+    </div>
+  );
 }
 
 const DASHBOARD_TABS = ['requests', 'wallet', 'profile'] as const;
@@ -142,8 +196,10 @@ export function UserDashboard() {
     }
   }, []);
 
+  // Fetch wallet on mount (not only on the wallet tab) so the hero can show the
+  // real balance — same endpoint, just earlier.
   useEffect(() => {
-    if (!authHydrated || !isAuthenticated || activeTab !== 'wallet') return;
+    if (!authHydrated || !isAuthenticated) return;
     void (async () => {
       try {
         const res = await apiFetch<{ wallet: { balance: number } }>('/api/wallet');
@@ -152,7 +208,7 @@ export function UserDashboard() {
         setWalletBalance(0);
       }
     })();
-  }, [authHydrated, isAuthenticated, activeTab, currentUser?.id]);
+  }, [authHydrated, isAuthenticated, currentUser?.id]);
 
   useEffect(() => {
     if (!authHydrated || !isAuthenticated) {
@@ -202,6 +258,20 @@ export function UserDashboard() {
     bio: currentUser?.bio || '',
     username: currentUser?.username || '',
   }), [currentUser]);
+
+  const completeness = useMemo(() => computeProfileCompleteness(currentUser), [currentUser]);
+
+  // The single highest-payoff next step (Hick's law: collapse N choices → 1).
+  // Incomplete profile (goal-gradient nudge) beats posting; both routes are robust.
+  const nextBestAction = useMemo(() => {
+    if (completeness < 100) {
+      return { label: 'تکمیل پروفایل', goProfile: true };
+    }
+    if (userRequests.length === 0) {
+      return { label: 'ثبت اولین نیاز', goProfile: false };
+    }
+    return { label: 'ثبت نیاز جدید', goProfile: false };
+  }, [completeness, userRequests.length]);
 
   const [profileForm, setProfileForm] = useState(initialProfile);
   const [usernameError, setUsernameError] = useState<string | null>(null);
@@ -316,88 +386,140 @@ export function UserDashboard() {
 
   return (
     <div dir="rtl" className="min-h-screen bg-background">
-      <PageContainer width="wide" className="py-6 space-y-8" noVerticalPadding>
-        {/* ============ WELCOME HEADER ============ */}
-        <div className="relative overflow-hidden rounded-2xl bg-linear-to-l from-emerald-600 via-teal-600 to-emerald-700 p-6 sm:p-8 text-white shadow-xl shadow-emerald-600/20">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-white" />
-            <div className="absolute -bottom-32 -right-20 w-96 h-96 rounded-full bg-white" />
-          </div>
-          <div className="relative flex flex-col md:flex-row items-start md:items-center gap-5">
-            <Avatar className="w-16 h-16 sm:w-20 sm:h-20 border-4 border-white/30 shadow-lg">
+      <PageContainer width="wide" className="py-5 sm:py-6 space-y-5" noVerticalPadding>
+        {/* ============ ACCOUNT HERO ============ */}
+        <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+          {/* the single saturated brand touch — a hairline emerald top edge */}
+          <div className="absolute inset-x-0 top-0 h-[3px] bg-linear-to-l from-emerald-400 via-emerald-500 to-emerald-600" />
+
+          {/* Zone A — identity + momentum ring */}
+          <div className="flex items-center gap-3 px-4 py-4 sm:px-6">
+            <Avatar className="size-12 sm:size-14 shrink-0 ring-2 ring-primary/15 ring-offset-2 ring-offset-card">
               <AvatarImage src={currentUser.avatar} alt={currentUser.firstName} />
-              <AvatarFallback className="text-xl sm:text-2xl bg-white/20 text-white font-bold">
+              <AvatarFallback className="bg-primary/10 text-primary font-semibold text-base">
                 {getInitials(currentUser.firstName, currentUser.lastName)}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 space-y-1">
-              <div className="space-y-1">
-                <h1 className="text-2xl sm:text-3xl font-bold">سلام، {currentUser.firstName} عزیز!</h1>
-                <p className="text-white/80 text-sm sm:text-base">
-                  {currentUser.username ? (
-                    <span className="inline-flex items-center gap-1"><AtSign className="w-3.5 h-3.5" />{currentUser.username}</span>
-                  ) : 'نام کاربری تعیین نشده'}
-                </p>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5">
+                <h1 className="truncate text-base sm:text-lg font-bold tracking-tight text-foreground">
+                  سلام {currentUser.firstName} 👋
+                </h1>
+                {currentUser.isVerified && (
+                  <BadgeCheck className="size-4 shrink-0 text-primary" aria-label="حساب تأییدشده" />
+                )}
+              </div>
+              <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+                {currentUser.username ? (
+                  <span className="inline-flex min-w-0 items-center gap-1 truncate" dir="ltr">
+                    <AtSign className="size-3 shrink-0" />
+                    {currentUser.username}
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('profile')}
+                    className="text-primary hover:underline"
+                  >
+                    نام کاربری تعیین نشده
+                  </button>
+                )}
+                <span className="text-border" aria-hidden>·</span>
+                <span className="shrink-0">{currentUser.role === 'CLIENT' ? 'کاربر' : 'کسب‌وکار'}</span>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-sm text-white/70">
-              {currentUser.isVerified && (
-                <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 gap-1"><BadgeCheck className="w-3.5 h-3.5" />تأیید شده</Badge>
-              )}
-              <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 gap-1"><Shield className="w-3.5 h-3.5" />{currentUser.role === 'CLIENT' ? 'کاربر' : 'کسب‌وکار'}</Badge>
-            </div>
+            <button
+              type="button"
+              onClick={() => setActiveTab('profile')}
+              className="shrink-0 rounded-full transition-transform hover:scale-105"
+              title={`پروفایلت ${toPersianDigits(completeness)}٪ کامله`}
+              aria-label="تکمیل پروفایل"
+            >
+              <ProgressRing value={completeness} />
+            </button>
           </div>
-        </div>
 
-        {/* ============ STATS CARDS ============ */}
-        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            {
-              icon: ClipboardList,
-              label: 'نیازهای فعال',
-              value: String(
-                dashboardStats?.activeRequests ??
-                  userRequests.filter((r) => r.status === 'OPEN' || r.status === 'IN_PROGRESS').length
-              ),
-              gradient: 'from-emerald-500 to-emerald-600',
-              shadow: 'shadow-emerald-500/10',
-            },
-            {
-              icon: MessageSquare,
-              label: 'پیشنهادهای دریافتی',
-              value: String(dashboardStats?.pendingProposals ?? '—'),
-              gradient: 'from-amber-500 to-amber-600',
-              shadow: 'shadow-amber-500/10',
-            },
-            {
-              icon: CheckCircle,
-              label: 'پروژه‌های تکمیل شده',
-              value: String(dashboardStats?.completedProjects ?? '—'),
-              gradient: 'from-cyan-500 to-cyan-600',
-              shadow: 'shadow-cyan-500/10',
-            },
-            {
-              icon: Star,
-              label: 'امتیاز شما',
-              value: dashboardStats?.avgRating ? String(dashboardStats.avgRating) : '—',
-              gradient: 'from-rose-500 to-rose-600',
-              shadow: 'shadow-rose-500/10',
-            },
-          ].map((stat) => (
-            <Card key={stat.label} className="relative overflow-hidden border-0 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-150" style={{ boxShadow: undefined }}>
-              <div className={`absolute inset-0 bg-linear-to-bl ${stat.gradient}`} />
-              <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-white/10" />
-              <CardContent className="relative p-5 sm:p-6 flex items-center gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0">
-                  <stat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+          {/* Zone B — wallet balance + the single next-best action. Stacks on
+              mobile (8-digit balances + a CTA never fit one row) → CTA full-width. */}
+          <div className="flex flex-col gap-3 border-t border-border/60 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div className="min-w-0">
+              <p className="text-[11px] text-muted-foreground">موجودی کیف پول</p>
+              <p className="mt-0.5 flex items-baseline gap-1.5 text-lg sm:text-2xl font-bold tabular-nums tracking-tight text-foreground">
+                <Wallet className="size-4 shrink-0 self-center text-amber-500" />
+                {walletBalance == null ? (
+                  <span className="inline-block h-6 w-20 rounded bg-muted animate-pulse" />
+                ) : (
+                  walletBalance.toLocaleString('fa-IR')
+                )}
+                <span className="text-xs font-medium text-muted-foreground">تومان</span>
+              </p>
+            </div>
+            <Button
+              onClick={() =>
+                nextBestAction.goProfile
+                  ? setActiveTab('profile')
+                  : router.push(routeBuilder.needNew())
+              }
+              className="h-11 w-full shrink-0 gap-1.5 rounded-xl bg-primary px-4 font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98] sm:w-auto"
+              title={nextBestAction.label}
+            >
+              {nextBestAction.goProfile ? <UserIcon className="size-4" /> : <Plus className="size-4" />}
+              <span className="text-sm">{nextBestAction.label}</span>
+            </Button>
+          </div>
+
+          {/* Zone C — compact metric strip (a calm "account statement", no rainbow) */}
+          <div className="grid grid-cols-4 divide-x divide-x-reverse divide-border/60 border-t border-border/60">
+            {[
+              {
+                label: 'نیازهای فعال',
+                value: toPersianDigits(
+                  dashboardStats?.activeRequests ??
+                    userRequests.filter((r) => r.status === 'OPEN' || r.status === 'IN_PROGRESS').length
+                ),
+                active: true,
+                loading: false,
+              },
+              {
+                label: 'پیشنهادها',
+                value: dashboardStats ? toPersianDigits(dashboardStats.pendingProposals) : null,
+                active: false,
+                loading: dashboardStats === null,
+              },
+              {
+                label: 'تکمیل‌شده',
+                value: dashboardStats ? toPersianDigits(dashboardStats.completedProjects) : null,
+                active: false,
+                loading: dashboardStats === null,
+              },
+              {
+                label: 'امتیاز',
+                value: dashboardStats?.avgRating ? toPersianDigits(dashboardStats.avgRating) : '—',
+                active: false,
+                loading: dashboardStats === null,
+                star: Boolean(dashboardStats?.avgRating),
+              },
+            ].map((m) => (
+              <div key={m.label} className="px-2 py-3 text-center">
+                <div
+                  className={cn(
+                    'inline-flex items-baseline justify-center gap-1 text-lg sm:text-2xl font-bold leading-none tabular-nums',
+                    m.active ? 'text-primary' : 'text-foreground'
+                  )}
+                >
+                  {m.loading ? (
+                    <span className="inline-block h-6 w-7 rounded bg-muted animate-pulse" />
+                  ) : (
+                    <>
+                      {m.value}
+                      {m.star && <Star className="size-3.5 self-center text-amber-500" />}
+                    </>
+                  )}
                 </div>
-                <div className="min-w-0">
-                  <p className="text-white/80 text-xs sm:text-sm">{stat.label}</p>
-                  <p className="text-white text-2xl sm:text-3xl font-bold">{stat.value}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                <div className="mt-1 text-[11px] sm:text-xs leading-tight text-muted-foreground">{m.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {canManageBusiness && (
@@ -410,49 +532,82 @@ export function UserDashboard() {
         {/* ============ MAIN TABS ============ */}
         <div>
           <Tabs value={activeTab} onValueChange={handleTabChange} dir="rtl" className="w-full">
-            <TabsList className="mb-6 flex h-auto w-full gap-1 overflow-x-auto rounded-xl border border-border/40 bg-muted/60 p-1.5 shadow-sm backdrop-blur-xs flex-nowrap md:flex-wrap">
-              <TabsTrigger value="requests" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
+            <TabsList className="mb-5 grid h-auto w-full grid-cols-3 gap-1 rounded-xl border border-border/60 bg-muted/50 p-1">
+              <TabsTrigger value="requests" className="min-h-10 rounded-lg py-2 text-xs sm:text-sm font-medium text-muted-foreground transition-colors data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
                 <ClipboardList className="w-4 h-4 ml-1.5" />نیازهای من
               </TabsTrigger>
-              <TabsTrigger value="wallet" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
+              <TabsTrigger value="wallet" className="min-h-10 rounded-lg py-2 text-xs sm:text-sm font-medium text-muted-foreground transition-colors data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
                 <Wallet className="w-4 h-4 ml-1.5" />کیف پول
               </TabsTrigger>
-              <TabsTrigger value="profile" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
+              <TabsTrigger value="profile" className="min-h-10 rounded-lg py-2 text-xs sm:text-sm font-medium text-muted-foreground transition-colors data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
                 <UserIcon className="w-4 h-4 ml-1.5" />پروفایل
               </TabsTrigger>
             </TabsList>
 
             {/* ============ TAB 1: MY NEEDS ============ */}
             <TabsContent value="requests">
-              <div className="flex items-center gap-2 mb-5 overflow-x-auto pb-2">
+              <div className="mb-5 inline-flex max-w-full gap-1 overflow-x-auto rounded-lg bg-muted/50 p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {[
                   { key: 'ALL', label: 'همه' },
                   { key: 'OPEN', label: 'باز' },
                   { key: 'IN_PROGRESS', label: 'در حال انجام' },
                   { key: 'COMPLETED', label: 'تکمیل شده' },
                 ].map((filter) => (
-                  <Button key={filter.key} variant={requestFilter === filter.key ? 'default' : 'outline'} size="sm" onClick={() => setRequestFilter(filter.key)} className="rounded-full px-4 shrink-0">{filter.label}</Button>
+                  <button
+                    key={filter.key}
+                    type="button"
+                    onClick={() => setRequestFilter(filter.key)}
+                    className={cn(
+                      'min-h-9 shrink-0 whitespace-nowrap rounded-md px-3.5 text-xs font-medium transition-colors',
+                      requestFilter === filter.key
+                        ? 'bg-card text-primary shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    {filter.label}
+                  </button>
                 ))}
               </div>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {requestsLoading ? (
-                  <Card>
+                  <Card className="rounded-xl border-border/70 shadow-none">
                     <CardContent className="flex items-center justify-center gap-2 py-10 text-muted-foreground">
                       <Loader2 className="size-5 animate-spin" />
-                      در حال بارگذاری آگهی‌ها…
+                      در حال بارگذاری نیازها…
                     </CardContent>
                   </Card>
                 ) : filteredRequests.length === 0 ? (
-                  <Card className="py-12 border-dashed border-2 border-border/60 rounded-2xl">
-                    <CardContent className="text-center text-muted-foreground">
-                      <ClipboardList className="w-12 h-12 mx-auto mb-3 opacity-40" />
-                      <p className="text-sm">نیازی با این فیلتر یافت نشد</p>
-                    </CardContent>
-                  </Card>
+                  <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border/70 bg-card/40 px-6 py-12 text-center">
+                    <div className="grid size-12 place-items-center rounded-full bg-primary/10">
+                      <ClipboardList className="size-6 text-primary" />
+                    </div>
+                    {userRequests.length === 0 ? (
+                      <>
+                        <p className="text-sm font-medium text-foreground">هنوز نیازی ثبت نکرده‌ای</p>
+                        <p className="max-w-xs text-xs text-muted-foreground">
+                          اولین نیازت رو ثبت کن تا کسب‌وکارها برات پیشنهاد بفرستن
+                        </p>
+                        <Button
+                          onClick={() => router.push(routeBuilder.needNew())}
+                          className="mt-1 h-10 gap-1.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"
+                        >
+                          <Plus className="size-4" />
+                          ثبت اولین نیاز
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm text-muted-foreground">نیازی با این فیلتر نیست</p>
+                        <Button variant="ghost" size="sm" onClick={() => setRequestFilter('ALL')} className="text-primary hover:text-primary">
+                          نمایش همه
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 ) : (
                   filteredRequests.map((request) => (
-                    <Card key={request.id} className="hover:border-emerald-300/50 dark:hover:border-emerald-700/50 transition-all duration-150 hover:shadow-md hover:shadow-emerald-500/5">
-                      <CardContent className="p-4 sm:p-6">
+                    <Card key={request.id} className="rounded-xl border-border/70 shadow-none transition-colors hover:border-primary/30">
+                      <CardContent className="p-4 sm:p-5">
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
                           <div className="flex-1 min-w-0 space-y-3">
                             <div className="flex flex-wrap items-center gap-2">
@@ -528,10 +683,10 @@ export function UserDashboard() {
 
             {/* ============ TAB 4: PROFILE ============ */}
             <TabsContent value="profile">
-              <Card className="border-border/50 shadow-md">
+              <Card className="rounded-xl border-border/70 shadow-none">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg"><UserIcon className="w-5 h-5" />ویرایش پروفایل</CardTitle>
-                  <CardDescription>اطلاعات حساب کاربری خود را مدیریت کنید</CardDescription>
+                  <CardTitle className="flex items-center gap-2 text-lg"><UserIcon className="w-5 h-5" />حساب کاربری</CardTitle>
+                  <CardDescription>اطلاعاتت رو به‌روز نگه دار</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

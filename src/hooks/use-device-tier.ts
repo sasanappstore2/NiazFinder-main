@@ -20,13 +20,12 @@ function tierFromWidth(width: number): DeviceTier {
 }
 
 export function useDeviceTier(): DeviceTier {
-  const [tier, setTier] = React.useState<DeviceTier>(() => {
-    if (typeof window === 'undefined') return 'laptop';
-    return tierFromWidth(window.innerWidth);
-  });
+  const [tier, setTier] = React.useState<DeviceTier>('laptop');
 
   React.useEffect(() => {
-    const onResize = () => setTier(tierFromWidth(window.innerWidth));
+    const update = () => setTier(tierFromWidth(window.innerWidth));
+    update();
+    const onResize = () => update();
     window.addEventListener('resize', onResize, { passive: true });
     return () => window.removeEventListener('resize', onResize);
   }, []);

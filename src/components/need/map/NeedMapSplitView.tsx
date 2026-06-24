@@ -9,6 +9,7 @@ import type { ServiceRequest } from '@/lib/types';
 import { useNeedMapPins, type NeedMapPinsQuery } from '@/hooks/use-need-map-pins';
 import { NeedMapListCard } from '@/components/need/map/NeedMapListCard';
 import { NeedMapMobileView } from '@/components/need/map/NeedMapMobileView';
+import { DeferredMapShell } from '@/components/map/DeferredMapShell';
 import { filterValidMapPins } from '@/lib/map/coords';
 
 const MAP_LOADING = 'در حال بارگذاری نقشه…';
@@ -187,7 +188,9 @@ export function NeedMapSplitView({
         <div className="h-[min(78vh,760px)] min-h-[460px]">
           <PanelGroup direction="horizontal" className="h-full" dir="ltr">
             <Panel defaultSize={56} minSize={42} maxSize={68}>
-              <NeedBrowseMap {...mapProps} className="h-full" />
+              <DeferredMapShell eager className="h-full">
+                <NeedBrowseMap {...mapProps} className="h-full" />
+              </DeferredMapShell>
             </Panel>
             <PanelResizeHandle className="w-1 bg-border/40 transition-colors hover:bg-primary/30" />
             <Panel defaultSize={44} minSize={28} maxSize={52}>

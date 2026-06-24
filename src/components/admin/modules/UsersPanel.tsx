@@ -255,6 +255,13 @@ export function UsersPanel() {
                 <Link href={`/b/${detail.businessProfile.slug}`} className="text-(--color-coloredText)">
                   {detail.businessProfile.name}
                 </Link>
+                {' · '}
+                <Link
+                  href={`/super-admin/businesses?id=${detail.businessProfile.id}`}
+                  className="text-(--color-coloredText)"
+                >
+                  مدیریت در ادمین
+                </Link>
               </p>
             ) : null}
             <p>آخرین فعالیت: {detail.lastSeenAt ? new Date(detail.lastSeenAt).toLocaleString('fa-IR') : '—'}</p>

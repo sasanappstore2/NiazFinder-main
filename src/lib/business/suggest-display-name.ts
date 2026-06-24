@@ -30,6 +30,11 @@ export function suggestBusinessDisplayName(input: SuggestDisplayNameInput): stri
   const person = input.personName?.trim();
   const city = input.city?.trim();
 
+  if (input.primaryOccupationSlug === 'real-estate-office') {
+    if (city) return `${occupation} در ${city}`.slice(0, 120);
+    return occupation.slice(0, 120);
+  }
+
   if (person && city) {
     return `${occupation} در ${city} — ${person}`.slice(0, 120);
   }
@@ -45,6 +50,12 @@ export function suggestBusinessDisplayName(input: SuggestDisplayNameInput): stri
 export function getDisplayNamePlaceholder(primaryOccupationSlug?: string): string {
   if (!primaryOccupationSlug) {
     return 'مثلاً لوله‌کشی احمد — مشهد (یا نام خودتان)';
+  }
+  if (primaryOccupationSlug === 'real-estate-agent') {
+    return 'مثلاً علی رضایی — مشاور املاک در تهران';
+  }
+  if (primaryOccupationSlug === 'real-estate-office') {
+    return 'مثلاً املاک آریا — تهران';
   }
   const occ = getBusinessCategoryTitle(primaryOccupationSlug);
   return `مثلاً ${occ} در مشهد — علی`;

@@ -28,7 +28,8 @@ import { cn } from '@/lib/utils';
 import type { IntakeWizardGuardContext } from '@/lib/need-intake/intake-wizard-guards';
 import { useNeedIntakeStore } from '@/stores/need-intake-store';
 import { getLeadPhone, setLeadPhone as persistLeadPhone } from '@/lib/lead-draft';
-import { buildSummary } from '@/lib/need-intake/question-engine';
+import { buildLiveSummaryCard } from '@/lib/need-intake/question-engine';
+import type { LiveSummaryCardData } from './IntakeLiveSummaryCard';
 import { useIntakeFormProjection } from '@/hooks/use-intake-form-projection';
 import { useIntakeListingCopy } from '@/hooks/use-intake-listing-copy';
 import { useIntakeIntelligence } from '@/hooks/use-intake-intelligence';
@@ -110,7 +111,7 @@ export function NeedIntakePanel({
   >({});
   const [titleEnriching, setTitleEnriching] = useState(false);
   const [descEnriching, setDescEnriching] = useState(false);
-  const [liveSummary, setLiveSummary] = useState('');
+  const [liveSummary, setLiveSummary] = useState<LiveSummaryCardData>({ kind: 'empty' });
 
   const location = useIntakeLocation({
     initialCity,
@@ -554,7 +555,7 @@ export function NeedIntakePanel({
   useEffect(() => {
     const composed = composeIntakeSourceText(needText, detailsText).trim();
     if ((step === 'need' || step === 'details') && intakeIntelligence.intentGist) {
-      setLiveSummary(intakeIntelligence.intentGist);
+      setLiveSummary({ kind: 'gist', text: intakeIntelligence.intentGist });
       return;
     }
     let d = needDraft ?? projectedDraft;
@@ -566,10 +567,10 @@ export function NeedIntakePanel({
       }
     }
     if (!d) {
-      setLiveSummary('');
+      setLiveSummary({ kind: 'empty' });
       return;
     }
-    setLiveSummary(buildSummary(d.parsedIntent, d.answers, d.sourceText));
+    setLiveSummary({ kind: 'card', ...buildLiveSummaryCard(d.parsedIntent, d.answers, d.sourceText) });
   }, [
     needDraft,
     projectedDraft,
@@ -610,25 +611,28 @@ export function NeedIntakePanel({
     draft.categoryLockedByUserRef,
   ]);
 
-  const goToDetails = async () => {
+  /**
+   * Transition to step 2 immediately (instant rules-based fields are already
+   * live via the debounced effects above); the AI analyze keeps running
+   * invisibly in the background and silently refines the draft as it lands —
+   * mirrors the non-blocking pattern already used by goToLocation() below.
+   * Never await the LLM here: it's the one call in the pipeline that can take
+   * seconds, and the user should never be stuck staring at a disabled button.
+   */
+  const goToDetails = () => {
     if (!needText.trim()) {
       toast.info('ابتدا نیاز خود را بنویسید');
       return;
     }
-    setLoading(true);
     setError(null);
-    try {
-      const res = await intakeIntelligence.analyzeNow();
-      if (!res && needText.trim().length >= 3) {
-        toast.warning('تحلیل هوش مصنوعی کامل نشد؛ می‌توانید ادامه دهید');
-      }
-      setSeedText(needText.trim());
-      setStep('details');
-    } catch {
-      toast.error('خطا در تحلیل نیاز');
-    } finally {
-      setLoading(false);
-    }
+    setSeedText(needText.trim());
+    setStep('details');
+
+    setAiEnriching(true);
+    void intakeIntelligence
+      .analyzeNow()
+      .catch(() => null)
+      .then(() => setAiEnriching(false));
   };
 
   const { goToLocation, prefetchLocationAnalyze } = useIntakeAnalyze({
@@ -827,16 +831,10 @@ export function NeedIntakePanel({
                 actions={
                   <Button
                     className={`w-full sm:w-auto ${intakePrimaryCta}`}
-                    onClick={() => void goToDetails()}
-                    disabled={
-                      isLoading ||
-                      !needText.trim() ||
-                      (intelligenceLiveEnabled && intakeIntelligence.analyzing)
-                    }
+                    onClick={goToDetails}
+                    disabled={isLoading || !needText.trim()}
                   >
-                    {intelligenceLiveEnabled && intakeIntelligence.analyzing
-                      ? 'در حال تحلیل…'
-                      : 'ادامه به توضیحات'}
+                    ادامه به توضیحات
                   </Button>
                 }
               >

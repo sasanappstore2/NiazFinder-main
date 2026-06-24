@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { getPublicLocationData, readManagedLocationData } from '@/lib/admin-locations';
 import { loadCityNeighborhoods, readManifest } from '@/lib/neighborhoods/catalog';
 import { locationCityIdToSlug } from '@/lib/search/city-slugs';
+import { getPublicCategoryWhere } from '@/lib/categories/category-status';
 
 function clampInt(value: unknown, min: number, max: number, fallback: number): number {
   const n = typeof value === 'number' ? value : Number(value);
@@ -32,7 +33,7 @@ export async function searchSiteCategories(args: Record<string, unknown>) {
   const limit = clampInt(args.limit, 1, 40, 20);
 
   const rows = await db.category.findMany({
-    where: { isActive: true },
+    where: getPublicCategoryWhere(),
     orderBy: [{ parentId: 'asc' }, { order: 'asc' }],
     select: {
       id: true,

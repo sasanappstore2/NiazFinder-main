@@ -53,7 +53,7 @@ function CategoryPill({
     'inline-flex max-w-[10rem] truncate rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary';
   if (href) {
     return (
-      <Link href={href} onClick={(e) => e.stopPropagation()} className={className}>
+      <Link href={href} prefetch onClick={(e) => e.stopPropagation()} className={className}>
         {name}
       </Link>
     );

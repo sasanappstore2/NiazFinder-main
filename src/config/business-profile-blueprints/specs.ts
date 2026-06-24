@@ -14,7 +14,13 @@ export const BLUEPRINT_SPECS: BusinessProfileBlueprint[] = [
     titleFa: 'املاک',
     match: {
       occupationSectors: ['real-estate-facility'],
-      occupationSlugs: ['real-estate-agent', 'property-manager', 'interior-designer', 'architect'],
+      occupationSlugs: [
+        'real-estate-agent',
+        'real-estate-office',
+        'property-manager',
+        'interior-designer',
+        'architect',
+      ],
       extensionHint: 'realEstate',
     },
     sectionOrder: [

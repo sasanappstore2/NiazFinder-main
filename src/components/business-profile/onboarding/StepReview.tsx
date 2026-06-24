@@ -3,22 +3,38 @@
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
 import { getBusinessCategoryTitle } from '@/lib/business/business-category';
+import { SPECIALIZATION_LABELS } from '@/lib/business/ecosystem/specialization';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { isolatePhoneDisplay } from '@/lib/chat/contact-share';
 import type { BusinessOnboardingPayload } from '@/lib/business/onboarding-schema';
 
+function formatServiceAreas(values: BusinessOnboardingPayload): string | null {
+  const areas = values.realEstateDetails?.serviceAreas ?? [];
+  if (areas.length === 0) return null;
+  const names = areas
+    .map((a) => a.neighborhood)
+    .filter((n): n is string => Boolean(n?.trim()));
+  return names.length > 0 ? names.join(' · ') : null;
+}
+
 export function StepReview({
   values,
   publicUrl,
   publishing,
+  isRealEstate = false,
   onPublish,
 }: {
   values: BusinessOnboardingPayload;
   publicUrl: string;
   publishing: boolean;
+  isRealEstate?: boolean;
   onPublish: () => void;
 }) {
+  const serviceAreasText = formatServiceAreas(values);
+  const specializations = values.realEstateDetails?.specializations ?? [];
+  const designStyles = values.realEstateDetails?.designStyles ?? [];
+
   return (
     <div className="space-y-[21px]">
       <Card className="border-emerald-500/20">
@@ -56,25 +72,53 @@ export function StepReview({
               {[values.city, values.province, values.address].filter(Boolean).join('، ')}
             </div>
           )}
-          {values.website && (
+          {isRealEstate && serviceAreasText && (
+            <div>
+              <span className="text-muted-foreground">محله‌های تحت پوشش: </span>
+              <span>{serviceAreasText}</span>
+            </div>
+          )}
+          {isRealEstate && specializations.length > 0 && (
+            <div>
+              <span className="text-muted-foreground">تخصص‌ها: </span>
+              <span>{specializations.map((s) => SPECIALIZATION_LABELS[s]).join(' · ')}</span>
+            </div>
+          )}
+          {isRealEstate && designStyles.length > 0 && (
+            <div>
+              <span className="text-muted-foreground">برچسب‌ها: </span>
+              <span>{designStyles.join(' · ')}</span>
+            </div>
+          )}
+          {!isRealEstate && values.website && (
             <div dir="ltr" className="text-left break-all">
               <span className="text-muted-foreground">وب‌سایت: </span>
               {values.website}
             </div>
           )}
-          {[values.instagram, values.telegram, values.bale, values.rubika, values.eitaa].some(
-            Boolean
-          ) && (
-            <div className="text-xs text-muted-foreground">
-              شبکه‌های اجتماعی در پروفایل ذخیره می‌شود.
-            </div>
-          )}
+          {!isRealEstate &&
+            [values.instagram, values.telegram, values.bale, values.rubika, values.eitaa].some(
+              Boolean
+            ) && (
+              <div className="text-xs text-muted-foreground">
+                شبکه‌های اجتماعی در پروفایل ذخیره می‌شود.
+              </div>
+            )}
         </CardContent>
       </Card>
 
       <p className="text-sm text-muted-foreground">
-        با انتشار، پروفایل شما برای کاربران قابل مشاهده می‌شود و در جستجو و تطبیق نیازها ظاهر
-        می‌شود.
+        {isRealEstate ? (
+          <>
+            با انتشار، پروفایل شما برای کاربران قابل مشاهده می‌شود. لوگو، آگهی‌ها و مدارک را
+            بعداً از پیشخوان املاک تکمیل کنید.
+          </>
+        ) : (
+          <>
+            با انتشار، پروفایل شما برای کاربران قابل مشاهده می‌شود و در جستجو و تطبیق نیازها
+            ظاهر می‌شود.
+          </>
+        )}
       </p>
 
       <Button

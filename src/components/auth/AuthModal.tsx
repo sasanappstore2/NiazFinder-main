@@ -71,12 +71,6 @@ export function AuthModal() {
           <PhoneOtpForm onStepChange={handleStepChange} />
         </div>
       </DialogContent>
-      <noscript>
-        <div className="sr-only">
-          <h1>ورود و ثبت‌نام - نیاز فایندر</h1>
-          <p>ورود به پلتفرم نیاز فایندر با شماره موبایل و کد تایید.</p>
-        </div>
-      </noscript>
     </Dialog>
   );
 }

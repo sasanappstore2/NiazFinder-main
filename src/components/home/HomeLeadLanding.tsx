@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useCallback, useRef, useMemo } from 'react';
+import { Suspense, useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Building2, Sparkles, Loader2 } from 'lucide-react';
@@ -98,6 +98,11 @@ function HomeLeadLandingContent() {
   const primaryCity = selectedCities[0];
   const citySlug = primaryCity ? locationCityIdToSlug(primaryCity.id) : null;
 
+  useEffect(() => {
+    router.prefetch(routeBuilder.needNew());
+    router.prefetch(getBrowseUrl({ type: 'need' }));
+    router.prefetch(getBrowseUrl({ type: 'business' }));
+  }, [router]);
 
   const focusComposer = useCallback(() => {
     requestAnimationFrame(() => composerInputRef.current?.focus());

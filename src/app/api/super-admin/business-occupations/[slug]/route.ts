@@ -48,6 +48,15 @@ export async function PATCH(
 
     const updated = [...occupations];
     updated[index] = next;
+
+    if (next.depth === 0 && next.isActive === false) {
+      for (let i = 0; i < updated.length; i++) {
+        if (updated[i].parentSlug === slug && updated[i].depth === 1) {
+          updated[i] = { ...updated[i], isActive: false };
+        }
+      }
+    }
+
     await writeManagedOccupations(updated);
     setOccupationsCache(updated);
 

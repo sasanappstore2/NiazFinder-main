@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { PageHeading } from '@/components/layout/PageHeading';
 import { Breadcrumb } from '@/components/shared/Breadcrumb';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { BusinessProfileAuraScope, UniversalBusinessProfile } from '@/components/business-profile';
 import {
   generateSearchMarketplaceMetadata,
@@ -92,7 +94,17 @@ export default async function BusinessSlugPage({ params, searchParams }: PagePro
             <PageHeading title={business.name} visuallyHidden />
           </div>
           <Separator className="my-4 bg-border/35 sm:my-5" />
-          <UniversalBusinessProfile businessId={business.userId} />
+          <Suspense
+            fallback={
+              <div className="space-y-6">
+                <Skeleton className="h-56 w-full rounded-2xl" />
+                <Skeleton className="h-8 w-2/3" />
+                <Skeleton className="h-32 w-full" />
+              </div>
+            }
+          >
+            <UniversalBusinessProfile businessId={business.userId} />
+          </Suspense>
         </PageContainer>
       </BusinessProfileAuraScope>
     </>

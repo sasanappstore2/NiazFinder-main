@@ -5,6 +5,7 @@ import {
   searchSiteCities,
 } from '@/lib/ai-agent/site-data';
 import { searchNeedsAgent } from '@/lib/ai-agent/vector-search';
+import { getPublicCategoryWhere } from '@/lib/categories/category-status';
 
 export async function checkUserAccountStatus(userId: string) {
   const fee = agentMessageFeeToman();
@@ -47,15 +48,15 @@ export async function getSiteCategories(args: Record<string, unknown>) {
   const depth = Math.min(3, Math.max(1, Math.floor(depthRaw)));
 
   const roots = await db.category.findMany({
-    where: { parentId: null, isActive: true },
+    where: getPublicCategoryWhere({ parentId: null }),
     orderBy: { order: 'asc' },
     include: {
       children: {
-        where: { isActive: true },
+        where: getPublicCategoryWhere(),
         orderBy: { order: 'asc' },
         include:
           depth >= 3
-            ? { children: { where: { isActive: true }, orderBy: { order: 'asc' } } }
+            ? { children: { where: getPublicCategoryWhere(), orderBy: { order: 'asc' } } }
             : undefined,
       },
     },

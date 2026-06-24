@@ -12,6 +12,9 @@ import {
   resolveBusinessDisplayName,
 } from '@/lib/business/suggest-display-name';
 import { queueBusinessProfileTypesenseSync } from '@/lib/search/typesense-sync';
+import { mergeEcosystemIntoExtensions } from '@/lib/business/ecosystem';
+import type { EcosystemExtension } from '@/lib/business/ecosystem';
+import { getPrimaryRealEstateSubtypeFromSlugs } from '@/lib/business/is-real-estate-business';
 
 export const runtime = 'nodejs';
 
@@ -70,6 +73,37 @@ export async function POST(request: NextRequest) {
       city: data.city,
     };
 
+    const reDetails = data.realEstateDetails;
+    const primarySubtype = getPrimaryRealEstateSubtypeFromSlugs(categorySlugs);
+    const ecosystemPatch: Partial<EcosystemExtension> = {};
+
+    if (reDetails?.serviceAreas?.length) {
+      ecosystemPatch.serviceArea = { areas: reDetails.serviceAreas };
+    }
+    if (reDetails?.specializations?.length) {
+      ecosystemPatch.specializations = reDetails.specializations;
+    }
+
+    let mergedExtensions: Record<string, unknown> = {
+      ...extensions,
+      webPresence: cleanedWebPresence,
+      _layout: {
+        ...layout,
+        template: blueprint.id,
+        defaultTab: layout.defaultTab ?? blueprint.defaultTab,
+      },
+    };
+
+    if (Object.keys(ecosystemPatch).length > 0) {
+      mergedExtensions = mergeEcosystemIntoExtensions(mergedExtensions, ecosystemPatch);
+    }
+
+    const tagSubtypes = new Set(['architect', 'interior-designer']);
+    const tagsJson =
+      reDetails?.designStyles?.length && primarySubtype && tagSubtypes.has(primarySubtype)
+        ? toJson(reDetails.designStyles)
+        : undefined;
+
     await db.businessProfile.update({
       where: { id: profile.id },
       data: {
@@ -84,18 +118,11 @@ export async function POST(request: NextRequest) {
         address: emptyToNull(data.address),
         logo: emptyToNull(data.logo),
         coverImage: emptyToNull(data.coverImage),
+        ...(tagsJson !== undefined ? { tags: tagsJson } : {}),
         status: 'ACTIVE',
         seoTitle: buildBusinessSeoTitle(seoMeta),
         seoDescription: buildBusinessSeoDescription(seoMeta),
-        extensions: toJson({
-          ...extensions,
-          webPresence: cleanedWebPresence,
-          _layout: {
-            ...layout,
-            template: blueprint.id,
-            defaultTab: layout.defaultTab ?? blueprint.defaultTab,
-          },
-        }),
+        extensions: toJson(mergedExtensions),
       },
     });
 

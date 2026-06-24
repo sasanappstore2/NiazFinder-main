@@ -40,7 +40,11 @@ export function IntakeStepShell({
           {description ? <p className="intake-form-card__desc">{description}</p> : null}
         </div>
         <div className="intake-panel-card__content">{children}</div>
-        {actions ? <div className="intake-sticky-actions intake-actions">{actions}</div> : null}
+        {actions ? (
+          <div className="intake-sticky-actions intake-actions flex flex-col gap-2 sm:flex-row">
+            {actions}
+          </div>
+        ) : null}
       </div>
     </section>
   );

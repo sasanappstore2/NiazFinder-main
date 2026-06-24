@@ -226,6 +226,112 @@ function labelDeal(deal?: unknown): string | null {
   );
 }
 
+export interface LiveSummaryFact {
+  label: string;
+  value: string;
+}
+
+export interface LiveSummaryCard {
+  categoryLabel: string;
+  dealLabel?: string;
+  /** Best available title for this need (falls back to the category label). */
+  title: string;
+  place?: string;
+  budgetLabel?: string;
+  urgent: boolean;
+  facts: LiveSummaryFact[];
+  detailsText?: string;
+}
+
+/** Structured equivalent of {@link buildSummary} — for card-style UI instead of plain text. */
+export function buildLiveSummaryCard(
+  parsed: ParsedIntent,
+  answers: Record<string, unknown>,
+  sourceText?: string
+): LiveSummaryCard {
+  const def = getIntentDefinition(parsed.intentType);
+  const categoryLabel = def.labelFa;
+  const dealLabel = labelDeal(answers.dealType ?? parsed.entities?.dealType) ?? undefined;
+  const facts: LiveSummaryFact[] = [];
+
+  const kind = answers.propertyKind ?? parsed.entities?.propertyKind;
+  if (kind) {
+    facts.push({ label: 'نوع ملک', value: String(PROPERTY_KIND_LABELS[String(kind)] ?? kind) });
+  }
+
+  for (const line of realEstateFilterSummaryLines(answers)) {
+    const idx = line.indexOf(': ');
+    if (idx > -1) facts.push({ label: line.slice(0, idx), value: line.slice(idx + 2) });
+  }
+
+  if (answers.areaMin) facts.push({ label: 'حداقل متراژ', value: `${answers.areaMin} متر` });
+  if (answers.areaMax) facts.push({ label: 'حداکثر متراژ', value: `${answers.areaMax} متر` });
+  if (answers.yearMin || answers.yearMax) {
+    const yMin = answers.yearMin ? String(answers.yearMin) : '—';
+    const yMax = answers.yearMax ? String(answers.yearMax) : '—';
+    facts.push({ label: 'سال ساخت', value: `${yMin} تا ${yMax}` });
+  }
+
+  let place: string | undefined;
+  if (answers.location || parsed.city || parsed.entities?.area) {
+    place =
+      (answers.location ? String(answers.location) : '') ||
+      [parsed.entities?.area, parsed.city].filter(Boolean).join('، ') ||
+      parsed.city ||
+      undefined;
+  }
+
+  let budgetLabel: string | undefined;
+  if (answers.budget) {
+    budgetLabel = `${formatMoneyToman(Number(answers.budget))} تومان`;
+  } else if (
+    parsed.budgetMax &&
+    !answers.rahnAmount &&
+    !parsed.entities?.rahnAmount &&
+    parsed.entities?.dealType !== 'rent_rahn_ejare' &&
+    parsed.entities?.dealType !== 'rent_rahn_full'
+  ) {
+    budgetLabel = `${formatMoneyToman(parsed.budgetMax)} تومان`;
+  }
+  if (answers.deposit) {
+    facts.push({ label: 'ودیعه', value: `${formatMoneyToman(Number(answers.deposit))} تومان` });
+  }
+
+  const vehicleRaw = sourceText?.trim() || parsed.rawText || '';
+  const isVehicle =
+    parsed.intentType.startsWith('vehicle') ||
+    getCategoryPath(parsed.categorySlug)[0]?.slug === 'vehicles';
+  const vehicleSubject =
+    (answers.brand ? String(answers.brand) : '') ||
+    (parsed.entities?.brand ? String(parsed.entities.brand) : '') ||
+    (isVehicle ? extractVehicleSubjectFromText(vehicleRaw) ?? '' : '');
+  if (vehicleSubject) facts.push({ label: 'خودرو', value: vehicleSubject });
+  if (isVehicle) {
+    const cond = extractVehicleConditionFromText(vehicleRaw);
+    if (cond) facts.push({ label: 'وضعیت', value: cond });
+  }
+  if (answers.productName) facts.push({ label: 'کالا', value: String(answers.productName) });
+  if (answers.jobTitle) facts.push({ label: 'شغل', value: String(answers.jobTitle) });
+  if (answers.serviceType) facts.push({ label: 'خدمت', value: String(answers.serviceType) });
+
+  const detail = answers.details ?? answers.serviceType;
+  const detailsText =
+    detail && String(detail).length > 3 ? String(detail) : undefined;
+
+  const title = parsed.title?.trim() || categoryLabel;
+
+  return {
+    categoryLabel,
+    dealLabel,
+    title,
+    place,
+    budgetLabel,
+    urgent: parsed.urgency === 'URGENT',
+    facts,
+    detailsText,
+  };
+}
+
 export function buildSummary(
   parsed: ParsedIntent,
   answers: Record<string, unknown>,

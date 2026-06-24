@@ -9,6 +9,7 @@ import type { SpecialistProfile } from '@/lib/types';
 import { useBusinessMapPins, type BusinessMapPinsQuery } from '@/hooks/use-business-map-pins';
 import { BusinessMapListCard } from '@/components/business/map/BusinessMapListCard';
 import { BusinessMapMobileView } from '@/components/business/map/BusinessMapMobileView';
+import { DeferredMapShell } from '@/components/map/DeferredMapShell';
 import { filterValidMapPins } from '@/lib/business/map-coords';
 
 const MAP_LOADING = '\u062f\u0631 \u062d\u0627\u0644 \u0628\u0627\u0631\u06af\u0630\u0627\u0631\u06cc \u0646\u0642\u0634\u0647\u2026';
@@ -195,7 +196,9 @@ export function BusinessMapSplitView({
         <div className="h-[min(78vh,760px)] min-h-[460px]">
           <PanelGroup direction="horizontal" className="h-full" dir="ltr">
             <Panel defaultSize={56} minSize={42} maxSize={68}>
-              <BusinessBrowseMap {...mapProps} className="h-full" />
+              <DeferredMapShell eager className="h-full">
+                <BusinessBrowseMap {...mapProps} className="h-full" />
+              </DeferredMapShell>
             </Panel>
             <PanelResizeHandle className="w-1 bg-border/40 transition-colors hover:bg-primary/30" />
             <Panel defaultSize={44} minSize={28} maxSize={52}>

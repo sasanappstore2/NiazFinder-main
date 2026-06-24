@@ -11,6 +11,8 @@ import { BUSINESS_AI_ASSISTANT_ENABLED } from '@/config/business-profile-feature
 import { ProfileShell } from '@/components/business-profile/ProfileShell';
 import { ProfileTabbedContent } from '@/components/business-profile/ProfileTabbedContent';
 import { useProfileSections } from '@/components/business-profile/hooks/useProfileSections';
+import { DynamicWidgetRenderer } from '@/components/business-profile/DynamicWidgetRenderer';
+import { ProfileCompleteness } from '@/components/business-profile/ProfileCompleteness';
 import type { OfferCtaType } from '@/contracts/business-profile';
 import { useAppStore } from '@/lib/store';
 
@@ -116,12 +118,18 @@ function UniversalBusinessProfileInner({ businessId: businessIdProp }: Props) {
   return (
     <>
       <ProfileShell business={business} requestId={requestId}>
+        <ProfileCompleteness business={business} />
         <ProfileTabbedContent
           business={business}
           layout={layout}
           requestId={requestId}
           onOfferAction={handleOfferAction}
         />
+
+        {/* Dynamic subtype-specific widgets */}
+        <div className="mt-8">
+          <DynamicWidgetRenderer business={business} requestId={requestId} />
+        </div>
       </ProfileShell>
       {BUSINESS_AI_ASSISTANT_ENABLED && <BusinessAssistantPanel business={business} />}
     </>
