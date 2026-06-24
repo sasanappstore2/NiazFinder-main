@@ -11,6 +11,7 @@ import { BusinessProfileTabSettings } from '@/components/business-profile/Busine
 import { BusinessCategoryPicker } from '@/components/business-profile/BusinessCategoryPicker';
 import { BusinessProfileAdvancedForm } from './forms/BusinessProfileAdvancedForm';
 import { BusinessDeletePanel } from './panels/BusinessDeletePanel';
+import { BusinessLocationsPanel } from './panels/BusinessLocationsPanel';
 import { useBusinessHub } from './BusinessHubContext';
 
 export function BusinessHubAdvanced({
@@ -34,6 +35,8 @@ export function BusinessHubAdvanced({
       </CollapsibleTrigger>
       <CollapsibleContent className="space-y-6 border-t px-4 py-4">
         <BusinessProfileAdvancedForm onSaved={onSlugSaved} />
+
+        <BusinessLocationsPanel />
 
         <div className="space-y-2">
           <p className="text-sm font-medium">حوزه کاری پروفایل</p>

@@ -11,9 +11,11 @@ import {
   type RealEstateCoverageFieldsValue,
 } from '@/components/business-profile/shared/RealEstateCoverageFields';
 import { useRealEstateHub } from '../RealEstateHubProvider';
+import { useBusinessHub } from '../../BusinessHubContext';
 
 export function RealEstateCoveragePanel() {
   const { subtype, ecosystem, tags, reLoading, saveEcosystem, saveTags } = useRealEstateHub();
+  const { profile } = useBusinessHub();
   const [value, setValue] = useState<RealEstateCoverageFieldsValue>({
     serviceAreas: [],
     specializations: [],
@@ -47,7 +49,7 @@ export function RealEstateCoveragePanel() {
         serviceArea: { areas: value.serviceAreas },
         specializations: value.specializations,
       });
-      if (subtype === 'architect') {
+      if (config.fields.designStyles) {
         await saveTags(value.designStyles);
       }
       toast.success('ذخیره شد');
@@ -71,6 +73,7 @@ export function RealEstateCoveragePanel() {
         config={{
           ...config.fields,
           variant: 'card',
+          pinnedCityName: profile?.city?.trim() || undefined,
         }}
       />
 
@@ -78,7 +81,7 @@ export function RealEstateCoveragePanel() {
         <Button
           onClick={() => void save()}
           disabled={saving}
-          className="gap-2 bg-blue-600 hover:bg-blue-700"
+          className="gap-2"
         >
           {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
           ذخیره

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { unstable_cache } from 'next/cache';
 import {
   getLocationStats,
   getPublicLocationData,
@@ -8,15 +9,25 @@ import { readManifest } from '@/lib/neighborhoods/catalog';
 
 export const runtime = 'nodejs';
 
-export async function GET() {
-  try {
+const getPublicLocationsPayload = unstable_cache(
+  async () => {
     const raw = await readManagedLocationData();
     const manifest = await readManifest();
     const data = getPublicLocationData(raw, manifest.counts);
+    const stats = await getLocationStats(raw);
+    return { ...data, stats };
+  },
+  ['public-locations-payload'],
+  { revalidate: 300, tags: ['locations'] }
+);
 
-    return NextResponse.json({
-      ...data,
-      stats: await getLocationStats(raw),
+export async function GET() {
+  try {
+    const payload = await getPublicLocationsPayload();
+    return NextResponse.json(payload, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      },
     });
   } catch (error) {
     console.error('Locations GET error:', error);

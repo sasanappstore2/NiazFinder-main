@@ -11,12 +11,14 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { toPersianDigits } from '@/lib/format/digits';
 import type { RealEstateCompletionResult } from '@/lib/business/real-estate-hub-completion';
 import { REAL_ESTATE_TASK_LABELS } from '@/lib/business/real-estate-hub-tasks';
 import { isRealEstateListingSubtype } from '@/lib/business/real-estate-listing-subtypes';
 import { useBusinessHub } from '../../BusinessHubContext';
 import { useRealEstateHub } from '../RealEstateHubProvider';
+import { RE_HUB_ICON } from '../real-estate-hub-tokens';
 
 export function RealEstateOverviewPanel({
   completion,
@@ -60,9 +62,9 @@ export function RealEstateOverviewPanel({
             key={task}
             type="button"
             onClick={() => navigateToTask(task)}
-            className="rounded-xl border border-border/60 bg-background p-4 text-right transition-colors hover:border-blue-500/30 hover:bg-blue-500/5"
+            className="rounded-xl border border-border/60 bg-background p-4 text-right transition-colors hover:border-border hover:bg-accent"
           >
-            <Icon className="mb-2 size-5 text-blue-600" />
+            <Icon className={cn('mb-2 size-5', RE_HUB_ICON)} />
             <p className="text-2xl font-bold">{toPersianDigits(value)}</p>
             <p className="text-xs text-muted-foreground">{label}</p>
           </button>
@@ -93,7 +95,7 @@ export function RealEstateOverviewPanel({
       )}
 
       <div className="flex flex-wrap gap-2">
-        <Button type="button" variant="default" className="gap-1.5 bg-blue-600 hover:bg-blue-700" asChild>
+        <Button type="button" variant="default" className="gap-1.5" asChild>
           <Link href={profile.publicUrl} target="_blank" rel="noopener noreferrer">
             پیش‌نمایش صفحه عمومی
             <ExternalLink className="size-3.5" />

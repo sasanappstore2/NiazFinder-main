@@ -1,15 +1,27 @@
 'use client';
 
-import React from 'react';
 import type { Business } from '@/contracts/business-profile';
 import { getListings, soldListings } from '@/lib/business/real-estate-listings';
 import { ListingGrid } from './_ListingGrid';
+import { useListingContact } from './use-listing-contact';
 
-export default function SoldProperties({ business }: { business: Business; requestId?: string }) {
+export default function SoldProperties({
+  business,
+  requestId,
+}: {
+  business: Business;
+  requestId?: string;
+}) {
+  const { onChat, onCall } = useListingContact(business, requestId);
+
   return (
     <ListingGrid
       listings={soldListings(getListings(business))}
       emptyText="ملک فروخته‌شده‌ای ثبت نشده است."
+      business={business}
+      requestId={requestId}
+      onChat={() => void onChat()}
+      onCall={() => void onCall()}
     />
   );
 }

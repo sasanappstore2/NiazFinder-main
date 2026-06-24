@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useAppStore } from '@/lib/store';
 
 const DeferredChatSocketBootstrap = dynamic(
   () =>
@@ -16,12 +17,23 @@ const GlobalVoiceCallLayer = dynamic(
   { ssr: false }
 );
 
-/** Deferred chat socket + voice overlay — client-only, must not load in root RSC layout. */
-export function DeferredVoiceBootstrap() {
+function AuthenticatedVoiceBootstrap() {
+  const authHydrated = useAppStore((s) => s.authHydrated);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+
+  if (!authHydrated || !isAuthenticated) {
+    return null;
+  }
+
   return (
     <>
       <DeferredChatSocketBootstrap />
       <GlobalVoiceCallLayer />
     </>
   );
+}
+
+/** Deferred chat socket + voice overlay — only for authenticated users. */
+export function DeferredVoiceBootstrap() {
+  return <AuthenticatedVoiceBootstrap />;
 }

@@ -71,7 +71,7 @@ export function RealEstateWidgetsPanel() {
       </ul>
 
       <div className="flex justify-end">
-        <Button onClick={() => void save()} disabled={saving} className="gap-2 bg-blue-600 hover:bg-blue-700">
+        <Button onClick={() => void save()} disabled={saving} className="gap-2">
           {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
           ذخیره ویجت‌ها
         </Button>

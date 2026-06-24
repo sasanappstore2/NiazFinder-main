@@ -7,11 +7,17 @@ import {
   getWidgetConfigForBusiness,
 } from '@/lib/business/widget-config';
 import { WIDGET_REGISTRY, type WidgetDefinition } from '@/lib/business/widget-registry';
+import {
+  isListingWidgetId,
+  profileUsesListingsTab,
+} from '@/lib/business/real-estate-listings-display';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface Props {
   business: Business;
   requestId?: string;
+  /** When false, owner-only widgets are hidden (public profile). */
+  isOwnerView?: boolean;
 }
 
 /**
@@ -47,7 +53,7 @@ class WidgetErrorBoundary extends Component<
  * Renders enabled widgets for the business's primary real-estate subtype.
  * Respects per-profile overrides stored in extensions.widgets.
  */
-export function DynamicWidgetRenderer({ business, requestId }: Props) {
+export function DynamicWidgetRenderer({ business, requestId, isOwnerView = false }: Props) {
   const subtype = useMemo(() => getPrimaryRealEstateSubtype(business), [business]);
 
   const widgets = useMemo(() => {
@@ -57,8 +63,13 @@ export function DynamicWidgetRenderer({ business, requestId }: Props) {
     return config
       .filter((c) => c.enabled)
       .map((c) => defs.find((d) => d.id === c.id))
-      .filter(Boolean) as WidgetDefinition[];
-  }, [business, subtype]);
+      .filter((d): d is WidgetDefinition => Boolean(d))
+      .filter((d) => isOwnerView || !d.ownerOnly)
+      .filter(
+        (d) =>
+          !profileUsesListingsTab(business) || !isListingWidgetId(d.id)
+      );
+  }, [business, subtype, isOwnerView]);
 
   if (!subtype || widgets.length === 0) {
     return null;

@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { budgetToJson } from '@/lib/budget';
 import { extractNeedBudgetMetaFromDynamicAnswers } from '@/lib/need/extract-need-budget-meta';
+import { extractNeighborhoodIdFromDynamicAnswers } from '@/lib/business/ecosystem/match-signals';
 import type { NeedMatchContext } from '@/contracts/need-match';
 
 function parseJsonArray(raw: string): string[] {
@@ -39,6 +40,8 @@ export async function buildNeedMatchContextFromRequest(
     r.subcategory?.slug ?? r.category.slug ?? 'general';
   const categoryName = r.subcategory?.name ?? r.category.name;
 
+  const dynamicAnswers = parseJsonObject(r.dynamicAnswers);
+
   return {
     id: r.id,
     title: r.title,
@@ -46,12 +49,13 @@ export async function buildNeedMatchContextFromRequest(
     city: r.city,
     province: r.province,
     address: r.address,
+    neighborhoodId: extractNeighborhoodIdFromDynamicAnswers(dynamicAnswers),
     categorySlug,
     categoryName,
     tags: parseJsonArray(r.tags),
     budgetMin: budgetToJson(r.budgetMin),
     budgetMax: budgetToJson(r.budgetMax),
     dealType: extractNeedBudgetMetaFromDynamicAnswers(r.dynamicAnswers).dealType,
-    dynamicAnswers: parseJsonObject(r.dynamicAnswers),
+    dynamicAnswers,
   };
 }

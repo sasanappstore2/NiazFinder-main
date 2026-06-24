@@ -12,11 +12,15 @@ export function HubMediaUpload({
   onChange,
   label = 'تصویر',
   className,
+  compact = false,
+  hideLabel = false,
 }: {
   value: string;
   onChange: (url: string) => void;
   label?: string;
   className?: string;
+  compact?: boolean;
+  hideLabel?: boolean;
 }) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = React.useState(false);
@@ -48,37 +52,46 @@ export function HubMediaUpload({
   };
 
   return (
-    <div className={cn('space-y-2', className)}>
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-medium">{label}</span>
-        {value && (
-          <button
-            type="button"
-            className="text-xs text-muted-foreground hover:text-destructive"
-            onClick={() => onChange('')}
-          >
-            حذف
-          </button>
+    <div className={cn('flex flex-col', hideLabel ? 'gap-0' : 'gap-2', className)}>
+      {!hideLabel && (
+        <div className="flex min-h-4 items-center justify-between gap-2">
+          <span className="text-xs font-medium text-muted-foreground">{label}</span>
+          {value && (
+            <button
+              type="button"
+              className="text-xs text-muted-foreground hover:text-destructive"
+              onClick={() => onChange('')}
+            >
+              حذف
+            </button>
+          )}
+        </div>
+      )}
+      <div
+        className={cn(
+          'relative overflow-hidden rounded-xl border border-dashed border-border/80 bg-muted/25',
+          compact ? 'size-[5.5rem] shrink-0 sm:size-28' : 'aspect-video w-full'
         )}
-      </div>
-      <div className="relative aspect-video overflow-hidden rounded-lg border border-dashed border-blue-500/30 bg-muted/30">
+      >
         {value ? (
           <>
             <Image src={value} alt="" fill className="object-cover" unoptimized />
             <button
               type="button"
-              className="absolute top-2 end-2 flex size-8 items-center justify-center rounded-full bg-background/90 shadow"
+              className="absolute bottom-1.5 end-1.5 flex size-7 items-center justify-center rounded-full bg-background/95 shadow-sm"
               onClick={() => inputRef.current?.click()}
               disabled={uploading}
+              aria-label="تغییر تصویر"
             >
-              {uploading ? <Loader2 className="size-4 animate-spin" /> : <Camera className="size-4" />}
+              {uploading ? <Loader2 className="size-3.5 animate-spin" /> : <Camera className="size-3.5" />}
             </button>
             <button
               type="button"
-              className="absolute top-2 start-2 flex size-8 items-center justify-center rounded-full bg-background/90 shadow"
+              className="absolute bottom-1.5 start-1.5 flex size-7 items-center justify-center rounded-full bg-background/95 shadow-sm"
               onClick={() => onChange('')}
+              aria-label="حذف تصویر"
             >
-              <X className="size-4" />
+              <X className="size-3.5" />
             </button>
           </>
         ) : (
@@ -86,14 +99,14 @@ export function HubMediaUpload({
             type="button"
             disabled={uploading}
             onClick={() => inputRef.current?.click()}
-            className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground hover:bg-blue-500/5"
+            className="flex h-full w-full flex-col items-center justify-center gap-1 text-muted-foreground transition-colors hover:bg-muted/40"
           >
             {uploading ? (
-              <Loader2 className="size-6 animate-spin text-blue-600" />
+              <Loader2 className="size-5 animate-spin" />
             ) : (
-              <Camera className="size-6 text-blue-600/80" />
+              <Camera className="size-5" />
             )}
-            <span className="text-xs">انتخاب تصویر</span>
+            <span className="text-[10px] font-medium">{compact ? 'افزودن عکس' : 'انتخاب تصویر'}</span>
           </button>
         )}
         <input

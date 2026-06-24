@@ -94,7 +94,7 @@ export function RealEstateServicesPanel() {
             <p className="font-medium">{o.title}</p>
             <p className="text-xs text-muted-foreground line-clamp-2">{o.description}</p>
             {o.priceRange && (
-              <p className="mt-1 text-xs font-medium text-blue-700">
+              <p className="mt-1 text-xs font-medium text-muted-foreground">
                 {formatPriceText(o.priceRange)}
               </p>
             )}
@@ -105,7 +105,7 @@ export function RealEstateServicesPanel() {
         </div>
       ))}
 
-      <IncompleteFieldHighlight itemId="specializations">
+      <IncompleteFieldHighlight itemId="services">
       <Card className="border-dashed">
         <CardHeader className="pb-2">
           <CardTitle className="text-base">افزودن خدمت / پکیج</CardTitle>

@@ -2,7 +2,7 @@
 
 import { useNavigate } from '@/hooks/navigation/use-navigate';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Menu } from "@ark-ui/react/menu";
 import { Portal } from "@ark-ui/react/portal";
 import {
@@ -109,26 +109,6 @@ export function ArkUserMenu() {
       }
     }
   };
-
-  useEffect(() => {
-    if (!authHydrated || !isAuthenticated || !currentUser) {
-      setCanOpenSuperAdmin(false);
-      return;
-    }
-
-    let cancelled = false;
-    void fetch('/api/super-admin/me', { headers: getClientAuthHeaders() })
-      .then((res) => {
-        if (!cancelled) setCanOpenSuperAdmin(res.ok);
-      })
-      .catch(() => {
-        if (!cancelled) setCanOpenSuperAdmin(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [authHydrated, isAuthenticated, currentUser?.id, currentUser?.role]);
 
   const openMyBusinessManage = () => {
     setMenuOpen(false);

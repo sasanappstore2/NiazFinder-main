@@ -462,6 +462,11 @@ export function isBusinessProductDetailPath(pathname: string): boolean {
   return BUSINESS_PRODUCT_DETAIL_PATH.test(pathname);
 }
 
+/** Owner business hub (`/my-business`) — uses its own bottom nav on mobile. */
+export function isMyBusinessHubPath(pathname: string): boolean {
+  return pathname === ROUTES.myBusiness || pathname.startsWith(`${ROUTES.myBusiness}/`);
+}
+
 const BUSINESS_PUBLIC_PROFILE_PATH = /^\/b\/[^/]+\/?$/;
 
 /** Public business profile (`/b/{slug}`), not product detail. */

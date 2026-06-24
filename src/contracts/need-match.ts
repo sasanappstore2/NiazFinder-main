@@ -36,6 +36,8 @@ export interface NeedMatchContext {
   city?: string | null;
   province?: string | null;
   address?: string | null;
+  /** Managed neighborhood id from intake dynamicAnswers */
+  neighborhoodId?: string | null;
   categorySlug: string;
   categoryName: string;
   tags: string[];

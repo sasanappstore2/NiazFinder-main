@@ -14,6 +14,8 @@ import {
 } from '@/lib/business/profile-tabs';
 import { PROFILE_TABS_TO_CONTENT } from '@/components/business-profile/profile-layout-tokens';
 import { cn } from '@/lib/utils';
+import { DynamicWidgetRenderer } from './DynamicWidgetRenderer';
+import { ProfileCompleteness } from './ProfileCompleteness';
 import { renderProfileSection } from './ProfileShell';
 import { ProfileTabEmpty } from './ProfilePrimaryTabs';
 
@@ -43,11 +45,13 @@ export function ProfileTabbedContent({
   layout,
   requestId,
   onOfferAction,
+  isOwnerView = false,
 }: {
   business: Business;
   layout: ResolvedProfileLayout;
   requestId?: string;
   onOfferAction?: (offerId: string, cta: OfferCtaType) => void;
+  isOwnerView?: boolean;
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -155,12 +159,20 @@ export function ProfileTabbedContent({
 
           return (
             <TabsContent key={tab.id} value={tab.id} className="mt-0 space-y-[34px] focus-visible:outline-hidden">
+              {tab.id === 'intro' && <ProfileCompleteness business={business} />}
               {!hasContent && EMPTY_MESSAGES[tab.id] && (
                 <ProfileTabEmpty message={EMPTY_MESSAGES[tab.id]!} />
               )}
               {sectionIds.map((id) => (
                 <div key={id}>{renderProfileSection(id, sectionProps)}</div>
               ))}
+              {tab.id === 'intro' && (
+                <DynamicWidgetRenderer
+                  business={business}
+                  requestId={requestId}
+                  isOwnerView={isOwnerView}
+                />
+              )}
             </TabsContent>
           );
         })}

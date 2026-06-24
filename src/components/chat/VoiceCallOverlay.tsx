@@ -7,7 +7,6 @@ import {
   PhoneOff,
   Mic,
   MicOff,
-  Volume2,
   MessageSquare,
   PhoneCall,
   PhoneIncoming,
@@ -348,9 +347,7 @@ function ActiveCallBar({
   targetUser,
   duration,
   isMuted,
-  isSpeakerOn,
   onToggleMute,
-  onToggleSpeaker,
   onHangup,
   onExpand,
   subtitle,
@@ -358,9 +355,7 @@ function ActiveCallBar({
   targetUser: VoiceCallPeer;
   duration: number;
   isMuted: boolean;
-  isSpeakerOn: boolean;
   onToggleMute: () => void;
-  onToggleSpeaker: () => void;
   onHangup: () => void;
   onExpand: () => void;
   subtitle?: string;
@@ -446,20 +441,6 @@ function ActiveCallBar({
 
           <Button
             type="button"
-            onClick={onToggleSpeaker}
-            size="sm"
-            variant="ghost"
-            className={cn(
-              'h-9 w-9 rounded-full text-white/70 transition-all hover:bg-white/10 hover:text-white',
-              isSpeakerOn && 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 hover:text-emerald-400'
-            )}
-            aria-label={isSpeakerOn ? 'خاموش کردن بلندگو' : 'بلندگو'}
-          >
-            <Volume2 className="h-4 w-4" />
-          </Button>
-
-          <Button
-            type="button"
             onClick={onHangup}
             size="sm"
             className="h-9 w-9 rounded-full bg-red-500 text-white shadow-lg shadow-red-500/25 transition-all hover:bg-red-600 hover:shadow-red-500/40"
@@ -481,9 +462,7 @@ function ActiveCallFullscreenView({
   targetUser,
   duration,
   isMuted,
-  isSpeakerOn,
   onToggleMute,
-  onToggleSpeaker,
   onHangup,
   onMinimize,
   subtitle,
@@ -492,9 +471,7 @@ function ActiveCallFullscreenView({
   targetUser: VoiceCallPeer;
   duration: number;
   isMuted: boolean;
-  isSpeakerOn: boolean;
   onToggleMute: () => void;
-  onToggleSpeaker: () => void;
   onHangup: () => void;
   onMinimize: () => void;
   subtitle?: string;
@@ -603,22 +580,6 @@ function ActiveCallFullscreenView({
           </motion.div>
           <span className="text-xs font-medium text-red-400">قطع</span>
         </div>
-
-        <div className="flex flex-col items-center gap-2">
-          <Button
-            type="button"
-            onClick={onToggleSpeaker}
-            size="lg"
-            className={cn(
-              'h-16 w-16 rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20',
-              isSpeakerOn && 'border-emerald-400/40 bg-emerald-500/25 text-emerald-300'
-            )}
-            aria-label={isSpeakerOn ? 'خاموش کردن بلندگو' : 'بلندگو'}
-          >
-            <Volume2 className="h-6 w-6" />
-          </Button>
-          <span className="text-xs text-white/50">بلندگو</span>
-        </div>
       </div>
     </motion.div>
   );
@@ -720,7 +681,6 @@ export function VoiceCallOverlay({
   const toggleVoiceCallMute = useAppStore((s) => s.toggleVoiceCallMute);
   const openVoiceCall = useAppStore((s) => s.openVoiceCall);
 
-  const [isSpeakerOn, setIsSpeakerOn] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [actionPending, setActionPending] = useState<'accept' | 'reject' | null>(null);
 
@@ -812,11 +772,7 @@ export function VoiceCallOverlay({
               key="outgoing-ring-full"
               targetUser={targetUser}
               duration={0}
-              isMuted={isMuted}
-              isSpeakerOn={isSpeakerOn}
-              onToggleMute={toggleVoiceCallMute}
-              onToggleSpeaker={() => setIsSpeakerOn((v) => !v)}
-              onHangup={handleHangup}
+              isMuted={isMuted}              onToggleMute={toggleVoiceCallMute}              onHangup={handleHangup}
               onMinimize={handleMinimize}
               subtitle="در حال برقراری تماس..."
               connecting
@@ -826,11 +782,7 @@ export function VoiceCallOverlay({
               key="outgoing-ring"
               targetUser={targetUser}
               duration={0}
-              isMuted={isMuted}
-              isSpeakerOn={isSpeakerOn}
-              onToggleMute={toggleVoiceCallMute}
-              onToggleSpeaker={() => setIsSpeakerOn((v) => !v)}
-              onHangup={handleHangup}
+              isMuted={isMuted}              onToggleMute={toggleVoiceCallMute}              onHangup={handleHangup}
               onExpand={handleExpand}
               subtitle="در حال برقراری تماس..."
             />
@@ -842,11 +794,7 @@ export function VoiceCallOverlay({
               key="active-full"
               targetUser={targetUser}
               duration={duration}
-              isMuted={isMuted}
-              isSpeakerOn={isSpeakerOn}
-              onToggleMute={toggleVoiceCallMute}
-              onToggleSpeaker={() => setIsSpeakerOn((v) => !v)}
-              onHangup={handleHangup}
+              isMuted={isMuted}              onToggleMute={toggleVoiceCallMute}              onHangup={handleHangup}
               onMinimize={handleMinimize}
             />
           ) : (
@@ -854,11 +802,7 @@ export function VoiceCallOverlay({
               key="active"
               targetUser={targetUser}
               duration={duration}
-              isMuted={isMuted}
-              isSpeakerOn={isSpeakerOn}
-              onToggleMute={toggleVoiceCallMute}
-              onToggleSpeaker={() => setIsSpeakerOn((v) => !v)}
-              onHangup={handleHangup}
+              isMuted={isMuted}              onToggleMute={toggleVoiceCallMute}              onHangup={handleHangup}
               onExpand={handleExpand}
             />
           ))}

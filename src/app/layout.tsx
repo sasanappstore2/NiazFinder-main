@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { vazirmatn } from "@/lib/fonts/vazirmatn";
-import { Toaster } from "sonner";
+import { DeferredToaster } from "@/components/layout/DeferredToaster";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import { DeferredVoiceBootstrap } from "@/components/voice/DeferredVoiceBootstrap";
 import {
@@ -190,7 +190,7 @@ export default function RootLayout({
         <ThemeProvider>
           {children}
           <DeferredVoiceBootstrap />
-          <Toaster position="top-center" richColors dir="rtl" closeButton />
+          <DeferredToaster />
         </ThemeProvider>
       </body>
     </html>

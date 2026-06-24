@@ -34,7 +34,7 @@ export const BLUEPRINT_SPECS: BusinessProfileBlueprint[] = [
       'seo',
     ],
     tabs: tabs(
-      { id: 'intro', labelFa: 'معرفی', sections: INTRO },
+      { id: 'intro', labelFa: 'معرفی', sections: [...INTRO, 'services'] },
       { id: 'listings', labelFa: 'آگهی‌ها', sections: ['listings'] },
       { id: 'reviews', labelFa: 'نظرات', sections: ['trust'] }
     ),

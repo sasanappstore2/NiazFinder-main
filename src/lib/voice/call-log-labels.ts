@@ -1,3 +1,5 @@
+import { toPersianDigits } from '@/lib/format/digits';
+
 /** JSON payload stored in Message.content when type === CALL */
 export type CallLogSnapshot = {
   callId: string;
@@ -26,8 +28,8 @@ export function formatCallDuration(seconds: number | null | undefined): string {
   if (!seconds || seconds <= 0) return '';
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
-  if (mins === 0) return `${secs} ثانیه`;
-  return `${mins}:${String(secs).padStart(2, '0')}`;
+  if (mins === 0) return `${toPersianDigits(secs)} ثانیه`;
+  return `${toPersianDigits(mins)}:${toPersianDigits(String(secs).padStart(2, '0'))}`;
 }
 
 export function formatCallLogLabel(

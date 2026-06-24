@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Reply } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -60,7 +61,7 @@ export function ChatMessageItem({
   onScrollToMessage,
   onImageOpen,
 }: ChatMessageItemProps) {
-  const hints = classifyMessageContent(msg);
+  const hints = useMemo(() => classifyMessageContent(msg), [msg]);
   const isDeleted = hints.kind === 'deleted';
   const side = isMe ? 'sent' : 'received';
   const showAvatar = !isMe && showPeerAvatar && Boolean(peer);
@@ -228,7 +229,22 @@ export function ChatMessageItem({
       <div className="chat-message-align-row">
         {showAvatar && peer ? (
           <div className={cn('chat-message-avatar', peer.avatarClassName)} aria-hidden>
-            {peer.avatarUrl ? <img src={peer.avatarUrl} alt="" /> : peer.initials}
+            {peer.avatarUrl ? (
+              <Image
+                src={peer.avatarUrl}
+                alt=""
+                width={36}
+                height={36}
+                className="size-full object-cover"
+                unoptimized={
+                  peer.avatarUrl.startsWith('http://') ||
+                  peer.avatarUrl.startsWith('https://') ||
+                  peer.avatarUrl.startsWith('//')
+                }
+              />
+            ) : (
+              peer.initials
+            )}
           </div>
         ) : (
           !isMe && <div className="chat-message-avatar-spacer" aria-hidden />

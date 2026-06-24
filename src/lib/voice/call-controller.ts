@@ -185,7 +185,13 @@ export function registerCallController(api: CallControllerStore) {
 }
 
 export function markCallIgnored(callId: string): void {
-  ignoredCallExpiry.set(callId, Date.now() + IGNORED_CALL_TTL_MS);
+  // Opportunistically prune expired entries so the map can't grow unbounded in
+  // long-lived tabs that reject/ignore many calls over a session.
+  const now = Date.now();
+  for (const [id, expiry] of ignoredCallExpiry) {
+    if (now > expiry) ignoredCallExpiry.delete(id);
+  }
+  ignoredCallExpiry.set(callId, now + IGNORED_CALL_TTL_MS);
 }
 
 export function isCallIgnored(callId: string): boolean {
@@ -321,10 +327,23 @@ async function waitForOffer(
 }
 
 async function getUserMediaWithTimeout(ms = 15_000): Promise<MediaStream> {
+  let timedOut = false;
+  const media = navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+  // If the timeout wins the race, the underlying getUserMedia keeps running and
+  // can still resolve later with a LIVE mic stream that nobody stops — leaving
+  // the mic indicator on forever. Stop that orphaned stream when it resolves.
+  void media
+    .then((stream) => {
+      if (timedOut) stream.getTracks().forEach((t) => t.stop());
+    })
+    .catch(() => {});
   return Promise.race([
-    navigator.mediaDevices.getUserMedia({ audio: true, video: false }),
+    media,
     new Promise<MediaStream>((_, reject) =>
-      setTimeout(() => reject(new Error('mic_timeout')), ms)
+      setTimeout(() => {
+        timedOut = true;
+        reject(new Error('mic_timeout'));
+      }, ms)
     ),
   ]);
 }
@@ -417,6 +436,10 @@ async function connectOutgoingCaller(callId: string, sdpAnswer?: RTCSessionDescr
     const answer = sdpAnswer?.sdp ? sdpAnswer : await fetchCallAnswer(callId);
     if (!answer?.sdp || !pc) return;
 
+    // Guard against a duplicate accept (socket event + poll fallback both firing):
+    // applying a remote answer is only valid in 'have-local-offer'. Re-applying
+    // when already 'stable'/'closed' throws and corrupts the connection.
+    if (pc.signalingState !== 'have-local-offer') return;
     await pc.setRemoteDescription(answer);
     await markRemoteDescriptionReady();
     stopCallTones();
@@ -523,7 +546,10 @@ async function createPeer(iceServers?: RTCIceServer[]) {
       const audio = document.getElementById('voice-call-remote-audio') as HTMLAudioElement | null;
       if (audio?.srcObject) void audio.play().catch(() => {});
     }
-    if (state === 'failed' || state === 'disconnected') {
+    // Only a terminal `failed` ends the call. `disconnected` is frequently a
+    // transient blip that recovers on its own (and oniceconnectionstatechange
+    // already attempts an ICE restart), so ending on it dropped calls needlessly.
+    if (state === 'failed') {
       void hangupVoiceCall();
     }
   };
@@ -532,6 +558,10 @@ async function createPeer(iceServers?: RTCIceServer[]) {
     localStream = await getUserMediaWithTimeout();
     localStream.getTracks().forEach((track) => pc!.addTrack(track, localStream!));
   } catch (e) {
+    // Tear down the half-open peer immediately so no RTCPeerConnection lingers
+    // when the mic is denied/times out (don't rely on a later caller cleanup).
+    pc?.close();
+    pc = null;
     const { toast } = await import('sonner');
     if ((e as Error).message === 'mic_timeout') {
       toast.error('دسترسی به میکروفون زمان‌بر شد. دوباره تلاش کنید.');

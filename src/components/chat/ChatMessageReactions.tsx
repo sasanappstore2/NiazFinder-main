@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import type { Message, MessageReactionItem } from '@/lib/types';
 import {
@@ -26,7 +27,7 @@ export function ChatMessageReactions({
   className,
   pillClassName,
 }: ChatMessageReactionsProps) {
-  const counts = aggregateReactionCounts(reactions);
+  const counts = useMemo(() => aggregateReactionCounts(reactions), [reactions]);
   if (counts.length === 0) return null;
 
   return (

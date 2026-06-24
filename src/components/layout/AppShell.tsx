@@ -1,10 +1,9 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { Suspense, useEffect, type ReactNode } from 'react';
 import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
-import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import {
   AuthModal,
   OnboardingWelcome,
@@ -16,39 +15,42 @@ import ErrorBoundary from '@/components/shared/ErrorBoundary';
 import { QueryProvider } from '@/components/providers/QueryProvider';
 import { Separator } from '@/components/ui/separator';
 import { useAppStore } from '@/lib/store';
-import { isBusinessProductDetailPath, isBusinessProfileAuraPath } from '@/config/routes';
+import { isBusinessProductDetailPath, isBusinessProfileAuraPath, isMyBusinessHubPath } from '@/config/routes';
 import { cn } from '@/lib/utils';
 import { getPageTitleForPath } from '@/config/page-titles';
 import { PageHeading } from '@/components/layout/PageHeading';
 import { useResumePendingContact } from '@/hooks/use-resume-pending-contact';
 import { useIntakeMobileChrome } from '@/hooks/use-intake-mobile-chrome';
-import { useHandheldViewport } from '@/hooks/use-device-tier';
+
+const Footer = dynamic(
+  () => import('@/components/layout/Footer').then((m) => m.Footer),
+  { loading: () => null }
+);
+
+const MobileBottomNav = dynamic(
+  () => import('@/components/layout/MobileBottomNav').then((m) => m.MobileBottomNav),
+  { ssr: false, loading: () => null }
+);
 
 interface AppShellProps {
   children: ReactNode;
-  /** Hide footer and bottom nav (e.g. chat fullscreen on mobile) */
+  /** Hide footer and bottom nav (e.g. chat fullscreen) */
   minimalChrome?: boolean;
-  /** Minimal chrome only on phone/tablet; desktop keeps header + bottom nav */
-  minimalChromeHandheldOnly?: boolean;
 }
 
 export function AppShell({
   children,
   minimalChrome = false,
-  minimalChromeHandheldOnly = false,
 }: AppShellProps) {
   const pathname = usePathname();
-  const handheld = useHandheldViewport();
   const intakeMobileChrome = useIntakeMobileChrome();
   const initializeFromStorage = useAppStore((state) => state.initializeFromStorage);
   const isHome = pathname === '/';
   const isProductDetail = isBusinessProductDetailPath(pathname);
   const businessProfileAura = isBusinessProfileAuraPath(pathname);
-  const useMinimalChrome =
-    minimalChrome && (!minimalChromeHandheldOnly || handheld);
-  const effectiveMinimal = useMinimalChrome || intakeMobileChrome;
-  const hideMobileNav = effectiveMinimal || isProductDetail;
-  const hideSiteHeader = intakeMobileChrome;
+  const effectiveMinimal = minimalChrome || intakeMobileChrome;
+  const hideMobileNav = effectiveMinimal || isProductDetail || isMyBusinessHubPath(pathname);
+  const hideSiteHeader = effectiveMinimal;
   const staticPageTitle = getPageTitleForPath(pathname);
 
   useResumePendingContact();

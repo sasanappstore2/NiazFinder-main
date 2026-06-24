@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import type { RealEstateCompletionResult } from '@/lib/business/real-estate-hub-completion';
 import type { RealEstateHubTask, RealEstateHubTaskId } from '@/lib/business/real-estate-hub-tasks';
 import { useRealEstateHub } from './RealEstateHubProvider';
+import { RE_HUB_ICON } from './real-estate-hub-tokens';
 
 const ICONS: Record<RealEstateHubTaskId, typeof Home> = {
   overview: LayoutGrid,
@@ -55,13 +56,13 @@ export function RealEstateHubTaskGrid({
             className={cn(
               'flex min-h-[88px] flex-col items-start gap-2 rounded-xl border p-4 text-right transition-colors',
               active
-                ? 'border-blue-500/40 bg-blue-500/10'
+                ? 'border-border bg-accent ring-1 ring-border/80'
                 : 'border-border/60 bg-background hover:bg-accent'
             )}
           >
             <div className="flex w-full items-center justify-between gap-2">
               <Icon
-                className={cn('size-5 shrink-0', active ? 'text-blue-600' : 'text-muted-foreground')}
+                className={cn('size-5 shrink-0', active ? RE_HUB_ICON : 'text-muted-foreground')}
               />
               {needsWork && (
                 <span className="rounded-full bg-primary/12 px-2 py-0.5 text-[10px] font-medium text-primary">

@@ -28,7 +28,9 @@ export function ChatImageMessage({
       <img
         src={url}
         alt=""
-        className="block max-h-[min(52vh,360px)] w-full object-contain bg-black/5 dark:bg-black/20"
+        // min-h reserves vertical space before load so the thread doesn't jump
+        // (layout shift) when the image arrives; object-contain keeps it uncropped.
+        className="block max-h-[min(52vh,360px)] min-h-[120px] w-full object-contain bg-black/5 dark:bg-black/20"
         loading="lazy"
         decoding="async"
         draggable={false}

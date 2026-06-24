@@ -378,7 +378,16 @@ export const useAppStore = create<AppState>((set, get) => ({
       set({ authToken: token });
       try {
         await get().fetchCurrentUser();
-        await get().fetchBookmarks();
+        const scheduleBookmarks = () => {
+          void get().fetchBookmarks().catch(() => undefined);
+        };
+        if (typeof window !== 'undefined') {
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(scheduleBookmarks, { timeout: 5000 });
+          } else {
+            globalThis.setTimeout(scheduleBookmarks, 2500);
+          }
+        }
       } catch {
         // Token is invalid — clear it
         localStorage.removeItem(TOKEN_KEY);

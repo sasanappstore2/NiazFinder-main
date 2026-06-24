@@ -110,4 +110,5 @@ export type BusinessTabId =
   | 'portfolio'
   | 'outreach'
   | 'reviews'
+  | 'ecosystem'
   | 'moderation';

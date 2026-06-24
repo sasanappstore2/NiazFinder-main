@@ -1,4 +1,4 @@
-/* RE hub: rotating brand border for incomplete field highlights (Open WebUI-style) */
+/* RE hub: subtle rotating brand border for incomplete field highlights */
 
 .re-incomplete-highlight {
   position: relative;
@@ -10,9 +10,8 @@
   overflow: hidden;
   padding: 2px;
   box-shadow:
-    0 0 0 1px color-mix(in oklch, var(--primary) 14%, transparent),
-    0 0 16px color-mix(in oklch, var(--primary) 20%, transparent),
-    0 0 32px color-mix(in oklch, var(--primary) 8%, transparent);
+    0 0 0 1px color-mix(in oklch, var(--primary) 10%, transparent),
+    0 0 10px color-mix(in oklch, var(--primary) 10%, transparent);
 }
 
 .re-incomplete-highlight--active::before {
@@ -21,14 +20,14 @@
   inset: -120%;
   background: conic-gradient(
     from 0deg,
-    color-mix(in oklch, var(--primary) 18%, transparent) 0deg,
-    color-mix(in oklch, var(--primary) 55%, transparent) 70deg,
-    var(--primary) 130deg,
-    color-mix(in oklch, var(--primary) 88%, white) 200deg,
-    var(--primary) 280deg,
-    color-mix(in oklch, var(--primary) 18%, transparent) 360deg
+    color-mix(in oklch, var(--primary) 10%, transparent) 0deg,
+    color-mix(in oklch, var(--primary) 32%, transparent) 70deg,
+    color-mix(in oklch, var(--primary) 48%, transparent) 130deg,
+    color-mix(in oklch, var(--primary) 36%, transparent) 200deg,
+    color-mix(in oklch, var(--primary) 48%, transparent) 280deg,
+    color-mix(in oklch, var(--primary) 10%, transparent) 360deg
   );
-  animation: re-highlight-border-spin 2.75s linear infinite;
+  animation: re-highlight-border-spin 4.5s linear infinite;
   z-index: 0;
 }
 
@@ -40,16 +39,16 @@
   background: linear-gradient(
     105deg,
     transparent 0%,
-    color-mix(in oklch, var(--primary) 12%, transparent) 45%,
-    color-mix(in oklch, var(--primary) 28%, transparent) 50%,
-    color-mix(in oklch, var(--primary) 12%, transparent) 55%,
+    color-mix(in oklch, var(--primary) 6%, transparent) 45%,
+    color-mix(in oklch, var(--primary) 14%, transparent) 50%,
+    color-mix(in oklch, var(--primary) 6%, transparent) 55%,
     transparent 100%
   );
   background-size: 220% 100%;
-  animation: re-highlight-shimmer 2.2s ease-in-out infinite;
+  animation: re-highlight-shimmer 3.4s ease-in-out infinite;
   pointer-events: none;
   z-index: 2;
-  mix-blend-mode: soft-light;
+  opacity: 0.65;
 }
 
 .re-incomplete-highlight__content {
@@ -71,22 +70,22 @@
 @keyframes re-highlight-shimmer {
   0% {
     background-position: 120% 0;
-    opacity: 0.35;
+    opacity: 0.2;
   }
   50% {
-    opacity: 0.85;
+    opacity: 0.45;
   }
   100% {
     background-position: -120% 0;
-    opacity: 0.35;
+    opacity: 0.2;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .re-incomplete-highlight--active {
     padding: 0;
-    outline: 2px solid color-mix(in oklch, var(--primary) 50%, transparent);
-    box-shadow: 0 0 0 4px color-mix(in oklch, var(--primary) 10%, transparent);
+    outline: 2px solid color-mix(in oklch, var(--primary) 40%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--primary) 8%, transparent);
   }
 
   .re-incomplete-highlight--active::before,

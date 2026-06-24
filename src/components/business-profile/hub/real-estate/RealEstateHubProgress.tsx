@@ -20,7 +20,7 @@ export function RealEstateHubProgress({
   const next = incomplete[0];
 
   return (
-    <div className="rounded-xl border border-blue-500/20 bg-card p-4">
+    <div className="rounded-xl border border-border/60 bg-card p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex-1 space-y-2">
           <div className="flex items-center justify-between text-sm">
@@ -29,7 +29,7 @@ export function RealEstateHubProgress({
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full rounded-full bg-blue-500 transition-all duration-500"
+              className="h-full rounded-full bg-primary transition-all duration-500"
               style={{ width: `${completion.percent}%` }}
             />
           </div>

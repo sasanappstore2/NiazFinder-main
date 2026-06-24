@@ -1,6 +1,10 @@
 import { db } from '@/lib/db';
 import type { MatchedBusinessItem, NeedMatchContext } from '@/contracts/need-match';
 import { expandCategorySlugsForMatch, normalizeProfileSlugsForMatch } from './category-slugs';
+import {
+  readBusinessMatchSignals,
+  scoreBusinessMatchSignals,
+} from '@/lib/business/ecosystem/match-signals';
 
 interface RawCandidate {
   id: string;
@@ -41,7 +45,8 @@ function scoreCandidate(
   name?: string,
   description?: string | null,
   offerTitle?: string,
-  businessAddress?: string | null
+  businessAddress?: string | null,
+  extensionsRaw?: string
 ): { score: number; reason: string } {
   let score = 0;
   const reasons: string[] = [];
@@ -88,7 +93,17 @@ function scoreCandidate(
   }
 
   if (reasons.length === 0) reasons.push('نزدیک به نیاز شما');
-  return { score: Math.min(score, 0.95), reason: reasons.join(' · ') };
+
+  if (extensionsRaw) {
+    const signals = readBusinessMatchSignals(extensionsRaw);
+    const { boost, reasons: signalReasons } = scoreBusinessMatchSignals(need, signals);
+    if (boost > 0) {
+      score += boost;
+      reasons.push(...signalReasons);
+    }
+  }
+
+  return { score: Math.min(score, 0.98), reason: [...new Set(reasons)].join(' · ') };
 }
 
 const candidateCache = new Map<string, { at: number; data: RawCandidate[] }>();
@@ -109,11 +124,28 @@ export async function findCandidateBusinesses(
 
   const profiles = await db.businessProfile.findMany({
     where: { status: 'ACTIVE' },
-    include: {
+    select: {
+      id: true,
+      userId: true,
+      name: true,
+      slug: true,
+      logo: true,
+      city: true,
+      province: true,
+      address: true,
+      rating: true,
+      reviewCount: true,
+      verified: true,
+      description: true,
+      categorySlugs: true,
+      chatEnabled: true,
+      phone: true,
+      extensions: true,
       offers: {
         where: { isPublished: true },
         orderBy: { order: 'asc' },
         take: 1,
+        select: { title: true },
       },
     },
     take: 120,
@@ -134,7 +166,8 @@ export async function findCandidateBusinesses(
       p.name,
       p.description,
       offerTitle,
-      p.address
+      p.address,
+      p.extensions
     );
 
     const categoryMatch = businessSlugs.some((s) => relevantSlugs.includes(s));

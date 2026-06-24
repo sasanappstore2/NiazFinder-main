@@ -8,6 +8,7 @@ import {
   levelForScore,
 } from '@/lib/business/ecosystem';
 import type { EcosystemExtension, VerificationLevel } from '@/lib/business/ecosystem';
+import { queueBusinessProfileTypesenseSync } from '@/lib/search/typesense-sync';
 
 export const runtime = 'nodejs';
 
@@ -23,6 +24,30 @@ function readEcosystem(extensions: string): EcosystemExtension {
  * Phase 10 — Super Admin manages verification level, trust badges, reputation
  * override and document approvals for a business.
  */
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const authz = await requirePermission(request, 'market:businesses:read');
+    if (!authz.ok) return authz.response;
+
+    const { id } = await params;
+    const profile = await db.businessProfile.findUnique({
+      where: { id },
+      select: { id: true, extensions: true },
+    });
+    if (!profile) {
+      return NextResponse.json({ error: 'کسب‌وکار یافت نشد' }, { status: 404 });
+    }
+
+    return NextResponse.json({ ecosystem: readEcosystem(profile.extensions) });
+  } catch (error) {
+    console.error('super-admin ecosystem GET error:', error);
+    return NextResponse.json({ error: 'خطای سرور رخ داده است' }, { status: 500 });
+  }
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -82,6 +107,8 @@ export async function PATCH(
     });
 
     await logAdminAction(request, authz.user.id, 'business.ecosystem.update', 'BusinessProfile', id, patch);
+
+    queueBusinessProfileTypesenseSync(id);
 
     return NextResponse.json({ ok: true, ecosystem: merged.ecosystem });
   } catch (error) {

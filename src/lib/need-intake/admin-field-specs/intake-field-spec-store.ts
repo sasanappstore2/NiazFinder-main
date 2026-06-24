@@ -17,10 +17,17 @@ export type IntakeFieldSpecStore = {
 const STORE_VERSION = 1;
 const MAX_HISTORY = 10;
 
+const DEFAULT_STORE_FILE = 'intake-field-spec-overrides.json';
+
+function defaultStorePath(): string {
+  return path.join(process.cwd(), 'data', DEFAULT_STORE_FILE);
+}
+
 function storePath(): string {
   const custom = process.env.INTAKE_FIELD_SPEC_STORE_PATH?.trim();
-  if (custom) return path.isAbsolute(custom) ? custom : path.join(process.cwd(), custom);
-  return path.join(process.cwd(), 'data', 'intake-field-spec-overrides.json');
+  if (!custom) return defaultStorePath();
+  if (path.isAbsolute(custom)) return custom;
+  return path.join(process.cwd(), 'data', path.basename(custom));
 }
 
 let memoryCache: IntakeFieldSpecStore | null = null;
@@ -54,7 +61,7 @@ async function persistStore(store: IntakeFieldSpecStore): Promise<void> {
 function ensureMemoryCacheSync(): void {
   if (memoryCache) return;
   try {
-    const file = storePath();
+    const file = defaultStorePath();
     if (existsSync(file)) {
       const raw = readFileSync(file, 'utf8');
       const parsed = JSON.parse(raw) as Partial<IntakeFieldSpecStore>;

@@ -29,21 +29,19 @@ export function RealEstateHubHeader({ occupationLabel }: { occupationLabel: stri
   };
 
   return (
-    <div className="rounded-2xl border border-blue-500/25 bg-linear-to-br from-blue-500/10 via-background to-background p-4 sm:p-6">
+    <div className="rounded-2xl border border-border/60 bg-card p-4 sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3">
-          <Avatar className="size-14 shrink-0 border-2 border-blue-500/25">
+          <Avatar className="size-14 shrink-0 border-2 border-border">
             {profile.logo ? <AvatarImage src={profile.logo} alt={profile.name} /> : null}
-            <AvatarFallback className="bg-blue-500/10 text-lg font-bold text-blue-800">
+            <AvatarFallback className="bg-muted text-lg font-bold text-foreground">
               {initial}
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-lg font-bold sm:text-xl">{profile.name}</h1>
-              <Badge variant="secondary" className="bg-blue-500/10 text-blue-800">
-                {occupationLabel}
-              </Badge>
+              <Badge variant="secondary">{occupationLabel}</Badge>
               {profile.verified && (
                 <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-700">
                   تأیید شده
@@ -73,7 +71,7 @@ export function RealEstateHubHeader({ occupationLabel }: { occupationLabel: stri
             <Share2 className="size-3.5" />
             اشتراک
           </Button>
-          <Button variant="default" size="sm" asChild className="gap-1.5 bg-blue-600 hover:bg-blue-700">
+          <Button variant="default" size="sm" asChild className="gap-1.5">
             <Link href={profile.publicUrl} target="_blank" rel="noopener noreferrer">
               مشاهده صفحه عمومی
               <ExternalLink className="size-3.5" />

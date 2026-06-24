@@ -135,13 +135,38 @@ export function MobileBottomNav() {
   }, [authToken, currentUser?.id, isAuthenticated]);
 
   useEffect(() => {
-    if (isAuthenticated && authToken) {
+    if (!isAuthenticated || !authToken) return;
+
+    const run = () => {
       void fetchConversations();
+    };
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const id = requestIdleCallback(run, { timeout: 6000 });
+      return () => cancelIdleCallback(id);
     }
+
+    const timer = globalThis.setTimeout(run, 2000);
+    return () => globalThis.clearTimeout(timer);
   }, [isAuthenticated, authToken, fetchConversations]);
 
   useEffect(() => {
-    void fetchMissedCalls();
+    if (!isAuthenticated || !authToken) return;
+
+    const run = () => {
+      void fetchMissedCalls();
+    };
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const id = requestIdleCallback(run, { timeout: 8000 });
+      return () => cancelIdleCallback(id);
+    }
+
+    const timer = globalThis.setTimeout(run, 3000);
+    return () => globalThis.clearTimeout(timer);
+  }, [isAuthenticated, authToken, fetchMissedCalls]);
+
+  useEffect(() => {
     const onCallLogChanged = () => void fetchMissedCalls();
     window.addEventListener('voice:call-log-changed', onCallLogChanged);
     return () => window.removeEventListener('voice:call-log-changed', onCallLogChanged);

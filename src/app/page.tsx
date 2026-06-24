@@ -1,5 +1,11 @@
+import dynamic from 'next/dynamic';
 import { AppShell } from '@/components/layout/AppShell';
-import { HomeLeadLanding } from '@/components/home/HomeLeadLanding';
+import { HomeLeadLandingFallback } from '@/components/home/HomeLeadLanding';
+
+const HomeLeadLanding = dynamic(
+  () => import('@/components/home/HomeLeadLanding').then((m) => m.HomeLeadLanding),
+  { loading: () => <HomeLeadLandingFallback /> }
+);
 
 export default function HomePage() {
   return (

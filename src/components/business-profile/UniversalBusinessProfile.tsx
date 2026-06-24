@@ -11,8 +11,6 @@ import { BUSINESS_AI_ASSISTANT_ENABLED } from '@/config/business-profile-feature
 import { ProfileShell } from '@/components/business-profile/ProfileShell';
 import { ProfileTabbedContent } from '@/components/business-profile/ProfileTabbedContent';
 import { useProfileSections } from '@/components/business-profile/hooks/useProfileSections';
-import { DynamicWidgetRenderer } from '@/components/business-profile/DynamicWidgetRenderer';
-import { ProfileCompleteness } from '@/components/business-profile/ProfileCompleteness';
 import type { OfferCtaType } from '@/contracts/business-profile';
 import { useAppStore } from '@/lib/store';
 
@@ -47,6 +45,7 @@ function UniversalBusinessProfileInner({ businessId: businessIdProp }: Props) {
   const openVoiceCall = useAppStore((s) => s.openVoiceCall);
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const authToken = useAppStore((s) => s.authToken);
+  const authUserId = useAppStore((s) => s.currentUser?.id);
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
 
   const handleOfferAction = async (_offerId: string, cta: OfferCtaType) => {
@@ -115,21 +114,18 @@ function UniversalBusinessProfileInner({ businessId: businessIdProp }: Props) {
     );
   }
 
+  const isOwnerView = Boolean(business && authUserId && business.userId === authUserId);
+
   return (
     <>
       <ProfileShell business={business} requestId={requestId}>
-        <ProfileCompleteness business={business} />
         <ProfileTabbedContent
           business={business}
           layout={layout}
           requestId={requestId}
           onOfferAction={handleOfferAction}
+          isOwnerView={isOwnerView}
         />
-
-        {/* Dynamic subtype-specific widgets */}
-        <div className="mt-8">
-          <DynamicWidgetRenderer business={business} requestId={requestId} />
-        </div>
       </ProfileShell>
       {BUSINESS_AI_ASSISTANT_ENABLED && <BusinessAssistantPanel business={business} />}
     </>

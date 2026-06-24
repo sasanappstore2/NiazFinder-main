@@ -12,6 +12,7 @@ export type RealEstateCompletionItemId =
   | 'serviceArea'
   | 'listings'
   | 'portfolio'
+  | 'services'
   | 'specializations'
   | 'designStyles';
 
@@ -39,6 +40,7 @@ export type RealEstateCompletionInput = {
   tags: string[];
   listings: PropertyListing[];
   portfolioCount: number;
+  offerCount: number;
   ecosystem: EcosystemExtension;
 };
 
@@ -51,6 +53,7 @@ export function computeRealEstateHubCompletion(
   const specializationsDone = (input.ecosystem.specializations?.length ?? 0) > 0;
   const listingsDone = input.listings.length > 0;
   const portfolioDone = input.portfolioCount > 0;
+  const offersDone = input.offerCount > 0;
   const designStylesDone = input.tags.some((t) => t.trim().length > 0);
 
   const items: RealEstateCompletionItem[] = [
@@ -129,18 +132,34 @@ export function computeRealEstateHubCompletion(
         taskId: 'portfolio',
       },
       {
-        id: 'specializations',
+        id: 'services',
         label: 'پکیج یا خدمات',
-        completed: portfolioDone,
+        completed: offersDone,
         taskId: 'services',
+      },
+      {
+        id: 'designStyles',
+        label: 'نوع پروژه',
+        completed: designStylesDone,
+        taskId: 'coverage',
       }
     );
+  }
+
+  if (input.subtype === 'property-manager') {
+    items.push({
+      id: 'services',
+      label: 'خدمات مدیریت ملک',
+      completed: offersDone,
+      taskId: 'services',
+    });
   }
 
   if (
     !isRealEstateListingSubtype(input.subtype) &&
     input.subtype !== 'architect' &&
-    input.subtype !== 'interior-designer'
+    input.subtype !== 'interior-designer' &&
+    input.subtype !== 'property-manager'
   ) {
     items.push({
       id: 'portfolio',

@@ -27,6 +27,7 @@ const profileSelect = {
   verified: true,
   viewCount: true,
   createdAt: true,
+  extensions: true,
   user: {
     select: {
       isActive: true,

@@ -5,6 +5,7 @@ import { requireBusinessManager } from '@/lib/business/require-business-manager'
 import { ensureBusinessProfile } from '@/lib/business/ensure-profile';
 import { parseJsonObject, toJson } from '@/lib/business/json-fields';
 import type { BusinessExtension } from '@/contracts/business-profile';
+import { extensionsOwnerPatchSchema } from '@/lib/business/extensions-owner-validation';
 
 export const runtime = 'nodejs';
 
@@ -31,10 +32,19 @@ export async function PATCH(request: NextRequest) {
     const user = auth.user;
 
     const body = await request.json().catch(() => ({}));
-    const patch = body.extensions as Partial<Omit<BusinessExtension, '_layout'>> | undefined;
-    if (!patch || typeof patch !== 'object') {
+    const patchRaw = body.extensions;
+    if (!patchRaw || typeof patchRaw !== 'object') {
       return NextResponse.json({ error: 'داده نامعتبر' }, { status: 400 });
     }
+
+    const parsed = extensionsOwnerPatchSchema.safeParse(patchRaw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'فیلدهای مجاز: webPresence، restaurant، storefront', issues: parsed.error.issues },
+        { status: 400 }
+      );
+    }
+    const patch = parsed.data as Partial<Omit<BusinessExtension, '_layout'>>;
 
     const profile = await ensureBusinessProfile(user);
     const extensions = parseJsonObject<Record<string, unknown>>(profile.extensions, {});

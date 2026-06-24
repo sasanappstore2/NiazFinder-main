@@ -4,7 +4,8 @@ import { requireBusinessAccess } from '@/lib/business/require-business-access';
 import { loadMyBusinessProfile } from '@/lib/business/load-my-business-profile';
 import { mergeEcosystemIntoExtensions } from '@/lib/business/ecosystem';
 import { ecosystemOwnerPatchSchema } from '@/lib/business/ecosystem/validation';
-import type { EcosystemExtension } from '@/lib/business/ecosystem';
+import type { EcosystemExtension, VerificationDocument } from '@/lib/business/ecosystem';
+import { queueBusinessProfileTypesenseSync } from '@/lib/search/typesense-sync';
 
 export const runtime = 'nodejs';
 
@@ -14,6 +15,30 @@ function readEcosystem(extensions: string): EcosystemExtension {
   } catch {
     return {};
   }
+}
+
+function sanitizeOwnerVerificationDocuments(
+  incoming: VerificationDocument[],
+  current: VerificationDocument[]
+): VerificationDocument[] {
+  const byId = new Map(current.map((d) => [d.id, d]));
+  return incoming.map((doc) => {
+    const prev = byId.get(doc.id);
+    if (prev && prev.status === 'approved' && prev.fileUrl === doc.fileUrl) {
+      return {
+        ...doc,
+        status: prev.status,
+        reviewedAt: prev.reviewedAt,
+        reviewerNote: prev.reviewerNote,
+      };
+    }
+    return {
+      ...doc,
+      status: 'pending' as const,
+      reviewedAt: undefined,
+      reviewerNote: undefined,
+    };
+  });
 }
 
 /** GET — current ecosystem blob for the owner's profile. */
@@ -58,11 +83,14 @@ export async function PATCH(request: NextRequest) {
   if (body.knowledge !== undefined) patch.knowledge = body.knowledge;
 
   if (body.verificationDocuments !== undefined) {
-    // Owners may add documents; level stays unchanged (admin-controlled).
     const current = readEcosystem(profile.extensions);
+    const documents = sanitizeOwnerVerificationDocuments(
+      body.verificationDocuments,
+      current.verification?.documents ?? []
+    );
     patch.verification = {
       level: current.verification?.level ?? 'basic',
-      documents: body.verificationDocuments,
+      documents,
       manualBadges: current.verification?.manualBadges,
     };
   }
@@ -76,6 +104,8 @@ export async function PATCH(request: NextRequest) {
     where: { id: profile.id },
     data: { extensions: JSON.stringify(merged) },
   });
+
+  queueBusinessProfileTypesenseSync(profile.id);
 
   return NextResponse.json({ ok: true, ecosystem: merged.ecosystem });
 }

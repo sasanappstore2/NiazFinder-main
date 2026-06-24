@@ -1,39 +1,32 @@
 'use client';
 
-import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatPriceText } from '@/lib/format/money';
+import type { Business } from '@/contracts/business-profile';
+import { ListingGrid } from '@/components/business-profile/widgets/_ListingGrid';
+import { activeListings, getListings } from '@/lib/business/real-estate-listings';
+import { profileUsesListingsTab } from '@/lib/business/real-estate-listings-display';
+import { RealEstateListingsSection } from './RealEstateListingsSection';
 import type { SectionProps } from './types';
 
-export function ListingsSection({ business }: SectionProps) {
-  const listings = business.extensions?.realEstate?.listings ?? [];
+export function ListingsSection({ business, requestId }: SectionProps) {
+  if (profileUsesListingsTab(business)) {
+    return <RealEstateListingsSection business={business} requestId={requestId} />;
+  }
+
+  const listings = activeListings(getListings(business));
   if (listings.length === 0) return null;
 
   return (
     <section id="section-listings" className="scroll-mt-24 space-y-4">
-      <h2 className="text-lg font-semibold">آگهی‌های املاک</h2>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {listings.map((item) => (
-          <Card key={item.id} className="overflow-hidden">
-            {item.image && (
-              <div className="relative aspect-4/3 bg-muted">
-                <Image src={item.image} alt={item.title} fill className="object-cover" />
-              </div>
-            )}
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">{item.title}</CardTitle>
-              {item.price && (
-                <p className="text-sm font-bold text-primary">{formatPriceText(item.price)}</p>
-              )}
-            </CardHeader>
-            <CardContent className="flex gap-3 text-xs text-muted-foreground">
-              {item.area && <span>{item.area}</span>}
-              {item.rooms != null && <span>{item.rooms} خواب</span>}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <h2 className="text-lg font-semibold">آگهی‌های فعال</h2>
+      <ListingGrid
+        listings={listings}
+        emptyText="هنوز آگهی فعالی ثبت نشده است."
+        business={business}
+        requestId={requestId}
+      />
     </section>
   );
 }

@@ -140,12 +140,34 @@ export interface PropertyListing {
   area?: string;
   rooms?: number;
   image?: string;
-  /** Optional neighborhood / area label shown on listing cards. */
+  /** Up to 5 gallery images; `image` mirrors the cover (`images[0]`). */
+  images?: string[];
+  deposit?: string;
+  monthlyRent?: string;
+  floor?: number;
+  deedType?: string;
+  pricePerMeter?: string;
+  plotWidth?: string;
+  /** Neighborhood / district label shown on listing cards. */
   location?: string;
+  /** Canonical need-market category slug (e.g. apartment-sale). */
+  categorySlug?: string;
+  neighborhoodId?: string;
+  cityId?: string;
+  /** @deprecated Use categorySlug — legacy compact type key */
+  propertyType?: string;
+  /** Short description for cards. */
+  description?: string;
   /** Lifecycle status — drives Active vs Sold widgets. Defaults to `active`. */
   status?: 'active' | 'sold' | 'rented';
   /** Sale vs rent — drives the Rental Properties widget. */
-  dealType?: 'sale' | 'rent';
+  dealType?:
+    | 'sell'
+    | 'rent_rahn_ejare'
+    | 'rent_rahn_full'
+    | 'rent_short_term'
+    | 'sale'
+    | 'rent';
 }
 
 export interface RestaurantExtension {

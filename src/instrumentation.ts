@@ -18,12 +18,12 @@ export async function register() {
     const { initRabbitMQ } = await import('@/lib/queue/rabbitmq-client');
     void initRabbitMQ().catch(() => undefined);
 
-    // Build the bge-m3 category-embedding index at boot instead of lazily on
-    // the first /post analyze — without this, the first real user after every
-    // server (re)start eats the ~15-20s one-time embed-the-whole-catalog cost.
-    const { warmCategoryEmbeddingIndex } = await import(
-      '@/intake/intelligence-engine/semantic/category-embedding-index'
-    );
-    void warmCategoryEmbeddingIndex().catch(() => undefined);
+    // Heavy embedding warmup (~15–20s) — opt-in via WARMUP_ENABLED=true in production.
+    if (process.env.NODE_ENV === 'production' && process.env.WARMUP_ENABLED === 'true') {
+      const { warmCategoryEmbeddingIndex } = await import(
+        '@/intake/intelligence-engine/semantic/category-embedding-index'
+      );
+      void warmCategoryEmbeddingIndex().catch(() => undefined);
+    }
   }
 }

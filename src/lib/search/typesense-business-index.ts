@@ -1,6 +1,9 @@
 import type { BusinessProfile, User } from '@prisma/client';
 import type { CollectionCreateSchema } from 'typesense/lib/Typesense/Collections';
 import { BUSINESS_PROFILES_COLLECTION, getTypesenseClient } from '@/lib/search/typesense-client';
+import { readBusinessMatchSignals } from '@/lib/business/ecosystem/match-signals';
+import { activeListings } from '@/lib/business/real-estate-listings';
+import type { PropertyListing } from '@/contracts/business-profile';
 
 export type BusinessProfileSearchDocument = {
   id: string;
@@ -19,6 +22,9 @@ export type BusinessProfileSearchDocument = {
   created_at: number;
   description?: string;
   logo?: string;
+  listing_count?: number;
+  specialization_facet?: string[];
+  service_neighborhood_ids?: string[];
 };
 
 export const businessProfilesCollectionSchema: CollectionCreateSchema = {
@@ -40,6 +46,9 @@ export const businessProfilesCollectionSchema: CollectionCreateSchema = {
     { name: 'created_at', type: 'int64' },
     { name: 'description', type: 'string', optional: true },
     { name: 'logo', type: 'string', optional: true },
+    { name: 'listing_count', type: 'int32', optional: true, facet: true },
+    { name: 'specialization_facet', type: 'string[]', optional: true, facet: true },
+    { name: 'service_neighborhood_ids', type: 'string[]', optional: true, facet: true },
   ],
   default_sorting_field: 'rating',
 };
@@ -64,6 +73,7 @@ type ProfileForIndex = Pick<
   | 'verified'
   | 'viewCount'
   | 'createdAt'
+  | 'extensions'
 > & {
   user?: Pick<User, 'isActive' | 'isVerified' | 'avatar' | 'online'>;
 };
@@ -84,6 +94,10 @@ export function isIndexableBusinessProfile(profile: ProfileForIndex): boolean {
 export function businessProfileToTypesenseDocument(
   profile: ProfileForIndex
 ): BusinessProfileSearchDocument {
+  const signals = readBusinessMatchSignals(profile.extensions ?? '{}');
+  const listings = signals.listings as PropertyListing[];
+  const listingCount = activeListings(listings).length;
+
   const doc: BusinessProfileSearchDocument = {
     id: profile.id,
     title: profile.name,
@@ -100,6 +114,11 @@ export function businessProfileToTypesenseDocument(
     created_at: profile.createdAt.getTime(),
     description: profile.description ?? undefined,
     logo: profile.logo ?? profile.user?.avatar ?? undefined,
+    listing_count: listingCount > 0 ? listingCount : undefined,
+    specialization_facet:
+      signals.specializations.length > 0 ? signals.specializations : undefined,
+    service_neighborhood_ids:
+      signals.serviceNeighborhoodIds.length > 0 ? signals.serviceNeighborhoodIds : undefined,
   };
 
   if (

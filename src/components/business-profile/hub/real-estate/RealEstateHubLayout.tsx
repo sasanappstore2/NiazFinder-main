@@ -1,6 +1,7 @@
 'use client';
 
 import { Building2, Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { getBusinessCategoryTitle } from '@/lib/business/business-category';
 import { getIncompleteItemIdsForTask } from '@/lib/business/real-estate-hub-completion';
 import { getRealEstateHubTasks, REAL_ESTATE_TASK_LABELS } from '@/lib/business/real-estate-hub-tasks';
@@ -21,6 +22,7 @@ import { BusinessProfilePanel } from '../panels/BusinessProfilePanel';
 import { BusinessBrandPanel } from '../panels/BusinessBrandPanel';
 import { BusinessContactsPanel } from '../panels/BusinessContactsPanel';
 import { BusinessHubAdvanced } from '../BusinessHubAdvanced';
+import { RE_HUB_ICON } from './real-estate-hub-tokens';
 
 function RealEstateHubBody({
   onProfileSaved,
@@ -67,7 +69,7 @@ function RealEstateHubBody({
 
       <div
         ref={panelRef}
-        className="relative min-w-0 scroll-mt-4 rounded-xl border border-blue-500/20 bg-card p-4 sm:p-6"
+        className="relative min-w-0 scroll-mt-4 rounded-xl border border-border/60 bg-card p-4 sm:p-6"
       >
         {(reLoading || reRefreshing) && (
           <div className="absolute inset-x-0 top-0 flex justify-center py-2">
@@ -77,7 +79,7 @@ function RealEstateHubBody({
 
         {activeTask !== 'overview' && (
           <div className="mb-4 flex items-center gap-2">
-            <Building2 className="size-4 text-blue-600" />
+            <Building2 className={cn('size-4', RE_HUB_ICON)} />
             <h2 className="text-base font-semibold">{panelTitle}</h2>
           </div>
         )}

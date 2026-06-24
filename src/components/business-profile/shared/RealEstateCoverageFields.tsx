@@ -215,7 +215,7 @@ export function RealEstateCoverageFields({
                 >
                   <Badge
                     variant={active ? 'default' : 'outline'}
-                    className={active ? 'bg-blue-600' : ''}
+                    className={active ? 'bg-primary' : ''}
                   >
                     {SPECIALIZATION_LABELS[tag]}
                   </Badge>

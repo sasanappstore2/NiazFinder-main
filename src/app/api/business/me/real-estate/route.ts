@@ -5,6 +5,7 @@ import { loadMyBusinessProfile } from '@/lib/business/load-my-business-profile';
 import { parseJsonObject, toJson } from '@/lib/business/json-fields';
 import type { PropertyListing, RealEstateExtension } from '@/contracts/business-profile';
 import { realEstateListingsPatchSchema } from '@/lib/business/real-estate-listings-validation';
+import { normalizePropertyListings } from '@/lib/business/normalize-property-listing';
 import { queueBusinessProfileTypesenseSync } from '@/lib/search/typesense-sync';
 
 export const runtime = 'nodejs';
@@ -43,6 +44,7 @@ export async function PATCH(request: NextRequest) {
   }
 
   const profile = await loadMyBusinessProfile(access.user);
+  const normalizedListings = normalizePropertyListings(parsed.data.listings);
   const extensions = parseJsonObject<Record<string, unknown>>(profile.extensions, {});
   const nextExtensions = {
     ...extensions,
@@ -50,7 +52,7 @@ export async function PATCH(request: NextRequest) {
       ...(typeof extensions.realEstate === 'object' && extensions.realEstate !== null
         ? (extensions.realEstate as Record<string, unknown>)
         : {}),
-      listings: parsed.data.listings,
+      listings: normalizedListings,
     },
   };
 
@@ -61,5 +63,5 @@ export async function PATCH(request: NextRequest) {
 
   queueBusinessProfileTypesenseSync(profile.id);
 
-  return NextResponse.json({ ok: true, listings: parsed.data.listings });
+  return NextResponse.json({ ok: true, listings: normalizedListings });
 }

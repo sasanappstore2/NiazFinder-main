@@ -35,6 +35,7 @@ import type {
   BusinessReviewRow,
   BusinessTabId,
 } from './types';
+import { BusinessEcosystemAdminTab } from './BusinessEcosystemAdminTab';
 
 const TABS: { id: BusinessTabId; label: string }[] = [
   { id: 'overview', label: 'خلاصه' },
@@ -44,6 +45,7 @@ const TABS: { id: BusinessTabId; label: string }[] = [
   { id: 'portfolio', label: 'نمونه‌کار' },
   { id: 'outreach', label: 'Outreach' },
   { id: 'reviews', label: 'نظرات' },
+  { id: 'ecosystem', label: 'اکوسیستم' },
   { id: 'moderation', label: 'بازبینی' },
 ];
 
@@ -626,6 +628,8 @@ export function BusinessAdminModal({
                 ))
               )}
             </div>
+          ) : tab === 'ecosystem' && businessId ? (
+            <BusinessEcosystemAdminTab businessId={businessId} canWrite={canWrite} />
           ) : tab === 'moderation' ? (
             <div className="space-y-3">
               <Textarea value={moderateReason} onChange={(e) => setModerateReason(e.target.value)} placeholder="دلیل (اختیاری)" rows={3} />

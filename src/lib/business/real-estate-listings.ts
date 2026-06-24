@@ -1,4 +1,5 @@
 import type { Business, PropertyListing } from '@/contracts/business-profile';
+import { isListingRentDeal } from '@/lib/business/real-estate-listing-deal-types';
 
 /**
  * Real-estate listing selectors.
@@ -22,5 +23,5 @@ export function soldListings(listings: PropertyListing[]): PropertyListing[] {
 
 /** Rental = offered for rent (by deal type) or already rented. */
 export function rentalListings(listings: PropertyListing[]): PropertyListing[] {
-  return listings.filter((l) => l.dealType === 'rent' || l.status === 'rented');
+  return listings.filter((l) => isListingRentDeal(l.dealType) || l.status === 'rented');
 }

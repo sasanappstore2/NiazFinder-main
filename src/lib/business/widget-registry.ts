@@ -62,6 +62,8 @@ export interface WidgetDefinition {
   defaultEnabled: boolean;
   /** Order within the subtype */
   defaultOrder: number;
+  /** Shown only to profile owner (hub tools), hidden on public profile */
+  ownerOnly?: boolean;
 }
 
 export interface WidgetConfig {
@@ -90,8 +92,8 @@ const ECOSYSTEM_WIDGETS: SubtypeWidget[] = [
   { id: 'service_coverage', title: 'محدوده خدمات', component: lazy('ServiceCoverage'), defaultEnabled: true },
   { id: 'business_network', title: 'شبکه کسب‌وکار', component: lazy('BusinessNetwork'), defaultEnabled: false },
   { id: 'knowledge_hub', title: 'مرکز دانش', component: lazy('KnowledgeHub'), defaultEnabled: false },
-  { id: 'matching_insights', title: 'تحلیل تطابق', component: lazy('MatchingInsights'), defaultEnabled: false },
-  { id: 'property_request_hub', title: 'مرکز درخواست‌ها', component: lazy('PropertyRequestHub'), defaultEnabled: false },
+  { id: 'matching_insights', title: 'تحلیل تطابق', component: lazy('MatchingInsights'), defaultEnabled: false, ownerOnly: true },
+  { id: 'property_request_hub', title: 'مرکز درخواست‌ها', component: lazy('PropertyRequestHub'), defaultEnabled: false, ownerOnly: true },
 ];
 
 /**

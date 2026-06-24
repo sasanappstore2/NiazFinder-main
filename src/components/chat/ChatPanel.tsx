@@ -274,6 +274,20 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   const selectedConversation = conversations.find((c) => c.id === activeConversationId) ?? null;
   const otherUser = selectedConversation?.otherUser;
 
+  // Stable peer descriptor for the thread — a fresh object here would defeat the
+  // message-list memoization (it's one of its deps), re-rendering every bubble on
+  // each composer keystroke.
+  const threadPeer = useMemo(() => {
+    if (!otherUser) return undefined;
+    const name = `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر';
+    return {
+      name,
+      avatarUrl: otherUser.avatar,
+      initials: getInitials(name),
+      avatarClassName: getAvatarColor(name),
+    };
+  }, [otherUser]);
+
   const filteredConversations = searchQuery.trim()
     ? conversations.filter((c) => {
         const name = `${c.otherUser?.firstName ?? ''} ${c.otherUser?.lastName ?? ''}`.trim();
@@ -979,8 +993,17 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
         role="navigation"
         aria-label="لیست مکالمات"
       >
-        {/* Header: پیام‌ها | تماس‌ها | + */}
+        {/* Header: بازگشت | پیام‌ها | تماس‌ها | + */}
         <div className="flex items-center gap-2 border-b px-3 py-2.5">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 shrink-0 rounded-lg"
+            onClick={() => router.back()}
+            aria-label="بازگشت"
+          >
+            <ArrowRight className="h-4 w-4" />
+          </Button>
           <div
             className="flex flex-1 rounded-lg bg-muted/60 p-1"
             role="tablist"
@@ -1439,30 +1462,17 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
               pinnedMessage={pinnedMessage}
               onUnpinPinned={handleUnpinPinned}
               messages={threadMessages}
-              peer={
-                otherUser
-                  ? {
-                      name: `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر',
-                      avatarUrl: otherUser.avatar,
-                      initials: getInitials(
-                        `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر'
-                      ),
-                      avatarClassName: getAvatarColor(
-                        `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر'
-                      ),
-                    }
-                  : undefined
-              }
+              peer={threadPeer}
               currentUserId={currentUser?.id}
               isLoading={isLoading}
               formatTime={formatTime}
               canDeleteForEveryone={canDeleteForEveryone}
               onReply={startReply}
               onEdit={startEdit}
-              onReact={(messageId, emoji) => void handleReact(messageId, emoji)}
-              onDeleteForMe={(messageId) => void handleDeleteForMe(messageId)}
+              onReact={handleReact}
+              onDeleteForMe={handleDeleteForMe}
               onDeleteForEveryoneRequest={setDeleteConfirmMsgId}
-              onPin={(messageId) => void handlePin(messageId)}
+              onPin={handlePin}
               onScrollToMessage={scrollToMessage}
               onImageOpen={openImageLightbox}
               peerTyping={{

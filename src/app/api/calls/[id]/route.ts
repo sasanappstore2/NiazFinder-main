@@ -93,7 +93,9 @@ export async function PATCH(
         },
       });
 
-      void publishCallAccepted({
+      // Await so the caller reliably receives the SDP answer and connects —
+      // a dropped accept fanout would leave the caller ringing on a live call.
+      await publishCallAccepted({
         callId: id,
         targetUserId: call.callerId,
         sdpAnswer: sdpAnswer?.type && sdpAnswer?.sdp ? sdpAnswer : undefined,
@@ -119,7 +121,10 @@ export async function PATCH(
           signalingAnswer: null,
         },
       });
-      void publishCallReject({
+      // Await delivery so the caller reliably learns the rejection before we
+      // respond (fire-and-forget left the peer stuck "ringing" on a transient
+      // fanout failure).
+      await publishCallReject({
         callId: id,
         callerId: call.callerId,
         calleeId: call.calleeId,
@@ -147,7 +152,8 @@ export async function PATCH(
           signalingAnswer: null,
         },
       });
-      void publishCallHangup({ callId: id, targetUserId: call.calleeId }).catch((e) =>
+      // Await so the callee reliably stops ringing on cancel/ring-timeout.
+      await publishCallHangup({ callId: id, targetUserId: call.calleeId }).catch((e) =>
         console.warn('[calls] publishCallHangup failed:', e)
       );
       void persistCallLogMessage(updated).catch((e) =>
@@ -176,7 +182,9 @@ export async function PATCH(
         },
       });
       const peerId = call.callerId === user.id ? call.calleeId : call.callerId;
-      void publishCallHangup({ callId: id, targetUserId: peerId }).catch((e) =>
+      // Await so the peer reliably exits the active call instead of being stuck
+      // "in call" after a hangup whose fanout transiently failed.
+      await publishCallHangup({ callId: id, targetUserId: peerId }).catch((e) =>
         console.warn('[calls] publishCallHangup failed:', e)
       );
       void persistCallLogMessage(updated).catch((e) =>

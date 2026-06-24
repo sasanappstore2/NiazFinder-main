@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Loader2, MessageSquare } from 'lucide-react';
 import type { Message } from '@/lib/types';
 import {
@@ -58,31 +59,14 @@ export function ChatMessageList({
   peer,
   needBanner,
 }: ChatMessageListProps) {
-  if (isLoading && messages.length === 0) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
-  if (messages.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <MessageSquare className="mb-3 h-10 w-10 text-muted-foreground/40" />
-        <p className="text-sm text-muted-foreground">هنوز پیامی ارسال نشده</p>
-        <p className="mt-1 text-xs text-muted-foreground/60">اولین پیام خود را ارسال کنید!</p>
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <p className="chat-thread-start">مکالمه آغاز شد</p>
-
-      {needBanner}
-
-      {messages.map((msg, index) => {
+  // Memoize the rendered bubbles so frequent parent re-renders that DON'T touch
+  // the thread (composer keystrokes, peer-typing ticks, presence updates) reuse
+  // the existing elements instead of re-rendering every message. All deps are
+  // stable refs (module-level helpers/handlers, memoized peer), so this only
+  // recomputes when the messages themselves change.
+  const renderedMessages = useMemo(
+    () =>
+      messages.map((msg, index) => {
         if (msg.type === 'CALL') {
           const cluster = getMessageClusterMeta(messages, index);
           return (
@@ -143,7 +127,49 @@ export function ChatMessageList({
             />
           </div>
         );
-      })}
+      }),
+    [
+      messages,
+      currentUserId,
+      formatTime,
+      canDeleteForEveryone,
+      onReply,
+      onReact,
+      onEdit,
+      onDeleteForMe,
+      onDeleteForEveryoneRequest,
+      onPin,
+      onScrollToMessage,
+      onImageOpen,
+      peer,
+    ]
+  );
+
+  if (isLoading && messages.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (messages.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <MessageSquare className="mb-3 h-10 w-10 text-muted-foreground/40" />
+        <p className="text-sm text-muted-foreground">هنوز پیامی ارسال نشده</p>
+        <p className="mt-1 text-xs text-muted-foreground/60">اولین پیام خود را ارسال کنید!</p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <p className="chat-thread-start">مکالمه آغاز شد</p>
+
+      {needBanner}
+
+      {renderedMessages}
 
       <ChatPeerTyping
         visible={peerTyping.isTyping}

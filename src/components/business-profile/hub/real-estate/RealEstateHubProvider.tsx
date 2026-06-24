@@ -60,6 +60,7 @@ export function RealEstateHubProvider({ children }: { children: ReactNode }) {
       tags,
       listings,
       portfolioCount: profile.portfolioCount,
+      offerCount: profile.offerCount,
       ecosystem,
     });
   }, [profile, subtype, tags, listings, ecosystem]);

@@ -14,6 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 import type { RealEstateHubTask, RealEstateHubTaskId } from '@/lib/business/real-estate-hub-tasks';
 import { useRealEstateHub } from './RealEstateHubProvider';
+import { RE_HUB_ICON } from './real-estate-hub-tokens';
 
 const MOBILE_ITEMS: RealEstateHubTaskId[] = [
   'overview',
@@ -58,10 +59,10 @@ export function RealEstateHubMobileNav({ tasks }: { tasks: RealEstateHubTask[] }
               onClick={() => navigateToTask(id)}
               className={cn(
                 'flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-medium touch-target-min',
-                active ? 'text-blue-700 dark:text-blue-400' : 'text-muted-foreground'
+                active ? 'text-foreground' : 'text-muted-foreground'
               )}
             >
-              <Icon className={cn('size-5', active && 'text-blue-600')} />
+              <Icon className={cn('size-5', active && RE_HUB_ICON)} />
               {label.split(' ')[0]}
             </button>
           );
