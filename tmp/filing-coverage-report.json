@@ -1,0 +1,1184 @@
+{
+  "generatedAt": "2026-07-01T11:51:09.445Z",
+  "siteKey": "maskanyaban",
+  "windowDays": 100,
+  "since": "2026-03-23T11:51:09.242Z",
+  "totalListings": 3455,
+  "cellStats": [
+    {
+      "cellKey": "rent_rahn_ejare:apartment",
+      "dealType": "rent_rahn_ejare",
+      "propertyKind": "apartment",
+      "count": 1669,
+      "avgCompleteness": 49,
+      "enrichedCount": 1669,
+      "fieldRates": {
+        "deposit": 1,
+        "fileCode": 1,
+        "dealType": 1,
+        "propertyKind": 1,
+        "area": 1,
+        "location": 1,
+        "floor": 0.838,
+        "rooms": 0.981,
+        "buildingAge": 0.929,
+        "monthlyRent": 0.774,
+        "description": 0.017,
+        "image": 0.017,
+        "images": 0.017,
+        "facade": 0.002,
+        "heating": 0.001,
+        "cooling": 0.001,
+        "cabinet": 0.002
+      },
+      "topMissing": [
+        {
+          "field": "price",
+          "missingCount": 1669
+        },
+        {
+          "field": "totalFloors",
+          "missingCount": 1669
+        },
+        {
+          "field": "unitsCount",
+          "missingCount": 1669
+        },
+        {
+          "field": "documentType",
+          "missingCount": 1669
+        },
+        {
+          "field": "flooring",
+          "missingCount": 1669
+        },
+        {
+          "field": "wallCover",
+          "missingCount": 1669
+        },
+        {
+          "field": "orientation",
+          "missingCount": 1669
+        },
+        {
+          "field": "exchangeable",
+          "missingCount": 1669
+        },
+        {
+          "field": "plotWidth",
+          "missingCount": 1669
+        },
+        {
+          "field": "landUse",
+          "missingCount": 1669
+        },
+        {
+          "field": "frontage",
+          "missingCount": 1669
+        },
+        {
+          "field": "commercialUse",
+          "missingCount": 1669
+        }
+      ]
+    },
+    {
+      "cellKey": "rent_rahn_ejare:land",
+      "dealType": "rent_rahn_ejare",
+      "propertyKind": "land",
+      "count": 2,
+      "avgCompleteness": 48,
+      "enrichedCount": 2,
+      "fieldRates": {
+        "deposit": 1,
+        "monthlyRent": 1,
+        "fileCode": 1,
+        "dealType": 1,
+        "propertyKind": 1,
+        "area": 1,
+        "location": 1,
+        "description": 0.5,
+        "image": 1,
+        "images": 1
+      },
+      "topMissing": [
+        {
+          "field": "price",
+          "missingCount": 2
+        },
+        {
+          "field": "pricePerMeter",
+          "missingCount": 2
+        },
+        {
+          "field": "landUse",
+          "missingCount": 2
+        },
+        {
+          "field": "documentType",
+          "missingCount": 2
+        },
+        {
+          "field": "orientation",
+          "missingCount": 2
+        },
+        {
+          "field": "frontage",
+          "missingCount": 2
+        },
+        {
+          "field": "plotWidth",
+          "missingCount": 2
+        },
+        {
+          "field": "exchangeable",
+          "missingCount": 2
+        },
+        {
+          "field": "commercialUse",
+          "missingCount": 2
+        },
+        {
+          "field": "description",
+          "missingCount": 1
+        }
+      ]
+    },
+    {
+      "cellKey": "rent_rahn_ejare:office",
+      "dealType": "rent_rahn_ejare",
+      "propertyKind": "office",
+      "count": 15,
+      "avgCompleteness": 52,
+      "enrichedCount": 15,
+      "fieldRates": {
+        "deposit": 1,
+        "monthlyRent": 0.667,
+        "fileCode": 1,
+        "dealType": 1,
+        "propertyKind": 1,
+        "area": 1,
+        "location": 1,
+        "floor": 0.6,
+        "rooms": 0.867,
+        "buildingAge": 0.8,
+        "image": 0.467,
+        "images": 0.467,
+        "description": 0.267,
+        "landUse": 0.067
+      },
+      "topMissing": [
+        {
+          "field": "price",
+          "missingCount": 15
+        },
+        {
+          "field": "totalFloors",
+          "missingCount": 15
+        },
+        {
+          "field": "documentType",
+          "missingCount": 15
+        },
+        {
+          "field": "orientation",
+          "missingCount": 15
+        },
+        {
+          "field": "heating",
+          "missingCount": 15
+        },
+        {
+          "field": "cooling",
+          "missingCount": 15
+        },
+        {
+          "field": "exchangeable",
+          "missingCount": 15
+        },
+        {
+          "field": "plotWidth",
+          "missingCount": 15
+        },
+        {
+          "field": "frontage",
+          "missingCount": 15
+        },
+        {
+          "field": "commercialUse",
+          "missingCount": 15
+        },
+        {
+          "field": "landUse",
+          "missingCount": 14
+        },
+        {
+          "field": "description",
+          "missingCount": 11
+        }
+      ]
+    },
+    {
+      "cellKey": "rent_rahn_ejare:shop",
+      "dealType": "rent_rahn_ejare",
+      "propertyKind": "shop",
+      "count": 14,
+      "avgCompleteness": 44,
+      "enrichedCount": 14,
+      "fieldRates": {
+        "deposit": 1,
+        "monthlyRent": 0.714,
+        "fileCode": 1,
+        "dealType": 1,
+        "propertyKind": 1,
+        "area": 1,
+        "location": 1,
+        "image": 0.571,
+        "images": 0.571,
+        "description": 0.286
+      },
+      "topMissing": [
+        {
+          "field": "price",
+          "missingCount": 14
+        },
+        {
+          "field": "floor",
+          "missingCount": 14
+        },
+        {
+          "field": "buildingAge",
+          "missingCount": 14
+        },
+        {
+          "field": "documentType",
+          "missingCount": 14
+        },
+        {
+          "field": "commercialUse",
+          "missingCount": 14
+        },
+        {
+          "field": "frontage",
+          "missingCount": 14
+        },
+        {
+          "field": "orientation",
+          "missingCount": 14
+        },
+        {
+          "field": "heating",
+          "missingCount": 14
+        },
+        {
+          "field": "cooling",
+          "missingCount": 14
+        },
+        {
+          "field": "exchangeable",
+          "missingCount": 14
+        },
+        {
+          "field": "plotWidth",
+          "missingCount": 14
+        },
+        {
+          "field": "landUse",
+          "missingCount": 14
+        }
+      ]
+    },
+    {
+      "cellKey": "rent_rahn_ejare:villa",
+      "dealType": "rent_rahn_ejare",
+      "propertyKind": "villa",
+      "count": 341,
+      "avgCompleteness": 47,
+      "enrichedCount": 341,
+      "fieldRates": {
+        "deposit": 1,
+        "fileCode": 1,
+        "dealType": 1,
+        "propertyKind": 1,
+        "area": 1,
+        "location": 1,
+        "buildingAge": 0.977,
+        "description": 0.032,
+        "image": 0.035,
+        "images": 0.035,
+        "monthlyRent": 0.868,
+        "rooms": 0.938,
+        "facade": 0.006,
+        "cabinet": 0.003
+      },
+      "topMissing": [
+        {
+          "field": "price",
+          "missingCount": 341
+        },
+        {
+          "field": "totalFloors",
+          "missingCount": 341
+        },
+        {
+          "field": "floor",
+          "missingCount": 341
+        },
+        {
+          "field": "documentType",
+          "missingCount": 341
+        },
+        {
+          "field": "orientation",
+          "missingCount": 341
+        },
+        {
+          "field": "flooring",
+          "missingCount": 341
+        },
+        {
+          "field": "wallCover",
+          "missingCount": 341
+        },
+        {
+          "field": "heating",
+          "missingCount": 341
+        },
+        {
+          "field": "cooling",
+          "missingCount": 341
+        },
+        {
+          "field": "exchangeable",
+          "missingCount": 341
+        },
+        {
+          "field": "plotWidth",
+          "missingCount": 341
+        },
+        {
+          "field": "landUse",
+          "missingCount": 341
+        }
+      ]
+    },
+    {
+      "cellKey": "sell:apartment",
+      "dealType": "sell",
+      "propertyKind": "apartment",
+      "count": 1286,
+      "avgCompleteness": 51,
+      "enrichedCount": 1286,
+      "fieldRates": {
+        "price": 1,
+        "fileCode": 1,
+        "dealType": 1,
+        "propertyKind": 1,
+        "area": 1,
+        "location": 1,
+        "floor": 0.906,
+        "rooms": 0.998,
+        "buildingAge": 0.807,
+        "documentType": 1,
+        "cabinet": 0.001,
+        "description": 0.003,
+        "image": 0.003,
+        "images": 0.003
+      },
+      "topMissing": [
+        {
+          "field": "deposit",
+          "missingCount": 1286
+        },
+        {
+          "field": "monthlyRent",
+          "missingCount": 1286
+        },
+        {
+          "field": "totalFloors",
+          "missingCount": 1286
+        },
+        {
+          "field": "unitsCount",
+          "missingCount": 1286
+        },
+        {
+          "field": "flooring",
+          "missingCount": 1286
+        },
+        {
+          "field": "wallCover",
+          "missingCount": 1286
+        },
+        {
+          "field": "facade",
+          "missingCount": 1286
+        },
+        {
+          "field": "orientation",
+          "missingCount": 1286
+        },
+        {
+          "field": "heating",
+          "missingCount": 1286
+        },
+        {
+          "field": "cooling",
+          "missingCount": 1286
+        },
+        {
+          "field": "exchangeable",
+          "missingCount": 1286
+        },
+        {
+          "field": "plotWidth",
+          "missingCount": 1286
+        }
+      ]
+    },
+    {
+      "cellKey": "sell:land",
+      "dealType": "sell",
+      "propertyKind": "land",
+      "count": 4,
+      "avgCompleteness": 49,
+      "enrichedCount": 4,
+      "fieldRates": {
+        "price": 1,
+        "fileCode": 1,
+        "dealType": 1,
+        "propertyKind": 1,
+        "area": 1,
+        "location": 1,
+        "pricePerMeter": 1,
+        "documentType": 1,
+        "image": 1,
+        "images": 1,
+        "description": 0.25
+      },
+      "topMissing": [
+        {
+          "field": "landUse",
+          "missingCount": 4
+        },
+        {
+          "field": "orientation",
+          "missingCount": 4
+        },
+        {
+          "field": "frontage",
+          "missingCount": 4
+        },
+        {
+          "field": "plotWidth",
+          "missingCount": 4
+        },
+        {
+          "field": "exchangeable",
+          "missingCount": 4
+        },
+        {
+          "field": "commercialUse",
+          "missingCount": 4
+        },
+        {
+          "field": "description",
+          "missingCount": 3
+        }
+      ]
+    },
+    {
+      "cellKey": "sell:office",
+      "dealType": "sell",
+      "propertyKind": "office",
+      "count": 5,
+      "avgCompleteness": 63,
+      "enrichedCount": 5,
+      "fieldRates": {
+        "price": 1,
+        "fileCode": 1,
+        "dealType": 1,
+        "propertyKind": 1,
+        "area": 1,
+        "location": 1,
+        "floor": 1,
+        "rooms": 0.8,
+        "buildingAge": 0.8,
+        "documentType": 1,
+        "description": 0.6,
+        "image": 0.8,
+        "images": 0.8
+      },
+      "topMissing": [
+        {
+          "field": "deposit",
+          "missingCount": 5
+        },
+        {
+          "field": "monthlyRent",
+          "missingCount": 5
+        },
+        {
+          "field": "totalFloors",
+          "missingCount": 5
+        },
+        {
+          "field": "orientation",
+          "missingCount": 5
+        },
+        {
+          "field": "heating",
+          "missingCount": 5
+        },
+        {
+          "field": "cooling",
+          "missingCount": 5
+        },
+        {
+          "field": "exchangeable",
+          "missingCount": 5
+        },
+        {
+          "field": "plotWidth",
+          "missingCount": 5
+        },
+        {
+          "field": "landUse",
+          "missingCount": 5
+        },
+        {
+          "field": "frontage",
+          "missingCount": 5
+        },
+        {
+          "field": "commercialUse",
+          "missingCount": 5
+        },
+        {
+          "field": "description",
+          "missingCount": 2
+        }
+      ]
+    },
+    {
+      "cellKey": "sell:shop",
+      "dealType": "sell",
+      "propertyKind": "shop",
+      "count": 8,
+      "avgCompleteness": 47,
+      "enrichedCount": 8,
+      "fieldRates": {
+        "price": 1,
+        "fileCode": 1,
+        "dealType": 1,
+        "propertyKind": 1,
+        "area": 1,
+        "location": 1,
+        "documentType": 1,
+        "description": 0.5,
+        "image": 0.5,
+        "images": 0.5
+      },
+      "topMissing": [
+        {
+          "field": "deposit",
+          "missingCount": 8
+        },
+        {
+          "field": "monthlyRent",
+          "missingCount": 8
+        },
+        {
+          "field": "floor",
+          "missingCount": 8
+        },
+        {
+          "field": "buildingAge",
+          "missingCount": 8
+        },
+        {
+          "field": "commercialUse",
+          "missingCount": 8
+        },
+        {
+          "field": "frontage",
+          "missingCount": 8
+        },
+        {
+          "field": "orientation",
+          "missingCount": 8
+        },
+        {
+          "field": "heating",
+          "missingCount": 8
+        },
+        {
+          "field": "cooling",
+          "missingCount": 8
+        },
+        {
+          "field": "exchangeable",
+          "missingCount": 8
+        },
+        {
+          "field": "plotWidth",
+          "missingCount": 8
+        },
+        {
+          "field": "landUse",
+          "missingCount": 8
+        }
+      ]
+    },
+    {
+      "cellKey": "sell:villa",
+      "dealType": "sell",
+      "propertyKind": "villa",
+      "count": 111,
+      "avgCompleteness": 49,
+      "enrichedCount": 111,
+      "fieldRates": {
+        "price": 1,
+        "fileCode": 1,
+        "dealType": 1,
+        "propertyKind": 1,
+        "area": 1,
+        "location": 1,
+        "rooms": 0.955,
+        "buildingAge": 0.991,
+        "documentType": 1,
+        "facade": 0.009,
+        "cabinet": 0.018,
+        "plotWidth": 0.009,
+        "description": 0.036,
+        "image": 0.036,
+        "images": 0.036
+      },
+      "topMissing": [
+        {
+          "field": "deposit",
+          "missingCount": 111
+        },
+        {
+          "field": "monthlyRent",
+          "missingCount": 111
+        },
+        {
+          "field": "totalFloors",
+          "missingCount": 111
+        },
+        {
+          "field": "floor",
+          "missingCount": 111
+        },
+        {
+          "field": "orientation",
+          "missingCount": 111
+        },
+        {
+          "field": "flooring",
+          "missingCount": 111
+        },
+        {
+          "field": "wallCover",
+          "missingCount": 111
+        },
+        {
+          "field": "heating",
+          "missingCount": 111
+        },
+        {
+          "field": "cooling",
+          "missingCount": 111
+        },
+        {
+          "field": "exchangeable",
+          "missingCount": 111
+        },
+        {
+          "field": "landUse",
+          "missingCount": 111
+        },
+        {
+          "field": "frontage",
+          "missingCount": 111
+        }
+      ]
+    }
+  ],
+  "sampleThinListings": [
+    {
+      "id": "cmr0rbc2x000us5d4alq43gmx",
+      "fileCode": "522548",
+      "cellKey": "rent_rahn_ejare:villa",
+      "completeness": 51,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0svyna019qs5j2c7pdf0s0",
+      "fileCode": "520966",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbd3j00eus5d4spm5p49h",
+      "fileCode": "521374",
+      "cellKey": "rent_rahn_ejare:villa",
+      "completeness": 47,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc2t000ss5d47cwq4qh1",
+      "fileCode": "522549",
+      "cellKey": "rent_rahn_ejare:villa",
+      "completeness": 43,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc52001ws5d42nseeu51",
+      "fileCode": "522523",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc27000ks5d42veu5ghn",
+      "fileCode": "522558",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc2o000qs5d4jaem5y6b",
+      "fileCode": "522551",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc22000is5d4d0a7bggw",
+      "fileCode": "522559",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc48001is5d4orveaz2l",
+      "fileCode": "522532",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc1q000es5d4so9ko365",
+      "fileCode": "522561",
+      "cellKey": "rent_rahn_ejare:villa",
+      "completeness": 47,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc3j0016s5d4krg5s22e",
+      "fileCode": "522542",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 48,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc3y001es5d4kduq0sst",
+      "fileCode": "522534",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc3n0018s5d4cpbkfule",
+      "fileCode": "522541",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 43,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0svye2015ws5j2gz1smuhi",
+      "fileCode": "521038",
+      "cellKey": "rent_rahn_ejare:villa",
+      "completeness": 47,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc4c001ks5d49me2uvfi",
+      "fileCode": "522531",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmqzqlmen001as5hpl7xuimw9",
+      "fileCode": "525897",
+      "cellKey": "sell:apartment",
+      "completeness": 52,
+      "missingRequired": [
+        "deposit",
+        "monthlyRent"
+      ]
+    },
+    {
+      "id": "cmqzqlmei0018s5hpp9sf70oh",
+      "fileCode": "525898",
+      "cellKey": "sell:apartment",
+      "completeness": 52,
+      "missingRequired": [
+        "deposit",
+        "monthlyRent"
+      ]
+    },
+    {
+      "id": "cmqzqlmer001cs5hpedwmy7ef",
+      "fileCode": "525896",
+      "cellKey": "sell:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "deposit",
+        "monthlyRent"
+      ]
+    },
+    {
+      "id": "cmqzqlme90012s5hpo5uzfoo3",
+      "fileCode": "525901",
+      "cellKey": "sell:apartment",
+      "completeness": 52,
+      "missingRequired": [
+        "deposit",
+        "monthlyRent"
+      ]
+    },
+    {
+      "id": "cmqzqlme70010s5hp6gzs3i0j",
+      "fileCode": "525902",
+      "cellKey": "sell:apartment",
+      "completeness": 52,
+      "missingRequired": [
+        "deposit",
+        "monthlyRent"
+      ]
+    },
+    {
+      "id": "cmqzqlmdy000ws5hpop4d3bp8",
+      "fileCode": "525904",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmqzqlmdt000us5hp6l5yf43c",
+      "fileCode": "525905",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmqzqlmdp000ss5hpw464rip1",
+      "fileCode": "525906",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc1l000cs5d47omy1jt2",
+      "fileCode": "522562",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0r08h302bcs532j0b33h5x",
+      "fileCode": "523088",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    },
+    {
+      "id": "cmqzqlmfa001os5hp1we66hti",
+      "fileCode": "525890",
+      "cellKey": "sell:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "deposit",
+        "monthlyRent"
+      ]
+    },
+    {
+      "id": "cmr0sh31800res5j25tjx6m40",
+      "fileCode": "521309",
+      "cellKey": "sell:apartment",
+      "completeness": 52,
+      "missingRequired": [
+        "deposit",
+        "monthlyRent"
+      ]
+    },
+    {
+      "id": "cmr0r068y013ws532xkn4flwi",
+      "fileCode": "522439",
+      "cellKey": "sell:apartment",
+      "completeness": 52,
+      "missingRequired": [
+        "deposit",
+        "monthlyRent"
+      ]
+    },
+    {
+      "id": "cmr0svxv600yas5j2nq2qy8xz",
+      "fileCode": "521184",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0r09ms02vcs5323t5i6olq",
+      "fileCode": "520818",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc2i000os5d4y6uovilz",
+      "fileCode": "522552",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0r07sn01yis532axcjvdbd",
+      "fileCode": "522697",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmqzqlmg20022s5hpc6vb9i9v",
+      "fileCode": "525884",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0r09fn02rus532kelf3efn",
+      "fileCode": "522570",
+      "cellKey": "rent_rahn_ejare:villa",
+      "completeness": 47,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmqzqlmfx0020s5hpgmbilok0",
+      "fileCode": "350994",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmqzqlmgb0028s5hpvp6gcf1o",
+      "fileCode": "525881",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 44,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rz2pb0062s5j2wgzxkny3",
+      "fileCode": "521730",
+      "cellKey": "rent_rahn_ejare:villa",
+      "completeness": 47,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc6c002is5d4kkvln49b",
+      "fileCode": "522482",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc5f0020s5d4do5yamhy",
+      "fileCode": "522519",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc4y001us5d45bz67uo1",
+      "fileCode": "522524",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0r0691013ys5325g8yt7w1",
+      "fileCode": "522438",
+      "cellKey": "sell:apartment",
+      "completeness": 52,
+      "missingRequired": [
+        "deposit",
+        "monthlyRent"
+      ]
+    },
+    {
+      "id": "cmr0rbc58001ys5d4mwnjuv1o",
+      "fileCode": "522521",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0r077w01o2s532epjpzio1",
+      "fileCode": "525747",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0r04iw007os5328wgzq5dd",
+      "fileCode": "525721",
+      "cellKey": "sell:apartment",
+      "completeness": 52,
+      "missingRequired": [
+        "deposit",
+        "monthlyRent"
+      ]
+    },
+    {
+      "id": "cmr0rbcfp003gs5d4sg2g44rw",
+      "fileCode": "522463",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmqzqlmvn006as5hp766h9524",
+      "fileCode": "525815",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc66002es5d4daguq1cz",
+      "fileCode": "522484",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 48,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc5x002as5d4c6edqe9u",
+      "fileCode": "522513",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 48,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc6i002ks5d4ue9972ck",
+      "fileCode": "522481",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 50,
+      "missingRequired": [
+        "price"
+      ]
+    },
+    {
+      "id": "cmr0rbc70002ss5d48bmh1gpx",
+      "fileCode": "522477",
+      "cellKey": "rent_rahn_ejare:apartment",
+      "completeness": 47,
+      "missingRequired": [
+        "monthlyRent",
+        "price"
+      ]
+    }
+  ]
+}

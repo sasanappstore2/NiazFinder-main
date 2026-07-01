@@ -7,6 +7,8 @@
 @import "../styles/chat/bubble.css";
 @import "../styles/chat/composer.css";
 @import "../styles/intake-golden.css";
+@import "../styles/filing-ui.css";
+@import "../styles/filing-detail-layout.css";
 @import "../styles/business/re-incomplete-highlight.css";
 
 @custom-variant dark (&:is(.dark *));

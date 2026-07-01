@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { useAppStore } from '@/lib/store';
 import type { AdminPermissionId } from '@/config/admin-permissions';
 import { permissionSatisfied } from '@/lib/rbac/permission-check';
+import { formatApiError } from '@/lib/api/format-api-error';
 
 export type AdminMe = {
   user: {
@@ -24,6 +25,8 @@ type AdminContextValue = {
   isLoading: boolean;
   hasPermission: (permission: AdminPermissionId | AdminPermissionId[]) => boolean;
   apiFetch: <T>(url: string, init?: RequestInit) => Promise<T>;
+  /** fetch with Bearer — for binary routes (frame.jpeg) */
+  authorizedFetch: (url: string, init?: RequestInit) => Promise<Response>;
   refreshMe: () => Promise<void>;
 };
 
@@ -34,21 +37,40 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [me, setMe] = useState<AdminMe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const apiFetch = useCallback(
-    async <T,>(url: string, init?: RequestInit): Promise<T> => {
-      const res = await fetch(url, {
+  const authorizedFetch = useCallback(
+    async (url: string, init?: RequestInit): Promise<Response> => {
+      return fetch(url, {
         ...init,
+        cache: init?.cache ?? 'no-store',
         headers: {
-          'Content-Type': 'application/json',
           ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
           ...((init?.headers as Record<string, string> | undefined) || {}),
         },
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'عملیات انجام نشد');
-      return data as T;
     },
     [authToken]
+  );
+
+  const apiFetch = useCallback(
+    async <T,>(url: string, init?: RequestInit): Promise<T> => {
+      const res = await authorizedFetch(url, {
+        ...init,
+        headers: {
+          'Content-Type': 'application/json',
+          ...((init?.headers as Record<string, string> | undefined) || {}),
+        },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const err = formatApiError(data);
+        if (res.status === 401) {
+          throw new Error(err === 'Unauthorized' ? 'لطفاً دوباره وارد شوید (نشست منقضی شده)' : err);
+        }
+        throw new Error(err);
+      }
+      return data as T;
+    },
+    [authorizedFetch]
   );
 
   const refreshMe = useCallback(async () => {
@@ -83,8 +105,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ me, isLoading, hasPermission, apiFetch, refreshMe }),
-    [me, isLoading, hasPermission, apiFetch, refreshMe]
+    () => ({ me, isLoading, hasPermission, apiFetch, authorizedFetch, refreshMe }),
+    [me, isLoading, hasPermission, apiFetch, authorizedFetch, refreshMe]
   );
 
   return <AdminContext.Provider value={value}>{children}</AdminContext.Provider>;

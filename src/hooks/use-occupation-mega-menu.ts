@@ -24,7 +24,7 @@ async function fetchOccupationRegistry(force = false): Promise<OccupationMegaMen
   if (!force) seedLaunchDefaults();
 
   try {
-    const res = await fetch('/api/business/occupations');
+    const res = await fetch('/api/business/occupations', { cache: 'no-store' });
     if (!res.ok) return getOccupationMegaMenuTree();
     const data = (await res.json()) as { occupations?: ManagedBusinessOccupation[] };
     if (data.occupations) {

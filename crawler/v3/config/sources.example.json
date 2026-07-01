@@ -1,0 +1,39 @@
+[
+  {
+    "id": "maskanyaban-public",
+    "name": "مسکن‌یابان — فایلینگ عمومی",
+    "enabled": true,
+    "provider": "estate-scrape-legacy",
+    "seedUrls": ["https://maskanyaban.ir/estate/all/all/"],
+    "authenticationRequired": false,
+    "visibility": "public",
+    "crawlFrequencyMinutes": 10,
+    "priority": "high",
+    "discoveryStrategy": "pagination",
+    "extractionStrategy": "dom",
+    "normalizationPipeline": ["generic-property", "filing-persian"],
+    "validationRules": ["property-record", "filing-deal-type"],
+    "dedupeRules": ["multi-signal", "external-id"],
+    "maxPages": 100,
+    "maxDepth": 1,
+    "allowedDomains": ["maskanyaban.ir"],
+    "excludePatterns": ["/login", "/admin"],
+    "metadata": { "siteKey": "maskanyaban", "portalFamily": "maskanyaban" }
+  },
+  {
+    "id": "example-firecrawl",
+    "name": "Example public site (Firecrawl)",
+    "enabled": false,
+    "provider": "firecrawl",
+    "seedUrls": ["https://example.com/listings"],
+    "authenticationRequired": false,
+    "visibility": "public",
+    "crawlFrequencyMinutes": 1440,
+    "priority": "normal",
+    "discoveryStrategy": "map-api",
+    "extractionStrategy": "firecrawl-extract",
+    "maxPages": 50,
+    "maxDepth": 2,
+    "metadata": {}
+  }
+]

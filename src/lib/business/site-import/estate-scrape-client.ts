@@ -1,3 +1,4 @@
+import { formatApiError } from '@/lib/api/format-api-error';
 import type { SiteImportBlueprintId, SiteImportPreviewResult, SiteImportSuggestion } from './types';
 
 export type SiteImportPreviewFromScrape = Omit<SiteImportPreviewResult, 'previewToken'>;
@@ -43,7 +44,7 @@ export async function fetchSiteImportPreview(input: {
     };
 
     if (!res.ok) {
-      throw new Error(data.detail ?? data.error ?? `درخواست estate-scrape با کد ${res.status} شکست خورد`);
+      throw new Error(formatApiError(data, `درخواست estate-scrape با کد ${res.status} شکست خورد`));
     }
 
     return data;

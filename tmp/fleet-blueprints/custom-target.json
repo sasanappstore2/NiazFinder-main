@@ -1,0 +1,8 @@
+{
+  "siteKey": "custom-target",
+  "listingsUrl": "",
+  "skipped": true,
+  "skipReason": "از FILING_FLEET_TARGET_URL env پر شود",
+  "blueprint": null,
+  "onboardedAt": "2026-06-26T22:34:40.830Z"
+}

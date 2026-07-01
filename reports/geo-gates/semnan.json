@@ -1,7 +1,7 @@
 {
   "provinceId": "semnan",
   "provinceName": "سمنان",
-  "generatedAt": "2026-06-12T21:20:06.230Z",
+  "generatedAt": "2026-06-25T07:37:50.724Z",
   "cities": [
     {
       "cityId": "semnan-city",
@@ -397,17 +397,74 @@
       "cityName": "کلاته",
       "provinceId": "semnan",
       "tier": "C",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 9,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 9,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 9
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "kalateh",
+          "neighborhoodId": "آستانه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kalateh",
+          "neighborhoodId": "آهوانو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kalateh",
+          "neighborhoodId": "بادله-کوه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kalateh",
+          "neighborhoodId": "تویه-رودبار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kalateh",
+          "neighborhoodId": "چشمه-علی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kalateh",
+          "neighborhoodId": "دیباج",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kalateh",
+          "neighborhoodId": "کلاته",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kalateh",
+          "neighborhoodId": "نمکه-رودبار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "chashm",
@@ -431,17 +488,291 @@
       "cityName": "امیرآباد",
       "provinceId": "semnan",
       "tier": "B",
-      "neighborhoodCount": 3,
+      "neighborhoodCount": 42,
       "shares": {
-        "divar": 3,
-        "osm": 0,
+        "divar": 0,
+        "osm": 42,
         "synthetic": 0,
         "manual": 0,
-        "total": 3
+        "total": 42
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "اردیان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "البرز-شرقی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "امیرآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "باغ-زندان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "بعثت",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "بیدآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "تل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "جعفرآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "چمران-و-رزمندگان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "حسین-آباد-ساغر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "خوریان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "دیزج",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "روستای-دیزج",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "رویان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "شهرک-البرز",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "شهرک-امام-خمینی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "شهرک-انقلاب",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "شهرک-بهشتی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "شهرک-پردیس",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "شهرک-دانشگاه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "شهرک-فدک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "شهرک-فرهنگیان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "شهرک-کوثر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "شهرک-نوین",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "شهرک-ولیعصر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "شهنما",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "صالح-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "علی-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "فرح-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "قلعه-شوکت",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "قلعه-نوخالصه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "قلعه-نوروزخان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "کلاته-خان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "کمیل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "مجتمع-سماء",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "مجتمع-مسکونی48-واحدی-نواب-city",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "میدان-ولایت",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "نواب-سیتی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "amirabad-city",
+          "neighborhoodId": "یونس-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "eyvanaki",
@@ -563,7 +894,7 @@
       "pass": true
     }
   ],
-  "errors": 0,
+  "errors": 47,
   "warnings": 31,
-  "pass": true
+  "pass": false
 }

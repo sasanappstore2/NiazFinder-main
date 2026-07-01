@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-06-25T07:48:28.315Z",
+  "checks": [
+    {
+      "name": "test:map-tiles",
+      "level": "ok",
+      "detail": "passed"
+    },
+    {
+      "name": "test:need-map-pins",
+      "level": "ok",
+      "detail": "passed"
+    },
+    {
+      "name": "test:neighborhoods",
+      "level": "ok",
+      "detail": "passed"
+    },
+    {
+      "name": "test:geo-map-data",
+      "level": "ok",
+      "detail": "passed"
+    },
+    {
+      "name": "test:location-viewport",
+      "level": "ok",
+      "detail": "passed"
+    },
+    {
+      "name": "test:geo-quality-gate",
+      "level": "ok",
+      "detail": "passed"
+    },
+    {
+      "name": "test:province-geo-parity",
+      "level": "ok",
+      "detail": "passed"
+    },
+    {
+      "name": "tile-sample",
+      "level": "ok",
+      "detail": "93 core tiles (z5/7/10) across 31 locations"
+    },
+    {
+      "name": "tile-sample-z13",
+      "level": "warn",
+      "detail": "6/31 z13 edge tiles not prewarmed (OK on cache miss)"
+    },
+    {
+      "name": "vector-route",
+      "level": "ok",
+      "detail": "src/app/api/map/vector/iran/[z]/[x]/[y]/route.ts"
+    },
+    {
+      "name": "live-vector-tile",
+      "level": "ok",
+      "detail": "423031B HTTP 200"
+    },
+    {
+      "name": "live-spot-tiles",
+      "level": "ok",
+      "detail": "8 provincial capitals z7 via HTTP"
+    }
+  ],
+  "fails": 0,
+  "warns": 1
+}

@@ -207,7 +207,7 @@ export function RequestDetail({ slug, id: idProp }: { slug?: string; id?: string
               آگهی شما در صف بازبینی است و پس از تأیید در بازار نمایش داده می‌شود.
             </span>
             <Button variant="outline" size="sm" asChild>
-              <a href={routeBuilder.dashboard()}>مشاهده در داشبورد</a>
+              <a href={routeBuilder.accountTab('requests')}>مشاهده در پروفایل</a>
             </Button>
           </div>
         </div>

@@ -28,7 +28,7 @@ const TABS: TabItem[] = [
   },
   { label: 'کسب‌وکارها', shortLabel: 'کسب‌وکار', title: 'مرور و جستجوی کسب‌وکارها', icon: Users, view: 'browse-specialists' },
   { label: 'پیام‌ها', shortLabel: 'پیام', title: 'پیام‌ها و مکاتبات', icon: MessageCircle, view: 'messages' },
-  { label: 'پروفایل', shortLabel: 'پروفایل', title: 'داشبورد و پروفایل کاربری', icon: User, view: 'dashboard' },
+  { label: 'پروفایل', shortLabel: 'پروفایل', title: 'پروفایل و حساب کاربری', icon: User, view: 'profile' },
 ];
 
 function isTabActive(
@@ -42,6 +42,9 @@ function isTabActive(
   if (view === 'browse-specialists') {
     if (isBusinessProductDetailPath(pathname)) return false;
     return pathname === '/b' || pathname.startsWith('/b/');
+  }
+  if (view === 'profile') {
+    return pathname === '/profile';
   }
   if (view === 'dashboard') {
     return pathname === '/dashboard' || pathname.startsWith('/dashboard/');
@@ -135,38 +138,13 @@ export function MobileBottomNav() {
   }, [authToken, currentUser?.id, isAuthenticated]);
 
   useEffect(() => {
-    if (!isAuthenticated || !authToken) return;
-
-    const run = () => {
+    if (isAuthenticated && authToken) {
       void fetchConversations();
-    };
-
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      const id = requestIdleCallback(run, { timeout: 6000 });
-      return () => cancelIdleCallback(id);
     }
-
-    const timer = globalThis.setTimeout(run, 2000);
-    return () => globalThis.clearTimeout(timer);
   }, [isAuthenticated, authToken, fetchConversations]);
 
   useEffect(() => {
-    if (!isAuthenticated || !authToken) return;
-
-    const run = () => {
-      void fetchMissedCalls();
-    };
-
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      const id = requestIdleCallback(run, { timeout: 8000 });
-      return () => cancelIdleCallback(id);
-    }
-
-    const timer = globalThis.setTimeout(run, 3000);
-    return () => globalThis.clearTimeout(timer);
-  }, [isAuthenticated, authToken, fetchMissedCalls]);
-
-  useEffect(() => {
+    void fetchMissedCalls();
     const onCallLogChanged = () => void fetchMissedCalls();
     window.addEventListener('voice:call-log-changed', onCallLogChanged);
     return () => window.removeEventListener('voice:call-log-changed', onCallLogChanged);

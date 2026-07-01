@@ -12,10 +12,12 @@ export default function SoldProperties({
   business: Business;
   requestId?: string;
 }) {
-  const { onChat, onCall } = useListingContact(business, requestId);
+  const { onChat, onCall, callSheet } = useListingContact(business, requestId);
 
   return (
-    <ListingGrid
+    <>
+      {callSheet}
+      <ListingGrid
       listings={soldListings(getListings(business))}
       emptyText="ملک فروخته‌شده‌ای ثبت نشده است."
       business={business}
@@ -23,5 +25,6 @@ export default function SoldProperties({
       onChat={() => void onChat()}
       onCall={() => void onCall()}
     />
+    </>
   );
 }

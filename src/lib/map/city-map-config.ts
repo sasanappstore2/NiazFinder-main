@@ -1,6 +1,11 @@
 import cityMapConfig from '@/data/geo/iran-cities-map-config.json';
+import viewportsIndex from '@/data/geo/iran-location-viewports-index.json';
 import type { BusinessMapBbox } from '@/lib/business/map-pins-types';
+import { compactBboxToBusiness, type LocationViewportsIndex } from '@/lib/map/location-viewport-types';
+import { haversineDistanceM } from '@/lib/map/intake-area-circle';
 import { locationCityIdToSlug } from '@/lib/search/city-slugs';
+
+const VIEWPORT_INDEX = viewportsIndex as unknown as LocationViewportsIndex;
 
 export type CityMapConfigEntry = {
   cityId: string;
@@ -117,4 +122,70 @@ export function resolveCityMapMinZoom(slug: string): number {
   if (!cfg) return 11;
   const hub = getCityMapConfigBySlug(cfg.viewportCitySlug) ?? cfg;
   return Math.max(10.5, hub.mapZoom - 0.5);
+}
+
+function lookupCityViewportBounds(slug: string): BusinessMapBbox | null {
+  const s = normalizeSlug(slug);
+  const entry = VIEWPORT_INDEX.cities[s] ?? VIEWPORT_INDEX.cities[locationCityIdToSlug(s)];
+  if (!entry?.b) return null;
+  return compactBboxToBusiness(entry.b);
+}
+
+/**
+ * Scope ring center — aligned with OSM place labels on vector tiles.
+ * Divar/catalog pins often sit east of the visible urban core on small/medium cities.
+ */
+export function resolveCityScopeRingCenter(slug: string): { lat: number; lng: number } | null {
+  const pin = resolveCityMapPinCenter(slug);
+  const pinBbox = resolveCityMapPinBbox(slug);
+  if (!pin || !pinBbox) return pin;
+
+  const nhBounds = lookupCityViewportBounds(slug);
+  const west = nhBounds?.west ?? pinBbox.west;
+  const east = nhBounds?.east ?? pinBbox.east;
+  const south = nhBounds?.south ?? pinBbox.south;
+  const north = nhBounds?.north ?? pinBbox.north;
+
+  const spanLng = east - west;
+  const spanLat = north - south;
+  let lng = pin.lng;
+  let lat = pin.lat;
+
+  if (spanLng > 0) {
+    const pinLngT = (pin.lng - west) / spanLng;
+    // Tight metro footprints with an east-heavy catalog pin → shift west toward OSM label.
+    if (pinLngT > 0.52 && spanLng < 0.12) {
+      lng = pinBbox.west + (pin.lng - pinBbox.west) * 0.22;
+    }
+  }
+
+  if (spanLat > 0) {
+    const pinLatT = (pin.lat - south) / spanLat;
+    if (pinLatT > 0.58) lat = south + spanLat * 0.45;
+    else if (pinLatT < 0.42) lat = south + spanLat * 0.55;
+  }
+
+  return { lat, lng };
+}
+
+/** Radius that covers the scope ring center and catalog viewport extent. */
+export function resolveCityScopeRingRadiusM(slug: string): number | null {
+  const cfg = getCityMapConfigBySlug(slug);
+  const center = resolveCityScopeRingCenter(slug);
+  if (!cfg || !center) return cfg?.radiusM ?? null;
+
+  let radiusM = cfg.radiusM;
+  const bounds = lookupCityViewportBounds(slug) ?? resolveCityMapPinBbox(slug);
+  if (!bounds) return radiusM;
+
+  const corners: Array<{ lat: number; lng: number }> = [
+    { lat: bounds.south, lng: bounds.west },
+    { lat: bounds.south, lng: bounds.east },
+    { lat: bounds.north, lng: bounds.west },
+    { lat: bounds.north, lng: bounds.east },
+  ];
+  for (const corner of corners) {
+    radiusM = Math.max(radiusM, haversineDistanceM(center.lat, center.lng, corner.lat, corner.lng));
+  }
+  return radiusM;
 }

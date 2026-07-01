@@ -1,0 +1,13 @@
+{
+  "startedAt": "2026-06-30T14:28:19.046Z",
+  "updatedAt": "2026-06-30T14:33:20.536Z",
+  "days": 100,
+  "batchSize": 200,
+  "maxBatches": 500,
+  "batchIndex": 0,
+  "totalImported": 0,
+  "totalScraped": 0,
+  "knownExternalIdsCount": 272,
+  "status": "error",
+  "error": "fetch failed"
+}

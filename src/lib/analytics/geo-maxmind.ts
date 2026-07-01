@@ -4,20 +4,10 @@ import { Reader, ReaderModel } from '@maxmind/geoip2-node';
 
 let readerPromise: Promise<ReaderModel | null> | null = null;
 
-const DEFAULT_DB_NAME = 'GeoLite2-City.mmdb';
-
-function defaultDbPath(): string {
-  return path.join(process.cwd(), 'data', DEFAULT_DB_NAME);
-}
-
 function dbPath(): string | null {
-  const defaultPath = defaultDbPath();
-  const configured = process.env.MAXMIND_DB_PATH?.trim();
-  if (configured) {
-    if (path.isAbsolute(configured) && fs.existsSync(configured)) return configured;
-    const scoped = path.join(process.cwd(), 'data', path.basename(configured));
-    if (fs.existsSync(scoped)) return scoped;
-  }
+  const configured = process.env.MAXMIND_DB_PATH;
+  if (configured && fs.existsSync(configured)) return configured;
+  const defaultPath = path.join(process.cwd(), 'data', 'GeoLite2-City.mmdb');
   if (fs.existsSync(defaultPath)) return defaultPath;
   return null;
 }
@@ -25,14 +15,10 @@ function dbPath(): string | null {
 async function getReader(): Promise<ReaderModel | null> {
   if (!readerPromise) {
     readerPromise = (async () => {
-      const resolved = dbPath();
-      if (!resolved) return null;
+      const p = dbPath();
+      if (!p) return null;
       try {
-        const filePath =
-          resolved === defaultDbPath()
-            ? defaultDbPath()
-            : resolved;
-        const dbBuffer = fs.readFileSync(filePath);
+        const dbBuffer = fs.readFileSync(p);
         return Reader.openBuffer(dbBuffer);
       } catch (e) {
         console.warn('[analytics] MaxMind DB unavailable:', e);

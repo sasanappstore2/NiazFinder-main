@@ -55,6 +55,24 @@ function prismaClientIsStale(client: PrismaClient): boolean {
       }
     )._runtimeDataModel?.models?.Message?.fields?.map((f) => f.name) ?? [];
   if (!messageFields.includes('isPinned')) return true;
+  const scraperFields =
+    (
+      client as unknown as {
+        _runtimeDataModel?: { models?: { RegionalFilingScraper?: { fields?: { name: string; isRequired?: boolean }[] } } };
+      }
+    )._runtimeDataModel?.models?.RegionalFilingScraper?.fields ?? [];
+  const passwordEncField = scraperFields.find((f) => f.name === 'passwordEnc');
+  if (passwordEncField?.isRequired === true) return true;
+  if (!scraperFields.some((f) => f.name === 'failureCount')) return true;
+  const filingFields =
+    (
+      client as unknown as {
+        _runtimeDataModel?: { models?: { RegionalFiling?: { fields?: { name: string }[] } } };
+      }
+    )._runtimeDataModel?.models?.RegionalFiling?.fields?.map((f) => f.name) ?? [];
+  if (!filingFields.includes('totalFloors')) return true;
+  if (!filingFields.includes('dataCompleteness')) return true;
+  if (!filingFields.includes('detailUrl')) return true;
   return false;
 }
 

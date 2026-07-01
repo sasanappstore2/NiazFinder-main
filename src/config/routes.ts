@@ -98,7 +98,11 @@ export const ROUTES = {
   myBusiness:                    '/my-business',
 
   /** App. */
+  /** @deprecated — redirects to /workspace */
   dashboard:                     '/dashboard',
+  workspace:                     '/workspace',
+  /** Logged-in user account hub (needs, wallet, profile settings). */
+  account:                       '/profile',
   dashboardSettings:             '/dashboard/settings',
   dashboardReferral:             '/dashboard/referral',
   dashboardNotificationSettings: '/dashboard/settings/notifications',
@@ -119,6 +123,10 @@ export const ROUTES = {
   discover:                      '/discover',
   createPost:                    '/create-post',
   submitReview:                  '/submit-review',
+
+  /** Regional filing browse + detail (maskanyaban-style template). */
+  filingBrowse:                  '/f',
+  filingDetail:                  '/f/[id]',
 } as const;
 
 export type RouteKey = keyof typeof ROUTES;
@@ -329,6 +337,22 @@ export const routeBuilder = {
     return `/b/${encodeURIComponent(profileSlug)}/p/${encodeURIComponent(offerId)}`;
   },
 
+  /** /f — regional filing browse (maskanyaban-style grid). */
+  filingBrowse(query?: Record<string, string | undefined>): string {
+    if (!query) return ROUTES.filingBrowse;
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) {
+      if (value?.trim()) params.set(key, value.trim());
+    }
+    const qs = params.toString();
+    return qs ? `${ROUTES.filingBrowse}?${qs}` : ROUTES.filingBrowse;
+  },
+
+  /** /f/{id} — regional filing detail. */
+  filingDetail(id: string): string {
+    return fillParams(ROUTES.filingDetail, { id });
+  },
+
   /** @deprecated Use businessProfile(slug) — /pro kept for redirects. */
   pro(id: string): string {
     return `/pro/${encodeURIComponent(id)}`;
@@ -365,7 +389,12 @@ export const routeBuilder = {
 
   // ── App
   myBusiness:         () => ROUTES.myBusiness,
+  workspace:          () => ROUTES.workspace,
   dashboard:          () => ROUTES.dashboard,
+  /** Logged-in account hub — was conflated with dashboard. */
+  account:            () => ROUTES.account,
+  accountTab:         (tab: string) =>
+    `${ROUTES.account}?tab=${encodeURIComponent(tab)}`,
   dashboardTab:       (tab: string) =>
     `${ROUTES.dashboard}?tab=${encodeURIComponent(tab)}`,
   chat:               () => ROUTES.chat,
@@ -427,12 +456,13 @@ export function legacyViewToPath(view: string, params?: Record<string, string>):
     case 'login':                return routeBuilder.login();
     case 'register':             return routeBuilder.register();
     case 'post-need':            return routeBuilder.needNew();
-    case 'dashboard':            return routeBuilder.dashboard();
+    case 'dashboard':
+    case 'workspace':            return routeBuilder.workspace();
     case 'messages':             return routeBuilder.chat();
     case 'notifications':        return routeBuilder.notifications();
     case 'bookmarks':            return routeBuilder.bookmarks();
     case 'admin':                return routeBuilder.admin();
-    case 'profile':              return routeBuilder.dashboard();
+    case 'profile':              return routeBuilder.account();
     case 'pricing':              return routeBuilder.pricing();
     case 'compare-specialists':
       return routeBuilder.search({ market: 'business' });
@@ -465,6 +495,16 @@ export function isBusinessProductDetailPath(pathname: string): boolean {
 /** Owner business hub (`/my-business`) — uses its own bottom nav on mobile. */
 export function isMyBusinessHubPath(pathname: string): boolean {
   return pathname === ROUTES.myBusiness || pathname.startsWith(`${ROUTES.myBusiness}/`);
+}
+
+/** Real-estate workspace desk — immersive; no site bottom nav on mobile. */
+export function isWorkspacePath(pathname: string): boolean {
+  return pathname === ROUTES.workspace || pathname.startsWith(`${ROUTES.workspace}/`);
+}
+
+/** Regional filing browse/detail (`/f`, `/f/{id}`) — uses filing chrome only. */
+export function isFilingPath(pathname: string): boolean {
+  return pathname === ROUTES.filingBrowse || pathname.startsWith(`${ROUTES.filingBrowse}/`);
 }
 
 const BUSINESS_PUBLIC_PROFILE_PATH = /^\/b\/[^/]+\/?$/;

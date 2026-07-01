@@ -99,6 +99,17 @@ export function NiazMapLibreCore({
     };
   }, [requireRtl]);
 
+  const syncMapReadyBeacon = useCallback(() => {
+    const map = mapRef.current?.getMap();
+    if (!map) return;
+    const root =
+      map.getContainer()?.closest('.iran-divar-map') ??
+      map.getContainer()?.closest('.business-browse-map');
+    if (!(root instanceof HTMLElement)) return;
+    root.dataset.mapReady = map.isStyleLoaded() ? 'true' : 'false';
+    root.dataset.mapZoom = map.getZoom().toFixed(2);
+  }, []);
+
   const refreshMapAfterLoad = () => {
     const map = mapRef.current?.getMap();
     if (!map) return;
@@ -106,6 +117,7 @@ export function NiazMapLibreCore({
     try {
       map.resize();
       map.triggerRepaint();
+      syncMapReadyBeacon();
     } catch {
       /* unmounting */
     }
@@ -115,6 +127,7 @@ export function NiazMapLibreCore({
         try {
           map.resize();
           map.triggerRepaint();
+          syncMapReadyBeacon();
         } catch {
           /* unmounting */
         }
@@ -163,6 +176,7 @@ export function NiazMapLibreCore({
             attributionControl={false}
             transformRequest={transformRequest}
             onMoveEnd={() => {
+              syncMapReadyBeacon();
               if (mapRef.current && onMoveEnd) {
                 onMoveEnd(mapRef.current as unknown as MapboxMapRef);
               }

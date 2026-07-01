@@ -26,6 +26,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@crawler/*": [
+        "./crawler/*"
       ]
     }
   },
@@ -40,6 +43,7 @@
   "exclude": [
     "node_modules",
     ".next/dev",
+    "crawler/**",
     "**/fixtures/**",
     "mini-services",
     "nellavio",

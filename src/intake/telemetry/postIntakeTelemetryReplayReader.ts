@@ -1,5 +1,5 @@
-import { readFile } from 'node:fs/promises';
-import { basename, isAbsolute, join } from 'node:path';
+import { readFile, readdir } from 'node:fs/promises';
+import { join } from 'node:path';
 import type { PostIntakeEvent } from '@/intake/telemetry/postIntakeEvents';
 import { getRecentPostIntakeEvents } from '@/intake/telemetry/postIntakeTelemetryStore';
 
@@ -80,21 +80,15 @@ function dedupeAndSort(events: PostIntakeEvent[]): PostIntakeEvent[] {
   return unique;
 }
 
-function resolveTelemetryDir(override?: string): string {
-  const custom = override?.trim() || process.env.POST_INTAKE_TELEMETRY_DIR?.trim();
-  if (custom) {
-    if (isAbsolute(custom)) return custom;
-    return join(process.cwd(), 'data', basename(custom));
-  }
-  return join(process.cwd(), 'data', 'telemetry', 'post-intake');
-}
-
 export async function loadPostIntakeEventsForAnalysis(
   opts: LoadPostIntakeEventsOptions = {}
 ): Promise<PostIntakeEvent[]> {
   const sinceDays = opts.sinceDays ?? DEFAULT_SINCE_DAYS;
   const maxEvents = opts.maxEvents ?? DEFAULT_MAX_EVENTS;
-  const telemetryDir = resolveTelemetryDir(opts.telemetryDir);
+  const telemetryDir =
+    opts.telemetryDir?.trim() ||
+    process.env.POST_INTAKE_TELEMETRY_DIR?.trim() ||
+    join(process.cwd(), 'data', 'telemetry', 'post-intake');
 
   const memory = getRecentPostIntakeEvents({
     templateId: opts.templateId,
@@ -106,8 +100,19 @@ export async function loadPostIntakeEventsForAnalysis(
   const fileNames = dateStringsForRange(sinceDays);
 
   for (const name of fileNames) {
-    const filePath = join(telemetryDir, name);
-    fileEvents.push(...(await readJsonlFile(filePath)));
+    const path = join(telemetryDir, name);
+    fileEvents.push(...(await readJsonlFile(path)));
+  }
+
+  // Also pick up any extra files in dir (best-effort)
+  try {
+    const entries = await readdir(telemetryDir);
+    for (const entry of entries) {
+      if (!entry.endsWith('.jsonl') || fileNames.includes(entry)) continue;
+      fileEvents.push(...(await readJsonlFile(join(telemetryDir, entry))));
+    }
+  } catch {
+    /* dir may not exist */
   }
 
   const merged = dedupeAndSort(

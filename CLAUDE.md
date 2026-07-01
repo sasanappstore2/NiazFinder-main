@@ -50,6 +50,8 @@ Copy `.env.example` → `.env.local`. Intake defaults to **rules-only**
   matchers, scoring, validation, wizard, schema-evolution, training, telemetry)
 - `src/lib/` — ~46 domain modules: `need-intake`, `smart-matching`, `business`, `chat`,
   `search`, `geo`, `map`, `wallet`, `rbac`, `analytics`, `auth`, …
+- `src/lib/filing/` — **filings** (فایلینگ): `schema/`, `content/`, `presentation/`, `browse/`,
+  `adapters/`, `ingest/`; public browse `/f`; fixtures at `fixtures/filing-portals/`; see `docs/filing/ARCHITECTURE.md`
 - `src/components/`, `src/hooks/`, `src/stores/`
 - `prisma/schema.prisma` — 63 models / 25 enums
 - `src/middleware.ts` — canonical / legacy URL handling

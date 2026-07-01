@@ -1,0 +1,8 @@
+{
+  "startedAt": "2026-07-01T10:40:04.343Z",
+  "updatedAt": "2026-07-01T10:52:02.149Z",
+  "days": 100,
+  "phase": "detail-enrich",
+  "status": "error",
+  "error": "src/lib/filing/ingest/fixtures/run-maskanyaban-detail-backfill.ts failed (exit 143)"
+}

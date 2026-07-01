@@ -1,0 +1,10 @@
+{
+  "startedAt": "2026-07-01T11:49:24.826Z",
+  "updatedAt": "2026-07-01T11:50:55.682Z",
+  "totalEnriched": 0,
+  "totalSkipped": 99820,
+  "batches": 500,
+  "remaining": 3455,
+  "status": "complete",
+  "lastErrors": []
+}

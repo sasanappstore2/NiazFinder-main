@@ -43,15 +43,20 @@ export async function proxyToNest(
   if (!base) return null;
 
   const auth = request.headers.get('authorization');
-  const res = await fetch(`${base}${path}`, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(auth ? { Authorization: auth } : {}),
-      ...(init?.headers ?? {}),
-    },
-  });
+  try {
+    const res = await fetch(`${base}${path}`, {
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(auth ? { Authorization: auth } : {}),
+        ...(init?.headers ?? {}),
+      },
+    });
 
-  const body = await res.json().catch(() => ({}));
-  return NextResponse.json(body, { status: res.status });
+    const body = await res.json().catch(() => ({}));
+    return NextResponse.json(body, { status: res.status });
+  } catch (err) {
+    console.warn('[proxyToNest] legacy Nest unavailable, using local handler:', path, err);
+    return null;
+  }
 }

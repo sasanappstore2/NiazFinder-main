@@ -249,6 +249,8 @@ function crumbsForPath(
 
   if (pathname === '/post')          return [home, { label: 'ثبت نیاز', href: routeBuilder.needNew() }];
   if (pathname === '/dashboard')     return [home, { label: 'داشبورد', href: routeBuilder.dashboard() }];
+  if (pathname === '/workspace')     return [home, { label: 'میزکار', href: routeBuilder.workspace() }];
+  if (pathname === '/profile')       return [home, { label: 'پروفایل', href: routeBuilder.account() }];
   if (pathname === '/chat' || pathname.startsWith('/chat/'))
                                      return [home, { label: 'پیام‌ها', href: routeBuilder.chat() }];
   if (pathname === '/notifications') return [home, { label: 'اعلان‌ها', href: routeBuilder.notifications() }];

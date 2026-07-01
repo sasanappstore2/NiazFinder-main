@@ -154,7 +154,7 @@ export function MyBusinessEditPage({
           {errorMessage || 'این حساب اجازهٔ مدیریت پروفایل کسب‌وکار را ندارد.'}
         </p>
         <Button variant="outline" asChild>
-          <Link href={routeBuilder.dashboard()}>بازگشت به داشبورد</Link>
+          <Link href={routeBuilder.account()}>بازگشت به پروفایل</Link>
         </Button>
       </div>
     );

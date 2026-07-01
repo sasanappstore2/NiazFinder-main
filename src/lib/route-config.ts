@@ -15,7 +15,7 @@ import { routeBuilder } from '@/config/routes';
 export const ROUTE_GROUPS = {
   auth: ['login', 'register'],
   marketplace: ['need', 'business', 'post-need'],
-  dashboard: ['dashboard', 'profile', 'pricing', 'referral', 'notification-settings', 'bookmarks'],
+  dashboard: ['dashboard', 'workspace', 'profile', 'pricing', 'referral', 'notification-settings', 'bookmarks'],
   chat: ['messages'],
   admin: ['admin'],
 } as const;
@@ -23,6 +23,7 @@ export const ROUTE_GROUPS = {
 export const ROUTE_PERMISSIONS: Record<string, string[]> = {
   admin: ['ADMIN', 'SUPER_ADMIN'],
   dashboard: ['CLIENT', 'SPECIALIST', 'ADMIN', 'SUPER_ADMIN'],
+  workspace: ['CLIENT', 'SPECIALIST', 'ADMIN', 'SUPER_ADMIN'],
   'submit-proposal': ['SPECIALIST'],
   'post-need': ['CLIENT', 'ADMIN', 'SUPER_ADMIN'],
   profile: ['CLIENT', 'SPECIALIST', 'ADMIN', 'SUPER_ADMIN'],

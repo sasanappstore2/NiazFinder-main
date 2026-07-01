@@ -1,0 +1,8 @@
+{
+  "startedAt": "2026-06-30T14:21:39.790Z",
+  "updatedAt": "2026-06-30T14:27:56.721Z",
+  "days": 100,
+  "phase": "matrix",
+  "status": "error",
+  "error": "src/lib/filing/ingest/fixtures/run-maskanyaban-matrix-harvest.ts failed (exit 1)"
+}

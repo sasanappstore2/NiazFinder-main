@@ -11,17 +11,17 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "Googlebot",
         allow: "/",
-        disallow: ["/api/", "/admin", "/dashboard", "/messages", "/notifications"],
+        disallow: ["/api/", "/admin", "/dashboard", "/workspace", "/messages", "/notifications"],
       },
       {
         userAgent: "Bingbot",
         allow: "/",
-        disallow: ["/api/", "/admin", "/dashboard", "/messages", "/notifications"],
+        disallow: ["/api/", "/admin", "/dashboard", "/workspace", "/messages", "/notifications"],
       },
       {
         userAgent: "YandexBot",
         allow: "/",
-        disallow: ["/api/", "/admin", "/dashboard", "/messages", "/notifications"],
+        disallow: ["/api/", "/admin", "/dashboard", "/workspace", "/messages", "/notifications"],
       },
       {
         userAgent: "Twitterbot",

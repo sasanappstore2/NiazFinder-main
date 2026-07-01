@@ -4,7 +4,8 @@ import provinceLabels from '@/data/geo/iran-provinces.json';
 import {
   getCityMapConfigBySlug,
   resolveCityMapPinBboxDelta,
-  resolveCityMapPinCenter,
+  resolveCityScopeRingCenter,
+  resolveCityScopeRingRadiusM,
 } from '@/lib/map/city-map-config';
 import { cityFromSlug, locationCityIdToSlug } from '@/lib/search/city-slugs';
 
@@ -18,37 +19,64 @@ type CentroidRow = {
 
 const CITY_CENTROIDS = (cityCentroids.cities ?? []) as CentroidRow[];
 
+const CIRCLE_STEPS = 64;
+
 function citySlugForCentroid(row: CentroidRow): string {
   return locationCityIdToSlug(row.cityId);
 }
 
-function bboxPolygon(
-  west: number,
-  south: number,
-  east: number,
-  north: number
-): Polygon {
+/** Label + scope ring share the same anchor (OSM-aligned when configured). */
+function resolveCityDisplayCenter(row: CentroidRow): { lat: number; lng: number } {
+  const slug = citySlugForCentroid(row);
+  const scopeCenter = resolveCityScopeRingCenter(slug);
+  const cfg = getCityMapConfigBySlug(slug);
   return {
-    type: 'Polygon',
-    coordinates: [
-      [
-        [west, south],
-        [east, south],
-        [east, north],
-        [west, north],
-        [west, south],
-      ],
-    ],
+    lat: scopeCenter?.lat ?? cfg?.lat ?? row.lat,
+    lng: scopeCenter?.lng ?? cfg?.lng ?? row.lng,
   };
 }
 
-function cityBBoxFeature(row: CentroidRow, selected: boolean): Feature<Polygon> {
+function metersToDegreeLat(meters: number): number {
+  return meters / 111_320;
+}
+
+function metersToDegreeLng(meters: number, lat: number): number {
+  const cos = Math.cos((lat * Math.PI) / 180);
+  return meters / (111_320 * Math.max(cos, 0.15));
+}
+
+function circlePolygon(
+  lng: number,
+  lat: number,
+  radiusLat: number,
+  radiusLng: number
+): Polygon {
+  const ring: [number, number][] = [];
+  for (let i = 0; i <= CIRCLE_STEPS; i++) {
+    const angle = (i / CIRCLE_STEPS) * Math.PI * 2;
+    ring.push([lng + Math.cos(angle) * radiusLng, lat + Math.sin(angle) * radiusLat]);
+  }
+  return { type: 'Polygon', coordinates: [ring] };
+}
+
+function cityScopeFeature(row: CentroidRow, selected: boolean): Feature<Polygon> {
   const slug = citySlugForCentroid(row);
-  const pin = resolveCityMapPinCenter(slug);
+  const { lat: centerLat, lng: centerLng } = resolveCityDisplayCenter(row);
   const cfg = getCityMapConfigBySlug(slug);
-  const centerLat = pin?.lat ?? cfg?.lat ?? row.lat;
-  const centerLng = pin?.lng ?? cfg?.lng ?? row.lng;
-  const delta = resolveCityMapPinBboxDelta(slug);
+
+  let radiusLat: number;
+  let radiusLng: number;
+  const scopeRadiusM = resolveCityScopeRingRadiusM(slug);
+  if (scopeRadiusM && scopeRadiusM > 0) {
+    radiusLat = metersToDegreeLat(scopeRadiusM);
+    radiusLng = metersToDegreeLng(scopeRadiusM, centerLat);
+  } else {
+    const delta = resolveCityMapPinBboxDelta(slug);
+    const r = Math.min(delta.lat, delta.lng);
+    radiusLat = r;
+    radiusLng = r;
+  }
+
   return {
     type: 'Feature',
     properties: {
@@ -57,12 +85,7 @@ function cityBBoxFeature(row: CentroidRow, selected: boolean): Feature<Polygon> 
       provinceId: row.provinceId,
       selected,
     },
-    geometry: bboxPolygon(
-      centerLng - delta.lng,
-      centerLat - delta.lat,
-      centerLng + delta.lng,
-      centerLat + delta.lat
-    ),
+    geometry: circlePolygon(centerLng, centerLat, radiusLat, radiusLng),
   };
 }
 
@@ -91,7 +114,7 @@ export function buildCityBoundariesFeatureCollection(opts: {
       selectedSlugSet.size > 0
         ? selectedSlugSet.has(slug)
         : opts.provinceIds.length > 0;
-    return cityBBoxFeature(row, selected);
+    return cityScopeFeature(row, selected);
   });
 
   return { type: 'FeatureCollection', features };
@@ -121,6 +144,7 @@ export function buildCityLabelsFeatureCollection(opts: {
     const slug = citySlugForCentroid(row);
     if (seen.has(slug)) continue;
     seen.add(slug);
+    const center = resolveCityDisplayCenter(row);
     features.push({
       type: 'Feature',
       properties: {
@@ -130,7 +154,7 @@ export function buildCityLabelsFeatureCollection(opts: {
       },
       geometry: {
         type: 'Point',
-        coordinates: [row.lng, row.lat],
+        coordinates: [center.lng, center.lat],
       },
     });
   }

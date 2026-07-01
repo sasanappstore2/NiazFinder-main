@@ -12,7 +12,7 @@ export default function PostEditPage() {
 
   useEffect(() => {
     toast.info('ویرایش آگهی از این مسیر موقتاً غیرفعال است');
-    router.replace('/dashboard?tab=requests');
+    router.replace('/profile?tab=requests');
   }, [router]);
 
   return (

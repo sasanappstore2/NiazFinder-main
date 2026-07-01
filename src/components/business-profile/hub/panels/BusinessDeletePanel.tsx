@@ -63,7 +63,7 @@ export function BusinessDeletePanel() {
 
       toast.success(data.message ?? 'کسب‌وکار حذف شد');
       setOpen(false);
-      router.replace(routeBuilder.dashboard());
+      router.replace(routeBuilder.account());
     } catch {
       toast.error('خطا در ارتباط با سرور');
     } finally {

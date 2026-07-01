@@ -23,6 +23,7 @@ export const RESERVED_BUSINESS_PROFILE_SLUGS = new Set([
   'social-feed',
   'my-business',
   'dashboard',
+  'workspace',
   'settings',
   'iran',
   'business',

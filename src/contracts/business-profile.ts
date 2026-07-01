@@ -160,6 +160,26 @@ export interface PropertyListing {
   description?: string;
   /** Lifecycle status — drives Active vs Sold widgets. Defaults to `active`. */
   status?: 'active' | 'sold' | 'rented';
+  /** ISO timestamp — regional imports / admin filings. */
+  createdAt?: string;
+  /** Portal file code (e.g. maskanyaban کد فایل). */
+  fileCode?: string;
+  /** Building age in years — regional filings. */
+  buildingAge?: number;
+  /** Compass / land orientation — regional filings. */
+  orientation?: string;
+  /** Facade material — villa / apartment filings. */
+  facade?: string;
+  /** Land use label — زمین filings (also in sourceMeta). */
+  landUse?: string;
+  /** Shop frontage in meters. */
+  frontage?: string;
+  /** Commercial use type — مغازه / تجاری. */
+  commercialUse?: string;
+  /** Original post date on source portal. */
+  postedAt?: string;
+  /** Source portal key (e.g. maskanyaban). */
+  sourceSite?: string;
   /** Sale vs rent — drives the Rental Properties widget. */
   dealType?:
     | 'sell'
@@ -168,6 +188,16 @@ export interface PropertyListing {
     | 'rent_short_term'
     | 'sale'
     | 'rent';
+  /** Regional filing amenity flags for browse filters. */
+  amenities?: {
+    parking?: boolean;
+    storage?: boolean;
+    elevator?: boolean;
+    securityDoor?: boolean;
+    exchangeable?: boolean;
+    terrace?: boolean;
+    builtInWardrobe?: boolean;
+  };
 }
 
 export interface RestaurantExtension {

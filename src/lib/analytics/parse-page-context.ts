@@ -90,8 +90,16 @@ export function parsePageContext(pathname: string): PageDimensions {
     dims.pageKind = 'post';
     return dims;
   }
+  if (path.startsWith('/workspace')) {
+    dims.pageKind = 'workspace';
+    return dims;
+  }
   if (path.startsWith('/dashboard')) {
     dims.pageKind = 'dashboard';
+    return dims;
+  }
+  if (path === '/profile') {
+    dims.pageKind = 'profile';
     return dims;
   }
   if (path === '/') {

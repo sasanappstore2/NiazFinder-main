@@ -1,0 +1,61 @@
+{
+  "siteKey": "iran-batch",
+  "listingsUrl": "https://iran-batch.test/list",
+  "blueprint": {
+    "version": 2,
+    "listPage": {
+      "containerSelector": "div.listing-grid > div.listing-item.property-card",
+      "itemLinkSelector": "a.detail-link, a[href]",
+      "dedupField": "fileCode"
+    },
+    "fieldMap": {
+      "fileCode": {
+        "scope": "item",
+        "attr": "textContent",
+        "selector": "div.card-body > div.field-row:nth-child(1) > span.value"
+      },
+      "area": {
+        "scope": "item",
+        "attr": "textContent",
+        "selector": "div.card-body > div.field-row:nth-child(2) > span.value"
+      },
+      "neighborhood": {
+        "scope": "item",
+        "attr": "textContent",
+        "selector": "div.card-body > div.field-row:nth-child(3) > span.value"
+      },
+      "deposit": {
+        "scope": "item",
+        "attr": "textContent",
+        "selector": "div.card-body > div.field-row:nth-child(4) > span.value"
+      },
+      "monthlyRent": {
+        "scope": "item",
+        "attr": "textContent",
+        "selector": "div.card-body > div.field-row:nth-child(5) > span.value"
+      },
+      "floor": {
+        "scope": "item",
+        "attr": "textContent",
+        "selector": "div.card-body > div.field-row:nth-child(6) > span.value"
+      },
+      "dealType": {
+        "scope": "item",
+        "attr": "textContent",
+        "selector": "div.card-header > span.deal-badge"
+      },
+      "propertyKind": {
+        "scope": "item",
+        "attr": "textContent",
+        "selector": "div.card-header > span.kind-badge"
+      }
+    },
+    "neighborhoodParse": {
+      "splitOn": "-",
+      "cityIndex": 0,
+      "neighborhoodIndex": 1
+    },
+    "titleTemplate": "{dealType} {propertyKind} {area} متری"
+  },
+  "onboardedAt": "2026-06-26T22:34:40.829Z"
+}

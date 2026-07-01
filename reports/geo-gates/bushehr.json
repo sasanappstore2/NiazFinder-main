@@ -1,7 +1,7 @@
 {
   "provinceId": "bushehr",
   "provinceName": "بوشهر",
-  "generatedAt": "2026-06-12T21:20:04.488Z",
+  "generatedAt": "2026-06-25T07:37:50.633Z",
   "cities": [
     {
       "cityId": "bushehr-city",
@@ -59,85 +59,587 @@
       "cityName": "عسلویه",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 17,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 17,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 17
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "اخند",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "بزباز",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "بساتین",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "بیدخون",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "خیارو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "دهنو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "زبار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "صدف",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "صفیه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "عسکری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "عسلویه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "لاور-ده",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "مجتمع-مسکونی-عرفان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "مجتمع-مسکونی-متین",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "نخل-تقی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "asaluyeh",
+          "neighborhoodId": "هاله",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "kangan",
       "cityName": "نگان",
       "provinceId": "bushehr",
       "tier": "C",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 10,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 10,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 10
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "kangan",
+          "neighborhoodId": "پی-گل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kangan",
+          "neighborhoodId": "چاه-سالار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kangan",
+          "neighborhoodId": "چاه-کان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kangan",
+          "neighborhoodId": "حبیب-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kangan",
+          "neighborhoodId": "رحمان-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kangan",
+          "neighborhoodId": "شریف-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kangan",
+          "neighborhoodId": "شیرآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kangan",
+          "neighborhoodId": "میرزاآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kangan",
+          "neighborhoodId": "یوسف-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "dayer",
       "cityName": "دیر",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 10,
       "shares": {
         "divar": 1,
-        "osm": 0,
+        "osm": 9,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 10
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "dayer",
+          "neighborhoodId": "اشکوری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dayer",
+          "neighborhoodId": "دمی-گز",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dayer",
+          "neighborhoodId": "دوپلنگو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dayer",
+          "neighborhoodId": "زیدون",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dayer",
+          "neighborhoodId": "شیبرم",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dayer",
+          "neighborhoodId": "کالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dayer",
+          "neighborhoodId": "گزخون",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dayer",
+          "neighborhoodId": "مله-سوخته",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dayer",
+          "neighborhoodId": "نرکوه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "deylam",
       "cityName": "دیلم",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 2,
+      "neighborhoodCount": 20,
       "shares": {
-        "divar": 2,
-        "osm": 0,
+        "divar": 0,
+        "osm": 20,
         "synthetic": 0,
         "manual": 0,
-        "total": 2
+        "total": 20
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "بابا-حسنی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "بندر-حماد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "بندر-دیلم",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "بنه-احمد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "بنه-اسماعیل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "بنه-خاطر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "بویرات",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "بیدو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "تنوب",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "خواجه-گیر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "روستای-سیامکان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "شاه-عبدالله",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "شیخ-زنگی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "عامری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "کنارکوه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "گزلوری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "لیلتین",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "deylam",
+          "neighborhoodId": "مال-شهاب",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "khormoj",
       "cityName": "خورموج",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 20,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 20,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 20
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "بادام-زار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "برکت",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "بنیان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "بوحیری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "چارک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "چاوشی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "چهله",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "درازی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "روستای-یخ",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "عالی-حسینی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "عربی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "کلل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "گشی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "لنگک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "محمدآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "مل-گاودان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "مل-گل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "میان-خره-بالا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "khormoj",
+          "neighborhoodId": "وراوی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "ganaveh",
@@ -161,153 +663,1359 @@
       "cityName": "بندر طاهری",
       "provinceId": "bushehr",
       "tier": "C",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 15,
       "shares": {
         "divar": 1,
-        "osm": 0,
+        "osm": 14,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 15
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "اسلام-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "بیدخوار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "پرک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "پلنگی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "چاهه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "سیراف",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "شهرک-پردیس-جم",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "شیرینو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "کمال-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "مهرآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "ناحیه-۲",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "ناحیه-۹",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "ناحیه-یک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandartaheri",
+          "neighborhoodId": "ولیعصر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "abpakhsh",
       "cityName": "آبپخش",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 39,
       "shares": {
         "divar": 1,
-        "osm": 0,
+        "osm": 38,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 39
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "آب-پخش",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "آل-یوسفی-علیا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "احشام-حسن",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "بارگاهی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "برمک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "بشیرآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "بنار-آب-شیرین",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "بنار-آزادگان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "بنار-سلیمانی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "بویری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "تل-سبز",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "تل-سرکوه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "جتوط",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "چم-درواهی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "چهاربرج",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "حیدری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "خوش-مکان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "خوشاب",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "درودگاه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "دشتی-اسماعیل-خانی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "ده-نو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "دهقاید",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "روستای-درودگاه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "روستای-دهقاید",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "زیارت",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "زیرراه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "سعدآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "صفی-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "قلایی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "کلل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "گزبلند",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "محمدشاهی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "میان-دشت-جنوبی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "میان-دشت-شمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "میدان-خلیج-فارس",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "نظرآقا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "هفت-جوش",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abpakhsh",
+          "neighborhoodId": "هلپهای",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "abdan",
       "cityName": "آبدان",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 19,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 19,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 19
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "احشام-نو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "احمدآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "باغان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "بحردن",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "تل-سنگ",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "جاشک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "سرچشمه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "سرمستان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "سورو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "سهول",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "کنارترشان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "گشی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "گله-زنی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "گنوی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "لوهک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "ملاسالمی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "مله-گاه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "abdan",
+          "neighborhoodId": "نوکن",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "oram",
       "cityName": "ارم",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 11,
       "shares": {
         "divar": 1,
-        "osm": 0,
+        "osm": 10,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 11
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "oram",
+          "neighborhoodId": "آبگرمو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "oram",
+          "neighborhoodId": "بزپر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "oram",
+          "neighborhoodId": "پرجونک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "oram",
+          "neighborhoodId": "تنگ-ارم",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "oram",
+          "neighborhoodId": "تنگ-فاریاب",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "oram",
+          "neighborhoodId": "دهرود-علیا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "oram",
+          "neighborhoodId": "رودفاریاب",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "oram",
+          "neighborhoodId": "سوک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "oram",
+          "neighborhoodId": "کم-زرد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "oram",
+          "neighborhoodId": "مرده-خیر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "emam-hasan",
       "cityName": "امام حسن",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 12,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 12,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 12
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "emam-hasan",
+          "neighborhoodId": "اخند",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "emam-hasan",
+          "neighborhoodId": "بزباز",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "emam-hasan",
+          "neighborhoodId": "بساتین",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "emam-hasan",
+          "neighborhoodId": "بیدخون",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "emam-hasan",
+          "neighborhoodId": "دهنو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "emam-hasan",
+          "neighborhoodId": "صفیه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "emam-hasan",
+          "neighborhoodId": "عسلویه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "emam-hasan",
+          "neighborhoodId": "مجتمع-مسکونی-عرفان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "emam-hasan",
+          "neighborhoodId": "مجتمع-مسکونی-متین",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "emam-hasan",
+          "neighborhoodId": "نخل-تقی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "emam-hasan",
+          "neighborhoodId": "هاله",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "aheram",
       "cityName": "اهرم",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 34,
       "shares": {
         "divar": 1,
-        "osm": 0,
+        "osm": 33,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 34
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "احشام-محمدحیدر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "احمدآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "اشکالی-محمدحاجی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "انبارک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "اَهرَم",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "بازوئی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "باغ-خلیفه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "باغچه-جنوبی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "باغچه-شمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "بنه-گز",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "جمالی-زایرحسین",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "جوی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "چاه-پیر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "حیدری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "خیاری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "دمروباه-دان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "ده-کهنه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "دهنو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "شمشیری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "شورکی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "عالی-حسینی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "عالی-شمس-الدین",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "قباکلکی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "کاکلی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "کلل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "کنارنرو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "کناری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "گادوئی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "گلکی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "محمد-طاهری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "مل-باریک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "aheram",
+          "neighborhoodId": "منصوری-جنوبی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "bardkhun",
       "cityName": "بردخون",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 17,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 17,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 17
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "ابکش",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "اسماعیل-محمودی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "بردخون-کهنه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "زیارت",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "زیدون",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "سجادیه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "شهنیا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "شیبرم",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "کردوان-سفلی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "کردوان-علیا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "کناری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "گزخون",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "مخدان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "مله-سوخته",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "میته",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bardkhun",
+          "neighborhoodId": "وحدت-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "bandar-kangan",
       "cityName": "بندر کنگان",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 26,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 26,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 26
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "آبگرمک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "احشام-احمد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "اولی-جنوبی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "اولی-شمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "بردستان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "برکه-چوپان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "بنای-راشد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "بندر-دیر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "بنک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "تل-رئیسی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "تنبک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "جمال-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "دوراهک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "شهر-خاص",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "شهرخاص",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "علی-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "کوری-حیاتی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "کوهچهر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "گندمزار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "گوده",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "لمبدان-بالایی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "لمبدان-پایینی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "لمبدان-حاجی-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "میانلو-شمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bandar-kangan",
+          "neighborhoodId": "نخل-غانم",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "bushkan",
       "cityName": "بوشکان",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 7,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 7,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 7
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "bushkan",
+          "neighborhoodId": "امامزاده-بده",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bushkan",
+          "neighborhoodId": "تنگ-رود",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bushkan",
+          "neighborhoodId": "درنگ",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bushkan",
+          "neighborhoodId": "شاه-پسرمرد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bushkan",
+          "neighborhoodId": "شلدان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "bushkan",
+          "neighborhoodId": "طلحه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "jam",
@@ -331,34 +2039,610 @@
       "cityName": "چاه مبارک",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 29,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 29,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 29
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "اخند",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "اکبری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "برکه-دکان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "بزباز",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "بساتین",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "بستانو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "بندر-تبن",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "بندو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "بنود",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "بیدخون",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "تنبوجنوبی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "تنبوشمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "چاه-مبارک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "خره",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "خیارو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "دهنو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "زبار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "سواحل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "سورباش",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "سهمو-جنوبی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "سهمو-شمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "صدف",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "صفیه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "عسکری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "فارسی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "کنارخیمه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "کوشکنار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chah-mobarak",
+          "neighborhoodId": "هاله",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "chaghadak",
       "cityName": "چغادک",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 55,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 55,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 55
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "ابطویل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "احشام-سرتل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "احشام-محمدحیدر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "احمدآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "احمدی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "باغ-خلیفه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "بنه-گز",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "پودر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "پهلوان-کشی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "تل-اشکی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "تل-سیاه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "تنگک-اول",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "تنگک-دوم",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "جوی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "چاه-پیر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "چاه-تلخ-جنوبی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "چاه-تلخ-شمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "چاه-عربی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "چاهکوتاه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "حسینکی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "خیش-اشکن",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "دویره",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "ده-کهنه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "دهنو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "رستمی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "زایرابراهیمی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "سرمل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "سه-راه-زایر-ابراهیمی-سه-راه-عالی-چنگی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "شمشیری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "عالی-چنگی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "عالی-شمس-الدین",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "عالیشهر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "فاز-چهار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "فاز-دو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "فاز-سه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "فاز-یک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "قباکلکی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "کاکلی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "گرگور",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "گورک-جمال",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "گورک-خورشیدی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "گورک-دژگاه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "گورک-سادات",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "گورک-سلیمانی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "گورک-کله-بندی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "گورک-محمد-رحیمی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "گورک-محمدرحیمی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "گورک-مزارحسینی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "لیلک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "مزارحسینی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "مسکنمهر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "مل-باریک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "میدان-آزادی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "chaghadak",
+          "neighborhoodId": "نیایش",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "khark",
@@ -367,8 +2651,8 @@
       "tier": "B",
       "neighborhoodCount": 1,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 1,
         "synthetic": 0,
         "manual": 0,
         "total": 1
@@ -382,68 +2666,639 @@
       "cityName": "خارکو",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 2,
       "shares": {
         "divar": 1,
-        "osm": 0,
+        "osm": 1,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 2
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "kharku",
+          "neighborhoodId": "خارک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "dalvar",
       "cityName": "دلوار",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 36,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 36,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 36
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "احشام-سرتل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "انبارک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "باشی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "باغچه-جنوبی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "باغچه-شمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "بربو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "بندرگاه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "بوجیکدون",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "پهلوان-کشی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "جائنک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "چاه-تلخ-جنوبی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "چاه-تلخ-شمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "چهله",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "حاجی-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "خیاری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "دلآرام",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "دهنو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "رستمی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "شورکی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "عالی-حسینی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "علی-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "فاز-دو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "فاز-سه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "قباکلکی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "کلل",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "کنارنرو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "گرگور",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "گلکی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "گورک-جمال",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "گورک-سلیمانی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "گورک-مزارحسینی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "لیلک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "محمد-طاهری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "محمدعامری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "dalvar",
+          "neighborhoodId": "مل-گپ",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "riz",
       "cityName": "ریز",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 20,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 20,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 20
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "اسلام-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "انارستان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "پشتو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "تشان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "تنگ-خوش",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "جمال-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "حرمیک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "حسین-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "دره-بان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "دوراهک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "دهنو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "شهر-خاص",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "شهرخاص",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "علی-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "قلعه-کهنه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "کوهچهر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "گلستان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "گندمزار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "riz",
+          "neighborhoodId": "گنوی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "rig",
       "cityName": "ریگ",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 3,
+      "neighborhoodCount": 29,
       "shares": {
-        "divar": 3,
-        "osm": 0,
+        "divar": 0,
+        "osm": 29,
         "synthetic": 0,
         "manual": 0,
-        "total": 3
+        "total": 29
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "بتون",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "بندر-ریگ",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "بندر-گناوه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "بیدو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "پوزگاه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "جزیره-جنوبی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "جزیره-شمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "چهار-برج",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "چهار-راه-فضیلت",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "چهار-روستایی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "رودشور",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "روستای-عرش",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "سربست",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "سمیعا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "عباسی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "کدایی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "کوهک-کوچک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "کوی-مطهری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "گاوسفید-بزرگ",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "گاوسفید-کوچک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "گشویی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "گنجشکی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "مال-خلیفه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "محله-امید",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "محمد-صالحی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "rig",
+          "neighborhoodId": "میلک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "saadabad",
@@ -467,17 +3322,109 @@
       "cityName": "سیراف",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 14,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 14,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 14
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "اسلام-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "بیدخوار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "پرک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "پلنگی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "چاهه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "شهرک-پردیس-جم",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "شیرینو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "کمال-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "مهرآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "ناحیه-۲",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "ناحیه-۹",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "ناحیه-یک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "siraf",
+          "neighborhoodId": "ولیعصر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "shabankareh",
@@ -501,54 +3448,631 @@
       "cityName": "شنبه و طسوج",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 16,
       "shares": {
         "divar": 1,
-        "osm": 0,
+        "osm": 15,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 16
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "اژدر-خوش",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "اسلام-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "چاه-گاه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "حنا-شور",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "درگو-جنوبی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "درگو-شمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "درویشی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "دهوک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "رزم-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "سرمک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "سنا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "شنبه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "کردلان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "کنار-بندک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "shanbeh-va-tasuj",
+          "neighborhoodId": "ممریز",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "kaki",
       "cityName": "کاکی",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 23,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 23,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 23
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "امام-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "بادوله",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "باغ-شلی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "باغ-شور",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "بامنیر",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "بنیاد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "تلخو",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "حسین-زایری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "درگو-جنوبی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "درگو-شمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "دولت-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "رزم-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "ریگدان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "سنا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "شیخیان-سلنجی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "شیخیان-ماری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "کمال-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "کناری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "گنخک-رئیسی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "گنخک-شیخی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "گنخک-کورا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "kaki",
+          "neighborhoodId": "ناصری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "vahdatiyeh",
       "cityName": "وحدتیه",
       "provinceId": "bushehr",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 46,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 46,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 46
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "آل-یوسفی-علیا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "اسلام-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "امامزاده-علی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "ایجانی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "بارگاهی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "برمک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "بشیرآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "بنه-جابری",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "بنه-عباس",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "بنه-محمود",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "بورکی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "بورکی-سفلی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "بورکی-علیا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "پلنگی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "تل-سرکوه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "جتوط",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "جره-علیا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "جره-میان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "چهاربرج",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "چیتی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "خشت",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "خواجه-جمالی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "خیرآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "دالکی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "راهدار",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "روستای-سبا-کان-سرخ",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "زیرراه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "سربست",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "سرقنات",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "سعدآباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "سیامنصور-سفلی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "سیامنصور-علیا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "شول-دشتستان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "شهبازخانی",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "قراول-خانه",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "قلعه-سفید",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "کنارتخته",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "گلدشت",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "مافی-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "محل-الدین",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "میلک",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "نظام-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "نظرآقا",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "نعمت-آباد",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        },
+        {
+          "level": "error",
+          "cityId": "vahdatiyeh",
+          "neighborhoodId": "هلپهای",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     }
   ],
-  "errors": 0,
+  "errors": 500,
   "warnings": 0,
-  "pass": true
+  "pass": false
 }

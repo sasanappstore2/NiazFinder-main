@@ -12,6 +12,13 @@ export function getListings(business: Business): PropertyListing[] {
   return business.extensions?.realEstate?.listings ?? [];
 }
 
+export function findListingById(
+  business: Business,
+  listingId: string
+): PropertyListing | undefined {
+  return getListings(business).find((listing) => listing.id === listingId);
+}
+
 /** Active = not sold and not rented (treats missing status as active). */
 export function activeListings(listings: PropertyListing[]): PropertyListing[] {
   return listings.filter((l) => l.status !== 'sold' && l.status !== 'rented');

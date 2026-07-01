@@ -157,7 +157,7 @@ function HomeLeadLandingContent() {
       setAuthModalOpen(true);
       return;
     }
-    router.push(routeBuilder.dashboard());
+    router.push(routeBuilder.account());
   }, [isAuthenticated, router, setAuthModalOpen]);
 
   const handleChipAction = useCallback(

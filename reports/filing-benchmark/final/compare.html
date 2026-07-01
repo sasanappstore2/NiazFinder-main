@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <title>Filing Redesign Compare</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 1.5rem; background: #f8fafc; color: #0f172a; }
+    h1, h2 { letter-spacing: -0.02em; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    figure { margin: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+    img { width: 100%; height: auto; display: block; }
+    figcaption { padding: 0.5rem 0.75rem; font-size: 0.75rem; color: #64748b; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; background: #fff; border-radius: 12px; overflow: hidden; }
+    th, td { border: 1px solid #e2e8f0; padding: 0.5rem 0.75rem; text-align: right; vertical-align: top; }
+    th { background: #f1f5f9; }
+    section { margin-bottom: 2.5rem; }
+  </style>
+</head>
+<body>
+  <h1>مقایسه ریدیزاین فایلینگ</h1>
+  <p>Generated: 2026-06-30T00:36:07.174Z</p>
+
+  <section>
+    <h2>الگوهای adopt‌شده</h2>
+    <table>
+      <thead><tr><th>الگو</th><th>منابع</th><th>قانون</th><th>پیاده‌سازی</th></tr></thead>
+      <tbody><tr><td>above-fold-hierarchy</td><td>zillow, bayut, rightmove, maskanyaban</td><td>Gallery → price (primary large) → location → key specs → CTA</td><td>FilingMaskanYabanCard, filing-scan-hero</td></tr>
+<tr><td>price-primary-secondary</td><td>bayut, redfin, rightmove</td><td>Primary price 1.0625rem+ bold green; secondary rent/deposit muted with pill hints</td><td>filing-scan-prices</td></tr>
+<tr><td>spec-icon-grid</td><td>zillow, zoopla, maskanyaban</td><td>2-col mobile, 3-col tablet, 4-col desktop; label:value pairs in muted cells</td><td>spec-grid-compact</td></tr>
+<tr><td>amenity-chips</td><td>zillow, idealista, maskanyaban</td><td>Frameless icon + label inline chips, no bordered boxes</td><td>total-features</td></tr>
+<tr><td>gallery-carousel</td><td>zillow, redfin, bayut</td><td>Hero carousel with thumbnail strip; swipe on mobile</td><td>filing-gallery-carousel</td></tr>
+<tr><td>broker-sticky-sidebar</td><td>rightmove, zoopla, maskanyaban</td><td>Compact sticky aside: avatar + phone CTA + 2-3 actions</td><td>filing-aside-card</td></tr>
+<tr><td>mobile-floating-cta</td><td>zillow, rightmove, bayut</td><td>Fixed bottom bar: phone primary (60%), share + browse secondary</td><td>filing-mobile-bar</td></tr>
+<tr><td>list-photo-left</td><td>rightmove, maskanyaban, divar</td><td>Thumbnail left, area badge center, content right; price at bottom</td><td>filing-list-card</td></tr>
+<tr><td>list-price-hero</td><td>bayut, zoopla, maskanyaban</td><td>Deal type + area sqm in colored badge; price rows below specs</td><td>filing-list-card__highlight</td></tr>
+<tr><td>sticky-filter-rail</td><td>zillow, rightmove, redfin</td><td>Sticky below header: search + category + sort; chip row for active filters</td><td>filing-browse-filter-rail</td></tr>
+<tr><td>filter-pill-chips</td><td>rightmove, zoopla, zillow</td><td>Horizontal scroll pills on mobile; wrap on desktop; clear-all link</td><td>filing-browse-chips</td></tr>
+<tr><td>category-segmented</td><td>zillow, redfin</td><td>Segmented pill toggles for deal type instead of plain selects</td><td>filing-category-segments</td></tr>
+<tr><td>filter-bottom-sheet</td><td>zillow mobile, divar, sheypoor</td><td>Advanced filters in bottom sheet with grouped ranges</td><td>FilingBrowseFilterSheet</td></tr>
+<tr><td>rtl-price-toman</td><td>maskanyaban, niazfinder</td><td>Persian digits, تومان suffix, RTL spec order</td><td>filing-scan-prices, filing-list-card</td></tr>
+<tr><td>scan-sheet-layout</td><td>maskanyaban, rightmove compact</td><td>Above-fold scan zone + scroll for description only</td><td>filing-scan-primary, filing-scan-secondary</td></tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>NiazFinder — local QA</h2>
+    <div class="grid"><figure><img src="../local-iter-1/local/browse-default__desktop.png" alt="browse-default__desktop.png" loading="lazy" /><figcaption>browse-default__desktop.png</figcaption></figure>
+<figure><img src="../local-iter-1/local/browse-default__mobile.png" alt="browse-default__mobile.png" loading="lazy" /><figcaption>browse-default__mobile.png</figcaption></figure>
+<figure><img src="../local-iter-1/local/browse-filtered__desktop.png" alt="browse-filtered__desktop.png" loading="lazy" /><figcaption>browse-filtered__desktop.png</figcaption></figure>
+<figure><img src="../local-iter-1/local/browse-filtered__mobile.png" alt="browse-filtered__mobile.png" loading="lazy" /><figcaption>browse-filtered__mobile.png</figcaption></figure>
+<figure><img src="../local-iter-1/local/browse-sheet-open__mobile.png" alt="browse-sheet-open__mobile.png" loading="lazy" /><figcaption>browse-sheet-open__mobile.png</figcaption></figure>
+<figure><img src="../local-iter-1/local/detail-mobile__mobile.png" alt="detail-mobile__mobile.png" loading="lazy" /><figcaption>detail-mobile__mobile.png</figcaption></figure>
+<figure><img src="../local-iter-1/local/detail-ref__desktop.png" alt="detail-ref__desktop.png" loading="lazy" /><figcaption>detail-ref__desktop.png</figcaption></figure>
+<figure><img src="../local-iter-1/local/detail-ref__mobile.png" alt="detail-ref__mobile.png" loading="lazy" /><figcaption>detail-ref__mobile.png</figcaption></figure>
+<figure><img src="../local-iter-1/local/detail-ref__tablet.png" alt="detail-ref__tablet.png" loading="lazy" /><figcaption>detail-ref__tablet.png</figcaption></figure></div>
+  </section>
+
+  <section>
+    <h2>Benchmark — external (نمونه)</h2>
+    <div class="grid"><figure><img src="../2026-06-30T002038/external/bama-real-estate-desktop.png" alt="bama-real-estate-desktop.png" loading="lazy" /><figcaption>bama-real-estate-desktop.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/bama-real-estate-mobile.png" alt="bama-real-estate-mobile.png" loading="lazy" /><figcaption>bama-real-estate-mobile.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/craigslist-housing-desktop.png" alt="craigslist-housing-desktop.png" loading="lazy" /><figcaption>craigslist-housing-desktop.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/divar-real-estate-desktop.png" alt="divar-real-estate-desktop.png" loading="lazy" /><figcaption>divar-real-estate-desktop.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/divar-real-estate-mobile.png" alt="divar-real-estate-mobile.png" loading="lazy" /><figcaption>divar-real-estate-mobile.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/dubizzle-property-mobile.png" alt="dubizzle-property-mobile.png" loading="lazy" /><figcaption>dubizzle-property-mobile.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/eghamat24-desktop.png" alt="eghamat24-desktop.png" loading="lazy" /><figcaption>eghamat24-desktop.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/eghamat24-mobile.png" alt="eghamat24-mobile.png" loading="lazy" /><figcaption>eghamat24-mobile.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/fotocasa-detail-mobile.png" alt="fotocasa-detail-mobile.png" loading="lazy" /><figcaption>fotocasa-detail-mobile.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/funda-detail-desktop.png" alt="funda-detail-desktop.png" loading="lazy" /><figcaption>funda-detail-desktop.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/funda-detail-mobile.png" alt="funda-detail-mobile.png" loading="lazy" /><figcaption>funda-detail-mobile.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/hemnet-detail-desktop.png" alt="hemnet-detail-desktop.png" loading="lazy" /><figcaption>hemnet-detail-desktop.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/hemnet-detail-mobile.png" alt="hemnet-detail-mobile.png" loading="lazy" /><figcaption>hemnet-detail-mobile.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/housing-detail-desktop.png" alt="housing-detail-desktop.png" loading="lazy" /><figcaption>housing-detail-desktop.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/housing-detail-mobile.png" alt="housing-detail-mobile.png" loading="lazy" /><figcaption>housing-detail-mobile.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/jajiga-desktop.png" alt="jajiga-desktop.png" loading="lazy" /><figcaption>jajiga-desktop.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/jajiga-mobile.png" alt="jajiga-mobile.png" loading="lazy" /><figcaption>jajiga-mobile.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/kilid-list-desktop.png" alt="kilid-list-desktop.png" loading="lazy" /><figcaption>kilid-list-desktop.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/kilid-list-mobile.png" alt="kilid-list-mobile.png" loading="lazy" /><figcaption>kilid-list-mobile.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/magicbricks-detail-desktop.png" alt="magicbricks-detail-desktop.png" loading="lazy" /><figcaption>magicbricks-detail-desktop.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/magicbricks-detail-mobile.png" alt="magicbricks-detail-mobile.png" loading="lazy" /><figcaption>magicbricks-detail-mobile.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/melkradar-list-desktop.png" alt="melkradar-list-desktop.png" loading="lazy" /><figcaption>melkradar-list-desktop.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/melkradar-list-mobile.png" alt="melkradar-list-mobile.png" loading="lazy" /><figcaption>melkradar-list-mobile.png</figcaption></figure>
+<figure><img src="../2026-06-30T002038/external/nobroker-detail-desktop.png" alt="nobroker-detail-desktop.png" loading="lazy" /><figcaption>nobroker-detail-desktop.png</figcaption></figure></div>
+  </section>
+</body>
+</html>

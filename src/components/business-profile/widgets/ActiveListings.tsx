@@ -12,16 +12,19 @@ export default function ActiveListings({
   business: Business;
   requestId?: string;
 }) {
-  const { onChat, onCall } = useListingContact(business, requestId);
+  const { onChat, onCall, callSheet } = useListingContact(business, requestId);
 
   return (
-    <ListingGrid
-      listings={activeListings(getListings(business))}
-      emptyText="هنوز آگهی فعالی ثبت نشده است."
-      business={business}
-      requestId={requestId}
-      onChat={() => void onChat()}
-      onCall={() => void onCall()}
-    />
+    <>
+      {callSheet}
+      <ListingGrid
+        listings={activeListings(getListings(business))}
+        emptyText="هنوز آگهی فعالی ثبت نشده است."
+        business={business}
+        requestId={requestId}
+        onChat={() => void onChat()}
+        onCall={() => void onCall()}
+      />
+    </>
   );
 }

@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import bundleAnalyzer from "@next/bundle-analyzer";
 import { buildContentSecurityPolicy } from "./src/lib/security/content-security-policy";
 import {
   logAllowedDevOriginsIfConfigured,
@@ -7,10 +6,6 @@ import {
 } from "./src/lib/dev/allowed-dev-origins";
 
 logAllowedDevOriginsIfConfigured();
-
-const withBundleAnalyzer = bundleAnalyzer({
-  enabled: process.env.ANALYZE === "true",
-});
 
 /**
  * Legacy → canonical 301 redirects.
@@ -60,41 +55,37 @@ const legacyRedirects = [
 ] as const;
 
 function buildMinioRemotePatterns(): NonNullable<NextConfig["images"]>["remotePatterns"] {
+  const patterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
+    {
+      protocol: "https",
+      hostname: "maskanyaban.ir",
+      pathname: "/**",
+    },
+  ];
+
   const raw = process.env.MINIO_PUBLIC_URL?.trim();
-  if (!raw) return [];
+  if (!raw) return patterns;
 
   try {
     const url = new URL(raw);
     const protocol = url.protocol.replace(":", "") as "http" | "https";
-    return [
-      {
-        protocol,
-        hostname: url.hostname,
-        pathname: "/**",
-        ...(url.port ? { port: url.port } : {}),
-      },
-    ];
+    patterns.push({
+      protocol,
+      hostname: url.hostname,
+      pathname: "/**",
+      ...(url.port ? { port: url.port } : {}),
+    });
   } catch {
-    return [];
+    // ignore invalid MINIO_PUBLIC_URL
   }
+
+  return patterns;
 }
 
 const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: false,
   compress: true,
-  poweredByHeader: false,
-  serverExternalPackages: ["@prisma/client", "prisma"],
-  outputFileTracingExcludes: {
-    "*": [
-      "./mini-services/**",
-      "./scripts/**",
-      "./docs/**",
-      "./OBISIDIAN/**",
-      "./openclaw/**",
-      "./examples/**",
-    ],
-  },
   allowedDevOrigins: parseAllowedDevOrigins(),
   experimental: {
     optimizePackageImports: [
@@ -106,18 +97,8 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-select",
       "@radix-ui/react-tabs",
       "@radix-ui/react-tooltip",
-      "@radix-ui/react-scroll-area",
-      "@radix-ui/react-accordion",
-      "@radix-ui/react-checkbox",
       "react-map-gl",
       "date-fns",
-      "sonner",
-      "@tanstack/react-query",
-      "zod",
-      "recharts",
-      "maplibre-gl",
-      "@ark-ui/react",
-      "socket.io-client",
     ],
   },
   async headers() {
@@ -141,51 +122,6 @@ const nextConfig: NextConfig = {
 
     return [
       {
-        source: "/fonts/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      {
-        source: "/logo.svg",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      {
-        source: "/icon-192.png",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      {
-        source: "/icon-512.png",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      {
-        source: "/apple-touch-icon.png",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      {
         source: "/:path*",
         headers: commonHeaders,
       },
@@ -204,4 +140,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withBundleAnalyzer(nextConfig);
+export default nextConfig;

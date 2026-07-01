@@ -13,12 +13,12 @@ import {
   syncAndNavigateToConversation,
   ContactAuthRequiredError,
 } from '@/lib/contact/start-conversation';
-import { fetchUserContact } from '@/lib/contact/fetch-contact';
 import { savePendingContact } from '@/lib/contact/pending-contact';
 import { ensureNeedChatPreview } from '@/lib/contact/need-chat-preview';
 import type { NeedChatPreview } from '@/lib/contact/need-chat-preview';
 import Link from 'next/link';
 import { useBusinessContact } from '@/hooks/use-business-contact';
+import { useContactCallSheet } from '@/components/contact/use-contact-call-sheet';
 
 export interface ContactActionsProps {
   otherUserId: string;
@@ -57,8 +57,8 @@ export function ContactActions({
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const authToken = useAppStore((s) => s.authToken);
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
-  const openVoiceCall = useAppStore((s) => s.openVoiceCall);
   const currentUserId = useAppStore((s) => s.currentUser?.id);
+  const { openCallSheet, sheet: callSheet } = useContactCallSheet();
 
   const [chatLoading, setChatLoading] = useState(false);
   const [callLoading, setCallLoading] = useState(false);
@@ -116,30 +116,13 @@ export function ContactActions({
 
   const handleCall = async () => {
     if (isSelf) return;
-    if (!isAuthenticated || !authToken) {
-      requireAuth('call');
-      return;
-    }
     setCallLoading(true);
     try {
-      const contact = await fetchUserContact(otherUserId, authToken, { requestId });
-      if (!contact.hasPhone) {
-        toast.info('این کاربر شماره تماس ثبت نکرده — از چت استفاده کنید');
-        return;
-      }
-      const parts = contact.displayName.split(/\s+/);
-      openVoiceCall({
-        id: contact.userId,
-        firstName: parts[0] ?? contact.displayName,
-        lastName: parts.slice(1).join(' ') || '',
-        displayName: contact.displayName,
+      await openCallSheet({
+        otherUserId,
+        requestId,
+        displayName,
       });
-    } catch (e) {
-      if (e instanceof ContactAuthRequiredError) {
-        setAuthModalOpen(true);
-      } else {
-        toast.error(e instanceof Error ? e.message : 'خطا در تماس');
-      }
     } finally {
       setCallLoading(false);
     }
@@ -164,6 +147,7 @@ export function ContactActions({
   return (
     <>
       {picker}
+      {callSheet}
       <div
       className={cn(
         layout,

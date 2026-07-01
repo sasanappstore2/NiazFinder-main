@@ -44,6 +44,8 @@ export type AdminPermissionId =
   | 'market:outreach:read'
   | 'market:outreach:write'
   | 'market:alerts:read'
+  | 'market:filings:read'
+  | 'market:filings:write'
   // ─── Growth ─────────────────────────────────────────────────────────
   | 'growth:referrals:read'
   | 'growth:coupons:read'
@@ -137,6 +139,8 @@ export const ADMIN_PERMISSIONS: readonly AdminPermission[] = [
   { id: 'market:outreach:read', label: 'مشاهده صف outreach نیازها', group: 'MarketOps' },
   { id: 'market:outreach:write', label: 'اجرای dispatch outreach', group: 'MarketOps' },
   { id: 'market:alerts:read', label: 'مشاهده alertهای مرور نیاز', group: 'MarketOps' },
+  { id: 'market:filings:read', label: 'مشاهده فایلینگ منطقه', group: 'MarketOps' },
+  { id: 'market:filings:write', label: 'افزودن/ویرایش فایلینگ منطقه', group: 'MarketOps' },
 
   { id: 'growth:referrals:read', label: 'مشاهده ارجاع‌ها', group: 'Growth' },
   { id: 'growth:coupons:read', label: 'مشاهده کوپن‌ها', group: 'Growth' },

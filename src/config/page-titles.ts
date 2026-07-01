@@ -6,6 +6,8 @@ const EXACT: Record<string, string> = {
   '/': 'نیاز فایندر — بازار خدمات و کسب‌وکار',
   '/discover': 'کشف نیازها',
   '/dashboard': 'داشبورد',
+  '/workspace': 'میزکار',
+  '/profile': 'پروفایل',
   '/messages': 'پیام‌ها',
   '/notifications': 'اعلان‌ها',
   '/bookmarks': 'نشان‌شده‌ها',

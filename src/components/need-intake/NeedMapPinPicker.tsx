@@ -207,6 +207,7 @@ export function NeedMapPinPicker({
       ) : null}
       <p className="text-xs text-muted-foreground">{DEFAULT_HINT}</p>
       <DeferredMapShell
+        eager
         className="business-browse-map intake-map-pin-shell overflow-hidden rounded-xl border border-border/50"
         placeholderClassName="h-[280px] sm:h-[320px]"
       >

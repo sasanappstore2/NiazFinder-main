@@ -218,8 +218,8 @@ export function NiazMapAdminBoundaries({
             filter={['==', ['get', 'selected'], true]}
             paint={{
               'line-color': colors.cityLineSelected,
-              'line-width': ['interpolate', ['linear'], ['zoom'], 10, 1, 13, 1.8, 15, 2.2],
-              'line-opacity': 0.7,
+              'line-width': ['interpolate', ['linear'], ['zoom'], 10, 1.2, 13, 2, 15, 2.4],
+              'line-opacity': 0.88,
             }}
           />
         </NiazMapSource>

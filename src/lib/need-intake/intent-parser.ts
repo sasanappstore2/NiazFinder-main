@@ -547,8 +547,8 @@ function parsePropertyDealType(text: string): string | undefined {
   if (text.includes('نه اجاره')) hasRent = false;
   if (text.includes('اجاره ندارم') && hasRahn) return 'rent_rahn_full';
   if (/رهن\s*\d+\s*اجاره\s*\d+/u.test(text)) return 'rent_rahn_ejare';
-  if (hasRahn && hasRent) return 'rent_rahn_ejare';
   if (RAHN_FULL_KEYWORDS.some((w) => text.includes(w))) return 'rent_rahn_full';
+  if (hasRahn && hasRent) return 'rent_rahn_ejare';
   if (RAHN_EJARE_KEYWORDS.some((w) => text.includes(w))) return 'rent_rahn_ejare';
   if (RENT_MONTHLY_KEYWORDS.some((w) => text.includes(w))) return 'rent_monthly';
   if (SELL_KEYWORDS.some((w) => text.includes(w))) return 'sell';

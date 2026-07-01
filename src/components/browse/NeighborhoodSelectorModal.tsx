@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { Search, X } from 'lucide-react';
 import {
   Dialog,
@@ -13,7 +14,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { ManagedNeighborhood } from '@/lib/neighborhoods/types';
-import { displayAreaLabels } from '@/lib/neighborhoods/area-labels';
+import { searchAreaLabels } from '@/lib/neighborhoods/area-labels';
+
+const ROW_HEIGHT = 52;
 
 function Checkable({ checked }: { checked: boolean }) {
   return (
@@ -43,15 +46,35 @@ function Checkable({ checked }: { checked: boolean }) {
   );
 }
 
-function neighborhoodAreas(n: ManagedNeighborhood): string[] {
-  return displayAreaLabels(n.areas, n.name);
-}
+const NeighborhoodRow = memo(function NeighborhoodRow({
+  neighborhood,
+  checked,
+  onToggle,
+}: {
+  neighborhood: ManagedNeighborhood;
+  checked: boolean;
+  onToggle: (id: string) => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="flex w-full items-center gap-3 border-b px-4 text-start hover:bg-muted/40"
+      style={{ height: ROW_HEIGHT }}
+      onClick={() => onToggle(neighborhood.id)}
+    >
+      <Checkable checked={checked} />
+      <p className="min-w-0 flex-1 truncate font-semibold leading-snug">{neighborhood.name}</p>
+    </button>
+  );
+});
 
-function matchesQuery(n: ManagedNeighborhood, q: string): boolean {
-  if (!q) return true;
-  const norm = q.trim().toLowerCase();
-  if (n.name.toLowerCase().includes(norm)) return true;
-  return neighborhoodAreas(n).some((a) => a.toLowerCase().includes(norm));
+function buildSearchIndex(neighborhoods: ManagedNeighborhood[]): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const n of neighborhoods) {
+    const haystack = [n.name, ...searchAreaLabels(n.areas, n.name)].join(' ').toLowerCase();
+    map.set(n.id, haystack);
+  }
+  return map;
 }
 
 interface NeighborhoodSelectorModalProps {
@@ -71,36 +94,56 @@ export function NeighborhoodSelectorModal({
 }: NeighborhoodSelectorModalProps) {
   const [draft, setDraft] = useState<string[]>(selectedIds);
   const [query, setQuery] = useState('');
+  const listRef = useRef<HTMLDivElement>(null);
 
-  const syncFromProps = (ids: string[]) => {
-    setDraft(ids);
-    setQuery('');
-  };
+  const searchIndex = useMemo(() => buildSearchIndex(neighborhoods), [neighborhoods]);
 
-  const filtered = useMemo(
-    () => neighborhoods.filter((n) => matchesQuery(n, query)),
-    [neighborhoods, query]
-  );
+  const draftSet = useMemo(() => new Set(draft), [draft]);
 
-  const toggle = (id: string) => {
-    setDraft((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
+  const filtered = useMemo(() => {
+    const norm = query.trim().toLowerCase();
+    if (!norm) return neighborhoods;
+    return neighborhoods.filter((n) => searchIndex.get(n.id)?.includes(norm));
+  }, [neighborhoods, query, searchIndex]);
 
   const selectedItems = useMemo(
-    () => neighborhoods.filter((n) => draft.includes(n.id)),
-    [neighborhoods, draft]
+    () => neighborhoods.filter((n) => draftSet.has(n.id)),
+    [neighborhoods, draftSet]
   );
 
+  const virtualizer = useVirtualizer({
+    count: open ? filtered.length : 0,
+    getScrollElement: () => listRef.current,
+    estimateSize: () => ROW_HEIGHT,
+    overscan: 10,
+  });
+
+  useEffect(() => {
+    if (!open) return;
+    setDraft(selectedIds);
+    setQuery('');
+  }, [open, selectedIds]);
+
+  useEffect(() => {
+    if (!open) return;
+    const id = requestAnimationFrame(() => {
+      virtualizer.measure();
+    });
+    return () => cancelAnimationFrame(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- remeasure when list opens/resizes
+  }, [open, filtered.length]);
+
+  const toggle = (id: string) => {
+    setDraft((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return [...next];
+    });
+  };
+
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(next) => {
-        if (next) syncFromProps(selectedIds);
-        onOpenChange(next);
-      }}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="flex max-h-[92dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg"
         dir="rtl"
@@ -125,12 +168,12 @@ export function NeighborhoodSelectorModal({
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="جستجو"
+              placeholder="جستجو در نام محله یا کوچه"
               className="ps-10"
             />
           </div>
           {selectedItems.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-3 flex max-h-24 flex-wrap gap-2 overflow-y-auto">
               {selectedItems.map((n) => (
                 <Badge
                   key={n.id}
@@ -146,42 +189,33 @@ export function NeighborhoodSelectorModal({
           )}
         </div>
 
-        <ul className="min-h-0 flex-1 overflow-y-auto">
-          {filtered.map((n) => {
-            const checked = draft.includes(n.id);
-            return (
-              <li key={n.id}>
-                <button
-                  type="button"
-                  className="flex w-full items-start gap-3 border-b px-4 py-3 text-start hover:bg-muted/40"
-                  onClick={() => toggle(n.id)}
-                >
-                  <Checkable checked={checked} />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold leading-snug">{n.name}</p>
-                    {neighborhoodAreas(n).length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        {neighborhoodAreas(n).map((area) => (
-                          <span
-                            key={area}
-                            className="rounded-md bg-muted/60 px-2 py-0.5 text-xs text-muted-foreground"
-                          >
-                            {area}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+        <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto">
+          {filtered.length === 0 ? (
+            <p className="px-4 py-8 text-center text-sm text-muted-foreground">محله‌ای یافت نشد</p>
+          ) : (
+            <div
+              className="relative w-full"
+              style={{ height: virtualizer.getTotalSize() }}
+            >
+              {virtualizer.getVirtualItems().map((row) => {
+                const n = filtered[row.index]!;
+                return (
+                  <div
+                    key={n.id}
+                    className="absolute start-0 top-0 w-full"
+                    style={{ transform: `translateY(${row.start}px)` }}
+                  >
+                    <NeighborhoodRow
+                      neighborhood={n}
+                      checked={draftSet.has(n.id)}
+                      onToggle={toggle}
+                    />
                   </div>
-                </button>
-              </li>
-            );
-          })}
-          {filtered.length === 0 && (
-            <li className="px-4 py-8 text-center text-sm text-muted-foreground">
-              محله‌ای یافت نشد
-            </li>
+                );
+              })}
+            </div>
           )}
-        </ul>
+        </div>
 
         <div className="flex gap-2 border-t bg-background p-4">
           <Button
@@ -192,11 +226,7 @@ export function NeighborhoodSelectorModal({
           >
             انصراف
           </Button>
-          <Button
-            type="button"
-            className="flex-2"
-            onClick={() => onApply(draft)}
-          >
+          <Button type="button" className="flex-2" onClick={() => onApply(draft)}>
             اعمال فیلتر
             {draft.length > 0 ? ` (${draft.length})` : ''}
           </Button>

@@ -14,7 +14,7 @@ export const MOBILE_NAV_TABS: NavTab[] = [
   { id: 'browse',    label: 'بازار',    href: routeBuilder.browseAll() },
   { id: 'post',      label: 'ثبت',     href: routeBuilder.needNew() },
   { id: 'business',  label: 'کسب‌وکار', href: routeBuilder.browseAll({ type: 'business' }) },
-  { id: 'dashboard', label: 'حساب',    href: routeBuilder.dashboard() },
+  { id: 'account', label: 'حساب',    href: routeBuilder.account() },
 ];
 
 export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [

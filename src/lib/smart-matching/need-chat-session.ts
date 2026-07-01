@@ -1,4 +1,5 @@
 import { db } from '@/lib/db';
+import { routeBuilder } from '@/config/routes';
 import type { Prisma } from '@prisma/client';
 import { SmartMatchingError, SMART_MATCHING_CODES } from './errors';
 import { getMaxActiveChatSessionsPerNeed } from './env';
@@ -174,6 +175,7 @@ export async function listPrivateLeads(businessUserId: string) {
           needAccessStatus: true,
           vipExpiresAt: true,
           status: true,
+          userId: true,
         },
       },
     },
@@ -187,6 +189,9 @@ export async function listPrivateLeads(businessUserId: string) {
     matchReasonFa: row.matchReasonFa,
     leadFeeAmount: row.leadFeeAmount,
     conversationId: row.conversationId,
+    chatUrl: row.conversationId ? routeBuilder.chatConversation(row.conversationId) : null,
+    needUrl: routeBuilder.need(row.request.id, row.request.title),
+    createdAt: row.createdAt.toISOString(),
     acceptedAt: row.acceptedAt?.toISOString() ?? null,
     request: {
       ...row.request,

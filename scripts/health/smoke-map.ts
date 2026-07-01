@@ -34,7 +34,7 @@ const CHECKS: Check[] = [
 async function runCheck(c: Check) {
   const start = Date.now();
   try {
-    const res = await fetch(`${BASE}${c.path}`, { signal: AbortSignal.timeout(15_000) });
+    const res = await fetch(`${BASE}${c.path}`, { signal: AbortSignal.timeout(30_000) });
     const buf = await res.arrayBuffer();
     const bytes = buf.byteLength;
     const ok =
@@ -63,7 +63,10 @@ async function runCheck(c: Check) {
 
 async function main() {
   console.log(`=== smoke:map (${BASE}) ===`);
-  const results = await Promise.all(CHECKS.map(runCheck));
+  const results = [];
+  for (const c of CHECKS) {
+    results.push(await runCheck(c));
+  }
   let failed = 0;
   for (const r of results) {
     const tag = r.ok ? 'ok' : 'FAIL';

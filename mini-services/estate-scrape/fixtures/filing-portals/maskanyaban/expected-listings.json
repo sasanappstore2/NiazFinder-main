@@ -1,0 +1,9 @@
+{
+  "siteKey": "maskanyaban",
+  "minListings": 3,
+  "minFileCodeRate": 1.0,
+  "minTitleRate": 0.98,
+  "minDealTypeRate": 0.9,
+  "minPriceOrRentRate": 0.66,
+  "sampleFileCodes": ["525837", "212537", "525836"]
+}

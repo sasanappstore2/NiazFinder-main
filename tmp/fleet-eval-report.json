@@ -1,0 +1,49 @@
+{
+  "results": [
+    {
+      "siteKey": "showmelk",
+      "pass": true,
+      "attempts": 1,
+      "metrics": {
+        "count": 3,
+        "titleRate": 1,
+        "fileCodeRate": 1,
+        "priceRate": 1,
+        "dealTypeRate": 1,
+        "attributeRate": 1,
+        "duplicates": 0
+      },
+      "evalScore": 100,
+      "extractMethod": "dom+public+fixture",
+      "sampleCount": 3
+    },
+    {
+      "siteKey": "maskanyaban",
+      "pass": false,
+      "attempts": 3,
+      "issues": [
+        "preview: {\"detail\":\"Page.goto: net::ERR_NAME_NOT_RESOLVED at https://maskanyaban.test/files\\nCall log:\\n  - navigating to \\\"https://maskanyaban.test/files\\\", waiting until \\\"domcontentloaded\\\"\\n\"}"
+      ],
+      "metrics": {},
+      "sampleCount": 0
+    },
+    {
+      "siteKey": "iran-batch",
+      "pass": true,
+      "attempts": 1,
+      "metrics": {
+        "count": 100,
+        "titleRate": 1,
+        "fileCodeRate": 1,
+        "priceRate": 1,
+        "dealTypeRate": 1,
+        "attributeRate": 0.45,
+        "duplicates": 0
+      },
+      "evalScore": 100,
+      "extractMethod": "dom+public+fixture",
+      "sampleCount": 100
+    }
+  ],
+  "at": "2026-06-27T10:31:55.227Z"
+}

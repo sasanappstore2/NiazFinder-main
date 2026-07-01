@@ -13,52 +13,27 @@ interface LocationResponse {
   countries: Country[];
 }
 
-let cachedCountries: Country[] | null = null;
-let cachePromise: Promise<Country[]> | null = null;
-
-async function fetchManagedCountries(force = false): Promise<Country[]> {
-  if (!force && cachedCountries) return cachedCountries;
-  if (!force && cachePromise) return cachePromise;
-
-  cachePromise = fetch('/api/locations')
-    .then((response) => (response.ok ? response.json() : null))
-    .then((data: LocationResponse | null) => {
-      const countries =
-        data?.countries?.length ? data.countries : fallbackCountries;
-      cachedCountries = countries;
-      return countries;
-    })
-    .catch(() => {
-      cachedCountries = fallbackCountries;
-      return fallbackCountries;
-    })
-    .finally(() => {
-      cachePromise = null;
-    });
-
-  return cachePromise;
-}
-
-export function invalidateManagedLocationsCache(): void {
-  cachedCountries = null;
-  cachePromise = null;
-}
-
 export function useManagedLocations() {
-  const [countries, setCountries] = useState<Country[]>(
-    cachedCountries ?? fallbackCountries
-  );
-  const [isLoading, setIsLoading] = useState(!cachedCountries);
+  const [countries, setCountries] = useState<Country[]>(fallbackCountries);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
 
-    void fetchManagedCountries().then((next) => {
-      if (!cancelled) {
-        setCountries(next);
-        setIsLoading(false);
-      }
-    });
+    setIsLoading(true);
+    fetch('/api/locations')
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: LocationResponse | null) => {
+        if (!cancelled && data?.countries?.length) {
+          setCountries(data.countries);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setCountries(fallbackCountries);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
 
     return () => {
       cancelled = true;

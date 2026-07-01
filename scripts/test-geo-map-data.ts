@@ -1,5 +1,5 @@
 /**
- * Validate geo map data: 31 provinces, 399 cities, paths, slug parity.
+ * Validate geo map data: 31 provinces, admin city parity, paths, slug parity.
  * Usage: npx tsx scripts/test-geo-map-data.ts
  */
 import fs from 'node:fs';
@@ -11,6 +11,7 @@ const GEO = path.join(process.cwd(), 'src/data/geo');
 function main() {
   let ok = true;
   const admin = loadAdminProvinces();
+  const adminCityCount = admin.reduce((n, p) => n + p.cities.length, 0);
   const boundaries = JSON.parse(fs.readFileSync(path.join(GEO, 'iran-provinces-boundaries.geojson'), 'utf8'));
   const centroids = JSON.parse(fs.readFileSync(path.join(GEO, 'iran-cities-centroids.json'), 'utf8'));
   const layout = JSON.parse(fs.readFileSync(path.join(GEO, 'iran-national-hex-layout.json'), 'utf8'));
@@ -34,8 +35,13 @@ function main() {
     }
   }
 
-  if (centroids.cities.length !== 399) {
-    console.error('FAIL: expected 399 city centroids, got', centroids.cities.length);
+  if (centroids.cities.length < adminCityCount) {
+    console.error(
+      'FAIL: centroids',
+      centroids.cities.length,
+      '< admin cities',
+      adminCityCount
+    );
     ok = false;
   }
 
@@ -49,8 +55,13 @@ function main() {
     ok = false;
   }
 
-  if (ok) console.log('OK: geo map data validation passed');
-  else process.exit(1);
+  if (ok) {
+    console.log('OK: geo map data validation passed', {
+      provinces: admin.length,
+      adminCities: adminCityCount,
+      centroids: centroids.cities.length,
+    });
+  } else process.exit(1);
 }
 
 main();

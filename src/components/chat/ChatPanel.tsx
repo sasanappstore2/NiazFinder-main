@@ -645,7 +645,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
               description: 'برای استفاده از دستیار هوشمند، کیف پول خود را شارژ کنید.',
               action: {
                 label: 'کیف پول',
-                onClick: () => router.push(routeBuilder.dashboardTab('wallet')),
+                onClick: () => router.push(routeBuilder.accountTab('wallet')),
               },
             });
           } else {

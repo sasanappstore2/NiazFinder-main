@@ -64,8 +64,6 @@ export function BrowseFilterPill({
   variant = 'default',
   badge,
 }: BrowseFilterPillProps) {
-  // Active + clearable: a chip carrying its own inline clear-X (e.g. selected
-  // category / neighborhood / price). Never used by the trigger.
   if (active && onClear) {
     return (
       <div className={pillClasses(variant, active, className)}>
@@ -95,4 +93,9 @@ export function BrowseFilterPill({
       {showChevron && <ChevronDown className="size-3 opacity-60" />}
     </button>
   );
+}
+
+/** Shared pill styles for popover-anchored filing filter triggers. */
+export function filingFilterPillClasses(active: boolean, className?: string): string {
+  return pillClasses('default', active, cn('filing-filter-pill shrink-0', className));
 }

@@ -60,6 +60,7 @@ function BrowseDispatcherInner({
   const searchParams = useSearchParams();
   useSyncBrowseCityUrl(citySlug);
   const filters = useMemo(() => parseFilters(searchParams), [searchParams]);
+  const viewParam = searchParams.get('view');
 
   const market = useMemo((): BrowseMarket => {
     if (marketProp) return marketProp;
@@ -93,6 +94,7 @@ function BrowseDispatcherInner({
     citySlugs,
     urlFilters: filters,
     serverRenderedHeading,
+    viewParam,
   };
 
   const listingType = listingTypeFromMarket(market);

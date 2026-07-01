@@ -11,7 +11,7 @@ import {
 import type { SectionProps } from './types';
 
 export function RealEstateListingsSection({ business, requestId }: SectionProps) {
-  const { onChat, onCall } = useListingContact(business, requestId);
+  const { onChat, onCall, callSheet } = useListingContact(business, requestId);
 
   const all = getListings(business);
   const active = activeListings(all);
@@ -22,6 +22,7 @@ export function RealEstateListingsSection({ business, requestId }: SectionProps)
 
   return (
     <section id="section-listings" className="scroll-mt-24 space-y-8">
+      {callSheet}
       {active.length > 0 && (
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">آگهی‌های فعال</h2>

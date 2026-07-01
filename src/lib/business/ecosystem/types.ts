@@ -91,6 +91,17 @@ export interface ServiceAreaEntry {
 
 export interface ServiceAreaState {
   areas: ServiceAreaEntry[];
+  /** Workspace column filters — empty arrays mean "show all". */
+  filingPreferences?: WorkspaceFilingPreferences;
+}
+
+export type WorkspacePropertyKind = 'apartment' | 'villa' | 'land' | 'office' | 'shop' | 'commercial';
+
+export interface WorkspaceFilingPreferences {
+  dealTypes?: Array<
+    'sell' | 'rent_rahn_ejare' | 'rent_rahn_full' | 'rent_short_term'
+  >;
+  propertyKinds?: WorkspacePropertyKind[];
 }
 
 // ─── Phase 1 + 7: Ecosystem / Network Graph ──────────────────────────────────

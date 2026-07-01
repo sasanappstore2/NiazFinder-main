@@ -9,23 +9,40 @@ export const runtime = 'nodejs';
 interface RequestRow {
   id: string;
   title: string;
+  slug?: string;
   city?: string | null;
   budget?: string | null;
+  createdAt?: string;
+  userId?: string;
 }
 
 const SELECT = {
   id: true,
   title: true,
+  slug: true,
   city: true,
   budgetMax: true,
+  createdAt: true,
+  userId: true,
 } as const;
 
-function toRow(r: { id: string; title: string; city: string | null; budgetMax: bigint | null }): RequestRow {
+function toRow(r: {
+  id: string;
+  title: string;
+  slug: string;
+  city: string | null;
+  budgetMax: bigint | null;
+  createdAt: Date;
+  userId: string;
+}): RequestRow {
   return {
     id: r.id,
     title: r.title,
+    slug: r.slug,
     city: r.city,
     budget: r.budgetMax != null ? `${r.budgetMax.toString()} تومان` : null,
+    createdAt: r.createdAt.toISOString(),
+    userId: r.userId,
   };
 }
 
@@ -64,7 +81,7 @@ export async function GET(
       db.serviceRequest.findMany({
         where: { ...baseWhere, ...cityWhere },
         select: SELECT,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { viewCount: 'desc' },
         take: 8,
       }),
       db.serviceRequest.findMany({

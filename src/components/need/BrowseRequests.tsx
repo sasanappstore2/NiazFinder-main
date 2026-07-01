@@ -53,6 +53,10 @@ const REQUEST_FILTER_DEFAULTS = {
 const REQUEST_PAGE_LIMIT = 9;
 const REQUEST_MAP_LIST_LIMIT = 40;
 
+function resolveNeedViewMode(view: string | null | undefined): 'list' | 'map' {
+  return view === 'map' ? 'map' : 'list';
+}
+
 // ─── Main Component ───────────────────────────────────
 interface BrowseRequestsProps {
   basePath?: string;
@@ -60,6 +64,8 @@ interface BrowseRequestsProps {
   citySlugs?: string[];
   urlFilters?: BrowseFilters;
   serverRenderedHeading?: boolean;
+  /** From URL `?view=` — must match SSR for hydration. */
+  viewParam?: string | null;
 }
 
 export function BrowseRequests({
@@ -68,6 +74,7 @@ export function BrowseRequests({
   citySlugs = [],
   urlFilters,
   serverRenderedHeading = false,
+  viewParam,
 }: BrowseRequestsProps = {}) {
   const { navigateTo } = useNavigate();
   const router = useRouter();
@@ -77,7 +84,7 @@ export function BrowseRequests({
 
   const [query, setQuery] = useState(urlFilters?.q ?? '');
   const [currentPage, setCurrentPage] = useState(1);
-  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'map'>(() => resolveNeedViewMode(viewParam));
   const [isUrlReady, setIsUrlReady] = useState(true);
 
   // Data state
@@ -146,14 +153,12 @@ export function BrowseRequests({
   }, [urlFilters?.q]);
 
   useEffect(() => {
+    setViewMode(resolveNeedViewMode(viewParam));
+  }, [viewParam]);
+
+  useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
-    const view = params.get('view');
-    if (view === 'map') {
-      setViewMode('map');
-    } else if (view === 'list' || view === 'grid') {
-      setViewMode('list');
-    }
     const pageParam = parseInt(params.get('page') || '1', 10);
     if (Number.isFinite(pageParam) && pageParam >= 1) {
       setCurrentPage(pageParam);

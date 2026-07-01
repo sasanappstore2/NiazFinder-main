@@ -786,6 +786,7 @@ model BusinessProfile {
   memberInvites  BusinessMemberInvite[]
   locations      BusinessLocation[]
   analyticsDaily BusinessAnalyticsDaily[]
+  regionalCollaborationPosts RegionalCollaborationPost[]
 
   @@index([slug])
   @@index([city])
@@ -1640,4 +1641,185 @@ model StaffAuditLog {
   @@index([action])
   @@index([entityType])
   @@index([createdAt])
+}
+
+enum CollaborationPostScope {
+  REGIONAL
+  CROSS_REGIONAL
+}
+
+enum CollaborationPostIntent {
+  CLIENT_REFERRAL
+  SEEK_PARTNER
+  CO_SHOWING
+}
+
+enum CollaborationSubjectKind {
+  CLIENT
+  PROPERTY
+  JOINT_VISIT
+}
+
+enum CollaborationPropertyKind {
+  APARTMENT
+  VILLA
+  LAND
+  COMMERCIAL
+  OTHER
+}
+
+enum CollaborationAreaBand {
+  UNDER_80
+  BAND_80_120
+  BAND_120_180
+  OVER_180
+}
+
+enum CollaborationBudgetBand {
+  SALE_UNDER_3B
+  SALE_3_5B
+  SALE_5_8B
+  SALE_8_12B
+  SALE_OVER_12B
+  RENT_UNDER_10M
+  RENT_10_20M
+  RENT_20_40M
+  RENT_OVER_40M
+}
+
+model RegionalCollaborationPost {
+  id                 String                  @id @default(cuid())
+  authorProfileId    String
+  intent             CollaborationPostIntent
+  headline           String
+  note               String?
+  scope              CollaborationPostScope  @default(REGIONAL)
+  city               String?
+  neighborhood       String?
+  neighborhoodId     String?
+  targetCity         String?
+  targetNeighborhood String?
+  subjectKind        CollaborationSubjectKind?
+  dealType           String?
+  propertyKind       CollaborationPropertyKind?
+  areaBand           CollaborationAreaBand?
+  budgetBand         CollaborationBudgetBand?
+  targetAreasJson    String                  @default("[]")
+  status             String                  @default("active")
+  createdAt          DateTime                @default(now())
+  expiresAt          DateTime?
+
+  author BusinessProfile @relation(fields: [authorProfileId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt(sort: Desc)])
+  @@index([city])
+  @@index([targetCity])
+  @@index([authorProfileId])
+}
+
+/** Central regional property filings — imported via super-admin for workspace feeds. */
+model RegionalFiling {
+  id             String   @id @default(cuid())
+  fileCode       String?
+  title          String
+  description    String?
+  dealType       String?
+  categorySlug   String?
+  propertyKind   String?
+  city           String
+  cityId         String?
+  district       String?
+  neighborhood   String?
+  neighborhoodId String?
+  location       String?
+  price          String?
+  deposit        String?
+  monthlyRent    String?
+  area           String?
+  rooms          Int?
+  floor          Int?
+  pricePerMeter  String?
+  postedAt       DateTime?
+  totalFloors    Int?
+  unitsCount     Int?
+  buildingAge    Int?
+  documentType   String?
+  cabinet        String?
+  flooring       String?
+  wallCover      String?
+  facade         String?
+  orientation    String?
+  heating        String?
+  cooling        String?
+  exchangeable   Boolean?
+  hasParking     Boolean?
+  hasStorage     Boolean?
+  hasElevator    Boolean?
+  hasSecurityDoor Boolean?
+  hasTerrace     Boolean?
+  hasBuiltInWardrobe Boolean?
+  detailUrl      String?
+  dataCompleteness Int?
+  enrichedAt     DateTime?
+  sourceMetaJson  String   @default("{}")
+  image          String?
+  imagesJson     String   @default("[]")
+  status         String   @default("active")
+  reviewIssuesJson String?
+  scrapedAt      DateTime?
+  createdById    String?
+  scraperId      String?
+  externalId     String?
+  sourceSite     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  scraper RegionalFilingScraper? @relation(fields: [scraperId], references: [id], onDelete: SetNull)
+
+  @@unique([scraperId, externalId])
+  @@index([status, createdAt(sort: Desc)])
+  @@index([city])
+  @@index([cityId])
+  @@index([neighborhoodId])
+  @@index([scraperId])
+  @@index([dealType])
+  @@index([propertyKind])
+  @@index([postedAt])
+  @@index([status, cityId, dealType, postedAt(sort: Desc)])
+  @@index([status, city, dealType, postedAt(sort: Desc)])
+  @@map("regional_filings")
+}
+
+/** Per-site filing feed bot — login + ScrapeGraph scrape on interval. */
+model RegionalFilingScraper {
+  id                    String    @id @default(cuid())
+  name                  String
+  siteKey               String    @unique
+  enabled               Boolean   @default(true)
+  loginUrl              String
+  listingsUrl           String
+  username              String    @default("")
+  passwordEnc           String?
+  siteConfigJson        String    @default("{}")
+  defaultCity           String
+  defaultCityId         String?
+  defaultNeighborhood   String?
+  defaultNeighborhoodId String?
+  intervalMinutes       Int       @default(10)
+  jitterMinutes         Int       @default(4)
+  status                String    @default("idle")
+  lastRunAt             DateTime?
+  lastSuccessAt         DateTime?
+  lastImportedCount     Int       @default(0)
+  lastError             String?
+  failureCount          Int       @default(0)
+  evalScore             Float?
+  lastEvalAt            DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  filings RegionalFiling[]
+
+  @@index([enabled, lastRunAt])
+  @@map("regional_filing_scrapers")
 }

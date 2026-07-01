@@ -12,10 +12,12 @@ export default function RentalProperties({
   business: Business;
   requestId?: string;
 }) {
-  const { onChat, onCall } = useListingContact(business, requestId);
+  const { onChat, onCall, callSheet } = useListingContact(business, requestId);
 
   return (
-    <ListingGrid
+    <>
+      {callSheet}
+      <ListingGrid
       listings={rentalListings(getListings(business))}
       emptyText="ملک اجاره‌ای ثبت نشده است."
       business={business}
@@ -23,5 +25,6 @@ export default function RentalProperties({
       onChat={() => void onChat()}
       onCall={() => void onCall()}
     />
+    </>
   );
 }

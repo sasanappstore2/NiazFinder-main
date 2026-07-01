@@ -46,8 +46,28 @@ export const serviceAreaEntrySchema = z.object({
   strength: z.number().int().min(1).max(5).optional(),
 });
 
+export const workspacePropertyKindSchema = z.enum([
+  'apartment',
+  'villa',
+  'land',
+  'commercial',
+]);
+
+export const workspaceFilingDealTypeSchema = z.enum([
+  'sell',
+  'rent_rahn_ejare',
+  'rent_rahn_full',
+  'rent_short_term',
+]);
+
+export const workspaceFilingPreferencesSchema = z.object({
+  dealTypes: z.array(workspaceFilingDealTypeSchema).max(4).optional(),
+  propertyKinds: z.array(workspacePropertyKindSchema).max(4).optional(),
+});
+
 export const serviceAreaSchema = z.object({
   areas: z.array(serviceAreaEntrySchema).max(LIMIT.serviceAreas),
+  filingPreferences: workspaceFilingPreferencesSchema.optional(),
 });
 
 export const ecosystemConnectionSchema = z.object({

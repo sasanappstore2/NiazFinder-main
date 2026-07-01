@@ -1,0 +1,1 @@
+../../../src/lib/filing/ingest/fixtures/run-filing-normalize-self-test.ts

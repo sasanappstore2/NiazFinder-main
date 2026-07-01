@@ -9,6 +9,7 @@ export type AppView =
   | 'browse-specialists'
   | 'specialist-profile'
   | 'dashboard'
+  | 'workspace'
   | 'messages'
   | 'notifications'
   | 'admin'

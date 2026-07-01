@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "defaultCity": "مشهد",
+  "sites": [
+    {
+      "siteKey": "showmelk",
+      "name": "ShowMelk (fixture)",
+      "mode": "fixture",
+      "entryUrl": "https://showmelk.test/list",
+      "listingsUrl": "https://showmelk.test/list",
+      "fixtureHtml": "mini-services/estate-scrape/fixtures/filing-portals/showmelk/list-sample.html",
+      "blueprintJson": "mini-services/estate-scrape/fixtures/filing-portals/showmelk/blueprint.json",
+      "minListings": 3,
+      "enabled": true
+    },
+    {
+      "siteKey": "maskanyaban",
+      "name": "مسکن‌یابان مشهد",
+      "mode": "live",
+      "entryUrl": "https://maskanyaban.ir/Account/Login",
+      "listingsUrl": "https://maskanyaban.ir/estate/all/all/",
+      "blueprintJson": "mini-services/estate-scrape/fixtures/filing-portals/maskanyaban/blueprint.json",
+      "fixtureHtml": "mini-services/estate-scrape/fixtures/filing-portals/maskanyaban/list-sample.html",
+      "minListings": 100,
+      "enabled": true
+    },
+    {
+      "siteKey": "melkify",
+      "name": "ملکی‌فای",
+      "mode": "live",
+      "entryUrl": "https://melkify.com/panel",
+      "listingsUrl": "https://melkify.com/files",
+      "minListings": 100,
+      "enabled": false,
+      "skipReason": "نیاز به URL زنده و تست دستی"
+    },
+    {
+      "siteKey": "filemelk",
+      "name": "فایل‌ملک",
+      "mode": "live",
+      "entryUrl": "https://filemelk.com/login",
+      "listingsUrl": "https://filemelk.com/files",
+      "minListings": 100,
+      "enabled": false,
+      "skipReason": "نیاز به URL زنده"
+    },
+    {
+      "siteKey": "amlakfile",
+      "name": "املاک فایل",
+      "mode": "live",
+      "entryUrl": "https://amlakfile.com/login",
+      "listingsUrl": "https://amlakfile.com/files",
+      "minListings": 100,
+      "enabled": false,
+      "skipReason": "نیاز به URL زنده"
+    },
+    {
+      "siteKey": "iranfile",
+      "name": "ایران فایل",
+      "mode": "live",
+      "entryUrl": "https://iranfile.com/login",
+      "listingsUrl": "https://iranfile.com/files",
+      "minListings": 100,
+      "enabled": false,
+      "skipReason": "نیاز به URL زنده"
+    },
+    {
+      "siteKey": "melkfile",
+      "name": "ملک فایل",
+      "mode": "live",
+      "entryUrl": "https://melkfile.com/login",
+      "listingsUrl": "https://melkfile.com/files",
+      "minListings": 100,
+      "enabled": false,
+      "skipReason": "نیاز به URL زنده"
+    },
+    {
+      "siteKey": "melkportal-demo",
+      "name": "پورتال نمونه (+1)",
+      "mode": "live",
+      "entryUrl": "https://example.com/login",
+      "listingsUrl": "https://example.com/files",
+      "minListings": 100,
+      "enabled": false,
+      "skipReason": "placeholder — URL واقعی در ویزارد"
+    },
+    {
+      "siteKey": "iran-batch",
+      "name": "ایران batch (synthetic 1000)",
+      "mode": "fixture",
+      "entryUrl": "https://iran-batch.test/list",
+      "listingsUrl": "https://iran-batch.test/list",
+      "fixtureHtml": "mini-services/estate-scrape/fixtures/filing-portals/iran-batch/list-50cities-x20.html",
+      "minListings": 100,
+      "maxExtract": 100,
+      "enabled": true
+    },
+    {
+      "siteKey": "custom-target",
+      "name": "سایت هدف (ویزارد)",
+      "mode": "live",
+      "entryUrl": "",
+      "listingsUrl": "",
+      "minListings": 100,
+      "enabled": false,
+      "skipReason": "از FILING_FLEET_TARGET_URL env پر شود"
+    }
+  ]
+}

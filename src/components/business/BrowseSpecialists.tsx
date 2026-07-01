@@ -332,12 +332,22 @@ function SpecialistListCard({
 }
 
 // ─── Main Component ───────────────────────────────────
+function resolveBusinessViewMode(
+  view: string | null | undefined
+): 'grid' | 'list' | 'map' {
+  if (view === 'map') return 'map';
+  if (view === 'list') return 'list';
+  if (view === 'grid') return 'grid';
+  return 'grid';
+}
+
 interface BrowseSpecialistsProps {
   basePath?: string;
   categorySlug?: string;
   citySlugs?: string[];
   urlFilters?: BrowseFilters;
   serverRenderedHeading?: boolean;
+  viewParam?: string | null;
 }
 
 export function BrowseSpecialists({
@@ -346,6 +356,7 @@ export function BrowseSpecialists({
   citySlugs = [],
   urlFilters,
   serverRenderedHeading = false,
+  viewParam,
 }: BrowseSpecialistsProps = {}) {
   const { navigateTo } = useNavigate();
   const pathname = usePathname();
@@ -366,7 +377,9 @@ export function BrowseSpecialists({
 
   const [query, setQuery] = useState(urlFilters?.q ?? '');
   const [currentPage, setCurrentPage] = useState(1);
-  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>(() =>
+    resolveBusinessViewMode(viewParam)
+  );
   const [isUrlReady, setIsUrlReady] = useState(true);
   const [specialists, setSpecialists] = useState<SpecialistProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -400,12 +413,12 @@ export function BrowseSpecialists({
   }, [urlFilters?.q]);
 
   useEffect(() => {
+    setViewMode(resolveBusinessViewMode(viewParam));
+  }, [viewParam]);
+
+  useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
-    const view = params.get('view');
-    if (view === 'map' || view === 'list' || view === 'grid') {
-      setViewMode(view);
-    }
     const pageParam = parseInt(params.get('page') || '1', 10);
     if (Number.isFinite(pageParam) && pageParam >= 1) {
       setCurrentPage(pageParam);

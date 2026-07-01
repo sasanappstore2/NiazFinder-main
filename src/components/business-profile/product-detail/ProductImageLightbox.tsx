@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import Image from 'next/image';
 import {
   ChevronLeft,
   ChevronRight,
@@ -399,14 +398,12 @@ export function ProductImageLightbox({
           onDoubleClick={onDoubleClick}
           onClick={(e) => e.stopPropagation()}
         >
-          <Image
+          { }
+          <img
             key={url}
             src={url}
             alt={title}
-            width={1200}
-            height={920}
-            unoptimized={url.startsWith('http')}
-            className="max-h-[min(100dvh-10rem,920px)] max-w-[min(100vw-1rem,1200px)] h-auto w-auto select-none object-contain"
+            className="max-h-[min(100dvh-10rem,920px)] max-w-[min(100vw-1rem,1200px)] select-none object-contain"
             draggable={false}
           />
         </div>
@@ -442,14 +439,8 @@ export function ProductImageLightbox({
                   i === index ? 'border-emerald-400 ring-2 ring-emerald-400/30' : 'border-transparent opacity-60 hover:opacity-100'
                 )}
               >
-                <Image
-                  src={thumb}
-                  alt=""
-                  fill
-                  sizes="56px"
-                  className="object-contain p-0.5"
-                  unoptimized={thumb.startsWith('http')}
-                />
+                { }
+                <img src={thumb} alt="" className="size-full object-contain p-0.5" />
               </button>
             ))}
           </div>

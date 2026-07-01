@@ -1,7 +1,7 @@
 {
   "provinceId": "yazd",
   "provinceName": "یزد",
-  "generatedAt": "2026-06-12T21:20:05.184Z",
+  "generatedAt": "2026-06-25T07:37:49.815Z",
   "cities": [
     {
       "cityId": "yazd-city",
@@ -399,17 +399,25 @@
       "cityName": "مروست",
       "provinceId": "yazd",
       "tier": "B",
-      "neighborhoodCount": 1,
+      "neighborhoodCount": 2,
       "shares": {
-        "divar": 1,
-        "osm": 0,
+        "divar": 0,
+        "osm": 2,
         "synthetic": 0,
         "manual": 0,
-        "total": 1
+        "total": 2
       },
       "tierOk": true,
-      "issues": [],
-      "pass": true
+      "issues": [
+        {
+          "level": "error",
+          "cityId": "marvast",
+          "neighborhoodId": "ترکان",
+          "code": "missing_geo_feature",
+          "message": "no polygon in geo file"
+        }
+      ],
+      "pass": false
     },
     {
       "cityId": "nadushan",
@@ -446,7 +454,7 @@
       "pass": true
     }
   ],
-  "errors": 0,
+  "errors": 1,
   "warnings": 0,
-  "pass": true
+  "pass": false
 }

@@ -1,0 +1,416 @@
+{
+  "FILING_CATEGORY_TEMPLATES": {
+    "apartment": {
+      "kind": "apartment",
+      "labelFa": "آپارتمان",
+      "specsSectionTitle": "مشخصات آپارتمان",
+      "specKeys": [
+        "floor",
+        "totalFloors",
+        "unitsCount",
+        "rooms",
+        "buildingAge",
+        "documentType",
+        "cabinet",
+        "flooring",
+        "wallCover",
+        "facade",
+        "orientation",
+        "heating",
+        "cooling",
+        "exchangeable"
+      ],
+      "quickStatKeys": [
+        "floor",
+        "rooms",
+        "buildingAge",
+        "orientation"
+      ],
+      "amenityKeys": [
+        "parking",
+        "storage",
+        "elevator",
+        "terrace",
+        "builtInWardrobe",
+        "securityDoor",
+        "builtInGas",
+        "exchangeable"
+      ],
+      "crawlDetailRequired": [
+        "fileCode",
+        "dealType",
+        "propertyKind",
+        "area",
+        "location",
+        "price",
+        "deposit",
+        "monthlyRent"
+      ],
+      "crawlDetailOptional": [
+        "floor",
+        "totalFloors",
+        "unitsCount",
+        "rooms",
+        "buildingAge",
+        "documentType",
+        "cabinet",
+        "flooring",
+        "wallCover",
+        "facade",
+        "orientation",
+        "heating",
+        "cooling",
+        "pricePerMeter",
+        "description",
+        "image",
+        "hasParking",
+        "hasStorage",
+        "hasElevator",
+        "hasSecurityDoor",
+        "hasTerrace",
+        "hasBuiltInWardrobe"
+      ],
+      "crawlListFeatureHints": [
+        "طبقه",
+        "خواب",
+        "سال ساخت",
+        "سند",
+        "آسانسور",
+        "پارکینگ"
+      ],
+      "browseListSpecKeys": [
+        "floor",
+        "rooms",
+        "buildingAge",
+        "documentType"
+      ]
+    },
+    "villa": {
+      "kind": "villa",
+      "labelFa": "خانه ویلایی",
+      "specsSectionTitle": "مشخصات ویلا",
+      "specKeys": [
+        "rooms",
+        "buildingAge",
+        "totalFloors",
+        "floor",
+        "documentType",
+        "facade",
+        "orientation",
+        "cabinet",
+        "flooring",
+        "wallCover",
+        "heating",
+        "cooling",
+        "exchangeable"
+      ],
+      "quickStatKeys": [
+        "rooms",
+        "buildingAge",
+        "orientation",
+        "documentType"
+      ],
+      "amenityKeys": [
+        "parking",
+        "storage",
+        "terrace",
+        "builtInWardrobe",
+        "securityDoor",
+        "builtInGas",
+        "exchangeable"
+      ],
+      "crawlDetailRequired": [
+        "fileCode",
+        "dealType",
+        "propertyKind",
+        "area",
+        "location",
+        "price",
+        "deposit",
+        "monthlyRent"
+      ],
+      "crawlDetailOptional": [
+        "rooms",
+        "buildingAge",
+        "totalFloors",
+        "floor",
+        "documentType",
+        "facade",
+        "orientation",
+        "cabinet",
+        "flooring",
+        "wallCover",
+        "heating",
+        "cooling",
+        "pricePerMeter",
+        "description",
+        "image",
+        "hasParking",
+        "hasStorage",
+        "hasTerrace",
+        "hasBuiltInWardrobe",
+        "hasSecurityDoor"
+      ],
+      "crawlListFeatureHints": [
+        "خواب",
+        "سال ساخت",
+        "سند",
+        "پارکینگ",
+        "تراس"
+      ],
+      "browseListSpecKeys": [
+        "rooms",
+        "buildingAge",
+        "orientation",
+        "documentType"
+      ]
+    },
+    "land": {
+      "kind": "land",
+      "labelFa": "زمین",
+      "specsSectionTitle": "مشخصات زمین",
+      "specKeys": [
+        "landUse",
+        "documentType",
+        "orientation",
+        "frontage",
+        "plotWidth",
+        "exchangeable"
+      ],
+      "quickStatKeys": [
+        "landUse",
+        "documentType",
+        "orientation",
+        "frontage"
+      ],
+      "amenityKeys": [
+        "exchangeable"
+      ],
+      "crawlDetailRequired": [
+        "fileCode",
+        "dealType",
+        "propertyKind",
+        "area",
+        "location",
+        "price",
+        "pricePerMeter"
+      ],
+      "crawlDetailOptional": [
+        "landUse",
+        "documentType",
+        "orientation",
+        "frontage",
+        "plotWidth",
+        "deposit",
+        "monthlyRent",
+        "description",
+        "image"
+      ],
+      "crawlListFeatureHints": [
+        "سند",
+        "جهت",
+        "کاربری",
+        "متری",
+        "بر"
+      ],
+      "browseListSpecKeys": [
+        "landUse",
+        "documentType",
+        "orientation",
+        "frontage"
+      ]
+    },
+    "shop": {
+      "kind": "shop",
+      "labelFa": "مغازه",
+      "specsSectionTitle": "مشخصات مغازه",
+      "specKeys": [
+        "floor",
+        "buildingAge",
+        "documentType",
+        "commercialUse",
+        "frontage",
+        "orientation",
+        "heating",
+        "cooling",
+        "exchangeable"
+      ],
+      "quickStatKeys": [
+        "floor",
+        "buildingAge",
+        "frontage",
+        "documentType"
+      ],
+      "amenityKeys": [
+        "parking",
+        "storage",
+        "securityDoor",
+        "exchangeable"
+      ],
+      "crawlDetailRequired": [
+        "fileCode",
+        "dealType",
+        "propertyKind",
+        "area",
+        "location",
+        "price",
+        "deposit",
+        "monthlyRent"
+      ],
+      "crawlDetailOptional": [
+        "floor",
+        "buildingAge",
+        "documentType",
+        "commercialUse",
+        "frontage",
+        "orientation",
+        "heating",
+        "cooling",
+        "pricePerMeter",
+        "description",
+        "image",
+        "hasParking",
+        "hasStorage",
+        "hasSecurityDoor"
+      ],
+      "crawlListFeatureHints": [
+        "طبقه",
+        "سند",
+        "سال ساخت",
+        "پارکینگ"
+      ],
+      "browseListSpecKeys": [
+        "floor",
+        "buildingAge",
+        "frontage",
+        "documentType"
+      ]
+    },
+    "office": {
+      "kind": "office",
+      "labelFa": "دفتر کار",
+      "specsSectionTitle": "مشخصات دفتر",
+      "specKeys": [
+        "floor",
+        "totalFloors",
+        "rooms",
+        "buildingAge",
+        "documentType",
+        "orientation",
+        "heating",
+        "cooling",
+        "exchangeable"
+      ],
+      "quickStatKeys": [
+        "floor",
+        "rooms",
+        "buildingAge",
+        "orientation"
+      ],
+      "amenityKeys": [
+        "parking",
+        "storage",
+        "elevator",
+        "securityDoor",
+        "exchangeable"
+      ],
+      "crawlDetailRequired": [
+        "fileCode",
+        "dealType",
+        "propertyKind",
+        "area",
+        "location",
+        "price",
+        "deposit",
+        "monthlyRent"
+      ],
+      "crawlDetailOptional": [
+        "floor",
+        "totalFloors",
+        "rooms",
+        "buildingAge",
+        "documentType",
+        "orientation",
+        "heating",
+        "cooling",
+        "description",
+        "image",
+        "hasParking",
+        "hasElevator"
+      ],
+      "crawlListFeatureHints": [
+        "طبقه",
+        "خواب",
+        "سند",
+        "آسانسور"
+      ],
+      "browseListSpecKeys": [
+        "floor",
+        "rooms",
+        "buildingAge",
+        "documentType"
+      ]
+    },
+    "commercial": {
+      "kind": "commercial",
+      "labelFa": "تجاری",
+      "specsSectionTitle": "مشخصات ملک تجاری",
+      "specKeys": [
+        "floor",
+        "buildingAge",
+        "documentType",
+        "commercialUse",
+        "frontage",
+        "orientation",
+        "heating",
+        "cooling",
+        "exchangeable"
+      ],
+      "quickStatKeys": [
+        "floor",
+        "buildingAge",
+        "frontage",
+        "commercialUse"
+      ],
+      "amenityKeys": [
+        "parking",
+        "storage",
+        "securityDoor",
+        "exchangeable"
+      ],
+      "crawlDetailRequired": [
+        "fileCode",
+        "dealType",
+        "propertyKind",
+        "area",
+        "location",
+        "price",
+        "deposit",
+        "monthlyRent"
+      ],
+      "crawlDetailOptional": [
+        "floor",
+        "buildingAge",
+        "documentType",
+        "commercialUse",
+        "frontage",
+        "orientation",
+        "heating",
+        "cooling",
+        "description",
+        "image"
+      ],
+      "crawlListFeatureHints": [
+        "طبقه",
+        "سند",
+        "پارکینگ"
+      ],
+      "browseListSpecKeys": [
+        "floor",
+        "buildingAge",
+        "frontage",
+        "commercialUse"
+      ]
+    }
+  }
+}

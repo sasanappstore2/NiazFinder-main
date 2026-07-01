@@ -24,7 +24,7 @@ async function fetchOnlineStoreRegistry(force = false): Promise<OccupationMegaMe
   if (!force) seedLaunchDefaults();
 
   try {
-    const res = await fetch('/api/business/online-stores');
+    const res = await fetch('/api/business/online-stores', { cache: 'no-store' });
     if (!res.ok) return getOnlineStoreMegaMenuTree();
     const data = (await res.json()) as { categories?: ManagedOnlineStoreCategory[] };
     if (data.categories) {

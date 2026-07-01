@@ -1,0 +1,1362 @@
+{
+  "generatedAt": "2026-06-24T23:55:07.815Z",
+  "baseUrl": "http://localhost:3000",
+  "outDir": "/Users/sasan/Desktop/NiazFinder main/reports/map-qa-2026-06-24T234213",
+  "summary": {
+    "total": 42,
+    "passed": 0,
+    "failed": 42
+  },
+  "results": [
+    {
+      "id": "biz-national",
+      "theme": "dark",
+      "label": "کسب‌وکار — ایران (ملی)",
+      "url": "/b/iran?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 5916,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1812
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-national__dark.png"
+    },
+    {
+      "id": "biz-national",
+      "theme": "dark",
+      "zoomLevel": 5,
+      "label": "کسب‌وکار — ایران (ملی)",
+      "url": "/b/iran?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(5) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6176,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1152
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-national__dark__z5.png"
+    },
+    {
+      "id": "biz-national",
+      "theme": "dark",
+      "zoomLevel": 7,
+      "label": "کسب‌وکار — ایران (ملی)",
+      "url": "/b/iran?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(7) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6201,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1078
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-national__dark__z7.png"
+    },
+    {
+      "id": "biz-national",
+      "theme": "dark",
+      "zoomLevel": 10,
+      "label": "کسب‌وکار — ایران (ملی)",
+      "url": "/b/iran?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(10) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6249,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1117
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-national__dark__z10.png"
+    },
+    {
+      "id": "biz-national",
+      "theme": "dark",
+      "zoomLevel": 13,
+      "label": "کسب‌وکار — ایران (ملی)",
+      "url": "/b/iran?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(13) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6456,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1424
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-national__dark__z13.png"
+    },
+    {
+      "id": "biz-mashhad",
+      "theme": "dark",
+      "label": "کسب‌وکار — مشهد",
+      "url": "/b/mashhad?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 5162,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1317
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-mashhad__dark.png"
+    },
+    {
+      "id": "biz-mashhad",
+      "theme": "dark",
+      "zoomLevel": 5,
+      "label": "کسب‌وکار — مشهد",
+      "url": "/b/mashhad?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(5) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6504,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1464
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-mashhad__dark__z5.png"
+    },
+    {
+      "id": "biz-mashhad",
+      "theme": "dark",
+      "zoomLevel": 7,
+      "label": "کسب‌وکار — مشهد",
+      "url": "/b/mashhad?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(7) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6538,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1404
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-mashhad__dark__z7.png"
+    },
+    {
+      "id": "biz-mashhad",
+      "theme": "dark",
+      "zoomLevel": 10,
+      "label": "کسب‌وکار — مشهد",
+      "url": "/b/mashhad?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(10) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6562,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1388
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-mashhad__dark__z10.png"
+    },
+    {
+      "id": "biz-mashhad",
+      "theme": "dark",
+      "zoomLevel": 13,
+      "label": "کسب‌وکار — مشهد",
+      "url": "/b/mashhad?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(13) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6360,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1372
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-mashhad__dark__z13.png"
+    },
+    {
+      "id": "need-national",
+      "theme": "dark",
+      "label": "نیاز — ایران (ملی)",
+      "url": "/n/iran?view=map",
+      "pass": false,
+      "issues": [
+        "نقشه لود نشد (canvas timeout)",
+        "نقشه خالی/تخت: no_canvas (colors=0, var=0)",
+        "هیچ vector tile 200 دریافت نشد"
+      ],
+      "loadMs": 48759,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_canvas",
+        "width": 0,
+        "height": 0,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 0,
+        "vectorFail": 0,
+        "glyph200": 0,
+        "glyphFail": 0,
+        "firstTileMs": null
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-national__dark.png"
+    },
+    {
+      "id": "need-national",
+      "theme": "dark",
+      "zoomLevel": 5,
+      "label": "نیاز — ایران (ملی)",
+      "url": "/n/iran?view=map",
+      "pass": false,
+      "issues": [
+        "نقشه لود نشد (canvas timeout)",
+        "zoomTo(5) ناموفق",
+        "نقشه خالی/تخت: no_canvas (colors=0, var=0)",
+        "هیچ vector tile 200 دریافت نشد"
+      ],
+      "loadMs": 48794,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_canvas",
+        "width": 0,
+        "height": 0,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 0,
+        "vectorFail": 0,
+        "glyph200": 0,
+        "glyphFail": 0,
+        "firstTileMs": null
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-national__dark__z5.png"
+    },
+    {
+      "id": "need-national",
+      "theme": "dark",
+      "zoomLevel": 7,
+      "label": "نیاز — ایران (ملی)",
+      "url": "/n/iran?view=map",
+      "pass": false,
+      "issues": [
+        "نقشه لود نشد (canvas timeout)",
+        "zoomTo(7) ناموفق",
+        "نقشه خالی/تخت: no_canvas (colors=0, var=0)",
+        "هیچ vector tile 200 دریافت نشد"
+      ],
+      "loadMs": 48876,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_canvas",
+        "width": 0,
+        "height": 0,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 0,
+        "vectorFail": 0,
+        "glyph200": 0,
+        "glyphFail": 0,
+        "firstTileMs": null
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-national__dark__z7.png"
+    },
+    {
+      "id": "need-national",
+      "theme": "dark",
+      "zoomLevel": 10,
+      "label": "نیاز — ایران (ملی)",
+      "url": "/n/iran?view=map",
+      "pass": false,
+      "issues": [
+        "نقشه لود نشد (canvas timeout)",
+        "zoomTo(10) ناموفق",
+        "نقشه خالی/تخت: no_canvas (colors=0, var=0)",
+        "هیچ vector tile 200 دریافت نشد"
+      ],
+      "loadMs": 49173,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_canvas",
+        "width": 0,
+        "height": 0,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 0,
+        "vectorFail": 0,
+        "glyph200": 0,
+        "glyphFail": 0,
+        "firstTileMs": null
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-national__dark__z10.png"
+    },
+    {
+      "id": "need-national",
+      "theme": "dark",
+      "zoomLevel": 13,
+      "label": "نیاز — ایران (ملی)",
+      "url": "/n/iran?view=map",
+      "pass": false,
+      "issues": [
+        "نقشه لود نشد (canvas timeout)",
+        "zoomTo(13) ناموفق",
+        "نقشه خالی/تخت: no_canvas (colors=0, var=0)",
+        "هیچ vector tile 200 دریافت نشد"
+      ],
+      "loadMs": 48928,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_canvas",
+        "width": 0,
+        "height": 0,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 0,
+        "vectorFail": 0,
+        "glyph200": 0,
+        "glyphFail": 0,
+        "firstTileMs": null
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-national__dark__z13.png"
+    },
+    {
+      "id": "need-tehran",
+      "theme": "dark",
+      "label": "نیاز — تهران",
+      "url": "/n/tehran?view=map",
+      "pass": false,
+      "issues": [
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 5354,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1298
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-tehran__dark.png"
+    },
+    {
+      "id": "need-tehran",
+      "theme": "dark",
+      "zoomLevel": 5,
+      "label": "نیاز — تهران",
+      "url": "/n/tehran?view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(5) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 7298,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 2196
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-tehran__dark__z5.png"
+    },
+    {
+      "id": "need-tehran",
+      "theme": "dark",
+      "zoomLevel": 7,
+      "label": "نیاز — تهران",
+      "url": "/n/tehran?view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(7) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6642,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1645
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-tehran__dark__z7.png"
+    },
+    {
+      "id": "need-tehran",
+      "theme": "dark",
+      "zoomLevel": 10,
+      "label": "نیاز — تهران",
+      "url": "/n/tehran?view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(10) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6197,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 929
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-tehran__dark__z10.png"
+    },
+    {
+      "id": "need-tehran",
+      "theme": "dark",
+      "zoomLevel": 13,
+      "label": "نیاز — تهران",
+      "url": "/n/tehran?view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(13) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6566,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1403
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-tehran__dark__z13.png"
+    },
+    {
+      "id": "post-picker",
+      "theme": "dark",
+      "label": "ثبت نیاز — انتخاب موقعیت",
+      "url": "/post",
+      "pass": false,
+      "issues": [
+        "نقشه لود نشد (canvas timeout)",
+        "نقشه خالی/تخت: no_canvas (colors=0, var=0)"
+      ],
+      "loadMs": 47883,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_canvas",
+        "width": 0,
+        "height": 0,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 0,
+        "vectorFail": 0,
+        "glyph200": 0,
+        "glyphFail": 0,
+        "firstTileMs": null
+      },
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/post-picker__dark.png"
+    },
+    {
+      "id": "biz-national",
+      "theme": "light",
+      "label": "کسب‌وکار — ایران (ملی)",
+      "url": "/b/iran?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 5393,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1312
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-national__light.png"
+    },
+    {
+      "id": "biz-national",
+      "theme": "light",
+      "zoomLevel": 5,
+      "label": "کسب‌وکار — ایران (ملی)",
+      "url": "/b/iran?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(5) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6523,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1417
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-national__light__z5.png"
+    },
+    {
+      "id": "biz-national",
+      "theme": "light",
+      "zoomLevel": 7,
+      "label": "کسب‌وکار — ایران (ملی)",
+      "url": "/b/iran?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(7) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 7961,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 2913
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-national__light__z7.png"
+    },
+    {
+      "id": "biz-national",
+      "theme": "light",
+      "zoomLevel": 10,
+      "label": "کسب‌وکار — ایران (ملی)",
+      "url": "/b/iran?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(10) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6498,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1300
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-national__light__z10.png"
+    },
+    {
+      "id": "biz-national",
+      "theme": "light",
+      "zoomLevel": 13,
+      "label": "کسب‌وکار — ایران (ملی)",
+      "url": "/b/iran?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(13) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6447,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1314
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-national__light__z13.png"
+    },
+    {
+      "id": "biz-mashhad",
+      "theme": "light",
+      "label": "کسب‌وکار — مشهد",
+      "url": "/b/mashhad?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 5517,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1354
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-mashhad__light.png"
+    },
+    {
+      "id": "biz-mashhad",
+      "theme": "light",
+      "zoomLevel": 5,
+      "label": "کسب‌وکار — مشهد",
+      "url": "/b/mashhad?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(5) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6520,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1479
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-mashhad__light__z5.png"
+    },
+    {
+      "id": "biz-mashhad",
+      "theme": "light",
+      "zoomLevel": 7,
+      "label": "کسب‌وکار — مشهد",
+      "url": "/b/mashhad?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(7) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6289,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1284
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-mashhad__light__z7.png"
+    },
+    {
+      "id": "biz-mashhad",
+      "theme": "light",
+      "zoomLevel": 10,
+      "label": "کسب‌وکار — مشهد",
+      "url": "/b/mashhad?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(10) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6278,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1745
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-mashhad__light__z10.png"
+    },
+    {
+      "id": "biz-mashhad",
+      "theme": "light",
+      "zoomLevel": 13,
+      "label": "کسب‌وکار — مشهد",
+      "url": "/b/mashhad?type=business&view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(13) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6535,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1388
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/biz-mashhad__light__z13.png"
+    },
+    {
+      "id": "need-national",
+      "theme": "light",
+      "label": "نیاز — ایران (ملی)",
+      "url": "/n/iran?view=map",
+      "pass": false,
+      "issues": [
+        "نقشه لود نشد (canvas timeout)",
+        "نقشه خالی/تخت: no_canvas (colors=0, var=0)",
+        "هیچ vector tile 200 دریافت نشد"
+      ],
+      "loadMs": 47396,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_canvas",
+        "width": 0,
+        "height": 0,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 0,
+        "vectorFail": 0,
+        "glyph200": 0,
+        "glyphFail": 0,
+        "firstTileMs": null
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-national__light.png"
+    },
+    {
+      "id": "need-national",
+      "theme": "light",
+      "zoomLevel": 5,
+      "label": "نیاز — ایران (ملی)",
+      "url": "/n/iran?view=map",
+      "pass": false,
+      "issues": [
+        "نقشه لود نشد (canvas timeout)",
+        "zoomTo(5) ناموفق",
+        "نقشه خالی/تخت: no_canvas (colors=0, var=0)",
+        "هیچ vector tile 200 دریافت نشد"
+      ],
+      "loadMs": 48975,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_canvas",
+        "width": 0,
+        "height": 0,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 0,
+        "vectorFail": 0,
+        "glyph200": 0,
+        "glyphFail": 0,
+        "firstTileMs": null
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-national__light__z5.png"
+    },
+    {
+      "id": "need-national",
+      "theme": "light",
+      "zoomLevel": 7,
+      "label": "نیاز — ایران (ملی)",
+      "url": "/n/iran?view=map",
+      "pass": false,
+      "issues": [
+        "نقشه لود نشد (canvas timeout)",
+        "zoomTo(7) ناموفق",
+        "نقشه خالی/تخت: no_canvas (colors=0, var=0)",
+        "هیچ vector tile 200 دریافت نشد"
+      ],
+      "loadMs": 48830,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_canvas",
+        "width": 0,
+        "height": 0,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 0,
+        "vectorFail": 0,
+        "glyph200": 0,
+        "glyphFail": 0,
+        "firstTileMs": null
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-national__light__z7.png"
+    },
+    {
+      "id": "need-national",
+      "theme": "light",
+      "zoomLevel": 10,
+      "label": "نیاز — ایران (ملی)",
+      "url": "/n/iran?view=map",
+      "pass": false,
+      "issues": [
+        "نقشه لود نشد (canvas timeout)",
+        "zoomTo(10) ناموفق",
+        "نقشه خالی/تخت: no_canvas (colors=0, var=0)",
+        "هیچ vector tile 200 دریافت نشد"
+      ],
+      "loadMs": 48865,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_canvas",
+        "width": 0,
+        "height": 0,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 0,
+        "vectorFail": 0,
+        "glyph200": 0,
+        "glyphFail": 0,
+        "firstTileMs": null
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-national__light__z10.png"
+    },
+    {
+      "id": "need-national",
+      "theme": "light",
+      "zoomLevel": 13,
+      "label": "نیاز — ایران (ملی)",
+      "url": "/n/iran?view=map",
+      "pass": false,
+      "issues": [
+        "نقشه لود نشد (canvas timeout)",
+        "zoomTo(13) ناموفق",
+        "نقشه خالی/تخت: no_canvas (colors=0, var=0)",
+        "هیچ vector tile 200 دریافت نشد"
+      ],
+      "loadMs": 48858,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_canvas",
+        "width": 0,
+        "height": 0,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 0,
+        "vectorFail": 0,
+        "glyph200": 0,
+        "glyphFail": 0,
+        "firstTileMs": null
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-national__light__z13.png"
+    },
+    {
+      "id": "need-tehran",
+      "theme": "light",
+      "label": "نیاز — تهران",
+      "url": "/n/tehran?view=map",
+      "pass": false,
+      "issues": [
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 5370,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1360
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-tehran__light.png"
+    },
+    {
+      "id": "need-tehran",
+      "theme": "light",
+      "zoomLevel": 5,
+      "label": "نیاز — تهران",
+      "url": "/n/tehran?view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(5) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 7397,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 2288
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-tehran__light__z5.png"
+    },
+    {
+      "id": "need-tehran",
+      "theme": "light",
+      "zoomLevel": 7,
+      "label": "نیاز — تهران",
+      "url": "/n/tehran?view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(7) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6514,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1536
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-tehran__light__z7.png"
+    },
+    {
+      "id": "need-tehran",
+      "theme": "light",
+      "zoomLevel": 10,
+      "label": "نیاز — تهران",
+      "url": "/n/tehran?view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(10) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6637,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1617
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-tehran__light__z10.png"
+    },
+    {
+      "id": "need-tehran",
+      "theme": "light",
+      "zoomLevel": 13,
+      "label": "نیاز — تهران",
+      "url": "/n/tehran?view=map",
+      "pass": false,
+      "issues": [
+        "zoomTo(13) ناموفق",
+        "نقشه خالی/تخت: no_context (colors=0, var=0)"
+      ],
+      "loadMs": 6805,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_context",
+        "width": 777,
+        "height": 702,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 2,
+        "vectorFail": 0,
+        "glyph200": 6,
+        "glyphFail": 0,
+        "firstTileMs": 1740
+      },
+      "consoleErrors": [],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/need-tehran__light__z13.png"
+    },
+    {
+      "id": "post-picker",
+      "theme": "light",
+      "label": "ثبت نیاز — انتخاب موقعیت",
+      "url": "/post",
+      "pass": false,
+      "issues": [
+        "نقشه لود نشد (canvas timeout)",
+        "نقشه خالی/تخت: no_canvas (colors=0, var=0)"
+      ],
+      "loadMs": 47353,
+      "mapZoom": null,
+      "canvas": {
+        "ok": false,
+        "reason": "no_canvas",
+        "width": 0,
+        "height": 0,
+        "uniqueColors": 0,
+        "variance": 0,
+        "meanRgb": 0
+      },
+      "tiles": {
+        "vector200": 0,
+        "vectorFail": 0,
+        "glyph200": 0,
+        "glyphFail": 0,
+        "firstTileMs": null
+      },
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "screenshot": "reports/map-qa-2026-06-24T234213/screenshots/post-picker__light.png"
+    }
+  ]
+}

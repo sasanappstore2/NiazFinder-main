@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-06-29T21:09:02.410Z",
+  "maxItems": 5,
+  "imported": 5,
+  "extractMethod": "maskanyaban+ajax",
+  "coverage": {
+    "fileCode": {
+      "count": 5,
+      "pct": 100
+    },
+    "dealType": {
+      "count": 5,
+      "pct": 100
+    },
+    "propertyKind": {
+      "count": 5,
+      "pct": 100
+    },
+    "area": {
+      "count": 5,
+      "pct": 100
+    },
+    "location": {
+      "count": 5,
+      "pct": 100
+    },
+    "neighborhood": {
+      "count": 5,
+      "pct": 100
+    },
+    "price": {
+      "count": 0,
+      "pct": 0
+    },
+    "deposit": {
+      "count": 5,
+      "pct": 100
+    },
+    "monthlyRent": {
+      "count": 4,
+      "pct": 80
+    },
+    "pricePerMeter": {
+      "count": 0,
+      "pct": 0
+    },
+    "rooms": {
+      "count": 5,
+      "pct": 100
+    },
+    "floor": {
+      "count": 3,
+      "pct": 60
+    },
+    "buildingAge": {
+      "count": 5,
+      "pct": 100
+    },
+    "documentType": {
+      "count": 0,
+      "pct": 0
+    },
+    "description": {
+      "count": 5,
+      "pct": 100
+    },
+    "cabinet": {
+      "count": 0,
+      "pct": 0
+    },
+    "orientation": {
+      "count": 0,
+      "pct": 0
+    },
+    "hasParking": {
+      "count": 3,
+      "pct": 60
+    },
+    "hasElevator": {
+      "count": 0,
+      "pct": 0
+    },
+    "hasStorage": {
+      "count": 3,
+      "pct": 60
+    },
+    "sourceMeta": {
+      "count": 5,
+      "pct": 100
+    }
+  },
+  "dealKindMatrix": {
+    "rent_rahn_ejare:apartment": 5
+  },
+  "verification": {
+    "sample": 5,
+    "ok": 5,
+    "fail": 0,
+    "issues": []
+  },
+  "ownerAddressRate": 0
+}

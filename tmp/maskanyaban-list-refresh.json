@@ -1,0 +1,11 @@
+{
+  "startedAt": "2026-07-01T10:40:06.307Z",
+  "updatedAt": "2026-07-01T10:49:19.895Z",
+  "days": 100,
+  "scraped": 2400,
+  "imported": 2400,
+  "enrichRounds": 0,
+  "enrichTotal": 0,
+  "enrichRemaining": 0,
+  "status": "complete"
+}

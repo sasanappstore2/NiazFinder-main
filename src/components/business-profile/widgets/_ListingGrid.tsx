@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import type { Business, PropertyListing } from '@/contracts/business-profile';
 import { propertyListingCategoryLabel } from '@/lib/business/real-estate-listing-categories';
 import { listingPriceDisplay } from '@/lib/business/real-estate-listing-deal-types';
@@ -39,19 +38,14 @@ export function ListingGrid({
     <>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {listings.slice(0, limit).map((l) => {
-          const cover = listingCoverImage(l);
           const inner = (
             <>
-              {cover ? (
-                <div className="relative aspect-square w-full bg-muted">
-                  <Image
-                    src={cover}
-                    alt={l.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 320px"
-                  />
-                </div>
+              {listingCoverImage(l) ? (
+                <img
+                  src={listingCoverImage(l)}
+                  alt={l.title}
+                  className="aspect-square w-full object-cover"
+                />
               ) : (
                 <div className="aspect-square w-full bg-muted" aria-hidden />
               )}
