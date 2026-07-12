@@ -294,7 +294,10 @@
     "geo:fix-gaps": "npx --yes tsx scripts/geo/fix-national-geo-gaps.ts",
     "geo:dashboard": "npx --yes tsx scripts/geo/geo-dashboard.ts",
     "test:geo-quality-gate": "npx --yes tsx src/lib/map/fixtures/run-geo-quality-gate-self-test.ts",
-    "test:province-geo-parity": "npx --yes tsx src/lib/map/fixtures/run-province-geo-parity-self-test.ts"
+    "test:province-geo-parity": "npx --yes tsx src/lib/map/fixtures/run-province-geo-parity-self-test.ts",
+    "test:intake-merge-policy": "npx --yes tsx src/lib/need-intake/fixtures/run-intake-merge-policy-self-test.ts",
+    "test:hybrid-runtime": "npx --yes tsx src/lib/need-intake/fixtures/run-hybrid-runtime-self-test.ts",
+    "test:vertical-expansion": "NEED_INTAKE_LOC_SKIP_PRISMA=true npx --yes tsx src/lib/need-intake/fixtures/run-vertical-expansion-self-test.ts"
   },
   "dependencies": {
     "@ark-ui/react": "^5.36.2",
