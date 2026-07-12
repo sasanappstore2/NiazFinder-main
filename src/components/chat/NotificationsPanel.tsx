@@ -19,6 +19,8 @@ import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
+import { PanelCard } from '@/components/shared/PanelCard';
+import { EmptyState } from '@/components/shared/EmptyState';
 import { cn } from '@/lib/utils';
 import type { Notification } from '@/lib/types';
 import { NEED_BROWSE_ALERT_NOTIFICATION_TYPE } from '@/lib/need-alerts/types';
@@ -187,11 +189,10 @@ export function NotificationsPanel() {
 
   // ─── Render ──────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col rounded-xl border bg-background shadow-sm">
-      {/* Header */}
+    <PanelCard padding="none" className="flex flex-col overflow-hidden">
+      {/* Toolbar */}
       <div className="flex items-center justify-between border-b px-5 py-4">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-bold">اعلان‌ها</h2>
           {unreadCount > 0 && (
             <Badge className="rounded-full px-2 text-xs">{unreadCount} جدید</Badge>
           )}
@@ -317,20 +318,18 @@ export function NotificationsPanel() {
             })}
           </div>
         ) : (
-          /* Empty State */
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-muted">
-              <BellOff className="h-10 w-10 text-muted-foreground" />
-            </div>
-            <h3 className="text-base font-semibold">اعلان جدیدی ندارید</h3>
-            <p className="mt-1 max-w-[240px] text-sm text-muted-foreground">
-              {activeFilter === 'unread'
+          <EmptyState
+            icon={BellOff}
+            title="اعلان جدیدی ندارید"
+            description={
+              activeFilter === 'unread'
                 ? 'تمام اعلان‌های شما را خوانده‌اید'
                 : activeFilter === 'needs'
                   ? 'هنوز نیاز جدیدی مطابق جستجوهای دنبال‌شده ثبت نشده'
-                  : 'هنوز اعلانی دریافت نکرده‌اید'}
-            </p>
-          </div>
+                  : 'هنوز اعلانی دریافت نکرده‌اید'
+            }
+            className="border-0 bg-transparent shadow-none"
+          />
         )}
       </ScrollArea>
 
@@ -358,6 +357,6 @@ export function NotificationsPanel() {
           <p>بخش اعلان‌ها شامل اعلان‌های پیشنهاد جدید، پیام، نظر، پرداخت، پروژه و سیستم پلتفرم نیاز فایندر.</p>
         </div>
       </noscript>
-    </div>
+    </PanelCard>
   );
 }

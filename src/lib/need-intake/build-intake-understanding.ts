@@ -1,5 +1,13 @@
 import { categorySuggestionLabelFromSlug } from '@/lib/categories/format-category-suggestion-label';
 import type { FieldState } from '@/intake/intelligence-engine/types';
+import {
+  RULES_CATEGORY_MIN_CONFIDENCE,
+  RULES_DISAMBIG_MIN_CONFIDENCE,
+} from '@/intake/rules/config';
+import {
+  COMPOSE_AUTO_APPLY_MIN_CONFIDENCE,
+  UNDERSTANDING_LOCATION_MIN_CONFIDENCE,
+} from '@/lib/need-intake/compose-auto-apply';
 
 export interface IntakeUnderstandingHighlight {
   key: string;
@@ -13,6 +21,14 @@ export interface IntakeUnderstandingView {
   aiInvoked: boolean;
   analysisMode: 'ai' | 'rules';
 }
+
+/** Category chips / auto-apply — only when the engine is clearly sure. */
+export const UNDERSTANDING_CATEGORY_MIN_CONFIDENCE = RULES_DISAMBIG_MIN_CONFIDENCE;
+/** Location auto-apply — parity with category (RFC-0004). */
+export { UNDERSTANDING_LOCATION_MIN_CONFIDENCE };
+/** Other field chips (budget, …) — display only; auto-apply uses COMPOSE gate. */
+export const UNDERSTANDING_FIELD_MIN_CONFIDENCE = RULES_CATEGORY_MIN_CONFIDENCE;
+export { COMPOSE_AUTO_APPLY_MIN_CONFIDENCE };
 
 const FIELD_LABELS: Record<string, string> = {
   categorySlug: '\u062F\u0633\u062A\u0647',
@@ -44,6 +60,16 @@ const TRANSACTION_LABELS: Record<string, string> = {
   DAILY_RENT: '\u0627\u062C\u0627\u0631\u0647 \u0631\u0648\u0632\u0627\u0646\u0647',
 };
 
+function minConfidenceForKey(key: string): number {
+  if (key === 'categorySlug' || key === 'subcategorySlug') {
+    return UNDERSTANDING_CATEGORY_MIN_CONFIDENCE;
+  }
+  if (key === 'city' || key === 'citySlug' || key === 'neighborhood' || key === 'neighborhoodSlug') {
+    return UNDERSTANDING_LOCATION_MIN_CONFIDENCE;
+  }
+  return UNDERSTANDING_FIELD_MIN_CONFIDENCE;
+}
+
 function formatFieldValue(key: string, value: unknown): string {
   if (value == null) return '';
   if (key === 'categorySlug' || key === 'subcategorySlug') {
@@ -73,6 +99,7 @@ function highlightFromMeta(
   meta: FieldState | undefined
 ): IntakeUnderstandingHighlight | null {
   if (!meta?.value) return null;
+  if ((meta.confidence ?? 0) < minConfidenceForKey(key)) return null;
   const value = formatFieldValue(key, meta.value);
   if (!value) return null;
   return {
@@ -152,8 +179,9 @@ export function buildIntakeUnderstanding(input: {
     highlights.push(row);
   }
 
+  const gist = input.intentGist?.trim() || '';
   const summary =
-    input.intentGist?.trim() ||
+    gist ||
     (highlights.length > 0
       ? `\u0628\u0647 \u0646\u0638\u0631 \u0645\u06CC\u200C\u0631\u0633\u062F ${highlights.map((h) => `${h.label}: ${h.value}`).join(' \u00B7 ')} \u0628\u0631\u0627\u06CC \u0634\u0645\u0627 \u0645\u0647\u0645 \u0627\u0633\u062A.`
       : '');

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { MapPin } from 'lucide-react';
+import { BorderGlow } from '@/components/ui/border-glow';
 import { SuggestionChips } from '@/components/need-intake/SuggestionChips';
 import type { NeedDraft } from '@/contracts/need-intake';
 import type { SmartExtractionResult } from '@/intake/smart-extractor/types';
@@ -54,7 +55,7 @@ export function buildSmartLocationOptions(
 ): LocationAmbiguityOption[] {
   const alts = result?.location?.alternatives;
   if (!alts?.length) return [];
-  if (!result.location.disambiguationNeeded && alts.length < 2) return [];
+  if (!result?.location?.disambiguationNeeded && alts.length < 2) return [];
 
   const seen = new Set<string>();
   const options: LocationAmbiguityOption[] = [];
@@ -140,7 +141,14 @@ export function IntakeLocationAmbiguityPrompt({
   if (!uniqueOptions.length) return null;
 
   return (
-    <div className="space-y-2 rounded-xl border border-amber-500/25 bg-amber-500/5 px-3 py-2">
+    <BorderGlow
+      rounded="xl"
+      glow
+      size={140}
+      className="border-amber-500/25 bg-amber-500/10"
+      innerClassName="space-y-2 bg-amber-500/5 px-3 py-2"
+      spotlightClassName="from-amber-500/50 via-amber-400/35 to-amber-300/20"
+    >
       <p className="text-xs font-medium text-amber-800 dark:text-amber-300 flex items-center gap-1">
         <MapPin className="size-3.5 shrink-0" aria-hidden />
         کدام شهر یا محله مدنظر شماست؟
@@ -178,6 +186,6 @@ export function IntakeLocationAmbiguityPrompt({
           if (label) onApplyNeighborhood(label, slug, { fromUser: true });
         }}
       />
-    </div>
+    </BorderGlow>
   );
 }

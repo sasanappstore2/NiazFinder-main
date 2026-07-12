@@ -53,13 +53,13 @@ Docker: `docker compose up rabbitmq worker-go` (add `--profile ai` for `gemma4-i
 
 | Variable | Purpose |
 |----------|---------|
-| `TYPESENSE_ENABLED` | `true` = use Typesense for `/api/business/browse` |
-| `TYPESENSE_API_KEY` | API key (must match docker `--api-key`) |
+| `TYPESENSE_ENABLED` | Default **on**; set `false` to force Prisma browse fallback |
+| `TYPESENSE_API_KEY` | API key (must match docker `--api-key`; local default `niazfinder_typesense_dev_key`) |
 | `TYPESENSE_HOST` | Host (default `127.0.0.1`) |
 | `TYPESENSE_PORT` | Port (default `8108`) |
 | `TYPESENSE_PROTOCOL` | `http` or `https` |
 
-Bootstrap index: `npm run sync:typesense`
+Bootstrap: `npm run ensure:typesense` (also runs via `predev` before `npm run dev`). Full reindex: `npm run sync:typesense`.
 
 ## Security (required in production)
 

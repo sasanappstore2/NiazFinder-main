@@ -31,7 +31,7 @@ export async function syncCanonicalCategoriesToDb(): Promise<{
         name: cat.title,
         description: cat.englishTitle ?? cat.title,
         order: i,
-        isActive: true,
+        // Preserve admin launch toggles — do not force re-activate.
       },
     });
     slugToId.set(cat.slug, row.id);

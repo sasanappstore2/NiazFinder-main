@@ -5,7 +5,12 @@ import {
   searchSiteCities,
   searchSiteNeighborhoods,
 } from '@/lib/ai-agent/site-data';
-import { searchNeedsAgent } from '@/lib/ai-agent/vector-search';
+import {
+  getPublicBusinessProfileTool,
+  searchBusinessesAgent,
+  searchNeedsAgent,
+  searchSiteKnowledgeAgent,
+} from '@/lib/ai-agent/vector-search';
 import {
   explainNeedFieldsForVertical,
   getSiteHelpFaq,
@@ -101,6 +106,12 @@ export async function executeAgentTool(
       return checkUserAccountStatus(ctx.userId);
     case 'search_needs_agent':
       return searchNeedsAgent(args);
+    case 'search_businesses_agent':
+      return searchBusinessesAgent(args);
+    case 'get_public_business_profile':
+      return getPublicBusinessProfileTool(args);
+    case 'search_site_knowledge':
+      return searchSiteKnowledgeAgent(args);
     case 'get_site_categories':
       return getSiteCategories(args);
     case 'search_site_categories':

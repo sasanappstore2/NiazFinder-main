@@ -17,7 +17,9 @@ const BATCH_SIZE = 200;
 
 async function main() {
   if (!typesenseEnabled()) {
-    console.error('Typesense is disabled. Set TYPESENSE_ENABLED=true and TYPESENSE_API_KEY.');
+    console.error(
+      'Typesense is disabled. Unset TYPESENSE_ENABLED=false (or set TYPESENSE_ENABLED=true) and provide TYPESENSE_API_KEY.'
+    );
     process.exit(1);
   }
 

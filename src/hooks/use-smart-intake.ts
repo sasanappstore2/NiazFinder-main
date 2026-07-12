@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { debounce } from 'lodash';
 import { toast } from 'sonner';
 import type {
@@ -160,28 +160,36 @@ export function useSmartIntake(
     }
   }, [preferredCity, preferredCitySlug, onExtractionComplete, onFieldsUpdate]);
 
-  /**
-   * Debounced extraction برای real-time
-   */
-  const debouncedExtraction = useMemo(
-    () => debounce((text: string, details: string) => {
-      performExtraction(text, details, true);
-    }, debounceDelay),
-    [performExtraction, debounceDelay]
-  );
+  const performExtractionRef = useRef(performExtraction);
+  useEffect(() => {
+    performExtractionRef.current = performExtraction;
+  }, [performExtraction]);
+
+  const debouncedExtractionRef = useRef<ReturnType<typeof debounce> | null>(null);
+
+  useEffect(() => {
+    const debounced = debounce((text: string, details: string) => {
+      void performExtractionRef.current(text, details, true);
+    }, debounceDelay);
+    debouncedExtractionRef.current = debounced;
+    return () => {
+      debounced.cancel();
+      if (debouncedExtractionRef.current === debounced) {
+        debouncedExtractionRef.current = null;
+      }
+    };
+  }, [debounceDelay]);
 
   /**
    * Effect برای auto extraction
    */
   useEffect(() => {
-    if (autoExtract) {
-      debouncedExtraction(needText, detailsText);
-    }
-
+    if (!autoExtract) return;
+    debouncedExtractionRef.current?.(needText, detailsText);
     return () => {
-      debouncedExtraction.cancel();
+      debouncedExtractionRef.current?.cancel();
     };
-  }, [needText, detailsText, autoExtract, debouncedExtraction]);
+  }, [needText, detailsText, autoExtract]);
 
   /**
    * تابع extraction دستی (بدون debounce)
@@ -279,79 +287,71 @@ export function useSmartIntake(
 }
 
 /**
- * تبدیل نتیجه extraction به NeedDraft
+ * Map SmartExtractionResult into a NeedDraft patch (entities + answers).
  */
 function convertToNeedDraft(result: SmartExtractionResult): Partial<NeedDraft> {
-  const draft: Partial<NeedDraft> = {};
+  const entities: Record<string, unknown> = {};
+  const answers: Record<string, string | number | boolean | string[]> = {};
 
-  // Category
   if (result.category.value) {
-    draft.categorySlug = result.category.value;
-    draft.subcategorySlug = result.category.subcategory || undefined;
+    entities.categorySlug = result.category.value;
+    if (result.category.subcategory) {
+      entities.subcategorySlug = result.category.subcategory;
+    }
   }
 
-  // Location
   if (result.location.city) {
-    draft.city = result.location.city;
-    draft.citySlug = result.location.citySlug || undefined;
+    entities.city = result.location.city;
+    if (result.location.citySlug) entities.citySlug = result.location.citySlug;
   }
 
   if (result.location.neighborhood) {
-    draft.neighborhood = result.location.neighborhood;
-    draft.neighborhoodSlug = result.location.neighborhoodSlug || undefined;
+    entities.neighborhood = result.location.neighborhood;
+    if (result.location.neighborhoodSlug) {
+      entities.neighborhoodSlug = result.location.neighborhoodSlug;
+    }
   }
 
-  // Transaction
   if (result.transaction.type) {
-    draft.transactionType = result.transaction.type;
-    draft.dealType = result.transaction.dealType;
+    entities.transactionType = result.transaction.type;
+  }
+  if (result.transaction.dealType) {
+    answers.dealType = result.transaction.dealType;
   }
 
-  // Budget
-  if (result.budget.min !== null || result.budget.max !== null) {
-    draft.budgetMin = result.budget.min || undefined;
-    draft.budgetMax = result.budget.max || undefined;
+  if (result.budget.min != null) entities.budgetMin = result.budget.min;
+  if (result.budget.max != null) entities.budgetMax = result.budget.max;
+  if (result.budget.depositAmount != null) {
+    answers.rahnAmount = result.budget.depositAmount;
+    answers.deposit = result.budget.depositAmount;
+  }
+  if (result.budget.rentAmount != null) {
+    answers.monthlyRent = result.budget.rentAmount;
   }
 
-  if (result.budget.depositAmount !== undefined) {
-    draft.depositAmount = result.budget.depositAmount;
-  }
+  if (result.property.area != null) entities.area = result.property.area;
+  if (result.property.rooms != null) entities.rooms = result.property.rooms;
 
-  if (result.budget.rentAmount !== undefined) {
-    draft.rentAmount = result.budget.rentAmount;
-  }
-
-  // Property
-  if (result.property.area) {
-    draft.area = result.property.area;
-  }
-
-  if (result.property.rooms) {
-    draft.rooms = result.property.rooms;
-  }
-
-  // Features
-  const features = [];
+  const features: string[] = [];
   if (result.property.hasParking) features.push('parking');
   if (result.property.hasElevator) features.push('elevator');
   if (result.property.hasStorage) features.push('storage');
+  if (features.length > 0) answers.features = features;
 
-  if (features.length > 0) {
-    draft.features = features;
-  }
+  const title = result.metadata.needTitle?.trim();
+  const description = result.metadata.needDescription?.trim();
+  const listingPreview =
+    title || description
+      ? {
+          title: title || '',
+          description: description || '',
+        }
+      : undefined;
 
-  // Metadata
-  if (result.metadata.needTitle) {
-    draft.title = result.metadata.needTitle;
-  }
-
-  if (result.metadata.needDescription) {
-    draft.description = result.metadata.needDescription;
-  }
-
-  if (result.metadata.urgency) {
-    draft.urgency = result.metadata.urgency;
-  }
-
-  return draft;
+  return {
+    ...(result.category.value ? { category: result.category.value } : {}),
+    entities,
+    answers,
+    ...(listingPreview ? { listingPreview } : {}),
+  };
 }

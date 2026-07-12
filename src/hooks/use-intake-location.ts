@@ -35,6 +35,7 @@ import {
 } from '@/lib/neighborhoods/format-disambiguation-label';
 import { findManagedNeighborhoodAmbiguity } from '@/lib/neighborhoods/find-managed-neighborhood-ambiguity';
 import { extractLocationFragment, normalizeHoodFragment } from '@/lib/need-intake/location-fragment';
+import { mayAutoApplyLocation } from '@/lib/need-intake/compose-auto-apply';
 
 export interface UseIntakeLocationOptions {
   initialCity?: string | null;
@@ -55,7 +56,13 @@ export function useIntakeLocation({
   const [myLocationLoading, setMyLocationLoading] = useState(false);
   const [promptNeighborhoodPick, setPromptNeighborhoodPick] = useState(false);
   const cityLockedByUserRef = useRef(false);
+  const [cityLockedByUser, setCityLockedByUser] = useState(false);
   const neighborhoodLockedByUserRef = useRef(false);
+
+  const markCityLockedByUser = useCallback((locked: boolean) => {
+    cityLockedByUserRef.current = locked;
+    setCityLockedByUser(locked);
+  }, []);
 
   const { cities: managedCities } = useManagedLocations();
   const sortedCities = useMemo(
@@ -95,7 +102,7 @@ export function useIntakeLocation({
   const applyCity = useCallback(
     (cityName: string) => {
       const trimmed = cityName.trim();
-      cityLockedByUserRef.current = true;
+      markCityLockedByUser(true);
 
       if (!trimmed) {
         setSelectedCity('');
@@ -124,7 +131,7 @@ export function useIntakeLocation({
         lng: null,
       });
     },
-    [patchNeedDraftEntities, selectedCity]
+    [patchNeedDraftEntities, selectedCity, markCityLockedByUser]
   );
 
   const applyCityRecord = useCallback(
@@ -213,14 +220,14 @@ export function useIntakeLocation({
         neighborhoodSlug: neighborhoodSlug?.trim() || null,
       });
       if (options?.lockUserChoice) {
-        cityLockedByUserRef.current = true;
+        markCityLockedByUser(true);
         neighborhoodLockedByUserRef.current = true;
       }
       if (options?.promptNeighborhood && city && !neighborhood) {
         setPromptNeighborhoodPick(true);
       }
     },
-    [patchNeedDraftEntities, sortedCities]
+    [patchNeedDraftEntities, sortedCities, markCityLockedByUser]
   );
 
   const resolveNeighborhoodLabelFromSlug = useCallback(
@@ -370,6 +377,10 @@ export function useIntakeLocation({
 
   const applyDetectedLocationFromDraft = useCallback(
     (draft: NeedDraft) => {
+      const allowCity = mayAutoApplyLocation(draft, 'city');
+      const allowNeighborhood = mayAutoApplyLocation(draft, 'neighborhood');
+      if (!allowCity && !allowNeighborhood) return;
+
       const { city, neighborhood } = extractIntakeLocationFromDraft(draft, sortedCities);
       const entities = recordToEntities(draft.entities);
       const slug =
@@ -378,42 +389,71 @@ export function useIntakeLocation({
       const sourceText = draft.sourceText ?? draft.parsedIntent.rawText ?? '';
 
       const scopedCity = selectedCity.trim();
-      const inferredCity = city?.trim() ?? '';
+      const inferredCity = allowCity ? (city?.trim() ?? '') : '';
       const crossCityInText =
         scopedCity.length > 0 && textMentionsCityOtherThan(sourceText, scopedCity);
+      const currentNeighborhood = selectedNeighborhood.trim();
 
-      if (!cityLockedByUserRef.current && inferredCity) {
+      if (allowCity && !cityLockedByUserRef.current && inferredCity) {
         if (!scopedCity || inferredCity === scopedCity) {
-          setSelectedCity(inferredCity);
-          patch.city = inferredCity;
-        } else if (scopedCity) {
+          if (inferredCity !== scopedCity) {
+            setSelectedCity(inferredCity);
+          }
+          if (entities.city !== inferredCity) {
+            patch.city = inferredCity;
+          }
+        } else if (scopedCity && entities.city !== scopedCity) {
           patch.city = scopedCity;
         }
-      } else if (scopedCity) {
+      } else if (scopedCity && entities.city !== scopedCity && cityLockedByUserRef.current) {
         patch.city = scopedCity;
       }
 
-      if (!neighborhoodLockedByUserRef.current && !crossCityInText) {
+      if (
+        allowNeighborhood &&
+        !neighborhoodLockedByUserRef.current &&
+        !crossCityInText
+      ) {
         const cityForMatch = scopedCity || inferredCity;
         const bySlug = slug ? lookupManagedNeighborhoodBySlug(neighborhoods, slug) : null;
         if (bySlug) {
-          setSelectedNeighborhood(bySlug.name);
-          patch.neighborhood = bySlug.name;
-          patch.neighborhoodSlug = bySlug.id;
+          if (bySlug.name !== currentNeighborhood) {
+            setSelectedNeighborhood(bySlug.name);
+          }
+          if (entities.neighborhood !== bySlug.name) {
+            patch.neighborhood = bySlug.name;
+          }
+          if (entities.neighborhoodSlug !== bySlug.id) {
+            patch.neighborhoodSlug = bySlug.id;
+          }
         } else if (neighborhood && neighborhoods.length > 0) {
           const hit = matchManagedNeighborhood(neighborhoods, neighborhood, cityForMatch);
           if (hit) {
-            setSelectedNeighborhood(hit.name);
-            patch.neighborhood = hit.name;
-            patch.neighborhoodSlug = hit.id;
-          } else {
+            if (hit.name !== currentNeighborhood) {
+              setSelectedNeighborhood(hit.name);
+            }
+            if (entities.neighborhood !== hit.name) {
+              patch.neighborhood = hit.name;
+            }
+            if (entities.neighborhoodSlug !== hit.id) {
+              patch.neighborhoodSlug = hit.id;
+            }
+          } else if (neighborhood !== currentNeighborhood) {
             setSelectedNeighborhood(neighborhood);
-            patch.neighborhood = neighborhood;
+            if (entities.neighborhood !== neighborhood) {
+              patch.neighborhood = neighborhood;
+            }
           }
         } else if (neighborhood) {
-          setSelectedNeighborhood(neighborhood);
-          patch.neighborhood = neighborhood;
-          if (slug) patch.neighborhoodSlug = slug;
+          if (neighborhood !== currentNeighborhood) {
+            setSelectedNeighborhood(neighborhood);
+          }
+          if (entities.neighborhood !== neighborhood) {
+            patch.neighborhood = neighborhood;
+          }
+          if (slug && entities.neighborhoodSlug !== slug) {
+            patch.neighborhoodSlug = slug;
+          }
         }
       }
 
@@ -421,7 +461,13 @@ export function useIntakeLocation({
         patchNeedDraftEntities(patch);
       }
     },
-    [neighborhoods, patchNeedDraftEntities, selectedCity, sortedCities]
+    [
+      neighborhoods,
+      patchNeedDraftEntities,
+      selectedCity,
+      selectedNeighborhood,
+      sortedCities,
+    ]
   );
 
   const neighborhoodDisambiguationChips = useMemo(() => {
@@ -608,34 +654,26 @@ export function useIntakeLocation({
 
   useEffect(() => {
     if (selectedCity.trim()) return;
-    if (initialCity?.trim()) {
-      const resolved =
-        resolveIntakeCitySelectValue(sortedCities, {
-          cityName: initialCity,
-          citySlug: initialCity,
-        }) ?? initialCity.trim();
-      setSelectedCity(resolved);
-      cityLockedByUserRef.current = true;
-      return;
-    }
+    // RFC-0004: URL initialCity is analyze hint only — do not fill/lock the form.
+    if (initialCity?.trim()) return;
     const scope = scopeFromCookie();
     if (scope.mode === 'city' || scope.mode === 'cities') {
       const cityName = scope.cities[0]?.name?.trim();
       if (cityName) {
         setSelectedCity(cityName);
-        cityLockedByUserRef.current = true;
+        markCityLockedByUser(true);
       }
     }
-  }, [selectedCity, initialCity, sortedCities]);
+  }, [selectedCity, initialCity, sortedCities, markCityLockedByUser]);
 
   const resetLocationLocks = useCallback(() => {
-    cityLockedByUserRef.current = false;
+    markCityLockedByUser(false);
     neighborhoodLockedByUserRef.current = false;
-  }, []);
+  }, [markCityLockedByUser]);
 
   const lockCityByUser = useCallback(() => {
-    cityLockedByUserRef.current = true;
-  }, []);
+    markCityLockedByUser(true);
+  }, [markCityLockedByUser]);
 
   return {
     selectedCity,
@@ -659,6 +697,7 @@ export function useIntakeLocation({
     handleLocationSuggestion,
     resetLocationLocks,
     lockCityByUser,
+    cityLockedByUser,
     cityLockedByUserRef,
     neighborhoodLockedByUserRef,
   };

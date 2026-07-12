@@ -254,7 +254,7 @@ function buildSuggestedQuestions(
 
   if (result.recommendedQuestions.length && questions.length === 0) {
     questions.push({
-      fieldKey: result.nextQuestion?.fieldKey ?? 'general',
+      fieldKey: result.nextQuestion?.field ?? 'general',
       questionFa: result.recommendedQuestions[0]!,
       reason: 'missing',
     });

@@ -1,4 +1,4 @@
-import { isPublicBusinessProfile } from '@/lib/business/load-profile';
+import { isPublicBusinessProfile } from '@/lib/business/public-profile';
 
 function assert(condition: boolean, message: string): string | null {
   return condition ? null : message;

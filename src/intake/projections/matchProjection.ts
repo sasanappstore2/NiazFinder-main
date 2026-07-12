@@ -83,11 +83,14 @@ export function toMatchProjection(draft: NeedDraft): MatchProjection {
     estateSignals: {
       area: asFiniteNumber(entities.area ?? answers.areaMin ?? answers.area),
       rooms: asFiniteNumber(entities.rooms ?? answers.rooms),
-      rahnAmount: asFiniteNumber(answers.rahnAmount ?? entities.rahnAmount),
-      monthlyRent: asFiniteNumber(answers.monthlyRent ?? entities.monthlyRent),
-      deposit: asFiniteNumber(answers.deposit ?? entities.deposit),
+      rahnAmount: asFiniteNumber(answers.rahnAmount),
+      monthlyRent: asFiniteNumber(answers.monthlyRent),
+      deposit: asFiniteNumber(answers.deposit),
       parkingCount: (answers.parkingCount as string | number | null) ?? null,
-      buildingAge: (answers.buildingAge as string | number | null) ?? answers.yearMin ?? null,
+      buildingAge: (answers.buildingAge as string | number | null) ??
+        (typeof answers.yearMin === 'number' || typeof answers.yearMin === 'string'
+          ? answers.yearMin
+          : null),
       deedType: typeof answers.deedType === 'string' ? answers.deedType : null,
       amenities: answers.amenities ?? null,
     },

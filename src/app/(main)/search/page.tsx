@@ -25,8 +25,11 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PageContainer } from '@/components/layout/PageContainer';
 import { Separator } from '@/components/ui/separator';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { PageChrome } from '@/components/layout/PageChrome';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { SITE_LABELS } from '@/config/site-labels';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useAppStore } from '@/lib/store';
 import { routeBuilder } from '@/config/routes';
@@ -567,64 +570,38 @@ function SpecialistSkeleton() {
 
 // ─── Empty state component ────────────────────────────────────────────────────
 
-function EmptyState({ type, query }: { type: 'initial' | 'no-results' | 'error'; query?: string }) {
+function SearchResultsEmpty({ type, query }: { type: 'initial' | 'no-results' | 'error'; query?: string }) {
   if (type === 'initial') {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex flex-col items-center justify-center py-20 text-center"
-      >
-        <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-4">
-          <Search className="h-8 w-8 text-emerald-500" />
-        </div>
-        <h3 className="text-lg font-semibold mb-2">جستجو در نیاز فایندر</h3>
-        <p className="text-sm text-muted-foreground max-w-sm">
-          کاربران، نیازها و متخصص‌ها را جستجو کنید.
-          <br />
-          عبارت مورد نظر خود را در بالا وارد کنید.
-        </p>
-      </motion.div>
+      <EmptyState
+        icon={Search}
+        title="جستجو در نیاز فایندر"
+        description="کاربران، نیازها و کسب‌وکارها را جستجو کنید. عبارت مورد نظر خود را در بالا وارد کنید."
+        className="border-0 bg-transparent shadow-none"
+      />
     );
   }
 
   if (type === 'no-results') {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col items-center justify-center py-20 text-center"
-      >
-        <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-          <SearchX className="h-8 w-8 text-muted-foreground" />
-        </div>
-        <h3 className="text-lg font-semibold mb-2">نتیجه‌ای یافت نشد</h3>
-        <p className="text-sm text-muted-foreground max-w-sm">
-          متأسفانه نتیجه‌ای برای &laquo;{query}&raquo; پیدا نشد.
-          <br />
-          لطفاً عبارت دیگری را جستجو کنید یا املای آن را بررسی نمایید.
-        </p>
-      </motion.div>
+      <EmptyState
+        icon={SearchX}
+        variant="filtered"
+        title="نتیجه‌ای یافت نشد"
+        description={`متأسفانه نتیجه‌ای برای «${query}» پیدا نشد. لطفاً عبارت دیگری را جستجو کنید یا املای آن را بررسی نمایید.`}
+        className="border-0 bg-transparent shadow-none"
+      />
     );
   }
 
-  // error
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="flex flex-col items-center justify-center py-20 text-center"
-    >
-      <div className="w-20 h-20 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
-        <SearchX className="h-8 w-8 text-red-500" />
-      </div>
-      <h3 className="text-lg font-semibold mb-2">خطا در جستجو</h3>
-      <p className="text-sm text-muted-foreground max-w-sm">
-        در دریافت نتایج جستجو مشکلی پیش آمد.
-        <br />
-        لطفاً دوباره تلاش کنید.
-      </p>
-    </motion.div>
+    <EmptyState
+      icon={SearchX}
+      variant="error"
+      title="خطا در جستجو"
+      description="در دریافت نتایج جستجو مشکلی پیش آمد. لطفاً دوباره تلاش کنید."
+      className="border-0 bg-transparent shadow-none"
+    />
   );
 }
 
@@ -793,31 +770,32 @@ function SearchPageContent() {
     specialistResults.length;
 
   return (
-    <PageContainer width="medium" className="pt-4" as="div">
+    <PageContainer width="medium" className="space-y-6 pt-4" as="div">
+      <PageChrome title={SITE_LABELS.search} hideBreadcrumb={false} />
       {/* Search Input */}
       <div className="relative mb-6">
         <div className="relative">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
+          <Search className="absolute end-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
           <Input
             type="text"
             placeholder="جستجوی کاربران، نیازها، متخصص‌ها..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="pr-10 pl-10 h-12 text-base rounded-xl border-border/60 focus-visible:border-emerald-400 focus-visible:ring-emerald-400/20 bg-background/80 backdrop-blur-xs"
+            className="pe-10 ps-10 h-12 text-base rounded-xl border-border/60 focus-visible:border-primary focus-visible:ring-primary/20 bg-background/80 backdrop-blur-xs"
             autoFocus
           />
           {query && (
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-2 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground hover:text-foreground"
+              className="absolute start-2 top-1/2 -translate-y-1/2 h-7 w-7 text-muted-foreground hover:text-foreground"
               onClick={() => setQuery('')}
             >
               <X className="h-4 w-4" />
             </Button>
           )}
           {loading && (
-            <Loader2 className="absolute left-10 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-500 animate-spin" />
+            <Loader2 className="absolute start-10 top-1/2 -translate-y-1/2 h-4 w-4 text-primary animate-spin" />
           )}
         </div>
       </div>
@@ -854,7 +832,7 @@ function SearchPageContent() {
 
       {/* Initial empty state */}
       {!hasSearched && !debouncedQuery.trim() && (
-        <EmptyState type="initial" />
+        <SearchResultsEmpty type="initial" />
       )}
 
       {/* Tabs & Results */}
@@ -911,9 +889,9 @@ function SearchPageContent() {
                 {[1, 2, 3, 4].map((i) => <UserSkeleton key={i} />)}
               </div>
             ) : error && currentResults.length === 0 ? (
-              <EmptyState type="error" />
+              <SearchResultsEmpty type="error" />
             ) : currentResults.length === 0 ? (
-              <EmptyState type="no-results" query={debouncedQuery.trim()} />
+              <SearchResultsEmpty type="no-results" query={debouncedQuery.trim()} />
             ) : (
               <AnimatePresence mode="popLayout">
                 <div className="space-y-3">
@@ -936,9 +914,9 @@ function SearchPageContent() {
                 {[1, 2, 3, 4].map((i) => <UserSkeleton key={i} />)}
               </div>
             ) : error && currentResults.length === 0 ? (
-              <EmptyState type="error" />
+              <SearchResultsEmpty type="error" />
             ) : currentResults.length === 0 ? (
-              <EmptyState type="no-results" query={debouncedQuery.trim()} />
+              <SearchResultsEmpty type="no-results" query={debouncedQuery.trim()} />
             ) : (
               <AnimatePresence mode="popLayout">
                 <div className="space-y-3">
@@ -961,9 +939,9 @@ function SearchPageContent() {
                 {[1, 2, 3, 4].map((i) => <RequestSkeleton key={i} />)}
               </div>
             ) : error && currentResults.length === 0 ? (
-              <EmptyState type="error" />
+              <SearchResultsEmpty type="error" />
             ) : currentResults.length === 0 ? (
-              <EmptyState type="no-results" query={debouncedQuery.trim()} />
+              <SearchResultsEmpty type="no-results" query={debouncedQuery.trim()} />
             ) : (
               <AnimatePresence mode="popLayout">
                 <div className="space-y-3">
@@ -981,9 +959,9 @@ function SearchPageContent() {
                 {[1, 2, 3, 4].map((i) => <SpecialistSkeleton key={i} />)}
               </div>
             ) : error && currentResults.length === 0 ? (
-              <EmptyState type="error" />
+              <SearchResultsEmpty type="error" />
             ) : currentResults.length === 0 ? (
-              <EmptyState type="no-results" query={debouncedQuery.trim()} />
+              <SearchResultsEmpty type="no-results" query={debouncedQuery.trim()} />
             ) : (
               <AnimatePresence mode="popLayout">
                 <div className="space-y-3">
@@ -1004,7 +982,7 @@ function SearchPageContent() {
 
       {/* No results across all tabs */}
       {hasSearched && !loading && !error && totalResults === 0 && debouncedQuery.trim() && (
-        <EmptyState type="no-results" query={debouncedQuery.trim()} />
+        <SearchResultsEmpty type="no-results" query={debouncedQuery.trim()} />
       )}
     </PageContainer>
   );

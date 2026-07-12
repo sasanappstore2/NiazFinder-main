@@ -86,14 +86,55 @@ function mergeEngineEntities(
       });
     }
   }
-  if (e.city) setField(bag, 'city', { value: e.city, confidence: analysis.confidence.city ?? 0.8, source: 'dictionary' });
-  if (e.citySlug) setField(bag, 'citySlug', { value: e.citySlug, confidence: analysis.confidence.city ?? 0.8, source: 'resolver' });
-  if (e.neighborhood) setField(bag, 'neighborhood', { value: e.neighborhood, confidence: analysis.confidence.neighborhood ?? 0.7, source: 'rule' });
-  if (e.neighborhoodSlug) setField(bag, 'neighborhoodSlug', { value: e.neighborhoodSlug, confidence: analysis.confidence.neighborhood ?? 0.75, source: 'resolver' });
-  if (e.area != null) setField(bag, 'area', { value: e.area, confidence: analysis.confidence.area ?? 0.8, source: 'rule' });
-  if (e.rooms != null) setField(bag, 'rooms', { value: e.rooms, confidence: analysis.confidence.rooms ?? 0.8, source: 'rule' });
-  if (e.budgetMax != null) setField(bag, 'budgetMax', { value: e.budgetMax, confidence: analysis.confidence.budget ?? 0.75, source: 'rule' });
-  if (e.transactionType) setField(bag, 'transactionType', { value: e.transactionType, confidence: analysis.confidence.transactionType ?? 0.85, source: 'rule' });
+  if (e.city && analysis.confidence.city != null) {
+    setField(bag, 'city', {
+      value: e.city,
+      confidence: analysis.confidence.city,
+      source: 'dictionary',
+      evidence: 'engine-entities',
+    });
+  }
+  if (e.citySlug && analysis.confidence.city != null) {
+    setField(bag, 'citySlug', {
+      value: e.citySlug,
+      confidence: analysis.confidence.city,
+      source: 'resolver',
+      evidence: 'engine-entities',
+    });
+  }
+  if (e.neighborhood && analysis.confidence.neighborhood != null) {
+    setField(bag, 'neighborhood', {
+      value: e.neighborhood,
+      confidence: analysis.confidence.neighborhood,
+      source: 'rule',
+      evidence: 'engine-entities',
+    });
+  }
+  if (e.neighborhoodSlug && analysis.confidence.neighborhood != null) {
+    setField(bag, 'neighborhoodSlug', {
+      value: e.neighborhoodSlug,
+      confidence: analysis.confidence.neighborhood,
+      source: 'resolver',
+      evidence: 'engine-entities',
+    });
+  }
+  if (e.area != null && analysis.confidence.area != null) {
+    setField(bag, 'area', { value: e.area, confidence: analysis.confidence.area, source: 'rule', evidence: 'engine-entities' });
+  }
+  if (e.rooms != null && analysis.confidence.rooms != null) {
+    setField(bag, 'rooms', { value: e.rooms, confidence: analysis.confidence.rooms, source: 'rule', evidence: 'engine-entities' });
+  }
+  if (e.budgetMax != null && analysis.confidence.budget != null) {
+    setField(bag, 'budgetMax', { value: e.budgetMax, confidence: analysis.confidence.budget, source: 'rule', evidence: 'engine-entities' });
+  }
+  if (e.transactionType && analysis.confidence.transactionType != null) {
+    setField(bag, 'transactionType', {
+      value: e.transactionType,
+      confidence: analysis.confidence.transactionType,
+      source: 'rule',
+      evidence: 'engine-entities',
+    });
+  }
 }
 
 export async function runIntakeIntelligence(

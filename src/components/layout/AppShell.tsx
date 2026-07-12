@@ -94,7 +94,7 @@ export function AppShell({
           </main>
           {!effectiveMinimal &&
             (isHome ? (
-              <Footer />
+              <Footer withMobileNav={!hideMobileNav} />
             ) : (
               <div
                 className={cn(
@@ -105,7 +105,7 @@ export function AppShell({
                 <Separator
                   className={cn(businessProfileAura && 'bg-border/40')}
                 />
-                <Footer compact />
+                <Footer compact withMobileNav={!hideMobileNav} />
               </div>
             ))}
           <AuthModal />

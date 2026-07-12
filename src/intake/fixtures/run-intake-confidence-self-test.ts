@@ -1,131 +1,99 @@
 /**
- * Phase 33 ? confidence-driven UX: field skip, missing-field priority, visibility reduction.
+ * Confidence discipline self-test (RFC-0004 / Compose Auto-Apply).
+ * Replaces obsolete confidence-driven UX + ambiguity-prompt theater checks.
+ *
  * Run: npm run test:intake-confidence
  */
-import { CONFIDENCE_VISIBILITY_CASES } from '@/intake/fixtures/confidence-visibility-cases';
+import assert from 'node:assert/strict';
 import {
-  buildConfidenceAwareShowField,
-  countIntakeVisibleFields,
-  prioritizeMissingFieldsByConfidence,
-  shouldShowLowConfidenceCategoryChips,
-  shouldSkipConfidentIntakeField,
-} from '@/intake/scoring/confidence-driven-fields';
+  COMPOSE_AUTO_APPLY_MIN_CONFIDENCE,
+  COMPOSE_EVIDENCE_REQUIRED_MIN_CONFIDENCE,
+  mayAutoApplyField,
+  mayAutoApplyLocation,
+  sanitizeDraftForComposeAutoApply,
+} from '@/lib/need-intake/compose-auto-apply';
 import {
-  buildLocationAmbiguityOptions,
-  hasLocationAmbiguity,
-} from '@/components/need-intake/IntakeLocationAmbiguityPrompt';
-import { buildIntakeConfidenceTelemetryPayload } from '@/lib/need-intake/intake-confidence-metrics';
+  REGISTRY_CATEGORY_OVERRIDE_THRESHOLD,
+  RULES_DISAMBIG_MIN_CONFIDENCE,
+} from '@/intake/rules/config';
 import {
-  allIntakeConfidenceChecksPass,
-  CONFIDENCE_VISIBILITY_CASE_COUNT,
-} from '@/lib/need-intake/intake-confidence-release';
-import { getIntakeConfidenceSkipThreshold } from '@/lib/need-intake/intake-confidence-config';
-import type { MissingFieldItem } from '@/intake/types';
+  UNDERSTANDING_CATEGORY_MIN_CONFIDENCE,
+  UNDERSTANDING_LOCATION_MIN_CONFIDENCE,
+} from '@/lib/need-intake/build-intake-understanding';
+import type { NeedDraft } from '@/contracts/need-intake';
 
-function assert(cond: boolean, msg: string): void {
-  if (!cond) throw new Error(msg);
-}
-
-function baselineShowField(sectionFieldSet: Set<string>) {
-  return (field: string) => sectionFieldSet.has(field);
+function draft(over: Partial<NeedDraft> = {}): NeedDraft {
+  return {
+    schemaVersion: 1,
+    sourceText: 'تست',
+    answers: {},
+    entities: {},
+    sections: [],
+    completeness: 0,
+    missingRequired: [],
+    nextQuestion: null,
+    parsedIntent: {
+      intentType: 'buy',
+      confidence: 0.5,
+      entities: {},
+      rawText: 'تست',
+    },
+    ...over,
+  } as NeedDraft;
 }
 
 function main(): void {
-  assert(allIntakeConfidenceChecksPass(), 'confidence release registry');
-  assert(CONFIDENCE_VISIBILITY_CASE_COUNT === CONFIDENCE_VISIBILITY_CASES.length, 'case count');
-  assert(getIntakeConfidenceSkipThreshold() === 0.8, 'default skip threshold 0.8');
+  assert.equal(COMPOSE_AUTO_APPLY_MIN_CONFIDENCE, 0.85);
+  assert.equal(RULES_DISAMBIG_MIN_CONFIDENCE, 0.85);
+  assert.equal(UNDERSTANDING_CATEGORY_MIN_CONFIDENCE, 0.85);
+  assert.equal(UNDERSTANDING_LOCATION_MIN_CONFIDENCE, 0.85);
+  assert.equal(REGISTRY_CATEGORY_OVERRIDE_THRESHOLD, 0.85);
+  assert.equal(COMPOSE_EVIDENCE_REQUIRED_MIN_CONFIDENCE, 0.75);
 
-  let aggregateReduction = 0;
-  let aggregateCases = 0;
-
-  for (const c of CONFIDENCE_VISIBILITY_CASES) {
-    const sectionFieldSet = new Set(c.fields);
-    const isFieldFilled = (field: string) => c.filled.includes(field);
-    const baseline = countIntakeVisibleFields(
-      c.fields,
-      baselineShowField(sectionFieldSet)
-    );
-    const confident = countIntakeVisibleFields(
-      c.fields,
-      buildConfidenceAwareShowField({
-        sectionFieldSet,
-        isFieldFilled,
-        confidence: c.confidence,
-      })
-    );
-    const reductionPct =
-      baseline.visible > 0
-        ? Math.round((1 - confident.visible / baseline.visible) * 100)
-        : 0;
-    if (c.minReductionPct >= 30) {
-      aggregateReduction += reductionPct;
-      aggregateCases += 1;
-    }
-    assert(
-      reductionPct >= c.minReductionPct,
-      `${c.id}: expected >=${c.minReductionPct}% reduction, got ${reductionPct}% (${confident.visible}/${baseline.visible})`
-    );
-  }
-
-  const avgHighConfReduction =
-    aggregateCases > 0 ? Math.round(aggregateReduction / aggregateCases) : 0;
-  assert(avgHighConfReduction >= 30, `avg high-confidence reduction ${avgHighConfReduction}%`);
-
-  const missingBase: MissingFieldItem[] = [
-    { field: 'budget', priority: 90, required: true },
-    { field: 'neighborhood', priority: 95, required: true },
-    { field: 'area', priority: 80, required: false },
-  ];
-  const sorted = prioritizeMissingFieldsByConfidence(missingBase, {
-    neighborhood: 0.4,
-    budget: 0.9,
-    area: 0.7,
+  const weak = draft({
+    entities: { categorySlug: 'apartment-rent', city: 'تهران', neighborhood: 'ونک' },
+    fieldMeta: {
+      categorySlug: { value: 'apartment-rent', confidence: 0.7, source: 'rule' },
+      city: { value: 'تهران', confidence: 0.7, source: 'dictionary' },
+      neighborhood: { value: 'ونک', confidence: 0.65, source: 'resolver' },
+    },
   });
-  assert(sorted[0]?.field === 'neighborhood', 'low-confidence neighborhood prioritized first');
+  assert.equal(mayAutoApplyField(weak, 'categorySlug'), false);
+  assert.equal(mayAutoApplyLocation(weak, 'city'), false);
+  assert.equal(mayAutoApplyLocation(weak, 'neighborhood'), false);
 
-  assert(
-    shouldSkipConfidentIntakeField('city', true, { city: 0.9 }),
-    'skip confident city'
-  );
-  assert(
-    !shouldSkipConfidentIntakeField('city', false, { city: 0.9 }),
-    'empty city never skipped'
-  );
-  assert(
-    !shouldShowLowConfidenceCategoryChips({ category: 0.9 }, true),
-    'hide category chips when confident'
-  );
-  assert(
-    shouldShowLowConfidenceCategoryChips({ category: 0.5 }, true),
-    'show category chips when low confidence'
-  );
-
-  assert(
-    hasLocationAmbiguity({
-      locationAmbiguous: true,
-      neighborhoodCandidates: [{ slug: 'a', label: 'A' }],
-    }),
-    'location ambiguity detected'
-  );
-  const opts = buildLocationAmbiguityOptions({
-    locationAmbiguous: true,
-    cityCandidates: [{ cityId: 'tehran', label: 'Tehran' }],
-    neighborhoodCandidates: [{ slug: 'vanak', label: 'Vanak' }],
+  const strong = draft({
+    entities: { categorySlug: 'apartment-rent', city: 'تهران' },
+    fieldMeta: {
+      categorySlug: {
+        value: 'apartment-rent',
+        confidence: 0.9,
+        source: 'rule',
+        evidence: 'rules-clear',
+      },
+      city: {
+        value: 'تهران',
+        confidence: 0.9,
+        source: 'dictionary',
+        evidence: 'parseCity',
+      },
+    },
   });
-  assert(opts.length === 2, 'unified ambiguity options');
+  assert.equal(mayAutoApplyField(strong, 'categorySlug'), true);
+  assert.equal(mayAutoApplyLocation(strong, 'city'), true);
 
-  const telemetry = buildIntakeConfidenceTelemetryPayload(null, 3, 7);
-  assert(telemetry.reductionPct === 57, 'telemetry reduction payload');
-  assert(telemetry.threshold === 0.8, 'telemetry threshold');
+  const cleaned = sanitizeDraftForComposeAutoApply(weak);
+  assert.equal((cleaned.entities as Record<string, unknown>).categorySlug, undefined);
+  assert.equal((cleaned.entities as Record<string, unknown>).neighborhood, undefined);
 
   console.log(
     JSON.stringify({
       ok: true,
-      cases: CONFIDENCE_VISIBILITY_CASES.length,
-      avgHighConfReductionPct: avgHighConfReduction,
-      defaultThreshold: getIntakeConfidenceSkipThreshold(),
+      autoApplyMin: COMPOSE_AUTO_APPLY_MIN_CONFIDENCE,
+      registryOverride: REGISTRY_CATEGORY_OVERRIDE_THRESHOLD,
     })
   );
+  console.log('test:intake-confidence OK');
 }
 
 main();

@@ -209,7 +209,7 @@ function HomeLeadLandingContent() {
     <div className="flex flex-col" dir="rtl">
       {/* AI hero — full viewport feel */}
       <section
-        className="relative flex min-h-0 flex-col overflow-hidden sm:min-h-viewport-content lg:min-h-[calc(100dvh-var(--site-header-offset,6.5rem))]"
+        className="relative flex min-h-0 flex-col overflow-hidden sm:min-h-viewport-content"
         aria-label="شروع گفتگو با دستیار هوشمند"
       >
         <div

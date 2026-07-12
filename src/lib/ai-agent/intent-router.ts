@@ -7,6 +7,8 @@ export type AgentIntent =
   | 'post_guide'
   | 'account_wallet'
   | 'need_search'
+  | 'business_search'
+  | 'section_help'
   | 'product_faq'
   | 'geo_lookup'
   | 'marketplace_link'
@@ -42,6 +44,12 @@ const NEED_LIKE_RE =
 
 const NEED_SEARCH_RE =
   /جستجو.*(نیاز|آگهی)|نیازهای?\s*(مشابه|باز)|پیدا\s*کن.*(نیاز|آگهی)|search.*need/i;
+
+const BUSINESS_SEARCH_RE =
+  /جستجو.*(کسب.?وکار|فروشنده|شرکت|مغازه)|کسب.?وکار.*(پیدا|جستجو|معرفی)|فروشنده.*(پیدا|جستجو)|پروفایل\s*کسب.?وکار|\/b\/|search.*business/i;
+
+const SECTION_HELP_RE =
+  /بخش\s*(چت|داشبورد|کیف|بازار|ثبت|پروفایل|کمک|قوانین|حریم)|چطور.*(چت|داشبورد|بازار\s*کسب|\/help|\/privacy|\/terms)|راهنمای\s*(بخش|صفحه)|این\s*صفحه\s*چی/i;
 
 const GEO_ANALYTICAL_RE =
   /چند\s*شهر|کدام\s*شهر|چه\s*شهر|در\s*چند|کجاها|لیست\s*(?:کامل\s*)?(?:محله|شهر)|همه\s*محله/i;
@@ -96,6 +104,26 @@ export function routeAgentIntent(text: string): IntentRouteResult {
     };
   }
 
+  if (BUSINESS_SEARCH_RE.test(t)) {
+    return {
+      intent: 'business_search',
+      skipTools: false,
+      preferredTools: ['search_businesses_agent', 'get_public_business_profile', 'search_site_cities'],
+      systemHint:
+        'کاربر جستجوی کسب‌وکار می‌خواهد. از search_businesses_agent استفاده کن؛ فقط کسب‌وکارهای عمومی فعال را بگو و لینک /b/{slug} بده.',
+    };
+  }
+
+  if (SECTION_HELP_RE.test(t)) {
+    return {
+      intent: 'section_help',
+      skipTools: false,
+      preferredTools: ['search_site_knowledge', 'get_site_help'],
+      systemHint:
+        'کاربر راهنمای بخش/صفحه سایت می‌خواهد. از search_site_knowledge یا get_site_help استفاده کن و فقط بر اساس نتیجه ابزار جواب بده.',
+    };
+  }
+
   if (MARKETPLACE_LINK_RE.test(t)) {
     return {
       intent: 'marketplace_link',
@@ -141,18 +169,19 @@ export function routeAgentIntent(text: string): IntentRouteResult {
     return {
       intent: 'need_help',
       skipTools: false,
-      preferredTools: ['get_site_help'],
+      preferredTools: ['search_site_knowledge', 'get_site_help'],
       systemHint:
-        'کاربر راهنمای کلی سایت می‌خواهد. از get_site_help استفاده کن و مسیر محصول را کوتاه توضیح بده.',
+        'کاربر راهنمای کلی سایت می‌خواهد. از search_site_knowledge یا get_site_help استفاده کن و مسیر محصول را کوتاه توضیح بده.',
     };
   }
 
   if (PRODUCT_FAQ_RE.test(t)) {
     return {
       intent: 'product_faq',
-      skipTools: true,
-      preferredTools: [],
-      systemHint: 'سوال متداول محصول است؛ پاسخ کوتاه و دقیق فارسی بده، ابزار لازم نیست.',
+      skipTools: false,
+      preferredTools: ['search_site_knowledge', 'get_site_help'],
+      systemHint:
+        'سوال متداول محصول است؛ ترجیحاً search_site_knowledge یا get_site_help را صدا بزن و پاسخ کوتاه فارسی بده.',
     };
   }
 

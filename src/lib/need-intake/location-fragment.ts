@@ -107,11 +107,17 @@ function stripTrailingMoneyFromFragment(frag: string): string {
     .trim();
 }
 
+/** Phrases that survive city-stripping from «تو {city} دنبال دسترسی…» — never neighborhoods. */
+const HOOD_NOISE_RE =
+  /^(?:دنبال|دسترسی|نانوایی|میوه[\u200c\s]*فروشی|حمل[\u200c\s]*ونقل|امنیت|جایگزین|اولویت|برامون|خانواده)/u;
+
 function isMeaningfulFragment(frag: string): boolean {
   if (frag.length < 2) return false;
   if (FRAGMENT_FILLER_WORDS.has(frag)) return false;
   // A single short token left after stripping is almost always noise, not a place name.
   if (!frag.includes(' ') && frag.length < 3) return false;
+  if (HOOD_NOISE_RE.test(frag.trim())) return false;
+  if (/دسترسی\s*راحت|نانوایی|میوه[\u200c\s]*فروشی/u.test(frag)) return false;
   return true;
 }
 
@@ -123,11 +129,24 @@ export function extractLocationFragment(rawText: string): string | undefined {
   const normalized = normalizeDigits(text);
   const stopSuffix =
     '(?:\\s+لازم\\s*دار(?:م|یم)|\\s+نیاز\\s*دار(?:م|یم)|\\s+دنبال|\\s+می[\\s‌]?خو(?:ام|واه|اهم)|\\s+میخو(?:ام|واه|اهم)|\\s+برای|\\s+بودجه|\\s+اجاره|\\s+رهن|\\s+فروش|\\s+خرید|\\s+زندگی\\s*می|\\s+اگر\\s+موردی|\\s+پیام\\s*بدید)';
+
+  // Prefer explicit «محله/منطقه X» (not «امنیت محله») before bare «تو/در» city phrases.
+  const labeledHood = normalized.match(
+    /(?<!امنیت\s)(?:محله|منطقه|محدوده)\s+([\u0600-\u06FF\u200c\-]+(?:\s+[\u0600-\u06FF\u200c\-]+){0,5}?)(?=\s+(?:اولویت|هستم|است|می‌|مي|محله|شهر|استان|متراژ|بودجه)|[،,]|$)/u
+  );
+  if (labeledHood?.[1]) {
+    const frag = stripTrailingCityFromFragment(
+      stripTrailingMoneyFromFragment(
+        stripTrailingAreaFromFragment(cleanLocationFragment(labeledHood[1]))
+      )
+    );
+    if (frag && isMeaningfulFragment(frag)) return frag;
+  }
+
   const patterns = [
     new RegExp(`(?:در|تو|توی|داخل)\\s+([\\u0600-\\u06FF\\u200c\\s\\-]+?)${stopSuffix}`, 'i'),
     /(?:در|تو|توی|داخل)\s+([\u0600-\u06FF\u200c\s\-]+?)(?:،|\s+و\s+)/i,
     /(?:در|تو|توی|داخل)\s+([\u0600-\u06FF\u200c\s\-]+?)(?=\s+\d[\d۰-۹]*\s*مت|\s+حد(?:اق|اک)ثر|$)/iu,
-    /(?:محله|منطقه|محدوده)\s+([\u0600-\u06FF\u200c\s\-]+?)(?:\s|$)/i,
     /(?:حاشیه|اطراف|حوالی)\s+([\u0600-\u06FF\u200c\s\-]+?)(?:\s+ده\s+|\s+صد\s+|\s+\d|$)/iu,
   ];
 

@@ -39,6 +39,8 @@ Test at: 320, 375, 390, 428, 640, 768, 1024, 1280, 1536 px.
 
 Critical routes: `/`, business profile `/b/{slug}`, business browse, `/post`, `/post-need`, `/profile/{id}`, `/dashboard`, `/super-admin`, `/chat`.
 
+Visual order system: [`UI_ORDER_SYSTEM.md`](UI_ORDER_SYSTEM.md).
+
 Mobile UX roadmap and QA gates: [`MOBILE_UX_ROADMAP.md`](MOBILE_UX_ROADMAP.md).
 
 Assert: `#main-content` has no horizontal overflow (`scrollWidth <= clientWidth`).

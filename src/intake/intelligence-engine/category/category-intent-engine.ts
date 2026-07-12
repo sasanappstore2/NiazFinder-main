@@ -86,9 +86,23 @@ function intentTypeFromVertical(vertical: ClassifierVertical, text: string): Int
 /** Strong commercial leaf hints when registry keyword order misses (e.g. مغازه … اجاره‌ای). */
 function commercialSlugHints(text: string): string[] {
   const hints: string[] = [];
-  const rentish = /اجاره|اجاره‌ای|رهن|ودیعه/u.test(text);
+  // Do not treat «رهگیری» / «فرهنگیان» as رهن, or «اینترنت» as رنت.
+  const rentish =
+    /اجاره|اجاره‌ای|(?<![\u0600-\u06FF])رهن(?!گیری|گ)|ودیعه|(?<![\u0600-\u06FFa-zA-Z])رنت(?![\u0600-\u06FFa-zA-Z])/u.test(
+      text
+    );
   const saleish =
-    /فروش|می‌فروش|میفروش|برای خرید|دنبال خرید|می[\u200c\s]*خرم|میخرم|می‌خرم/u.test(
+    /فروش(?!ی)|می‌فروش|میفروش|برای خرید|دنبال خرید|قصد خرید|می[\u200c\s]*خرم|میخرم|می‌خرم|بخرم|می[\u200c\s]*خوام\s*بخرم|میخوام\s*بخرم/u.test(
+      text
+    );
+  const strongRent =
+    /برای اجاره|رهن و اجاره|اجاره‌ای|اجاره‌اش|ودیعه|اجاره روزانه|(?<![\u0600-\u06FF])رهن(?!گیری|گ)/u.test(
+      text
+    );
+  const strongBuy = /برای خرید|دنبال خرید|قصد خرید/u.test(text);
+  // Allow gap: «می‌خوام آپارتمان مسکونی بخرم»
+  const buyPhrase =
+    /برای خرید|دنبال خرید|قصد خرید|می[\u200c\s]*خرم|میخرم|می‌خرم|بخرم|می[\u200c\s]*خوام[\u0600-\u06FF\u200c\s،,]{0,48}بخرم|میخوام[\u0600-\u06FF\u200c\s،,]{0,48}بخرم/u.test(
       text
     );
 
@@ -120,38 +134,98 @@ function commercialSlugHints(text: string): string[] {
     hints.push('locksmith-repair');
   }
 
+  // Hiring / jobs — «منشی اداری» must not fall into office-sale/rent.
+  if (
+    /استخدام|به\s*دنبال\s*(?:منشی|کارمند)|نیروی\s*(?:کار|انسانی)/u.test(text) &&
+    !/املاک|آپارتمان|سوله|مغازه|اجاره\s*دفتر|خرید\s*دفتر/u.test(text)
+  ) {
+    hints.push('admin-management');
+  }
+
   // Clinic / dental office rent → commercial office, not residential apartment.
   if (/کلینیک|مطب|دندانپزشک/u.test(text) && rentish) {
     hints.push('office-rent');
   }
 
   if (/مغازه|غرفه/u.test(text) || (/ویترین/u.test(text) && !/آپارتمان|اپارتمان|ویلا|سوئیت/u.test(text))) {
-    if (rentish && !/فروش\s*مغازه|مغازه\s*فروش/u.test(text)) hints.push('shop-rent');
-    if (saleish && !rentish) hints.push('shop-sale');
+    if ((rentish && !buyPhrase && !saleish) || (strongRent && !strongBuy && !buyPhrase)) {
+      hints.push('shop-rent');
+    } else if (saleish || buyPhrase || /بخرم|خرید/u.test(text)) {
+      hints.push('shop-sale');
+    }
   }
   if (/دفتر\s*کار|دفتر اداری|\bآفیس\b|office/iu.test(text)) {
-    if (rentish) hints.push('office-rent');
-    if (saleish && !rentish) hints.push('office-sale');
+    if ((rentish && !buyPhrase && !saleish) || (strongRent && !strongBuy && !buyPhrase)) {
+      hints.push('office-rent');
+    } else if (saleish || buyPhrase) {
+      hints.push('office-sale');
+    }
   }
-  // "ملک‌شهر" etc. can pull residential-sale; force rent leaf when ویلا/آپارتمان + رهن/اجاره.
-  // Sale: force villa/apartment when خرید/فروش so short product-model rules (e.g. phone "14")
-  // cannot win over clear real-estate wording.
-  // When both rent + می‌خرم appear, prefer explicit rent framing over bare buy verb.
-  const strongRent =
-    /برای اجاره|رهن و اجاره|اجاره‌ای|اجاره‌اش|ودیعه|اجاره روزانه/u.test(text);
-  const strongBuy = /برای خرید|دنبال خرید/u.test(text);
-  if (/ویلا|خانه ویلایی/u.test(text)) {
-    if ((rentish && !saleish) || (strongRent && !strongBuy)) hints.push('villa-rent');
-    else if (saleish || /برای خرید|دنبال خرید|می[\u200c\s]*خرم|میخرم|می‌خرم/u.test(text))
+  // Partnership / pre-sale before bare land so «زمین + مشارکت در ساخت» does not become land-sale.
+  if (/مشارکت\s*در\s*ساخت|مشارکت\s*ساخت/u.test(text)) {
+    hints.push('construction-partnership');
+  }
+  if (/پیش[\u200c\s]*فروش|پیشفروش/u.test(text) && /آپارتمان|واحد|پروژه|مسکن/u.test(text)) {
+    hints.push('pre-sale-services');
+  }
+  // Industrial / land / agency — colloquial phrasing often skips contiguous «خرید سوله».
+  if (/سوله|کارگاه\s*صنعتی|انبار\s*صنعتی/u.test(text)) {
+    if ((rentish && !buyPhrase && !saleish) || (strongRent && !strongBuy && !buyPhrase)) {
+      hints.push('industrial-rent');
+    } else if (saleish || buyPhrase || /بخرم|خرید/u.test(text)) {
+      hints.push('industrial-sale');
+    }
+  }
+  // «شهرک ویلایی» is a neighborhood label, not villa property (colloquial-0567).
+  const textSansVillaHood = text.replace(/شهرک\s*ویلایی/gu, ' ');
+  const hasVillaProperty =
+    /خانه\s*ویلایی|باغ[\s‌]*ویلا|(?<![\u0600-\u06FF])ویلا(?!یی)/u.test(textSansVillaHood) ||
+    /اجاره\s*ویلا|خرید\s*ویلا|ویلا\s*(?:اجاره|بخرم|مسکونی)/u.test(textSansVillaHood);
+  if (
+    /زمین|کلنگی/u.test(text) &&
+    !/سوله|مغازه|دفتر|آپارتمان|مشارکت/u.test(text) &&
+    !hasVillaProperty
+  ) {
+    // Never treat bare «زمین یا کلنگی» as rent — buy ads use the same phrase (#165/#579).
+    if (
+      /اجاره\s*(?:ماهانه|ماهی|ماهانهٔ)?\s*(?:ی\s*)?(?:زمین|کلنگی)|زمین\s*(?:یا\s*کلنگی)?\s*اجاره|کلنگی\s*اجاره/u.test(
+        text
+      ) ||
+      ((rentish || strongRent) && !buyPhrase && !saleish)
+    ) {
+      hints.push('land-rent');
+    } else if (saleish || buyPhrase || /بخرم|خرید/u.test(text)) {
+      hints.push('land-sale');
+    }
+  }
+  if (/مشاور\s*املاک|آژانس\s*املاک|بنگاه\s*املاک/u.test(text)) {
+    hints.push('agency-services');
+  }
+  // Short-term workspace / suite / villa — before residential apartment heuristics.
+  const shortTerm =
+    /کوتاه[\u200c\s]*مدت|اجاره\s*روزانه|چند\s*روز|حداکثر\s*دو\s*هفته|هفتگی/u.test(text);
+  if (shortTerm && /فضای\s*کار|کار\s*اشتراکی|workspace/iu.test(text)) {
+    hints.push('workspace-short-rent');
+  } else if (shortTerm && /سوئیت|آپارتمان|اپارتمان/u.test(text)) {
+    hints.push('suite-apartment-rent');
+  } else if (shortTerm && hasVillaProperty) {
+    hints.push('villa-short-rent');
+  }
+  if (hasVillaProperty) {
+    if ((rentish && !saleish && !buyPhrase) || (strongRent && !strongBuy && !buyPhrase)) {
+      hints.push('villa-rent');
+    } else if (saleish || buyPhrase) {
       hints.push('villa-sale');
+    }
   } else if (
     /آپارتمان|اپارتمان|سوئیت|خانه|خونه|واحد|مسکونی/u.test(text) &&
     !/روزانه|شبانه|کوتاه\s*مدت|کلینیک|مطب|دندانپزشک|کلیدساز/u.test(text)
   ) {
-    if ((rentish && !saleish) || (strongRent && !strongBuy)) hints.push('apartment-rent');
-    else if (
+    if ((rentish && !saleish && !buyPhrase) || (strongRent && !strongBuy && !buyPhrase)) {
+      hints.push('apartment-rent');
+    } else if (
       /آپارتمان|اپارتمان|خانه|خونه|واحد|مسکونی/u.test(text) &&
-      (saleish || /برای خرید|دنبال خرید|می[\u200c\s]*خرم|میخرم|می‌خرم/u.test(text))
+      (saleish || buyPhrase)
     ) {
       hints.push('apartment-sale');
     }
@@ -313,7 +387,9 @@ export async function runCategoryIntentEngine(
       Boolean(clearLeaf) &&
       (clearLeaf!.includes('repair') || clearLeaf === 'repairs' || clearLeaf === 'services');
     const forcedIsEstate =
-      /apartment|villa|shop|office|land|suite|rent|sale|partnership/u.test(commercialForced);
+      /apartment|villa|shop|office|land|suite|rent|sale|partnership|industrial|agency|workspace/u.test(
+        commercialForced
+      );
     const conflicts =
       !clearLeaf ||
       (commercialForced === 'motorcycle' && clearLeaf !== 'motorcycle') ||
@@ -332,6 +408,19 @@ export async function runCategoryIntentEngine(
       (commercialForced.includes('office') && !clearLeaf.includes('office')) ||
       (commercialForced.includes('villa') && !clearLeaf.includes('villa')) ||
       (commercialForced.includes('apartment') && !clearLeaf.includes('apartment')) ||
+      (commercialForced.includes('industrial') && !clearLeaf.includes('industrial')) ||
+      (commercialForced.includes('land') && !clearLeaf.includes('land')) ||
+      (commercialForced.includes('agency') && !clearLeaf.includes('agency')) ||
+      (commercialForced.includes('partnership') && !clearLeaf.includes('partnership')) ||
+      (commercialForced.includes('pre-sale') && !clearLeaf.includes('pre-sale')) ||
+      (commercialForced.includes('workspace') && !clearLeaf.includes('workspace')) ||
+      (commercialForced.includes('suite') && !clearLeaf.includes('suite')) ||
+      (commercialForced === 'villa-short-rent' && !clearLeaf.includes('villa')) ||
+      (commercialForced === 'admin-management' &&
+        clearLeaf !== 'admin-management' &&
+        !clearLeaf.includes('admin') &&
+        clearLeaf !== 'jobs' &&
+        !clearLeaf.includes('office-jobs')) ||
       (commercialForced.includes('rent') && clearLeaf.includes('sale') && !clearLeaf.includes('rent')) ||
       (clearIsRepair && forcedIsEstate);
     if (conflicts) {

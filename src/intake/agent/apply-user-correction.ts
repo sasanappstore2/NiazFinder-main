@@ -54,8 +54,14 @@ export function applyUserCorrectionToDraft(
     answers: {
       ...recomputed.answers,
       ...(correction.fieldKey in (recomputed.answers as object)
-        ? { [correction.fieldKey]: correction.value }
+        ? {
+            [correction.fieldKey]: correction.value as
+              | string
+              | number
+              | boolean
+              | string[],
+          }
         : {}),
-    },
+    } as NeedDraft['answers'],
   };
 }

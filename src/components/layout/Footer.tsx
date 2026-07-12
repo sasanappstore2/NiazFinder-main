@@ -17,6 +17,8 @@ import {
 import { cn } from '@/lib/utils';
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
 import type { AppView } from '@/lib/types';
+import { FOOTER_LINK_GROUPS } from '@/config/navigation';
+import { SITE_LABELS } from '@/config/site-labels';
 import { legacyViewToPath, routeBuilder } from '@/config/routes';
 
 import { Separator } from '@/components/ui/separator';
@@ -39,10 +41,19 @@ const FOOTER_COLUMNS: FooterLinkColumn[] = [
   {
     title: 'دسترسی سریع',
     links: [
-      { label: 'صفحه اصلی', view: 'home', title: 'بازگشت به صفحه اصلی نیاز فایندر' },
-      { label: 'ثبت نیاز', view: 'post-need', title: 'ثبت نیاز و درخواست خدمات جدید' },
-      { label: 'کسب‌وکارها', view: 'browse-specialists', title: 'مرور و جستجوی کسب‌وکارها حرفه‌ای' },
-      { label: 'تعرفه‌ها', view: 'pricing', title: 'مشاهده تعرفه‌ها و طرح‌های اشتراک' },
+      { label: SITE_LABELS.home, view: 'home', title: `بازگشت به ${SITE_LABELS.siteName}` },
+      { label: SITE_LABELS.postNeed, view: 'post-need', title: SITE_LABELS.postNeed },
+      {
+        label: SITE_LABELS.marketplaceNeeds,
+        view: 'browse-requests',
+        title: SITE_LABELS.marketplaceNeeds,
+      },
+      {
+        label: SITE_LABELS.marketplaceBusiness,
+        view: 'browse-specialists',
+        title: SITE_LABELS.marketplaceBusiness,
+      },
+      { label: SITE_LABELS.pricing, view: 'pricing', title: SITE_LABELS.pricing },
     ],
   },
   {
@@ -100,9 +111,11 @@ const CONTACT_INFO = [
 // ============ Footer Component ============
 interface FooterProps {
   compact?: boolean;
+  /** Add bottom padding for floating mobile nav */
+  withMobileNav?: boolean;
 }
 
-export function Footer({ compact = false }: FooterProps) {
+export function Footer({ compact = false, withMobileNav = true }: FooterProps) {
   const { navigateTo } = useNavigate();
   const [showBackToTop, setShowBackToTop] = useState(false);
 
@@ -124,10 +137,12 @@ export function Footer({ compact = false }: FooterProps) {
 
   const currentYear = new Date().getFullYear();
 
+  const footerNavClass = cn(withMobileNav && 'footer-with-mobile-nav');
+
   // ============ Compact Footer (non-home pages) ============
   if (compact) {
     return (
-      <footer id="footer" className="footer-with-mobile-nav bg-card/30" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
+      <footer id="footer" className={cn(footerNavClass, 'bg-card/30')} role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
         <div className="page-container py-4">
           <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
             <div className="flex items-center gap-2" itemScope itemType="https://schema.org/Organization">
@@ -143,31 +158,41 @@ export function Footer({ compact = false }: FooterProps) {
                 href={routeBuilder.home()}
                 data-view="home"
                 data-href={routeBuilder.home()}
-                title="صفحه اصلی"
-                onClick={(e) => handleLinkClick(e, FOOTER_COLUMNS[0].links[0])}
+                title={SITE_LABELS.home}
+                onClick={(e) => handleLinkClick(e, { label: SITE_LABELS.home, view: 'home', title: SITE_LABELS.home })}
                 className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
               >
-                صفحه اصلی
+                {SITE_LABELS.home}
               </a>
               <a
                 href={routeBuilder.needNew()}
                 data-view="post-need"
                 data-href={routeBuilder.needNew()}
-                title="ثبت نیاز"
-                onClick={(e) => handleLinkClick(e, FOOTER_COLUMNS[0].links[1])}
+                title={SITE_LABELS.postNeed}
+                onClick={(e) => handleLinkClick(e, { label: SITE_LABELS.postNeed, view: 'post-need', title: SITE_LABELS.postNeed })}
                 className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
               >
-                ثبت نیاز
+                {SITE_LABELS.postNeed}
+              </a>
+              <a
+                href={routeBuilder.browseAll({ type: 'need' })}
+                data-view="browse-requests"
+                data-href={routeBuilder.browseAll({ type: 'need' })}
+                title={SITE_LABELS.marketplaceNeeds}
+                onClick={(e) => handleLinkClick(e, { label: SITE_LABELS.marketplaceNeeds, view: 'browse-requests', title: SITE_LABELS.marketplaceNeeds })}
+                className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
+              >
+                {SITE_LABELS.marketplaceNeeds}
               </a>
               <a
                 href={routeBuilder.browseAll({ type: 'business' })}
                 data-view="browse-specialists"
                 data-href={routeBuilder.browseAll({ type: 'business' })}
-                title="کسب‌وکارها"
-                onClick={(e) => handleLinkClick(e, FOOTER_COLUMNS[0].links[2])}
+                title={SITE_LABELS.marketplaceBusiness}
+                onClick={(e) => handleLinkClick(e, { label: SITE_LABELS.marketplaceBusiness, view: 'browse-specialists', title: SITE_LABELS.marketplaceBusiness })}
                 className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
               >
-                کسب‌وکارها
+                {SITE_LABELS.marketplaceBusiness}
               </a>
               <a
                 href="/#contact"
@@ -202,7 +227,7 @@ export function Footer({ compact = false }: FooterProps) {
 
   // ============ Full Footer (home page) ============
   return (
-    <footer id="footer" className="footer-with-mobile-nav mt-auto footer-glass footer-wave" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
+    <footer id="footer" className={cn(footerNavClass, 'mt-auto footer-glass footer-wave')} role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
       <div className="gradient-line" />
 
       <div id="footer-contact" className="page-container py-6 sm:py-8">
@@ -333,9 +358,9 @@ export function Footer({ compact = false }: FooterProps) {
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className={cn('back-to-top-btn', showBackToTop && 'visible')}
-        aria-label="بازگشت به بالای صفحه"
-        title="بازگشت به بالای صفحه"
+        className={cn('back-to-top-btn hidden', showBackToTop && 'visible')}
+        aria-hidden
+        tabIndex={-1}
       >
         <ArrowUp className="size-5" />
       </button>

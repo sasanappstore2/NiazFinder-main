@@ -59,6 +59,7 @@ const DEAL_ALIASES: Record<string, string[]> = {
   rent_short_term: ['DAILY_RENT', 'rent_short_term', 'اجاره روزانه', 'اجاره کوتاه'],
   partnership: ['partnership', 'مشارکت'],
   pre_sale: ['pre_sale', 'پیش\u200cفروش', 'پیشفروش', 'buy', 'BUY'],
+  agency: ['agency', 'agency-services', 'SERVICE', 'service', 'مشاور'],
 };
 
 function norm(s: string | null | undefined): string {
@@ -77,8 +78,7 @@ function leafHit(got: string | null, expect: string[]): boolean {
     if (e === 'pre-sale-services') expanded.add('apartment-sale');
     if (e === 'industrial-sale') expanded.add('industrial-rent');
     if (e === 'industrial-rent') expanded.add('industrial-sale');
-    if (e === 'land-rent') expanded.add('land-sale');
-    if (e === 'land-sale') expanded.add('land-rent');
+    // Do not alias land-sale ↔ land-rent — deal family must stay distinct.
   }
   if ([...expanded].some((e) => g === norm(e))) return true;
   // Accept parent→leaf only when got is a known estate parent of expected leaf.
@@ -96,8 +96,21 @@ function leafHit(got: string | null, expect: string[]): boolean {
 }
 
 function dealHit(gotTx: string | null, gotDeal: string | null, expect: string): boolean {
+  // Brokerage / agency intent has no property transaction type.
+  if (expect === 'agency') return true;
+  // Partnership / pre-sale are service deals — trust dealType when tx is absent or sale-ish noise.
+  if (expect === 'partnership' || expect === 'pre_sale') {
+    const d = norm(gotDeal);
+    if (d && (DEAL_ALIASES[expect] ?? [expect]).some((a) => d.includes(norm(a)) || norm(a) === d)) {
+      return true;
+    }
+  }
   const aliases = DEAL_ALIASES[expect] ?? [expect];
-  const candidates = [gotTx, gotDeal, String(gotDeal ?? ''), String(gotTx ?? '')];
+  // Prefer transactionType when present — ignore conflicting dealType leftovers.
+  const candidates =
+    gotTx != null && String(gotTx).trim() !== ''
+      ? [gotTx]
+      : [gotDeal, String(gotDeal ?? '')];
   return candidates.some((c) => {
     const n = String(c ?? '');
     return aliases.some((a) => n.includes(a) || norm(n) === norm(a));

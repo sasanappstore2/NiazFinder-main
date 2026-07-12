@@ -12,7 +12,7 @@ function includesBounded(text: string, pattern: string): boolean {
   while ((idx = text.indexOf(p, idx)) !== -1) {
     const before = idx > 0 ? text[idx - 1]! : ' ';
     const after = idx + p.length < text.length ? text[idx + p.length]! : ' ';
-    const isLetter = (c: string) => /[\u0600-\u06FFa-zA-Z0-9]/.test(c);
+    const isLetter = (c: string) => /[\u0600-\u06FFa-zA-Z0-9\u200c]/.test(c);
     if (!isLetter(before) && !isLetter(after)) return true;
     idx += 1;
   }

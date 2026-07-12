@@ -6,6 +6,7 @@ import { enqueueVipBroadcast } from '@/lib/smart-matching/enqueue-vip-broadcast'
 import { isSmartMatchingEnabled } from '@/lib/smart-matching/env';
 import { logModerationAudit } from '@/lib/rbac/moderation-audit';
 import { notifyNeedBrowseAlertsForRequest } from '@/lib/need-alerts/notify';
+import { queueNeedRagIndex } from '@/lib/rag/queue';
 export type ModerationAction = 'approve' | 'reject_soft' | 'reject_final';
 
 export function parseModerationAction(value: unknown): ModerationAction | null {
@@ -126,6 +127,11 @@ export async function applyModerationAction(
     void notifyNeedBrowseAlertsForRequest(requestId).catch((err) =>
       console.error('need browse alert notify failed', err)
     );
+    // VIP/PRIVATE needs stay out of public RAG until flipNeedToPublic; still enqueue
+    // so the worker can clear/skip until PUBLIC.
+    queueNeedRagIndex(requestId, 'UPSERT');
+  } else {
+    queueNeedRagIndex(requestId, 'DELETE');
   }
 
   return { ok: true as const, request: outcome.request };
@@ -172,6 +178,8 @@ export async function applyUnpublishAction(
     userAgent: options?.userAgent,
   });
 
+  queueNeedRagIndex(requestId, 'DELETE');
+
   return { ok: true as const, request: updated };
 }
 
@@ -214,6 +222,8 @@ export async function applyAdminDeleteAction(
     ip: options?.ip,
     userAgent: options?.userAgent,
   });
+
+  queueNeedRagIndex(requestId, 'DELETE');
 
   return { ok: true as const, request: updated };
 }

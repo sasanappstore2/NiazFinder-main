@@ -16,7 +16,7 @@ const TOOL_LEAK_PATTERNS: RegExp[] = [
 ];
 
 const KNOWN_TOOL_INVOKE =
-  /\b(?:check_user_account_status|search_needs_agent|get_site_categories|search_site_categories|search_site_cities|search_site_neighborhoods|explain_need_fields|get_site_help|get_user_memory|update_user_memory)\s*(?:\{[\s\S]*?\}|\([\s\S]*?\))/gi;
+  /\b(?:check_user_account_status|search_needs_agent|search_businesses_agent|get_public_business_profile|search_site_knowledge|get_site_categories|search_site_categories|search_site_cities|search_site_neighborhoods|explain_need_fields|get_site_help|get_user_memory|update_user_memory)\s*(?:\{[\s\S]*?\}|\([\s\S]*?\))/gi;
 
 /** True if text still contains tool-protocol leakage. */
 export function containsToolLeakage(text: string): boolean {

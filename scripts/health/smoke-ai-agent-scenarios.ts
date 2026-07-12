@@ -24,6 +24,8 @@ const scenarios: Array<{ text: string; intent: string }> = [
   { text: 'چطور نیاز ثبت کنم در تهران؟', intent: 'post_guide' },
   { text: 'موجودی کیف پولم چقدره؟', intent: 'account_wallet' },
   { text: 'نیازهای مشابه اجاره آپارتمان پیدا کن', intent: 'need_search' },
+  { text: 'کسب‌وکار املاک در تهران پیدا کن', intent: 'business_search' },
+  { text: 'راهنمای بخش چت سایت چیست؟', intent: 'section_help' },
 ];
 
 for (const s of scenarios) {

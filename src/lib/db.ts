@@ -18,7 +18,6 @@ const REQUIRED_DELEGATES = [
 
 function createPrismaClient(): PrismaClient {
   // Prefer static import path for stability; dynamic require only when needed in CJS.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { PrismaClient: Client } = require('@prisma/client') as typeof import('@prisma/client');
   return new Client({
     log: process.env.NODE_ENV === 'production' ? [] : ['error'],

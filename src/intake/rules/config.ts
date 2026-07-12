@@ -25,7 +25,8 @@ export function isIntakeRulesOnlyMode(): boolean {
 }
 
 export const RULES_CATEGORY_MIN_CONFIDENCE = 0.75;
-export const REGISTRY_CATEGORY_OVERRIDE_THRESHOLD = 0.78;
+/** Align registry override with compose auto-apply / disambig gate (RFC-0004). */
+export const REGISTRY_CATEGORY_OVERRIDE_THRESHOLD = 0.85;
 export const RULES_PACK_TARGET_SIZE = 10_000;
 /** Smaller cartesian target for estate leaves — collision table covers cross-category cases. */
 export const RULES_ESTATE_PACK_TARGET_SIZE = 2_000;

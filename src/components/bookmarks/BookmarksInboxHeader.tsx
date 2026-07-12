@@ -3,6 +3,8 @@
 import type { BookmarkInboxFilter } from '@/lib/bookmarks/types';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
+import { OptionGroup } from '@/components/shared/OptionGroup';
+import { SITE_LABELS } from '@/config/site-labels';
 import { Search } from 'lucide-react';
 
 const FILTERS: { id: BookmarkInboxFilter; label: string }[] = [
@@ -35,8 +37,7 @@ export function BookmarksInboxHeader({
   return (
     <header className="space-y-4">
       <div>
-        <h1 className="text-h2 font-bold">علاقه‌مندی‌ها</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-body-sm text-muted-foreground">
           {isBusinessUser
             ? 'آگهی‌هایی که ذخیره کردید — اینجا پیگیری کنید'
             : 'آگهی‌های نیاز ذخیره‌شده'}
@@ -47,7 +48,7 @@ export function BookmarksInboxHeader({
 
       <div className="relative">
         <Search
-          className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
           aria-hidden
         />
         <Input
@@ -55,12 +56,12 @@ export function BookmarksInboxHeader({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="جستجو در عنوان یا شهر..."
-          className="pr-10"
-          aria-label="جستجو در علاقه‌مندی‌ها"
+          className="pe-10"
+          aria-label={`جستجو در ${SITE_LABELS.bookmarks}`}
         />
       </div>
 
-      <div className="flex flex-wrap gap-2" role="tablist" aria-label="فیلتر علاقه‌مندی‌ها">
+      <OptionGroup layout="chips" label="فیلتر علاقه‌مندی‌ها">
         {FILTERS.map((f) => {
           const active = filter === f.id;
           const showBadge = f.id === 'needs_follow_up' && followUpCount > 0;
@@ -72,7 +73,7 @@ export function BookmarksInboxHeader({
               aria-selected={active}
               onClick={() => onFilterChange(f.id)}
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-caption font-medium transition-colors',
+                'inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-caption font-medium transition-colors',
                 active
                   ? 'border-primary bg-primary/10 text-primary'
                   : 'border-border/60 bg-background text-muted-foreground hover:bg-muted/50 hover:text-foreground'
@@ -92,7 +93,7 @@ export function BookmarksInboxHeader({
             </button>
           );
         })}
-      </div>
+      </OptionGroup>
     </header>
   );
 }

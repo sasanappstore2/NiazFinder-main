@@ -7,26 +7,19 @@ import type { FieldState } from '@/intake/intelligence-engine/types';
 import type { IntakeAnalysisMode } from '@/lib/intake/rules-only-mode';
 import { TypingIndicator } from './realtime/TypingIndicator';
 import {
-  INTAKE_COPY,
   intakeUnderstandingFootnote,
   intakeUnderstandingLoading,
   intakeUnderstandingTitle,
 } from './intake-copy';
 
-export interface IntakeUnderstandingHighlightAction {
-  key: string;
-  label: string;
-  value: string;
-}
-
 export interface IntakeAiUnderstandingCardProps {
   intentGist: string | null;
   fieldMeta: Record<string, FieldState> | null;
   analyzing: boolean;
+  /** True when fieldMeta/gist belong to an older text than the composer. */
+  stale?: boolean;
   aiInvoked?: boolean;
   analysisMode?: IntakeAnalysisMode;
-  /** When set, chips become actionable confirm/edit controls. */
-  onHighlightSelect?: (highlight: IntakeUnderstandingHighlightAction) => void;
   className?: string;
 }
 
@@ -34,9 +27,9 @@ export function IntakeAiUnderstandingCard({
   intentGist,
   fieldMeta,
   analyzing,
+  stale = false,
   aiInvoked,
   analysisMode = 'rules',
-  onHighlightSelect,
   className,
 }: IntakeAiUnderstandingCardProps) {
   const view = buildIntakeUnderstanding({
@@ -45,7 +38,11 @@ export function IntakeAiUnderstandingCard({
     aiInvoked,
     analysisMode,
   });
-  const hasContent = Boolean(view.summary || view.highlights.length > 0);
+  // Never flash weak / outdated guesses while the user is still typing.
+  const showResolved = !analyzing && !stale;
+  const hasContent = Boolean(
+    showResolved && (view.summary || view.highlights.length > 0)
+  );
   const showAsAi = analysisMode === 'ai' || Boolean(aiInvoked);
   const TitleIcon = showAsAi ? Sparkles : ListChecks;
 
@@ -72,53 +69,31 @@ export function IntakeAiUnderstandingCard({
         {analyzing ? <TypingIndicator status="analyzing" className="mr-auto" /> : null}
       </div>
 
-      {analyzing && !hasContent ? (
+      {analyzing ? (
         <p className="text-sm text-muted-foreground">
           {intakeUnderstandingLoading(analysisMode)}
         </p>
       ) : null}
 
-      {view.summary ? (
+      {showResolved && view.summary ? (
         <p className="text-sm leading-relaxed text-foreground">{view.summary}</p>
       ) : null}
 
-      {view.highlights.length > 0 ? (
+      {showResolved && view.highlights.length > 0 ? (
         <ul className="mt-3 flex flex-wrap gap-2">
-          {view.highlights.map((h) => {
-            if (onHighlightSelect) {
-              return (
-                <li key={h.key}>
-                  <button
-                    type="button"
-                    className={cn(
-                      'rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs text-foreground',
-                      'transition-colors hover:border-primary/40 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30'
-                    )}
-                    onClick={() =>
-                      onHighlightSelect({ key: h.key, label: h.label, value: h.value })
-                    }
-                    title={INTAKE_COPY.chipConfirmHint}
-                  >
-                    <span className="text-muted-foreground">{h.label}: </span>
-                    {h.value}
-                  </button>
-                </li>
-              );
-            }
-            return (
-              <li
-                key={h.key}
-                className="rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs text-foreground"
-              >
-                <span className="text-muted-foreground">{h.label}: </span>
-                {h.value}
-              </li>
-            );
-          })}
+          {view.highlights.map((h) => (
+            <li
+              key={h.key}
+              className="rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs text-foreground"
+            >
+              <span className="text-muted-foreground">{h.label}: </span>
+              {h.value}
+            </li>
+          ))}
         </ul>
       ) : null}
 
-      {!analyzing && hasContent ? (
+      {hasContent ? (
         <p className="mt-2 text-[11px] text-muted-foreground">
           {intakeUnderstandingFootnote(analysisMode, aiInvoked)}
         </p>

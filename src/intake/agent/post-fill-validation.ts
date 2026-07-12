@@ -4,7 +4,7 @@
  */
 
 import { getCategoryBySlug } from '@/config/categories';
-import type { FieldBag, FieldState } from '@/intake/intelligence-engine/types';
+import type { FieldState, IntakeFieldBag } from '@/intake/intelligence-engine/types';
 import type { IntakeAgentWarning } from '@/intake/agent/types';
 
 const MONEY_MAX = 1e15;
@@ -27,7 +27,7 @@ const MONEY_KEYS = new Set([
 ]);
 
 export interface PostFillValidationResult {
-  fields: FieldBag;
+  fields: IntakeFieldBag;
   warnings: IntakeAgentWarning[];
   rejectedKeys: string[];
 }
@@ -41,7 +41,7 @@ function asNumber(value: unknown): number | null {
   return null;
 }
 
-function clearField(bag: FieldBag, key: string): void {
+function clearField(bag: IntakeFieldBag, key: string): void {
   if (!bag[key]) return;
   bag[key] = {
     ...bag[key]!,
@@ -138,8 +138,8 @@ function validateNumericField(
 /**
  * Validate and soft-clear invalid values after rules/AI merge.
  */
-export function validatePostFillFields(fields: FieldBag): PostFillValidationResult {
-  const bag: FieldBag = { ...fields };
+export function validatePostFillFields(fields: IntakeFieldBag): PostFillValidationResult {
+  const bag: IntakeFieldBag = { ...fields };
   const warnings: IntakeAgentWarning[] = [];
   const rejectedKeys: string[] = [];
 
@@ -170,7 +170,7 @@ export function validatePostFillFields(fields: FieldBag): PostFillValidationResu
   const hasRent = asNumber(bag.monthlyRent?.value) != null;
   const hasDeposit = asNumber(bag.deposit?.value) != null;
   const hasBudget =
-    asNumber(bag.budgetMax?.value) != null || asNumber(bag.budget?.value) != null;
+    asNumber(bag.budgetMax?.value) != null || asNumber(bag.budgetMin?.value) != null;
 
   if (isSaleDeal(tx) && (hasRahn || hasRent) && !hasBudget) {
     warnings.push({

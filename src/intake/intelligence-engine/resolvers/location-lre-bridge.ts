@@ -164,13 +164,16 @@ function applyLreToFieldBag(
       setField(bag, 'province', { value: province, confidence: 0.85, source: 'resolver', evidence: 'city→province' });
     }
   } else if (result.city) {
-    setField(bag, 'city', { value: result.city, confidence, source: 'resolver' });
+    // Explicit/inferred city must beat dictionary province hits (e.g. «استان همدان»
+    // → همدان) even when neighborhood stays unresolved.
+    const cityConfidence = Math.max(confidence, 0.93);
+    setField(bag, 'city', { value: result.city, confidence: cityConfidence, source: 'resolver' });
     if (result.cityId) {
-      setField(bag, 'citySlug', { value: result.cityId, confidence, source: 'resolver' });
+      setField(bag, 'citySlug', { value: result.cityId, confidence: cityConfidence, source: 'resolver' });
     }
     const province = provinceTitleFor(result.cityId, result.city);
     if (province) {
-      setField(bag, 'province', { value: province, confidence, source: 'resolver', evidence: 'city→province' });
+      setField(bag, 'province', { value: province, confidence: cityConfidence, source: 'resolver', evidence: 'city→province' });
     }
   }
 

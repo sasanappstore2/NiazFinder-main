@@ -280,16 +280,44 @@ export function buildMarketplaceLinkReply(input: {
 
 export function buildNeedSearchReply(
   query: string,
-  hits: Array<{ title?: string; city?: string; category?: string }>,
+  hits: Array<{ title?: string; city?: string; category?: string; categoryName?: string }>,
 ): string {
   if (!hits.length) {
     return `نیاز بازی با عبارت «${query}» پیدا نکردم. می‌توانید خودتان در /post نیاز مشابه ثبت کنید یا در /n/{city} بازار شهر را ببینید.`;
   }
   const top = hits.slice(0, 5).map((h) => {
-    const bits = [h.title, h.city, h.category].filter(Boolean);
+    const bits = [h.title, h.city, h.categoryName ?? h.category].filter(Boolean);
     return `«${bits.join(' — ') || 'نیاز'}»`;
   });
   return `چند نیاز مرتبط با «${query}»: ${top.join('؛ ')}. برای دیدن بیشتر به بازار شهر (/n/{city}) بروید یا نیاز خودتان را در /post ثبت کنید.`;
+}
+
+export function buildBusinessSearchReply(
+  query: string,
+  hits: Array<{ name?: string; city?: string; href?: string; slug?: string; verified?: boolean }>,
+): string {
+  if (!hits.length) {
+    return `کسب‌وکار عمومی فعالی با عبارت «${query}» پیدا نکردم. می‌توانید در /b/{city} بازار کسب‌وکارها را ببینید.`;
+  }
+  const top = hits.slice(0, 5).map((h) => {
+    const href = h.href || (h.slug ? `/b/${h.slug}` : null);
+    const label = [h.name, h.city, h.verified ? 'تأییدشده' : null].filter(Boolean).join(' — ');
+    return href ? `«${label}» (${href})` : `«${label}»`;
+  });
+  return `چند کسب‌وکار مرتبط با «${query}»: ${top.join('؛ ')}. برای جزئیات بیشتر روی لینک پروفایل بزنید.`;
+}
+
+export function buildSiteKnowledgeReply(
+  query: string,
+  chunks: Array<{ title?: string; content?: string; route?: string | null }>,
+): string {
+  if (!chunks.length) {
+    return `راهنمای مشخصی برای «${query}» در دانش سایت پیدا نکردم. می‌توانید از /help یا /post شروع کنید.`;
+  }
+  const top = chunks[0]!;
+  const route = top.route ? ` مسیر مرتبط: ${top.route}.` : '';
+  const body = (top.content || '').replace(/\s+/g, ' ').trim().slice(0, 280);
+  return `${top.title ? `${top.title}: ` : ''}${body}${route}`;
 }
 
 export function buildGreetingReply(text: string): string {

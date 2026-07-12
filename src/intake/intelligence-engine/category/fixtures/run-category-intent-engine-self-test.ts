@@ -66,6 +66,54 @@ const CASES: Case[] = [
     expectLeaf: ['villa-sale', 'residential-sale'],
     expectVertical: 'real-estate',
   },
+  {
+    // Regression: colloquial-0002 — «قصد خرید» + «کد رهگیری» must not flip to villa-rent.
+    id: 'villa-sale-ghasd-kharid-rahgiri',
+    text:
+      'وقت‌تون بخیر، قصد خرید خانه ویلایی یا ویلا دارم. قرارداد رسمی، کد رهگیری و شفافیت مالک برام غیرقابل مذاکره‌ست.',
+    expectLeaf: ['villa-sale'],
+    expectVertical: 'real-estate',
+  },
+  {
+    id: 'industrial-sale-ghasd',
+    text: 'قصد خرید سوله یا کارگاه صنعتی دارم در اصفهان',
+    expectLeaf: ['industrial-sale'],
+    expectVertical: 'real-estate',
+  },
+  {
+    id: 'land-rent-mahane',
+    text: 'اجاره ماهانهٔ زمین یا کلنگی در گیلان لازم دارم',
+    expectLeaf: ['land-rent'],
+  },
+  {
+    // Regression: colloquial-0567 — alternate hood «شهرک ویلایی» must not flip land-rent → villa-rent.
+    id: 'land-rent-shahrak-villaee',
+    text:
+      'برای کارم نیاز به اجاره ماهانهٔ زمین یا کلنگی دارم. محله‌های جایگزین: شهرک ویلایی باران. متراژ حدود 1600 متر.',
+    expectLeaf: ['land-rent'],
+    expectVertical: 'real-estate',
+  },
+  {
+    id: 'agency-moshaver',
+    text: 'دنبال مشاور املاک حرفه‌ای هستم در ملایر',
+    expectLeaf: ['agency-services'],
+    expectVertical: 'real-estate',
+  },
+  {
+    // Regression: colloquial-0037 — محله «شهر صنعتی» must not null-out آپارتمان فروش
+    id: 'apartment-sale-shahr-sanati',
+    text:
+      'می‌خوام آپارتمان مسکونی بخرم. استان تهران، شهر قدس، محله شهر صنعتی اولویت اوله.',
+    expectLeaf: ['apartment-sale'],
+    expectVertical: 'real-estate',
+  },
+  {
+    // Regression: colloquial-0069 — فضای کار اشتراکی کوتاه‌مدت
+    id: 'workspace-short-cowork',
+    text: 'اجاره کوتاه‌مدت فضای کار اشتراکی می‌خوام برای چند روز تا حداکثر دو هفته در نقده',
+    expectLeaf: ['workspace-short-rent'],
+    expectVertical: 'real-estate',
+  },
 ];
 
 function leafOf(match: { categorySlug: string; subcategorySlug?: string } | null): string | null {

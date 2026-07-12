@@ -31,7 +31,7 @@ import {
   collectHybridUnresolvedFields,
   runScopedFieldFill,
 } from '@/intake/intelligence-engine/hybrid/scoped-field-fill';
-import { isIntakeAiGloballyDisabled } from '@/intake/rules/config';
+import { isIntakeAiGloballyDisabled, REGISTRY_CATEGORY_OVERRIDE_THRESHOLD } from '@/intake/rules/config';
 import { rulesCategoryToFieldBag } from '@/intake/rules/resolver/rules-category-resolver';
 import { getNextQuestion } from '@/lib/need-intake/question-engine';
 import type { NeedDraft } from '@/contracts/need-intake';
@@ -48,6 +48,7 @@ import {
   cityCandidatesForUi,
   runCityDisambiguation,
 } from '@/intake/intelligence-engine/disambiguation/city-disambiguation';
+import { COMPOSE_AUTO_APPLY_MIN_CONFIDENCE } from '@/lib/need-intake/compose-auto-apply';
 
 export { isHybridIntakeEnabled } from '@/intake/intelligence-engine/hybrid/config';
 
@@ -57,31 +58,72 @@ function mergeEngineEntitiesHybrid(
   skipCategory: boolean
 ): void {
   const e = analysis.entities;
-  if (e.city && !bag.city?.value) {
-    setField(bag, 'city', { value: e.city, confidence: analysis.confidence.city ?? 0.8, source: 'dictionary' });
+  // Prefer real confidence; never inflate with ??0.7+ (RFC-0004).
+  if (e.city && !bag.city?.value && analysis.confidence.city != null) {
+    setField(bag, 'city', {
+      value: e.city,
+      confidence: analysis.confidence.city,
+      source: 'dictionary',
+      evidence: 'engine-entities',
+    });
   }
-  if (e.citySlug && !bag.citySlug?.value) {
-    setField(bag, 'citySlug', { value: e.citySlug, confidence: analysis.confidence.city ?? 0.8, source: 'resolver' });
+  if (e.citySlug && !bag.citySlug?.value && analysis.confidence.city != null) {
+    setField(bag, 'citySlug', {
+      value: e.citySlug,
+      confidence: analysis.confidence.city,
+      source: 'resolver',
+      evidence: 'engine-entities',
+    });
   }
-  if (e.neighborhood) {
-    setField(bag, 'neighborhood', { value: e.neighborhood, confidence: analysis.confidence.neighborhood ?? 0.7, source: 'rule' });
+  if (e.neighborhood && analysis.confidence.neighborhood != null) {
+    setField(bag, 'neighborhood', {
+      value: e.neighborhood,
+      confidence: analysis.confidence.neighborhood,
+      source: 'rule',
+      evidence: 'engine-entities',
+    });
   }
-  if (e.neighborhoodSlug) {
-    setField(bag, 'neighborhoodSlug', { value: e.neighborhoodSlug, confidence: analysis.confidence.neighborhood ?? 0.75, source: 'resolver' });
+  if (e.neighborhoodSlug && analysis.confidence.neighborhood != null) {
+    setField(bag, 'neighborhoodSlug', {
+      value: e.neighborhoodSlug,
+      confidence: analysis.confidence.neighborhood,
+      source: 'resolver',
+      evidence: 'engine-entities',
+    });
   }
-  if (e.area != null) setField(bag, 'area', { value: e.area, confidence: analysis.confidence.area ?? 0.8, source: 'rule' });
-  if (e.rooms != null) setField(bag, 'rooms', { value: e.rooms, confidence: analysis.confidence.rooms ?? 0.8, source: 'rule' });
-  if (e.budgetMax != null) setField(bag, 'budgetMax', { value: e.budgetMax, confidence: analysis.confidence.budget ?? 0.75, source: 'rule' });
-  if (e.transactionType) {
-    setField(bag, 'transactionType', { value: e.transactionType, confidence: analysis.confidence.transactionType ?? 0.85, source: 'rule' });
+  if (e.area != null && analysis.confidence.area != null) {
+    setField(bag, 'area', { value: e.area, confidence: analysis.confidence.area, source: 'rule', evidence: 'engine-entities' });
+  }
+  if (e.rooms != null && analysis.confidence.rooms != null) {
+    setField(bag, 'rooms', { value: e.rooms, confidence: analysis.confidence.rooms, source: 'rule', evidence: 'engine-entities' });
+  }
+  if (e.budgetMax != null && analysis.confidence.budget != null) {
+    setField(bag, 'budgetMax', { value: e.budgetMax, confidence: analysis.confidence.budget, source: 'rule', evidence: 'engine-entities' });
+  }
+  if (e.transactionType && analysis.confidence.transactionType != null) {
+    setField(bag, 'transactionType', {
+      value: e.transactionType,
+      confidence: analysis.confidence.transactionType,
+      source: 'rule',
+      evidence: 'engine-entities',
+    });
   }
 
   if (skipCategory || bag.categorySlug?.lockedByUser) return;
 
   const registryConf = bag.categorySlug?.confidence ?? 0;
   const engineConf = analysis.confidence.category ?? 0;
-  if (e.categorySlug && engineConf > registryConf + 0.05 && engineConf >= 0.78) {
-    setField(bag, 'categorySlug', { value: e.categorySlug, confidence: engineConf, source: 'rule' });
+  if (
+    e.categorySlug &&
+    engineConf > registryConf + 0.05 &&
+    engineConf >= REGISTRY_CATEGORY_OVERRIDE_THRESHOLD
+  ) {
+    setField(bag, 'categorySlug', {
+      value: e.categorySlug,
+      confidence: engineConf,
+      source: 'rule',
+      evidence: 'engine-category-override',
+    });
   }
 }
 
@@ -247,8 +289,10 @@ export async function runHybridIntakePipeline(
   bag = mergeFieldBags(bag, locationResult.fields);
 
   const cityUnresolved =
+    !bag.city?.value &&
     !bag.citySlug?.value &&
     !input.citySlug &&
+    !input.cityName &&
     locationResult.status !== 'resolved';
 
   if (cityUnresolved) {
@@ -261,16 +305,24 @@ export async function runHybridIntakePipeline(
         aiLatencyMs += cityDisambigResult.aiLatencyMs;
       }
     }
-    if (cityDisambigResult.citySlug && cityDisambigResult.cityName) {
+    if (
+      cityDisambigResult.citySlug &&
+      cityDisambigResult.cityName &&
+      !cityDisambigResult.ambiguous
+    ) {
+      const raw = cityDisambigResult.candidates[0]?.score ?? 0;
+      const confidence = Math.max(raw, COMPOSE_AUTO_APPLY_MIN_CONFIDENCE);
       setField(bag, 'citySlug', {
         value: cityDisambigResult.citySlug,
-        confidence: 0.82,
+        confidence,
         source: cityDisambigResult.aiInvoked ? 'ai' : 'resolver',
+        evidence: `city-disambig:${cityDisambigResult.method}`,
       });
       setField(bag, 'city', {
         value: cityDisambigResult.cityName,
-        confidence: 0.82,
+        confidence,
         source: cityDisambigResult.aiInvoked ? 'ai' : 'dictionary',
+        evidence: `city-disambig:${cityDisambigResult.method}`,
       });
     }
     steps.push(

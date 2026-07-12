@@ -53,6 +53,8 @@
     "download",
     "upload",
     "prisma/seed-extra.ts",
-    "crawler"
+    "crawler",
+    "src/intake.backup.*",
+    "src/components/**/*.backup.*"
   ]
 }

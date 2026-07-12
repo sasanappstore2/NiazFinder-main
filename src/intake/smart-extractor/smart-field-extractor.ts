@@ -382,12 +382,12 @@ async function enhanceWithAI(
     );
 
     if (aiResult.fields) {
-      if (!result.category.value && aiResult.fields.categorySlug) {
-        result.category.value = aiResult.fields.categorySlug.value;
+      if (!result.category.value && aiResult.fields.categorySlug?.value != null) {
+        result.category.value = String(aiResult.fields.categorySlug.value);
         result.category.confidence = aiResult.fields.categorySlug.confidence || 0.8;
 
-        if (aiResult.categoryOptions) {
-          result.category.alternatives = aiResult.categoryOptions.map((opt) => ({
+        if (aiResult.categoryCandidates?.length) {
+          result.category.alternatives = aiResult.categoryCandidates.map((opt) => ({
             slug: opt.slug,
             label: opt.label,
             confidence: opt.confidence || 0.5,
@@ -395,15 +395,21 @@ async function enhanceWithAI(
         }
       }
 
-      if (aiResult.fields.city?.value && !result.location.city) {
-        result.location.city = aiResult.fields.city.value;
-        result.location.citySlug = aiResult.fields.citySlug?.value || null;
+      if (aiResult.fields.city?.value != null && !result.location.city) {
+        result.location.city = String(aiResult.fields.city.value);
+        result.location.citySlug =
+          aiResult.fields.citySlug?.value != null
+            ? String(aiResult.fields.citySlug.value)
+            : null;
         result.location.confidence = aiResult.fields.city.confidence || 0.8;
       }
 
-      if (aiResult.fields.neighborhood?.value) {
-        result.location.neighborhood = aiResult.fields.neighborhood.value;
-        result.location.neighborhoodSlug = aiResult.fields.neighborhoodSlug?.value || null;
+      if (aiResult.fields.neighborhood?.value != null) {
+        result.location.neighborhood = String(aiResult.fields.neighborhood.value);
+        result.location.neighborhoodSlug =
+          aiResult.fields.neighborhoodSlug?.value != null
+            ? String(aiResult.fields.neighborhoodSlug.value)
+            : null;
       }
     }
   } catch (error) {
@@ -635,13 +641,12 @@ function inferTransactionFromBudget(result: SmartExtractionResult): void {
  */
 function generateMetadata(result: SmartExtractionResult, originalText: string): void {
   // تولید عنوان
-  const titleParts = [];
+  const titleParts: string[] = [];
 
   if (result.transaction.type === 'BUY') titleParts.push('خرید');
   else if (result.transaction.type === 'SELL') titleParts.push('فروش');
   else if (result.transaction.type === 'RENT' || result.transaction.type === 'DEPOSIT_AND_RENT') titleParts.push('اجاره');
   else if (result.transaction.type === 'FULL_DEPOSIT') titleParts.push('رهن کامل');
-  else if (result.transaction.type === 'SERVICE') titleParts.push('درخواست خدمت');
 
   if (result.category.subcategory) {
     titleParts.push(getCategoryLabel(result.category.subcategory));
@@ -675,9 +680,9 @@ function generateMetadata(result: SmartExtractionResult, originalText: string): 
  * اعتبارسنجی و پیشنهادات
  */
 function validateAndSuggest(result: SmartExtractionResult): void {
-  const missingFields = [];
-  const warnings = [];
-  const suggestions = [];
+  const missingFields: string[] = [];
+  const warnings: string[] = [];
+  const suggestions: string[] = [];
 
   // بررسی فیلدهای ضروری
   if (!result.category.value) {
@@ -738,7 +743,7 @@ function shouldUseAI(result: SmartExtractionResult, options: SmartExtractionOpti
   }
 
   // اگر فیلدهای مهم missing هستند، AI لازم است
-  return !result.category.value || !result.location.city || result.location.disambiguationNeeded;
+  return !result.category.value || !result.location.city || Boolean(result.location.disambiguationNeeded);
 }
 
 function getCategoryLabel(slug: string): string {

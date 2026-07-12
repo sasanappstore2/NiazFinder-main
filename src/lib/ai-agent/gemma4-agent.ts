@@ -44,6 +44,9 @@ export interface GemmaAgentRoundResult {
 export const AGENT_TOOL_NAMES = [
   'check_user_account_status',
   'search_needs_agent',
+  'search_businesses_agent',
+  'get_public_business_profile',
+  'search_site_knowledge',
   'get_site_categories',
   'search_site_categories',
   'search_site_cities',

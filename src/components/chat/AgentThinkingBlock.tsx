@@ -77,6 +77,9 @@ export function AgentThinkingBlock({
 const TOOL_LABELS: Record<string, string> = {
   check_user_account_status: 'بررسی وضعیت حساب…',
   search_needs_agent: 'جستجو در نیازها…',
+  search_businesses_agent: 'جستجو در کسب‌وکارها…',
+  get_public_business_profile: 'دریافت پروفایل کسب‌وکار…',
+  search_site_knowledge: 'جستجو در دانش سایت…',
   get_site_categories: 'دریافت دسته‌بندی‌ها…',
   search_site_categories: 'جستجوی دسته‌بندی…',
   search_site_cities: 'جستجوی شهر…',

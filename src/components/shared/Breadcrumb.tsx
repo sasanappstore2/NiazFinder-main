@@ -28,6 +28,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import type { BreadcrumbCrumb as Crumb } from '@/lib/browse/breadcrumb-crumbs';
+import { SITE_LABELS } from '@/config/site-labels';
 
 function marketplacePrefix(pathname: string): RegExp | null {
   if (pathname === '/n' || pathname.startsWith('/n/')) return /^\/n\/?/;
@@ -58,7 +59,8 @@ function marketplaceCrumbs(
   const scope = resolveLocationScope(pathname, searchParams);
   const scoped = scopeIsActive(scope);
 
-  const marketRootLabel = market === 'business' ? 'بازار کسب‌وکارها' : 'بازار نیازها';
+  const marketRootLabel =
+    market === 'business' ? SITE_LABELS.marketplaceBusiness : SITE_LABELS.marketplaceNeeds;
   const marketRootHref = routeBuilder.search({ market });
 
   if (!rawLocation) {
@@ -80,7 +82,7 @@ function marketplaceCrumbs(
       pathCtx.citySlug ??
       (pathCtx.pathLocation === COUNTRY_SLUG ? 'iran' : pathCtx.pathLocation);
     const pathLocLabel =
-      locSlug === 'iran' ? 'سراسر ایران' : (getCityBySlug(locSlug)?.title ?? locSlug);
+      locSlug === 'iran' ? SITE_LABELS.countryWide : (getCityBySlug(locSlug)?.title ?? locSlug);
 
     const crumbs: Crumb[] = [home];
     if (!scoped) {
@@ -126,7 +128,7 @@ function marketplaceCrumbs(
 
   const locSlug = ctx.location.kind === 'country' ? 'iran' : ctx.location.city.slug;
   const pathLocLabel =
-    ctx.location.kind === 'country' ? 'سراسر ایران' : ctx.location.city.title;
+    ctx.location.kind === 'country' ? SITE_LABELS.countryWide : ctx.location.city.title;
 
   const crumbs: Crumb[] = [home];
 
@@ -190,7 +192,7 @@ function crumbsForPath(
   searchParams: URLSearchParams,
   businessProfileLabel?: string
 ): Crumb[] {
-  const home: Crumb = { label: 'صفحه اصلی', href: routeBuilder.home() };
+  const home: Crumb = { label: SITE_LABELS.home, href: routeBuilder.home() };
 
   if (pathname === '/') return [home];
 
@@ -206,7 +208,7 @@ function crumbsForPath(
   }
 
   if (pathname === '/browse' || pathname.startsWith('/browse/')) {
-    return [home, { label: 'بازار نیازها', href: routeBuilder.search({ market: 'need' }) }];
+    return [home, { label: SITE_LABELS.marketplaceNeeds, href: routeBuilder.search({ market: 'need' }) }];
   }
 
   if (pathname.startsWith('/v/')) {
@@ -214,21 +216,21 @@ function crumbsForPath(
     if (from) {
       return [
         ...marketplaceCrumbs(from, home, new URLSearchParams()),
-        { label: 'جزئیات آگهی', href: pathname },
+        { label: SITE_LABELS.listingDetail, href: pathname },
       ];
     }
     return [
       home,
-      { label: 'بازار نیازها', href: routeBuilder.search({ market: 'need' }) },
-      { label: 'جزئیات آگهی', href: pathname },
+      { label: SITE_LABELS.marketplaceNeeds, href: routeBuilder.search({ market: 'need' }) },
+      { label: SITE_LABELS.listingDetail, href: pathname },
     ];
   }
 
   if (pathname.startsWith('/pro/')) {
     return [
       home,
-      { label: 'بازار کسب‌وکارها', href: routeBuilder.search({ market: 'business' }) },
-      { label: 'پروفایل کسب‌وکار', href: pathname },
+      { label: SITE_LABELS.marketplaceBusiness, href: routeBuilder.search({ market: 'business' }) },
+      { label: SITE_LABELS.businessProfile, href: pathname },
     ];
   }
 
@@ -242,23 +244,31 @@ function crumbsForPath(
     }
     return [
       home,
-      { label: 'بازار کسب‌وکارها', href: routeBuilder.search({ market: 'business' }) },
+      { label: SITE_LABELS.marketplaceBusiness, href: routeBuilder.search({ market: 'business' }) },
       terminal,
     ];
   }
 
-  if (pathname === '/post')          return [home, { label: 'ثبت نیاز', href: routeBuilder.needNew() }];
-  if (pathname === '/dashboard')     return [home, { label: 'داشبورد', href: routeBuilder.dashboard() }];
+  if (pathname === '/post')          return [home, { label: SITE_LABELS.postNeed, href: routeBuilder.needNew() }];
+  if (pathname === '/dashboard')     return [home, { label: SITE_LABELS.dashboard, href: routeBuilder.dashboard() }];
   if (pathname === '/chat' || pathname.startsWith('/chat/'))
-                                     return [home, { label: 'پیام‌ها', href: routeBuilder.chat() }];
-  if (pathname === '/notifications') return [home, { label: 'اعلان‌ها', href: routeBuilder.notifications() }];
-  if (pathname === '/bookmarks')     return [home, { label: 'علاقه‌مندی‌ها', href: routeBuilder.bookmarks() }];
-  if (pathname === '/help')          return [home, { label: 'پشتیبانی', href: routeBuilder.help() }];
-  if (pathname === '/terms')         return [home, { label: 'قوانین استفاده', href: '/terms' }];
-  if (pathname === '/privacy')       return [home, { label: 'حریم خصوصی', href: '/privacy' }];
-  if (pathname === '/pricing')       return [home, { label: 'تعرفه‌ها', href: routeBuilder.pricing() }];
-  if (pathname === '/login')         return [home, { label: 'ورود', href: routeBuilder.login() }];
-  if (pathname === '/register')      return [home, { label: 'ثبت‌نام', href: routeBuilder.register() }];
+                                     return [home, { label: SITE_LABELS.messages, href: routeBuilder.chat() }];
+  if (pathname === '/notifications') return [home, { label: SITE_LABELS.notifications, href: routeBuilder.notifications() }];
+  if (pathname === '/bookmarks')     return [home, { label: SITE_LABELS.bookmarks, href: routeBuilder.bookmarks() }];
+  if (pathname === '/discover')      return [home, { label: SITE_LABELS.discover, href: '/discover' }];
+  if (pathname === '/search')        return [home, { label: SITE_LABELS.search, href: '/search' }];
+  if (pathname === '/social-feed')   return [home, { label: SITE_LABELS.socialFeed, href: '/social-feed' }];
+  if (pathname === '/workspace')     return [home, { label: SITE_LABELS.workspace, href: '/workspace' }];
+  if (pathname === '/my-business')   return [home, { label: SITE_LABELS.myBusiness, href: '/my-business' }];
+  if (pathname === '/referral')      return [home, { label: SITE_LABELS.referral, href: '/referral' }];
+  if (pathname === '/edit-profile')  return [home, { label: SITE_LABELS.editProfile, href: '/edit-profile' }];
+  if (pathname === '/help')          return [home, { label: SITE_LABELS.support, href: routeBuilder.help() }];
+  if (pathname === '/terms')         return [home, { label: SITE_LABELS.terms, href: '/terms' }];
+  if (pathname === '/privacy')       return [home, { label: SITE_LABELS.privacy, href: '/privacy' }];
+  if (pathname === '/pricing')       return [home, { label: SITE_LABELS.pricing, href: routeBuilder.pricing() }];
+  if (pathname === '/faq')           return [home, { label: SITE_LABELS.faq, href: '/faq' }];
+  if (pathname === '/login')         return [home, { label: SITE_LABELS.login, href: routeBuilder.login() }];
+  if (pathname === '/register')      return [home, { label: SITE_LABELS.register, href: routeBuilder.register() }];
 
   return [home, { label: 'صفحه', href: pathname }];
 }

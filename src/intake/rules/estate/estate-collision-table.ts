@@ -122,15 +122,15 @@ export const DEAL_LEXICON: DealLexiconEntry[] = [
   { token: 'می خرم', family: 'sale', weight: 3 },
 
   { token: 'اجاره', family: 'rent', weight: 4 },
-  { token: 'رهن', family: 'rent', weight: 4 },
-  { token: 'ودیعه', family: 'rent', weight: 3 },
   { token: 'رهن و اجاره', family: 'rent', weight: 5 },
   { token: 'رهن کامل', family: 'rent', weight: 5 },
-
+  { token: 'ودیعه', family: 'rent', weight: 3 },
+  // Bare «رهن» / «شبانه» are sticky (رهگیری، شبانه‌روزی); use longer tokens + ZWNJ-aware bounds.
+  { token: 'اجاره ماهانه', family: 'rent', weight: 5 },
   { token: 'کوتاه مدت', family: 'short', weight: 5 },
   { token: 'کوتاه\u200cمدت', family: 'short', weight: 5 },
-  { token: 'روزانه', family: 'short', weight: 3 },
-  { token: 'شبانه', family: 'short', weight: 3 },
+  { token: 'اجاره روزانه', family: 'short', weight: 4 },
+  { token: 'اجاره شبانه', family: 'short', weight: 5 },
 
   { token: 'مشارکت در ساخت', family: 'partnership', weight: 6 },
   { token: 'مشارکت', family: 'partnership', weight: 3 },
@@ -179,8 +179,8 @@ const KIND_DEAL_TO_LEAF: Partial<Record<EstatePropertyKind, Partial<Record<Estat
 
 const RESIDENTIAL_RESCUE = ['آپارتمان', 'اپارتمان', 'ویلا', 'خانه ویلایی'];
 const APARTMENT_RESCUE = ['آپارتمان', 'اپارتمان'];
-const SALE_RESCUE = ['خرید', 'فروش', 'بخرم'];
-const RENT_RESCUE = ['اجاره', 'رهن', 'ودیعه'];
+const SALE_RESCUE = ['خرید', 'فروش', 'بخرم', 'قصد خرید'];
+const RENT_RESCUE = ['اجاره', 'رهن و اجاره', 'رهن کامل', 'ودیعه', 'ماهانه'];
 const REPAIR_RESCUE = ['تعمیر', 'سرویس', 'خراب'];
 
 /**
@@ -206,6 +206,11 @@ export const COLLISION_ROWS: CollisionRow[] = [
   { slug: 'apartment-rent', pattern: 'زمین', unless: APARTMENT_RESCUE },
   { slug: 'villa-sale', pattern: 'زمین و کلنگی', unless: ['ویلا'] },
   { slug: 'villa-rent', pattern: 'زمین و کلنگی', unless: ['ویلا'] },
+  // Neighborhood «شهرک ویلایی» must not beat explicit land/کلنگی rent (colloquial-0567).
+  { slug: 'villa-rent', pattern: 'زمین یا کلنگی', unless: [] },
+  { slug: 'villa-sale', pattern: 'زمین یا کلنگی', unless: [] },
+  { slug: 'villa-rent', pattern: 'کلنگی', unless: ['اجاره ویلا', 'ویلا اجاره', 'خانه ویلایی'] },
+  { slug: 'villa-sale', pattern: 'کلنگی', unless: ['خرید ویلا', 'ویلا بخرم', 'خانه ویلایی'] },
   { slug: 'apartment-sale', pattern: 'کلنگی', unless: APARTMENT_RESCUE },
   { slug: 'apartment-rent', pattern: 'کلنگی', unless: APARTMENT_RESCUE },
   { slug: 'apartment-sale', pattern: 'زمین و کلنگی', unless: APARTMENT_RESCUE },
@@ -221,7 +226,7 @@ export const COLLISION_ROWS: CollisionRow[] = [
   { slug: 'villa-sale', pattern: 'دفتر', unless: ['ویلا'] },
   { slug: 'villa-rent', pattern: 'دفتر', unless: ['ویلا'] },
 
-  // industrial ↔ residential
+  // industrial ↔ residential — bare «صنعتی» in «شهر/شهرک صنعتی» must not beat آپارتمان
   { slug: 'apartment-sale', pattern: 'سوله', unless: APARTMENT_RESCUE },
   { slug: 'apartment-rent', pattern: 'سوله', unless: APARTMENT_RESCUE },
   { slug: 'apartment-sale', pattern: 'کارگاه', unless: APARTMENT_RESCUE },
@@ -230,6 +235,14 @@ export const COLLISION_ROWS: CollisionRow[] = [
   { slug: 'villa-rent', pattern: 'سوله', unless: ['ویلا'] },
   { slug: 'villa-sale', pattern: 'کارگاه', unless: ['ویلا'] },
   { slug: 'villa-rent', pattern: 'کارگاه', unless: ['ویلا'] },
+  { slug: 'industrial-sale', pattern: 'آپارتمان', unless: ['سوله', 'کارگاه', 'انبار صنعتی'] },
+  { slug: 'industrial-rent', pattern: 'آپارتمان', unless: ['سوله', 'کارگاه', 'انبار صنعتی'] },
+  { slug: 'industrial-sale', pattern: 'مسکونی', unless: ['سوله', 'کارگاه'] },
+  { slug: 'industrial-rent', pattern: 'مسکونی', unless: ['سوله', 'کارگاه'] },
+  { slug: 'industrial-sale', pattern: 'شهر صنعتی', unless: ['سوله', 'کارگاه', 'انبار'] },
+  { slug: 'industrial-rent', pattern: 'شهر صنعتی', unless: ['سوله', 'کارگاه', 'انبار'] },
+  { slug: 'industrial-sale', pattern: 'شهرک صنعتی', unless: ['سوله', 'کارگاه', 'انبار'] },
+  { slug: 'industrial-rent', pattern: 'شهرک صنعتی', unless: ['سوله', 'کارگاه', 'انبار'] },
 
   // workspace ↔ residential sale
   { slug: 'apartment-sale', pattern: 'فضای کار', unless: APARTMENT_RESCUE },
@@ -291,8 +304,17 @@ export const COLLISION_ROWS: CollisionRow[] = [
   { slug: 'shop-rent', pattern: 'فروش', unless: RENT_RESCUE },
   { slug: 'shop-rent', pattern: 'خرید', unless: RENT_RESCUE },
 
-  // industrial-sale needs deal cue when only سوله fires
+  // land sale vs partnership — bare زمین must not beat مشارکت در ساخت
+  { slug: 'land-sale', pattern: 'مشارکت', unless: ['خرید زمین', 'فروش زمین'] },
+  { slug: 'land-rent', pattern: 'مشارکت', unless: ['اجاره زمین'] },
+  { slug: 'construction-partnership', pattern: 'خرید', unless: ['مشارکت'] },
+
+  // industrial-sale needs deal cue when only سوله fires; also penalize rent leaf on buy cues
   { slug: 'industrial-sale', pattern: 'سوله', unless: SALE_RESCUE },
+  { slug: 'industrial-rent', pattern: 'خرید', unless: RENT_RESCUE },
+  { slug: 'industrial-rent', pattern: 'بخرم', unless: RENT_RESCUE },
+  { slug: 'industrial-rent', pattern: 'فروش', unless: RENT_RESCUE },
+  { slug: 'industrial-rent', pattern: 'قصد خرید', unless: RENT_RESCUE },
 
   // خونه/خانه synonym matrix (decor vs real estate)
   ...(['apartment-sale', 'apartment-rent', 'villa-sale', 'villa-rent'] as const).flatMap((slug) =>
@@ -369,7 +391,10 @@ const CURATED_HIGH_PRIORITY: Array<{
   { slug: 'office-rent', pattern: 'دفتر', priority: 15, weight: 3 },
   { slug: 'industrial-sale', pattern: 'سوله صنعتی', priority: 22, weight: 6 },
   { slug: 'industrial-sale', pattern: 'خرید سوله', priority: 22, weight: 6 },
+  { slug: 'industrial-sale', pattern: 'قصد خرید سوله', priority: 24, weight: 7 },
+  { slug: 'industrial-sale', pattern: 'سوله یا کارگاه', priority: 22, weight: 6 },
   { slug: 'industrial-sale', pattern: 'خرید کارگاه', priority: 20, weight: 5 },
+  { slug: 'industrial-sale', pattern: 'کارگاه صنعتی بخرم', priority: 24, weight: 7 },
   { slug: 'industrial-rent', pattern: 'سوله', priority: 15, weight: 3 },
   { slug: 'industrial-rent', pattern: 'اجاره سوله', priority: 22, weight: 6 },
   { slug: 'industrial-rent', pattern: 'کارگاه صنعتی', priority: 20, weight: 5 },
@@ -378,13 +403,26 @@ const CURATED_HIGH_PRIORITY: Array<{
   { slug: 'land-sale', pattern: 'خرید زمین و کلنگی', priority: 24, weight: 7 },
   { slug: 'land-rent', pattern: 'اجاره زمین', priority: 22, weight: 6 },
   { slug: 'land-rent', pattern: 'زمین اجاره', priority: 22, weight: 6 },
+  { slug: 'land-rent', pattern: 'اجاره ماهانه زمین', priority: 24, weight: 7 },
+  { slug: 'land-rent', pattern: 'اجاره ماهانهٔ زمین', priority: 24, weight: 7 },
   { slug: 'land-rent', pattern: 'اجاره زمین و کلنگی', priority: 26, weight: 8 },
   { slug: 'land-rent', pattern: 'زمین و کلنگی اجاره', priority: 26, weight: 8 },
+  { slug: 'land-rent', pattern: 'اجاره ماهانهٔ زمین یا کلنگی', priority: 28, weight: 9 },
+  { slug: 'land-rent', pattern: 'اجاره ماهانه زمین یا کلنگی', priority: 28, weight: 9 },
+  { slug: 'land-sale', pattern: 'خرید زمین یا کلنگی', priority: 28, weight: 9 },
+  { slug: 'land-sale', pattern: 'دنبال خرید زمین', priority: 26, weight: 8 },
+  { slug: 'land-sale', pattern: 'زمین یا کلنگی', priority: 18, weight: 4 },
+  { slug: 'agency-services', pattern: 'مشاور املاک', priority: 24, weight: 7 },
+  { slug: 'agency-services', pattern: 'آژانس املاک', priority: 22, weight: 6 },
+  { slug: 'agency-services', pattern: 'بنگاه املاک', priority: 22, weight: 6 },
   { slug: 'construction-partnership', pattern: 'مشارکت در ساخت', priority: 24, weight: 7 },
   { slug: 'pre-sale-services', pattern: 'پیش\u200cفروش', priority: 22, weight: 6 },
   { slug: 'pre-sale-services', pattern: 'پیش فروش', priority: 22, weight: 6 },
   { slug: 'workspace-short-rent', pattern: 'فضای کار اشتراکی', priority: 24, weight: 7 },
   { slug: 'workspace-short-rent', pattern: 'اجاره کوتاه\u200cمدت فضای کار', priority: 24, weight: 7 },
+  { slug: 'workspace-short-rent', pattern: 'اجاره کوتاه مدت فضای کار', priority: 24, weight: 7 },
+  { slug: 'workspace-short-rent', pattern: 'اجاره کوتاه\u200cمدت فضای کار اشتراکی', priority: 26, weight: 8 },
+  { slug: 'workspace-short-rent', pattern: 'اجاره کوتاه مدت فضای کار اشتراکی', priority: 26, weight: 8 },
   { slug: 'suite-apartment-rent', pattern: 'سوئیت', priority: 14, weight: 2 },
   { slug: 'suite-apartment-rent', pattern: 'اجاره کوتاه مدت', priority: 24, weight: 7 },
   { slug: 'suite-apartment-rent', pattern: 'اجاره کوتاه\u200cمدت', priority: 24, weight: 7 },
@@ -452,7 +490,7 @@ function includesBounded(text: string, pattern: string): boolean {
   while ((idx = text.indexOf(pattern, idx)) !== -1) {
     const before = idx > 0 ? text[idx - 1]! : ' ';
     const after = idx + pattern.length < text.length ? text[idx + pattern.length]! : ' ';
-    const isLetter = (c: string) => /[\u0600-\u06FFa-zA-Z0-9]/.test(c);
+    const isLetter = (c: string) => /[\u0600-\u06FFa-zA-Z0-9\u200c]/.test(c);
     if (!isLetter(before) && !isLetter(after)) return true;
     idx += 1;
   }

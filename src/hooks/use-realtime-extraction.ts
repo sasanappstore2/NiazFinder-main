@@ -108,18 +108,23 @@ export function useRealtimeExtraction(options: UseRealtimeExtractionOptions = {}
   const requestIdRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onResultRef = useRef(onResult);
-  onResultRef.current = onResult;
-
   const preferredCityRef = useRef(preferredCity);
   const preferredCitySlugRef = useRef(preferredCitySlug);
   const useAIRef = useRef(useAI);
   const enabledRef = useRef(enabled);
   const debounceMsRef = useRef(debounceMs);
-  preferredCityRef.current = preferredCity;
-  preferredCitySlugRef.current = preferredCitySlug;
-  useAIRef.current = useAI;
-  enabledRef.current = enabled;
-  debounceMsRef.current = debounceMs;
+
+  useEffect(() => {
+    onResultRef.current = onResult;
+  }, [onResult]);
+
+  useEffect(() => {
+    preferredCityRef.current = preferredCity;
+    preferredCitySlugRef.current = preferredCitySlug;
+    useAIRef.current = useAI;
+    enabledRef.current = enabled;
+    debounceMsRef.current = debounceMs;
+  }, [preferredCity, preferredCitySlug, useAI, enabled, debounceMs]);
 
   useEffect(() => {
     mountedRef.current = true;

@@ -46,6 +46,12 @@ const WANT_KEYWORDS = ['میخوام', 'میخواهم', 'نیاز دارم', '�
 const BUY_KEYWORDS = ['می‌خرم', 'می خرم', 'میخرم', 'بخرم', 'خرید', 'میخرم'];
 const ALL_BUY_HINT_KEYWORDS = [...WANT_KEYWORDS, ...BUY_KEYWORDS];
 const SELL_KEYWORDS = ['می‌فروشم', 'میفروشم', 'فروش', 'آگهی', 'فروشنده'];
+
+function textHasSellKeyword(text: string): boolean {
+  // Bare «فروش» must not match «میوه‌فروشی» / «کتاب‌فروشی».
+  if (/فروش(?!ی)|می\s*فروشم|میفروشم|فروشنده|آگهی/u.test(text)) return true;
+  return false;
+}
 import {
   isLandlordOfferRent,
   isLandlordOfferRahn,
@@ -55,7 +61,13 @@ import {
 } from '@/lib/need-intake/deal-type-helpers';
 
 const NEED_SEEKER_OPENER = TENANT_SEEKER_OPENER;
-const RENT_KEYWORDS = ['اجاره', 'رنت', 'اجاره‌ای', 'مستاجر'];
+const RENT_KEYWORDS = ['اجاره', 'اجاره‌ای', 'مستاجر'];
+
+function textHasRentKeyword(text: string): boolean {
+  // Avoid «رنت» inside «اینترنت» (#617).
+  if (/اجاره|اجاره‌ای|مستاجر/u.test(text)) return true;
+  return /(?<![\u0600-\u06FFa-zA-Z])رنت(?![\u0600-\u06FFa-zA-Z])/u.test(text);
+}
 const REPAIR_KEYWORDS = ['تعمیر', 'تعمیرکار', 'نصب'];
 const URGENT_KEYWORDS = ['فوری', 'سریع', 'امروز', 'الان'];
 
@@ -64,12 +76,13 @@ const RAHN_EJARE_KEYWORDS = ['رهن و اجاره', 'ودیعه و اجاره',
 const RENT_MONTHLY_KEYWORDS = ['اجاره ماهانه', 'اجاره ماهیانه'];
 const RENT_SHORT_TERM_KEYWORDS = [
   'اجاره روزانه',
-  'روزانه',
+  'اجاره کوتاه',
   'کوتاه مدت',
   'کوتاه‌مدت',
   'هر شب',
   'تومان شب',
-  'سوئیت',
+  'سوئیت روزانه',
+  'اجاره شبانه',
 ];
 
 /** مشارکت در ساخت / زمین برای ساخت — not buy/sell listing. */
@@ -322,7 +335,7 @@ function isDesireOnly(text: string): boolean {
 
 function parseBudget(text: string): { min?: number; max?: number } {
   const norm = withAsciiDigitRuns(text);
-  const hasRahn = /رهن|ودیعه/u.test(norm);
+  const hasRahn = /(?<![\u0600-\u06FF])رهن(?!گیری|گ)|ودیعه/u.test(norm);
   const hasRent = /اجاره/u.test(norm);
 
   if (hasRahn) {
@@ -372,6 +385,20 @@ export function parseCity(text: string): string | undefined {
     const slug = cityLine[1].trim().toLowerCase();
     const hit = CANONICAL_CITIES.find((c) => c.slug === slug || c.title === cityLine[1].trim());
     if (hit) return hit.title;
+  }
+
+  // Explicit «شهر X» / «شهر X،» beats neighborhood→city inference (e.g. حکم‌آباد→تبریز
+  // when the user wrote «شهر الوند»). Skip «شهرک …» (no space after شهر).
+  // Do not capture Persian/ASCII commas — they sit in the \u0600–\u06FF range.
+  const labeledCity = text.match(
+    /(?:^|[\s،,])\s*شهر\s+([\u0600-\u06FF\u200c\-]+?)(?=[\s،,]|$)/u
+  );
+  if (labeledCity?.[1]) {
+    const name = labeledCity[1].trim().replace(/[،,]+$/u, '');
+    if (name.length >= 2 && name !== 'ک') {
+      const hit = CANONICAL_CITIES.find((c) => c.title === name || c.slug === name);
+      return hit?.title ?? name;
+    }
   }
 
   const letter = /[\u0600-\u06FFa-z0-9]/i;
@@ -539,12 +566,16 @@ function detectCategorySlug(text: string, classification: VerticalClassification
 
 function isShortTermRentText(text: string): boolean {
   if (RENT_SHORT_TERM_KEYWORDS.some((w) => text.includes(w))) return true;
-  if (text.includes('شب') && (text.includes('اجاره') || text.includes('نفر'))) return true;
+  // Do not treat «شبانه‌روزی» / «نفرستید» as nightly rent (colloquial-0165).
+  if (/هر\s*شب|تومان\s*شب|(?:اجاره|سوئیت|ویلا)\s*شبانه(?!\u200c?روزی)/u.test(text)) {
+    return true;
+  }
+  if (/\d+\s*شب/u.test(text) && /اجاره|سوئیت|ویلا|اتاق/u.test(text)) return true;
   return false;
 }
 
 function parsePropertyDealType(text: string): string | undefined {
-  if (NEED_SEEKER_OPENER.test(text) && /فروش/u.test(text)) {
+  if (NEED_SEEKER_OPENER.test(text) && /فروش(?!ی)/u.test(text)) {
     const sellerExplicit =
       /می\s*فروش|میفروش|فروشنده|فروش\s*دم|اجاره\s*بدم|رهن\s*بدم|آگهی\s*فروش/u.test(text);
     if (!sellerExplicit) return 'buy';
@@ -552,6 +583,15 @@ function parsePropertyDealType(text: string): string | undefined {
   if (isLandlordOfferRent(text)) {
     return 'sell';
   }
+  // Explicit buy beats weak short-term false positives (e.g. داروخانه شبانه‌روزی).
+  if (
+    /(?:دنبال\s*)?خرید|قصد\s*خرید|(?<!ن)می\s*خوام[\s\p{L}\d]{0,40}?بخرم/u.test(text) &&
+    !isShortTermRentText(text)
+  ) {
+    return 'buy';
+  }
+  // Short-term beats rahn+ejare so «کد رهگیری» cannot flip اجاره کوتاه‌مدت.
+  if (isShortTermRentText(text)) return 'rent_short_term';
   if (isTenantSeekerRahnEjare(text) || isSeekerRahnEjareDeal(text)) {
     return 'rent_rahn_ejare';
   }
@@ -564,8 +604,7 @@ function parsePropertyDealType(text: string): string | undefined {
   if (text.includes('رهن بدم') || text.includes('رهن می‌دم') || text.includes('رهن میدم') || text.includes('رهن می دم')) {
     return 'sell';
   }
-  if (isShortTermRentText(text)) return 'rent_short_term';
-  const hasRahn = text.includes('رهن') || text.includes('ودیعه');
+  const hasRahn = /(?<![\u0600-\u06FF])رهن(?!گیری|گ)|ودیعه/u.test(text);
   let hasRent =
     text.includes('اجاره') || RENT_MONTHLY_KEYWORDS.some((w) => text.includes(w));
   if (text.includes('نه اجاره')) hasRent = false;
@@ -575,10 +614,10 @@ function parsePropertyDealType(text: string): string | undefined {
   if (RAHN_FULL_KEYWORDS.some((w) => text.includes(w))) return 'rent_rahn_full';
   if (RAHN_EJARE_KEYWORDS.some((w) => text.includes(w))) return 'rent_rahn_ejare';
   if (RENT_MONTHLY_KEYWORDS.some((w) => text.includes(w))) return 'rent_monthly';
-  if (SELL_KEYWORDS.some((w) => text.includes(w))) return 'sell';
+  if (textHasSellKeyword(text)) return 'sell';
   if (hasRahn && text.includes('اجاره ندارم')) return 'rent_rahn_full';
   if (hasRahn && !text.includes('بدم')) return 'rent_rahn_ejare';
-  if (RENT_KEYWORDS.some((w) => text.includes(w)) || hasRent) return 'rent_monthly';
+  if (textHasRentKeyword(text) || hasRent) return 'rent_monthly';
   if (BUY_KEYWORDS.some((w) => text.includes(w))) return 'buy';
   if (NEED_SEEKER_OPENER.test(text) && hasPropertyContext(text)) return 'buy';
   if (text.includes('بگیرم') || text.includes('پول دارم')) return 'buy';
@@ -588,15 +627,15 @@ function parsePropertyDealType(text: string): string | undefined {
 function parseVehicleDealType(text: string): string | undefined {
   if (REPAIR_KEYWORDS.some((w) => text.includes(w))) return 'service';
   if (text.includes('یدکی') || text.includes('قطعه')) return 'parts';
-  if (SELL_KEYWORDS.some((w) => text.includes(w))) return 'sell';
-  if (RENT_KEYWORDS.some((w) => text.includes(w))) return 'rent';
+  if (textHasSellKeyword(text)) return 'sell';
+  if (textHasRentKeyword(text)) return 'rent';
   if (BUY_KEYWORDS.some((w) => text.includes(w))) return 'buy';
   if (WANT_KEYWORDS.some((w) => text.includes(w))) return 'buy';
   return undefined;
 }
 
 function parseProductDealType(text: string): string | undefined {
-  if (SELL_KEYWORDS.some((w) => text.includes(w))) return 'sell';
+  if (textHasSellKeyword(text)) return 'sell';
   if (BUY_KEYWORDS.some((w) => text.includes(w))) return 'buy';
   if (WANT_KEYWORDS.some((w) => text.includes(w))) return 'buy';
   return undefined;
@@ -728,7 +767,7 @@ function detectIntent(
     if (parseVehicleDealType(text) === 'service' && allowed.includes('vehicle_service')) {
       return 'vehicle_service';
     }
-    if (SELL_KEYWORDS.some((w) => text.includes(w)) && allowed.includes('vehicle_listing')) {
+    if (textHasSellKeyword(text) && allowed.includes('vehicle_listing')) {
       return 'vehicle_listing';
     }
     if (allowed.includes('vehicle_search')) return 'vehicle_search';
@@ -743,7 +782,7 @@ function detectIntent(
     if (allowed.includes('vehicle_service')) return 'vehicle_service';
   }
 
-  if (SELL_KEYWORDS.some((w) => text.includes(w))) {
+  if (textHasSellKeyword(text)) {
     if (allowed.includes('product_listing')) return 'product_listing';
     if (allowed.includes('vehicle_listing')) return 'vehicle_listing';
     if (allowed.includes('property_listing')) return 'property_listing';

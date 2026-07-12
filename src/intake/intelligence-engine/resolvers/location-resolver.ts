@@ -75,22 +75,19 @@ export async function resolveLocation(
     score: h.confidence,
   }));
 
-  if (hoodHits.length === 1 && hoodHits[0]!.confidence >= 0.72) {
+  // RFC-0004: write neighborhood only when clearly resolved (≥0.85, single candidate).
+  if (hoodHits.length === 1 && hoodHits[0]!.confidence >= 0.85) {
     const h = hoodHits[0]!;
     setField(bag, 'city', { value: h.record.cityName ?? cityName, confidence: 0.9, source: 'resolver', evidence: h.evidence });
-    setField(bag, 'citySlug', { value: h.record.citySlug ?? citySlug, confidence: 0.9, source: 'resolver' });
+    setField(bag, 'citySlug', { value: h.record.citySlug ?? citySlug, confidence: 0.9, source: 'resolver', evidence: h.evidence });
     setProvinceFromCity(bag, h.record.citySlug ?? citySlug, h.record.cityName ?? cityName, h.record.provinceSlug);
     setField(bag, 'neighborhood', { value: h.record.name, confidence: h.confidence, source: 'resolver', evidence: h.evidence });
-    setField(bag, 'neighborhoodSlug', { value: h.record.slug, confidence: h.confidence, source: 'resolver' });
+    setField(bag, 'neighborhoodSlug', { value: h.record.slug, confidence: h.confidence, source: 'resolver', evidence: h.evidence });
     return { fields: bag, candidates, status: 'resolved' };
   }
 
-  if (hoodHits.length > 1 && hoodHits[0]!.confidence >= 0.6) {
-    const h = hoodHits[0]!;
-    setField(bag, 'city', { value: h.record.cityName ?? cityName, confidence: 0.75, source: 'resolver' });
-    setProvinceFromCity(bag, h.record.citySlug ?? citySlug, h.record.cityName ?? cityName, h.record.provinceSlug, 0.7);
-    setField(bag, 'neighborhood', { value: fragment ?? h.record.name, confidence: 0.65, source: 'resolver' });
-    setField(bag, 'neighborhoodSlug', { value: h.record.slug, confidence: 0.65, source: 'resolver' });
+  // Single weak hit or multiple hits: refuse to write a winner (ambiguity ⇒ no write).
+  if (hoodHits.length >= 1) {
     return { fields: bag, candidates, status: 'ambiguous' };
   }
 

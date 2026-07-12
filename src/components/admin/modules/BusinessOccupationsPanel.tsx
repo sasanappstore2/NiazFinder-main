@@ -9,6 +9,7 @@ import {
   GitBranch,
   Layers3,
   Plus,
+  Power,
   Save,
   Search,
   ShoppingBag,
@@ -16,6 +17,13 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAdmin } from '@/components/admin/context/AdminContext';
+import { LaunchControlDialog } from '@/components/admin/modules/LaunchControlDialog';
+import {
+  REAL_ESTATE_OCCUPATION_ROOT_SLUG,
+  computeRealEstateLaunchPlan,
+  flatItemsFromSlugTaxonomy,
+  sortForActivate,
+} from '@/lib/admin/launch-control';
 import {
   AdminBadge,
   AdminFilterBar,
@@ -104,6 +112,9 @@ export function BusinessOccupationsPanel() {
   const [sectors, setSectors] = useState<Array<{ slug: string; title: string }>>([]);
   const [form, setForm] = useState<FormState>(initialForm);
   const [search, setSearch] = useState('');
+  const [launchOpen, setLaunchOpen] = useState(false);
+  const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -134,6 +145,20 @@ export function BusinessOccupationsPanel() {
   }, [load]);
 
   const sectorTree = useMemo(() => buildSectorTree(occupations), [occupations]);
+
+  const launchItems = useMemo(
+    () =>
+      flatItemsFromSlugTaxonomy(
+        occupations.map((o) => ({
+          slug: o.slug,
+          title: o.title,
+          parentSlug: o.parentSlug,
+          isActive: o.isActive !== false,
+          sortOrder: o.sortOrder,
+        }))
+      ),
+    [occupations]
+  );
 
   const sectorCount = sectorTree.length;
   const jobCount = occupations.filter((o) => o.depth === 1).length;
@@ -220,22 +245,118 @@ export function BusinessOccupationsPanel() {
     }
   };
 
+  const patchOccupationActive = async (slug: string, nextActive: boolean) => {
+    await apiFetch(`/api/super-admin/business-occupations/${encodeURIComponent(slug)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ isActive: nextActive }),
+    });
+  };
+
+  const toggleOccupationActive = async (
+    item: { id: string; name: string },
+    nextActive: boolean
+  ) => {
+    if (togglingIds.has(item.id) || bulkBusy) return;
+    setTogglingIds((prev) => new Set(prev).add(item.id));
+    try {
+      await patchOccupationActive(item.id, nextActive);
+      toast.success(nextActive ? `«${item.name}» فعال شد` : `«${item.name}» خاموش شد`);
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'خطا در تغییر وضعیت');
+      await load();
+    } finally {
+      setTogglingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(item.id);
+        return next;
+      });
+    }
+  };
+
+  const bulkSetOccupationActive = async (
+    targets: { id: string; name: string }[],
+    nextActive: boolean
+  ) => {
+    if (bulkBusy || targets.length === 0) return;
+    setBulkBusy(true);
+    let ok = 0;
+    let failed = 0;
+    try {
+      for (const target of targets) {
+        try {
+          await patchOccupationActive(target.id, nextActive);
+          ok += 1;
+        } catch {
+          failed += 1;
+        }
+      }
+      if (failed === 0) {
+        toast.success(
+          nextActive
+            ? `${formatNumber(ok)} مورد روشن شد`
+            : `${formatNumber(ok)} مورد خاموش شد`
+        );
+      } else {
+        toast.error(`${formatNumber(ok)} موفق · ${formatNumber(failed)} ناموفق`);
+      }
+      await load();
+    } finally {
+      setBulkBusy(false);
+    }
+  };
+
+  const applyRealEstateOccupationPreset = async () => {
+    const plan = computeRealEstateLaunchPlan(launchItems, REAL_ESTATE_OCCUPATION_ROOT_SLUG);
+    const activateTargets = sortForActivate(plan.toActivate, launchItems);
+    if (plan.toDeactivate.length === 0 && activateTargets.length === 0) {
+      toast.info('پریست از قبل اعمال شده است');
+      return;
+    }
+    setBulkBusy(true);
+    try {
+      for (const t of plan.toDeactivate) {
+        await patchOccupationActive(t.id, false);
+      }
+      for (const t of activateTargets) {
+        await patchOccupationActive(t.id, true);
+      }
+      toast.success('پریست لانچ فقط املاک (کسب‌وکار) اعمال شد');
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'خطا در اعمال پریست');
+      await load();
+    } finally {
+      setBulkBusy(false);
+    }
+  };
+
   return (
     <AdminPageShell
       section="business-occupations"
       layout="form"
       description="شغل‌ها و حرفه‌های کسب‌وکار — جدا از دسته‌بندی نیازها"
       actions={
-        <Button
-          className="admin-btn-primary h-9 gap-2"
-          onClick={() => {
-            setForm(initialForm);
-            document.getElementById('occupation-form-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }}
-        >
-          <Plus className="size-4" />
-          مورد جدید
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            className="admin-input h-9 gap-2"
+            onClick={() => setLaunchOpen(true)}
+          >
+            <Power className="size-4" />
+            کنترل لانچ
+          </Button>
+          <Button
+            className="admin-btn-primary h-9 gap-2"
+            onClick={() => {
+              setForm(initialForm);
+              document.getElementById('occupation-form-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+          >
+            <Plus className="size-4" />
+            مورد جدید
+          </Button>
+        </div>
       }
     >
       <div className="mb-4 flex flex-col gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
@@ -390,7 +511,21 @@ export function BusinessOccupationsPanel() {
             </aside>
 
             <div className="admin-paper overflow-hidden">
-              <AdminFilterBar search={search} onSearchChange={setSearch} searchPlaceholder="جستجو در sectorها و مشاغل..." />
+              <AdminFilterBar
+                search={search}
+                onSearchChange={setSearch}
+                searchPlaceholder="جستجو در sectorها و مشاغل..."
+                actions={
+                  <Button
+                    variant="outline"
+                    className="admin-input h-9 gap-2"
+                    onClick={() => setLaunchOpen(true)}
+                  >
+                    <Power className="size-4" />
+                    کنترل لانچ
+                  </Button>
+                }
+              />
 
               <div className="max-h-[calc(100vh-18rem)] space-y-3 overflow-y-auto p-4">
                 {filtered.length === 0 ? (
@@ -500,6 +635,25 @@ export function BusinessOccupationsPanel() {
           </div>
         </>
       )}
+
+      <LaunchControlDialog
+        open={launchOpen}
+        onOpenChange={setLaunchOpen}
+        title="کنترل لانچ دسته‌بندی کسب‌وکار"
+        description="sectorها و مشاغل غیرفعال در ثبت‌نام و پروفایل کسب‌وکار نمایش داده نمی‌شوند."
+        childCountLabel="شغل"
+        items={launchItems}
+        togglingIds={togglingIds}
+        bulkBusy={bulkBusy}
+        onToggle={toggleOccupationActive}
+        onBulkSet={bulkSetOccupationActive}
+        realEstatePreset={{
+          label: 'لانچ فقط املاک (کسب‌وکار)',
+          description:
+            'فقط sector «املاک و ساختمان» و مشاغل زیرمجموعه‌اش روشن می‌مانند؛ بقیه sectorها خاموش می‌شوند.',
+        }}
+        onApplyRealEstatePreset={applyRealEstateOccupationPreset}
+      />
     </AdminPageShell>
   );
 }

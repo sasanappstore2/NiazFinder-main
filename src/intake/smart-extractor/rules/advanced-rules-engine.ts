@@ -34,7 +34,7 @@ const EXTRACTION_RULES: ExtractionRule[] = [
       /نه\s+می\s*خوام[\s\p{L}\d]{0,40}?(?:رهن|اجاره)\s*کنم/u,
     ],
     extractor: (_match, text) => {
-      const hasDeposit = /رهن|ودیعه/u.test(text);
+      const hasDeposit = /(?<![\u0600-\u06FF])رهن(?!گیری|گ)|ودیعه/u.test(text);
       const hasRent = /اجاره/u.test(text);
       let transactionType: SmartTransactionType = 'RENT';
       if (hasDeposit && hasRent) transactionType = 'DEPOSIT_AND_RENT';
@@ -310,7 +310,7 @@ export function applyAdvancedRules(normalizedText: string): AdvancedRulesResult 
 }
 
 function inferRentFamilyFromText(text: string): SmartTransactionType {
-  const hasDeposit = /رهن|ودیعه/u.test(text);
+  const hasDeposit = /(?<![\u0600-\u06FF])رهن(?!گیری|گ)|ودیعه/u.test(text);
   const hasRent = /اجاره/u.test(text);
   if (hasDeposit && hasRent) return 'DEPOSIT_AND_RENT';
   if (hasDeposit) return 'FULL_DEPOSIT';

@@ -233,7 +233,7 @@ export async function runScopedFieldFill(
   }
 
   const fieldConfidence: Record<string, number> = {};
-  const fc = providerResult.fieldConfidence;
+  const fc = providerResult.fieldConfidence as Record<string, number> | undefined;
   if (fc) {
     if (typeof fc.category === 'number') fieldConfidence.categorySlug = fc.category;
     if (typeof fc.city === 'number') {

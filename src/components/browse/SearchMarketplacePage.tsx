@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { Breadcrumb } from '@/components/shared/Breadcrumb';
-import { Separator } from '@/components/ui/separator';
+import { PageChrome } from '@/components/layout/PageChrome';
 import { BrowseDispatcher } from '@/components/browse/BrowseDispatcher';
 import {
   resolveSearchSegments,
@@ -18,7 +17,6 @@ import {
   listingTypeFromMarket,
 } from '@/config/market-routes';
 import type { BrowseListingType } from '@/lib/search/browse-entry-url';
-import { PageHeading } from '@/components/layout/PageHeading';
 import { crumbsFromJsonLd } from '@/lib/browse/breadcrumb-crumbs';
 import { SITE_NAME, SITE_URL } from '@/lib/seo';
 import {
@@ -104,9 +102,10 @@ function marketplaceChrome(
       <JsonLd id="search-breadcrumb-jsonld" data={breadcrumbJsonLd} />
       <div data-browse-chrome>
         <PageContainer noVerticalPadding className="pt-2 pb-0">
-          <Breadcrumb initialCrumbs={initialCrumbs} />
-          <PageHeading title={truncateBrowsePageH1(h1)} className="mt-2" />
-          <Separator className="my-4" />
+          <PageChrome
+            title={truncateBrowsePageH1(h1)}
+            initialCrumbs={initialCrumbs}
+          />
         </PageContainer>
       </div>
       <BrowseDispatcher

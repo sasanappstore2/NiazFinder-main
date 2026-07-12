@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { IntakeAgentFieldProjection, IntakeAgentResult } from '@/intake/agent/types';
 
 export type ProposalFieldStatus = 'pending' | 'confirmed' | 'rejected' | 'edited';
@@ -48,7 +48,9 @@ export function useIntakeProposalConfirmation(): UseIntakeProposalConfirmation {
   const [textSignature, setTextSignature] = useState<string | null>(null);
   const [records, setRecords] = useState<Record<string, ProposalFieldRecord>>({});
   const recordsRef = useRef(records);
-  recordsRef.current = records;
+  useEffect(() => {
+    recordsRef.current = records;
+  }, [records]);
 
   const reset = useCallback(() => {
     setTextSignature(null);

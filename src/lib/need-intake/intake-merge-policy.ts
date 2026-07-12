@@ -264,7 +264,7 @@ export function buildSourceSig(needText: string, detailsText = ''): string {
 export function pickNeighborhoodSoftFill(
   result: SmartExtractionResult | null | undefined,
   locks?: IntakeUserLocks,
-  minConfidence = 0.75
+  minConfidence = 0.85
 ): { neighborhood: string; neighborhoodSlug: string | null; confidence: number } | null {
   if (!result) return null;
   if (isLocked(locks, 'neighborhood') || isLocked(locks, 'neighborhoodSlug')) return null;
