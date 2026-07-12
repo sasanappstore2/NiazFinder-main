@@ -19,7 +19,7 @@ import {
   LayoutGrid,
 } from 'lucide-react';
 
-import { HeaderSearchBar, DEMO_SEARCH_DATA } from '@/components/shared/HeaderSearchBar';
+import { HeaderSearchBar } from '@/components/shared/HeaderSearchBar';
 import { LocationSelector } from '@/components/shared/LocationSelector';
 import { ArkUserMenu } from '@/components/ui/ark-user-menu';
 
@@ -150,22 +150,21 @@ function NotificationsButton() {
         align="end"
         sideOffset={8}
         className={cn(
-          'w-80 p-0 rtl:',
-          'border-emerald-500/20 bg-emerald-950/80 backdrop-blur-xl dark:bg-emerald-950/90',
-          'shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
+          'w-80 p-0',
+          'border-border bg-popover text-popover-foreground shadow-lg'
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-emerald-500/15 px-4 py-3">
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div className="flex items-center gap-2">
-            <Bell className="size-4 text-emerald-400" />
-            <h3 className="text-sm font-semibold text-emerald-100">اعلان‌ها</h3>
+            <Bell className="size-4 text-primary" />
+            <h3 className="text-sm font-semibold">اعلان‌ها</h3>
           </div>
           {unreadNotificationCount > 0 && (
             <button
               type="button"
               onClick={handleMarkAllRead}
-              className="text-xs text-emerald-400/70 transition-colors hover:text-emerald-300"
+              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
               خواندن همه
             </button>
@@ -177,11 +176,11 @@ function NotificationsButton() {
           {recentNotifications.length === 0 ? (
             /* Empty state */
             <div className="flex flex-col items-center justify-center gap-2 px-4 py-10">
-              <BellOff className="size-8 text-emerald-500/30" />
-              <p className="text-sm text-emerald-400/50">بدون اعلان</p>
+              <BellOff className="size-8 text-muted-foreground/40" />
+              <p className="text-sm text-muted-foreground">بدون اعلان</p>
             </div>
           ) : (
-            <ul className="divide-y divide-emerald-500/10">
+            <ul className="divide-y divide-border">
               {recentNotifications.map((notif) => {
                 const Icon = getNotificationIcon(notif.type);
                 return (
@@ -192,13 +191,13 @@ function NotificationsButton() {
                       className={cn(
                         'flex w-full items-start gap-3 px-4 py-3 text-right transition-colors duration-150',
                         notif.isRead
-                          ? 'opacity-60 hover:bg-emerald-500/5'
-                          : 'bg-emerald-500/8 hover:bg-emerald-500/12'
+                          ? 'opacity-60 hover:bg-muted/50'
+                          : 'bg-muted/40 hover:bg-muted/60'
                       )}
                     >
                       {/* Unread indicator */}
                       {!notif.isRead && (
-                        <span className="mt-1.5 size-2 shrink-0 rounded-full bg-emerald-400" />
+                        <span className="mt-1.5 size-2 shrink-0 rounded-full bg-primary" />
                       )}
                       {notif.isRead && <span className="w-2 shrink-0" />}
 
@@ -207,8 +206,8 @@ function NotificationsButton() {
                         className={cn(
                           'mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full',
                           notif.isRead
-                            ? 'bg-emerald-500/10 text-emerald-500/40'
-                            : 'bg-emerald-500/20 text-emerald-400'
+                            ? 'bg-muted text-muted-foreground'
+                            : 'bg-primary/10 text-primary'
                         )}
                       >
                         <Icon className="size-4" />
@@ -218,16 +217,16 @@ function NotificationsButton() {
                       <div className="flex-1 min-w-0">
                         <p className={cn(
                           'truncate text-sm leading-snug',
-                          notif.isRead ? 'text-emerald-200/60' : 'text-emerald-100 font-medium'
+                          notif.isRead ? 'text-muted-foreground' : 'text-foreground font-medium'
                         )}>
                           {notif.title}
                         </p>
                         {notif.message && (
-                          <p className="mt-0.5 truncate text-xs text-emerald-300/40">
+                          <p className="mt-0.5 truncate text-xs text-muted-foreground">
                             {notif.message}
                           </p>
                         )}
-                        <div className="mt-1 flex items-center gap-1 text-caption text-emerald-400/40">
+                        <div className="mt-1 flex items-center gap-1 text-caption text-muted-foreground">
                           <Clock className="size-3" />
                           <span>{timeAgo(notif.createdAt)}</span>
                         </div>
@@ -242,11 +241,11 @@ function NotificationsButton() {
 
         {/* View All footer */}
         {notifications.length > 0 && (
-          <div className="border-t border-emerald-500/15 px-4 py-2.5">
+          <div className="border-t border-border px-4 py-2.5">
             <button
               type="button"
               onClick={handleViewAll}
-              className="flex w-full items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium text-emerald-400 transition-colors hover:bg-emerald-500/10 hover:text-emerald-300"
+              className="flex w-full items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-muted"
               data-href={routeBuilder.notifications()}
               title={VIEW_TITLE['notifications']}
             >
@@ -542,7 +541,7 @@ export function Header({ compact = false }: { compact?: boolean }) {
           {/* Search — full width on mobile */}
           <div className="flex min-w-0 flex-1 max-w-[600px] items-center">
             <div className="search-glow-focus w-full min-w-0 flex-1 rounded-xl">
-              <HeaderSearchBar data={DEMO_SEARCH_DATA} compact />
+              <HeaderSearchBar compact />
             </div>
           </div>
 

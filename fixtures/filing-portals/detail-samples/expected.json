@@ -1,0 +1,47 @@
+{
+  "sell-apartment-525798": {
+    "fileCode": "525798",
+    "dealType": "sell",
+    "propertyKind": "apartment",
+    "minFieldCount": 12,
+    "required": ["price", "pricePerMeter", "floor", "documentType", "buildingAge"]
+  },
+  "rent-rahn-ejare-525830": {
+    "fileCode": "525830",
+    "dealType": "rent_rahn_ejare",
+    "propertyKind": "apartment",
+    "minFieldCount": 12,
+    "required": ["deposit", "monthlyRent", "floor", "documentType"]
+  },
+  "rent-rahn-full-477601": {
+    "fileCode": "477601",
+    "dealType": "rent_rahn_full",
+    "propertyKind": "apartment",
+    "minFieldCount": 12,
+    "required": ["deposit", "floor", "documentType"],
+    "forbidden": ["monthlyRent", "price"]
+  },
+  "sell-land-610101": {
+    "fileCode": "610101",
+    "dealType": "sell",
+    "propertyKind": "land",
+    "minFieldCount": 8,
+    "required": ["price", "pricePerMeter", "documentType"],
+    "requiredSourceMeta": ["landUse", "frontage", "plotWidth"]
+  },
+  "sell-villa-610202": {
+    "fileCode": "610202",
+    "dealType": "sell",
+    "propertyKind": "villa",
+    "minFieldCount": 12,
+    "required": ["price", "rooms", "buildingAge", "documentType", "facade"]
+  },
+  "sell-shop-610303": {
+    "fileCode": "610303",
+    "dealType": "sell",
+    "propertyKind": "shop",
+    "minFieldCount": 10,
+    "required": ["price", "documentType", "buildingAge"],
+    "requiredSourceMeta": ["commercialUse", "frontage"]
+  }
+}

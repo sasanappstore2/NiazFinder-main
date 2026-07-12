@@ -123,7 +123,7 @@ export async function GET(request: NextRequest) {
           firstName: otherUser.firstName,
           lastName: otherUser.lastName,
           avatar: otherUser.avatar,
-          online: otherUser.online,
+          online: isPlatformBot ? true : otherUser.online,
           lastSeenAt: otherUser.lastSeenAt?.toISOString() ?? null,
         },
         businessContext: conv.contactPoint

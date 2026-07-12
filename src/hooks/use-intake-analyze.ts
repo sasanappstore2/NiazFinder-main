@@ -15,7 +15,6 @@ import { normalizeCategoryPair } from '@/config/categories';
 import { recomputeNeedDraft, recordToEntities } from '@/intake/aggregate/needDraftAggregate';
 import type { IntakeAiShardKey, IntakeAiShardStatus } from '@/components/need-intake/IntakeAiShardBar';
 import { cascadeRunningShardsFromDraft, shardStatusFromNeedDraft } from '@/components/need-intake/intake-shard-status';
-import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
 import { isAmbiguousCommercialSubtype } from '@/lib/need-intake/business-commercial-property-intent';
 
 export interface UseIntakeAnalyzeOptions {
@@ -65,7 +64,14 @@ export interface UseIntakeAnalyzeOptions {
   setNeedDraftFromAnalysis: (
     analysis: IntakeAnalysisResult,
     sourceText: string,
-    intakeTrace?: IntakeAnalysisTrace
+    intakeTrace?: IntakeAnalysisTrace,
+    locks?: {
+      categoryLockedByUser?: boolean;
+      cityLockedByUser?: boolean;
+      neighborhoodLockedByUser?: boolean;
+      dealLockedByUser?: boolean;
+      lockedFieldKeys?: string[];
+    }
   ) => void;
   /** Live intelligence cache — skip blocking API when fresh. */
   isFreshForText: (sourceText: string) => boolean;
@@ -83,18 +89,20 @@ function applyDraftToFormFields(
   opts: UseIntakeAnalyzeOptions,
   sourceText: string
 ): void {
+  // Proposal-first: only apply category/location that the user already locked
+  // (confirmed/edited). Never push raw analysis into the form.
   const categoryLocked = opts.categoryLockedByUserRef.current;
   const ambiguousCommercial = isAmbiguousCommercialSubtype(sourceText);
   const entities = recordToEntities(draft.entities);
   const leaf = entities.subcategorySlug || entities.categorySlug;
 
-  if (leaf && !categoryLocked && !ambiguousCommercial) {
+  if (leaf && categoryLocked && !ambiguousCommercial) {
     const normalized = normalizeCategoryPair(leaf);
     opts.setSelectedCategory(normalized.categorySlug);
     opts.setSelectedSubcategory(normalized.subcategorySlug ?? '');
   }
 
-  if (!opts.cityLockedByUserRef.current || !opts.neighborhoodLockedByUserRef.current) {
+  if (opts.cityLockedByUserRef.current || opts.neighborhoodLockedByUserRef.current) {
     opts.applyDetectedLocationFromDraft(draft);
   }
 
@@ -106,25 +114,20 @@ function applyDraftToFormFields(
 function fallbackGoToLocation(opts: UseIntakeAnalyzeOptions): NeedDraft | null {
   const parsed = opts.buildParsedFromForm();
   const sourceText = composeIntakeSourceText(opts.needText, opts.detailsText);
-  const fragment = extractLocationFragment(sourceText)?.trim() ?? '';
-  const parsedNeighborhood = parsed.entities?.area?.trim() || fragment;
   const categoryLocked = opts.categoryLockedByUserRef.current;
   const neighborhoodLocked = opts.neighborhoodLockedByUserRef.current;
 
   const normalized = parsed.categorySlug ? normalizeCategoryPair(parsed.categorySlug) : null;
   const ambiguousCommercial = isAmbiguousCommercialSubtype(sourceText);
-  if (normalized && !categoryLocked && !ambiguousCommercial) {
+  // Only keep user-locked category; do not auto-select from parse.
+  if (normalized && categoryLocked && !ambiguousCommercial) {
     opts.setSelectedCategory(normalized.categorySlug);
     opts.setSelectedSubcategory(normalized.subcategorySlug ?? '');
   }
 
   const neighborhood = neighborhoodLocked
     ? opts.selectedNeighborhood
-    : parsedNeighborhood || opts.selectedNeighborhood;
-
-  if (!neighborhoodLocked && neighborhood && neighborhood !== opts.selectedNeighborhood) {
-    opts.setSelectedNeighborhood(neighborhood);
-  }
+    : opts.selectedNeighborhood || '';
 
   const instantDraft = opts.syncNeedDraftFromFormFields(
     {
@@ -132,18 +135,15 @@ function fallbackGoToLocation(opts: UseIntakeAnalyzeOptions): NeedDraft | null {
       detailsText: opts.detailsText,
       categorySlug: categoryLocked
         ? normalized?.categorySlug ?? opts.selectedCategory
-        : ambiguousCommercial
-          ? ''
-          : normalized?.categorySlug ?? '',
+        : opts.selectedCategory || '',
       subcategorySlug: categoryLocked
         ? normalized?.subcategorySlug ?? opts.selectedSubcategory
-        : ambiguousCommercial
-          ? ''
-          : normalized?.subcategorySlug ?? '',
-      city:
-        opts.resolveIntakeCitySelectValue(opts.sortedCities, {
-          cityName: opts.selectedCity || parsed.city,
-        }) ?? '',
+        : opts.selectedSubcategory || '',
+      city: opts.cityLockedByUserRef.current
+        ? opts.resolveIntakeCitySelectValue(opts.sortedCities, {
+            cityName: opts.selectedCity || parsed.city,
+          }) ?? opts.selectedCity
+        : opts.selectedCity || '',
       neighborhood,
       neighborhoodSlug: opts.resolvedNeighborhoodSlug,
     },
@@ -164,7 +164,8 @@ function finishFromAnalysis(
   sourceText: string
 ): void {
   if (!res) return;
-  opts.setNeedDraftFromAnalysis(res, sourceText, res.meta?.trace);
+  // Proposal-first: do not dump the full analysis into the confirmed draft.
+  // Keep user-confirmed draft; only refresh shard status from current draft.
   const draft = opts.getDraft();
   if (draft) {
     applyDraftToFormFields(draft, opts, sourceText);
@@ -173,6 +174,8 @@ function finishFromAnalysis(
     opts.setAiShardStatus({});
   }
   opts.setAiEnriching(false);
+  void res;
+  void sourceText;
 }
 
 /** Navigate to location instantly; full analyze runs in background when needed. */

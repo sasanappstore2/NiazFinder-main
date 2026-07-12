@@ -137,6 +137,10 @@ export const CANONICAL_CATEGORIES: readonly CanonicalCategory[] = [
   { slug: 'tickets',             parentSlug: 'entertainment',      title: 'بلیط',                                              depth: 1 },
   { slug: 'tours',               parentSlug: 'entertainment',      title: 'تور',                                               depth: 1 },
   { slug: 'sports-fitness',      parentSlug: 'entertainment',      title: 'ورزش',                                              depth: 1 },
+  { slug: 'bicycle',             parentSlug: 'sports-fitness',     title: 'دوچرخه',         englishTitle: 'Bicycle',         depth: 2 },
+  { slug: 'scooter',             parentSlug: 'sports-fitness',     title: 'اسکوتر و اسکیت', englishTitle: 'Scooter & Skate', depth: 2 },
+  { slug: 'fitness-equipment',   parentSlug: 'sports-fitness',     title: 'تجهیزات بدنسازی', englishTitle: 'Fitness Equipment', depth: 2 },
+  { slug: 'camping-outdoor',     parentSlug: 'sports-fitness',     title: 'کوهنوردی و کمپینگ', englishTitle: 'Camping & Outdoor', depth: 2 },
   { slug: 'pets',                parentSlug: 'entertainment',      title: 'حیوانات',                                           depth: 1 },
   { slug: 'musical-instruments', parentSlug: 'entertainment',      title: 'موسیقی',                                            depth: 1 },
 

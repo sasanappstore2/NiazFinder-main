@@ -38,15 +38,23 @@ export function mergeSeededAnswersFromParsed(
 
   const deal = String(merged.dealType ?? parsed.entities?.dealType ?? '').trim();
   if (deal === 'rent_rahn_ejare') {
-    const rahn = coerceNum(merged.rahnAmount ?? parsed.entities?.rahnAmount);
+    const rahn = coerceNum(merged.rahnAmount ?? merged.deposit ?? parsed.entities?.rahnAmount);
     const monthly = coerceNum(merged.monthlyRent ?? parsed.entities?.monthlyRent);
     if (rahn != null && monthly != null) {
       merged.rahnAmount = rahn;
+      merged.deposit = rahn;
       merged.monthlyRent = monthly;
       merged.budgetMin = rahn;
       merged.budgetMax = monthly;
       delete merged.budget;
     }
+  }
+
+  // Always keep ودیعه ↔ رهن mirrored when either is present.
+  const rahnAny = coerceNum(merged.rahnAmount ?? merged.deposit);
+  if (rahnAny != null) {
+    if (merged.deposit == null || merged.deposit === '') merged.deposit = rahnAny;
+    if (merged.rahnAmount == null || merged.rahnAmount === '') merged.rahnAmount = rahnAny;
   }
 
   return merged;

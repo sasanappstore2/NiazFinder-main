@@ -1,9 +1,10 @@
 /** Client-safe location fragment extraction (no Node fs / catalog deps). */
 
 import { parseCity } from '@/lib/need-intake/intent-parser';
+import { CANONICAL_PROVINCES } from '@/config/locations';
 
 const FRAGMENT_STOP_RE =
-  /(?:\s+لازم\s*دار(?:م|یم)|\s+نیاز\s*دار(?:م|یم)|\s+دنبال|\s+می[\s‌]?خو(?:ام|واه|اهم)|\s+میخو(?:ام|واه|اهم)|\s+برای|\s+بودجه|\s+اجاره|\s+رهن|\s+فروش|\s+خرید|\s+زندگی\s*می|\s+اگر\s+موردی|\s+پیام\s*بدید)\s*$/i;
+  /(?:\s+لازم\s*دار(?:م|یم)|\s+نیاز\s*دار(?:م|یم)|\s+دنبال|\s+می[\s‌]?خو(?:ام|واه|اهم)|\s+میخو(?:ام|واه|اهم)|\s+برای|\s+بودجه|\s+اجاره|\s+رهن|\s+فروش|\s+خرید|\s+زندگی\s*می|\s+اگر\s+موردی|\s+پیام\s*بدید|\s+فوری)\s*$/i;
 
 function cleanLocationFragment(frag: string): string {
   return frag
@@ -60,14 +61,28 @@ export function pickStreetOrHoodDisplay(
   return f;
 }
 
+const PROVINCE_TITLES = new Set(CANONICAL_PROVINCES.map((p) => p.title));
+
+// Bare connector/filler words that can be left behind once a city/province name is
+// stripped out of a fragment (e.g. «تو شیراز تا ۳۰ میلیون» → residue «تا»).
+// These are never neighborhood names and must not be surfaced as one.
+const FRAGMENT_FILLER_WORDS = new Set([
+  'تا', 'را', 'رو', 'که', 'یا', 'و', 'در', 'به', 'از', 'با', 'هم', 'هست', 'است',
+]);
+
+/** Remove city-name, province-name, and filler tokens from a hood fragment,
+ *  wherever they sit (leading «شیراز تا», trailing «سعادت آباد تهران», or
+ *  mid-phrase «شیراز فارس تا سی»). None of these are ever a neighborhood
+ *  themselves, so they must never survive into the fragment. */
 function stripTrailingCityFromFragment(frag: string): string {
-  const parts = frag.trim().split(/\s+/).filter(Boolean);
-  if (parts.length < 2) return frag.trim();
-  const city = parseCity(frag);
-  if (!city) return frag.trim();
-  const idx = parts.findIndex((p) => p === city);
-  if (idx > 0) return parts.slice(0, idx).join(' ');
-  return frag.trim();
+  const trimmed = frag.trim();
+  const parts = trimmed.split(/\s+/).filter(Boolean);
+  if (!parts.length) return '';
+  const city = parseCity(trimmed);
+  const kept = parts.filter(
+    (p) => p !== city && !PROVINCE_TITLES.has(p) && !FRAGMENT_FILLER_WORDS.has(p)
+  );
+  return kept.join(' ').trim();
 }
 
 function stripTrailingAreaFromFragment(frag: string): string {
@@ -82,11 +97,22 @@ function stripTrailingMoneyFromFragment(frag: string): string {
   return frag
     .replace(/\s+بودجه(?:\s+.*)?$/iu, '')
     .replace(/\s+\d[\d۰-۹,\s]*\s*میلی(?:ون|ارد)(?:\s+.*)?$/iu, '')
+    // Spelled-out amount before میلیون/میلیارد (e.g. «سی», «صد و بیست») — bounded to
+    // a couple of words so this can't walk back over a real place name (e.g. a
+    // province mentioned right before the money phrase) and delete it too.
     .replace(
-      /\s+[\u0600-\u06FF\u200c\-]+(?:\s+[\u0600-\u06FF\u200c\-]+)*\s*میلی(?:ون|ارد)(?:\s+.*)?$/iu,
+      /\s+[\u0600-\u06FF\u200c\-]+(?:\s+[\u0600-\u06FF\u200c\-]+){0,2}\s*میلی(?:ون|ارد)(?:\s+.*)?$/iu,
       ''
     )
     .trim();
+}
+
+function isMeaningfulFragment(frag: string): boolean {
+  if (frag.length < 2) return false;
+  if (FRAGMENT_FILLER_WORDS.has(frag)) return false;
+  // A single short token left after stripping is almost always noise, not a place name.
+  if (!frag.includes(' ') && frag.length < 3) return false;
+  return true;
 }
 
 /** Extract full location phrase after «در/تو» — avoid truncating to last token. */
@@ -113,7 +139,7 @@ export function extractLocationFragment(rawText: string): string | undefined {
           stripTrailingMoneyFromFragment(stripTrailingAreaFromFragment(raw))
         )
       : undefined;
-    if (frag && frag.length >= 2) return frag;
+    if (frag && isMeaningfulFragment(frag)) return frag;
   }
 
   const streetLead = normalized.match(
@@ -123,7 +149,7 @@ export function extractLocationFragment(rawText: string): string | undefined {
     const frag = stripTrailingCityFromFragment(
       stripTrailingMoneyFromFragment(stripTrailingAreaFromFragment(cleanLocationFragment(streetLead[1])))
     );
-    if (frag && frag.length >= 2) return frag;
+    if (frag && isMeaningfulFragment(frag)) return frag;
   }
 
   return undefined;

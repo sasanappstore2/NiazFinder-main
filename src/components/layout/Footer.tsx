@@ -58,7 +58,7 @@ const FOOTER_COLUMNS: FooterLinkColumn[] = [
     title: 'پشتیبانی',
     links: [
       { label: 'راهنما', href: routeBuilder.help(), title: 'راهنمای استفاده از نیاز فایندر' },
-      { label: 'سوالات متداول', href: '/#faq', title: 'پاسخ سوالات رایج کاربران' },
+      { label: 'سوالات متداول', href: routeBuilder.help(), title: 'پاسخ سوالات رایج کاربران' },
       { label: 'تماس با ما', href: '#contact', title: 'اطلاعات تماس با تیم پشتیبانی' },
       { label: 'قوانین و مقررات', href: '/terms', title: 'قوانین و مقررات استفاده از سرویس' },
     ],
@@ -67,9 +67,9 @@ const FOOTER_COLUMNS: FooterLinkColumn[] = [
 
 // ============ Social Links ============
 const SOCIAL_LINKS = [
-  { label: 'اینستاگرام', icon: Instagram, href: '#', title: 'ما را در اینستاگرام دنبال کنید' },
-  { label: 'توییتر', icon: Twitter, href: '#', title: 'ما را در توییتر دنبال کنید' },
-  { label: 'لینکدین', icon: Linkedin, href: '#', title: 'ما را در لینکدین دنبال کنید' },
+  { label: 'اینستاگرام', icon: Instagram, href: 'https://instagram.com/needfinder', title: 'ما را در اینستاگرام دنبال کنید' },
+  { label: 'توییتر', icon: Twitter, href: 'https://twitter.com/needfinder', title: 'ما را در توییتر دنبال کنید' },
+  { label: 'لینکدین', icon: Linkedin, href: 'https://linkedin.com/company/needfinder', title: 'ما را در لینکدین دنبال کنید' },
 ];
 
 // ============ Contact Info ============
@@ -170,8 +170,8 @@ export function Footer({ compact = false }: FooterProps) {
                 کسب‌وکارها
               </a>
               <a
-                href="#contact"
-                data-href="#contact"
+                href="/#contact"
+                data-href="/#contact"
                 title="تماس با ما"
                 className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
               >
@@ -192,7 +192,7 @@ export function Footer({ compact = false }: FooterProps) {
               <a href="/post" title="ثبت نیاز">ثبت نیاز</a>
               <a href={routeBuilder.browseAll({ type: 'business' })} title="کسب‌وکارها">کسب‌وکارها</a>
               <a href="/pricing" title="تعرفه‌ها">تعرفه‌ها</a>
-              <a href="#contact" title="تماس با ما">تماس با ما</a>
+              <a href="/#contact" title="تماس با ما">تماس با ما</a>
             </nav>
           </div>
         </noscript>
@@ -250,17 +250,33 @@ export function Footer({ compact = false }: FooterProps) {
                 itemScope
                 itemType="https://schema.org/ContactPoint"
               >
-                {CONTACT_INFO.map((contact) => (
-                  <a
-                    key={contact.label}
-                    href={contact.href}
-                    title={contact.title}
-                    className="inline-flex items-center gap-1 transition-colors duration-200 hover:text-primary"
-                  >
-                    <contact.icon className="size-3.5 shrink-0 text-primary/70" />
-                    <span className="truncate max-w-[140px] sm:max-w-none">{contact.value}</span>
-                  </a>
-                ))}
+                {CONTACT_INFO.map((contact) => {
+                  const isLink = Boolean(contact.href) && contact.href !== '#';
+                  const inner = (
+                    <>
+                      <contact.icon className="size-3.5 shrink-0 text-primary/70" />
+                      <span className="truncate max-w-[140px] sm:max-w-none">{contact.value}</span>
+                    </>
+                  );
+                  return isLink ? (
+                    <a
+                      key={contact.label}
+                      href={contact.href}
+                      title={contact.title}
+                      className="inline-flex items-center gap-1 transition-colors duration-200 hover:text-primary"
+                    >
+                      {inner}
+                    </a>
+                  ) : (
+                    <span
+                      key={contact.label}
+                      title={contact.title}
+                      className="inline-flex items-center gap-1"
+                    >
+                      {inner}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -386,7 +402,7 @@ export function Footer({ compact = false }: FooterProps) {
               <h4 className="mb-3 text-sm font-semibold">پشتیبانی</h4>
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <li><a href={routeBuilder.help()} title="راهنمای استفاده">راهنما</a></li>
-                <li><a href="/#faq" title="سوالات متداول">سوالات متداول</a></li>
+                <li><a href={routeBuilder.help()} title="سوالات متداول">سوالات متداول</a></li>
                 <li><a href="#contact" title="تماس با ما">تماس با ما</a></li>
                 <li><a href="/terms" title="قوانین و مقررات">قوانین و مقررات</a></li>
               </ul>

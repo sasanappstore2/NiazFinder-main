@@ -44,10 +44,10 @@ export function shouldSkipNeedStep(seed: string): boolean {
 /** Initial wizard step after home ? /post navigation. */
 export function resolveHomeSeedLandingStep(seed: string): IntakeStep {
   const trimmed = seed.trim();
-  if (!trimmed) return 'need';
-  if (!shouldSkipNeedStep(trimmed)) return 'need';
+  if (!trimmed) return 'compose';
+  if (!shouldSkipNeedStep(trimmed)) return 'compose';
   if (canProceedToIntakeLocation(trimmed, '')) return 'location';
-  return 'need';
+  return 'compose';
 }
 
 /** Atomic query string: seed + city + inferred category + optional phone. */

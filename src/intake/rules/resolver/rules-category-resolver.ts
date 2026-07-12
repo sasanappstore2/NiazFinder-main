@@ -135,11 +135,29 @@ export function rulesCategoryToFieldBag(
   const commercialAmbiguous = isAmbiguousCommercialSubtype(sourceText) && !locked;
 
   if (commercialAmbiguous) {
+    const saleHint =
+      (sourceText.includes('خرید') || sourceText.includes('فروش')) &&
+      !sourceText.includes('اجاره') &&
+      !sourceText.includes('رهن');
+    const commercialParent = saleHint ? 'commercial-sale' : 'commercial-rent';
     setField(bag, 'vertical', {
       value: 'real-estate',
       confidence: 0.82,
       source: 'rule',
       evidence: 'business-commercial-ambiguous',
+    });
+    // Parent commercial path only — shop vs office stays a user question.
+    setField(bag, 'categorySlug', {
+      value: commercialParent,
+      confidence: 0.78,
+      source: 'rule',
+      evidence: 'business-commercial-parent',
+    });
+    setField(bag, 'subcategorySlug', {
+      value: commercialParent,
+      confidence: 0.78,
+      source: 'rule',
+      evidence: 'business-commercial-parent',
     });
     const t = sourceText;
     const deal =

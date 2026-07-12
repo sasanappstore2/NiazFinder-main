@@ -145,13 +145,27 @@ export async function searchSiteNeighborhoods(args: Record<string, unknown>) {
     (typeof args.query === 'string' && args.query.trim()) ||
     '';
   const limit = clampInt(args.limit, 1, 50, 25);
+  const nationwide =
+    args.nationwide === true ||
+    args.nationwide === 'true' ||
+    args.acrossCities === true ||
+    args.acrossCities === 'true';
 
   const cityId = await resolveCityId(args);
   if (!cityId) {
-    return {
-      error: 'شهر مشخص نشده یا یافت نشد. cityId یا cityName را بفرست.',
-      neighborhoods: [] as unknown[],
-    };
+    if (!neighborhoodQuery) {
+      return {
+        error: 'نام محله یا شهر مشخص نشده. query و در صورت امکان cityName را بفرست.',
+        cityCount: 0,
+        cities: [] as string[],
+        neighborhoods: [] as unknown[],
+      };
+    }
+    return searchNeighborhoodsNationwide({ query: neighborhoodQuery, limit });
+  }
+
+  if (nationwide && neighborhoodQuery) {
+    return searchNeighborhoodsNationwide({ query: neighborhoodQuery, limit });
   }
 
   const rows = await loadCityNeighborhoods(cityId);
@@ -175,6 +189,75 @@ export async function searchSiteNeighborhoods(args: Record<string, unknown>) {
     cityId,
     count: filtered.length,
     neighborhoods: filtered,
+  };
+}
+
+function isStrongNeighborhoodNameMatch(query: string, name: string): boolean {
+  const q = normalizeSearchText(query);
+  const n = normalizeSearchText(name);
+  if (!q || q.length < 2) return false;
+  if (n === q) return true;
+  if (n.startsWith(`${q} `) || n.endsWith(` ${q}`) || n.includes(` ${q} `)) return true;
+  // short names like فردوسی / ولیعصر — allow close variants
+  if (q.length >= 3 && n.includes(q) && n.length - q.length <= 10) return true;
+  return false;
+}
+
+/** Search a neighborhood name across all catalog cities (for “در چند شهر محله X داریم؟”). */
+export async function searchNeighborhoodsNationwide(args: {
+  query: string;
+  limit?: number;
+}): Promise<{
+  query: string;
+  cityCount: number;
+  cities: string[];
+  neighborhoods: Array<{ name: string; cityId: string; cityName: string }>;
+}> {
+  const query = args.query.trim();
+  const limit = clampInt(args.limit, 1, 80, 40);
+  if (!query || query.length < 2) {
+    return { query, cityCount: 0, cities: [], neighborhoods: [] };
+  }
+
+  const [manifest, raw] = await Promise.all([readManifest(), readManagedLocationData()]);
+  const publicData = getPublicLocationData(raw, manifest.counts);
+  const cityNameById = new Map<string, string>();
+  for (const country of publicData.countries) {
+    for (const prov of country.provinces) {
+      for (const city of prov.cities) {
+        cityNameById.set(city.id, city.name);
+      }
+    }
+  }
+
+  const cityIds = Object.entries(manifest.counts ?? {})
+    .filter(([, count]) => Number(count) > 0)
+    .map(([id]) => id);
+
+  const byCity = new Map<string, { name: string; cityId: string; cityName: string }>();
+
+  for (const cityId of cityIds) {
+    const rows = await loadCityNeighborhoods(cityId);
+    const hit = rows.find(
+      (n) => n.isActive !== false && isStrongNeighborhoodNameMatch(query, n.name),
+    );
+    if (!hit) continue;
+    const cityName = cityNameById.get(cityId) ?? cityId;
+    if (!byCity.has(cityId)) {
+      byCity.set(cityId, { name: hit.name, cityId, cityName });
+    }
+  }
+
+  const neighborhoods = [...byCity.values()].sort((a, b) =>
+    a.cityName.localeCompare(b.cityName, 'fa'),
+  );
+  const cities = neighborhoods.map((n) => n.cityName);
+
+  return {
+    query,
+    cityCount: cities.length,
+    cities: cities.slice(0, 40),
+    neighborhoods: neighborhoods.slice(0, limit),
   };
 }
 

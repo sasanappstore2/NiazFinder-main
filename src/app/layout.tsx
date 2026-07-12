@@ -177,7 +177,7 @@ export default function RootLayout({
         {/* Skip to main content link for accessibility */}
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:inset-s-2 focus:z-100 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:inset-s-2 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg"
         >
           رفتن به محتوای اصلی
         </a>

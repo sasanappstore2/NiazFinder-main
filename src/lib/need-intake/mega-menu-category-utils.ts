@@ -38,9 +38,10 @@ export function findMegaMenuCategoryForSlug(slug: string): MegaMenuCategory | nu
 
 export function getMegaMenuBreadcrumb(category: MegaMenuCategory): string {
   const path: MegaMenuCategory[] = [];
-  walkMegaMenu(ALL_CATEGORIES, (node, ancestors) => {
+  walkMegaMenu(ALL_CATEGORIES, (node, ancestorsWithSelf) => {
     if (node.id === category.id) {
-      path.push(...ancestors, node);
+      // walkMegaMenu passes path that already includes `node`
+      path.push(...ancestorsWithSelf);
       return node;
     }
     return null;

@@ -11,6 +11,7 @@ const EJARE = '\u0627\u062C\u0627\u0631\u0647';
 const RAHN_BEDAM = '\u0631\u0647\u0646 \u0628\u062F\u0645';
 const RAHN_MIDAM1 = '\u0631\u0647\u0646 \u0645\u06CC\u200C\u062F\u0645';
 const RAHN_MIDAM2 = '\u0631\u0647\u0646 \u0645\u06CC\u062F\u0645';
+const RAHN_MIDAM3 = '\u0631\u0647\u0646 \u0645\u06CC \u062F\u0645';
 const EJARE_BEDAM = '\u0627\u062C\u0627\u0631\u0647 \u0628\u062F\u0645';
 const EJARE_DADAN = '\u0627\u062C\u0627\u0631\u0647 \u062F\u0627\u062F\u0646';
 const EJARE_DADANI = '\u0627\u062C\u0627\u0631\u0647 \u062F\u0627\u062F\u0646\u06CC';
@@ -69,7 +70,8 @@ export function isLandlordOfferRahn(text: string): boolean {
   return (
     text.includes(RAHN_BEDAM) ||
     text.includes(RAHN_MIDAM1) ||
-    text.includes(RAHN_MIDAM2)
+    text.includes(RAHN_MIDAM2) ||
+    text.includes(RAHN_MIDAM3)
   );
 }
 

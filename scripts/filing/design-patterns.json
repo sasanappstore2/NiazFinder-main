@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "updatedAt": "2026-06-24T12:00:00.000Z",
+  "patterns": [
+    {
+      "id": "above-fold-hierarchy",
+      "category": "detail",
+      "sources": ["zillow", "bayut", "rightmove", "maskanyaban"],
+      "rule": "Gallery → price (primary large) → location → key specs → CTA",
+      "adoptedIn": ["FilingMaskanYabanCard", "filing-scan-hero"]
+    },
+    {
+      "id": "price-primary-secondary",
+      "category": "detail",
+      "sources": ["bayut", "redfin", "rightmove"],
+      "rule": "Primary price 1.0625rem+ bold green; secondary rent/deposit muted with pill hints",
+      "adoptedIn": ["filing-scan-prices"]
+    },
+    {
+      "id": "spec-icon-grid",
+      "category": "detail",
+      "sources": ["zillow", "zoopla", "maskanyaban"],
+      "rule": "2-col mobile, 3-col tablet, 4-col desktop; label:value pairs in muted cells",
+      "adoptedIn": ["spec-grid-compact"]
+    },
+    {
+      "id": "amenity-chips",
+      "category": "detail",
+      "sources": ["zillow", "idealista", "maskanyaban"],
+      "rule": "Frameless icon + label inline chips, no bordered boxes",
+      "adoptedIn": ["total-features"]
+    },
+    {
+      "id": "gallery-carousel",
+      "category": "detail",
+      "sources": ["zillow", "redfin", "bayut"],
+      "rule": "Hero carousel with thumbnail strip; swipe on mobile",
+      "adoptedIn": ["filing-gallery-carousel"]
+    },
+    {
+      "id": "broker-sticky-sidebar",
+      "category": "detail",
+      "sources": ["rightmove", "zoopla", "maskanyaban"],
+      "rule": "Compact sticky aside: avatar + phone CTA + 2-3 actions",
+      "adoptedIn": ["filing-aside-card"]
+    },
+    {
+      "id": "mobile-floating-cta",
+      "category": "detail",
+      "sources": ["zillow", "rightmove", "bayut"],
+      "rule": "Fixed bottom bar: phone primary (60%), share + browse secondary",
+      "adoptedIn": ["filing-mobile-bar"]
+    },
+    {
+      "id": "list-photo-left",
+      "category": "browse",
+      "sources": ["rightmove", "maskanyaban", "divar"],
+      "rule": "Thumbnail left, area badge center, content right; price at bottom",
+      "adoptedIn": ["filing-list-card"]
+    },
+    {
+      "id": "list-price-hero",
+      "category": "browse",
+      "sources": ["bayut", "zoopla", "maskanyaban"],
+      "rule": "Deal type + area sqm in colored badge; price rows below specs",
+      "adoptedIn": ["filing-list-card__highlight"]
+    },
+    {
+      "id": "sticky-filter-rail",
+      "category": "browse",
+      "sources": ["zillow", "rightmove", "redfin"],
+      "rule": "Sticky below header: search + category + sort; chip row for active filters",
+      "adoptedIn": ["filing-browse-filter-rail"]
+    },
+    {
+      "id": "filter-pill-chips",
+      "category": "browse",
+      "sources": ["rightmove", "zoopla", "zillow"],
+      "rule": "Horizontal scroll pills on mobile; wrap on desktop; clear-all link",
+      "adoptedIn": ["filing-browse-chips"]
+    },
+    {
+      "id": "category-segmented",
+      "category": "browse",
+      "sources": ["zillow", "redfin"],
+      "rule": "Segmented pill toggles for deal type instead of plain selects",
+      "adoptedIn": ["filing-category-segments"]
+    },
+    {
+      "id": "filter-bottom-sheet",
+      "category": "browse",
+      "sources": ["zillow mobile", "divar", "sheypoor"],
+      "rule": "Advanced filters in bottom sheet with grouped ranges",
+      "adoptedIn": ["FilingBrowseFilterSheet"]
+    },
+    {
+      "id": "rtl-price-toman",
+      "category": "localization",
+      "sources": ["maskanyaban", "niazfinder"],
+      "rule": "Persian digits, تومان suffix, RTL spec order",
+      "adoptedIn": ["filing-scan-prices", "filing-list-card"]
+    },
+    {
+      "id": "scan-sheet-layout",
+      "category": "detail",
+      "sources": ["maskanyaban", "rightmove compact"],
+      "rule": "Above-fold scan zone + scroll for description only",
+      "adoptedIn": ["filing-scan-primary", "filing-scan-secondary"]
+    }
+  ],
+  "iterationBacklog": [
+    { "priority": 1, "surface": "browse", "task": "Unified filing-golden.css browse tokens + list card redesign", "status": "done" },
+    { "priority": 2, "surface": "browse", "task": "Sticky filter rail + segmented category bar", "status": "done" },
+    { "priority": 3, "surface": "detail", "task": "Gallery carousel + price hierarchy", "status": "done" },
+    { "priority": 4, "surface": "detail", "task": "Mobile CTA + tablet aside polish", "status": "done" },
+    { "priority": 5, "surface": "all", "task": "Visual regression + compare report", "status": "done" }
+  ]
+}

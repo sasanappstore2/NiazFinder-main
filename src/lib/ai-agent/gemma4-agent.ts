@@ -1,9 +1,28 @@
-import { extractJsonFromChatContent, localChatCompletions, type ChatMessage } from '@/lib/need-intake/local-chat-client';
+import {
+  extractAnswerFromReasoning,
+  localChatCompletions,
+  localChatCompletionsStream,
+  type ChatMessage,
+} from '@/lib/need-intake/local-chat-client';
 import { getLocalModelConfig } from '@/lib/need-intake/local-model-config';
 import { AI_AGENT_USER_MESSAGES } from '@/lib/ai-agent/errors';
+import { getAgentLlmBaseUrl, getAgentLlmModel } from '@/lib/ai-agent/env';
 import { isLocalLlmOnly } from '@/lib/local-llm/config';
 import { geminiChatCompletions } from '@/lib/gemini/chat-completions';
-import { isGeminiConfigured } from '@/lib/gemini/config';
+import { isGeminiConfigured, isGeminiFallbackEnabled } from '@/lib/gemini/config';
+import {
+  ThinkTagStreamParser,
+  composePersistedThinkContent,
+  looksLikeAgentToolJson,
+  parseThinkContent,
+  stripThinkTags,
+} from '@/lib/ai-agent/think-tag-parser';
+import { parseToolCallsFromContent } from '@/lib/ai-agent/tool-call-parser';
+import {
+  sanitizeAgentStreamChunk,
+  sanitizeAgentVisibleText,
+  sanitizePersistedAgentContent,
+} from '@/lib/ai-agent/output-sanitizer';
 
 export type GemmaAgentMessage = ChatMessage | { role: 'tool'; content: string; name?: string };
 
@@ -16,13 +35,31 @@ export interface GemmaAgentToolCall {
 export interface GemmaAgentRoundResult {
   text: string;
   toolCalls: GemmaAgentToolCall[];
+  /** Raw thinking text (without tags) when present. */
+  thinking?: string;
+  /** Full persisted content: optional <think>…</think> + answer. */
+  persistedContent?: string;
 }
 
-const TOOL_PROTOCOL = `برای فراخوانی ابزار فقط یکی از این JSONها را برگردان (بدون markdown):
+export const AGENT_TOOL_NAMES = [
+  'check_user_account_status',
+  'search_needs_agent',
+  'get_site_categories',
+  'search_site_categories',
+  'search_site_cities',
+  'search_site_neighborhoods',
+  'explain_need_fields',
+  'get_site_help',
+  'get_user_memory',
+  'update_user_memory',
+] as const;
+
+const TOOL_PROTOCOL = `برای فراخوانی ابزار فقط یکی از این JSONها را برگردان (بدون markdown و بدون تگ tool_call):
 {"action":"tool","name":"TOOL_NAME","arguments":{}}
-برای پاسخ نهایی:
-{"action":"answer","content":"متن پاسخ"}
-ابزارها: check_user_account_status, search_needs_agent, get_site_categories, search_site_categories, search_site_cities`.trim();
+هرگز متن call: یا <|tool_call|> را در پاسخ کاربر ننویس.
+برای پاسخ نهایی به کاربر:
+ابتدا استدلال کوتاه فارسی را داخل <think>…</think> بنویس، سپس فقط متن فارسی پاسخ (بدون JSON و بدون ابزار).
+ابزارها: ${AGENT_TOOL_NAMES.join(', ')}`.trim();
 
 export function isGemma4AgentProvider(): boolean {
   if (isLocalLlmOnly()) return true;
@@ -46,29 +83,56 @@ export function isGemma4AgentProvider(): boolean {
   );
 }
 
-function parseAgentJson(content: string): GemmaAgentRoundResult {
-  const parsed = extractJsonFromChatContent(content) as
-    | { action?: string; name?: string; arguments?: Record<string, unknown>; content?: string }
-    | null;
+export function parseAgentJson(content: string): GemmaAgentRoundResult {
+  const { thinking, answer } = parseThinkContent(content);
+  const stripped = (answer || stripThinkTags(content)).trim();
+  const { toolCalls, residualText } = parseToolCallsFromContent(stripped);
 
-  if (parsed && parsed.action === 'tool' && parsed.name) {
+  if (toolCalls.length > 0) {
     return {
       text: '',
-      toolCalls: [
-        {
-          id: `tool_${Date.now()}`,
-          name: parsed.name,
-          arguments: parsed.arguments ?? {},
-        },
-      ],
+      toolCalls: toolCalls.map((t) => ({
+        id: t.id,
+        name: t.name,
+        arguments: t.arguments,
+      })),
     };
   }
 
-  if (parsed && parsed.action === 'answer' && parsed.content) {
-    return { text: parsed.content, toolCalls: [] };
+  // Legacy JSON answer wrapper
+  try {
+    const start = stripped.indexOf('{');
+    const end = stripped.lastIndexOf('}');
+    if (start >= 0 && end > start) {
+      const parsed = JSON.parse(stripped.slice(start, end + 1)) as {
+        action?: string;
+        content?: string;
+      };
+      if (parsed.action === 'answer' && parsed.content) {
+        const text = sanitizeAgentVisibleText(parsed.content);
+        return {
+          text,
+          toolCalls: [],
+          thinking: thinking || undefined,
+          persistedContent: sanitizePersistedAgentContent(
+            composePersistedThinkContent(thinking, text),
+          ),
+        };
+      }
+    }
+  } catch {
+    /* ignore */
   }
 
-  return { text: content.trim(), toolCalls: [] };
+  const text = sanitizeAgentVisibleText(residualText || stripped);
+  return {
+    text,
+    toolCalls: [],
+    thinking: thinking ? sanitizeAgentVisibleText(thinking) : undefined,
+    persistedContent: sanitizePersistedAgentContent(
+      composePersistedThinkContent(thinking, text),
+    ),
+  };
 }
 
 function toChatMessages(messages: GemmaAgentMessage[]): ChatMessage[] {
@@ -80,16 +144,34 @@ function toChatMessages(messages: GemmaAgentMessage[]): ChatMessage[] {
   });
 }
 
+function agentChatMessages(
+  systemPrompt: string,
+  messages: GemmaAgentMessage[],
+  opts?: { allowTools?: boolean },
+): ChatMessage[] {
+  const allowTools = opts?.allowTools !== false;
+  const system = allowTools ? `${systemPrompt}\n\n${TOOL_PROTOCOL}` : systemPrompt;
+  return [{ role: 'system', content: system }, ...toChatMessages(messages)];
+}
+
+function agentLocalConfig() {
+  const config = getLocalModelConfig();
+  const agentBase = getAgentLlmBaseUrl().replace(/\/$/, '').replace(/\/v1$/, '');
+  return {
+    ...config,
+    baseUrl: agentBase || config.baseUrl,
+    model: getAgentLlmModel() || config.model,
+    timeoutMs: Number(process.env.AGENT_LLM_TIMEOUT_MS ?? config.timeoutMs ?? 120_000),
+  };
+}
+
 export async function runGemma4AgentRound(
   systemPrompt: string,
   messages: GemmaAgentMessage[],
+  opts?: { allowTools?: boolean },
 ): Promise<GemmaAgentRoundResult> {
   const agentProvider = process.env.AGENT_LLM_PROVIDER?.trim().toLowerCase();
-
-  const chatMessages: ChatMessage[] = [
-    { role: 'system', content: `${systemPrompt}\n\n${TOOL_PROTOCOL}` },
-    ...toChatMessages(messages),
-  ];
+  const chatMessages = agentChatMessages(systemPrompt, messages, opts);
 
   if (agentProvider === 'gemini' || (!isGemma4AgentProvider() && isGeminiConfigured())) {
     const res = await geminiChatCompletions(chatMessages, {
@@ -102,17 +184,7 @@ export async function runGemma4AgentRound(
     return parseAgentJson(res.content);
   }
 
-  const config = getLocalModelConfig();
-  const agentBase = process.env.AGENT_LLM_BASE_URL?.replace(/\/$/, '');
-  const mergedConfig = agentBase
-    ? {
-        ...config,
-        baseUrl: agentBase.replace(/\/v1$/, ''),
-        model: process.env.AGENT_LLM_MODEL ?? config.model,
-        timeoutMs: Number(process.env.AGENT_LLM_TIMEOUT_MS ?? 45000),
-      }
-    : config;
-
+  const mergedConfig = agentLocalConfig();
   const res = await localChatCompletions(chatMessages, {
     config: mergedConfig,
     maxTokens: Number(process.env.AGENT_LLM_MAX_TOKENS ?? 800),
@@ -120,7 +192,7 @@ export async function runGemma4AgentRound(
     maxRetries: 0,
   });
 
-  if (!res?.content && isGeminiConfigured() && process.env.GEMINI_FALLBACK_ENABLED === 'true') {
+  if (!res?.content && !isLocalLlmOnly() && isGeminiFallbackEnabled()) {
     const geminiRes = await geminiChatCompletions(chatMessages, {
       maxTokens: Number(process.env.AGENT_LLM_MAX_TOKENS ?? 800),
       temperature: 0.2,
@@ -131,12 +203,253 @@ export async function runGemma4AgentRound(
   }
 
   if (!res?.content) {
+    console.warn('[ai-agent] local LLM returned empty content', {
+      baseUrl: mergedConfig.baseUrl,
+      model: mergedConfig.model,
+    });
     return { text: AI_AGENT_USER_MESSAGES.LLM_UNAVAILABLE, toolCalls: [] };
   }
 
-  return parseAgentJson(res.content);
+  const parsed = parseAgentJson(res.content);
+  // Answer-only rounds must never surface tool calls
+  if (opts?.allowTools === false && parsed.toolCalls.length > 0) {
+    return {
+      text: 'الان نتوانستم ابزار را کامل کنم؛ لطفاً سوال را ساده‌تر بپرسید یا کمی بعد دوباره تلاش کنید.',
+      toolCalls: [],
+      persistedContent: 'الان نتوانستم ابزار را کامل کنم؛ لطفاً سوال را ساده‌تر بپرسید یا کمی بعد دوباره تلاش کنید.',
+    };
+  }
+  return parsed;
 }
 
+export type GemmaAgentStreamEvent =
+  | { type: 'thinking'; delta: string }
+  | { type: 'token'; delta: string }
+  | { type: 'complete'; result: GemmaAgentRoundResult };
+
+/**
+ * Stream one agent round from the local LLM.
+ * Emits thinking/token live for answers; suppresses tool-call JSON from the client.
+ *
+ * Native model `reasoning_content` is kept internally (for fallback) but NOT dumped
+ * into the UI — only explicit `<think>…</think>` Persian blocks are streamed as thinking.
+ */
+export async function* streamGemma4AgentRound(
+  systemPrompt: string,
+  messages: GemmaAgentMessage[],
+  opts?: { allowTools?: boolean },
+): AsyncGenerator<GemmaAgentStreamEvent> {
+  const agentProvider = process.env.AGENT_LLM_PROVIDER?.trim().toLowerCase();
+  const chatMessages = agentChatMessages(systemPrompt, messages, opts);
+
+  // Non-local providers: complete then fake-stream via caller using result text
+  if (agentProvider === 'gemini' || (!isGemma4AgentProvider() && isGeminiConfigured())) {
+    const result = await runGemma4AgentRound(systemPrompt, messages, opts);
+    yield { type: 'complete', result };
+    return;
+  }
+
+  if (!isGemma4AgentProvider()) {
+    const result = await runGemma4AgentRound(systemPrompt, messages, opts);
+    yield { type: 'complete', result };
+    return;
+  }
+
+  const mergedConfig = agentLocalConfig();
+  const parser = new ThinkTagStreamParser();
+  let rawContent = '';
+  let reasoningAcc = '';
+  let tagThinkingAcc = '';
+  let answerAcc = '';
+  /** Hold answer deltas while stripped content still looks like it might be JSON. */
+  let pendingAnswer = '';
+  let jsonMode: 'unknown' | 'tool' | 'answer' = 'unknown';
+  let sawAnyDelta = false;
+  let emittedThinkingPulse = false;
+
+  const flushPendingAnswer = function* (): Generator<GemmaAgentStreamEvent> {
+    if (!pendingAnswer) return;
+    const clean = sanitizeAgentStreamChunk(pendingAnswer);
+    pendingAnswer = '';
+    if (!clean) return;
+    answerAcc += clean;
+    yield { type: 'token', delta: clean };
+  };
+
+  try {
+    for await (const delta of localChatCompletionsStream(chatMessages, {
+      config: mergedConfig,
+      maxTokens: Number(process.env.AGENT_LLM_MAX_TOKENS ?? 800),
+      temperature: 0.2,
+    })) {
+      sawAnyDelta = true;
+
+      if (delta.reasoning) {
+        reasoningAcc += delta.reasoning;
+        // Pulse once so UI shows «در حال فکر کردن» without English CoT dump
+        if (!emittedThinkingPulse && jsonMode !== 'tool') {
+          emittedThinkingPulse = true;
+          yield { type: 'thinking', delta: '…' };
+        }
+      }
+
+      if (!delta.content) continue;
+      rawContent += delta.content;
+
+      if (jsonMode === 'unknown' && looksLikeAgentToolJson(rawContent)) {
+        jsonMode = 'tool';
+        pendingAnswer = '';
+      }
+
+      const parts = parser.push(delta.content);
+      for (const part of parts) {
+        if (part.kind === 'thinking') {
+          tagThinkingAcc += part.delta;
+          if (jsonMode !== 'tool') yield { type: 'thinking', delta: part.delta };
+          continue;
+        }
+
+        if (jsonMode === 'tool') continue;
+
+        const strippedSoFar = stripThinkTags(rawContent).trim();
+        if (jsonMode === 'unknown' && strippedSoFar.startsWith('{')) {
+          pendingAnswer += part.delta;
+          if (looksLikeAgentToolJson(rawContent)) {
+            jsonMode = 'tool';
+            pendingAnswer = '';
+          }
+          continue;
+        }
+
+        jsonMode = 'answer';
+        yield* flushPendingAnswer();
+        const clean = sanitizeAgentStreamChunk(part.delta);
+        if (!clean) continue;
+        answerAcc += clean;
+        yield { type: 'token', delta: clean };
+      }
+    }
+
+    for (const part of parser.flush()) {
+      if (part.kind === 'thinking') {
+        tagThinkingAcc += part.delta;
+        if (jsonMode !== 'tool') yield { type: 'thinking', delta: part.delta };
+        continue;
+      }
+      if (jsonMode === 'tool') continue;
+      if (jsonMode === 'unknown' && stripThinkTags(rawContent).trim().startsWith('{')) {
+        pendingAnswer += part.delta;
+        continue;
+      }
+      jsonMode = 'answer';
+      yield* flushPendingAnswer();
+      const clean = sanitizeAgentStreamChunk(part.delta);
+      if (!clean) continue;
+      answerAcc += clean;
+      yield { type: 'token', delta: clean };
+    }
+
+    if (jsonMode !== 'tool' && pendingAnswer) {
+      jsonMode = 'answer';
+      yield* flushPendingAnswer();
+    }
+  } catch (err) {
+    console.warn('[ai-agent] stream round failed', err);
+  }
+
+  // Empty stream → non-stream fallback
+  if (!sawAnyDelta && !rawContent.trim() && !reasoningAcc.trim()) {
+    const fallback = await runGemma4AgentRound(systemPrompt, messages, opts);
+    yield { type: 'complete', result: fallback };
+    return;
+  }
+
+  const parsed = parseAgentJson(
+    rawContent || answerAcc || extractAnswerFromReasoning(reasoningAcc) || '',
+  );
+  if (parsed.toolCalls.length > 0) {
+    if (opts?.allowTools === false) {
+      const recovery = await runGemma4AgentRound(
+        `${systemPrompt}\n\nفقط پاسخ نهایی کوتاه فارسی. ابزار ممنوع.`,
+        messages,
+        { allowTools: false },
+      );
+      if (
+        recovery.text.trim() &&
+        recovery.text !== AI_AGENT_USER_MESSAGES.LLM_UNAVAILABLE &&
+        recovery.toolCalls.length === 0
+      ) {
+        for (const ch of recovery.text) yield { type: 'token', delta: ch };
+        yield {
+          type: 'complete',
+          result: {
+            text: recovery.text,
+            toolCalls: [],
+            thinking: recovery.thinking,
+            persistedContent:
+              recovery.persistedContent ??
+              composePersistedThinkContent(recovery.thinking ?? '', recovery.text),
+          },
+        };
+        return;
+      }
+    }
+    yield { type: 'complete', result: parsed };
+    return;
+  }
+
+  let text = sanitizeAgentVisibleText(answerAcc || parsed.text || stripThinkTags(rawContent));
+  // Never treat native English reasoning_content as the user-facing answer
+  if (text && !rawContent.trim() && !answerAcc.trim() && reasoningAcc.trim()) {
+    text = '';
+  }
+  // If the model burned tokens on native reasoning and left content empty, recover
+  if (!text) {
+    const recovery = await runGemma4AgentRound(
+      `${systemPrompt}\n\nفقط پاسخ نهایی کوتاه فارسی بده. تگ think اختیاری و کوتاه. ابزار صدا نزن.`,
+      messages,
+      { allowTools: false },
+    );
+    if (recovery.toolCalls.length > 0) {
+      yield { type: 'complete', result: recovery };
+      return;
+    }
+    if (recovery.text && recovery.text !== AI_AGENT_USER_MESSAGES.LLM_UNAVAILABLE) {
+      text = sanitizeAgentVisibleText(recovery.text);
+      for (const ch of text) {
+        yield { type: 'token', delta: ch };
+      }
+    } else if (recovery.text === AI_AGENT_USER_MESSAGES.LLM_UNAVAILABLE) {
+      yield { type: 'complete', result: recovery };
+      return;
+    }
+  }
+
+  // Don't persist English native CoT as the visible think block
+  const thinking = sanitizeAgentVisibleText(tagThinkingAcc) || undefined;
+  if (!text) {
+    yield {
+      type: 'complete',
+      result: { text: AI_AGENT_USER_MESSAGES.LLM_UNAVAILABLE, toolCalls: [] },
+    };
+    return;
+  }
+
+  const persistedContent = sanitizePersistedAgentContent(
+    composePersistedThinkContent(thinking ?? '', text),
+  );
+  yield {
+    type: 'complete',
+    result: {
+      text,
+      toolCalls: [],
+      thinking,
+      persistedContent,
+    },
+  };
+}
+
+/** Soft character drip for non-stream fallbacks (Gemini / empty stream). */
 export async function* streamTextDeltas(text: string): AsyncGenerator<string> {
   for (const ch of text) {
     yield ch;

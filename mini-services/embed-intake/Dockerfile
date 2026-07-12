@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
 
-ENV EMBED_MODEL_PATH=/models/EMBED/multilingual-e5-small.Q8_0.gguf
+ENV EMBED_MODEL_PATH=/models/EMBED/multilingual-e5-small-q8_0.gguf
 ENV EMBED_MODEL_ID=multilingual-e5-small
 ENV EMBED_PORT=8101
 

@@ -13,7 +13,12 @@ import {
 } from '@/lib/chat/prisma-message';
 import { mapDbMessageToClient, type DbMessageRow } from '@/lib/chat/message-map';
 import { getConversationDetailForUser } from '@/lib/chat/conversation-detail';
+import { checkRateLimit, clientIp } from '@/lib/security/rate-limit';
 import type { Message } from '@/lib/types';
+
+const MAX_MESSAGE_LENGTH = 8000;
+const CHAT_POST_RATE_WINDOW_MS = 60_000;
+const CHAT_POST_RATE_MAX = 60;
 
 // ============ TYPES ============
 
@@ -172,6 +177,18 @@ export async function POST(
       );
     }
 
+    const rate = checkRateLimit(
+      `chat:post:${user.id}:${clientIp(request)}`,
+      CHAT_POST_RATE_MAX,
+      CHAT_POST_RATE_WINDOW_MS
+    );
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { error: 'تعداد درخواست‌ها بیش از حد مجاز است' },
+        { status: 429, headers: { 'Retry-After': String(rate.retryAfterSec ?? 60) } }
+      );
+    }
+
     const otherUserId =
       conversation.userId1 === user.id ? conversation.userId2 : conversation.userId1;
     if (await isBlockedEitherWay(user.id, otherUserId)) {
@@ -207,6 +224,11 @@ export async function POST(
     } else if (!content?.trim()) {
       return NextResponse.json(
         { error: 'محتوای پیام الزامی است' },
+        { status: 400 }
+      );
+    } else if (content.length > MAX_MESSAGE_LENGTH) {
+      return NextResponse.json(
+        { error: `حداکثر طول پیام ${MAX_MESSAGE_LENGTH} کاراکتر است` },
         { status: 400 }
       );
     }
@@ -301,19 +323,6 @@ export async function POST(
         data: {
           lastMessage: lastPreview,
           lastMessageAt: new Date(),
-        },
-      });
-
-      // Mark messages from other user as read
-      await tx.message.updateMany({
-        where: {
-          conversationId,
-          senderId: otherUserId,
-          isRead: false,
-        },
-        data: {
-          isRead: true,
-          readAt: new Date(),
         },
       });
 

@@ -167,6 +167,14 @@ export interface Message {
   pinnedBy?: string | null;
   pinnedAt?: string | null;
   sender?: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatar'>;
+  /** Client-only: live thinking text while platform agent streams. */
+  agentThinking?: string;
+  /** Client-only: stream phase for platform agent bubble. */
+  agentStatus?: 'thinking' | 'tool' | 'streaming' | 'done';
+  /** Client-only: tool name while agentStatus === 'tool'. */
+  agentToolName?: string;
+  /** Client-only: true while the agent reply is still streaming. */
+  agentStreaming?: boolean;
 }
 
 // ============ Conversation ============

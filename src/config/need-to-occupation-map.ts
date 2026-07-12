@@ -222,6 +222,10 @@ export const NEED_SLUG_TO_OCCUPATIONS: Readonly<Record<string, readonly string[]
   // Entertainment
   entertainment: ['photographer', 'videographer-editor', 'dj-sound'],
   'sports-fitness': ['sports-coach', 'online-sporting-goods'],
+  bicycle: ['online-bicycle-scooter', 'online-sporting-goods'],
+  scooter: ['online-bicycle-scooter', 'online-sporting-goods'],
+  'fitness-equipment': ['online-sporting-goods'],
+  'camping-outdoor': ['online-outdoor-camping', 'online-sporting-goods'],
   pets: ['veterinarian', 'pet-grooming', 'pet-boarding', 'online-pet-supplies'],
   'musical-instruments': ['music-teacher', 'music-band-events', 'online-music-instruments'],
 

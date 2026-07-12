@@ -1,0 +1,34 @@
+{
+  "total": 100,
+  "ok": 99,
+  "fail": 1,
+  "qualityOk": 99,
+  "avgScore": 100,
+  "flagCounts": {
+    "empty": 1,
+    "too_short": 1
+  },
+  "conversationId": "cmql10cyg0007s5pqjjyaagf4",
+  "userId": "cmql10cs70000s5pq4z1eud71",
+  "finishedAt": "2026-07-11T06:35:57.773Z",
+  "failSamples": [
+    {
+      "i": 90,
+      "prompt": "مهاجرت و ویزا مشاوره",
+      "ok": false,
+      "qualityOk": false,
+      "score": 64,
+      "flags": [
+        "empty",
+        "too_short"
+      ],
+      "thinkingChars": 0,
+      "answerChars": 0,
+      "hasThinkTag": false,
+      "orderOk": false,
+      "ms": 16424,
+      "assistantPreview": "",
+      "error": "\nInvalid `tx.transaction.create()` invocation in\n/Users/sasan/Desktop/NiazFinder main/.next/dev/server/chunks/[root-of-the-server]__13qrddw._.js:2724:46\n\n  2721         }\n  2722     }\n  2723 });\n→ 2724 const transaction = await tx.transaction.create(\nResponse from the Engine was empty"
+    }
+  ]
+}

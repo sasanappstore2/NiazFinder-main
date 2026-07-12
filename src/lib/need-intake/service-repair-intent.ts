@@ -195,6 +195,12 @@ export function detectRepairServiceCategory(text: string): string | null {
   const t = normalizeIntakeText(text);
   const repair = hasRepairSignal(text);
 
+  if (t.includes('دوچرخه') && (repair || t.includes('پنچر'))) {
+    return 'bicycle-repair';
+  }
+  if ((t.includes('تردمیل') || t.includes('دستگاه بدنسازی')) && repair) {
+    return 'fitness-equipment-repair';
+  }
   if ((t.includes('کولر') || t.includes('اسپلیت') || t.includes('گازی')) && repair) {
     return 'ac-repair';
   }

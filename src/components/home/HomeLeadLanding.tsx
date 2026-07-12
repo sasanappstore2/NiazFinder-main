@@ -19,6 +19,7 @@ import { getLeadPhone } from '@/lib/lead-draft';
 import { buildHomeToPostSearchParams } from '@/lib/need-intake/home-post-seamless';
 import { trackAnalyticsEvent } from '@/lib/analytics/track';
 import { useAppStore } from '@/lib/store';
+import { useHomeLeadAnalyzePrefetch } from '@/hooks/use-home-lead-analyze-prefetch';
 import { toast } from 'sonner';
 
 /** Normalize Persian for matching (unify ي/ی, ك/ک, drop ZWNJ, collapse spaces). */
@@ -97,7 +98,15 @@ function HomeLeadLandingContent() {
   const hasCity = selectedCities.length > 0 || selectedProvinceIds.length > 0;
   const primaryCity = selectedCities[0];
   const citySlug = primaryCity ? locationCityIdToSlug(primaryCity.id) : null;
+  const cityName = primaryCity?.name ?? null;
 
+  const { status: prefetchStatus, flushPrefetch } = useHomeLeadAnalyzePrefetch({
+    text: needText,
+    citySlug,
+    cityName,
+    // Match /post cache key (city is required before submit).
+    enabled: hasCity && needText.trim().length >= 8,
+  });
 
   const focusComposer = useCallback(() => {
     requestAnimationFrame(() => composerInputRef.current?.focus());
@@ -116,11 +125,12 @@ function HomeLeadLandingContent() {
         hasCategory: params.has('category'),
         hasPhone: params.has('phone'),
         seedLength: seed.length,
+        prefetchStatus,
       });
       setIsSubmitting(true);
       router.push(`${routeBuilder.needNew()}?${params.toString()}`);
     },
-    [router, citySlug]
+    [router, citySlug, prefetchStatus]
   );
 
   const goToPost = useCallback(async () => {
@@ -135,8 +145,22 @@ function HomeLeadLandingContent() {
       setCityPickerOpen(true);
       return;
     }
+    setIsSubmitting(true);
+    try {
+      // Finish in-flight background analyze so /post can hit a warm cache.
+      await flushPrefetch(2800);
+    } catch {
+      /* navigate anyway */
+    }
     navigateToPostForm(seed);
-  }, [needText, hasCity, setCityPickerOpen, focusComposer, navigateToPostForm]);
+  }, [
+    needText,
+    hasCity,
+    setCityPickerOpen,
+    focusComposer,
+    navigateToPostForm,
+    flushPrefetch,
+  ]);
 
   const browseNeeds = useCallback(() => {
     if (!hasCity) {
@@ -263,6 +287,7 @@ function HomeLeadLandingContent() {
               onOpenCityPicker={() => setCityPickerOpen(true)}
               onDetectLocation={() => void geo.runDetection()}
               isSubmitting={isSubmitting}
+              prefetchStatus={prefetchStatus}
             />
 
             <LeadQuickChips

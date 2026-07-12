@@ -42,6 +42,7 @@ export function resolveIntakeMobileCta(input: IntakeMobileCtaInput): IntakeMobil
   });
 
   switch (step) {
+    case 'compose':
     case 'need':
     case 'details':
       return {

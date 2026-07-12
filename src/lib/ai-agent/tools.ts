@@ -3,8 +3,17 @@ import { agentMessageFeeToman } from '@/lib/ai-agent/env';
 import {
   searchSiteCategories,
   searchSiteCities,
+  searchSiteNeighborhoods,
 } from '@/lib/ai-agent/site-data';
 import { searchNeedsAgent } from '@/lib/ai-agent/vector-search';
+import {
+  explainNeedFieldsForVertical,
+  getSiteHelpFaq,
+} from '@/lib/ai-agent/knowledge/site-pack';
+import {
+  getUserMemoryTool,
+  updateUserMemoryTool,
+} from '@/lib/ai-agent/memory/user-memory';
 
 export async function checkUserAccountStatus(userId: string) {
   const fee = agentMessageFeeToman();
@@ -43,36 +52,43 @@ export async function checkUserAccountStatus(userId: string) {
 }
 
 export async function getSiteCategories(args: Record<string, unknown>) {
-  const depthRaw = typeof args.depth === 'number' ? args.depth : 2;
-  const depth = Math.min(3, Math.max(1, Math.floor(depthRaw)));
+  const depthRaw = typeof args.depth === 'number' ? args.depth : 1;
+  const depth = Math.min(2, Math.max(1, Math.floor(depthRaw)));
+  const limit = Math.min(
+    40,
+    Math.max(5, typeof args.limit === 'number' ? Math.floor(args.limit) : 25),
+  );
 
   const roots = await db.category.findMany({
     where: { parentId: null, isActive: true },
     orderBy: { order: 'asc' },
+    take: limit,
     include: {
-      children: {
-        where: { isActive: true },
-        orderBy: { order: 'asc' },
-        include:
-          depth >= 3
-            ? { children: { where: { isActive: true }, orderBy: { order: 'asc' } } }
-            : undefined,
-      },
+      children:
+        depth >= 2
+          ? {
+              where: { isActive: true },
+              orderBy: { order: 'asc' },
+              take: 8,
+              select: { id: true, name: true, slug: true },
+            }
+          : false,
     },
   });
 
-  const mapNode = (c: any, level: number): Record<string, unknown> => ({
-    id: c.id,
-    name: c.name,
-    slug: c.slug,
-    icon: c.icon,
-    children:
-      level < depth && c.children?.length
-        ? c.children.map((child: any) => mapNode(child, level + 1))
-        : [],
-  });
-
-  return roots.map((r) => mapNode(r, 1));
+  return {
+    depth,
+    count: roots.length,
+    categories: roots.map((r) => ({
+      name: r.name,
+      slug: r.slug,
+      children:
+        depth >= 2 && Array.isArray(r.children)
+          ? r.children.map((c) => ({ name: c.name, slug: c.slug }))
+          : undefined,
+    })),
+    hint: 'برای جزئیات بیشتر search_site_categories را با query صدا بزن.',
+  };
 }
 
 export async function executeAgentTool(
@@ -91,6 +107,28 @@ export async function executeAgentTool(
       return searchSiteCategories(args);
     case 'search_site_cities':
       return searchSiteCities(args);
+    case 'search_site_neighborhoods':
+      return searchSiteNeighborhoods(args);
+    case 'explain_need_fields': {
+      const vertical =
+        (typeof args.vertical === 'string' && args.vertical) ||
+        (typeof args.category === 'string' && args.category) ||
+        (typeof args.query === 'string' && args.query) ||
+        'general';
+      return explainNeedFieldsForVertical(vertical);
+    }
+    case 'get_site_help':
+      return getSiteHelpFaq(
+        typeof args.topic === 'string'
+          ? args.topic
+          : typeof args.query === 'string'
+            ? args.query
+            : undefined,
+      );
+    case 'get_user_memory':
+      return getUserMemoryTool(ctx.userId);
+    case 'update_user_memory':
+      return updateUserMemoryTool(ctx.userId, args);
     default:
       throw new Error(`Unknown tool: ${name}`);
   }

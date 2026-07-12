@@ -1,6 +1,10 @@
 /**
  * Content-Security-Policy for Next.js responses.
  * Allows self-hosted assets only; dev adds chat-service + MinIO connect/img origins.
+ *
+ * Nonce-based CSP (removing 'unsafe-inline' from script-src/style-src) is deferred:
+ * Next.js App Router still relies on inline hydration/style chunks unless we add a
+ * custom nonce middleware and wire it through every layout — tracked for a later pass.
  */
 
 function parseOrigin(url: string | undefined): string | null {

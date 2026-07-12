@@ -1,7 +1,7 @@
 import { createHash } from 'crypto';
 import type { IntakeIntelligenceResult } from '@/intake/intelligence-engine/types';
 
-const INTAKE_PARSE_CACHE_VERSION = 'v2';
+const INTAKE_PARSE_CACHE_VERSION = 'v3';
 
 interface CacheEntry {
   result: IntakeIntelligenceResult;
@@ -48,7 +48,8 @@ export function buildParseCacheKey(
     city?: string;
     neighborhood?: string;
     categoryLockedByUser?: boolean;
-  } | null
+  } | null,
+  forceAi?: boolean
 ): string {
   const payload = [
     INTAKE_PARSE_CACHE_VERSION,
@@ -57,6 +58,7 @@ export function buildParseCacheKey(
     citySlug ?? '',
     cityName ?? '',
     serializeFormHints(formHints),
+    forceAi ? 'fa1' : 'fa0',
   ].join('|');
   return createHash('sha256').update(payload).digest('hex');
 }

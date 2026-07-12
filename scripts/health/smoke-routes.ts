@@ -13,6 +13,8 @@ const CORE_PAGES = [
   '/post',
   '/chat',
   '/my-business',
+  '/workspace',
+  '/f',
   '/blog',
   '/help',
   '/privacy',
@@ -49,6 +51,7 @@ const APIS: Check[] = [
   { name: 'dashboard', path: '/api/dashboard', expect: 401 },
   { name: 'wallet', path: '/api/wallet', expect: 401 },
   { name: 'blog', path: '/api/blog' },
+  { name: 'filings_browse', path: '/api/filings/browse' },
   { name: 'search_unified', path: '/api/search/unified?q=test' },
 ];
 

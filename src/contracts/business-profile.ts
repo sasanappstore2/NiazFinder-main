@@ -3,6 +3,11 @@
  * 80% shared structure + 20% category extensions (plugins).
  */
 
+import type {
+  EcosystemExtension,
+  WorkspaceBoardState,
+} from '@/lib/business/ecosystem/types';
+
 // ─── Primitives ─────────────────────────────────────────────────────────────
 
 export type BusinessStatus = 'active' | 'inactive';
@@ -140,6 +145,64 @@ export interface PropertyListing {
   area?: string;
   rooms?: number;
   image?: string;
+  /** Up to 5 gallery images; `image` mirrors the cover (`images[0]`). */
+  images?: string[];
+  deposit?: string;
+  monthlyRent?: string;
+  floor?: number;
+  deedType?: string;
+  pricePerMeter?: string;
+  plotWidth?: string;
+  /** Neighborhood / district label shown on listing cards. */
+  location?: string;
+  /** Canonical need-market category slug (e.g. apartment-sale). */
+  categorySlug?: string;
+  neighborhoodId?: string;
+  cityId?: string;
+  /** @deprecated Use categorySlug — legacy compact type key */
+  propertyType?: string;
+  /** Short description for cards. */
+  description?: string;
+  /** Lifecycle status — drives Active vs Sold widgets. Defaults to `active`. */
+  status?: 'active' | 'sold' | 'rented';
+  /** ISO timestamp — regional imports / admin filings. */
+  createdAt?: string;
+  /** Portal file code (e.g. maskanyaban کد فایل). */
+  fileCode?: string;
+  /** Building age in years — regional filings. */
+  buildingAge?: number;
+  /** Compass / land orientation — regional filings. */
+  orientation?: string;
+  /** Facade material — villa / apartment filings. */
+  facade?: string;
+  /** Land use label — زمین filings (also in sourceMeta). */
+  landUse?: string;
+  /** Shop frontage in meters. */
+  frontage?: string;
+  /** Commercial use type — مغازه / تجاری. */
+  commercialUse?: string;
+  /** Original post date on source portal. */
+  postedAt?: string;
+  /** Source portal key (e.g. maskanyaban). */
+  sourceSite?: string;
+  /** Sale vs rent — drives the Rental Properties widget. */
+  dealType?:
+    | 'sell'
+    | 'rent_rahn_ejare'
+    | 'rent_rahn_full'
+    | 'rent_short_term'
+    | 'sale'
+    | 'rent';
+  /** Regional filing amenity flags for browse filters. */
+  amenities?: {
+    parking?: boolean;
+    storage?: boolean;
+    elevator?: boolean;
+    securityDoor?: boolean;
+    exchangeable?: boolean;
+    terrace?: boolean;
+    builtInWardrobe?: boolean;
+  };
 }
 
 export interface RestaurantExtension {
@@ -225,6 +288,10 @@ export interface BusinessExtension {
   coach?: CoachExtension;
   webPresence?: WebPresenceExtension;
   storefront?: StorefrontExtension;
+  /** Real-estate ecosystem blob (service area, network, follow-ups). */
+  ecosystem?: EcosystemExtension;
+  /** Kanban column card ordering for workspace board. */
+  workspace?: WorkspaceBoardState;
   /** Optional layout overrides stored in extensions JSON */
   _layout?: ProfileLayoutConfig;
 }

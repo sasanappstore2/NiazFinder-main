@@ -34,6 +34,15 @@ export function getNestBaseUrl() {
   );
 }
 
+function isNestUnreachableError(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false;
+  const cause = 'cause' in err ? (err as { cause?: unknown }).cause : err;
+  if (!cause || typeof cause !== 'object') return false;
+  const code = 'code' in cause ? String((cause as { code?: string }).code) : '';
+  return code === 'ECONNREFUSED' || code === 'ENOTFOUND' || code === 'ETIMEDOUT';
+}
+
+/** Legacy NestJS proxy — returns null when Nest is unset or unreachable so callers use local Prisma logic. */
 export async function proxyToNest(
   request: NextRequest,
   path: string,
@@ -43,15 +52,28 @@ export async function proxyToNest(
   if (!base) return null;
 
   const auth = request.headers.get('authorization');
-  const res = await fetch(`${base}${path}`, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(auth ? { Authorization: auth } : {}),
-      ...(init?.headers ?? {}),
-    },
-  });
+  try {
+    const res = await fetch(`${base}${path}`, {
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(auth ? { Authorization: auth } : {}),
+        ...(init?.headers ?? {}),
+      },
+      signal: AbortSignal.timeout(8000),
+    });
 
-  const body = await res.json().catch(() => ({}));
-  return NextResponse.json(body, { status: res.status });
+    const body = await res.json().catch(() => ({}));
+    return NextResponse.json(body, { status: res.status });
+  } catch (err) {
+    if (isNestUnreachableError(err)) {
+      console.warn(`[nest-proxy] unreachable (${base}${path}), using local fallback`);
+      return null;
+    }
+    console.error('[nest-proxy] request failed:', err);
+    return NextResponse.json(
+      { error: 'سرویس legacy موقتاً در دسترس نیست', code: 'NEST_UNAVAILABLE' },
+      { status: 503 }
+    );
+  }
 }

@@ -1,6 +1,10 @@
 import type { CategoryFilterSpec } from './types';
 import {
   AMENITIES,
+  BATHROOM_COUNT,
+  BUILDING_AGE_CHIPS,
+  CABINET_TYPE,
+  COOLING,
   DEED_TYPE,
   FAMILY_COUNT,
   CONDITION,
@@ -10,13 +14,21 @@ import {
   DELIVERY_PRE_SALE,
   EMPLOYMENT_TYPE,
   EXPERIENCE,
+  FACADE_TYPE,
   GUEST_COUNT,
+  HEATING,
+  LAND_USE,
+  MOVE_IN_WHEN,
+  ORIENTATION,
+  PARKING_COUNT,
   PET_TYPE,
+  POSTER_KIND,
   PROPERTY_KIND,
   RAM_OPTIONS,
   ROLE_TYPE,
   ROOMS,
   SERVICE_WHEN,
+  SHORT_TERM_AMENITIES,
   SOCIAL_TYPE,
   STORAGE_MOBILE,
   VEHICLE_KIND,
@@ -25,7 +37,103 @@ import {
 const G = { browse: true, intake: true } as const;
 const C = { browse: true, intake: true, intakeTier: 'critical' as const };
 
+/** Shared built-property amenities & systems (sale + rent residential/commercial). */
+const BUILT_PROPERTY_EXTRAS: CategoryFilterSpec = [
+  {
+    key: 'buildingAge',
+    label: 'سن بنا',
+    kind: 'chips',
+    options: [...BUILDING_AGE_CHIPS],
+    ...G,
+  },
+  {
+    key: 'totalFloors',
+    label: 'تعداد کل طبقات',
+    kind: 'range',
+    ...G,
+  },
+  {
+    key: 'unitCount',
+    label: 'تعداد واحد در طبقه',
+    kind: 'range',
+    browse: false,
+    intake: true,
+  },
+  {
+    key: 'parkingCount',
+    label: 'تعداد پارکینگ',
+    kind: 'chips',
+    options: [...PARKING_COUNT],
+    ...G,
+  },
+  {
+    key: 'bathroomCount',
+    label: 'تعداد سرویس بهداشتی',
+    kind: 'chips',
+    options: [...BATHROOM_COUNT],
+    browse: false,
+    intake: true,
+  },
+  {
+    key: 'orientation',
+    label: 'جهت ساختمان',
+    kind: 'chips',
+    options: [...ORIENTATION],
+    browse: false,
+    intake: true,
+  },
+  {
+    key: 'facadeType',
+    label: 'نوع نما',
+    kind: 'chips',
+    options: [...FACADE_TYPE],
+    browse: false,
+    intake: true,
+  },
+  {
+    key: 'heating',
+    label: 'گرمایش',
+    kind: 'chips',
+    options: [...HEATING],
+    browse: false,
+    intake: true,
+  },
+  {
+    key: 'cooling',
+    label: 'سرمایش',
+    kind: 'chips',
+    options: [...COOLING],
+    browse: false,
+    intake: true,
+  },
+  {
+    key: 'cabinetType',
+    label: 'کابینت',
+    kind: 'chips',
+    options: [...CABINET_TYPE],
+    browse: false,
+    intake: true,
+  },
+  {
+    key: 'posterKind',
+    label: 'آگهی‌دهنده',
+    kind: 'chips',
+    options: [...POSTER_KIND],
+    browse: false,
+    intake: true,
+  },
+  {
+    key: 'moveInWhen',
+    label: 'زمان تحویل / جابجایی',
+    kind: 'chips',
+    options: [...MOVE_IN_WHEN],
+    browse: false,
+    intake: true,
+  },
+];
+
 const SALE_RESIDENTIAL_SPEC: CategoryFilterSpec = [
+  { key: 'dealType', label: 'نوع معامله', kind: 'chips', options: [...DEAL_TYPE_PROPERTY], required: true, ...C },
   { key: 'budget', label: 'بودجه / قیمت (تومان)', kind: 'range', browse: true, intake: true },
   {
     key: 'areaMin',
@@ -87,9 +195,11 @@ const SALE_RESIDENTIAL_SPEC: CategoryFilterSpec = [
     browse: true,
     intake: true,
   },
+  ...BUILT_PROPERTY_EXTRAS,
 ];
 
 const RENT_BUILT_SPEC: CategoryFilterSpec = [
+  { key: 'dealType', label: 'نوع معامله', kind: 'chips', options: [...DEAL_TYPE_PROPERTY], required: true, ...C },
   { key: 'deposit', label: 'ودیعه (تومان)', kind: 'range', browse: true, intake: true },
   { key: 'monthlyRent', label: 'اجاره ماهانه (تومان)', kind: 'range', browse: true, intake: true },
   {
@@ -138,9 +248,11 @@ const RENT_BUILT_SPEC: CategoryFilterSpec = [
     options: [...AMENITIES],
     ...C,
   },
+  ...BUILT_PROPERTY_EXTRAS,
 ];
 
 const SHORT_TERM_SPEC: CategoryFilterSpec = [
+  { key: 'dealType', label: 'نوع معامله', kind: 'chips', options: [...DEAL_TYPE_PROPERTY], required: true, ...C },
   {
     key: 'guestCount',
     label: 'تعداد نفرات',
@@ -171,9 +283,25 @@ const SHORT_TERM_SPEC: CategoryFilterSpec = [
     ...G,
   },
   { key: 'rooms', label: 'تعداد اتاق', kind: 'chips', options: [...ROOMS], ...G },
+  {
+    key: 'shortTermAmenities',
+    label: 'امکانات اقامت',
+    kind: 'multi',
+    options: [...SHORT_TERM_AMENITIES],
+    ...G,
+  },
+  {
+    key: 'moveInWhen',
+    label: 'زمان ورود',
+    kind: 'chips',
+    options: [...MOVE_IN_WHEN],
+    browse: false,
+    intake: true,
+  },
 ];
 
 const LAND_SALE_SPEC: CategoryFilterSpec = [
+  { key: 'dealType', label: 'نوع معامله', kind: 'chips', options: [...DEAL_TYPE_PROPERTY], required: true, ...C },
   { key: 'budget', label: 'بودجه / قیمت (تومان)', kind: 'range', browse: true, intake: true },
   {
     key: 'areaMin',
@@ -203,9 +331,41 @@ const LAND_SALE_SPEC: CategoryFilterSpec = [
     urlParam: 'pricePerMeter',
     ...G,
   },
+  {
+    key: 'landUse',
+    label: 'کاربری زمین',
+    kind: 'chips',
+    options: [...LAND_USE],
+    ...G,
+  },
+  {
+    key: 'plotWidth',
+    label: 'عرض بر (متر)',
+    kind: 'text',
+    placeholder: 'مثلاً ۱۲',
+    browse: false,
+    intake: true,
+  },
+  {
+    key: 'deedType',
+    label: 'نوع سند',
+    kind: 'chips',
+    options: [...DEED_TYPE],
+    browse: true,
+    intake: true,
+  },
+  {
+    key: 'posterKind',
+    label: 'آگهی‌دهنده',
+    kind: 'chips',
+    options: [...POSTER_KIND],
+    browse: false,
+    intake: true,
+  },
 ];
 
 const LAND_RENT_SPEC: CategoryFilterSpec = [
+  { key: 'dealType', label: 'نوع معامله', kind: 'chips', options: [...DEAL_TYPE_PROPERTY], required: true, ...C },
   { key: 'deposit', label: 'ودیعه (تومان)', kind: 'range', browse: true, intake: true },
   { key: 'monthlyRent', label: 'اجاره ماهانه (تومان)', kind: 'range', browse: true, intake: true },
   {
@@ -229,6 +389,29 @@ const LAND_RENT_SPEC: CategoryFilterSpec = [
     kind: 'range',
     urlParam: 'area',
     ...G,
+  },
+  {
+    key: 'landUse',
+    label: 'کاربری زمین',
+    kind: 'chips',
+    options: [...LAND_USE],
+    ...G,
+  },
+  {
+    key: 'plotWidth',
+    label: 'عرض بر (متر)',
+    kind: 'text',
+    placeholder: 'مثلاً ۱۲',
+    browse: false,
+    intake: true,
+  },
+  {
+    key: 'posterKind',
+    label: 'آگهی‌دهنده',
+    kind: 'chips',
+    options: [...POSTER_KIND],
+    browse: false,
+    intake: true,
   },
 ];
 

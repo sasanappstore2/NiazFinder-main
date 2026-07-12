@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/lib/db';
 import { getAuthUser, createSlug, type PaginatedResponse } from '@/lib/auth';
+import { checkRateLimit, clientIp } from '@/lib/security/rate-limit';
 import type { Prisma } from '@prisma/client';
 import { scheduleNeedLeadOutreach } from '@/lib/need-leads/schedule';
 import {
@@ -78,6 +80,29 @@ interface RequestListItem {
 }
 
 const REQUEST_STATUSES = ['PENDING_AI_REVIEW', 'PENDING_REVIEW', 'OPEN', 'IN_PROGRESS', 'CLOSED', 'COMPLETED', 'CANCELLED', 'REJECTED'] as const;
+
+const createRequestSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  description: z.string().trim().min(1).max(10000),
+  categoryId: z.string().trim().min(1),
+  budgetMin: z.number().optional(),
+  budgetMax: z.number().optional(),
+  budgetType: z.enum(['FIXED', 'HOURLY', 'NEGOTIABLE']).optional(),
+  deliveryTime: z.number().optional(),
+  deliveryUnit: z.string().optional(),
+  city: z.string().optional(),
+  province: z.string().optional(),
+  address: z.string().optional(),
+  priority: z.enum(['LOW', 'NORMAL', 'HIGH', 'URGENT']).optional(),
+  tags: z.array(z.string()).optional(),
+  intentType: z.string().optional(),
+  dynamicAnswers: z.record(z.string(), z.unknown()).optional(),
+  aiExtractedData: z.record(z.string(), z.unknown()).optional(),
+  source: z.string().optional(),
+});
+
+const REQUEST_POST_RATE_WINDOW_MS = 60_000;
+const REQUEST_POST_RATE_MAX = 10;
 
 function budgetToJson(value: bigint | number | null | undefined): number | null {
   if (value == null) return null;
@@ -423,7 +448,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: CreateRequestBody = await request.json();
+    const rate = checkRateLimit(
+      `requests:post:${user.id}:${clientIp(request)}`,
+      REQUEST_POST_RATE_MAX,
+      REQUEST_POST_RATE_WINDOW_MS
+    );
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { error: 'تعداد درخواست‌ها بیش از حد مجاز است' },
+        { status: 429, headers: { 'Retry-After': String(rate.retryAfterSec ?? 60) } }
+      );
+    }
+
+    const parsedBody = createRequestSchema.safeParse(await request.json());
+    if (!parsedBody.success) {
+      return NextResponse.json(
+        { error: 'داده‌های ارسالی نامعتبر است', details: parsedBody.error.flatten() },
+        { status: 400 }
+      );
+    }
+
     const {
       title,
       description,
@@ -442,15 +486,7 @@ export async function POST(request: NextRequest) {
       dynamicAnswers,
       aiExtractedData,
       source,
-    } = body;
-
-    // Validate required fields
-    if (!title?.trim() || !description?.trim() || !categoryId) {
-      return NextResponse.json(
-        { error: 'عنوان، توضیحات و دسته‌بندی الزامی است' },
-        { status: 400 }
-      );
-    }
+    } = parsedBody.data;
 
     // Verify category exists
     const category = await db.category.findUnique({

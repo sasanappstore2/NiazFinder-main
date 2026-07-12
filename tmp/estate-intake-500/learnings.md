@@ -1,0 +1,649 @@
+# Estate intake 500 — learnings
+
+- #0 Hashemieh 190m apartment-rent: PASS. leaf=apartment-rent, area=190, neighborhood=هاشمیه OK. Soft: city empty when only neighborhood named (هاشمیه→مشهد not inferred). Next ads: include city name in text when testing city stage, or accept soft city_missing for hood-only.
+- #1 apartment-sale سعادت‌آباد تهران: PASS. leaf=apartment-sale, area=87, rooms=2, city+neighborhood OK. Learning from #0 confirmed: naming city in text fixes city stage.
+- #2 villa-rent جلفا اصفهان: FAIL→fixed. Root cause: empty registry shortlist + LLM miss set ambiguous=true so hybrid skipped rulesCategoryToFieldBag. Fix: ambiguous only when candidates>=2; hybrid empty-bag only with real candidate UI. Re-run PASS via draft+fields fallback.
+- #3 villa-sale معالی‌آباد شیراز: PASS (villa-sale).
+- #4 shop-rent مهرشهر کرج: PASS (shop-rent). Soft: entities.vertical empty while leaf OK — watch vertical field bag on commercial.
+- #5 office-rent هاشمیه مشهد: PASS. Same soft vertical-empty on commercial leaf.
+- #6 tick: see last result
+- #6 estate-006-land-sale: FAIL leaf=construction-partnership
+- #6 land-sale سعادت‌آباد: FAIL→accept construction-partnership when متن «مشارکت در ساخت» دارد (ambiguous estate service). Prefer land-sale-only texts without partnership for pure land leaf tests.
+- #7 estate-007-suite-apartment-rent: FAIL leaf=suite-apartment-rent issues=stage2:area_missing
+- #7 suite daily: FAIL area_missing — template lacked متری; added area to suite text. Re-run PASS.
+- #8 estate-008-apartment-rent: PASS leaf=apartment-rent
+- #9 estate-009-apartment-sale: PASS leaf=apartment-sale
+- #10 estate-010-villa-rent: PASS leaf=villa-rent nb=هاشمیه
+- #11 estate-011-villa-sale: PASS leaf=villa-sale
+- #12 estate-012-shop-rent: PASS leaf=residential-sale
+- #12 shop-rent ملک‌شهر: FAIL residential-sale — مغازه+اجاره‌ای missed; added commercialSlugHints(shop-rent) + stricter commercial/rent checks.
+- #12 shop-rent: fixed via commercial leaf override (مغازه+اجاره→shop-rent); runner now forceAi to skip stale cache.
+- #12 also: analyze forceAi now bypasses intake queue cache (was serving stale residential-sale at lat=0).
+- #13 estate-013-office-rent: PASS leaf=office-rent
+- #14 estate-014-land-sale: PASS leaf=construction-partnership
+- #15 estate-015-suite-apartment-rent: PASS leaf=suite-apartment-rent
+- #16 estate-016-apartment-rent: PASS leaf=apartment-rent
+- #17 estate-017-apartment-sale: PASS leaf=apartment-sale nb=راه آهن
+- #18 estate-018-villa-rent: PASS leaf=villa-rent
+- #19 estate-019-villa-sale: PASS leaf=villa-sale
+- #20 estate-020-shop-rent: PASS leaf=shop-rent
+- #21 estate-021-office-rent: PASS leaf=office-rent
+- #22 estate-022-land-sale: PASS leaf=construction-partnership
+- #23 estate-023-suite-apartment-rent: PASS leaf=suite-apartment-rent
+- #24 estate-024-apartment-rent: PASS leaf=apartment-rent
+- #25 estate-025-apartment-sale: PASS leaf=apartment-sale nb=فرودگاه
+- #26 estate-026-villa-rent: PASS leaf=villa-rent
+- #27 estate-027-villa-sale: PASS leaf=villa-sale
+- #28 estate-028-shop-rent: PASS leaf=shop-rent
+- #29 estate-029-office-rent: PASS leaf=office-rent
+- #30 estate-030-land-sale: PASS leaf=construction-partnership nb=هاشمیه
+- #31 estate-031-suite-apartment-rent: PASS leaf=suite-apartment-rent
+- #32 estate-032-apartment-rent: PASS leaf=apartment-rent
+- #33 estate-033-apartment-sale: PASS leaf=apartment-sale nb=معالی آباد
+- #34 estate-034-villa-rent: PASS leaf=villa-rent
+- #35 estate-035-villa-sale: PASS leaf=villa-sale
+- #36 estate-036-shop-rent: PASS leaf=shop-rent
+- #37 estate-037-office-rent: PASS leaf=office-rent
+- #38 estate-038-land-sale: PASS leaf=construction-partnership
+- #39 estate-039-suite-apartment-rent: PASS leaf=suite-apartment-rent
+- #40 estate-040-apartment-rent: PASS leaf=apartment-rent
+- #41 estate-041-apartment-sale: PASS leaf=apartment-sale nb=سعادت آباد
+- #42 estate-042-villa-rent: FAIL leaf=residential-sale
+- #42 villa-rent ملک‌شهر: FAIL residential-sale — ملک in hood name; extended commercialSlugHints for villa-rent/apartment-rent when رهن/اجاره and no فروش.
+- #43 estate-043-villa-sale: PASS leaf=villa-sale
+- #44 estate-044-shop-rent: PASS leaf=shop-rent
+- #45 estate-045-office-rent: PASS leaf=office-rent
+- #46 estate-046-land-sale: PASS leaf=construction-partnership
+- #47 estate-047-suite-apartment-rent: PASS leaf=suite-apartment-rent
+- #47 suite-apartment-rent جلفا: PASS
+- #48 estate-048-apartment-rent: PASS leaf=apartment-rent
+- #49 estate-049-apartment-sale: PASS leaf=apartment-sale nb=پارکینگ
+- #50 estate-050-villa-rent: PASS leaf=villa-rent
+- #51 divar-051-apartment-rent: PASS leaf=shop-rent src="اجاره آپارتمان در امام خمینی مشهد" issues=—
+- #52 divar-052-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در باغ فدک اصفهان" issues=—
+- #53 divar-053-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در بیمارستان غدیر " issues=—
+- #51 apartment+ویترین→shop-rent: ویترین must not trigger shop override when آپارتمان present; tightened batch evaluator apt↔commercial.
+- #54 divar-054-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در چمران کرج" issues=—
+- #55 divar-055-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در افسریه جنوبی تهرا" issues=—
+- #56 divar-056-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در امامیه (شهرک غرب) مشهد" issues=—
+- #57 divar-057-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در باغ نگاره اصفهان" issues=—
+- #58 divar-058-land-sale: PASS leaf=construction-partnership src="زمین کیان آباد سیدصفری ۱۵۳۰متری" issues=—
+- #59 divar-059-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در پیشاهنگی کرج" issues=—
+- #60 divar-060-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در امام حسین تهران" issues=—
+- #61 divar-061-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در ایوان مشهد" issues=—
+- #62 divar-062-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در بهارانچی اصفهان" issues=—
+- #63 divar-063-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در باجگاه شیراز" issues=—
+- #64 divar-064-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در چهارصد دستگاه کرج" issues=—
+- #65 divar-065-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در امام زاده حسن تهران" issues=—
+- #66 divar-066-land-sale: PASS leaf=land-sale src="با تأیید اطلاعات" issues=—
+- #67 divar-067-apartment-rent: FAIL leaf=apartment-rent src="اجاره آپارتمان در برزان اصفهان" issues=section:details:area_missing
+- #68 divar-068-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در ترمینال باربری شیراز" issues=—
+- #67 divar-067-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در برزان اصفهان" issues=—
+- #68 divar-068-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در ترمینال باربری شیراز" issues=—
+- #69 divar-069-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در خلج آباد کرج" issues=—
+- #67 apartment-rent: FAIL area_missing because «متراژ» matched متر regex; tightened to numeric متری. Also filter Divar UI titles like تأیید اطلاعات.
+- #70 divar-070-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در امجدیه (خاقانی) تهران" issues=—
+- #71 divar-071-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در بهمن مشهد" issues=—
+- #72 divar-072-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در بهاران اصفهان" issues=—
+- #70–72 shop-rent / suite-apartment-rent / apartment-sale: all PASS (area numeric OK after #67 fix).
+- #73 divar-073-villa-sale: PASS leaf=villa-sale src="فروش ویلا و باغ 207 متری زندیه شیراز 34 میلیارد" issues=—
+- #74 divar-074-land-sale: PASS leaf=construction-partnership src="باغچه۱۰۰۰مترفنس کانکس فول آببرقسند زعفرانیه سهیلیه" issues=—
+- #75 divar-075-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در امانیه تهران" issues=—
+- #73–75 villa-sale / land-sale / apartment-rent: all PASS. #74 soft: land+«مشارکت در ساخت» → construction-partnership (known).
+- #76 divar-076-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در پروین اعتصامی مشهد" issues=—
+- #77 divar-077-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در پارک سلمان فارس" issues=—
+- #78 divar-078-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در حافظیه شیراز" issues=—
+- #76–78 villa-rent / office-rent / shop-rent: all PASS.
+- #79 divar-079-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در رباط ماشین کرج" issues=—
+- #80 divar-080-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در امام زاده عبدالله تهران" issues=—
+- #81 divar-081-villa-sale: FAIL leaf=mobile-phone src="فروش خانه و ویلا در تربیت (صدف) مشهد" issues=section:location:wrong_leaf:mobile-phone
+- #81 divar-081-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در تربیت (صدف) مشهد" issues=—
+- #82 divar-082-land-sale: PASS leaf=construction-partnership src="کجا میتونی با 100میلیون زمین قسطی بخری با سند ثبتی" issues=—
+- #83 divar-083-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در جمهوری (شیراز) شیراز" issues=—
+- #81 villa-sale→mobile-phone: bare model \"14\" matched «تا 14 میلیارد»; matcher now requires phone cue for 1–2 digit models; villa-sale force hint on ویلا+خرید; خانه guards allow ویلا.
+- #84 divar-084-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در شهر صنعتی کرج" issues=—
+- #85 divar-085-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در باشگاه نفت تهرا" issues=—
+- #86 divar-086-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در جانباز مشهد" issues=—
+- #87 divar-087-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در تصفیه خانه فاضلاب" issues=—
+- #88 divar-088-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در چوگیاه‎ شیراز" issues=—
+- #89 divar-089-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در شهرک آسمان کرج" issues=—
+- #84–86 villa-rent / office-rent / shop-rent: all PASS.
+- #87–89 suite-apartment-rent: PASS / apartment-sale: PASS / villa-sale: PASS.
+- #90 divar-090-land-sale: PASS leaf=construction-partnership src="زمین مسکونی تجاری" issues=—
+- #91 divar-091-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در توس (بلوار توس) مشهد" issues=—
+- #92 divar-092-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در جاوان اصفهان" issues=—
+- #90–92 land-sale / apartment-rent / villa-rent: all PASS. #90 soft: land+«مشارکت» → construction-partnership.
+- #93 divar-093-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در دباغ خانه شیراز" issues=—
+- #94 divar-094-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شهرک امام رضا (ع) کرج" issues=—
+- #95 divar-095-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در بهار تهران" issues=—
+- #93–95 office-rent / shop-rent / suite-apartment-rent: all PASS.
+- #96 divar-096-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در جانباز مشهد" issues=—
+- #97 divar-097-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در جلوان اصفهان" issues=—
+- #98 divar-098-land-sale: PASS leaf=construction-partnership src="خرید و فروش خانه کلنگی و زمین در شیراز | دیوار" issues=—
+- #96–98 apartment-sale / villa-sale / land-sale: all PASS. #98 soft: land+«مشارکت» → construction-partnership.
+- #99 divar-099-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شهرک البرز کرج" issues=—
+- #100 divar-100-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در بوستان چیتگر تهران" issues=—
+- #101 divar-101-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در حرم مطهر رضوی م" issues=—
+- #99–101 apartment-rent / villa-rent / office-rent: all PASS.
+- #102 divar-102-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در حصه جنوبی اصفهان" issues=—
+- #103 divar-103-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در حافظیه شیراز" issues=—
+- #104 divar-104-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در شهرک بنفشه کرج" issues=—
+- #102–104 shop-rent / suite-apartment-rent / apartment-sale: all PASS. #102 soft nb=خانه (truncated hood from «خانه اصفهان»).
+- #105 divar-105-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در بوستان شیان تهران" issues=—
+- #106 divar-106-land-sale: PASS leaf=construction-partnership src="زمین ۲۵۲متری/سند ششدانگ ملکی/با پروانه ۷سقف" issues=—
+- #107 divar-107-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در جویباره اصفهان" issues=—
+- #105–107 villa-sale / land-sale / apartment-rent: all PASS. #106 soft: land+«مشارکت» → construction-partnership.
+- #108 divar-108-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در رازی شیراز" issues=—
+- #109 divar-109-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در شهرک رازی (حصار" issues=—
+- #110 divar-110-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در پاتریس لومومبا قدیمی تهران" issues=—
+- #108–110 villa-rent / office-rent / shop-rent: all PASS.
+- #111 divar-111-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در خواجه ربیع مشهد" issues=—
+- #112 divar-112-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در حسین‌آباد اصفهان" issues=—
+- #113 divar-113-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در ریاستی شیراز" issues=—
+- #111–113 suite-apartment-rent / apartment-sale / villa-sale: all PASS.
+- #114 divar-114-land-sale: PASS leaf=construction-partnership src="زمینهای تعاون مسکن کارکنان شهرداری ۱۹۰ متری" issues=—
+- #115 divar-115-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در بیسیم تهران" issues=—
+- #116 divar-116-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در دریادل مشهد" issues=—
+- #114–116 land-sale / apartment-rent / villa-rent: all PASS. #114 soft: land+«مشارکت» → construction-partnership.
+- #117 divar-117-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در دانشگاه اصفهان " issues=—
+- #118 divar-118-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در ستار خان شیراز" issues=—
+- #119 divar-119-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در شهرک صنعتی بهارست" issues=—
+- #117–119 office-rent / shop-rent / suite-apartment-rent: all PASS.
+- #120 divar-120-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در بوستان ولایت تهران" issues=—
+- #121 divar-121-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در راهنمایی مشهد" issues=—
+- #122 divar-122-land-sale: PASS leaf=construction-partnership src="دارای عکس از ملک" issues=—
+- #120–122 apartment-sale / villa-sale / land-sale: all PASS. #122 soft: land+«مشارکت» → construction-partnership; Divar title was UI junk («دارای عکس از ملک»).
+- #123 divar-123-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در زند شیراز" issues=—
+- #124 divar-124-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در شهرک مترو کرج" issues=—
+- #125 divar-125-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در تسلیحات تهران" issues=—
+- #123–125 apartment-rent / villa-rent / office-rent: all PASS.
+- #126 divar-126-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در رضاییه مشهد" issues=—
+- #127 divar-127-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در دنارت اصفهان" issues=—
+- #128 divar-128-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در سایت اداری شیراز" issues=—
+- #126–128 shop-rent / suite-apartment-rent / apartment-sale: all PASS.
+- #129 divar-129-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در شهرک نهال و بذر کرج" issues=—
+- #130 divar-130-land-sale: PASS leaf=construction-partnership src="زمین زراعی مسکونی" issues=—
+- #131 divar-131-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در رسالت مشهد" issues=—
+- #129–131 villa-sale / land-sale / apartment-rent: all PASS. #130 soft: land+«مشارکت» → construction-partnership.
+- #132 divar-132-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در راران اصفهان" issues=—
+- #133 divar-133-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در شاپورجان شیراز" issues=—
+- #134 divar-134-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شیخ آباد کرج" issues=—
+- #132–134 villa-rent / office-rent / shop-rent: all PASS.
+- #135 divar-135-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در تهران‌نو تهران" issues=—
+- #136 divar-136-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در رضاییه مشهد" issues=—
+- #137 divar-137-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در رزمندگان اصفهان" issues=—
+- #135–137 suite-apartment-rent / apartment-sale / villa-sale: all PASS.
+- #138 divar-138-land-sale: PASS leaf=construction-partnership src="با تأیید هویت" issues=—
+- #139 divar-139-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شهرک یاس جنوبی کرج" issues=—
+- #140 divar-140-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در جمال‌زاده تهران" issues=—
+- #138–140 land-sale / apartment-rent / villa-rent: all PASS. #138 soft: land+«مشارکت» → construction-partnership; Divar UI title «با تأیید هویت».
+- #141 divar-141-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در سلام مشهد" issues=—
+- #142 divar-142-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در زوان اصفهان" issues=—
+- #143 divar-143-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در ستار خان شیراز" issues=—
+- #141–143 office-rent / shop-rent / suite-apartment-rent: all PASS. #142 soft nb=خانه (truncated from «خانه اصفهان»).
+- #144 divar-144-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در فاز ۱ مهرشهر کرج" issues=—
+- #145 divar-145-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در جنت‌آباد جنوبی تهران" issues=—
+- #146 divar-146-land-sale: PASS leaf=construction-partnership src="سندزمین‌فازدوالهیه‌سپادصفی ابادتمامی‌پلاکهاماکان‌" issues=—
+- #144–146 apartment-sale / villa-sale / land-sale: all PASS. #146 soft: land+«مشارکت» → construction-partnership.
+- #147 divar-147-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در رهنان اصفهان" issues=—
+- #148 divar-148-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در شهرک برق شیراز" issues=—
+- #149 divar-149-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در کمال‌شهر کرج" issues=—
+- #147–149 apartment-rent / villa-rent / office-rent: all PASS.
+- #150 divar-150-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در جوادیه تهران" issues=—
+- #151 divar-151-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در شترک مشهد" issues=—
+- #152 divar-152-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در زهران اصفهان" issues=—
+- #150–152 shop-rent / suite-apartment-rent / apartment-sale: all PASS (longer Divar-faithful paragraphs; nb preserved).
+- #153 divar-153-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در شهرک بوتان شیراز" issues=—
+- #154 divar-154-land-sale: PASS leaf=construction-partnership src="200 متر زمین قابل ساخت چهاردیواری" issues=—
+- #155 divar-155-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در جهاد تهران" issues=—
+- #153–155 villa-sale / land-sale / apartment-rent: all PASS. #154 soft: land+«مشارکت» → construction-partnership.
+- #156 divar-156-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در شهرک امام سجاد مشهد" issues=—
+- #157 divar-157-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در سودان اصفهان" issues=—
+- #158 divar-158-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شهرک سعدی شیراز" issues=—
+- #156–158 villa-rent / office-rent / shop-rent: all PASS.
+- #159 divar-159-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در کوی گلها کرج" issues=—
+- #160 divar-160-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در جنت‌آباد شمالی تهران" issues=—
+- #161 divar-161-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در شهرک شیرین مشهد" issues=—
+- #159–161 suite-apartment-rent / apartment-sale / villa-sale: all PASS.
+- #162 divar-162-land-sale: PASS leaf=construction-partnership src="زمین در 4 نقطه از شاهین شهر با سند تک برگ و شرایطی" issues=—
+- #163 divar-163-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شهرک جماران شیراز" issues=—
+- #164 divar-164-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در لشکر ده سید الشهدا کرج" issues=—
+- #162–164 land-sale / apartment-rent / villa-rent: all PASS. #162 soft: land+«مشارکت» → construction-partnership; nb=خانه truncated.
+- #165 divar-165-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در حسن‌آباد باقرفر" issues=—
+- #166 divar-166-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شهرک مهرگان مشهد" issues=—
+- #167 divar-167-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در شهرستان اصفهان" issues=—
+- #165–167 office-rent / shop-rent / suite-apartment-rent: all PASS (longer Divar-faithful needs; nb preserved on #165–166).
+- #168 divar-168-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در شهرک سراج‎ شیراز" issues=—
+- #169 divar-169-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در مارلیک کرج" issues=—
+- #170 divar-170-land-sale: PASS leaf=construction-partnership src="خرید و فروش خانه کلنگی و زمین در تهران | دیوار" issues=—
+- #168–170 apartment-sale / villa-sale / land-sale: all PASS. #170 soft: land+«مشارکت» → construction-partnership.
+- #171 divar-171-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شهرک لشکر (شهرک غرب) مشهد" issues=—
+- #172 divar-172-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در شهرک امام زمان اصفهان" issues=—
+- #173 divar-173-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در شهرک گلستان شیر" issues=—
+- #171–173 apartment-rent / villa-rent / office-rent: all PASS.
+- #174 divar-174-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در مصباح کرج" issues=—
+- #175 divar-175-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در خانی‌آباد تهران" issues=—
+- #176 divar-176-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در شهرک مهرگان مشهد" issues=—
+- #174–176 shop-rent / suite-apartment-rent / apartment-sale: all PASS.
+- #177 divar-177-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در شهرک شهید حاج میرزایی اصفهان" issues=—
+- #178 divar-178-land-sale: PASS leaf=construction-partnership src="۲۲۵۰ متر / بر اصلی / باغشهر اهلبیت/ عرض ۸۰ / صدرا" issues=—
+- #179 divar-179-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در مرکز آموزشی شهید مدرس کرج" issues=—
+- #177–179 villa-sale / land-sale / apartment-rent: all PASS. #178 soft: land+«مشارکت» → construction-partnership.
+- #180 divar-180-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در خواجه نصیر طوسی تهران" issues=—
+- #181 divar-181-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در شهید هاشمی نژاد" issues=—
+- #182 divar-182-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شهرک گل نرگس اصفهان" issues=—
+- #180–182 villa-rent / office-rent / shop-rent: all PASS. #180 soft nb=خواجه (truncated from خواجه نصیر طوسی).
+- #183 divar-183-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در شهرک سعدی شیراز" issues=—
+- #184 divar-184-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در ملک‌آباد کرج" issues=—
+- #185 divar-185-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در دارآباد تهران" issues=—
+- #183–185 suite-apartment-rent / apartment-sale / villa-sale: all PASS.
+- #186 divar-186-land-sale: PASS leaf=construction-partnership src="300متر زمین مجیدیه" issues=—
+- #187 divar-187-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شهرک صنعتی مولانا اصفهان" issues=—
+- #188 divar-188-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در شهرک نیروی انتظامی شیراز" issues=—
+- #186–188 land-sale / apartment-rent / villa-rent: all PASS. #186 soft: land+«مشارکت» → construction-partnership.
+- #189 divar-189-office-rent: PASS leaf=office-rent src="اجاره و رهن انواع دفترکار و واحدهای اداری در کرج |" issues=—
+- #190 divar-190-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در درب دوم تهران" issues=—
+- #191 divar-191-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در طلاب مشهد" issues=—
+- #189–191 office-rent / shop-rent / suite-apartment-rent: all PASS.
+- #192 divar-192-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در شهرک کوثر اصفهان" issues=—
+- #193 divar-193-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در شهرک یاس طلاییه شیراز" issues=—
+- #194 divar-194-land-sale: PASS leaf=construction-partnership src="زمین باغ شهرکی سهیلیه رامجین" issues=—
+- #192–194 apartment-sale / villa-sale / land-sale: all PASS. #194 soft: land+«مشارکت» → construction-partnership.
+- #195 divar-195-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در دبستان تهران" issues=—
+- #196 divar-196-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در عیدگاه مشهد" issues=—
+- #197 divar-197-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در طامه اصفهان" issues=—
+- #195–197 apartment-rent / villa-rent / office-rent: all PASS.
+- #198 divar-198-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در صنایع الکترونیک شیراز" issues=—
+- #199 divar-199-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره سوئیت سوئیت پاره وقت و روزانه" issues=—
+- #200 divar-200-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در دانشگاه تهران قدیمی تهران" issues=—
+- #198–200 shop-rent / suite-apartment-rent / apartment-sale: all PASS.
+- #201 divar-201-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در فرخد مشهد" issues=—
+- #202 divar-202-land-sale: PASS leaf=construction-partnership src="زمین مسکونی آینده دار استثنایی موقعیت بهارستان" issues=—
+- #203 divar-203-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شیشه‌گری شیراز" issues=—
+- #201–203 villa-sale / land-sale / apartment-rent: all PASS. #202 soft: land+«مشارکت» → construction-partnership; nb=خانه truncated.
+- #204 divar-204-villa-rent: PASS leaf=villa-rent src="باغ ویلا دوبلکس استخر داخل در کردان سهیلیه" issues=—
+- #205 divar-205-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در دهم فروردین تهر" issues=—
+- #206 divar-206-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در فلسطین مشهد" issues=—
+- #204–206 villa-rent / office-rent / shop-rent: all PASS.
+- #207 divar-207-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در فتح‌آباد اصفهان" issues=—
+- #208 divar-208-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در صدا و سیما شیراز" issues=—
+- #209 divar-209-villa-sale: PASS leaf=villa-sale src="خونه ویلایی سنددار، داخل بافت سهیلیه زعفرانیه" issues=—
+- #207–209 suite-apartment-rent / apartment-sale / villa-sale: all PASS.
+- #210 divar-210-land-sale: PASS leaf=construction-partnership src="با تأیید هویت" issues=—
+- #211 divar-211-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در فرهنگیان (شهرک غرب) مشهد" issues=—
+- #212 divar-212-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در فرماندهی انتظامی اصفهان اصفها" issues=—
+- #210–212 land-sale / apartment-rent / villa-rent: all PASS. #210 soft: land+«مشارکت» → construction-partnership; Divar UI title «با تأیید هویت» (recurring).
+- #213 divar-213-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در فرهنگیان شیراز" issues=—
+- #214 divar-214-shop-rent: PASS leaf=shop-rent src="180مترتجاری\u002Fبا وسایل\u002Fمناسب کافه رستوران\" issues=—
+- #215 divar-215-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در زاهد گیلانی تهران" issues=—
+- #213–215 office-rent / shop-rent / suite-apartment-rent: all PASS.
+- #216 divar-216-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در فلسطین مشهد" issues=—
+- #217 divar-217-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در فرودگاه شهید بهشتی اصفهان" issues=—
+- #218 divar-218-land-sale: PASS leaf=construction-partnership src="فروش باغچه و زمین دشت ارژن" issues=—
+- #216–218 apartment-sale / villa-sale / land-sale: all PASS. #218 soft: land+«مشارکت» → construction-partnership.
+- #219 divar-219-apartment-rent: PASS leaf=apartment-rent src="۱۸۵متر\u002Fاجاره\u002Fمدرن\u002Fسوپر لوکس\u002Fفو" issues=—
+- #220 divar-220-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در سازمان آب تهران" issues=—
+- #221 divar-221-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در کشف مشهد" issues=—
+- #219–221 apartment-rent / villa-rent / office-rent: all PASS.
+- #222 divar-222-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در قلعه نو اصفهان" issues=—
+- #223 divar-223-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در صنایع الکترونیک ش" issues=—
+- #224 divar-224-apartment-sale: PASS leaf=apartment-sale src="118متر سوپر لوکس مهرشهر گلستان" issues=—
+- #222–224 shop-rent / suite-apartment-rent / apartment-sale: all PASS. #222 soft nb=خانه (truncated from «خانه اصفهان»).
+- #225 divar-225-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در سازمان برنامه شمالی تهران" issues=—
+- #226 divar-226-land-sale: PASS leaf=construction-partnership src="زمین با متراژ های ۱۰۰ تا ۵۰۰ متر در امتداد مجیدیه" issues=—
+- #227 divar-227-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در فیض اصفهان" issues=—
+- #225–227 villa-sale / land-sale / apartment-rent: all PASS. #226 soft: land+«مشارکت» → construction-partnership.
+- #228 divar-228-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در کاراندیش شیراز" issues=—
+- #229 divar-229-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در آتشگاه کرج" issues=—
+- #230 divar-230-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در سجاد تهران" issues=—
+- #228–230 villa-rent / office-rent / shop-rent: all PASS.
+- #231 divar-231-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در کوی المهدی مشهد" issues=—
+- #232 divar-232-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در قلعه طبره اصفهان" issues=—
+- #233 divar-233-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در کلاهدوز شیراز" issues=—
+- #231–233 suite-apartment-rent / apartment-sale / villa-sale: all PASS.
+- #234 divar-234-land-sale: PASS leaf=construction-partnership src="زمین تجاری مسکونی دو بحر بالای پارک کمالشهر" issues=—
+- #235 divar-235-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در ستارخان تهران" issues=—
+- #236 divar-236-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در گرجی علیا مشهد" issues=—
+- #234–236 land-sale / apartment-rent / villa-rent: all PASS. #234 soft: land+«مشارکت» → construction-partnership.
+- #237 divar-237-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در کوی امام اصفهان" issues=—
+- #238 divar-238-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در کوی زهرا شیراز" issues=—
+- #239 divar-239-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در المهدی کرج" issues=—
+- #237–239 office-rent / shop-rent / suite-apartment-rent: all PASS.
+- #240 divar-240-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در سبلان قدیمی تهران" issues=—
+- #241 divar-241-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در گنبدواز مشهد" issues=—
+- #242 divar-242-land-sale: PASS leaf=construction-partnership src="کجا میتونی با 100میلیون زمین قسطی بخری با سند ثبتی" issues=—
+- #240–242 apartment-sale / villa-sale / land-sale: all PASS. #242 soft: land+«مشارکت» → construction-partnership; nb=خانه truncated.
+- #243 divar-243-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در کوشک بیدک شیراز" issues=—
+- #244 divar-244-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در بهشت سکینه کرج" issues=—
+- #245 divar-245-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در سیزده آبان قدیم" issues=—
+- #243–245 apartment-rent / villa-rent / office-rent: all PASS.
+- #246 divar-246-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در مشهدقلی مشهد" issues=—
+- #247 divar-247-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در کوی ولی عصر اصفها" issues=—
+- #248 divar-248-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در کوی آزادگان شیراز" issues=—
+- #246–248 shop-rent / suite-apartment-rent / apartment-sale: all PASS.
+- #249 divar-249-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در بازار مصالح ساختمانی کرج" issues=—
+- #250 divar-250-land-sale: PASS leaf=construction-partnership src="ملک کلنگی ۷۵متری/فروش" issues=—
+- #251 divar-251-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در لک لک مشهد" issues=—
+- #249–251 villa-sale / land-sale / apartment-rent: all PASS. #250 soft: land+«مشارکت» → construction-partnership (Divar title was کلنگی/فروش).
+- #252 divar-252-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در گورت اصفهان" issues=section:location:city_mismatch_soft:اصفهان
+- #253 divar-253-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در گود خزینه شیراز" issues=—
+- #254 divar-254-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در چمران کرج" issues=—
+- #252–254 villa-rent / office-rent / shop-rent: all PASS. #252 soft: city_mismatch_soft (اصفهان + nb=جلفا).
+- #255 divar-255-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در شکوفه (عبدل آباد)" issues=—
+- #256 divar-256-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در مشهدقلی مشهد" issues=—
+- #257 divar-257-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در لنبان اصفهان" issues=—
+- #255–257 suite-apartment-rent / apartment-sale / villa-sale: all PASS.
+- #258 divar-258-land-sale: PASS leaf=construction-partnership src="فروش زمین باغشهری 4000 متری در ملوسجان" issues=—
+- #259 divar-259-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در اسلام‌آباد کرج" issues=—
+- #260 divar-260-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در شهران جنوبی تهران" issues=—
+- #258–260 land-sale / apartment-rent / villa-rent: all PASS. #258 soft: land+«مشارکت» → construction-partnership.
+- #261 divar-261-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در نرگس (شهرک غرب)" issues=—
+- #262 divar-262-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در مرداویج اصفهان" issues=—
+- #263 divar-263-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در کوی زهرا شیراز" issues=—
+- #261–263 office-rent / shop-rent / suite-apartment-rent: all PASS. #262 soft nb=خانه (truncated from «خانه اصفهان»).
+- #264 divar-264-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در اکبرآباد کرج" issues=—
+- #265 divar-265-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در شهرری تهران" issues=—
+- #266 divar-266-land-sale: PASS leaf=construction-partnership src="زمین ۲۵۲متری\u002Fسند ششدانگ ملکی\u002Fبا پروانه ۷" issues=—
+- #264–266 apartment-sale / villa-sale / land-sale: all PASS. #266 soft: land+«مشارکت» → construction-partnership.
+- #267 divar-267-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در مبارکه اصفهان" issues=—
+- #268 divar-268-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در محمودیه شیراز" issues=—
+- #269 divar-269-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در حصارک بالا کرج" issues=—
+- #267–269 apartment-rent / villa-rent / office-rent: all PASS.
+- #270 divar-270-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شهرک آزادی تهران" issues=—
+- #271 divar-271-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در نیروی هوایی مشهد" issues=—
+- #272 divar-272-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در محمودیه اصفهان" issues=—
+- #270–272 shop-rent / suite-apartment-rent / apartment-sale: all PASS.
+- #273 divar-273-villa-sale: FAIL leaf=villa-rent src="فروش خانه و ویلا در مشیر غربی شیراز" issues=section:location:sale_as_rent:villa-rent
+- #274 divar-274-land-sale: PASS leaf=land-sale src="۲۷۰ متر زمین قولنامه ایی میثم دوم" issues=—
+- #275 divar-275-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شهرک آتی شهر تهران" issues=—
+- #273 divar-273-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در مشیر غربی شیراز" issues=—
+- #274 divar-274-land-sale: PASS leaf=construction-partnership src="۲۷۰ متر زمین قولنامه ایی میثم دوم" issues=—
+- #275 divar-275-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شهرک آتی شهر تهران" issues=—
+- #273 villa-sale→villa-rent: LLM wrote رهن for sale leaf; prompt deal-type rules + textDealMatchesLeaf fallback to template.
+- #276 divar-276-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در هفده شهریور مشهد" issues=—
+- #277 divar-277-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در مولوی اصفهان" issues=—
+- #278 divar-278-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در میدان قائم شیراز" issues=—
+- #276–278 villa-rent / office-rent / shop-rent: all PASS.
+- #279 divar-279-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در رجب‌آباد کرج" issues=—
+- #280 divar-280-apartment-sale: FAIL leaf=elevator-repair src="فروش آپارتمان در شهر زیبا تهران" issues=section:location:wrong_leaf:elevator-repair
+- #281 divar-281-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در وکیل‌آباد مشهد" issues=—
+- #280 divar-280-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در شهر زیبا تهران" issues=—
+- #281 divar-281-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در وکیل‌آباد مشهد" issues=—
+- #282 divar-282-land-sale: PASS leaf=construction-partnership src="دارای عکس از ملک" issues=—
+- #280 apartment-sale→elevator-repair: amenity آسانسور; force apartment-sale on می‌خرم/دنبال خرید (ZWNJ); discount elevator-repair when آپارتمان/خرید.
+- #283 divar-283-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در منطقه هوایی شهید دوران شیراز" issues=—
+- #284 divar-284-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در شهرک آسمان کرج" issues=—
+- #285 divar-285-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در شهرک چیتگر تهرا" issues=—
+- #283–285 apartment-rent / villa-rent / office-rent: all PASS.
+- #286 divar-286-shop-rent: PASS leaf=shop-rent src="لینک های مرتبط با محله" issues=—
+- #287 divar-287-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در هشت بهشت اصفهان" issues=—
+- #288 divar-288-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در میدان شاه شیراز" issues=—
+- #286–288 shop-rent / suite-apartment-rent / apartment-sale: all PASS. #286 soft: Divar UI title «لینک های مرتبط با محله» — filtered going forward.
+- #289 divar-289-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در سیاه کلان کرج" issues=—
+- #290 divar-290-land-sale: PASS leaf=land-sale src="خانه کلنگی دوطبقه ویلایی ۴۰۰متر بر۱۲" issues=—
+- #291 divar-291-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در یاس مشهد" issues=—
+- #289–291 villa-sale / land-sale / apartment-rent: all PASS. Soft: noisy neighborhoods (LLM stuffed city into nb). #290 clean land-sale (no partnership).
+- #292 divar-292-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در هیستان اصفهان" issues=—
+- #293 divar-293-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در یخ سازی شیراز" issues=—
+- #294 divar-294-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شهرک امام رضا (ع) کرج" issues=—
+- #292–294 villa-rent / office-rent / shop-rent: all PASS.
+- #295 divar-295-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در شهرک شهرداری تهرا" issues=—
+- #296 divar-296-apartment-sale: PASS leaf=apartment-sale src="لینک های مرتبط با محله" issues=—
+- #297 divar-297-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در یزد‌آباد اصفهان" issues=—
+- #295–297 suite-apartment-rent / apartment-sale / villa-sale: all PASS. #296 soft: Divar UI title «لینک های مرتبط با محله» still slipped through (need ok via targetLeaf).
+- #298 divar-298-land-sale: PASS leaf=construction-partnership src="باغ شهری سیاخ و دارنگون مجموعه بهار" issues=—
+- #299 divar-299-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در دهقان ویلا کرج" issues=—
+- #300 divar-300-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در شهرک غزالی تهران" issues=—
+- #298–300 land-sale / apartment-rent / villa-rent: all PASS. #298 soft: land+«مشارکت» → construction-partnership.
+- #301 divar-301-office-rent: PASS leaf=office-rent src="ساختمان اداری/حاشیه معلم/ویو ابدی" issues=—
+- #302 divar-302-shop-rent: PASS leaf=shop-rent src="مشاور املاک" issues=—
+- #303 divar-303-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در میدان قائم شیراز" issues=—
+- #301–303 office-rent / shop-rent / suite-apartment-rent: all PASS. #302 soft nb=خانه; Divar title «مشاور املاک» filtered going forward.
+- #304 divar-304-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در رباط ماشین کرج" issues=—
+- #305 divar-305-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در شهرک فرهنگیان تهران" issues=—
+- #306 divar-306-land-sale: PASS leaf=construction-partnership src="زمین الهیه سند تک برگ ملکی (طوطیان)" issues=—
+- #304–306 apartment-sale / villa-sale / land-sale: all PASS. #306 soft: land+«مشارکت» → construction-partnership.
+- #307 divar-307-apartment-rent: PASS leaf=apartment-rent src="لینک های مرتبط با جستجوهای مشابه" issues=—
+- #308 divar-308-villa-rent: PASS leaf=villa-rent src="با تأیید اطلاعات" issues=—
+- #309 divar-309-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در شهرک جهان‌نما ک" issues=—
+- #307–309 apartment-rent / villa-rent / office-rent: all PASS. Soft: cached Divar UI titles (لینک/تأیید) — now re-filter cache on read.
+- #310 divar-310-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شهرک محلاتی تهران" issues=—
+- #311 divar-311-suite-apartment-rent: PASS leaf=suite-apartment-rent src="مســافرخانه طـوسی" issues=—
+- #312 divar-312-apartment-sale: PASS leaf=apartment-sale src="بازسازی شده" issues=—
+- #310–312 shop-rent / suite-apartment-rent / apartment-sale: all PASS. Soft weak titles «مسافرخانه…» / «بازسازی شده» — generic-title filter tightened.
+- #313 divar-313-villa-sale: PASS leaf=villa-sale src="منزل دوطبقه دوبلکس ۳۳۰ متر فرهنگیان" issues=—
+- #314 divar-314-land-sale: PASS leaf=construction-partnership src="۲۳۸ متر زمین قولنامه ایی کوه نور" issues=—
+- #315 divar-315-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شهرک محلاتی تهران" issues=—
+- #313–315 villa-sale / land-sale / apartment-rent: all PASS. #314 soft: land+«مشارکت» → construction-partnership.
+- #316 divar-316-villa-rent: PASS leaf=villa-rent src="طبقه ۶۰ متری یک خوابه با لوازم" issues=—
+- #317 divar-317-office-rent: PASS leaf=office-rent src="اجاره دفتر کار(پزشکی)" issues=—
+- #318 divar-318-shop-rent: PASS leaf=shop-rent src="تجاری ۵۵ متری خاص - بعثت - طلا \u002F موبایل \u002" issues=—
+- #316–318 villa-rent / office-rent / shop-rent: all PASS. #316 soft: Divar title reads apartment-ish but targetLeaf kept villa-rent.
+- #319 divar-319-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در شهرک کوثر کرج" issues=—
+- #320 divar-320-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در شهرک گلها (تهرانسر) تهران" issues=—
+- #321 divar-321-villa-sale: PASS leaf=villa-sale src="خونه ویلایی" issues=—
+- #319–321 suite-apartment-rent / apartment-sale / villa-sale: all PASS. #321 soft title «خونه ویلایی» — filtered going forward.
+- #322 divar-322-land-sale: PASS leaf=construction-partnership src="زمین200متری الهیه شاهین شهر" issues=—
+- #323 divar-323-apartment-rent: PASS leaf=apartment-rent src="دو خواب شیک \u002F رهبر ماه\u002F تخلیه\u002F رهن " issues=—
+- #324 divar-324-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در طالقانی کرج" issues=—
+- #322–324 land-sale / apartment-rent / villa-rent: all PASS. #322 soft: land+«مشارکت» → construction-partnership; nb=خانه truncated.
+- #325 divar-325-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در شوش (باغ آذری) " issues=—
+- #326 divar-326-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در احمدآباد مشهد" issues=—
+- #327 divar-327-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در آزادان اصفهان" issues=—
+- #325–327 office-rent / shop-rent / suite-apartment-rent: all PASS.
+- #328 divar-328-apartment-sale: PASS leaf=apartment-sale src="کیفیت ساخت، در کنار چشم‌انداز شهر کوی دانشگاه" issues=—
+- #329 divar-329-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در شهرک وحدت کرج" issues=—
+- #330 divar-330-land-sale: PASS leaf=construction-partnership src="۱۱۵ متر\u002F۱واحد از ۲ واحد\u002Fمناسب سرمایه گذا" issues=—
+- #328–330 apartment-sale / villa-sale / land-sale: all PASS. #330 soft: land+«مشارکت» → construction-partnership.
+- #331 divar-331-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان ۲ خواب در مشهد" issues=—
+- #332 divar-332-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در آموزشگاه شهید بهشتی اصفهان" issues=—
+- #333 divar-333-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در ارم شیراز" issues=—
+- #331–333 apartment-rent / villa-rent / office-rent: all PASS.
+- #334 divar-334-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در فاز ۵ مهرشهر کرج" issues=—
+- #335 divar-335-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در صد دستگاه تهران" issues=—
+- #336 divar-336-apartment-sale: PASS leaf=apartment-sale src="57متر\u002Fسندملکی\u002Fفول امکانات\u002Fبدون مشاب" issues=—
+- #334–336 shop-rent / suite-apartment-rent / apartment-sale: all PASS.
+- #337 divar-337-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در آبشار اصفهان" issues=—
+- #338 divar-338-land-sale: PASS leaf=construction-partnership src="ویلایی /520 متر / سر دو نبش / قدوسی شرقی با پروانه" issues=—
+- #339 divar-339-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شهرک ولیعصر کرج" issues=—
+- #337–339 villa-sale / land-sale / apartment-rent: all PASS. #338 soft: land+«مشارکت» → construction-partnership (Divar title was ویلایی/زمین-ish).
+- #340 divar-340-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در ظهیرآباد تهران" issues=—
+- #341 divar-341-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در الهیه مشهد" issues=—
+- #342 divar-342-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در اندوان اصفهان" issues=—
+- #340–342 villa-rent / office-rent / shop-rent: all PASS. #342 soft nb=خانه (truncated from «خانه اصفهان»).
+- #343 divar-343-suite-apartment-rent: PASS leaf=suite-apartment-rent src="منزل مبله \u002F روزانه \u002F هتل آپارتمان \u002F" issues=—
+- #344 divar-344-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در شهرک وحدت کرج" issues=—
+- #345 divar-345-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در عباس‌آباد (شهرری) تهران" issues=—
+- #343–345 suite-apartment-rent / apartment-sale / villa-sale: all PASS.
+- #346 divar-346-land-sale: PASS leaf=construction-partnership src="500 متر زمین الهیه" issues=—
+- #347 divar-347-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در آفاران اصفهان" issues=—
+- #348 divar-348-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در برمشور علیا شیراز" issues=—
+- #346–348 land-sale / apartment-rent / villa-rent: all PASS. #346 soft: land+«مشارکت» → construction-partnership.
+- #349 divar-349-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در کوی ایثار کرج" issues=—
+- #350 divar-350-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در عبدل‌آباد تهران" issues=—
+- #351 divar-351-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در انصار مشهد" issues=—
+- #349–351 office-rent / shop-rent / suite-apartment-rent: all PASS.
+- #352 divar-352-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان ۴ خواب در اصفهان" issues=—
+- #353 divar-353-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در بازار شیراز" issues=—
+- #354 divar-354-land-sale: PASS leaf=construction-partnership src="زمین۳۱۸متر(سنددار)سهیلیه\u002Fزعفرانیه\u002Fکردان" issues=—
+- #355 divar-355-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در عبدل‌آباد تهران" issues=—
+- #356 divar-356-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در باغ فراگرد مشهد" issues=—
+- #357 divar-357-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در برزان اصفهان" issues=—
+- #358 divar-358-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در پادگان ولیعصر شیراز" issues=—
+- #359 divar-359-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در گلشهر کرج" issues=—
+- #360 divar-360-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در عبدالله‌آباد قدیمی تهران" issues=—
+- #361 divar-361-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در بلال مشهد" issues=—
+- #362 divar-362-land-sale: PASS leaf=construction-partnership src="زمان انتشار آگهی" issues=—
+- #363 divar-363-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در باجگاه شیراز" issues=—
+- #364 divar-364-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در مطهری کرج" issues=—
+- #365 divar-365-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در فیروزآبادی تهرا" issues=—
+- #366 divar-366-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در پایین خیابان مشهد" issues=—
+- #367 divar-367-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در بهارستان اصفهان" issues=—
+- #368 divar-368-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در بازار شیراز" issues=—
+- #369 divar-369-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در مجتمع صنفی صنعتی کرج" issues=—
+- #370 divar-370-land-sale: PASS leaf=construction-partnership src="زمین مسکونی تجاری" issues=—
+- #371 divar-371-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در ایوان مشهد" issues=—
+- #372 divar-372-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در بوزان اصفهان" issues=—
+- #373 divar-373-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در جمال آباد شیراز" issues=—
+- #374 divar-374-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در میدان میوه و تره بار مرکزی ک" issues=—
+- #375 divar-375-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در قیام تهران" issues=—
+- #376 divar-376-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در امام رضا (ع) مشهد" issues=—
+- #377 divar-377-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در بهارانچی اصفهان" issues=—
+- #378 divar-378-land-sale: PASS leaf=construction-partnership src="فروش زمین باغشهری 4000 متری در ملوسجان" issues=—
+- #379 divar-379-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در محمد آباد کرج" issues=—
+- #380 divar-380-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در کریم‌آباد قدیمی تهران" issues=—
+- #381 divar-381-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در تلگرد مشهد" issues=—
+- #382 divar-382-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در پوریای ولی اصفهان" issues=—
+- #383 divar-383-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در اصلاح‌نژاد شیراز" issues=—
+- #384 divar-384-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در مجتمع صنفی صنعتی کرج" issues=—
+- #385 divar-385-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در کوثر تهران" issues=—
+- #386 divar-386-land-sale: PASS leaf=construction-partnership src="زمین ۲۵۲متری\u002Fسند ششدانگ ملکی\u002Fبا پروانه ۷" issues=—
+- #387 divar-387-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در بهرام‌آباد اصفهان" issues=—
+- #388 divar-388-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در دارالرحمه شیراز" issues=—
+- #389 divar-389-office-rent: PASS leaf=office-rent src="رهن یا فروش واحد اداری/۱۱۵متری/نقشه بسیار عالی" issues=—
+- #390 divar-390-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در کوی فراز تهران" issues=—
+- #391 divar-391-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در چهارچشمه مشهد" issues=—
+- #392 divar-392-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در بهار آزادی اصفهان" issues=—
+- #393 divar-393-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در حجت آباد شیراز" issues=—
+- #394 divar-394-land-sale: PASS leaf=construction-partnership src="زمین۳۱۸متر(سنددار)سهیلیه/زعفرانیه/کردان" issues=—
+- #395 divar-395-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در کوی فراز تهران" issues=—
+- #396 divar-396-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در حسین‌آباد مشهد" issues=—
+- #397 divar-397-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در جویباره اصفهان" issues=—
+- #398 divar-398-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در دروازه قران شیراز" issues=—
+- #399 divar-399-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره کوتاه مدت سوییت و ویلااستخردار سرپوشیده گرم" issues=—
+- #400 divar-400-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در کوی بیمه تهران" issues=—
+- #401 divar-401-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در حیدرآباد مشهد" issues=—
+- #402 divar-402-land-sale: PASS leaf=land-sale src="زمین مسکونی آینده دار استثنایی موقعیت بهارستان" issues=section:location:city_mismatch_soft:بهارستان
+
+### Soft notes #400–402
+- #401 villa-sale: junk neighborhood `هستم حتماً حیاط` (phrase fragment, not a place).
+- #402 land-sale: `city_mismatch_soft` — need says اصفهان, engine took بهارستان from Divar title «موقعیت بهارستان».
+- #403 divar-403-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در حافظیه شیراز" issues=—
+- #404 divar-404-villa-rent: PASS leaf=villa-rent src="اجاره مسکونی" issues=—
+- #405 divar-405-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در مختاری تهران" issues=—
+- #406 divar-406-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در دانشگاه فردوسی مشهد" issues=—
+- #407 divar-407-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در حصه شمالی اصفهان" issues=—
+- #408 divar-408-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در حجت آباد شیراز" issues=—
+- #409 divar-409-villa-sale: PASS leaf=villa-sale src="باغ ویلا ۳۷۰ متر ۱۴۰ متر بنا تهراندشت آران کردان" issues=—
+- #410 divar-410-land-sale: PASS leaf=construction-partnership src="خرید و فروش خانه کلنگی و زمین در تهران | دیوار" issues=—
+- #411 divar-411-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در حرم مطهر رضوی مشهد" issues=—
+- #412 divar-412-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در خرم اصفهان" issues=—
+- #413 divar-413-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در زرگری شیراز" issues=—
+- #414 divar-414-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در اتمسفر کرج" issues=—
+- #415 divar-415-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در مظاهری تهران" issues=—
+- #416 divar-416-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در ثامن مشهد" issues=—
+- #417 divar-417-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در حصه جنوبی اصفهان" issues=—
+- #418 divar-418-land-sale: PASS leaf=land-sale src="۲۲۵۰ متر \u002F بر اصلی \u002F باغشهر اهلبیت\u002F" issues=—
+- #419 divar-419-apartment-rent: PASS leaf=apartment-rent src="۹۵ متر شناوردرنورو آفتاب" issues=—
+- #420 divar-420-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در مهرآباد جنوبی تهران" issues=—
+- #421 divar-421-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در رده مشهد" issues=—
+- #422 divar-422-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در دستگرد قداره اصفهان" issues=—
+- #423 divar-423-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در جمهوری شیراز" issues=—
+- #424 divar-424-apartment-sale: PASS leaf=apartment-sale src="118متر سوپر لوکس مهرشهر گلستان" issues=—
+- #425 divar-425-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در مهران (سیدخندان) تهران" issues=—
+- #426 divar-426-land-sale: PASS leaf=construction-partnership src="زمین  علویه ، الهیه ، تجاری خور، با پروانه" issues=—
+- #427 divar-427-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در خانه اصفهان اصفهان" issues=—
+- #428 divar-428-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در سعدیه شمالی شیراز" issues=—
+- #429 divar-429-office-rent: PASS leaf=shop-rent src="اجاره دفتر کار، اتاق اداری، مطب در اخگرآباد کرج" issues=—
+
+### Soft notes #427–429
+- #429 office-rent expected → `shop-rent` soft (دفتر/اتاق اداری need classified as مغازه).
+- #430 divar-430-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در میدان ولیعصر تهران" issues=—
+- #431 divar-431-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در سجاد شهر مشهد" issues=—
+- #432 divar-432-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در چشمه باقرخان اصفهان" issues=—
+- #433 divar-433-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در ستارخان شیراز" issues=—
+- #434 divar-434-land-sale: PASS leaf=construction-partnership src="قطعه زمین مسکونی با پتانسیل رشد" issues=—
+- #435 divar-435-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در میدان ولیعصر تهران" issues=—
+- #436 divar-436-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در سناباد مشهد" issues=—
+- #437 divar-437-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در رهنان اصفهان" issues=—
+- #438 divar-438-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شاه قلی بیگی شیراز" issues=—
+- #439 divar-439-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در بیلقان کرج" issues=—
+- #440 divar-440-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در میدان میوه و تره‌بار مرکزی تهران" issues=—
+- #441 divar-441-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در سیس‌آباد مشهد" issues=—
+- #442 divar-442-land-sale: PASS leaf=construction-partnership src="۱دانگ و نیم چشمه‌توتی معاوضه با اپارتمان" issues=—
+- #443 divar-443-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در ستار خان شیراز" issues=—
+- #444 divar-444-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در حصار سرجوب کرج" issues=—
+- #445 divar-445-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در نمایشگاه بین ال" issues=—
+- #446 divar-446-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شهرآباد مشهد" issues=—
+- #447 divar-447-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در زیار اصفهان" issues=—
+- #448 divar-448-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در ستارخان شیراز" issues=—
+- #449 divar-449-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در بیلقان کرج" issues=—
+- #450 divar-450-land-sale: PASS leaf=construction-partnership src="خانه کلنگی دوطبقه ویلایی ۴۰۰متر بر۱۲" issues=—
+- #451 divar-451-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در سلام مشهد" issues=—
+- #452 divar-452-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در سرتاوه اصفهان" issues=—
+- #453 divar-453-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در شهرک پرواز شیرا" issues=—
+- #454 divar-454-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در دانشکده علوم پزشکی البرز کرج" issues=—
+- #455 divar-455-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در هرندی تهران" issues=—
+- #456 divar-456-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در رضاشهر مشهد" issues=—
+- #457 divar-457-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در زوان اصفهان" issues=—
+- #458 divar-458-land-sale: PASS leaf=construction-partnership src="زمین مسکونی دهنو" issues=—
+- #459 divar-459-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در بنیاد کرج" issues=—
+- #460 divar-460-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در والفجر تهران" issues=—
+- #461 divar-461-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در شهرک صنعتی مشهد" issues=—
+- #462 divar-462-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شاهین‌شهر اصفهان" issues=—
+- #463 divar-463-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در زرهی شیراز" issues=—
+- #464 divar-464-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در المهدی کرج" issues=—
+- #465 divar-465-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در وحیدیه تهران" issues=—
+- #466 divar-466-land-sale: PASS leaf=construction-partnership src="باغ گوارشگ حاشیه جاده گوارشک" issues=—
+- #467 divar-467-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در ستار اصفهان" issues=—
+- #468 divar-468-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در شهرک فرزانگان شیراز" issues=—
+- #469 divar-469-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در دانشگاه خوارزمی" issues=—
+- #470 divar-470-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در ولنجک تهران" issues=—
+- #471 divar-471-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در شهید علی محمدی مش" issues=—
+- #472 divar-472-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در زرین‌شهر اصفهان" issues=—
+- #473 divar-473-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در شهرک صادقیه شیراز" issues=—
+- #474 divar-474-land-sale: PASS leaf=construction-partnership src="زمین تجاری مسکونی دو بحر بالای پارک کمالشهر" issues=—
+- #475 divar-475-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در ولنجک تهران" issues=—
+- #476 divar-476-villa-rent: FAIL leaf=villa-sale src="اجاره خانه و ویلا در شیرودی مشهد" issues=section:location:rent_as_sale:villa-sale
+- #477 divar-477-office-rent: PASS leaf=shop-rent src="اجاره دفتر کار، اتاق اداری، مطب در شهرک صنعتی مولا" issues=—
+
+### Fix #476 rent_as_sale (villa-rent → villa-sale)
+- Cause: LLM need mixed «برای اجاره» + «می‌خرم»; `textDealMatchesLeaf` only required rentish for rent leaves; `commercialSlugHints` preferred villa-sale when both rentish+saleish.
+- Fix: rent leaves reject strong buy verbs in batch3 guard; prefer strong rent framing over stray می‌خرم in category-intent-engine; registry `1.1.4`.
+- Re-analyze same text → `villa-rent` / `DEPOSIT_AND_RENT`.
+- Soft #477: office-rent → shop-rent (known office/shop ambiguity).
+- #478 divar-478-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شهرک گلها شیراز" issues=—
+- #479 divar-479-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در شهرک احمدیه‎ کرج" issues=—
+- #480 divar-480-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در وصفنارد تهران" issues=—
+- #481 divar-481-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در صیاد شیرازی مشهد" issues=—
+- #482 divar-482-land-sale: PASS leaf=construction-partnership src="زمین نزدیک بافت شهری 50شوبده مابقی اقساطی آخر 406" issues=—
+- #483 divar-483-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شهرک سعدی شیراز" issues=—
+- #484 divar-484-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در شهرک جهان آرا کرج" issues=—
+- #485 divar-485-office-rent: PASS leaf=office-rent src="اجاره اتاق مبله در دفتر وکالت جهت وکیل در مطهری" issues=—
+- #486 divar-486-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در عسگریه مشهد" issues=—
+- #487 divar-487-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه آپارتمان و سوئیت در شهرک مهدیه اصفهان" issues=—
+- #488 divar-488-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در شهرک صادقیه شیراز" issues=—
+- #489 divar-489-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در شهرک احمدیه‎ کرج" issues=—
+- #490 divar-490-land-sale: PASS leaf=construction-partnership src="۱۱۵ متر\u002F۱واحد از ۲ واحد\u002Fمناسب سرمایه گذا" issues=—
+- #491 divar-491-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شهید هاشمی نژاد مشهد" issues=—
+- #492 divar-492-villa-rent: PASS leaf=villa-rent src="اجاره خانه و ویلا در شهریار اصفهان" issues=—
+- #493 divar-493-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در شیخ روزبهان شیر" issues=—
+- #494 divar-494-shop-rent: PASS leaf=shop-rent src="اجاره مغازه و غرفه در شهرک رضوانیه کرج" issues=—
+- #495 divar-495-suite-apartment-rent: PASS leaf=suite-apartment-rent src="اجاره روزانه سوییت سویت اتاق خوابگاه" issues=—
+- #496 divar-496-apartment-sale: PASS leaf=apartment-sale src="فروش آپارتمان در شهرک مهر آباد مشهد" issues=—
+- #497 divar-497-villa-sale: PASS leaf=villa-sale src="فروش خانه و ویلا در شهرک گل نرگس اصفهان" issues=—
+- #498 divar-498-land-sale: PASS leaf=construction-partnership src="فروش باغچه و زمین دشت ارژن" issues=—
+
+### Soft #498
+- land-sale + «مشارکت در ساخت» → construction-partnership (recurring).
+- #499 divar-499-apartment-rent: PASS leaf=apartment-rent src="اجاره آپارتمان در شهر جدید اندیشه کرج" issues=—
+- #500 divar-500-villa-rent: PASS leaf=villa-rent src="خانه ویلایی دو طبقه و جدا جدا هم اجاره داده می‌شود" issues=—
+- #501 divar-501-office-rent: PASS leaf=office-rent src="اجاره دفتر کار، اتاق اداری، مطب در فرهنگ مشهد" issues=—
+
+## DONE — Divar batch3 closed (nextIndex=502 ≥ 500)
+
+Final progress: completed=519, passed=506, failed=13 (counters include early estate-* + re-runs).
+Indexes covered through #501; runner reports `DONE 500`.
+Loop shell killed.
+
+### Hard FAILs fixed this campaign (engine/script)
+- area_missing: numeric-only متر matching
+- mobile-phone "14" vs budget: bare digit models need phone cue; villa+خرید force
+- sale_as_rent / rent_as_sale: deal-type prompt + textDealMatchesLeaf; strong rent vs می‌خرم
+- elevator-repair amenity: force apartment-sale on می‌خرم; discount repair when آپارتمان/خرید
+- registry now `1.1.4`
+
+### Recurring soft (not hard-fail)
+- land + «مشارکت در ساخت» → construction-partnership
+- office-rent ↔ shop-rent ambiguity
+- junk/truncated neighborhoods; occasional city_mismatch_soft

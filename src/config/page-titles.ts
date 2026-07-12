@@ -15,6 +15,8 @@ const EXACT: Record<string, string> = {
   '/chat': 'گفتگوها',
   '/chat/new': 'گفتگوی جدید',
   '/my-business': 'کسب‌وکار من',
+  '/workspace': 'میزکار املاک',
+  '/f': 'فایلینگ املاک',
   '/social-feed': 'فید اجتماعی',
   '/n': 'بازار نیازها',
   '/b': 'بازار کسب‌وکارها',
@@ -53,7 +55,8 @@ function hasOwnH1(path: string): boolean {
     path.startsWith('/n/') ||
     path.startsWith('/b/') ||
     path.startsWith('/v/') ||
-    path.startsWith('/s/')
+    path.startsWith('/s/') ||
+    path.startsWith('/f/')
   );
 }
 

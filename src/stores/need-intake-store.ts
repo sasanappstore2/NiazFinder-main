@@ -15,12 +15,19 @@ import type {
 import type { IntakeAnalysisResult } from '@/intake/types';
 import {
   createNeedDraftFromAnalysis,
+  mergeAnalyzeIntoDraft,
   patchNeedDraftEntities as patchDraftEntities,
   projectNeedDraftFromForm,
   syncNeedDraftFromForm,
   type SyncNeedDraftFormOpts,
+  type IntakeUserFieldLocks,
 } from '@/intake/aggregate/needDraftAggregate';
 import { warnLegacyWriteDetected } from '@/intake/legacy/legacy-guards';
+import type { NeedDraft as NeedDraftContract } from '@/contracts/need-intake';
+
+type AnalyzedDraftCarrier = IntakeAnalysisResult & {
+  draft?: NeedDraftContract;
+};
 
 interface NeedIntakeState {
   step: IntakeStep;
@@ -68,7 +75,8 @@ interface NeedIntakeState {
   setNeedDraftFromAnalysis: (
     analysis: IntakeAnalysisResult,
     sourceText: string,
-    intakeTrace?: import('@/intake/types/analysis-trace').IntakeAnalysisTrace
+    intakeTrace?: import('@/intake/types/analysis-trace').IntakeAnalysisTrace,
+    locks?: IntakeUserFieldLocks
   ) => void;
   patchNeedDraftEntities: (patch: Partial<Record<string, unknown>>) => void;
   syncNeedDraftFromFormFields: (
@@ -101,7 +109,7 @@ interface NeedIntakeState {
 }
 
 const initialState = {
-  step: 'need' as IntakeStep,
+  step: 'compose' as IntakeStep,
   seedText: '',
   needDraft: null as NeedDraft | null,
   parsedIntent: null,
@@ -175,13 +183,27 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
 
   setNeedDraft: (draft) => applyNeedDraft(set, draft),
 
-  setNeedDraftFromAnalysis: (analysis, sourceText, intakeTrace) => {
-    const { leadPhone, listingPreview } = get();
-    const draft = createNeedDraftFromAnalysis(analysis, sourceText, {
-      leadPhone,
-      intakeTrace,
-      existing: { listingPreview: listingPreview ?? undefined },
-    });
+  setNeedDraftFromAnalysis: (analysis, sourceText, intakeTrace, locks) => {
+    const { leadPhone, listingPreview, needDraft } = get();
+    const carrier = analysis as AnalyzedDraftCarrier;
+    const analyzed =
+      carrier.draft ??
+      createNeedDraftFromAnalysis(analysis, sourceText, {
+        leadPhone,
+        intakeTrace,
+        existing: { listingPreview: listingPreview ?? undefined },
+      });
+    const draft = mergeAnalyzeIntoDraft(
+      needDraft,
+      {
+        ...analyzed,
+        sourceText: analyzed.sourceText || sourceText,
+        leadPhone: leadPhone ?? analyzed.leadPhone,
+        listingPreview: analyzed.listingPreview ?? listingPreview ?? undefined,
+        intakeTrace: intakeTrace ?? analyzed.intakeTrace,
+      },
+      locks
+    );
     applyNeedDraft(set, draft);
   },
 

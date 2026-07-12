@@ -106,7 +106,13 @@ export async function runIntakeIntelligence(
     throw new Error('text too short');
   }
 
-  const cacheKey = buildParseCacheKey(text, input.citySlug, input.cityName, input.formHints);
+  const cacheKey = buildParseCacheKey(
+    text,
+    input.citySlug,
+    input.cityName,
+    input.formHints,
+    Boolean(input.forceAi)
+  );
   if (!opts?.skipCache) {
     const cached = await getIntelligenceCache(cacheKey);
     if (cached) {
@@ -132,10 +138,18 @@ export async function runIntakeIntelligence(
   steps.push(createStepTrace('normalize', t, 'unified-normalizer'));
 
   t = performance.now();
-  const categoryPartial = resolveCategory(text, input);
+  const categoryResolved = await resolveCategory(text, input);
+  const categoryPartial = categoryResolved.fields;
   const budgetPartial = resolveBudget(text);
   const propertyPartial = resolveProperty(text);
-  steps.push(createStepTrace('property-budget-category', t, 'resolvers'));
+  steps.push(
+    createStepTrace(
+      'property-budget-category',
+      t,
+      'category-intent-engine',
+      categoryResolved.method
+    )
+  );
 
   t = performance.now();
   const engineAnalysis = extractEntities(norm.lookupKey, text, {
@@ -158,9 +172,9 @@ export async function runIntakeIntelligence(
   scoreFieldConfidence(bag);
   steps.push(createStepTrace('deal-type', t, 'resolveTransactionType'));
 
-  let aiInvoked = false;
-  let aiProvider: string | null = null;
-  let aiLatencyMs = 0;
+  let aiInvoked = categoryResolved.aiInvoked;
+  let aiProvider: string | null = categoryResolved.aiProvider;
+  let aiLatencyMs = categoryResolved.aiLatencyMs;
   let truthVerification: IntakeIntelligenceResult['trace']['truthVerification'];
 
   const aiDisabled = isIntakeAiGloballyDisabled();
@@ -198,7 +212,7 @@ export async function runIntakeIntelligence(
       });
       bag = verifyResult.fields;
       aiProvider = verifyResult.provider;
-      aiLatencyMs = verifyResult.latencyMs;
+      aiLatencyMs += verifyResult.latencyMs;
       truthVerification = {
         invoked: verifyResult.invoked,
         fieldsChecked: verifyResult.fieldsChecked,
@@ -207,7 +221,7 @@ export async function runIntakeIntelligence(
         skipped: verifyResult.skipped,
         latencyMs: verifyResult.latencyMs,
       };
-      aiInvoked = verifyResult.invoked || verifyResult.fieldsChecked.length > 0;
+      aiInvoked = verifyResult.invoked || verifyResult.fieldsChecked.length > 0 || aiInvoked;
       scoreFieldConfidence(bag);
       steps.push(
         createStepTrace(
@@ -232,12 +246,23 @@ export async function runIntakeIntelligence(
         bag
       );
       bag = aiResult.fields;
-      aiInvoked = aiResult.invoked;
-      aiProvider = aiResult.provider;
-      aiLatencyMs = aiResult.latencyMs;
+      aiInvoked = aiResult.invoked || aiInvoked;
+      aiProvider = aiResult.provider ?? aiProvider;
+      aiLatencyMs += aiResult.latencyMs;
       steps.push(createStepTrace('ai-resolver', t, aiProvider ?? 'none', unresolved.join(',')));
     }
   }
+
+  const categoryCandidatesUi = categoryResolved.candidates;
+  const parsedLocationPatch = {
+    ...locationResult.parsedLocationPatch,
+    ...(categoryResolved.intent?.intentType
+      ? { intentType: categoryResolved.intent.intentType }
+      : {}),
+    ...(categoryCandidatesUi.length >= 2 && !bag.categorySlug?.value
+      ? { categoryCandidates: categoryCandidatesUi }
+      : {}),
+  };
 
   t = performance.now();
   const built = buildNeedFromFields({
@@ -247,9 +272,17 @@ export async function runIntakeIntelligence(
     formHints: input.formHints,
     existingDraft: opts?.existingDraft,
     locationScope: { citySlug: input.citySlug, cityName: input.cityName },
-    parsedLocationPatch: locationResult.parsedLocationPatch,
+    parsedLocationPatch,
   });
   const gaps = detectGaps(bag, built.parsedIntent, built.missingFields, text);
+  if (categoryResolved.ambiguousUnresolved && categoryCandidatesUi.length >= 2) {
+    gaps.push({
+      id: 'category_ambiguous',
+      kind: 'uncertain',
+      fieldKey: 'categorySlug',
+      messageFa: 'دسته‌بندی دقیق مشخص نیست — یکی از گزینه‌ها را انتخاب کنید.',
+    });
+  }
   const draft = buildNeedFromFields({
     sourceText: text,
     fields: bag,
@@ -257,9 +290,15 @@ export async function runIntakeIntelligence(
     formHints: input.formHints,
     existingDraft: opts?.existingDraft,
     locationScope: { citySlug: input.citySlug, cityName: input.cityName },
-    parsedLocationPatch: locationResult.parsedLocationPatch,
+    parsedLocationPatch: {
+      ...parsedLocationPatch,
+      categoryCandidates:
+        categoryCandidatesUi.length >= 2
+          ? categoryCandidatesUi
+          : built.parsedIntent.categoryCandidates,
+    },
   }).draft;
-  steps.push(createStepTrace('need-builder', t, 'need-builder'));
+  steps.push(createStepTrace('need-builder', t, 'need-builder', categoryResolved.method));
 
   const nextQ = getNextQuestion(
     draft.parsedIntent.intentType,
@@ -274,6 +313,10 @@ export async function runIntakeIntelligence(
           nextQ.field?.label ??
           '',
       ].filter(Boolean);
+
+  if (categoryResolved.ambiguousUnresolved && categoryCandidatesUi.length >= 2) {
+    recommendedQuestions.unshift('کدام دسته‌بندی به نیاز شما نزدیک‌تر است؟');
+  }
 
   const intelligenceTrace = buildIntelligenceTrace({
     inputText: text,
@@ -301,6 +344,7 @@ export async function runIntakeIntelligence(
     nextQuestion: draft.nextQuestion ?? null,
     recommendedQuestions,
     parsedIntent: draft.parsedIntent,
+    categoryCandidates: categoryCandidatesUi.length >= 2 ? categoryCandidatesUi : undefined,
     suggestedFilters,
     meta: {
       engine: truthVerification?.invoked

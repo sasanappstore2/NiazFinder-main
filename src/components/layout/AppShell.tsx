@@ -14,7 +14,11 @@ import ErrorBoundary from '@/components/shared/ErrorBoundary';
 import { QueryProvider } from '@/components/providers/QueryProvider';
 import { Separator } from '@/components/ui/separator';
 import { useAppStore } from '@/lib/store';
-import { isBusinessProductDetailPath, isBusinessProfileAuraPath } from '@/config/routes';
+import {
+  isBusinessProductDetailPath,
+  isBusinessProfileAuraPath,
+  isFilingPath,
+} from '@/config/routes';
 import { cn } from '@/lib/utils';
 import { getPageTitleForPath } from '@/config/page-titles';
 import { PageHeading } from '@/components/layout/PageHeading';
@@ -45,7 +49,8 @@ export function AppShell({
   const useMinimalChrome =
     minimalChrome && (!minimalChromeHandheldOnly || handheld);
   const effectiveMinimal = useMinimalChrome || intakeMobileChrome;
-  const hideMobileNav = effectiveMinimal || isProductDetail;
+  const filingChrome = isFilingPath(pathname);
+  const hideMobileNav = effectiveMinimal || isProductDetail || filingChrome;
   const hideSiteHeader = intakeMobileChrome;
   const staticPageTitle = getPageTitleForPath(pathname);
 

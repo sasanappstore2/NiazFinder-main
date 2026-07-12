@@ -52,4 +52,20 @@ assert(isBusinessCommercialPropertyIntent(SHOP), 'shop rent intent');
 assert(!isAmbiguousCommercialSubtype(SHOP), 'explicit shop is not ambiguous');
 assert(getBusinessCommercialPropertyCandidates(SHOP).join(',') === 'shop-rent', 'shop only');
 
+const BIZ_APT = 'آپارتمان اجاره برای کسب و کار در ونک';
+assert(isBusinessCommercialPropertyIntent(BIZ_APT), 'apartment+business is commercial');
+assert(
+  !getBusinessCommercialPropertyCandidates(BIZ_APT).includes('apartment-rent'),
+  'must not suggest apartment-rent'
+);
+const parsedBizApt = parseIntentFromText(BIZ_APT);
+assert(
+  parsedBizApt.categorySlug !== 'apartment-rent' &&
+    parsedBizApt.subcategorySlug !== 'apartment-rent',
+  `biz apt must not be residential: ${parsedBizApt.categorySlug}/${parsedBizApt.subcategorySlug}`
+);
+
+const BIZ_UNIT = 'میخوام یه واحد برای کسب و کارم اجاره کنم مشهد';
+assert(isBusinessCommercialPropertyIntent(BIZ_UNIT), 'unit for business is commercial');
+
 console.log('business-commercial-property-intent self-test OK');

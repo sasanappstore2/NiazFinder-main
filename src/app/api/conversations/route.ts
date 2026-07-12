@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { checkRateLimit, clientIp } from '@/lib/security/rate-limit';
+
+const CONVERSATION_POST_RATE_WINDOW_MS = 60_000;
+const CONVERSATION_POST_RATE_MAX = 20;
+const CUID_PATTERN = /^c[a-z0-9]{20,}$/i;
+
+function isValidUserId(value: unknown): value is string {
+  return typeof value === 'string' && CUID_PATTERN.test(value.trim());
+}
 
 /** @deprecated Use `/api/chat` instead. */
 const DEPRECATION_HEADERS = {
@@ -126,9 +135,21 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { otherUserId, requestId } = body;
 
-    if (!otherUserId) {
+    const rate = checkRateLimit(
+      `conversations:post:${user.id}:${clientIp(request)}`,
+      CONVERSATION_POST_RATE_MAX,
+      CONVERSATION_POST_RATE_WINDOW_MS
+    );
+    if (!rate.allowed) {
       return NextResponse.json(
-        { error: 'شناسه کاربر مقابل الزامی است' },
+        { error: 'تعداد درخواست‌ها بیش از حد مجاز است' },
+        { status: 429, headers: { 'Retry-After': String(rate.retryAfterSec ?? 60) } }
+      );
+    }
+
+    if (!isValidUserId(otherUserId)) {
+      return NextResponse.json(
+        { error: 'شناسه کاربر مقابل معتبر نیست' },
         { status: 400 }
       );
     }

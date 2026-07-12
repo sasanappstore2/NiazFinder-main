@@ -11,10 +11,10 @@ MAX_PAGE_TEXT = 14_000
 MAX_EXTRA_PAGES = 3
 
 SHOP_HINTS = re.compile(
-    r"/(shop|product|products|category|categories|store|cart|???????|?????)",
+    r"/(shop|product|products|category|categories|store|cart|foroshgah|mahsulat)(?:/|$)",
     re.I,
 )
-ABOUT_HINTS = re.compile(r"/(about|contact|??????|????)", re.I)
+ABOUT_HINTS = re.compile(r"/(about|contact|about-us|darbare|tamas)(?:/|$)", re.I)
 
 
 def fetch_page_text(url: str, *, timeout: float = 25.0) -> tuple[str, str]:

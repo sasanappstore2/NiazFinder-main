@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { Search, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,20 +19,20 @@ const popularCategories = [
 ];
 
 export default function NotFound() {
+  const router = useRouter();
+  const [query, setQuery] = useState('');
+
   return (
     <div
       dir="rtl"
       className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12"
     >
       <div className="w-full max-w-lg text-center">
-        {/* Creative Illustration */}
         <div className="relative mx-auto mb-8">
-          {/* Large 404 number */}
           <div className="text-[120px] sm:text-[160px] font-black leading-none text-emerald-100 dark:text-emerald-900/40 select-none">
             ۴۰۴
           </div>
 
-          {/* Search icon on top */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             <div className="rounded-full bg-background p-4 shadow-lg border border-border/50">
               <Search className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
@@ -38,7 +40,6 @@ export default function NotFound() {
           </div>
         </div>
 
-        {/* Message */}
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
           صفحه مورد نظر یافت نشد
         </h1>
@@ -47,22 +48,30 @@ export default function NotFound() {
           استفاده کنید یا به یکی از صفحات پرکاربرد مراجعه کنید.
         </p>
 
-        {/* Search */}
         <div className="mt-8 mx-auto max-w-sm">
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={(e) => {
+              e.preventDefault();
+              const q = query.trim();
+              if (q) router.push(`/search?q=${encodeURIComponent(q)}`);
+            }}
             className="relative"
           >
+            <label htmlFor="not-found-search" className="sr-only">
+              جستجو در نیاز فایندر
+            </label>
             <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
+              id="not-found-search"
               type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
               placeholder="جستجو در نیاز فایندر..."
               className="pr-9 h-11"
             />
           </form>
         </div>
 
-        {/* Popular Categories */}
         <div className="mt-8">
           <p className="mb-3 text-sm font-medium text-muted-foreground">
             دسته‌بندی‌های پرطرفدار
@@ -81,7 +90,6 @@ export default function NotFound() {
           </div>
         </div>
 
-        {/* Back to Home */}
         <div className="mt-10">
           <Link href="/">
             <Button
