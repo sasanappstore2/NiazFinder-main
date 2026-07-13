@@ -10,16 +10,26 @@ export async function deductLeadFee(
     referenceId: string;
   }
 ) {
-  const existing = await tx.transaction.findFirst({
-    where: {
-      referenceId: params.idempotencyKey,
-      type: 'PAYMENT',
-      status: 'COMPLETED',
-    },
-  });
-  if (existing) return { transaction: existing, duplicate: true as const };
+  const findExisting = () =>
+    tx.transaction.findFirst({
+      where: {
+        referenceId: params.idempotencyKey,
+        type: 'PAYMENT',
+        status: 'COMPLETED',
+      },
+    });
+
+  // Fast path: skip locking if this fee was already recorded.
+  const preLock = await findExisting();
+  if (preLock) return { transaction: preLock, duplicate: true as const };
 
   await tx.$executeRaw`SELECT id FROM "Wallet" WHERE "userId" = ${params.userId} FOR UPDATE`;
+
+  // Authoritative idempotency re-check AFTER the row lock: a concurrent tx may
+  // have committed the same referenceId while we waited for the lock. Return
+  // gracefully instead of relying solely on Serializable aborts.
+  const locked = await findExisting();
+  if (locked) return { transaction: locked, duplicate: true as const };
 
   let wallet = await tx.wallet.findUnique({ where: { userId: params.userId } });
   if (!wallet) {
@@ -64,16 +74,24 @@ export async function refundLeadFee(
     referenceId: string;
   }
 ) {
-  const existing = await tx.transaction.findFirst({
-    where: {
-      referenceId: params.idempotencyKey,
-      type: 'REFUND',
-      status: 'COMPLETED',
-    },
-  });
-  if (existing) return { transaction: existing, duplicate: true as const };
+  const findExisting = () =>
+    tx.transaction.findFirst({
+      where: {
+        referenceId: params.idempotencyKey,
+        type: 'REFUND',
+        status: 'COMPLETED',
+      },
+    });
+
+  // Fast path: skip locking if this refund was already recorded.
+  const preLock = await findExisting();
+  if (preLock) return { transaction: preLock, duplicate: true as const };
 
   await tx.$executeRaw`SELECT id FROM "Wallet" WHERE "userId" = ${params.businessUserId} FOR UPDATE`;
+
+  // Authoritative idempotency re-check AFTER the row lock.
+  const locked = await findExisting();
+  if (locked) return { transaction: locked, duplicate: true as const };
 
   let wallet = await tx.wallet.findUnique({ where: { userId: params.businessUserId } });
   if (!wallet) {

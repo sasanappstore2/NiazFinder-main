@@ -39,6 +39,14 @@ import { mapApiConversationItem } from '@/lib/chat/map-conversation-item';
 import { mergeOtherUserPresence } from '@/lib/chat/merge-presence';
 import { canEditChatMessage } from '@/lib/chat/message-edit';
 import { streamAiAgentChat } from '@/lib/ai-agent/stream-client';
+import { sortMessagesChronologically, agentReplyClientId } from '@/lib/chat/message-order';
+import {
+  AGENT_EMPTY_AFTER_SANITIZE,
+  containsToolLeakage,
+  sanitizeAgentStreamChunk,
+  sanitizeAgentVisibleText,
+  sanitizePersistedAgentContent,
+} from '@/lib/ai-agent/output-sanitizer';
 
 // ============ Store Interface ============
 
@@ -1227,9 +1235,7 @@ export const useAppStore = create<AppState>((set, get) => ({
           if (m.clientTempId && apiByClientTemp.has(m.clientTempId)) continue;
           byId.set(m.id, m);
         }
-        const forConv = [...byId.values()].sort(
-          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
+        const forConv = sortMessagesChronologically([...byId.values()]);
         const otherConv = state.messages.filter((m) => m.conversationId !== id);
         return { messages: [...otherConv, ...forConv] };
       });
@@ -1358,7 +1364,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       : undefined;
 
     const agentStreamId = `agent-stream-${clientTempId}`;
-    const now = new Date().toISOString();
+    const nowMs = Date.now();
+    const userCreatedAt = new Date(nowMs).toISOString();
+    // Always after the user bubble so sorts / socket merges cannot invert the turn
+    const assistantCreatedAt = new Date(nowMs + 1).toISOString();
 
     const optimisticUser: Message = {
       id: clientTempId,
@@ -1369,7 +1378,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       type: 'TEXT',
       attachmentUrls: [],
       isRead: false,
-      createdAt: now,
+      createdAt: userCreatedAt,
       replyToId: options?.replyToId,
       replyTo,
     };
@@ -1382,7 +1391,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       type: 'TEXT',
       attachmentUrls: [],
       isRead: false,
-      createdAt: now,
+      createdAt: assistantCreatedAt,
+      agentThinking: '',
+      agentStatus: 'thinking',
+      agentStreaming: true,
     };
 
     set((state) => ({
@@ -1393,6 +1405,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     let finalAssistant: Message | null = null;
     let finalUserId = clientTempId;
 
+    const patchStream = (patch: Partial<Message>) => {
+      set((state) => ({
+        messages: state.messages.map((m) =>
+          m.id === agentStreamId ? { ...m, ...patch } : m
+        ),
+      }));
+    };
+
     try {
       await streamAiAgentChat({
         conversationId,
@@ -1401,24 +1421,64 @@ export const useAppStore = create<AppState>((set, get) => ({
         replyToId: options?.replyToId,
         authToken: token,
         onEvent: (event) => {
-          if (event.type === 'token' && typeof event.data.delta === 'string') {
+          if (event.type === 'thinking' && typeof event.data.delta === 'string') {
+            const delta = sanitizeAgentStreamChunk(String(event.data.delta));
+            if (!delta) return;
             set((state) => ({
               messages: state.messages.map((m) =>
                 m.id === agentStreamId
-                  ? { ...m, content: m.content + event.data.delta }
+                  ? {
+                      ...m,
+                      agentThinking: sanitizeAgentStreamChunk((m.agentThinking ?? '') + delta),
+                      agentStatus: 'thinking' as const,
+                      agentStreaming: true,
+                    }
+                  : m
+              ),
+            }));
+          } else if (event.type === 'tool_start' && typeof event.data.name === 'string') {
+            patchStream({
+              agentStatus: 'tool',
+              agentToolName: String(event.data.name),
+              agentStreaming: true,
+            });
+          } else if (event.type === 'token' && typeof event.data.delta === 'string') {
+            const delta = sanitizeAgentStreamChunk(String(event.data.delta));
+            if (!delta) return;
+            set((state) => ({
+              messages: state.messages.map((m) =>
+                m.id === agentStreamId
+                  ? {
+                      ...m,
+                      content: sanitizeAgentStreamChunk(m.content + delta),
+                      agentStatus: 'streaming' as const,
+                      agentStreaming: true,
+                    }
                   : m
               ),
             }));
           } else if (event.type === 'done') {
+            const rawContent = String(event.data.content ?? '');
+            const cleanContent =
+              sanitizePersistedAgentContent(rawContent) || AGENT_EMPTY_AFTER_SANITIZE;
+            if (containsToolLeakage(cleanContent) && !sanitizeAgentVisibleText(cleanContent)) {
+              streamState.error = {
+                code: 'BAD_RESPONSE',
+                message: AGENT_EMPTY_AFTER_SANITIZE,
+              };
+              return;
+            }
             finalAssistant = {
               id: String(event.data.messageId),
               conversationId,
               senderId: botUserId,
-              content: String(event.data.content ?? ''),
+              content: cleanContent,
               type: 'TEXT',
               attachmentUrls: [],
               isRead: false,
               createdAt: new Date().toISOString(),
+              agentStreaming: false,
+              agentStatus: 'done',
             };
             finalUserId = String(event.data.userMessageId ?? clientTempId);
           } else if (event.type === 'error') {
@@ -1431,39 +1491,55 @@ export const useAppStore = create<AppState>((set, get) => ({
       });
 
       if (streamState.error) {
+        // Keep the user message (may already be persisted); only drop the stream bubble
         set((state) => ({
-          messages: state.messages.filter(
-            (m) => m.id !== agentStreamId && m.clientTempId !== clientTempId
-          ),
+          messages: state.messages.filter((m) => m.id !== agentStreamId),
           error: streamState.error!.message,
         }));
         return { ok: false, code: streamState.error.code };
       }
 
       if (finalAssistant) {
-        const replyKey = `agent-reply:${clientTempId}`;
-        set((state) => ({
-          messages: state.messages
-            .filter(
-              (m) =>
-                m.id !== agentStreamId &&
-                m.id !== finalAssistant!.id &&
-                m.clientTempId !== replyKey,
-            )
-            .map((m) =>
-              m.clientTempId === clientTempId ? { ...m, id: finalUserId } : m,
-            )
-            .concat(finalAssistant!),
-          conversations: state.conversations.map((c) =>
-            c.id === conversationId
-              ? {
-                  ...c,
-                  lastMessage: chatMessageListPreview(finalAssistant!.content, 'TEXT'),
-                  lastMessageAt: finalAssistant!.createdAt,
-                }
-              : c
-          ),
-        }));
+        const replyKey = agentReplyClientId(clientTempId);
+        set((state) => {
+          const userRow = state.messages.find((m) => m.clientTempId === clientTempId);
+          const resolvedUserCreatedAt = userRow?.createdAt ?? userCreatedAt;
+          const assistantCreatedAt = new Date(
+            new Date(resolvedUserCreatedAt).getTime() + 2,
+          ).toISOString();
+          const assistant: Message = {
+            ...finalAssistant!,
+            createdAt: assistantCreatedAt,
+            clientTempId: replyKey,
+            agentStreaming: false,
+            agentStatus: 'done',
+          };
+          const merged = sortMessagesChronologically(
+            state.messages
+              .filter(
+                (m) =>
+                  m.id !== agentStreamId &&
+                  m.id !== assistant.id &&
+                  m.clientTempId !== replyKey,
+              )
+              .map((m) =>
+                m.clientTempId === clientTempId ? { ...m, id: finalUserId } : m,
+              )
+              .concat(assistant),
+          );
+          return {
+            messages: merged,
+            conversations: state.conversations.map((c) =>
+              c.id === conversationId
+                ? {
+                    ...c,
+                    lastMessage: chatMessageListPreview(assistant.content, 'TEXT'),
+                    lastMessageAt: assistant.createdAt,
+                  }
+                : c,
+            ),
+          };
+        });
         return { ok: true };
       }
 
@@ -1475,9 +1551,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'خطا در دستیار هوشمند';
       set((state) => ({
-        messages: state.messages.filter(
-          (m) => m.id !== agentStreamId && m.clientTempId !== clientTempId
-        ),
+        messages: state.messages.filter((m) => m.id !== agentStreamId),
         error: message,
       }));
       return { ok: false, code: 'AGENT_ERROR' };

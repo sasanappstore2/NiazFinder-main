@@ -14,9 +14,9 @@ export function LegalDocumentPage({
   showEntityPendingNotice?: boolean;
 }) {
   return (
-    <article className="pb-16" dir="rtl">
+    <article className="pb-16">
       <header className="mb-8 space-y-3">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{meta.title}</h1>
+        <h2 className="text-h3 font-bold tracking-tight">{meta.title}</h2>
         <p className="text-sm text-muted-foreground">
           آخرین به‌روزرسانی: {meta.effectiveDate} · نسخه {meta.version}
         </p>
@@ -78,7 +78,7 @@ export function LegalDocumentPage({
                 </p>
               ))}
               {section.bullets && section.bullets.length > 0 && (
-                <ul className="list-disc space-y-2 ps-5 text-sm leading-7 text-muted-foreground marker:text-emerald-600/70">
+                <ul className="list-disc space-y-2 ps-5 text-sm leading-7 text-muted-foreground marker:text-primary/70">
                   {section.bullets.map((item, i) => (
                     <li key={i}>{item}</li>
                   ))}

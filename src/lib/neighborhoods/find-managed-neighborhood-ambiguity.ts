@@ -76,7 +76,17 @@ export function findManagedNeighborhoodAmbiguity(
   const subAreaMatchCount = countSubAreaPhraseMatches(neighborhoods, compactPhrase);
   const isSharedSubAreaPhrase = subAreaMatchCount >= 2;
 
-  if (subAreaMatchCount === 1) {
+  const hasExactNeighborhoodName = neighborhoods.some(
+    (n) => compact(n.name) === compactPhrase && compactPhrase.length >= 2
+  );
+  const hasSimilarNeighborhoodName = neighborhoods.some((n) => {
+    const nameTokens = phraseTokens(n.name).map((t) => compact(t));
+    return nameTokens.includes(compactPhrase) && compact(n.name) !== compactPhrase;
+  });
+
+  // Only auto-collapse to a single sub-area parent when no same/similar hood name exists
+  // (e.g. «فردوسی» is both a Mashhad hood and a sub-area under «توس فردوسی»).
+  if (subAreaMatchCount === 1 && !hasExactNeighborhoodName && !hasSimilarNeighborhoodName) {
     return findSingleExactSubAreaMatch(neighborhoods, compactPhrase);
   }
 
@@ -94,8 +104,15 @@ export function findManagedNeighborhoodAmbiguity(
   for (const n of neighborhoods) {
     const name = n.name.trim();
     const compactName = compact(name);
+    const nameTokens = phraseTokens(name).map((t) => compact(t));
 
     if (compactName.length >= 3 && compactPhrase === compactName) {
+      add(n, name);
+      continue;
+    }
+
+    // «فردوسی» ↔ «توس فردوسی» / «دانشگاه فردوسی» — same token in the managed name
+    if (compactPhrase.length >= 2 && nameTokens.includes(compactPhrase)) {
       add(n, name);
       continue;
     }
@@ -166,20 +183,30 @@ export function findManagedNeighborhoodAmbiguity(
     const aName = compact(a.neighborhood.name);
     const bName = compact(b.neighborhood.name);
     const phraseLead = compact(tokens[0] ?? phrase);
+    // Exact managed name wins over compound / sub-area parents
+    const aExactName = aName === compactPhrase ? 4 : 0;
+    const bExactName = bName === compactPhrase ? 4 : 0;
+    if (aExactName !== bExactName) return bExactName - aExactName;
     const aNameLead =
-      aName.startsWith(phraseLead) || compact(firstNameToken(a.neighborhood.name)) === phraseLead
-        ? 2
-        : 0;
+      compact(firstNameToken(a.neighborhood.name)) === phraseLead
+        ? 3
+        : aName.startsWith(phraseLead)
+          ? 1
+          : 0;
     const bNameLead =
-      bName.startsWith(phraseLead) || compact(firstNameToken(b.neighborhood.name)) === phraseLead
-        ? 2
-        : 0;
+      compact(firstNameToken(b.neighborhood.name)) === phraseLead
+        ? 3
+        : bName.startsWith(phraseLead)
+          ? 1
+          : 0;
     if (aNameLead !== bNameLead) return bNameLead - aNameLead;
     const aExact = compact(a.matchedLabel) === phraseLead ? 1 : 0;
     const bExact = compact(b.matchedLabel) === phraseLead ? 1 : 0;
     if (aExact !== bExact) return bExact - aExact;
     if (aName === phraseLead && bName !== phraseLead) return -1;
     if (bName === phraseLead && aName !== phraseLead) return 1;
+    // Prefer shorter names when equally related («فردوسی» before «توس فردوسی»)
+    if (aName.length !== bName.length) return aName.length - bName.length;
     return a.neighborhood.name.localeCompare(b.neighborhood.name, 'fa');
   });
 }

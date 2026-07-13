@@ -139,6 +139,7 @@ export interface ParsedIntent {
 }
 
 export type IntakeStep =
+  | 'compose'
   | 'need'
   | 'details'
   | 'location'

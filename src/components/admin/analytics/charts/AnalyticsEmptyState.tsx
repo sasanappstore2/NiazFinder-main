@@ -1,16 +1,21 @@
 'use client';
 
+import { AdminEmptyState } from '@/components/admin/ui/AdminSkeleton';
+
 export function AnalyticsEmptyState({
   title = 'داده‌ای موجود نیست',
-  description,
+  description = 'فیلترها را تغییر دهید یا بازه زمانی دیگری انتخاب کنید.',
+  action,
 }: {
   title?: string;
   description?: string;
+  action?: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-[160px] flex-col items-center justify-center rounded-xl border border-dashed border-(--color-mainBorder) p-6 text-center">
-      <p className="text-sm font-medium">{title}</p>
-      {description && <p className="mt-1 text-xs text-(--color-secondaryText)">{description}</p>}
-    </div>
+    <AdminEmptyState
+      title={title}
+      description={description}
+      action={action}
+    />
   );
 }

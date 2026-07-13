@@ -26,22 +26,41 @@ import { intakePrimaryCta } from './intake-ui-tokens';
 import { INTAKE_COPY } from './intake-copy';
 import { cn } from '@/lib/utils';
 import type { IntakeWizardGuardContext } from '@/lib/need-intake/intake-wizard-guards';
+import { isIntakeComposeStep } from '@/lib/need-intake/intake-wizard-steps';
+import { getIntakeAnalysisMode } from '@/lib/intake/rules-only-mode';
 import { useNeedIntakeStore } from '@/stores/need-intake-store';
 import { getLeadPhone, setLeadPhone as persistLeadPhone } from '@/lib/lead-draft';
 import { buildSummary } from '@/lib/need-intake/question-engine';
 import { useIntakeFormProjection } from '@/hooks/use-intake-form-projection';
 import { useIntakeListingCopy } from '@/hooks/use-intake-listing-copy';
 import { useIntakeIntelligence } from '@/hooks/use-intake-intelligence';
+import { intakeTextSignature, useRealtimeExtraction } from '@/hooks/use-realtime-extraction';
+import {
+  mergeIntakeSources,
+  pickNeighborhoodSoftFill,
+  type SmartFieldProposal,
+} from '@/lib/need-intake/intake-merge-policy';
+import { UNDERSTANDING_CATEGORY_MIN_CONFIDENCE } from '@/lib/need-intake/build-intake-understanding';
+import {
+  NEIGHBORHOOD_SOFT_FILL_MIN_CONFIDENCE,
+  mayAutoApplyLocation,
+  sanitizeDraftForComposeAutoApply,
+} from '@/lib/need-intake/compose-auto-apply';
 import { useIntakeAnalyze } from '@/hooks/use-intake-analyze';
 import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
 import { resolveDeterministicListingTitle } from '@/lib/need-intake/resolve-listing-title';
-import { validateNeedDraftForPublish } from '@/intake/validation/publishValidator';
+import {
+  generateSmartDescription,
+  generateSmartTitle,
+} from '@/lib/need-intake/smart/utils/title-generator';
+import { validateNeedDraftForPublish, getPublishReadiness } from '@/intake/validation/publishValidator';
 import {
   canProceedToIntakeLocation,
   composeIntakeSourceText,
 } from '@/lib/need-intake/compose-source-text';
 import { isAmbiguousCommercialSubtype } from '@/lib/need-intake/business-commercial-property-intent';
 import { buildParsedIntentFromForm, recordToEntities } from '@/intake/aggregate/needDraftAggregate';
+import { resolveRequiredFields } from '@/intake/template/required-field-resolver';
 import { resolveIntakeCategory } from '@/lib/need-intake/resolve-intake-category';
 import {
   resolveIntakeCitySelectValue,
@@ -50,7 +69,7 @@ import {
 import { normalizeCategoryPair } from '@/config/categories';
 import { locationCityIdToSlug } from '@/lib/search/city-slugs';
 import { IntakeTemplateForm } from '@/intake/rendering/IntakeTemplateForm';
-import type { ParsedIntent } from '@/contracts/need-intake';
+import type { NeedDraft, ParsedIntent } from '@/contracts/need-intake';
 import {
   computeEnabledSectionsForLocation,
   useIntakeDraft,
@@ -65,6 +84,23 @@ interface NeedIntakePanelProps {
   initialCategory?: string | null;
   initialCity?: string | null;
   initialPhone?: string | null;
+}
+
+function smartProposalsEqual(a: SmartFieldProposal[], b: SmartFieldProposal[]): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    const left = a[i];
+    const right = b[i];
+    if (
+      left.fieldKey !== right.fieldKey ||
+      left.confidence !== right.confidence ||
+      left.value !== right.value ||
+      left.label !== right.label
+    ) {
+      return false;
+    }
+  }
+  return true;
 }
 
 export function NeedIntakePanel({
@@ -111,6 +147,35 @@ export function NeedIntakePanel({
   const [titleEnriching, setTitleEnriching] = useState(false);
   const [descEnriching, setDescEnriching] = useState(false);
   const [liveSummary, setLiveSummary] = useState('');
+  /** Fields the user manually edited — soft-fill must not overwrite (Batch 7). */
+  const userOverriddenFieldsRef = useRef(new Set<string>());
+  const softFillActiveRef = useRef(false);
+  const sourceCoreRef = useRef('');
+  const lastSoftFillTxRef = useRef<string | null>(null);
+
+  const RENT_SCHEMA_FIELDS = ['monthlyRent', 'deposit', 'rahnAmount'] as const;
+
+  const markUserFieldOverride = useCallback((fieldKey: string) => {
+    if (softFillActiveRef.current) return;
+    userOverriddenFieldsRef.current.add(fieldKey);
+  }, []);
+
+  const pruneOverridesForSchema = useCallback((txType: string | null | undefined) => {
+    const isBuy = txType === 'BUY' || txType === 'SELL';
+    const isRent =
+      txType === 'RENT' ||
+      txType === 'DEPOSIT_AND_RENT' ||
+      txType === 'FULL_DEPOSIT';
+    if (isBuy) {
+      for (const key of RENT_SCHEMA_FIELDS) {
+        userOverriddenFieldsRef.current.delete(key);
+      }
+    } else if (isRent) {
+      userOverriddenFieldsRef.current.delete('budget');
+      userOverriddenFieldsRef.current.delete('budgetMin');
+      userOverriddenFieldsRef.current.delete('budgetMax');
+    }
+  }, []);
 
   const location = useIntakeLocation({
     initialCity,
@@ -160,6 +225,22 @@ export function NeedIntakePanel({
     },
     locationContext,
   });
+
+  const patchIntakeFieldFromUser = useCallback(
+    (key: string, value: string | number | string[]) => {
+      markUserFieldOverride(key);
+      draft.patchIntakeField(key, value);
+    },
+    [draft.patchIntakeField, markUserFieldOverride]
+  );
+
+  useEffect(() => {
+    const core = composeIntakeSourceText(needText, detailsText).replace(/\s+/g, ' ').trim();
+    if (core !== sourceCoreRef.current) {
+      sourceCoreRef.current = core;
+      userOverriddenFieldsRef.current.clear();
+    }
+  }, [needText, detailsText]);
 
   usePostIntakeTelemetry({
     step,
@@ -221,19 +302,25 @@ export function NeedIntakePanel({
   });
 
   const steps: Array<{
-    key: 'need' | 'details' | 'location' | 'preview';
+    key: 'compose' | 'location' | 'preview';
     title: string;
     subtitle: string;
   }> = [
-    { key: 'need', title: 'نیاز', subtitle: 'چه چیزی می‌خواهید؟' },
-    { key: 'details', title: 'توضیحات', subtitle: 'جزئیات کاربردی را اضافه کنید' },
-    { key: 'location', title: 'دسته و مکان', subtitle: 'دسته، شهر و محله را تایید کنید' },
-    { key: 'preview', title: 'پیش‌نمایش و انتشار', subtitle: 'بازبینی نهایی قبل از ثبت' },
+    { key: 'compose', title: INTAKE_COPY.stepComposeTitle, subtitle: 'چه چیزی می‌خواهید؟' },
+    { key: 'location', title: INTAKE_COPY.stepFormTitle, subtitle: 'دسته، مکان و بودجه را تایید کنید' },
+    { key: 'preview', title: INTAKE_COPY.stepPreviewTitle, subtitle: 'بازبینی نهایی قبل از ثبت' },
   ];
-  const activeStepIndex = Math.max(0, steps.findIndex((s) => s.key === step));
+  const activeStepIndex = Math.max(
+    0,
+    steps.findIndex((s) =>
+      s.key === 'compose' ? isIntakeComposeStep(step) : s.key === step
+    )
+  );
   const progress = ((activeStepIndex + 1) / steps.length) * 100;
   const stepTitleRef = useRef<HTMLHeadingElement | null>(null);
-  const homeSeedHighlight = Boolean(initialSeed.trim()) && step === 'details';
+  const homeSeedHighlight = Boolean(initialSeed.trim()) && isIntakeComposeStep(step);
+  const [showMoreDetails, setShowMoreDetails] = useState(() => Boolean(detailsText.trim()));
+  const configuredAnalysisMode = getIntakeAnalysisMode();
 
   const wizardGuardContext = useMemo<IntakeWizardGuardContext>(
     () => ({
@@ -269,23 +356,36 @@ export function NeedIntakePanel({
   }, [step]);
 
   const intakeAnalyzeCityHint = useMemo(() => {
+    // RFC-0004: analyze scope only from URL city or explicit user lock — never auto-fill.
+    const locked = location.cityLockedByUser;
+    const urlCity = initialCity?.trim() || '';
+    if (!locked && !urlCity) {
+      return { cityName: undefined, citySlug: undefined };
+    }
+    const nameSource = locked ? location.selectedCity.trim() || urlCity : urlCity;
     const resolvedName =
       resolveIntakeCitySelectValue(location.sortedCities, {
-        cityName: location.selectedCity,
-        citySlug: initialCity,
-      }) ?? location.selectedCity.trim();
+        cityName: nameSource,
+        citySlug: urlCity || undefined,
+      }) ?? nameSource;
     const meta = resolvedName
       ? resolveManagedCityForNeighborhoods(location.sortedCities, resolvedName)
       : null;
     const citySlug =
-      initialCity?.trim() ||
+      (locked && meta ? locationCityIdToSlug(meta.id) : '') ||
+      urlCity ||
       (meta ? locationCityIdToSlug(meta.id) : '') ||
       undefined;
     return {
       cityName: resolvedName || undefined,
-      citySlug,
+      citySlug: citySlug || undefined,
     };
-  }, [location.selectedCity, location.sortedCities, initialCity]);
+  }, [
+    location.cityLockedByUser,
+    location.selectedCity,
+    location.sortedCities,
+    initialCity,
+  ]);
 
   const { projectedDraft, liveDraftForCopy, liveCopyStreamEnabled } = useIntakeFormProjection({
     needText,
@@ -304,17 +404,148 @@ export function NeedIntakePanel({
     [needText, detailsText]
   );
 
+  /** Claude Smart Intake Step 4 — rules-first realtime extractor (API), complements useIntakeIntelligence */
+  const smartRealtime = useRealtimeExtraction({
+    debounceMs: 300,
+    preferredCity: intakeAnalyzeCityHint.cityName || undefined,
+    preferredCitySlug: intakeAnalyzeCityHint.citySlug || undefined,
+    useAI: false,
+    enabled: isIntakeComposeStep(step) && Boolean(composedSourceText.trim()),
+  });
+  const { extract: smartExtract, result: smartResult, extracting: smartExtracting } =
+    smartRealtime;
+
+  useEffect(() => {
+    if (!isIntakeComposeStep(step)) return;
+    if (!composedSourceText.trim()) return;
+    // Call as free function (not method) — avoids debounce `this` context bugs.
+    smartExtract(needText, detailsText);
+  }, [composedSourceText, needText, detailsText, step, smartExtract]);
+
+  /** Smart proposals from merge policy — never auto-written into NeedDraft. */
+  const [smartProposals, setSmartProposals] = useState<SmartFieldProposal[]>([]);
+  const neighborhoodSoftFill = useMemo(() => {
+    const soft = pickNeighborhoodSoftFill(
+      smartResult,
+      {
+        cityLockedByUser: location.cityLockedByUserRef.current,
+        neighborhoodLockedByUser: location.neighborhoodLockedByUserRef.current,
+      },
+      NEIGHBORHOOD_SOFT_FILL_MIN_CONFIDENCE
+    );
+    if (soft) {
+      return { neighborhood: soft.neighborhood, confidence: soft.confidence };
+    }
+    const hood = smartProposals.find((p) => p.fieldKey === 'neighborhood');
+    if (!hood || typeof hood.value !== 'string') return null;
+    if (hood.confidence < NEIGHBORHOOD_SOFT_FILL_MIN_CONFIDENCE) return null;
+    return { neighborhood: hood.value, confidence: hood.confidence };
+  }, [smartProposals, smartResult, location.cityLockedByUser, location.selectedNeighborhood]);
+
+  useEffect(() => {
+    // Dual-pipeline merge: intelligence owns NeedDraft; smart is proposal-only.
+    // Do not depend on the `location` object — it is a new reference every render.
+    if (!isIntakeComposeStep(step)) {
+      setSmartProposals((prev) => (prev.length === 0 ? prev : []));
+      return;
+    }
+    if (!smartResult || smartExtracting) return;
+    const currentSig = intakeTextSignature(needText, detailsText);
+    const merged = mergeIntakeSources({
+      currentSourceSig: currentSig,
+      locks: {
+        categoryLockedByUser: draft.categoryLockedByUser,
+        cityLockedByUser: location.cityLockedByUserRef.current,
+        neighborhoodLockedByUser: location.neighborhoodLockedByUserRef.current,
+        dealLockedByUser:
+          needDraft?.answers?._userSetDealType === true ||
+          (typeof needDraft?.answers?.dealType === 'string' &&
+            draft.categoryLockedByUser &&
+            Boolean(needDraft.answers.dealType)),
+        lockedFieldKeys: [...userOverriddenFieldsRef.current],
+      },
+      smart: {
+        result: smartResult,
+        sourceSig: smartResult._sourceSig ?? currentSig,
+        receivedAtMs: Date.now(),
+        requestId: smartResult._requestId,
+      },
+      intelligence:
+        needDraft && composedSourceText.trim()
+          ? {
+              draft: needDraft,
+              sourceSig: currentSig,
+              receivedAtMs: Date.now(),
+            }
+          : null,
+    });
+    if (!merged.smartIsFresh) {
+      setSmartProposals((prev) => (prev.length === 0 ? prev : []));
+      return;
+    }
+    setSmartProposals((prev) =>
+      smartProposalsEqual(prev, merged.proposals) ? prev : merged.proposals
+    );
+    lastSoftFillTxRef.current = smartResult.transaction.type ?? lastSoftFillTxRef.current;
+  }, [
+    step,
+    smartResult,
+    smartExtracting,
+    needText,
+    detailsText,
+    needDraft,
+    composedSourceText,
+    draft.categoryLockedByUser,
+  ]);
+
+  useEffect(() => {
+    if (!isIntakeComposeStep(step)) {
+      smartRealtime.clear();
+    }
+  }, [step, smartRealtime.clear]);
   const intelligenceLiveEnabled =
-    Boolean(composedSourceText.trim()) && (step === 'need' || step === 'details');
+    Boolean(composedSourceText.trim()) && isIntakeComposeStep(step);
 
   const intakeAnalyzeFormHints = useMemo(() => {
-    if (!draft.categoryLockedByUser) return undefined;
+    const lockedFieldKeys: string[] = [];
+    const dealLocked =
+      needDraft?.answers?._userSetDealType === true ||
+      (typeof needDraft?.answers?.dealType === 'string' &&
+        draft.categoryLockedByUser &&
+        Boolean(needDraft.answers.dealType));
+    if (dealLocked) lockedFieldKeys.push('dealType', 'transactionType');
+
+    // Only user-confirmed locks — URL category/city are analyze hints, not locks.
+    const hasAnyLock =
+      draft.categoryLockedByUser ||
+      location.cityLockedByUserRef.current ||
+      location.neighborhoodLockedByUserRef.current ||
+      lockedFieldKeys.length > 0;
+
+    if (!hasAnyLock) return undefined;
+
     return {
-      categorySlug: selectedCategory || undefined,
-      subcategorySlug: selectedSubcategory || undefined,
-      categoryLockedByUser: true as const,
+      categorySlug: draft.categoryLockedByUser ? selectedCategory || undefined : undefined,
+      subcategorySlug: draft.categoryLockedByUser ? selectedSubcategory || undefined : undefined,
+      city: location.cityLockedByUserRef.current ? location.selectedCity || undefined : undefined,
+      neighborhood: location.neighborhoodLockedByUserRef.current
+        ? location.selectedNeighborhood || undefined
+        : undefined,
+      categoryLockedByUser: draft.categoryLockedByUser || undefined,
+      cityLockedByUser: location.cityLockedByUserRef.current || undefined,
+      neighborhoodLockedByUser: location.neighborhoodLockedByUserRef.current || undefined,
+      dealLockedByUser: dealLocked || undefined,
+      lockedFieldKeys: lockedFieldKeys.length ? lockedFieldKeys : undefined,
     };
-  }, [selectedCategory, selectedSubcategory, draft.categoryLockedByUser]);
+  }, [
+    selectedCategory,
+    selectedSubcategory,
+    draft.categoryLockedByUser,
+    location.selectedCity,
+    location.selectedNeighborhood,
+    needDraft?.answers?._userSetDealType,
+    needDraft?.answers?.dealType,
+  ]);
 
   const intakeIntelligence = useIntakeIntelligence({
     text: composedSourceText,
@@ -322,19 +553,47 @@ export function NeedIntakePanel({
     citySlug: intakeAnalyzeCityHint.citySlug,
     cityName: intakeAnalyzeCityHint.cityName,
     formHints: intakeAnalyzeFormHints,
-    debounceMs: step === 'details' ? 500 : 600,
-    forceAi: step === 'need',
-    onDraft: (d) => {
-      setNeedDraft(d);
+    debounceMs: 500,
+    forceAi: configuredAnalysisMode === 'ai',
+    // Auto-apply in background — user can correct fields on the location step.
+    onDraft: (d: NeedDraft) => {
+      if (!isIntakeComposeStep(step)) return;
+      const sanitized = sanitizeDraftForComposeAutoApply(d);
+      setNeedDraft(sanitized);
+
+      // M2/M4: clear stale auto-fills when new analysis refuses to write.
+      const entities = sanitized.entities as Record<string, unknown> | undefined;
+      if (
+        !draft.categoryLockedByUserRef.current &&
+        !entities?.categorySlug &&
+        !entities?.subcategorySlug &&
+        !sanitized.parsedIntent?.categorySlug &&
+        !sanitized.parsedIntent?.subcategorySlug
+      ) {
+        if (selectedCategory || selectedSubcategory) {
+          setSelectedCategory('');
+          setSelectedSubcategory('');
+        }
+      }
+
       if (!draft.categoryLockedByUserRef.current) {
         const ambiguousCommercial = isAmbiguousCommercialSubtype(composedSourceText);
-        const entities = d.entities as Record<string, unknown> | undefined;
         const leaf =
           (typeof entities?.subcategorySlug === 'string' && entities.subcategorySlug) ||
           (typeof entities?.categorySlug === 'string' && entities.categorySlug) ||
-          d.parsedIntent?.subcategorySlug ||
-          d.parsedIntent?.categorySlug;
-        if (leaf && !ambiguousCommercial) {
+          sanitized.parsedIntent?.subcategorySlug ||
+          sanitized.parsedIntent?.categorySlug;
+        const categoryConfidence = Math.max(
+          Number(sanitized.fieldMeta?.subcategorySlug?.confidence ?? 0),
+          Number(sanitized.fieldMeta?.categorySlug?.confidence ?? 0)
+        );
+        const currentLeaf = selectedSubcategory || selectedCategory;
+        if (
+          leaf &&
+          !ambiguousCommercial &&
+          leaf !== currentLeaf &&
+          categoryConfidence >= UNDERSTANDING_CATEGORY_MIN_CONFIDENCE
+        ) {
           draft.applyCategorySlug(leaf);
         }
       }
@@ -342,27 +601,74 @@ export function NeedIntakePanel({
         !location.cityLockedByUserRef.current ||
         !location.neighborhoodLockedByUserRef.current
       ) {
-        location.applyDetectedLocationFromDraft(d);
+        location.applyDetectedLocationFromDraft(sanitized);
+      }
+
+      // Clear neighborhood auto-fill when refused.
+      if (
+        !location.neighborhoodLockedByUserRef.current &&
+        !mayAutoApplyLocation(sanitized, 'neighborhood') &&
+        location.selectedNeighborhood.trim()
+      ) {
+        location.setSelectedNeighborhood('');
+      }
+      if (
+        !location.cityLockedByUserRef.current &&
+        !mayAutoApplyLocation(sanitized, 'city') &&
+        location.selectedCity.trim() &&
+        !initialCity?.trim()
+      ) {
+        location.setSelectedCity('');
       }
     },
   });
 
+  const analysisMode = intakeIntelligence.analysisMode ?? configuredAnalysisMode;
+
   const intakeFormContext = useMemo(
-    () => ({
-      ...draft.intakeRenderContext,
-      filterSuggestions: intakeIntelligence.filterSuggestionChips,
-      criticalFieldKeys: new Set(draft.intakeTemplate.criticalFields),
-      onFilterSuggestionSelect: (fieldKey: string, value: string | number | string[]) => {
-        const parsed =
-          typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : value;
-        draft.patchIntakeField(fieldKey, parsed as string | number | string[]);
-      },
-    }),
+    () => {
+      const leaf =
+        selectedSubcategory ||
+        selectedCategory ||
+        String(
+          (needDraft?.entities as Record<string, unknown> | undefined)?.subcategorySlug ??
+            (needDraft?.entities as Record<string, unknown> | undefined)?.categorySlug ??
+            ''
+        );
+      const required = resolveRequiredFields({
+        categorySlug: leaf,
+        answers: (needDraft?.answers ?? {}) as Record<string, unknown>,
+        entities: (needDraft?.entities ?? {}) as Record<string, unknown>,
+        fieldConfidence: Object.fromEntries(
+          Object.entries(needDraft?.fieldMeta ?? {}).map(([k, v]) => [k, v.confidence])
+        ),
+      });
+      return {
+        ...draft.intakeRenderContext,
+        onFieldChange: patchIntakeFieldFromUser,
+        filterSuggestions: intakeIntelligence.filterSuggestionChips,
+        criticalFieldKeys: new Set(draft.intakeTemplate.criticalFields),
+        missingFieldKeys: new Set([
+          ...required.missingFieldKeys,
+          ...required.lowConfidenceKeys,
+        ]),
+        onFilterSuggestionSelect: (fieldKey: string, value: string | number | string[]) => {
+          const parsed =
+            typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : value;
+          patchIntakeFieldFromUser(fieldKey, parsed as string | number | string[]);
+        },
+      };
+    },
     [
       draft.intakeRenderContext,
       draft.intakeTemplate.criticalFields,
-      draft.patchIntakeField,
+      patchIntakeFieldFromUser,
       intakeIntelligence.filterSuggestionChips,
+      needDraft?.answers,
+      needDraft?.entities,
+      needDraft?.fieldMeta,
+      selectedCategory,
+      selectedSubcategory,
     ]
   );
 
@@ -371,13 +677,13 @@ export function NeedIntakePanel({
   }, [step, setError]);
 
   useEffect(() => {
-    if (step !== 'need' && step !== 'details' && step !== 'location') return;
+    if (!isIntakeComposeStep(step) && step !== 'location') return;
     const draftForShards = needDraft ?? projectedDraft;
     const progressOpts = { needText, detailsText };
     setAiShardStatus(
       shardStatusFromNeedDraft(draftForShards, intakeIntelligence.analyzing || aiEnriching, progressOpts)
     );
-    if (step === 'need' || step === 'details') {
+    if (isIntakeComposeStep(step)) {
       setAiEnriching(intakeIntelligence.analyzing);
     }
   }, [
@@ -410,7 +716,7 @@ export function NeedIntakePanel({
   const showAiShardBar = composedSourceText.trim().length >= 3;
 
   useEffect(() => {
-    if (step !== 'details' || !composedSourceText.trim()) return;
+    if (!isIntakeComposeStep(step) || !composedSourceText.trim()) return;
     if (intakeIntelligence.isFreshForText(composedSourceText)) return;
     void intakeIntelligence.analyzeNow();
   }, [step, composedSourceText, intakeIntelligence.analyzeNow, intakeIntelligence.isFreshForText]);
@@ -428,22 +734,21 @@ export function NeedIntakePanel({
     location.setSelectedNeighborhood('');
     const seed = initialSeed.trim();
     setNeedText(seed);
+    // URL city is an analyze hint only — do not lock or preselect until user confirms.
     if (initialCity?.trim()) {
       pendingInitialCityRef.current = initialCity.trim();
-      location.lockCityByUser();
     } else {
       pendingInitialCityRef.current = null;
-      location.setSelectedCity('');
     }
+    location.setSelectedCity('');
     const phone = initialPhone?.trim() || getLeadPhone();
     if (phone) setLeadPhone(phone);
 
     if (seed) {
       setSeedText(seed);
-      setStep('details');
-    } else {
-      setStep('need');
+      setShowMoreDetails(false);
     }
+    setStep('compose');
   }, [
     initialSeed,
     initialCity,
@@ -454,29 +759,21 @@ export function NeedIntakePanel({
     setSeedText,
     location.setSelectedCity,
     location.resetLocationLocks,
-    location.lockCityByUser,
     draft.resetCategoryLocks,
   ]);
 
   useEffect(() => {
-    const pending = pendingInitialCityRef.current;
-    if (!pending || location.sortedCities.length === 0) return;
-    const resolved =
-      resolveIntakeCitySelectValue(location.sortedCities, {
-        cityName: pending,
-        citySlug: pending,
-      }) ?? pending;
-    location.setSelectedCity(resolved);
+    // Keep pending URL city as analyze hint via intakeAnalyzeCityHint; do not fill the form.
     pendingInitialCityRef.current = null;
-  }, [initialCity, location.sortedCities, location.setSelectedCity]);
+  }, [initialCity, location.sortedCities]);
+
+  // URL category=… is a hint for ranking, not a form lock / auto-select.
 
   useEffect(() => {
-    if (!initialCategory?.trim()) return;
-    draft.applyInitialCategoryIfNeeded(initialCategory.trim());
-  }, [initialCategory, draft.applyInitialCategoryIfNeeded]);
+    if (!isIntakeComposeStep(step)) return;
 
-  useEffect(() => {
-    if (step !== 'need' && step !== 'details') return;
+    // Live analyze is source of truth — only project locally as offline/rules fallback.
+    if (intelligenceLiveEnabled) return;
 
     const timer = window.setTimeout(() => {
       const composed = composeIntakeSourceText(needText, detailsText).trim();
@@ -511,13 +808,14 @@ export function NeedIntakePanel({
     projectNeedDraftFromFormFields,
     setNeedDraft,
     draft.categoryLockedByUserRef,
+    intelligenceLiveEnabled,
   ]);
 
   useEffect(() => {
-    if (step !== 'need' && step !== 'details') return;
+    if (!isIntakeComposeStep(step)) return;
     if (!needText.trim()) return;
     if (draft.categoryLockedByUserRef.current) return;
-    // Category comes from /api/intake/analyze (rules engine) while typing — avoid local overwrite.
+    // Category comes from /api/intake/analyze while typing — avoid local overwrite.
     if (intelligenceLiveEnabled) return;
 
     const timer = window.setTimeout(() => {
@@ -541,7 +839,7 @@ export function NeedIntakePanel({
   }, [step, needText, detailsText, selectedCategory, selectedSubcategory, draft, intelligenceLiveEnabled]);
 
   useEffect(() => {
-    if (step === 'need' || step === 'details' || step === 'done' || step === 'publishing') return;
+    if (isIntakeComposeStep(step) || step === 'done' || step === 'publishing') return;
     const timer = window.setTimeout(() => {
       if (!needText.trim()) return;
       syncNeedDraftFromFormFields(formFields, {
@@ -553,23 +851,37 @@ export function NeedIntakePanel({
 
   useEffect(() => {
     const composed = composeIntakeSourceText(needText, detailsText).trim();
-    if ((step === 'need' || step === 'details') && intakeIntelligence.intentGist) {
+    if (isIntakeComposeStep(step) && intakeIntelligence.agent?.description) {
+      setLiveSummary(intakeIntelligence.agent.description);
+      return;
+    }
+    if (isIntakeComposeStep(step) && intakeIntelligence.intentGist) {
       setLiveSummary(intakeIntelligence.intentGist);
       return;
     }
-    let d = needDraft ?? projectedDraft;
-    if (step === 'need' || step === 'details') {
-      if (projectedDraft) {
-        d = projectedDraft;
-      } else if (needDraft?.sourceText?.trim() !== composed) {
-        d = null;
-      }
+    // Prefer analyze draft when live intelligence is on; local projection is fallback only.
+    let d = needDraft;
+    if (!d && !intelligenceLiveEnabled) {
+      d = projectedDraft;
+    } else if (isIntakeComposeStep(step) && needDraft?.sourceText?.trim() !== composed && !intelligenceLiveEnabled) {
+      d = projectedDraft;
     }
     if (!d) {
-      setLiveSummary('');
+      const softHood =
+        neighborhoodSoftFill && neighborhoodSoftFill.confidence >= 0.75
+          ? `محله پیشنهادی: ${neighborhoodSoftFill.neighborhood}`
+          : '';
+      setLiveSummary(softHood);
       return;
     }
-    setLiveSummary(buildSummary(d.parsedIntent, d.answers, d.sourceText));
+    const base = buildSummary(d.parsedIntent, d.answers, d.sourceText);
+    const softHood =
+      neighborhoodSoftFill &&
+      neighborhoodSoftFill.confidence >= 0.75 &&
+      !location.selectedNeighborhood
+        ? ` · محله پیشنهادی: ${neighborhoodSoftFill.neighborhood}`
+        : '';
+    setLiveSummary(`${base}${softHood}`);
   }, [
     needDraft,
     projectedDraft,
@@ -577,6 +889,10 @@ export function NeedIntakePanel({
     detailsText,
     step,
     intakeIntelligence.intentGist,
+    intakeIntelligence.agent?.description,
+    intelligenceLiveEnabled,
+    neighborhoodSoftFill,
+    location.selectedNeighborhood,
   ]);
 
   const buildParsedFromForm = useCallback((): ParsedIntent => {
@@ -609,27 +925,6 @@ export function NeedIntakePanel({
     needDraft?.parsedIntent,
     draft.categoryLockedByUserRef,
   ]);
-
-  const goToDetails = async () => {
-    if (!needText.trim()) {
-      toast.info('ابتدا نیاز خود را بنویسید');
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await intakeIntelligence.analyzeNow();
-      if (!res && needText.trim().length >= 3) {
-        toast.warning('تحلیل هوش مصنوعی کامل نشد؛ می‌توانید ادامه دهید');
-      }
-      setSeedText(needText.trim());
-      setStep('details');
-    } catch {
-      toast.error('خطا در تحلیل نیاز');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const { goToLocation, prefetchLocationAnalyze } = useIntakeAnalyze({
     needText,
@@ -667,6 +962,19 @@ export function NeedIntakePanel({
     analyzeNow: intakeIntelligence.analyzeNow,
     waitForAnalysis: intakeIntelligence.waitForAnalysis,
   });
+
+  const goToForm = async () => {
+    if (!needText.trim()) {
+      toast.info('ابتدا نیاز خود را بنویسید');
+      return;
+    }
+    if (!canProceedToIntakeLocation(needText, detailsText)) {
+      toast.info('یک جمله کامل‌تر بنویسید یا توضیح بیشتری اضافه کنید');
+      return;
+    }
+    setSeedText(needText.trim());
+    goToLocation();
+  };
 
   const goToPreview = () => {
     const draftEntities = needDraft ? recordToEntities(needDraft.entities) : null;
@@ -707,9 +1015,14 @@ export function NeedIntakePanel({
     setError(null);
     const composed = composeListingFromDraft(synced);
     const deterministicTitle = resolveDeterministicListingTitle(synced).title;
+    const smartTitle = generateSmartTitle(smartRealtime.result);
+    const smartDesc = generateSmartDescription(
+      smartRealtime.result,
+      composeIntakeSourceText(needText, detailsText)
+    );
     setListingPreview({
-      title: deterministicTitle,
-      description: composed.description,
+      title: deterministicTitle.trim() || smartTitle || '',
+      description: composed.description.trim() || smartDesc || '',
       budgetMin: synced.parsedIntent.budgetMin,
       budgetMax: synced.parsedIntent.budgetMax,
       extras: listingPreview?.extras,
@@ -729,39 +1042,16 @@ export function NeedIntakePanel({
         ? 'شهر را انتخاب کنید'
         : undefined;
 
+  // Soft-apply analyzed category/location onto the form when user reaches location step.
   useEffect(() => {
     if (step !== 'location' || !needDraft) return;
-    if (draft.categoryLockedByUserRef.current) return;
-
-    const entities = recordToEntities(needDraft.entities);
-    const leaf = entities.subcategorySlug || entities.categorySlug;
-    if (leaf && !selectedCategory && !selectedSubcategory && !isAmbiguousCommercialSubtype(composedSourceText)) {
-      draft.applyCategorySlug(leaf);
-    }
-
-    if (!location.selectedCity.trim() && entities.city?.trim()) {
-      location.applyDetectedLocationFromDraft(needDraft);
-    }
-
     if (draft.enabledSections.size === 0 && needDraft.sections?.length) {
       draft.setEnabledSections(computeEnabledSectionsForLocation(needDraft));
     }
-  }, [
-    step,
-    needDraft,
-    composedSourceText,
-    selectedCategory,
-    selectedSubcategory,
-    location.selectedCity,
-    location.applyDetectedLocationFromDraft,
-    draft,
-  ]);
+  }, [step, needDraft, draft]);
 
   const showLiveSummary =
-    step === 'need' ||
-    step === 'details' ||
-    step === 'location' ||
-    step === 'preview';
+    isIntakeComposeStep(step) || step === 'location' || step === 'preview';
   const liveSnippet =
     liveListingCopy &&
     (liveListingCopy.title || liveListingCopy.description || liveListingCopy.streaming) ? (
@@ -787,7 +1077,11 @@ export function NeedIntakePanel({
         </span>
         {showLiveSummary ? (
           <div className="ms-auto lg:hidden">
-            <IntakeMobileSummarySheet summary={liveSummary} inline />
+            <IntakeMobileSummarySheet
+              summary={liveSummary}
+              analysisMode={analysisMode}
+              inline
+            />
           </div>
         ) : null}
       </div>
@@ -817,26 +1111,28 @@ export function NeedIntakePanel({
       >
         <div className="layout-golden-main flex min-h-0 flex-1 flex-col min-w-0">
           <div className="intake-steps-stack">
-            {step === 'need' && (
+            {isIntakeComposeStep(step) && (
               <IntakeStepShell
                 stepNumber={1}
-                title="نیاز"
+                title={INTAKE_COPY.stepComposeTitle}
                 titleRef={stepTitleRef}
                 header={panelChrome}
-                description={INTAKE_COPY.stepNeedDescription}
+                description={INTAKE_COPY.stepComposeDescription}
                 actions={
                   <Button
                     className={`w-full sm:w-auto ${intakePrimaryCta}`}
-                    onClick={() => void goToDetails()}
+                    onClick={() => void goToForm()}
+                    onMouseEnter={prefetchLocationAnalyze}
+                    onFocus={prefetchLocationAnalyze}
                     disabled={
                       isLoading ||
-                      !needText.trim() ||
+                      !canProceedToIntakeLocation(needText, detailsText) ||
                       (intelligenceLiveEnabled && intakeIntelligence.analyzing)
                     }
                   >
                     {intelligenceLiveEnabled && intakeIntelligence.analyzing
-                      ? 'در حال تحلیل…'
-                      : 'ادامه به توضیحات'}
+                      ? INTAKE_COPY.analyzingContinue
+                      : INTAKE_COPY.continueToForm}
                   </Button>
                 }
               >
@@ -845,70 +1141,46 @@ export function NeedIntakePanel({
                   name="needText"
                   value={needText}
                   onChange={setNeedText}
-                  placeholder="مثلاً: یک آپارتمان در فرامرز عباسی میخوام"
-                  disabled={isLoading}
-                  analyzing={intelligenceLiveEnabled && intakeIntelligence.analyzing}
-                />
-                {needText.trim().length >= 3 ? (
-                  <IntakeAiUnderstandingCard
-                    intentGist={intakeIntelligence.intentGist}
-                    fieldMeta={intakeIntelligence.fieldMeta}
-                    analyzing={intelligenceLiveEnabled && intakeIntelligence.analyzing}
-                    aiInvoked={intakeIntelligence.aiInvoked}
-                    className="mt-3"
-                  />
-                ) : null}
-                {showAiShardBar ? (
-                  <IntakeAiShardBar
-                    snapshot={intakeProgressSnapshot}
-                    active={aiEnriching || intakeIntelligence.analyzing}
-                  />
-                ) : null}
-              </IntakeStepShell>
-            )}
-
-            {step === 'details' && (
-              <IntakeStepShell
-                stepNumber={2}
-                title="توضیحات"
-                titleRef={stepTitleRef}
-                header={panelChrome}
-                description="بودجه، شرایط خاص و اولویت‌ها را بنویسید."
-                actions={
-                  <>
-                    <Button className="w-full sm:w-auto" variant="outline" onClick={() => setStep('need')}>
-                      <ArrowRight className="size-4 ml-1" />
-                      بازگشت
-                    </Button>
-                    <Button
-                      className={`w-full sm:w-auto ${intakePrimaryCta}`}
-                      onClick={() => goToLocation()}
-                      onMouseEnter={prefetchLocationAnalyze}
-                      onFocus={prefetchLocationAnalyze}
-                      disabled={!canProceedToIntakeLocation(needText, detailsText) || isLoading}
-                    >
-                      ادامه به دسته و مکان
-                    </Button>
-                  </>
-                }
-              >
-                <IntakeComposerTextarea
-                  id="intake-details-text"
-                  name="detailsText"
-                  value={detailsText}
-                  onChange={setDetailsText}
-                  placeholder="مثلاً: ۱۰ میلیارد بودجه، دو خواب، نزدیک مترو..."
+                  placeholder="مثلاً: یک آپارتمان ۸۰ متری در فرامرز عباسی، رهن و اجاره…"
                   showCharProgress
                   highlightFromHome={homeSeedHighlight}
                   disabled={isLoading}
                   analyzing={intelligenceLiveEnabled && intakeIntelligence.analyzing}
+                  analysisMode={analysisMode}
                 />
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    className="text-xs text-muted-foreground underline-offset-2 hover:underline"
+                    onClick={() => setShowMoreDetails((v) => !v)}
+                  >
+                    {INTAKE_COPY.detailsMoreToggle}
+                  </button>
+                  {showMoreDetails ? (
+                    <IntakeComposerTextarea
+                      id="intake-details-text"
+                      name="detailsText"
+                      value={detailsText}
+                      onChange={setDetailsText}
+                      placeholder={INTAKE_COPY.detailsMorePlaceholder}
+                      disabled={isLoading}
+                      analyzing={false}
+                      analysisMode={analysisMode}
+                      className="mt-2"
+                    />
+                  ) : null}
+                </div>
                 {composedSourceText.trim().length >= 3 ? (
                   <IntakeAiUnderstandingCard
                     intentGist={intakeIntelligence.intentGist}
                     fieldMeta={intakeIntelligence.fieldMeta}
                     analyzing={intelligenceLiveEnabled && intakeIntelligence.analyzing}
+                    stale={
+                      Boolean(composedSourceText.trim()) &&
+                      !intakeIntelligence.isFreshForText(composedSourceText)
+                    }
                     aiInvoked={intakeIntelligence.aiInvoked}
+                    analysisMode={analysisMode}
                     className="mt-3"
                   />
                 ) : null}
@@ -924,14 +1196,18 @@ export function NeedIntakePanel({
 
             {step === 'location' && (
               <IntakeStepShell
-                stepNumber={3}
-                title="دسته و مکان"
+                stepNumber={2}
+                title={INTAKE_COPY.stepFormTitle}
                 titleRef={stepTitleRef}
                 header={panelChrome}
-                description="دسته، شهر و محله را انتخاب یا ویرایش کنید."
+                description={INTAKE_COPY.stepFormDescription}
                 actions={
                   <>
-                    <Button className="w-full sm:w-auto" variant="outline" onClick={() => setStep('details')}>
+                    <Button
+                      className="w-full sm:w-auto"
+                      variant="outline"
+                      onClick={() => setStep('compose')}
+                    >
                       <ArrowRight className="size-4 ml-1" />
                       بازگشت
                     </Button>
@@ -941,7 +1217,7 @@ export function NeedIntakePanel({
                       disabled={!canGoToPreview}
                       title={previewDisabledReason}
                     >
-                      {needDraft?.completionState === 'READY_TO_PUBLISH'
+                      {needDraft && getPublishReadiness(needDraft).canPublish
                         ? 'ادامه به پیش‌نمایش'
                         : 'تکمیل اطلاعات و ادامه'}
                     </Button>
@@ -981,6 +1257,7 @@ export function NeedIntakePanel({
                     publishDisabled={!publishState.canPublish}
                     categoryLabel={previewCategoryLabel}
                     cityLabel={previewCityLabel}
+                    smartResult={smartRealtime.result}
                     nested
                   />
                 </div>
@@ -994,7 +1271,9 @@ export function NeedIntakePanel({
             )}
           </div>
         </div>
-        {showLiveSummary ? <IntakeLiveSummaryAside summary={liveSummary} /> : null}
+        {showLiveSummary ? (
+          <IntakeLiveSummaryAside summary={liveSummary} analysisMode={analysisMode} />
+        ) : null}
       </div>
     </>
   );

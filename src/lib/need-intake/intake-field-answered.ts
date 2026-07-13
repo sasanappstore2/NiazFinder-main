@@ -22,8 +22,14 @@ export function isIntakeFieldAnswered(
   if (field.key === 'rahnAmount' && parsed.budgetMax && e.dealType?.includes('rahn')) {
     return true;
   }
-  if (field.key === 'deposit' && answers.deposit) return true;
-  if (field.key === 'monthlyRent' && answers.monthlyRent) return true;
+  // ودیعه و رهن یک فیلد منطقی‌اند — هر کدام پر باشد کافی است.
+  if (
+    (field.key === 'deposit' || field.key === 'rahnAmount') &&
+    (answers.deposit || answers.rahnAmount || e.deposit || e.rahnAmount)
+  ) {
+    return true;
+  }
+  if (field.key === 'monthlyRent' && (answers.monthlyRent || e.monthlyRent)) return true;
 
   if (field.key === 'location') {
     if (parsed.locationAmbiguous === true) return false;
@@ -63,13 +69,16 @@ export function isIntakeFieldAnswered(
   if (field.key === 'nightlyRent' && (answers.nightlyRent != null || e.nightlyRent)) return true;
   if (field.key === 'serviceKind' && (answers.serviceKind || e.serviceKind)) return true;
 
-  if (
-    (field.key === 'phone' || field.key === 'contact') &&
-    answers._leadPhone
-  ) {
-    return true;
+  if (field.key === 'phone' || field.key === 'contact') {
+    if (answers._leadPhone) return true;
   }
-  if (field.key === 'area' && parsed.city) return true;
+  // Square-meters `area` must come from answers/entities — city alone is NOT enough.
+  if (field.key === 'area') {
+    if (answers.area !== undefined && answers.area !== null && answers.area !== '') return true;
+    if (e.area !== undefined && e.area !== null && e.area !== '') return true;
+    if (answers.areaMin || e.areaMin || answers.areaMax || e.areaMax) return true;
+    return false;
+  }
 
   if (field.key === 'productName' && parsed.title && parsed.intentType === 'product_search') {
     const t = parsed.rawText.toLowerCase();

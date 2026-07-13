@@ -7,6 +7,7 @@ import { ClipboardList, Users, MessageCircle, User, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
 import { routeBuilder, legacyViewToPath, isBusinessProductDetailPath } from '@/config/routes';
+import { SITE_LABELS, SITE_NAV_TITLES } from '@/config/site-labels';
 import { useBrowseUrl } from '@/hooks/use-browse-url';
 import type { AppView } from '@/lib/types';
 
@@ -20,15 +21,33 @@ interface TabItem {
 
 const TABS: TabItem[] = [
   {
-    label: 'نیازها',
-    shortLabel: 'نیازها',
-    title: 'مرور و جستجوی نیازها',
+    label: SITE_LABELS.needsNav,
+    shortLabel: SITE_LABELS.needsNav,
+    title: SITE_NAV_TITLES.needs,
     icon: ClipboardList,
     view: 'browse-requests',
   },
-  { label: 'کسب‌وکارها', shortLabel: 'کسب‌وکار', title: 'مرور و جستجوی کسب‌وکارها', icon: Users, view: 'browse-specialists' },
-  { label: 'پیام‌ها', shortLabel: 'پیام', title: 'پیام‌ها و مکاتبات', icon: MessageCircle, view: 'messages' },
-  { label: 'پروفایل', shortLabel: 'پروفایل', title: 'داشبورد و پروفایل کاربری', icon: User, view: 'dashboard' },
+  {
+    label: SITE_LABELS.businessNav,
+    shortLabel: SITE_LABELS.businessNav,
+    title: SITE_NAV_TITLES.business,
+    icon: Users,
+    view: 'browse-specialists',
+  },
+  {
+    label: SITE_LABELS.messages,
+    shortLabel: SITE_LABELS.messages,
+    title: SITE_NAV_TITLES.messages,
+    icon: MessageCircle,
+    view: 'messages',
+  },
+  {
+    label: SITE_LABELS.profileNav,
+    shortLabel: SITE_LABELS.profileNav,
+    title: SITE_NAV_TITLES.profile,
+    icon: User,
+    view: 'dashboard',
+  },
 ];
 
 function isTabActive(
@@ -54,7 +73,6 @@ function isTabActive(
   return pathname === pathOnly || pathname.startsWith(`${pathOnly}/`);
 }
 
-/** نقطه نئونی فشرده — حداکثر ۴px بیشتر از نقطه تکی (۴px → ۸px برای هر دو) */
 function MobileNavChatAlert({
   hasUnread,
   hasMissedCall,
@@ -83,7 +101,7 @@ function MobileNavChatAlert({
       className={cn(
         'pointer-events-none absolute -top-px -inset-e-px size-1 rounded-full ring-1 ring-background/70',
         hasUnread
-          ? 'bg-emerald-400 shadow-[0_0_4px_1px_rgba(52,211,153,0.9)]'
+          ? 'bg-primary shadow-[0_0_4px_1px_oklch(0.72_0.15_165/0.9)]'
           : 'bg-rose-500 shadow-[0_0_4px_1px_rgba(248,113,113,0.9)]'
       )}
       aria-hidden
@@ -106,7 +124,7 @@ export function MobileBottomNav() {
 
   const businessHref = useBrowseUrl({ type: 'business' }, pathname);
   const needsHref = useBrowseUrl({ type: 'need' }, pathname);
-  const isHomeActive = pathname === '/';
+  const isPostActive = pathname === '/post' || pathname.startsWith('/post/');
 
   const unreadMessages = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
   const hasUnreadMessages = unreadMessages > 0;
@@ -169,7 +187,7 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-(--z-mobile-nav) pointer-events-none lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-(--z-mobile-nav) pointer-events-none"
       dir="rtl"
       role="navigation"
       aria-label="ناوبری پایین صفحه"
@@ -206,35 +224,35 @@ export function MobileBottomNav() {
                 {index === 2 && (
                   <button
                     type="button"
-                    data-href={routeBuilder.home()}
-                    title="ثبت نیاز جدید"
-                    onClick={() => navigateTo('home')}
+                    data-href={routeBuilder.needNew()}
+                    title={SITE_NAV_TITLES.postNeed}
+                    onClick={() => navigateTo('post-need')}
                     className={cn(
                       'relative -mt-(--mobile-nav-fab-overhang) flex flex-col items-center justify-center shrink-0',
                       'min-w-13 group'
                     )}
-                    aria-current={isHomeActive ? 'page' : undefined}
-                    aria-label="ثبت نیاز"
+                    aria-current={isPostActive ? 'page' : undefined}
+                    aria-label={SITE_LABELS.postNeed}
                   >
                     <span
                       className={cn(
                         'flex size-11 items-center justify-center rounded-full',
-                        'bg-linear-to-br from-emerald-500 to-emerald-600',
-                        'shadow-[0_3px_12px_rgba(5,150,105,0.35),0_0_0_2px_oklch(0.51_0.12_165/0.08)]',
+                        'bg-linear-to-br from-primary to-primary/80',
+                        'shadow-[0_3px_12px_oklch(0.51_0.12_165/0.35),0_0_0_2px_oklch(0.51_0.12_165/0.08)]',
                         'transition-transform duration-200 ease-out',
                         'group-hover:scale-[1.04] group-active:scale-95',
-                        isHomeActive && 'ring-2 ring-primary/40 ring-offset-2 ring-offset-background'
+                        isPostActive && 'ring-2 ring-primary/40 ring-offset-2 ring-offset-background'
                       )}
                     >
-                      <Plus className="size-5 text-white" strokeWidth={2.5} aria-hidden />
+                      <Plus className="size-5 text-primary-foreground" strokeWidth={2.5} aria-hidden />
                     </span>
                     <span
                       className={cn(
                         'mt-0.5 text-xs leading-none font-medium max-[360px]:hidden',
-                        isHomeActive ? 'text-primary' : 'text-muted-foreground'
+                        isPostActive ? 'text-primary' : 'text-muted-foreground'
                       )}
                     >
-                      ثبت نیاز
+                      {SITE_LABELS.postNeed}
                     </span>
                   </button>
                 )}

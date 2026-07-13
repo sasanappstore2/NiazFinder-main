@@ -17,6 +17,18 @@ import { ChatLocationShareCard } from '@/components/chat/ChatLocationShareCard';
 import { ChatImageMessage } from '@/components/chat/ChatImageMessage';
 import { ChatVoiceMessage } from '@/components/chat/ChatVoiceMessage';
 import { sanitizeUserFacingPersianText } from '@/lib/persian-encoding-guard';
+import {
+  AGENT_EMPTY_AFTER_SANITIZE,
+  sanitizeAgentStreamChunk,
+  sanitizeAgentVisibleText,
+} from '@/lib/ai-agent/output-sanitizer';
+import { parseThinkContent } from '@/lib/ai-agent/think-tag-parser';
+import {
+  AgentStreamCursor,
+  AgentThinkingBlock,
+  AgentToolStatusChip,
+  AgentTypingDots,
+} from '@/components/chat/AgentThinkingBlock';
 
 interface ChatMessageContentProps {
   message: Message;
@@ -27,6 +39,55 @@ interface ChatMessageContentProps {
   /** For VOICE bubbles: time + read ticks below the player. */
   voiceMeta?: { timeLabel: string; isRead?: boolean };
   onImageOpen?: () => void;
+}
+
+function AgentTextBubble({
+  message,
+  textClassName,
+}: {
+  message: Message;
+  textClassName: string;
+}) {
+  const fromContent = parseThinkContent(message.content);
+  const thinking = sanitizeAgentVisibleText(
+    message.agentThinking?.trim() || fromContent.thinking,
+  );
+  // While streaming, keep spaces; after done, full sanitize+trim is fine.
+  const rawAnswer = message.agentStreaming
+    ? message.content
+    : fromContent.answer || (thinking ? '' : message.content);
+  const answer = message.agentStreaming
+    ? sanitizeAgentStreamChunk(rawAnswer)
+    : sanitizeAgentVisibleText(rawAnswer);
+
+  const isLive = Boolean(message.agentStreaming);
+  const showTool = message.agentStatus === 'tool';
+  const showTyping =
+    isLive && !answer.trim() && !thinking && message.agentStatus !== 'tool';
+
+  return (
+    <div className="min-w-0">
+      {showTool ? <AgentToolStatusChip toolName={message.agentToolName} /> : null}
+      {thinking || (isLive && message.agentStatus === 'thinking') ? (
+        <AgentThinkingBlock
+          thinking={thinking}
+          isLive={isLive && (message.agentStatus === 'thinking' || !answer.trim())}
+        />
+      ) : null}
+      {showTyping ? (
+        <p className={textClassName}>
+          <AgentTypingDots />
+        </p>
+      ) : answer.trim() ? (
+        <p className={textClassName}>
+          {sanitizeUserFacingPersianText(answer)}
+          {isLive && message.agentStatus === 'streaming' ? <AgentStreamCursor /> : null}
+        </p>
+      ) : !isLive && message.content.trim() ? (
+        <p className={textClassName}>{AGENT_EMPTY_AFTER_SANITIZE}</p>
+      ) : null}
+    </div>
+  );
 }
 
 export function ChatMessageContent({
@@ -144,6 +205,16 @@ export function ChatMessageContent({
           isOwn={isOwn}
         />
       );
+    }
+
+    const isAgentBubble =
+      Boolean(message.agentStreaming) ||
+      Boolean(message.agentThinking) ||
+      Boolean(message.agentStatus) ||
+      /<think>/i.test(message.content);
+
+    if (isAgentBubble && !isOwn) {
+      return <AgentTextBubble message={message} textClassName={textClassName} />;
     }
   }
 

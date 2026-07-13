@@ -30,6 +30,9 @@ import type { IntakeRenderContext } from '@/intake/rendering/types';
 import type { IntakeTemplate } from '@/intake/template/types';
 import { trackFieldChange } from '@/intake/telemetry/postIntakeTelemetry';
 
+import { resolveRequiredFields } from '@/intake/template/required-field-resolver';
+import { resolveSectionKeyForField } from '@/intake/template/sectionGroups';
+
 function sectionKeysEqual(a: Set<string>, b: Set<string>): boolean {
   if (a.size !== b.size) return false;
   for (const key of a) {
@@ -54,6 +57,14 @@ export function computeEnabledSectionsForLocation(draft: NeedDraft): Set<string>
     parsedBrand: draft.parsedIntent?.entities?.brand,
   };
 
+  const leaf = entities.subcategorySlug || entities.categorySlug || '';
+  const required = resolveRequiredFields({
+    categorySlug: leaf,
+    answers: draft.answers as Record<string, unknown>,
+    entities: draft.entities as Record<string, unknown>,
+  });
+  const markKeys = new Set([...required.missingFieldKeys, ...required.criticalKeys]);
+
   for (const section of template.sections) {
     if (section.key === 'specs') continue;
     if (section.key === 'timing') {
@@ -72,7 +83,18 @@ export function computeEnabledSectionsForLocation(draft: NeedDraft): Set<string>
       const meta = template.fieldMap[key];
       return meta ? isFieldFilled(meta, filledCtx) : false;
     });
-    if (hasFilled) next.add(section.key);
+    if (hasFilled) {
+      next.add(section.key);
+      continue;
+    }
+    const hasMissingCritical = section.fields.some((key) => markKeys.has(key));
+    if (hasMissingCritical) next.add(section.key);
+  }
+
+  // Also open sections for missing keys that live outside template.section.fields lists.
+  for (const key of required.missingFieldKeys) {
+    const sectionKey = resolveSectionKeyForField(key, leaf);
+    if (sectionKey && sectionKey !== 'specs') next.add(sectionKey);
   }
 
   return next;
@@ -153,11 +175,17 @@ export function useIntakeDraft({
 
   const categorySuggestions = useMemo(() => {
     const ruleCandidates = needDraft?.parsedIntent?.categoryCandidates;
-    if (ruleCandidates && ruleCandidates.length >= 2 && !draftEntities?.categorySlug) {
+    // Prefer server category candidates — do not override with client keyword heuristics.
+    if (ruleCandidates && ruleCandidates.length > 0 && !draftEntities?.categorySlug) {
       return ruleCandidates
         .sort((a, b) => b.confidence - a.confidence)
         .slice(0, 6)
         .map((c) => c.slug);
+    }
+
+    // Server already resolved a leaf — no client keyword chip override.
+    if (draftEntities?.categorySlug || draftEntities?.subcategorySlug) {
+      return [];
     }
 
     const source = `${needText}\n${detailsText}`;
@@ -195,7 +223,7 @@ export function useIntakeDraft({
       }
     }
     return slugs.slice(0, 3);
-  }, [needDraft?.parsedIntent?.categoryCandidates, needText, detailsText, draftEntities?.categorySlug]);
+  }, [needDraft?.parsedIntent?.categoryCandidates, needText, detailsText, draftEntities?.categorySlug, draftEntities?.subcategorySlug]);
 
   const categoryAmbiguous = useMemo(
     () => hasCategoryAmbiguity(needDraft?.parsedIntent),
@@ -209,7 +237,7 @@ export function useIntakeDraft({
 
   const categorySuggestionOptions = useMemo(() => {
     const ruleCandidates = needDraft?.parsedIntent?.categoryCandidates;
-    if (ruleCandidates && ruleCandidates.length >= 2) {
+    if (ruleCandidates && ruleCandidates.length > 0) {
       return ruleCandidates
         .sort((a, b) => b.confidence - a.confidence)
         .slice(0, 6)
@@ -347,12 +375,20 @@ export function useIntakeDraft({
             ? scalarAnswer
             : undefined;
 
+      // ودیعه ↔ رهن: same money in Iranian rent deals; keep answers in sync.
+      const moneyMirror: Record<string, string | number | string[]> = {};
+      if (key === 'deposit' || key === 'rahnAmount') {
+        moneyMirror.deposit = answerValue;
+        moneyMirror.rahnAmount = answerValue;
+      }
+
       setNeedDraft(
         recomputeNeedDraft({
           ...base,
           answers: {
             ...base.answers,
             [key]: answerValue,
+            ...moneyMirror,
             ...(key === 'dealType' ? { _userSetDealType: true } : {}),
           },
           ...(urgencyFromWhen
@@ -393,7 +429,7 @@ export function useIntakeDraft({
         fieldType: meta?.type ?? 'text',
         changedFrom: prevValue ?? null,
         changedTo: value,
-        step: step as 'need' | 'details' | 'location' | 'preview',
+        step: step as 'compose' | 'need' | 'details' | 'location' | 'preview',
       });
     },
     [intakeTemplate.fieldMap, patchIntakeAnswer, patchNeedDraftEntities, getDraft, step]

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MapPin, Sparkles, Loader2, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import type { ListingPreview } from '@/contracts/need-intake';
+import type { SmartExtractionResult } from '@/intake/smart-extractor/types';
 import { formatMoneyToman } from '@/lib/format/money';
 import { cn } from '@/lib/utils';
 import { LISTING_TITLE_MAX_LENGTH } from '@/lib/need-intake/listing-title';
@@ -15,6 +16,14 @@ import {
   rejectListingTitleReason,
   truncateListingTitle,
 } from '@/lib/need-intake/listing-title-sanitize';
+import {
+  generateSmartDescription,
+  generateSmartTitle,
+} from '@/lib/need-intake/smart/utils/title-generator';
+import {
+  trackSmartTitleApplied,
+  trackSmartTitleShown,
+} from '@/lib/need-intake/smart/telemetry/smart-intake-telemetry';
 import { toPersianDigits } from '@/lib/format/digits';
 import { intakePrimaryCta } from './intake-ui-tokens';
 
@@ -31,6 +40,8 @@ export interface NeedListingPreviewProps {
   categoryLabel?: string;
   cityLabel?: string;
   nested?: boolean;
+  /** Smart extraction for empty-field suggestions (Claude backlog #2). */
+  smartResult?: SmartExtractionResult | null;
 }
 
 export function NeedListingPreview({
@@ -46,8 +57,27 @@ export function NeedListingPreview({
   categoryLabel,
   cityLabel,
   nested = false,
+  smartResult = null,
 }: NeedListingPreviewProps) {
   const [extraLine, setExtraLine] = useState('');
+
+  const suggestedTitle = !preview.title.trim()
+    ? generateSmartTitle(smartResult)
+    : null;
+  const suggestedDescription = !preview.description.trim()
+    ? generateSmartDescription(smartResult)
+    : null;
+  const displayTitle = preview.title.trim() || suggestedTitle || '';
+  const displayDescription = preview.description.trim() || suggestedDescription || '';
+
+  useEffect(() => {
+    if (suggestedTitle || suggestedDescription) {
+      trackSmartTitleShown({
+        hasTitle: !!suggestedTitle,
+        hasDescription: !!suggestedDescription,
+      });
+    }
+  }, [suggestedTitle, suggestedDescription]);
 
   const addExtra = () => {
     const line = extraLine.trim();
@@ -94,9 +124,6 @@ export function NeedListingPreview({
       )}
 
       <div className="intake-listing-preview-card">
-        <div className="intake-listing-preview-card__media" aria-hidden>
-          پیش‌نمایش تصویر
-        </div>
         <div className="intake-listing-preview-card__body">
           {(categoryLabel || cityLabel) && (
             <div className="flex flex-wrap gap-1.5">
@@ -115,10 +142,18 @@ export function NeedListingPreview({
             </div>
           )}
           <p className="text-base font-semibold leading-snug">
-            {preview.title.trim() || (titlePending ? '…' : 'عنوان آگهی')}
+            {displayTitle || (titlePending ? '…' : 'عنوان آگهی')}
+            {!preview.title.trim() && suggestedTitle ? (
+              <span className="mr-2 text-xs font-normal text-muted-foreground">
+                (پیشنهاد هوشمند)
+              </span>
+            ) : null}
           </p>
           <p className="line-clamp-4 text-sm leading-relaxed text-muted-foreground">
-            {preview.description.trim() || 'توضیحات آگهی'}
+            {displayDescription || 'توضیحات آگهی'}
+            {!preview.description.trim() && suggestedDescription ? (
+              <span className="mr-1 text-xs">(پیشنهاد هوشمند)</span>
+            ) : null}
           </p>
           {(preview.budgetMax || preview.budgetMin) && (
             <p className="text-sm font-medium text-foreground">
@@ -152,7 +187,11 @@ export function NeedListingPreview({
           name="previewTitle"
           value={preview.title}
           maxLength={LISTING_TITLE_MAX_LENGTH}
-          placeholder={titlePending ? 'در حال نوشتن عنوان…' : 'عنوان آگهی'}
+          placeholder={
+            titlePending
+              ? 'در حال نوشتن عنوان…'
+              : suggestedTitle || 'عنوان آگهی'
+          }
           disabled={titlePending}
           onChange={(e) =>
             onChange({
@@ -165,7 +204,27 @@ export function NeedListingPreview({
             !preview.title.trim() && !titlePending && 'border-amber-500/60 bg-amber-500/5'
           )}
         />
-        {!preview.title.trim() && !titlePending ? (
+        {!preview.title.trim() && suggestedTitle && !titlePending ? (
+          <p className="text-xs text-muted-foreground">
+            پیشنهاد هوشمند:{' '}
+            <button
+              type="button"
+              className="text-primary underline-offset-2 hover:underline"
+              onClick={() => {
+                trackSmartTitleApplied({
+                  field: 'title',
+                  generatedLength: suggestedTitle.length,
+                });
+                onChange({
+                  ...preview,
+                  title: truncateListingTitle(suggestedTitle),
+                });
+              }}
+            >
+              {suggestedTitle}
+            </button>
+          </p>
+        ) : !preview.title.trim() && !titlePending ? (
           <p className="text-xs text-amber-700 dark:text-amber-400">
             عنوان خالی است — قبل از انتشار حتماً بررسی یا ویرایش کنید.
           </p>
@@ -188,13 +247,34 @@ export function NeedListingPreview({
           id="preview-desc"
           name="previewDescription"
           value={preview.description}
+          placeholder={suggestedDescription || 'توضیحات آگهی'}
           onChange={(e) => onChange({ ...preview, description: e.target.value })}
           className={cn(
             'min-h-[140px] leading-relaxed',
             !preview.description.trim() && 'border-amber-500/60 bg-amber-500/5'
           )}
         />
-        {!preview.description.trim() ? (
+        {!preview.description.trim() && suggestedDescription ? (
+          <p className="text-xs text-muted-foreground">
+            پیشنهاد هوشمند —{' '}
+            <button
+              type="button"
+              className="text-primary underline-offset-2 hover:underline"
+              onClick={() => {
+                trackSmartTitleApplied({
+                  field: 'description',
+                  generatedLength: suggestedDescription.length,
+                });
+                onChange({
+                  ...preview,
+                  description: suggestedDescription,
+                });
+              }}
+            >
+              اعمال توضیحات پیشنهادی
+            </button>
+          </p>
+        ) : !preview.description.trim() ? (
           <p className="text-xs text-amber-700 dark:text-amber-400">
             توضیحات خالی است — جزئیات نیاز را قبل از انتشار تکمیل کنید.
           </p>

@@ -912,20 +912,6 @@ html[dir='ltr'] .intake-step-track__connector-fill[data-state='active']::after {
   box-shadow: 0 4px 20px -8px color-mix(in oklch, black 18%, transparent);
 }
 
-.intake-listing-preview-card__media {
-  aspect-ratio: 16 / 9;
-  background: linear-gradient(
-    135deg,
-    color-mix(in oklch, var(--primary) 12%, var(--muted)) 0%,
-    color-mix(in oklch, var(--muted) 80%, transparent) 100%
-  );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted-foreground);
-  font-size: 0.75rem;
-}
-
 .intake-listing-preview-card__body {
   padding: var(--golden-md);
   display: flex;

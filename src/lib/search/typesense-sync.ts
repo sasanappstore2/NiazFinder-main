@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { isPublicBusinessProfile } from '@/lib/business/load-profile';
+import { isPublicBusinessProfile } from '@/lib/business/public-profile';
 import {
   businessProfileToTypesenseDocument,
   deleteBusinessProfileDocument,

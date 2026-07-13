@@ -12,7 +12,7 @@ function includesBounded(text: string, pattern: string): boolean {
   while ((idx = text.indexOf(p, idx)) !== -1) {
     const before = idx > 0 ? text[idx - 1]! : ' ';
     const after = idx + p.length < text.length ? text[idx + p.length]! : ' ';
-    const isLetter = (c: string) => /[\u0600-\u06FFa-zA-Z0-9]/.test(c);
+    const isLetter = (c: string) => /[\u0600-\u06FFa-zA-Z0-9\u200c]/.test(c);
     if (!isLetter(before) && !isLetter(after)) return true;
     idx += 1;
   }
@@ -35,10 +35,20 @@ function textMatchesRule(text: string, rule: IntakeRule): boolean {
         return false;
       }
     }
+    case 'model': {
+      // Bare 1–2 digit models (e.g. legacy "14") collide with money amounts («تا 14 میلیارد»).
+      if (/^\d{1,2}$/.test(pat)) {
+        const phoneCue =
+          /گوشی|موبایل|آیفون|iphone|سامسونگ|samsung|شیائومی|xiaomi|هواوی|huawei/u.test(
+            text
+          );
+        if (!phoneCue) return false;
+      }
+      return includesBounded(text, pat);
+    }
     case 'phrase':
     case 'keyword':
     case 'brand':
-    case 'model':
     case 'scenario':
     case 'deal':
       return includesBounded(text, pat);

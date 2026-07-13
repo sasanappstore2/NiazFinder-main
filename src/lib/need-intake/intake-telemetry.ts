@@ -22,13 +22,13 @@ const PII_BLOCKLIST = new Set([
 ]);
 
 const WIZARD_STEPS = new Set<IntakeWizardTelemetryStep>([
-  'need',
-  'details',
+  'compose',
   'location',
   'preview',
 ]);
 
 function isWizardStep(step: IntakeStep): step is IntakeWizardTelemetryStep {
+  if (step === 'need' || step === 'details') return true;
   return WIZARD_STEPS.has(step as IntakeWizardTelemetryStep);
 }
 
@@ -68,11 +68,17 @@ function trackIntakeEvent(name: string, props?: Record<string, unknown>): void {
   trackAnalyticsEvent(name, sanitizeIntakeTelemetryProps(props));
 }
 
-/** Phase 36.1 ? wizard step enter (4 steps). */
+/** Phase 36.1 — wizard step enter (3 steps). */
 export function trackIntakeStepEnter(step: IntakeStep): void {
-  if (!isWizardStep(step)) return;
-  trackIntakeEvent('intake_step_enter', { step });
-  trackIntakeEvent(`intake_wizard_step_${step}`, { step });
+  const telemetryStep: IntakeWizardTelemetryStep =
+    step === 'need' || step === 'details' || step === 'compose'
+      ? 'compose'
+      : step === 'location' || step === 'preview'
+        ? step
+        : 'compose';
+  if (!WIZARD_STEPS.has(telemetryStep)) return;
+  trackIntakeEvent('intake_step_enter', { step: telemetryStep });
+  trackIntakeEvent(`intake_wizard_step_${telemetryStep}`, { step: telemetryStep });
 }
 
 /** Phase 36.2 ? wizard step exit + duration. */

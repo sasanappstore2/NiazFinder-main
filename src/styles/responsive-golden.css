@@ -53,15 +53,9 @@ body {
   width: 100%;
 }
 
-/* Bottom nav padding when main shell shows app bottom nav (mobile/tablet only) */
+/* Bottom nav padding when main shell shows app bottom nav */
 .has-mobile-nav {
   padding-bottom: var(--mobile-nav-offset);
-}
-
-@media (min-width: 1024px) {
-  .has-mobile-nav {
-    padding-bottom: 0;
-  }
 }
 
 /* Sheet/drawer bottom safe area */

@@ -2,14 +2,22 @@
 
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import { isRealEstateBusiness } from '@/lib/business/is-real-estate-business';
 import { useBusinessHub } from './BusinessHubContext';
 
 export function BusinessHubInitializer({ children }: { children: React.ReactNode }) {
-  const { refresh, loading, profile } = useBusinessHub();
+  const { refresh, loading, profile, activeTask, setActiveTask } = useBusinessHub();
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  useEffect(() => {
+    if (!profile || activeTask !== 'filings') return;
+    if (!isRealEstateBusiness(profile.occupationSlugs)) {
+      setActiveTask('storefront');
+    }
+  }, [profile, activeTask, setActiveTask]);
 
   if (loading && !profile) {
     return (

@@ -235,7 +235,7 @@ export function NiazMapGpuClusterLayer<T extends MapPoint>({
         // map tearing down
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [isLoaded, map, sourceId, clustersOnly]);
 
   // Sync data

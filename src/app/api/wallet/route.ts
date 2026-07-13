@@ -2,6 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser, type PaginatedResponse } from '@/lib/auth';
 
+/**
+ * Upper bound for a single deposit/withdraw (Toman). Rejects absurd/overflow
+ * values before we ever open a transaction.
+ */
+const MAX_WALLET_TX_AMOUNT = 100_000_000_000;
+
+/** Thrown inside the withdraw transaction when the locked balance is insufficient. */
+class InsufficientBalanceError extends Error {
+  constructor() {
+    super('INSUFFICIENT_BALANCE');
+    this.name = 'InsufficientBalanceError';
+  }
+}
+
 // ============ GET handler ============
 
 export async function GET(request: NextRequest) {
@@ -112,9 +126,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!amount || amount <= 0) {
+    if (
+      typeof amount !== 'number' ||
+      !Number.isFinite(amount) ||
+      !Number.isInteger(amount) ||
+      amount <= 0
+    ) {
       return NextResponse.json(
-        { error: 'مبلغ باید بیشتر از صفر باشد' },
+        { error: 'مبلغ باید یک عدد صحیح مثبت باشد' },
+        { status: 400 }
+      );
+    }
+
+    if (amount > MAX_WALLET_TX_AMOUNT) {
+      return NextResponse.json(
+        { error: 'مبلغ وارد شده بیش از حد مجاز است' },
         { status: 400 }
       );
     }
@@ -176,39 +202,51 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // WITHDRAW — only available (non-frozen) balance may be withdrawn
-    const availableBalance = wallet.balance - wallet.frozen;
-    if (availableBalance < amount) {
-      return NextResponse.json(
-        { error: 'موجودی قابل برداشت کافی نیست' },
-        { status: 400 }
-      );
-    }
+    // WITHDRAW — only available (non-frozen) balance may be withdrawn.
+    // The balance read + assertion MUST run inside the transaction under a row
+    // lock; otherwise two concurrent withdrawals can both pass the check and
+    // drive the balance negative.
+    const transaction = await db.$transaction(
+      async (tx) => {
+        // Serialize concurrent withdrawals for this wallet.
+        await tx.$executeRaw`SELECT id FROM "Wallet" WHERE "userId" = ${user.id} FOR UPDATE`;
 
-    const transaction = await db.$transaction(async (tx) => {
-      // Create pending transaction
-      const txRecord = await tx.transaction.create({
-        data: {
-          walletId: wallet!.id,
-          userId: user.id,
-          type: 'WITHDRAW',
-          amount,
-          description: description || 'برداشت از کیف پول',
-          status: 'PENDING',
-        },
-      });
+        const locked = await tx.wallet.findUnique({ where: { userId: user.id } });
+        if (!locked) {
+          throw new InsufficientBalanceError();
+        }
 
-      // Deduct from balance, add to frozen
-      await tx.wallet.update({
-        where: { id: wallet!.id },
-        data: {
-          balance: { decrement: amount },
-          frozen: { increment: amount },
-        },
-      });
+        // Re-assert available balance under the lock.
+        const available = locked.balance - locked.frozen;
+        if (available < amount) {
+          throw new InsufficientBalanceError();
+        }
 
-      return txRecord;
-    });
+        // Create pending transaction
+        const txRecord = await tx.transaction.create({
+          data: {
+            walletId: locked.id,
+            userId: user.id,
+            type: 'WITHDRAW',
+            amount,
+            description: description || 'برداشت از کیف پول',
+            status: 'PENDING',
+          },
+        });
+
+        // Deduct from balance, add to frozen
+        await tx.wallet.update({
+          where: { id: locked.id },
+          data: {
+            balance: { decrement: amount },
+            frozen: { increment: amount },
+          },
+        });
+
+        return txRecord;
+      },
+      { isolationLevel: 'Serializable', maxWait: 5000, timeout: 15000 }
+    );
 
     return NextResponse.json(
       {
@@ -225,6 +263,12 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
+    if (error instanceof InsufficientBalanceError) {
+      return NextResponse.json(
+        { error: 'موجودی قابل برداشت کافی نیست' },
+        { status: 409 }
+      );
+    }
     console.error('Wallet POST error:', error);
     return NextResponse.json(
       { error: 'خطای سرور رخ داده است' },

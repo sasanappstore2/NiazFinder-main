@@ -5,7 +5,7 @@ import { recordToEntities } from '@/intake/aggregate/needDraftAggregate';
 import { getPublishReadiness } from '@/intake/validation/publishValidator';
 import { canProceedToIntakeLocation } from '@/lib/need-intake/compose-source-text';
 
-const WIZARD_ORDER: readonly IntakeWizardStepKey[] = ['need', 'location', 'preview'];
+const WIZARD_ORDER: readonly IntakeWizardStepKey[] = ['compose', 'location', 'preview'];
 
 function wizardStepIndex(step: IntakeStep): number {
   if (step === 'publishing' || step === 'done') return WIZARD_ORDER.length - 1;
@@ -15,7 +15,7 @@ function wizardStepIndex(step: IntakeStep): number {
 }
 
 function normalizeNavigationTarget(target: IntakeStep): IntakeWizardStepKey | null {
-  if (target === 'details') return 'need';
+  if (target === 'need' || target === 'details' || target === 'compose') return 'compose';
   if (WIZARD_ORDER.includes(target as IntakeWizardStepKey)) {
     return target as IntakeWizardStepKey;
   }
@@ -53,7 +53,7 @@ export function canNavigateToIntakeStep(
     return { ok: true };
   }
 
-  if (normalizedTarget === 'need' && !ctx.needText.trim()) {
+  if (normalizedTarget === 'compose' && !ctx.needText.trim()) {
     return { ok: false, message: 'ابتدا متن نیاز را وارد کنید' };
   }
 

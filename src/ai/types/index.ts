@@ -59,6 +59,11 @@ export interface AiExtractionRaw {
   neighborhood: string | null;
   transactionType: string | null;
   budget: number | null;
+  budgetMin?: number | null;
+  budgetMax?: number | null;
+  rahnAmount?: number | null;
+  monthlyRent?: number | null;
+  deposit?: number | null;
   area: number | null;
   rooms: number | null;
   confidence: number;

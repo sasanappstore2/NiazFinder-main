@@ -58,6 +58,9 @@ const COLLOQUIAL_ALIASES: Record<string, string> = {
   '\u067E\u0648\u0646 \u0635\u062F': '\u067E\u0627\u0646\u0635\u062F',
   '\u0634\u06CC\u0634\u0635\u062F': '\u0634\u0634\u0635\u062F',
   '\u0634\u06CC\u0634 \u0635\u062F': '\u0634\u0634\u0635\u062F',
+  // Common misspelling: ملیون → میلیون
+  '\u0645\u0644\u06CC\u0648\u0646': '\u0645\u06CC\u0644\u06CC\u0648\u0646',
+  '\u0645\u0644\u06CC\u0627\u0631\u062F': '\u0645\u06CC\u0644\u06CC\u0627\u0631\u062F',
 };
 
 const PHRASE_LOOKUP: Record<string, number> = {
@@ -353,6 +356,31 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
 
   if (out.budgetMax == null && mentions.length === 1 && !out.rahnAmount && !out.monthlyRent) {
     out.budgetMax = mentions[0]!.tomans;
+  }
+
+  // Rent-only needs: a lone generic budget chip is usually the monthly rent.
+  if (
+    out.budgetMax != null &&
+    out.monthlyRent == null &&
+    out.rahnAmount == null &&
+    norm.includes(EJARE_WORD) &&
+    !norm.includes(RAHN_WORD)
+  ) {
+    out.monthlyRent = out.budgetMax;
+    delete out.budgetMax;
+  }
+
+  // رهن‌واجاره with two money mentions but only budgetMax filled — split by order.
+  if (
+    out.budgetMax == null &&
+    out.rahnAmount == null &&
+    out.monthlyRent == null &&
+    mentions.length >= 2 &&
+    norm.includes(RAHN_WORD) &&
+    norm.includes(EJARE_WORD)
+  ) {
+    out.rahnAmount = mentions[0]!.tomans;
+    out.monthlyRent = mentions[1]!.tomans;
   }
 
   if (

@@ -36,7 +36,7 @@ export function aiDescriptionConflictsSource(
   const desc = description.trim();
   if (!src || !desc) return false;
 
-  const textHasRent = /رهن|ودیعه|اجاره/u.test(src);
+  const textHasRent = /(?<![\u0600-\u06FF])رهن(?!گیری|گ)|ودیعه|اجاره|(?<![\u0600-\u06FFa-zA-Z])رنت(?![\u0600-\u06FFa-zA-Z])/u.test(src);
   const textHasSale = /(?:فروش|خرید)(?!\s*اداری)/u.test(src);
   const descHasSale = /^فروش/u.test(desc) || /\bفروش\b/u.test(desc.slice(0, 80));
   const descHasBuy = /^خرید/u.test(desc) || /\bخرید\b/u.test(desc.slice(0, 80));

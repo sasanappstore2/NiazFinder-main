@@ -1,17 +1,25 @@
 'use client';
 
-import { Sparkles } from 'lucide-react';
+import { ListChecks, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { buildIntakeUnderstanding } from '@/lib/need-intake/build-intake-understanding';
 import type { FieldState } from '@/intake/intelligence-engine/types';
+import type { IntakeAnalysisMode } from '@/lib/intake/rules-only-mode';
 import { TypingIndicator } from './realtime/TypingIndicator';
-import { INTAKE_COPY } from './intake-copy';
+import {
+  intakeUnderstandingFootnote,
+  intakeUnderstandingLoading,
+  intakeUnderstandingTitle,
+} from './intake-copy';
 
 export interface IntakeAiUnderstandingCardProps {
   intentGist: string | null;
   fieldMeta: Record<string, FieldState> | null;
   analyzing: boolean;
+  /** True when fieldMeta/gist belong to an older text than the composer. */
+  stale?: boolean;
   aiInvoked?: boolean;
+  analysisMode?: IntakeAnalysisMode;
   className?: string;
 }
 
@@ -19,38 +27,59 @@ export function IntakeAiUnderstandingCard({
   intentGist,
   fieldMeta,
   analyzing,
+  stale = false,
   aiInvoked,
+  analysisMode = 'rules',
   className,
 }: IntakeAiUnderstandingCardProps) {
-  const view = buildIntakeUnderstanding({ intentGist, fieldMeta, aiInvoked });
-  const hasContent = Boolean(view.summary || view.highlights.length > 0);
+  const view = buildIntakeUnderstanding({
+    intentGist,
+    fieldMeta,
+    aiInvoked,
+    analysisMode,
+  });
+  // Never flash weak / outdated guesses while the user is still typing.
+  const showResolved = !analyzing && !stale;
+  const hasContent = Boolean(
+    showResolved && (view.summary || view.highlights.length > 0)
+  );
+  const showAsAi = analysisMode === 'ai' || Boolean(aiInvoked);
+  const TitleIcon = showAsAi ? Sparkles : ListChecks;
 
   if (!analyzing && !hasContent) return null;
 
   return (
     <section
       className={cn(
-        'rounded-2xl border border-primary/20 bg-primary/[0.04] p-4 shadow-sm',
+        'rounded-2xl border p-4 shadow-sm',
+        showAsAi ? 'border-primary/20 bg-primary/[0.04]' : 'border-border/70 bg-muted/30',
         className
       )}
       aria-live="polite"
       aria-busy={analyzing}
     >
-      <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">
-        <Sparkles className="size-4 shrink-0" aria-hidden />
-        <span>{INTAKE_COPY.aiUnderstandingTitle}</span>
+      <div
+        className={cn(
+          'mb-2 flex items-center gap-2 text-sm font-semibold',
+          showAsAi ? 'text-primary' : 'text-foreground'
+        )}
+      >
+        <TitleIcon className="size-4 shrink-0" aria-hidden />
+        <span>{intakeUnderstandingTitle(analysisMode, aiInvoked)}</span>
         {analyzing ? <TypingIndicator status="analyzing" className="mr-auto" /> : null}
       </div>
 
-      {analyzing && !hasContent ? (
-        <p className="text-sm text-muted-foreground">{INTAKE_COPY.aiUnderstandingLoading}</p>
+      {analyzing ? (
+        <p className="text-sm text-muted-foreground">
+          {intakeUnderstandingLoading(analysisMode)}
+        </p>
       ) : null}
 
-      {view.summary ? (
+      {showResolved && view.summary ? (
         <p className="text-sm leading-relaxed text-foreground">{view.summary}</p>
       ) : null}
 
-      {view.highlights.length > 0 ? (
+      {showResolved && view.highlights.length > 0 ? (
         <ul className="mt-3 flex flex-wrap gap-2">
           {view.highlights.map((h) => (
             <li
@@ -64,8 +93,10 @@ export function IntakeAiUnderstandingCard({
         </ul>
       ) : null}
 
-      {!analyzing && view.aiInvoked ? (
-        <p className="mt-2 text-[11px] text-muted-foreground">{INTAKE_COPY.aiUnderstandingFootnote}</p>
+      {hasContent ? (
+        <p className="mt-2 text-[11px] text-muted-foreground">
+          {intakeUnderstandingFootnote(analysisMode, aiInvoked)}
+        </p>
       ) : null}
     </section>
   );

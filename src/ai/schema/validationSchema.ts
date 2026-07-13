@@ -131,17 +131,63 @@ export function validateConstrainedSelection(
     }
   }
 
-  if (selection.budget != null && Number.isFinite(selection.budget) && selection.budget > 0) {
-    patch.budgetMax = Math.round(selection.budget);
-    patch.budgetMin = Math.round(selection.budget);
+  const budgetMax =
+    selection.budgetMax ?? selection.budget ?? null;
+  const budgetMin = selection.budgetMin ?? null;
+  if (budgetMax != null && Number.isFinite(budgetMax) && budgetMax > 0 && budgetMax < 1e15) {
+    patch.budgetMax = Math.round(budgetMax);
+  } else if (budgetMax != null) {
+    reject(rejects, 'budget', budgetMax, 'out_of_range');
+  }
+  if (budgetMin != null && Number.isFinite(budgetMin) && budgetMin > 0 && budgetMin < 1e15) {
+    patch.budgetMin = Math.round(budgetMin);
   }
 
-  if (selection.area != null && Number.isFinite(selection.area) && selection.area > 0) {
-    patch.area = Math.round(selection.area);
+  if (selection.area != null && Number.isFinite(selection.area)) {
+    if (selection.area >= 5 && selection.area <= 100_000) {
+      patch.area = Math.round(selection.area);
+    } else {
+      reject(rejects, 'area', selection.area, 'out_of_range');
+    }
   }
 
-  if (selection.rooms != null && Number.isFinite(selection.rooms) && selection.rooms > 0) {
-    patch.rooms = Math.round(selection.rooms);
+  if (selection.rooms != null && Number.isFinite(selection.rooms)) {
+    if (selection.rooms >= 0 && selection.rooms <= 30) {
+      patch.rooms = Math.round(selection.rooms);
+    } else {
+      reject(rejects, 'rooms', selection.rooms, 'out_of_range');
+    }
+  }
+
+  // Rent/rahn money fields live on answers/entities extension via patch extras.
+  const moneyExtras = patch as Partial<IntakeEntities> & {
+    rahnAmount?: number;
+    monthlyRent?: number;
+    deposit?: number;
+  };
+  if (
+    selection.rahnAmount != null &&
+    Number.isFinite(selection.rahnAmount) &&
+    selection.rahnAmount > 0 &&
+    selection.rahnAmount < 1e15
+  ) {
+    moneyExtras.rahnAmount = Math.round(selection.rahnAmount);
+  }
+  if (
+    selection.monthlyRent != null &&
+    Number.isFinite(selection.monthlyRent) &&
+    selection.monthlyRent > 0 &&
+    selection.monthlyRent < 1e15
+  ) {
+    moneyExtras.monthlyRent = Math.round(selection.monthlyRent);
+  }
+  if (
+    selection.deposit != null &&
+    Number.isFinite(selection.deposit) &&
+    selection.deposit > 0 &&
+    selection.deposit < 1e15
+  ) {
+    moneyExtras.deposit = Math.round(selection.deposit);
   }
 
   return { patch, rejects, acceptedSlugs };
@@ -153,7 +199,12 @@ export function toAiExtractionRaw(selection: ConstrainedSelectionParsed): AiExtr
     city: selection.city,
     neighborhood: selection.neighborhood,
     transactionType: selection.transactionType,
-    budget: selection.budget,
+    budget: selection.budget ?? selection.budgetMax ?? null,
+    budgetMin: selection.budgetMin ?? null,
+    budgetMax: selection.budgetMax ?? selection.budget ?? null,
+    rahnAmount: selection.rahnAmount ?? null,
+    monthlyRent: selection.monthlyRent ?? null,
+    deposit: selection.deposit ?? null,
     area: selection.area,
     rooms: selection.rooms,
     confidence: selection.confidence,

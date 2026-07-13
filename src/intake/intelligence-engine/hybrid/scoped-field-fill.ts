@@ -22,6 +22,7 @@ export interface ScopedFieldFillInput {
   fields: IntakeFieldBag;
   intentSlice: IntentSliceResult | null;
   extraUnresolved?: string[];
+  forceAi?: boolean;
 }
 
 export interface ScopedFieldFillResult {
@@ -57,7 +58,8 @@ function mapPackFieldToBagKey(field: string): string {
 
 export function collectHybridUnresolvedFields(
   bag: IntakeFieldBag,
-  intentSlice: IntentSliceResult | null
+  intentSlice: IntentSliceResult | null,
+  opts?: { forceAi?: boolean }
 ): string[] {
   const vertical = intentSlice?.vertical ?? String(bag.vertical?.value ?? '');
   const fromConfidence = fieldsNeedingAi(bag, { threshold: 0.6, vertical });
@@ -65,7 +67,41 @@ export function collectHybridUnresolvedFields(
   const categorySlug = String(bag.subcategorySlug?.value ?? bag.categorySlug?.value ?? '');
   const packFields = packRequiredFieldKeys(categorySlug).map(mapPackFieldToBagKey);
 
-  return [...new Set([...fromConfidence, ...packFields])];
+  const criticalPropertyKeys = [
+    'budgetMax',
+    'budgetMin',
+    'rahnAmount',
+    'monthlyRent',
+    'rooms',
+    'area',
+    'deposit',
+  ] as const;
+
+  const weakCritical: string[] = [];
+  for (const key of criticalPropertyKeys) {
+    const f = bag[key];
+    if (!f?.value || f.value === '' || (f.confidence ?? 0) < 0.6) {
+      // Only ask AI for rent/rahn when deal type suggests it, or when forceAi.
+      if (
+        (key === 'rahnAmount' || key === 'monthlyRent' || key === 'deposit') &&
+        !opts?.forceAi
+      ) {
+        const tx = String(bag.transactionType?.value ?? bag.dealType?.value ?? '');
+        const rentish =
+          /RENT|DEPOSIT|rahn|rent|اجاره|رهن/i.test(tx) ||
+          vertical === 'real-estate';
+        if (!rentish) continue;
+      }
+      weakCritical.push(key);
+    }
+  }
+
+  // forceAi: always include weak critical property fields for scoped fill.
+  const forced = opts?.forceAi ? weakCritical : weakCritical.filter((k) =>
+    ['budgetMax', 'budgetMin', 'rooms', 'area'].includes(k)
+  );
+
+  return [...new Set([...fromConfidence, ...packFields, ...forced])];
 }
 
 /** Stage 5: single LLM call to fill unresolved fields with top-N candidates only. */
@@ -74,7 +110,9 @@ export async function runScopedFieldFill(
 ): Promise<ScopedFieldFillResult> {
   const unresolved = [
     ...new Set([
-      ...collectHybridUnresolvedFields(input.fields, input.intentSlice),
+      ...collectHybridUnresolvedFields(input.fields, input.intentSlice, {
+        forceAi: input.forceAi,
+      }),
       ...(input.extraUnresolved ?? []),
     ]),
   ];
@@ -134,7 +172,15 @@ export async function runScopedFieldFill(
   );
 
   const patch: Record<string, unknown> = {};
-  const validated = providerResult.validatedEntities;
+  const validated = providerResult.validatedEntities as
+    | (Partial<import('@/intake/types').IntakeEntities> & {
+        rahnAmount?: number;
+        monthlyRent?: number;
+        deposit?: number;
+      })
+    | null;
+  const extraction = providerResult.extraction;
+
   if (validated) {
     if (unresolved.includes('categorySlug') && validated.categorySlug) {
       patch.categorySlug = validated.subcategorySlug ?? validated.categorySlug;
@@ -154,13 +200,71 @@ export async function runScopedFieldFill(
     if (unresolved.includes('budgetMax') && validated.budgetMax != null) {
       patch.budgetMax = validated.budgetMax;
     }
+    if (unresolved.includes('budgetMin') && validated.budgetMin != null) {
+      patch.budgetMin = validated.budgetMin;
+    }
     if (unresolved.includes('rooms') && validated.rooms != null) patch.rooms = validated.rooms;
+    if (unresolved.includes('rahnAmount') && validated.rahnAmount != null) {
+      patch.rahnAmount = validated.rahnAmount;
+    }
+    if (unresolved.includes('monthlyRent') && validated.monthlyRent != null) {
+      patch.monthlyRent = validated.monthlyRent;
+    }
+    if (unresolved.includes('deposit') && validated.deposit != null) {
+      patch.deposit = validated.deposit;
+    }
   }
 
-  const merged = applyAiPatchToFieldBag({ ...input.fields }, patch);
+  // Fallback: raw extraction money fields when validator only mapped budget.
+  if (extraction) {
+    if (unresolved.includes('rahnAmount') && patch.rahnAmount == null && extraction.rahnAmount != null) {
+      patch.rahnAmount = extraction.rahnAmount;
+    }
+    if (
+      unresolved.includes('monthlyRent') &&
+      patch.monthlyRent == null &&
+      extraction.monthlyRent != null
+    ) {
+      patch.monthlyRent = extraction.monthlyRent;
+    }
+    if (unresolved.includes('deposit') && patch.deposit == null && extraction.deposit != null) {
+      patch.deposit = extraction.deposit;
+    }
+  }
+
+  const fieldConfidence: Record<string, number> = {};
+  const fc = providerResult.fieldConfidence as Record<string, number> | undefined;
+  if (fc) {
+    if (typeof fc.category === 'number') fieldConfidence.categorySlug = fc.category;
+    if (typeof fc.city === 'number') {
+      fieldConfidence.city = fc.city;
+      fieldConfidence.citySlug = fc.city;
+    }
+    if (typeof fc.neighborhood === 'number') {
+      fieldConfidence.neighborhood = fc.neighborhood;
+      fieldConfidence.neighborhoodSlug = fc.neighborhood;
+    }
+    if (typeof fc.transactionType === 'number') {
+      fieldConfidence.transactionType = fc.transactionType;
+    }
+    if (typeof fc.budget === 'number') {
+      fieldConfidence.budgetMax = fc.budget;
+      fieldConfidence.budgetMin = fc.budget;
+      fieldConfidence.rahnAmount = fc.budget;
+      fieldConfidence.monthlyRent = fc.budget;
+      fieldConfidence.deposit = fc.budget;
+    }
+    if (typeof fc.area === 'number') fieldConfidence.area = fc.area;
+    if (typeof fc.rooms === 'number') fieldConfidence.rooms = fc.rooms;
+  }
+
+  const merged = applyAiPatchToFieldBag({ ...input.fields }, patch, {
+    fieldConfidence,
+    baseConfidence: typeof extraction?.confidence === 'number' ? extraction.confidence : 0.72,
+  });
 
   return {
-    invoked: providerResult.ok || Boolean(providerResult.extraction),
+    invoked: providerResult.ok && Object.keys(patch).length > 0,
     provider: providerResult.provider,
     latencyMs: Math.round(performance.now() - started),
     unresolvedFields: unresolved,

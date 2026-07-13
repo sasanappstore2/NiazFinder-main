@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { getNestAiChatUrl } from '@/lib/ai-agent/env';
 import { handleLocalAiAgentChatStream } from '@/lib/ai-agent/local-handler';
+import { isLocalLlmOnly } from '@/lib/local-llm/config';
 
 type AiChatDto = {
   conversationId: string;
@@ -123,27 +124,28 @@ export async function handleAiChatPost(request: NextRequest): Promise<Response> 
   }
 
   const nestUrl = getNestAiChatUrl();
-  if (nestUrl) {
-    const auth = request.headers.get('authorization') ?? '';
-    try {
-      const proxied = await proxyNestChat(nestUrl, auth, bodyText);
-      if (proxied) return proxied;
-    } catch (err) {
-      if (!nestFallbackEnabled()) {
-        const message =
-          err instanceof Error ? err.message : '????? ?????? ?? ????? ????';
-        return sseErrorResponse('NEST_UNREACHABLE', message);
-      }
-      console.warn('[ai/chat] Nest unreachable, using local handler:', err);
-    }
-
-    if (nestFallbackEnabled()) {
-      console.warn('[ai/chat] Nest returned an error, falling back to local handler');
-      return createLocalSseResponse(user.id, dto);
-    }
-
-    return sseErrorResponse('NEST_ERROR', '????? ?????? ?? ????? ????');
+  // Local-only mode: never wait on legacy Nest (:4000) — go straight to LM Studio / local agent.
+  if (!nestUrl || isLocalLlmOnly() || process.env.AI_AGENT_SKIP_NEST === 'true') {
+    return createLocalSseResponse(user.id, dto);
   }
 
-  return createLocalSseResponse(user.id, dto);
+  const auth = request.headers.get('authorization') ?? '';
+  try {
+    const proxied = await proxyNestChat(nestUrl, auth, bodyText);
+    if (proxied) return proxied;
+  } catch (err) {
+    if (!nestFallbackEnabled()) {
+      const message =
+        err instanceof Error ? err.message : '????? ?????? ?? ????? ????';
+      return sseErrorResponse('NEST_UNREACHABLE', message);
+    }
+    console.warn('[ai/chat] Nest unreachable, using local handler:', err);
+  }
+
+  if (nestFallbackEnabled()) {
+    console.warn('[ai/chat] Nest returned an error, falling back to local handler');
+    return createLocalSseResponse(user.id, dto);
+  }
+
+  return sseErrorResponse('NEST_ERROR', '????? ?????? ?? ????? ????');
 }

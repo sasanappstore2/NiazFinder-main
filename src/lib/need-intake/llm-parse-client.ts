@@ -5,7 +5,7 @@ import { parseLabelsViaLocalChat } from '@/lib/need-intake/local-parse-bridge';
 import { checkLocalModelHealth } from '@/lib/need-intake/local-chat-client';
 import { INTENT_REGISTRY } from '@/config/need-intents';
 import { CANONICAL_CATEGORIES } from '@/config/categories';
-import { CANONICAL_CITIES } from '@/config/locations';
+import { CANONICAL_CITIES, CANONICAL_PROVINCES } from '@/config/locations';
 
 const ALLOWED_INTENT_TYPES = new Set(Object.keys(INTENT_REGISTRY));
 const ALLOWED_CATEGORY_SlUGS = new Set(CANONICAL_CATEGORIES.map((c) => c.slug));
@@ -28,14 +28,35 @@ function normalizeCity(input: unknown): string | undefined {
   return undefined;
 }
 
+function normalizeProvince(input: unknown, city?: string): string | undefined {
+  if (typeof input === 'string' && input.trim()) {
+    const v = input.trim();
+    const byTitle = CANONICAL_PROVINCES.find((p) => p.title === v);
+    if (byTitle) return byTitle.title;
+    const lower = v.toLowerCase();
+    const bySlugOrEnglish = CANONICAL_PROVINCES.find(
+      (p) => p.slug.toLowerCase() === lower || p.englishTitle.toLowerCase() === lower
+    );
+    if (bySlugOrEnglish) return bySlugOrEnglish.title;
+  }
+  // Fall back to the canonical city's province.
+  if (city) {
+    const canonicalCity = CANONICAL_CITIES.find((c) => c.title === city);
+    if (canonicalCity) {
+      const province = CANONICAL_PROVINCES.find((p) => p.slug === canonicalCity.provinceSlug);
+      if (province) return province.title;
+    }
+  }
+  return undefined;
+}
+
 function mapUrgency(input: unknown): DatasetLabels['urgency'] | undefined {
   if (typeof input !== 'string') return undefined;
   const v = input.trim().toLowerCase();
-  if (v === 'low') return 'LOW';
-  if (v === 'normal' || v === 'medium') return 'NORMAL';
-  if (v === 'high') return 'HIGH';
-  if (v === 'urgent') return 'URGENT';
-  if (v === 'low' || v === 'normal') return v.toUpperCase() as DatasetLabels['urgency'];
+  if (v === 'low' || v === 'کم') return 'LOW';
+  if (v === 'normal' || v === 'medium' || v === 'عادی' || v === 'معمولی') return 'NORMAL';
+  if (v === 'high' || v === 'زیاد' || v === 'بالا') return 'HIGH';
+  if (v === 'urgent' || v === 'فوری' || v === 'اضطراری') return 'URGENT';
   return undefined;
 }
 
@@ -141,12 +162,14 @@ export async function parseIntentViaLlm(text: string): Promise<LlmParseResult | 
   const categorySlug = mapCategorySlug(chatResult.labels.categorySlug);
   if (!intentType || !categorySlug) return null;
 
+  const city = normalizeCity(chatResult.labels.city);
   const parsedLabels: DatasetLabels = {
     intentType,
     categorySlug,
     subcategorySlug: chatResult.labels.subcategorySlug,
     entities: chatResult.labels.entities ?? {},
-    city: normalizeCity(chatResult.labels.city),
+    city,
+    province: normalizeProvince(chatResult.labels.province, city),
     budgetMin: chatResult.labels.budgetMin,
     budgetMax: chatResult.labels.budgetMax,
     urgency: chatResult.labels.urgency,
@@ -194,6 +217,7 @@ async function parseIntentViaLegacyMlx(text: string): Promise<LlmParseResult | n
     const parsedLabels: DatasetLabels = {
       intentType,
       categorySlug,
+      province: normalizeProvince(rawLabels.province, city),
       subcategorySlug:
         typeof rawLabels.subcategorySlug === 'string'
           ? (rawLabels.subcategorySlug.trim() as string)

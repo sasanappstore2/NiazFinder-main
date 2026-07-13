@@ -9,6 +9,8 @@
  *
  * Disable realtime:
  *   NEXT_PUBLIC_CHAT_SOCKET_URL=off
+ *
+ * Dev defaults to disabled unless NEXT_PUBLIC_CHAT_SOCKET_URL is set explicitly.
  */
 
 const SOCKET_PATH = '/socket.io';
@@ -36,13 +38,9 @@ export function getChatSocketConfig(): {
     };
   }
 
+  // Dev: opt-in only — avoids auth/connect spam when chat-service is not running.
   if (process.env.NODE_ENV === 'development') {
-    return {
-      url: 'http://localhost:3004',
-      path: SOCKET_PATH,
-      enabled: true,
-      useNestNamespace: false,
-    };
+    return { url: '', path: SOCKET_PATH, enabled: false, useNestNamespace: false };
   }
 
   if (typeof window !== 'undefined') {

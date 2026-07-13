@@ -188,7 +188,17 @@ export function NeedBrowseCard({
 
           {/* Row 2 — title */}
           <h3 className="text-base font-bold leading-snug tracking-tight text-foreground line-clamp-2 transition-colors group-hover:text-emerald-700 dark:group-hover:text-emerald-400 sm:text-[1.0625rem]">
-            {request.title}
+            {previewMode ? (
+              request.title
+            ) : (
+              <Link
+                href={detailHref}
+                onClick={(e) => e.stopPropagation()}
+                className="rounded-xs outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+              >
+                {request.title}
+              </Link>
+            )}
           </h3>
 
           {/* Row 3 — location */}

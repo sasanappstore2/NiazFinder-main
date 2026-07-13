@@ -68,15 +68,33 @@ function resolveFieldValue(
   if (field.key === 'rahnAmount') {
     const answer = answers.rahnAmount ?? answers.deposit;
     if (answer != null && answer !== '') return answer as string | number;
-    if (entities?.budgetMax != null && entities.budgetMax >= 50_000_000) {
+    const tx = String(entities?.transactionType ?? answers.dealType ?? '');
+    const isRentDeal =
+      tx === 'FULL_DEPOSIT' ||
+      tx === 'DEPOSIT_AND_RENT' ||
+      tx === 'RENT' ||
+      tx.includes('rahn') ||
+      tx.includes('rent');
+    if (isRentDeal && entities?.budgetMax != null && entities.budgetMax >= 50_000_000) {
       return entities.budgetMax;
     }
   }
   if (field.key === 'monthlyRent' && answers.monthlyRent != null && answers.monthlyRent !== '') {
     return answers.monthlyRent as string | number;
   }
-  if (field.key === 'deposit' && answers.deposit != null && answers.deposit !== '') {
-    return answers.deposit as string | number;
+  if (field.key === 'deposit') {
+    const answer = answers.deposit ?? answers.rahnAmount;
+    if (answer != null && answer !== '') return answer as string | number;
+    const tx = String(entities?.transactionType ?? answers.dealType ?? '');
+    const isRentDeal =
+      tx === 'FULL_DEPOSIT' ||
+      tx === 'DEPOSIT_AND_RENT' ||
+      tx === 'RENT' ||
+      tx.includes('rahn') ||
+      tx.includes('rent');
+    if (isRentDeal && entities?.budgetMax != null && entities.budgetMax >= 50_000_000) {
+      return entities.budgetMax;
+    }
   }
   if (field.key === 'area' && entities.area != null) {
     return entities.area;

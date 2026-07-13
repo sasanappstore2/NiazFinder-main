@@ -10,23 +10,52 @@ const BLOCKED_HOSTNAMES = new Set([
   'metadata.google.internal',
 ]);
 
-function isPrivateIpv4(host: string): boolean {
-  if (!isIP(host)) return false;
-  if (host === '127.0.0.1' || host === '0.0.0.0') return true;
-  if (host.startsWith('10.')) return true;
-  if (host.startsWith('192.168.')) return true;
-  if (host.startsWith('169.254.')) return true;
-  const m = /^172\.(\d+)\./.exec(host);
-  if (m) {
-    const second = Number(m[1]);
-    if (second >= 16 && second <= 31) return true;
+function ipv4ToMapped(host: string): string | null {
+  const lower = host.toLowerCase();
+  const mappedPrefix = '::ffff:';
+  if (lower.startsWith(mappedPrefix)) {
+    const v4 = lower.slice(mappedPrefix.length);
+    if (isIP(v4) === 4) return v4;
   }
+  return null;
+}
+
+function isBlockedIpv4(host: string): boolean {
+  if (isIP(host) !== 4) return false;
+  const parts = host.split('.').map(Number);
+  const [a, b] = parts;
+  if (a === 127) return true;
+  if (a === 0) return true;
+  if (a === 10) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 192 && b === 168) return true;
   return false;
 }
 
-function isPrivateIpv6(host: string): boolean {
+function isBlockedIpv6(host: string): boolean {
+  const mapped = ipv4ToMapped(host);
+  if (mapped) return isBlockedIpv4(mapped);
+
   const h = host.toLowerCase();
-  return h === '::1' || h.startsWith('fc') || h.startsWith('fd') || h.startsWith('fe80');
+  if (h === '::1') return true;
+
+  const firstHextet = /^([0-9a-f]{1,4})/i.exec(h)?.[1];
+  if (firstHextet) {
+    const n = parseInt(firstHextet, 16);
+    if (n >= 0xfc00 && n <= 0xfdff) return true;
+    if (n >= 0xfe80 && n <= 0xfebf) return true;
+  }
+
+  return false;
+}
+
+function isPrivateOrBlockedHost(host: string): boolean {
+  const mapped = ipv4ToMapped(host);
+  if (mapped) return isBlockedIpv4(mapped);
+  if (isIP(host) === 4) return isBlockedIpv4(host);
+  if (isIP(host) === 6) return isBlockedIpv6(host);
+  return false;
 }
 
 export type ValidateImportUrlResult =
@@ -51,21 +80,21 @@ export async function validateImportUrl(raw: string): Promise<ValidateImportUrlR
     return { ok: false, error: 'فقط http و https مجاز است' };
   }
 
-  const hostname = parsed.hostname.toLowerCase();
+  const hostname = parsed.hostname.replace(/^\[/, '').replace(/\]$/, '').toLowerCase();
   if (BLOCKED_HOSTNAMES.has(hostname)) {
     return { ok: false, error: 'این آدرس مجاز نیست' };
   }
 
-  if (isPrivateIpv4(hostname) || isPrivateIpv6(hostname)) {
+  if (isPrivateOrBlockedHost(hostname)) {
     return { ok: false, error: 'آدرس شبکه داخلی مجاز نیست' };
   }
 
   if (!isIP(hostname)) {
     try {
-      const records = await lookup(hostname, { verbatim: true });
-      const addrs = Array.isArray(records) ? records.map((r) => r.address) : [records.address];
-      for (const addr of addrs) {
-        if (isPrivateIpv4(addr) || isPrivateIpv6(addr)) {
+      const records = await lookup(hostname, { verbatim: true, all: true });
+      const list = Array.isArray(records) ? records : [records];
+      for (const record of list) {
+        if (isPrivateOrBlockedHost(record.address)) {
           return { ok: false, error: 'دامنه به آدرس داخلی اشاره می‌کند' };
         }
       }

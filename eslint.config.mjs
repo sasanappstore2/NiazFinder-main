@@ -45,6 +45,18 @@ export default defineConfig(
     files: ["**/*.{js,jsx,ts,tsx,mjs,cjs}"],
     rules: relaxedRules,
   },
+  {
+    files: ["src/components/**/*.{tsx,ts}", "src/app/**/*.{tsx,ts}"],
+    rules: {
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector: "Literal[value=/\\b(m[lr]-\\d|ml-|mr-)\\b/]",
+          message: "Prefer logical RTL spacing (ms/me/ps/pe) — see docs/UI_ORDER_SYSTEM.md",
+        },
+      ],
+    },
+  },
   globalIgnores([
     "node_modules/**",
     ".next/**",
@@ -59,5 +71,7 @@ export default defineConfig(
     "test-api*.js",
     "*.test.ts",
     "*.test.tsx",
+    "src/**/*.backup.*/**",
+    "src/**/*.backup.*",
   ]),
 );

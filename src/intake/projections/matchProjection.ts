@@ -19,7 +19,28 @@ export interface MatchProjection {
   neighborhood: string | null;
   transactionType: string | null;
   budget: number | null;
+  /** Estate match signals from dynamic answers (non-canonical). */
+  estateSignals: {
+    area: number | null;
+    rooms: number | null;
+    rahnAmount: number | null;
+    monthlyRent: number | null;
+    deposit: number | null;
+    parkingCount: string | number | null;
+    buildingAge: string | number | null;
+    deedType: string | null;
+    amenities: unknown;
+  };
   analysis: MatchabilityAnalysis;
+}
+
+function asFiniteNumber(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string' && value.trim()) {
+    const n = Number(value.replace(/,/g, ''));
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
 }
 
 function analyze(draft: NeedDraft): MatchabilityAnalysis {
@@ -50,6 +71,7 @@ function analyze(draft: NeedDraft): MatchabilityAnalysis {
 
 export function toMatchProjection(draft: NeedDraft): MatchProjection {
   const entities = recordToEntities(draft.entities);
+  const answers = draft.answers as Record<string, unknown>;
   return {
     projection: buildProjectionMetadata(draft, 1),
     vertical: entities.vertical,
@@ -58,6 +80,20 @@ export function toMatchProjection(draft: NeedDraft): MatchProjection {
     neighborhood: entities.neighborhood,
     transactionType: entities.transactionType,
     budget: entities.budgetMax ?? entities.budgetMin ?? null,
+    estateSignals: {
+      area: asFiniteNumber(entities.area ?? answers.areaMin ?? answers.area),
+      rooms: asFiniteNumber(entities.rooms ?? answers.rooms),
+      rahnAmount: asFiniteNumber(answers.rahnAmount),
+      monthlyRent: asFiniteNumber(answers.monthlyRent),
+      deposit: asFiniteNumber(answers.deposit),
+      parkingCount: (answers.parkingCount as string | number | null) ?? null,
+      buildingAge: (answers.buildingAge as string | number | null) ??
+        (typeof answers.yearMin === 'number' || typeof answers.yearMin === 'string'
+          ? answers.yearMin
+          : null),
+      deedType: typeof answers.deedType === 'string' ? answers.deedType : null,
+      amenities: answers.amenities ?? null,
+    },
     analysis: analyze(draft),
   };
 }

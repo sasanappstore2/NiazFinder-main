@@ -1,0 +1,2761 @@
+/* Filing browse + detail tokens (imported as filing-ui.css from globals) */
+.filing-detail-page {
+  --filing-green: #1f9d63;
+  --filing-green-soft: color-mix(in oklab, #1f9d63 10%, var(--card));
+  --filing-green-muted: color-mix(in oklab, #1f9d63 18%, transparent);
+  --filing-orange: #f59e0b;
+  --filing-red: #ef4444;
+  --filing-surface: var(--card);
+  --filing-border: color-mix(in oklab, var(--border) 85%, transparent);
+  --filing-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 4%, transparent),
+    0 6px 18px color-mix(in oklab, var(--foreground) 4%, transparent);
+  --filing-radius: 0.75rem;
+  --filing-gap: var(--golden-sm);
+  --filing-pad: var(--golden-md);
+}
+
+/* Card shell */
+.filing-detail-page .box.file {
+  background: var(--filing-surface);
+  border: 1px solid var(--filing-border);
+  border-radius: var(--filing-radius);
+  box-shadow: var(--filing-shadow);
+  overflow: hidden;
+}
+
+.filing-detail-page .filing-detail-gallery-wrap {
+  position: relative;
+}
+
+.filing-detail-page .filing-detail-gallery-demo {
+  position: absolute;
+  top: 0.55rem;
+  inset-inline-end: 0.55rem;
+  z-index: 3;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: white;
+  background: color-mix(in oklab, var(--foreground) 62%, transparent);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+.filing-detail-page .box.file .melk-gallery {
+  position: relative;
+  border-bottom: none;
+}
+
+/* ── Detail header (title + meta) ── */
+.filing-detail-page .filing-detail-header {
+  padding: 1rem 1.1rem 0.85rem;
+  border-bottom: 1px solid var(--filing-border);
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-detail-header {
+    padding: 1.15rem 1.35rem 1rem;
+  }
+}
+
+.filing-detail-page .filing-detail-header__row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+  margin-bottom: 0;
+}
+
+.filing-detail-page .filing-detail-header__row .top__media {
+  display: flex;
+  flex-shrink: 0;
+  order: -1;
+}
+
+.filing-detail-page .filing-detail-header__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.filing-detail-page .filing-detail-header__row .filing-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.65rem;
+}
+
+.filing-detail-page .filing-detail-header__row .filing-detail-title {
+  margin: 0;
+}
+
+/* MaskanYaban-style deal + area highlight (matches browse `.size`) */
+.filing-detail-page .box.file .filing-detail-size.size {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 9.375rem;
+  min-height: 6.4375rem;
+  padding: 0.5rem 0.4rem;
+  border-radius: 0.5rem;
+  background: var(--filing-green-soft);
+  border: 1px solid var(--filing-green-muted);
+  color: var(--filing-green);
+}
+
+.filing-detail-page .box.file .filing-detail-size.size .small {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.35;
+  max-width: 100%;
+}
+
+.filing-detail-page .box.file .filing-detail-size.size .large {
+  margin: 0.25rem 0 0.05rem;
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .box.file .filing-detail-size.size {
+    width: 9.375rem;
+    min-height: 6.4375rem;
+  }
+
+  .filing-detail-page .box.file .filing-detail-size.size .large {
+    font-size: 2.5rem;
+  }
+}
+
+.filing-detail-page .filing-detail-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin: 0 0 0.55rem;
+  font-size: 1.125rem;
+  font-weight: 800;
+  line-height: 1.45;
+  color: var(--foreground);
+  text-align: start;
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-detail-title {
+    font-size: 1.3125rem;
+  }
+}
+
+.filing-detail-page .filing-detail-title__pin {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-top: 0.2rem;
+  color: var(--filing-green);
+}
+
+.filing-detail-page .filing-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.65rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.filing-detail-page .filing-detail-meta__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.filing-detail-page .filing-detail-meta .file-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: none;
+}
+
+.filing-detail-page .filing-detail-meta .file-code span {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--filing-orange);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-detail-meta .file-code span {
+    font-size: 1.0625rem;
+  }
+}
+
+.filing-detail-page .filing-detail-meta__item + .file-code::before,
+.filing-detail-page .filing-detail-meta .file-code + .filing-detail-meta__source::before {
+  content: '·';
+  margin-inline-end: 0.65rem;
+  color: color-mix(in oklab, var(--muted-foreground) 50%, transparent);
+  font-weight: 400;
+}
+
+.filing-detail-page .filing-detail-meta__source {
+  font-weight: 600;
+  color: color-mix(in oklab, var(--filing-green) 75%, var(--muted-foreground));
+}
+
+.filing-detail-page .filing-detail-meta__source--link {
+  text-decoration: none;
+}
+
+.filing-detail-page .filing-detail-meta__source--link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 639px) {
+  .filing-detail-page .filing-detail-meta__source {
+    flex-basis: 100%;
+  }
+}
+
+/* ── Price band ── */
+.filing-detail-page .filing-detail-prices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  background: color-mix(in oklab, var(--filing-green) 5%, var(--card));
+  border-bottom: 1px solid var(--filing-border);
+}
+
+.filing-detail-page .filing-detail-prices__item {
+  flex: 1 1 0;
+  min-width: min(100%, 12rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1.15rem;
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-detail-prices__item {
+    padding: 1.15rem 1.5rem;
+    gap: 0.4rem;
+  }
+}
+
+.filing-detail-page .filing-detail-prices__item + .filing-detail-prices__item {
+  border-inline-start: 1px solid color-mix(in oklab, var(--filing-border) 75%, transparent);
+}
+
+.filing-detail-page .filing-detail-prices__label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-detail-prices__label {
+    font-size: 0.875rem;
+  }
+}
+
+.filing-detail-page .filing-detail-prices__value {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.35rem;
+}
+
+.filing-detail-page .filing-detail-prices__item--primary .PriceKama {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--filing-green);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-detail-prices__item--primary .PriceKama {
+    font-size: 1.875rem;
+  }
+}
+
+.filing-detail-page .filing-detail-prices__item--secondary .PriceKama {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: color-mix(in oklab, var(--filing-green) 80%, var(--foreground));
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-detail-prices__item--secondary .PriceKama {
+    font-size: 1.5rem;
+  }
+}
+
+.filing-detail-page .filing-detail-prices__currency {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: color-mix(in oklab, var(--filing-green) 60%, var(--muted-foreground));
+}
+
+.filing-detail-page .filing-detail-prices__hint {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 0.15rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+  background: color-mix(in oklab, var(--muted) 40%, transparent);
+}
+
+/* ── Quick stats strip ── */
+.filing-detail-page .filing-quick-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+  gap: 0;
+  border-bottom: 1px solid var(--filing-border);
+}
+
+.filing-detail-page .filing-quick-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.9rem 0.65rem;
+  text-align: center;
+  border-inline-end: 1px solid color-mix(in oklab, var(--filing-border) 55%, transparent);
+}
+
+.filing-detail-page .filing-quick-stat:last-child {
+  border-inline-end: none;
+}
+
+.filing-detail-page .filing-quick-stat__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--filing-green);
+  opacity: 0.9;
+}
+
+.filing-detail-page .filing-quick-stat__label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+  line-height: 1.3;
+}
+
+.filing-detail-page .filing-quick-stat__value {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--foreground);
+  line-height: 1.25;
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-quick-stat {
+    padding: 1rem 0.75rem;
+  }
+
+  .filing-detail-page .filing-quick-stat__label {
+    font-size: 0.75rem;
+  }
+
+  .filing-detail-page .filing-quick-stat__value {
+    font-size: 1.125rem;
+  }
+}
+
+/* ── Specs + amenities ── */
+.filing-detail-page .filing-detail-specs {
+  padding: var(--filing-pad) var(--golden-md);
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-detail-specs {
+    padding: var(--golden-md) var(--golden-lg);
+  }
+}
+
+.filing-detail-page .filing-detail-amenities {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+  gap: 0.5rem;
+  margin-top: var(--filing-gap);
+  padding-top: var(--filing-gap);
+  border-top: 1px solid var(--filing-border);
+}
+
+.filing-detail-page .filing-detail-amenity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.55rem 0.35rem;
+  border-radius: 0.5rem;
+  background: color-mix(in oklab, var(--filing-green) 5%, var(--card));
+  border: 1px solid color-mix(in oklab, var(--filing-green-muted) 50%, transparent);
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--foreground);
+  text-align: center;
+  line-height: 1.35;
+}
+
+.filing-detail-page .filing-detail-amenity svg {
+  color: var(--filing-green);
+  opacity: 0.8;
+}
+
+.filing-detail-page .filing-detail-description {
+  padding: var(--filing-pad) var(--golden-md);
+  border-top: 1px solid var(--filing-border);
+  background: color-mix(in oklab, var(--muted) 8%, transparent);
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-detail-description {
+    padding: var(--golden-md) var(--golden-lg);
+  }
+}
+
+/* Legacy scan-hero (kept for compat) */
+.filing-detail-page .filing-scan-hero {
+  display: grid;
+  gap: var(--filing-gap);
+  padding: var(--filing-pad);
+  border-bottom: 1px solid var(--filing-border);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--filing-green) 5%, var(--card)) 0%,
+    var(--card) 100%
+  );
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-scan-hero {
+    grid-template-columns: 5.5rem 1fr;
+    align-items: start;
+    padding: var(--golden-md) var(--golden-lg);
+  }
+}
+
+.filing-detail-page .filing-scan-hero__size {
+  text-align: center;
+  padding: 0.5rem 0.4rem;
+  border-radius: 0.5rem;
+  background: var(--filing-green-soft);
+  border: 1px solid var(--filing-green-muted);
+  color: var(--filing-green);
+}
+
+.filing-detail-page .filing-scan-hero__size .small {
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.filing-detail-page .filing-scan-hero__size .large {
+  font-size: 1.625rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.filing-detail-page .filing-scan-hero__size .unit {
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.filing-detail-page .filing-scan-hero__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.filing-detail-page .filing-scan-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.filing-detail-page .filing-scan-hero__meta .Box_Date {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.filing-detail-page .filing-source-badge {
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  background: var(--filing-green-soft);
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--filing-green);
+}
+
+.filing-detail-page .filing-scan-hero__meta .file-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  background: var(--filing-orange);
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.filing-detail-page .filing-meta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.filing-detail-page .filing-meta-share {
+  height: 1.625rem !important;
+  min-height: 1.625rem !important;
+  padding: 0 0.5rem !important;
+  font-size: 0.625rem !important;
+  border-radius: 9999px !important;
+}
+
+.filing-detail-page .filing-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.3rem;
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  line-height: 1.45;
+  color: var(--foreground);
+}
+
+/* Prices inline in hero */
+.filing-detail-page .filing-scan-prices {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+@media (min-width: 480px) {
+  .filing-detail-page .filing-scan-prices {
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  }
+}
+
+.filing-detail-page .filing-scan-prices .item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 0.625rem;
+  border-radius: 0.5rem;
+  background: color-mix(in oklab, var(--filing-green) 6%, var(--card));
+  border: 1px solid var(--filing-green-muted);
+}
+
+.filing-detail-page .filing-scan-prices .title {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.filing-detail-page .filing-scan-prices .title::after {
+  content: ':';
+}
+
+.filing-detail-page .filing-scan-prices .price-line {
+  font-size: 1.0625rem;
+  font-weight: 800;
+  color: var(--filing-green);
+  font-variant-numeric: tabular-nums;
+}
+
+.filing-detail-page .filing-scan-prices .toman-suffix {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: color-mix(in oklab, var(--filing-green) 65%, var(--muted-foreground));
+}
+
+.filing-detail-page .filing-scan-prices .price-hint {
+  width: 100%;
+  font-size: 0.625rem;
+  color: var(--muted-foreground);
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-scan-prices .price-hint {
+    width: auto;
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--muted) 45%, transparent);
+  }
+}
+
+/* ── Primary scan zone ── */
+.filing-detail-page .filing-scan-primary {
+  padding: var(--filing-pad) var(--golden-md);
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-scan-primary {
+    padding: var(--golden-md) var(--golden-lg);
+  }
+}
+
+.filing-detail-page .spec-grid-compact {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.filing-detail-page .spec-grid-compact__item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  background: color-mix(in oklab, var(--muted) 14%, var(--card));
+  border: 1px solid color-mix(in oklab, var(--filing-border) 60%, transparent);
+}
+
+@media (min-width: 640px) {
+  .filing-detail-page .spec-grid-compact {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .filing-detail-page .spec-grid-compact {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.filing-detail-page .spec-grid-compact .spec-label {
+  flex-shrink: 0;
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.filing-detail-page .spec-grid-compact .spec-label::after {
+  content: ':';
+}
+
+.filing-detail-page .spec-grid-compact dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: end;
+  color: var(--foreground);
+}
+
+/* Amenities — inline chips */
+.filing-detail-page .filing-scan-primary .total-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  margin-top: var(--filing-gap);
+  padding-top: var(--filing-gap);
+  border-top: 1px solid var(--filing-border);
+}
+
+.filing-detail-page .filing-scan-primary .feature {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.filing-detail-page .filing-scan-primary .feature-icon {
+  color: var(--filing-green);
+  filter: drop-shadow(0 2px 6px color-mix(in oklab, var(--filing-green) 40%, transparent));
+}
+
+.filing-detail-page .filing-scan-primary .feature-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+/* ── Secondary zone (scroll) ── */
+.filing-detail-page .filing-scan-secondary {
+  padding: var(--filing-pad) var(--golden-md);
+  border-top: 1px dashed var(--filing-border);
+  background: color-mix(in oklab, var(--muted) 10%, transparent);
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-scan-secondary {
+    padding: var(--golden-md) var(--golden-lg);
+  }
+}
+
+.filing-detail-page .filing-scan-secondary__label {
+  margin: 0 0 0.375rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+}
+
+.filing-detail-page .desc-block {
+  padding: 0.5rem 0.625rem;
+  border-radius: 0.5rem;
+  background: var(--card);
+  border: 1px solid var(--filing-border);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: color-mix(in oklab, var(--foreground) 88%, transparent);
+}
+
+.filing-detail-page .desc-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-top: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--filing-green);
+}
+
+/* ── Sidebar — action rail card ── */
+.filing-detail-page .filing-aside-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: calc(var(--filing-radius) + 2px);
+  border: 1px solid var(--filing-border);
+  background: var(--filing-surface);
+  box-shadow:
+    0 1px 0 color-mix(in oklab, white 40%, transparent) inset,
+    var(--filing-shadow);
+}
+
+.filing-detail-page .filing-aside-card::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--filing-green),
+    color-mix(in oklab, var(--filing-green) 55%, #34d399),
+    color-mix(in oklab, var(--filing-green) 25%, transparent)
+  );
+  pointer-events: none;
+}
+
+.filing-detail-page .filing-aside-card__brand {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 0.625rem;
+  padding: 0.875rem 0.875rem 0.75rem;
+  overflow: hidden;
+  border-radius: calc(var(--filing-radius) + 2px) calc(var(--filing-radius) + 2px) 0 0;
+  background:
+    radial-gradient(
+      120% 140% at 100% 0%,
+      color-mix(in oklab, var(--filing-green) 14%, transparent),
+      transparent 55%
+    ),
+    color-mix(in oklab, var(--filing-green) 4%, var(--card));
+  border-bottom: 1px solid color-mix(in oklab, var(--filing-border) 70%, var(--filing-green-muted));
+}
+
+.filing-detail-page .filing-aside-card__brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.625rem;
+  background: var(--card);
+  color: var(--filing-green);
+  border: 1px solid var(--filing-green-muted);
+  box-shadow: 0 4px 12px color-mix(in oklab, var(--filing-green) 12%, transparent);
+}
+
+.filing-detail-page .filing-aside-card__brand-text {
+  min-width: 0;
+}
+
+.filing-detail-page .filing-aside-card__brand-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.filing-detail-page .filing-aside-card__brand-name {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.filing-detail-page .filing-aside-card__brand-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  color: var(--muted-foreground);
+  transition: color 0.15s, background 0.15s;
+}
+
+.filing-detail-page .filing-aside-card__brand-link:hover {
+  color: var(--filing-green);
+  background: color-mix(in oklab, var(--filing-green) 10%, transparent);
+}
+
+.filing-detail-page .filing-aside-card__brand-tag {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.filing-detail-page .filing-aside-card__file-pill {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  padding: 0.25rem 0.45rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--filing-border);
+  background: color-mix(in oklab, var(--card) 88%, var(--muted));
+  font-size: 0.6875rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+
+.filing-detail-page .filing-aside-card__file-pill-label {
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+}
+
+/* sm tablet: full-width dock below main */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .filing-detail-aside {
+    width: 100%;
+    max-width: 40rem;
+    margin-inline: auto;
+  }
+
+  .filing-detail-page .filing-aside-card {
+    border-radius: calc(var(--filing-radius) + 2px);
+    box-shadow: var(--filing-shadow);
+  }
+
+  .filing-detail-page .filing-aside-card__brand {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .filing-detail-page .filing-aside-action__hint {
+    display: none;
+  }
+
+  .filing-detail-page .filing-aside-card__broker {
+    padding: 0.75rem 0.875rem 0.35rem;
+  }
+
+  .filing-detail-page .filing-aside-card__divider {
+    margin-top: 0.15rem;
+  }
+
+  .filing-detail-page .filing-aside-card__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem;
+    padding: 0.5rem 0.75rem 0.75rem;
+  }
+
+  .filing-detail-page .filing-aside-action {
+    min-width: 0;
+    padding: 0.5rem 0.55rem;
+  }
+
+  .filing-detail-page .filing-aside-action__hint {
+    display: none;
+  }
+
+  .filing-detail-page .filing-aside-action__chevron {
+    display: none;
+  }
+
+  .filing-detail-page .broker-row--placeholder .broker-address {
+    -webkit-line-clamp: 2;
+  }
+}
+
+.filing-detail-page .filing-aside-card__broker {
+  padding: 0.875rem 0.875rem 0.25rem;
+  min-width: 0;
+}
+
+.filing-detail-page .broker-eyebrow {
+  margin: 0 0 0.1rem;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.filing-detail-page .broker-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+
+.filing-detail-page .broker-row--placeholder .broker-address {
+  -webkit-line-clamp: 3;
+}
+
+.filing-detail-page .broker-avatar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.625rem;
+  background: var(--filing-green-soft);
+  color: var(--filing-green);
+  border: 1px solid var(--filing-green-muted);
+}
+
+.filing-detail-page .broker-avatar--lg {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+}
+
+.filing-detail-page .broker-row__text {
+  min-width: 0;
+}
+
+.filing-detail-page .broker-office {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.filing-detail-page .broker-office.muted {
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.filing-detail-page .broker-address {
+  margin: 0.2rem 0 0;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.filing-detail-page .broker-phone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  width: 100%;
+  margin-top: 0.65rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: white;
+  background: linear-gradient(135deg, #f87171, var(--filing-red));
+  font-variant-numeric: tabular-nums;
+}
+
+.filing-detail-page .broker-phone--hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.75rem;
+  margin-top: 0.75rem;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  box-shadow: 0 8px 20px color-mix(in oklab, var(--filing-red) 28%, transparent);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.filing-detail-page .broker-phone--hero:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px color-mix(in oklab, var(--filing-red) 34%, transparent);
+}
+
+.filing-detail-page .broker-phone--source {
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--filing-green) 88%, #166534),
+    var(--filing-green)
+  );
+  box-shadow: 0 8px 20px color-mix(in oklab, var(--filing-green) 26%, transparent);
+}
+
+.filing-detail-page .broker-phone--source:hover {
+  box-shadow: 0 10px 24px color-mix(in oklab, var(--filing-green) 34%, transparent);
+}
+
+.filing-detail-page .broker-phone__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: color-mix(in oklab, white 18%, transparent);
+}
+
+.filing-detail-page .broker-phone__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+.filing-detail-page .broker-phone__label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  opacity: 0.92;
+}
+
+.filing-detail-page .broker-phone__number {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.filing-detail-page .broker-phone__number--muted {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.filing-detail-page .broker-phone__chevron {
+  opacity: 0.75;
+}
+
+.filing-detail-page .filing-aside-card__divider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.875rem;
+  margin-top: 0.35rem;
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.filing-detail-page .filing-aside-card__divider::before,
+.filing-detail-page .filing-aside-card__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--filing-border);
+}
+
+.filing-detail-page .filing-aside-card__cta {
+  padding: 0 0.75rem 0.35rem;
+}
+
+.filing-detail-page .filing-aside-need-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  text-decoration: none;
+  color: white;
+  background: linear-gradient(135deg, #f87171, var(--filing-red));
+  box-shadow: 0 4px 14px color-mix(in oklab, var(--filing-red) 32%, transparent);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.filing-detail-page .filing-aside-need-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px color-mix(in oklab, var(--filing-red) 38%, transparent);
+}
+
+.filing-detail-page .filing-aside-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.5rem 0.625rem 0.5rem;
+  overflow: hidden;
+}
+
+.filing-detail-page .filing-aside-card__footer {
+  padding: 0.55rem 0.75rem 0.7rem;
+  border-top: 1px solid var(--filing-border);
+  background: color-mix(in oklab, var(--muted) 22%, var(--card));
+  border-radius: 0 0 calc(var(--filing-radius) + 2px) calc(var(--filing-radius) + 2px);
+}
+
+.filing-detail-page .filing-aside-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.filing-detail-page .filing-aside-back:hover {
+  color: var(--foreground);
+  background: color-mix(in oklab, var(--muted) 35%, transparent);
+}
+
+.filing-detail-page .filing-aside-action {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.55rem 0.6rem;
+  border-radius: 0.625rem;
+  border: 1px solid transparent;
+  background: transparent;
+  text-align: start;
+  text-decoration: none;
+  color: inherit;
+  font: inherit;
+  appearance: none;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.filing-detail-page .filing-aside-action:hover {
+  background: color-mix(in oklab, var(--muted) 35%, var(--card));
+  border-color: var(--filing-border);
+}
+
+@media (max-width: 1023px) {
+  .filing-detail-page .filing-aside-action:hover {
+    transform: translateX(-2px);
+  }
+
+  .filing-detail-page .filing-aside-action:hover .filing-aside-action__chevron {
+    transform: translateX(-2px);
+  }
+}
+
+.filing-detail-page .filing-aside-action--primary {
+  background: color-mix(in oklab, var(--filing-green) 7%, var(--card));
+  border-color: color-mix(in oklab, var(--filing-green) 18%, var(--filing-border));
+}
+
+.filing-detail-page .filing-aside-action--primary:hover {
+  background: color-mix(in oklab, var(--filing-green) 12%, var(--card));
+  border-color: var(--filing-green-muted);
+}
+
+.filing-detail-page .filing-aside-action--muted {
+  opacity: 0.88;
+}
+
+.filing-detail-page .filing-aside-action__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background: color-mix(in oklab, var(--muted) 40%, var(--card));
+  color: var(--foreground);
+}
+
+.filing-detail-page .filing-aside-action--primary .filing-aside-action__icon {
+  background: var(--filing-green-soft);
+  color: var(--filing-green);
+}
+
+.filing-detail-page .filing-aside-action__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+.filing-detail-page .filing-aside-action__title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filing-detail-page .filing-aside-action__hint {
+  font-size: 0.625rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--muted-foreground);
+}
+
+.filing-detail-page .filing-aside-action__chevron {
+  color: var(--muted-foreground);
+  opacity: 0.45;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.filing-detail-page .filing-aside-action:hover .filing-aside-action__chevron {
+  opacity: 0.85;
+}
+
+/* Legacy btn aliases — keep for any stragglers */
+.filing-detail-page .filing-aside-btn {
+  display: none;
+}
+
+/* Mobile action bar — phone only (app nav hidden on /f) */
+.filing-detail-page .filing-mobile-bar {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .filing-detail-page .filing-mobile-bar {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem var(--page-padding, 1rem) calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    background: color-mix(in oklab, var(--card) 94%, transparent);
+    border-top: 1px solid var(--filing-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 -6px 24px color-mix(in oklab, var(--foreground) 8%, transparent);
+  }
+
+  .filing-detail-page .filing-mobile-bar__inner {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+    width: min(100%, 42rem);
+    min-height: 3rem;
+  }
+
+  .filing-detail-page .filing-mobile-bar__primary {
+    display: inline-flex;
+    flex: 1.35;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 3rem;
+    padding: 0 1rem;
+    border-radius: 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 800;
+    text-decoration: none;
+    background: linear-gradient(135deg, #f87171, var(--filing-red));
+    color: white;
+    box-shadow: 0 2px 8px color-mix(in oklab, var(--filing-red) 35%, transparent);
+  }
+
+  .filing-detail-page .filing-mobile-bar__tools {
+    display: flex;
+    flex: 1;
+    align-items: stretch;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .filing-detail-page .filing-mobile-bar__tool {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem;
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0.25rem 0.15rem;
+    border-radius: 0.625rem;
+    border: 1px solid var(--filing-border);
+    background: var(--card);
+    color: var(--foreground);
+    font-size: 0.5625rem;
+    font-weight: 700;
+    text-decoration: none;
+    line-height: 1.2;
+    appearance: none;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .filing-detail-page .filing-mobile-bar__tool-label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.filing-detail-page .filing-scan-prices .item--primary .price-line {
+  font-size: 1.25rem;
+}
+
+.filing-detail-page .filing-scan-prices .item--secondary .price-line {
+  font-size: 0.9375rem;
+  color: color-mix(in oklab, var(--filing-green) 75%, var(--muted-foreground));
+}
+
+.filing-detail-page .filing-scan-prices .item--secondary .title {
+  font-size: 0.625rem;
+}
+
+/* Gallery — square tiles, same row height, as many as fit */
+.filing-detail-page .filing-gallery-carousel.melk-gallery {
+  border-bottom: 1px solid var(--filing-border);
+}
+
+.filing-detail-page .filing-gallery-carousel__stage {
+  --filing-gallery-h: 20.8rem;
+  --filing-gallery-gap: 0.375rem;
+  position: relative;
+  height: var(--filing-gallery-h);
+  padding: 0 0.375rem;
+  background: color-mix(in oklab, var(--muted) 10%, var(--card));
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-gallery-carousel__stage {
+    --filing-gallery-h: 28.6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .filing-detail-page .filing-gallery-carousel__stage {
+    --filing-gallery-h: 33.8rem;
+  }
+}
+
+.filing-detail-page .filing-gallery-carousel__viewport {
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y pinch-zoom;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+  scrollbar-width: none;
+}
+
+.filing-detail-page .filing-gallery-carousel__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.filing-detail-page .filing-gallery-carousel__viewport:focus-visible {
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--filing-green) 45%, transparent);
+}
+
+.filing-detail-page .filing-gallery-carousel__viewport.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
+
+.filing-detail-page .filing-gallery-carousel__track {
+  display: flex;
+  height: 100%;
+  margin-inline-start: calc(var(--filing-gallery-gap) * -1);
+  backface-visibility: hidden;
+}
+
+.filing-detail-page .filing-gallery-carousel__slide {
+  flex: 0 0 var(--filing-gallery-h);
+  min-width: 0;
+  height: 100%;
+  padding-inline-start: var(--filing-gallery-gap);
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+.filing-detail-page .filing-gallery-carousel__tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--filing-border) 75%, transparent);
+  background: color-mix(in oklab, var(--muted) 18%, var(--card));
+  box-shadow: 0 1px 4px color-mix(in oklab, var(--foreground) 5%, transparent);
+  transform: translateZ(0);
+  cursor: zoom-in;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.filing-detail-page .filing-gallery-carousel__tile:hover {
+  border-color: color-mix(in oklab, var(--filing-green) 40%, var(--border));
+  box-shadow: 0 4px 16px color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+
+.filing-detail-page .filing-gallery-carousel__tile:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--filing-green) 50%, transparent);
+  outline-offset: 2px;
+}
+
+.filing-detail-page .filing-gallery-carousel__zoom-hint {
+  position: absolute;
+  inset-inline-end: 0.4rem;
+  bottom: 0.4rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--foreground) 58%, transparent);
+  color: white;
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.15s, transform 0.15s;
+  pointer-events: none;
+}
+
+.filing-detail-page .filing-gallery-carousel__tile:hover .filing-gallery-carousel__zoom-hint,
+.filing-detail-page .filing-gallery-carousel__tile:focus-visible .filing-gallery-carousel__zoom-hint {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (hover: none) {
+  .filing-detail-page .filing-gallery-carousel__zoom-hint {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+}
+
+.filing-detail-page .filing-gallery-carousel__nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* No-image media placeholder */
+.filing-detail-page .filing-detail-media-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 5.5rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--filing-border);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--muted) 12%, var(--card)) 0%,
+    var(--card) 100%
+  );
+  color: var(--muted-foreground);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .filing-detail-page .filing-detail-media-empty {
+    min-height: 6.5rem;
+  }
+}
+
+/* Legacy no-image hero (unused) */
+.filing-detail-page .filing-detail-hero-visual {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 7rem;
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid var(--filing-border);
+  background: linear-gradient(
+    160deg,
+    color-mix(in oklab, var(--filing-green) 8%, var(--card)) 0%,
+    color-mix(in oklab, var(--muted) 12%, var(--card)) 100%
+  );
+  color: var(--muted-foreground);
+}
+
+.filing-detail-page .filing-detail-hero-visual__area {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  color: var(--filing-green);
+}
+
+.filing-detail-page .filing-detail-hero-visual__value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.filing-detail-page .filing-detail-hero-visual__unit {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.filing-detail-page .filing-detail-hero-visual__deal {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  background: var(--filing-green-soft);
+  color: var(--filing-green);
+}
+
+.filing-detail-page .filing-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+
+.filing-detail-page .filing-hero-pill--deal {
+  background: var(--filing-green-soft);
+  color: var(--filing-green);
+}
+
+.filing-detail-page .filing-hero-pill--area {
+  background: color-mix(in oklab, var(--muted) 30%, var(--card));
+  color: var(--foreground);
+}
+
+.filing-detail-page .filing-scan-hero__body--full {
+  grid-column: 1 / -1;
+}
+
+.filing-detail-page .filing-section-heading {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+}
+
+.filing-detail-page .filing-scan-secondary .filing-section-heading {
+  margin-bottom: 0.375rem;
+}
+
+.filing-detail-page .filing-gallery-carousel__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin-top: -1rem;
+  border-radius: 9999px;
+  border: none;
+  background: color-mix(in oklab, var(--card) 92%, transparent);
+  color: var(--foreground);
+  box-shadow: 0 2px 8px color-mix(in oklab, var(--foreground) 12%, transparent);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.filing-detail-page .filing-gallery-carousel__nav--prev {
+  inset-inline-start: 0.65rem;
+}
+
+.filing-detail-page .filing-gallery-carousel__nav--next {
+  inset-inline-end: 0.65rem;
+}
+
+.filing-detail-page .filing-gallery-carousel__counter {
+  position: absolute;
+  bottom: 0.5rem;
+  inset-inline-start: 0.65rem;
+  z-index: 2;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  background: color-mix(in oklab, var(--foreground) 55%, transparent);
+  color: white;
+  pointer-events: none;
+}
+
+/* Legacy thumb strip (removed from carousel) */
+.filing-detail-page .filing-gallery-carousel__thumbs {
+  display: none;
+}
+
+/* ── Filing image lightbox ── */
+.filing-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  overscroll-behavior: none;
+}
+
+.filing-lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  background: #050505;
+  transition: opacity 0.2s ease-out;
+}
+
+.filing-lightbox__header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.75rem;
+  padding-top: max(0.65rem, env(safe-area-inset-top));
+  background: linear-gradient(180deg, rgb(0 0 0 / 72%) 0%, transparent 100%);
+}
+
+.filing-lightbox__icon-btn {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  flex-shrink: 0;
+  color: white !important;
+}
+
+.filing-lightbox__icon-btn:hover {
+  background: rgb(255 255 255 / 12%) !important;
+}
+
+.filing-lightbox__title-block {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.filing-lightbox__title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filing-lightbox__meta {
+  margin: 0.1rem 0 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: rgb(255 255 255 / 68%);
+  font-variant-numeric: tabular-nums;
+}
+
+.filing-lightbox__tools {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex-shrink: 0;
+}
+
+.filing-lightbox__zoom-label {
+  min-width: 2.75rem;
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: rgb(255 255 255 / 75%);
+  font-variant-numeric: tabular-nums;
+}
+
+.filing-lightbox__stage {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0.5rem;
+  touch-action: none;
+}
+
+.filing-lightbox__frame {
+  display: flex;
+  max-height: 100%;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.filing-lightbox__frame.is-fit {
+  cursor: zoom-in;
+}
+
+.filing-lightbox__frame.is-zoomed {
+  cursor: grab;
+}
+
+.filing-lightbox__frame.is-zoomed:active {
+  cursor: grabbing;
+}
+
+.filing-lightbox__image {
+  max-height: min(100dvh - 11rem, 920px);
+  max-width: min(100vw - 1.5rem, 1200px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  border-radius: 0.35rem;
+  box-shadow: 0 12px 48px rgb(0 0 0 / 45%);
+}
+
+.filing-lightbox__nav {
+  position: absolute;
+  z-index: 3;
+  width: 3rem !important;
+  height: 3rem !important;
+  border-radius: 9999px !important;
+  background: rgb(0 0 0 / 52%) !important;
+  color: white !important;
+  backdrop-filter: blur(6px);
+}
+
+.filing-lightbox__nav:hover {
+  background: rgb(0 0 0 / 72%) !important;
+}
+
+.filing-lightbox__nav--prev {
+  inset-inline-start: 0.75rem;
+}
+
+.filing-lightbox__nav--next {
+  inset-inline-end: 0.75rem;
+}
+
+.filing-lightbox__footer {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  padding: 0.65rem 0.85rem;
+  padding-bottom: max(0.65rem, env(safe-area-inset-bottom));
+  border-top: 1px solid rgb(255 255 255 / 10%);
+  background: rgb(0 0 0 / 62%);
+  backdrop-filter: blur(10px);
+}
+
+.filing-lightbox__filmstrip {
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-bottom: 0.55rem;
+  overflow-x: auto;
+  padding-bottom: 0.15rem;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+  touch-action: pan-x;
+}
+
+.filing-lightbox__filmstrip::-webkit-scrollbar {
+  display: none;
+}
+
+.filing-lightbox__thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 2px solid transparent;
+  background: rgb(255 255 255 / 8%);
+  opacity: 0.62;
+  transition: opacity 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.filing-lightbox__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.filing-lightbox__thumb:hover {
+  opacity: 0.92;
+}
+
+.filing-lightbox__thumb.is-active {
+  opacity: 1;
+  border-color: var(--filing-green, #1f9d63);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--filing-green, #1f9d63) 35%, transparent);
+  transform: translateY(-1px);
+}
+
+.filing-lightbox__hint {
+  margin: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: rgb(255 255 255 / 48%);
+  line-height: 1.5;
+}
+
+.filing-lightbox--tablet .filing-lightbox__thumb {
+  width: 4rem;
+  height: 4rem;
+}
+
+.filing-lightbox--tablet .filing-lightbox__image {
+  max-height: min(100dvh - 12rem, 880px);
+}
+
+@media (min-width: 1024px) {
+  .filing-lightbox__thumb {
+    width: 4.25rem;
+    height: 4.25rem;
+  }
+
+  .filing-lightbox__nav {
+    width: 3.25rem !important;
+    height: 3.25rem !important;
+  }
+
+  .filing-lightbox__nav--prev {
+    inset-inline-start: 1.25rem;
+  }
+
+  .filing-lightbox__nav--next {
+    inset-inline-end: 1.25rem;
+  }
+}
+
+.filing-lightbox--phone .filing-lightbox__header {
+  padding-inline: 0.55rem;
+}
+
+.filing-lightbox--phone .filing-lightbox__title {
+  font-size: 0.8125rem;
+}
+
+.filing-lightbox--phone .filing-lightbox__image {
+  max-height: calc(100dvh - 10.5rem);
+  max-width: 100vw;
+  border-radius: 0.25rem;
+}
+
+.filing-lightbox--phone .filing-lightbox__thumb {
+  width: 3.25rem;
+  height: 3.25rem;
+}
+
+.filing-lightbox--phone .filing-lightbox__hint {
+  font-size: 0.5625rem;
+}
+
+@media (max-width: 519px) {
+  .filing-detail-page .filing-detail-header {
+    padding: 0.7rem 0.75rem 0.65rem;
+  }
+
+  .filing-detail-page .filing-detail-header__row {
+    gap: 0.55rem;
+    align-items: center;
+  }
+
+  .filing-detail-page .box.file .filing-detail-size.size {
+    width: 6.25rem;
+    min-height: 5.5rem;
+    padding: 0.35rem 0.28rem;
+  }
+
+  .filing-detail-page .box.file .filing-detail-size.size .large {
+    font-size: 1.75rem;
+  }
+
+  .filing-detail-page .box.file .filing-detail-size.size .small {
+    font-size: 0.5625rem;
+    line-height: 1.25;
+  }
+
+  .filing-detail-page .filing-detail-header__main {
+    gap: 0.35rem;
+  }
+
+  .filing-detail-page .filing-detail-header__row .filing-detail-meta {
+    font-size: 0.625rem;
+    gap: 0.2rem 0.45rem;
+  }
+
+  .filing-detail-page .filing-detail-meta .file-code span {
+    font-size: 0.8125rem;
+  }
+
+  .filing-detail-page .filing-detail-header__row .filing-detail-title {
+    font-size: 1rem;
+    line-height: 1.4;
+    gap: 0.3rem;
+  }
+
+  .filing-detail-page .filing-detail-title__pin {
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.15rem;
+  }
+
+  .filing-detail-page .filing-detail-meta__item + .file-code::before,
+  .filing-detail-page .filing-detail-meta .file-code + .filing-detail-meta__source::before {
+    margin-inline-end: 0.45rem;
+  }
+
+  .filing-detail-page .filing-detail-prices {
+    flex-direction: column;
+  }
+
+  .filing-detail-page .filing-detail-prices__item + .filing-detail-prices__item {
+    border-inline-start: none;
+    border-top: 1px solid color-mix(in oklab, var(--filing-border) 75%, transparent);
+  }
+
+  .filing-detail-page .filing-quick-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filing-detail-page .filing-quick-stat:nth-child(2n) {
+    border-inline-end: none;
+  }
+
+  .filing-detail-page .filing-quick-stat:nth-child(n + 3) {
+    border-top: 1px solid color-mix(in oklab, var(--filing-border) 55%, transparent);
+  }
+}
+
+.filing-detail-page .filing-gallery-carousel__thumb.is-active {
+  border-color: var(--filing-green);
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Browse page — unified tokens (Rightmove / Bayut / maskanyaban)
+   ═══════════════════════════════════════════════════════════ */
+
+.filing-browse-page {
+  --filing-green: #1f9d63;
+  --filing-green-soft: color-mix(in oklab, #1f9d63 10%, var(--card));
+  --filing-green-muted: color-mix(in oklab, #1f9d63 18%, transparent);
+  --filing-orange: #f59e0b;
+  --filing-sale: #1f9d63;
+  --filing-rent: #2563eb;
+  --filing-border: color-mix(in oklab, var(--border) 85%, transparent);
+  --filing-radius: 0.75rem;
+  --filing-gap: var(--golden-sm);
+  width: 100%;
+  max-width: 42rem;
+  margin-inline: auto;
+  padding: 0.75rem var(--page-padding, 1rem) calc(var(--golden-lg) + 3.5rem);
+}
+
+@media (min-width: 768px) {
+  .filing-browse-page {
+    max-width: 52rem;
+    padding-inline: var(--page-padding, 1.5rem);
+    padding-bottom: var(--golden-lg);
+  }
+}
+
+.filing-browse-header {
+  margin-bottom: 0.625rem;
+}
+
+.filing-browse-header__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+@media (min-width: 640px) {
+  .filing-browse-header__title {
+    font-size: 1.3125rem;
+  }
+}
+
+.filing-browse-header__count {
+  margin: 0.2rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+}
+
+.filing-browse-header__count strong {
+  color: var(--foreground);
+  font-weight: 800;
+}
+
+/* ── Compact filter rail ── */
+.filing-browse-filter-rail {
+  position: sticky;
+  top: 3.25rem;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border-radius: var(--filing-radius);
+  border: 1px solid var(--filing-border);
+  background: color-mix(in oklab, var(--card) 94%, transparent);
+  box-shadow: 0 2px 12px color-mix(in oklab, var(--foreground) 5%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.filing-browse-filter-rail__toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.filing-browse-filter-rail__search {
+  position: relative;
+  min-width: 0;
+}
+
+.filing-browse-filter-rail__search-input {
+  height: 2.375rem !important;
+  width: 100%;
+  border-color: var(--filing-border) !important;
+  background: color-mix(in oklab, var(--muted) 12%, var(--card)) !important;
+  padding-inline-start: 2.25rem !important;
+  font-size: 0.8125rem !important;
+}
+
+.filing-browse-filter-rail__sort {
+  height: 2.375rem !important;
+  width: 6.5rem !important;
+  min-width: 6.5rem;
+  border-color: var(--filing-border) !important;
+  background: color-mix(in oklab, var(--muted) 12%, var(--card)) !important;
+  font-size: 0.6875rem !important;
+}
+
+@media (min-width: 640px) {
+  .filing-browse-filter-rail__sort {
+    width: 7.5rem !important;
+    min-width: 7.5rem;
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Quick deal chips — single scroll row */
+.filing-browse-quick-deals {
+  display: flex;
+  gap: 0.3rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-bottom: 0.1rem;
+  scrollbar-width: none;
+  mask-image: linear-gradient(to left, #000 calc(100% - 1rem), transparent);
+}
+
+.filing-browse-quick-deals::-webkit-scrollbar {
+  display: none;
+}
+
+.filing-browse-quick-deals__btn {
+  flex-shrink: 0;
+  height: 1.75rem;
+  padding: 0 0.6rem;
+  border-radius: 9999px;
+  border: 1px solid var(--filing-border);
+  background: transparent;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.filing-browse-quick-deals__btn.is-active {
+  border-color: var(--filing-green-muted);
+  background: var(--filing-green-soft);
+  color: var(--filing-green);
+  font-weight: 800;
+}
+
+.filing-browse-quick-deals__btn:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--filing-green) 50%, transparent);
+  outline-offset: 2px;
+}
+
+/* Action chips row */
+.filing-browse-chips {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2rem;
+}
+
+.filing-browse-chips__divider {
+  width: 1px;
+  height: 1.25rem;
+  flex-shrink: 0;
+  background: var(--filing-border);
+}
+
+.filing-browse-chips__scroll {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 0.35rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.filing-browse-chips__scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.filing-browse-chips__clear {
+  flex-shrink: 0;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--filing-green);
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filing-browse-chips__clear:hover {
+  text-decoration: underline;
+}
+
+.filing-browse-chips__clear:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--filing-green) 50%, transparent);
+  border-radius: 0.25rem;
+}
+
+/* Advanced per-filter rail */
+.filing-filter-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.filing-filter-rail__row {
+  min-width: 0;
+}
+
+.filing-filter-rail__pills {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.35rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-bottom: 0.1rem;
+  scrollbar-width: none;
+  mask-image: linear-gradient(to left, #000 calc(100% - 1rem), transparent);
+}
+
+.filing-filter-rail__pills::-webkit-scrollbar {
+  display: none;
+}
+
+.filing-filter-pill {
+  min-height: 2rem !important;
+  padding-block: 0.35rem !important;
+  font-size: 0.75rem !important;
+}
+
+.filing-filter-popover__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.75rem;
+}
+
+.filing-filter-popover__title {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.filing-filter-popover__actions {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
+.filing-filter-rail__active {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.filing-active-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  max-width: 100%;
+  font-size: 0.6875rem;
+  line-height: 1;
+}
+
+.filing-active-filter-chip__type,
+.filing-active-filter-chip__value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.5rem;
+  background: color-mix(in oklab, var(--muted) 55%, var(--card));
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+.filing-active-filter-chip__type {
+  border-start-start-radius: 0.25rem;
+  border-end-start-radius: 0.25rem;
+  font-weight: 600;
+}
+
+.filing-active-filter-chip__value {
+  color: var(--foreground);
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filing-active-filter-chip__clear {
+  height: 1.5rem !important;
+  width: 1.5rem !important;
+  min-height: 0 !important;
+  border-start-end-radius: 0.25rem;
+  border-end-end-radius: 0.25rem;
+  background: color-mix(in oklab, var(--muted) 55%, var(--card)) !important;
+  color: var(--muted-foreground) !important;
+}
+
+.filing-active-filter-chip__clear:hover {
+  color: var(--foreground) !important;
+  background: color-mix(in oklab, var(--muted) 70%, var(--card)) !important;
+}
+
+/* Category segments (in sheet) */
+.filing-category-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filing-category-segments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.filing-category-segments__btn {
+  flex-shrink: 0;
+  height: 2rem;
+  padding: 0 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid var(--filing-border);
+  background: color-mix(in oklab, var(--muted) 10%, var(--card));
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.filing-category-segments__btn.is-active {
+  border-color: var(--filing-green-muted);
+  background: var(--filing-green-soft);
+  color: var(--filing-green);
+  font-weight: 800;
+}
+
+.filing-category-segments__btn:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--filing-green) 50%, transparent);
+  outline-offset: 2px;
+}
+
+/* Filter sheet */
+.filing-filter-sheet__body {
+  max-height: 58vh;
+  overflow-y: auto;
+  padding: 0.5rem 1rem;
+}
+
+.filing-filter-sheet__group {
+  margin-bottom: 1.125rem;
+}
+
+.filing-filter-sheet__group-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: var(--muted-foreground);
+  letter-spacing: 0.03em;
+}
+
+.filing-filter-sheet__footer {
+  display: flex;
+  gap: 0.5rem;
+  border-top: 1px solid var(--filing-border);
+  padding: 1rem 1rem pb-safe;
+}
+
+/* Results */
+.filing-browse-empty {
+  border: 1px dashed var(--filing-border);
+  border-radius: var(--filing-radius);
+  padding: 2.5rem 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.filing-browse-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filing-browse-more {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.75rem;
+}
+
+/* ── List card — maskanyaban box-list parity ── */
+.filing-list-card__link {
+  display: block;
+  border-radius: var(--filing-radius);
+  outline: none;
+  text-decoration: none;
+  color: inherit;
+}
+
+.filing-list-card__link:focus-visible .filing-list-card.box-list {
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--filing-green) 45%, transparent);
+}
+
+.filing-browse-page .filing-list-card.box.box-list.file {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--filing-radius);
+  border: 1px solid var(--filing-border);
+  background: var(--card);
+  box-shadow: 0 1px 4px color-mix(in oklab, var(--foreground) 4%, transparent);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.filing-list-card__link:hover .filing-list-card.box-list,
+.filing-browse-page .filing-list-card.box-list:hover {
+  border-color: color-mix(in oklab, var(--filing-green) 28%, var(--border));
+  box-shadow: 0 4px 18px color-mix(in oklab, var(--foreground) 7%, transparent);
+}
+
+.filing-browse-page .box-list.file .top {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem 0.65rem;
+  position: relative;
+}
+
+.filing-browse-page .box-list.file .top__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.filing-browse-page .box-list.file .top__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.65rem;
+}
+
+.filing-browse-page .box-list.file .top__media {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  order: -1;
+}
+
+.filing-browse-page .box-list.file .ImageFream {
+  position: relative;
+  flex-shrink: 0;
+  width: 10.1875rem;
+  height: 10.1875rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--filing-border) 80%, transparent);
+  background: color-mix(in oklab, var(--muted) 20%, var(--card));
+}
+
+.filing-browse-page .box-list.file .size {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.5rem 0.35rem;
+  border-radius: 0.5rem;
+  background: var(--filing-green-soft);
+  border: 1px solid var(--filing-green-muted);
+  color: var(--filing-green);
+}
+
+.filing-browse-page .box-list.file:not(.has-cover) .top__media {
+  justify-content: flex-start;
+}
+
+.filing-browse-page .box-list.file:not(.has-cover) .size {
+  width: 7.5rem;
+  min-height: 7.5rem;
+}
+
+.filing-browse-page .box-list.file .size.sizeWithImg {
+  width: 5.25rem;
+  min-height: 10.1875rem;
+}
+
+.filing-browse-page .box-list.file .size .small {
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1.35;
+  max-width: 100%;
+}
+
+.filing-browse-page .box-list.file .size .large {
+  margin: 0.2rem 0 0.05rem;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.filing-browse-page .box-list.file .Box_Date {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.filing-browse-page .box-list.file .filing-list-address {
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.5;
+  color: var(--foreground);
+  text-align: start;
+}
+
+.filing-browse-page .box-list.file .file-code {
+  position: static;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: none;
+}
+
+.filing-browse-page .box-list.file .file-code span {
+  margin-inline-start: 0.2rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--filing-orange);
+}
+
+.filing-browse-page .box-list.file .top__meta .Box_Date + .file-code::before {
+  content: '·';
+  margin-inline-end: 0.65rem;
+  color: color-mix(in oklab, var(--muted-foreground) 55%, transparent);
+  font-weight: 400;
+}
+
+.filing-browse-page .box-list.file .pricing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0;
+  padding: 0.55rem 0.85rem 0.6rem;
+  border-top: 1px solid color-mix(in oklab, var(--filing-border) 65%, transparent);
+}
+
+.filing-browse-page .box-list.file .pricing--multi .item {
+  flex: 1 1 0;
+  min-width: min(100%, 11rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.filing-browse-page .box-list.file .pricing--multi .item:not(:first-child) .price {
+  justify-content: flex-end;
+}
+
+.filing-browse-page .box-list.file .pricing--multi .item + .item {
+  border-inline-start: 1px solid color-mix(in oklab, var(--filing-border) 70%, transparent);
+  padding-inline-start: 0.85rem;
+  margin-inline-start: 0.85rem;
+}
+
+.filing-browse-page .box-list.file .pricing:not(.pricing--multi) .item {
+  flex: 1;
+  min-width: 0;
+}
+
+.filing-browse-page .box-list.file .pricing .item {
+  min-width: 0;
+}
+
+.filing-browse-page .box-list.file .pricing .price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.3rem;
+}
+
+.filing-browse-page .box-list.file .pricing--multi .item:first-child .PriceKama {
+  font-size: 1.125rem;
+}
+
+.filing-browse-page .box-list.file .pricing--multi .item:not(:first-child) .price {
+  color: color-mix(in oklab, var(--foreground) 88%, transparent);
+}
+
+.filing-browse-page .box-list.file .pricing .title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+.filing-browse-page .box-list.file .pricing .PriceKama {
+  font-size: 1.0625rem;
+  font-weight: 800;
+  color: var(--filing-green);
+  font-variant-numeric: tabular-nums;
+}
+
+.filing-browse-page .box-list.file .pricing .PriceKama.small {
+  font-size: 0.875rem;
+}
+
+.filing-browse-page .box-list.file .pricing .currency {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: color-mix(in oklab, var(--filing-green) 70%, var(--muted-foreground));
+}
+
+.filing-browse-page .box-list.file .pricing .price-text {
+  margin-top: 0.15rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  background: color-mix(in oklab, var(--muted) 35%, transparent);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.filing-browse-page .box-list.file .features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(4.25rem, 1fr));
+  justify-items: center;
+  gap: 0.5rem 0.75rem;
+  padding: 0.55rem 0.85rem 0.7rem;
+  border-top: 1px solid color-mix(in oklab, var(--filing-border) 55%, transparent);
+}
+
+.filing-browse-page .box-list.file .features--with-img {
+  padding-top: 0.6rem;
+}
+
+.filing-browse-page .box-list.file .features .item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 3rem;
+  text-align: center;
+  color: color-mix(in oklab, var(--foreground) 82%, transparent);
+}
+
+.filing-browse-page .box-list.file .features .item svg {
+  opacity: 0.65;
+  color: var(--muted-foreground);
+}
+
+.filing-browse-page .box-list.file .features .item span {
+  font-size: 0.625rem;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.filing-list-card__skel-size {
+  width: 7.5rem !important;
+  min-height: 7.5rem !important;
+  border-radius: 0.5rem !important;
+}
+
+@media (max-width: 520px) {
+  .filing-browse-page .box-list.file .top {
+    flex-direction: column;
+    padding: 0.65rem 0.75rem 0.55rem;
+  }
+
+  .filing-browse-page .box-list.file .top__media {
+    order: 0;
+    align-self: flex-start;
+  }
+
+  .filing-browse-page .box-list.file .ImageFream,
+  .filing-browse-page .box-list.file:not(.has-cover) .size {
+    width: 5.75rem;
+    height: 5.75rem;
+    min-height: 5.75rem;
+  }
+
+  .filing-browse-page .box-list.file .size.sizeWithImg {
+    width: 4rem;
+    min-height: 5.75rem;
+  }
+
+  .filing-browse-page .box-list.file .size .large {
+    font-size: 1.5rem;
+  }
+
+  .filing-browse-page .box-list.file .pricing--multi .item + .item {
+    border-inline-start: none;
+    padding-inline-start: 0;
+    margin-inline-start: 0;
+    border-top: 1px solid color-mix(in oklab, var(--filing-border) 65%, transparent);
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .filing-browse-page .box-list.file .pricing--multi {
+    flex-direction: column;
+  }
+}
+

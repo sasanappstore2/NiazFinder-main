@@ -1,7 +1,7 @@
 'use client';
 
 import { Bookmark } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 interface BookmarksEmptyStateProps {
   isBusinessUser: boolean;
@@ -16,29 +16,26 @@ export function BookmarksEmptyState({
 }: BookmarksEmptyStateProps) {
   if (filteredEmpty) {
     return (
-      <div className="rounded-2xl border border-dashed border-border/60 bg-muted/10 py-14 text-center">
-        <p className="text-sm text-muted-foreground">در این فیلتر موردی یافت نشد.</p>
-        <p className="mt-1 text-caption text-muted-foreground/70">
-          فیلتر دیگری انتخاب کنید یا جستجو را پاک کنید.
-        </p>
-      </div>
+      <EmptyState
+        icon={Bookmark}
+        variant="filtered"
+        title="در این فیلتر موردی یافت نشد"
+        description="فیلتر دیگری انتخاب کنید یا جستجو را پاک کنید."
+      />
     );
   }
 
   return (
-    <div className="py-16 text-center">
-      <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-muted/60">
-        <Bookmark className="size-8 text-muted-foreground/40" aria-hidden />
-      </div>
-      <h2 className="mb-2 text-lg font-semibold text-foreground">صندوق پیگیری خالی است</h2>
-      <p className="mx-auto mb-6 max-w-md text-sm text-muted-foreground">
-        {isBusinessUser
+    <EmptyState
+      icon={Bookmark}
+      title="صندوق پیگیری خالی است"
+      description={
+        isBusinessUser
           ? 'آگهی‌های مناسب کسب‌وکار خود را ذخیره کنید تا اینجا ببینید و با یک کلیک پیام بدهید یا پیشنهاد ثبت کنید.'
-          : 'روی آیکن ذخیره در صفحه آگهی نیاز بزنید تا اینجا ببینید و بعداً سریع به آن برگردید.'}
-      </p>
-      <Button type="button" onClick={onBrowse}>
-        مرور آگهی‌های نیاز
-      </Button>
-    </div>
+          : 'روی آیکن ذخیره در صفحه آگهی نیاز بزنید تا اینجا ببینید و بعداً سریع به آن برگردید.'
+      }
+      actionLabel="مرور آگهی‌های نیاز"
+      onAction={onBrowse}
+    />
   );
 }

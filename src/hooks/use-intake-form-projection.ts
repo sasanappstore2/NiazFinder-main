@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import type { IntakeStep, NeedDraft } from '@/contracts/need-intake';
+import { isIntakeComposeStep } from '@/lib/need-intake/intake-wizard-steps';
 
 export interface IntakeFormProjectionFields {
   needText: string;
@@ -72,7 +73,7 @@ export function useIntakeFormProjection({
   }, [needText, projectNeedDraftFromFormFields, intakeFormProjection]);
 
   const liveDraftForCopy = useMemo(() => {
-    if (step !== 'location' && step !== 'details') return null;
+    if (step !== 'location' && !isIntakeComposeStep(step)) return null;
     if (!projectedDraft) return null;
     if (step === 'location' && !selectedCity.trim()) return null;
     return projectedDraft;
@@ -80,7 +81,7 @@ export function useIntakeFormProjection({
 
   const liveCopyStreamEnabled =
     Boolean(needText.trim()) &&
-    (step === 'details' ||
+    (isIntakeComposeStep(step) ||
       (step === 'location' &&
         Boolean(
           selectedCity.trim() && (selectedCategory.trim() || selectedSubcategory.trim())

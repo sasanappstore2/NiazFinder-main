@@ -3,6 +3,8 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
+    "predev": "npm run ensure:typesense",
+    "ensure:typesense": "bash scripts/ensure-typesense.sh",
     "dev": "prisma generate && next dev -H 0.0.0.0 -p 3000 2>&1 | tee dev.log",
     "postinstall": "prisma generate",
     "dev:chat": "bun --env-file=.env --hot mini-services/chat-service/index.ts",

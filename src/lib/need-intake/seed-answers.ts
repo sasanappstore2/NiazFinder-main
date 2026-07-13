@@ -87,6 +87,13 @@ export function seedAnswersFromParsed(
     answers.rahnAmount = parsed.budgetMax;
   }
 
+  // Mirror ودیعه ↔ رهن so catalog `deposit` chips and form fields stay filled.
+  if (answers.rahnAmount != null && answers.deposit == null) {
+    answers.deposit = answers.rahnAmount;
+  } else if (answers.deposit != null && answers.rahnAmount == null) {
+    answers.rahnAmount = answers.deposit;
+  }
+
   if (parsed.intentType === 'property_listing' && !answers.dealType) {
     answers.dealType = 'sell';
   }

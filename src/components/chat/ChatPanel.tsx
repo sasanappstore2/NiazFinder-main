@@ -499,8 +499,9 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
         setShowNewChat(false);
         setUserSearchQuery('');
         setSearchResults([]);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error creating conversation:', err);
+        toast.error(err instanceof Error ? err.message : 'خطا در ایجاد گفتگو');
       } finally {
         setIsCreatingConversation(false);
       }
@@ -1367,12 +1368,14 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                   <p
                     className={cn(
                       'text-xs transition-colors',
-                      otherUser.online
+                      otherUser.online || selectedConversation?.isPlatformBot
                         ? 'text-emerald-600 dark:text-emerald-400'
                         : 'text-muted-foreground'
                     )}
                   >
-                    {peerPresenceLabel(otherUser)}
+                    {selectedConversation?.isPlatformBot
+                      ? 'آنلاین'
+                      : peerPresenceLabel(otherUser)}
                   </p>
                 ) : (
                   <p className="text-xs text-muted-foreground">گفتگو</p>

@@ -57,7 +57,26 @@ export function matchManagedNeighborhood(
 
   const ambiguityHits = findManagedNeighborhoodAmbiguity(neighborhoods, withoutCity || raw);
   if (ambiguityHits.length >= 2) return null;
-  if (ambiguityHits.length === 1) return ambiguityHits[0].neighborhood;
+  if (ambiguityHits.length === 1) {
+    const only = ambiguityHits[0]!.neighborhood;
+    // Prefer exact managed name over a lone sub-area parent when both exist
+    const exactName = neighborhoods.find(
+      (n) => compact(n.name) === compactQ || compact(n.name) === compactRaw
+    );
+    if (exactName && exactName.id !== only.id) return exactName;
+    return only;
+  }
+
+  // Whole-token name matches (e.g. «فردوسی» in «توس فردوسی») — never greedily pick one
+  const tokenNameHits = neighborhoods.filter((n) => {
+    const nameTokens = normalize(n.name)
+      .split(/[\s،,.]+/)
+      .map((t) => compact(t))
+      .filter(Boolean);
+    return nameTokens.includes(compactQ) || nameTokens.includes(compactRaw);
+  });
+  if (tokenNameHits.length === 1) return tokenNameHits[0]!;
+  if (tokenNameHits.length >= 2) return null;
 
   for (const n of neighborhoods) {
     const cn = compact(n.name);

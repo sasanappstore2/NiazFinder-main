@@ -4,6 +4,7 @@ import { requireBusinessManager } from '@/lib/business/require-business-manager'
 import { ensureBusinessProfile } from '@/lib/business/ensure-profile';
 import { parseJsonArray, toJson } from '@/lib/business/json-fields';
 import { buildOfferFeaturesFromBody } from '@/lib/business/serialize-offer-payload';
+import { queueBusinessProfileSearchSync } from '@/lib/rag/sync';
 
 export const runtime = 'nodejs';
 
@@ -48,6 +49,8 @@ export async function PATCH(
       },
     });
 
+    queueBusinessProfileSearchSync(profile.id);
+
     return NextResponse.json({ message: 'به‌روزرسانی شد' });
   } catch (error) {
     console.error('Business offer PATCH error:', error);
@@ -72,6 +75,7 @@ export async function DELETE(
     if (!existing) return NextResponse.json({ error: 'یافت نشد' }, { status: 404 });
 
     await db.businessOffer.delete({ where: { id } });
+    queueBusinessProfileSearchSync(profile.id);
     return NextResponse.json({ message: 'حذف شد' });
   } catch (error) {
     console.error('Business offer DELETE error:', error);
