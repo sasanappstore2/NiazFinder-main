@@ -9,26 +9,39 @@ export function NeedsColumn({
   items,
   error,
   onRetry,
+  emptyMessage,
+  onAddToFollowUp,
+  trackedSourceIds,
   fillHeight,
 }: {
   items: WorkspaceNeedItem[];
   error?: string;
   onRetry?: () => void;
+  emptyMessage: string;
+  onAddToFollowUp?: (item: WorkspaceNeedItem) => void;
+  trackedSourceIds?: Set<string>;
   fillHeight?: boolean;
 }) {
   return (
     <KanbanColumn
-      title="نیازها و لیدها"
+      title="نیازهای مرتبط"
       count={items.length}
       isEmpty={items.length === 0}
-      emptyMessage="نیاز یا لید جدیدی در صف شما نیست. لیدهای هوشمند پس از تطابق اینجا نمایش داده می‌شوند."
+      emptyMessage={emptyMessage}
       error={error}
       onRetry={onRetry}
       fillHeight={fillHeight}
     >
       {items.map((item) => (
-        <SortableCardShell key={item.id} id={item.id}>
-          {(dragHandle) => <NeedCard item={item} dragHandle={dragHandle} />}
+        <SortableCardShell key={item.id} id={item.id} dragLabel="کشیدن به پیگیری‌ها">
+          {(dragHandle) => (
+            <NeedCard
+              item={item}
+              dragHandle={dragHandle}
+              onAddToFollowUp={onAddToFollowUp}
+              isInFollowUps={trackedSourceIds?.has(item.requestId)}
+            />
+          )}
         </SortableCardShell>
       ))}
     </KanbanColumn>
