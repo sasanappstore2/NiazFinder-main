@@ -51,7 +51,7 @@ export function WorkspaceFilingsExplorer({
   const regionHint = feedMeta.regionLabel ?? businessCity ?? null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[200] flex flex-col bg-background">
+    <div className="filing-browse-page fixed inset-0 z-[200] flex flex-col bg-background">
       <header className="shrink-0 border-b border-border/60 bg-gradient-to-l from-primary/5 via-background to-background px-4 py-3">
         <div className="flex flex-wrap items-center gap-2 gap-y-3">
           <Button

@@ -69,6 +69,14 @@ export function useChatSocket(): ChatSocketAPI {
   const activeConversationId = useAppStore((s) => s.activeConversationId);
 
   const socketRef = useRef<Socket | null>(null);
+  // Route changes must NOT recreate `connect` — a new identity re-runs the
+  // main effect whose cleanup fully disconnects the socket. That churn drops
+  // realtime events mid-flight (voice-call signaling, ICE candidates).
+  const pathnameRef = useRef(pathname);
+  useEffect(() => {
+    pathnameRef.current = pathname;
+  }, [pathname]);
+  const currentUserId = currentUser?.id ?? null;
   const listenersBoundRef = useRef(false);
   const typingTimeoutRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const [isConnected, setIsConnected] = useState(false);
@@ -97,11 +105,11 @@ export function useChatSocket(): ChatSocketAPI {
     setIsConnected(false);
     setChatSocketConnected(false);
     setSocket(null);
-  }, [authToken]);
+  }, []);
 
   const connect = useCallback(() => {
-    if (!currentUser || !isAuthenticated || !authToken) return;
-    if (!isChatSocketConnectAllowed(pathname)) return;
+    if (!currentUserId || !isAuthenticated || !authToken) return;
+    if (!isChatSocketConnectAllowed(pathnameRef.current)) return;
     if (shouldSkipChatSocketAuth(authToken)) return;
 
     const { url, path, enabled, useNestNamespace } = getChatSocketConfig();
@@ -226,7 +234,7 @@ export function useChatSocket(): ChatSocketAPI {
         console.warn('[chat] خطای اتصال:', error.message);
       }
     });
-  }, [currentUser, isAuthenticated, authToken, pathname, handleAuthFailure]);
+  }, [currentUserId, isAuthenticated, authToken, handleAuthFailure]);
 
   const disconnect = useCallback(() => {
     socketConsumerCount = Math.max(0, socketConsumerCount - 1);
@@ -356,16 +364,17 @@ export function useChatSocket(): ChatSocketAPI {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated && currentUser && authToken && connectPolicyAllowed) {
+    if (isAuthenticated && currentUserId && authToken && connectPolicyAllowed) {
       socketConsumerCount += 1;
       connect();
+      return () => {
+        disconnect();
+      };
     }
-    return () => {
-      disconnect();
-    };
+    return undefined;
   }, [
     isAuthenticated,
-    currentUser,
+    currentUserId,
     authToken,
     connectPolicyAllowed,
     connect,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requirePermission } from '@/lib/rbac/authz';
 import { logAdminAction } from '@/lib/audit/admin-audit';
+import { publishCommEvent } from '@/lib/communication/redis-publish';
 
 export const runtime = 'nodejs';
 
@@ -31,6 +32,17 @@ export async function POST(
 
     await logAdminAction(request, authz.user.id, 'comms.message.hide', 'Message', id, {
       conversationId: message.conversationId,
+    });
+
+    void publishCommEvent({
+      type: 'message:delete',
+      payload: {
+        messageId: message.id,
+        conversationId: message.conversationId,
+        forEveryone: true,
+        deletedBy: authz.user.id,
+        adminHide: true,
+      },
     });
 
     return NextResponse.json({

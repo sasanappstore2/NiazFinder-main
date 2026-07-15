@@ -309,9 +309,9 @@ export function Footer({ compact = false, withMobileNav = true }: FooterProps) {
           {/* Link columns — 2×2 on mobile */}
           {FOOTER_COLUMNS.map((column) => (
             <div key={column.title}>
-              <h4 className="mb-2 text-xs font-semibold text-foreground sm:text-sm">
+              <h2 className="mb-2 text-xs font-semibold text-foreground sm:text-sm">
                 {column.title}
-              </h4>
+              </h2>
               <ul className="flex flex-col gap-1.5" role="list">
                 {column.links.map((link) => (
                   <li key={link.label}>
@@ -322,7 +322,7 @@ export function Footer({ compact = false, withMobileNav = true }: FooterProps) {
                         data-href={legacyViewToPath(link.view)}
                         title={link.title}
                         onClick={(e) => handleLinkClick(e, link)}
-                        className="flex items-center gap-1 text-xs text-muted-foreground transition-colors duration-150 hover:text-primary sm:text-sm link-underline-animated"
+                        className="flex min-h-6 items-center gap-1 py-0.5 text-xs text-muted-foreground transition-colors duration-150 hover:text-primary sm:text-sm link-underline-animated"
                       >
                         {link.label}
                       </a>
@@ -331,7 +331,7 @@ export function Footer({ compact = false, withMobileNav = true }: FooterProps) {
                         href={link.href ?? '#'}
                         data-href={link.href ?? '#'}
                         title={link.title}
-                        className="flex items-center gap-1 text-xs text-muted-foreground transition-colors duration-150 hover:text-primary sm:text-sm link-underline-animated"
+                        className="flex min-h-6 items-center gap-1 py-0.5 text-xs text-muted-foreground transition-colors duration-150 hover:text-primary sm:text-sm link-underline-animated"
                         target={
                           (link.href ?? '').startsWith('http') ? '_blank' : undefined
                         }
@@ -400,13 +400,13 @@ export function Footer({ compact = false, withMobileNav = true }: FooterProps) {
         <div className="page-container border-t border-border py-6">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <h4 className="mb-3 text-sm font-semibold">نیاز فایندر</h4>
+              <h2 className="mb-3 text-sm font-semibold">نیاز فایندر</h2>
               <p className="text-sm text-muted-foreground">{SITE_DESCRIPTION}</p>
               <p className="mt-2 text-sm text-muted-foreground">ایمیل: info@needfinder.ir</p>
               <p className="text-sm text-muted-foreground">تلفن: ۰۲۱-۹۱۰۰۰۰۰۰</p>
             </div>
             <nav aria-label="دسترسی سریع">
-              <h4 className="mb-3 text-sm font-semibold">دسترسی سریع</h4>
+              <h2 className="mb-3 text-sm font-semibold">دسترسی سریع</h2>
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <li><a href="/" title="صفحه اصلی نیاز فایندر">صفحه اصلی</a></li>
                 <li><a href="/post" title="ثبت نیاز جدید">ثبت نیاز</a></li>
@@ -415,7 +415,7 @@ export function Footer({ compact = false, withMobileNav = true }: FooterProps) {
               </ul>
             </nav>
             <nav aria-label="دسته‌بندی‌ها">
-              <h4 className="mb-3 text-sm font-semibold">دسته‌بندی‌ها</h4>
+              <h2 className="mb-3 text-sm font-semibold">دسته‌بندی‌ها</h2>
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <li><a href={routeBuilder.browseAll({ type: 'business' })} title="طراحی وب‌سایت">طراحی وب</a></li>
                 <li><a href={routeBuilder.browseAll({ type: 'business' })} title="اپلیکیشن موبایل">اپلیکیشن موبایل</a></li>
@@ -424,7 +424,7 @@ export function Footer({ compact = false, withMobileNav = true }: FooterProps) {
               </ul>
             </nav>
             <nav aria-label="پشتیبانی">
-              <h4 className="mb-3 text-sm font-semibold">پشتیبانی</h4>
+              <h2 className="mb-3 text-sm font-semibold">پشتیبانی</h2>
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <li><a href={routeBuilder.help()} title="راهنمای استفاده">راهنما</a></li>
                 <li><a href={routeBuilder.help()} title="سوالات متداول">سوالات متداول</a></li>

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Building2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { routeBuilder } from '@/config/routes';
@@ -18,17 +18,29 @@ import { WorkspaceHeader } from './WorkspaceHeader';
 import { KanbanBoard } from './kanban/KanbanBoard';
 import type { WorkspaceColumnId } from './types';
 
-export function WorkspacePage() {
+export function WorkspacePage({
+  adminPreview = false,
+  headerActions,
+}: {
+  adminPreview?: boolean;
+  headerActions?: ReactNode;
+}) {
   const currentUser = useAppStore((s) => s.currentUser);
   const authHydrated = useAppStore((s) => s.authHydrated);
   const unreadNotificationCount = useAppStore((s) => s.unreadNotificationCount);
   const userId = currentUser?.id;
 
+  const dataEnabled = adminPreview || (authHydrated && Boolean(userId));
+
   const { data, loading, reload, refreshSilent } = useWorkspaceData(
     userId,
-    authHydrated && Boolean(userId)
+    dataEnabled,
+    adminPreview
   );
-  useWorkspacePolling(refreshSilent, authHydrated && Boolean(userId) && data.isRealEstate);
+  useWorkspacePolling(
+    refreshSilent,
+    !adminPreview && authHydrated && Boolean(userId) && data.isRealEstate
+  );
   const {
     followUps,
     addFromSource,
@@ -66,7 +78,7 @@ export function WorkspacePage() {
     [data.needs.length, data.files.length, data.collaborations.length, enrichedFollowUps.length]
   );
 
-  if (!authHydrated || (loading && !data.profile)) {
+  if ((!adminPreview && !authHydrated) || (loading && (adminPreview ? data.needs.length === 0 && data.files.length === 0 : !data.profile))) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center gap-2 text-muted-foreground">
         <Loader2 className="size-5 animate-spin" />
@@ -75,7 +87,7 @@ export function WorkspacePage() {
     );
   }
 
-  if (!loading && data.profile && !data.isRealEstate) {
+  if (!adminPreview && !loading && data.profile && !data.isRealEstate) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center px-4 text-center">
         <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-muted">
@@ -99,6 +111,7 @@ export function WorkspacePage() {
         onTabChange={setActiveTab}
         tabCounts={tabCounts}
         unreadNotifications={unreadNotificationCount}
+        actions={headerActions}
       />
 
       <KanbanBoard

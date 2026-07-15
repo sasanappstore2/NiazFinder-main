@@ -10,6 +10,7 @@
     "dev:chat": "bun --env-file=.env --hot mini-services/chat-service/index.ts",
     "dev:comm": "npm run dev:chat",
     "test:communication-e2e": "npx --yes tsx scripts/test-communication-e2e.ts",
+    "test:chat-socket-integration": "npx --yes tsx scripts/test-chat-socket-integration.ts",
     "test:security-smoke": "npx --yes tsx scripts/security-smoke.ts",
     "security:inventory": "npx --yes tsx scripts/security-route-inventory.ts",
     "dev:backend": "cd mini-services/backend && bun run dev",

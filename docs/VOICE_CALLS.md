@@ -40,7 +40,9 @@ docker compose -f docker-compose.voice.yml --env-file .env.voice up -d
 ```
 
 - TURNS روی پورت **443 TCP**
-- `GET /api/voice/credentials` — Janus room (مسیر `useVoiceCall.ts`، جدا از P2P `call-controller`)
+- `GET /api/voice/credentials` — Janus room metadata + ICE (مسیر اختیاری SFU؛ **SoT overlay نیست**)
+- Overlay اصلی: `call-controller` + `/api/calls` + `useVoiceCallSignaling` (`use-voice-call.ts`)
+- `useVoiceCall.ts` — legacy helper برای credentials؛ media همچنان P2P است
 
 ## Env
 
@@ -48,8 +50,8 @@ docker compose -f docker-compose.voice.yml --env-file .env.voice up -d
 |--------|--------|
 | `NEXT_PUBLIC_CHAT_SOCKET_URL` | Socket.io chat-service |
 | `REDIS_URL` | fanout production (اختیاری local — HTTP mirror هم هست) |
-| `NEXT_PUBLIC_JANUS_WS_URL` | Janus (اختیاری) |
-| `NEXT_PUBLIC_VOICE_RELAY_ONLY` | `true` — فقط relay ICE |
+| `NEXT_PUBLIC_JANUS_WS_URL` | Janus WebSocket (اختیاری SFU) |
+| `NEXT_PUBLIC_VOICE_RELAY_ONLY` | `true` — `buildIceServersFromEnv` فقط TURN (بدون STUN) و `RTCPeerConnection.iceTransportPolicy='relay'` در `call-controller` — مناسب ISP ایران |
 
 ## API
 

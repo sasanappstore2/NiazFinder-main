@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { BookmarkButton } from '@/components/shared/BookmarkButton';
 import { formatRequestBudget } from '@/lib/need/format-need-budget';
 import { getTimeAgo, getPriorityLabel } from '@/lib/constants';
+import { toPersianDigits } from '@/lib/format/digits';
 import { routeBuilder } from '@/config/routes';
 import type { ServiceRequest } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -189,14 +190,14 @@ export function NeedBrowseCard({
           {/* Row 2 — title */}
           <h3 className="text-base font-bold leading-snug tracking-tight text-foreground line-clamp-2 transition-colors group-hover:text-emerald-700 dark:group-hover:text-emerald-400 sm:text-[1.0625rem]">
             {previewMode ? (
-              request.title
+              toPersianDigits(request.title)
             ) : (
               <Link
                 href={detailHref}
                 onClick={(e) => e.stopPropagation()}
                 className="rounded-xs outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
               >
-                {request.title}
+                {toPersianDigits(request.title)}
               </Link>
             )}
           </h3>

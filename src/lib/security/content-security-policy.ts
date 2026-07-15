@@ -42,7 +42,9 @@ export function buildContentSecurityPolicy(): string {
 
   return [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' blob:",
+    // 'wasm-unsafe-eval': MapLibre's RTL text plugin instantiates WebAssembly
+    // (Persian label shaping) — without it map labels silently break.
+    "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:",
     "style-src 'self' 'unsafe-inline'",
     `img-src ${imgSrc}`,
     "font-src 'self'",

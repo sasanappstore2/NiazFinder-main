@@ -1,14 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getClientAuthHeaders } from '@/lib/auth/client-auth';
-import { isRealEstateBusiness } from '@/lib/business/is-real-estate-business';
-import type { WorkspaceSyncPayload } from '@/lib/business/workspace/load-workspace-sync';
 import type { WorkspaceData } from '../types';
-import {
-  type BusinessMeResponse,
-  mergeWorkspaceSyncPayload,
-} from '../lib/merge-workspace-sync';
 
 const EMPTY: WorkspaceData = {
   profile: null,
@@ -23,7 +17,12 @@ const EMPTY: WorkspaceData = {
   filterOptions: { cities: [], regions: [], propertyTypes: [], dealTypes: [] },
 };
 
-async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<{ data: T | null; error?: string }> {
+type WorkspaceApiResponse = WorkspaceData & { adminPreview?: boolean };
+
+async function fetchJson<T>(
+  url: string,
+  signal?: AbortSignal
+): Promise<{ data: T | null; error?: string }> {
   try {
     const res = await fetch(url, { headers: getClientAuthHeaders(), signal });
     if (!res.ok) {
@@ -39,105 +38,54 @@ async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<{ data: 
   }
 }
 
-export function useWorkspaceData(userId: string | undefined, enabled: boolean) {
+export function useWorkspaceData(
+  userId: string | undefined,
+  enabled: boolean,
+  adminPreview = false
+) {
   const [data, setData] = useState<WorkspaceData>(EMPTY);
   const [loading, setLoading] = useState(true);
-  const profileRef = useRef<WorkspaceData['profile']>(null);
 
-  const applySync = useCallback((sync: WorkspaceSyncPayload) => {
-    const profile = profileRef.current;
-    if (!profile) return;
-    setData(mergeWorkspaceSyncPayload(profile, sync));
-  }, []);
+  const workspaceUrl = adminPreview
+    ? '/api/business/me/workspace?adminPreview=1'
+    : '/api/business/me/workspace';
 
   const load = useCallback(async () => {
-    if (!enabled || !userId) {
-      profileRef.current = null;
+    if (!enabled) {
+      setData(EMPTY);
+      setLoading(false);
+      return;
+    }
+    if (!adminPreview && !userId) {
       setData(EMPTY);
       setLoading(false);
       return;
     }
 
     setLoading(true);
-
-    const meResult = await fetchJson<BusinessMeResponse>('/api/business/me');
-
-    if (!meResult.data || meResult.error) {
-      profileRef.current = null;
-      setData({ ...EMPTY, errors: { needs: meResult.error ?? 'پروفایل کسب‌وکار یافت نشد' } });
-      setLoading(false);
-      return;
-    }
-
-    const me = meResult.data;
-    const occupationSlugs = me.occupationSlugs ?? [];
-    const isRE = isRealEstateBusiness(occupationSlugs);
-
-    const profile = {
-      slug: me.slug,
-      name: me.name,
-      city: me.city,
-      occupationSlugs,
-      userId,
-    };
-    profileRef.current = profile;
-
-    if (!isRE) {
-      setData({ ...EMPTY, profile, isRealEstate: false });
-      setLoading(false);
-      return;
-    }
-
-    const syncResult = await fetchJson<WorkspaceSyncPayload>('/api/business/me/workspace-sync');
-    if (!syncResult.data) {
-      const message = syncResult.error ?? 'بارگذاری میزکار ناموفق بود';
+    const result = await fetchJson<WorkspaceApiResponse>(workspaceUrl);
+    if (!result.data) {
+      const message = result.error ?? 'بارگذاری میزکار ناموفق بود';
       setData({
         ...EMPTY,
-        profile,
-        isRealEstate: true,
-        errors: {
-          needs: message,
-          files: message,
-          collaborations: message,
-        },
+        errors: { needs: message, files: message, collaborations: message },
       });
-      setLoading(false);
-      return;
-    }
-
-    try {
-      setData(mergeWorkspaceSyncPayload(profile, syncResult.data));
-    } catch {
-      const message = 'خطا در پردازش داده‌های میزکار';
-      setData({
-        ...EMPTY,
-        profile,
-        isRealEstate: true,
-        errors: {
-          needs: message,
-          files: message,
-          collaborations: message,
-        },
-      });
-      setLoading(false);
-      return;
+    } else {
+      const { adminPreview: _preview, ...workspace } = result.data;
+      setData(workspace);
     }
     setLoading(false);
-  }, [enabled, userId]);
+  }, [adminPreview, enabled, userId, workspaceUrl]);
 
   const refreshSilent = useCallback(
     async (signal?: AbortSignal) => {
-      if (!enabled || !userId || !profileRef.current) return;
-
-      const syncResult = await fetchJson<WorkspaceSyncPayload>(
-        '/api/business/me/workspace-sync',
-        signal
-      );
-      if (!syncResult.data) return;
-
-      applySync(syncResult.data);
+      if (!enabled || (!adminPreview && !userId)) return;
+      const result = await fetchJson<WorkspaceApiResponse>(workspaceUrl, signal);
+      if (!result.data) return;
+      const { adminPreview: _preview, ...workspace } = result.data;
+      setData(workspace);
     },
-    [applySync, enabled, userId]
+    [adminPreview, enabled, userId, workspaceUrl]
   );
 
   useEffect(() => {

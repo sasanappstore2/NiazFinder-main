@@ -1,27 +1,25 @@
 import type { WorkspaceFollowUpItem } from '@/components/workspace/types';
+import { mergeEcosystemIntoExtensions } from '@/lib/business/ecosystem/accessor';
+import type { WorkspaceFollowUpRecord } from '@/lib/business/ecosystem/types';
 import { parseJsonObject, toJson } from '@/lib/business/json-fields';
 
-const EXT_KEY = 'workspaceFollowUps';
-
-export type WorkspaceFollowUpsBlob = {
-  items: WorkspaceFollowUpItem[];
-  updatedAt: string;
-};
+function itemToRecord(item: WorkspaceFollowUpItem): WorkspaceFollowUpRecord {
+  const { kind: _kind, ...record } = item;
+  return record;
+}
 
 export function readWorkspaceFollowUpsFromExtensions(extensions: string): WorkspaceFollowUpItem[] {
   const root = parseJsonObject<Record<string, unknown>>(extensions, {});
-  const blob = root[EXT_KEY] as WorkspaceFollowUpsBlob | undefined;
-  return Array.isArray(blob?.items) ? blob.items : [];
+  const ecosystem = (root.ecosystem as { workspaceFollowUps?: WorkspaceFollowUpRecord[] }) ?? {};
+  const items = ecosystem.workspaceFollowUps ?? [];
+  return items.map((record) => ({ kind: 'followup' as const, ...record }));
 }
 
 export function writeWorkspaceFollowUpsToExtensions(
   extensions: string,
   items: WorkspaceFollowUpItem[]
 ): string {
-  const root = parseJsonObject<Record<string, unknown>>(extensions, {});
-  const next: WorkspaceFollowUpsBlob = {
-    items,
-    updatedAt: new Date().toISOString(),
-  };
-  return toJson({ ...root, [EXT_KEY]: next });
+  const records = items.map(itemToRecord);
+  const merged = mergeEcosystemIntoExtensions(extensions, { workspaceFollowUps: records });
+  return toJson(merged);
 }

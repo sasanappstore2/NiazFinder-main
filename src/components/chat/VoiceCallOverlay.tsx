@@ -19,6 +19,10 @@ import {
 import { useAppStore } from '@/lib/store';
 import { useAppRouter } from '@/hooks/use-router';
 import { acceptIncomingCall, rejectIncomingCall } from '@/lib/voice/call-controller';
+import {
+  isNativeAudioAvailable,
+  setNativeAudioRoute,
+} from '@/lib/voice/native-audio-route';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -733,6 +737,24 @@ export function VoiceCallOverlay({
     }
   }, [isOpen, callState]);
 
+  // Native app: call audio starts on the earpiece (real phone-call behavior);
+  // plain mobile web has no earpiece routing, so the speaker is the reality.
+  useEffect(() => {
+    if (callState === 'active') {
+      setIsSpeakerOn(!isNativeAudioAvailable());
+    }
+  }, [callState]);
+
+  const handleToggleSpeaker = useCallback(() => {
+    setIsSpeakerOn((prev) => {
+      const next = !prev;
+      if (isNativeAudioAvailable()) {
+        void setNativeAudioRoute(next ? 'speaker' : 'earpiece');
+      }
+      return next;
+    });
+  }, []);
+
   const handleExpand = useCallback(() => setIsExpanded(true), []);
   const handleMinimize = useCallback(() => setIsExpanded(false), []);
 
@@ -815,7 +837,7 @@ export function VoiceCallOverlay({
               isMuted={isMuted}
               isSpeakerOn={isSpeakerOn}
               onToggleMute={toggleVoiceCallMute}
-              onToggleSpeaker={() => setIsSpeakerOn((v) => !v)}
+              onToggleSpeaker={handleToggleSpeaker}
               onHangup={handleHangup}
               onMinimize={handleMinimize}
               subtitle="در حال برقراری تماس..."
@@ -829,7 +851,7 @@ export function VoiceCallOverlay({
               isMuted={isMuted}
               isSpeakerOn={isSpeakerOn}
               onToggleMute={toggleVoiceCallMute}
-              onToggleSpeaker={() => setIsSpeakerOn((v) => !v)}
+              onToggleSpeaker={handleToggleSpeaker}
               onHangup={handleHangup}
               onExpand={handleExpand}
               subtitle="در حال برقراری تماس..."
@@ -845,7 +867,7 @@ export function VoiceCallOverlay({
               isMuted={isMuted}
               isSpeakerOn={isSpeakerOn}
               onToggleMute={toggleVoiceCallMute}
-              onToggleSpeaker={() => setIsSpeakerOn((v) => !v)}
+              onToggleSpeaker={handleToggleSpeaker}
               onHangup={handleHangup}
               onMinimize={handleMinimize}
             />
@@ -857,7 +879,7 @@ export function VoiceCallOverlay({
               isMuted={isMuted}
               isSpeakerOn={isSpeakerOn}
               onToggleMute={toggleVoiceCallMute}
-              onToggleSpeaker={() => setIsSpeakerOn((v) => !v)}
+              onToggleSpeaker={handleToggleSpeaker}
               onHangup={handleHangup}
               onExpand={handleExpand}
             />

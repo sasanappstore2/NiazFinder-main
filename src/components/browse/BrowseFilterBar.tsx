@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toPersianDigits } from '@/lib/format/digits';
 import { SlidersHorizontal } from 'lucide-react';
 import { BrowseFilterPill } from './BrowseFilterPill';
 import { BrowseFilterSheet } from './BrowseFilterSheet';
@@ -33,7 +34,9 @@ export function BrowseFilterBar() {
           label={
             <span className="inline-flex items-center gap-1">
               <SlidersHorizontal className="size-3.5" />
-              {queryFilterCount > 0 ? `${queryFilterCount} فیلتر` : 'فیلتر'}
+              {queryFilterCount > 0
+                ? toPersianDigits(`${queryFilterCount} فیلتر`)
+                : 'فیلتر'}
             </span>
           }
           active={queryFilterCount > 0}

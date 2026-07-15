@@ -20,9 +20,14 @@ import {
   verticalListSortingStrategy,
   arrayMove,
 } from '@dnd-kit/sortable';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@/components/ui/resizable';
 import { FollowUpsDropZone } from './FollowUpsDropZone';
 import { NeedsColumn } from './columns/NeedsColumn';
 import { RegionalFilingsColumn } from './columns/RegionalFilingsColumn';
@@ -50,11 +55,28 @@ type ColumnKey = 'needs' | 'files' | 'collaborations';
 type DragKind = 'need' | 'file' | 'collaboration';
 type ActiveDrag = { kind: DragKind; id: string } | null;
 
+const LG_MEDIA = '(min-width: 1024px)';
+const KANBAN_PANEL_STORAGE_ID = 'workspace-kanban-columns-v2';
+
 const DRAG_OVERLAY_DROP_ANIMATION: DropAnimation = {
   ...defaultDropAnimation,
   duration: 220,
   easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
 };
+
+function subscribeLg(onStoreChange: () => void) {
+  const mql = window.matchMedia(LG_MEDIA);
+  mql.addEventListener('change', onStoreChange);
+  return () => mql.removeEventListener('change', onStoreChange);
+}
+
+function getLgSnapshot() {
+  return window.matchMedia(LG_MEDIA).matches;
+}
+
+function useIsLgViewport() {
+  return useSyncExternalStore(subscribeLg, getLgSnapshot, () => false);
+}
 
 function DragOverlayShell({ children }: { children: ReactNode }) {
   return (
@@ -67,7 +89,7 @@ function DragOverlayShell({ children }: { children: ReactNode }) {
 function columnShell(tab: WorkspaceColumnId, activeTab: WorkspaceColumnId, className?: string) {
   return cn(
     'flex min-h-0 min-w-0 flex-col',
-    activeTab !== tab ? 'hidden lg:flex' : 'flex min-h-0 flex-1 flex-col',
+    activeTab !== tab ? 'hidden' : 'flex min-h-0 flex-1 flex-col',
     className
   );
 }
@@ -77,6 +99,30 @@ function collisionDetection(args: Parameters<typeof closestCenter>[0]) {
   const followUpHit = pointerHits.find((c) => c.id === WORKSPACE_FOLLOWUPS_DROP_ID);
   if (followUpHit) return [followUpHit];
   return closestCenter(args);
+}
+
+function KanbanPanelShell({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div dir="rtl" className={cn('flex h-full min-h-0 min-w-0 flex-col text-start', className)}>
+      {children}
+    </div>
+  );
+}
+
+function KanbanResizeHandle() {
+  return (
+    <ResizableHandle
+      withHandle
+      className="mx-0 w-2 shrink-0 bg-transparent after:w-1 hover:bg-primary/10 data-[resize-handle-active]:bg-primary/15"
+      title="تغییر عرض ستون"
+    />
+  );
 }
 
 export function KanbanBoard({
@@ -125,6 +171,7 @@ export function KanbanBoard({
   businessCity?: string;
   onAreasSaved?: () => void;
 }) {
+  const isLg = useIsLgViewport();
   const [order, setOrder] = useState<Record<ColumnKey, string[]>>({
     needs: [],
     files: [],
@@ -245,14 +292,82 @@ export function KanbanBoard({
     setActiveDrag(null);
   };
 
+  const needsColumn = (
+    <SortableContext items={order.needs} strategy={verticalListSortingStrategy}>
+      <NeedsColumn
+        items={orderedNeeds}
+        error={errors.needs}
+        onRetry={onRetry}
+        emptyMessage="نیاز مرتبطی یافت نشد"
+        onAddToFollowUp={onAddToFollowUp}
+        trackedSourceIds={trackedSourceIds}
+        fillHeight
+      />
+    </SortableContext>
+  );
+
+  const filesColumn = (
+    <SortableContext items={order.files} strategy={verticalListSortingStrategy}>
+      <RegionalFilingsColumn
+        items={orderedFiles}
+        feedMeta={regionalFeed}
+        businessCity={businessCity}
+        error={errors.files}
+        onRetry={onRetry}
+        onAreasSaved={onAreasSaved}
+        fillHeight
+      />
+    </SortableContext>
+  );
+
+  const collaborationsColumn = (
+    <SortableContext items={order.collaborations} strategy={verticalListSortingStrategy}>
+      <CollaborationsColumn
+        items={orderedCollabs}
+        error={errors.collaborations}
+        onRetry={onRetry}
+        emptyMessage=""
+        hasServiceArea={collaborationHasServiceArea}
+        onCreate={onCreateCollaboration}
+        onAddToFollowUp={onAddToFollowUp}
+        trackedSourceIds={trackedSourceIds}
+        fillHeight
+      />
+    </SortableContext>
+  );
+
+  const followUpsColumn = (
+    <FollowUpsDropZone highlight={activeDrag !== null}>
+      <FollowUpsColumn
+        items={followUps}
+        fillHeight
+        dropHint={activeDrag !== null}
+        onStageChange={onFollowUpStageChange}
+        onAppendNote={onFollowUpAppendNote}
+        onSetReminder={onFollowUpSetReminder}
+        onClearReminder={onFollowUpClearReminder}
+        onRemove={onFollowUpRemove}
+      />
+    </FollowUpsDropZone>
+  );
+
   if (loading) {
     return (
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden lg:grid lg:min-h-0 lg:grid-cols-[repeat(4,minmax(0,1fr))] lg:overflow-hidden">
-        <KanbanColumnSkeleton fillHeight />
-        <KanbanColumnSkeleton fillHeight className="hidden lg:block" />
-        <KanbanColumnSkeleton fillHeight className="hidden lg:block" />
-        <KanbanColumnSkeleton fillHeight className="hidden lg:block" />
+        <div
+          className={cn(
+            'flex min-h-0 flex-1 flex-col gap-2 overflow-hidden',
+            isLg && 'min-h-[min(72vh,760px)] lg:flex-row lg:gap-1'
+          )}
+        >
+          <KanbanColumnSkeleton fillHeight />
+          {isLg ? (
+            <>
+              <KanbanColumnSkeleton fillHeight />
+              <KanbanColumnSkeleton fillHeight />
+              <KanbanColumnSkeleton fillHeight />
+            </>
+          ) : null}
         </div>
       </div>
     );
@@ -260,95 +375,69 @@ export function KanbanBoard({
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-    <DndContext
-      sensors={sensors}
-      collisionDetection={collisionDetection}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      onDragCancel={handleDragCancel}
-    >
-      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden lg:grid lg:min-h-0 lg:grid-cols-[repeat(4,minmax(0,1fr))] lg:overflow-hidden">
-        <div className={columnShell('needs', activeTab)}>
-          <SortableContext items={order.needs} strategy={verticalListSortingStrategy}>
-            <NeedsColumn
-              items={orderedNeeds}
-              error={errors.needs}
-              onRetry={onRetry}
-              emptyMessage="نیاز مرتبطی یافت نشد"
-              onAddToFollowUp={onAddToFollowUp}
-              trackedSourceIds={trackedSourceIds}
-              fillHeight
-            />
-          </SortableContext>
-        </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={collisionDetection}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
+      >
+        {isLg ? (
+          <div className="min-h-[min(72vh,760px)] flex-1 overflow-hidden">
+            <ResizablePanelGroup
+              autoSaveId={KANBAN_PANEL_STORAGE_ID}
+              direction="horizontal"
+              className="h-full min-h-[inherit] rounded-xl"
+              dir="ltr"
+            >
+              {/* DOM left→right; visually RTL: پیگیری … نیازها (rightmost) */}
+              <ResizablePanel defaultSize={26} minSize={14} maxSize={48} className="min-w-0">
+                <KanbanPanelShell className="pe-1">{followUpsColumn}</KanbanPanelShell>
+              </ResizablePanel>
+              <KanbanResizeHandle />
+              <ResizablePanel defaultSize={24} minSize={14} maxSize={48} className="min-w-0">
+                <KanbanPanelShell className="px-0.5">{collaborationsColumn}</KanbanPanelShell>
+              </ResizablePanel>
+              <KanbanResizeHandle />
+              <ResizablePanel defaultSize={26} minSize={16} maxSize={52} className="min-w-0">
+                <KanbanPanelShell className="px-0.5">{filesColumn}</KanbanPanelShell>
+              </ResizablePanel>
+              <KanbanResizeHandle />
+              <ResizablePanel defaultSize={24} minSize={14} maxSize={48} className="min-w-0">
+                <KanbanPanelShell className="ps-1">{needsColumn}</KanbanPanelShell>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </div>
+        ) : (
+          <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden">
+            <div className={columnShell('needs', activeTab)}>{needsColumn}</div>
+            <div className={columnShell('files', activeTab)}>{filesColumn}</div>
+            <div className={columnShell('collaborations', activeTab)}>{collaborationsColumn}</div>
+            <div className={columnShell('followups', activeTab)}>{followUpsColumn}</div>
+          </div>
+        )}
 
-        <div className={columnShell('files', activeTab)}>
-          <SortableContext items={order.files} strategy={verticalListSortingStrategy}>
-            <RegionalFilingsColumn
-              items={orderedFiles}
-              feedMeta={regionalFeed}
-              businessCity={businessCity}
-              error={errors.files}
-              onRetry={onRetry}
-              onAreasSaved={onAreasSaved}
-              fillHeight
-            />
-          </SortableContext>
-        </div>
-
-        <div className={columnShell('collaborations', activeTab)}>
-          <SortableContext items={order.collaborations} strategy={verticalListSortingStrategy}>
-            <CollaborationsColumn
-              items={orderedCollabs}
-              error={errors.collaborations}
-              onRetry={onRetry}
-              emptyMessage=""
-              hasServiceArea={collaborationHasServiceArea}
-              onCreate={onCreateCollaboration}
-              onAddToFollowUp={onAddToFollowUp}
-              trackedSourceIds={trackedSourceIds}
-              fillHeight
-            />
-          </SortableContext>
-        </div>
-
-        <div className={columnShell('followups', activeTab)}>
-          <FollowUpsDropZone highlight={activeDrag !== null}>
-            <FollowUpsColumn
-              items={followUps}
-              fillHeight
-              dropHint={activeDrag !== null}
-              onStageChange={onFollowUpStageChange}
-              onAppendNote={onFollowUpAppendNote}
-              onSetReminder={onFollowUpSetReminder}
-              onClearReminder={onFollowUpClearReminder}
-              onRemove={onFollowUpRemove}
-            />
-          </FollowUpsDropZone>
-        </div>
-      </div>
-
-      <DragOverlay dropAnimation={DRAG_OVERLAY_DROP_ANIMATION}>
-        {draggingNeed ? (
-          <DragOverlayShell>
-            <NeedCard
-              item={draggingNeed}
-              isInFollowUps={trackedSourceIds?.has(draggingNeed.requestId)}
-            />
-          </DragOverlayShell>
-        ) : null}
-        {draggingFile ? (
-          <DragOverlayShell>
-            <PropertyCard item={draggingFile} />
-          </DragOverlayShell>
-        ) : null}
-        {draggingCollab ? (
-          <DragOverlayShell>
-            <CollaborationCard item={draggingCollab} />
-          </DragOverlayShell>
-        ) : null}
-      </DragOverlay>
-    </DndContext>
+        <DragOverlay dropAnimation={DRAG_OVERLAY_DROP_ANIMATION}>
+          {draggingNeed ? (
+            <DragOverlayShell>
+              <NeedCard
+                item={draggingNeed}
+                isInFollowUps={trackedSourceIds?.has(draggingNeed.requestId)}
+              />
+            </DragOverlayShell>
+          ) : null}
+          {draggingFile ? (
+            <DragOverlayShell>
+              <PropertyCard item={draggingFile} />
+            </DragOverlayShell>
+          ) : null}
+          {draggingCollab ? (
+            <DragOverlayShell>
+              <CollaborationCard item={draggingCollab} />
+            </DragOverlayShell>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
     </div>
   );
 }

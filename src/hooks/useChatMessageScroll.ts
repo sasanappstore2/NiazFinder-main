@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const NEAR_BOTTOM_PX = 120;
 
@@ -25,6 +25,7 @@ export function useChatMessageScroll({ conversationId, messageCount, enabled }: 
   const isNearBottomRef = useRef(true);
   const lastConvRef = useRef<string | null>(null);
   const lastCountRef = useRef(0);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
 
   const getViewport = useCallback((): HTMLElement | null => {
     return scrollRootRef.current?.querySelector(
@@ -37,7 +38,10 @@ export function useChatMessageScroll({ conversationId, messageCount, enabled }: 
   }, []);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      setShowScrollToBottom(false);
+      return;
+    }
 
     let cleanup: (() => void) | undefined;
 
@@ -46,11 +50,33 @@ export function useChatMessageScroll({ conversationId, messageCount, enabled }: 
       if (!vp) return false;
 
       const onScroll = () => {
-        isNearBottomRef.current = isNearBottom(vp);
+        const near = isNearBottom(vp);
+        isNearBottomRef.current = near;
+        setShowScrollToBottom(!near);
       };
       onScroll();
       vp.addEventListener('scroll', onScroll, { passive: true });
-      cleanup = () => vp.removeEventListener('scroll', onScroll);
+
+      // Keep the latest message visible when the viewport shrinks/grows —
+      // keyboard open/close, composer autoresize, reply bar. Without this the
+      // thread stays at the old scrollTop and the last messages slide out of
+      // view under the composer (WhatsApp/Telegram re-pin here too).
+      let lastHeight = vp.clientHeight;
+      const ro = new ResizeObserver(() => {
+        const h = vp.clientHeight;
+        if (h !== lastHeight) {
+          lastHeight = h;
+          if (isNearBottomRef.current) {
+            vp.scrollTop = vp.scrollHeight;
+          }
+        }
+      });
+      ro.observe(vp);
+
+      cleanup = () => {
+        vp.removeEventListener('scroll', onScroll);
+        ro.disconnect();
+      };
       return true;
     };
 
@@ -72,6 +98,7 @@ export function useChatMessageScroll({ conversationId, messageCount, enabled }: 
       lastConvRef.current = conversationId;
       lastCountRef.current = 0;
       isNearBottomRef.current = true;
+      setShowScrollToBottom(false);
     }
 
     const prev = lastCountRef.current;
@@ -87,13 +114,16 @@ export function useChatMessageScroll({ conversationId, messageCount, enabled }: 
 
     if (count > prev && isNearBottomRef.current) {
       requestAnimationFrame(() => scrollToBottom(true));
+    } else if (count > prev && !isNearBottomRef.current) {
+      setShowScrollToBottom(true);
     }
   }, [messageCount, conversationId, enabled, scrollToBottom]);
 
   const scrollToBottomForced = useCallback(() => {
     isNearBottomRef.current = true;
+    setShowScrollToBottom(false);
     scrollToBottom(true);
   }, [scrollToBottom]);
 
-  return { endRef, scrollRootRef, scrollToBottomForced };
+  return { endRef, scrollRootRef, scrollToBottomForced, showScrollToBottom };
 }

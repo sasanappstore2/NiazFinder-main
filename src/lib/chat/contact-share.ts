@@ -80,7 +80,11 @@ export function chatMessageListPreview(content: string, type?: string): string {
   if (parseChatContactShareContent(content)) return 'شمارهٔ تماس';
   if (parseChatLocationShareContent(content)) return CHAT_LOCATION_LIST_PREVIEW;
   // Strip agent <think> blocks from list previews
-  const withoutThink = content
+  const body =
+    typeof content === 'string' && content.startsWith('__NF_FWD__\n')
+      ? content.slice('__NF_FWD__\n'.length)
+      : content;
+  const withoutThink = body
     .replace(/<think>[\s\S]*?<\/think>/gi, '')
     .replace(/<\/?think>/gi, '')
     .trim();

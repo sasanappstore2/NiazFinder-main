@@ -90,3 +90,6 @@ reports/*.json
 reports/*.csv
 reports/*.jsonl
 !reports/.gitkeep
+mobile/node_modules
+mobile/ios/App/App/public
+mobile/ios/DerivedData

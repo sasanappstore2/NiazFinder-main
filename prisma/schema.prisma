@@ -43,6 +43,8 @@ model User {
   sentMessages            Message[]              @relation("SentMessages")
   messageDeliveries       MessageDelivery[]
   messageReactions        MessageReaction[]
+  messageStars            MessageStar[]
+  conversationMutes       ConversationMute[]
   blockedUsers            UserBlock[]            @relation("UserBlocks")
   blockedByUsers          UserBlock[]            @relation("BlockedByUsers")
   sentProposals           Proposal[]
@@ -1119,6 +1121,7 @@ model Conversation {
   user2        User                  @relation("ConvUser2", fields: [userId2], references: [id])
   contactPoint BusinessContactPoint? @relation(fields: [contactPointId], references: [id], onDelete: SetNull)
   messages     Message[]
+  mutes        ConversationMute[]
 
   @@index([userId1])
   @@index([userId2])
@@ -1250,6 +1253,7 @@ model Message {
   replies      Message[]         @relation("MessageReplies")
   deliveries   MessageDelivery[]
   reactions    MessageReaction[]
+  stars        MessageStar[]
 
   @@index([conversationId])
   @@index([conversationId, createdAt(sort: Desc)])
@@ -1284,6 +1288,33 @@ model MessageReaction {
 
   @@unique([messageId, userId, emoji])
   @@index([messageId])
+}
+
+/** Per-user starred messages (workspace favorites within a chat). */
+model MessageStar {
+  messageId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, userId])
+  @@index([userId])
+}
+
+/** Per-user mute of a 1:1 conversation (suppresses in-app/push toasts). */
+model ConversationMute {
+  conversationId String
+  userId         String
+  mutedUntil     DateTime?
+  createdAt      DateTime  @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, userId])
+  @@index([userId])
 }
 
 model UserBlock {

@@ -166,6 +166,8 @@ export interface Message {
   isPinned?: boolean;
   pinnedBy?: string | null;
   pinnedAt?: string | null;
+  /** Whether the viewing user starred this message. */
+  isStarred?: boolean;
   sender?: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatar'>;
   /** Client-only: live thinking text while platform agent streams. */
   agentThinking?: string;
@@ -189,6 +191,8 @@ export interface Conversation {
   lastMessage?: string;
   lastMessageAt?: string;
   unreadCount: number;
+  /** Viewer has muted this conversation. */
+  isMuted?: boolean;
   businessContext?: {
     businessName: string;
     contactLabel: string;

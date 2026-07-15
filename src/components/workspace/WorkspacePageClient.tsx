@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ExternalLink, Loader2 } from 'lucide-react';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { PageChrome } from '@/components/layout/PageChrome';
-import { WorkspaceBoard } from '@/components/workspace/kanban/WorkspaceBoard';
+import { WorkspacePage } from '@/components/workspace/WorkspacePage';
 import { Button } from '@/components/ui/button';
 import { routeBuilder } from '@/config/routes';
 import { SITE_LABELS } from '@/config/site-labels';
@@ -55,14 +54,11 @@ export function WorkspacePageClient() {
 
   if (adminPreview) {
     return (
-      <PageContainer width="full" className="space-y-6">
-        <PageChrome
-          title={SITE_LABELS.workspace}
-          description="پیش‌نمایش ادمین — نیازها، فایلینگ منطقه، همکاری و پیگیری"
-          actions={<WorkspaceActions adminPreview />}
-          headingClassName="flex items-center gap-2"
-        />
-        <WorkspaceBoard adminPreview />
+      <PageContainer width="full" noVerticalPadding className="flex min-h-0 flex-1 flex-col">
+        <div className="shrink-0 border-b border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs text-amber-900 lg:px-6 dark:text-amber-200">
+          پیش‌نمایش ادمین — داده‌های نمونه برای بررسی چیدمان میزکار
+        </div>
+        <WorkspacePage adminPreview headerActions={<WorkspaceActions adminPreview />} />
       </PageContainer>
     );
   }
@@ -81,13 +77,8 @@ export function WorkspacePageClient() {
   }
 
   return (
-    <PageContainer width="full" className="space-y-6">
-      <PageChrome
-        title={SITE_LABELS.workspace}
-        description="نیازها، فایل‌های منطقه، همکاری‌ها و پیگیری — در یک نمای Trello"
-        actions={<WorkspaceActions adminPreview={adminPreview} />}
-      />
-      <WorkspaceBoard adminPreview={adminPreview} />
+    <PageContainer width="full" noVerticalPadding className="flex min-h-0 flex-1 flex-col">
+      <WorkspacePage headerActions={<WorkspaceActions adminPreview={adminPreview} />} />
     </PageContainer>
   );
 }

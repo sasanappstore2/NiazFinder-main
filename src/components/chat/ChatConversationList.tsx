@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { Bot, Loader2, MessageSquare, Plus } from 'lucide-react';
+import { Bot, BellOff, Loader2, MessageSquare, Plus } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import type { Conversation } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -58,7 +58,7 @@ function ConversationRow({
       key={conv.id}
       onClick={() => onSelectConversation(conv.id)}
       className={cn(
-        'flex w-full items-start gap-3 rounded-lg p-3 text-right transition-all duration-150',
+        'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-right transition-all duration-150',
         isBot
           ? cn(
               'border border-primary/20 bg-primary/5',
@@ -69,17 +69,17 @@ function ConversationRow({
             : 'border border-transparent hover:bg-muted/50'
       )}
       role="listitem"
-      aria-label={`مکالمه با ${convName}${conv.unreadCount > 0 ? `، ${conv.unreadCount} پیام خوانده نشده` : ''}`}
+      aria-label={`مکالمه با ${convName}${conv.unreadCount > 0 ? `، ${conv.unreadCount} پیام خوانده نشده` : ''}${conv.isMuted ? '، بی‌صدا' : ''}`}
     >
       <div className="relative shrink-0">
         {isBot ? (
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary ring-2 ring-primary/20">
-            <Bot className="size-6" aria-hidden />
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/15 text-primary ring-2 ring-primary/20">
+            <Bot className="size-5" aria-hidden />
           </div>
         ) : (
           <div
             className={cn(
-              'flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white',
+              'flex h-11 w-11 items-center justify-center rounded-full text-sm font-bold text-white',
               getAvatarColor(convName)
             )}
           >
@@ -96,21 +96,23 @@ function ConversationRow({
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="truncate text-sm font-semibold">{convName}</span>
+          <span className="flex min-w-0 items-center gap-1.5 truncate text-sm font-semibold">
+            <span className="truncate">{convName}</span>
+            {conv.isMuted ? (
+              <BellOff className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
+            ) : null}
+          </span>
           <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
             {conv.lastMessageAt ? formatTimeAgo(conv.lastMessageAt) : ''}
           </span>
         </div>
         <div className="mt-1 flex items-center justify-between gap-2">
           {isConversationTyping(conv.id) ? (
-            <p className="truncate text-sm font-medium text-primary" style={{ maxWidth: '200px' }}>
+            <p className="min-w-0 flex-1 truncate text-sm font-medium text-primary">
               در حال تایپ
             </p>
           ) : (
-            <p
-              className="truncate text-sm text-muted-foreground"
-              style={{ maxWidth: '200px' }}
-            >
+            <p className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
               {conv.lastMessage
                 ? (() => {
                     const preview = sanitizeUserFacingPersianText(conv.lastMessage);

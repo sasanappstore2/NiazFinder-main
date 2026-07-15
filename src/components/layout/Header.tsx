@@ -545,8 +545,8 @@ export function Header({ compact = false }: { compact?: boolean }) {
             </div>
           </div>
 
-          {/* Left: city + auth */}
-          <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+          {/* Left edge (RTL end): city + auth — ms-auto absorbs gap from search max-width */}
+          <div className="ms-auto flex shrink-0 items-center gap-1 sm:gap-1.5">
             <AuthSection />
           </div>
         </div>

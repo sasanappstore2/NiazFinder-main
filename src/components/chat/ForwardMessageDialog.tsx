@@ -25,6 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAppStore } from '@/lib/store';
 import { toast } from 'sonner';
+import { wrapForwardedContent } from '@/lib/chat/forward-marker';
 import { cn } from '@/lib/utils';
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -133,7 +134,8 @@ export function ForwardMessageDialog({
       setForwarding(conversationId);
 
       try {
-        const success = await sendMessage(conversationId, message.content, message.type);
+        const payload = wrapForwardedContent(message.content);
+        const success = await sendMessage(conversationId, payload, message.type);
         if (success) {
           toast.success('پیام با موفقیت منتقل شد');
           handleClose(false);

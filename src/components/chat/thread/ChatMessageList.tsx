@@ -28,6 +28,9 @@ export interface ChatMessageListProps {
   onDeleteForMe: (messageId: string) => void;
   onDeleteForEveryoneRequest: (messageId: string) => void;
   onPin: (messageId: string) => void;
+  onToggleStar?: (messageId: string) => void;
+  onForward?: (msg: Message) => void;
+  onCopy?: (msg: Message) => void;
   onScrollToMessage: (messageId: string) => void;
   onImageOpen: (messageId: string) => void;
   peerTyping: {
@@ -37,6 +40,9 @@ export interface ChatMessageListProps {
   messagesEndRef: React.RefObject<HTMLDivElement | null>;
   peer?: PeerDisplay;
   needBanner?: React.ReactNode;
+  /** Index of first unread peer message when opening thread; -1 to hide. */
+  unreadDividerIndex?: number;
+  highlightedMessageId?: string | null;
 }
 
 export function ChatMessageList({
@@ -51,12 +57,17 @@ export function ChatMessageList({
   onDeleteForMe,
   onDeleteForEveryoneRequest,
   onPin,
+  onToggleStar,
+  onForward,
   onScrollToMessage,
   onImageOpen,
   peerTyping,
   messagesEndRef,
   peer,
   needBanner,
+  unreadDividerIndex = -1,
+  highlightedMessageId,
+  onCopy,
 }: ChatMessageListProps) {
   if (isLoading && messages.length === 0) {
     return (
@@ -83,10 +94,27 @@ export function ChatMessageList({
       {needBanner}
 
       {messages.map((msg, index) => {
+        const unreadDivider =
+          unreadDividerIndex === index ? (
+            <div
+              key={`unread-${msg.id}`}
+              className="my-3 flex items-center gap-2 px-2"
+              role="separator"
+              aria-label="پیام‌های خوانده‌نشده"
+            >
+              <div className="h-px flex-1 bg-emerald-500/40" />
+              <span className="shrink-0 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
+                پیام‌های خوانده‌نشده
+              </span>
+              <div className="h-px flex-1 bg-emerald-500/40" />
+            </div>
+          ) : null;
+
         if (msg.type === 'CALL') {
           const cluster = getMessageClusterMeta(messages, index);
           return (
             <div key={msg.id} className="chat-message-slot chat-message-slot--call-log">
+              {unreadDivider}
               {cluster.showDateSeparator && cluster.dateLabel && (
                 <div className="chat-date-separator">{cluster.dateLabel}</div>
               )}
@@ -120,6 +148,7 @@ export function ChatMessageList({
               groupBreak && 'chat-message-slot--group-break'
             )}
           >
+            {unreadDivider}
             {cluster.showDateSeparator && cluster.dateLabel && (
               <div className="chat-date-separator">{cluster.dateLabel}</div>
             )}
@@ -130,12 +159,16 @@ export function ChatMessageList({
               formatTime={formatTime}
               currentUserId={currentUserId}
               canDeleteForEveryone={showDeleteForEveryone}
+              highlighted={highlightedMessageId === msg.id}
               onReply={() => onReply(msg)}
               onReact={(emoji) => onReact(msg.id, emoji)}
               onEdit={onEdit ? () => onEdit(msg) : undefined}
               onDeleteForMe={() => onDeleteForMe(msg.id)}
               onDeleteForEveryone={() => onDeleteForEveryoneRequest(msg.id)}
               onPin={() => onPin(msg.id)}
+              onToggleStar={onToggleStar ? () => onToggleStar(msg.id) : undefined}
+              onForward={onForward ? () => onForward(msg) : undefined}
+              onCopy={onCopy ? () => onCopy(msg) : undefined}
               onScrollToMessage={onScrollToMessage}
               onImageOpen={() => onImageOpen(msg.id)}
               peer={!isMe ? peer : undefined}

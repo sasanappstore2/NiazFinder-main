@@ -16,6 +16,8 @@ export const CHAT_THREAD_PAD_X_REM = 1;
 
 export const CHAT_SWIPE_REPLY_THRESHOLD_PX = 56;
 export const CHAT_SWIPE_MAX_PX = 72;
+/** Pixels of dominant axis movement before locking swipe vs scroll. */
+export const CHAT_SWIPE_AXIS_LOCK_PX = 8;
 export const CHAT_LONG_PRESS_MS = 480;
 export const CHAT_DOUBLE_TAP_MS = 300;
 export const CHAT_TOUCH_MOVE_CANCEL_PX = 10;

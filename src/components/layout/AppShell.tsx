@@ -44,13 +44,20 @@ export function AppShell({
   const intakeMobileChrome = useIntakeMobileChrome();
   const initializeFromStorage = useAppStore((state) => state.initializeFromStorage);
   const isHome = pathname === '/';
+  const isChatRoute = pathname === '/chat' || pathname.startsWith('/chat/');
   const isProductDetail = isBusinessProductDetailPath(pathname);
   const businessProfileAura = isBusinessProfileAuraPath(pathname);
   const useMinimalChrome =
     minimalChrome && (!minimalChromeHandheldOnly || handheld);
   const effectiveMinimal = useMinimalChrome || intakeMobileChrome;
+  /** Chat is always a single-viewport shell (no document scroll). */
+  const lockViewport = effectiveMinimal || isChatRoute;
   const filingChrome = isFilingPath(pathname);
-  const hideMobileNav = effectiveMinimal || isProductDetail || filingChrome;
+  const hideMobileNav = lockViewport || isProductDetail || filingChrome;
+  /**
+   * Immersive chat on phone: keep Header in the tree (hydration-safe) and hide
+   * with CSS below `md`. Never gate on `useIsMobile()` for omit/include.
+   */
   const hideSiteHeader = intakeMobileChrome;
   const staticPageTitle = getPageTitleForPath(pathname);
 
@@ -68,15 +75,19 @@ export function AppShell({
           className={cn(
             'shell-root flex min-w-0 flex-col text-foreground',
             businessProfileAura ? 'bg-transparent' : 'bg-background',
-            effectiveMinimal ? 'h-dvh max-h-dvh overflow-hidden' : 'min-h-screen'
+            lockViewport ? 'h-dvh max-h-dvh overflow-hidden' : 'min-h-screen'
           )}
         >
-          {!hideSiteHeader ? <Header compact={effectiveMinimal} /> : null}
+          {!hideSiteHeader ? (
+            <div className={cn(isChatRoute && 'max-md:hidden')}>
+              <Header compact={lockViewport} />
+            </div>
+          ) : null}
           <main
             className={cn(
               'relative flex min-h-0 min-w-0 flex-col',
-              effectiveMinimal ? 'flex-1 overflow-hidden' : 'flex-1',
-              !effectiveMinimal &&
+              lockViewport ? 'flex-1 overflow-hidden' : 'flex-1',
+              !lockViewport &&
                 !isHome &&
                 !businessProfileAura &&
                 'pt-3 sm:pt-5 md:pt-6',
@@ -92,7 +103,7 @@ export function AppShell({
             ) : null}
             {children}
           </main>
-          {!effectiveMinimal &&
+          {!lockViewport &&
             (isHome ? (
               <Footer withMobileNav={!hideMobileNav} />
             ) : (
@@ -116,7 +127,7 @@ export function AppShell({
             </Suspense>
           )}
           <CookieConsent />
-          {!effectiveMinimal && !isProductDetail && <BackToTop />}
+          {!lockViewport && !isProductDetail && <BackToTop />}
         </div>
         </AnalyticsProvider>
       </ErrorBoundary>

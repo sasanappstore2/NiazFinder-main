@@ -11,6 +11,10 @@ import {
   playBusyTone,
   playUnavailableTone,
 } from '@/lib/voice/call-audio';
+import {
+  configureNativeCallAudio,
+  endNativeCallAudio,
+} from '@/lib/voice/native-audio-route';
 
 const OUTGOING_RING_TIMEOUT_MS = 45_000;
 const IGNORED_CALL_TTL_MS = 60_000;
@@ -119,6 +123,27 @@ let socketEmit: ((event: string, payload: unknown) => void) | null = null;
 let connectingOutgoing = false;
 let pendingRemoteCandidates: RTCIceCandidateInit[] = [];
 let remoteDescriptionReady = false;
+let disconnectGraceTimer: ReturnType<typeof setTimeout> | null = null;
+
+const DISCONNECT_GRACE_MS = 10_000;
+
+function clearDisconnectGrace(): void {
+  if (disconnectGraceTimer) {
+    clearTimeout(disconnectGraceTimer);
+    disconnectGraceTimer = null;
+  }
+}
+
+function scheduleDisconnectGrace(): void {
+  if (disconnectGraceTimer) return;
+  disconnectGraceTimer = setTimeout(() => {
+    disconnectGraceTimer = null;
+    const state = pc?.connectionState;
+    if (state === 'disconnected' || state === 'failed') {
+      void hangupVoiceCall();
+    }
+  }, DISCONNECT_GRACE_MS);
+}
 
 function resetIceSignalingState(): void {
   pendingRemoteCandidates = [];
@@ -320,9 +345,40 @@ async function waitForOffer(
   return null;
 }
 
+/**
+ * Wait briefly for ICE gathering so the SDP we relay carries host/srflx
+ * candidates (vanilla-ICE fallback). Trickled candidates still flow over the
+ * socket afterwards — but the call now connects even if that relay misses.
+ */
+async function waitForIceGathering(peer: RTCPeerConnection, timeoutMs = 1_500): Promise<void> {
+  if (peer.iceGatheringState === 'complete') return;
+  await new Promise<void>((resolve) => {
+    let timer: ReturnType<typeof setTimeout>;
+    const check = () => {
+      if (peer.iceGatheringState === 'complete') done();
+    };
+    const done = () => {
+      peer.removeEventListener('icegatheringstatechange', check);
+      clearTimeout(timer);
+      resolve();
+    };
+    timer = setTimeout(done, timeoutMs);
+    peer.addEventListener('icegatheringstatechange', check);
+  });
+}
+
 async function getUserMediaWithTimeout(ms = 15_000): Promise<MediaStream> {
   return Promise.race([
-    navigator.mediaDevices.getUserMedia({ audio: true, video: false }),
+    navigator.mediaDevices.getUserMedia({
+      // Explicit voice-call processing — otherwise some mobile browsers pick
+      // raw capture defaults and the far end hears room echo / feedback.
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+      },
+      video: false,
+    }),
     new Promise<MediaStream>((_, reject) =>
       setTimeout(() => reject(new Error('mic_timeout')), ms)
     ),
@@ -354,8 +410,10 @@ export function dismissCallUI(): void {
 }
 
 function stopLocalMedia() {
+  clearDisconnectGrace();
   localStream?.getTracks().forEach((t) => t.stop());
   localStream = null;
+  if (pc) void endNativeCallAudio();
   pc?.close();
   pc = null;
   resetIceSignalingState();
@@ -364,6 +422,8 @@ function stopLocalMedia() {
 function startDurationTimer() {
   if (durationTimer) clearInterval(durationTimer);
   patch().setState({ voiceCallDuration: 0 });
+  // Native app only: move call audio to the phone-call channel (earpiece).
+  void configureNativeCallAudio();
   durationTimer = setInterval(() => {
     patch().incrementCallDuration();
   }, 1000);
@@ -488,6 +548,8 @@ async function createPeer(iceServers?: RTCIceServer[]) {
   pc = new RTCPeerConnection({
     iceServers: iceServers ?? getClientIceServers(),
     iceCandidatePoolSize: 4,
+    iceTransportPolicy:
+      process.env.NEXT_PUBLIC_VOICE_RELAY_ONLY === 'true' ? 'relay' : 'all',
   });
 
   pc.onicecandidate = (e) => {
@@ -520,18 +582,33 @@ async function createPeer(iceServers?: RTCIceServer[]) {
   pc.onconnectionstatechange = () => {
     const state = pc?.connectionState;
     if (state === 'connected') {
+      clearDisconnectGrace();
       const audio = document.getElementById('voice-call-remote-audio') as HTMLAudioElement | null;
       if (audio?.srcObject) void audio.play().catch(() => {});
     }
-    if (state === 'failed' || state === 'disconnected') {
+    if (state === 'failed') {
+      clearDisconnectGrace();
       void hangupVoiceCall();
+    }
+    // 'disconnected' is transient (Wi-Fi blip, network switch) — restartIce is
+    // already running from oniceconnectionstatechange; only hang up if it
+    // doesn't recover within the grace window.
+    if (state === 'disconnected') {
+      scheduleDisconnectGrace();
     }
   };
 
   try {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      // Insecure context (plain HTTP over LAN) — browser hides mic entirely.
+      const { toast } = await import('sonner');
+      toast.error('تماس صوتی فقط روی HTTPS یا localhost کار می‌کند (مرورگر در HTTP اجازهٔ میکروفون نمی‌دهد)');
+      throw new Error('mic_denied');
+    }
     localStream = await getUserMediaWithTimeout();
     localStream.getTracks().forEach((track) => pc!.addTrack(track, localStream!));
   } catch (e) {
+    if ((e as Error).message === 'mic_denied') throw e;
     const { toast } = await import('sonner');
     if ((e as Error).message === 'mic_timeout') {
       toast.error('دسترسی به میکروفون زمان‌بر شد. دوباره تلاش کنید.');
@@ -544,11 +621,13 @@ async function createPeer(iceServers?: RTCIceServer[]) {
 
 export async function startOutgoingCall(
   target: VoiceCallPeer,
-  conversationId?: string
+  conversationId?: string,
+  isRetry = false
 ): Promise<void> {
   const s = patch();
   const token = resolveAuthToken();
   if (!token) return;
+  let createdCallId: string | null = null;
 
   const local = useAppStore.getState();
   if (hasLocalActiveCall()) {
@@ -593,6 +672,20 @@ export async function startOutgoingCall(
         return;
       }
       if (res.status === 409 && err.existingCall) {
+        // Ghost call: server says we have an outgoing RINGING call but this tab
+        // has no peer connection (e.g. a previous attempt died after POST).
+        // Cancel it server-side and retry once instead of restoring a dead UI.
+        if (
+          !isRetry &&
+          !pc &&
+          err.existingCall.callType === 'outgoing' &&
+          err.existingCall.status === 'RINGING'
+        ) {
+          await apiPatchCall(err.existingCall.callId, 'cancel');
+          markCallIgnored(err.existingCall.callId);
+          await startOutgoingCall(target, conversationId, true);
+          return;
+        }
         restoreExistingCallUI(err.existingCall);
         toast.info('تماس قبلی هنوز باز است — برای تماس جدید ابتدا قطع کنید');
         return;
@@ -606,6 +699,7 @@ export async function startOutgoingCall(
       iceServers: RTCIceServer[];
       calleePresence?: 'online' | 'offline';
     };
+    createdCallId = data.callId;
 
     s.setState({
       voiceCallOpen: true,
@@ -622,11 +716,26 @@ export async function startOutgoingCall(
       userId: useAppStore.getState().currentUser?.id,
     });
 
-    await createPeer(data.iceServers);
+    // Prefer ICE from /api/voice/credentials when Janus env is set (same TURN/relay policy).
+    let iceServers = data.iceServers;
+    if (conversationId) {
+      const { isJanusConfigured, loadVoiceCredentials } = await import(
+        '@/lib/voice/load-voice-credentials'
+      );
+      if (isJanusConfigured()) {
+        const creds = await loadVoiceCredentials(conversationId, token);
+        if (creds?.iceServers?.length) iceServers = creds.iceServers;
+      }
+    }
+
+    await createPeer(iceServers);
     const offer = await pc!.createOffer();
     await pc!.setLocalDescription(offer);
+    await waitForIceGathering(pc!);
+    const localOffer =
+      (pc!.localDescription?.toJSON?.() as RTCSessionDescriptionInit | undefined) ?? offer;
 
-    const invited = await relayCallInvite(data.callId, offer);
+    const invited = await relayCallInvite(data.callId, localOffer);
     if (!invited) {
       const { toast } = await import('sonner');
       toast.error('خطا در ارسال دعوت تماس');
@@ -650,6 +759,12 @@ export async function startOutgoingCall(
       console.error('startOutgoingCall', e);
     }
     stopLocalMedia();
+    // The server row is RINGING — cancel it so neither side stays "busy"
+    // and the callee stops ringing for a call that can never connect.
+    if (createdCallId) {
+      markCallIgnored(createdCallId);
+      void apiPatchCall(createdCallId, 'cancel');
+    }
     s.setState({
       voiceCallOpen: false,
       voiceCallTarget: null,
@@ -682,8 +797,11 @@ export async function acceptIncomingCall(): Promise<boolean> {
     const answer = await pc!.createAnswer();
     await pc!.setLocalDescription(answer);
     await markRemoteDescriptionReady();
+    await waitForIceGathering(pc!);
+    const localAnswer =
+      (pc!.localDescription?.toJSON?.() as RTCSessionDescriptionInit | undefined) ?? answer;
 
-    const patchResult = await apiPatchCall(callId, 'accept', { sdpAnswer: answer });
+    const patchResult = await apiPatchCall(callId, 'accept', { sdpAnswer: localAnswer });
     if (!patchResult.ok) {
       stopLocalMedia();
       pc = null;

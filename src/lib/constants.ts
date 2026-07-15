@@ -1,5 +1,6 @@
 import type { Category, SpecialistProfile, ServiceRequest, Review } from './types';
 import { formatTomanAmount } from '@/lib/format/money';
+import { toPersianDigits } from '@/lib/format/digits';
 
 // ============ CATEGORIES ============
 export const CATEGORIES: Category[] = [
@@ -361,11 +362,11 @@ export const getTimeAgo = (dateString: string): string => {
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
   if (seconds < 60) return 'لحظاتی پیش';
-  if (seconds < 3600) return `${Math.floor(seconds / 60)} دقیقه پیش`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)} ساعت پیش`;
-  if (seconds < 604800) return `${Math.floor(seconds / 86400)} روز پیش`;
-  if (seconds < 2592000) return `${Math.floor(seconds / 604800)} هفته پیش`;
-  return `${Math.floor(seconds / 2592000)} ماه پیش`;
+  if (seconds < 3600) return toPersianDigits(`${Math.floor(seconds / 60)} دقیقه پیش`);
+  if (seconds < 86400) return toPersianDigits(`${Math.floor(seconds / 3600)} ساعت پیش`);
+  if (seconds < 604800) return toPersianDigits(`${Math.floor(seconds / 86400)} روز پیش`);
+  if (seconds < 2592000) return toPersianDigits(`${Math.floor(seconds / 604800)} هفته پیش`);
+  return toPersianDigits(`${Math.floor(seconds / 2592000)} ماه پیش`);
 };
 
 // ============ PRICING PLANS ============

@@ -5,6 +5,8 @@ import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import { GlobalVoiceCallLayer } from "@/components/voice/GlobalVoiceCallLayer";
 import { DeferredChatSocketBootstrap } from "@/components/voice/DeferredChatSocketBootstrap";
+import { PwaRegistration } from "@/components/pwa/PwaRegistration";
+import { PwaInstallPrompt } from "@/components/pwa/PwaInstallPrompt";
 import {
   SITE_URL,
   SITE_NAME,
@@ -25,6 +27,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   viewportFit: "cover",
+  /** Keyboard resizes layout so bottom bars stay reachable (chat overrides). */
+  interactiveWidget: "resizes-content",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#059669" },
     { media: "(prefers-color-scheme: dark)", color: "#047857" },
@@ -70,9 +74,11 @@ export const metadata: Metadata = {
   // ── Icons & Manifest ──
   icons: {
     icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
       { url: "/logo.svg", type: "image/svg+xml" },
     ],
-    apple: "/logo.svg",
+    apple: "/apple-touch-icon.png",
   },
   manifest: "/manifest.json",
 
@@ -186,6 +192,8 @@ export default function RootLayout({
           {children}
           <DeferredChatSocketBootstrap />
           <GlobalVoiceCallLayer />
+          <PwaRegistration />
+          <PwaInstallPrompt />
           <Toaster position="top-center" richColors dir="rtl" closeButton />
         </ThemeProvider>
       </body>

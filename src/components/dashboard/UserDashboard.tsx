@@ -51,6 +51,7 @@ import { NeedResolveWizard } from '@/components/need/NeedResolveWizard';
 import { WalletHistory } from '@/components/dashboard/WalletHistory';
 import { canManageBusinessProfile } from '@/lib/business/can-manage-business-profile';
 import { routeBuilder } from '@/config/routes';
+import { toPersianDigits } from '@/lib/format/digits';
 
 // ============ MOCK DATA (wallet API not wired yet) ============
 
@@ -330,11 +331,15 @@ export function UserDashboard() {
             </Avatar>
             <div className="flex-1 space-y-1">
               <div className="space-y-1">
-                <h2 className="text-2xl sm:text-3xl font-bold">سلام، {currentUser.firstName} عزیز!</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold">
+                  {currentUser.firstName?.trim()
+                    ? `سلام، ${currentUser.firstName} عزیز!`
+                    : 'سلام، خوش آمدید!'}
+                </h2>
                 <p className="text-white/80 text-sm sm:text-base">
                   {currentUser.username ? (
                     <span className="inline-flex items-center gap-1"><AtSign className="w-3.5 h-3.5" />{currentUser.username}</span>
-                  ) : 'نام کاربری تعیین نشده'}
+                  ) : 'برای تکمیل پروفایل، نام کاربری انتخاب کنید'}
                 </p>
               </div>
             </div>
@@ -391,7 +396,9 @@ export function UserDashboard() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-white/80 text-xs sm:text-sm">{stat.label}</p>
-                  <p className="text-white text-2xl sm:text-3xl font-bold">{stat.value}</p>
+                  <p className="text-white text-2xl sm:text-3xl font-bold">
+                    {toPersianDigits(stat.value)}
+                  </p>
                 </div>
               </CardContent>
             </Card>

@@ -14,6 +14,7 @@ export function useVoiceCallFloatWrapClass() {
 
   return cn(
     'voice-call-float-wrap pointer-events-none fixed inset-x-3 flex justify-center sm:inset-x-4',
-    aboveMobileNav && 'voice-call-float-wrap--above-mobile-nav'
+    aboveMobileNav && 'voice-call-float-wrap--above-mobile-nav',
+    isChat && 'voice-call-float-wrap--above-composer'
   );
 }

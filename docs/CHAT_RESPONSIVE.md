@@ -19,19 +19,34 @@ NEXT_PUBLIC_CHAT_SOCKET_URL=http://localhost:3004
 ## معماری
 
 - مسیر `/chat` داخل [`AppShell`](../src/components/layout/AppShell.tsx) با `minimalChrome`
-- موبایل (`< md`): لیست ↔ گفتگو با URL (`/chat` / `/chat/[id]`)
-- دسکتاپ: split view — لیست `min(380px, 35vw)` + thread
-- Composer با `safe-area-inset-bottom` و `Textarea` auto-grow
+- **بدون اسکرول صفحه:** فقط لیست مکالمات و thread داخل `ScrollArea` اسکرول می‌شوند
+- موبایل (`< md` = 768): immersive — بدون Header سایت؛ list ↔ گفتگو با URL (`/chat` / `/chat/[id]`)
+- دسکتاپ (`md+`): Header فشرده + split view — لیست `min(380px, 35vw)` + thread
+- [`ChatViewportShell`](../src/components/chat/ChatViewportShell.tsx) + `visualViewport` (`--vv-bottom`, `--vv-height`) — bottom-anchored بالای کیبورد؛ `data-vv-kb` برای حذف safe-area هنگام کیبورد
+- `(chat)/layout` viewport: `interactiveWidget: 'overlays-content'`
+- Composer موبایل: لبه به لبه ستون چت (`+` / متن / mic↔send)؛ بدون فاصلهٔ اضافی بالای کیبورد؛ پیوست = bottom Sheet
+- Long-press پیام روی موبایل = [`MessageActionSheet`](../src/components/chat/actions/MessageActionSheet.tsx) (شامل کپی متن)
+- Info panel موبایل = تمام‌عرض + safe-area؛ هدر thread (آواتار+نام) قابل‌لمس → info
+- Multi-pin bar: `پیام‌های سنجاق‌شده (N تا)` + cycle با tap → scroll + highlight
+- FAB ↓ وقتی از انتهای thread دوریم
+- Unread divider سبک هنگام باز کردن thread با unread
+- Inbox: آیکون mute وقتی `isMuted`
 
 ## چک‌لیست QA
 
 | سناریو | انتظار |
 |--------|--------|
-| موبایل `/chat` | لیست ↔ thread؛ دکمه back به `/chat` |
-| Composer موبایل | بالای safe-area؛ بدون پوشیده شدن توسط home indicator |
-| دسکتاپ | split ثابت؛ resize پنجره بدون overflow |
-| `/chat` مهمان | `AuthModal` باز می‌شود |
-| Info panel | دکمه info در header گفتگو |
-| گفتگوی جدید | FAB / دیالوگ جستجوی کاربر |
-| Reply موبایل | action sheet (نه hover) |
-| Loading | [`(chat)/loading.tsx`](../src/app/(chat)/loading.tsx) — موبایل تک‌پنجره، دسکتاپ split |
+| موبایل `/chat` | بدون Header سایت؛ لیست ↔ thread؛ دکمه back |
+| هدر thread | tap آواتار/نام → info panel |
+| Multi-pin | نوار شمارش؛ tap cycle + اسکرول به پیام |
+| FAB اسکرول | ↓ وقتی scrolled-up؛ tap → انتها |
+| کیبورد iOS/Android | composer بالای کیبورد؛ بدون اسکرول document |
+| Composer مینیمال | `+` / متن / mic یا send؛ safe-area |
+| Long-press پیام | bottom sheet + کپی متن |
+| Forward | برچسب «هدایت‌شده» روی حباب |
+| Mute در لیست | آیکون BellOff روی ردیف بی‌صدا |
+| Unread divider | «پیام‌های خوانده‌نشده» هنگام باز با unread |
+| Info panel | تمام‌عرض موبایل؛ حذف گفتگو → `/chat` |
+| دسکتاپ | split ثابت؛ Header visible |
+| `/chat` مهمان | `AuthModal` |
+| Loading | [`(chat)/loading.tsx`](../src/app/(chat)/loading.tsx) |

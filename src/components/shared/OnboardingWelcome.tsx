@@ -212,20 +212,15 @@ function DotsIndicator({ current, total, onDotClick }: { current: number; total:
           aria-selected={i === current}
           aria-label={`مرحله ${i + 1}`}
           className={cn(
-            'relative flex h-[10px] w-[10px] items-center justify-center rounded-full transition-all duration-150 ease-in-out',
+            // 24px hit area (a11y target-size) around a 10px visual dot.
+            'relative flex h-6 w-6 items-center justify-center rounded-full transition-all duration-150 ease-in-out',
             'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-1',
+            'before:absolute before:h-[10px] before:w-[10px] before:rounded-full before:transition-all before:duration-150',
             i === current
-              ? 'bg-emerald-500 scale-125'
-              : 'bg-muted-foreground/30 hover:bg-muted-foreground/50',
+              ? 'before:bg-emerald-500 before:scale-125'
+              : 'before:bg-muted-foreground/30 hover:before:bg-muted-foreground/50',
           )}
-        >
-          <span
-            className={cn(
-              'block h-2 w-2 rounded-full transition-colors duration-150',
-              i === current ? 'bg-transparent' : 'bg-muted-foreground/30',
-            )}
-          />
-        </button>
+        />
       ))}
     </div>
   );
@@ -252,12 +247,33 @@ export function OnboardingWelcome() {
       if (seen === 'true') {
         return; // Already seen — do nothing
       }
-      const timer = setTimeout(() => setIsVisible(true), 800);
-      return () => clearTimeout(timer);
     } catch {
-      const timer = setTimeout(() => setIsVisible(true), 800);
-      return () => clearTimeout(timer);
+      /* private mode — still show below */
     }
+
+    // Don't interrupt the initial page load (a late full-screen paint also
+    // becomes the page's LCP): reveal on the first user interaction, with a
+    // long idle fallback for users who only read.
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const show = () => {
+      cleanup();
+      setIsVisible(true);
+    };
+    const events: Array<keyof WindowEventMap> = [
+      'pointerdown',
+      'keydown',
+      'wheel',
+      'touchstart',
+    ];
+    const cleanup = () => {
+      if (timer) clearTimeout(timer);
+      for (const ev of events) window.removeEventListener(ev, show);
+    };
+    for (const ev of events) {
+      window.addEventListener(ev, show, { once: true, passive: true });
+    }
+    timer = setTimeout(show, 20_000);
+    return cleanup;
   }, []);
 
   const handleClose = useCallback(() => {

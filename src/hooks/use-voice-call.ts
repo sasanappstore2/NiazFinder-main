@@ -13,10 +13,27 @@ import {
   handleCallReject,
   handleCallHangup,
   handleCallUnavailable,
+  applyServerStatus,
 } from '@/lib/voice/call-controller';
 import { getClientAuthToken } from '@/lib/auth/client-auth';
 
+const RINGING_POLL_MS = 3_000;
+
 export function useVoiceCallSignaling() {
+  const voiceCallId = useAppStore((s) => s.voiceCallId);
+  const voiceCallStatus = useAppStore((s) => s.voiceCallStatus);
+
+  // Socket-loss fallback: while a call is ringing, reconcile with the server.
+  // Without this, a missed `call:accepted`/`call:reject` socket event leaves
+  // the caller "ringing" forever even though the callee already answered.
+  useEffect(() => {
+    if (!voiceCallId || voiceCallStatus !== 'ringing') return;
+    const timer = setInterval(() => {
+      void applyServerStatus(voiceCallId);
+    }, RINGING_POLL_MS);
+    return () => clearInterval(timer);
+  }, [voiceCallId, voiceCallStatus]);
+
   useEffect(() => {
     registerCallController({
       getVoiceCallId: () => useAppStore.getState().voiceCallId,

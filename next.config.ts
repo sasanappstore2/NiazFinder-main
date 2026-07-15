@@ -78,6 +78,24 @@ const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: false,
   allowedDevOrigins: parseAllowedDevOrigins(),
+  // Runtime fs reads (rag/knowledge-index, intake rules packs, map tile caches)
+  // make the tracer pull huge repo trees into .next/standalone. These paths
+  // live on the server disk at runtime — exclude them from the traced output.
+  outputFileTracingExcludes: {
+    "*": [
+      "./OBISIDIAN/**",
+      "./docs/**",
+      // Runtime caches/crawl corpora — recreated on demand; deploys that want
+      // geo analytics must copy data/GeoLite2-City.mmdb next to the server.
+      "./data/**",
+      "./reports/**",
+      "./mini-services/**",
+      "./Scrapegraph-ai-main/**",
+      "./archive/**",
+      "./src/intake.backup.20260711/**",
+      "./src/components/need-intake.backup.20260711/**",
+    ],
+  },
   async headers() {
     const commonHeaders = [
       { key: "X-Frame-Options", value: "SAMEORIGIN" },
@@ -105,7 +123,14 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    remotePatterns: buildMinioRemotePatterns(),
+    remotePatterns: [
+      ...buildMinioRemotePatterns(),
+      // Filing portal listing images (maskanyaban and similar)
+      { protocol: "https", hostname: "maskanyaban.ir", pathname: "/**" },
+      { protocol: "https", hostname: "www.maskanyaban.ir", pathname: "/**" },
+      { protocol: "https", hostname: "showmelk.ir", pathname: "/**" },
+      { protocol: "https", hostname: "www.showmelk.ir", pathname: "/**" },
+    ],
     // ProgressiveImage uses 20 (placeholder) and 86 (full); ProductDetailGallery uses 78.
     qualities: [20, 75, 78, 86],
   },

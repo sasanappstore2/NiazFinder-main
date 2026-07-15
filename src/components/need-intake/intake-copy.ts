@@ -1,9 +1,11 @@
 /** Centralized Persian UI strings for need intake (UTF-8). */
 
 import type { IntakeAnalysisMode } from '@/lib/intake/rules-only-mode';
+import { toPersianDigits } from '@/lib/format/digits';
 
 export const INTAKE_COPY = {
-  stepOf: (current: number, total: number) => `مرحله ${current} از ${total}`,
+  stepOf: (current: number, total: number) =>
+    toPersianDigits(`مرحله ${current} از ${total}`),
   stagedBadge: 'ثبت نیاز مرحله‌ای',
   charUnit: 'کاراکتر',
   charsRemaining: (n: string | number) => `${n} کاراکتر مانده`,

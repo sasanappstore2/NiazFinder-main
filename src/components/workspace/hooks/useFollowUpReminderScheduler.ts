@@ -31,7 +31,10 @@ export function useFollowUpReminderScheduler(
 ) {
   const firedRef = useRef<Set<string>>(new Set());
   const onFiredRef = useRef(onReminderFired);
-  onFiredRef.current = onReminderFired;
+
+  useEffect(() => {
+    onFiredRef.current = onReminderFired;
+  }, [onReminderFired]);
 
   const processDue = useCallback((items: WorkspaceFollowUpItem[]) => {
     const now = Date.now();

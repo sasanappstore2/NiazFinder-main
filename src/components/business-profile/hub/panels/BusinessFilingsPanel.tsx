@@ -1,9 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, LayoutGrid } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { WorkspaceBoard } from '@/components/workspace/kanban/WorkspaceBoard';
 import { routeBuilder } from '@/config/routes';
 
 export function BusinessFilingsPanel() {
@@ -20,7 +19,15 @@ export function BusinessFilingsPanel() {
           </Link>
         </Button>
       </div>
-      <WorkspaceBoard fillHeight={false} />
+      <div className="rounded-xl border border-dashed border-border/70 bg-muted/20 px-4 py-8 text-center">
+        <LayoutGrid className="mx-auto mb-3 size-8 text-muted-foreground/70" />
+        <p className="text-sm text-muted-foreground">
+          برای درگ‌اند‌دراپ به پیگیری، یادداشت و مدیریت کارت‌ها، میزکار را تمام‌صفحه باز کنید.
+        </p>
+        <Button className="mt-4" size="sm" asChild>
+          <Link href={routeBuilder.workspace()}>رفتن به میزکار</Link>
+        </Button>
+      </div>
     </div>
   );
 }

@@ -166,6 +166,46 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Fan out a PROPOSAL card into the related conversation when one exists.
+    try {
+      const { ensureConversation, createSystemMessage } = await import(
+        '@/lib/chat/create-system-messages'
+      );
+      const { publishMessageNew } = await import('@/lib/communication/redis-publish');
+      const conversation = await ensureConversation({
+        userId1: user.id,
+        userId2: serviceRequest.userId,
+        requestId: serviceRequest.id,
+      });
+      const cardContent = JSON.stringify({
+        proposalId: proposal.id,
+        requestId: serviceRequest.id,
+        title: serviceRequest.title,
+        price: proposal.price,
+        message: proposal.message,
+      });
+      const chatMsg = await createSystemMessage({
+        conversationId: conversation.id,
+        senderId: user.id,
+        content: cardContent,
+        type: 'PROPOSAL',
+        lastMessagePreview: 'پیشنهاد جدید',
+      });
+      void publishMessageNew({
+        id: chatMsg.id,
+        conversationId: conversation.id,
+        senderId: user.id,
+        content: cardContent,
+        type: 'PROPOSAL',
+        attachmentUrls: [],
+        isRead: false,
+        createdAt: chatMsg.createdAt.toISOString(),
+        recipientUserId: serviceRequest.userId,
+      });
+    } catch (e) {
+      console.warn('[proposals] chat fanout skipped:', e);
+    }
+
     const mappedProposal: ProposalListItem = {
       id: proposal.id,
       price: proposal.price,

@@ -7,8 +7,12 @@ tags: [feature, chat]
 
 چت realtime، اعلان‌ها، و تماس صوتی (WebRTC).
 
+> **SoT:** [`docs/COMMUNICATION.md`](../../docs/COMMUNICATION.md) — این صفحه فقط index است.
+
 ## Docs
 
+- [docs/COMMUNICATION.md](../../docs/COMMUNICATION.md) ← canonical
+- [docs/CHAT_QA_CHECKLIST.md](../../docs/CHAT_QA_CHECKLIST.md)
 - [docs/CHAT_RESPONSIVE.md](../../docs/CHAT_RESPONSIVE.md)
 - [docs/VOICE_CALLS.md](../../docs/VOICE_CALLS.md)
 
@@ -23,24 +27,30 @@ tags: [feature, chat]
 ## Components
 
 - [src/components/chat/](../../src/components/chat/) — [[../02_Technical_Refs/ComponentsIndex#chat|Components → chat]]
+- Primary shell: `ChatPanel.tsx` (thread/list already split under `thread/`, `ChatComposer`, `ChatInfoPanel`)
 
 ## Next API
 
 | Route | File |
 |-------|------|
 | `/api/chat` | [chat/route.ts](../../src/app/api/chat/route.ts) |
-| `/api/conversations` | [conversations/route.ts](../../src/app/api/conversations/route.ts) |
+| `/api/chat/.../mute` | mute API |
+| `/api/chat/messages/.../star` | star API |
+| `/api/conversations` | **deprecated** (POST → 410) |
 | `/api/calls` | [calls/route.ts](../../src/app/api/calls/route.ts) |
 
-## Socket config
+## Socket
 
-- Chat (Nest default): [chat-socket-config.ts](../../src/lib/chat-socket-config.ts)
-- Standalone service (legacy): [mini-services/chat-service/index.ts](../../mini-services/chat-service/index.ts)
+- **Realtime SoT:** [mini-services/chat-service/index.ts](../../mini-services/chat-service/index.ts) (`npm run dev:chat`)
+- Client config: [chat-socket-config.ts](../../src/lib/chat-socket-config.ts)
+- Nest gateway: keep `CHAT_SOCKET_GATEWAY_ENABLED` off
 
 ## Voice / ICE
 
-- [ice-servers.ts](../../src/lib/voice/ice-servers.ts)
-- [ice-servers-client.ts](../../src/lib/voice/ice-servers-client.ts)
+- Overlay: `call-controller` + `use-voice-call` (P2P)
+- Optional Janus creds: `/api/voice/credentials` + `load-voice-credentials.ts`
+- [ice-servers.ts](../../src/lib/voice/ice-servers.ts) / [ice-servers-client.ts](../../src/lib/voice/ice-servers-client.ts)
+- Iran ISP: `NEXT_PUBLIC_VOICE_RELAY_ONLY=true`
 
 ## Related
 

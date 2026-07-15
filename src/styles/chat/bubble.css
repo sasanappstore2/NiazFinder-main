@@ -232,4 +232,19 @@
     background: color-mix(in oklch, var(--background) 55%, transparent);
     color: inherit;
   }
+
+  .chat-message--highlighted .chat-bubble-shell,
+  .chat-message--highlighted {
+    animation: chat-highlight-pulse 1.4s ease;
+  }
+}
+
+@keyframes chat-highlight-pulse {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  30% {
+    filter: brightness(1.15);
+  }
 }

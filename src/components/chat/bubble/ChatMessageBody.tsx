@@ -2,6 +2,7 @@
 
 import type { Message } from '@/lib/types';
 import { MESSAGE_DELETED_TOMBSTONE } from '@/lib/chat/message-delete';
+import { parseForwardedContent } from '@/lib/chat/forward-marker';
 import { ChatMessageContent } from '@/components/chat/ChatMessageContent';
 import { ChatMessageReplyQuote } from '@/components/chat/ChatMessageReplyQuote';
 import {
@@ -32,9 +33,19 @@ export function ChatMessageBody({
 
   const isImage = hints.kind === 'image';
   const isVoice = hints.kind === 'voice';
+  const { isForwarded, body } = parseForwardedContent(message.content);
+  const displayMessage =
+    isForwarded && body !== message.content
+      ? { ...message, content: body }
+      : message;
 
   return (
     <>
+      {isForwarded ? (
+        <p className="mb-1 text-[11px] font-medium text-emerald-700/90 dark:text-emerald-400/90">
+          هدایت‌شده
+        </p>
+      ) : null}
       {message.replyTo && (
         <ChatMessageReplyQuote
           replyTo={message.replyTo}
@@ -43,7 +54,7 @@ export function ChatMessageBody({
         />
       )}
       <ChatMessageContent
-        message={message}
+        message={displayMessage}
         isOwn={isOwn}
         textClassName={messageTextClassName(hints)}
         imageMeta={

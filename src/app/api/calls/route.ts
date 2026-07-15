@@ -120,10 +120,23 @@ export async function POST(request: NextRequest) {
       },
     });
     if (calleeBusy) {
-      return NextResponse.json(
-        { error: 'طرف مقابل مشغول است', unavailableReason: 'busy' as const },
-        { status: 422 }
-      );
+      const busyAgeMs = Date.now() - calleeBusy.startedAt.getTime();
+      // Same stale-ring self-heal as the caller path — an orphaned RINGING row
+      // must not make the callee permanently unreachable.
+      if (calleeBusy.status === 'RINGING' && busyAgeMs > STALE_RINGING_MS) {
+        const missed = await db.voiceCall.update({
+          where: { id: calleeBusy.id },
+          data: { status: 'MISSED', endedAt: new Date() },
+        });
+        void persistCallLogMessage(missed).catch((e) =>
+          console.warn('[calls] persistCallLogMessage (stale callee ring) failed:', e)
+        );
+      } else {
+        return NextResponse.json(
+          { error: 'طرف مقابل مشغول است', unavailableReason: 'busy' as const },
+          { status: 422 }
+        );
+      }
     }
 
     const call = await db.voiceCall.create({

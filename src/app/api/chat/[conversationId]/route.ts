@@ -13,6 +13,7 @@ import {
 } from '@/lib/chat/prisma-message';
 import { mapDbMessageToClient, type DbMessageRow } from '@/lib/chat/message-map';
 import { getConversationDetailForUser } from '@/lib/chat/conversation-detail';
+import { deleteConversationForUser } from '@/lib/chat/conversation-delete';
 import { checkRateLimit, clientIp } from '@/lib/security/rate-limit';
 import type { Message } from '@/lib/types';
 
@@ -95,6 +96,10 @@ export async function GET(
                 select: { id: true, firstName: true, lastName: true, avatar: true },
               },
             },
+          },
+          stars: {
+            where: { userId: user.id },
+            select: { userId: true },
           },
         },
       }),
@@ -376,5 +381,33 @@ export async function POST(
       { error: 'خطای سرور رخ داده است' },
       { status: 500 }
     );
+  }
+}
+
+/** DELETE — hard-delete conversation for a participant (both parties lose the thread). */
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ conversationId: string }> }
+) {
+  try {
+    const user = await getAuthUser(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { conversationId } = await params;
+    if (!conversationId) {
+      return NextResponse.json({ error: 'شناسه گفتگو الزامی است' }, { status: 400 });
+    }
+
+    const result = await deleteConversationForUser(conversationId, user.id);
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: result.status });
+    }
+
+    return NextResponse.json({ ok: true, conversationId: result.conversationId });
+  } catch (error) {
+    console.error('Chat conversation DELETE error:', error);
+    return NextResponse.json({ error: 'خطای سرور رخ داده است' }, { status: 500 });
   }
 }

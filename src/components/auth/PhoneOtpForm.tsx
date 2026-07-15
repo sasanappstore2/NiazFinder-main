@@ -39,6 +39,14 @@ const COUNTDOWN_SECONDS = 120;
 
 const showTestOtpHint = isAuthTestOtpModeClient();
 
+/** fetch() failed — usually dev server down, not missing internet. */
+function authFetchErrorMessage(): string {
+  if (typeof navigator !== 'undefined' && !navigator.onLine) {
+    return 'خطای شبکه. لطفاً اتصال اینترنت خود را بررسی کنید.';
+  }
+  return 'ارتباط با سرور برقرار نشد. اگر لوکال کار می‌کنید، در ترمینال `npm run dev` را اجرا کنید و صفحه را رفرش کنید.';
+}
+
 export type PhoneOtpStep = 'phone' | 'password' | 'otp' | 'set-password' | 'welcome';
 type OtpMode = 'login' | 'register';
 
@@ -136,7 +144,7 @@ export function PhoneOtpForm({
         }
         return true;
       } catch {
-        setPhoneError('خطای شبکه. لطفاً اتصال اینترنت خود را بررسی کنید.');
+        setPhoneError(authFetchErrorMessage());
         return false;
       } finally {
         setIsLoading(false);
@@ -188,7 +196,7 @@ export function PhoneOtpForm({
       setPasswordError('');
       setStep('password');
     } catch {
-      setPhoneError('خطای شبکه. لطفاً اتصال اینترنت خود را بررسی کنید.');
+      setPhoneError(authFetchErrorMessage());
     } finally {
       setIsLoading(false);
     }

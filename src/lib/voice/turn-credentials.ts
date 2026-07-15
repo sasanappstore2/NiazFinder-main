@@ -25,9 +25,12 @@ export function buildIceServersFromEnv(userId: string): IceServerConfig[] {
   const stunFromEnv =
     process.env.NEXT_PUBLIC_STUN_URLS?.split(',').map((s) => s.trim()).filter(Boolean) ?? [];
 
-  const defaultStunHost = turnHost ?? '127.0.0.1';
   const stun =
-    stunFromEnv.length > 0 ? stunFromEnv : [`stun:${defaultStunHost}:3478`];
+    stunFromEnv.length > 0
+      ? stunFromEnv
+      : turnHost
+        ? [`stun:${turnHost}:3478`]
+        : ['stun:stun.l.google.com:19302'];
 
   const turnSecret = process.env.TURN_STATIC_AUTH_SECRET;
   const relayOnly = process.env.NEXT_PUBLIC_VOICE_RELAY_ONLY === 'true';
