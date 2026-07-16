@@ -60,6 +60,19 @@ status: partial
 - [[../../docs/CHAT_RESPONSIVE.md|docs/CHAT_RESPONSIVE.md]]
 - Appendix: [[../90_Technical_Appendix/README|Technical Appendix]]
 
+## پیاده‌سازی فنی (فایل‌ها و مسیرها)
+
+*(merge شده از `01_Features/Chat.md`)*
+
+| نوع | مسیر |
+|-----|------|
+| UI shell | `src/components/chat/` (`ChatPanel.tsx`, `thread/`, `ChatComposer`, `ChatInfoPanel`) |
+| صفحات | `src/app/(chat)/chat/page.tsx`، `src/app/(chat)/chat/[conversationId]/page.tsx` |
+| API | `src/app/api/chat/route.ts`، mute/star zir-route ها، `src/app/api/calls/route.ts` |
+| Socket (SoT) | `mini-services/chat-service/index.ts` (`npm run dev:chat`) — کلاینت: `src/lib/chat-socket-config.ts` |
+| صوتی/ICE | `src/lib/voice/ice-servers.ts`, `ice-servers-client.ts` — Janus اختیاری: `/api/voice/credentials` |
+| Prisma | `Conversation`, `Message` در `prisma/schema.prisma` (بخش MESSAGES & CHAT) |
+
 ## وضعیت
 
 `partial`

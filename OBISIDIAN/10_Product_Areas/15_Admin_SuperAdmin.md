@@ -88,6 +88,18 @@ npx tsx scripts/analytics/rollup-daily.ts
 - `src/components/admin/modules/`
 - `src/config/super-admin-nav.ts`
 
+## پیاده‌سازی فنی (فایل‌ها و مسیرها)
+
+*(merge شده از `01_Features/AdminModeration.md`)*
+
+| نوع | مسیر |
+|-----|------|
+| Permissions config | `src/config/admin-permissions.ts` |
+| صف moderation | `src/lib/request-moderation/enqueue.ts`, `rules.ts` — internal route: `src/app/api/internal/request-moderation/route.ts` |
+| API گروه super-admin | `super-admin/requests/**`, `super-admin/rbac/**`, `super-admin/chat-review/**`, users/categories/locations/analytics |
+| Nest | `RequestModerationProcessor` — ماژول‌های `admin`, `internal` (legacy، فقط ۳ ماژول intake-* هنوز load-bearing‌اند) |
+| Prisma | `ModerationStatus`, `AdminAuditLog`, `StaffRole` |
+
 ## وضعیت
 
 `live`
@@ -95,4 +107,5 @@ npx tsx scripts/analytics/rollup-daily.ts
 ## Related
 
 - [[../00_Product_MOC/ProductMap|ProductMap]]
-- [[../01_Features/AdminModeration|AdminModeration]]
+- [[02_Need_Intake]] (publish → صف moderation)
+- [[../03_Operations_Debug/E2EChecklist|E2EChecklist]]

@@ -60,3 +60,4 @@ status: live
 ## Related
 
 - [[../00_Product_MOC/ProductMap|ProductMap]]
+- [[03_Need_Marketplace]] — پیاده‌سازی فنی مشترک (routes/middleware/search)
