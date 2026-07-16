@@ -6,7 +6,7 @@ from typing import Any
 
 import httpx
 
-from app.config import EXTRACT_ARTICLE_SYSTEM, INTAKE_LLM_MODEL, INTAKE_MLX_CHAT_URL, INTAKE_MLX_URL
+from app.config import EXTRACT_ARTICLE_SYSTEM, EXTRACT_FILINGS_SYSTEM, INTAKE_LLM_MODEL, INTAKE_MLX_CHAT_URL, INTAKE_MLX_URL
 
 
 def mlx_health_ok() -> bool:
@@ -50,4 +50,11 @@ def extract_article_from_text(url: str, page_text: str) -> dict[str, Any]:
     clipped = page_text[:12_000]
     user = f"URL: {url}\n\nمتن صفحه:\n{clipped}"
     raw = chat_completion(EXTRACT_ARTICLE_SYSTEM, user, max_tokens=1200)
+    return _extract_json_blob(raw)
+
+
+def extract_filings_from_html(url: str, page_text: str, *, site_key: str = "site") -> dict[str, Any]:
+    clipped = page_text[:18_000]
+    user = f"Site: {site_key}\nURL: {url}\n\nمتن صفحه:\n{clipped}"
+    raw = chat_completion(EXTRACT_FILINGS_SYSTEM, user, max_tokens=4000)
     return _extract_json_blob(raw)

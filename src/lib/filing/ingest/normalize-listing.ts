@@ -39,6 +39,27 @@ export function normalizeDigits(input: string): string {
 export function parsePostedAtText(text: string | null | undefined): Date | null {
   if (!text?.trim()) return null;
   const normalized = text.replace(/\s+/g, ' ').trim();
+
+  // MaskanYaban's .FDate is US-format Gregorian: "7/16/2026 7:20:42 PM"
+  const us = normalized.match(
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?)?$/i
+  );
+  if (us) {
+    const [, mo, day, year, hh, mm, ss, meridiem] = us;
+    let hours = hh ? parseInt(hh, 10) : 0;
+    if (meridiem?.toUpperCase() === 'PM' && hours < 12) hours += 12;
+    if (meridiem?.toUpperCase() === 'AM' && hours === 12) hours = 0;
+    const date = new Date(
+      parseInt(year!, 10),
+      parseInt(mo!, 10) - 1,
+      parseInt(day!, 10),
+      hours,
+      mm ? parseInt(mm, 10) : 0,
+      ss ? parseInt(ss, 10) : 0
+    );
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
   const m = normalized.match(/(\d{1,2})\s+([\u0600-\u06FF]+)\s+(\d{4})/);
   if (!m) return null;
   const jd = parseInt(normalizeDigits(m[1]!), 10);

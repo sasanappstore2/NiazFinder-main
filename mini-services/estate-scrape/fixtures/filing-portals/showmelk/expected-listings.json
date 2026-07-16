@@ -1,0 +1,8 @@
+{
+  "siteKey": "showmelk",
+  "minListings": 3,
+  "minFileCodeRate": 1.0,
+  "minTitleRate": 0.98,
+  "minPriceOrRentRate": 0.66,
+  "sampleFileCodes": ["525815", "525816", "525817"]
+}

@@ -1,0 +1,6 @@
+{
+  "siteKey": "maskanyaban",
+  "containerSelector": "div.listing-grid > div.listing-item.property-card",
+  "minFieldKeys": ["fileCode", "dealType", "neighborhood"],
+  "sampleFileCodePattern": "\\d{4,}"
+}

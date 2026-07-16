@@ -12,7 +12,15 @@ import { archiveStaleFilingsForScraper } from '@/lib/filing/ingest/stale-listing
 import { invalidateFilingCaches } from '@/lib/filing/cache/invalidate';
 import type { ScrapedFilingRow } from '@/lib/filing/ingest/estate-scrape-filing-client';
 
-const SCRAPE_TIMEOUT_MS = 45 * 60_000;
+/**
+ * Node's fetch (undici) enforces a hard 300s headers timeout regardless of any
+ * AbortController budget, so a single long-running scrape request dies with a
+ * bare "fetch failed" after 5 minutes. We therefore scrape in bounded batches
+ * (mirroring the proven run-maskanyaban-week-import fixture): each HTTP call
+ * asks for at most BATCH_SIZE new items and must finish inside BATCH_TIMEOUT_MS.
+ */
+const BATCH_TIMEOUT_MS = 240_000;
+const BATCH_SIZE = 200;
 const DEFAULT_WITHIN_DAYS = 7;
 const DEFAULT_MAX_ITEMS = 2500;
 
@@ -40,31 +48,62 @@ export async function runPortalWeekSync(
   const withinDays = opts?.withinDays ?? DEFAULT_WITHIN_DAYS;
   const maxItems = opts?.maxItems ?? DEFAULT_MAX_ITEMS;
   const password = scraper.passwordEnc ? decryptScraperPassword(scraper.passwordEnc) : '';
-  const siteConfig = scraperSiteConfigForEstateScrape(scraper.siteConfigJson);
+  // Inline detail-enrich during the list scrape costs seconds per row and blows
+  // the per-batch latency budget; the post-import enrich pipeline fetches detail
+  // pages separately, so disable it here (same as the week-import fixture).
+  const baseSiteConfig = scraperSiteConfigForEstateScrape(scraper.siteConfigJson);
+  const detailPage = (baseSiteConfig.detailPage as Record<string, unknown> | undefined) ?? {};
+  const siteConfig = { ...baseSiteConfig, detailPage: { ...detailPage, enabled: false } };
+  const { importScrapedFilings } = await import('@/lib/filing/ingest/runner');
 
-  const scrape = await fetchFilingFeedScrape(
-    {
-      siteKey: scraper.siteKey,
-      loginUrl: scraper.loginUrl,
-      listingsUrl: scraper.listingsUrl,
-      username: scraper.username,
-      password,
-      siteConfig,
-      maxItems,
-      withinDays,
-      knownExternalIds: opts?.refreshExisting === false ? [] : undefined,
-    },
-    { timeoutMs: SCRAPE_TIMEOUT_MS }
-  );
+  const seenExternalIds: string[] = [];
+  const knownIds = new Set<string>(opts?.refreshExisting === false ? [] : undefined);
+  let imported = 0;
+  let scrapedTotal = 0;
+  let lastError: string | undefined;
+  const maxBatches = Math.max(1, Math.ceil(maxItems / BATCH_SIZE));
 
-  if (!scrape.ok && !scrape.listings?.length) {
-    throw new Error(scrape.error ?? 'استخراج لیست فایل‌ها ناموفق بود');
+  for (let batch = 0; batch < maxBatches; batch++) {
+    const remaining = maxItems - scrapedTotal;
+    if (remaining <= 0) break;
+
+    const scrape = await fetchFilingFeedScrape(
+      {
+        siteKey: scraper.siteKey,
+        loginUrl: scraper.loginUrl,
+        listingsUrl: scraper.listingsUrl,
+        username: scraper.username,
+        password,
+        siteConfig,
+        maxItems: Math.min(BATCH_SIZE, remaining),
+        withinDays,
+        knownExternalIds: [...knownIds],
+      },
+      { timeoutMs: BATCH_TIMEOUT_MS }
+    );
+
+    const rows = scrape.listings ?? [];
+    if (!scrape.ok && rows.length === 0) {
+      lastError = scrape.error ?? 'استخراج لیست فایل‌ها ناموفق بود';
+      break;
+    }
+    if (rows.length === 0) break;
+
+    imported += await importScrapedFilings(scraper, rows);
+    scrapedTotal += rows.length;
+    for (const [index, row] of rows.entries()) {
+      const id = listingExternalId(row, index);
+      seenExternalIds.push(id);
+      knownIds.add(id);
+    }
+
+    // A short batch means the portal has no more new rows in the window.
+    if (rows.length < Math.min(BATCH_SIZE, remaining)) break;
   }
 
-  const rows = scrape.listings ?? [];
-  const { importScrapedFilings } = await import('@/lib/filing/ingest/runner');
-  const imported = rows.length ? await importScrapedFilings(scraper, rows) : 0;
-  const seenExternalIds = rows.map((row, index) => listingExternalId(row, index));
+  if (scrapedTotal === 0 && lastError) {
+    throw new Error(lastError);
+  }
 
   try {
     await reconcileFilingMetadataForScraper(scraper, { withinDays, limit: Math.max(imported, 200) });
@@ -78,7 +117,7 @@ export async function runPortalWeekSync(
     console.warn('[week-sync] stale archive skipped:', err);
   }
 
-  return { imported, scraped: rows.length, seenExternalIds, enrichStarted: false };
+  return { imported, scraped: scrapedTotal, seenExternalIds, enrichStarted: false };
 }
 
 export async function runPostImportEnrich(

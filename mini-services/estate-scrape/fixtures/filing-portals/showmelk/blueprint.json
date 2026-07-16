@@ -1,0 +1,68 @@
+{
+  "version": 2,
+  "listPage": {
+    "containerSelector": "#MelkList > div.box.file.clearfix",
+    "itemLinkSelector": "a[href]",
+    "pagination": { "mode": "nextButton", "selector": "a.next", "maxPages": 20 }
+  },
+  "fieldMap": {
+    "fileCode": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "کد\\s*فایل\\s*[:：]?\\s*(\\d+)",
+      "regexGroup": 1
+    },
+    "dealType": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "(رهن و اجاره|رهن کامل|فروش|اجاره)",
+      "regexGroup": 1
+    },
+    "propertyKind": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "(آپارتمان|ویلا|زمین|مغازه|دفتر|تجاری)",
+      "regexGroup": 1
+    },
+    "deposit": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "مبلغ\\s*رهن\\s*[:：]?\\s*([\\d,]+)",
+      "regexGroup": 1,
+      "transform": "toman"
+    },
+    "monthlyRent": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "مبلغ\\s*اجاره\\s*[:：]?\\s*([\\d,]+)",
+      "regexGroup": 1,
+      "transform": "toman"
+    },
+    "price": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "(?:قیمت|مبلغ\\s*فروش)\\s*[:：]?\\s*([\\d,]+)",
+      "regexGroup": 1,
+      "transform": "toman"
+    },
+    "area": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "(\\d+)\\s*متری",
+      "regexGroup": 1
+    },
+    "floor": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "طبقه\\s*[:：]?\\s*(\\d+)",
+      "regexGroup": 1
+    },
+    "location": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "محله\\s*[:：]?\\s*([^\\n]+)",
+      "regexGroup": 1,
+      "transform": "trim"
+    }
+  }
+}

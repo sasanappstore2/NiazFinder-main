@@ -5,7 +5,10 @@ import {
 } from '@/lib/filing/ingest/estate-scrape-filing-client';
 import { decryptScraperPassword } from '@/lib/filing/ingest/credentials';
 import { importScrapedFilings } from '@/lib/filing/ingest/runner';
-import { scraperSiteConfigForEstateScrape } from '@/lib/filing/ingest/scheduler';
+import {
+  parseScraperSiteConfig,
+  scraperSiteConfigForEstateScrape,
+} from '@/lib/filing/ingest/scheduler';
 import {
   countFilingsNeedingEnrich,
   filingWithinDaysWhere,
@@ -18,7 +21,17 @@ const DEFAULT_MIN_COMPLETENESS = 75;
 const DEFAULT_ENRICH_DELAY_MS = 800;
 
 function scraperCanFetchDetail(scraper: RegionalFilingScraper): boolean {
-  return Boolean(scraper.username?.trim() && scraper.passwordEnc);
+  if (scraper.username?.trim() && scraper.passwordEnc) return true;
+  // Public portals (public-bot mode: credentials optional since the
+  // filing_scraper_public_bots migration) expose detail pages without login —
+  // a blueprint with an enabled detailPage is enough to fetch them.
+  try {
+    const cfg = parseScraperSiteConfig(scraper.siteConfigJson);
+    const detail = (cfg.detailPage ?? {}) as { enabled?: boolean; linkFromList?: boolean };
+    return Boolean(detail.enabled || detail.linkFromList);
+  } catch {
+    return false;
+  }
 }
 
 export { scraperCanFetchDetail };
