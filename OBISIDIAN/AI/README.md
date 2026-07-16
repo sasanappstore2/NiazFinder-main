@@ -19,7 +19,9 @@ status: live
 7. [[AI_Collaboration_Guide|AI_Collaboration_Guide.md]] — چطور با این پروژه کار کنیم
 8. [[Prompt_Library|Prompt_Library.md]] — پرامپت‌های تکرارشوندهٔ مفید
 9. [[Agent_Memory|Agent_Memory.md]] — یادداشت‌های زندهٔ ایجنت‌ها (به‌مرور به‌روزرسانی می‌شود)
-10. [[Claude_Context|Claude_Context.md]] / [[Cursor_Context|Cursor_Context.md]] — نسخهٔ کوتاه‌شدهٔ ابزار-محور
+10. [[Cursor_Context|Cursor_Context.md]] — نسخهٔ کوتاه‌شدهٔ ابزار-محور برای Cursor
+
+> نکته: `CLAUDE_CONTEXT.md` هم نقش نسخهٔ فشردهٔ Claude را ایفا می‌کند — روی این فایل‌سیستم (case-insensitive) یک فایل جدای `Claude_Context.md` با همین نام برخورد می‌کرد، پس تکرار نشد.
 
 ## روابط
 - معماری فنی تفصیلی: [[../Architecture/README|Architecture/]]
