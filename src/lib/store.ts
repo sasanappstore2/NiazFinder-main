@@ -450,10 +450,13 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   registerWithPhonePassword: async (phone: string, password: string, code: string) => {
     try {
+      const referralCode =
+        typeof window !== 'undefined' ? localStorage.getItem('nf_referral_code') : null;
+
       const res = await fetch('/api/auth/register-phone', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, password, code }),
+        body: JSON.stringify({ phone, password, code, referralCode: referralCode || undefined }),
       });
 
       const data = await res.json().catch(() => ({}));
@@ -462,7 +465,35 @@ export const useAppStore = create<AppState>((set, get) => ({
         return { success: false, error: data.error || 'خطا در ثبت‌نام' };
       }
 
+      if (referralCode) localStorage.removeItem('nf_referral_code');
+
       applyPhoneAuthSuccess(data.user, data.token, { closeModal: false });
+
+      // Apply the name/username optionally captured in the onboarding welcome
+      // modal (OnboardingWelcome) to the freshly created profile — best effort.
+      try {
+        const stashRaw = localStorage.getItem('nf_onboarding_profile');
+        if (stashRaw && data.token) {
+          const stash = JSON.parse(stashRaw) as { name?: string; username?: string };
+          const body: Record<string, string> = {};
+          if (stash.name?.trim()) body.firstName = stash.name.trim();
+          if (stash.username?.trim()) body.username = stash.username.trim();
+          if (Object.keys(body).length > 0) {
+            void fetch('/api/users/profile', {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${data.token}`,
+              },
+              body: JSON.stringify(body),
+            }).catch(() => {});
+          }
+          localStorage.removeItem('nf_onboarding_profile');
+        }
+      } catch {
+        // best effort — never block registration on profile prefill
+      }
+
       return { success: true, error: null };
     } catch {
       return { success: false, error: 'خطای شبکه. لطفاً اتصال اینترنت خود را بررسی کنید.' };

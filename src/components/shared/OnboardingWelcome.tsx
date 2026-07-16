@@ -13,10 +13,15 @@ import {
   Rocket,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
+import { apiFetch } from '@/lib/api-client';
 
 const ONBOARDING_STORAGE_KEY = 'needfinder-onboarding-seen';
+/** Optional name/username typed in the last onboarding step; applied to the
+ * profile right after registration (see store.registerWithPhonePassword). */
+export const ONBOARDING_PROFILE_STASH_KEY = 'nf_onboarding_profile';
 
 // ──────────────────────────────────────────────
 // Step 1 — Welcome
@@ -143,19 +148,33 @@ function StepHowItWorks() {
 function StepGetStarted({
   dontShowAgain,
   setDontShowAgain,
+  name,
+  setName,
+  username,
+  setUsername,
+  isAuthenticated,
+  saving,
+  saveError,
   onRegister,
   onLater,
 }: {
   dontShowAgain: boolean;
   setDontShowAgain: (v: boolean) => void;
+  name: string;
+  setName: (v: string) => void;
+  username: string;
+  setUsername: (v: string) => void;
+  isAuthenticated: boolean;
+  saving: boolean;
+  saveError: string | null;
   onRegister: () => void;
   onLater: () => void;
 }) {
   return (
-    <div className="space-y-6 text-center">
+    <div className="space-y-4 text-center">
       {/* Rocket icon */}
-      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25">
-        <Rocket className="size-10 text-white" />
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-linear-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25">
+        <Rocket className="size-7 text-white" />
       </div>
 
       {/* Title */}
@@ -163,19 +182,42 @@ function StepGetStarted({
         شروع کنید!
       </h2>
 
-      <p className="mx-auto max-w-xs text-sm leading-7 text-muted-foreground sm:text-base">
-        همین الان ثبت‌نام کنید و از خدمات هزاران کسب‌وکار بهره‌مند شوید.
+      <p className="mx-auto max-w-xs text-sm leading-6 text-muted-foreground">
+        {isAuthenticated
+          ? 'پروفایل خود را تکمیل کنید تا کسب‌وکارها بهتر بشناسندتان.'
+          : 'اگر دوست دارید، نام و نام کاربری‌تان را همین‌جا بنویسید تا بعد از ثبت‌نام خودکار روی پروفایل‌تان بنشیند.'}
       </p>
 
+      {/* Optional profile fields */}
+      <div className="mx-auto max-w-xs space-y-2.5 text-right">
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="نام شما (اختیاری)"
+          autoComplete="name"
+          className="h-11 rounded-xl"
+        />
+        <Input
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="نام کاربری، مثل sasan (اختیاری)"
+          autoComplete="username"
+          dir="ltr"
+          className="h-11 rounded-xl text-left placeholder:text-right"
+        />
+        {saveError && <p className="text-xs text-destructive">{saveError}</p>}
+      </div>
+
       {/* CTA Buttons */}
-      <div className="flex flex-col gap-3 pt-1 sm:flex-row sm:justify-center">
+      <div className="flex flex-col gap-2.5 pt-1 sm:flex-row sm:justify-center">
         <Button
           onClick={onRegister}
+          disabled={saving}
           className="w-full bg-emerald-600 text-white hover:bg-emerald-700 sm:w-auto"
           size="lg"
         >
-          <Sparkles className="ml-2 size-4" />
-          ثبت‌نام رایگان
+          <Sparkles className="me-2 size-4" />
+          {isAuthenticated ? (saving ? 'در حال ذخیره...' : 'ذخیره و شروع') : 'ثبت‌نام رایگان'}
         </Button>
         <Button variant="ghost" className="w-full sm:w-auto" size="lg" onClick={onLater}>
           بعداً
@@ -183,7 +225,7 @@ function StepGetStarted({
       </div>
 
       {/* Checkbox */}
-      <label className="flex cursor-pointer items-center justify-center gap-2 pt-1">
+      <label className="flex cursor-pointer items-center justify-center gap-2">
         <input
           type="checkbox"
           checked={dontShowAgain}
@@ -234,10 +276,20 @@ export function OnboardingWelcome() {
   const [step, setStep] = useState(0);
   const [dontShowAgain, setDontShowAgain] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const prevStepRef = useRef(0);
   const modalRef = useRef<HTMLDivElement>(null);
+  // The modal reveals on the visitor's first pointerdown — the click event of
+  // that same interaction then lands on the freshly-mounted overlay and would
+  // close (and permanently dismiss) the modal instantly. Ignore overlay clicks
+  // for a short grace period after reveal.
+  const revealedAtRef = useRef(0);
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
   const setAuthModalTab = useAppStore((s) => s.setAuthModalTab);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
 
   const totalSteps = 3;
 
@@ -257,6 +309,7 @@ export function OnboardingWelcome() {
     let timer: ReturnType<typeof setTimeout> | null = null;
     const show = () => {
       cleanup();
+      revealedAtRef.current = Date.now();
       setIsVisible(true);
     };
     const events: Array<keyof WindowEventMap> = [
@@ -287,8 +340,48 @@ export function OnboardingWelcome() {
     setIsVisible(false);
   }, [dontShowAgain]);
 
-  const handleRegister = useCallback(() => {
+  const handleRegister = useCallback(async () => {
+    const trimmedName = name.trim();
+    const trimmedUsername = username.trim();
+
+    if (isAuthenticated) {
+      // Already signed in: persist directly to the profile.
+      if (trimmedName || trimmedUsername) {
+        setSaving(true);
+        setSaveError(null);
+        try {
+          await apiFetch('/api/users/profile', {
+            method: 'PUT',
+            body: JSON.stringify({
+              ...(trimmedName ? { firstName: trimmedName } : {}),
+              ...(trimmedUsername ? { username: trimmedUsername } : {}),
+            }),
+          });
+        } catch (err) {
+          setSaving(false);
+          setSaveError(err instanceof Error ? err.message : 'خطا در ذخیرهٔ پروفایل');
+          return; // keep the modal open so the user can fix e.g. a taken username
+        }
+        setSaving(false);
+      }
+      try {
+        localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
+      } catch {
+        // Silently fail
+      }
+      setIsVisible(false);
+      return;
+    }
+
+    // Not signed in yet: stash the values; they are applied to the profile
+    // right after registration completes (store.registerWithPhonePassword).
     try {
+      if (trimmedName || trimmedUsername) {
+        localStorage.setItem(
+          ONBOARDING_PROFILE_STASH_KEY,
+          JSON.stringify({ name: trimmedName, username: trimmedUsername })
+        );
+      }
       localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
     } catch {
       // Silently fail
@@ -296,7 +389,7 @@ export function OnboardingWelcome() {
     setIsVisible(false);
     setAuthModalTab('register');
     setAuthModalOpen(true);
-  }, [setAuthModalOpen, setAuthModalTab]);
+  }, [name, username, isAuthenticated, setAuthModalOpen, setAuthModalTab]);
 
   const goNext = useCallback(() => {
     if (step < totalSteps - 1 && !isTransitioning) {
@@ -381,7 +474,11 @@ export function OnboardingWelcome() {
       {/* Dark overlay + blur */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-xs"
-        onClick={handleClose}
+        onClick={() => {
+          // Swallow the click belonging to the pointerdown that revealed us.
+          if (Date.now() - revealedAtRef.current < 500) return;
+          handleClose();
+        }}
         aria-hidden="true"
       />
 
@@ -419,7 +516,14 @@ export function OnboardingWelcome() {
             <StepGetStarted
               dontShowAgain={dontShowAgain}
               setDontShowAgain={setDontShowAgain}
-              onRegister={handleRegister}
+              name={name}
+              setName={setName}
+              username={username}
+              setUsername={setUsername}
+              isAuthenticated={isAuthenticated}
+              saving={saving}
+              saveError={saveError}
+              onRegister={() => void handleRegister()}
               onLater={handleClose}
             />
           )}
