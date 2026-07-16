@@ -385,10 +385,12 @@ export function OnboardingWelcome() {
         aria-hidden="true"
       />
 
-      {/* Modal card */}
+      {/* Modal card — overflow-hidden clips the decorative blurs (they used to
+          live inside the scroll container and manufactured phantom scrollbars
+          in both axes); only the content area below actually scrolls. */}
       <div
         ref={modalRef}
-        className="gradient-mesh-card relative z-10 w-full max-w-[520px] max-h-[min(92dvh,calc(100dvh-2rem))] overflow-y-auto rounded-2xl border border-border/40 bg-background/80 shadow-[0_16px_70px_rgba(0,0,0,0.18)] backdrop-blur-xl"
+        className="gradient-mesh-card relative z-10 flex w-full max-w-[520px] max-h-[min(92dvh,calc(100dvh-2rem))] flex-col overflow-hidden rounded-2xl border border-border/40 bg-background/80 shadow-[0_16px_70px_rgba(0,0,0,0.18)] backdrop-blur-xl"
       >
         {/* Decorative gradient blurs */}
         <div className="pointer-events-none absolute -top-24 -left-24 size-48 rounded-full bg-emerald-500/8 blur-3xl" />
@@ -403,9 +405,9 @@ export function OnboardingWelcome() {
           <X className="size-4" />
         </button>
 
-        {/* Content area with CSS fade transition */}
+        {/* Content area with CSS fade transition — the only scrollable region */}
         <div
-          className="relative px-6 pb-4 pt-8 sm:px-8 sm:pt-10"
+          className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 pb-4 pt-8 sm:px-8 sm:pt-10"
           style={{
             opacity: isTransitioning ? 0 : 1,
             transition: 'opacity 100ms ease-in-out',
@@ -423,8 +425,8 @@ export function OnboardingWelcome() {
           )}
         </div>
 
-        {/* Bottom navigation: prev / dots / next */}
-        <div className="flex items-center justify-between border-t border-border/30 px-6 py-4 sm:px-8">
+        {/* Bottom navigation: prev / dots / next — pinned below the scroll area */}
+        <div className="flex shrink-0 items-center justify-between border-t border-border/30 px-6 py-4 sm:px-8">
           {/* Prev button */}
           {step > 0 ? (
             <Button
