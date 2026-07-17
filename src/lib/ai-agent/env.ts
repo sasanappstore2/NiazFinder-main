@@ -49,10 +49,3 @@ export function getAgentLlmModel(): string {
   return 'gpt-4o-mini';
 }
 
-export function getNestAiChatUrl(): string | null {
-  const base =
-    process.env.NEST_API_URL?.replace(/\/$/, '') ||
-    process.env.NEXT_PUBLIC_NEST_API_URL?.replace(/\/$/, '') ||
-    '';
-  return base ? `${base}/api/ai/chat` : null;
-}

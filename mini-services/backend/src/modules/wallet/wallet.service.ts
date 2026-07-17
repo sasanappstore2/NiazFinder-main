@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaymentRequiredException } from '../ai-agent/exceptions/payment-required.exception';
+import { PaymentRequiredException } from '../../common/exceptions/payment-required.exception';
 import { ChargeDto } from './dto/charge.dto';
 import { WithdrawDto } from './dto/withdraw.dto';
 import { QueryTransactionsDto } from './dto/query-transactions.dto';
