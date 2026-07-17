@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { BadgeCheck, MapPin, Star } from 'lucide-react';
 import { BusinessStarButton } from '@/components/shared/BusinessStarButton';
@@ -29,7 +30,10 @@ export function HeroSection({ business, requestId }: SectionProps) {
       ? window.location.href
       : business.seo.canonicalUrl ?? routeBuilder.pro(business.id);
 
-  const hasCover = Boolean(business.identity.coverImage);
+  // A 404'd cover must degrade to the aurora fallback, not a broken-image icon.
+  const [coverFailed, setCoverFailed] = useState(false);
+  const [logoFailed, setLogoFailed] = useState(false);
+  const hasCover = Boolean(business.identity.coverImage) && !coverFailed;
 
   return (
     <section id="section-hero" className={PROFILE_HERO}>
@@ -41,6 +45,11 @@ export function HeroSection({ business, requestId }: SectionProps) {
             fill
             className={PROFILE_COVER_IMAGE}
             priority
+            onError={() => setCoverFailed(true)}
+            // SSR imgs can fail before hydration — onError never fires then.
+            ref={(el) => {
+              if (el && el.complete && el.naturalWidth === 0) setCoverFailed(true);
+            }}
           />
         ) : (
           <HeroCoverAurora className="absolute inset-0" />
@@ -56,13 +65,17 @@ export function HeroSection({ business, requestId }: SectionProps) {
 
       <div className={PROFILE_IDENTITY_SHEET}>
         <div className={PROFILE_LOGO}>
-          {business.identity.logo ? (
+          {business.identity.logo && !logoFailed ? (
             <Image
               src={business.identity.logo}
               alt=""
               width={112}
               height={112}
               className="size-full object-cover"
+              onError={() => setLogoFailed(true)}
+              ref={(el) => {
+                if (el && el.complete && el.naturalWidth === 0) setLogoFailed(true);
+              }}
             />
           ) : (
             <div className="flex size-full items-center justify-center text-xl font-bold text-muted-foreground sm:text-2xl">

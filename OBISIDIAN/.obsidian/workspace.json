@@ -11,14 +11,10 @@
             "id": "8c60ec624017d5f1",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "00_Product_MOC/ProductMap.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "ProductMap"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
         ]
@@ -183,6 +179,12 @@
   },
   "active": "8c60ec624017d5f1",
   "lastOpenFiles": [
+    "Untitled.canvas",
+    "Untitled 1.base",
+    "10_Product_Areas/10_Proposals_Reviews.md",
+    "90_Technical_Appendix/Technical_Refs/NestBackendModules.md",
+    "90_Technical_Appendix/Index/Architecture.md",
+    "00_Product_MOC/ProductMap.md",
     "Indexes/Future_Maintenance_Recommendations.md",
     "Indexes/Missing_Documentation_Report.md",
     "Indexes/AI_Readiness_Report.md",
@@ -204,11 +206,6 @@
     "AI/System_Constraints.md",
     "AI/Project_Vocabulary.md",
     "AI/Engineering_Constitution.md",
-    "AI/CLAUDE_CONTEXT.md",
-    "RFC/002-market-data-reports.md",
-    "RFC/001-ads-featured-placement.md",
-    "ADR/011-wallet-monetization-strategy.md",
-    "ADR/010-websocket-realtime-strategy.md",
     "Indexes",
     "AI",
     "Decision Logs",
@@ -218,8 +215,6 @@
     "Testing",
     "Debug",
     "Runbooks",
-    "Playbooks",
-    "Untitled.canvas",
     "Untitled 1.canvas"
   ]
 }

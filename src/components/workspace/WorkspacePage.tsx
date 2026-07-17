@@ -14,7 +14,10 @@ import { useWorkspaceData } from './hooks/useWorkspaceData';
 import { useWorkspacePolling } from './hooks/useWorkspacePolling';
 import { useWorkspaceFollowUps } from './hooks/useWorkspaceFollowUps';
 import { useFollowUpReminderScheduler } from './hooks/useFollowUpReminderScheduler';
+import { useWorkspaceSearch } from './hooks/useWorkspaceSearch';
 import { WorkspaceHeader } from './WorkspaceHeader';
+import { WorkspaceSearch } from './WorkspaceSearch';
+import { WorkspaceQuickAdd } from './WorkspaceQuickAdd';
 import { KanbanBoard } from './kanban/KanbanBoard';
 import type { WorkspaceColumnId } from './types';
 
@@ -58,6 +61,12 @@ export function WorkspacePage({
   );
 
   useFollowUpReminderScheduler(enrichedFollowUps, markReminderFired);
+
+  const { query: searchQuery, setQuery: setSearchQuery, searched } = useWorkspaceSearch(
+    data.needs,
+    data.files,
+    data.collaborations
+  );
 
   const [activeTab, setActiveTab] = useState<WorkspaceColumnId>('needs');
   const [followUpTarget, setFollowUpTarget] = useState<WorkspaceFollowUpCandidate | null>(null);
@@ -112,14 +121,16 @@ export function WorkspacePage({
         tabCounts={tabCounts}
         unreadNotifications={unreadNotificationCount}
         actions={headerActions}
+        search={<WorkspaceSearch value={searchQuery} onChange={setSearchQuery} />}
+        quickAdd={<WorkspaceQuickAdd onCollaborationRequest={() => setCreateCollaborationOpen(true)} />}
       />
 
       <KanbanBoard
         activeTab={activeTab}
-        needs={data.needs}
-        files={data.files}
+        needs={searched.needs}
+        files={searched.files}
         regionalFeed={data.regionalFeed}
-        collaborations={data.collaborations}
+        collaborations={searched.collaborations}
         collaborationHasServiceArea={data.collaborationHasServiceArea}
         followUps={enrichedFollowUps}
         loading={loading}

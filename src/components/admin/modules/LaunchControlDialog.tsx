@@ -261,7 +261,7 @@ export function LaunchControlDialog({
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="admin-content-zone flex max-h-[90vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl">
-          <DialogHeader className="shrink-0 space-y-2 border-b border-(--color-mainBorder) px-5 py-4 text-start">
+          <DialogHeader className="shrink-0 space-y-2 border-b border-(--color-mainBorder) px-5 py-4 pe-14 text-start">
             <DialogTitle className="flex flex-wrap items-center gap-2">
               <Power className="size-5 text-(--color-coloredText)" />
               {title}

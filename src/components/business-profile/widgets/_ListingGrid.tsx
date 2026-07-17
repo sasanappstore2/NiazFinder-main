@@ -5,6 +5,7 @@ import type { Business, PropertyListing } from '@/contracts/business-profile';
 import { propertyListingCategoryLabel } from '@/lib/business/real-estate-listing-categories';
 import { listingPriceDisplay } from '@/lib/business/real-estate-listing-deal-types';
 import { listingCoverImage } from '@/lib/business/normalize-property-listing';
+import { toPersianDigits } from '@/lib/format/digits';
 import { cn } from '@/lib/utils';
 import { PropertyListingDetailSheet } from './PropertyListingDetailSheet';
 
@@ -62,7 +63,7 @@ export function ListingGrid({
                 )}
                 <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
                   {listingPriceDisplay(l) && <span>{listingPriceDisplay(l)}</span>}
-                  {l.area && <span>{l.area}</span>}
+                  {l.area && <span>{toPersianDigits(l.area)} متر</span>}
                   {typeof l.rooms === 'number' && (
                     <span>{l.rooms.toLocaleString('fa-IR')} خواب</span>
                   )}

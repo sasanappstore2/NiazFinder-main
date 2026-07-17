@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
+import { toPersianDigits } from '@/lib/format/digits';
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
 import type { AppView } from '@/lib/types';
 import { FOOTER_LINK_GROUPS } from '@/config/navigation';
@@ -135,7 +136,7 @@ export function Footer({ compact = false, withMobileNav = true }: FooterProps) {
     }
   };
 
-  const currentYear = new Date().getFullYear();
+  const currentYear = toPersianDigits(new Date().getFullYear());
 
   const footerNavClass = cn(withMobileNav && 'footer-with-mobile-nav');
 

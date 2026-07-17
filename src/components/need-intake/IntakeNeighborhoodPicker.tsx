@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronDown, MapPin, Search } from 'lucide-react';
+import { ChevronDown, MapPin, Search, X } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -199,11 +199,21 @@ export function IntakeNeighborhoodPicker({
             className="flex max-h-[92dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg"
             dir="rtl"
             aria-describedby={undefined}
+            showCloseButton={false}
           >
             <DialogHeader className="flex flex-row items-center justify-between border-b px-4 py-3 space-y-0">
               <DialogTitle className="text-base font-bold">
                 محله‌های {cityName}
               </DialogTitle>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="size-9 shrink-0 rounded-full"
+                onClick={() => setOpen(false)}
+              >
+                <X className="size-5" />
+              </Button>
             </DialogHeader>
 
             <div className="border-b px-4 py-3">

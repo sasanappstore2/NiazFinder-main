@@ -1,5 +1,6 @@
 'use client';
 
+import { ClipboardList } from 'lucide-react';
 import { KanbanColumn } from '../KanbanColumn';
 import { FollowUpCard } from '../cards/FollowUpCard';
 import { FOLLOW_UP_STAGES, type WorkspaceFollowUpItem } from '../../types';
@@ -38,6 +39,15 @@ export function FollowUpsColumn({
       fillHeight={fillHeight}
       dropHint={dropHint}
     >
+      {items.length === 0 ? (
+        <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-border/60 px-3 py-8 text-center">
+          <ClipboardList className="size-6 text-muted-foreground/50" aria-hidden />
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            هنوز پیگیری‌ای ثبت نشده — یک نیاز یا همکاری را از ستون‌های کناری اینجا بکشید یا از
+            دکمهٔ «افزودن به پیگیری‌ها» روی هر کارت استفاده کنید.
+          </p>
+        </div>
+      ) : (
       <div className="space-y-3">
         {byStage.map((stage) => (
           <div
@@ -83,6 +93,7 @@ export function FollowUpsColumn({
           </div>
         ))}
       </div>
+      )}
     </KanbanColumn>
   );
 }

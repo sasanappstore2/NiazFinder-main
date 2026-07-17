@@ -23,6 +23,8 @@ import {
   propertyListingDealTypeLabel,
 } from '@/lib/business/real-estate-listing-deal-types';
 import { listingCoverImage } from '@/lib/business/normalize-property-listing';
+import { formatListingMoneyValue } from '@/lib/business/real-estate-listing-deal-types';
+import { toPersianDigits } from '@/lib/format/digits';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
@@ -41,7 +43,7 @@ function buildSpecItems(listing: PropertyListing): SpecItem[] {
       key: 'area',
       icon: Ruler,
       label: 'متراژ',
-      value: `${listing.area} متر`,
+      value: `${toPersianDigits(listing.area)} متر`,
     });
   }
   if (typeof listing.rooms === 'number') {
@@ -65,7 +67,7 @@ function buildSpecItems(listing: PropertyListing): SpecItem[] {
       key: 'plot',
       icon: Ruler,
       label: 'عرض زمین',
-      value: `${listing.plotWidth} متر`,
+      value: `${toPersianDigits(listing.plotWidth)} متر`,
     });
   }
   if (listing.pricePerMeter) {
@@ -73,7 +75,7 @@ function buildSpecItems(listing: PropertyListing): SpecItem[] {
       key: 'ppm',
       icon: Banknote,
       label: 'قیمت هر متر',
-      value: listing.pricePerMeter,
+      value: formatListingMoneyValue(listing.pricePerMeter) ?? listing.pricePerMeter,
     });
   }
   if (listing.deposit) {
@@ -81,7 +83,7 @@ function buildSpecItems(listing: PropertyListing): SpecItem[] {
       key: 'deposit',
       icon: KeyRound,
       label: 'ودیعه / رهن',
-      value: listing.deposit,
+      value: formatListingMoneyValue(listing.deposit) ?? listing.deposit,
     });
   }
   if (listing.monthlyRent) {
@@ -89,7 +91,7 @@ function buildSpecItems(listing: PropertyListing): SpecItem[] {
       key: 'rent',
       icon: Banknote,
       label: 'اجاره ماهانه',
-      value: listing.monthlyRent,
+      value: formatListingMoneyValue(listing.monthlyRent) ?? listing.monthlyRent,
     });
   }
 

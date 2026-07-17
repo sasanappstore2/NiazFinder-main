@@ -16,9 +16,9 @@ export function WorkspaceQuickAdd({ onCollaborationRequest }: { onCollaborationR
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="sm" className="h-9 gap-1">
+        <Button size="sm" className="h-8 shrink-0 gap-1 px-2 lg:h-9 lg:px-3" aria-label="افزودن سریع">
           <Plus className="size-4" />
-          افزودن سریع
+          <span className="hidden lg:inline">افزودن سریع</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">

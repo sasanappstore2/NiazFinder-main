@@ -53,7 +53,7 @@ export function CreateCollaborationDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[min(88vh,640px)] flex-col gap-0 overflow-hidden p-0 sm:max-w-md">
-        <DialogHeader className="space-y-3 border-b px-4 py-3">
+        <DialogHeader className="space-y-3 border-b px-4 py-3 pe-12">
           <div className="flex items-center justify-between gap-3">
             <DialogTitle className="text-base">درخواست همکاری</DialogTitle>
             <span className="text-[11px] tabular-nums text-muted-foreground">

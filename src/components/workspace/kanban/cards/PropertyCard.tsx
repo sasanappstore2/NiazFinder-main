@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { toPersianDigits } from '@/lib/format/digits';
 import type { WorkspaceFileItem } from '../../types';
 
 const COLOR_LABEL_CLASS: Record<string, string> = {
@@ -57,7 +58,7 @@ export function PropertyCard({
           {item.listing.area ? (
             <span className="inline-flex items-center gap-1">
               <Ruler className="size-3" />
-              {item.listing.area}
+              {toPersianDigits(item.listing.area)} متر
             </span>
           ) : null}
         </div>
