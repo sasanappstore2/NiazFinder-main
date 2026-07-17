@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
+import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import {
@@ -11,7 +12,6 @@ import {
   Wallet,
   Save,
   User as UserIcon,
-  Mail,
   Phone,
   MapPin,
   Clock,
@@ -25,6 +25,8 @@ import {
   Loader2,
   MapPinned,
   Pencil,
+  Sparkles,
+  Plus,
 } from 'lucide-react';
 import {
   detectUserCity,
@@ -47,8 +49,10 @@ import { formatBudgetRange, getStatusLabel, getTimeAgo } from '@/lib/constants';
 import type { ServiceRequest } from '@/lib/types';
 import { SmartLeadsSection } from '@/components/dashboard/SmartLeadsSection';
 import { PrivateLeadsPanel } from '@/components/dashboard/PrivateLeadsPanel';
+import { DashboardQuickActions } from '@/components/dashboard/DashboardQuickActions';
 import { NeedResolveWizard } from '@/components/need/NeedResolveWizard';
 import { WalletHistory } from '@/components/dashboard/WalletHistory';
+import { SubscriptionPlanCard } from '@/components/dashboard/SubscriptionPlanCard';
 import { canManageBusinessProfile } from '@/lib/business/can-manage-business-profile';
 import { routeBuilder } from '@/config/routes';
 import { toPersianDigits } from '@/lib/format/digits';
@@ -317,40 +321,51 @@ export function UserDashboard() {
   return (
     <div className="min-w-0 space-y-8">
         {/* ============ WELCOME HEADER ============ */}
-        <div className="relative overflow-hidden rounded-2xl bg-linear-to-l from-primary via-primary/90 to-primary/80 p-6 sm:p-8 text-primary-foreground shadow-xl shadow-primary/20">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-white" />
-            <div className="absolute -bottom-32 -right-20 w-96 h-96 rounded-full bg-white" />
-          </div>
-          <div className="relative flex flex-col md:flex-row items-start md:items-center gap-5">
-            <Avatar className="w-16 h-16 sm:w-20 sm:h-20 border-4 border-white/30 shadow-lg">
+        <div className="flex flex-col gap-4 rounded-2xl border border-border/60 bg-card p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <div className="flex items-center gap-4">
+            <Avatar className="h-14 w-14 border-2 border-primary/15 sm:h-16 sm:w-16">
               <AvatarImage src={currentUser.avatar} alt={currentUser.firstName} />
-              <AvatarFallback className="text-xl sm:text-2xl bg-white/20 text-white font-bold">
+              <AvatarFallback className="bg-primary/10 text-lg font-bold text-primary sm:text-xl">
                 {getInitials(currentUser.firstName, currentUser.lastName)}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 space-y-1">
-              <div className="space-y-1">
-                <h2 className="text-2xl sm:text-3xl font-bold">
-                  {currentUser.firstName?.trim()
-                    ? `سلام، ${currentUser.firstName} عزیز!`
-                    : 'سلام، خوش آمدید!'}
-                </h2>
-                <p className="text-white/80 text-sm sm:text-base">
-                  {currentUser.username ? (
-                    <span className="inline-flex items-center gap-1"><AtSign className="w-3.5 h-3.5" />{currentUser.username}</span>
-                  ) : 'برای تکمیل پروفایل، نام کاربری انتخاب کنید'}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-white/70">
-              {currentUser.isVerified && (
-                <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 gap-1"><BadgeCheck className="w-3.5 h-3.5" />تأیید شده</Badge>
-              )}
-              <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 gap-1"><Shield className="w-3.5 h-3.5" />{currentUser.role === 'CLIENT' ? 'کاربر' : 'کسب‌وکار'}</Badge>
+            <div className="min-w-0 space-y-1">
+              <h2 className="truncate text-xl font-bold text-foreground sm:text-2xl">
+                {currentUser.firstName?.trim()
+                  ? `سلام، ${currentUser.firstName} عزیز!`
+                  : 'سلام، خوش آمدید!'}
+              </h2>
+              <p className="truncate text-sm text-muted-foreground">
+                {currentUser.username ? (
+                  <span className="inline-flex items-center gap-1">
+                    <AtSign className="size-3.5" />
+                    {currentUser.username}
+                  </span>
+                ) : (
+                  'برای تکمیل پروفایل، نام کاربری انتخاب کنید'
+                )}
+              </p>
             </div>
           </div>
+          <div className="flex shrink-0 items-center gap-2">
+            {currentUser.isVerified && (
+              <Badge variant="outline" className="gap-1 border-primary/30 bg-primary/10 text-primary">
+                <BadgeCheck className="size-3.5" />
+                تأیید شده
+              </Badge>
+            )}
+            <Badge variant="secondary" className="gap-1">
+              <Shield className="size-3.5" />
+              {canManageBusiness ? 'کسب‌وکار' : 'کاربر'}
+            </Badge>
+          </div>
         </div>
+
+        {/* ============ QUICK ACTIONS ============ */}
+        <DashboardQuickActions
+          isBusiness={canManageBusiness}
+          onWalletTab={() => handleTabChange('wallet')}
+        />
 
         {/* ============ STATS CARDS ============ */}
         <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -358,57 +373,58 @@ export function UserDashboard() {
             {
               icon: ClipboardList,
               label: 'نیازهای فعال',
-              value: String(
+              value: toPersianDigits(String(
                 dashboardStats?.activeRequests ??
                   userRequests.filter((r) => r.status === 'OPEN' || r.status === 'IN_PROGRESS').length
-              ),
-              gradient: 'from-emerald-500 to-emerald-600',
-              shadow: 'shadow-emerald-500/10',
+              )),
+              tone: 'text-primary bg-primary/10',
             },
             {
               icon: MessageSquare,
               label: 'پیشنهادهای دریافتی',
-              value: String(dashboardStats?.pendingProposals ?? '—'),
-              gradient: 'from-amber-500 to-amber-600',
-              shadow: 'shadow-amber-500/10',
+              value: dashboardStats == null ? '—' : toPersianDigits(String(dashboardStats.pendingProposals)),
+              tone: 'text-amber-600 bg-amber-500/10 dark:text-amber-400',
             },
             {
               icon: CheckCircle,
               label: 'پروژه‌های تکمیل شده',
-              value: String(dashboardStats?.completedProjects ?? '—'),
-              gradient: 'from-cyan-500 to-cyan-600',
-              shadow: 'shadow-cyan-500/10',
+              value: dashboardStats == null ? '—' : toPersianDigits(String(dashboardStats.completedProjects)),
+              tone: 'text-sky-600 bg-sky-500/10 dark:text-sky-400',
             },
             {
               icon: Star,
               label: 'امتیاز شما',
-              value: dashboardStats?.avgRating ? String(dashboardStats.avgRating) : '—',
-              gradient: 'from-rose-500 to-rose-600',
-              shadow: 'shadow-rose-500/10',
+              value: dashboardStats == null ? '—' : toPersianDigits(String(dashboardStats.avgRating)),
+              tone: 'text-rose-600 bg-rose-500/10 dark:text-rose-400',
             },
           ].map((stat) => (
-            <Card key={stat.label} className="relative overflow-hidden border-0 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-150" style={{ boxShadow: undefined }}>
-              <div className={`absolute inset-0 bg-linear-to-bl ${stat.gradient}`} />
-              <div className="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-white/10" />
-              <CardContent className="relative p-5 sm:p-6 flex items-center gap-4">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0">
-                  <stat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+            <Card key={stat.label} className="border-border/60 shadow-none">
+              <CardContent className="flex items-center gap-4 p-5">
+                <div className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${stat.tone}`}>
+                  <stat.icon className="size-5" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-white/80 text-xs sm:text-sm">{stat.label}</p>
-                  <p className="text-white text-2xl sm:text-3xl font-bold">
-                    {toPersianDigits(stat.value)}
-                  </p>
+                  <p className="text-xs text-muted-foreground sm:text-sm">{stat.label}</p>
+                  <p className="text-xl font-bold text-foreground sm:text-2xl">{stat.value}</p>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {canManageBusiness && (
-          <div className="mb-6">
-            <SmartLeadsSection />
-            {canManageBusiness ? <PrivateLeadsPanel /> : null}
+        {currentUser.role === 'SPECIALIST' && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="size-4 text-primary" />
+              <h3 className="text-base font-semibold text-foreground">لیدهای دریافتی</h3>
+            </div>
+            <p className="-mt-2 text-sm text-muted-foreground">
+              مشتریانی که با نیازشان به شما معرفی شده‌اند
+            </p>
+            <div className="space-y-4">
+              <SmartLeadsSection />
+              <PrivateLeadsPanel />
+            </div>
           </div>
         )}
 
@@ -416,13 +432,13 @@ export function UserDashboard() {
         <div>
           <Tabs value={activeTab} onValueChange={handleTabChange} dir="rtl" className="w-full">
             <TabsList className="mb-6 flex h-auto w-full gap-1 overflow-x-auto rounded-xl border border-border/40 bg-muted/60 p-1.5 shadow-sm backdrop-blur-xs flex-nowrap md:flex-wrap">
-              <TabsTrigger value="requests" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
+              <TabsTrigger value="requests" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-primary rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
                 <ClipboardList className="w-4 h-4 ms-1.5" />نیازهای من
               </TabsTrigger>
-              <TabsTrigger value="wallet" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
+              <TabsTrigger value="wallet" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-primary rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
                 <Wallet className="w-4 h-4 ms-1.5" />کیف پول
               </TabsTrigger>
-              <TabsTrigger value="profile" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
+              <TabsTrigger value="profile" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-primary rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
                 <UserIcon className="w-4 h-4 ms-1.5" />پروفایل
               </TabsTrigger>
             </TabsList>
@@ -448,12 +464,27 @@ export function UserDashboard() {
                     </CardContent>
                   </Card>
                 ) : filteredRequests.length === 0 ? (
-                  <Card className="py-12 border-dashed border-2 border-border/60 rounded-2xl">
-                    <CardContent className="text-center text-muted-foreground">
-                      <ClipboardList className="w-12 h-12 mx-auto mb-3 opacity-40" />
-                      <p className="text-sm">نیازی با این فیلتر یافت نشد</p>
-                    </CardContent>
-                  </Card>
+                  <div className="flex flex-col items-center px-4 py-12 text-center">
+                    <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-muted">
+                      <ClipboardList className="size-7 text-muted-foreground/70" />
+                    </div>
+                    <h3 className="text-base font-semibold text-foreground">
+                      {requestFilter === 'ALL' ? 'هنوز نیازی ثبت نکرده‌اید' : 'نیازی با این فیلتر یافت نشد'}
+                    </h3>
+                    <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
+                      {requestFilter === 'ALL'
+                        ? 'نیاز خود را بنویسید تا بهترین کسب‌وکارهای شهرتان به شما پیشنهاد بدهند.'
+                        : 'فیلتر دیگری را امتحان کنید یا همه را ببینید.'}
+                    </p>
+                    {requestFilter === 'ALL' ? (
+                      <Button className="mt-5 gap-2" asChild>
+                        <Link href={routeBuilder.needNew()}>
+                          <Plus className="size-4" />
+                          ثبت نیاز جدید
+                        </Link>
+                      </Button>
+                    ) : null}
+                  </div>
                 ) : (
                   filteredRequests.map((request) => (
                     <Card key={request.id} className="hover:border-emerald-300/50 dark:hover:border-emerald-700/50 transition-all duration-150 hover:shadow-md hover:shadow-emerald-500/5">
@@ -527,7 +558,8 @@ export function UserDashboard() {
             </TabsContent>
 
             {/* ============ TAB 2: WALLET & PAYMENTS ============ */}
-            <TabsContent value="wallet">
+            <TabsContent value="wallet" className="space-y-6">
+              {canManageBusiness && <SubscriptionPlanCard />}
               <WalletHistory balance={walletBalance ?? undefined} />
             </TabsContent>
 
