@@ -7,6 +7,8 @@ import { isSuperAdminPhone, normalizePhone } from '@/lib/super-admin';
 import { issueAuthToken, mapDbUserToResponse } from '@/lib/auth/phone-auth-response';
 import { devAuthFallbackEnabled, devIssueAuth, devUserExists } from '@/lib/auth/dev-phone-auth';
 import { DATABASE_UNAVAILABLE_FA, isPrismaUnavailableError } from '@/lib/db-health';
+import { generateReferralCode } from '@/lib/referral/generate-code';
+import { generateDefaultUsername } from '@/lib/users/generate-username';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,6 +16,7 @@ export async function POST(request: NextRequest) {
     const normalizedPhone = normalizePhone(String(body.phone ?? ''));
     const password = String(body.password ?? '');
     const code = toAsciiDigits(String(body.code ?? ''));
+    const referralCode = typeof body.referralCode === 'string' ? body.referralCode.trim() : '';
 
     if (!normalizedPhone || !password || !code) {
       return NextResponse.json(
@@ -57,6 +60,10 @@ export async function POST(request: NextRequest) {
 
       const grantSuperAdmin = isSuperAdminPhone(normalizedPhone);
 
+      const referrer = referralCode
+        ? await db.user.findUnique({ where: { referralCode }, select: { id: true } })
+        : null;
+
       const user = await db.$transaction(async (tx) => {
         const newUser = await tx.user.create({
           data: {
@@ -66,12 +73,24 @@ export async function POST(request: NextRequest) {
             role: grantSuperAdmin ? ('SUPER_ADMIN' as const) : ('CLIENT' as const),
             isVerified: true,
             phoneVerified: true,
+            referralCode: generateReferralCode(),
+            username: generateDefaultUsername(),
           },
         });
 
         await tx.wallet.create({
           data: { userId: newUser.id },
         });
+
+        if (referrer && referrer.id !== newUser.id) {
+          await tx.referral.create({
+            data: {
+              referrerId: referrer.id,
+              referredId: newUser.id,
+              code: referralCode,
+            },
+          });
+        }
 
         return newUser;
       });

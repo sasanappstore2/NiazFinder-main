@@ -113,6 +113,7 @@ export const ROUTES = {
   adminUsers:                    '/admin/users',
   superAdmin:                    '/super-admin',
   profile:                       '/profile/[id]',
+  userByUsername:                '/u/[username]',
   editProfile:                   '/edit-profile',
   pricing:                       '/pricing',
   referral:                      '/referral',
@@ -405,6 +406,9 @@ export const routeBuilder = {
   },
   chatConversation:   (conversationId: string) =>
     fillParams(ROUTES.chatConversation, { conversationId }),
+  /** /u/{username} — username deep-link to a user's public profile. */
+  userByUsername:     (username: string) =>
+    fillParams(ROUTES.userByUsername, { username: username.replace(/^@/, '') }),
   notifications:      () => ROUTES.notifications,
   bookmarks:          () => ROUTES.bookmarks,
   admin:              () => ROUTES.admin,

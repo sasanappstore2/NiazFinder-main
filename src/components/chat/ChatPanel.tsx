@@ -532,6 +532,15 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     }
   }, [showNewChat]);
 
+  // Bridge: conversation-filter found nothing → jump to people search with the
+  // same query (social layer: find anyone by name/username and start a DM).
+  const handleSearchPeople = useCallback((query: string) => {
+    setSidebarTab('messages');
+    setShowNewChat(true);
+    setUserSearchQuery(query.replace(/^@/, ''));
+    setSearchQuery('');
+  }, []);
+
   const handleSidebarTabChange = useCallback((tab: SidebarTab) => {
     setSidebarTab(tab);
     setShowNewChat(false);
@@ -1373,6 +1382,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
             activeConversationId={activeConversationId}
             onSelectConversation={handleSelectConversation}
             onStartNewChat={handleToggleNewChat}
+            onSearchPeople={handleSearchPeople}
             getAvatarColor={getAvatarColor}
             getInitials={getInitials}
             formatTimeAgo={formatTimeAgo}

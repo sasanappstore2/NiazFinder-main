@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { Bot, BellOff, Loader2, MessageSquare, Plus } from 'lucide-react';
+import { Bot, BellOff, Loader2, MessageSquare, Plus, Search } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import type { Conversation } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ type ChatConversationListProps = {
   activeConversationId: string | null;
   onSelectConversation: (id: string) => void;
   onStartNewChat: () => void;
+  onSearchPeople?: (query: string) => void;
   getAvatarColor: (name: string) => string;
   getInitials: (name: string) => string;
   formatTimeAgo: (date: string) => string;
@@ -142,6 +143,7 @@ function ChatConversationListInner({
   activeConversationId,
   onSelectConversation,
   onStartNewChat,
+  onSearchPeople,
   getAvatarColor,
   getInitials,
   formatTimeAgo,
@@ -164,7 +166,17 @@ function ChatConversationListInner({
           <p className="text-sm text-muted-foreground">
             {searchQuery ? 'مکالمه‌ای یافت نشد' : 'هنوز مکالمه‌ای ندارید'}
           </p>
-          {!searchQuery && (
+          {searchQuery && onSearchPeople ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-3"
+              onClick={() => onSearchPeople(searchQuery)}
+            >
+              <Search className="h-4 w-4 ms-1" />
+              جستجوی «{searchQuery}» بین افراد
+            </Button>
+          ) : !searchQuery ? (
             <Button
               variant="outline"
               size="sm"
@@ -174,7 +186,7 @@ function ChatConversationListInner({
               <Plus className="h-4 w-4 ml-1" />
               شروع گفتگوی جدید
             </Button>
-          )}
+          ) : null}
         </div>
       ) : (
         <div className="space-y-0.5 p-2">
