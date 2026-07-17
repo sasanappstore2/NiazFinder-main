@@ -5,6 +5,7 @@ import { parseJsonArray, toJson } from '@/lib/business/json-fields';
 import { migrateSlugToOccupation } from '@/config/need-to-occupation-map';
 import { isOccupationSlug } from '@/config/business-occupations';
 import { queueBusinessProfileSearchSync } from '@/lib/rag/sync';
+import { grantSignupBonusIfEligible } from '@/lib/payment/signup-bonus';
 import type { BusinessProfile, User } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 
@@ -82,6 +83,7 @@ export async function ensureBusinessProfile(user: UserForProfile): Promise<Busin
     const { seedBusinessTeamDefaults } = await import('@/lib/business/team/seed-defaults');
     await seedBusinessTeamDefaults(profile.id, user.id);
     queueBusinessProfileSearchSync(profile.id);
+    await grantSignupBonusIfEligible(user.id);
     return profile;
   } catch (error) {
     if (!isUniqueConstraintError(error)) throw error;
@@ -107,6 +109,7 @@ export async function ensureBusinessProfile(user: UserForProfile): Promise<Busin
         const { seedBusinessTeamDefaults } = await import('@/lib/business/team/seed-defaults');
         await seedBusinessTeamDefaults(profile.id, user.id);
         queueBusinessProfileSearchSync(profile.id);
+        await grantSignupBonusIfEligible(user.id);
         return profile;
       } catch (retryError) {
         if (isUniqueConstraintError(retryError)) {

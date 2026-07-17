@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { routeBuilder } from '@/config/routes';
+import { tryClaimReferralReward } from '@/lib/payment/referral-reward';
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,6 +36,12 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    if (leads.length > 0) {
+      void tryClaimReferralReward(user.id).catch((err) =>
+        console.error('tryClaimReferralReward (lead view) failed:', err)
+      );
+    }
+
     return NextResponse.json({
       leads: leads.map((l) => ({
         id: l.id,
@@ -44,6 +51,7 @@ export async function GET(request: NextRequest) {
         conversationId: l.conversationId,
         chatUrl: l.conversationId ? routeBuilder.chatConversation(l.conversationId) : null,
         needUrl: routeBuilder.need(l.request.id, l.request.title),
+        leadFeeAmount: l.leadFeeAmount,
         request: l.request,
         createdAt: l.createdAt,
       })),

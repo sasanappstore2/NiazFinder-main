@@ -5,6 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   Wallet,
@@ -95,12 +102,38 @@ const FILTER_MAP: Record<FilterTab, Transaction['type'][]> = {
   PAYMENTS: ['PAYMENT', 'COMMISSION'],
 };
 
+// ============ Deposit Presets ============
+const DEPOSIT_PRESETS = [50000, 100000, 200000, 500000];
+
 // ============ Component ============
 export function WalletHistory({ balance }: { balance?: number }) {
   const [activeTab, setActiveTab] = useState<FilterTab>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [transactions, setTransactions] = useState<(Transaction & { description: string })[]>([]);
   const [frozenAmount, setFrozenAmount] = useState(0);
+  const [depositOpen, setDepositOpen] = useState(false);
+  const [depositAmount, setDepositAmount] = useState<number | ''>(DEPOSIT_PRESETS[1]);
+  const [depositLoading, setDepositLoading] = useState(false);
+  const [depositError, setDepositError] = useState<string | null>(null);
+
+  async function submitDeposit() {
+    if (typeof depositAmount !== 'number' || depositAmount <= 0) {
+      setDepositError('مبلغ نامعتبر است');
+      return;
+    }
+    setDepositLoading(true);
+    setDepositError(null);
+    try {
+      const res = await apiFetch<{ paymentUrl: string }>('/api/wallet/deposit/initiate', {
+        method: 'POST',
+        body: JSON.stringify({ amount: depositAmount }),
+      });
+      window.location.href = res.paymentUrl;
+    } catch (err) {
+      setDepositError(err instanceof Error ? err.message : 'خطا در اتصال به درگاه پرداخت');
+      setDepositLoading(false);
+    }
+  }
 
   useEffect(() => {
     void (async () => {
@@ -193,7 +226,10 @@ export function WalletHistory({ balance }: { balance?: number }) {
 
                 {/* Action Buttons */}
                 <div className="flex gap-3">
-                  <Button className="gap-2 rounded-xl bg-white text-emerald-700 shadow-md hover:bg-emerald-50 active:scale-95 transition-transform">
+                  <Button
+                    onClick={() => setDepositOpen(true)}
+                    className="gap-2 rounded-xl bg-white text-emerald-700 shadow-md hover:bg-emerald-50 active:scale-95 transition-transform"
+                  >
                     <Plus className="h-4 w-4" />
                     <span className="font-semibold">شارژ کیف پول</span>
                   </Button>
@@ -265,6 +301,47 @@ export function WalletHistory({ balance }: { balance?: number }) {
           </CardContent>
         </Card>
       </div>
+
+      {/* ============ Deposit Dialog ============ */}
+      <Dialog open={depositOpen} onOpenChange={(open) => { setDepositOpen(open); if (!open) setDepositError(null); }}>
+        <DialogContent className="sm:max-w-sm" dir="rtl">
+          <DialogHeader>
+            <DialogTitle>شارژ کیف پول</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-2">
+              {DEPOSIT_PRESETS.map((preset) => (
+                <Button
+                  key={preset}
+                  type="button"
+                  variant={depositAmount === preset ? 'default' : 'outline'}
+                  className="rounded-xl"
+                  onClick={() => setDepositAmount(preset)}
+                >
+                  {preset.toLocaleString('fa-IR')} تومان
+                </Button>
+              ))}
+            </div>
+            <div className="space-y-1.5">
+              <p className="text-sm text-muted-foreground">یا مبلغ دلخواه (تومان)</p>
+              <Input
+                type="number"
+                inputMode="numeric"
+                min={0}
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(e.target.value === '' ? '' : Number(e.target.value))}
+                className="rounded-xl"
+              />
+            </div>
+            {depositError && <p className="text-sm text-destructive">{depositError}</p>}
+          </div>
+          <DialogFooter>
+            <Button onClick={submitDeposit} disabled={depositLoading} className="w-full rounded-xl">
+              {depositLoading ? 'در حال اتصال به درگاه...' : 'پرداخت و شارژ'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

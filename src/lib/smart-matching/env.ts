@@ -4,9 +4,20 @@ export function isSmartMatchingEnabled(): boolean {
   return v === 'true' || v === '1' || process.env.NODE_ENV === 'production';
 }
 
+/** @deprecated use getStandardLeadFeeToman/getQualityLeadFeeToman */
 export function getLeadFeeToman(): number {
   const n = parseInt(process.env.LEAD_FEE_TOMAN ?? '5000', 10);
   return Number.isFinite(n) && n > 0 ? n : 5000;
+}
+
+export function getStandardLeadFeeToman(): number {
+  const n = parseInt(process.env.STANDARD_LEAD_FEE_TOMAN ?? '10000', 10);
+  return Number.isFinite(n) && n > 0 ? n : 10000;
+}
+
+export function getQualityLeadFeeToman(): number {
+  const n = parseInt(process.env.QUALITY_LEAD_FEE_TOMAN ?? '20000', 10);
+  return Number.isFinite(n) && n > 0 ? n : 20000;
 }
 
 export function getVipTtlMs(): number {

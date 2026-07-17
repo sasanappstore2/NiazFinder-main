@@ -17,6 +17,7 @@ interface LeadItem {
   conversationId: string | null;
   chatUrl: string | null;
   needUrl: string;
+  leadFeeAmount: number;
   request: {
     id: string;
     title: string;
@@ -69,7 +70,7 @@ export function SmartLeadsSection() {
           لیدهای هوشمند
         </CardTitle>
         <CardDescription>
-          نیازهایی که هوش مصنوعی نیازفایندر با کسب‌وکار شما هم‌خوان دانسته و در گفتگو معرفی کرده است.
+          نیازهایی که هوش مصنوعی نیازفایندر با کسب‌وکار شما هم‌خوان دانسته و در گفتگو معرفی کرده است. فی هر لید هنگام ارسال، به‌صورت خودکار از کیف پول شما کسر شده است.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -94,6 +95,19 @@ export function SmartLeadsSection() {
                     <Badge variant="outline" className="text-xs">
                       {Math.round(lead.matchScore * 100)}٪ تطابق
                     </Badge>
+                    {lead.leadFeeAmount > 0 && (
+                      <Badge
+                        variant="secondary"
+                        className={
+                          lead.leadFeeAmount >= 15000
+                            ? 'text-xs text-primary bg-primary/10'
+                            : 'text-xs'
+                        }
+                      >
+                        {lead.leadFeeAmount >= 15000 ? 'لید باکیفیت' : 'لید عادی'} ·{' '}
+                        {lead.leadFeeAmount.toLocaleString('fa-IR')} تومان
+                      </Badge>
+                    )}
                   </div>
                   {(lead.request.address || lead.request.city) && (
                     <p className="text-caption text-muted-foreground mt-1 flex items-center gap-1">

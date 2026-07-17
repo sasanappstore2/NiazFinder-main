@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
     if (action === 'deposit') {
       if (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN') {
         return NextResponse.json(
-          { error: 'واریز مستقیم به کیف پول از طریق درگاه پرداخت انجام می‌شود' },
+          { error: 'برای شارژ کیف پول از دکمهٔ «شارژ کیف پول» استفاده کنید (POST /api/wallet/deposit/initiate)' },
           { status: 403 }
         );
       }

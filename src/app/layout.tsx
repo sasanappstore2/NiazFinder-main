@@ -7,6 +7,7 @@ import { GlobalVoiceCallLayer } from "@/components/voice/GlobalVoiceCallLayer";
 import { DeferredChatSocketBootstrap } from "@/components/voice/DeferredChatSocketBootstrap";
 import { PwaRegistration } from "@/components/pwa/PwaRegistration";
 import { PwaInstallPrompt } from "@/components/pwa/PwaInstallPrompt";
+import { ReferralCapture } from "@/components/referral/ReferralCapture";
 import {
   SITE_URL,
   SITE_NAME,
@@ -190,6 +191,7 @@ export default function RootLayout({
 
         <ThemeProvider>
           {children}
+          <ReferralCapture />
           <DeferredChatSocketBootstrap />
           <GlobalVoiceCallLayer />
           <PwaRegistration />

@@ -1,5 +1,26 @@
 import type { Prisma } from '@prisma/client';
 import { SmartMatchingError, SMART_MATCHING_CODES } from './errors';
+import { getProLeadDiscountPercent, getBusinessLeadDiscountPercent } from '@/lib/payment/env';
+
+/** Applies the user's subscription-plan discount (if any) to a base lead fee. */
+export async function getLeadFeeForUser(
+  tx: Prisma.TransactionClient,
+  userId: string,
+  baseFeeToman: number
+): Promise<number> {
+  const subscription = await tx.subscription.findUnique({ where: { userId } });
+  if (!subscription) return baseFeeToman;
+
+  const discountPercent =
+    subscription.plan === 'BUSINESS'
+      ? getBusinessLeadDiscountPercent()
+      : subscription.plan === 'PRO'
+        ? getProLeadDiscountPercent()
+        : 0;
+
+  if (discountPercent <= 0) return baseFeeToman;
+  return Math.max(0, Math.round(baseFeeToman * (1 - discountPercent / 100)));
+}
 
 export async function deductLeadFee(
   tx: Prisma.TransactionClient,
