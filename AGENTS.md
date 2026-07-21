@@ -67,6 +67,21 @@ Lint / typecheck / test: see `CLAUDE.md` (`npm run lint`, `npx tsc --noEmit`,
 
 - Test OTP is enabled (`ALLOW_TEST_OTP=true`): phone login accepts OTP `1234` in dev.
 
-- Lint currently reports one PRE-EXISTING error unrelated to setup
-  (`react-hooks/immutability` in `src/components/chat/VoiceRecorder.tsx`); it is not
-  caused by environment changes.
+### Known PRE-EXISTING issues (not caused by environment setup)
+
+These exist in tracked code on the base branch; do not attribute them to env setup and
+do not "fix" them unless explicitly asked:
+
+- Lint: one error `react-hooks/immutability` in `src/components/chat/VoiceRecorder.tsx`
+  (`npm run lint`). `npx tsc --noEmit` passes with 0 errors once the generated data +
+  `local-*` modules exist.
+- Publishing a need fails: `POST /api/need-intake/publish` returns 400
+  `پیش‌نویس نامعتبر`. Cause: `NeedDraft.templateVersion` is a `number`
+  (`src/contracts/need-intake.ts`, `src/intake/api/intake.dto.ts` uses `z.number()`),
+  but the publish boundary schema `src/lib/queue/schemas/intake-publish.ts` declares
+  `templateVersion: z.string().optional()`, so every publish body is rejected. The
+  intake wizard, analysis (`POST /api/intake/analyze`), and preview all work up to this
+  point. Account registration (phone OTP, test code `1234`) works and persists a `User`.
+- `npm run test:intake-persian-locale` (the `persian-encoding-guard`) fails on ~30
+  pre-existing "corrupted Persian placeholder" strings in tracked source. A clean core
+  test to sanity-check the runner is `npm run test:post-pipeline` (153/153 scenarios).
