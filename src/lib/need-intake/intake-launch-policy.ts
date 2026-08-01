@@ -12,9 +12,11 @@ export function isAreaLikeRentConflict(text: string): boolean {
   return /\d+\s*m\b|\d+\s*متر|\d+\s*متری/i.test(text.trim());
 }
 
-/** User text signals land purchase (not rent). */
+/** User text signals land purchase (not rent / not construction partnership). */
 export function isLandPurchaseSignal(text: string): boolean {
   const t = text.trim();
+  // Partnership seeker ads mention زمین but are not land-sale (#592).
+  if (/مشارکت\s*(?:در\s*)?ساخت/u.test(t)) return false;
   return /زمین|کلنگی|پروانه\s*ساخت|منطقه\s*سجاد|سجاد\s*شهر/u.test(t) && !/رهن|ودیعه|اجاره|مستاجر|رنت/i.test(t);
 }
 

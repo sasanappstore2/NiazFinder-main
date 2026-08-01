@@ -28,8 +28,8 @@ const legacyRedirects = [
   { source: "/requests/new",              destination: "/post",                  permanent: true },
   { source: "/requests/:slug",            destination: "/v/:slug",               permanent: true },
   { source: "/specialists",               destination: "/b/iran",                permanent: true },
-  { source: "/specialists/:id",           destination: "/pro/:id",               permanent: true },
   { source: "/specialists/compare",       destination: "/b/iran",                permanent: true },
+  { source: "/specialists/:id",           destination: "/pro/:id",               permanent: true },
 
   { source: "/need",                      destination: "/n/iran",                permanent: true },
   { source: "/need/new",                  destination: "/post",                  permanent: true },
@@ -105,7 +105,14 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    remotePatterns: buildMinioRemotePatterns(),
+    remotePatterns: [
+      ...buildMinioRemotePatterns(),
+      // Filing portal listing images (maskanyaban and similar)
+      { protocol: 'https', hostname: 'maskanyaban.ir', pathname: '/**' },
+      { protocol: 'https', hostname: 'www.maskanyaban.ir', pathname: '/**' },
+      { protocol: 'https', hostname: 'showmelk.ir', pathname: '/**' },
+      { protocol: 'https', hostname: 'www.showmelk.ir', pathname: '/**' },
+    ],
     // ProgressiveImage uses 20 (placeholder) and 86 (full); ProductDetailGallery uses 78.
     qualities: [20, 75, 78, 86],
   },

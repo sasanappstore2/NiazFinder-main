@@ -1,0 +1,515 @@
+{
+  "version": 1,
+  "referenceFilingId": "cmqw3dd5m0012s54wls83bgoe",
+  "sites": [
+    {
+      "id": "zillow-detail",
+      "market": "global",
+      "label": "Zillow",
+      "url": "https://www.zillow.com/homedetails/1234-Main-St-San-Francisco-CA-94102/12345678_zpid/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": "[data-testid='hollywood-gallery']", "price": "[data-testid='price']" },
+      "cookieDismiss": "button:has-text('Accept'), button:has-text('Got it')",
+      "rateLimitMs": 4000,
+      "batch": 1
+    },
+    {
+      "id": "redfin-detail",
+      "market": "global",
+      "label": "Redfin",
+      "url": "https://www.redfin.com/CA/San-Francisco/123-Main-St-94102/home/12345678",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".MediaBlock", "price": ".statsValue" },
+      "cookieDismiss": "button:has-text('Accept')",
+      "rateLimitMs": 4000,
+      "batch": 1
+    },
+    {
+      "id": "realtor-detail",
+      "market": "global",
+      "label": "Realtor.com",
+      "url": "https://www.realtor.com/realestateandhomes-detail/M1234567890",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": "[data-testid='hero-image']", "price": "[data-testid='card-price']" },
+      "rateLimitMs": 4000,
+      "batch": 1
+    },
+    {
+      "id": "trulia-detail",
+      "market": "global",
+      "label": "Trulia",
+      "url": "https://www.trulia.com/home/123-main-st-san-francisco-ca-94102-12345678",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".media-stream", "price": "[data-testid='price-section']" },
+      "rateLimitMs": 4000,
+      "batch": 1
+    },
+    {
+      "id": "rightmove-detail",
+      "market": "global",
+      "label": "Rightmove",
+      "url": "https://www.rightmove.co.uk/properties/12345678",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".property-header-price" },
+      "cookieDismiss": "button:has-text('Accept all')",
+      "rateLimitMs": 3500,
+      "batch": 1
+    },
+    {
+      "id": "zoopla-detail",
+      "market": "global",
+      "label": "Zoopla",
+      "url": "https://www.zoopla.co.uk/for-sale/details/12345678/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": "[data-testid='gallery']", "price": "[data-testid='price']" },
+      "cookieDismiss": "button:has-text('Accept')",
+      "rateLimitMs": 3500,
+      "batch": 1
+    },
+    {
+      "id": "onthemarket-detail",
+      "market": "global",
+      "label": "OnTheMarket",
+      "url": "https://www.onthemarket.com/details/12345678/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".property-gallery", "price": ".price" },
+      "rateLimitMs": 3500,
+      "batch": 1
+    },
+    {
+      "id": "openrent-detail",
+      "market": "global",
+      "label": "OpenRent",
+      "url": "https://www.openrent.co.uk/property-to-rent/london/12345678",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".property-images", "price": ".rent-price" },
+      "rateLimitMs": 3000,
+      "batch": 1
+    },
+    {
+      "id": "bayut-detail",
+      "market": "global",
+      "label": "Bayut",
+      "url": "https://www.bayut.com/property/details-12345678.html",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": "[aria-label='Gallery']", "price": "[aria-label='Price']" },
+      "rateLimitMs": 3500,
+      "batch": 1
+    },
+    {
+      "id": "propertyfinder-detail",
+      "market": "global",
+      "label": "PropertyFinder",
+      "url": "https://www.propertyfinder.ae/en/plp/buy/apartment-for-sale-dubai-downtown-dubai-12345678.html",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": "[data-testid='price']" },
+      "rateLimitMs": 3500,
+      "batch": 1
+    },
+    {
+      "id": "dubizzle-property",
+      "market": "global",
+      "label": "Dubizzle Property",
+      "url": "https://dubai.dubizzle.com/property-for-sale/residential/apartmentflat/2024/1/1/test-123456/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".carousel", "price": ".price" },
+      "rateLimitMs": 3500,
+      "batch": 1
+    },
+    {
+      "id": "idealista-detail",
+      "market": "global",
+      "label": "Idealista",
+      "url": "https://www.idealista.com/inmueble/12345678/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".detail-image-gallery", "price": ".info-data-price" },
+      "cookieDismiss": "button:has-text('Aceptar')",
+      "rateLimitMs": 3500,
+      "batch": 1
+    },
+    {
+      "id": "fotocasa-detail",
+      "market": "global",
+      "label": "Fotocasa",
+      "url": "https://www.fotocasa.es/es/comprar/vivienda/madrid-capital/aire-acondicionado-terraza/12345678/d",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".re-DetailMultimedia", "price": ".re-DetailHeader-price" },
+      "cookieDismiss": "button:has-text('Aceptar')",
+      "rateLimitMs": 3500,
+      "batch": 2
+    },
+    {
+      "id": "immobilienscout24-detail",
+      "market": "global",
+      "label": "Immobilienscout24",
+      "url": "https://www.immobilienscout24.de/expose/12345678",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".is24qa-preis" },
+      "cookieDismiss": "button:has-text('Alle akzeptieren')",
+      "rateLimitMs": 4000,
+      "batch": 2
+    },
+    {
+      "id": "immowelt-detail",
+      "market": "global",
+      "label": "Immowelt",
+      "url": "https://www.immowelt.de/expose/12345678",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".hardfact--price" },
+      "rateLimitMs": 3500,
+      "batch": 2
+    },
+    {
+      "id": "seloger-detail",
+      "market": "global",
+      "label": "SeLoger",
+      "url": "https://www.seloger.com/annonces/achat/appartement/paris-75/12345678.htm",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".carousel", "price": ".price" },
+      "cookieDismiss": "button:has-text('Tout accepter')",
+      "rateLimitMs": 3500,
+      "batch": 2
+    },
+    {
+      "id": "funda-detail",
+      "market": "global",
+      "label": "Funda",
+      "url": "https://www.funda.nl/koop/amsterdam/appartement-straat-12345678/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".object-media", "price": ".object-header__price" },
+      "cookieDismiss": "button:has-text('Alles accepteren')",
+      "rateLimitMs": 3500,
+      "batch": 2
+    },
+    {
+      "id": "hemnet-detail",
+      "market": "global",
+      "label": "Hemnet",
+      "url": "https://www.hemnet.se/bostad/lagenhet-12345678",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".property-info__price" },
+      "rateLimitMs": 3500,
+      "batch": 2
+    },
+    {
+      "id": "domain-au-detail",
+      "market": "global",
+      "label": "Domain.com.au",
+      "url": "https://www.domain.com.au/123-main-st-sydney-nsw-2000-12345678",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": "[data-testid='listing-details__summary-title']" },
+      "rateLimitMs": 3500,
+      "batch": 2
+    },
+    {
+      "id": "realestate-au-detail",
+      "market": "global",
+      "label": "Realestate.com.au",
+      "url": "https://www.realestate.com.au/property-apartment-nsw-sydney-12345678",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".hero-image", "price": ".property-price" },
+      "rateLimitMs": 3500,
+      "batch": 2
+    },
+    {
+      "id": "trademe-property",
+      "market": "global",
+      "label": "Trade Me Property",
+      "url": "https://www.trademe.co.nz/a/property/residential/sale/auckland/auckland-city/parnell/listing/1234567890",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 3500,
+      "batch": 2
+    },
+    {
+      "id": "99co-detail",
+      "market": "global",
+      "label": "99.co",
+      "url": "https://www.99.co/singapore/sale/apartment/test-123456",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 3000,
+      "batch": 2
+    },
+    {
+      "id": "propertyguru-detail",
+      "market": "global",
+      "label": "PropertyGuru",
+      "url": "https://www.propertyguru.com.sg/listing/for-sale-test-123456",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 3000,
+      "batch": 2
+    },
+    {
+      "id": "magicbricks-detail",
+      "market": "global",
+      "label": "MagicBricks",
+      "url": "https://www.magicbricks.com/propertyDetails/3-BHK-12345678",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 3500,
+      "batch": 2
+    },
+    {
+      "id": "housing-detail",
+      "market": "global",
+      "label": "Housing.com",
+      "url": "https://housing.com/in/buy/projects/page/123456-abc",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 3500,
+      "batch": 2
+    },
+    {
+      "id": "nobroker-detail",
+      "market": "global",
+      "label": "NoBroker",
+      "url": "https://www.nobroker.in/property/rent/bangalore/Test-123456",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 3000,
+      "batch": 2
+    },
+    {
+      "id": "craigslist-housing",
+      "market": "global",
+      "label": "Craigslist Housing",
+      "url": "https://sfbay.craigslist.org/sfc/apa/d/san-francisco-test/1234567890.html",
+      "viewports": ["desktop"],
+      "selectors": { "hero": "#thumbs", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "loopnet-detail",
+      "market": "global",
+      "label": "LoopNet",
+      "url": "https://www.loopnet.com/Listing/123-Main-St-San-Francisco-CA/12345678/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 4000,
+      "batch": 2
+    },
+    {
+      "id": "compass-detail",
+      "market": "global",
+      "label": "Compass",
+      "url": "https://www.compass.com/listing/123-main-st-san-francisco-ca-94102/1234567890123456789/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 4000,
+      "batch": 2
+    },
+    {
+      "id": "streeteasy-detail",
+      "market": "global",
+      "label": "StreetEasy",
+      "url": "https://streeteasy.com/building/123-main-street-new_york/123",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 3500,
+      "batch": 2
+    },
+    {
+      "id": "maskanyaban-detail",
+      "market": "iran",
+      "label": "مسکن‌یاب",
+      "url": "https://maskanyaban.com/Portal/Detail/525823",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": "#ShowMelk", "price": ".pricing" },
+      "rateLimitMs": 2500,
+      "batch": 1
+    },
+    {
+      "id": "maskanyaban-list",
+      "market": "iran",
+      "label": "مسکن‌یاب لیست",
+      "url": "https://maskanyaban.com/Portal/List",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".sizeWithImg", "price": ".pricing" },
+      "rateLimitMs": 2500,
+      "batch": 1
+    },
+    {
+      "id": "iranfile-detail",
+      "market": "iran",
+      "label": "ایران‌فایل",
+      "url": "https://www.iranfile.net/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 1
+    },
+    {
+      "id": "fileiran-list",
+      "market": "iran",
+      "label": "فایل‌ایران",
+      "url": "https://www.fileiran.com/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".list", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 1
+    },
+    {
+      "id": "kilid-list",
+      "market": "iran",
+      "label": "کلید",
+      "url": "https://kilid.com/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".card", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 1
+    },
+    {
+      "id": "melkradar-list",
+      "market": "iran",
+      "label": "ملک‌رادار",
+      "url": "https://melkradar.com/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".property-card", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "divar-real-estate",
+      "market": "iran",
+      "label": "دیوار املاک",
+      "url": "https://divar.ir/s/tehran/real-estate",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".post-card", "price": ".kt-post-card__description" },
+      "rateLimitMs": 3000,
+      "batch": 2
+    },
+    {
+      "id": "sheypoor-real-estate",
+      "market": "iran",
+      "label": "شیپور املاک",
+      "url": "https://www.sheypoor.com/s/tehran/houses-apartments-for-sale",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".listing-card", "price": ".price" },
+      "rateLimitMs": 3000,
+      "batch": 2
+    },
+    {
+      "id": "bama-real-estate",
+      "market": "iran",
+      "label": "باما",
+      "url": "https://bama.ir/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".card", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "eghamat24",
+      "market": "iran",
+      "label": "اقامت۲۴",
+      "url": "https://www.eghamat24.com/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "maskanemroz",
+      "market": "iran",
+      "label": "مسکن امروز",
+      "url": "https://www.maskanemrooz.com/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".file", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "melkiran",
+      "market": "iran",
+      "label": "ملک ایران",
+      "url": "https://www.melkiran.com/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".listing", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "tehranfile",
+      "market": "iran",
+      "label": "تهران‌فایل",
+      "url": "https://www.tehranfile.com/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".file-box", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "mashhadfile",
+      "market": "iran",
+      "label": "مشهدفایل",
+      "url": "https://www.mashhadfile.com/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".file", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "maskanonline",
+      "market": "iran",
+      "label": "مسکن آنلاین",
+      "url": "https://www.maskanonline.com/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".property", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "gheymat",
+      "market": "iran",
+      "label": "قیمت",
+      "url": "https://www.gheymat.com/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".card", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "sakhteman",
+      "market": "iran",
+      "label": "ساختمان",
+      "url": "https://www.sakhteman.ir/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".listing", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "shab",
+      "market": "iran",
+      "label": "شب",
+      "url": "https://www.shab.ir/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "jajiga",
+      "market": "iran",
+      "label": "جاجیگا",
+      "url": "https://www.jajiga.com/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    },
+    {
+      "id": "otaghak",
+      "market": "iran",
+      "label": "اتاقک",
+      "url": "https://www.otaghak.com/",
+      "viewports": ["mobile", "desktop"],
+      "selectors": { "hero": ".gallery", "price": ".price" },
+      "rateLimitMs": 2500,
+      "batch": 2
+    }
+  ]
+}

@@ -1,64 +1,44 @@
 'use client';
 
-import { ImageIcon, LayoutList, Store, UserRound, Users } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { routeBuilder } from '@/config/routes';
 import { useBusinessHub } from './BusinessHubContext';
+import { getVisibleHubTasks } from './hub-tasks';
 import type { HubTaskId } from './types';
 
-const TASKS: {
-  id: HubTaskId;
-  label: string;
-  hint: string;
-  icon: typeof Store;
-}[] = [
-  {
-    id: 'storefront',
-    label: 'ویترین و محصولات',
-    hint: 'دسته و محصول اضافه کنید',
-    icon: LayoutList,
-  },
-  {
-    id: 'profile',
-    label: 'معرفی و تماس',
-    hint: 'نام، موقعیت روی نقشه و تماس',
-    icon: UserRound,
-  },
-  {
-    id: 'brand',
-    label: 'عکس و لینک‌ها',
-    hint: 'لوگو، کاور و شبکه‌های اجتماعی',
-    icon: Store,
-  },
-  {
-    id: 'gallery',
-    label: 'نمونه کارها',
-    hint: 'عکس یا ویدیو از کارهای شما',
-    icon: ImageIcon,
-  },
-  {
-    id: 'contacts',
-    label: 'مخاطبین و تیم',
-    hint: 'بخش‌های تماس و دعوت کارمند',
-    icon: Users,
-  },
-];
-
 export function BusinessHubTaskGrid({ className }: { className?: string }) {
-  const { activeTask, setActiveTask, completion } = useBusinessHub();
+  const router = useRouter();
+  const { activeTask, setActiveTask, completion, profile } = useBusinessHub();
+  const tasks = getVisibleHubTasks(profile);
+
+  const selectTask = (id: HubTaskId) => {
+    if (id === 'filings') {
+      router.push(routeBuilder.workspace());
+      return;
+    }
+    setActiveTask(id);
+  };
 
   const incompleteByTask = (taskId: HubTaskId) =>
     completion?.items.some((i) => !i.completed && i.taskId === taskId) ?? false;
 
   return (
-    <div className={cn('hidden gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-5', className)}>
-      {TASKS.map(({ id, label, hint, icon: Icon }) => {
+    <div
+      className={cn(
+        'hidden gap-3 sm:grid sm:grid-cols-2',
+        tasks.length > 5 ? 'lg:grid-cols-3 xl:grid-cols-6' : 'lg:grid-cols-5',
+        className
+      )}
+    >
+      {tasks.map(({ id, label, hint, icon: Icon }) => {
         const needsWork = incompleteByTask(id);
         const active = activeTask === id;
         return (
           <button
             key={id}
             type="button"
-            onClick={() => setActiveTask(id)}
+            onClick={() => selectTask(id)}
             className={cn(
               'flex min-h-[88px] flex-col items-start gap-2 rounded-xl border p-4 text-right transition-colors',
               active
@@ -67,7 +47,12 @@ export function BusinessHubTaskGrid({ className }: { className?: string }) {
             )}
           >
             <div className="flex w-full items-center justify-between gap-2">
-              <Icon className={cn('size-5 shrink-0', active ? 'text-emerald-600' : 'text-muted-foreground')} />
+              <Icon
+                className={cn(
+                  'size-5 shrink-0',
+                  active ? 'text-emerald-600' : 'text-muted-foreground'
+                )}
+              />
               {needsWork && (
                 <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-medium text-amber-800 dark:text-amber-200">
                   ناتمام

@@ -2,7 +2,13 @@
  * Business profile completion checklist for /my-business hub.
  */
 
-export type HubTaskId = 'storefront' | 'profile' | 'brand' | 'gallery' | 'contacts';
+export type HubTaskId =
+  | 'storefront'
+  | 'profile'
+  | 'brand'
+  | 'gallery'
+  | 'contacts'
+  | 'filings';
 
 export type CompletionItemId =
   | 'name'

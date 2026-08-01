@@ -1,12 +1,39 @@
 import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
 import { parseCity } from '@/lib/need-intake/intent-parser';
 import { searchLocationIndex } from '@/intake/intelligence-engine/indexes/location-fuse-index';
+import { CANONICAL_CITIES, CANONICAL_PROVINCES } from '@/config/locations';
 import {
   createEmptyFieldBag,
   setField,
   type IntakeFieldBag,
   type IntakeIntelligenceInput,
 } from '@/intake/intelligence-engine/types';
+
+export function provinceTitleFor(
+  citySlug?: string | null,
+  cityName?: string | null,
+  provinceSlug?: string | null
+): string | null {
+  const slug =
+    provinceSlug ??
+    (citySlug ? CANONICAL_CITIES.find((c) => c.slug === citySlug)?.provinceSlug : undefined) ??
+    (cityName ? CANONICAL_CITIES.find((c) => c.title === cityName)?.provinceSlug : undefined);
+  if (!slug) return null;
+  return CANONICAL_PROVINCES.find((p) => p.slug === slug)?.title ?? null;
+}
+
+function setProvinceFromCity(
+  bag: Partial<IntakeFieldBag>,
+  citySlug?: string | null,
+  cityName?: string | null,
+  provinceSlug?: string | null,
+  confidence = 0.85
+): void {
+  const title = provinceTitleFor(citySlug, cityName, provinceSlug);
+  if (title) {
+    setField(bag as IntakeFieldBag, 'province', { value: title, confidence, source: 'resolver', evidence: 'city→province' });
+  }
+}
 
 export interface LocationResolverResult {
   fields: Partial<IntakeFieldBag>;
@@ -48,20 +75,19 @@ export async function resolveLocation(
     score: h.confidence,
   }));
 
-  if (hoodHits.length === 1 && hoodHits[0]!.confidence >= 0.72) {
+  // RFC-0004: write neighborhood only when clearly resolved (≥0.85, single candidate).
+  if (hoodHits.length === 1 && hoodHits[0]!.confidence >= 0.85) {
     const h = hoodHits[0]!;
     setField(bag, 'city', { value: h.record.cityName ?? cityName, confidence: 0.9, source: 'resolver', evidence: h.evidence });
-    setField(bag, 'citySlug', { value: h.record.citySlug ?? citySlug, confidence: 0.9, source: 'resolver' });
+    setField(bag, 'citySlug', { value: h.record.citySlug ?? citySlug, confidence: 0.9, source: 'resolver', evidence: h.evidence });
+    setProvinceFromCity(bag, h.record.citySlug ?? citySlug, h.record.cityName ?? cityName, h.record.provinceSlug);
     setField(bag, 'neighborhood', { value: h.record.name, confidence: h.confidence, source: 'resolver', evidence: h.evidence });
-    setField(bag, 'neighborhoodSlug', { value: h.record.slug, confidence: h.confidence, source: 'resolver' });
+    setField(bag, 'neighborhoodSlug', { value: h.record.slug, confidence: h.confidence, source: 'resolver', evidence: h.evidence });
     return { fields: bag, candidates, status: 'resolved' };
   }
 
-  if (hoodHits.length > 1 && hoodHits[0]!.confidence >= 0.6) {
-    const h = hoodHits[0]!;
-    setField(bag, 'city', { value: h.record.cityName ?? cityName, confidence: 0.75, source: 'resolver' });
-    setField(bag, 'neighborhood', { value: fragment ?? h.record.name, confidence: 0.65, source: 'resolver' });
-    setField(bag, 'neighborhoodSlug', { value: h.record.slug, confidence: 0.65, source: 'resolver' });
+  // Single weak hit or multiple hits: refuse to write a winner (ambiguity ⇒ no write).
+  if (hoodHits.length >= 1) {
     return { fields: bag, candidates, status: 'ambiguous' };
   }
 
@@ -76,6 +102,7 @@ export async function resolveLocation(
     if (ch || citySlug) {
       setField(bag, 'citySlug', { value: citySlug ?? ch?.record.slug ?? null, confidence: 0.8, source: 'resolver' });
     }
+    setProvinceFromCity(bag, citySlug ?? ch?.record.slug, cityName ?? ch?.record.name, ch?.record.provinceSlug, 0.8);
     if (fragment) {
       setField(bag, 'neighborhood', { value: fragment, confidence: 0.5, source: 'rule', evidence: 'fragment-unresolved' });
     }

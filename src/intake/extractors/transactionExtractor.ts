@@ -25,7 +25,15 @@ const RULES: Array<{ type: TransactionType; patterns: RegExp[]; confidence: numb
   },
   {
     type: 'DAILY_RENT',
-    patterns: [/اجاره\s*روزانه/u, /روزانه/u, /کوتاه\s*مدت/u, /کوتاه‌مدت/u, /هر\s*شب/u],
+    patterns: [
+      /اجاره\s*روزانه/u,
+      /اجاره\s*کوتاه[\s‌]*مدت/u,
+      /کوتاه[\s‌]*مدت/u,
+      /هر\s*شب/u,
+      /تومان\s*شب/u,
+      /سوئیت\s*روزانه/u,
+      /اجاره\s*شبانه(?!\u200c?روزی)/u,
+    ],
     confidence: 0.92,
   },
   {
@@ -35,7 +43,8 @@ const RULES: Array<{ type: TransactionType; patterns: RegExp[]; confidence: numb
   },
   {
     type: 'RENT',
-    patterns: [/اجاره\s*ماهانه/u, /اجاره/u, /رنت/u, /مستاجر/u],
+    // Avoid «رنت» inside «اینترنت» (#617).
+    patterns: [/اجاره\s*ماهانه/u, /اجاره/u, /(?<![\u0600-\u06FFa-zA-Z])رنت(?![\u0600-\u06FFa-zA-Z])/u, /مستاجر/u],
     confidence: 0.85,
   },
   {
@@ -45,7 +54,8 @@ const RULES: Array<{ type: TransactionType; patterns: RegExp[]; confidence: numb
   },
   {
     type: 'SELL',
-    patterns: [/فروش/u, /می\s*فروشم/u, /میفروشم/u],
+    // Avoid «میوه‌فروشی» / «کتاب‌فروشی» shop nouns (#592).
+    patterns: [/فروش(?!ی)/u, /می\s*فروشم/u, /میفروشم/u],
     confidence: 0.88,
   },
 ];
@@ -54,6 +64,16 @@ const RULES: Array<{ type: TransactionType; patterns: RegExp[]; confidence: numb
  * Detect transaction intent. Does NOT infer BUY from vague «میخوام» alone.
  */
 export function extractTransactionType(normalizedText: string): TransactionHit | null {
+  // Prefer short-term before rahn+ejare so «کد رهگیری» does not win over کوتاه‌مدت/هر شب.
+  for (const rule of RULES) {
+    if (rule.type !== 'DAILY_RENT' && rule.type !== 'HOURLY_RENT') continue;
+    for (const re of rule.patterns) {
+      if (re.test(normalizedText)) {
+        return { type: rule.type, confidence: rule.confidence };
+      }
+    }
+  }
+
   if (isSeekerRahnEjareDeal(normalizedText)) {
     return { type: 'DEPOSIT_AND_RENT', confidence: 0.93 };
   }
@@ -69,6 +89,7 @@ export function extractTransactionType(normalizedText: string): TransactionHit |
   }
 
   for (const rule of RULES) {
+    if (rule.type === 'DAILY_RENT' || rule.type === 'HOURLY_RENT') continue;
     for (const re of rule.patterns) {
       if (re.test(normalizedText)) {
         return { type: rule.type, confidence: rule.confidence };

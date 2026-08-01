@@ -49,7 +49,6 @@ import { SmartLeadsSection } from '@/components/dashboard/SmartLeadsSection';
 import { PrivateLeadsPanel } from '@/components/dashboard/PrivateLeadsPanel';
 import { NeedResolveWizard } from '@/components/need/NeedResolveWizard';
 import { WalletHistory } from '@/components/dashboard/WalletHistory';
-import { PageContainer } from '@/components/layout/PageContainer';
 import { canManageBusinessProfile } from '@/lib/business/can-manage-business-profile';
 import { routeBuilder } from '@/config/routes';
 
@@ -315,10 +314,9 @@ export function UserDashboard() {
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-background">
-      <PageContainer width="wide" className="py-6 space-y-8" noVerticalPadding>
+    <div className="min-w-0 space-y-8">
         {/* ============ WELCOME HEADER ============ */}
-        <div className="relative overflow-hidden rounded-2xl bg-linear-to-l from-emerald-600 via-teal-600 to-emerald-700 p-6 sm:p-8 text-white shadow-xl shadow-emerald-600/20">
+        <div className="relative overflow-hidden rounded-2xl bg-linear-to-l from-primary via-primary/90 to-primary/80 p-6 sm:p-8 text-primary-foreground shadow-xl shadow-primary/20">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-white" />
             <div className="absolute -bottom-32 -right-20 w-96 h-96 rounded-full bg-white" />
@@ -332,7 +330,7 @@ export function UserDashboard() {
             </Avatar>
             <div className="flex-1 space-y-1">
               <div className="space-y-1">
-                <h1 className="text-2xl sm:text-3xl font-bold">سلام، {currentUser.firstName} عزیز!</h1>
+                <h2 className="text-2xl sm:text-3xl font-bold">سلام، {currentUser.firstName} عزیز!</h2>
                 <p className="text-white/80 text-sm sm:text-base">
                   {currentUser.username ? (
                     <span className="inline-flex items-center gap-1"><AtSign className="w-3.5 h-3.5" />{currentUser.username}</span>
@@ -412,13 +410,13 @@ export function UserDashboard() {
           <Tabs value={activeTab} onValueChange={handleTabChange} dir="rtl" className="w-full">
             <TabsList className="mb-6 flex h-auto w-full gap-1 overflow-x-auto rounded-xl border border-border/40 bg-muted/60 p-1.5 shadow-sm backdrop-blur-xs flex-nowrap md:flex-wrap">
               <TabsTrigger value="requests" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
-                <ClipboardList className="w-4 h-4 ml-1.5" />نیازهای من
+                <ClipboardList className="w-4 h-4 ms-1.5" />نیازهای من
               </TabsTrigger>
               <TabsTrigger value="wallet" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
-                <Wallet className="w-4 h-4 ml-1.5" />کیف پول
+                <Wallet className="w-4 h-4 ms-1.5" />کیف پول
               </TabsTrigger>
               <TabsTrigger value="profile" className="flex-1 min-w-[7rem] shrink-0 min-h-11 data-[state=active]:bg-background data-[state=active]:shadow-md data-[state=active]:text-emerald-700 data-[state=active]:dark:text-emerald-400 rounded-lg py-2.5 text-xs sm:text-sm transition-all duration-150">
-                <UserIcon className="w-4 h-4 ml-1.5" />پروفایل
+                <UserIcon className="w-4 h-4 ms-1.5" />پروفایل
               </TabsTrigger>
             </TabsList>
 
@@ -489,7 +487,7 @@ export function UserDashboard() {
                                 className="bg-emerald-600 hover:bg-emerald-700"
                                 onClick={() => setResolveRequestId(request.id)}
                               >
-                                <CheckCircle className="w-4 h-4 ml-1" />
+                                <CheckCircle className="w-4 h-4 ms-1" />
                                 نیازم رفع شد
                               </Button>
                             ) : null}
@@ -510,7 +508,7 @@ export function UserDashboard() {
                               onClick={() => router.push(routeBuilder.listing(request.id, request.title))}
                               title="مشاهده جزئیات نیاز"
                             >
-                              مشاهده<ChevronLeft className="w-4 h-4 mr-1" />
+                              مشاهده<ChevronLeft className="w-4 h-4 me-1" />
                             </Button>
                           </div>
                         </div>
@@ -619,7 +617,7 @@ export function UserDashboard() {
                   </div>
                   <Separator />
                   <div className="flex justify-end">
-                    <Button onClick={handleProfileSave} className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white" title="ذخیره تغییرات پروفایل">
+                    <Button onClick={handleProfileSave} className="gap-2" size="touch" title="ذخیره تغییرات پروفایل">
                       <Save className="w-4 h-4" />ذخیره تغییرات
                     </Button>
                   </div>
@@ -628,7 +626,6 @@ export function UserDashboard() {
             </TabsContent>
           </Tabs>
         </div>
-      </PageContainer>
       {resolveRequestId ? (
         <NeedResolveWizard
           requestId={resolveRequestId}

@@ -196,11 +196,20 @@ export function useChatSocket(): ChatSocketAPI {
       const now = Date.now();
 
       if (isAuthConnectError(error.message)) {
+        // Before first successful connect, auth errors often mean chat-service is down (not expired JWT).
+        const likelyServiceDown = reconnectAttempts <= 2;
+        if (likelyServiceDown) {
+          if (now - lastConnectErrorLogAt >= CONNECT_ERROR_LOG_INTERVAL_MS) {
+            lastConnectErrorLogAt = now;
+            console.warn(
+              '[chat] سرویس realtime در دسترس نیست. برای dev: NEXT_PUBLIC_CHAT_SOCKET_URL=http://localhost:3004 و npm run dev:chat'
+            );
+          }
+          return;
+        }
         if (now - lastConnectErrorLogAt >= CONNECT_ERROR_LOG_INTERVAL_MS) {
           lastConnectErrorLogAt = now;
-          console.warn(
-            '[chat] نشست منقضی شده — لطفاً دوباره وارد شوید. برای چت realtime در dev: npm run dev:chat'
-          );
+          console.warn('[chat] نشست منقضی شده — لطفاً دوباره وارد شوید.');
         }
         handleAuthFailure();
         return;

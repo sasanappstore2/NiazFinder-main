@@ -1,0 +1,6 @@
+{
+  "siteKey": "showmelk",
+  "containerSelector": "#MelkList > div.box.file.clearfix",
+  "minFieldKeys": ["fileCode", "dealType"],
+  "sampleFileCodePattern": "\\d{4,}"
+}

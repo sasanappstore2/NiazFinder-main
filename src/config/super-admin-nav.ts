@@ -12,6 +12,7 @@ import {
   Building2,
   Settings2,
   GitBranch,
+  LayoutGrid,
   Bot,
   FileText,
   AlertTriangle,
@@ -138,6 +139,14 @@ export const SUPER_ADMIN_NAV: readonly SuperAdminNavGroup[] = [
         href: '/super-admin/businesses',
         icon: Building2,
         permission: 'market:businesses:read',
+      },
+      {
+        id: 'filings',
+        label: 'فایلینگ',
+        description: 'فایل‌های منطقه برای میزکار مشاوران',
+        href: '/super-admin/filings',
+        icon: LayoutGrid,
+        permission: 'market:filings:read',
       },
       {
         id: 'outreach',

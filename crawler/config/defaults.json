@@ -1,0 +1,44 @@
+{
+  "version": 2,
+  "defaultProvider": "firecrawl",
+  "providers": {
+    "firecrawl": {
+      "timeoutMs": 120000,
+      "pollIntervalMs": 2000
+    },
+    "playwright": {
+      "headless": true,
+      "timeoutMs": 60000
+    },
+    "http": {
+      "timeoutMs": 30000
+    }
+  },
+  "queue": {
+    "concurrency": 3,
+    "maxRetries": 5,
+    "backoffBaseMs": 2000,
+    "backoffMaxMs": 120000,
+    "rateLimitPerMinute": 60
+  },
+  "discovery": {
+    "maxDepth": 3,
+    "maxUrls": 10000,
+    "respectRobotsTxt": true
+  },
+  "pipeline": {
+    "aiEnrichment": false,
+    "deduplication": true,
+    "batchSize": 25,
+    "retainRawHtml": true
+  },
+  "storage": {
+    "driver": "memory",
+    "basePath": ".crawler-data"
+  },
+  "featureFlags": {
+    "crawlerV2": false,
+    "firecrawlPrimary": true,
+    "legacyEstateScrapeFallback": true
+  }
+}

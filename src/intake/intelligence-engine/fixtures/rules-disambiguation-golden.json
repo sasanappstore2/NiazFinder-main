@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Rules-first disambiguation golden — ambiguous vs clear category hypotheses",
+  "description": "Rules-first disambiguation golden — ambiguous vs clear category hypotheses (RFC-0004 critical pack @ 100%)",
   "cases": [
     {
       "id": "estate-rent-vs-sale-ambiguous",
@@ -34,6 +34,21 @@
         "ambiguous": false,
         "clearWinner": true,
         "categorySlug": "refrigerator"
+      }
+    },
+    {
+      "id": "commercial-space-no-forced-winner",
+      "text": "\u0645\u06CC\u062E\u0648\u0627\u0645 \u0645\u06A9\u0627\u0646 \u062A\u062C\u0627\u0631\u06CC \u062F\u0631 \u062A\u0647\u0631\u0627\u0646 \u0627\u062C\u0627\u0631\u0647 \u06A9\u0646\u0645",
+      "expect": {
+        "clearWinner": false
+      }
+    },
+    {
+      "id": "apartment-no-deal-ambiguous",
+      "text": "\u0622\u067E\u0627\u0631\u062A\u0645\u0627\u0646 \u062F\u0631 \u0633\u0639\u0627\u062F\u062A\u200C\u0622\u0628\u0627\u062F",
+      "expect": {
+        "clearWinner": false,
+        "minCandidates": 2
       }
     }
   ]

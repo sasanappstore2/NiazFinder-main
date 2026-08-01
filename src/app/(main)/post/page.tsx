@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { Eraser } from 'lucide-react';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { Breadcrumb } from '@/components/shared/Breadcrumb';
+import { PageChrome } from '@/components/layout/PageChrome';
+import { SITE_LABELS } from '@/config/site-labels';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { NeedIntakePanel } from '@/components/need-intake';
@@ -38,7 +39,24 @@ function PostNeedContent() {
     <>
       <PageContainer width="intake" noVerticalPadding className="pt-2 pb-0 sm:pt-3 lg:pt-2">
         <div className="intake-page-breadcrumb--mobile-collapse">
-          <Breadcrumb />
+          <PageChrome
+            title={SITE_LABELS.postNeed}
+            hideSeparator
+            separatorClassName="intake-page-separator my-2 sm:my-3 lg:my-2"
+            actions={
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="shrink-0 gap-1.5 text-muted-foreground hover:text-foreground"
+                onClick={handleClearForm}
+              >
+                <Eraser className="size-4" />
+                <span className="hidden sm:inline">پاک کردن فرم</span>
+                <span className="sm:hidden">پاک کردن</span>
+              </Button>
+            }
+          />
         </div>
       </PageContainer>
       <PageContainer
@@ -47,19 +65,8 @@ function PostNeedContent() {
         className="intake-page--compact sm:pb-8"
       >
         <Separator className="intake-page-separator my-2 sm:my-3 lg:my-2" />
-        <div className="intake-page-head intake-page-head--slim">
-          <h1 className="intake-page-head__title min-w-0">ثبت نیاز جدید</h1>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="shrink-0 gap-1.5 text-muted-foreground hover:text-foreground"
-            onClick={handleClearForm}
-          >
-            <Eraser className="size-4" />
-            <span className="hidden sm:inline">پاک کردن فرم</span>
-            <span className="sm:hidden">پاک کردن</span>
-          </Button>
+        <div className="intake-page-head intake-page-head--slim sr-only">
+          <span className="intake-page-head__title min-w-0">{SITE_LABELS.postNeed}</span>
         </div>
         <NeedIntakePanel
           key={panelKey}

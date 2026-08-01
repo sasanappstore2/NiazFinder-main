@@ -150,11 +150,32 @@ async function testTools(userId: string) {
   }
 
   const cats = await executeAgentTool('get_site_categories', { depth: 1 }, { userId });
-  if (!Array.isArray(cats)) throw new Error('get_site_categories must return array');
+  if (!cats || typeof cats !== 'object' || !('categories' in cats) || !Array.isArray((cats as { categories: unknown }).categories)) {
+    throw new Error('get_site_categories must return object with categories array');
+  }
   const catSearch = await executeAgentTool('search_site_categories', { query: 'املاک', limit: 5 }, { userId });
   if (!Array.isArray(catSearch)) throw new Error('search_site_categories must return array');
   const cities = await executeAgentTool('search_site_cities', { query: 'تهران', limit: 3 }, { userId });
   if (!Array.isArray(cities)) throw new Error('search_site_cities must return array');
+
+  const businesses = await executeAgentTool(
+    'search_businesses_agent',
+    { query: 'املاک', limit: 3 },
+    { userId },
+  );
+  if (!businesses || typeof businesses !== 'object' || !('businesses' in businesses)) {
+    throw new Error('search_businesses_agent must return object with businesses');
+  }
+
+  const knowledge = await executeAgentTool(
+    'search_site_knowledge',
+    { query: 'ثبت نیاز', limit: 3 },
+    { userId },
+  );
+  if (!knowledge || typeof knowledge !== 'object' || !('chunks' in knowledge)) {
+    throw new Error('search_site_knowledge must return object with chunks');
+  }
+
   console.log('tools: OK');
 }
 

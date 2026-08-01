@@ -1,6 +1,7 @@
 'use client';
 
 import type { FieldOption } from '@/contracts/need-intake';
+import { BorderGlow } from '@/components/ui/border-glow';
 import { cn } from '@/lib/utils';
 
 interface SuggestionChipsProps {
@@ -10,6 +11,8 @@ interface SuggestionChipsProps {
   onSelect: (value: string | string[]) => void;
   disabled?: boolean;
   className?: string;
+  /** Border-glow on active chip (and hover via spotlight). */
+  glow?: boolean;
 }
 
 function normalizeSelected(value: string | string[] | undefined, multiple: boolean): Set<string> {
@@ -20,7 +23,7 @@ function normalizeSelected(value: string | string[] | undefined, multiple: boole
         value
           .split(',')
           .map((v) => v.trim())
-          .filter(Boolean)
+          .filter(Boolean),
       );
     }
     return new Set();
@@ -36,6 +39,7 @@ export function SuggestionChips({
   onSelect,
   disabled,
   className,
+  glow = true,
 }: SuggestionChipsProps) {
   const selectedSet = normalizeSelected(value, multiple);
 
@@ -43,9 +47,9 @@ export function SuggestionChips({
     <div className={cn('flex flex-wrap gap-2', className)}>
       {options.map((opt) => {
         const active = selectedSet.has(opt.value);
-        return (
+
+        const chipButton = (
           <button
-            key={opt.value}
             type="button"
             disabled={disabled}
             onClick={(e) => {
@@ -60,16 +64,41 @@ export function SuggestionChips({
               onSelect(active ? '' : opt.value);
             }}
             className={cn(
-              'min-h-11 rounded-full border px-4 py-2 text-sm font-medium transition-colors',
+              'min-h-11 w-full rounded-full px-4 py-2 text-sm font-medium transition-colors',
               'disabled:opacity-50',
               active
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border bg-card hover:border-primary hover:bg-primary/5'
+                ? 'bg-primary/10 text-primary'
+                : 'bg-background text-foreground hover:bg-muted/40',
+              !glow &&
+                (active
+                  ? 'border border-primary'
+                  : 'border border-border hover:border-primary/40'),
             )}
             aria-pressed={active}
           >
             {opt.label}
           </button>
+        );
+
+        if (!glow) {
+          return (
+            <div key={opt.value} className="inline-flex">
+              {chipButton}
+            </div>
+          );
+        }
+
+        return (
+          <BorderGlow
+            key={opt.value}
+            rounded="full"
+            glow
+            size={88}
+            className={cn('inline-flex', active && 'shadow-[0_0_20px_-8px_oklch(var(--primary)/0.4)]')}
+            innerClassName="p-0"
+          >
+            {chipButton}
+          </BorderGlow>
         );
       })}
     </div>

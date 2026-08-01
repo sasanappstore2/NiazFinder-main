@@ -27,6 +27,9 @@ export type AdminPermissionId =
   | 'market:businesses:read'
   | 'market:businesses:write'
   | 'market:businesses:moderate'
+  // ─── Regional filings ───────────────────────────────────────────────
+  | 'market:filings:read'
+  | 'market:filings:write'
   // ─── Reviews / Content ──────────────────────────────────────────────
   | 'content:reviews:read'
   | 'content:reviews:moderate'
@@ -120,6 +123,9 @@ export const ADMIN_PERMISSIONS: readonly AdminPermission[] = [
   { id: 'market:businesses:read', label: 'مشاهده کسب‌وکارها', group: 'Businesses' },
   { id: 'market:businesses:write', label: 'ویرایش کسب‌وکارها', group: 'Businesses' },
   { id: 'market:businesses:moderate', label: 'بازبینی/اقدام روی کسب‌وکارها', group: 'Businesses' },
+
+  { id: 'market:filings:read', label: 'مشاهده فایلینگ منطقه', group: 'MarketOps' },
+  { id: 'market:filings:write', label: 'افزودن/ویرایش فایلینگ منطقه', group: 'MarketOps' },
 
   { id: 'content:reviews:read', label: 'مشاهده نظرات و امتیازها', group: 'Content' },
   { id: 'content:reviews:moderate', label: 'بازبینی/حذف/اقدام روی نظرات', group: 'Content' },

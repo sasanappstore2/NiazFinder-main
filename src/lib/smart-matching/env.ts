@@ -25,7 +25,7 @@ export function getMaxActiveChatSessionsPerNeed(): number {
 }
 
 export function getSmartMatchingInternalSecret(): string {
-  return process.env.SMART_MATCHING_INTERNAL_SECRET ?? 'smart-matching-internal-dev';
+  return process.env.SMART_MATCHING_INTERNAL_SECRET ?? '';
 }
 
 export function getLeadMaxPerRequest(): number {

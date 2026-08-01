@@ -40,6 +40,8 @@ export interface NeedLeadPromptBoxProps {
   /** When false (default), phone is not collected here — only at final publish/login. */
   showPhoneField?: boolean;
   placeholder?: string;
+  /** Optional background-analyze status (home typing prefetch). */
+  prefetchStatus?: 'idle' | 'pending' | 'ready' | 'error';
   className?: string;
 }
 
@@ -128,6 +130,7 @@ export function NeedLeadPromptBox({
   placeholder = 'مثلاً: به تعمیرکار کولر در غرب تهران نیاز دارم…',
   className,
   isSubmitting = false,
+  prefetchStatus = 'idle',
 }: NeedLeadPromptBoxProps) {
   const [showLocation, setShowLocation] = useState(hasCity);
   const [showContact, setShowContact] = useState(
@@ -365,6 +368,26 @@ export function NeedLeadPromptBox({
                     : 'تبدیل گفتار به متن (Chrome / Edge)'}
                 </TooltipContent>
               </Tooltip>
+            </>
+          ) : null}
+
+          {prefetchStatus === 'pending' || prefetchStatus === 'ready' ? (
+            <>
+              <VerticalDivider />
+              <span
+                className={cn(
+                  'hidden items-center gap-1 truncate text-[11px] sm:inline-flex',
+                  prefetchStatus === 'pending'
+                    ? 'text-muted-foreground'
+                    : 'text-emerald-700 dark:text-emerald-400'
+                )}
+                aria-live="polite"
+              >
+                {prefetchStatus === 'pending' ? (
+                  <Loader2 className="size-3 shrink-0 animate-spin" aria-hidden />
+                ) : null}
+                {prefetchStatus === 'pending' ? 'آماده‌سازی تحلیل…' : 'تحلیل آماده'}
+              </span>
             </>
           ) : null}
         </div>

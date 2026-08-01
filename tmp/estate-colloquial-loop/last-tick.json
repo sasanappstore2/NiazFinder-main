@@ -1,0 +1,115 @@
+{
+  "id": "estate-colloquial-1000",
+  "mode": "rules",
+  "passedHard": true,
+  "hardScore": 4,
+  "hardMax": 4,
+  "weightedScore": 2,
+  "weightedMax": 2,
+  "fields": [
+    {
+      "field": "category",
+      "tier": "hard",
+      "passed": true
+    },
+    {
+      "field": "deal",
+      "tier": "hard",
+      "passed": true
+    },
+    {
+      "field": "area",
+      "tier": "hard",
+      "passed": true
+    },
+    {
+      "field": "rooms",
+      "tier": "hard",
+      "passed": true
+    },
+    {
+      "field": "location",
+      "tier": "weighted",
+      "passed": true
+    },
+    {
+      "field": "budget",
+      "tier": "weighted",
+      "passed": true
+    }
+  ],
+  "taxonomy": [],
+  "index": 1000,
+  "textPreview": "برای کارم نیاز به اجاره ماهانهٔ دفتر اداری دارم و می‌خوام سریع جمع‌بندی کنم. دانشجوییم و بودجه محدودی داریم؛ دنبال جایی هستیم که رفت‌وآمد دانشگاه و هزینهٔ ماهانه فشار نیاره. استان ",
+  "wordCount": 203,
+  "oracle": {
+    "leaf": [
+      "office-rent"
+    ],
+    "deal": "rent_monthly",
+    "city": "سنندج",
+    "neighborhood": "وکیل",
+    "area": {
+      "exact": 112
+    },
+    "rooms": 1,
+    "budget": {
+      "rahn": 634000000,
+      "rent": 14000000
+    },
+    "hard": [
+      "category",
+      "deal",
+      "area",
+      "rooms"
+    ],
+    "weighted": [
+      "location",
+      "budget"
+    ],
+    "ambiguous": false,
+    "expectQuestion": false,
+    "hallucinationTrap": false
+  },
+  "tags": [
+    "leaf:office-rent",
+    "deal:rent_monthly",
+    "tone:student",
+    "province:کردستان",
+    "city:سنندج",
+    "clear",
+    "normal",
+    "words:203"
+  ],
+  "projection": {
+    "categorySlug": "commercial-rent",
+    "subcategorySlug": "office-rent",
+    "city": "سنندج",
+    "neighborhood": "وکیل",
+    "area": 112,
+    "rooms": 1,
+    "transactionType": "DEPOSIT_AND_RENT",
+    "dealType": "rent_rahn_ejare",
+    "budgetMax": 634000000,
+    "rahnAmount": 634000000,
+    "monthlyRent": 14000000,
+    "deposit": 634000000,
+    "recommendedQuestions": [
+      "توضیحات تکمیلی"
+    ],
+    "gaps": [],
+    "answers": {
+      "dealType": "rent_rahn_ejare",
+      "propertyKind": "office",
+      "rooms": "1",
+      "areaMax": 112,
+      "monthlyRent": 14000000,
+      "rahnAmount": 634000000,
+      "_neighborhoodSlug": "وکیل",
+      "location": "وکیل، سنندج",
+      "deposit": 634000000
+    }
+  },
+  "latencyMs": 608,
+  "at": "2026-07-12T21:34:09.180Z"
+}

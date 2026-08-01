@@ -6,6 +6,7 @@ import { enqueueVipBroadcast } from '@/lib/smart-matching/enqueue-vip-broadcast'
 import { isSmartMatchingEnabled } from '@/lib/smart-matching/env';
 import { logModerationAudit } from '@/lib/rbac/moderation-audit';
 import { notifyNeedBrowseAlertsForRequest } from '@/lib/need-alerts/notify';
+import { queueNeedRagIndex } from '@/lib/rag/queue';
 export type ModerationAction = 'approve' | 'reject_soft' | 'reject_final';
 
 export function parseModerationAction(value: unknown): ModerationAction | null {
@@ -19,15 +20,6 @@ export async function applyModerationAction(
   actorUserId: string,
   options?: { reason?: string; notes?: string; ip?: string; userAgent?: string }
 ) {
-  const existing = await db.serviceRequest.findUnique({
-    where: { id: requestId },
-    select: { id: true, moderationStatus: true, status: true },
-  });
-
-  if (!existing) {
-    return { ok: false as const, error: 'نیاز یافت نشد', status: 404 };
-  }
-
   const now = new Date();
   let moderationStatus: ModerationStatus;
   let status: RequestStatus;
@@ -47,19 +39,68 @@ export async function applyModerationAction(
       break;
   }
 
-  const updated = await db.serviceRequest.update({
-    where: { id: requestId },
-    data: {
-      moderationStatus,
-      status,
-      reviewedAt: now,
-      reviewedByUserId: actorUserId,
-      rejectionReason: action.startsWith('reject') ? options?.reason ?? null : null,
-      moderationNotes: options?.notes ?? null,
-      assignedToUserId: null,
+  // Read + update under a row lock so concurrent moderation actions serialize
+  // and we can enforce a state-transition guard atomically.
+  const outcome = await db.$transaction(
+    async (tx) => {
+      await tx.$executeRaw`SELECT id FROM "ServiceRequest" WHERE id = ${requestId} FOR UPDATE`;
+
+      const existing = await tx.serviceRequest.findUnique({
+        where: { id: requestId },
+        select: { id: true, title: true, slug: true, moderationStatus: true, status: true },
+      });
+
+      if (!existing) {
+        return { kind: 'not_found' as const };
+      }
+
+      // Idempotent no-op: already in the target moderation state. Do NOT re-run
+      // the update or re-fire side effects (VIP broadcast / lead outreach / alerts).
+      if (existing.moderationStatus === moderationStatus) {
+        return {
+          kind: 'noop' as const,
+          request: {
+            id: existing.id,
+            title: existing.title,
+            slug: existing.slug,
+            moderationStatus: existing.moderationStatus,
+            status: existing.status,
+          },
+        };
+      }
+
+      const updated = await tx.serviceRequest.update({
+        where: { id: requestId },
+        data: {
+          moderationStatus,
+          status,
+          reviewedAt: now,
+          reviewedByUserId: actorUserId,
+          rejectionReason: action.startsWith('reject') ? options?.reason ?? null : null,
+          moderationNotes: options?.notes ?? null,
+          assignedToUserId: null,
+        },
+        select: { id: true, title: true, slug: true, moderationStatus: true, status: true },
+      });
+
+      return {
+        kind: 'updated' as const,
+        previousStatus: existing.status,
+        previousModerationStatus: existing.moderationStatus,
+        request: updated,
+      };
     },
-    select: { id: true, title: true, slug: true, moderationStatus: true, status: true },
-  });
+    { isolationLevel: 'Serializable', maxWait: 5000, timeout: 15000 }
+  );
+
+  if (outcome.kind === 'not_found') {
+    return { ok: false as const, error: 'نیاز یافت نشد', status: 404 };
+  }
+
+  if (outcome.kind === 'noop') {
+    // Nothing changed — return current state without audit or side effects.
+    return { ok: true as const, request: outcome.request };
+  }
 
   await logModerationAudit({
     actorUserId,
@@ -68,8 +109,8 @@ export async function applyModerationAction(
     payload: {
       reason: options?.reason,
       notes: options?.notes,
-      previousStatus: existing.status,
-      previousModerationStatus: existing.moderationStatus,
+      previousStatus: outcome.previousStatus,
+      previousModerationStatus: outcome.previousModerationStatus,
       nextStatus: status,
       nextModerationStatus: moderationStatus,
     },
@@ -86,10 +127,14 @@ export async function applyModerationAction(
     void notifyNeedBrowseAlertsForRequest(requestId).catch((err) =>
       console.error('need browse alert notify failed', err)
     );
+    // VIP/PRIVATE needs stay out of public RAG until flipNeedToPublic; still enqueue
+    // so the worker can clear/skip until PUBLIC.
+    queueNeedRagIndex(requestId, 'UPSERT');
+  } else {
+    queueNeedRagIndex(requestId, 'DELETE');
   }
 
-
-  return { ok: true as const, request: updated };
+  return { ok: true as const, request: outcome.request };
 }
 
 export async function applyUnpublishAction(
@@ -133,6 +178,8 @@ export async function applyUnpublishAction(
     userAgent: options?.userAgent,
   });
 
+  queueNeedRagIndex(requestId, 'DELETE');
+
   return { ok: true as const, request: updated };
 }
 
@@ -175,6 +222,8 @@ export async function applyAdminDeleteAction(
     ip: options?.ip,
     userAgent: options?.userAgent,
   });
+
+  queueNeedRagIndex(requestId, 'DELETE');
 
   return { ok: true as const, request: updated };
 }

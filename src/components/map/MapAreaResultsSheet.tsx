@@ -97,9 +97,9 @@ export function MapAreaResultsSheet({
       ) : null}
 
       <section
-        role="region"
+        role={peek ? 'region' : 'dialog'}
         aria-label={sheetTitle}
-        aria-modal={!peek}
+        aria-modal={peek ? undefined : true}
         className={cn(
           'map-area-results-sheet business-map-mobile-sheet sheet-safe-area',
           'fixed inset-x-0 bottom-0 z-[701] flex flex-col overflow-hidden',

@@ -448,7 +448,7 @@ export function SocialFeedPage() {
       <div className="w-full min-h-[40vh]" dir="rtl">
         <div className="w-full py-4">
           <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-xl font-extrabold">فید اجتماعی</h1>
+            <h2 className="text-h3 font-extrabold">فید اجتماعی</h2>
             <div className="animate-shimmer-loading h-9 w-28 rounded-xl bg-muted/40" />
           </div>
           {Array.from({ length: 3 }).map((_, i) => (
@@ -467,7 +467,7 @@ export function SocialFeedPage() {
           {...fadeIn}
           className="mb-6 flex items-center justify-between"
         >
-          <h1 className="text-xl font-extrabold">فید اجتماعی</h1>
+          <h2 className="text-h3 font-extrabold">فید اجتماعی</h2>
           <Button
             variant="outline"
             size="sm"

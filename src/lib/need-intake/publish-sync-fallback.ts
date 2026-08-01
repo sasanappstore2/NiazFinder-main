@@ -1,5 +1,6 @@
 import { enqueueIntakeHeavyJob } from '@/lib/need-intake/enqueue-heavy';
 import { enqueueRequestModerationJob } from '@/lib/request-moderation/enqueue';
+import { queueNeedRagIndex } from '@/lib/rag/queue';
 
 /** Post-create hooks for synchronous publish (no RabbitMQ / MLX worker). */
 export function completeSyncPublish(
@@ -11,6 +12,8 @@ export function completeSyncPublish(
 ): void {
   if (!options.autoApprove) {
     enqueueRequestModerationJob(serviceRequestId);
+  } else {
+    queueNeedRagIndex(serviceRequestId, 'UPSERT');
   }
   void enqueueIntakeHeavyJob(serviceRequestId, options.sessionId);
 }

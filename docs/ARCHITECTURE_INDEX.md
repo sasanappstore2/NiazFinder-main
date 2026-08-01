@@ -1,5 +1,7 @@
 ## Architecture index (today's map)
 
+> **Engineering Constitution (vision & layers):** [`engineering-constitution/README.md`](./engineering-constitution/README.md) — approve before large AI/architecture implementation waves.
+
 > **ایندکس کامل:** برای نقشه سکتوربه‌سکتور با ۱۹۹ API، ۸۵ صفحه، ۵۸ model و ۴۶ ماژول lib → [`PROJECT_INDEX.md`](./PROJECT_INDEX.md)
 
 This document is a short, practical map of the codebase so you can jump to the right entry point quickly.
@@ -23,8 +25,8 @@ This document is a short, practical map of the codebase so you can jump to the r
 
 ### Data / persistence
 
-- **Prisma (root)**: `prisma/schema.prisma` (expects `DATABASE_URL`, currently sqlite provider)
-- **Prisma (backend)**: `mini-services/backend/prisma/schema.prisma` (sqlite file url, used for compatibility)
+- **Prisma (root)**: `prisma/schema.prisma` — **PostgreSQL** (`provider = "postgresql"`, DB `needfinder`)
+- **Prisma (backend legacy)**: `mini-services/backend/prisma/schema.prisma` — legacy Nest profile only; do not treat as product SoT
 - **Prisma (chat-service)**: `mini-services/chat-service/prisma/schema.prisma` (expects `DATABASE_URL`)
 
 ### Reverse proxy / infra (mostly for deploy)
@@ -37,5 +39,6 @@ This document is a short, practical map of the codebase so you can jump to the r
 - **Need intake / typing analysis / internal orchestration**: `src/lib/need-intake/`, `src/lib/typing-analysis/`, `src/app/api/need-intake/**`
 - **Marketplace browsing + canonical URLs**: `src/config/market-routes.ts`, `src/lib/search/**`, `src/middleware.ts`
 - **Chat UI**: `src/components/chat/**`, `src/lib/chat-socket-config.ts`
+- **Platform AI assistant + site-wide RAG**: `src/lib/ai-agent/**`, `src/lib/rag/**`, [`RAG_SITE_ASSISTANT.md`](./RAG_SITE_ASSISTANT.md), [`TYPESENSE_SYNC.md`](./TYPESENSE_SYNC.md)
 - **Admin / moderation**: `src/app/api/internal/**`, `src/lib/request-moderation/**`, backend `mini-services/backend/src/modules/**`
 

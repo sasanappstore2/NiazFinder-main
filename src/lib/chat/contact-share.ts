@@ -79,7 +79,12 @@ export function chatMessageListPreview(content: string, type?: string): string {
   if (legacyProduct) return 'محصول';
   if (parseChatContactShareContent(content)) return 'شمارهٔ تماس';
   if (parseChatLocationShareContent(content)) return CHAT_LOCATION_LIST_PREVIEW;
-  return content;
+  // Strip agent <think> blocks from list previews
+  const withoutThink = content
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    .replace(/<\/?think>/gi, '')
+    .trim();
+  return withoutThink || content;
 }
 
 export function phoneToTelHref(phone: string): string {

@@ -7,10 +7,16 @@ import {
   isVehicleRepairServiceIntent,
 } from '@/lib/need-intake/service-repair-intent';
 
+/** A city's own name is never a valid "area" (neighborhood/district) — never surface it as one. */
+function isCanonicalCityTitle(value: string): boolean {
+  const v = value.trim();
+  return CANONICAL_CITIES.some((city) => city.title === v);
+}
+
 function stripTrailingCityFromArea(area: string): string {
   const trimmed = area.trim();
   for (const city of CANONICAL_CITIES) {
-    if (trimmed === city.title) return trimmed;
+    if (trimmed === city.title) return '';
     const suffix = ` ${city.title}`;
     if (trimmed.endsWith(suffix)) {
       const base = trimmed.slice(0, -suffix.length).trim();
@@ -145,6 +151,14 @@ const PRODUCT_SIGNALS: { word: string; weight: number }[] = [
   { word: 'کت و شلوار', weight: 4 },
   { word: 'دوربین', weight: 4 },
   { word: 'تبلت', weight: 3 },
+  { word: 'دوچرخه', weight: 4 },
+  { word: 'اسکوتر', weight: 4 },
+  { word: 'اسکیت', weight: 4 },
+  { word: 'تردمیل', weight: 4 },
+  { word: 'دستگاه بدنسازی', weight: 5 },
+  { word: 'تجهیزات بدنسازی', weight: 5 },
+  { word: 'کیسه خواب', weight: 4 },
+  { word: 'لوازم کوهنوردی', weight: 5 },
   { word: 'پیانو', weight: 6 },
   { word: 'piano', weight: 6 },
   { word: 'گیتار', weight: 5 },
@@ -178,6 +192,8 @@ const SERVICE_SIGNALS: { word: string; weight: number }[] = [
   { word: 'نقاش', weight: 3 },
   { word: 'اسباب کشی', weight: 4 },
   { word: 'اسباب‌کشی', weight: 4 },
+  { word: 'پنچر', weight: 4 },
+  { word: 'پنچرگیری', weight: 4 },
   { word: 'باربری', weight: 3 },
   { word: 'کولر', weight: 3 },
   { word: 'پزشک', weight: 3 },
@@ -423,6 +439,23 @@ export function categorySlugForVertical(
       ) {
         return 'game-console';
       }
+      if (t.includes('دوچرخه')) return 'bicycle';
+      if (t.includes('اسکوتر') || t.includes('اسکیت')) return 'scooter';
+      if (
+        t.includes('تردمیل') ||
+        t.includes('دستگاه بدنسازی') ||
+        t.includes('تجهیزات بدنسازی')
+      ) {
+        return 'fitness-equipment';
+      }
+      if (
+        t.includes('کیسه خواب') ||
+        t.includes('لوازم کوهنوردی') ||
+        t.includes('لوازم کمپینگ') ||
+        t.includes('چادر مسافرتی')
+      ) {
+        return 'camping-outdoor';
+      }
       if (t.includes('لپ')) return 'laptop';
       if (t.includes('گوشی') || t.includes('آیفون') || t.includes('iphone')) {
         return 'mobile-phone';
@@ -496,12 +529,12 @@ export function parseAreaFromText(rawText: string, cityId?: string | null): stri
   const knownAreas = getKnownAreasForCity(cityId);
   const sorted = [...knownAreas].sort((a, b) => b.length - a.length);
   for (const area of sorted) {
-    if (area.length < 5) continue;
+    if (area.length < 5 || isCanonicalCityTitle(area)) continue;
     if (textContainsAreaName(text, area)) return area.replace(/\s+/g, ' ').trim();
   }
 
   for (const area of KNOWN_AREAS) {
-    if (area.length < 5) continue;
+    if (area.length < 5 || isCanonicalCityTitle(area)) continue;
     if (textContainsAreaName(text, area)) return area.replace(/\s+/g, ' ').trim();
   }
 

@@ -1,6 +1,9 @@
 /**
  * Backfill Location and ServiceRequest embeddings for agent vector search.
  * Run: npm run embed:locations | npm run embed:service-needs | npm run embed:search-index
+ *
+ * Business + site-knowledge RAG: prefer `npm run rag:backfill` (scripts/rag/backfill.ts).
+ * Per-record embed helpers live in src/lib/rag/*.
  */
 import { PrismaClient } from '@prisma/client';
 import {
@@ -9,6 +12,7 @@ import {
   embedPassagesBatch,
 } from '../src/lib/ai-agent/embedding-client';
 import { pgvectorLiteral } from '../src/lib/ai-agent/pgvector';
+import { hashRagContent } from '../src/lib/rag/content-hash';
 
 const prisma = new PrismaClient();
 
@@ -55,7 +59,7 @@ async function backfillServiceRequests() {
         status: { in: ['OPEN', 'IN_PROGRESS'] },
         moderationStatus: 'APPROVED',
         needAccessStatus: 'PUBLIC',
-        OR: [{ embeddedAt: null }, { searchText: null }],
+        OR: [{ embeddedAt: null }, { searchText: null }, { embeddingContentHash: null }],
       },
       take: Math.min(BATCH, 32),
       select: {
@@ -80,7 +84,7 @@ async function backfillServiceRequests() {
         address: r.address,
         categoryName: r.category.name,
       });
-      return { id: r.id, searchText };
+      return { id: r.id, searchText, contentHash: hashRagContent(searchText) };
     });
 
     const vectors = await embedPassagesBatch(payloads.map((p) => p.searchText));
@@ -90,11 +94,12 @@ async function backfillServiceRequests() {
     for (let i = 0; i < payloads.length; i++) {
       const literal = pgvectorLiteral(vectors[i]);
       await prisma.$executeRawUnsafe(
-        `UPDATE "ServiceRequest" SET "searchText" = $1, "searchEmbedding" = $2::vector, "embeddingModel" = $3, "embeddedAt" = $4 WHERE id = $5`,
+        `UPDATE "ServiceRequest" SET "searchText" = $1, "searchEmbedding" = $2::vector, "embeddingModel" = $3, "embeddedAt" = $4, "embeddingContentHash" = $5 WHERE id = $6`,
         payloads[i].searchText,
         literal,
         model,
         now,
+        payloads[i].contentHash,
         payloads[i].id,
       );
       updated += 1;

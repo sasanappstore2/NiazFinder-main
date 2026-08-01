@@ -1,0 +1,84 @@
+# Cognitive Governance CI — RFC-005 §18 (automation mapping), wired per ADR-079:
+# automation implements the CI actor's mechanical duties without acquiring authority. These jobs
+# can BLOCK a merge (failing checks); nothing here approves, deploys, or mutates history
+# (ADR-075/076). Adding/altering this workflow changes no governance rule — the rules live in
+# RFC-004/RFC-005; this file only executes them.
+#
+# Deliberately NOT here: golden replay and gate evaluation (they need the local LLM sidecar and
+# the project Postgres — they run via the local/scheduled CLIs: ccqs:replay,
+# ccqs:pvw:scheduled-replay). CI runs everything that is pure: diff guards + self-tests.
+name: cognitive-governance
+
+on:
+  pull_request:
+    paths:
+      - 'src/cognitive-engine/**'
+      - 'src/ccqs/**'
+      - 'src/semantic-evaluation-engine/**'
+      - 'src/intake/rules/**'
+      - 'src/intake/intelligence-engine/**'
+      - 'src/lib/need-intake/local-chat-client.ts'
+      - 'scripts/ccqs/**'
+      - 'scripts/ci/**'
+  push:
+    branches: [main]
+
+jobs:
+  mei-diff-guards:
+    name: MEI diff guards (RFC-005 §17)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Determine diff base
+        id: base
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "ref=origin/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=HEAD~1" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Run MEI guards
+        run: npx --yes tsx scripts/ci/mei-guards.ts "${{ steps.base.outputs.ref }}"
+
+  pure-self-tests:
+    name: Pure self-tests (no DB, no LLM)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx prisma generate
+      - name: SEE self-tests
+        run: |
+          npx tsx src/semantic-evaluation-engine/fixtures/run-contracts-self-test.ts
+          npx tsx src/semantic-evaluation-engine/fixtures/run-category-ontology-provider-self-test.ts
+          npx tsx src/semantic-evaluation-engine/fixtures/run-adapters-self-test.ts
+          npx tsx src/semantic-evaluation-engine/fixtures/run-comparator-self-test.ts
+          npx tsx src/semantic-evaluation-engine/fixtures/run-scoring-policy-self-test.ts
+      - name: CCQS pure self-tests
+        run: |
+          npx tsx src/ccqs/fixtures/run-golden-dataset-self-test.ts
+          npx tsx src/ccqs/fixtures/run-golden-case-to-snapshot-self-test.ts
+          npx tsx src/ccqs/fixtures/run-aggregate-metrics-self-test.ts
+          npx tsx src/ccqs/fixtures/run-compare-replay-runs-self-test.ts
+          npx tsx src/ccqs/fixtures/run-evaluate-gate-self-test.ts
+          npx tsx src/ccqs/fixtures/run-pvw-self-test.ts
+      - name: Cognitive Engine pure self-tests
+        env:
+          NODE_OPTIONS: --conditions=react-server
+          NEED_INTAKE_LOC_SKIP_PRISMA: 'true'
+        run: |
+          npx tsx src/cognitive-engine/fixtures/run-decision-engine-self-test.ts
+          npx tsx src/cognitive-engine/fixtures/run-canonical-need-self-test.ts
+          npx tsx src/cognitive-engine/fixtures/run-cognitive-state-self-test.ts
+          npx tsx src/cognitive-engine/fixtures/run-shadow-compare-self-test.ts
+          npx tsx src/cognitive-engine/fixtures/run-grounding-self-test.ts
+          npx tsx src/cognitive-engine/fixtures/run-conformance-self-test.ts

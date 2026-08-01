@@ -13,7 +13,7 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAppStore } from '@/lib/store';
+import { apiFetch, ApiClientError } from '@/lib/api-client';
 import {
   Card,
   CardContent,
@@ -294,7 +294,13 @@ function SuccessState({
 export default function ReviewForm() {
   const { navigateTo, goBack } = useNavigate();
   const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-  const specialistId = searchParams?.get('id') ?? '';
+  // Review target (the reviewed user) + the accepted proposal that authorizes the review.
+  const targetUserId = searchParams?.get('targetUserId') ?? '';
+  const proposalId = searchParams?.get('proposalId') ?? '';
+  // Legacy/context params used only for post-submit navigation.
+  const specialistId = searchParams?.get('id') ?? targetUserId;
+  // A valid review requires both the reviewed user and an accepted proposal id.
+  const hasReviewContext = Boolean(targetUserId && proposalId);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -317,7 +323,9 @@ export default function ReviewForm() {
     const vals = Object.values(ratings);
     const ratedCount = vals.filter((v) => v > 0).length;
     if (ratedCount === 0) return 0;
-    return vals.reduce((sum, v) => sum + v, 0) / vals.length;
+    // Average over rated categories only, so the live display isn't diluted
+    // during partial fill. At submit time all four are rated (see isFormValid).
+    return vals.reduce((sum, v) => sum + v, 0) / ratedCount;
   }, [ratings]);
 
   const overallLabel = RATING_LABELS[Math.round(overallRating * 2) / 2] ?? '';
@@ -392,17 +400,45 @@ export default function ReviewForm() {
   const handleSubmit = useCallback(async () => {
     if (!validate()) return;
 
+    if (!hasReviewContext) {
+      toast.error('اطلاعات لازم برای ثبت نظر ناقص است. لطفاً از صفحه‌ی همکاری تأییدشده اقدام کنید.');
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1800));
+    // The API stores a single rating + comment, so fold the category average and
+    // the optional pros/cons/recommendation into the payload to avoid losing input.
+    const ratingInt = Math.max(1, Math.min(5, Math.round(overallRating)));
+    const commentParts = [comment.trim()];
+    if (pros.trim()) commentParts.push(`نقاط قوت: ${pros.trim()}`);
+    if (cons.trim()) commentParts.push(`نقاط ضعف: ${cons.trim()}`);
+    commentParts.push(
+      recommended ? 'این کسب‌وکار را توصیه می‌کنم.' : 'این کسب‌وکار را توصیه نمی‌کنم.'
+    );
 
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    toast.success('نظر شما با موفقیت ثبت شد', {
-      description: 'با تشکر از اشتراک‌گذاری تجربه‌تان.',
-    });
-  }, [validate]);
+    try {
+      await apiFetch('/api/reviews', {
+        method: 'POST',
+        body: JSON.stringify({
+          targetUserId,
+          proposalId,
+          rating: ratingInt,
+          comment: commentParts.join('\n\n'),
+        }),
+      });
+      setIsSuccess(true);
+      toast.success('نظر شما با موفقیت ثبت شد', {
+        description: 'با تشکر از اشتراک‌گذاری تجربه‌تان.',
+      });
+    } catch (err) {
+      const message =
+        err instanceof ApiClientError ? err.message : 'خطا در ثبت نظر. لطفاً دوباره تلاش کنید.';
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [validate, hasReviewContext, overallRating, comment, pros, cons, recommended, targetUserId, proposalId]);
 
   const handleGoBack = useCallback(() => {
     if (specialistId) {
@@ -437,6 +473,16 @@ export default function ReviewForm() {
         </CardHeader>
 
         <CardContent className="pt-6 space-y-6">
+          {/* ── Missing review context warning ─────────────────────────── */}
+          {!hasReviewContext && (
+            <div
+              role="alert"
+              className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-300"
+            >
+              ⚠️ امکان ثبت نظر وجود ندارد. ثبت نظر فقط از طریق یک همکاری تأییدشده (پیشنهاد پذیرفته‌شده) ممکن است.
+            </div>
+          )}
+
           {/* ── Overall Rating Display ─────────────────────────────────── */}
           <div className="flex items-center gap-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl p-4 border border-emerald-100/60 dark:border-emerald-900/30 shadow-sm">
             <div className="flex items-center justify-center w-16 h-16 rounded-xl bg-white dark:bg-gray-800 shadow-sm border">
@@ -630,7 +676,7 @@ export default function ReviewForm() {
           <div>
             <Button
               onClick={handleSubmit}
-              disabled={isSubmitting || !isFormValid}
+              disabled={isSubmitting || !isFormValid || !hasReviewContext}
               className="w-full h-12 text-base font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/25"
               title="ثبت نظر و امتیاز"
             >

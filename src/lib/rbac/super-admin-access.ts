@@ -16,7 +16,7 @@ export function hasSuperAdminPanelAccessFromRoleAndPermissions(
   if (role === 'ADMIN' || role === 'SUPER_ADMIN') return true;
   const set = permissions instanceof Set ? permissions : new Set(permissions);
   if (set.has('*') || set.has('superadmin:access')) return true;
-  return set.size > 0;
+  return false;
 }
 
 /** Same rules as `/api/super-admin/me` — owner, wildcard, or any staff RBAC permission. */

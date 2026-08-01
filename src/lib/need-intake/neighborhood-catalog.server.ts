@@ -322,6 +322,29 @@ export interface GlobalNeighborhoodCandidate {
   score: number;
 }
 
+/**
+ * Above this raw score, a match is exact/near-exact (compact-form equality, full substring
+ * containment of a reasonably long fragment/name) — see `scoreFragmentAgainstEntry`'s paths 1-2.
+ * This kind of evidence is reliable on its own, with or without a city hint (e.g. "سیدی" → مشهد).
+ */
+const STRONG_MATCH_FLOOR = 85;
+
+/**
+ * LRE permissiveness audit finding: below `STRONG_MATCH_FLOOR`, a match is only weak corroborating
+ * evidence (token overlap, prefix, or a blended contextual score — see `scoreFragmentAgainstEntry`
+ * paths 3+) — plausible when a city is already known/hinted (narrows the search space enormously),
+ * but NOT reliable enough to search the entire nationwide catalog unconstrained and trust the
+ * result. Applied only when there is no city hint at all (`preferredCityId` falsy); a hinted
+ * search already gets its own `+18` city-match boost below and needn't be further discounted.
+ * Precision/recall trade-off, explicit: this trades a small amount of recall (a genuinely correct
+ * but weakly-scored nationwide guess may now require a follow-up question instead of auto-
+ * resolving) for a large precision gain (a generic word/short fragment with no city context can no
+ * longer coincidentally out-score its way to auto-resolution nationwide — the original class of
+ * bug this was built to fix, e.g. a fragment fuzzy-matching an unrelated neighborhood by weak
+ * token overlap alone).
+ */
+const NO_HINT_WEAK_MATCH_DISCOUNT = 0.55;
+
 /** Rank neighborhood matches across priority cities (multi-candidate, for LRE). */
 export function rankGlobalNeighborhoodCandidates(
   rawText: string,
@@ -352,6 +375,9 @@ export function rankGlobalNeighborhoodCandidates(
       let score = scoreFragmentAgainstEntry(seed, entry, norm);
       if (score <= 0) score = scoreNeighborhoodAgainstText(norm, entry);
       if (score <= 0) continue;
+      if (!preferredCityId && score < STRONG_MATCH_FLOOR) {
+        score *= NO_HINT_WEAK_MATCH_DISCOUNT;
+      }
       if (preferredCityId && cityId === preferredCityId) score += 18;
       hits.push({
         city: entry.city,
@@ -497,6 +523,9 @@ export function rankNeighborhoodCandidates(
   const top = scored[0].score;
   const second = scored[1].score;
   const compactFrag = compactMatchText(frag);
+  const exactNameMatches = scored.filter(
+    (c) => compactMatchText(c.name) === compactFrag && c.score >= 90
+  );
   const exactAreaMatches = scored.filter((c) => {
     if (c.score < 90) return false;
     const entry = catalog.find((e) => e.slug === c.slug);
@@ -507,7 +536,17 @@ export function rankNeighborhoodCandidates(
     return { candidates: exactAreaMatches, ambiguous: true };
   }
 
-  if (exactAreaMatches.length === 1) {
+  // Exact hood name + other strong similar hits (compound names / shared sub-areas)
+  if (exactNameMatches.length >= 1) {
+    const strongSimilar = scored.filter((c) => c.score >= top - AMBIGUOUS_SCORE_GAP);
+    if (strongSimilar.length >= 2) {
+      return { candidates: scored, ambiguous: true };
+    }
+    return { candidates: scored, ambiguous: false };
+  }
+
+  // Lone sub-area hit without a same-named hood — keep previous auto-resolve behavior
+  if (exactAreaMatches.length === 1 && top - second >= AMBIGUOUS_SCORE_GAP) {
     return { candidates: scored, ambiguous: false };
   }
 

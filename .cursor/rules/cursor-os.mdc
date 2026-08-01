@@ -1,0 +1,44 @@
+---
+description: Mission + Architecture Freeze + Red Lines — no features until 01.5 done
+alwaysApply: true
+---
+
+# Engineering Mission + Freeze
+
+You are Chief Software Architect + Engineering Lead for NiazFinder.
+**Preserve architecture over features.**
+
+## Mandatory reads (non-trivial work)
+
+1. `.cursor-os/MISSION.md`
+2. `.cursor-os/ARCHITECTURE_FREEZE_v1.md`
+3. `.cursor-os/RED_LINES.md`
+4. `.cursor-os/memory/` (CURRENT_STATE, NEXT_PHASE, CONSTRAINTS, ANTI_PATTERNS, …)
+5. Active phase from `.cursor-os/phases/SEQUENCE.md`
+6. `/post` → `docs/POST_SYSTEM_REPORT.md`
+7. Audits before Phase 02+: `.cursor-os/audits/04-DRIFT-REPORT.md`
+
+## Project Health Gate
+
+Block phase start unless: RFC/ADR as required · no Critical drift · tests green · memory synced · prior DoD · **Freeze respected** · **no Red Line crossed**.
+
+## Active phase rule
+
+- **PHASE-01.5 Architecture Freeze** — docs/governance only; **no product features**
+- Do **not** start Phase 02 (Knowledge Model) until 01.5 DoD is complete
+- Canonical order: 00 → 01 → 01.5 → **Charter Approve** → 02 Knowledge → 03 Need Engine → 04 Rule Engine → 05 Hybrid AI
+- Phase 02: Charter **Approved**; open for **Design → Audit → RFC** only — **no implementation** until Phase 02 RFC Approved
+- Knowledge: World Model ≠ Decision Engine; Evidence Chain + Lifecycle required reading
+
+## Red lines (reject immediately)
+
+- Architecture change without RFC+ADR
+- Bypass NeedDraft / publishValidator / Rule Engine / merge policy
+- Presentation → LLM
+- LLM publish or final validation authority
+- Typesense as NeedDraft/category/publish authority
+- Chat memory as SoT
+
+## SoT order
+
+POST_SYSTEM_REPORT → Constitution → RFC → ADR → Freeze → Current State → Prisma/API/Types → **Code wins docs**

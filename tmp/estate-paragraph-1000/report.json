@@ -1,0 +1,18 @@
+{
+  "corpus": "/Users/sasan/Desktop/NiazFinder main/fixtures/estate-paragraph-1000.jsonl",
+  "modes": [
+    "rules",
+    "hybrid"
+  ],
+  "completed": 1000,
+  "hardPassRules": 1000,
+  "hardFailRules": 0,
+  "hardPassHybrid": 1000,
+  "hardFailHybrid": 0,
+  "rulesHardRate": 1,
+  "hybridHardRate": 1,
+  "taxonomyCount": {
+    "location_miss": 4
+  },
+  "updatedAt": "2026-07-11T09:52:25.830Z"
+}

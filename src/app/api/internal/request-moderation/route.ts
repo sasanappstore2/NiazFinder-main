@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { evaluateRequestModeration } from '@/lib/request-moderation/rules';
 import { passesIntakeAutoModerationGate } from '@/lib/need-intake/intake-auto-moderation-policy';
 import { applyModerationAction } from '@/lib/rbac/request-moderation';
+import { verifyInternalApiSecret } from '@/lib/security/internal-secret';
 
 export const runtime = 'nodejs';
 
@@ -12,13 +13,12 @@ export const runtime = 'nodejs';
  */
 export async function POST(request: NextRequest) {
   try {
-    const secret = process.env.INTERNAL_API_SECRET?.trim();
-    if (!secret) {
+    const auth = verifyInternalApiSecret(request);
+    if (auth === 'unconfigured') {
       console.error('[internal/request-moderation] INTERNAL_API_SECRET not configured');
       return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });
     }
-    const header = request.headers.get('x-internal-secret');
-    if (header !== secret) {
+    if (auth === 'mismatch') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

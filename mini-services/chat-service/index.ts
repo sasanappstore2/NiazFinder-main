@@ -473,12 +473,15 @@ io.on('connection', (socket: AuthenticatedSocket) => {
   // ─── Event: message:preview (legacy — same hot path as send) ───────────
   socket.on('message:preview', (payload: MessagePreviewPayload) => {
     if (!payload.conversationId || !payload.content?.trim() || !payload.clientTempId) return;
-    const participants = conversationCache.get(payload.conversationId);
-    if (!participants?.has(userId)) return;
-    const recipientUserId = participants.get(userId);
-    fanoutMessageNew(
-      io,
-      {
+    // Same rate-limit + participant authorization as message:send — otherwise a
+    // client could flood a peer with fake message:new events.
+    if (!allowSend(userId)) {
+      socket.emit('error', { message: 'Rate limit exceeded' });
+      return;
+    }
+
+    const emitPreview = (recipientUserId: string | undefined) => {
+      fanoutMessageNew(io, {
         ...buildInstantBroadcast(
           {
             conversationId: payload.conversationId,
@@ -490,8 +493,27 @@ io.on('connection', (socket: AuthenticatedSocket) => {
           payload.clientTempId
         ),
         recipientUserId,
+      });
+    };
+
+    const cached = conversationCache.get(payload.conversationId);
+    if (cached?.has(userId)) {
+      emitPreview(cached.get(userId));
+      return;
+    }
+
+    void (async () => {
+      const resolved = await resolveParticipants(
+        payload.conversationId,
+        loadConversationParticipants,
+        conversationCache
+      );
+      if (!resolved?.map.has(userId)) {
+        socket.emit('error', { message: 'Access denied to conversation' });
+        return;
       }
-    );
+      emitPreview(resolved.map.get(userId));
+    })();
   });
 
   // ─── Event: message:send — emit FIRST (~0ms), persist AFTER ───────────

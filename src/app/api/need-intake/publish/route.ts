@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser, createSlug } from '@/lib/auth';
 import { mapDraftToCreateRequest } from '@/lib/need-intake/map-to-request';
@@ -14,6 +14,20 @@ import { compareLegacyAndCanonical } from '@/intake/legacy/compareLegacyAndCanon
 import { recordIntakeMigrationEvent } from '@/intake/migration/events';
 import { getIntakeMigrationFeatureFlags } from '@/intake/migration/feature-flags';
 import { runPublishShadowMode } from '@/intake/migration/shadow-publish';
+import { runCognitivePipeline } from '@/cognitive-engine/pipeline/run-cognitive-pipeline';
+import { ENGINE_VERSION } from '@/cognitive-engine/canonical-need/build-canonical-need';
+import { RULES_REGISTRY_VERSION } from '@/intake/rules/registry-version';
+import { legacyDraftToSemanticSnapshot } from '@/semantic-evaluation-engine/adapters/legacy-to-snapshot';
+import { cognitiveResultToSemanticSnapshot } from '@/semantic-evaluation-engine/adapters/cognitive-to-snapshot';
+import { compareSnapshots } from '@/semantic-evaluation-engine/comparator/compare-snapshots';
+import { applyScoringPolicy } from '@/semantic-evaluation-engine/policy/apply-scoring-policy';
+import { DEFAULT_SCORING_POLICY } from '@/semantic-evaluation-engine/policy/default-policy';
+import {
+  SEE_FIELD_SPECS,
+  SEE_ONTOLOGY_PROVIDERS,
+  SEE_COMPARATOR_ENGINE_VERSION,
+  SEE_EVALUATION_REPORT_VERSION,
+} from '@/semantic-evaluation-engine/config';
 import {
   rejectListingTitleReason,
   truncateListingTitle,
@@ -54,6 +68,95 @@ function enqueueTrainingCapture(
     },
     serviceRequestId,
     sessionId,
+  });
+}
+
+/**
+ * RFC-002 Phase 7 — cognitive-engine shadow comparison, observability only. Never blocks the
+ * response, never affects what gets published. Scheduled via Next.js's `after()` rather than a
+ * bare fire-and-forget `void (async () => {})()` — the latter is NOT guaranteed to run to
+ * completion once the response is sent (confirmed empirically: the existing
+ * `ShadowPublishComparison`/`recordIntakeMigrationEvent` calls elsewhere in this file are
+ * sub-100ms and reliably complete, but this one awaits a ~10-30s LLM call via
+ * `runCognitivePipeline`, and with a bare `void (async () => {})()` those events silently never
+ * landed in the DB). `after()` explicitly keeps the request's execution context alive until the
+ * callback finishes. Wrapped in its own try/catch regardless, so a failure here can never surface
+ * to the client. Called from both publish success paths (sync-fallback and async/queue) — the
+ * pre-existing `ShadowPublishComparison` mechanism this mirrors only covered the async path,
+ * which meant it silently never fired in any environment where the queue falls back to sync (as
+ * this dev environment does for every request).
+ *
+ * Rewired (Step 6, `PLAN/semantic-comparator-architecture.md` §12) to run through the Semantic
+ * Evaluation Engine (adapters -> Comparator -> Scoring Policy) instead of the superseded
+ * `src/cognitive-engine/shadow/compare-with-legacy.ts` one-off comparator
+ * (`PLAN/phase7-drift-investigation-report.md` — that comparator was the direct cause of the
+ * "100% drift" false alarm the six-phase investigation resolved). That old file and its self-test
+ * (`test:cognitive-shadow-compare`) are left in place, unused by this route, pending a separate
+ * cleanup decision — not deleted here.
+ *
+ * Payload migration: the event TYPE and its `equal`/`diffs` fields are kept byte-compatible with
+ * `getCognitiveEngineShadowStats` (no reader changes needed) — but their MEANING is now correct
+ * rather than merely present. `equal` no longer counts a category refinement or a
+ * location-not-in-sourceText artifact as drift; only a genuine `mismatch`/`contradiction-detected`
+ * field does. The full `comparisonReport`/`finalEvaluation` (§16 Historical Record) are attached
+ * as new fields for any future, richer consumer.
+ */
+function scheduleCognitiveEngineShadowComparison(draft: NeedDraft, serviceRequestId: string): void {
+  if (!getIntakeMigrationFeatureFlags().cognitiveEngineShadowEnabled) return;
+  after(async () => {
+    try {
+      const now = new Date().toISOString();
+      const result = await runCognitivePipeline(draft.sourceText, { now });
+      if (!result) return;
+
+      const legacySnapshot = legacyDraftToSemanticSnapshot(draft, {
+        snapshotId: randomUUID(),
+        producedAt: now,
+      });
+      const cognitiveSnapshot = cognitiveResultToSemanticSnapshot(result, {
+        snapshotId: randomUUID(),
+        producedAt: now,
+      });
+
+      const comparisonReport = compareSnapshots(legacySnapshot, cognitiveSnapshot, {
+        reportId: randomUUID(),
+        comparedAt: now,
+        fieldSpecs: SEE_FIELD_SPECS,
+        ontologyProviders: SEE_ONTOLOGY_PROVIDERS,
+        comparatorEngineVersion: SEE_COMPARATOR_ENGINE_VERSION,
+      });
+
+      const finalEvaluation = applyScoringPolicy(comparisonReport, DEFAULT_SCORING_POLICY, {
+        evaluationId: randomUUID(),
+        evaluationReportVersion: SEE_EVALUATION_REPORT_VERSION,
+      });
+
+      const equal = comparisonReport.counts.mismatch === 0 && comparisonReport.counts.contradictionDetected === 0;
+      const diffs = comparisonReport.fieldResults
+        .filter((f) => f.status === 'mismatch' || f.status === 'contradiction-detected')
+        .map((f) => ({ field: f.fieldId }));
+
+      await recordIntakeMigrationEvent('CognitiveEngineShadowComparison', {
+        requestId: serviceRequestId,
+        templateId: draft.templateId,
+        equal,
+        diffs,
+        readinessLevel: result.readiness.level,
+        comparisonReport,
+        finalEvaluation,
+        // PVW §2.4 amendment (approved by the Operationalization Roadmap; closes gap G4):
+        // production shadow events are attributable to the exact engine version that produced
+        // them, so Pillar B can group by version boundary instead of guessing from timestamps.
+        engineVersion: {
+          label: `${ENGINE_VERSION}+rules-${RULES_REGISTRY_VERSION}`,
+          cognitiveEngineVersion: ENGINE_VERSION,
+          rulesRegistryVersion: RULES_REGISTRY_VERSION,
+          comparatorEngineVersion: SEE_COMPARATOR_ENGINE_VERSION,
+        },
+      });
+    } catch (err) {
+      console.error('[cognitive-engine-shadow]', err);
+    }
   });
 }
 
@@ -253,6 +356,8 @@ export async function POST(request: NextRequest) {
         syncFallback: true,
       });
 
+      scheduleCognitiveEngineShadowComparison(draft, serviceRequest.id);
+
       enqueueTrainingCapture(draft, serviceRequest.id, body.sessionId);
 
       return NextResponse.json({
@@ -347,6 +452,8 @@ export async function POST(request: NextRequest) {
         canonicalHash: serviceRequestV2.canonicalHash,
       });
     }
+
+    scheduleCognitiveEngineShadowComparison(draft, serviceRequest.id);
 
     enqueueTrainingCapture(draft, serviceRequest.id, body.sessionId);
 

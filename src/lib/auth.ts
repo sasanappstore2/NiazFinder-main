@@ -3,6 +3,24 @@ import { db } from '@/lib/db';
 import type { Prisma } from '@prisma/client';
 import { devAuthFallbackEnabled, devGetUserByToken, isDevAuthToken } from '@/lib/auth/dev-phone-auth';
 
+const LAST_SEEN_TOUCH_INTERVAL_MS = 5 * 60 * 1000;
+const lastSeenTouchAt = new Map<string, number>();
+
+function touchLastSeenFireAndForget(userId: string, lastSeenAt: Date | null | undefined): void {
+  const now = Date.now();
+  const previous = lastSeenAt?.getTime() ?? lastSeenTouchAt.get(userId) ?? 0;
+  if (now - previous < LAST_SEEN_TOUCH_INTERVAL_MS) return;
+  lastSeenTouchAt.set(userId, now);
+  void db.user
+    .update({
+      where: { id: userId },
+      data: { lastSeenAt: new Date(now) },
+    })
+    .catch(() => {
+      lastSeenTouchAt.delete(userId);
+    });
+}
+
 export interface AuthUser {
   id: string;
   email: string;
@@ -88,10 +106,7 @@ export async function getAuthUser(request: Request): Promise<AuthUser | null> {
     }
 
     // Touch last seen only — online is owned by chat-service socket presence.
-    await db.user.update({
-      where: { id: user.id },
-      data: { lastSeenAt: new Date() },
-    });
+    touchLastSeenFireAndForget(user.id, user.lastSeenAt);
 
     return {
       id: user.id,

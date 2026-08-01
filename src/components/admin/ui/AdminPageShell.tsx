@@ -19,6 +19,7 @@ const SECTION_LABELS: Record<AdminSectionId, string> = {
   requests: 'نیازها',
   proposals: 'پیشنهادها',
   businesses: 'کسب‌وکارها',
+  filings: 'فایلینگ',
   outreach: 'Outreach',
   'need-alerts': 'Alertهای مرور',
   users: 'کاربران',

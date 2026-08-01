@@ -262,8 +262,8 @@
       "id": "vehicle-bicycle",
       "text": "دوچرخه کوهستان",
       "expect": {
-        "vertical": "services",
-        "categorySlug": "bicycle-repair"
+        "vertical": "products",
+        "categorySlug": "bicycle"
       }
     },
     {
@@ -278,8 +278,8 @@
       "id": "service-locksmith",
       "text": "کلیدساز برای در آپارتمان",
       "expect": {
-        "vertical": "real-estate",
-        "categorySlug": "apartment-sale"
+        "vertical": "services",
+        "categorySlug": "locksmith-repair"
       }
     },
     {
@@ -319,7 +319,7 @@
       "text": "کلینیک دندانپزشکی برای اجاره",
       "expect": {
         "vertical": "real-estate",
-        "categorySlug": "apartment-rent"
+        "categorySlug": "office-rent"
       }
     },
     {
@@ -374,8 +374,8 @@
       "id": "vehicle-scooter",
       "text": "اسکوتر برقی",
       "expect": {
-        "vertical": "services",
-        "categorySlug": "electrical"
+        "vertical": "products",
+        "categorySlug": "scooter"
       }
     },
     {
@@ -400,6 +400,38 @@
       "expect": {
         "vertical": "social",
         "categorySlug": "conference"
+      }
+    },
+    {
+      "id": "product-bicycle-buy-city",
+      "text": "یه دوچرخه کوهستان دست دوم میخوام تو تبریز",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "bicycle"
+      }
+    },
+    {
+      "id": "product-fitness-treadmill",
+      "text": "تردمیل خانگی دست دوم",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "fitness-equipment"
+      }
+    },
+    {
+      "id": "product-camping-sleepingbag",
+      "text": "کیسه خواب کوهنوردی میخوام",
+      "expect": {
+        "vertical": "products",
+        "categorySlug": "camping-outdoor"
+      }
+    },
+    {
+      "id": "service-bicycle-puncture",
+      "text": "دوچرخه‌ام پنچر شده پنچرگیری میخوام",
+      "expect": {
+        "vertical": "services",
+        "categorySlug": "bicycle-repair"
       }
     }
   ]

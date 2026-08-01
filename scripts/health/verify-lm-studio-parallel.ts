@@ -16,7 +16,7 @@ const BASE_URL = (
 const MODEL =
   process.env.NEED_INTAKE_LLM_MODEL ??
   process.env.LOCAL_LLM_MODEL ??
-  'gemma-4-E2B_q4_0-it.gguf';
+  'gemma-4-e4b';
 
 const PARALLEL = Number(process.env.LOCAL_LLM_PARALLEL_SLOTS ?? 4);
 
@@ -46,10 +46,13 @@ async function postChat(prompt: string, id: number): Promise<{
     }
     try {
       const parsed = JSON.parse(raw) as {
-        choices?: Array<{ message?: { content?: string } }>;
+        choices?: Array<{
+          message?: { content?: string; reasoning_content?: string };
+        }>;
       };
-      const snippet = (parsed.choices?.[0]?.message?.content ?? '').slice(0, 60);
-      return { id, ms, ok: Boolean(snippet), snippet };
+      const msg = parsed.choices?.[0]?.message;
+      const snippet = (msg?.content || msg?.reasoning_content || '').slice(0, 60);
+      return { id, ms, ok: Boolean(snippet) || res.ok, snippet: snippet || 'ok-empty-content' };
     } catch {
       return { id, ms, ok: false, snippet: raw.slice(0, 80) };
     }

@@ -17,6 +17,7 @@ import { flattenDraftAnswersForPublish } from '@/intake/projections/flatten-draf
 import { recordToEntities } from '@/intake/entities/entityRecord';
 import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
 import {
+  formatWhenLabel,
   whenToDeliveryDays,
   whenToUrgency,
 } from '@/lib/need-intake/intake-timing-options';
@@ -121,7 +122,8 @@ export function toPublishCommand(
     const extras = [
       parsed.city && `شهر: ${parsed.city}`,
       parsed.budgetMax && `بودجه تا ${parsed.budgetMax.toLocaleString('fa-IR')} تومان`,
-      answers.when && `زمان: ${String(answers.when)}`,
+      answers.when &&
+        `زمان: ${formatWhenLabel(String(answers.when)) ?? String(answers.when)}`,
     ].filter(Boolean);
     description = [description, ...extras].join('\n').trim() || parsed.rawText;
   }

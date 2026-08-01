@@ -1,9 +1,7 @@
 import { db } from '@/lib/db';
 import { fetchLivePresence } from '@/lib/chat/live-presence';
 import { resolveUserOnline } from '@/lib/chat/resolve-online';
-import {
-  isPlatformAiUserId,
-} from '@/lib/platform-ai/conversation';
+import { isPlatformAiUserId } from '@/lib/platform-ai/conversation';
 import { getPlatformAiUserId } from '@/lib/platform-ai/user';
 import { sanitizeMessageContentForClient } from '@/lib/persian-encoding-guard';
 
@@ -76,6 +74,7 @@ export async function getConversationDetailForUser(
   const isUser1 = conv.userId1 === userId;
   const otherUser = isUser1 ? conv.user2 : conv.user1;
   const livePresence = await fetchLivePresence([otherUser.id]);
+  const isPlatformBot = isPlatformAiUserId(otherUser.id, platformAiUserId);
 
   return {
     id: conv.id,
@@ -92,10 +91,12 @@ export async function getConversationDetailForUser(
       firstName: otherUser.firstName,
       lastName: otherUser.lastName,
       avatar: otherUser.avatar,
-      online: resolveUserOnline(otherUser.id, livePresence, {
-        online: otherUser.online,
-        lastSeenAt: otherUser.lastSeenAt?.toISOString() ?? null,
-      }),
+      online: isPlatformBot
+        ? true
+        : resolveUserOnline(otherUser.id, livePresence, {
+            online: otherUser.online,
+            lastSeenAt: otherUser.lastSeenAt?.toISOString() ?? null,
+          }),
       lastSeenAt: otherUser.lastSeenAt?.toISOString() ?? null,
     },
     businessContext: conv.contactPoint
@@ -105,6 +106,6 @@ export async function getConversationDetailForUser(
           logo: conv.contactPoint.profile.logo,
         }
       : undefined,
-    isPlatformBot: isPlatformAiUserId(otherUser.id, platformAiUserId),
+    isPlatformBot,
   };
 }

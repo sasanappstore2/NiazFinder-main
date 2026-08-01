@@ -1,0 +1,876 @@
+[
+  {
+    "text": "یه آپارتمان 180 متری تو فرامرز عباسی میخوام",
+    "expected": {
+      "category": "apartment-rent",
+      "city": "mashhad",
+      "neighborhood": "شهید-فرامرز-عباسی"
+    }
+  },
+  {
+    "text": "خانه ویلایی در الهیه",
+    "expected": {
+      "category": "villa-rent",
+      "city": "tehran",
+      "neighborhood": "الهیه"
+    }
+  },
+  {
+    "text": "مغازه برای اجاره در احمدآباد",
+    "expected": {
+      "category": "shop-rent",
+      "city": "mashhad",
+      "neighborhood": "احمدآباد",
+      "transactionType": "RENT"
+    }
+  },
+  {
+    "text": "دفتر کار در سجاد",
+    "expected": {
+      "category": "office-rent",
+      "city": "mashhad",
+      "neighborhood": "سجاد"
+    }
+  },
+  {
+    "text": "پژو 207 سقف شیشه ای میخوام",
+    "expected": {
+      "category": "car",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "سانتافه مدل 2022",
+    "expected": {
+      "category": "car",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "پراید زیر 300 میلیون",
+    "expected": {
+      "category": "car",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "لوله کش فوری میخوام",
+    "expected": {
+      "category": "plumbing"
+    }
+  },
+  {
+    "text": "برقکار برای ساختمان",
+    "expected": {
+      "category": "electrical"
+    }
+  },
+  {
+    "text": "تعمیرکار کولر گازی فوری",
+    "expected": {
+      "category": "repairs"
+    }
+  },
+  {
+    "text": "استخدام برنامه نویس ری اکت",
+    "expected": {
+      "category": "it-services"
+    }
+  },
+  {
+    "text": "طراح گرافیک دورکار",
+    "expected": {}
+  },
+  {
+    "text": "حسابدار خانم",
+    "expected": {}
+  },
+  {
+    "text": "خونه میخوام",
+    "expected": {
+      "category": "villa-rent"
+    }
+  },
+  {
+    "text": "ماشین خوب میخوام",
+    "expected": {
+      "category": "car"
+    }
+  },
+  {
+    "text": "یه متخصص نیاز دارم",
+    "expected": {}
+  },
+  {
+    "text": "دفتر کار لازم دارم",
+    "expected": {
+      "category": "office-rent"
+    }
+  },
+  {
+    "text": "آپارتمان دو خواب رهن کامل غرب تهران تا ۲ میلیارد",
+    "expected": {
+      "category": "apartment-rent",
+      "city": "tehran",
+      "transactionType": "FULL_DEPOSIT"
+    }
+  },
+  {
+    "text": "رهن و اجاره آپارتمان ۹۰ متری سعادت‌آباد",
+    "expected": {
+      "category": "apartment-rent",
+      "transactionType": "DEPOSIT_AND_RENT"
+    }
+  },
+  {
+    "text": "میخوام آپارتمان ۱۰۰ متری در مشهد بخرم",
+    "expected": {
+      "category": "residential-sale",
+      "city": "mashhad",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خونه میخوام در محدوده ولنجک تهران",
+    "expected": {
+      "category": "villa-rent",
+      "city": "tehran"
+    }
+  },
+  {
+    "text": "میفروشم ویلا ۳۰۰ متری شمال",
+    "expected": {
+      "category": "residential-sale",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "اجاره ماهانه آپارتمان ۷۰ متری یوسف‌آباد",
+    "expected": {
+      "category": "apartment-rent",
+      "transactionType": "RENT"
+    }
+  },
+  {
+    "text": "فروش دفتر کار در ونک تهران",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "neighborhood": "ونک",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "اجاره مغازه در بازار تهران",
+    "expected": {
+      "category": "shop-rent",
+      "city": "tehran",
+      "transactionType": "RENT"
+    }
+  },
+  {
+    "text": "زمین کلنگی ۵۰۰ متری کرج برای فروش",
+    "expected": {
+      "category": "land-sale",
+      "city": "alborz-karaj",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "آژانس املاک برای فروش آپارتمان در شیراز",
+    "expected": {
+      "category": "agency-services",
+      "city": "shiraz",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "پیش‌فروش واحد در پروژه جدید",
+    "expected": {
+      "category": "pre-sale-services",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "اجاره خانه ویلایی در شمال تهران",
+    "expected": {
+      "category": "villa-rent",
+      "city": "tehran",
+      "transactionType": "RENT"
+    }
+  },
+  {
+    "text": "یک خونه ویلایی میخوام ۵۰۰ متر برای مشارکت در ساخت عرض ۱۲ باشه",
+    "expected": {
+      "category": "villa-rent"
+    }
+  },
+  {
+    "text": "یک خونه مجردی ۵۰ متری میخوام منطقه سجاد مشهد",
+    "expected": {
+      "category": "villa-rent",
+      "city": "mashhad",
+      "neighborhood": "سجاد"
+    }
+  },
+  {
+    "text": "اجاره روزانه سوئیت ۷۰ متری تهران برای ۳ نفر ۲ میلیون هر شب",
+    "expected": {
+      "category": "suite-apartment-rent",
+      "city": "tehran",
+      "transactionType": "DAILY_RENT"
+    }
+  },
+  {
+    "text": "خرید آپارتمان ۱۰۰ متری تهران متری ۴۵ میلیون",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام یک خونه آپارتمانی بخرم تو فرامرز عباسی ۱۵۰ متر حداکثر",
+    "expected": {
+      "category": "residential-sale",
+      "city": "mashhad",
+      "neighborhood": "شهید-فرامرز-عباسی",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "اجاره ماهانه زمین ۵۰۰ متری در کرج",
+    "expected": {
+      "category": "land-rent",
+      "city": "alborz-karaj",
+      "transactionType": "RENT"
+    }
+  },
+  {
+    "text": "رهن کامل زمین کلنگی ۳۰۰ متری تهران",
+    "expected": {
+      "category": "residential-rent",
+      "city": "tehran",
+      "transactionType": "FULL_DEPOSIT"
+    }
+  },
+  {
+    "text": "رهن و اجاره زمین ۸۰۰ متری در مشهد",
+    "expected": {
+      "category": "land-rent",
+      "city": "mashhad",
+      "transactionType": "DEPOSIT_AND_RENT"
+    }
+  },
+  {
+    "text": "دنبال پژو ۲۰۶ سفید کارکرده در اصفهان",
+    "expected": {
+      "city": "isfahan"
+    }
+  },
+  {
+    "text": "پراید ۱۳۱ مدل ۹۸ میفروشم",
+    "expected": {
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "موتور هوندا کارکرده میخرم تهران",
+    "expected": {
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "اجاره خودرو سواری برای سفر",
+    "expected": {
+      "category": "car",
+      "transactionType": "RENT"
+    }
+  },
+  {
+    "text": "سمند EF7 کم کارکرد مشهد",
+    "expected": {
+      "city": "mashhad"
+    }
+  },
+  {
+    "text": "گوشی آیفون ۱۳ کارکرده میخرم تهران",
+    "expected": {
+      "category": "mobile-phone",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "لپ تاپ دل میفروشم",
+    "expected": {
+      "category": "laptop",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "تبلت سامسونگ برای خرید",
+    "expected": {
+      "category": "tablet",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "یخچال ساید سامسونگ کارکرده",
+    "expected": {
+      "category": "refrigerator"
+    }
+  },
+  {
+    "text": "مبل راحتی دست دوم تهران",
+    "expected": {
+      "city": "tehran"
+    }
+  },
+  {
+    "text": "تعمیرکار کولر گازی فوری غرب تهران",
+    "expected": {
+      "category": "repairs",
+      "city": "tehran"
+    }
+  },
+  {
+    "text": "اسباب کشی از تهران به کرج فردا",
+    "expected": {
+      "category": "moving",
+      "city": "tehran"
+    }
+  },
+  {
+    "text": "لوله‌کشی فوری نشتی آب",
+    "expected": {
+      "category": "plumbing"
+    }
+  },
+  {
+    "text": "نظافتچی منزل هفتگی سعادت آباد",
+    "expected": {
+      "category": "cleaning"
+    }
+  },
+  {
+    "text": "نقاش ساختمان آپارتمان ۱۲۰ متری",
+    "expected": {
+      "category": "apartment-rent"
+    }
+  },
+  {
+    "text": "طراحی سایت فروشگاهی با سئو",
+    "expected": {
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "نیاز به نیروی اداری با سابقه",
+    "expected": {
+      "category": "admin-management"
+    }
+  },
+  {
+    "text": "استخدام کارشناس بازاریابی دیجیتال تهران",
+    "expected": {
+      "category": "marketing-sales",
+      "city": "tehran"
+    }
+  },
+  {
+    "text": "خونه میخام تهران",
+    "expected": {
+      "category": "villa-rent",
+      "city": "tehran"
+    }
+  },
+  {
+    "text": "آپارتمان تا ۵ میلیون اجاره ماهانه تهران",
+    "expected": {
+      "category": "apartment-rent",
+      "city": "tehran",
+      "transactionType": "RENT"
+    }
+  },
+  {
+    "text": "تعمیر یخچال فوری امروز",
+    "expected": {
+      "category": "repairs"
+    }
+  },
+  {
+    "text": "پارکینگ آپارتمان برای اجاره",
+    "expected": {
+      "category": "apartment-rent",
+      "transactionType": "RENT"
+    }
+  },
+  {
+    "text": "سامسونگ s24 نو میخرم",
+    "expected": {
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "ملک در غرب تهران تا ۳ میلیارد",
+    "expected": {
+      "city": "tehran"
+    }
+  },
+  {
+    "text": "استخدام نظافتچی منزل",
+    "expected": {
+      "category": "cleaning"
+    }
+  },
+  {
+    "text": "بلیط کنسرت تهران",
+    "expected": {
+      "category": "tickets",
+      "city": "tehran"
+    }
+  },
+  {
+    "text": "گربه پرشین فروشی",
+    "expected": {
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "آرایشگر عروس در تهران",
+    "expected": {
+      "city": "tehran"
+    }
+  },
+  {
+    "text": "وانت باربری دربستی",
+    "expected": {
+      "category": "moving"
+    }
+  },
+  {
+    "text": "استخدام مهندس برق صنعتی",
+    "expected": {
+      "category": "industrial-rent"
+    }
+  },
+  {
+    "text": "همایش استارتاپ ثبت نام",
+    "expected": {
+      "category": "conference"
+    }
+  },
+  {
+    "text": "سوله صنعتی ۱۰۰۰ متری فروش",
+    "expected": {
+      "category": "commercial-sale",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "قایق تفریحی دست دوم",
+    "expected": {
+      "category": "boat"
+    }
+  },
+  {
+    "text": "دوربین کانن دست دوم",
+    "expected": {
+      "category": "camera"
+    }
+  },
+  {
+    "text": "میخوام آپارتمان 55 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید آپارتمان در ولنجک تهران حدود 200 متر",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام آپارتمان 800 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید آپارتمان در ولنجک تهران حدود 180 متر",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام آپارتمان 500 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید آپارتمان در ولنجک تهران حدود 150 متر",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام آپارتمان 300 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید آپارتمان در ولنجک تهران حدود 120 متر",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام ویلا 55 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید ویلا در ولنجک تهران حدود 200 متر",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام ویلا 800 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید ویلا در ولنجک تهران حدود 180 متر",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام ویلا 500 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید ویلا در ولنجک تهران حدود 150 متر",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام ویلا 300 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید ویلا در ولنجک تهران حدود 120 متر",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام زمین 55 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید کلنگی در ولنجک تهران حدود 85 متر",
+    "expected": {
+      "category": "land-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام کلنگی 150 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "land-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید زمین در ولنجک تهران حدود 200 متر",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام زمین 800 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید کلنگی در ولنجک تهران حدود 70 متر",
+    "expected": {
+      "category": "land-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام کلنگی 120 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "land-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید زمین در ولنجک تهران حدود 180 متر",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام دفتر کار 55 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید دفتر تجاری در ولنجک تهران حدود 85 متر",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام دفتر کار 150 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید دفتر تجاری در ولنجک تهران حدود 200 متر",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام دفتر کار 800 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید دفتر تجاری در ولنجک تهران حدود 70 متر",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام دفتر کار 120 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید دفتر تجاری در ولنجک تهران حدود 180 متر",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام مغازه 55 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید مغازه سر پیچ در ولنجک تهران حدود 85 متر",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام مغازه 150 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید مغازه سر پیچ در ولنجک تهران حدود 200 متر",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام مغازه 800 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید مغازه سر پیچ در ولنجک تهران حدود 70 متر",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میخوام مغازه 120 متری در ولنجک تهران بخرم",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "خرید مغازه سر پیچ در ولنجک تهران حدود 180 متر",
+    "expected": {
+      "category": "commercial-sale",
+      "city": "tehran",
+      "transactionType": "BUY"
+    }
+  },
+  {
+    "text": "میفروشم آپارتمان 55 متری در ولنجک تهران",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "آپارتمان 100 متری ولنجک تهران برای فروش",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "فروشنده آپارتمان در ولنجک تهران با قیمت مناسب",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "آگهی فروش آپارتمان 800 متری ولنجک تهران",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "فروش آپارتمان در ولنجک تهران",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "میفروشم آپارتمان 180 متری در ولنجک تهران",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "آپارتمان 500 متری ولنجک تهران برای فروش",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "آگهی فروش آپارتمان 150 متری ولنجک تهران",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "SELL"
+    }
+  },
+  {
+    "text": "میفروشم ویلا 55 متری در ولنجک تهران",
+    "expected": {
+      "category": "residential-sale",
+      "city": "tehran",
+      "transactionType": "SELL"
+    }
+  }
+]

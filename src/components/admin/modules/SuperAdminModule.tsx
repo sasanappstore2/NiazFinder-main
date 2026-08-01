@@ -14,6 +14,7 @@ import { UsersPanel } from './UsersPanel';
 import { RequestsPanel } from './RequestsPanel';
 import { ProposalsPanel } from './ProposalsPanel';
 import { BusinessesPanel } from './BusinessesPanel';
+import { FilingsPanel } from './FilingsPanel';
 import { OutreachPanel } from './OutreachPanel';
 import { NeedAlertsPanel } from './NeedAlertsPanel';
 import { ReportsPanel } from './ReportsPanel';
@@ -112,6 +113,8 @@ export function SuperAdminModule({ section }: { section: AdminSectionId }) {
       return <ProposalsPanel />;
     case 'businesses':
       return <BusinessesPanel />;
+    case 'filings':
+      return <FilingsPanel />;
     case 'outreach':
       return <OutreachPanel />;
     case 'need-alerts':

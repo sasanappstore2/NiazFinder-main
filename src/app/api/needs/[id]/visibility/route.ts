@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getNeedVisibility } from '@/lib/smart-matching/need-visibility';
-import { requireAuthUser, proxyToNest } from '@/lib/smart-matching/api-helpers';
+import { requireAuthUser, smartMatchingErrorResponse } from '@/lib/smart-matching/api-helpers';
+import { db } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
@@ -10,12 +11,25 @@ export async function GET(
   if (!user) return response!;
 
   const { id } = await context.params;
-  const proxied = await proxyToNest(request, `/api/smart-matching/needs/${id}/visibility`);
-  if (proxied) return proxied;
 
-  const visibility = await getNeedVisibility(id);
-  if (!visibility) {
-    return NextResponse.json({ error: 'نیاز یافت نشد' }, { status: 404 });
+  try {
+    const need = await db.serviceRequest.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+    if (!need) {
+      return NextResponse.json({ error: 'نیاز یافت نشد' }, { status: 404 });
+    }
+    if (need.userId !== user.id) {
+      return NextResponse.json({ error: 'دسترسی غیرمجاز' }, { status: 403 });
+    }
+
+    const visibility = await getNeedVisibility(id);
+    if (!visibility) {
+      return NextResponse.json({ error: 'نیاز یافت نشد' }, { status: 404 });
+    }
+    return NextResponse.json(visibility);
+  } catch (err) {
+    return smartMatchingErrorResponse(err);
   }
-  return NextResponse.json(visibility);
 }

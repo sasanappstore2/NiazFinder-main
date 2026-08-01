@@ -9,8 +9,10 @@ import {
   ChevronDown,
   ChevronUp,
   MessageCircle,
+  Star,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -215,15 +217,25 @@ export function OwnerProposalsSection({ requestId, defaultOpen = false }: OwnerP
             <MessageCircle className="size-4 text-primary" />
             با {accepted.user.firstName} همکاری را شروع کنید
           </p>
-          <ContactActions
-            otherUserId={accepted.user.id}
-            requestId={requestId}
-            displayName={`${accepted.user.firstName} ${accepted.user.lastName}`}
-            hasPhone
-            chatEnabled
-            showProfile={false}
-            variant="compact"
-          />
+          <div className="flex flex-wrap items-center gap-2">
+            <ContactActions
+              otherUserId={accepted.user.id}
+              requestId={requestId}
+              displayName={`${accepted.user.firstName} ${accepted.user.lastName}`}
+              hasPhone
+              chatEnabled
+              showProfile={false}
+              variant="compact"
+            />
+            <Button asChild size="sm" variant="outline" className="gap-1.5">
+              <Link
+                href={`${routeBuilder.submitReview()}?targetUserId=${encodeURIComponent(accepted.user.id)}&proposalId=${encodeURIComponent(accepted.id)}`}
+              >
+                <Star className="size-4" />
+                ثبت نظر
+              </Link>
+            </Button>
+          </div>
         </div>
       )}
 

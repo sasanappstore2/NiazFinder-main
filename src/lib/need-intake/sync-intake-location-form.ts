@@ -24,6 +24,17 @@ export function neighborhoodMatchesFragment(
   const a = normalizeNeighborhoodMatchKey(entityNeighborhood);
   const b = normalizeNeighborhoodMatchKey(fragment);
   if (!a || !b) return false;
+  if (a === b) return true;
+
+  const aToks = a.split(/\s+/).filter(Boolean);
+  const bToks = b.split(/\s+/).filter(Boolean);
+
+  // Single-token fragment («فردوسی») must not be confirmed by a longer compound
+  // entity («توس فردوسی») — those are alternatives for the user to pick.
+  if (bToks.length === 1) {
+    return aToks.length === 1 && aToks[0] === bToks[0];
+  }
+
   return a.includes(b) || b.includes(a);
 }
 import { cityFromSlug, locationCityIdToSlug } from '@/lib/search/city-slugs';

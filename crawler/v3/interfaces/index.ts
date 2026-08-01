@@ -1,0 +1,13 @@
+export type { IDiscoveryStage } from './discovery-stage';
+export type { IExtractionStage, ExtractionStrategyId, ExtractionContext } from './extraction-stage';
+export type { INormalizationStage } from './normalization-stage';
+export type { IValidationStage } from './validation-stage';
+export type { IDeduplicationStage, DedupeSignal } from './deduplication-stage';
+export type { IEnrichmentStage } from './enrichment-stage';
+export type { IPersistenceStage } from './persistence-stage';
+export type { ISearchIndexStage, IndexDocument } from './search-index-stage';
+export type { IAnalyticsStage, AnalyticsCounter } from './analytics-stage';
+export type { IQueueStage } from './queue-stage';
+export type { IProviderAdapterStage } from './provider-stage';
+export type { CrawlProviderContract, DiscoverOptions, FetchOptions } from '../sdk/provider-contract';
+export type { ProviderCapabilities } from '../sdk/capabilities';

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import type { NeedDraft, ListingPreview } from '@/contracts/need-intake';
+import type { NeedDraft, ListingPreview, IntakeStep } from '@/contracts/need-intake';
 import { useAppStore } from '@/lib/store';
 import { routeBuilder } from '@/config/routes';
 import { trackAnalyticsEvent } from '@/lib/analytics/track';
@@ -41,7 +41,7 @@ export interface UseIntakePublishOptions {
   descEnriching: boolean;
   linkToBusinessProfile: boolean;
   getDraft: () => NeedDraft | null;
-  setStep: (step: 'need' | 'details' | 'location' | 'preview' | 'publishing' | 'done') => void;
+  setStep: (step: IntakeStep) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setListingPreview: (preview: ListingPreview | null) => void;

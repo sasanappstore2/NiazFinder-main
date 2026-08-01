@@ -22,10 +22,13 @@ import {
   Mail,
   Crown,
   Store,
+  Building2,
+  LayoutGrid,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { routeBuilder } from '@/config/routes';
 import { canManageBusinessProfile } from '@/lib/business/can-manage-business-profile';
+import { isRealEstateBusiness } from '@/lib/business/is-real-estate-business';
 import { useAppStore } from "@/lib/store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -88,8 +91,16 @@ export function ArkUserMenu() {
   const { navigateTo } = useNavigate();
   const router = useRouter();
 
+  const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [canOpenSuperAdmin, setCanOpenSuperAdmin] = useState(false);
+  const [showRealEstateNav, setShowRealEstateNav] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const showAuthenticated = mounted && authHydrated && isAuthenticated && Boolean(currentUser);
   const unreadMsgCount = conversations.reduce((sum, c) => sum + c.unreadCount, 0);
   const recentNotifications = notifications.slice(0, 3);
   const totalBadges = unreadNotificationCount + unreadMsgCount;
@@ -102,16 +113,27 @@ export function ArkUserMenu() {
     setMenuOpen(details.open);
     if (details.open) {
       fetchNotifications();
-      if (authHydrated && isAuthenticated && currentUser) {
+      if (showAuthenticated && currentUser) {
         void fetch('/api/super-admin/me', { headers: getClientAuthHeaders() })
           .then((res) => setCanOpenSuperAdmin(res.ok))
           .catch(() => setCanOpenSuperAdmin(false));
+
+        if (currentUser.role && canManageBusinessProfile(currentUser.role)) {
+          void fetch('/api/business/me', { headers: getClientAuthHeaders() })
+            .then((res) => (res.ok ? res.json() : null))
+            .then((body: { occupationSlugs?: string[] } | null) => {
+              setShowRealEstateNav(isRealEstateBusiness(body?.occupationSlugs));
+            })
+            .catch(() => setShowRealEstateNav(false));
+        } else {
+          setShowRealEstateNav(false);
+        }
       }
     }
   };
 
   useEffect(() => {
-    if (!authHydrated || !isAuthenticated || !currentUser) {
+    if (!showAuthenticated || !currentUser) {
       setCanOpenSuperAdmin(false);
       return;
     }
@@ -128,7 +150,28 @@ export function ArkUserMenu() {
     return () => {
       cancelled = true;
     };
-  }, [authHydrated, isAuthenticated, currentUser?.id, currentUser?.role]);
+  }, [showAuthenticated, currentUser?.id, currentUser?.role]);
+
+  const guestTriggerClassName = cn(
+    'inline-flex items-center gap-2.5 rounded-xl text-sm font-medium transition-all duration-200',
+    'border border-border/40 outline-hidden',
+    'size-9 justify-center px-0 sm:h-auto sm:w-auto sm:px-3 sm:py-1.5',
+    'bg-background/60 text-foreground hover:bg-accent hover:border-border/60'
+  );
+
+  if (!mounted) {
+    return (
+      <button
+        type="button"
+        className={guestTriggerClassName}
+        aria-label="ورود / ثبت‌نام"
+      >
+        <User className="size-[18px]" />
+        <span className="hidden lg:inline-block">ورود / ثبت‌نام</span>
+        <ChevronDown className="hidden size-3.5 opacity-60 sm:block" />
+      </button>
+    );
+  }
 
   const openMyBusinessManage = () => {
     setMenuOpen(false);
@@ -172,9 +215,9 @@ export function ArkUserMenu() {
               ? 'bg-primary/10 text-primary border-primary/25 shadow-[0_0_12px_oklch(0.51_0.12_165/0.1)]'
               : 'bg-background/60 text-foreground hover:bg-accent hover:border-border/60'
           )}
-          aria-label={isAuthenticated && currentUser ? 'منوی کاربری' : 'ورود / ثبت‌نام'}
+          aria-label={showAuthenticated ? 'منوی کاربری' : 'ورود / ثبت‌نام'}
         >
-          {isAuthenticated && currentUser ? (
+          {showAuthenticated && currentUser ? (
             <>
               <span className="relative">
                 <Avatar className="size-6 border-2 border-primary/20 sm:size-7">
@@ -227,7 +270,7 @@ export function ArkUserMenu() {
             )}
           >
             {/* ── User Info Header ── */}
-            {isAuthenticated && currentUser ? (
+            {showAuthenticated && currentUser ? (
               <div className="mb-1.5 rounded-lg bg-muted/50 px-3 py-2.5">
                 <div className="flex items-center gap-2.5">
                   <Avatar className="size-9 border-2 border-primary/15">
@@ -261,7 +304,7 @@ export function ArkUserMenu() {
             )}
 
             {/* ── User Navigation Items ── */}
-            {isAuthenticated && (
+            {showAuthenticated && (
               <>
                 <Menu.Item
                   value="profile"
@@ -279,7 +322,7 @@ export function ArkUserMenu() {
                   <LayoutDashboard className="size-4 text-muted-foreground" />
                   داشبورد
                 </Menu.Item>
-                {isAuthenticated && (
+                {showAuthenticated && (
                   <Menu.Item
                     value="my-business"
                     className={cn(menuItemBase, menuItemDefault)}
@@ -291,6 +334,32 @@ export function ArkUserMenu() {
                       : 'ثبت کسب‌وکار'}
                   </Menu.Item>
                 )}
+                {showRealEstateNav ? (
+                  <>
+                    <Menu.Item
+                      value="workspace"
+                      className={cn(menuItemBase, menuItemDefault)}
+                      onClick={() => {
+                        setMenuOpen(false);
+                        router.push(routeBuilder.workspace());
+                      }}
+                    >
+                      <LayoutGrid className="size-4 text-emerald-600" />
+                      میزکار املاک
+                    </Menu.Item>
+                    <Menu.Item
+                      value="filing-browse"
+                      className={cn(menuItemBase, menuItemDefault)}
+                      onClick={() => {
+                        setMenuOpen(false);
+                        router.push(routeBuilder.filingBrowse());
+                      }}
+                    >
+                      <Building2 className="size-4 text-emerald-600" />
+                      فایلینگ منطقه
+                    </Menu.Item>
+                  </>
+                ) : null}
                 {canOpenSuperAdmin && (
                   <Menu.Item
                     value="super-admin"
@@ -455,7 +524,7 @@ export function ArkUserMenu() {
             </div>
 
             {/* ── Logout ── */}
-            {isAuthenticated && (
+            {showAuthenticated && (
               <>
                 <Menu.Separator className="my-1 h-px bg-border/50" />
                 <Menu.Item

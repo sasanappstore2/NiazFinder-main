@@ -1,5 +1,6 @@
 export type AiAgentStreamEventType =
   | 'fee_deducted'
+  | 'thinking'
   | 'token'
   | 'tool_start'
   | 'done'

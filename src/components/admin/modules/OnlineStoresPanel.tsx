@@ -9,6 +9,7 @@ import {
   GitBranch,
   Layers3,
   Plus,
+  Power,
   Save,
   Search,
   Store,
@@ -16,6 +17,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAdmin } from '@/components/admin/context/AdminContext';
+import { LaunchControlDialog } from '@/components/admin/modules/LaunchControlDialog';
+import { computeRealEstateLaunchPlan, flatItemsFromSlugTaxonomy } from '@/lib/admin/launch-control';
 import {
   AdminBadge,
   AdminFilterBar,
@@ -104,6 +107,9 @@ export function OnlineStoresPanel() {
   const [sectors, setSectors] = useState<Array<{ slug: string; title: string }>>([]);
   const [form, setForm] = useState<FormState>(initialForm);
   const [search, setSearch] = useState('');
+  const [launchOpen, setLaunchOpen] = useState(false);
+  const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -134,6 +140,20 @@ export function OnlineStoresPanel() {
   }, [load]);
 
   const sectorTree = useMemo(() => buildSectorTree(categories), [categories]);
+
+  const launchItems = useMemo(
+    () =>
+      flatItemsFromSlugTaxonomy(
+        categories.map((o) => ({
+          slug: o.slug,
+          title: o.title,
+          parentSlug: o.parentSlug,
+          isActive: o.isActive !== false,
+          sortOrder: o.sortOrder,
+        }))
+      ),
+    [categories]
+  );
 
   const sectorCount = sectorTree.length;
   const jobCount = categories.filter((o) => o.depth === 1).length;
@@ -220,22 +240,111 @@ export function OnlineStoresPanel() {
     }
   };
 
+  const patchStoreActive = async (slug: string, nextActive: boolean) => {
+    await apiFetch(`/api/super-admin/online-stores/${encodeURIComponent(slug)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ isActive: nextActive }),
+    });
+  };
+
+  const toggleStoreActive = async (item: { id: string; name: string }, nextActive: boolean) => {
+    if (togglingIds.has(item.id) || bulkBusy) return;
+    setTogglingIds((prev) => new Set(prev).add(item.id));
+    try {
+      await patchStoreActive(item.id, nextActive);
+      toast.success(nextActive ? `«${item.name}» فعال شد` : `«${item.name}» خاموش شد`);
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'خطا در تغییر وضعیت');
+      await load();
+    } finally {
+      setTogglingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(item.id);
+        return next;
+      });
+    }
+  };
+
+  const bulkSetStoreActive = async (
+    targets: { id: string; name: string }[],
+    nextActive: boolean
+  ) => {
+    if (bulkBusy || targets.length === 0) return;
+    setBulkBusy(true);
+    let ok = 0;
+    let failed = 0;
+    try {
+      for (const target of targets) {
+        try {
+          await patchStoreActive(target.id, nextActive);
+          ok += 1;
+        } catch {
+          failed += 1;
+        }
+      }
+      if (failed === 0) {
+        toast.success(
+          nextActive
+            ? `${formatNumber(ok)} مورد روشن شد`
+            : `${formatNumber(ok)} مورد خاموش شد`
+        );
+      } else {
+        toast.error(`${formatNumber(ok)} موفق · ${formatNumber(failed)} ناموفق`);
+      }
+      await load();
+    } finally {
+      setBulkBusy(false);
+    }
+  };
+
+  const applyOnlineStoresOffPreset = async () => {
+    const plan = computeRealEstateLaunchPlan(launchItems, null);
+    if (plan.toDeactivate.length === 0) {
+      toast.info('همه دسته‌های فروشگاه از قبل خاموش هستند');
+      return;
+    }
+    setBulkBusy(true);
+    try {
+      for (const t of plan.toDeactivate) {
+        await patchStoreActive(t.id, false);
+      }
+      toast.success('همه دسته‌های فروشگاه اینترنتی خاموش شد');
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'خطا در اعمال پریست');
+      await load();
+    } finally {
+      setBulkBusy(false);
+    }
+  };
+
   return (
     <AdminPageShell
       section="online-stores"
       layout="form"
       description="حوزه‌های فروش آنلاین (Digikala/Basalam-style) — جدا از مشاغل و نیازها"
       actions={
-        <Button
-          className="admin-btn-primary h-9 gap-2"
-          onClick={() => {
-            setForm(initialForm);
-            document.getElementById('online-store-form-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }}
-        >
-          <Plus className="size-4" />
-          مورد جدید
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            className="admin-input h-9 gap-2"
+            onClick={() => setLaunchOpen(true)}
+          >
+            <Power className="size-4" />
+            کنترل لانچ
+          </Button>
+          <Button
+            className="admin-btn-primary h-9 gap-2"
+            onClick={() => {
+              setForm(initialForm);
+              document.getElementById('online-store-form-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+          >
+            <Plus className="size-4" />
+            مورد جدید
+          </Button>
+        </div>
       }
     >
       <div className="mb-4 flex flex-col gap-2 rounded-lg border border-violet-500/30 bg-violet-500/5 p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
@@ -390,7 +499,21 @@ export function OnlineStoresPanel() {
             </aside>
 
             <div className="admin-paper overflow-hidden">
-              <AdminFilterBar search={search} onSearchChange={setSearch} searchPlaceholder="جستجو در sectorها و زیردسته‌ها..." />
+              <AdminFilterBar
+                search={search}
+                onSearchChange={setSearch}
+                searchPlaceholder="جستجو در sectorها و زیردسته‌ها..."
+                actions={
+                  <Button
+                    variant="outline"
+                    className="admin-input h-9 gap-2"
+                    onClick={() => setLaunchOpen(true)}
+                  >
+                    <Power className="size-4" />
+                    کنترل لانچ
+                  </Button>
+                }
+              />
 
               <div className="max-h-[calc(100vh-18rem)] space-y-3 overflow-y-auto p-4">
                 {filtered.length === 0 ? (
@@ -500,6 +623,25 @@ export function OnlineStoresPanel() {
           </div>
         </>
       )}
+
+      <LaunchControlDialog
+        open={launchOpen}
+        onOpenChange={setLaunchOpen}
+        title="کنترل لانچ فروشگاه اینترنتی"
+        description="دسته‌های خاموش در انتخاب حوزه فروش آنلاین نمایش داده نمی‌شوند."
+        childCountLabel="زیردسته"
+        items={launchItems}
+        togglingIds={togglingIds}
+        bulkBusy={bulkBusy}
+        onToggle={toggleStoreActive}
+        onBulkSet={bulkSetStoreActive}
+        realEstatePreset={{
+          label: 'خاموش کردن همه (لانچ املاک)',
+          description:
+            'در فاز اول لانچ املاک، همه دسته‌های فروشگاه اینترنتی خاموش می‌شوند (املاک در این taxonomy وجود ندارد).',
+        }}
+        onApplyRealEstatePreset={applyOnlineStoresOffPreset}
+      />
     </AdminPageShell>
   );
 }

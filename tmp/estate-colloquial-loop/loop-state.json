@@ -1,0 +1,8 @@
+{
+  "nextIndex": 1001,
+  "passed": 993,
+  "failed": 7,
+  "lastId": "estate-colloquial-1000",
+  "updatedAt": "2026-07-12T21:34:09.181Z",
+  "notes": "Corpus loop; #37 category fixed (parent real-estate ambiguity + بخرم gap); retest pass"
+}

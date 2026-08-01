@@ -7,7 +7,12 @@ import type { IntakeParseGap } from '@/lib/need-intake/intake-parse-schema';
 import type { CriticalFilterSuggestion } from '@/intake/intelligence-engine/suggestions/critical-filter-suggestions';
 import { criticalSuggestionsToChips } from '@/intake/intelligence-engine/suggestions/critical-filter-suggestions';
 import { analyzeIntakeTextApi } from '@/lib/intake/intake-analyze-client';
+import {
+  getIntakeAnalysisMode,
+  type IntakeAnalysisMode,
+} from '@/lib/intake/rules-only-mode';
 import type { FieldState, IntakeIntelligenceInput } from '@/intake/intelligence-engine/types';
+import type { IntakeAgentResult } from '@/intake/agent/types';
 import { draftWithAnalysisSnapshot } from '@/intake/training/buildAnalysisSnapshot';
 
 export interface UseIntakeIntelligenceOptions {
@@ -17,7 +22,7 @@ export interface UseIntakeIntelligenceOptions {
   cityName?: string | null;
   formHints?: IntakeIntelligenceInput['formHints'];
   debounceMs?: number;
-  /** When true, server runs AI extraction even if rules are confident (step 1). */
+  /** When true, server runs AI extraction even if rules are confident (compose step). */
   forceAi?: boolean;
   onDraft?: (draft: NeedDraft) => void;
 }
@@ -25,6 +30,7 @@ export interface UseIntakeIntelligenceOptions {
 export interface UseIntakeIntelligenceState {
   analyzing: boolean;
   aiInvoked: boolean;
+  analysisMode: IntakeAnalysisMode;
   analyzedText: string | null;
   fieldMeta: Record<string, FieldState> | null;
   gaps: IntakeParseGap[];
@@ -34,6 +40,8 @@ export interface UseIntakeIntelligenceState {
   error: string | null;
   /** AI one-sentence summary of user need (city, budget, subject). */
   intentGist: string | null;
+  /** Product agent projection (same schema for rules / LLM). */
+  agent: IntakeAgentResult | null;
   /** Flush debounce and run analyze immediately (returns in-flight or fresh result). */
   analyzeNow: () => Promise<IntakeAnalyzeResponse | null>;
   /** Wait for the current in-flight analyze, if any. */
@@ -58,6 +66,9 @@ export function useIntakeIntelligence({
 }: UseIntakeIntelligenceOptions): UseIntakeIntelligenceState {
   const [analyzing, setAnalyzing] = useState(false);
   const [aiInvoked, setAiInvoked] = useState(false);
+  const [analysisMode, setAnalysisMode] = useState<IntakeAnalysisMode>(() =>
+    getIntakeAnalysisMode()
+  );
   const [analyzedText, setAnalyzedText] = useState<string | null>(null);
   const [fieldMeta, setFieldMeta] = useState<Record<string, FieldState> | null>(null);
   const [gaps, setGaps] = useState<IntakeParseGap[]>([]);
@@ -68,6 +79,7 @@ export function useIntakeIntelligence({
   const [latencyMs, setLatencyMs] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [intentGist, setIntentGist] = useState<string | null>(null);
+  const [agent, setAgent] = useState<IntakeAgentResult | null>(null);
 
   const reqId = useRef(0);
   const debounceTimerRef = useRef<number | null>(null);
@@ -94,25 +106,33 @@ export function useIntakeIntelligence({
   }, [onDraft]);
 
   const applyAnalysisResult = useCallback((res: IntakeAnalyzeResponse, trimmed: string, hintsSig: string) => {
-    const meta = (res as { fieldMeta?: Record<string, FieldState> }).fieldMeta ?? null;
+    const fieldMetaPayload = (res as { fieldMeta?: Record<string, FieldState> }).fieldMeta ?? null;
     const parseGaps = (res as { parseGaps?: IntakeParseGap[] }).parseGaps ?? [];
     const draft = (res as { draft?: NeedDraft }).draft;
     const filters =
       (res as { suggestedFilters?: CriticalFilterSuggestion[] }).suggestedFilters ?? [];
+    const responseMeta = res.meta as {
+      aiInvoked?: boolean;
+      analysisMode?: IntakeAnalysisMode;
+      intentGist?: string | null;
+    } | undefined;
 
     lastAnalysisRef.current = res;
     analyzedTextRef.current = trimmed;
     formHintsSigRef.current = hintsSig;
     setAnalyzedText(trimmed);
-    setFieldMeta(meta);
+    setFieldMeta(fieldMetaPayload);
     setGaps(parseGaps);
     setSuggestedFilters(filters);
     setFilterSuggestionChips(criticalSuggestionsToChips(filters));
     setLatencyMs(res.latencyMs ?? null);
-    setAiInvoked(Boolean((res.meta as { aiInvoked?: boolean })?.aiInvoked));
-    setIntentGist(
-      ((res.meta as { intentGist?: string | null })?.intentGist ?? null)?.trim() || null
-    );
+    setAiInvoked(Boolean(responseMeta?.aiInvoked));
+    if (responseMeta?.analysisMode === 'ai' || responseMeta?.analysisMode === 'rules') {
+      setAnalysisMode(responseMeta.analysisMode);
+    }
+    setIntentGist(responseMeta?.intentGist?.trim() || null);
+    const agentPayload = (res as { agent?: IntakeAgentResult }).agent ?? null;
+    setAgent(agentPayload);
 
     if (draft && onDraftRef.current) {
       onDraftRef.current(draftWithAnalysisSnapshot(draft, res, trimmed));
@@ -223,6 +243,7 @@ export function useIntakeIntelligence({
         debounceTimerRef.current = null;
       }
       setIntentGist(null);
+      setAgent(null);
       return;
     }
 
@@ -255,6 +276,7 @@ export function useIntakeIntelligence({
   return {
     analyzing,
     aiInvoked,
+    analysisMode,
     analyzedText,
     fieldMeta,
     gaps,
@@ -263,6 +285,7 @@ export function useIntakeIntelligence({
     latencyMs,
     error,
     intentGist,
+    agent,
     analyzeNow,
     waitForAnalysis,
     isFreshForText,

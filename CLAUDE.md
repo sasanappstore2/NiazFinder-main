@@ -2,6 +2,25 @@
 
 Guidance for working in this repo (NiazFinder / نیازفایندر).
 
+## Cursor OS
+
+Durable agent operating docs live in **`/.cursor-os/`** (charter, architecture,
+ADR/RFC, memory, roadmap). For non-trivial Cursor work: read
+`/.cursor-os/README.md` → `00_MASTER_CHARTER.md` → `INDEX.md` (task read pack)
+and skim `/.cursor-os/memory/`. Wired via `.cursor/rules/cursor-os.mdc`.
+
+## Engineering Constitution
+
+Vision and layer law: **`docs/engineering-constitution/`**
+(skill: `.cursor/skills/niazfinder-engineering-constitution`).
+Claude Code = Chief Architect; Cursor = Implementation Engineer.
+No large architecture/AI implementation until the Constitution is approved
+and RFCs are followed.
+
+**Mission (Phase 0+):** `.cursor-os/MISSION.md` — architecture preservation,
+SoT order, one phase at a time. Boot memory under `.cursor-os/memory/`.
+`/post` report SoT: `docs/POST_SYSTEM_REPORT.md`.
+
 ## What this is
 
 A Persian-language **reverse marketplace**: users post a "need" (نیاز) in free Persian

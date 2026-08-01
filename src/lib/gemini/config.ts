@@ -1,5 +1,7 @@
 /** Google Gemini API (Generative Language API). */
 
+import { isLocalLlmOnly } from '@/lib/local-llm/config';
+
 export const DEFAULT_GEMINI_MODEL = 'gemini-flash-latest';
 
 export const DEFAULT_GEMINI_BASE_URL =
@@ -11,6 +13,7 @@ export function getGeminiApiKey(): string | null {
 }
 
 export function isGeminiConfigured(): boolean {
+  if (isLocalLlmOnly()) return false;
   return Boolean(getGeminiApiKey());
 }
 
@@ -36,5 +39,6 @@ export function getGeminiTimeoutMs(): number {
 }
 
 export function isGeminiFallbackEnabled(): boolean {
+  if (isLocalLlmOnly()) return false;
   return process.env.GEMINI_FALLBACK_ENABLED === 'true' && isGeminiConfigured();
 }
