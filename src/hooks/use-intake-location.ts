@@ -35,7 +35,7 @@ import {
 } from '@/lib/neighborhoods/format-disambiguation-label';
 import { findManagedNeighborhoodAmbiguity } from '@/lib/neighborhoods/find-managed-neighborhood-ambiguity';
 import { extractLocationFragment, normalizeHoodFragment } from '@/lib/need-intake/location-fragment';
-import { mayAutoApplyLocation } from '@/lib/need-intake/compose-auto-apply';
+import { mayAutoApplyLocation, mayPrefillNeighborhood } from '@/lib/need-intake/compose-auto-apply';
 
 export interface UseIntakeLocationOptions {
   initialCity?: string | null;
@@ -378,7 +378,7 @@ export function useIntakeLocation({
   const applyDetectedLocationFromDraft = useCallback(
     (draft: NeedDraft) => {
       const allowCity = mayAutoApplyLocation(draft, 'city');
-      const allowNeighborhood = mayAutoApplyLocation(draft, 'neighborhood');
+      const allowNeighborhood = mayPrefillNeighborhood(draft);
       if (!allowCity && !allowNeighborhood) return;
 
       const { city, neighborhood } = extractIntakeLocationFromDraft(draft, sortedCities);

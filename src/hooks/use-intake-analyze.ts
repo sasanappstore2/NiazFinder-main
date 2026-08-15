@@ -11,6 +11,7 @@ import {
   canProceedToIntakeLocation,
   composeIntakeSourceText,
 } from '@/lib/need-intake/compose-source-text';
+import { COMPOSE_AUTO_APPLY_MIN_CONFIDENCE, mayAutoApplyLocation, mayPrefillNeighborhood, sanitizeDraftForComposeAutoApply } from '@/lib/need-intake/compose-auto-apply';
 import { normalizeCategoryPair } from '@/config/categories';
 import { recomputeNeedDraft, recordToEntities } from '@/intake/aggregate/needDraftAggregate';
 import type { IntakeAiShardKey, IntakeAiShardStatus } from '@/components/need-intake/IntakeAiShardBar';
@@ -84,25 +85,53 @@ function progressOpts(opts: UseIntakeAnalyzeOptions) {
   return { needText: opts.needText, detailsText: opts.detailsText };
 }
 
+function locationProceedOpts(opts: UseIntakeAnalyzeOptions) {
+  const draft = opts.getDraft();
+  const entities = draft ? recordToEntities(draft.entities) : null;
+  return {
+    hasCategory: Boolean(
+      opts.selectedCategory ||
+        opts.selectedSubcategory ||
+        entities?.categorySlug ||
+        entities?.subcategorySlug ||
+        draft?.parsedIntent?.categorySlug
+    ),
+    hasCity: Boolean(
+      opts.selectedCity ||
+        entities?.city ||
+        draft?.parsedIntent?.city
+    ),
+  };
+}
+
 function applyDraftToFormFields(
   draft: NeedDraft,
   opts: UseIntakeAnalyzeOptions,
   sourceText: string
 ): void {
-  // Proposal-first: only apply category/location that the user already locked
-  // (confirmed/edited). Never push raw analysis into the form.
   const categoryLocked = opts.categoryLockedByUserRef.current;
   const ambiguousCommercial = isAmbiguousCommercialSubtype(sourceText);
   const entities = recordToEntities(draft.entities);
   const leaf = entities.subcategorySlug || entities.categorySlug;
+  const categoryConfidence = Math.max(
+    Number(draft.fieldMeta?.subcategorySlug?.confidence ?? 0),
+    Number(draft.fieldMeta?.categorySlug?.confidence ?? 0)
+  );
+  const canWriteCategory =
+    Boolean(leaf) &&
+    !ambiguousCommercial &&
+    (categoryLocked || categoryConfidence >= COMPOSE_AUTO_APPLY_MIN_CONFIDENCE);
 
-  if (leaf && categoryLocked && !ambiguousCommercial) {
+  if (canWriteCategory && leaf) {
     const normalized = normalizeCategoryPair(leaf);
     opts.setSelectedCategory(normalized.categorySlug);
     opts.setSelectedSubcategory(normalized.subcategorySlug ?? '');
   }
 
-  if (opts.cityLockedByUserRef.current || opts.neighborhoodLockedByUserRef.current) {
+  const allowCity = opts.cityLockedByUserRef.current || mayAutoApplyLocation(draft, 'city');
+  const allowNeighborhood =
+    opts.neighborhoodLockedByUserRef.current || mayPrefillNeighborhood(draft);
+  if (allowCity || allowNeighborhood) {
     opts.applyDetectedLocationFromDraft(draft);
   }
 
@@ -164,24 +193,25 @@ function finishFromAnalysis(
   sourceText: string
 ): void {
   if (!res) return;
-  // Proposal-first: do not dump the full analysis into the confirmed draft.
-  // Keep user-confirmed draft; only refresh shard status from current draft.
-  const draft = opts.getDraft();
-  if (draft) {
-    applyDraftToFormFields(draft, opts, sourceText);
-    opts.setAiShardStatus(shardStatusFromNeedDraft(draft, false, progressOpts(opts)));
+  const analyzedDraft = (res as { draft?: NeedDraft }).draft;
+  const next = analyzedDraft
+    ? sanitizeDraftForComposeAutoApply(analyzedDraft)
+    : opts.getDraft();
+  if (next) {
+    opts.setNeedDraft(next);
+    applyDraftToFormFields(next, opts, sourceText);
+    opts.setAiShardStatus(shardStatusFromNeedDraft(next, false, progressOpts(opts)));
   } else {
     opts.setAiShardStatus({});
   }
   opts.setAiEnriching(false);
-  void res;
   void sourceText;
 }
 
 /** Navigate to location instantly; full analyze runs in background when needed. */
 export function useIntakeAnalyze(opts: UseIntakeAnalyzeOptions) {
   const goToLocation = useCallback(() => {
-    if (!canProceedToIntakeLocation(opts.needText, opts.detailsText)) {
+    if (!canProceedToIntakeLocation(opts.needText, opts.detailsText, locationProceedOpts(opts))) {
       toast.info('توضیحات را وارد کنید یا در مرحله قبل متن کامل\u200cتری بنویسید');
       return;
     }
@@ -228,7 +258,7 @@ export function useIntakeAnalyze(opts: UseIntakeAnalyzeOptions) {
   }, [opts]);
 
   const prefetchLocationAnalyze = useCallback(() => {
-    if (!canProceedToIntakeLocation(opts.needText, opts.detailsText)) return;
+    if (!canProceedToIntakeLocation(opts.needText, opts.detailsText, locationProceedOpts(opts))) return;
     void opts.analyzeNow();
   }, [opts]);
 

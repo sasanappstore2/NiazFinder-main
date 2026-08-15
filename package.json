@@ -165,6 +165,7 @@
     "docker:diagnose": "bash scripts/docker/diagnose-docker-stack.sh",
     "setup:native-ollama-gemma": "bash scripts/docker/setup-native-ollama-gemma.sh",
     "test:hybrid-intake-golden": "NEED_INTAKE_LOC_SKIP_PRISMA=true NEED_INTAKE_HYBRID_ENABLED=true NEED_INTAKE_RULES_ONLY=true npx --yes tsx src/intake/intelligence-engine/fixtures/run-hybrid-intake-golden-self-test.ts",
+    "test:intake-fast-path": "NEED_INTAKE_LOC_SKIP_PRISMA=true NEED_INTAKE_HYBRID_ENABLED=true NEED_INTAKE_RULES_ONLY=false NEED_INTAKE_LLM_ENABLED=true npx --yes tsx src/intake/intelligence-engine/fixtures/run-intake-fast-path-self-test.ts",
     "test:rules-disambiguation-golden": "NEED_INTAKE_LOC_SKIP_PRISMA=true npx --yes tsx src/intake/intelligence-engine/fixtures/run-rules-disambiguation-golden-self-test.ts",
     "test:rules-hypothesis": "npx --yes tsx src/intake/rules/fixtures/run-rules-hypothesis-self-test.ts",
     "smoke:disambig-intake": "NEED_INTAKE_LOC_SKIP_PRISMA=true NEED_INTAKE_HYBRID_ENABLED=true npx --yes tsx scripts/health/smoke-disambig-intake.ts",

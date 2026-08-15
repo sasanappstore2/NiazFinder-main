@@ -106,7 +106,13 @@ function scheduleCognitiveEngineShadowComparison(draft: NeedDraft, serviceReques
   after(async () => {
     try {
       const now = new Date().toISOString();
-      const result = await runCognitivePipeline(draft.sourceText, { now });
+      const cognitiveTimeoutMs = Number(process.env.NEED_INTAKE_COGNITIVE_TIMEOUT_MS ?? 8_000);
+      const result = await Promise.race([
+        runCognitivePipeline(draft.sourceText, { now }),
+        new Promise<null>((resolve) => {
+          setTimeout(() => resolve(null), Number.isFinite(cognitiveTimeoutMs) ? cognitiveTimeoutMs : 8_000);
+        }),
+      ]);
       if (!result) return;
 
       const legacySnapshot = legacyDraftToSemanticSnapshot(draft, {

@@ -84,7 +84,7 @@ function main(): void {
 
   const cleaned = sanitizeDraftForComposeAutoApply(weak);
   assert.equal((cleaned.entities as Record<string, unknown>).categorySlug, undefined);
-  assert.equal((cleaned.entities as Record<string, unknown>).neighborhood, undefined);
+  assert.equal((cleaned.entities as Record<string, unknown>).neighborhood, 'ونک');
 
   console.log(
     JSON.stringify({

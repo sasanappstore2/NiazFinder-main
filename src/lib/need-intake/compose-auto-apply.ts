@@ -13,6 +13,9 @@ export const COMPOSE_EVIDENCE_REQUIRED_MIN_CONFIDENCE = 0.75;
 
 export const UNDERSTANDING_LOCATION_MIN_CONFIDENCE = COMPOSE_AUTO_APPLY_MIN_CONFIDENCE;
 
+/** Keep mid-confidence neighborhood for chips / form prefill (auto-lock stays 0.85). */
+export const NEIGHBORHOOD_PREFILL_MIN_CONFIDENCE = 0.5;
+
 export type ComposeFieldKey =
   | 'categorySlug'
   | 'subcategorySlug'
@@ -48,6 +51,16 @@ export function mayAutoApplyField(
   const conf = metaConfidence(draft, key);
   if (conf < COMPOSE_AUTO_APPLY_MIN_CONFIDENCE) return false;
   return true;
+}
+
+export function mayPrefillNeighborhood(draft: NeedDraft): boolean {
+  const candidates = draft.parsedIntent?.neighborhoodCandidates?.length ?? 0;
+  if (candidates >= 2) return false;
+  const conf = Math.max(
+    metaConfidence(draft, 'neighborhood'),
+    metaConfidence(draft, 'neighborhoodSlug')
+  );
+  return conf >= NEIGHBORHOOD_PREFILL_MIN_CONFIDENCE;
 }
 
 export function mayAutoApplyLocation(
@@ -133,7 +146,7 @@ export function sanitizeDraftForComposeAutoApply(draft: NeedDraft): NeedDraft {
     const ok =
       kind === 'city'
         ? mayAutoApplyLocation(draft, 'city')
-        : mayAutoApplyLocation(draft, 'neighborhood');
+        : mayPrefillNeighborhood(draft);
     if (!ok) {
       entities = stripEntity(entities, key);
       fieldMeta = stripFieldMeta(fieldMeta, key);
@@ -171,5 +184,5 @@ export function sanitizeDraftForComposeAutoApply(draft: NeedDraft): NeedDraft {
   };
 }
 
-/** Soft-fill min confidence aligned with auto-apply. */
-export const NEIGHBORHOOD_SOFT_FILL_MIN_CONFIDENCE = COMPOSE_AUTO_APPLY_MIN_CONFIDENCE;
+/** Soft-fill min confidence aligned with neighborhood prefill chips. */
+export const NEIGHBORHOOD_SOFT_FILL_MIN_CONFIDENCE = NEIGHBORHOOD_PREFILL_MIN_CONFIDENCE;

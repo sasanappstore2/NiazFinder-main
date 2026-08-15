@@ -7,6 +7,7 @@ export interface AnalyzeIntakeTextOptions {
   cityName?: string | null;
   formHints?: IntakeIntelligenceInput['formHints'];
   forceAi?: boolean;
+  enrich?: boolean;
   signal?: AbortSignal;
 }
 
@@ -33,6 +34,7 @@ export async function analyzeIntakeTextApi(
       ...(options?.cityName?.trim() ? { cityName: options.cityName.trim() } : {}),
       ...(hasFormHints ? { formHints } : {}),
       ...(options?.forceAi ? { forceAi: true } : {}),
+      ...(options?.enrich ? { enrich: true } : {}),
     }),
   });
 }

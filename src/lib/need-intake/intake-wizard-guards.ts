@@ -58,7 +58,14 @@ export function canNavigateToIntakeStep(
   }
 
   if (normalizedTarget === 'location' || normalizedTarget === 'preview') {
-    if (!canProceedToIntakeLocation(ctx.needText, ctx.detailsText)) {
+    if (!canProceedToIntakeLocation(ctx.needText, ctx.detailsText, {
+      hasCategory: Boolean(
+        ctx.selectedCategory ||
+          ctx.selectedSubcategory ||
+          ctx.needDraft?.parsedIntent?.categorySlug
+      ),
+      hasCity: Boolean(ctx.selectedCity || ctx.needDraft?.parsedIntent?.city),
+    })) {
       return {
         ok: false,
         message: 'یک جمله کامل‌تر بنویسید یا جزئیات اختیاری را پر کنید',

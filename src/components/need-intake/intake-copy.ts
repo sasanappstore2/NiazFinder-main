@@ -48,35 +48,49 @@ export const INTAKE_COPY = {
   chipConfirmHint: 'برای تایید یا اصلاح ضربه بزنید',
 } as const;
 
-/** Honest composer / loading copy based on configured analysis mode. */
-export function intakeComposerHint(mode: IntakeAnalysisMode): string {
-  return mode === 'ai' ? INTAKE_COPY.composerHintAi : INTAKE_COPY.composerHintRules;
+/** Honest composer / loading copy. Live typing is rules-fast until enrich actually runs. */
+export function intakeComposerHint(
+  mode: IntakeAnalysisMode,
+  opts?: { enriching?: boolean }
+): string {
+  if (opts?.enriching) return INTAKE_COPY.composerHintAi;
+  void mode;
+  return INTAKE_COPY.composerHintRules;
 }
 
-export function intakeAnalyzingNeed(mode: IntakeAnalysisMode): string {
-  return mode === 'ai' ? INTAKE_COPY.analyzingNeedAi : INTAKE_COPY.analyzingNeedRules;
+export function intakeAnalyzingNeed(
+  mode: IntakeAnalysisMode,
+  opts?: { enriching?: boolean }
+): string {
+  if (opts?.enriching) return INTAKE_COPY.analyzingNeedAi;
+  void mode;
+  return INTAKE_COPY.analyzingNeedRules;
 }
 
 export function intakeUnderstandingTitle(
   mode: IntakeAnalysisMode,
   aiInvoked?: boolean
 ): string {
-  if (aiInvoked || mode === 'ai') return INTAKE_COPY.aiUnderstandingTitle;
+  if (aiInvoked) return INTAKE_COPY.aiUnderstandingTitle;
+  void mode;
   return INTAKE_COPY.rulesUnderstandingTitle;
 }
 
 export function intakeUnderstandingLoading(mode: IntakeAnalysisMode): string {
-  return mode === 'ai' ? INTAKE_COPY.aiUnderstandingLoading : INTAKE_COPY.rulesUnderstandingLoading;
+  void mode;
+  return INTAKE_COPY.rulesUnderstandingLoading;
 }
 
 export function intakeUnderstandingFootnote(
   mode: IntakeAnalysisMode,
   aiInvoked?: boolean
 ): string {
-  if (aiInvoked || mode === 'ai') return INTAKE_COPY.aiUnderstandingFootnote;
+  if (aiInvoked) return INTAKE_COPY.aiUnderstandingFootnote;
+  void mode;
   return INTAKE_COPY.rulesUnderstandingFootnote;
 }
 
 export function intakeLiveSummaryEmpty(mode: IntakeAnalysisMode): string {
-  return mode === 'ai' ? INTAKE_COPY.liveSummaryEmptyAi : INTAKE_COPY.liveSummaryEmptyRules;
+  void mode;
+  return INTAKE_COPY.liveSummaryEmptyRules;
 }

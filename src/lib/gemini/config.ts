@@ -17,6 +17,15 @@ export function isGeminiConfigured(): boolean {
   return Boolean(getGeminiApiKey());
 }
 
+/** Gist may use Gemini even when LOCAL_LLM_ONLY blocks other Gemini paths. */
+export function isGeminiGistAllowed(): boolean {
+  if (!getGeminiApiKey()) return false;
+  if (process.env.NEED_INTAKE_INTENT_GIST_PROVIDER?.trim().toLowerCase() === 'gemini') {
+    return true;
+  }
+  return isGeminiConfigured();
+}
+
 export function getGeminiModelId(): string {
   return (
     process.env.GEMINI_MODEL?.trim() ||

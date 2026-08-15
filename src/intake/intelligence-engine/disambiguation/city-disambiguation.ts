@@ -117,7 +117,10 @@ async function validateCitySlug(slug: string, candidates: CityCandidate[]): Prom
   return null;
 }
 
-export async function runCityDisambiguation(text: string): Promise<CityDisambiguationResult> {
+export async function runCityDisambiguation(
+  text: string,
+  opts?: { allowAi?: boolean }
+): Promise<CityDisambiguationResult> {
   const started = performance.now();
   const candidates = matchCityCandidatesFromText(text);
 
@@ -161,7 +164,7 @@ export async function runCityDisambiguation(text: string): Promise<CityDisambigu
     };
   }
 
-  if (!isDisambigAiEnabled()) {
+  if (opts?.allowAi === false || !isDisambigAiEnabled()) {
     return {
       citySlug: null,
       cityName: null,

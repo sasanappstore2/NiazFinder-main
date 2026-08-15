@@ -29,6 +29,8 @@ async function executeJob(jobName: IntakeQueueJobName, payload: unknown): Promis
       citySlug: p.citySlug,
       cityName: p.cityName,
       formHints: p.formHints,
+      forceAi: p.forceAi,
+      enrich: p.enrich,
     });
   }
   if (jobName === 'intake.listing-copy') {

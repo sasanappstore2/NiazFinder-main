@@ -15,7 +15,7 @@ import type { IntakeIntelligenceResult } from '@/intake/intelligence-engine/type
 
 export const runtime = 'nodejs';
 
-/** Rules-first intake analyze — Intelligence Engine v1 (queue-backed when enabled). */
+/** Rules-first intake analyze — Intelligence Engine v1 (queue-backed when enriching). */
 export async function POST(request: NextRequest) {
   const rateLimited = guardIntakePublicApi(request, 'analyze', 120);
   if (rateLimited) return rateLimited;
@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
 
     const { text, citySlug, cityName, formHints } = parsed.data;
     const forceAi = parsed.data.forceAi === true;
+    const enrich = parsed.data.enrich === true;
 
     let result: IntakeIntelligenceResult;
     const intelligenceInput = {
@@ -40,10 +41,12 @@ export async function POST(request: NextRequest) {
       cityName,
       formHints,
       forceAi,
+      enrich,
     };
-    // Prefer warm cache from home typing prefetch. forceAi only bypasses the
-    // async queue — not a fresh memory/redis hit for the same text signature.
-    if (isIntakeQueueEnabled() && !forceAi) {
+    // Live/fast analyze is always in-process. Nest :4000 is only for optional enrich
+    // and is skipped immediately when the circuit is open.
+    const useQueue = isIntakeQueueEnabled() && (enrich || forceAi);
+    if (useQueue) {
       const enqueued = await enqueueIntakeJobOrchestrated({
         jobName: INTAKE_JOB_ANALYZE,
         payload: intelligenceInput,
@@ -61,11 +64,7 @@ export async function POST(request: NextRequest) {
 
     const response = formatIntakeAnalyzeResponse(result);
     const hybridRuntime = resolveHybridRuntime({
-      llmHealthy: Boolean(
-        (result as { meta?: { llmHealthy?: boolean; aiInvoked?: boolean } }).meta?.llmHealthy ??
-          (result as { meta?: { aiInvoked?: boolean } }).meta?.aiInvoked ??
-          !isRulesOnlyIntakeMode()
-      ),
+      llmHealthy: !isRulesOnlyIntakeMode(),
       rulesOnlyForced: isRulesOnlyIntakeMode(),
     });
     return NextResponse.json({

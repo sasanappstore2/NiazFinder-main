@@ -43,6 +43,15 @@ export interface NeedBuilderOutput {
   nextQuestion: WizardQuestion | null;
 }
 
+function fieldNumeric(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string' && value.trim()) {
+    const n = Number(value.replace(/,/g, ''));
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
 function fieldBagToAnswers(fields: IntakeFieldBag): Record<string, string | number | boolean> {
   const answers: Record<string, string | number | boolean> = {};
   const set = (k: string, v: unknown) => {
@@ -244,6 +253,15 @@ export function buildNeedFromFields(input: NeedBuilderInput): NeedBuilderOutput 
         ...(fields.monthlyRent?.value != null
           ? { monthlyRent: String(fields.monthlyRent.value) }
           : {}),
+        ...(fieldNumeric(fields.rooms?.value) != null
+          ? { rooms: String(fieldNumeric(fields.rooms?.value)) }
+          : {}),
+        ...(fieldNumeric(fields.budgetMax?.value) != null
+          ? { budgetMax: String(fieldNumeric(fields.budgetMax?.value)) }
+          : {}),
+        ...(fields.neighborhoodSlug?.value
+          ? { neighborhoodSlug: String(fields.neighborhoodSlug.value) }
+          : {}),
       },
     },
   });
@@ -299,20 +317,35 @@ export function buildNeedFromFields(input: NeedBuilderInput): NeedBuilderOutput 
 
   const enrichedEntities: Record<string, unknown> = {
     ...(draft.entities as Record<string, unknown>),
-    ...(enrichedParsed.entities ?? {}),
   };
+  for (const [key, value] of Object.entries(enrichedParsed.entities ?? {})) {
+    // parsedIntent.entities.area is a neighborhood fragment, not m².
+    if (key === 'area') continue;
+    enrichedEntities[key] = value;
+  }
   if (scopedCityName) {
     enrichedEntities.city = scopedCityName;
   }
-  if (enrichedParsed.neighborhoodSlug) {
-    enrichedEntities.neighborhoodSlug = enrichedParsed.neighborhoodSlug;
+  if (fields.citySlug?.value) {
+    enrichedEntities.citySlug = String(fields.citySlug.value);
+  }
+  if (enrichedParsed.neighborhoodSlug || fields.neighborhoodSlug?.value) {
+    enrichedEntities.neighborhoodSlug = String(
+      fields.neighborhoodSlug?.value ?? enrichedParsed.neighborhoodSlug
+    );
   }
   const hoodArea = enrichedParsed.entities?.area?.trim();
-  if (hoodArea) {
-    enrichedEntities.neighborhood = hoodArea;
-  } else if (fields.neighborhood?.value) {
+  if (fields.neighborhood?.value) {
     enrichedEntities.neighborhood = String(fields.neighborhood.value);
+  } else if (hoodArea && /[^\d]/.test(hoodArea)) {
+    enrichedEntities.neighborhood = hoodArea;
   }
+  const roomsN = fieldNumeric(fields.rooms?.value);
+  const areaN = fieldNumeric(fields.area?.value);
+  const budgetMaxN = fieldNumeric(fields.budgetMax?.value);
+  if (roomsN != null) enrichedEntities.rooms = roomsN;
+  if (areaN != null) enrichedEntities.area = areaN;
+  if (budgetMaxN != null) enrichedEntities.budgetMax = budgetMaxN;
 
   draft = recomputeNeedDraft({
     ...draft,

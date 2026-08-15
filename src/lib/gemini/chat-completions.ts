@@ -3,7 +3,7 @@ import {
   chatMessagesToGeminiRequest,
   geminiGenerateContent,
 } from '@/lib/gemini/generate-content';
-import { getGeminiModelId, getGeminiTimeoutMs, isGeminiConfigured } from '@/lib/gemini/config';
+import { getGeminiApiKey, getGeminiModelId, getGeminiTimeoutMs, isGeminiConfigured } from '@/lib/gemini/config';
 
 export interface GeminiChatOptions {
   maxTokens?: number;
@@ -11,6 +11,8 @@ export interface GeminiChatOptions {
   jsonMode?: boolean;
   timeoutMs?: number;
   model?: string;
+  /** Intent gist may call Gemini while LOCAL_LLM_ONLY blocks other Gemini paths. */
+  bypassLocalLlmOnly?: boolean;
 }
 
 /** OpenAI-compatible shape for drop-in use beside localChatCompletions. */
@@ -18,7 +20,11 @@ export async function geminiChatCompletions(
   messages: ChatMessage[],
   opts?: GeminiChatOptions
 ): Promise<ChatCompletionResult | null> {
-  if (!isGeminiConfigured()) return null;
+  if (opts?.bypassLocalLlmOnly) {
+    if (!getGeminiApiKey()) return null;
+  } else if (!isGeminiConfigured()) {
+    return null;
+  }
 
   const started = performance.now();
   const request = chatMessagesToGeminiRequest(messages, {

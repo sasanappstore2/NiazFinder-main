@@ -6,6 +6,7 @@ import {
 } from '@/intake/rules/config';
 import {
   COMPOSE_AUTO_APPLY_MIN_CONFIDENCE,
+  NEIGHBORHOOD_PREFILL_MIN_CONFIDENCE,
   UNDERSTANDING_LOCATION_MIN_CONFIDENCE,
 } from '@/lib/need-intake/compose-auto-apply';
 
@@ -64,8 +65,11 @@ function minConfidenceForKey(key: string): number {
   if (key === 'categorySlug' || key === 'subcategorySlug') {
     return UNDERSTANDING_CATEGORY_MIN_CONFIDENCE;
   }
-  if (key === 'city' || key === 'citySlug' || key === 'neighborhood' || key === 'neighborhoodSlug') {
+  if (key === 'city' || key === 'citySlug') {
     return UNDERSTANDING_LOCATION_MIN_CONFIDENCE;
+  }
+  if (key === 'neighborhood' || key === 'neighborhoodSlug') {
+    return NEIGHBORHOOD_PREFILL_MIN_CONFIDENCE;
   }
   return UNDERSTANDING_FIELD_MIN_CONFIDENCE;
 }

@@ -10,6 +10,7 @@ import type {
 } from '@/intake/intelligence-engine/types';
 import type { CategoryCandidateOption } from '@/contracts/need-intake';
 import type { IntentSliceResult } from '@/intake/intelligence-engine/hybrid/intent-slice-schema';
+import { isIntakeAiPassRequested } from '@/intake/intelligence-engine/hybrid/ai-gate';
 
 export interface ResolveCategoryResult {
   fields: Partial<IntakeFieldBag>;
@@ -53,6 +54,7 @@ export async function resolveCategory(
   const engine = await runCategoryIntentEngine({
     text: sourceText,
     forceAi: input.forceAi,
+    allowAi: isIntakeAiPassRequested(input),
   });
 
   let fields: Partial<IntakeFieldBag>;

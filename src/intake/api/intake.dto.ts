@@ -22,6 +22,8 @@ export const intakeAnalyzeRequestSchema = z.object({
   formHints: intakeFormHintsSchema.optional(),
   /** Step-1 AI-first: invoke semantic AI even when rules confidence is high. */
   forceAi: z.boolean().optional(),
+  /** Non-blocking second pass (gist / disambig / empty critical fill). */
+  enrich: z.boolean().optional(),
 });
 
 export type IntakeAnalyzeRequest = z.infer<typeof intakeAnalyzeRequestSchema>;

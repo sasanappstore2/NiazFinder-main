@@ -14,16 +14,31 @@ export interface NestEnqueueResponse {
   error?: string;
 }
 
+let nestDownUntilMs = 0;
+const NEST_ENQUEUE_TIMEOUT_MS = 250;
+const NEST_DOWN_CACHE_MS = 15_000;
+
+function nestCircuitOpen(): boolean {
+  return Date.now() < nestDownUntilMs;
+}
+
+function markNestDown(): void {
+  nestDownUntilMs = Date.now() + NEST_DOWN_CACHE_MS;
+}
+
 export async function nestEnqueueIntakeJob(
   request: IntakeQueueEnqueueRequest
 ): Promise<NestEnqueueResponse> {
+  if (nestCircuitOpen()) {
+    return { ok: false, error: 'nest circuit open' };
+  }
   const base = getNestApiBase();
   try {
     const res = await fetch(`${base}/api/intake-queue/enqueue`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request),
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(NEST_ENQUEUE_TIMEOUT_MS),
     });
 
     if (!res.ok) {
@@ -33,6 +48,7 @@ export async function nestEnqueueIntakeJob(
 
     return (await res.json()) as NestEnqueueResponse;
   } catch (err) {
+    markNestDown();
     const msg = err instanceof Error ? err.message : 'nest unreachable';
     return { ok: false, error: msg };
   }

@@ -18,6 +18,8 @@ import { PublishSuccessOverlay } from './PublishSuccessOverlay';
 import { IntakeStepShell } from './IntakeStepShell';
 import { IntakeComposerTextarea } from './IntakeComposerTextarea';
 import { IntakeAiUnderstandingCard } from './IntakeAiUnderstandingCard';
+import { IntakeCategoryAmbiguityPrompt } from './IntakeCategoryAmbiguityPrompt';
+import { IntakeLocationAmbiguityPrompt } from './IntakeLocationAmbiguityPrompt';
 import { IntakeLiveListingSnippet } from './IntakeLiveListingSnippet';
 import { IntakeLiveSummaryAside } from './IntakeLiveSummaryAside';
 import { IntakeMobileSummarySheet } from './IntakeMobileSummarySheet';
@@ -44,6 +46,7 @@ import { UNDERSTANDING_CATEGORY_MIN_CONFIDENCE } from '@/lib/need-intake/build-i
 import {
   NEIGHBORHOOD_SOFT_FILL_MIN_CONFIDENCE,
   mayAutoApplyLocation,
+  mayPrefillNeighborhood,
   sanitizeDraftForComposeAutoApply,
 } from '@/lib/need-intake/compose-auto-apply';
 import { useIntakeAnalyze } from '@/hooks/use-intake-analyze';
@@ -404,23 +407,15 @@ export function NeedIntakePanel({
     [needText, detailsText]
   );
 
-  /** Claude Smart Intake Step 4 — rules-first realtime extractor (API), complements useIntakeIntelligence */
+  /** Live smart-extract is off — Intelligence Engine is the single compose source. */
   const smartRealtime = useRealtimeExtraction({
     debounceMs: 300,
     preferredCity: intakeAnalyzeCityHint.cityName || undefined,
     preferredCitySlug: intakeAnalyzeCityHint.citySlug || undefined,
     useAI: false,
-    enabled: isIntakeComposeStep(step) && Boolean(composedSourceText.trim()),
+    enabled: false,
   });
-  const { extract: smartExtract, result: smartResult, extracting: smartExtracting } =
-    smartRealtime;
-
-  useEffect(() => {
-    if (!isIntakeComposeStep(step)) return;
-    if (!composedSourceText.trim()) return;
-    // Call as free function (not method) — avoids debounce `this` context bugs.
-    smartExtract(needText, detailsText);
-  }, [composedSourceText, needText, detailsText, step, smartExtract]);
+  const { result: smartResult, extracting: smartExtracting } = smartRealtime;
 
   /** Smart proposals from merge policy — never auto-written into NeedDraft. */
   const [smartProposals, setSmartProposals] = useState<SmartFieldProposal[]>([]);
@@ -553,8 +548,8 @@ export function NeedIntakePanel({
     citySlug: intakeAnalyzeCityHint.citySlug,
     cityName: intakeAnalyzeCityHint.cityName,
     formHints: intakeAnalyzeFormHints,
-    debounceMs: 500,
-    forceAi: configuredAnalysisMode === 'ai',
+    debounceMs: 400,
+    forceAi: false,
     // Auto-apply in background — user can correct fields on the location step.
     onDraft: (d: NeedDraft) => {
       if (!isIntakeComposeStep(step)) return;
@@ -607,7 +602,7 @@ export function NeedIntakePanel({
       // Clear neighborhood auto-fill when refused.
       if (
         !location.neighborhoodLockedByUserRef.current &&
-        !mayAutoApplyLocation(sanitized, 'neighborhood') &&
+        !mayPrefillNeighborhood(sanitized) &&
         location.selectedNeighborhood.trim()
       ) {
         location.setSelectedNeighborhood('');
@@ -624,6 +619,27 @@ export function NeedIntakePanel({
   });
 
   const analysisMode = intakeIntelligence.analysisMode ?? configuredAnalysisMode;
+
+  const locationProceedOpts = useMemo(() => {
+    const entities = needDraft ? recordToEntities(needDraft.entities) : null;
+    return {
+      hasCategory: Boolean(
+        selectedCategory ||
+          selectedSubcategory ||
+          entities?.categorySlug ||
+          entities?.subcategorySlug ||
+          needDraft?.parsedIntent?.categorySlug
+      ),
+      hasCity: Boolean(
+        location.selectedCity || entities?.city || needDraft?.parsedIntent?.city
+      ),
+    };
+  }, [
+    needDraft,
+    selectedCategory,
+    selectedSubcategory,
+    location.selectedCity,
+  ]);
 
   const intakeFormContext = useMemo(
     () => {
@@ -681,10 +697,10 @@ export function NeedIntakePanel({
     const draftForShards = needDraft ?? projectedDraft;
     const progressOpts = { needText, detailsText };
     setAiShardStatus(
-      shardStatusFromNeedDraft(draftForShards, intakeIntelligence.analyzing || aiEnriching, progressOpts)
+      shardStatusFromNeedDraft(draftForShards, intakeIntelligence.enriching || aiEnriching, progressOpts)
     );
     if (isIntakeComposeStep(step)) {
-      setAiEnriching(intakeIntelligence.analyzing);
+      setAiEnriching(intakeIntelligence.enriching);
     }
   }, [
     step,
@@ -693,20 +709,21 @@ export function NeedIntakePanel({
     needDraft,
     projectedDraft,
     intakeIntelligence.analyzing,
+    intakeIntelligence.enriching,
     aiEnriching,
   ]);
 
   const intakeProgressSnapshot = useMemo(
     () =>
       buildIntakeProgressSnapshot(needDraft ?? projectedDraft, {
-        enriching: intakeIntelligence.analyzing || aiEnriching,
+        enriching: intakeIntelligence.enriching || aiEnriching,
         needText,
         detailsText,
       }),
     [
       needDraft,
       projectedDraft,
-      intakeIntelligence.analyzing,
+      intakeIntelligence.enriching,
       aiEnriching,
       needText,
       detailsText,
@@ -714,12 +731,6 @@ export function NeedIntakePanel({
   );
 
   const showAiShardBar = composedSourceText.trim().length >= 3;
-
-  useEffect(() => {
-    if (!isIntakeComposeStep(step) || !composedSourceText.trim()) return;
-    if (intakeIntelligence.isFreshForText(composedSourceText)) return;
-    void intakeIntelligence.analyzeNow();
-  }, [step, composedSourceText, intakeIntelligence.analyzeNow, intakeIntelligence.isFreshForText]);
 
   const liveListingCopy = useIntakeListingCopy(liveDraftForCopy, liveCopyStreamEnabled);
 
@@ -968,7 +979,7 @@ export function NeedIntakePanel({
       toast.info('ابتدا نیاز خود را بنویسید');
       return;
     }
-    if (!canProceedToIntakeLocation(needText, detailsText)) {
+    if (!canProceedToIntakeLocation(needText, detailsText, locationProceedOpts)) {
       toast.info('یک جمله کامل‌تر بنویسید یا توضیح بیشتری اضافه کنید');
       return;
     }
@@ -1126,13 +1137,10 @@ export function NeedIntakePanel({
                     onFocus={prefetchLocationAnalyze}
                     disabled={
                       isLoading ||
-                      !canProceedToIntakeLocation(needText, detailsText) ||
-                      (intelligenceLiveEnabled && intakeIntelligence.analyzing)
+                      !canProceedToIntakeLocation(needText, detailsText, locationProceedOpts)
                     }
                   >
-                    {intelligenceLiveEnabled && intakeIntelligence.analyzing
-                      ? INTAKE_COPY.analyzingContinue
-                      : INTAKE_COPY.continueToForm}
+                    {INTAKE_COPY.continueToForm}
                   </Button>
                 }
               >
@@ -1145,7 +1153,7 @@ export function NeedIntakePanel({
                   showCharProgress
                   highlightFromHome={homeSeedHighlight}
                   disabled={isLoading}
-                  analyzing={intelligenceLiveEnabled && intakeIntelligence.analyzing}
+                  analyzing={intelligenceLiveEnabled && intakeIntelligence.enriching}
                   analysisMode={analysisMode}
                 />
                 <div className="mt-3">
@@ -1174,7 +1182,8 @@ export function NeedIntakePanel({
                   <IntakeAiUnderstandingCard
                     intentGist={intakeIntelligence.intentGist}
                     fieldMeta={intakeIntelligence.fieldMeta}
-                    analyzing={intelligenceLiveEnabled && intakeIntelligence.analyzing}
+                    analyzing={false}
+                    enriching={intelligenceLiveEnabled && intakeIntelligence.enriching}
                     stale={
                       Boolean(composedSourceText.trim()) &&
                       !intakeIntelligence.isFreshForText(composedSourceText)
@@ -1184,11 +1193,45 @@ export function NeedIntakePanel({
                     className="mt-3"
                   />
                 ) : null}
+                {isIntakeComposeStep(step) ? (
+                  <div className="mt-3 space-y-2">
+                    <IntakeCategoryAmbiguityPrompt
+                      needDraft={needDraft}
+                      selectedSlug={selectedSubcategory || selectedCategory}
+                      onApplyCategory={(slug) => {
+                        draft.applyCategorySlug(slug);
+                        toast.success('دسته‌بندی انتخاب شد');
+                      }}
+                    />
+                    <IntakeLocationAmbiguityPrompt
+                      needDraft={needDraft}
+                      onApplyCity={(cityIdOrName) => {
+                        const hit = needDraft?.parsedIntent?.cityCandidates?.find(
+                          (c) => c.cityId === cityIdOrName || c.label === cityIdOrName
+                        );
+                        const name = hit?.label ?? cityIdOrName;
+                        location.lockCityByUser();
+                        location.setSelectedCity(name);
+                        toast.success('شهر انتخاب شد');
+                      }}
+                      onApplyNeighborhood={(name, id, opts) => {
+                        if (opts?.fromUser !== false) {
+                          location.neighborhoodLockedByUserRef.current = true;
+                        }
+                        location.setSelectedNeighborhood(name);
+                        if (id) {
+                          patchNeedDraftEntities({ neighborhood: name, neighborhoodSlug: id });
+                        }
+                        toast.success('محله انتخاب شد');
+                      }}
+                    />
+                  </div>
+                ) : null}
                 {liveSnippet}
                 {showAiShardBar ? (
                   <IntakeAiShardBar
                     snapshot={intakeProgressSnapshot}
-                    active={aiEnriching || intakeIntelligence.analyzing}
+                    active={aiEnriching || intakeIntelligence.enriching}
                   />
                 ) : null}
               </IntakeStepShell>
@@ -1234,7 +1277,7 @@ export function NeedIntakePanel({
                 {showAiShardBar ? (
                   <IntakeAiShardBar
                     snapshot={intakeProgressSnapshot}
-                    active={aiEnriching || intakeIntelligence.analyzing}
+                    active={aiEnriching || intakeIntelligence.enriching}
                     compact
                   />
                 ) : null}

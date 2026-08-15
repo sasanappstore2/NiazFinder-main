@@ -49,6 +49,11 @@ import {
   runCityDisambiguation,
 } from '@/intake/intelligence-engine/disambiguation/city-disambiguation';
 import { COMPOSE_AUTO_APPLY_MIN_CONFIDENCE } from '@/lib/need-intake/compose-auto-apply';
+import {
+  computeNeedsEnrich,
+  isDuplicateMoneyFieldBag,
+  isIntakeAiPassRequested,
+} from '@/intake/intelligence-engine/hybrid/ai-gate';
 
 export { isHybridIntakeEnabled } from '@/intake/intelligence-engine/hybrid/config';
 
@@ -145,8 +150,9 @@ export async function runHybridIntakePipeline(
   steps.push(createStepTrace('normalize', t, 'unified-normalizer'));
 
   const categoryLocked = Boolean(input.formHints?.categoryLockedByUser);
+  const aiPass = isIntakeAiPassRequested(input);
   const gistPromise =
-    shouldRunIntentGist(text, { categoryLocked }) && aiBudget.tryConsume()
+    aiPass && shouldRunIntentGist(text, { categoryLocked }) && aiBudget.tryConsume()
       ? runIntentGist(text, {
           cityName: input.cityName,
           citySlug: input.citySlug,
@@ -227,8 +233,9 @@ export async function runHybridIntakePipeline(
       runCategoryIntentEngine({
         text: rulesSourceText,
         forceAi: input.forceAi,
+        allowAi: aiPass,
       }),
-      runCityDisambiguation(text),
+      runCityDisambiguation(text, { allowAi: aiPass }),
     ]);
     cityDisambigResult = cityEarly;
     categoryPartial = applyCategoryEngine(engine);
@@ -251,6 +258,7 @@ export async function runHybridIntakePipeline(
     const engine = await runCategoryIntentEngine({
       text: rulesSourceText,
       forceAi: input.forceAi,
+      allowAi: aiPass,
     });
     categoryPartial = applyCategoryEngine(engine);
 
@@ -298,7 +306,7 @@ export async function runHybridIntakePipeline(
   if (cityUnresolved) {
     t = performance.now();
     if (!cityDisambigResult) {
-      cityDisambigResult = await runCityDisambiguation(text);
+      cityDisambigResult = await runCityDisambiguation(text, { allowAi: aiPass });
       if (cityDisambigResult.aiInvoked) {
         aiInvoked = true;
         aiProvider = cityDisambigResult.aiProvider;
@@ -341,13 +349,22 @@ export async function runHybridIntakePipeline(
   scoreFieldConfidence(bag);
   steps.push(createStepTrace('deal-type', t, 'resolveTransactionType'));
 
+  const duplicateMoney = isDuplicateMoneyFieldBag(bag);
+  const emptyCritical: string[] = [];
+  if (!bag.area?.value) emptyCritical.push('area');
+  if (!bag.neighborhood?.value && !bag.neighborhoodSlug?.value) {
+    emptyCritical.push('neighborhood', 'neighborhoodSlug');
+  }
+  if (duplicateMoney) emptyCritical.push('rahnAmount', 'monthlyRent');
+
   const unresolvedForFill = collectHybridUnresolvedFields(bag, intentSlice, {
     forceAi: input.forceAi,
   });
   const shouldScopedFill =
+    aiPass &&
     !isIntakeAiGloballyDisabled() &&
     !aiBudget.exhausted &&
-    (Boolean(input.forceAi) || unresolvedForFill.length > 0);
+    (Boolean(input.forceAi) || emptyCritical.length > 0);
 
   if (shouldScopedFill && aiBudget.tryConsume()) {
     t = performance.now();
@@ -357,7 +374,7 @@ export async function runHybridIntakePipeline(
       fields: bag,
       intentSlice,
       forceAi: input.forceAi,
-      extraUnresolved: input.forceAi ? unresolvedForFill : undefined,
+      extraUnresolved: input.forceAi ? unresolvedForFill : emptyCritical,
     });
     bag = fill.fields;
     if (fill.invoked) {
@@ -499,6 +516,19 @@ export async function runHybridIntakePipeline(
       aiInvoked,
       latencyMs: Math.round(performance.now() - started),
       textSignature: norm.lookupKey || text,
+      needsEnrich: computeNeedsEnrich({
+        alreadyEnriched: aiPass,
+        categoryAmbiguous:
+          categoryAmbiguousUnresolved ||
+          (categoryCandidatesUi.length >= 2 && !bag.categorySlug?.value),
+        cityUnresolved:
+          !bag.city?.value &&
+          !bag.citySlug?.value &&
+          !input.citySlug &&
+          !input.cityName &&
+          (cityDisambigResult?.ambiguous || locationResult.status !== 'resolved'),
+        duplicateMoney,
+      }),
     },
   };
 }

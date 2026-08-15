@@ -16,6 +16,8 @@ export interface IntakeAiUnderstandingCardProps {
   intentGist: string | null;
   fieldMeta: Record<string, FieldState> | null;
   analyzing: boolean;
+  /** Non-blocking AI enrich — keep chips visible. */
+  enriching?: boolean;
   /** True when fieldMeta/gist belong to an older text than the composer. */
   stale?: boolean;
   aiInvoked?: boolean;
@@ -27,6 +29,7 @@ export function IntakeAiUnderstandingCard({
   intentGist,
   fieldMeta,
   analyzing,
+  enriching = false,
   stale = false,
   aiInvoked,
   analysisMode = 'rules',
@@ -38,25 +41,23 @@ export function IntakeAiUnderstandingCard({
     aiInvoked,
     analysisMode,
   });
-  // Never flash weak / outdated guesses while the user is still typing.
-  const showResolved = !analyzing && !stale;
-  const hasContent = Boolean(
-    showResolved && (view.summary || view.highlights.length > 0)
-  );
-  const showAsAi = analysisMode === 'ai' || Boolean(aiInvoked);
+  const busy = enriching || analyzing;
+  const showResolved = Boolean(view.summary || view.highlights.length > 0);
+  const showAsAi = Boolean(aiInvoked) || enriching;
   const TitleIcon = showAsAi ? Sparkles : ListChecks;
 
-  if (!analyzing && !hasContent) return null;
+  if (!busy && !showResolved) return null;
 
   return (
     <section
       className={cn(
         'rounded-2xl border p-4 shadow-sm',
         showAsAi ? 'border-primary/20 bg-primary/[0.04]' : 'border-border/70 bg-muted/30',
+        stale && 'opacity-80',
         className
       )}
       aria-live="polite"
-      aria-busy={analyzing}
+      aria-busy={busy}
     >
       <div
         className={cn(
@@ -65,11 +66,11 @@ export function IntakeAiUnderstandingCard({
         )}
       >
         <TitleIcon className="size-4 shrink-0" aria-hidden />
-        <span>{intakeUnderstandingTitle(analysisMode, aiInvoked)}</span>
-        {analyzing ? <TypingIndicator status="analyzing" className="mr-auto" /> : null}
+        <span>{intakeUnderstandingTitle(analysisMode, aiInvoked || enriching)}</span>
+        {enriching ? <TypingIndicator status="analyzing" className="mr-auto" /> : null}
       </div>
 
-      {analyzing ? (
+      {enriching && !showResolved ? (
         <p className="text-sm text-muted-foreground">
           {intakeUnderstandingLoading(analysisMode)}
         </p>
@@ -93,7 +94,7 @@ export function IntakeAiUnderstandingCard({
         </ul>
       ) : null}
 
-      {hasContent ? (
+      {showResolved ? (
         <p className="mt-2 text-[11px] text-muted-foreground">
           {intakeUnderstandingFootnote(analysisMode, aiInvoked)}
         </p>

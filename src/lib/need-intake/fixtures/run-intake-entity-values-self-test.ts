@@ -51,6 +51,17 @@ assert(
 
 assert(canProceedToIntakeLocation('x'.repeat(40), ''), 'skip details when need long');
 assert(!canProceedToIntakeLocation('کوتاه', ''), 'require details when need short');
+assert(
+  canProceedToIntakeLocation('اجاره آپارتمان مشهد سیدی', '', {
+    hasCategory: true,
+    hasCity: true,
+  }),
+  'skip 40-char gate when category+city extracted'
+);
+assert(
+  !canProceedToIntakeLocation('کوتاه', '', { hasCategory: true, hasCity: true }),
+  'still require a sentence even with extracted fields'
+);
 
 const plumbingDraft: NeedDraft = {
   templateId: 'services',

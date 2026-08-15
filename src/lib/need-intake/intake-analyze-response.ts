@@ -89,6 +89,7 @@ export function formatIntakeAnalyzeResponse(result: IntakeIntelligenceResult) {
       truthVerification: result.trace.truthVerification,
       intentGist: result.trace.intentGist ?? null,
       intentGistProvider: result.trace.intentGistProvider ?? null,
+      needsEnrich: Boolean(result.meta.needsEnrich),
       indexStats: {
         categories: indexes.categories.size,
         cities: indexes.cities.size,

@@ -25,6 +25,8 @@ export interface IntakeAnalyzeJobPayload {
     categoryLockedByUser?: boolean;
   };
   fastParse?: boolean;
+  forceAi?: boolean;
+  enrich?: boolean;
 }
 
 export interface IntakeListingCopyJobPayload {

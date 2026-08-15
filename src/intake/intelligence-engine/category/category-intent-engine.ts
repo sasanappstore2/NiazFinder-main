@@ -327,6 +327,8 @@ export interface CategoryIntentEngineInput {
   lockedSubcategorySlug?: string | null;
   /** Force AI even if intent-slice flag is off (when disambig AI is on). */
   forceAi?: boolean;
+  /** When false, skip category LLM even if rules are ambiguous (live fast-path). */
+  allowAi?: boolean;
 }
 
 /**
@@ -473,8 +475,9 @@ export async function runCategoryIntentEngine(
 
   const ambiguous = isCategoryAmbiguous(candidates);
   // Category LLM: ambiguous / empty shortlist / forceAi with weak-or-empty rules.
-  // Strong clear matches never reach here (see above).
+  // Strong clear matches never reach here (see above). Fast path passes allowAi:false.
   const aiEnabled =
+    input.allowAi !== false &&
     !isIntakeAiGloballyDisabled() &&
     isDisambigAiEnabled() &&
     (ambiguous || candidates.length === 0 || Boolean(input.forceAi));

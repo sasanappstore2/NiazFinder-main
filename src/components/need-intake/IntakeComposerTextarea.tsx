@@ -107,7 +107,7 @@ export function IntakeComposerTextarea({
             {analyzing ? (
               <>
                 <TypingIndicator status="analyzing" />
-                <span>{intakeAnalyzingNeed(analysisMode)}</span>
+                <span>{intakeAnalyzingNeed(analysisMode, { enriching: true })}</span>
               </>
             ) : (
               intakeComposerHint(analysisMode)

@@ -41,16 +41,13 @@ import type { NeedDraft } from '@/contracts/need-intake';
 import { REGISTRY_CATEGORY_OVERRIDE_THRESHOLD } from '@/intake/rules/config';
 import { isHybridIntakeEnabled } from '@/intake/intelligence-engine/hybrid/config';
 import { inferCriticalFilterSuggestions } from '@/intake/intelligence-engine/suggestions/critical-filter-suggestions';
+import {
+  computeNeedsEnrich,
+  isDuplicateMoneyFieldBag,
+  isIntakeAiPassRequested,
+} from '@/intake/intelligence-engine/hybrid/ai-gate';
 
 const AI_CONFIDENCE_THRESHOLD = 0.6;
-
-/** Rules sometimes assign the same amount to rahn and rent ? always verify with AI. */
-function rulesSuspectDuplicateMoney(bag: ReturnType<typeof createEmptyFieldBag>): boolean {
-  const rahn = bag.rahnAmount?.value;
-  const rent = bag.monthlyRent?.value;
-  if (rahn == null || rent == null) return false;
-  return Number(rahn) === Number(rent) && Number(rahn) > 0;
-}
 
 function mergeEngineEntities(
   bag: ReturnType<typeof createEmptyFieldBag>,
@@ -152,7 +149,8 @@ export async function runIntakeIntelligence(
     input.citySlug,
     input.cityName,
     input.formHints,
-    Boolean(input.forceAi)
+    Boolean(input.forceAi),
+    Boolean(input.enrich)
   );
   if (!opts?.skipCache) {
     const cached = await getIntelligenceCache(cacheKey);
@@ -218,7 +216,8 @@ export async function runIntakeIntelligence(
   let aiLatencyMs = categoryResolved.aiLatencyMs;
   let truthVerification: IntakeIntelligenceResult['trace']['truthVerification'];
 
-  const aiDisabled = isIntakeAiGloballyDisabled();
+  const aiPass = isIntakeAiPassRequested(input);
+  const aiDisabled = isIntakeAiGloballyDisabled() || !aiPass;
 
   const unresolved = aiDisabled
     ? []
@@ -231,7 +230,7 @@ export async function runIntakeIntelligence(
     !aiDisabled &&
     (input.forceAi ||
       process.env.NEED_INTAKE_TRUTH_VERIFY_ALWAYS === 'true' ||
-      rulesSuspectDuplicateMoney(bag) ||
+      isDuplicateMoneyFieldBag(bag) ||
       (unresolved.length > 0 && overallFieldConfidence(bag) < 0.82));
 
   if (
@@ -396,6 +395,13 @@ export async function runIntakeIntelligence(
       aiInvoked,
       latencyMs: Math.round(performance.now() - started),
       truthVerifyCorrected: truthVerification?.corrected,
+      needsEnrich: computeNeedsEnrich({
+        alreadyEnriched: aiPass,
+        categoryAmbiguous:
+          categoryResolved.ambiguousUnresolved && categoryCandidatesUi.length >= 2,
+        cityUnresolved: !bag.city?.value && !bag.citySlug?.value && !input.citySlug,
+        duplicateMoney: isDuplicateMoneyFieldBag(bag),
+      }),
     },
   };
 

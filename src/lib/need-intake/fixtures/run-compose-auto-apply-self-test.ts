@@ -7,6 +7,7 @@ import type { NeedDraft, ParsedIntent } from '@/contracts/need-intake';
 import {
   COMPOSE_AUTO_APPLY_MIN_CONFIDENCE,
   mayAutoApplyLocation,
+  mayPrefillNeighborhood,
   sanitizeDraftForComposeAutoApply,
 } from '@/lib/need-intake/compose-auto-apply';
 import { pickNeighborhoodSoftFill } from '@/lib/need-intake/intake-merge-policy';
@@ -123,12 +124,26 @@ function testRefuseWeakLocationApply() {
   assert.equal(mayAutoApplyLocation(draft, 'neighborhood'), false);
 }
 
+function testKeepMidNeighborhoodForPrefill() {
+  const draft = baseDraft({
+    entities: { city: 'مشهد', neighborhood: 'سیدی' },
+    fieldMeta: {
+      city: { value: 'مشهد', confidence: 0.9, source: 'dictionary' },
+      neighborhood: { value: 'سیدی', confidence: 0.5, source: 'resolver' },
+    },
+  });
+  assert.equal(mayAutoApplyLocation(draft, 'neighborhood'), false);
+  assert.equal(mayPrefillNeighborhood(draft), true);
+  const out = sanitizeDraftForComposeAutoApply(draft);
+  assert.equal((out.entities as Record<string, unknown>).neighborhood, 'سیدی');
+}
+
 function testSoftFillAligned() {
   const result = {
     location: {
       neighborhood: 'پاسداران',
       neighborhoodSlug: 'pasdaran',
-      confidence: 0.8,
+      confidence: 0.4,
       disambiguationNeeded: false,
       alternatives: [],
     },
@@ -138,7 +153,7 @@ function testSoftFillAligned() {
     location: {
       neighborhood: 'پاسداران',
       neighborhoodSlug: 'pasdaran',
-      confidence: 0.9,
+      confidence: 0.55,
       disambiguationNeeded: false,
       alternatives: [],
     },
@@ -150,5 +165,6 @@ testRefuseWeakCategory();
 testKeepStrongCategory();
 testRefuseAmbiguousNeighborhood();
 testRefuseWeakLocationApply();
+testKeepMidNeighborhoodForPrefill();
 testSoftFillAligned();
 console.log('test:compose-auto-apply OK');

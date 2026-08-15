@@ -54,6 +54,8 @@ export interface IntakeIntelligenceInput {
     lockedFieldKeys?: string[];
   };
   forceAi?: boolean;
+  /** Optional second pass: gist / disambig LLM / scoped fill. Live typing omits this. */
+  enrich?: boolean;
 }
 
 export interface IntakeIntelligenceStepTrace {
@@ -113,6 +115,8 @@ export interface IntakeIntelligenceResult {
     truthVerifyCorrected?: string[];
     /** Hash/signature of source text — clients discard stale proposals. */
     textSignature?: string;
+    /** Fast-path hint: UI may request a non-blocking enrich pass. */
+    needsEnrich?: boolean;
   };
 }
 

@@ -15,6 +15,8 @@ import type { FieldState, IntakeIntelligenceInput } from '@/intake/intelligence-
 import type { IntakeAgentResult } from '@/intake/agent/types';
 import { draftWithAnalysisSnapshot } from '@/intake/training/buildAnalysisSnapshot';
 
+const ENRICH_PAUSE_MS = 1200;
+
 export interface UseIntakeIntelligenceOptions {
   text: string;
   enabled: boolean;
@@ -22,13 +24,14 @@ export interface UseIntakeIntelligenceOptions {
   cityName?: string | null;
   formHints?: IntakeIntelligenceInput['formHints'];
   debounceMs?: number;
-  /** When true, server runs AI extraction even if rules are confident (compose step). */
+  /** Unused on live compose — kept for callers that previously forced AI. */
   forceAi?: boolean;
   onDraft?: (draft: NeedDraft) => void;
 }
 
 export interface UseIntakeIntelligenceState {
   analyzing: boolean;
+  enriching: boolean;
   aiInvoked: boolean;
   analysisMode: IntakeAnalysisMode;
   analyzedText: string | null;
@@ -49,9 +52,12 @@ export interface UseIntakeIntelligenceState {
   isFreshForText: (sourceText: string) => boolean;
 }
 
-function formHintsSignature(formHints?: IntakeIntelligenceInput['formHints'], forceAiFlag?: boolean): string {
-  const base = formHints ? JSON.stringify(formHints) : '';
-  return forceAiFlag ? `${base}|forceAi` : base;
+function formHintsSignature(formHints?: IntakeIntelligenceInput['formHints']): string {
+  return formHints ? JSON.stringify(formHints) : '';
+}
+
+function responseNeedsEnrich(res: IntakeAnalyzeResponse | null): boolean {
+  return Boolean((res?.meta as { needsEnrich?: boolean } | undefined)?.needsEnrich);
 }
 
 export function useIntakeIntelligence({
@@ -61,10 +67,10 @@ export function useIntakeIntelligence({
   cityName,
   formHints,
   debounceMs = 400,
-  forceAi = false,
   onDraft,
 }: UseIntakeIntelligenceOptions): UseIntakeIntelligenceState {
   const [analyzing, setAnalyzing] = useState(false);
+  const [enriching, setEnriching] = useState(false);
   const [aiInvoked, setAiInvoked] = useState(false);
   const [analysisMode, setAnalysisMode] = useState<IntakeAnalysisMode>(() =>
     getIntakeAnalysisMode()
@@ -83,22 +89,26 @@ export function useIntakeIntelligence({
 
   const reqId = useRef(0);
   const debounceTimerRef = useRef<number | null>(null);
+  const enrichTimerRef = useRef<number | null>(null);
   const inflightRef = useRef<Promise<IntakeAnalyzeResponse | null> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const lastAnalysisRef = useRef<IntakeAnalyzeResponse | null>(null);
   const analyzedTextRef = useRef<string | null>(null);
   const formHintsSigRef = useRef<string>('');
-  const forceAiRef = useRef(forceAi);
+  const lastEnrichTextRef = useRef<string | null>(null);
   const onDraftRef = useRef(onDraft);
-
-  useEffect(() => {
-    forceAiRef.current = forceAi;
-  }, [forceAi]);
 
   const cancelInflight = useCallback(() => {
     abortRef.current?.abort();
     abortRef.current = null;
     inflightRef.current = null;
+  }, []);
+
+  const cancelEnrichTimer = useCallback(() => {
+    if (enrichTimerRef.current != null) {
+      window.clearTimeout(enrichTimerRef.current);
+      enrichTimerRef.current = null;
+    }
   }, []);
 
   useEffect(() => {
@@ -130,22 +140,25 @@ export function useIntakeIntelligence({
     if (responseMeta?.analysisMode === 'ai' || responseMeta?.analysisMode === 'rules') {
       setAnalysisMode(responseMeta.analysisMode);
     }
-    setIntentGist(responseMeta?.intentGist?.trim() || null);
+    const gist = responseMeta?.intentGist?.trim() || null;
+    if (gist) setIntentGist(gist);
     const agentPayload = (res as { agent?: IntakeAgentResult }).agent ?? null;
-    setAgent(agentPayload);
+    if (agentPayload) setAgent(agentPayload);
 
     if (draft && onDraftRef.current) {
       onDraftRef.current(draftWithAnalysisSnapshot(draft, res, trimmed));
     }
   }, []);
 
-  const runAnalyze = useCallback(async (): Promise<IntakeAnalyzeResponse | null> => {
+  const runAnalyze = useCallback(async (mode: 'fast' | 'enrich'): Promise<IntakeAnalyzeResponse | null> => {
     const trimmed = text.trim();
     if (!trimmed || trimmed.length < 3) return null;
 
-    const hintsSig = formHintsSignature(formHints, forceAiRef.current);
+    const hintsSig = formHintsSignature(formHints);
+    const enrich = mode === 'enrich';
 
     if (
+      !enrich &&
       analyzedTextRef.current === trimmed &&
       formHintsSigRef.current === hintsSig &&
       lastAnalysisRef.current &&
@@ -154,8 +167,17 @@ export function useIntakeIntelligence({
       return lastAnalysisRef.current;
     }
 
-    if (inflightRef.current && analyzedTextRef.current === trimmed && formHintsSigRef.current === hintsSig) {
+    if (
+      !enrich &&
+      inflightRef.current &&
+      analyzedTextRef.current === trimmed &&
+      formHintsSigRef.current === hintsSig
+    ) {
       return inflightRef.current;
+    }
+
+    if (enrich && lastEnrichTextRef.current === trimmed) {
+      return lastAnalysisRef.current;
     }
 
     cancelInflight();
@@ -163,7 +185,11 @@ export function useIntakeIntelligence({
     const id = ++reqId.current;
     const controller = new AbortController();
     abortRef.current = controller;
-    setAnalyzing(true);
+    if (enrich) {
+      setEnriching(true);
+    } else {
+      setAnalyzing(true);
+    }
     setError(null);
 
     const promise = (async (): Promise<IntakeAnalyzeResponse | null> => {
@@ -172,13 +198,14 @@ export function useIntakeIntelligence({
           citySlug: citySlug ?? undefined,
           cityName: cityName ?? undefined,
           formHints,
-          forceAi: forceAiRef.current || undefined,
+          enrich: enrich || undefined,
           signal: controller.signal,
         });
 
         if (id !== reqId.current) return null;
 
         applyAnalysisResult(res, trimmed, hintsSig);
+        if (enrich) lastEnrichTextRef.current = trimmed;
         return res;
       } catch (e) {
         if (id !== reqId.current) return null;
@@ -188,7 +215,8 @@ export function useIntakeIntelligence({
         return null;
       } finally {
         if (id === reqId.current) {
-          setAnalyzing(false);
+          if (enrich) setEnriching(false);
+          else setAnalyzing(false);
           inflightRef.current = null;
           abortRef.current = null;
         }
@@ -199,13 +227,26 @@ export function useIntakeIntelligence({
     return promise;
   }, [text, citySlug, cityName, formHints, applyAnalysisResult, cancelInflight]);
 
+  const scheduleEnrich = useCallback(
+    (trimmed: string) => {
+      cancelEnrichTimer();
+      enrichTimerRef.current = window.setTimeout(() => {
+        enrichTimerRef.current = null;
+        if (text.trim() !== trimmed) return;
+        if (lastEnrichTextRef.current === trimmed) return;
+        void runAnalyze('enrich');
+      }, ENRICH_PAUSE_MS);
+    },
+    [cancelEnrichTimer, runAnalyze, text]
+  );
+
   const analyzeNow = useCallback(async (): Promise<IntakeAnalyzeResponse | null> => {
     if (debounceTimerRef.current != null) {
       window.clearTimeout(debounceTimerRef.current);
       debounceTimerRef.current = null;
     }
     const trimmed = text.trim();
-    const hintsSig = formHintsSignature(formHints, forceAiRef.current);
+    const hintsSig = formHintsSignature(formHints);
     if (
       trimmed &&
       analyzedTextRef.current === trimmed &&
@@ -216,8 +257,8 @@ export function useIntakeIntelligence({
       return lastAnalysisRef.current;
     }
     if (inflightRef.current) return inflightRef.current;
-    return runAnalyze();
-  }, [text, formHints, forceAi, runAnalyze]);
+    return runAnalyze('fast');
+  }, [text, formHints, runAnalyze]);
 
   const waitForAnalysis = useCallback(async (): Promise<IntakeAnalyzeResponse | null> => {
     if (inflightRef.current) return inflightRef.current;
@@ -229,7 +270,7 @@ export function useIntakeIntelligence({
       const trimmed = sourceText.trim();
       return (
         analyzedTextRef.current === trimmed &&
-        formHintsSigRef.current === formHintsSignature(formHints, forceAi) &&
+        formHintsSigRef.current === formHintsSignature(formHints) &&
         lastAnalysisRef.current != null
       );
     },
@@ -242,6 +283,7 @@ export function useIntakeIntelligence({
         window.clearTimeout(debounceTimerRef.current);
         debounceTimerRef.current = null;
       }
+      cancelEnrichTimer();
       setIntentGist(null);
       setAgent(null);
       return;
@@ -252,15 +294,22 @@ export function useIntakeIntelligence({
 
     debounceTimerRef.current = window.setTimeout(() => {
       debounceTimerRef.current = null;
-      const hintsSig = formHintsSignature(formHints, forceAiRef.current);
+      const hintsSig = formHintsSignature(formHints);
       if (
         analyzedTextRef.current === trimmed &&
         formHintsSigRef.current === hintsSig &&
         lastAnalysisRef.current
       ) {
+        if (responseNeedsEnrich(lastAnalysisRef.current) && lastEnrichTextRef.current !== trimmed) {
+          scheduleEnrich(trimmed);
+        }
         return;
       }
-      void runAnalyze();
+      void runAnalyze('fast').then((res) => {
+        if (res && responseNeedsEnrich(res) && text.trim() === trimmed) {
+          scheduleEnrich(trimmed);
+        }
+      });
     }, debounceMs);
 
     return () => {
@@ -269,12 +318,16 @@ export function useIntakeIntelligence({
         debounceTimerRef.current = null;
       }
     };
-  }, [enabled, text, formHints, debounceMs, runAnalyze]);
+  }, [enabled, text, formHints, debounceMs, runAnalyze, scheduleEnrich, cancelEnrichTimer]);
 
-  useEffect(() => () => cancelInflight(), [cancelInflight]);
+  useEffect(() => () => {
+    cancelInflight();
+    cancelEnrichTimer();
+  }, [cancelInflight, cancelEnrichTimer]);
 
   return {
     analyzing,
+    enriching,
     aiInvoked,
     analysisMode,
     analyzedText,
