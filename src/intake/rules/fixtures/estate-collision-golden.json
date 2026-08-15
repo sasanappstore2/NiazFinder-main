@@ -213,5 +213,10 @@
     "id": "agency-not-industrial-example",
     "text": "مشاور املاک در اراک. خدمات مشاوره و قرارداد، نه اینکه خودم سوله یا آپارتمان مشخص بخرم",
     "expectSlug": "agency-services"
+  },
+  {
+    "id": "shop-rent-forushgah-not-sale",
+    "text": "مغازه اجاره‌ای لازم دارم تو کرج برای فروشگاه. حدود ۱۴۰ متر. دفتر اداری نمی‌خوام",
+    "expectSlug": "shop-rent"
   }
 ]

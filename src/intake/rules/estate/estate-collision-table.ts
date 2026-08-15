@@ -438,6 +438,8 @@ const CURATED_HIGH_PRIORITY: Array<{
   { slug: 'suite-apartment-rent', pattern: 'آپارتمان اجاره کوتاه\u200cمدت', priority: 26, weight: 8 },
   { slug: 'shop-rent', pattern: 'اجاره مغازه', priority: 22, weight: 6 },
   { slug: 'shop-rent', pattern: 'رهن مغازه', priority: 22, weight: 6 },
+  { slug: 'shop-rent', pattern: 'مغازه اجاره ای', priority: 24, weight: 7 },
+  { slug: 'shop-rent', pattern: 'مغازه اجاره\u200cای', priority: 24, weight: 7 },
   { slug: 'villa-short-rent', pattern: 'اجاره روزانه ویلا', priority: 22, weight: 6 },
   { slug: 'villa-rent', pattern: 'اجاره ویلا', priority: 20, weight: 5 },
   { slug: 'villa-rent', pattern: 'قرارداد بلندمدت', priority: 22, weight: 6 },

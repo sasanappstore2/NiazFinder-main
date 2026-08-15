@@ -94,7 +94,7 @@ function commercialSlugHints(text: string): string[] {
       text
     );
   const saleish =
-    /فروش(?!ی)|می‌فروش|میفروش|برای خرید|دنبال خرید|قصد خرید|می[\u200c\s]*خرم|میخرم|می‌خرم|بخرم|می[\u200c\s]*خوام\s*بخرم|میخوام\s*بخرم/u.test(
+    /فروش(?!ی|گاه|نده)|می‌فروش|میفروش|برای خرید|دنبال خرید|قصد خرید|می[\u200c\s]*خرم|میخرم|می‌خرم|بخرم|می[\u200c\s]*خوام\s*بخرم|میخوام\s*بخرم/u.test(
       text
     );
   const strongRent =
@@ -442,7 +442,8 @@ export async function runCategoryIntentEngine(
       (commercialForced.includes('sale') &&
         !commercialForced.includes('pre-sale') &&
         clearLeaf.includes('rent') &&
-        !commercialForced.includes('rent')) ||
+        !commercialForced.includes('rent') &&
+        !/اجاره\s*ای|اجاره‌ای|رهن و اجاره|ودیعه/u.test(text)) ||
       (commercialForced === 'villa-short-rent' && clearLeaf === 'villa-rent') ||
       (commercialForced === 'villa-rent' && clearLeaf === 'villa-short-rent') ||
       (clearIsRepair && forcedIsEstate);
