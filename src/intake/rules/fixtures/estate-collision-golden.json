@@ -145,8 +145,33 @@
     "expectSlug": "villa-sale"
   },
   {
-    "id": "apartment-not-villa",
-    "text": "خرید آپارتمان دو خواب در الهیه",
+    "id": "apartment-not-villa-land",
+    "text": "می‌خوام اپارتمان بخرم، نه ویلا و نه زمین. زاهدان محله بلوچ آباد",
     "expectSlug": "apartment-sale"
+  },
+  {
+    "id": "villa-not-shop",
+    "text": "ویلا می‌خوام بخرم تو اسکو. نه مغازه نه زمین کلنگی؛ ویلای مسکونی برای زندگی",
+    "expectSlug": "villa-sale"
+  },
+  {
+    "id": "land-not-industrial",
+    "text": "خرید زمین و کلنگی در چالوس. آپارتمان و سوله نمی‌خوام؛ فقط زمین",
+    "expectSlug": "land-sale"
+  },
+  {
+    "id": "office-not-shop",
+    "text": "خرید دفتر اداری در برازجان. مغازه خیابانی نمی‌خوام، دفتر کار می‌خوام",
+    "expectSlug": "office-sale"
+  },
+  {
+    "id": "apartment-rent-not-suite",
+    "text": "رهن و اجاره آپارتمان مسکونی در قزوین. اجاره روزانه و سوئیت مسافری نمی‌خوام",
+    "expectSlug": "apartment-rent"
+  },
+  {
+    "id": "land-rent-not-partnership",
+    "text": "کلنگی اجاره می‌کنم تو زرند حدود ۱۲۰۰ متر. مشارکت در ساخت نیست؛ اجاره ماهانه",
+    "expectSlug": "land-rent"
   }
 ]

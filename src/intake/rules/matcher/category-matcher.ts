@@ -1,4 +1,5 @@
 import { normalizeIntakeText } from '@/lib/need-intake/normalize-intake-text';
+import { maskNegatedCategoryCues } from '@/intake/rules/negation-mask';
 import type { CategoryMatchCandidate, IntakeRule } from '@/intake/rules/types';
 
 function ruleWeight(rule: IntakeRule): number {
@@ -64,7 +65,7 @@ export function scoreRulesAgainstText(
   rules: IntakeRule[],
   negativeRules: IntakeRule[]
 ): CategoryMatchCandidate[] {
-  const normalized = normalizeIntakeText(text);
+  const normalized = maskNegatedCategoryCues(text);
   const bySlug = new Map<string, { score: number; matched: string[] }>();
 
   for (const rule of rules) {

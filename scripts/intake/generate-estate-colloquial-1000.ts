@@ -9,7 +9,7 @@
  *
  * Usage: npx tsx scripts/intake/generate-estate-colloquial-1000.ts
  */
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { EstateParagraphCase, EstateParagraphOracle } from '@/lib/need-intake/estate/estate-paragraph-types';
 
@@ -136,7 +136,37 @@ function wordCount(text: string): number {
     .filter(Boolean).length;
 }
 
-function loadLocations(): LocRow[] {
+function cityNameKey(name: string): string {
+  return name.replace(/\s*\(.+\)\s*$/, '').trim();
+}
+
+function loadCityToProvince(): Map<string, string> {
+  const map = new Map<string, string>();
+  const adminPath = join(ROOT, 'src/data/admin-locations.json');
+  if (!existsSync(adminPath)) return map;
+  const admin = JSON.parse(readFileSync(adminPath, 'utf8')) as {
+    countries: Array<{
+      provinces: Array<{ name: string; cities: Array<{ name: string }> }>;
+    }>;
+  };
+  for (const p of admin.countries[0]?.provinces ?? []) {
+    for (const c of p.cities) {
+      map.set(c.name.trim(), p.name);
+      map.set(cityNameKey(c.name), p.name);
+    }
+  }
+  return map;
+}
+
+function weightLocationPool(rows: LocRow[]): LocRow[] {
+  const priority = rows.filter(
+    (r) => PRIORITY_CITIES.has(r.city) || PRIORITY_CITIES.has(cityNameKey(r.city))
+  );
+  const rich = rows.filter((r) => r.neighborhoods.length >= 20);
+  return [...priority, ...priority, ...rich];
+}
+
+function loadLocationsFromTree(): LocRow[] {
   const raw = JSON.parse(readFileSync(LOC_TREE, 'utf8')) as {
     countries: Array<{
       provinces: Array<{
@@ -165,10 +195,45 @@ function loadLocations(): LocRow[] {
       });
     }
   }
-  const priority = rows.filter((r) => PRIORITY_CITIES.has(r.city) || PRIORITY_CITIES.has(r.city.replace(/\s*\(.+\)\s*$/, '')));
-  const rich = rows.filter((r) => r.neighborhoods.length >= 20);
-  // Weighted pool: priority majors + other rich cities for geographic diversity.
-  return [...priority, ...priority, ...rich];
+  return weightLocationPool(rows);
+}
+
+/** Fallback when iran-locations-tree.json is gitignored / missing: Divar neighborhood catalogs. */
+function loadLocationsFromCatalogs(): LocRow[] {
+  const catalogDir = join(ROOT, 'src/data/neighborhoods/catalog');
+  if (!existsSync(catalogDir)) return [];
+  const cityToProvince = loadCityToProvince();
+  const rows: LocRow[] = [];
+  for (const file of readdirSync(catalogDir).filter((f) => f.endsWith('.json'))) {
+    const raw = JSON.parse(readFileSync(join(catalogDir, file), 'utf8')) as {
+      cityId: string;
+      cityName?: string;
+      neighborhoods?: Array<{ name?: string } | string>;
+    };
+    const city = (raw.cityName ?? '').trim();
+    if (!city) continue;
+    const neighborhoods = (raw.neighborhoods ?? [])
+      .map((h) => (typeof h === 'string' ? h : String(h.name ?? '').trim()))
+      .map((n) => n.trim())
+      .filter((n) => n.length >= 2 && n.length <= 40 && !/^\d+$/.test(n));
+    if (neighborhoods.length < 3) continue;
+    rows.push({
+      province: cityToProvince.get(city) ?? cityToProvince.get(cityNameKey(city)) ?? city,
+      city,
+      citySlug: raw.cityId,
+      neighborhoods,
+    });
+  }
+  return weightLocationPool(rows);
+}
+
+function loadLocations(): LocRow[] {
+  if (existsSync(LOC_TREE)) return loadLocationsFromTree();
+  const fromCatalogs = loadLocationsFromCatalogs();
+  if (fromCatalogs.length) return fromCatalogs;
+  throw new Error(
+    `Missing ${LOC_TREE} and neighborhood catalogs under src/data/neighborhoods/catalog`
+  );
 }
 
 function dealOpeners(deal: string, labelLong: string, rand: () => number): string[] {

@@ -28,6 +28,7 @@ import {
   INTENT_SLICE_INTENT_TYPES,
   INTENT_SLICE_VERTICALS,
 } from '@/intake/intelligence-engine/hybrid/intent-slice-schema';
+import { maskNegatedCategoryCues } from '@/intake/rules/negation-mask';
 import {
   buildCategoryIntentPickPrompt,
   buildCategoryIntentSuggestPrompt,
@@ -85,6 +86,7 @@ function intentTypeFromVertical(vertical: ClassifierVertical, text: string): Int
 
 /** Strong commercial leaf hints when registry keyword order misses (e.g. مغازه … اجاره‌ای). */
 function commercialSlugHints(text: string): string[] {
+  text = maskNegatedCategoryCues(text);
   const hints: string[] = [];
   // Do not treat «رهگیری» / «فرهنگیان» as رهن, or «اینترنت» as رنت.
   const rentish =
