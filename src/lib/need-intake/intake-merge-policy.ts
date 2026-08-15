@@ -13,6 +13,7 @@
 
 import type { NeedDraft } from '@/contracts/need-intake';
 import type { SmartExtractionResult } from '@/intake/smart-extractor/types';
+import { NEIGHBORHOOD_SOFT_FILL_MIN_CONFIDENCE } from '@/lib/need-intake/compose-auto-apply';
 
 export type IntakeMergeSource = 'user' | 'intelligence' | 'smart' | 'none';
 
@@ -264,7 +265,7 @@ export function buildSourceSig(needText: string, detailsText = ''): string {
 export function pickNeighborhoodSoftFill(
   result: SmartExtractionResult | null | undefined,
   locks?: IntakeUserLocks,
-  minConfidence = 0.85
+  minConfidence = NEIGHBORHOOD_SOFT_FILL_MIN_CONFIDENCE
 ): { neighborhood: string; neighborhoodSlug: string | null; confidence: number } | null {
   if (!result) return null;
   if (isLocked(locks, 'neighborhood') || isLocked(locks, 'neighborhoodSlug')) return null;
