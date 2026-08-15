@@ -279,6 +279,8 @@ export const COLLISION_ROWS: CollisionRow[] = [
   { slug: 'apartment-rent', pattern: 'شبانه', unless: ['ماهانه', 'رهن'] },
   { slug: 'villa-rent', pattern: 'کوتاه مدت', unless: [] },
   { slug: 'villa-rent', pattern: 'کوتاه\u200cمدت', unless: [] },
+  { slug: 'villa-short-rent', pattern: 'بلندمدت', unless: ['روزانه', 'کوتاه مدت', 'کوتاه\u200cمدت'] },
+  { slug: 'villa-short-rent', pattern: 'برای زندگی', unless: ['روزانه', 'کوتاه مدت'] },
 
   // partnership ↔ land-sale
   { slug: 'land-sale', pattern: 'مشارکت', unless: SALE_RESCUE },
@@ -388,6 +390,9 @@ const CURATED_HIGH_PRIORITY: Array<{
   { slug: 'shop-rent', pattern: 'رهن مغازه', priority: 18, weight: 4 },
   { slug: 'office-sale', pattern: 'دفتر کار اداری', priority: 22, weight: 6 },
   { slug: 'office-sale', pattern: 'خرید دفتر', priority: 22, weight: 6 },
+  { slug: 'office-sale', pattern: 'واحد اداری', priority: 24, weight: 7 },
+  { slug: 'office-sale', pattern: 'دفتر کار می خوام بخرم', priority: 24, weight: 7 },
+  { slug: 'office-sale', pattern: 'دفتر کار می\u200cخوام بخرم', priority: 24, weight: 7 },
   { slug: 'office-rent', pattern: 'دفتر', priority: 15, weight: 3 },
   { slug: 'industrial-sale', pattern: 'سوله صنعتی', priority: 22, weight: 6 },
   { slug: 'industrial-sale', pattern: 'خرید سوله', priority: 22, weight: 6 },
@@ -424,6 +429,9 @@ const CURATED_HIGH_PRIORITY: Array<{
   { slug: 'workspace-short-rent', pattern: 'اجاره کوتاه\u200cمدت فضای کار اشتراکی', priority: 26, weight: 8 },
   { slug: 'workspace-short-rent', pattern: 'اجاره کوتاه مدت فضای کار اشتراکی', priority: 26, weight: 8 },
   { slug: 'suite-apartment-rent', pattern: 'سوئیت', priority: 14, weight: 2 },
+  { slug: 'suite-apartment-rent', pattern: 'سوییت', priority: 14, weight: 2 },
+  { slug: 'suite-apartment-rent', pattern: 'سوییت اقامتی', priority: 22, weight: 6 },
+  { slug: 'suite-apartment-rent', pattern: 'سوئیت اقامتی', priority: 22, weight: 6 },
   { slug: 'suite-apartment-rent', pattern: 'اجاره کوتاه مدت', priority: 24, weight: 7 },
   { slug: 'suite-apartment-rent', pattern: 'اجاره کوتاه\u200cمدت', priority: 24, weight: 7 },
   { slug: 'suite-apartment-rent', pattern: 'آپارتمان اجاره کوتاه مدت', priority: 26, weight: 8 },
@@ -432,6 +440,7 @@ const CURATED_HIGH_PRIORITY: Array<{
   { slug: 'shop-rent', pattern: 'رهن مغازه', priority: 22, weight: 6 },
   { slug: 'villa-short-rent', pattern: 'اجاره روزانه ویلا', priority: 22, weight: 6 },
   { slug: 'villa-rent', pattern: 'اجاره ویلا', priority: 20, weight: 5 },
+  { slug: 'villa-rent', pattern: 'قرارداد بلندمدت', priority: 22, weight: 6 },
 ];
 
 function leafFor(kind: EstatePropertyKind, family: EstateDealFamily): EstateLeafSlug | null {

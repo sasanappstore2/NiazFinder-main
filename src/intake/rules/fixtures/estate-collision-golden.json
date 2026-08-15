@@ -125,6 +125,11 @@
     "expectSlug": "villa-short-rent"
   },
   {
+    "id": "villa-short-not-yearly",
+    "text": "اجاره روزانه ویلا در سمنان برای تعطیلات چند روزه. سکونت سالانه و رهن‌اجاره نمی‌خوام، فقط کوتاه‌مدت",
+    "expectSlug": "villa-short-rent"
+  },
+  {
     "id": "apartment-rent-monthly",
     "text": "اجاره آپارتمان ماهانه در اصفهان",
     "expectSlug": "apartment-rent"
@@ -173,5 +178,40 @@
     "id": "land-rent-not-partnership",
     "text": "کلنگی اجاره می‌کنم تو زرند حدود ۱۲۰۰ متر. مشارکت در ساخت نیست؛ اجاره ماهانه",
     "expectSlug": "land-rent"
+  },
+  {
+    "id": "villa-rent-not-short",
+    "text": "اجاره ویلا در ارومیه برای زندگی، قرارداد بلندمدت. ودیعه ۷۰۰ میلیون. کوتاه‌مدت و مسافری نیست",
+    "expectSlug": "villa-rent"
+  },
+  {
+    "id": "office-sale-vahed-edari",
+    "text": "دنبال خرید واحد اداری‌ام در بیرجند. متراژ ۱۳۹. سند اداری مهمه",
+    "expectSlug": "office-sale"
+  },
+  {
+    "id": "suite-soyyit",
+    "text": "سوییت اقامتی کوتاه‌مدت تو طالقان. چند روز تا دو هفته. اجاره ماهانه و رهن خانوادگی نیست",
+    "expectSlug": "suite-apartment-rent"
+  },
+  {
+    "id": "apartment-sale-not-shop-file",
+    "text": "قصد خرید آپارتمان در رشت دارم. لطفاً فایل اداری یا مغازه نفرستید، مسکونی می‌خوام",
+    "expectSlug": "apartment-sale"
+  },
+  {
+    "id": "office-sale-not-clinic-rent",
+    "text": "دفتر کار می‌خوام بخرم تو لنجان، حدود ۱۳۰ متر. برای استقرار تیم، نه مطب اجاره‌ای",
+    "expectSlug": "office-sale"
+  },
+  {
+    "id": "presale-not-partnership-land",
+    "text": "دنبال پیش‌فروش مسکن تو اصفهان هستم. پروژه معتبر. مشارکت در ساخت زمین خالی نیست",
+    "expectSlug": "pre-sale-services"
+  },
+  {
+    "id": "agency-not-industrial-example",
+    "text": "مشاور املاک در اراک. خدمات مشاوره و قرارداد، نه اینکه خودم سوله یا آپارتمان مشخص بخرم",
+    "expectSlug": "agency-services"
   }
 ]

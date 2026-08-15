@@ -35,7 +35,33 @@ function main() {
   assert.match(f, /کلنگی|اجاره/);
   assert.doesNotMatch(f, /مشارکت/);
 
-  assert.match(maskNegatedCategoryCues('اجاره روزانه ویلا در رامسر'), /ویلا/);
+  const g = maskNegatedCategoryCues(
+    'اجاره ویلا برای زندگی، قرارداد بلندمدت. کوتاه‌مدت و مسافری نیست'
+  );
+  assert.match(g, /ویلا/);
+  assert.doesNotMatch(g, /کوتاه مدت|مسافری/);
+
+  const h = maskNegatedCategoryCues(
+    'لطفاً فایل اداری یا مغازه نفرستید، مسکونی می‌خوام. خرید آپارتمان'
+  );
+  assert.match(h, /آپارتمان/);
+  assert.doesNotMatch(h, /مغازه/);
+
+  const i = maskNegatedCategoryCues(
+    'مشاور املاک. نه اینکه خودم سوله یا آپارتمان مشخص بخرم'
+  );
+  assert.match(i, /مشاور/);
+  assert.doesNotMatch(i, /سوله/);
+
+  const j = maskNegatedCategoryCues('دنبال پیش‌فروش مسکن. مشارکت در ساخت زمین خالی نیست');
+  assert.match(j, /پیش فروش|پیش‌فروش|مسکن/);
+  assert.doesNotMatch(j, /مشارکت/);
+
+  const k = maskNegatedCategoryCues(
+    'اجاره روزانه ویلا. سکونت سالانه و رهن‌اجاره نمی‌خوام، فقط کوتاه‌مدت'
+  );
+  assert.match(k, /روزانه|ویلا|کوتاه مدت/);
+  assert.doesNotMatch(k, /سالانه/);
   assert.match(maskNegatedCategoryCues('اجاره روزانه ویلا در رامسر'), /روزانه/);
 
   console.log('negation-mask: ok');

@@ -144,19 +144,31 @@ function commercialSlugHints(text: string): string[] {
     hints.push('admin-management');
   }
 
+  // Brokerage intent outranks property nouns mentioned only as examples («نه اینکه سوله بخرم»).
+  if (/مشاور\s*املاک|آژانس\s*املاک|بنگاه\s*املاک/u.test(text)) {
+    hints.push('agency-services');
+  }
+
   // Clinic / dental office rent → commercial office, not residential apartment.
-  if (/کلینیک|مطب|دندانپزشک/u.test(text) && rentish) {
+  // «نه مطب اجاره‌ای» is a rejected example, not a clinic search.
+  if (
+    /کلینیک|مطب|دندانپزشک/u.test(text) &&
+    rentish &&
+    !buyPhrase &&
+    !saleish &&
+    !/نه\s+مطب/u.test(text)
+  ) {
     hints.push('office-rent');
   }
 
-  if (/مغازه|غرفه/u.test(text) || (/ویترین/u.test(text) && !/آپارتمان|اپارتمان|ویلا|سوئیت/u.test(text))) {
+  if (/مغازه|غرفه/u.test(text) || (/ویترین/u.test(text) && !/آپارتمان|اپارتمان|ویلا|سوئیت|سوییت/u.test(text))) {
     if ((rentish && !buyPhrase && !saleish) || (strongRent && !strongBuy && !buyPhrase)) {
       hints.push('shop-rent');
     } else if (saleish || buyPhrase || /بخرم|خرید/u.test(text)) {
       hints.push('shop-sale');
     }
   }
-  if (/دفتر\s*کار|دفتر اداری|\bآفیس\b|office/iu.test(text)) {
+  if (/دفتر\s*کار|دفتر اداری|واحد اداری|\bآفیس\b|office/iu.test(text)) {
     if ((rentish && !buyPhrase && !saleish) || (strongRent && !strongBuy && !buyPhrase)) {
       hints.push('office-rent');
     } else if (saleish || buyPhrase) {
@@ -200,17 +212,16 @@ function commercialSlugHints(text: string): string[] {
       hints.push('land-sale');
     }
   }
-  if (/مشاور\s*املاک|آژانس\s*املاک|بنگاه\s*املاک/u.test(text)) {
-    hints.push('agency-services');
-  }
   // Short-term workspace / suite / villa — before residential apartment heuristics.
   const shortTerm =
     /کوتاه[\u200c\s]*مدت|اجاره\s*روزانه|چند\s*روز|حداکثر\s*دو\s*هفته|هفتگی/u.test(text);
+  const longStay =
+    /بلندمدت|بلند\s*مدت|سالانه|برای زندگی|رهن و اجاره|ودیعه/u.test(text);
   if (shortTerm && /فضای\s*کار|کار\s*اشتراکی|workspace/iu.test(text)) {
     hints.push('workspace-short-rent');
-  } else if (shortTerm && /سوئیت|آپارتمان|اپارتمان/u.test(text)) {
+  } else if (shortTerm && /سوئیت|سوییت|آپارتمان|اپارتمان/u.test(text) && !longStay) {
     hints.push('suite-apartment-rent');
-  } else if (shortTerm && hasVillaProperty) {
+  } else if (shortTerm && hasVillaProperty && !longStay) {
     hints.push('villa-short-rent');
   }
   if (hasVillaProperty) {
@@ -220,13 +231,15 @@ function commercialSlugHints(text: string): string[] {
       hints.push('villa-sale');
     }
   } else if (
-    /آپارتمان|اپارتمان|سوئیت|خانه|خونه|واحد|مسکونی/u.test(text) &&
+    /آپارتمان|اپارتمان|سوئیت|سوییت|خانه|خونه|(?<![\u0600-\u06FF])واحد(?!\s*اداری)|مسکونی/u.test(
+      text
+    ) &&
     !/روزانه|شبانه|کوتاه\s*مدت|کلینیک|مطب|دندانپزشک|کلیدساز/u.test(text)
   ) {
     if ((rentish && !saleish && !buyPhrase) || (strongRent && !strongBuy && !buyPhrase)) {
       hints.push('apartment-rent');
     } else if (
-      /آپارتمان|اپارتمان|خانه|خونه|واحد|مسکونی/u.test(text) &&
+      /آپارتمان|اپارتمان|خانه|خونه|(?<![\u0600-\u06FF])واحد(?!\s*اداری)|مسکونی/u.test(text) &&
       (saleish || buyPhrase)
     ) {
       hints.push('apartment-sale');
@@ -426,6 +439,12 @@ export async function runCategoryIntentEngine(
         clearLeaf !== 'jobs' &&
         !clearLeaf.includes('office-jobs')) ||
       (commercialForced.includes('rent') && clearLeaf.includes('sale') && !clearLeaf.includes('rent')) ||
+      (commercialForced.includes('sale') &&
+        !commercialForced.includes('pre-sale') &&
+        clearLeaf.includes('rent') &&
+        !commercialForced.includes('rent')) ||
+      (commercialForced === 'villa-short-rent' && clearLeaf === 'villa-rent') ||
+      (commercialForced === 'villa-rent' && clearLeaf === 'villa-short-rent') ||
       (clearIsRepair && forcedIsEstate);
     if (conflicts) {
       const forcedMatch = resolveMatchFromSlug(text, commercialForced, candidates);

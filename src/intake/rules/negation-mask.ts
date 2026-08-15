@@ -10,10 +10,30 @@ const NEGATABLE_CUES = [
   'خانه ویلایی',
   'باغ ویلا',
   'اجاره روزانه',
+  'رهن اجاره',
   'کوتاه مدت',
   'دفتر کار',
   'پیش فروش',
+  'سکونت سالانه',
   'آپارتمان',
+  'اپارتمان',
+  'سوئیت',
+  'سوییت',
+  'ویلایی',
+  'ویلای',
+  'ویلا',
+  'کلنگی',
+  'زمین',
+  'مغازه',
+  'غرفه',
+  'سوله',
+  'کارگاه',
+  'دفتر',
+  'آفیس',
+  'مسافری',
+  'سالانه',
+  'روزانه',
+  'مشارکت',
   'اپارتمان',
   'سوئیت',
   'سوییت',
@@ -40,7 +60,7 @@ function escapeRe(s: string): string {
 const CUE_ALT = NEGATABLE_CUES.map(escapeRe).join('|');
 
 const REJECT_VERB =
-  /نمی\s*خواه(?:م|یم|ی|د|ند)?|نمی\s*خوام|نمیخواهم|نمیخوام/u;
+  /نمی\s*خواه(?:م|یم|ی|د|ند)?|نمی\s*خوام|نمیخواهم|نمیخوام|نفرست(?:ید)?|(?<![\u0600-\u06FF])نیست/u;
 
 function blank(span: string): string {
   return span.replace(/[^\s]/g, ' ');
@@ -61,7 +81,13 @@ export function maskNegatedCategoryCues(text: string): string {
   );
   t = t.replace(neChain, (m) => blank(m));
 
-  // Clause immediately before «نمی‌خوام / نمیخوام»: mask cues in that clause only.
+  // «نه اینکه خودم سوله یا آپارتمان بخرم»
+  t = t.replace(/نه\s+اینکه[\u0600-\u06FF\s،,]{0,80}/gu, (span) => {
+    const cueRe = new RegExp(CUE_ALT, 'gu');
+    return span.replace(cueRe, (m) => blank(m));
+  });
+
+  // Clause immediately before «نمی‌خوام / نمیخوام / نفرستید / نیست»: mask cues in that clause only.
   const verbGlobal = new RegExp(REJECT_VERB.source, 'gu');
   let m: RegExpExecArray | null;
   const masked = t.split('');
@@ -82,8 +108,8 @@ export function maskNegatedCategoryCues(text: string): string {
   }
   t = masked.join('');
 
-  // «مشارکت در ساخت نیست»
-  t = t.replace(/مشارکت(?:\s+در)?\s+ساخت\s+نیست/gu, (s) => blank(s));
+  // «مشارکت در ساخت زمین خالی نیست»
+  t = t.replace(/مشارکت(?:\s+در)?\s+ساخت[\u0600-\u06FF\s]{0,40}نیست/gu, (s) => blank(s));
 
   return t.replace(/\s+/g, ' ').trim();
 }
