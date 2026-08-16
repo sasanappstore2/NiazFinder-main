@@ -54,8 +54,16 @@ export function hasEntityValue(
       return Boolean(entities.transactionType);
     case 'area':
       return entities.area != null;
-    case 'budget':
-      return entities.budgetMin != null || entities.budgetMax != null;
+    case 'budget': {
+      if (entities.budgetMin != null || entities.budgetMax != null) return true;
+      const answers = ctx?.answers ?? {};
+      const asNumber = (v: unknown): boolean => {
+        if (typeof v === 'number') return Number.isFinite(v);
+        if (typeof v === 'string' && v.trim()) return Number.isFinite(Number(v.replace(/,/g, '')));
+        return false;
+      };
+      return asNumber(answers.rahnAmount) || asNumber(answers.monthlyRent) || asNumber(answers.budget);
+    }
     case 'rooms':
       return entities.rooms != null;
     case 'description': {

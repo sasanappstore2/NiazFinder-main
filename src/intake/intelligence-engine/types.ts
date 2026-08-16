@@ -56,6 +56,8 @@ export interface IntakeIntelligenceInput {
   forceAi?: boolean;
   /** Optional second pass: gist / disambig LLM / scoped fill. Live typing omits this. */
   enrich?: boolean;
+  /** Live compose: category + deal + numbers; skip LRE and city-AI. */
+  lite?: boolean;
 }
 
 export interface IntakeIntelligenceStepTrace {
@@ -117,6 +119,8 @@ export interface IntakeIntelligenceResult {
     textSignature?: string;
     /** Fast-path hint: UI may request a non-blocking enrich pass. */
     needsEnrich?: boolean;
+    /** True when this pass skipped LRE / city-AI. */
+    lite?: boolean;
   };
 }
 

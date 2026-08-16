@@ -59,8 +59,9 @@ export function legacyDealTypeFromTransactionType(
 
 export function inferTransactionTypeFromSlug(leafSlug: string): TransactionType | null {
   const s = leafSlug.toLowerCase();
+  if (s.includes('short-rent') || s.includes('daily')) return 'DAILY_RENT';
   if (s.includes('rent')) return 'RENT';
-  if (s.includes('sale')) return 'BUY';
+  if (s.includes('sale') || s.includes('partnership') || s.includes('agency')) return 'BUY';
   return null;
 }
 

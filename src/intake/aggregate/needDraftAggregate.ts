@@ -20,6 +20,7 @@ import {
   resolveTransactionType,
 } from '@/lib/need-intake/resolve-transaction-type';
 import { resolveIntakeCategory } from '@/lib/need-intake/resolve-intake-category';
+import { resolveIntakeDefaultPin } from '@/lib/need/resolve-intake-default-pin';
 
 import { entitiesToRecord, recordToEntities } from '@/intake/entities/entityRecord';
 
@@ -55,8 +56,40 @@ function mergeAnalysisLocationIntoParsed(
 }
 
 /** Recompute canonical fields and derive legacy read models on demand. */
+function numericAnswer(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string' && value.trim()) {
+    const n = Number(value.replace(/,/g, ''));
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
+function mirrorMoneyAndAreaToEntities(
+  entities: ReturnType<typeof recordToEntities>,
+  answers: Record<string, unknown>
+): ReturnType<typeof recordToEntities> {
+  const next = { ...entities };
+  const rahn = numericAnswer(answers.rahnAmount);
+  const rent = numericAnswer(answers.monthlyRent);
+  const budget = numericAnswer(answers.budget);
+  const areaMin = numericAnswer(answers.areaMin);
+  if (next.budgetMax == null) {
+    if (rahn != null) next.budgetMax = rahn;
+    else if (rent != null) next.budgetMax = rent;
+    else if (budget != null) next.budgetMax = budget;
+  }
+  if (next.area == null && areaMin != null) {
+    next.area = areaMin;
+  }
+  return next;
+}
+
 export function recomputeNeedDraft(draft: NeedDraft): NeedDraft {
-  const entities = recordToEntities(draft.entities);
+  const entities = mirrorMoneyAndAreaToEntities(
+    recordToEntities(draft.entities),
+    (draft.answers ?? {}) as Record<string, unknown>
+  );
   const template = resolveTemplateFromDraftEntities(entities);
   const missingFields = buildPrioritizedMissingFields(entities, {
     sourceText: draft.sourceText,
@@ -463,6 +496,15 @@ export function syncNeedDraftFromForm(
     form.neighborhoodSlug?.trim() ||
     existingEntities?.neighborhoodSlug?.trim() ||
     null;
+  const pin =
+    existingEntities?.lat != null && existingEntities?.lng != null
+      ? null
+      : resolveIntakeDefaultPin({
+          cityName: form.city,
+          neighborhoodName: form.neighborhood,
+          neighborhoodSlug,
+          seed: sourceText || form.city,
+        });
 
   return recomputeNeedDraft({
     ...patchNeedDraftEntities(base, {
@@ -470,6 +512,7 @@ export function syncNeedDraftFromForm(
       city: form.city.trim() || null,
       neighborhood: form.neighborhood.trim() || null,
       neighborhoodSlug,
+      ...(pin ? { lat: pin.lat, lng: pin.lng } : {}),
     }),
     sourceText,
     parsedIntent,

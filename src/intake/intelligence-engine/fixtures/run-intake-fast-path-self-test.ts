@@ -1,5 +1,6 @@
 /**
  * Fast-path hybrid intake: no LLM on clear estate text; enrich only when ambiguous.
+ * Lite live pass skips LRE / city-AI.
  *
  * Run: npm run test:intake-fast-path
  */
@@ -18,8 +19,16 @@ async function stubServerOnly(): Promise<void> {
   } as NodeModule;
 }
 
-function stepNames(result: { trace?: { steps?: Array<{ name: string }> } }): string[] {
+function stepNames(result: { trace?: { steps?: Array<{ name: string; summary?: string }> } }): string[] {
   return (result.trace?.steps ?? []).map((s) => s.name);
+}
+
+function stepResolver(
+  result: { trace?: { steps?: Array<{ name: string; resolver?: string; summary?: string }> } },
+  name: string
+): string {
+  const step = result.trace?.steps?.find((s) => s.name === name);
+  return `${step?.resolver ?? ''} ${step?.summary ?? ''}`.trim();
 }
 
 async function main(): Promise<void> {
@@ -38,7 +47,34 @@ async function main(): Promise<void> {
   const clearText =
     'اجاره آپارتمان دو خوابه در سیدی مشهد رهن ۵۰۰ میلیون اجاره ۱۵ میلیون';
 
-  // Warm dictionaries / caches so the timed pass is representative.
+  await runHybridIntakePipeline({ text: clearText, lite: true });
+  await clearIntelligenceCache();
+
+  const liteStarted = performance.now();
+  const lite = await runHybridIntakePipeline({ text: clearText, lite: true });
+  const liteLatencyMs = Math.round(performance.now() - liteStarted);
+  const liteNames = stepNames(lite);
+  const liteResolver = stepResolver(lite, 'resolvers');
+
+  assert.equal(lite.meta.lite, true, 'lite pass must set meta.lite');
+  assert.equal(lite.meta.aiInvoked, false, 'lite must not invoke AI');
+  assert.ok(!liteNames.includes('city-disambig'), `lite must skip city-disambig: ${liteNames.join(',')}`);
+  assert.ok(liteResolver.includes('lite'), `lite resolvers must skip LRE: ${liteResolver}`);
+  assert.ok(!liteNames.includes('intent-gist'), `unexpected gist step: ${liteNames.join(',')}`);
+  assert.ok(!liteNames.includes('scoped-field-fill'), `unexpected fill step: ${liteNames.join(',')}`);
+
+  const liteRooms = Number(lite.fields.rooms?.value ?? lite.draft.entities.rooms ?? 0);
+  const liteCity = String(lite.fields.city?.value ?? lite.draft.entities.city ?? '');
+  assert.ok(liteRooms === 2 || liteRooms === 1, `lite rooms expected, got ${liteRooms}`);
+  assert.ok(liteCity.includes('مشهد') || Boolean(lite.fields.citySlug?.value), `lite city missing: ${liteCity}`);
+
+  const LITE_BUDGET_MS = 350;
+  assert.ok(
+    liteLatencyMs < LITE_BUDGET_MS,
+    `lite latency ${liteLatencyMs}ms exceeds ${LITE_BUDGET_MS}ms budget`
+  );
+
+  await clearIntelligenceCache();
   await runHybridIntakePipeline({ text: clearText });
   await clearIntelligenceCache();
 
@@ -49,6 +85,7 @@ async function main(): Promise<void> {
 
   assert.equal(fast.meta.aiInvoked, false, 'clear estate text must not invoke AI on fast path');
   assert.equal(fast.meta.needsEnrich, false, 'clear estate text must not request enrich');
+  assert.equal(Boolean(fast.meta.lite), false, 'full pass must not be lite');
   assert.ok(!names.includes('intent-gist'), `unexpected gist step: ${names.join(',')}`);
   assert.ok(!names.includes('scoped-field-fill'), `unexpected fill step: ${names.join(',')}`);
 
@@ -76,12 +113,14 @@ async function main(): Promise<void> {
     enrich: true,
   });
   const enrichNames = stepNames(enrichClear);
-  // Clear category+city: enrich may gist but must not be required; AI is optional.
   assert.equal(enrichClear.meta.needsEnrich, false);
 
   console.log(
     JSON.stringify({
       ok: true,
+      liteLatencyMs,
+      liteSteps: liteNames,
+      liteResolver,
       fastLatencyMs: latencyMs,
       fastEngine: fast.meta.engine,
       fastSteps: names,

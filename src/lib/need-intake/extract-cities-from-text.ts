@@ -1,4 +1,5 @@
 import { CANONICAL_CITIES } from '@/config/locations';
+import { ALL_LOCATION_CITIES } from '@/lib/search/city-slugs';
 
 function normalizeCityLabel(city: string): string {
   return city.trim();
@@ -19,6 +20,12 @@ export function extractCitiesMentionedInText(text: string): string[] {
     if (normalized.toLowerCase().includes(city.slug)) {
       found.add(city.title);
     }
+  }
+
+  for (const city of ALL_LOCATION_CITIES) {
+    const name = city.name.trim();
+    if (name.length < 3) continue;
+    if (normalized.includes(name)) found.add(name);
   }
 
   if (normalized.includes('\u0641\u0631\u0627\u0645\u0631\u0632')) found.add('\u0645\u0634\u0647\u062F');

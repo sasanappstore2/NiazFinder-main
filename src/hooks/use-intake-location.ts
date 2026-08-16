@@ -36,6 +36,7 @@ import {
 import { findManagedNeighborhoodAmbiguity } from '@/lib/neighborhoods/find-managed-neighborhood-ambiguity';
 import { extractLocationFragment, normalizeHoodFragment } from '@/lib/need-intake/location-fragment';
 import { mayAutoApplyLocation, mayPrefillNeighborhood } from '@/lib/need-intake/compose-auto-apply';
+import { resolveIntakeDefaultPin } from '@/lib/need/resolve-intake-default-pin';
 
 export interface UseIntakeLocationOptions {
   initialCity?: string | null;
@@ -123,12 +124,13 @@ export function useIntakeLocation({
 
       neighborhoodLockedByUserRef.current = true;
       setSelectedNeighborhood('');
+      const cityPin = resolveIntakeDefaultPin({ cityName: trimmed, seed: trimmed });
       patchNeedDraftEntities({
         city: trimmed,
         neighborhood: null,
         neighborhoodSlug: null,
-        lat: null,
-        lng: null,
+        lat: cityPin?.lat ?? null,
+        lng: cityPin?.lng ?? null,
       });
     },
     [patchNeedDraftEntities, selectedCity, markCityLockedByUser]
@@ -184,10 +186,19 @@ export function useIntakeLocation({
 
       if (opts?.fromUser) neighborhoodLockedByUserRef.current = true;
       setSelectedNeighborhood(canonicalName);
+      const fallbackPin =
+        Object.keys(coordsPatch).length > 0
+          ? coordsPatch
+          : resolveIntakeDefaultPin({
+              cityName: selectedCity,
+              neighborhoodName: canonicalName,
+              neighborhoodSlug: resolvedSlug,
+              seed: canonicalName,
+            }) ?? {};
       patchNeedDraftEntities({
         neighborhood: canonicalName || null,
         neighborhoodSlug: resolvedSlug,
-        ...coordsPatch,
+        ...fallbackPin,
       });
     },
     [neighborhoods, needDraft, patchNeedDraftEntities, selectedCity, selectedNeighborhood]
@@ -214,10 +225,18 @@ export function useIntakeLocation({
       const neighborhood = neighborhoodName?.trim() ?? '';
       setSelectedCity(city);
       setSelectedNeighborhood(neighborhood);
+      const pin = resolveIntakeDefaultPin({
+        cityName: city,
+        citySlug: options?.citySlug,
+        neighborhoodName: neighborhood,
+        neighborhoodSlug: neighborhoodSlug,
+        seed: `${city}:${neighborhood}`,
+      });
       patchNeedDraftEntities({
         city: city || null,
         neighborhood: neighborhood || null,
         neighborhoodSlug: neighborhoodSlug?.trim() || null,
+        ...(pin ? { lat: pin.lat, lng: pin.lng } : {}),
       });
       if (options?.lockUserChoice) {
         markCityLockedByUser(true);

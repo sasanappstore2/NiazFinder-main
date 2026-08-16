@@ -15,7 +15,9 @@ import type { FieldState, IntakeIntelligenceInput } from '@/intake/intelligence-
 import type { IntakeAgentResult } from '@/intake/agent/types';
 import { draftWithAnalysisSnapshot } from '@/intake/training/buildAnalysisSnapshot';
 
-const ENRICH_PAUSE_MS = 1200;
+const ENRICH_PAUSE_MS = 400;
+
+type AnalyzeMode = 'lite' | 'full' | 'enrich';
 
 export interface UseIntakeIntelligenceOptions {
   text: string;
@@ -45,7 +47,7 @@ export interface UseIntakeIntelligenceState {
   intentGist: string | null;
   /** Product agent projection (same schema for rules / LLM). */
   agent: IntakeAgentResult | null;
-  /** Flush debounce and run analyze immediately (returns in-flight or fresh result). */
+  /** Flush debounce and run full analyze (location prefetch / Continue). */
   analyzeNow: () => Promise<IntakeAnalyzeResponse | null>;
   /** Wait for the current in-flight analyze, if any. */
   waitForAnalysis: () => Promise<IntakeAnalyzeResponse | null>;
@@ -58,6 +60,10 @@ function formHintsSignature(formHints?: IntakeIntelligenceInput['formHints']): s
 
 function responseNeedsEnrich(res: IntakeAnalyzeResponse | null): boolean {
   return Boolean((res?.meta as { needsEnrich?: boolean } | undefined)?.needsEnrich);
+}
+
+function isFullOrEnrich(mode: AnalyzeMode | null): boolean {
+  return mode === 'full' || mode === 'enrich';
 }
 
 export function useIntakeIntelligence({
@@ -95,6 +101,8 @@ export function useIntakeIntelligence({
   const lastAnalysisRef = useRef<IntakeAnalyzeResponse | null>(null);
   const analyzedTextRef = useRef<string | null>(null);
   const formHintsSigRef = useRef<string>('');
+  const lastModeRef = useRef<AnalyzeMode | null>(null);
+  const lastRequestedModeRef = useRef<AnalyzeMode | null>(null);
   const lastEnrichTextRef = useRef<string | null>(null);
   const onDraftRef = useRef(onDraft);
 
@@ -150,18 +158,30 @@ export function useIntakeIntelligence({
     }
   }, []);
 
-  const runAnalyze = useCallback(async (mode: 'fast' | 'enrich'): Promise<IntakeAnalyzeResponse | null> => {
+  const runAnalyze = useCallback(async (mode: AnalyzeMode): Promise<IntakeAnalyzeResponse | null> => {
     const trimmed = text.trim();
     if (!trimmed || trimmed.length < 3) return null;
 
     const hintsSig = formHintsSignature(formHints);
+    const lite = mode === 'lite';
     const enrich = mode === 'enrich';
+
+    if (
+      lite &&
+      analyzedTextRef.current === trimmed &&
+      formHintsSigRef.current === hintsSig &&
+      lastAnalysisRef.current &&
+      isFullOrEnrich(lastModeRef.current)
+    ) {
+      return lastAnalysisRef.current;
+    }
 
     if (
       !enrich &&
       analyzedTextRef.current === trimmed &&
       formHintsSigRef.current === hintsSig &&
       lastAnalysisRef.current &&
+      lastModeRef.current === mode &&
       !inflightRef.current
     ) {
       return lastAnalysisRef.current;
@@ -170,6 +190,7 @@ export function useIntakeIntelligence({
     if (
       !enrich &&
       inflightRef.current &&
+      lastRequestedModeRef.current === mode &&
       analyzedTextRef.current === trimmed &&
       formHintsSigRef.current === hintsSig
     ) {
@@ -180,11 +201,16 @@ export function useIntakeIntelligence({
       return lastAnalysisRef.current;
     }
 
-    cancelInflight();
+    if (!lite && inflightRef.current && lastRequestedModeRef.current === 'lite') {
+      cancelInflight();
+    } else {
+      cancelInflight();
+    }
 
     const id = ++reqId.current;
     const controller = new AbortController();
     abortRef.current = controller;
+    lastRequestedModeRef.current = mode;
     if (enrich) {
       setEnriching(true);
     } else {
@@ -199,11 +225,13 @@ export function useIntakeIntelligence({
           cityName: cityName ?? undefined,
           formHints,
           enrich: enrich || undefined,
+          lite: lite || undefined,
           signal: controller.signal,
         });
 
         if (id !== reqId.current) return null;
 
+        lastModeRef.current = mode;
         applyAnalysisResult(res, trimmed, hintsSig);
         if (enrich) lastEnrichTextRef.current = trimmed;
         return res;
@@ -252,13 +280,20 @@ export function useIntakeIntelligence({
       analyzedTextRef.current === trimmed &&
       formHintsSigRef.current === hintsSig &&
       lastAnalysisRef.current &&
+      isFullOrEnrich(lastModeRef.current) &&
       !inflightRef.current
     ) {
       return lastAnalysisRef.current;
     }
-    if (inflightRef.current) return inflightRef.current;
-    return runAnalyze('fast');
-  }, [text, formHints, runAnalyze]);
+    if (inflightRef.current && lastRequestedModeRef.current === 'full') {
+      return inflightRef.current;
+    }
+    const res = await runAnalyze('full');
+    if (res && responseNeedsEnrich(res) && text.trim() === trimmed) {
+      scheduleEnrich(trimmed);
+    }
+    return res;
+  }, [text, formHints, runAnalyze, scheduleEnrich]);
 
   const waitForAnalysis = useCallback(async (): Promise<IntakeAnalyzeResponse | null> => {
     if (inflightRef.current) return inflightRef.current;
@@ -271,7 +306,8 @@ export function useIntakeIntelligence({
       return (
         analyzedTextRef.current === trimmed &&
         formHintsSigRef.current === formHintsSignature(formHints) &&
-        lastAnalysisRef.current != null
+        lastAnalysisRef.current != null &&
+        isFullOrEnrich(lastModeRef.current)
       );
     },
     [formHints]
@@ -300,16 +336,9 @@ export function useIntakeIntelligence({
         formHintsSigRef.current === hintsSig &&
         lastAnalysisRef.current
       ) {
-        if (responseNeedsEnrich(lastAnalysisRef.current) && lastEnrichTextRef.current !== trimmed) {
-          scheduleEnrich(trimmed);
-        }
         return;
       }
-      void runAnalyze('fast').then((res) => {
-        if (res && responseNeedsEnrich(res) && text.trim() === trimmed) {
-          scheduleEnrich(trimmed);
-        }
-      });
+      void runAnalyze('lite');
     }, debounceMs);
 
     return () => {
@@ -318,7 +347,7 @@ export function useIntakeIntelligence({
         debounceTimerRef.current = null;
       }
     };
-  }, [enabled, text, formHints, debounceMs, runAnalyze, scheduleEnrich, cancelEnrichTimer]);
+  }, [enabled, text, formHints, debounceMs, runAnalyze, cancelEnrichTimer]);
 
   useEffect(() => () => {
     cancelInflight();

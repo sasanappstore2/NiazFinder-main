@@ -1,6 +1,9 @@
 import { unifiedNormalize } from '@/intake/intelligence-engine/normalizer/unified-normalizer';
 import { extractEntities } from '@/intake/intelligence-engine/extractors/entity-extractor';
-import { resolveLocationViaLre } from '@/intake/intelligence-engine/resolvers/location-lre-bridge';
+import {
+  resolveLocationViaLre,
+  type LocationLreBridgeResult,
+} from '@/intake/intelligence-engine/resolvers/location-lre-bridge';
 import { resolveBudget } from '@/intake/intelligence-engine/resolvers/budget-resolver';
 import { resolveProperty } from '@/intake/intelligence-engine/resolvers/property-resolver';
 import { resolveDealTypeFields } from '@/intake/intelligence-engine/resolvers/deal-type-resolver';
@@ -53,7 +56,18 @@ import {
   computeNeedsEnrich,
   isDuplicateMoneyFieldBag,
   isIntakeAiPassRequested,
+  splitDuplicateRahnRent,
 } from '@/intake/intelligence-engine/hybrid/ai-gate';
+import { extractCitiesMentionedInText } from '@/lib/need-intake/extract-cities-from-text';
+
+function emptyLiteLocation(): LocationLreBridgeResult {
+  return {
+    fields: createEmptyFieldBag(),
+    candidates: [],
+    status: 'unresolved',
+    parsedLocationPatch: {},
+  };
+}
 
 export { isHybridIntakeEnabled } from '@/intake/intelligence-engine/hybrid/config';
 
@@ -150,7 +164,8 @@ export async function runHybridIntakePipeline(
   steps.push(createStepTrace('normalize', t, 'unified-normalizer'));
 
   const categoryLocked = Boolean(input.formHints?.categoryLockedByUser);
-  const aiPass = isIntakeAiPassRequested(input);
+  const lite = Boolean(input.lite) && !input.enrich && !input.forceAi;
+  const aiPass = !lite && isIntakeAiPassRequested(input);
   const gistPromise =
     aiPass && shouldRunIntentGist(text, { categoryLocked }) && aiBudget.tryConsume()
       ? runIntentGist(text, {
@@ -228,6 +243,21 @@ export async function runHybridIntakePipeline(
     });
     intentSlice = lockedEngine.intent;
     categoryDisambigMethod = lockedEngine.method;
+  } else if (lite) {
+    const engine = await runCategoryIntentEngine({
+      text: rulesSourceText,
+      forceAi: false,
+      allowAi: false,
+    });
+    categoryPartial = applyCategoryEngine(engine);
+    steps.push(
+      createStepTrace(
+        'rules-hypothesis',
+        t,
+        'category-intent-engine',
+        `${engine.method}:${engine.candidates.length}candidates|lite`
+      )
+    );
   } else if (!cityPreLocked) {
     const [engine, cityEarly] = await Promise.all([
       runCategoryIntentEngine({
@@ -282,9 +312,17 @@ export async function runHybridIntakePipeline(
         preferredCityName: input.cityName,
       })
     ),
-    resolveLocationViaLre(norm.lookupKey, text, input),
+    lite
+      ? Promise.resolve(emptyLiteLocation())
+      : resolveLocationViaLre(norm.lookupKey, text, input),
   ]);
-  steps.push(createStepTrace('resolvers', t, 'budget+property+location|parallel'));
+  steps.push(
+    createStepTrace(
+      'resolvers',
+      t,
+      lite ? 'budget+property+entities|lite' : 'budget+property+location|parallel'
+    )
+  );
 
   let bag = createEmptyFieldBag();
   bag = mergeFieldBags(bag, categoryPartial, budgetPartial, propertyPartial);
@@ -296,6 +334,30 @@ export async function runHybridIntakePipeline(
   );
   bag = mergeFieldBags(bag, locationResult.fields);
 
+  const mentionedCities = extractCitiesMentionedInText(text);
+  if (mentionedCities.length === 1) {
+    const name = mentionedCities[0]!;
+    if (String(bag.city?.value ?? '') !== name) {
+      setField(bag, 'city', {
+        value: name,
+        confidence: 0.93,
+        source: 'dictionary',
+        evidence: 'explicit-city-mention',
+      });
+    }
+  } else if (mentionedCities.length > 1) {
+    const current = String(bag.city?.value ?? '');
+    const currentInText = mentionedCities.some((c) => current.includes(c) || c.includes(current));
+    if (!currentInText) {
+      setField(bag, 'city', {
+        value: mentionedCities[0]!,
+        confidence: 0.86,
+        source: 'dictionary',
+        evidence: 'explicit-city-mention',
+      });
+    }
+  }
+
   const cityUnresolved =
     !bag.city?.value &&
     !bag.citySlug?.value &&
@@ -303,7 +365,7 @@ export async function runHybridIntakePipeline(
     !input.cityName &&
     locationResult.status !== 'resolved';
 
-  if (cityUnresolved) {
+  if (!lite && cityUnresolved) {
     t = performance.now();
     if (!cityDisambigResult) {
       cityDisambigResult = await runCityDisambiguation(text, { allowAi: aiPass });
@@ -346,6 +408,7 @@ export async function runHybridIntakePipeline(
   t = performance.now();
   const dealPartial = resolveDealTypeFields(text, bag);
   bag = mergeFieldBags(bag, dealPartial);
+  bag = mergeFieldBags(bag, splitDuplicateRahnRent(bag, text));
   scoreFieldConfidence(bag);
   steps.push(createStepTrace('deal-type', t, 'resolveTransactionType'));
 
@@ -526,9 +589,10 @@ export async function runHybridIntakePipeline(
           !bag.citySlug?.value &&
           !input.citySlug &&
           !input.cityName &&
-          (cityDisambigResult?.ambiguous || locationResult.status !== 'resolved'),
+          (lite || cityDisambigResult?.ambiguous || locationResult.status !== 'resolved'),
         duplicateMoney,
       }),
+      lite,
     },
   };
 }

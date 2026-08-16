@@ -8,6 +8,7 @@ export interface AnalyzeIntakeTextOptions {
   formHints?: IntakeIntelligenceInput['formHints'];
   forceAi?: boolean;
   enrich?: boolean;
+  lite?: boolean;
   signal?: AbortSignal;
 }
 
@@ -35,6 +36,7 @@ export async function analyzeIntakeTextApi(
       ...(hasFormHints ? { formHints } : {}),
       ...(options?.forceAi ? { forceAi: true } : {}),
       ...(options?.enrich ? { enrich: true } : {}),
+      ...(options?.lite ? { lite: true } : {}),
     }),
   });
 }

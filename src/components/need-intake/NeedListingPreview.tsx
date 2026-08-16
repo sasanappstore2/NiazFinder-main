@@ -37,6 +37,7 @@ export interface NeedListingPreviewProps {
   isTitleEnriching?: boolean;
   isDescEnriching?: boolean;
   publishDisabled?: boolean;
+  publishDisabledReason?: string;
   categoryLabel?: string;
   cityLabel?: string;
   nested?: boolean;
@@ -54,6 +55,7 @@ export function NeedListingPreview({
   isTitleEnriching,
   isDescEnriching,
   publishDisabled = false,
+  publishDisabledReason,
   categoryLabel,
   cityLabel,
   nested = false,
@@ -78,6 +80,21 @@ export function NeedListingPreview({
       });
     }
   }, [suggestedTitle, suggestedDescription]);
+
+  useEffect(() => {
+    if (!preview.title.trim() && suggestedTitle) {
+      onChange({ ...preview, title: suggestedTitle });
+    }
+    // Only auto-fill once when the preview title is empty.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [suggestedTitle, preview.title]);
+
+  useEffect(() => {
+    if (!preview.description.trim() && suggestedDescription) {
+      onChange({ ...preview, description: suggestedDescription });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [suggestedDescription, preview.description]);
 
   const addExtra = () => {
     const line = extraLine.trim();
@@ -353,6 +370,9 @@ export function NeedListingPreview({
           {isLoading ? <Loader2 className="size-4 ml-2 animate-spin" /> : null}
           تأیید و ثبت نیاز
         </Button>
+        {publishDisabledReason && !isLoading ? (
+          <p className="w-full text-xs text-muted-foreground sm:basis-full">{publishDisabledReason}</p>
+        ) : null}
       </div>
     </div>
   );

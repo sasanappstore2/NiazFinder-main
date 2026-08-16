@@ -167,9 +167,16 @@ export function NeedMapPinPicker({
 
   useEffect(() => {
     const centroid = selectedNeighborhood?.centroid;
-    if (!centroid || !Number.isFinite(centroid.lat) || !Number.isFinite(centroid.lng)) return;
-    onChangeRef.current({ lat: centroid.lat, lng: centroid.lng });
+    if (centroid && Number.isFinite(centroid.lat) && Number.isFinite(centroid.lng)) {
+      onChangeRef.current({ lat: centroid.lat, lng: centroid.lng });
+      return;
+    }
+    if (Number.isFinite(mapCenter.lat) && Number.isFinite(mapCenter.lng)) {
+      onChangeRef.current({ lat: mapCenter.lat, lng: mapCenter.lng });
+    }
   }, [
+    mapCenter.lat,
+    mapCenter.lng,
     selectedNeighborhood?.id,
     selectedNeighborhood?.centroid?.lat,
     selectedNeighborhood?.centroid?.lng,

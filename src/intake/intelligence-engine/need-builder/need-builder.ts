@@ -343,9 +343,13 @@ export function buildNeedFromFields(input: NeedBuilderInput): NeedBuilderOutput 
   const roomsN = fieldNumeric(fields.rooms?.value);
   const areaN = fieldNumeric(fields.area?.value);
   const budgetMaxN = fieldNumeric(fields.budgetMax?.value);
+  const rahnN = fieldNumeric(fields.rahnAmount?.value);
+  const rentN = fieldNumeric(fields.monthlyRent?.value);
   if (roomsN != null) enrichedEntities.rooms = roomsN;
   if (areaN != null) enrichedEntities.area = areaN;
   if (budgetMaxN != null) enrichedEntities.budgetMax = budgetMaxN;
+  else if (rahnN != null) enrichedEntities.budgetMax = rahnN;
+  else if (rentN != null) enrichedEntities.budgetMax = rentN;
 
   draft = recomputeNeedDraft({
     ...draft,

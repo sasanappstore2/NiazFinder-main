@@ -57,6 +57,8 @@ import {
   generateSmartTitle,
 } from '@/lib/need-intake/smart/utils/title-generator';
 import { validateNeedDraftForPublish, getPublishReadiness } from '@/intake/validation/publishValidator';
+import { extractCitiesMentionedInText } from '@/lib/need-intake/extract-cities-from-text';
+import { ensureDraftMapPin } from '@/lib/need/ensure-draft-map-pin';
 import {
   canProceedToIntakeLocation,
   composeIntakeSourceText,
@@ -622,6 +624,7 @@ export function NeedIntakePanel({
 
   const locationProceedOpts = useMemo(() => {
     const entities = needDraft ? recordToEntities(needDraft.entities) : null;
+    const mentionedCities = extractCitiesMentionedInText(composedSourceText);
     return {
       hasCategory: Boolean(
         selectedCategory ||
@@ -631,7 +634,10 @@ export function NeedIntakePanel({
           needDraft?.parsedIntent?.categorySlug
       ),
       hasCity: Boolean(
-        location.selectedCity || entities?.city || needDraft?.parsedIntent?.city
+        location.selectedCity ||
+          entities?.city ||
+          needDraft?.parsedIntent?.city ||
+          mentionedCities.length > 0
       ),
     };
   }, [
@@ -639,6 +645,7 @@ export function NeedIntakePanel({
     selectedCategory,
     selectedSubcategory,
     location.selectedCity,
+    composedSourceText,
   ]);
 
   const intakeFormContext = useMemo(
@@ -851,13 +858,10 @@ export function NeedIntakePanel({
 
   useEffect(() => {
     if (isIntakeComposeStep(step) || step === 'done' || step === 'publishing') return;
-    const timer = window.setTimeout(() => {
-      if (!needText.trim()) return;
-      syncNeedDraftFromFormFields(formFields, {
-        categoryLockedByUser: draft.categoryLockedByUserRef.current,
-      });
-    }, 350);
-    return () => window.clearTimeout(timer);
+    if (!needText.trim()) return;
+    syncNeedDraftFromFormFields(formFields, {
+      categoryLockedByUser: draft.categoryLockedByUserRef.current,
+    });
   }, [step, needText, formFields, syncNeedDraftFromFormFields, draft.categoryLockedByUserRef]);
 
   useEffect(() => {
@@ -1000,13 +1004,15 @@ export function NeedIntakePanel({
       toast.info('شهر را انتخاب کنید');
       return;
     }
-    const synced = syncNeedDraftFromFormFields(formFields, {
+    const syncedRaw = syncNeedDraftFromFormFields(formFields, {
       categoryLockedByUser: draft.categoryLockedByUserRef.current,
     });
-    if (!synced) {
+    if (!syncedRaw) {
       toast.error('پیش‌نویس نامعتبر است');
       return;
     }
+    const synced = ensureDraftMapPin(syncedRaw, composeIntakeSourceText(needText, detailsText));
+    setNeedDraft(synced);
 
     const validation = validateNeedDraftForPublish(synced);
     if (!validation.success) {
@@ -1044,14 +1050,26 @@ export function NeedIntakePanel({
     setDescEnriching(false);
   };
 
-  const canGoToPreview =
-    Boolean(selectedCategory || selectedSubcategory) && Boolean(location.selectedCity.trim());
+  const previewGateDraft = useMemo(() => {
+    if (step !== 'location') return null;
+    const projected = projectNeedDraftFromFormFields(formFields, {
+      categoryLockedByUser: draft.categoryLockedByUserRef.current,
+    });
+    return projected
+      ? ensureDraftMapPin(projected, composeIntakeSourceText(needText, detailsText))
+      : null;
+  }, [step, formFields, projectNeedDraftFromFormFields, draft.categoryLockedByUserRef, needText, detailsText]);
+
+  const previewReadiness = previewGateDraft ? getPublishReadiness(previewGateDraft) : null;
+  const canGoToPreview = Boolean(previewReadiness?.canPublish);
   const previewDisabledReason =
-    !selectedCategory && !selectedSubcategory
-      ? 'دسته‌بندی را انتخاب کنید'
-      : !location.selectedCity.trim()
-        ? 'شهر را انتخاب کنید'
-        : undefined;
+    previewReadiness && !previewReadiness.canPublish
+      ? previewReadiness.errors[0]?.message
+      : !selectedCategory && !selectedSubcategory
+        ? 'دسته‌بندی را انتخاب کنید'
+        : !location.selectedCity.trim()
+          ? 'شهر را انتخاب کنید'
+          : undefined;
 
   // Soft-apply analyzed category/location onto the form when user reaches location step.
   useEffect(() => {
@@ -1153,7 +1171,7 @@ export function NeedIntakePanel({
                   showCharProgress
                   highlightFromHome={homeSeedHighlight}
                   disabled={isLoading}
-                  analyzing={intelligenceLiveEnabled && intakeIntelligence.enriching}
+                  analyzing={false}
                   analysisMode={analysisMode}
                 />
                 <div className="mt-3">
@@ -1183,7 +1201,7 @@ export function NeedIntakePanel({
                     intentGist={intakeIntelligence.intentGist}
                     fieldMeta={intakeIntelligence.fieldMeta}
                     analyzing={false}
-                    enriching={intelligenceLiveEnabled && intakeIntelligence.enriching}
+                    enriching={false}
                     stale={
                       Boolean(composedSourceText.trim()) &&
                       !intakeIntelligence.isFreshForText(composedSourceText)
@@ -1254,16 +1272,19 @@ export function NeedIntakePanel({
                       <ArrowRight className="size-4 ml-1" />
                       بازگشت
                     </Button>
-                    <Button
-                      className={`w-full sm:w-auto ${intakePrimaryCta}`}
-                      onClick={goToPreview}
-                      disabled={!canGoToPreview}
-                      title={previewDisabledReason}
-                    >
-                      {needDraft && getPublishReadiness(needDraft).canPublish
-                        ? 'ادامه به پیش‌نمایش'
-                        : 'تکمیل اطلاعات و ادامه'}
-                    </Button>
+                    <div className="flex w-full flex-col gap-1 sm:w-auto">
+                      <Button
+                        className={`w-full sm:w-auto ${intakePrimaryCta}`}
+                        onClick={goToPreview}
+                        disabled={!canGoToPreview}
+                        title={previewDisabledReason}
+                      >
+                        {canGoToPreview ? 'ادامه به پیش‌نمایش' : 'تکمیل اطلاعات و ادامه'}
+                      </Button>
+                      {previewDisabledReason ? (
+                        <p className="text-xs text-muted-foreground">{previewDisabledReason}</p>
+                      ) : null}
+                    </div>
                   </>
                 }
               >
@@ -1298,6 +1319,7 @@ export function NeedIntakePanel({
                     isTitleEnriching={titleEnriching}
                     isDescEnriching={descEnriching}
                     publishDisabled={!publishState.canPublish}
+                    publishDisabledReason={publishState.publishDisabledReason}
                     categoryLabel={previewCategoryLabel}
                     cityLabel={previewCityLabel}
                     smartResult={smartRealtime.result}

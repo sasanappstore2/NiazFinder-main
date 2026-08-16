@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
     const { text, citySlug, cityName, formHints } = parsed.data;
     const forceAi = parsed.data.forceAi === true;
     const enrich = parsed.data.enrich === true;
+    const lite = parsed.data.lite === true && !enrich && !forceAi;
 
     let result: IntakeIntelligenceResult;
     const intelligenceInput = {
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
       formHints,
       forceAi,
       enrich,
+      lite,
     };
     // Live/fast analyze is always in-process. Nest :4000 is only for optional enrich
     // and is skipped immediately when the circuit is open.

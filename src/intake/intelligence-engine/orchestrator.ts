@@ -150,9 +150,27 @@ export async function runIntakeIntelligence(
     input.cityName,
     input.formHints,
     Boolean(input.forceAi),
-    Boolean(input.enrich)
+    Boolean(input.enrich),
+    Boolean(input.lite)
   );
   if (!opts?.skipCache) {
+    if (input.lite) {
+      const fullKey = buildParseCacheKey(
+        text,
+        input.citySlug,
+        input.cityName,
+        input.formHints,
+        Boolean(input.forceAi),
+        Boolean(input.enrich),
+        false
+      );
+      const fullCached = await getIntelligenceCache(fullKey);
+      if (fullCached) {
+        fullCached.trace.cacheHit = true;
+        fullCached.meta.latencyMs = Math.round(performance.now() - started);
+        return fullCached;
+      }
+    }
     const cached = await getIntelligenceCache(cacheKey);
     if (cached) {
       cached.trace.cacheHit = true;
@@ -167,6 +185,18 @@ export async function runIntakeIntelligence(
     );
     const result = await runHybridIntakePipeline(input, { existingDraft: opts?.existingDraft });
     await setIntelligenceCache(cacheKey, result);
+    if (!input.lite && !input.enrich && !input.forceAi) {
+      const liteKey = buildParseCacheKey(
+        text,
+        input.citySlug,
+        input.cityName,
+        input.formHints,
+        false,
+        false,
+        true
+      );
+      await setIntelligenceCache(liteKey, result);
+    }
     return result;
   }
 

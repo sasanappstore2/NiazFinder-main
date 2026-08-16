@@ -445,6 +445,18 @@ function buildCase(index: number, rand: () => number, locs: LocRow[]): EstatePar
       deal: leaf.deal,
       city: loc.city,
       neighborhood: hood,
+      area: { exact: area },
+      rooms: leaf.kind === 'land' || leaf.kind === 'service' ? null : rooms,
+      budget: {
+        max: leaf.deal === 'buy' || leaf.deal === 'pre_sale' ? budgetMax : undefined,
+        rahn: leaf.deal === 'rent_rahn_ejare' || leaf.deal === 'rent_rahn_full' ? rahn : undefined,
+        rent:
+          leaf.deal === 'rent_rahn_ejare' ||
+          leaf.deal === 'rent_monthly' ||
+          leaf.deal === 'rent_short_term'
+            ? rent
+            : undefined,
+      },
       hard: ['category'],
       weighted: ['location'],
       ambiguous: false,

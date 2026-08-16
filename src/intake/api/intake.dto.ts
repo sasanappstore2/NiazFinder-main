@@ -24,6 +24,8 @@ export const intakeAnalyzeRequestSchema = z.object({
   forceAi: z.boolean().optional(),
   /** Non-blocking second pass (gist / disambig / empty critical fill). */
   enrich: z.boolean().optional(),
+  /** Live compose: skip LRE and city-AI. */
+  lite: z.boolean().optional(),
 });
 
 export type IntakeAnalyzeRequest = z.infer<typeof intakeAnalyzeRequestSchema>;

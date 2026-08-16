@@ -14,7 +14,12 @@ import {
   loadPendingIntakePublish,
   savePendingIntakePublish,
 } from '@/lib/need-intake/pending-intake-publish';
-import { validateNeedDraftForPublish } from '@/intake/validation/publishValidator';
+import {
+  getPublishReadiness,
+  validateNeedDraftForPublish,
+} from '@/intake/validation/publishValidator';
+import { projectNeedDraftFromForm } from '@/intake/aggregate/needDraftAggregate';
+import { ensureDraftMapPin } from '@/lib/need/ensure-draft-map-pin';
 import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
 import { resolveDeterministicListingTitle } from '@/lib/need-intake/resolve-listing-title';
 import {
@@ -86,15 +91,39 @@ export function useIntakePublish({
   const pendingPublishResumeRef = useRef(false);
   const publishRef = useRef<() => Promise<void>>(async () => {});
 
-  const canPublish = useMemo(() => {
-    if (!listingPreview?.title.trim() || titleEnriching || descEnriching || isLoading) return false;
-    if (!needDraft) return false;
-    return validateNeedDraftForPublish(needDraft).success;
-  }, [needDraft, listingPreview, titleEnriching, descEnriching, isLoading]);
+  const liveDraft = useMemo(() => {
+    const projected = projectNeedDraftFromForm(needDraft, formFields);
+    return ensureDraftMapPin(projected, formFields.needText);
+  }, [formFields, needDraft]);
+
+  const publishReadiness = useMemo(() => {
+    if (titleEnriching || descEnriching || isLoading) {
+      return { success: false, canPublish: false, errors: [] as { field: string; message: string }[] };
+    }
+    if (!listingPreview?.title.trim()) {
+      return {
+        success: false,
+        canPublish: false,
+        errors: [{ field: 'title', message: 'عنوان آگهی را وارد کنید' }],
+      };
+    }
+    if (!liveDraft) {
+      return {
+        success: false,
+        canPublish: false,
+        errors: [{ field: 'draft', message: 'پیش‌نویس آماده نیست' }],
+      };
+    }
+    return getPublishReadiness(liveDraft);
+  }, [liveDraft, listingPreview, titleEnriching, descEnriching, isLoading]);
+
+  const canPublish = publishReadiness.canPublish;
+  const publishDisabledReason = publishReadiness.errors[0]?.message;
 
   const publish = useCallback(async () => {
-    const draft =
+    const draftRaw =
       syncNeedDraftFromFormFields(formFields) ?? getDraft();
+    const draft = draftRaw ? ensureDraftMapPin(draftRaw, formFields.needText) : null;
     if (!draft || !listingPreview) {
       toast.error('اطلاعات برای انتشار آماده نیست');
       return;
@@ -252,6 +281,7 @@ export function useIntakePublish({
     publish,
     repolishPreview,
     canPublish,
+    publishDisabledReason,
     isRepublishing,
     publishRedirect,
     publishSuccessCopy,
