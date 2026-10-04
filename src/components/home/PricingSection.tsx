@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Check } from 'lucide-react';
+import { Building2, Check, Sparkles, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -88,7 +88,18 @@ export function PricingSection() {
                 )}
 
                 <CardHeader className="relative flex flex-col items-center gap-2 px-6 pt-8 pb-2 text-center">
-                  <span className="mb-1 text-4xl" aria-hidden="true">{plan.icon}</span>
+                  <span
+                    className="mb-1 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary"
+                    aria-hidden="true"
+                  >
+                    {plan.id === 'free' ? (
+                      <Sparkles className="size-7" />
+                    ) : plan.id === 'pro' ? (
+                      <Star className="size-7" />
+                    ) : (
+                      <Building2 className="size-7" />
+                    )}
+                  </span>
                   <CardTitle className="text-xl" itemProp="name">{plan.name}</CardTitle>
                   <p className="text-sm text-muted-foreground">{plan.description}</p>
 

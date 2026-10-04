@@ -21,7 +21,7 @@ export default function AuthLayout({
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl" />
       </div>
 
-      <div className="w-full min-w-0 max-w-md">{children}</div>
+      <main id="main-content" className="w-full min-w-0 max-w-md">{children}</main>
     </div>
   );
 }

@@ -15,12 +15,19 @@ import type {
 import type { IntakeAnalysisResult } from '@/intake/types';
 import {
   createNeedDraftFromAnalysis,
+  mergeAnalyzeIntoDraft,
   patchNeedDraftEntities as patchDraftEntities,
   projectNeedDraftFromForm,
   syncNeedDraftFromForm,
   type SyncNeedDraftFormOpts,
+  type IntakeUserFieldLocks,
 } from '@/intake/aggregate/needDraftAggregate';
 import { warnLegacyWriteDetected } from '@/intake/legacy/legacy-guards';
+import type { NeedDraft as NeedDraftContract } from '@/contracts/need-intake';
+
+type AnalyzedDraftCarrier = IntakeAnalysisResult & {
+  draft?: NeedDraftContract;
+};
 
 interface NeedIntakeState {
   step: IntakeStep;
@@ -68,7 +75,8 @@ interface NeedIntakeState {
   setNeedDraftFromAnalysis: (
     analysis: IntakeAnalysisResult,
     sourceText: string,
-    intakeTrace?: import('@/intake/types/analysis-trace').IntakeAnalysisTrace
+    intakeTrace?: import('@/intake/types/analysis-trace').IntakeAnalysisTrace,
+    locks?: IntakeUserFieldLocks
   ) => void;
   patchNeedDraftEntities: (patch: Partial<Record<string, unknown>>) => void;
   syncNeedDraftFromFormFields: (
@@ -101,7 +109,7 @@ interface NeedIntakeState {
 }
 
 const initialState = {
-  step: 'need' as IntakeStep,
+  step: 'compose' as IntakeStep,
   seedText: '',
   needDraft: null as NeedDraft | null,
   parsedIntent: null,
@@ -120,15 +128,49 @@ const initialState = {
   typingSessionId: null,
 };
 
-function applyNeedDraft(set: (partial: Partial<NeedIntakeState>) => void, draft: NeedDraft | null) {
+function applyNeedDraft(
+  set: (partial: Partial<NeedIntakeState>) => void,
+  draft: NeedDraft | null,
+  currentDraft?: NeedDraft | null
+) {
+  const safeDraft = draft && draft.publishSnapshot && !sameDraftAsSnapshot(draft)
+    ? { ...draft, publishSnapshot: undefined }
+    : draft;
+
+  // Zustand notifies subscribers when the partial state object is new, even if
+  // all of its values are the same. Reconciliation effects frequently produce
+  // the exact same draft, so keep this write idempotent at the store boundary.
+  if (currentDraft === safeDraft) return;
+
   set({
-    needDraft: draft,
-    parsedIntent: draft?.parsedIntent ?? null,
-    answers: draft?.answers ?? {},
-    seedText: draft?.sourceText ?? '',
-    readinessScore: draft?.completionScore ?? 0,
-    readyToPreview: draft?.completionState === 'READY_TO_PUBLISH',
+    needDraft: safeDraft,
+    parsedIntent: safeDraft?.parsedIntent ?? null,
+    answers: safeDraft?.answers ?? {},
+    seedText: safeDraft?.sourceText ?? '',
+    readinessScore: safeDraft?.completionScore ?? 0,
+    readyToPreview: safeDraft?.completionState === 'READY_TO_PUBLISH',
   });
+}
+
+function stableJson(value: unknown): string {
+  return JSON.stringify(value, (_key, current) => {
+    if (current && typeof current === 'object' && !Array.isArray(current)) {
+      return Object.keys(current as Record<string, unknown>)
+        .sort()
+        .reduce<Record<string, unknown>>((out, key) => {
+          out[key] = (current as Record<string, unknown>)[key];
+          return out;
+        }, {});
+    }
+    return current;
+  });
+}
+
+function sameDraftAsSnapshot(draft: NeedDraft): boolean {
+  const snapshot = draft.publishSnapshot;
+  if (!snapshot || draft.draftRevision !== snapshot.draftRevision) return false;
+  const { publishSnapshot: _ignored, ...current } = draft;
+  return stableJson(current) === stableJson(snapshot.draft);
 }
 
 export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
@@ -154,9 +196,19 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
     set((s) => {
       const next =
         typeof listingPreview === 'function' ? listingPreview(s.listingPreview) : listingPreview;
+      const snapshotPreview = s.needDraft?.publishSnapshot?.listingPreview;
+      const sameAsSnapshot =
+        JSON.stringify(next ?? null) === JSON.stringify(snapshotPreview ?? null);
       return {
         listingPreview: next,
-        needDraft: s.needDraft ? { ...s.needDraft, listingPreview: next ?? undefined } : null,
+        needDraft: s.needDraft
+          ? {
+              ...s.needDraft,
+              listingPreview: next ?? undefined,
+              // Any manual preview edit invalidates the immutable snapshot.
+              publishSnapshot: sameAsSnapshot ? s.needDraft.publishSnapshot : undefined,
+            }
+          : null,
       };
     }),
   setReadiness: (readinessScore, readyToPreview) =>
@@ -173,29 +225,43 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
   setTypingPreloading: (typingPreloading) => set({ typingPreloading }),
   setTypingSessionId: (typingSessionId) => set({ typingSessionId }),
 
-  setNeedDraft: (draft) => applyNeedDraft(set, draft),
+  setNeedDraft: (draft) => applyNeedDraft(set, draft, get().needDraft),
 
-  setNeedDraftFromAnalysis: (analysis, sourceText, intakeTrace) => {
-    const { leadPhone, listingPreview } = get();
-    const draft = createNeedDraftFromAnalysis(analysis, sourceText, {
-      leadPhone,
-      intakeTrace,
-      existing: { listingPreview: listingPreview ?? undefined },
-    });
-    applyNeedDraft(set, draft);
+  setNeedDraftFromAnalysis: (analysis, sourceText, intakeTrace, locks) => {
+    const { leadPhone, listingPreview, needDraft } = get();
+    const carrier = analysis as AnalyzedDraftCarrier;
+    const analyzed =
+      carrier.draft ??
+      createNeedDraftFromAnalysis(analysis, sourceText, {
+        leadPhone,
+        intakeTrace,
+        existing: { listingPreview: listingPreview ?? undefined },
+      });
+    const draft = mergeAnalyzeIntoDraft(
+      needDraft,
+      {
+        ...analyzed,
+        sourceText: analyzed.sourceText || sourceText,
+        leadPhone: leadPhone ?? analyzed.leadPhone,
+        listingPreview: analyzed.listingPreview ?? listingPreview ?? undefined,
+        intakeTrace: intakeTrace ?? analyzed.intakeTrace,
+      },
+      locks
+    );
+    applyNeedDraft(set, draft, needDraft);
   },
 
   patchNeedDraftEntities: (patch) => {
     const current = get().needDraft;
     if (!current) return;
     const updated = patchDraftEntities(current, patch);
-    applyNeedDraft(set, updated);
+    applyNeedDraft(set, updated, current);
   },
 
   syncNeedDraftFromFormFields: (form, opts) => {
     const current = get().needDraft;
     const updated = syncNeedDraftFromForm(current, form, opts);
-    applyNeedDraft(set, updated);
+    applyNeedDraft(set, updated, current);
     return updated;
   },
 

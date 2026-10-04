@@ -24,7 +24,6 @@ import {
   PhoneIncoming,
   PhoneOutgoing,
   PhoneMissed,
-  CircleUserRound,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useShallow } from 'zustand/react/shallow';
@@ -56,6 +55,7 @@ import {
 } from '@/components/chat/ChatImageLightbox';
 import { ChatComposer } from '@/components/chat/ChatComposer';
 import { ChatLocationPickerDialog } from '@/components/chat/ChatLocationPickerDialog';
+import { ForwardMessageDialog } from '@/components/chat/ForwardMessageDialog';
 import { toVoiceCallPeer } from '@/lib/voice/voice-call-peer';
 import { useChatRealtime } from '@/hooks/useChatRealtime';
 import { useChatTypingEmitter } from '@/hooks/useChatTypingEmitter';
@@ -66,6 +66,7 @@ import { tryJoinConversation } from '@/lib/chat/socket-bridge';
 import { useChatPollingFallback } from '@/hooks/useChatPollingFallback';
 import { usePeerPresenceRefresh } from '@/hooks/usePeerPresenceRefresh';
 import { markConversationRead } from '@/lib/chat/mark-conversation-read';
+import { toggleMessageStar } from '@/lib/chat/toggle-message-star';
 import { ChatPeerTyping, ChatTypingHeaderStatus } from '@/components/chat/ChatPeerTyping';
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -220,17 +221,21 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     [messages, activeConversationId]
   );
 
-  const pinnedMessage = useMemo(() => {
-    const pinned = threadMessages.filter((m) => m.isPinned && !m.deletedAt);
-    if (pinned.length === 0) return null;
-    return pinned.reduce((latest, m) => {
-      const latestAt = latest.pinnedAt ? Date.parse(latest.pinnedAt) : 0;
-      const at = m.pinnedAt ? Date.parse(m.pinnedAt) : 0;
-      return at >= latestAt ? m : latest;
-    });
+  const pinnedMessages = useMemo(() => {
+    return threadMessages
+      .filter((m) => m.isPinned && !m.deletedAt)
+      .sort(
+        (a, b) =>
+          Date.parse(b.pinnedAt ?? '0') - Date.parse(a.pinnedAt ?? '0')
+      );
   }, [threadMessages]);
 
-  const { endRef: messagesEndRef, scrollRootRef: messagesScrollRootRef, scrollToBottomForced } =
+  const {
+    endRef: messagesEndRef,
+    scrollRootRef: messagesScrollRootRef,
+    scrollToBottomForced,
+    showScrollToBottom,
+  } =
     useChatMessageScroll({
       conversationId: activeConversationId,
       messageCount: threadMessages.length,
@@ -252,6 +257,9 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   const fileAttachmentRef = useRef<HTMLInputElement>(null);
   const [infoPanelOpen, setInfoPanelOpen] = useState(false);
   const [deleteConfirmMsgId, setDeleteConfirmMsgId] = useState<string | null>(null);
+  const [forwardMessage, setForwardMessage] = useState<Message | null>(null);
+  const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
+  const [unreadAtOpen, setUnreadAtOpen] = useState(0);
 
   const [attachmentBusy, setAttachmentBusy] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -444,11 +452,16 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   // ── Select conversation ────────────────────────────────────────────────
   const handleSelectConversation = useCallback(
     (convId: string) => {
+      const conv = useAppStore.getState().conversations.find((c) => c.id === convId);
+      setUnreadAtOpen(conv?.unreadCount ?? 0);
       setActiveConversationId(convId);
       setShowMessages(true);
       setReplyTo(null);
       router.push(routeBuilder.chatConversation(convId));
-      inputRef.current?.focus();
+      // Desktop only — mobile: wait for explicit tap on composer (keyboard UX).
+      if (typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches) {
+        inputRef.current?.focus();
+      }
     },
     [setActiveConversationId, router]
   );
@@ -499,8 +512,9 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
         setShowNewChat(false);
         setUserSearchQuery('');
         setSearchResults([]);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error creating conversation:', err);
+        toast.error(err instanceof Error ? err.message : 'خطا در ایجاد گفتگو');
       } finally {
         setIsCreatingConversation(false);
       }
@@ -517,6 +531,15 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
       setSearchResults([]);
     }
   }, [showNewChat]);
+
+  // Bridge: conversation-filter found nothing → jump to people search with the
+  // same query (social layer: find anyone by name/username and start a DM).
+  const handleSearchPeople = useCallback((query: string) => {
+    setSidebarTab('messages');
+    setShowNewChat(true);
+    setUserSearchQuery(query.replace(/^@/, ''));
+    setSearchQuery('');
+  }, []);
 
   const handleSidebarTabChange = useCallback((tab: SidebarTab) => {
     setSidebarTab(tab);
@@ -563,7 +586,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     [currentUser?.id, openVoiceCall]
   );
 
-  // ── Back to conversation list ──────────────────────────────────────────
+  // ── Back to conversation list (mobile thread header) ───────────────────
   const handleBack = useCallback(() => {
     setShowMessages(false);
     setActiveConversationId(null);
@@ -571,6 +594,34 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
     setEditingMessage(null);
     router.push(routeBuilder.chat());
   }, [setActiveConversationId, router]);
+
+  /**
+   * Close chat entirely (list header). Do not use history.back() — the stack is
+   * often /chat ↔ /chat/[id], which never leaves chat.
+   */
+  const handleCloseChat = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const ref = document.referrer;
+        if (ref) {
+          const u = new URL(ref);
+          const path = u.pathname;
+          if (
+            u.origin === window.location.origin &&
+            !path.startsWith('/chat') &&
+            path !== '/messages' &&
+            !path.startsWith('/messages/')
+          ) {
+            router.push(`${path}${u.search}${u.hash}`);
+            return;
+          }
+        }
+      } catch {
+        // ignore bad referrer
+      }
+    }
+    router.push(routeBuilder.home());
+  }, [router]);
 
   // ── Send message ───────────────────────────────────────────────────────
   const handleSendMessage = useCallback(() => {
@@ -885,6 +936,21 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
   const scrollToMessage = useCallback((messageId: string) => {
     const el = document.querySelector(`[data-message-id="${messageId}"]`);
     el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setHighlightedMessageId(messageId);
+    window.setTimeout(() => {
+      setHighlightedMessageId((cur) => (cur === messageId ? null : cur));
+    }, 1600);
+  }, []);
+
+  const handleCopyMessage = useCallback(async (msg: Message) => {
+    const { parseForwardedContent } = await import('@/lib/chat/forward-marker');
+    const text = parseForwardedContent(msg.content).body;
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success('متن کپی شد');
+    } catch {
+      toast.error('کپی ممکن نشد');
+    }
   }, []);
 
   const handleReact = useCallback(
@@ -926,35 +992,55 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
       const msg = threadMessages.find((m) => m.id === messageId);
       if (!msg || !activeConversationId) return;
       const unpin = Boolean(msg.isPinned);
-      try {
-        const ok = await pinChatMessage(messageId, activeConversationId, unpin);
-        if (ok) {
-          toast.success(unpin ? 'سنجاق برداشته شد' : 'پیام سنجاق شد');
-        } else {
-          toast.error('سنجاق پیام ناموفق بود');
-        }
-      } catch (err) {
-        toast.error(err instanceof Error ? err.message : 'سنجاق پیام ناموفق بود');
-      }
+      const ok = await pinChatMessage(messageId, activeConversationId, unpin);
+      if (ok) toast.success(unpin ? 'سنجاق برداشته شد' : 'پیام سنجاق شد');
+      else toast.error('عملیات سنجاق ناموفق بود');
     },
+    // pinChatMessage / threadMessages resolved below — keep deps tight if eslint warns
     [threadMessages, activeConversationId, pinChatMessage]
   );
 
-  const handleUnpinPinned = useCallback(() => {
-    if (!pinnedMessage || !activeConversationId) return;
-    void handlePin(pinnedMessage.id);
-  }, [pinnedMessage, activeConversationId, handlePin]);
+  const handleToggleStar = useCallback(
+    async (messageId: string) => {
+      const msg = threadMessages.find((m) => m.id === messageId);
+      if (!msg) return;
+      const unstar = Boolean(msg.isStarred);
+      try {
+        const ok = await toggleMessageStar(messageId, unstar, authToken);
+        if (!ok) {
+          toast.error('ستاره‌گذاری ناموفق بود');
+          return;
+        }
+        useAppStore.setState((s) => ({
+          messages: s.messages.map((m) =>
+            m.id === messageId ? { ...m, isStarred: !unstar } : m
+          ),
+        }));
+        toast.success(unstar ? 'ستاره برداشته شد' : 'پیام ستاره‌دار شد');
+      } catch {
+        toast.error('خطا در ستاره‌گذاری');
+      }
+    },
+    [threadMessages, authToken]
+  );
+
+  const handleUnpinPinned = useCallback(
+    (messageId: string) => {
+      void handlePin(messageId);
+    },
+    [handlePin]
+  );
 
   // ─── Auth Guard ──────────────────────────────────────────────────────────
   if (!isAuthenticated) {
     return (
-      <div className="flex h-full min-h-[400px] items-center justify-center p-6">
+      <div className="flex h-full min-h-0 flex-1 items-center justify-center overflow-hidden p-6">
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
             <MessageSquare className="h-8 w-8 text-primary" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-h3 font-semibold">دسترسی به پیام‌ها</h3>
+            <h2 className="text-h3 font-semibold">دسترسی به پیام‌ها</h2>
             <p className="text-body-sm text-muted-foreground">
               برای مشاهده و ارسال پیام، ابتدا وارد حساب کاربری شوید
             </p>
@@ -979,8 +1065,18 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
         role="navigation"
         aria-label="لیست مکالمات"
       >
-        {/* Header: پیام‌ها | تماس‌ها | + */}
+        {/* Header: بستن | پیام‌ها | تماس‌ها | + */}
         <div className="flex items-center gap-2 border-b px-3 py-2.5">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 shrink-0 rounded-lg"
+            aria-label="بستن چت"
+            title="بستن چت"
+            onClick={handleCloseChat}
+          >
+            <X className="h-4 w-4" />
+          </Button>
           <div
             className="flex flex-1 rounded-lg bg-muted/60 p-1"
             role="tablist"
@@ -1042,7 +1138,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                 placeholder="جستجوی کاربر (نام، آیدی، شماره...)"
                 value={userSearchQuery}
                 onChange={(e) => setUserSearchQuery(e.target.value)}
-                className="h-10 pr-9 text-sm"
+                className="h-10 pr-9 text-base md:text-sm"
                 aria-label="جستجوی کاربر"
               />
             ) : (
@@ -1052,7 +1148,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                 }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-10 pr-9 text-sm"
+                className="h-10 pr-9 text-base md:text-sm"
                 aria-label={sidebarTab === 'calls' ? 'جستجوی تماس' : 'جستجوی مکالمه'}
               />
             )}
@@ -1286,6 +1382,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
             activeConversationId={activeConversationId}
             onSelectConversation={handleSelectConversation}
             onStartNewChat={handleToggleNewChat}
+            onSearchPeople={handleSearchPeople}
             getAvatarColor={getAvatarColor}
             getInitials={getInitials}
             formatTimeAgo={formatTimeAgo}
@@ -1306,93 +1403,95 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
       >
         {threadActive ? (
           <>
-            {/* Chat Header */}
-            <div className="flex items-center gap-3 border-b px-4 py-3">
+            {/* Chat Header — Bale-like compact strip */}
+            <div className="flex h-[52px] shrink-0 items-center gap-1.5 border-b px-2 sm:gap-2 sm:px-3">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 md:hidden"
+                className="h-10 w-10 shrink-0 md:hidden"
                 onClick={handleBack}
-                aria-label="بازگشت"
+                aria-label="بازگشت به لیست گفتگوها"
+                title="بازگشت به لیست گفتگوها"
               >
                 <ArrowRight className="h-4 w-4" />
               </Button>
-              <div className="relative">
-                {otherUser?.avatar ? (
-                  <div
-                    className="h-10 w-10 rounded-full bg-cover bg-center"
-                    style={{ backgroundImage: `url(${otherUser.avatar})` }}
-                  />
-                ) : (
-                  <div
-                    className={cn(
-                      'flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white',
-                      getAvatarColor(
-                        otherUser
-                          ? `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر'
-                          : 'کاربر'
-                      )
-                    )}
-                  >
-                    {otherUser ? (
-                      getInitials(
-                        `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر'
-                      )
-                    ) : (
-                      <Loader2 className="size-4 animate-spin text-white/90" aria-hidden />
-                    )}
-                  </div>
-                )}
-                {otherUser ? (
-                  <ChatPresenceDot
-                    online={otherUser.online}
-                    className="absolute bottom-0 left-0"
-                  />
-                ) : null}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold truncate">
-                  {otherUser
-                    ? `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() || 'کاربر'
-                    : 'در حال بارگذاری…'}
-                </h3>
-                {peerTyping.isTyping ? (
-                  <ChatTypingHeaderStatus visible />
-                ) : selectedConversation?.businessContext ? (
-                  <p className="text-xs text-muted-foreground truncate">
-                    {selectedConversation.businessContext.contactLabel} ·{' '}
-                    {selectedConversation.businessContext.businessName}
-                  </p>
-                ) : otherUser ? (
-                  <p
-                    className={cn(
-                      'text-xs transition-colors',
-                      otherUser.online
-                        ? 'text-emerald-600 dark:text-emerald-400'
-                        : 'text-muted-foreground'
-                    )}
-                  >
-                    {peerPresenceLabel(otherUser)}
-                  </p>
-                ) : (
-                  <p className="text-xs text-muted-foreground">گفتگو</p>
-                )}
-              </div>
-              {/* Call button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 min-h-[44px] min-w-[44px] md:min-h-9 md:min-w-9"
-                aria-label="اطلاعات گفتگو"
-                title="جزئیات تماس و پروفایل"
+              <button
+                type="button"
+                className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg px-1 py-1 text-start transition hover:bg-muted/50"
                 onClick={() => setInfoPanelOpen(true)}
+                aria-label="اطلاعات گفتگو"
               >
-                <CircleUserRound className="h-4 w-4" strokeWidth={2} />
-              </Button>
+                <div className="relative shrink-0">
+                  {otherUser?.avatar ? (
+                    <div
+                      className="h-9 w-9 rounded-full bg-cover bg-center"
+                      style={{ backgroundImage: `url(${otherUser.avatar})` }}
+                    />
+                  ) : (
+                    <div
+                      className={cn(
+                        'flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold text-white',
+                        getAvatarColor(
+                          otherUser
+                            ? `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() ||
+                                'کاربر'
+                            : 'کاربر'
+                        )
+                      )}
+                    >
+                      {otherUser ? (
+                        getInitials(
+                          `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() ||
+                            'کاربر'
+                        )
+                      ) : (
+                        <Loader2 className="size-4 animate-spin text-white/90" aria-hidden />
+                      )}
+                    </div>
+                  )}
+                  {otherUser ? (
+                    <ChatPresenceDot
+                      online={otherUser.online}
+                      className="absolute bottom-0 left-0"
+                    />
+                  ) : null}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-sm font-semibold">
+                    {otherUser
+                      ? `${otherUser.firstName ?? ''} ${otherUser.lastName ?? ''}`.trim() ||
+                        'کاربر'
+                      : 'در حال بارگذاری…'}
+                  </h3>
+                  {peerTyping.isTyping ? (
+                    <ChatTypingHeaderStatus visible />
+                  ) : selectedConversation?.businessContext ? (
+                    <p className="truncate text-xs text-muted-foreground">
+                      {selectedConversation.businessContext.contactLabel} ·{' '}
+                      {selectedConversation.businessContext.businessName}
+                    </p>
+                  ) : otherUser ? (
+                    <p
+                      className={cn(
+                        'text-xs transition-colors',
+                        otherUser.online || selectedConversation?.isPlatformBot
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-muted-foreground'
+                      )}
+                    >
+                      {selectedConversation?.isPlatformBot
+                        ? 'آنلاین'
+                        : peerPresenceLabel(otherUser)}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">گفتگو</p>
+                  )}
+                </div>
+              </button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 min-h-[44px] min-w-[44px] md:min-h-9 md:min-w-9"
+                className="h-10 w-10 shrink-0"
                 aria-label="تماس"
                 title="تماس صوتی"
                 onClick={() => {
@@ -1430,14 +1529,30 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                 type: m.type,
                 senderId: m.senderId,
                 createdAt: m.createdAt,
+                isPinned: m.isPinned,
+                isStarred: m.isStarred,
               }))}
             />
 
             <ChatThread
               scrollRootRef={messagesScrollRootRef}
               messagesEndRef={messagesEndRef}
-              pinnedMessage={pinnedMessage}
+              pinnedMessages={pinnedMessages}
               onUnpinPinned={handleUnpinPinned}
+              showScrollToBottom={showScrollToBottom}
+              onScrollToBottom={scrollToBottomForced}
+              highlightedMessageId={highlightedMessageId}
+              unreadDividerIndex={(() => {
+                if (!currentUser?.id || unreadAtOpen <= 0) return -1;
+                let left = unreadAtOpen;
+                for (let i = threadMessages.length - 1; i >= 0; i--) {
+                  if (threadMessages[i]!.senderId !== currentUser.id) {
+                    left -= 1;
+                    if (left === 0) return i;
+                  }
+                }
+                return -1;
+              })()}
               messages={threadMessages}
               peer={
                 otherUser
@@ -1463,6 +1578,9 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
               onDeleteForMe={(messageId) => void handleDeleteForMe(messageId)}
               onDeleteForEveryoneRequest={setDeleteConfirmMsgId}
               onPin={(messageId) => void handlePin(messageId)}
+              onToggleStar={(messageId) => void handleToggleStar(messageId)}
+              onForward={(msg) => setForwardMessage(msg)}
+              onCopy={(msg) => void handleCopyMessage(msg)}
               onScrollToMessage={scrollToMessage}
               onImageOpen={openImageLightbox}
               peerTyping={{
@@ -1543,7 +1661,7 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
                 <MessageSquare className="h-8 w-8 text-muted-foreground" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold">یک گفتگو انتخاب کنید</h3>
+                <h2 className="text-lg font-semibold">یک گفتگو انتخاب کنید</h2>
                 <p className="text-sm text-muted-foreground max-w-[250px]">
                   از لیست کنار صفحه یک مکالمه را انتخاب کنید یا گفتگوی جدید شروع کنید
                 </p>
@@ -1566,6 +1684,22 @@ export function ChatPanel({ conversationId: initialConversationId }: { conversat
         city={locationPickerCity}
         onConfirm={sendSharedLocation}
         busy={isSendingMessage}
+      />
+      <ForwardMessageDialog
+        open={forwardMessage !== null}
+        onOpenChange={(open) => {
+          if (!open) setForwardMessage(null);
+        }}
+        message={
+          forwardMessage
+            ? {
+                id: forwardMessage.id,
+                content: forwardMessage.content,
+                type: forwardMessage.type,
+                senderId: forwardMessage.senderId,
+              }
+            : null
+        }
       />
       <AlertDialog
         open={Boolean(deleteConfirmMsgId)}

@@ -15,6 +15,7 @@ import {
 } from '@/lib/bookmarks/types';
 import { useAppStore } from '@/lib/store';
 import { toast } from 'sonner';
+import { PanelCard } from '@/components/shared/PanelCard';
 import { BookmarksInboxHeader } from './BookmarksInboxHeader';
 import { BookmarkNeedRow } from './BookmarkNeedRow';
 import { BookmarksEmptyState } from './BookmarksEmptyState';
@@ -126,7 +127,7 @@ export function BookmarksPanel() {
   }
 
   return (
-    <div className="space-y-5">
+    <PanelCard padding="sm" className="space-y-5">
       <BookmarksInboxHeader
         totalCount={syncedItems.length}
         followUpCount={followUpCount}
@@ -169,6 +170,6 @@ export function BookmarksPanel() {
           ))}
         </div>
       )}
-    </div>
+    </PanelCard>
   );
 }

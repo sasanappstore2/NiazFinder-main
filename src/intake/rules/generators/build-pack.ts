@@ -8,7 +8,8 @@ import {
   INTENTS_SELL,
 } from '@/intake/rules/seeds/category-seeds';
 import type { IntakeRule, RulePack } from '@/intake/rules/types';
-import { RULES_PACK_TARGET_SIZE } from '@/intake/rules/config';
+import { RULES_ESTATE_PACK_TARGET_SIZE, RULES_PACK_TARGET_SIZE } from '@/intake/rules/config';
+import { isEstateLeafSlug } from '@/intake/rules/estate/estate-collision-table';
 
 const RENT_KW = '\u0627\u062C\u0627\u0631\u0647';
 const RAHN_KW = '\u0631\u0647\u0646';
@@ -27,7 +28,13 @@ function dedupeRules(rules: IntakeRule[]): IntakeRule[] {
   return out;
 }
 
-export function buildRulePackFromSeed(seed: CategorySeed, target = RULES_PACK_TARGET_SIZE): RulePack {
+function packTargetForSlug(slug: string, target?: number): number {
+  if (target != null) return target;
+  return isEstateLeafSlug(slug) ? RULES_ESTATE_PACK_TARGET_SIZE : RULES_PACK_TARGET_SIZE;
+}
+
+export function buildRulePackFromSeed(seed: CategorySeed, target?: number): RulePack {
+  const resolvedTarget = packTargetForSlug(seed.slug, target);
   const rules: IntakeRule[] = [];
   let seq = 0;
 
@@ -111,7 +118,7 @@ export function buildRulePackFromSeed(seed: CategorySeed, target = RULES_PACK_TA
       for (const cond of conditions) {
         for (const brand of brands.length ? brands : ['']) {
           for (const model of models.length ? models : ['']) {
-            if (rules.length >= target * 1.2) break;
+            if (rules.length >= resolvedTarget * 1.2) break;
             const parts = [intent, noun, brand, model, cond].filter(Boolean);
             rules.push({
               id: `${seed.slug}-sc-${seq++}`,
@@ -133,11 +140,11 @@ export function buildRulePackFromSeed(seed: CategorySeed, target = RULES_PACK_TA
     }
   }
 
-  if (rules.length < target) {
+  if (rules.length < resolvedTarget) {
     for (const city of CITIES) {
       for (const noun of productNouns) {
         for (const intent of intentPool) {
-          if (rules.length >= target * 1.2) break;
+          if (rules.length >= resolvedTarget * 1.2) break;
           rules.push({
             id: `${seed.slug}-geo-${seq++}`,
             kind: 'scenario',
@@ -152,7 +159,7 @@ export function buildRulePackFromSeed(seed: CategorySeed, target = RULES_PACK_TA
 
   const base = seed.keywords[0] ?? seed.slug;
   let i = 0;
-  while (rules.length < target * 1.2) {
+  while (rules.length < resolvedTarget * 1.2) {
     const cond = conditions[i % conditions.length] ?? conditions[0]!;
     const intent = intentPool[i % intentPool.length] ?? intentPool[0]!;
     const city = CITIES[i % CITIES.length]!;
@@ -171,7 +178,7 @@ export function buildRulePackFromSeed(seed: CategorySeed, target = RULES_PACK_TA
 
   let unique = dedupeRules(rules);
   let pad = 0;
-  while (unique.length < target) {
+  while (unique.length < resolvedTarget) {
     unique.push({
       id: `${seed.slug}-pad-${pad}`,
       kind: 'phrase',
@@ -181,7 +188,7 @@ export function buildRulePackFromSeed(seed: CategorySeed, target = RULES_PACK_TA
     });
     pad += 1;
   }
-  unique = unique.slice(0, target);
+  unique = unique.slice(0, resolvedTarget);
 
   return {
     meta: {

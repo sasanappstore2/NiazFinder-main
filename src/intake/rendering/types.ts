@@ -25,6 +25,8 @@ export interface IntakeRenderContext {
   /** AI/rules suggestions for critical optional filters (chip-only, no auto-fill). */
   filterSuggestions?: Record<string, Array<{ value: string; label: string; confidence?: number }>>;
   criticalFieldKeys?: ReadonlySet<string>;
+  /** Required/low-confidence keys to highlight — not a visual redesign. */
+  missingFieldKeys?: ReadonlySet<string>;
   onFilterSuggestionSelect?: (fieldKey: string, value: string | number | string[]) => void;
   onCategoryChange: (
     payload:

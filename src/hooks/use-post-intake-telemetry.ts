@@ -11,9 +11,8 @@ import {
 } from '@/intake/telemetry/postIntakeTelemetry';
 
 function toTelemetryStep(step: IntakeStep): PostIntakeWizardStep {
+  if (step === 'compose' || step === 'need' || step === 'details') return 'compose';
   if (
-    step === 'need' ||
-    step === 'details' ||
     step === 'location' ||
     step === 'preview' ||
     step === 'publishing' ||
@@ -21,7 +20,7 @@ function toTelemetryStep(step: IntakeStep): PostIntakeWizardStep {
   ) {
     return step;
   }
-  return 'need';
+  return 'compose';
 }
 
 export interface UsePostIntakeTelemetryOptions {

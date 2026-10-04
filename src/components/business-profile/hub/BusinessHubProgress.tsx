@@ -4,16 +4,8 @@ import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useBusinessHub } from './BusinessHubContext';
-import type { HubTaskId } from './types';
+import { HUB_TASK_LABELS } from './hub-tasks';
 import { toPersianDigits } from '@/lib/format/digits';
-
-const TASK_LABELS: Record<HubTaskId, string> = {
-  storefront: 'ویترین و محصولات',
-  profile: 'معرفی و تماس',
-  brand: 'عکس و لینک‌ها',
-  gallery: 'نمونه کارها',
-  contacts: 'مخاطبین و تیم',
-};
 
 export function BusinessHubProgress() {
   const { completion, setActiveTask } = useBusinessHub();
@@ -50,7 +42,7 @@ export function BusinessHubProgress() {
             className="shrink-0 gap-1 self-start sm:self-center"
             onClick={() => setActiveTask(next.taskId)}
           >
-            {TASK_LABELS[next.taskId]}
+            {HUB_TASK_LABELS[next.taskId]}
             <ChevronLeft className="size-4" />
           </Button>
         )}

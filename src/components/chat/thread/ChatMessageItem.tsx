@@ -12,6 +12,7 @@ import { ChatMessageBody } from '@/components/chat/bubble/ChatMessageBody';
 import { ChatReadReceiptIcon } from '@/components/chat/bubble/ChatReadReceiptIcon';
 import { ChatMessageReactions } from '@/components/chat/ChatMessageReactions';
 import { MessageContextMenu } from '@/components/chat/actions/MessageContextMenu';
+import { MessageActionSheet } from '@/components/chat/actions/MessageActionSheet';
 import { useMessageGestures } from '@/components/chat/actions/useMessageGestures';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { canEditChatMessage } from '@/lib/chat/message-edit';
@@ -38,8 +39,12 @@ export interface ChatMessageItemProps {
   onDeleteForMe: () => void;
   onDeleteForEveryone: () => void;
   onPin?: () => void;
+  onToggleStar?: () => void;
+  onForward?: () => void;
+  onCopy?: () => void;
   onScrollToMessage?: (messageId: string) => void;
   onImageOpen?: () => void;
+  highlighted?: boolean;
 }
 
 export function ChatMessageItem({
@@ -57,8 +62,12 @@ export function ChatMessageItem({
   onDeleteForMe,
   onDeleteForEveryone,
   onPin,
+  onToggleStar,
+  onForward,
+  onCopy,
   onScrollToMessage,
   onImageOpen,
+  highlighted = false,
 }: ChatMessageItemProps) {
   const hints = classifyMessageContent(msg);
   const isDeleted = hints.kind === 'deleted';
@@ -100,6 +109,10 @@ export function ChatMessageItem({
                 onDeleteForEveryone={onDeleteForEveryone}
                 isPinned={Boolean(msg.isPinned)}
                 onPin={onPin}
+                isStarred={Boolean(msg.isStarred)}
+                onToggleStar={onToggleStar}
+                onForward={onForward}
+                onCopy={onCopy}
               />
             </div>
           )}
@@ -108,17 +121,15 @@ export function ChatMessageItem({
         <div className="chat-bubble-wrap">
           <motion.div
             className="chat-gesture-surface"
-            style={{ x: dragX }}
+            style={{ x: dragX, touchAction: touchGesturesEnabled ? 'pan-y' : undefined }}
             onDragEnd={handleDragEnd}
             {...dragProps}
             {...touchProps}
           >
             {touchGesturesEnabled && (
-              <MessageContextMenu
-                anchorOnly
+              <MessageActionSheet
                 open={menuOpen}
                 onOpenChange={setMenuOpen}
-                isMe={isMe}
                 canEdit={canEdit}
                 canDeleteForEveryone={canDeleteForEveryone}
                 onReply={onReply}
@@ -128,6 +139,10 @@ export function ChatMessageItem({
                 onDeleteForEveryone={onDeleteForEveryone}
                 isPinned={Boolean(msg.isPinned)}
                 onPin={onPin}
+                isStarred={Boolean(msg.isStarred)}
+                onToggleStar={onToggleStar}
+                onForward={onForward}
+                onCopy={onCopy}
               />
             )}
             {!isDeleted && (
@@ -197,6 +212,10 @@ export function ChatMessageItem({
                 onDeleteForEveryone={onDeleteForEveryone}
                 isPinned={Boolean(msg.isPinned)}
                 onPin={onPin}
+                isStarred={Boolean(msg.isStarred)}
+                onToggleStar={onToggleStar}
+                onForward={onForward}
+                onCopy={onCopy}
               />
             </div>
           )}
@@ -209,7 +228,8 @@ export function ChatMessageItem({
         data-message-id={msg.id}
         className={cn(
           'chat-message chat-message--outgoing',
-          !group.isFirst && 'chat-message--stacked'
+          !group.isFirst && 'chat-message--stacked',
+          highlighted && 'chat-message--highlighted'
         )}
       >
         <div className="chat-message-column">{bubbleRow}</div>
@@ -222,7 +242,8 @@ export function ChatMessageItem({
       data-message-id={msg.id}
       className={cn(
         'chat-message chat-message--incoming',
-        !showAvatar && 'chat-message--stacked'
+        !showAvatar && 'chat-message--stacked',
+        highlighted && 'chat-message--highlighted'
       )}
     >
       <div className="chat-message-align-row">

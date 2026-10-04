@@ -58,7 +58,7 @@ export function resolveFieldValue(
   if (field.key === 'transactionType' && entities.transactionType) {
     return entities.transactionType;
   }
-  if (field.key === 'area' && entities.area != null) {
+  if ((field.key === 'area' || field.key === 'areaMin') && entities.area != null) {
     return entities.area;
   }
   if (field.key === 'rooms' && entities.rooms != null) {
@@ -80,15 +80,41 @@ export function resolveFieldValue(
   if (field.key === 'rahnAmount') {
     const rahn = answers.rahnAmount ?? answers.deposit;
     if (rahn != null && rahn !== '') return rahn as string | number;
-    if (entities.budgetMax != null && entities.budgetMax >= 50_000_000) {
+    const tx = String(entities.transactionType ?? answers.dealType ?? '');
+    const isRentDeal =
+      tx === 'FULL_DEPOSIT' ||
+      tx === 'DEPOSIT_AND_RENT' ||
+      tx === 'RENT' ||
+      tx.includes('rahn') ||
+      tx.includes('rent');
+    if (
+      isRentDeal &&
+      entities.budgetMax != null &&
+      entities.budgetMax >= 50_000_000
+    ) {
       return entities.budgetMax;
     }
   }
   if (field.key === 'monthlyRent' && answers.monthlyRent != null && answers.monthlyRent !== '') {
     return answers.monthlyRent as string | number;
   }
-  if (field.key === 'deposit' && answers.deposit != null && answers.deposit !== '') {
-    return answers.deposit as string | number;
+  if (field.key === 'deposit') {
+    const deposit = answers.deposit ?? answers.rahnAmount;
+    if (deposit != null && deposit !== '') return deposit as string | number;
+    const tx = String(entities.transactionType ?? answers.dealType ?? '');
+    const isRentDeal =
+      tx === 'FULL_DEPOSIT' ||
+      tx === 'DEPOSIT_AND_RENT' ||
+      tx === 'RENT' ||
+      tx.includes('rahn') ||
+      tx.includes('rent');
+    if (
+      isRentDeal &&
+      entities.budgetMax != null &&
+      entities.budgetMax >= 50_000_000
+    ) {
+      return entities.budgetMax;
+    }
   }
   if (field.key === 'brand') {
     const brandAnswer = answers.brand;

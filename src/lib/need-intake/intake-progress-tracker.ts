@@ -10,6 +10,7 @@ import {
 } from '@/lib/need-intake/compose-source-text';
 import { isIntakeFieldAnswered } from '@/lib/need-intake/intake-field-answered';
 import { resolveIntakeNeighborhoodFromDraft } from '@/lib/need-intake/sync-intake-location-form';
+import { getPublishReadiness } from '@/intake/validation/publishValidator';
 
 export type IntakeProgressCoreKey = 'need' | 'category' | 'city' | 'neighborhood';
 export type IntakeProgressShardStatus = 'pending' | 'blocked' | 'running' | 'done';
@@ -139,7 +140,15 @@ function isDraftFieldFilled(draft: NeedDraft | null, fieldKey: string): boolean 
   }
   if (fieldKey === 'rooms') return hasEntityValue(entities, 'rooms', { answers });
   if (fieldKey === 'area' || fieldKey === 'areaMin') {
-    return hasEntityValue(entities, 'area', { answers }) || Boolean(answers.areaMin);
+    // Square meters only — city alone must never mark area answered.
+    return hasEntityValue(entities, 'area', { answers }) || Boolean(answers.areaMin || answers.area);
+  }
+  // ودیعه = رهن for rent deals
+  if (fieldKey === 'deposit' || fieldKey === 'rahnAmount') {
+    return Boolean(answers.deposit || answers.rahnAmount);
+  }
+  if (fieldKey === 'monthlyRent') {
+    return answers.monthlyRent != null && answers.monthlyRent !== '';
   }
 
   const categorySlug = entities.subcategorySlug || entities.categorySlug || '';
@@ -314,6 +323,18 @@ export function buildIntakeProgressSnapshot(
     fields,
     missingSummaryFa,
     activeShardLabel,
+  };
+}
+
+export function alignProgressWithPublishGate(draft: NeedDraft | null): {
+  canPublish: boolean;
+  blockingFields: string[];
+} {
+  if (!draft) return { canPublish: false, blockingFields: ['draft'] };
+  const readiness = getPublishReadiness(draft);
+  return {
+    canPublish: readiness.canPublish,
+    blockingFields: readiness.errors.map((e) => e.field),
   };
 }
 

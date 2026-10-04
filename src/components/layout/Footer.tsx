@@ -15,8 +15,11 @@ import {
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
+import { toPersianDigits } from '@/lib/format/digits';
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
 import type { AppView } from '@/lib/types';
+import { FOOTER_LINK_GROUPS } from '@/config/navigation';
+import { SITE_LABELS } from '@/config/site-labels';
 import { legacyViewToPath, routeBuilder } from '@/config/routes';
 
 import { Separator } from '@/components/ui/separator';
@@ -39,10 +42,19 @@ const FOOTER_COLUMNS: FooterLinkColumn[] = [
   {
     title: 'دسترسی سریع',
     links: [
-      { label: 'صفحه اصلی', view: 'home', title: 'بازگشت به صفحه اصلی نیاز فایندر' },
-      { label: 'ثبت نیاز', view: 'post-need', title: 'ثبت نیاز و درخواست خدمات جدید' },
-      { label: 'کسب‌وکارها', view: 'browse-specialists', title: 'مرور و جستجوی کسب‌وکارها حرفه‌ای' },
-      { label: 'تعرفه‌ها', view: 'pricing', title: 'مشاهده تعرفه‌ها و طرح‌های اشتراک' },
+      { label: SITE_LABELS.home, view: 'home', title: `بازگشت به ${SITE_LABELS.siteName}` },
+      { label: SITE_LABELS.postNeed, view: 'post-need', title: SITE_LABELS.postNeed },
+      {
+        label: SITE_LABELS.marketplaceNeeds,
+        view: 'browse-requests',
+        title: SITE_LABELS.marketplaceNeeds,
+      },
+      {
+        label: SITE_LABELS.marketplaceBusiness,
+        view: 'browse-specialists',
+        title: SITE_LABELS.marketplaceBusiness,
+      },
+      { label: SITE_LABELS.pricing, view: 'pricing', title: SITE_LABELS.pricing },
     ],
   },
   {
@@ -58,7 +70,7 @@ const FOOTER_COLUMNS: FooterLinkColumn[] = [
     title: 'پشتیبانی',
     links: [
       { label: 'راهنما', href: routeBuilder.help(), title: 'راهنمای استفاده از نیاز فایندر' },
-      { label: 'سوالات متداول', href: '/#faq', title: 'پاسخ سوالات رایج کاربران' },
+      { label: 'سوالات متداول', href: routeBuilder.help(), title: 'پاسخ سوالات رایج کاربران' },
       { label: 'تماس با ما', href: '#contact', title: 'اطلاعات تماس با تیم پشتیبانی' },
       { label: 'قوانین و مقررات', href: '/terms', title: 'قوانین و مقررات استفاده از سرویس' },
     ],
@@ -67,9 +79,9 @@ const FOOTER_COLUMNS: FooterLinkColumn[] = [
 
 // ============ Social Links ============
 const SOCIAL_LINKS = [
-  { label: 'اینستاگرام', icon: Instagram, href: '#', title: 'ما را در اینستاگرام دنبال کنید' },
-  { label: 'توییتر', icon: Twitter, href: '#', title: 'ما را در توییتر دنبال کنید' },
-  { label: 'لینکدین', icon: Linkedin, href: '#', title: 'ما را در لینکدین دنبال کنید' },
+  { label: 'اینستاگرام', icon: Instagram, href: 'https://instagram.com/needfinder', title: 'ما را در اینستاگرام دنبال کنید' },
+  { label: 'توییتر', icon: Twitter, href: 'https://twitter.com/needfinder', title: 'ما را در توییتر دنبال کنید' },
+  { label: 'لینکدین', icon: Linkedin, href: 'https://linkedin.com/company/needfinder', title: 'ما را در لینکدین دنبال کنید' },
 ];
 
 // ============ Contact Info ============
@@ -100,9 +112,11 @@ const CONTACT_INFO = [
 // ============ Footer Component ============
 interface FooterProps {
   compact?: boolean;
+  /** Add bottom padding for floating mobile nav */
+  withMobileNav?: boolean;
 }
 
-export function Footer({ compact = false }: FooterProps) {
+export function Footer({ compact = false, withMobileNav = true }: FooterProps) {
   const { navigateTo } = useNavigate();
   const [showBackToTop, setShowBackToTop] = useState(false);
 
@@ -122,12 +136,14 @@ export function Footer({ compact = false }: FooterProps) {
     }
   };
 
-  const currentYear = new Date().getFullYear();
+  const currentYear = toPersianDigits(new Date().getFullYear());
+
+  const footerNavClass = cn(withMobileNav && 'footer-with-mobile-nav');
 
   // ============ Compact Footer (non-home pages) ============
   if (compact) {
     return (
-      <footer id="footer" className="footer-with-mobile-nav bg-card/30" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
+      <footer id="footer" className={cn(footerNavClass, 'bg-card/30')} role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
         <div className="page-container py-4">
           <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
             <div className="flex items-center gap-2" itemScope itemType="https://schema.org/Organization">
@@ -143,35 +159,45 @@ export function Footer({ compact = false }: FooterProps) {
                 href={routeBuilder.home()}
                 data-view="home"
                 data-href={routeBuilder.home()}
-                title="صفحه اصلی"
-                onClick={(e) => handleLinkClick(e, FOOTER_COLUMNS[0].links[0])}
+                title={SITE_LABELS.home}
+                onClick={(e) => handleLinkClick(e, { label: SITE_LABELS.home, view: 'home', title: SITE_LABELS.home })}
                 className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
               >
-                صفحه اصلی
+                {SITE_LABELS.home}
               </a>
               <a
                 href={routeBuilder.needNew()}
                 data-view="post-need"
                 data-href={routeBuilder.needNew()}
-                title="ثبت نیاز"
-                onClick={(e) => handleLinkClick(e, FOOTER_COLUMNS[0].links[1])}
+                title={SITE_LABELS.postNeed}
+                onClick={(e) => handleLinkClick(e, { label: SITE_LABELS.postNeed, view: 'post-need', title: SITE_LABELS.postNeed })}
                 className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
               >
-                ثبت نیاز
+                {SITE_LABELS.postNeed}
+              </a>
+              <a
+                href={routeBuilder.browseAll({ type: 'need' })}
+                data-view="browse-requests"
+                data-href={routeBuilder.browseAll({ type: 'need' })}
+                title={SITE_LABELS.marketplaceNeeds}
+                onClick={(e) => handleLinkClick(e, { label: SITE_LABELS.marketplaceNeeds, view: 'browse-requests', title: SITE_LABELS.marketplaceNeeds })}
+                className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
+              >
+                {SITE_LABELS.marketplaceNeeds}
               </a>
               <a
                 href={routeBuilder.browseAll({ type: 'business' })}
                 data-view="browse-specialists"
                 data-href={routeBuilder.browseAll({ type: 'business' })}
-                title="کسب‌وکارها"
-                onClick={(e) => handleLinkClick(e, FOOTER_COLUMNS[0].links[2])}
+                title={SITE_LABELS.marketplaceBusiness}
+                onClick={(e) => handleLinkClick(e, { label: SITE_LABELS.marketplaceBusiness, view: 'browse-specialists', title: SITE_LABELS.marketplaceBusiness })}
                 className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
               >
-                کسب‌وکارها
+                {SITE_LABELS.marketplaceBusiness}
               </a>
               <a
-                href="#contact"
-                data-href="#contact"
+                href="/#contact"
+                data-href="/#contact"
                 title="تماس با ما"
                 className="text-xs text-muted-foreground transition-colors duration-200 hover:text-primary hover:underline decoration-primary/30 underline-offset-2"
               >
@@ -192,7 +218,7 @@ export function Footer({ compact = false }: FooterProps) {
               <a href="/post" title="ثبت نیاز">ثبت نیاز</a>
               <a href={routeBuilder.browseAll({ type: 'business' })} title="کسب‌وکارها">کسب‌وکارها</a>
               <a href="/pricing" title="تعرفه‌ها">تعرفه‌ها</a>
-              <a href="#contact" title="تماس با ما">تماس با ما</a>
+              <a href="/#contact" title="تماس با ما">تماس با ما</a>
             </nav>
           </div>
         </noscript>
@@ -202,7 +228,7 @@ export function Footer({ compact = false }: FooterProps) {
 
   // ============ Full Footer (home page) ============
   return (
-    <footer id="footer" className="footer-with-mobile-nav mt-auto footer-glass footer-wave" role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
+    <footer id="footer" className={cn(footerNavClass, 'mt-auto footer-glass footer-wave')} role="contentinfo" itemScope itemType="https://schema.org/WPFooter">
       <div className="gradient-line" />
 
       <div id="footer-contact" className="page-container py-6 sm:py-8">
@@ -250,17 +276,33 @@ export function Footer({ compact = false }: FooterProps) {
                 itemScope
                 itemType="https://schema.org/ContactPoint"
               >
-                {CONTACT_INFO.map((contact) => (
-                  <a
-                    key={contact.label}
-                    href={contact.href}
-                    title={contact.title}
-                    className="inline-flex items-center gap-1 transition-colors duration-200 hover:text-primary"
-                  >
-                    <contact.icon className="size-3.5 shrink-0 text-primary/70" />
-                    <span className="truncate max-w-[140px] sm:max-w-none">{contact.value}</span>
-                  </a>
-                ))}
+                {CONTACT_INFO.map((contact) => {
+                  const isLink = Boolean(contact.href) && contact.href !== '#';
+                  const inner = (
+                    <>
+                      <contact.icon className="size-3.5 shrink-0 text-primary/70" />
+                      <span className="truncate max-w-[140px] sm:max-w-none">{contact.value}</span>
+                    </>
+                  );
+                  return isLink ? (
+                    <a
+                      key={contact.label}
+                      href={contact.href}
+                      title={contact.title}
+                      className="inline-flex items-center gap-1 transition-colors duration-200 hover:text-primary"
+                    >
+                      {inner}
+                    </a>
+                  ) : (
+                    <span
+                      key={contact.label}
+                      title={contact.title}
+                      className="inline-flex items-center gap-1"
+                    >
+                      {inner}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -268,9 +310,9 @@ export function Footer({ compact = false }: FooterProps) {
           {/* Link columns — 2×2 on mobile */}
           {FOOTER_COLUMNS.map((column) => (
             <div key={column.title}>
-              <h4 className="mb-2 text-xs font-semibold text-foreground sm:text-sm">
+              <h2 className="mb-2 text-xs font-semibold text-foreground sm:text-sm">
                 {column.title}
-              </h4>
+              </h2>
               <ul className="flex flex-col gap-1.5" role="list">
                 {column.links.map((link) => (
                   <li key={link.label}>
@@ -281,7 +323,7 @@ export function Footer({ compact = false }: FooterProps) {
                         data-href={legacyViewToPath(link.view)}
                         title={link.title}
                         onClick={(e) => handleLinkClick(e, link)}
-                        className="flex items-center gap-1 text-xs text-muted-foreground transition-colors duration-150 hover:text-primary sm:text-sm link-underline-animated"
+                        className="flex min-h-6 items-center gap-1 py-0.5 text-xs text-muted-foreground transition-colors duration-150 hover:text-primary sm:text-sm link-underline-animated"
                       >
                         {link.label}
                       </a>
@@ -290,7 +332,7 @@ export function Footer({ compact = false }: FooterProps) {
                         href={link.href ?? '#'}
                         data-href={link.href ?? '#'}
                         title={link.title}
-                        className="flex items-center gap-1 text-xs text-muted-foreground transition-colors duration-150 hover:text-primary sm:text-sm link-underline-animated"
+                        className="flex min-h-6 items-center gap-1 py-0.5 text-xs text-muted-foreground transition-colors duration-150 hover:text-primary sm:text-sm link-underline-animated"
                         target={
                           (link.href ?? '').startsWith('http') ? '_blank' : undefined
                         }
@@ -317,9 +359,9 @@ export function Footer({ compact = false }: FooterProps) {
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className={cn('back-to-top-btn', showBackToTop && 'visible')}
-        aria-label="بازگشت به بالای صفحه"
-        title="بازگشت به بالای صفحه"
+        className={cn('back-to-top-btn hidden', showBackToTop && 'visible')}
+        aria-hidden
+        tabIndex={-1}
       >
         <ArrowUp className="size-5" />
       </button>
@@ -359,13 +401,13 @@ export function Footer({ compact = false }: FooterProps) {
         <div className="page-container border-t border-border py-6">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <h4 className="mb-3 text-sm font-semibold">نیاز فایندر</h4>
+              <h2 className="mb-3 text-sm font-semibold">نیاز فایندر</h2>
               <p className="text-sm text-muted-foreground">{SITE_DESCRIPTION}</p>
               <p className="mt-2 text-sm text-muted-foreground">ایمیل: info@needfinder.ir</p>
               <p className="text-sm text-muted-foreground">تلفن: ۰۲۱-۹۱۰۰۰۰۰۰</p>
             </div>
             <nav aria-label="دسترسی سریع">
-              <h4 className="mb-3 text-sm font-semibold">دسترسی سریع</h4>
+              <h2 className="mb-3 text-sm font-semibold">دسترسی سریع</h2>
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <li><a href="/" title="صفحه اصلی نیاز فایندر">صفحه اصلی</a></li>
                 <li><a href="/post" title="ثبت نیاز جدید">ثبت نیاز</a></li>
@@ -374,7 +416,7 @@ export function Footer({ compact = false }: FooterProps) {
               </ul>
             </nav>
             <nav aria-label="دسته‌بندی‌ها">
-              <h4 className="mb-3 text-sm font-semibold">دسته‌بندی‌ها</h4>
+              <h2 className="mb-3 text-sm font-semibold">دسته‌بندی‌ها</h2>
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <li><a href={routeBuilder.browseAll({ type: 'business' })} title="طراحی وب‌سایت">طراحی وب</a></li>
                 <li><a href={routeBuilder.browseAll({ type: 'business' })} title="اپلیکیشن موبایل">اپلیکیشن موبایل</a></li>
@@ -383,10 +425,10 @@ export function Footer({ compact = false }: FooterProps) {
               </ul>
             </nav>
             <nav aria-label="پشتیبانی">
-              <h4 className="mb-3 text-sm font-semibold">پشتیبانی</h4>
+              <h2 className="mb-3 text-sm font-semibold">پشتیبانی</h2>
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <li><a href={routeBuilder.help()} title="راهنمای استفاده">راهنما</a></li>
-                <li><a href="/#faq" title="سوالات متداول">سوالات متداول</a></li>
+                <li><a href={routeBuilder.help()} title="سوالات متداول">سوالات متداول</a></li>
                 <li><a href="#contact" title="تماس با ما">تماس با ما</a></li>
                 <li><a href="/terms" title="قوانین و مقررات">قوانین و مقررات</a></li>
               </ul>

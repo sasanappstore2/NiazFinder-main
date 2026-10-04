@@ -5,6 +5,9 @@ import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import { GlobalVoiceCallLayer } from "@/components/voice/GlobalVoiceCallLayer";
 import { DeferredChatSocketBootstrap } from "@/components/voice/DeferredChatSocketBootstrap";
+import { PwaRegistration } from "@/components/pwa/PwaRegistration";
+import { PwaInstallPrompt } from "@/components/pwa/PwaInstallPrompt";
+import { ReferralCapture } from "@/components/referral/ReferralCapture";
 import {
   SITE_URL,
   SITE_NAME,
@@ -25,6 +28,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   viewportFit: "cover",
+  /** Keyboard resizes layout so bottom bars stay reachable (chat overrides). */
+  interactiveWidget: "resizes-content",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#059669" },
     { media: "(prefers-color-scheme: dark)", color: "#047857" },
@@ -70,9 +75,11 @@ export const metadata: Metadata = {
   // ── Icons & Manifest ──
   icons: {
     icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
       { url: "/logo.svg", type: "image/svg+xml" },
     ],
-    apple: "/logo.svg",
+    apple: "/apple-touch-icon.png",
   },
   manifest: "/manifest.json",
 
@@ -177,15 +184,18 @@ export default function RootLayout({
         {/* Skip to main content link for accessibility */}
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:inset-s-2 focus:z-100 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:inset-s-2 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg"
         >
           رفتن به محتوای اصلی
         </a>
 
         <ThemeProvider>
           {children}
+          <ReferralCapture />
           <DeferredChatSocketBootstrap />
           <GlobalVoiceCallLayer />
+          <PwaRegistration />
+          <PwaInstallPrompt />
           <Toaster position="top-center" richColors dir="rtl" closeButton />
         </ThemeProvider>
       </body>

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { tryClaimReferralReward } from '@/lib/payment/referral-reward';
+import { isValidUsername } from '@/lib/users/generate-username';
 
 // ============ TYPES ============
 
@@ -155,8 +157,17 @@ export async function PUT(request: NextRequest) {
     const body: UpdateProfileBody = await request.json();
     const { firstName, lastName, displayName, username, bio, city, province, phone: _phone, avatar, coverImage, website } = body;
 
-    // Check username uniqueness if provided
+    // Check username format + uniqueness if provided
     if (username !== undefined && username.trim()) {
+      if (!isValidUsername(username.trim().toLowerCase())) {
+        return NextResponse.json(
+          {
+            error:
+              'نام کاربری باید ۳ تا ۲۰ کاراکتر، با حروف انگلیسی کوچک شروع شود و فقط شامل حروف، عدد، نقطه یا زیرخط باشد',
+          },
+          { status: 400 }
+        );
+      }
       const existingUsername = await db.user.findFirst({
         where: { username: username.trim().toLowerCase(), id: { not: user.id } },
       });
@@ -191,6 +202,10 @@ export async function PUT(request: NextRequest) {
       where: { id: user.id },
       data: updateData,
     });
+
+    void tryClaimReferralReward(user.id).catch((err) =>
+      console.error('tryClaimReferralReward (profile update) failed:', err)
+    );
 
     return NextResponse.json({
       message: 'پروفایل با موفقیت به‌روزرسانی شد',

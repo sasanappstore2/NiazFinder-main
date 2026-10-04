@@ -1,4 +1,5 @@
 import { db } from '@/lib/db';
+import { queueNeedRagIndex } from '@/lib/rag/queue';
 import { getVipTtlMs } from './env';
 
 const expiryTimers = new Map<string, ReturnType<typeof setTimeout>>();
@@ -19,7 +20,11 @@ export async function flipNeedToPublic(requestId: string) {
     data: { needAccessStatus: 'PUBLIC' },
   });
 
-  return updated.count > 0 ? { flipped: true as const } : { skipped: 'race' as const };
+  if (updated.count > 0) {
+    queueNeedRagIndex(requestId, 'UPSERT');
+    return { flipped: true as const };
+  }
+  return { skipped: 'race' as const };
 }
 
 /** Schedule expiry via Nest BullMQ when available; fallback to in-process timer. */

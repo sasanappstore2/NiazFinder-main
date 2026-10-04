@@ -1,5 +1,5 @@
 /**
- * AUTO-GENERATED ? do not edit by hand.
+ * AUTO-GENERATED — do not edit by hand.
  * Run: npx tsx scripts/generate/build-critical-intake-catalog.ts
  */
 import { getCategoryPath } from '@/config/categories';
@@ -73,7 +73,7 @@ export const CRITICAL_BY_ROOT: Record<string, readonly string[]> = {
 } as const;
 
 export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
-  "ac-repair": {
+  "elevator-repair": {
     "fields": [
       "when",
       "budget",
@@ -81,13 +81,166 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "urgency"
     ]
   },
-  "admin-management": {
+  "cooking-appliance-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "car-ride": {
+    "fields": [
+      "brand",
+      "yearMin",
+      "mileageMax",
+      "condition",
+      "budget"
+    ]
+  },
+  "engineering": {
     "fields": [
       "employmentType",
       "experience",
       "salaryMin",
       "roleType",
       "budget"
+    ]
+  },
+  "mobile-phone": {
+    "fields": [
+      "brand",
+      "condition",
+      "storage",
+      "budget"
+    ]
+  },
+  "plumbing": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "furniture-wood-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "door-window-glass-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "cosmetics-health": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "mobile-accessories": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget",
+      "storage"
+    ]
+  },
+  "mobile-tablet-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "vehicle-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "workspace-short-rent": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
+      "budget"
+    ]
+  },
+  "office-rent": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
+      "budget"
+    ]
+  },
+  "legal-services": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "desktop-computer": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget",
+      "storage"
+    ]
+  },
+  "scooter": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "table-closet": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "roofing-waterproofing-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "tours": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "water-heater-boiler-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
     ]
   },
   "agency-services": {
@@ -100,6 +253,59 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "budget"
     ]
   },
+  "motorcycle-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "jewelry-watches": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "events-catering": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "it-services": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "medical-equipment-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "furniture-decor": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "moving": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType"
+    ]
+  },
   "apartment-rent": {
     "fields": [
       "rooms",
@@ -107,6 +313,243 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "deposit",
       "monthlyRent",
       "amenities"
+    ]
+  },
+  "musical-instruments": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "mobile-tablet": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget",
+      "storage"
+    ]
+  },
+  "spare-parts": {
+    "fields": [
+      "brand",
+      "yearMin",
+      "mileageMax",
+      "condition",
+      "budget"
+    ]
+  },
+  "books": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "kitchen-appliances": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "cooking-utensils": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "health-beauty": {
+    "fields": [
+      "employmentType",
+      "experience",
+      "salaryMin",
+      "roleType",
+      "budget"
+    ]
+  },
+  "tablet": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget",
+      "storage"
+    ]
+  },
+  "motorcycle": {
+    "fields": [
+      "brand",
+      "yearMin",
+      "mileageMax",
+      "condition"
+    ]
+  },
+  "pre-sale-services": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
+      "budget"
+    ]
+  },
+  "ac-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "car": {
+    "fields": [
+      "brand",
+      "yearMin",
+      "mileageMax",
+      "condition",
+      "budget"
+    ]
+  },
+  "bicycle": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "office-sale": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
+      "budget"
+    ]
+  },
+  "admin-management": {
+    "fields": [
+      "employmentType",
+      "experience",
+      "salaryMin",
+      "roleType",
+      "budget"
+    ]
+  },
+  "car-heavy": {
+    "fields": [
+      "brand",
+      "yearMin",
+      "mileageMax",
+      "condition",
+      "budget"
+    ]
+  },
+  "sofa-chair": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "social-events": {
+    "fields": [
+      "socialType",
+      "when",
+      "budget"
+    ]
+  },
+  "finance-legal": {
+    "fields": [
+      "employmentType",
+      "experience",
+      "salaryMin",
+      "roleType",
+      "budget"
+    ]
+  },
+  "fitness-equipment-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "computer-parts": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget",
+      "storage"
+    ]
+  },
+  "cultural-artistic": {
+    "fields": [
+      "socialType",
+      "when",
+      "budget"
+    ]
+  },
+  "volunteering": {
+    "fields": [
+      "socialType",
+      "when",
+      "budget"
+    ]
+  },
+  "short-term-rent": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
+      "budget"
+    ]
+  },
+  "boat": {
+    "fields": [
+      "brand",
+      "yearMin",
+      "mileageMax",
+      "condition",
+      "budget"
+    ]
+  },
+  "rugs": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "camera-cctv-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "construction-partnership": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
+      "budget"
+    ]
+  },
+  "audio-video": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget",
+      "storage"
     ]
   },
   "apartment-sale": {
@@ -118,16 +561,135 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "buildingAge"
     ]
   },
-  "art-media": {
+  "tv-audio-repair": {
     "fields": [
-      "employmentType",
-      "experience",
-      "salaryMin",
-      "roleType",
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "laundry-dishwasher-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "repairs": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "watch-jewelry-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "sporting": {
+    "fields": [
+      "socialType",
+      "when",
       "budget"
     ]
   },
-  "audio-video": {
+  "decorative-art": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "fitness-equipment": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "land-sale": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
+      "budget"
+    ]
+  },
+  "transportation": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "residential-rent": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
+      "budget"
+    ]
+  },
+  "camping-outdoor": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "building-industrial": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "industrial-sale": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
+      "budget"
+    ]
+  },
+  "kids-baby": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "villa-rent": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities"
+    ]
+  },
+  "lighting": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "game-console": {
     "fields": [
       "brand",
       "condition",
@@ -151,38 +713,7 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "urgency"
     ]
   },
-  "boat": {
-    "fields": [
-      "brand",
-      "yearMin",
-      "mileageMax",
-      "condition",
-      "budget"
-    ]
-  },
-  "books": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "building-industrial": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "camera-cctv-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "camera": {
+  "laptop": {
     "fields": [
       "brand",
       "condition",
@@ -190,52 +721,41 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "storage"
     ]
   },
-  "car-classic": {
+  "sports-fitness": {
     "fields": [
       "brand",
-      "yearMin",
-      "mileageMax",
       "condition",
       "budget"
     ]
   },
-  "car-heavy": {
+  "electrical": {
     "fields": [
-      "brand",
-      "yearMin",
-      "mileageMax",
-      "condition",
+      "when",
+      "budget",
+      "serviceType"
+    ]
+  },
+  "suite-apartment-rent": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
       "budget"
     ]
   },
-  "car-rental": {
+  "commercial-rent": {
     "fields": [
-      "brand",
-      "yearMin",
-      "mileageMax",
-      "condition",
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
       "budget"
     ]
   },
-  "car-ride": {
-    "fields": [
-      "brand",
-      "yearMin",
-      "mileageMax",
-      "condition",
-      "budget"
-    ]
-  },
-  "car": {
-    "fields": [
-      "brand",
-      "yearMin",
-      "mileageMax",
-      "condition",
-      "budget"
-    ]
-  },
-  "carpet-rug-repair": {
+  "musical-instrument-repair": {
     "fields": [
       "when",
       "budget",
@@ -250,204 +770,33 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "serviceType"
     ]
   },
-  "clothing": {
+  "painting": {
     "fields": [
-      "brand",
-      "condition",
-      "budget"
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
     ]
   },
-  "commercial-rent": {
+  "shop-sale": {
     "fields": [
-      "rooms",
       "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
-      "budget"
-    ]
-  },
-  "commercial-sale": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
-      "budget"
-    ]
-  },
-  "computer-laptop-repair": {
-    "fields": [
-      "when",
       "budget",
-      "serviceType",
-      "urgency"
+      "deedType"
     ]
   },
-  "computer-parts": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget",
-      "storage"
-    ]
-  },
-  "computer": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget",
-      "storage"
-    ]
-  },
-  "conference": {
-    "fields": [
-      "socialType",
-      "when",
-      "budget"
-    ]
-  },
-  "construction-partnership": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
-      "budget"
-    ]
-  },
-  "cooking-appliance-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "cooking-utensils": {
+  "pets": {
     "fields": [
       "brand",
       "condition",
       "budget"
     ]
   },
-  "cosmetics-health": {
+  "tickets": {
     "fields": [
       "brand",
       "condition",
       "budget"
-    ]
-  },
-  "cultural-artistic": {
-    "fields": [
-      "socialType",
-      "when",
-      "budget"
-    ]
-  },
-  "decorative-art": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "desktop-computer": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget",
-      "storage"
-    ]
-  },
-  "door-window-glass-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "education": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "electrical": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType"
-    ]
-  },
-  "elevator-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "engineering": {
-    "fields": [
-      "employmentType",
-      "experience",
-      "salaryMin",
-      "roleType",
-      "budget"
-    ]
-  },
-  "events-catering": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "finance-legal": {
-    "fields": [
-      "employmentType",
-      "experience",
-      "salaryMin",
-      "roleType",
-      "budget"
-    ]
-  },
-  "fitness-equipment-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "furniture-decor": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "furniture-wood-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "game-console": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget",
-      "storage"
     ]
   },
   "general-handyman-repair": {
@@ -458,7 +807,7 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "urgency"
     ]
   },
-  "generator-ups-repair": {
+  "small-appliance-repair": {
     "fields": [
       "when",
       "budget",
@@ -466,74 +815,7 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "urgency"
     ]
   },
-  "health-beauty": {
-    "fields": [
-      "employmentType",
-      "experience",
-      "salaryMin",
-      "roleType",
-      "budget"
-    ]
-  },
-  "industrial-machinery-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "industrial-rent": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
-      "budget"
-    ]
-  },
-  "industrial-sale": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
-      "budget"
-    ]
-  },
-  "it-services": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "it": {
-    "fields": [
-      "employmentType",
-      "experience",
-      "salaryMin",
-      "roleType"
-    ]
-  },
-  "jewelry-watches": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "kids-baby": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "kitchen-appliances": {
+  "stove-microwave": {
     "fields": [
       "brand",
       "condition",
@@ -550,44 +832,12 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "budget"
     ]
   },
-  "land-sale": {
+  "art-media": {
     "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
-      "budget"
-    ]
-  },
-  "laptop": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget",
-      "storage"
-    ]
-  },
-  "laundry-dishwasher-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "legal-services": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "lighting": {
-    "fields": [
-      "brand",
-      "condition",
+      "employmentType",
+      "experience",
+      "salaryMin",
+      "roleType",
       "budget"
     ]
   },
@@ -599,22 +849,7 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "urgency"
     ]
   },
-  "lost-found": {
-    "fields": [
-      "when",
-      "socialType"
-    ]
-  },
-  "marketing-sales": {
-    "fields": [
-      "employmentType",
-      "experience",
-      "salaryMin",
-      "roleType",
-      "budget"
-    ]
-  },
-  "medical-equipment-repair": {
+  "generator-ups-repair": {
     "fields": [
       "when",
       "budget",
@@ -622,185 +857,12 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "urgency"
     ]
   },
-  "medical-health": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "mobile-accessories": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget",
-      "storage"
-    ]
-  },
-  "mobile-phone": {
-    "fields": [
-      "brand",
-      "condition",
-      "storage",
-      "budget"
-    ]
-  },
-  "mobile-tablet-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "mobile-tablet": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget",
-      "storage"
-    ]
-  },
-  "motorcycle-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "motorcycle": {
+  "car-classic": {
     "fields": [
       "brand",
       "yearMin",
       "mileageMax",
-      "condition"
-    ]
-  },
-  "moving": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType"
-    ]
-  },
-  "musical-instrument-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "musical-instruments": {
-    "fields": [
-      "brand",
       "condition",
-      "budget"
-    ]
-  },
-  "office-rent": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
-      "budget"
-    ]
-  },
-  "office-sale": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
-      "budget"
-    ]
-  },
-  "painting": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "pets": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "plumbing": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "pre-sale-services": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
-      "budget"
-    ]
-  },
-  "printer-office-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "real-estate-services": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
-      "budget"
-    ]
-  },
-  "refrigerator-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "refrigerator": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "repairs": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "residential-rent": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
       "budget"
     ]
   },
@@ -814,77 +876,13 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "budget"
     ]
   },
-  "roofing-waterproofing-repair": {
+  "lost-found": {
     "fields": [
       "when",
-      "budget",
-      "serviceType",
-      "urgency"
+      "socialType"
     ]
   },
-  "rugs": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "sewing-machine-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "shop-rent": {
-    "fields": [
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "budget"
-    ]
-  },
-  "shop-sale": {
-    "fields": [
-      "areaMin",
-      "budget",
-      "deedType"
-    ]
-  },
-  "short-term-rent": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
-      "budget"
-    ]
-  },
-  "small-appliance-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "social-events": {
-    "fields": [
-      "socialType",
-      "when",
-      "budget"
-    ]
-  },
-  "sofa-chair": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "spare-parts": {
+  "car-rental": {
     "fields": [
       "brand",
       "yearMin",
@@ -893,28 +891,7 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "budget"
     ]
   },
-  "sporting": {
-    "fields": [
-      "socialType",
-      "when",
-      "budget"
-    ]
-  },
-  "sports-fitness": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "stove-microwave": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "suite-apartment-rent": {
+  "industrial-rent": {
     "fields": [
       "rooms",
       "areaMin",
@@ -924,14 +901,7 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "budget"
     ]
   },
-  "table-closet": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "tablet": {
+  "computer": {
     "fields": [
       "brand",
       "condition",
@@ -939,21 +909,7 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "storage"
     ]
   },
-  "tickets": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "tours": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "transportation": {
+  "industrial-machinery-repair": {
     "fields": [
       "when",
       "budget",
@@ -961,72 +917,15 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "urgency"
     ]
   },
-  "tv-audio-repair": {
+  "it": {
     "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
+      "employmentType",
+      "experience",
+      "salaryMin",
+      "roleType"
     ]
   },
-  "vehicle-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "villa-rent": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities"
-    ]
-  },
-  "villa-sale": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "budget",
-      "plotWidth"
-    ]
-  },
-  "villa-short-rent": {
-    "fields": [
-      "rooms",
-      "areaMin",
-      "deposit",
-      "monthlyRent",
-      "amenities",
-      "budget"
-    ]
-  },
-  "volunteering": {
-    "fields": [
-      "socialType",
-      "when",
-      "budget"
-    ]
-  },
-  "washing-machine": {
-    "fields": [
-      "brand",
-      "condition",
-      "budget"
-    ]
-  },
-  "watch-jewelry-repair": {
-    "fields": [
-      "when",
-      "budget",
-      "serviceType",
-      "urgency"
-    ]
-  },
-  "water-heater-boiler-repair": {
+  "medical-health": {
     "fields": [
       "when",
       "budget",
@@ -1042,7 +941,136 @@ export const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {
       "urgency"
     ]
   },
-  "workspace-short-rent": {
+  "sewing-machine-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "conference": {
+    "fields": [
+      "socialType",
+      "when",
+      "budget"
+    ]
+  },
+  "refrigerator": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "marketing-sales": {
+    "fields": [
+      "employmentType",
+      "experience",
+      "salaryMin",
+      "roleType",
+      "budget"
+    ]
+  },
+  "villa-sale": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "budget",
+      "plotWidth"
+    ]
+  },
+  "real-estate-services": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
+      "budget"
+    ]
+  },
+  "washing-machine": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "clothing": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget"
+    ]
+  },
+  "printer-office-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "commercial-sale": {
+    "fields": [
+      "rooms",
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "amenities",
+      "budget"
+    ]
+  },
+  "carpet-rug-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "refrigerator-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "computer-laptop-repair": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "shop-rent": {
+    "fields": [
+      "areaMin",
+      "deposit",
+      "monthlyRent",
+      "budget"
+    ]
+  },
+  "education": {
+    "fields": [
+      "when",
+      "budget",
+      "serviceType",
+      "urgency"
+    ]
+  },
+  "camera": {
+    "fields": [
+      "brand",
+      "condition",
+      "budget",
+      "storage"
+    ]
+  },
+  "villa-short-rent": {
     "fields": [
       "rooms",
       "areaMin",

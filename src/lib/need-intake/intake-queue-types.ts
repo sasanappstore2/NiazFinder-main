@@ -15,6 +15,7 @@ export type IntakeQueueJobStatus = 'queued' | 'active' | 'completed' | 'failed' 
 
 export interface IntakeAnalyzeJobPayload {
   text: string;
+  draftRevision?: number;
   citySlug?: string;
   cityName?: string;
   formHints?: {
@@ -23,7 +24,11 @@ export interface IntakeAnalyzeJobPayload {
     city?: string;
     neighborhood?: string;
     categoryLockedByUser?: boolean;
+    cityLockedByUser?: boolean;
+    neighborhoodLockedByUser?: boolean;
+    lockedFieldKeys?: string[];
   };
+  forceAi?: boolean;
   fastParse?: boolean;
 }
 

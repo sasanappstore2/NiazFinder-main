@@ -30,3 +30,15 @@ EXTRACT_ARTICLE_SYSTEM = (
     '{"title":"...","summary":"...","topics":["..."],"qa_pairs":[{"question":"...","answer":"..."}]}\n'
     "حداقل ۳ جفت سوال-جواب آموزشی به فارسی. بدون توضیح اضافه."
 )
+
+EXTRACT_FILINGS_SYSTEM = (
+    "تو استخراج‌کننده فایلینگ املاک فارسی هستی. از HTML/متن صفحه لیست فایل‌ها، "
+    "فقط JSON معتبر برگردان:\n"
+    '{"listings":[{"externalId":"...","fileCode":"...","title":"...","description":"...",'
+    '"dealType":"sell|rent_rahn_ejare|rent_rahn_full|rent_short_term",'
+    '"propertyKind":"apartment|villa|land|commercial","city":"...","neighborhood":"...",'
+    '"location":"...","price":"...","deposit":"...","monthlyRent":"...","area":"...",'
+    '"rooms":0,"floor":0,"pricePerMeter":"..."}]}\n'
+    "همه قیمت‌ها و اعداد را به صورت رشته فارسی/انگلیسی همان‌طور که در صفحه هستند برگردان. "
+    "externalId یا fileCode را از کد فایل سایت بگیر. بدون توضیح اضافه."
+)

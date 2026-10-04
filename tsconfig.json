@@ -26,6 +26,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@crawler/*": [
+        "./crawler/*"
       ]
     }
   },
@@ -34,6 +37,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "prisma/**/*.ts",
+    "crawler/types/optional-deps.d.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
@@ -48,6 +52,9 @@
     "agent-ctx",
     "download",
     "upload",
-    "prisma/seed-extra.ts"
+    "prisma/seed-extra.ts",
+    "crawler",
+    "src/intake.backup.*",
+    "src/components/**/*.backup.*"
   ]
 }

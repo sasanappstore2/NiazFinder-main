@@ -1,0 +1,7 @@
+{
+  "minListings": 2,
+  "minFileCodeRate": 0.9,
+  "requireItemLinkSelector": true,
+  "requirePagination": true,
+  "sampleFileCodes": ["90001", "90002"]
+}

@@ -57,8 +57,20 @@ status: live
 
 - [[../../docs/NEIGHBORHOOD_FILTERS.md|docs/NEIGHBORHOOD_FILTERS.md]]
 - [[../../docs/CATEGORY_FILTERS.md|docs/CATEGORY_FILTERS.md]]
+- [[../../docs/LOCATION_AUTO.md|docs/LOCATION_AUTO.md]]
 - `src/middleware.ts`
 - Appendix: [[../90_Technical_Appendix/README|Technical Appendix]]
+
+## پیاده‌سازی فنی (فایل‌ها و مسیرها)
+
+*(merge شده از `01_Features/MarketplaceBrowse.md` — شامل بازار کسب‌وکار، به [[04_Business_Marketplace]] هم مرتبطه)*
+
+| نوع | مسیر |
+|-----|------|
+| صفحات | `/n/{location}` → `src/app/(main)/n/[location]/page.tsx`، `/b/{slug}` → `.../b/[slug]/page.tsx`، `/v/{slug}/{id}` → `.../v/[...path]/page.tsx` |
+| Middleware | `src/middleware.ts` (legacy `?category=` → path segments)، `next.config.ts` (legacy redirects) |
+| Config/Search | `src/config/market-routes.ts`, `src/lib/search/`, `src/config/category-filters/` |
+| Data | `src/data/neighborhoods/` |
 
 ## وضعیت
 

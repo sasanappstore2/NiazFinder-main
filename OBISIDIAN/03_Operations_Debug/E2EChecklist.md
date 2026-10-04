@@ -22,4 +22,4 @@ tags: [operations, qa]
 ## Related
 
 - [[DebugPlaybook]]
-- [[../01_Features/NeedIntake|NeedIntake]]
+- [[../10_Product_Areas/02_Need_Intake|NeedIntake]]

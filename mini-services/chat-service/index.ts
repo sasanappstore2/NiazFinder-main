@@ -207,10 +207,35 @@ const httpServer = createServer((req, res) => {
   res.end(JSON.stringify({ error: 'Not found' }));
 });
 
+/** Comma-separated origins. Dev default `*`; prod should set CHAT_CORS_ORIGINS. */
+function resolveChatCorsOrigin(): string | string[] {
+  const raw = process.env.CHAT_CORS_ORIGINS?.trim();
+  if (!raw || raw === '*') {
+    if (process.env.NODE_ENV === 'production') {
+      const appUrl =
+        process.env.NEXT_PUBLIC_APP_URL?.trim() || process.env.APP_URL?.trim();
+      if (appUrl) {
+        console.warn(
+          '[chat-service] CHAT_CORS_ORIGINS unset — falling back to APP URL only'
+        );
+        return [appUrl];
+      }
+      console.warn(
+        '[chat-service] CHAT_CORS_ORIGINS unset in production — allowing * (set env to lock down)'
+      );
+    }
+    return '*';
+  }
+  return raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 const io = new Server(httpServer, {
   path: '/socket.io',
   cors: {
-    origin: '*',
+    origin: resolveChatCorsOrigin(),
     methods: ['GET', 'POST'],
   },
   pingTimeout: 60000,
@@ -328,6 +353,31 @@ function handleCommRedisEvent(type: string, payload: Record<string, unknown>) {
     const conversationId = payload.conversationId as string;
     if (conversationId) {
       io.to(`conv:${conversationId}`).emit('conversation:unread-update', payload);
+    }
+    return;
+  }
+  if (type === 'conversation:deleted') {
+    const conversationId = payload.conversationId as string;
+    if (!conversationId) return;
+    invalidateConversationCache(conversationId);
+    io.to(`conv:${conversationId}`).emit('conversation:deleted', {
+      conversationId,
+      deletedBy: payload.deletedBy,
+    });
+    const participants = (payload.participantIds as string[] | undefined) ?? [];
+    for (const uid of participants) {
+      io.to(`user:${uid}`).emit('conversation:removed', { conversationId });
+    }
+    return;
+  }
+  if (type === 'message:star') {
+    const conversationId = payload.conversationId as string;
+    const targetUserId = payload.userId as string | undefined;
+    if (targetUserId) {
+      io.to(`user:${targetUserId}`).emit('message:star-changed', payload);
+    }
+    if (conversationId) {
+      io.to(`conv:${conversationId}`).emit('message:star-changed', payload);
     }
     return;
   }
@@ -494,62 +544,31 @@ io.on('connection', (socket: AuthenticatedSocket) => {
     );
   });
 
-  // ─── Event: message:send — emit FIRST (~0ms), persist AFTER ───────────
-  socket.on('message:send', (payload: SendMessagePayload) => {
-    const { conversationId, content, clientTempId, replyToId } = payload;
-
-    if (!conversationId || !content?.trim()) return;
-    if (!allowSend(userId)) {
-      socket.emit('error', { message: 'Rate limit exceeded' });
-      return;
-    }
-
-    const tempId = clientTempId || `tmp-${userId}-${Date.now()}`;
-    const instantPayload: SendMessagePayload = { ...payload, clientTempId: tempId };
-
-    const instantReplyTo = payload.replyTo
-      ? replyInfoFromClientPayload(payload.replyTo)
-      : undefined;
-
-    const cached = conversationCache.get(conversationId);
-    if (cached?.has(userId)) {
-      const recipientUserId = cached.get(userId);
-      fanoutMessageNew(io, {
-        ...buildInstantBroadcast(instantPayload, userId, tempId, instantReplyTo),
-        recipientUserId,
-      });
-      void persistMessageSend(io, userId, instantPayload, replyToId, cached);
-      return;
-    }
-
-    void (async () => {
-      const resolved = await resolveParticipants(
-        conversationId,
-        loadConversationParticipants,
-        conversationCache
-      );
-      if (!resolved?.map.has(userId)) {
-        socket.emit('error', { message: 'Access denied to conversation' });
-        return;
-      }
-      const recipientUserId = resolved.map.get(userId);
-      fanoutMessageNew(io, {
-        ...buildInstantBroadcast(instantPayload, userId, tempId, instantReplyTo),
-        recipientUserId,
-      });
-      await persistMessageSend(io, userId, instantPayload, replyToId, resolved.map);
-    })();
+  // ─── Event: message:send — DEPRECATED ─────────────────────────────────
+  // Authoritative sends go through POST /api/chat/[conversationId] (blocks,
+  // rate limits, card validation, Redis fanout). Socket send is disabled.
+  socket.on('message:send', (_payload: SendMessagePayload) => {
+    socket.emit('error', {
+      message:
+        'message:send via socket is deprecated — use POST /api/chat/:conversationId',
+      code: 'SOCKET_SEND_DEPRECATED',
+    });
   });
 
+  // legacy preview kept for instant UI echo only (no persist)
   // ─── Event: message:react ───────────────────────────────────────────
+  // Matches Next.js /api/chat/messages/[id]/react — unique is (messageId, userId, emoji).
+  // One reaction per user per message: toggle same emoji off, otherwise replace.
   socket.on('message:react', async (data: ReactionPayload) => {
     try {
-      // Find the message to get conversationId and verify participant
+      const emoji = typeof data.emoji === 'string' ? data.emoji.trim() : '';
+      if (!emoji) return;
+
       const message = await db.message.findUnique({
         where: { id: data.messageId },
-        select: { conversationId: true },
+        select: { conversationId: true, deletedAt: true },
       });
-      if (!message) return;
+      if (!message || message.deletedAt) return;
 
       const conv = await db.conversation.findUnique({
         where: { id: message.conversationId },
@@ -557,44 +576,54 @@ io.on('connection', (socket: AuthenticatedSocket) => {
       });
       if (!conv || (conv.userId1 !== userId && conv.userId2 !== userId)) return;
 
-      // Check if reaction already exists
-      const existing = await db.messageReaction.findUnique({
-        where: { messageId_userId: { messageId: data.messageId, userId } },
+      const existing = await db.messageReaction.findFirst({
+        where: { messageId: data.messageId, userId },
       });
 
-      if (existing) {
-        // Remove reaction if same emoji, update if different
-        if (existing.emoji === data.emoji) {
-          await db.messageReaction.delete({ where: { id: existing.id } });
-          io.to(`conv:${message.conversationId}`).emit('message:reaction-removed', {
-            messageId: data.messageId,
-            userId,
-            emoji: data.emoji,
-          });
-        } else {
-          await db.messageReaction.update({
-            where: { id: existing.id },
-            data: { emoji: data.emoji },
-          });
-          const user = socket.data.user;
-          io.to(`conv:${message.conversationId}`).emit('message:reaction-updated', {
-            messageId: data.messageId,
-            userId,
-            emoji: data.emoji,
-            user: { id: userId, firstName: user.firstName, lastName: user.lastName },
-          });
-        }
-      } else {
-        // Create new reaction
-        const reaction = await db.messageReaction.create({
-          data: { messageId: data.messageId, userId, emoji: data.emoji },
-          include: { user: { select: { id: true, firstName: true, lastName: true, avatar: true } } },
+      const user = socket.data.user;
+      const room = `conv:${message.conversationId}`;
+
+      if (existing?.emoji === emoji) {
+        await db.messageReaction.delete({
+          where: {
+            messageId_userId_emoji: {
+              messageId: data.messageId,
+              userId,
+              emoji,
+            },
+          },
         });
-        io.to(`conv:${message.conversationId}`).emit('message:reaction-added', {
-          ...reaction,
-          createdAt: reaction.createdAt.toISOString(),
+        io.to(room).emit('message:reaction-removed', {
+          messageId: data.messageId,
+          userId,
+          emoji,
         });
+        return;
       }
+
+      await db.messageReaction.deleteMany({
+        where: { messageId: data.messageId, userId },
+      });
+      const reaction = await db.messageReaction.create({
+        data: { messageId: data.messageId, userId, emoji },
+        include: {
+          user: { select: { id: true, firstName: true, lastName: true, avatar: true } },
+        },
+      });
+
+      const eventName = existing ? 'message:reaction-updated' : 'message:reaction-added';
+      io.to(room).emit(eventName, {
+        messageId: data.messageId,
+        userId,
+        emoji,
+        user: {
+          id: userId,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          avatar: reaction.user?.avatar ?? undefined,
+        },
+        createdAt: reaction.createdAt.toISOString(),
+      });
     } catch (error) {
       console.error('[react] Error:', error);
     }
@@ -722,34 +751,36 @@ io.on('connection', (socket: AuthenticatedSocket) => {
     }
   });
 
-  // ─── Event: message:star ────────────────────────────────────────────
+  // ─── Event: message:star — persisted via MessageStar (REST is primary) ──
   socket.on('message:star', async (data: MessageStarPayload) => {
     try {
-      const message = await db.message.findUnique({ where: { id: data.messageId } });
-      if (!message) return;
-
-      let starredBy: string[] = [];
-      try {
-        starredBy = JSON.parse(message.starredBy);
-      } catch {
-        starredBy = [];
-      }
+      const message = await db.message.findUnique({
+        where: { id: data.messageId },
+        include: { conversation: true },
+      });
+      if (!message || message.deletedAt) return;
+      const conv = message.conversation;
+      if (conv.userId1 !== userId && conv.userId2 !== userId) return;
 
       if (data.unstar) {
-        const idx = starredBy.indexOf(userId);
-        if (idx >= 0) starredBy.splice(idx, 1);
+        await db.messageStar.deleteMany({
+          where: { messageId: data.messageId, userId },
+        });
       } else {
-        if (!starredBy.includes(userId)) starredBy.push(userId);
+        await db.messageStar.upsert({
+          where: {
+            messageId_userId: { messageId: data.messageId, userId },
+          },
+          create: { messageId: data.messageId, userId },
+          update: {},
+        });
       }
 
-      await db.message.update({
-        where: { id: data.messageId },
-        data: { starredBy: JSON.stringify(starredBy) },
-      });
-
-      socket.emit('message:star-changed', {
+      io.to(`user:${userId}`).emit('message:star-changed', {
         messageId: data.messageId,
-        starredBy,
+        conversationId: message.conversationId,
+        userId,
+        isStarred: !data.unstar,
       });
     } catch (error) {
       console.error('[star] Error:', error);

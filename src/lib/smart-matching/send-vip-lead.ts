@@ -4,9 +4,21 @@ import type { Prisma } from '@prisma/client';
 import { getPlatformAiUserId } from '@/lib/platform-ai/user';
 import { generateOutreachCopy } from '@/lib/need-leads/outreach-copy-templates';
 import { buildNeedCardSnapshot } from '@/lib/need-leads/build-need-card-snapshot';
-import { deductLeadFee } from './wallet-lead-fee';
-import { getLeadFeeToman } from './env';
+import { deductLeadFee, getLeadFeeForUser } from './wallet-lead-fee';
+import { getStandardLeadFeeToman, getQualityLeadFeeToman } from './env';
 import type { VipQualifiedBusiness } from './business-matching';
+
+/**
+ * A "quality" lead has confirmed budget, area, and urgency, plus a phone-verified
+ * owner — matches the pricing spec's definition of a higher-value lead worth a
+ * higher flat fee than a "standard" lead with only partial details.
+ */
+function isQualityLead(need: NeedMatchContext, ownerPhoneVerified: boolean): boolean {
+  const hasBudget = need.budgetMin != null || need.budgetMax != null;
+  const hasArea = Boolean(need.neighborhoodId || need.city);
+  const hasUrgency = Boolean(need.dynamicAnswers?.urgency);
+  return ownerPhoneVerified && hasBudget && hasArea && hasUrgency;
+}
 
 async function ensureConversationInTx(
   tx: Prisma.TransactionClient,
@@ -42,7 +54,13 @@ export async function sendVipLeadToBusiness(params: {
   needOwnerUserId: string;
 }): Promise<{ ok: true; outreachId: string } | { ok: false; skipReason: string }> {
   const { requestId, need, business, needOwnerUserId } = params;
-  const leadFee = getLeadFeeToman();
+  const owner = await db.user.findUnique({
+    where: { id: needOwnerUserId },
+    select: { phoneVerified: true },
+  });
+  const baseLeadFee = isQualityLead(need, owner?.phoneVerified ?? false)
+    ? getQualityLeadFeeToman()
+    : getStandardLeadFeeToman();
   const idempotencyKey = `lead:${requestId}:${business.userId}`;
 
   const existing = await db.needLeadOutreach.findUnique({
@@ -69,6 +87,7 @@ export async function sendVipLeadToBusiness(params: {
   try {
     const result = await db.$transaction(
       async (tx) => {
+        const leadFee = await getLeadFeeForUser(tx, business.userId, baseLeadFee);
         const { transaction } = await deductLeadFee(tx, {
           userId: business.userId,
           amount: leadFee,

@@ -23,9 +23,15 @@ function walkMegaMenu(
 }
 
 export function findMegaMenuCategoryForSlug(slug: string): MegaMenuCategory | null {
+  const exact = walkMegaMenu(ALL_CATEGORIES, (node) => {
+    const canonical = resolveMegaMenuCategorySlug(node);
+    return canonical === slug || node.id === slug || node.value === slug ? node : null;
+  });
+  if (exact) return exact;
+
   const normalized = normalizeCategoryPair(slug);
   const targets = new Set(
-    [slug, normalized.categorySlug, normalized.subcategorySlug].filter(Boolean) as string[]
+    [normalized.subcategorySlug, normalized.categorySlug].filter(Boolean) as string[]
   );
 
   return walkMegaMenu(ALL_CATEGORIES, (node) => {
@@ -38,9 +44,10 @@ export function findMegaMenuCategoryForSlug(slug: string): MegaMenuCategory | nu
 
 export function getMegaMenuBreadcrumb(category: MegaMenuCategory): string {
   const path: MegaMenuCategory[] = [];
-  walkMegaMenu(ALL_CATEGORIES, (node, ancestors) => {
+  walkMegaMenu(ALL_CATEGORIES, (node, ancestorsWithSelf) => {
     if (node.id === category.id) {
-      path.push(...ancestors, node);
+      // walkMegaMenu passes path that already includes `node`
+      path.push(...ancestorsWithSelf);
       return node;
     }
     return null;

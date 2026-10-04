@@ -8,7 +8,9 @@ export async function enqueueIntakeHeavyJob(
   const base =
     process.env.NEST_API_URL?.replace(/\/$/, '') ||
     process.env.NEXT_PUBLIC_NEST_API_URL?.replace(/\/$/, '') ||
-    'http://127.0.0.1:4000';
+    '';
+
+  if (!base) return;
 
   try {
     await fetch(`${base}/api/intake-typing/heavy`, {

@@ -17,21 +17,22 @@ export function scopedMatchToFieldBag(
   const bag = createEmptyFieldBag();
   const leaf = match.subcategorySlug ?? match.categorySlug;
   const locked = input.formHints?.categoryLockedByUser ?? false;
-  const root = getCategoryPath(leaf)[0]?.slug;
-
-  const verticalValue =
-    intentSlice?.vertical ??
-    (root === 'real-estate'
+  const pathRoot = getCategoryPath(leaf)[0]?.slug;
+  const verticalFromPath =
+    pathRoot === 'real-estate'
       ? 'real-estate'
-      : root === 'vehicles'
+      : pathRoot === 'vehicles'
         ? 'vehicles'
-        : root === 'services'
+        : pathRoot === 'services'
           ? 'services'
-          : root === 'jobs'
+          : pathRoot === 'jobs'
             ? 'jobs'
-            : root === 'social'
+            : pathRoot === 'social'
               ? 'social'
-              : 'products');
+              : 'products';
+
+  // Prefer registry path when leaf is locked; intent vertical only as fallback.
+  const verticalValue = verticalFromPath || intentSlice?.vertical || 'products';
 
   setField(bag, 'vertical', {
     value: verticalValue,

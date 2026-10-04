@@ -10,7 +10,12 @@ import {
   intakeComposerTextarea,
   INTAKE_DETAILS_MIN_CHARS,
 } from './intake-ui-tokens';
-import { INTAKE_COPY } from './intake-copy';
+import type { IntakeAnalysisMode } from '@/lib/intake/rules-only-mode';
+import {
+  INTAKE_COPY,
+  intakeAnalyzingNeed,
+  intakeComposerHint,
+} from './intake-copy';
 import { TypingIndicator } from './realtime/TypingIndicator';
 
 export interface IntakeComposerTextareaProps {
@@ -22,8 +27,11 @@ export interface IntakeComposerTextareaProps {
   disabled?: boolean;
   minCharsHint?: number;
   showCharProgress?: boolean;
+  showCharCount?: boolean;
+  showFooter?: boolean;
   highlightFromHome?: boolean;
   analyzing?: boolean;
+  analysisMode?: IntakeAnalysisMode;
   className?: string;
 }
 
@@ -36,8 +44,11 @@ export function IntakeComposerTextarea({
   disabled,
   minCharsHint = INTAKE_DETAILS_MIN_CHARS,
   showCharProgress = false,
+  showCharCount = true,
+  showFooter = true,
   highlightFromHome = false,
   analyzing = false,
+  analysisMode = 'rules',
   className,
 }: IntakeComposerTextareaProps) {
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({
@@ -76,41 +87,45 @@ export function IntakeComposerTextarea({
         className={intakeComposerTextarea}
         rows={3}
       />
-      <div className="flex items-center justify-between gap-2 px-3 pb-2 text-xs text-muted-foreground">
-        {showCharProgress ? (
-          <div className="flex min-w-0 flex-1 items-center gap-2">
-            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-emerald-500 transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
+      {showFooter ? (
+        <div className="flex items-center justify-between gap-2 px-3 pb-2 text-xs text-muted-foreground">
+          {showCharProgress ? (
+            <div className="flex min-w-0 flex-1 items-center gap-2">
+              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-emerald-500 transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              {analyzing ? (
+                <TypingIndicator status="analyzing" className="shrink-0" />
+              ) : (
+                <span className="shrink-0 tabular-nums">
+                  {len >= minCharsHint
+                    ? INTAKE_COPY.charsEnough
+                    : INTAKE_COPY.charsRemaining(toPersianDigits(String(minCharsHint - len)))}
+                </span>
+              )}
             </div>
-            {analyzing ? (
-              <TypingIndicator status="analyzing" className="shrink-0" />
-            ) : (
-              <span className="shrink-0 tabular-nums">
-                {len >= minCharsHint
-                  ? INTAKE_COPY.charsEnough
-                  : INTAKE_COPY.charsRemaining(toPersianDigits(String(minCharsHint - len)))}
-              </span>
-            )}
-          </div>
-        ) : (
-          <span className="flex min-w-0 flex-1 items-center gap-2 text-muted-foreground/80">
-            {analyzing ? (
-              <>
-                <TypingIndicator status="analyzing" />
-                <span>{INTAKE_COPY.analyzingNeed}</span>
-              </>
-            ) : (
-              INTAKE_COPY.composerHint
-            )}
-          </span>
-        )}
-        <span className="shrink-0 tabular-nums">
-          {toPersianDigits(String(len))} {INTAKE_COPY.charUnit}
-        </span>
-      </div>
+          ) : (
+            <span className="flex min-w-0 flex-1 items-center gap-2 text-muted-foreground/80">
+              {analyzing ? (
+                <>
+                  <TypingIndicator status="analyzing" />
+                  <span>{intakeAnalyzingNeed(analysisMode)}</span>
+                </>
+              ) : (
+                intakeComposerHint(analysisMode)
+              )}
+            </span>
+          )}
+          {showCharCount ? (
+            <span className="shrink-0 tabular-nums">
+              {toPersianDigits(String(len))} {INTAKE_COPY.charUnit}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

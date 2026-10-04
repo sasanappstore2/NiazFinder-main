@@ -1,13 +1,19 @@
+import {
+  getIntakeAnalysisMode,
+  isRulesOnlyIntakeMode,
+  type IntakeAnalysisMode,
+} from '@/lib/intake/rules-only-mode';
+
+export type { IntakeAnalysisMode };
+export { getIntakeAnalysisMode };
+
 /**
  * Rules-first intake configuration.
+ * Prefer `getIntakeAnalysisMode()` / `isRulesOnlyIntakeMode()` for product UX;
+ * this flag is the server gate for invoking LLM paths.
  */
 export function isIntakeAiGloballyDisabled(): boolean {
-  if (process.env.NEED_INTAKE_RULES_ONLY === 'true') return true;
-  if (process.env.NEED_INTAKE_LLM_ENABLED === 'true') return false;
-  if (process.env.AI_SEMANTIC_RESOLVER_ENABLED === 'true') return false;
-  if (process.env.NEED_INTAKE_TRUTH_VERIFY_ENABLED === 'true') return false;
-  if (process.env.NEED_INTAKE_HYBRID_ENABLED === 'true') return false;
-  return true;
+  return isRulesOnlyIntakeMode();
 }
 
 export function isHybridIntakeConfigured(): boolean {
@@ -19,8 +25,11 @@ export function isIntakeRulesOnlyMode(): boolean {
 }
 
 export const RULES_CATEGORY_MIN_CONFIDENCE = 0.75;
-export const REGISTRY_CATEGORY_OVERRIDE_THRESHOLD = 0.78;
+/** Align registry override with compose auto-apply / disambig gate (RFC-0004). */
+export const REGISTRY_CATEGORY_OVERRIDE_THRESHOLD = 0.85;
 export const RULES_PACK_TARGET_SIZE = 10_000;
+/** Smaller cartesian target for estate leaves — collision table covers cross-category cases. */
+export const RULES_ESTATE_PACK_TARGET_SIZE = 2_000;
 export const RULES_PACKS_DIR = 'src/intake/rules/packs';
 
 /** Top-K rule hypotheses for disambiguation. */

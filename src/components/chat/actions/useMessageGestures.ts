@@ -5,6 +5,7 @@ import { useMotionValue, useTransform, animate } from 'framer-motion';
 import {
   CHAT_DOUBLE_TAP_MS,
   CHAT_LONG_PRESS_MS,
+  CHAT_SWIPE_AXIS_LOCK_PX,
   CHAT_SWIPE_MAX_PX,
   CHAT_SWIPE_REPLY_THRESHOLD_PX,
   CHAT_TOUCH_MOVE_CANCEL_PX,
@@ -31,6 +32,8 @@ export function useMessageGestures(options: {
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const longPressFiredRef = useRef(false);
   const suppressClickUntilRef = useRef(0);
+  /** null = undecided, true = horizontal swipe-reply, false = vertical scroll */
+  const axisLockRef = useRef<boolean | null>(null);
 
   const clearLongPressTimer = useCallback(() => {
     if (longPressTimerRef.current) {
@@ -45,6 +48,7 @@ export function useMessageGestures(options: {
       onReply();
     }
     animate(dragX, 0, { type: 'spring', stiffness: 420, damping: 32 });
+    axisLockRef.current = null;
   }, [disabled, dragX, onReply]);
 
   const handleTouchStart: TouchEventHandler = useCallback(
@@ -55,6 +59,7 @@ export function useMessageGestures(options: {
 
       touchStartRef.current = { x: touch.clientX, y: touch.clientY };
       longPressFiredRef.current = false;
+      axisLockRef.current = null;
       clearLongPressTimer();
 
       if (!onLongPress) return;
@@ -76,9 +81,18 @@ export function useMessageGestures(options: {
       const touch = e.touches[0];
       if (!touch) return;
 
-      const dx = Math.abs(touch.clientX - touchStartRef.current.x);
-      const dy = Math.abs(touch.clientY - touchStartRef.current.y);
-      if (dx > CHAT_TOUCH_MOVE_CANCEL_PX || dy > CHAT_TOUCH_MOVE_CANCEL_PX) {
+      const dx = touch.clientX - touchStartRef.current.x;
+      const dy = touch.clientY - touchStartRef.current.y;
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+
+      if (axisLockRef.current === null) {
+        if (absDx > CHAT_SWIPE_AXIS_LOCK_PX || absDy > CHAT_SWIPE_AXIS_LOCK_PX) {
+          axisLockRef.current = absDx > absDy;
+        }
+      }
+
+      if (absDx > CHAT_TOUCH_MOVE_CANCEL_PX || absDy > CHAT_TOUCH_MOVE_CANCEL_PX) {
         clearLongPressTimer();
       }
     },
@@ -88,6 +102,7 @@ export function useMessageGestures(options: {
   const handleTouchEnd: TouchEventHandler = useCallback(
     (e) => {
       clearLongPressTimer();
+      axisLockRef.current = null;
 
       if (disabled || !touchActionsEnabled || longPressFiredRef.current) {
         touchStartRef.current = null;
@@ -116,11 +131,12 @@ export function useMessageGestures(options: {
     clearLongPressTimer();
     touchStartRef.current = null;
     longPressFiredRef.current = false;
+    axisLockRef.current = null;
   }, [clearLongPressTimer]);
 
   const handleClickCapture = useCallback((e: MouseEvent) => {
-      if (Date.now() < suppressClickUntilRef.current) {
-        e.preventDefault();
+    if (Date.now() < suppressClickUntilRef.current) {
+      e.preventDefault();
       e.stopPropagation();
     }
   }, []);
@@ -136,6 +152,13 @@ export function useMessageGestures(options: {
           dragConstraints: { left: -CHAT_SWIPE_MAX_PX, right: 0 },
           dragElastic: 0.12,
           dragMomentum: false,
+          dragDirectionLock: true,
+          onDragStart: () => {
+            // Prefer vertical scroll until horizontal intent is clear.
+            if (axisLockRef.current === false) {
+              dragX.set(0);
+            }
+          },
         },
     touchProps: touchActionsEnabled
       ? {

@@ -1,5 +1,5 @@
 /**
- * AUTO-GENERATED ? do not edit by hand.
+ * AUTO-GENERATED — do not edit by hand.
  * Run: npx tsx scripts/generate/build-pack-intake-manifest.ts
  */
 export interface PackIntakeMeta {
@@ -84,12 +84,13 @@ export const PACK_INTAKE_MANIFEST: Record<string, PackIntakeMeta> = {
   },
   "bicycle-repair": {
     "requiredFields": [
-      "dealType"
+      "city"
     ],
-    "optionalFields": [
-      "city",
-      "budget"
-    ]
+    "optionalFields": []
+  },
+  "bicycle": {
+    "requiredFields": [],
+    "optionalFields": []
   },
   "boat": {
     "requiredFields": [
@@ -135,6 +136,10 @@ export const PACK_INTAKE_MANIFEST: Record<string, PackIntakeMeta> = {
       "city",
       "budget"
     ]
+  },
+  "camping-outdoor": {
+    "requiredFields": [],
+    "optionalFields": []
   },
   "car-classic": {
     "requiredFields": [
@@ -391,12 +396,13 @@ export const PACK_INTAKE_MANIFEST: Record<string, PackIntakeMeta> = {
   },
   "fitness-equipment-repair": {
     "requiredFields": [
-      "dealType"
+      "city"
     ],
-    "optionalFields": [
-      "city",
-      "budget"
-    ]
+    "optionalFields": []
+  },
+  "fitness-equipment": {
+    "requiredFields": [],
+    "optionalFields": []
   },
   "furniture-decor": {
     "requiredFields": [
@@ -592,6 +598,10 @@ export const PACK_INTAKE_MANIFEST: Record<string, PackIntakeMeta> = {
     "requiredFields": [
       "city"
     ],
+    "optionalFields": []
+  },
+  "marathon-overrides": {
+    "requiredFields": [],
     "optionalFields": []
   },
   "marketing-sales": {
@@ -830,6 +840,10 @@ export const PACK_INTAKE_MANIFEST: Record<string, PackIntakeMeta> = {
       "city",
       "budget"
     ]
+  },
+  "scooter": {
+    "requiredFields": [],
+    "optionalFields": []
   },
   "sewing-machine-repair": {
     "requiredFields": [

@@ -1,3 +1,8 @@
+/**
+ * Optional legacy intent-only LLM slice.
+ * Live `/post` hybrid path uses `runCategoryIntentEngine` (intent + category in one call).
+ * Kept for scripts / force-ai experiments that import this module directly.
+ */
 import type { IntentType } from '@/contracts/need-intake';
 import { parseAiJsonPayload } from '@/ai/schema/extractionSchema';
 import { localChatCompletions } from '@/lib/need-intake/local-chat-client';

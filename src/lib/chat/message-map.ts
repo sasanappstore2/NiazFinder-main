@@ -35,6 +35,7 @@ export type DbMessageRow = {
   pinnedAt?: Date | null;
   replyTo?: DbReply | null;
   reactions?: DbReaction[];
+  stars?: { userId: string }[];
 };
 
 export function replyPreview(content: string, type: string, max = 120): string {
@@ -99,5 +100,6 @@ export function mapDbMessageToClient(
     isPinned: m.isPinned ?? false,
     pinnedBy: m.pinnedBy ?? undefined,
     pinnedAt: m.pinnedAt?.toISOString() ?? undefined,
+    isStarred: Boolean(m.stars?.some((s) => s.userId === viewerId)),
   };
 }

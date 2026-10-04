@@ -2,37 +2,27 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppStore } from '@/lib/store';
+import {
+  isJanusConfigured,
+  loadVoiceCredentials,
+  type VoiceCredentialsResponse,
+} from '@/lib/voice/load-voice-credentials';
 
 export type VoiceCallPhase = 'idle' | 'outgoing' | 'incoming' | 'active' | 'ended';
 
-interface VoiceCredentials {
-  janus: {
-    wsUrl: string;
-    roomId: number;
-    plugin: string;
-    iceTransportPolicy: 'relay' | 'all';
-  } | null;
-  iceServers: Array<{ urls: string | string[]; username?: string; credential?: string }>;
-}
-
 /**
- * Voice calls: loads Janus/TURN credentials when configured.
- * Signaling for P2P remains in `call-controller` + chat-service socket events.
- * Attach `janus-gateway` at runtime when `NEXT_PUBLIC_JANUS_WS_URL` is set.
+ * @deprecated Prefer primary path: `useVoiceCallSignaling` + `call-controller`.
+ * This hook only loads `/api/voice/credentials` for optional Janus SFU experiments.
+ * Overlay media uses P2P ICE from `/api/calls` (relay when NEXT_PUBLIC_VOICE_RELAY_ONLY=true).
  */
 export function useVoiceCall(conversationId: string | null) {
   const { authToken } = useAppStore();
   const [phase, setPhase] = useState<VoiceCallPhase>('idle');
-  const credsRef = useRef<VoiceCredentials | null>(null);
+  const credsRef = useRef<VoiceCredentialsResponse | null>(null);
 
   const loadCredentials = useCallback(async () => {
     if (!authToken || !conversationId) return null;
-    const res = await fetch(
-      `/api/voice/credentials?conversationId=${encodeURIComponent(conversationId)}`,
-      { headers: { Authorization: `Bearer ${authToken}` } }
-    );
-    if (!res.ok) return null;
-    const data = (await res.json()) as VoiceCredentials;
+    const data = await loadVoiceCredentials(conversationId, authToken);
     credsRef.current = data;
     return data;
   }, [authToken, conversationId]);
@@ -57,7 +47,7 @@ export function useVoiceCall(conversationId: string | null) {
     loadCredentials,
     startJanusCall,
     endCall,
-    janusEnabled: Boolean(process.env.NEXT_PUBLIC_JANUS_WS_URL),
+    janusEnabled: isJanusConfigured(),
     credentials: credsRef,
   };
 }

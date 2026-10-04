@@ -102,6 +102,9 @@ export const POST_ESTATE_SCENARIO_MATRIX: PostEstateScenario[] = [
     assert: (r) => {
       if (r.entities.city !== 'تهران') return `city=${r.entities.city}`;
       if (r.entities.transactionType !== 'RENT') return `tx=${r.entities.transactionType}`;
+      if (r.entities.neighborhoodSlug !== 'ونک') {
+        return `hood=${r.entities.neighborhoodSlug}/${r.locationHints?.locationResolutionStatus}`;
+      }
       return null;
     },
   },
@@ -186,12 +189,30 @@ export const POST_ESTATE_SCENARIO_MATRIX: PostEstateScenario[] = [
   },
   {
     id: 'mashhad-shop-faramez',
-    text: 'مغازه در فرامرز عباسی مشهد می‌خوام',
+    text: 'من یک مغازه می‌خوام برای لوازم آرایشی محدوده فرامرزعباسی یک میلیارد رهن دارم دویست میلیون اجاره',
+    preferredCitySlug: 'mashhad',
+    preferredCityName: 'مشهد',
     assert: (r) => {
       if (r.entities.city !== 'مشهد') return `city=${r.entities.city}`;
       const slug = r.entities.categorySlug ?? '';
       if (!slug.includes('shop') && !slug.includes('commercial')) {
         return `category=${slug}`;
+      }
+      if (r.entities.neighborhoodSlug !== 'شهید-فرامرز-عباسی') {
+        return `hood=${r.entities.neighborhoodSlug}/${r.locationHints?.locationResolutionStatus}`;
+      }
+      return null;
+    },
+  },
+  {
+    id: 'mashhad-firdowsi-between-landmarks',
+    text: 'یک واحد برای مزون می‌خوام حاشیه فردوسی بین ثمانه و مهدی حداکثر صد میلیون اجاره',
+    preferredCitySlug: 'mashhad',
+    preferredCityName: 'مشهد',
+    assert: (r) => {
+      if (r.entities.city !== 'مشهد') return `city=${r.entities.city}`;
+      if (r.entities.neighborhoodSlug !== 'فردوسی') {
+        return `hood=${r.entities.neighborhoodSlug}/${r.locationHints?.locationResolutionStatus}`;
       }
       return null;
     },

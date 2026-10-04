@@ -16,9 +16,23 @@ let lastHealthOk: boolean | null = null;
 let lastHealthAt = 0;
 const HEALTH_TTL_MS = 15_000;
 
+const DEFAULT_DEV_API_KEY = 'niazfinder_typesense_dev_key';
+
+function isExplicitlyDisabled(): boolean {
+  const raw = process.env.TYPESENSE_ENABLED?.trim().toLowerCase();
+  return raw === 'false' || raw === '0' || raw === 'off' || raw === 'no';
+}
+
 function readConfig(): TypesenseConfig | null {
-  const apiKey = process.env.TYPESENSE_API_KEY?.trim();
-  if (!apiKey || process.env.TYPESENSE_ENABLED !== 'true') {
+  // Always on unless explicitly disabled (TYPESENSE_ENABLED=false).
+  if (isExplicitlyDisabled()) {
+    return null;
+  }
+
+  const apiKey =
+    process.env.TYPESENSE_API_KEY?.trim() ||
+    (process.env.NODE_ENV === 'production' ? '' : DEFAULT_DEV_API_KEY);
+  if (!apiKey) {
     return null;
   }
 

@@ -149,8 +149,8 @@ function buildEntities(
   }
 
   const budget = extractBudget(normalizedText);
-  if (budget.min != null) {
-    entities.budgetMin = budget.min;
+  if (budget.min != null || budget.max != null) {
+    if (budget.min != null) entities.budgetMin = budget.min;
     entities.budgetMax = budget.max ?? budget.min;
     confidence.budget = budget.confidence;
   }

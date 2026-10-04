@@ -1,6 +1,13 @@
 import type { Message, MessageReactionItem } from '@/lib/types';
 import { MESSAGE_DELETED_TOMBSTONE } from '@/lib/chat/message-delete';
 import { chatMessageListPreview } from '@/lib/chat/contact-share';
+import {
+  agentReplyClientId,
+  agentStreamIdForTurn,
+  bumpAgentStreamAfterUser,
+  compareMessages,
+  sortMessagesChronologically,
+} from '@/lib/chat/message-order';
 
 export type IncomingMessagePayload = {
   id: string;
@@ -59,23 +66,53 @@ export function appendIncomingMessageToStore(
   messages: Message[],
   incoming: Message
 ): Message[] {
-  if (incoming.clientTempId) {
-    const temp = messages.find((m) => m.clientTempId === incoming.clientTempId);
-    const merged =
-      temp?.replyTo && !incoming.replyTo ? { ...incoming, replyTo: temp.replyTo } : incoming;
-    const withoutTemp = messages.filter(
-      (m) => m.clientTempId !== incoming.clientTempId && m.id !== incoming.id
-    );
-    if (withoutTemp.some((m) => m.id === incoming.id)) return withoutTemp;
-    return [...withoutTemp, merged];
+  if (incoming.clientTempId?.startsWith('agent-reply:')) {
+    const turnId = incoming.clientTempId.slice('agent-reply:'.length);
+    const streamId = agentStreamIdForTurn(turnId);
+    const streamIdx = messages.findIndex((m) => m.id === streamId);
+    if (streamIdx >= 0) {
+      const next = messages.filter((m) => m.id !== incoming.id);
+      next[streamIdx] = {
+        ...incoming,
+        agentStreaming: false,
+        agentStatus: 'done',
+      };
+      return next;
+    }
   }
+
+  if (incoming.clientTempId) {
+    const tempIndex = messages.findIndex((m) => m.clientTempId === incoming.clientTempId);
+    const temp = tempIndex >= 0 ? messages[tempIndex] : undefined;
+    const merged: Message =
+      temp?.replyTo && !incoming.replyTo
+        ? { ...incoming, replyTo: temp.replyTo }
+        : incoming;
+
+    if (tempIndex >= 0) {
+      const next = messages.filter(
+        (m) => m.id !== incoming.id || m.clientTempId === incoming.clientTempId,
+      );
+      const idx = next.findIndex((m) => m.clientTempId === incoming.clientTempId);
+      if (idx >= 0) {
+        next[idx] = merged;
+        return bumpAgentStreamAfterUser(next, incoming.clientTempId, merged.createdAt);
+      }
+    }
+
+    const withoutDup = messages.filter(
+      (m) => m.clientTempId !== incoming.clientTempId && m.id !== incoming.id,
+    );
+    if (withoutDup.some((m) => m.id === incoming.id)) return withoutDup;
+    return sortMessagesChronologically([...withoutDup, merged]);
+  }
+
   if (messages.some((m) => m.id === incoming.id)) return messages;
-  const merged = [...messages, incoming];
-  return merged.sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-  );
+  return sortMessagesChronologically([...messages, incoming]);
 }
 
 export function previewFromIncoming(data: IncomingMessagePayload): string {
   return chatMessageListPreview(data.content, data.type);
 }
+
+export { compareMessages, sortMessagesChronologically } from '@/lib/chat/message-order';

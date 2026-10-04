@@ -54,7 +54,21 @@ status: live
 
 - [[../../docs/AI_LEAD_OUTREACH.md|docs/AI_LEAD_OUTREACH.md]]
 - [[../../docs/NEED_MATCH.md|docs/NEED_MATCH.md]]
+- [[../../docs/HOME_LEAD.md|docs/HOME_LEAD.md]]
 - Appendix: [[../90_Technical_Appendix/README|Technical Appendix]]
+
+## پیاده‌سازی فنی (فایل‌ها و مسیرها)
+
+*(merge شده از `01_Features/LeadOutreach.md`)*
+
+| نوع | مسیر |
+|-----|------|
+| Config | `.env.example` (`LEAD_*`), `src/lib/need-leads/env.ts`, `src/lib/smart-matching/env.ts` (`STANDARD_LEAD_FEE_TOMAN`, `QUALITY_LEAD_FEE_TOMAN`) |
+| API | `src/app/api/admin/need-leads/dispatch/route.ts`, `src/app/api/business/leads/route.ts` |
+| هستهٔ ارسال + کسر فی | `src/lib/smart-matching/send-vip-lead.ts`, `wallet-lead-fee.ts` |
+| Prisma | `NeedLeadOutreach` (شامل `leadFeeAmount`, `feeDeductedAt`, `walletTransactionId`) |
+
+> فی لید از ۲۰۲۶-۰۷-۱۶ دو سطحی شد (عادی/باکیفیت) — به [[11_Wallet_Payments]] مراجعه کن.
 
 ## وضعیت
 

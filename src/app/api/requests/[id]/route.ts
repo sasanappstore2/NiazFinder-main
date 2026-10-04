@@ -4,6 +4,7 @@ import { ProposalStatus } from '@prisma/client';
 import { db } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import { extractNeedBudgetMetaFromDynamicAnswers } from '@/lib/need/extract-need-budget-meta';
+import { queueNeedRagIndex } from '@/lib/rag/queue';
 
 function budgetToJson(value: bigint | number | null | undefined): number | null {
   if (value == null) return null;
@@ -337,6 +338,10 @@ export async function PUT(
       createdAt: updatedRequest.createdAt,
       updatedAt: updatedRequest.updatedAt,
     };
+
+    if (title !== undefined || description !== undefined || city !== undefined || province !== undefined || status !== undefined) {
+      queueNeedRagIndex(updatedRequest.id, 'UPSERT');
+    }
 
     return NextResponse.json(
       { message: 'نیاز با موفقیت بروزرسانی شد', request: result }

@@ -30,6 +30,9 @@ import type { IntakeRenderContext } from '@/intake/rendering/types';
 import type { IntakeTemplate } from '@/intake/template/types';
 import { trackFieldChange } from '@/intake/telemetry/postIntakeTelemetry';
 
+import { resolveRequiredFields } from '@/intake/template/required-field-resolver';
+import { resolveSectionKeyForField } from '@/intake/template/sectionGroups';
+
 function sectionKeysEqual(a: Set<string>, b: Set<string>): boolean {
   if (a.size !== b.size) return false;
   for (const key of a) {
@@ -54,17 +57,26 @@ export function computeEnabledSectionsForLocation(draft: NeedDraft): Set<string>
     parsedBrand: draft.parsedIntent?.entities?.brand,
   };
 
+  const leaf = entities.subcategorySlug || entities.categorySlug || '';
+  const required = resolveRequiredFields({
+    categorySlug: leaf,
+    answers: draft.answers as Record<string, unknown>,
+    entities: draft.entities as Record<string, unknown>,
+  });
+  // Critical fields are useful for matching, but not all are mandatory.
+  const missingRequiredKeys = new Set(required.missingFieldKeys);
+
   for (const section of template.sections) {
     if (section.key === 'specs') continue;
     if (section.key === 'timing') {
-      next.add('timing');
+      const hasTimingValue = section.fields.some((key) => {
+        const meta = template.fieldMap[key];
+        return meta ? isFieldFilled(meta, filledCtx) : false;
+      });
+      if (hasTimingValue) next.add('timing');
       continue;
     }
     if (template.mandatorySectionKeys.has(section.key)) {
-      next.add(section.key);
-      continue;
-    }
-    if (template.criticalSectionKeys.has(section.key)) {
       next.add(section.key);
       continue;
     }
@@ -72,7 +84,18 @@ export function computeEnabledSectionsForLocation(draft: NeedDraft): Set<string>
       const meta = template.fieldMap[key];
       return meta ? isFieldFilled(meta, filledCtx) : false;
     });
-    if (hasFilled) next.add(section.key);
+    if (hasFilled) {
+      next.add(section.key);
+      continue;
+    }
+    const hasMissingRequired = section.fields.some((key) => missingRequiredKeys.has(key));
+    if (hasMissingRequired) next.add(section.key);
+  }
+
+  // Also open sections for missing keys that live outside template.section.fields lists.
+  for (const key of required.missingFieldKeys) {
+    const sectionKey = resolveSectionKeyForField(key, leaf);
+    if (sectionKey && sectionKey !== 'specs') next.add(sectionKey);
   }
 
   return next;
@@ -130,6 +153,14 @@ export function useIntakeDraft({
 
   const selectedLeafCategorySlug = selectedSubcategory || selectedCategory;
 
+  useEffect(() => {
+    if (!needDraft) return;
+    if (needDraft.categoryLockedByUser && !categoryLockedByUserRef.current) {
+      categoryLockedByUserRef.current = true;
+      setCategoryLockedByUser(true);
+    }
+  }, [needDraft?.categoryLockedByUser, needDraft]);
+
   const categorySourceText = useMemo(
     () => composeIntakeSourceText(needText, detailsText),
     [needText, detailsText]
@@ -152,16 +183,34 @@ export function useIntakeDraft({
   const draftEntities = needDraft ? recordToEntities(needDraft.entities) : null;
 
   const categorySuggestions = useMemo(() => {
+    const source = `${needText}\n${detailsText}`;
+    const commercialCandidates = getBusinessCommercialPropertyCandidates(source);
+    const selectedLeaf = selectedSubcategory || draftEntities?.subcategorySlug || '';
+    const selectedScope = selectedLeaf || selectedCategory || draftEntities?.categorySlug || '';
+    const selectedDepth = getCategoryBySlug(selectedScope)?.depth ?? -1;
+    if (selectedDepth === 2) return [];
+
+    if (commercialCandidates.length > 0) {
+      return commercialCandidates.filter((slug) => {
+        if (!selectedScope || selectedDepth === 0) return true;
+        return normalizeCategoryPair(slug).categorySlug === selectedScope;
+      });
+    }
+
     const ruleCandidates = needDraft?.parsedIntent?.categoryCandidates;
-    if (ruleCandidates && ruleCandidates.length >= 2 && !draftEntities?.categorySlug) {
+    // Prefer server category candidates — do not override with client keyword heuristics.
+    if (ruleCandidates && ruleCandidates.length > 0 && !selectedScope) {
       return ruleCandidates
         .sort((a, b) => b.confidence - a.confidence)
         .slice(0, 6)
         .map((c) => c.slug);
     }
 
-    const source = `${needText}\n${detailsText}`;
-    const commercialCandidates = getBusinessCommercialPropertyCandidates(source);
+    // Server already resolved a leaf — no client keyword chip override.
+    if (selectedScope) {
+      return [];
+    }
+
     const commercialAmbiguous = isAmbiguousCommercialSubtype(source);
     const candidates = suggestNeedCategoriesFromText(source, 8);
     const slugs: string[] = [];
@@ -195,7 +244,7 @@ export function useIntakeDraft({
       }
     }
     return slugs.slice(0, 3);
-  }, [needDraft?.parsedIntent?.categoryCandidates, needText, detailsText, draftEntities?.categorySlug]);
+  }, [needDraft?.parsedIntent?.categoryCandidates, needText, detailsText, selectedCategory, selectedSubcategory, draftEntities?.categorySlug, draftEntities?.subcategorySlug]);
 
   const categoryAmbiguous = useMemo(
     () => hasCategoryAmbiguity(needDraft?.parsedIntent),
@@ -208,8 +257,10 @@ export function useIntakeDraft({
   );
 
   const categorySuggestionOptions = useMemo(() => {
+    const activeLeaf = selectedSubcategory || draftEntities?.subcategorySlug || selectedCategory || draftEntities?.categorySlug || '';
+    if (getCategoryBySlug(activeLeaf)?.depth === 2) return [];
     const ruleCandidates = needDraft?.parsedIntent?.categoryCandidates;
-    if (ruleCandidates && ruleCandidates.length >= 2) {
+    if (ruleCandidates && ruleCandidates.length > 0 && categorySuggestions.length === 0) {
       return ruleCandidates
         .sort((a, b) => b.confidence - a.confidence)
         .slice(0, 6)
@@ -222,7 +273,7 @@ export function useIntakeDraft({
       value: slug,
       label: categorySuggestionLabelFromSlug(slug),
     }));
-  }, [categorySuggestions, needDraft?.parsedIntent?.categoryCandidates]);
+  }, [categorySuggestions, needDraft?.parsedIntent?.categoryCandidates, selectedCategory, selectedSubcategory, draftEntities?.categorySlug, draftEntities?.subcategorySlug]);
 
   const intakeTemplate: IntakeTemplate = useMemo(() => {
     const base = resolveTemplate({
@@ -280,6 +331,7 @@ export function useIntakeDraft({
           setNeedDraft(
             recomputeNeedDraft({
               ...current,
+              categoryLockedByUser: true,
               answers: { ...current.answers, _userSetCategory: true },
             })
           );
@@ -306,6 +358,7 @@ export function useIntakeDraft({
         setNeedDraft(
           recomputeNeedDraft({
             ...current,
+            categoryLockedByUser: true,
             answers: { ...current.answers, _userSetCategory: true },
           })
         );
@@ -347,12 +400,20 @@ export function useIntakeDraft({
             ? scalarAnswer
             : undefined;
 
+      // ودیعه ↔ رهن: same money in Iranian rent deals; keep answers in sync.
+      const moneyMirror: Record<string, string | number | string[]> = {};
+      if (key === 'deposit' || key === 'rahnAmount') {
+        moneyMirror.deposit = answerValue;
+        moneyMirror.rahnAmount = answerValue;
+      }
+
       setNeedDraft(
         recomputeNeedDraft({
           ...base,
           answers: {
             ...base.answers,
             [key]: answerValue,
+            ...moneyMirror,
             ...(key === 'dealType' ? { _userSetDealType: true } : {}),
           },
           ...(urgencyFromWhen
@@ -393,7 +454,7 @@ export function useIntakeDraft({
         fieldType: meta?.type ?? 'text',
         changedFrom: prevValue ?? null,
         changedTo: value,
-        step: step as 'need' | 'details' | 'location' | 'preview',
+        step: step as 'compose' | 'need' | 'details' | 'location' | 'preview',
       });
     },
     [intakeTemplate.fieldMap, patchIntakeAnswer, patchNeedDraftEntities, getDraft, step]
@@ -473,15 +534,37 @@ export function useIntakeDraft({
   const resetCategoryLocks = useCallback(() => {
     categoryLockedByUserRef.current = false;
     setCategoryLockedByUser(false);
-  }, []);
+    const current = getDraft();
+    if (current) {
+      setNeedDraft(
+        recomputeNeedDraft({
+          ...current,
+          categoryLockedByUser: false,
+          answers: { ...current.answers, _userSetCategory: false },
+        })
+      );
+    }
+  }, [getDraft, setNeedDraft]);
 
   const applyInitialCategoryIfNeeded = useCallback(
     (slug: string) => {
       if (initialCategoryAppliedRef.current || !slug.trim()) return;
       initialCategoryAppliedRef.current = true;
-      applyCategorySlug(slug.trim(), { userInitiated: true });
+      // A top-level URL category is browsing context, not a form choice.
+      // In particular `services` must not mask a property request in the text.
+      if (getCategoryBySlug(slug.trim())?.depth !== 0) {
+        applyCategorySlug(slug.trim());
+      }
+      const current = getDraft();
+      if (current) {
+        setNeedDraft({
+          ...current,
+          categoryHintSlug: slug.trim(),
+          categoryLockedByUser: false,
+        });
+      }
     },
-    [applyCategorySlug]
+    [applyCategorySlug, getDraft, setNeedDraft]
   );
 
   return {

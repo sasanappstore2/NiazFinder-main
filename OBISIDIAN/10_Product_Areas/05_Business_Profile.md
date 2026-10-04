@@ -57,6 +57,18 @@ status: live
 - [[../../docs/BUSINESS_PROFILE_SYSTEM.md|docs/BUSINESS_PROFILE_SYSTEM.md]]
 - Appendix: [[../90_Technical_Appendix/README|Technical Appendix]]
 
+## پیاده‌سازی فنی (فایل‌ها و مسیرها)
+
+*(merge شده از `01_Features/BusinessProfile.md`)*
+
+| نوع | مسیر |
+|-----|------|
+| صفحه عمومی | `src/app/(main)/b/[slug]/` |
+| صفحه ویرایش | `src/app/(main)/pro/[id]/edit/page.tsx` |
+| Components | `src/components/business-profile/` |
+| API | `GET/PATCH /api/business/me` — offers/portfolio/layout/extensions زیر `business/me/**` |
+| Domain | `src/lib/business/` |
+
 ## وضعیت
 
 `live`

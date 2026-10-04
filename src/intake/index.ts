@@ -42,11 +42,14 @@ export { ENTITY_FIELD_REGISTRY, hasEntityValue } from '@/intake/entities/entityR
 export { computeMatchabilityScore } from '@/intake/scoring/matchabilityEngine';
 export {
   createNeedDraftFromAnalysis,
+  mergeAnalyzeIntoDraft,
   patchNeedDraftEntities,
   recomputeNeedDraft,
   legacyNeedDraftFromParsed,
   syncNeedDraftFromForm,
 } from '@/intake/aggregate/needDraftAggregate';
+export type { IntakeUserFieldLocks } from '@/intake/aggregate/needDraftAggregate';
+export { resolveRequiredFields } from '@/intake/template/required-field-resolver';
 export { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
 export { compareLegacyAndCanonical } from '@/intake/legacy/compareLegacyAndCanonical';
 export { LEGACY_CONSUMER_MATRIX, listUnmigratedConsumers } from '@/intake/legacy/consumer-audit';

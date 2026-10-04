@@ -35,6 +35,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Blocked-either-way users are excluded from people search — starting a
+    // chat with them is refused later anyway (POST /api/chat), so surfacing
+    // them here would only produce a dead-end result.
+    const blocks = await db.userBlock.findMany({
+      where: { OR: [{ blockerId: user.id }, { blockedId: user.id }] },
+      select: { blockerId: true, blockedId: true },
+    });
+    const blockedIds = [
+      ...new Set(blocks.map((b) => (b.blockerId === user.id ? b.blockedId : b.blockerId))),
+    ];
+
     // Search by username (exact or prefix match) OR displayName (contains)
     const users = await db.user.findMany({
       where: {
@@ -42,6 +53,7 @@ export async function GET(request: NextRequest) {
           { isActive: true },
           { isBanned: false },
           { id: { not: user.id } }, // Exclude self
+          ...(blockedIds.length > 0 ? [{ id: { notIn: blockedIds } }] : []),
           {
             OR: [
               // Exact username match

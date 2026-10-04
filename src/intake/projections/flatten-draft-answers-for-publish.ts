@@ -84,5 +84,29 @@ export function flattenDraftAnswersForPublish(draft: NeedDraft): Record<string, 
     if (Number.isFinite(n)) flat.nightlyRent = n;
   }
 
+  const estateExtras = [
+    'buildingAge',
+    'totalFloors',
+    'unitCount',
+    'parkingCount',
+    'bathroomCount',
+    'orientation',
+    'facadeType',
+    'heating',
+    'cooling',
+    'cabinetType',
+    'posterKind',
+    'moveInWhen',
+    'landUse',
+    'shortTermAmenities',
+  ] as const;
+
+  for (const key of estateExtras) {
+    if (flat[key] != null && flat[key] !== '') continue;
+    const fromEntity = entities[key];
+    if (fromEntity == null || fromEntity === '') continue;
+    flat[key] = typeof fromEntity === 'string' ? fromEntity.trim() : fromEntity;
+  }
+
   return flat;
 }

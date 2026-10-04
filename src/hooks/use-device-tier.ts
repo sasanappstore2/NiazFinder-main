@@ -20,13 +20,13 @@ function tierFromWidth(width: number): DeviceTier {
 }
 
 export function useDeviceTier(): DeviceTier {
-  const [tier, setTier] = React.useState<DeviceTier>(() => {
-    if (typeof window === 'undefined') return 'laptop';
-    return tierFromWidth(window.innerWidth);
-  });
+  // Always start with the SSR default so the first client render matches the server.
+  // Real viewport is applied after mount (avoids hydration mismatch).
+  const [tier, setTier] = React.useState<DeviceTier>('laptop');
 
   React.useEffect(() => {
     const onResize = () => setTier(tierFromWidth(window.innerWidth));
+    onResize();
     window.addEventListener('resize', onResize, { passive: true });
     return () => window.removeEventListener('resize', onResize);
   }, []);

@@ -112,7 +112,7 @@ function CategoryFieldControl({
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <span>
+          <span role="button">
             <BrowseFilterPill
               label={value ? label : field.label}
               active={Boolean(value)}
@@ -210,7 +210,7 @@ function RangePopover({
       }}
     >
       <PopoverTrigger asChild>
-        <span>
+        <span role="button">
           <BrowseFilterPill
             label={active ? label : fieldLabel}
             active={active}
@@ -249,7 +249,7 @@ function RecentControl({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <span>
+        <span role="button">
           <BrowseFilterPill
             label={label}
             active={Boolean(filters.recent)}
@@ -296,7 +296,7 @@ function SortControl({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <span>
+        <span role="button">
           <BrowseFilterPill label={sortLabel} active={filters.sort !== 'newest'} showChevron />
         </span>
       </PopoverTrigger>
@@ -347,7 +347,7 @@ export function GlobalBrowseControls({
       {fields.some((f) => f.globalKey === 'price') && (
         <Popover open={priceOpen} onOpenChange={openPrice}>
           <PopoverTrigger asChild>
-            <span>
+            <span role="button">
               <BrowseFilterPill
                 label={
                   hasPrice

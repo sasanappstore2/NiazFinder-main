@@ -6,6 +6,8 @@ export const vazirmatn = localFont({
   variable: '--font-vazirmatn',
   weight: '100 900',
   display: 'swap',
-  preload: false,
+  // Preload: the hero text is the LCP on most pages — a late font swap both
+  // delays LCP and shifts layout (fallback metrics differ from Vazirmatn).
+  preload: true,
   fallback: ['Tahoma', 'Arial', 'sans-serif'],
 });

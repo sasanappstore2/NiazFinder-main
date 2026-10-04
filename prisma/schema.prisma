@@ -34,50 +34,56 @@ model User {
   banReason     String?
   emailVerified Boolean   @default(false)
   phoneVerified Boolean   @default(false)
+  referralCode  String?   @unique
   lastSeenAt    DateTime?
   online        Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   // Relations
-  sentMessages       Message[]         @relation("SentMessages")
-  messageDeliveries  MessageDelivery[]
-  messageReactions   MessageReaction[]
-  blockedUsers       UserBlock[]       @relation("UserBlocks")
-  blockedByUsers     UserBlock[]       @relation("BlockedByUsers")
-  sentProposals      Proposal[]
-  requests           ServiceRequest[]
-  reviews            Review[]
-  givenReviews       Review[]         @relation("ReviewAuthor")
-  wallet             Wallet?
-  notifications      Notification[]
-  portfolios         Portfolio[]
-  skills             UserSkill[]
-  transactions       Transaction[]
-  authTokens         AuthToken[]
-  staffRoles         UserStaffRole[]
-  adminAuditLogs     AdminAuditLog[]
-  conversations1     Conversation[]     @relation("ConvUser1")
-  conversations2     Conversation[]     @relation("ConvUser2")
-  posts              UserPost[]
-  postComments       PostComment[]
-  postLikes          PostLike[]
-  bookmarks          Bookmark[]
-  followers          Follow[]           @relation("Followers")
-  following          Follow[]           @relation("Following")
-  businessProfile    BusinessProfile?
-  callsAsCaller      VoiceCall[]     @relation("VoiceCallsAsCaller")
-  callsAsCallee      VoiceCall[]     @relation("VoiceCallsAsCallee")
-  reviewedRequests   ServiceRequest[] @relation("ReviewedRequests")
-  assignedRequests   ServiceRequest[] @relation("AssignedRequests")
-  needBrowseAlerts   NeedBrowseAlert[]
-  analyticsSessions  AnalyticsSession[]
-  businessMemberships BusinessMember[]
-  assignedContactPoints BusinessContactPoint[] @relation("ContactPointAssignee")
-  businessInvitesSent BusinessMemberInvite[] @relation("BusinessInviteInviter")
+  sentMessages            Message[]              @relation("SentMessages")
+  messageDeliveries       MessageDelivery[]
+  messageReactions        MessageReaction[]
+  messageStars            MessageStar[]
+  conversationMutes       ConversationMute[]
+  blockedUsers            UserBlock[]            @relation("UserBlocks")
+  blockedByUsers          UserBlock[]            @relation("BlockedByUsers")
+  sentProposals           Proposal[]
+  requests                ServiceRequest[]
+  reviews                 Review[]
+  givenReviews            Review[]               @relation("ReviewAuthor")
+  wallet                  Wallet?
+  subscription            Subscription?
+  notifications           Notification[]
+  portfolios              Portfolio[]
+  skills                  UserSkill[]
+  transactions            Transaction[]
+  authTokens              AuthToken[]
+  staffRoles              UserStaffRole[]
+  adminAuditLogs          AdminAuditLog[]
+  conversations1          Conversation[]         @relation("ConvUser1")
+  conversations2          Conversation[]         @relation("ConvUser2")
+  posts                   UserPost[]
+  postComments            PostComment[]
+  postLikes               PostLike[]
+  bookmarks               Bookmark[]
+  followers               Follow[]               @relation("Followers")
+  following               Follow[]               @relation("Following")
+  businessProfile         BusinessProfile?
+  callsAsCaller           VoiceCall[]            @relation("VoiceCallsAsCaller")
+  callsAsCallee           VoiceCall[]            @relation("VoiceCallsAsCallee")
+  reviewedRequests        ServiceRequest[]       @relation("ReviewedRequests")
+  assignedRequests        ServiceRequest[]       @relation("AssignedRequests")
+  needBrowseAlerts        NeedBrowseAlert[]
+  analyticsSessions       AnalyticsSession[]
+  businessMemberships     BusinessMember[]
+  assignedContactPoints   BusinessContactPoint[] @relation("ContactPointAssignee")
+  businessInvitesSent     BusinessMemberInvite[] @relation("BusinessInviteInviter")
   businessInvitesAccepted BusinessMemberInvite[] @relation("BusinessInviteAcceptor")
-  chatReplyTemplates ChatReplyTemplate[]
-  staffAuditLogs     StaffAuditLog[]
+  chatReplyTemplates      ChatReplyTemplate[]
+  staffAuditLogs          StaffAuditLog[]
+  agentMemory             AgentUserMemory?
+  agentConversationSummaries AgentConversationSummary[]
 
   @@index([role])
   @@index([city])
@@ -186,34 +192,34 @@ model AdminAuditLog {
 // ============ INTAKE LOCATION CATALOG (Intelligence Engine v1) ============
 
 model IntakeProvince {
-  id        String       @id @default(cuid())
-  slug      String       @unique
+  id        String                @id @default(cuid())
+  slug      String                @unique
   name      String
   nameEn    String?
-  isActive  Boolean      @default(true)
+  isActive  Boolean               @default(true)
   cities    IntakeCity[]
   aliases   IntakeLocationAlias[] @relation("ProvinceAliases")
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
 
   @@index([slug])
   @@map("intake_provinces")
 }
 
 model IntakeCity {
-  id            String              @id @default(cuid())
-  slug          String              @unique
+  id            String                @id @default(cuid())
+  slug          String                @unique
   name          String
   nameEn        String?
   provinceId    String
-  province      IntakeProvince      @relation(fields: [provinceId], references: [id], onDelete: Cascade)
-  isActive      Boolean             @default(true)
+  province      IntakeProvince        @relation(fields: [provinceId], references: [id], onDelete: Cascade)
+  isActive      Boolean               @default(true)
   lat           Float?
   lng           Float?
   neighborhoods IntakeNeighborhood[]
   aliases       IntakeLocationAlias[] @relation("CityAliases")
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
 
   @@index([provinceId])
   @@index([slug])
@@ -221,20 +227,20 @@ model IntakeCity {
 }
 
 model IntakeNeighborhood {
-  id        String   @id @default(cuid())
+  id        String                @id @default(cuid())
   slug      String
   name      String
   nameEn    String?
   cityId    String
-  city      IntakeCity @relation(fields: [cityId], references: [id], onDelete: Cascade)
-  areas     String[] @default([])
+  city      IntakeCity            @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  areas     String[]              @default([])
   lat       Float?
   lng       Float?
   bbox      Json?
-  isActive  Boolean  @default(true)
+  isActive  Boolean               @default(true)
   aliases   IntakeLocationAlias[] @relation("NeighborhoodAliases")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
 
   @@unique([cityId, slug])
   @@index([cityId])
@@ -268,17 +274,17 @@ enum LocationType {
 }
 
 model Location {
-  id           String       @id @default(cuid())
-  slug         String
-  name         String
-  nameEn       String?
-  type         LocationType
-  parentId     String?
-  parent       Location?    @relation("LocationTree", fields: [parentId], references: [id], onDelete: Cascade)
-  children     Location[]   @relation("LocationTree")
+  id       String       @id @default(cuid())
+  slug     String
+  name     String
+  nameEn   String?
+  type     LocationType
+  parentId String?
+  parent   Location?    @relation("LocationTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children Location[]   @relation("LocationTree")
 
   semanticPath String?
-  areas        String[]     @default([])
+  areas        String[] @default([])
   lat          Float?
   lng          Float?
 
@@ -302,30 +308,32 @@ enum IntakeDomain {
   BUSINESS
 }
 
-/** Level 1: semantic routing — categories & occupations (~500 rows). */
+/**
+ * Level 1: semantic routing — categories & occupations (~500 rows).
+ */
 model IntakeCategoryRoute {
-  id                   String       @id @default(cuid())
-  domain               IntakeDomain
-  slug                 String
-  parentSlug           String?
-  title                String
-  depth                Int          @default(0)
-  categoryId           String?
-  category             Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  id         String       @id @default(cuid())
+  domain     IntakeDomain
+  slug       String
+  parentSlug String?
+  title      String
+  depth      Int          @default(0)
+  categoryId String?
+  category   Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
   description          String
   semanticPath         String?
-  technicalConstraints Json         @default("{}")
-  ruleCount            Int          @default(0)
+  technicalConstraints Json    @default("{}")
+  ruleCount            Int     @default(0)
 
-  embedding            Unsupported("vector(384)")?
-  embeddingModel       String?
-  embeddedAt           DateTime?
+  embedding      Unsupported("vector(384)")?
+  embeddingModel String?
+  embeddedAt     DateTime?
 
-  createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  ruleDocuments        IntakeRuleDocument[]
+  ruleDocuments IntakeRuleDocument[]
 
   @@unique([domain, slug])
   @@index([domain])
@@ -334,31 +342,33 @@ model IntakeCategoryRoute {
   @@map("intake_category_routes")
 }
 
-/** Level 2: intake rules & business capabilities (up to ~2M rows). */
+/**
+ * Level 2: intake rules & business capabilities (up to ~2M rows).
+ */
 model IntakeRuleDocument {
-  id                   String              @id @default(cuid())
-  domain               IntakeDomain
-  categorySlug         String
-  categoryRouteId      String?
-  categoryRoute        IntakeCategoryRoute? @relation(fields: [categoryRouteId], references: [id], onDelete: SetNull)
+  id              String               @id @default(cuid())
+  domain          IntakeDomain
+  categorySlug    String
+  categoryRouteId String?
+  categoryRoute   IntakeCategoryRoute? @relation(fields: [categoryRouteId], references: [id], onDelete: SetNull)
 
-  ruleKey              String
-  ruleKind             String
-  pattern              String
-  bundleType           String              @default("match")
+  ruleKey    String
+  ruleKind   String
+  pattern    String
+  bundleType String @default("match")
 
   description          String
-  technicalConstraints Json                @default("{}")
+  technicalConstraints Json   @default("{}")
 
-  searchText           String?
-  embedding            Unsupported("vector(384)")?
-  embeddingModel       String?
-  embeddedAt           DateTime?
-  priority             Int                 @default(0)
-  weight               Float               @default(1)
+  searchText     String?
+  embedding      Unsupported("vector(384)")?
+  embeddingModel String?
+  embeddedAt     DateTime?
+  priority       Int                         @default(0)
+  weight         Float                       @default(1)
 
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([domain, ruleKey])
   @@index([domain, categorySlug])
@@ -370,23 +380,23 @@ model IntakeRuleDocument {
 // ============ CATEGORIES & SKILLS ============
 
 model Category {
-  id          String     @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
-  slug        String     @unique
+  slug        String   @unique
   description String?
   icon        String?
   image       String?
   parentId    String?
-  order       Int        @default(0)
-  isActive    Boolean    @default(true)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  parent      Category?       @relation("CategoryHierarchy", fields: [parentId], references: [id])
-  children    Category[]      @relation("CategoryHierarchy")
-  requests    ServiceRequest[]
-  subcategoryRequests ServiceRequest[] @relation("SubcategoryRequest")
-  skills      Skill[]
+  parent               Category?             @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children             Category[]            @relation("CategoryHierarchy")
+  requests             ServiceRequest[]
+  subcategoryRequests  ServiceRequest[]      @relation("SubcategoryRequest")
+  skills               Skill[]
   intakeCategoryRoutes IntakeCategoryRoute[]
 
   @@index([slug])
@@ -395,18 +405,18 @@ model Category {
 }
 
 model Skill {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
-  slug        String    @unique
+  slug        String   @unique
   description String?
   categoryId  String?
   icon        String?
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  category    Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  users       UserSkill[]
+  category Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  users    UserSkill[]
 
   @@index([slug])
   @@index([categoryId])
@@ -431,70 +441,71 @@ model UserSkill {
 // ============ SERVICE REQUESTS ============
 
 model ServiceRequest {
-  id            String           @id @default(cuid())
-  title         String
-  slug          String           @unique
-  description   String
-  budgetMin     BigInt?
-  budgetMax     BigInt?
-  budgetType    BudgetType       @default(FIXED)
-  deliveryTime  Int?
-  deliveryUnit  String           @default("day")
-  city          String?
-  province      String?
-  address       String?
-  lat           Float?
-  lng           Float?
-  categoryId    String
-  subcategoryId String?
-  priority      Priority         @default(NORMAL)
-  status        RequestStatus    @default(PENDING_REVIEW)
-  moderationStatus ModerationStatus @default(PENDING)
-  reviewedAt       DateTime?
-  reviewedByUserId String?
-  rejectionReason  String?
-  moderationNotes  String?
-  assignedToUserId String?
-  tags          String           @default("[]")
-  attachmentUrls String          @default("[]")
-  viewCount     Int              @default(0)
-  proposalCount Int              @default(0)
-  isFeatured    Boolean          @default(false)
-  expiresAt     DateTime?
-  closedAt      DateTime?
+  id                 String           @id @default(cuid())
+  title              String
+  slug               String           @unique
+  description        String
+  budgetMin          BigInt?
+  budgetMax          BigInt?
+  budgetType         BudgetType       @default(FIXED)
+  deliveryTime       Int?
+  deliveryUnit       String           @default("day")
+  city               String?
+  province           String?
+  address            String?
+  lat                Float?
+  lng                Float?
+  categoryId         String
+  subcategoryId      String?
+  priority           Priority         @default(NORMAL)
+  status             RequestStatus    @default(PENDING_REVIEW)
+  moderationStatus   ModerationStatus @default(PENDING)
+  reviewedAt         DateTime?
+  reviewedByUserId   String?
+  rejectionReason    String?
+  moderationNotes    String?
+  assignedToUserId   String?
+  tags               String           @default("[]")
+  attachmentUrls     String           @default("[]")
+  viewCount          Int              @default(0)
+  proposalCount      Int              @default(0)
+  isFeatured         Boolean          @default(false)
+  expiresAt          DateTime?
+  closedAt           DateTime?
   selectedProposalId String?
-  intentType        String?
-  dynamicAnswers    String           @default("{}")
-  aiExtractedData   String           @default("{}")
-  source            String           @default("form")
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  intentType         String?
+  dynamicAnswers     String           @default("{}")
+  aiExtractedData    String           @default("{}")
+  source             String           @default("form")
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
 
-  user              User           @relation(fields: [userId], references: [id])
-  userId            String
-  businessProfile   BusinessProfile? @relation(fields: [businessProfileId], references: [id])
-  businessProfileId String?
-  reviewedBy        User?          @relation("ReviewedRequests", fields: [reviewedByUserId], references: [id])
-  assignedTo        User?          @relation("AssignedRequests", fields: [assignedToUserId], references: [id])
-  category          Category       @relation(fields: [categoryId], references: [id])
-  subcategory       Category?      @relation("SubcategoryRequest", fields: [subcategoryId], references: [id])
-  proposals         Proposal[]
-  reviews           Review[]
-  leadOutreach      NeedLeadOutreach[]
-  needChatSessions  NeedChatSession[]
-  resolutionDisputes NeedResolutionDispute[]
+  user                  User                    @relation(fields: [userId], references: [id])
+  userId                String
+  businessProfile       BusinessProfile?        @relation(fields: [businessProfileId], references: [id])
+  businessProfileId     String?
+  reviewedBy            User?                   @relation("ReviewedRequests", fields: [reviewedByUserId], references: [id])
+  assignedTo            User?                   @relation("AssignedRequests", fields: [assignedToUserId], references: [id])
+  category              Category                @relation(fields: [categoryId], references: [id])
+  subcategory           Category?               @relation("SubcategoryRequest", fields: [subcategoryId], references: [id])
+  proposals             Proposal[]
+  reviews               Review[]
+  leadOutreach          NeedLeadOutreach[]
+  needChatSessions      NeedChatSession[]
+  resolutionDisputes    NeedResolutionDispute[]
   intakeTrainingExample IntakeTrainingExample?
 
-  needAccessStatus NeedAccessStatus @default(PRIVATE)
-  vipExpiresAt     DateTime?
-  resolvedBusinessProfileId String?
-  resolvedAt       DateTime?
+  needAccessStatus                     NeedAccessStatus @default(PRIVATE)
+  vipExpiresAt                         DateTime?
+  resolvedBusinessProfileId            String?
+  resolvedAt                           DateTime?
   pendingVerificationBusinessProfileId String?
 
-  searchText      String?
-  searchEmbedding Unsupported("vector(384)")?
-  embeddingModel  String?
-  embeddedAt      DateTime?
+  searchText           String?
+  searchEmbedding      Unsupported("vector(384)")?
+  embeddingModel       String?
+  embeddedAt           DateTime?
+  embeddingContentHash String?
 
   @@index([userId])
   @@index([businessProfileId])
@@ -534,7 +545,27 @@ model NeedIntakeSession {
   @@index([status])
 }
 
-/** Canonical migration observability — event log for intake domain migration control. */
+/** Durable publish idempotency ledger. A retry must never create a second need. */
+model NeedPublishIdempotency {
+  id                  String    @id @default(cuid())
+  scopeKey            String
+  idempotencyKey      String
+  requestHash         String
+  status              String    @default("pending")
+  serviceRequestId    String?
+  responsePayload     Json?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  expiresAt           DateTime
+
+  @@unique([scopeKey, idempotencyKey])
+  @@index([expiresAt])
+  @@index([serviceRequestId])
+}
+
+/**
+ * Canonical migration observability — event log for intake domain migration control.
+ */
 model IntakeMigrationEvent {
   id        String   @id @default(cuid())
   type      String
@@ -546,31 +577,167 @@ model IntakeMigrationEvent {
   @@index([type, createdAt])
 }
 
-/** Captured intake publish examples for learning pipeline (non-blocking). */
+/**
+ * CCQS — Continuous Cognitive Quality System (`PLAN/ccqs-architecture.md`). Permanent quality /
+ * release-gating platform surrounding the Cognitive Engine and SEE — not part of either. Append-
+ * only: no CCQS code path ever UPDATEs a CcqsComparisonRecord, CcqsGatePolicy, or CcqsGateVerdict
+ * row once written (mirrors SEE's Historical Record discipline, semantic-comparator-architecture.md
+ * §16). The only mutable fields anywhere are CcqsReplayRun.status/completedAt, describing the
+ * run's own lifecycle, never a historical result.
+ */
+model CcqsEngineVersion {
+  id                      String   @id @default(cuid())
+  label                   String
+  cognitiveEngineVersion  String
+  semanticContractVersion String
+  comparatorEngineVersion String
+  rulesRegistryVersion    String
+  ontologyVersions        String // JSON: Record<namespace, string>
+  gitCommit               String?
+  createdAt               DateTime @default(now())
+
+  replayRuns CcqsReplayRun[]
+
+  @@index([createdAt])
+}
+
+model CcqsReplayRun {
+  id              String            @id @default(cuid())
+  engineVersionId String
+  engineVersion   CcqsEngineVersion @relation(fields: [engineVersionId], references: [id])
+  datasetRef      String
+  status          String // 'running' | 'completed' | 'failed'
+  triggeredBy     String // 'manual' | 'ci' | 'scheduled'
+  startedAt       DateTime          @default(now())
+  completedAt     DateTime?
+
+  comparisons  CcqsComparisonRecord[]
+  gateVerdicts CcqsGateVerdict[]
+
+  @@index([datasetRef])
+  @@index([status])
+}
+
+model CcqsComparisonRecord {
+  id               String        @id @default(cuid())
+  replayRunId      String
+  replayRun        CcqsReplayRun @relation(fields: [replayRunId], references: [id])
+  caseId           String
+  comparisonReport String // JSON — SEE's ComparisonReport, verbatim
+  finalEvaluation  String // JSON — SEE's FinalEvaluation, verbatim
+  ruleTrace        String // JSON — RuleTraceEntry[], CCQS-only (SEE doesn't carry this)
+  createdAt        DateTime      @default(now())
+
+  @@index([replayRunId])
+  @@index([caseId])
+}
+
+model CcqsGatePolicy {
+  id            String   @id @default(cuid())
+  policyId      String
+  policyVersion String
+  thresholds    String // JSON
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  gateVerdicts CcqsGateVerdict[]
+
+  @@unique([policyId, policyVersion])
+}
+
+model CcqsGateVerdict {
+  id           String         @id @default(cuid())
+  replayRunId  String
+  replayRun    CcqsReplayRun  @relation(fields: [replayRunId], references: [id])
+  gatePolicyId String
+  gatePolicy   CcqsGatePolicy @relation(fields: [gatePolicyId], references: [id])
+  verdict      String
+  reasons      String // JSON
+  decidedAt    DateTime       @default(now())
+
+  @@index([replayRunId])
+}
+
+/**
+ * PVW MetricSnapshot Time Series Store — `PLAN/production-validation-window-architecture.md`
+ * §2.2 module 3 (closes gap G6). Append-only Derived-View CACHE: every row is mechanically
+ * reproducible from CcqsComparisonRecords (pillar='golden') or IntakeMigrationEvent shadow
+ * events (pillar='production') — never a second source of truth (SEE §16.2 discipline).
+ * `windowSpecVersion` stamps the bucketing definition (PVW §2.3): old rows stay valid under
+ * their original spec forever, never recomputed under a new one (SEE INV-11 discipline).
+ */
+model CcqsMetricSnapshot {
+  id                      String    @id @default(cuid())
+  pillar                  String // 'golden' | 'production'
+  windowSpecVersion       String
+  /// pillar='golden': the ReplayRun this snapshot summarizes. Null for production buckets.
+  replayRunId             String?
+  /// pillar='production': UTC bucket boundaries. Null for golden (run-scoped) snapshots.
+  bucketStart             DateTime?
+  bucketEnd               DateTime?
+  /// JSON — QualityMetricSnapshot (golden) or ProductionMetricSnapshot (production), verbatim.
+  metrics                 String
+  /// EngineVersionManifest lineage fields (PVW §2.3). Nullable for production buckets that
+  /// aggregate events written before shadow version-stamping existed (pre-G4-closure history).
+  engineLabel             String?
+  cognitiveEngineVersion  String?
+  rulesRegistryVersion    String?
+  comparatorEngineVersion String?
+  computedAt              DateTime  @default(now())
+
+  @@index([pillar, bucketStart])
+  @@index([replayRunId])
+}
+
+/**
+ * PVW Alert store — PVW §5. Append-only: fired alerts are Historical Record, never mutated or
+ * "resolved" in place; a resolution is a NEW event referencing the original via
+ * `resolvesAlertEventId`. `alertPolicyVersion` pins the threshold set that fired it (PVW §2.3 —
+ * a later policy change never retroactively changes what a past alert meant).
+ */
+model CcqsAlertEvent {
+  id                   String   @id @default(cuid())
+  alertPolicyId        String
+  alertPolicyVersion   String
+  alertKey             String // e.g. 'category-accuracy-drop', 'ambiguity-spike'
+  severity             String // 'critical' | 'warning'
+  detail               String // JSON — trigger values, thresholds, window refs
+  /// CcqsMetricSnapshot ids this alert was computed from — JSON array.
+  sourceSnapshotIds    String
+  resolvesAlertEventId String?
+  firedAt              DateTime @default(now())
+
+  @@index([alertKey, firedAt])
+  @@index([severity])
+}
+
+/**
+ * Captured intake publish examples for learning pipeline (non-blocking).
+ */
 model IntakeTrainingExample {
-  id                String   @id @default(cuid())
-  sourceText        String
-  needType          String?
-  ruleResult        Json?
-  aiResult          Json?
-  finalEntities     Json
-  finalNeedDraft    Json?
-  intakeTrace       Json?
-  serviceRequestId  String?  @unique
-  publishedAt       DateTime @default(now())
-  reviewed          Boolean  @default(false)
-  reviewedBy        String?
-  reviewedAt        DateTime?
-  correctedEntities Json?
-  qualityScore      Float?
-  qualityFlags      String[] @default([])
-  sourceTextHash    String?
-  moderationLabel   String?
-  sessionId         String?
-  hasUserCorrections Boolean @default(false)
-  correctionFields  String[] @default([])
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                 String    @id @default(cuid())
+  sourceText         String
+  needType           String?
+  ruleResult         Json?
+  aiResult           Json?
+  finalEntities      Json
+  finalNeedDraft     Json?
+  intakeTrace        Json?
+  serviceRequestId   String?   @unique
+  publishedAt        DateTime  @default(now())
+  reviewed           Boolean   @default(false)
+  reviewedBy         String?
+  reviewedAt         DateTime?
+  correctedEntities  Json?
+  qualityScore       Float?
+  qualityFlags       String[]  @default([])
+  sourceTextHash     String?
+  moderationLabel    String?
+  sessionId          String?
+  hasUserCorrections Boolean   @default(false)
+  correctionFields   String[]  @default([])
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   serviceRequest ServiceRequest? @relation(fields: [serviceRequestId], references: [id], onDelete: SetNull)
 
@@ -584,7 +751,9 @@ model IntakeTrainingExample {
   @@index([hasUserCorrections])
 }
 
-/** Persisted validation reject events for analytics. */
+/**
+ * Persisted validation reject events for analytics.
+ */
 model IntakeValidationRejectEvent {
   id        String   @id @default(cuid())
   reason    String
@@ -599,7 +768,9 @@ model IntakeValidationRejectEvent {
   @@index([reason, createdAt])
 }
 
-/** Candidate coverage failures — expected category missing from candidate list. */
+/**
+ * Candidate coverage failures — expected category missing from candidate list.
+ */
 model IntakeCandidateFailureEvent {
   id                 String   @id @default(cuid())
   sourceText         String?
@@ -661,21 +832,21 @@ enum NeedAccessPhase {
 // ============ PROPOSALS ============
 
 model Proposal {
-  id            String        @id @default(cuid())
-  price         Int
-  deliveryTime  Int?
-  deliveryUnit  String        @default("day")
-  message       String
-  attachmentUrls String       @default("[]")
-  status        ProposalStatus @default(PENDING)
-  isRead        Boolean       @default(false)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id             String         @id @default(cuid())
+  price          Int
+  deliveryTime   Int?
+  deliveryUnit   String         @default("day")
+  message        String
+  attachmentUrls String         @default("[]")
+  status         ProposalStatus @default(PENDING)
+  isRead         Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
-  userId        String
-  requestId     String
-  user          User          @relation(fields: [userId], references: [id])
-  request       ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  userId    String
+  requestId String
+  user      User           @relation(fields: [userId], references: [id])
+  request   ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([requestId])
@@ -693,21 +864,21 @@ enum ProposalStatus {
 // ============ PORTFOLIO ============
 
 model Portfolio {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String?
-  imageUrls   String   @default("[]")
+  imageUrls   String    @default("[]")
   videoUrl    String?
   projectUrl  String?
   clientName  String?
   completedAt DateTime?
-  order       Int      @default(0)
-  isPublished Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  order       Int       @default(0)
+  isPublished Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   userId String
-  user   User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([isPublished])
@@ -716,30 +887,30 @@ model Portfolio {
 // ============ UNIVERSAL BUSINESS PROFILE ============
 
 model BusinessProfile {
-  id          String         @id @default(cuid())
-  userId      String         @unique
-  name        String
-  slug        String         @unique
-  logo        String?
-  coverImage  String?
-  description String?
-  categorySlugs String       @default("[]")
-  tags        String         @default("[]")
-  city        String?
-  province    String?
-  address     String?
-  lat         Float?
-  lng         Float?
-  status      BusinessStatus @default(INACTIVE)
+  id                    String         @id @default(cuid())
+  userId                String         @unique
+  name                  String
+  slug                  String         @unique
+  logo                  String?
+  coverImage            String?
+  description           String?
+  categorySlugs         String         @default("[]")
+  tags                  String         @default("[]")
+  city                  String?
+  province              String?
+  address               String?
+  lat                   Float?
+  lng                   Float?
+  status                BusinessStatus @default(INACTIVE)
   onboardingCompletedAt DateTime?
 
-  rating        Float   @default(0)
-  reviewCount   Int     @default(0)
-  verified      Boolean @default(false)
-  badges        String  @default("[]")
-  responseRate  Float   @default(0)
-  responseTime  String?
-  yearsActive   Int     @default(0)
+  rating       Float   @default(0)
+  reviewCount  Int     @default(0)
+  verified     Boolean @default(false)
+  badges       String  @default("[]")
+  responseRate Float   @default(0)
+  responseTime String?
+  yearsActive  Int     @default(0)
 
   phone       String?
   whatsapp    String?
@@ -750,36 +921,43 @@ model BusinessProfile {
   seoDescription String?
   seoKeywords    String  @default("[]")
 
-  viewCount         Int @default(0)
-  clickCount        Int @default(0)
-  conversionCount   Int @default(0)
-  saveCount         Int @default(0)
+  viewCount       Int @default(0)
+  clickCount      Int @default(0)
+  conversionCount Int @default(0)
+  saveCount       Int @default(0)
 
-  aiAssistantConfig String @default("{}")
-  extensions        String @default("{}")
+  aiAssistantConfig String  @default("{}")
+  extensions        String  @default("{}")
   leadAlertsEnabled Boolean @default(true)
   trustScore        Float   @default(5)
+
+  searchText           String?
+  searchEmbedding      Unsupported("vector(384)")?
+  embeddingModel       String?
+  embeddedAt           DateTime?
+  embeddingContentHash String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user           User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  offers         BusinessOffer[]
-  portfolioItems BusinessPortfolioItem[]
-  profileReviews BusinessProfileReview[]
-  leadOutreach   NeedLeadOutreach[]
+  user             User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  offers           BusinessOffer[]
+  portfolioItems   BusinessPortfolioItem[]
+  profileReviews   BusinessProfileReview[]
+  leadOutreach     NeedLeadOutreach[]
   needChatSessions NeedChatSession[]
-  linkedRequests ServiceRequest[]
-  members        BusinessMember[]
-  contactPoints  BusinessContactPoint[]
-  memberInvites  BusinessMemberInvite[]
-  locations      BusinessLocation[]
-  analyticsDaily BusinessAnalyticsDaily[]
+  linkedRequests   ServiceRequest[]
+  members          BusinessMember[]
+  contactPoints    BusinessContactPoint[]
+  memberInvites    BusinessMemberInvite[]
+  locations        BusinessLocation[]
+  analyticsDaily   BusinessAnalyticsDaily[]
 
   @@index([slug])
   @@index([city])
   @@index([status])
   @@index([verified])
+  collaborationPosts RegionalCollaborationPost[]
 }
 
 enum BusinessStatus {
@@ -842,16 +1020,16 @@ enum PortfolioMediaType {
 }
 
 model BusinessProfileReview {
-  id        String   @id @default(cuid())
-  profileId String
-  userName  String
-  rating    Int
-  comment   String
-  reply     String?
-  authorId  String?
-  isPublished Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  profileId   String
+  userName    String
+  rating      Int
+  comment     String
+  reply       String?
+  authorId    String?
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   profile BusinessProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
@@ -899,25 +1077,25 @@ model BusinessMember {
 }
 
 model BusinessContactPoint {
-  id               String   @id @default(cuid())
-  profileId        String
-  label            String
-  slug             String
-  description      String?
-  assignedUserId   String
-  displayName      String?
-  avatar           String?
-  chatEnabled      Boolean  @default(true)
-  voiceEnabled     Boolean  @default(true)
-  isDefault        Boolean  @default(false)
-  sortOrder        Int      @default(0)
-  isPublished      Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id             String   @id @default(cuid())
+  profileId      String
+  label          String
+  slug           String
+  description    String?
+  assignedUserId String
+  displayName    String?
+  avatar         String?
+  chatEnabled    Boolean  @default(true)
+  voiceEnabled   Boolean  @default(true)
+  isDefault      Boolean  @default(false)
+  sortOrder      Int      @default(0)
+  isPublished    Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  profile        BusinessProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  assignedUser   User            @relation("ContactPointAssignee", fields: [assignedUserId], references: [id], onDelete: Cascade)
-  conversations  Conversation[]
+  profile       BusinessProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  assignedUser  User            @relation("ContactPointAssignee", fields: [assignedUserId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
 
   @@unique([profileId, slug])
   @@index([profileId, isPublished, sortOrder])
@@ -937,9 +1115,9 @@ model BusinessMemberInvite {
   createdAt       DateTime             @default(now())
   updatedAt       DateTime             @updatedAt
 
-  profile       BusinessProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  invitedBy     User            @relation("BusinessInviteInviter", fields: [invitedByUserId], references: [id], onDelete: Cascade)
-  acceptedUser  User?           @relation("BusinessInviteAcceptor", fields: [acceptedUserId], references: [id], onDelete: SetNull)
+  profile      BusinessProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  invitedBy    User            @relation("BusinessInviteInviter", fields: [invitedByUserId], references: [id], onDelete: Cascade)
+  acceptedUser User?           @relation("BusinessInviteAcceptor", fields: [acceptedUserId], references: [id], onDelete: SetNull)
 
   @@index([profileId, status])
   @@index([phone, status])
@@ -948,7 +1126,7 @@ model BusinessMemberInvite {
 // ============ MESSAGES & CHAT ============
 
 model Conversation {
-  id                String   @id @default(cuid())
+  id                String    @id @default(cuid())
   requestId         String?
   businessProfileId String?
   contactPointId    String?
@@ -956,13 +1134,14 @@ model Conversation {
   userId2           String
   lastMessage       String?
   lastMessageAt     DateTime?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  user1         User                  @relation("ConvUser1", fields: [userId1], references: [id])
-  user2         User                  @relation("ConvUser2", fields: [userId2], references: [id])
-  contactPoint  BusinessContactPoint? @relation(fields: [contactPointId], references: [id], onDelete: SetNull)
-  messages      Message[]
+  user1        User                  @relation("ConvUser1", fields: [userId1], references: [id])
+  user2        User                  @relation("ConvUser2", fields: [userId2], references: [id])
+  contactPoint BusinessContactPoint? @relation(fields: [contactPointId], references: [id], onDelete: SetNull)
+  messages     Message[]
+  mutes        ConversationMute[]
 
   @@index([userId1])
   @@index([userId2])
@@ -971,6 +1150,102 @@ model Conversation {
   @@index([contactPointId])
   @@index([lastMessageAt])
   @@index([userId1, userId2, requestId, contactPointId])
+}
+
+model AgentUserMemory {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  preferredCity String?
+  interests     String[] @default([])
+  notes         String?
+  lastNeedHint  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([preferredCity])
+}
+
+/// Chunked public product knowledge for platform-agent RAG (allowlisted sources only).
+model SiteKnowledgeChunk {
+  id           String                       @id @default(cuid())
+  sourceKey    String
+  sourcePath   String
+  section      String?
+  title        String
+  content      String
+  contentHash  String
+  chunkIndex   Int                          @default(0)
+  route        String?
+  isPublic     Boolean                      @default(true)
+  embedding    Unsupported("vector(384)")?
+  embeddingModel String?
+  embeddedAt   DateTime?
+  createdAt    DateTime                     @default(now())
+  updatedAt    DateTime                     @updatedAt
+
+  @@unique([sourceKey, contentHash, chunkIndex])
+  @@index([sourceKey])
+  @@index([isPublic])
+  @@index([route])
+  @@map("site_knowledge_chunks")
+}
+
+enum RagIndexSourceType {
+  BUSINESS
+  NEED
+  SITE_KNOWLEDGE
+}
+
+enum RagIndexOperation {
+  UPSERT
+  DELETE
+}
+
+enum RagIndexJobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  DEAD
+}
+
+/// Durable queue for embedding / RAG index updates (business, need, site knowledge).
+model RagIndexJob {
+  id          String             @id @default(cuid())
+  sourceType  RagIndexSourceType
+  sourceId    String
+  operation   RagIndexOperation  @default(UPSERT)
+  status      RagIndexJobStatus  @default(PENDING)
+  attempts    Int                @default(0)
+  maxAttempts Int                @default(5)
+  lastError   String?
+  availableAt DateTime           @default(now())
+  lockedAt    DateTime?
+  lockedBy    String?
+  completedAt DateTime?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([status, availableAt])
+  @@index([sourceType, sourceId])
+  @@index([lockedAt])
+  @@map("rag_index_jobs")
+}
+
+model AgentConversationSummary {
+  id             String   @id @default(cuid())
+  conversationId String   @unique
+  userId         String
+  summary        String
+  turnCount      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Message {
@@ -998,6 +1273,7 @@ model Message {
   replies      Message[]         @relation("MessageReplies")
   deliveries   MessageDelivery[]
   reactions    MessageReaction[]
+  stars        MessageStar[]
 
   @@index([conversationId])
   @@index([conversationId, createdAt(sort: Desc)])
@@ -1032,6 +1308,33 @@ model MessageReaction {
 
   @@unique([messageId, userId, emoji])
   @@index([messageId])
+}
+
+/** Per-user starred messages (workspace favorites within a chat). */
+model MessageStar {
+  messageId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, userId])
+  @@index([userId])
+}
+
+/** Per-user mute of a 1:1 conversation (suppresses in-app/push toasts). */
+model ConversationMute {
+  conversationId String
+  userId         String
+  mutedUntil     DateTime?
+  createdAt      DateTime  @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, userId])
+  @@index([userId])
 }
 
 model UserBlock {
@@ -1070,20 +1373,24 @@ enum VoiceCallStatus {
 }
 
 model VoiceCall {
-  id             String          @id @default(cuid())
-  callerId       String
-  calleeId       String
-  conversationId String?
-  status         VoiceCallStatus @default(INITIATED)
-  startedAt      DateTime        @default(now())
-  endedAt        DateTime?
-  durationSec    Int?
-  janusRoomId    Int?
-  janusPin       String?
-  turnUsername   String?
-  /** JSON SDP offer for callee polling fallback (cleared when call ends) */
-  signalingOffer String?
-  /** JSON SDP answer for caller polling fallback (cleared when call ends) */
+  id              String          @id @default(cuid())
+  callerId        String
+  calleeId        String
+  conversationId  String?
+  status          VoiceCallStatus @default(INITIATED)
+  startedAt       DateTime        @default(now())
+  endedAt         DateTime?
+  durationSec     Int?
+  janusRoomId     Int?
+  janusPin        String?
+  turnUsername    String?
+  /**
+   * JSON SDP offer for callee polling fallback (cleared when call ends)
+   */
+  signalingOffer  String?
+  /**
+   * JSON SDP answer for caller polling fallback (cleared when call ends)
+   */
   signalingAnswer String?
 
   caller User @relation("VoiceCallsAsCaller", fields: [callerId], references: [id], onDelete: Cascade)
@@ -1103,27 +1410,27 @@ enum NeedLeadOutreachStatus {
 }
 
 model NeedLeadOutreach {
-  id                String                 @id @default(cuid())
-  requestId         String
-  businessProfileId String
-  businessUserId    String
-  matchScore        Float                  @default(0)
-  matchReasonFa     String                 @default("")
-  status            NeedLeadOutreachStatus @default(QUEUED)
-  skipReason        String?
-  conversationId    String?
-  introMessageId    String?
-  cardMessageId     String?
-  accessPhase       NeedAccessPhase        @default(PRIVATE)
-  idempotencyKey    String                 @unique
-  feeDeductedAt     DateTime?
+  id                  String                 @id @default(cuid())
+  requestId           String
+  businessProfileId   String
+  businessUserId      String
+  matchScore          Float                  @default(0)
+  matchReasonFa       String                 @default("")
+  status              NeedLeadOutreachStatus @default(QUEUED)
+  skipReason          String?
+  conversationId      String?
+  introMessageId      String?
+  cardMessageId       String?
+  accessPhase         NeedAccessPhase        @default(PRIVATE)
+  idempotencyKey      String                 @unique
+  feeDeductedAt       DateTime?
   walletTransactionId String?
   refundTransactionId String?
-  refundedAt        DateTime?
-  leadFeeAmount     Int                    @default(0)
-  acceptedAt        DateTime?
-  createdAt         DateTime               @default(now())
-  updatedAt         DateTime               @updatedAt
+  refundedAt          DateTime?
+  leadFeeAmount       Int                    @default(0)
+  acceptedAt          DateTime?
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
 
   request  ServiceRequest  @relation(fields: [requestId], references: [id], onDelete: Cascade)
   business BusinessProfile @relation(fields: [businessProfileId], references: [id], onDelete: Cascade)
@@ -1176,21 +1483,21 @@ model NeedResolutionDispute {
 // ============ REVIEWS & RATINGS ============
 
 model Review {
-  id            String   @id @default(cuid())
-  rating        Int
-  comment       String?
-  response      String?
-  isPublished   Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id          String   @id @default(cuid())
+  rating      Int
+  comment     String?
+  response    String?
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  authorId      String
-  userId        String
-  requestId     String
+  authorId          String
+  userId            String
+  requestId         String
   businessProfileId String?
-  author        User           @relation("ReviewAuthor", fields: [authorId], references: [id])
-  user          User           @relation(fields: [userId], references: [id])
-  request       ServiceRequest @relation(fields: [requestId], references: [id])
+  author            User           @relation("ReviewAuthor", fields: [authorId], references: [id])
+  user              User           @relation(fields: [userId], references: [id])
+  request           ServiceRequest @relation(fields: [requestId], references: [id])
 
   @@index([authorId])
   @@index([userId])
@@ -1201,12 +1508,12 @@ model Review {
 // ============ WALLET & PAYMENTS ============
 
 model Wallet {
-  id         String   @id @default(cuid())
-  userId     String   @unique
-  balance    Int      @default(0)
-  frozen     Int      @default(0)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  balance   Int      @default(0)
+  frozen    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactions Transaction[]
@@ -1215,16 +1522,16 @@ model Wallet {
 }
 
 model Transaction {
-  id            String          @id @default(cuid())
-  walletId      String
-  userId        String
-  type          TransactionType
-  amount        Int
-  description   String?
-  referenceId   String?
-  status        TransactionStatus @default(PENDING)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id          String            @id @default(cuid())
+  walletId    String
+  userId      String
+  type        TransactionType
+  amount      Int
+  description String?
+  referenceId String?
+  status      TransactionStatus @default(PENDING)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 
   wallet Wallet @relation(fields: [walletId], references: [id])
   user   User   @relation(fields: [userId], references: [id])
@@ -1254,22 +1561,45 @@ enum TransactionStatus {
   CANCELLED
 }
 
+enum SubscriptionPlan {
+  FREE
+  PRO
+  BUSINESS
+}
+
+model Subscription {
+  id        String           @id @default(cuid())
+  userId    String           @unique
+  plan      SubscriptionPlan @default(FREE)
+  startedAt DateTime         @default(now())
+  expiresAt DateTime?
+  autoRenew Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
 // ============ NOTIFICATIONS ============
 
-/** اشتراک اعلان برای صفحهٔ مرور نیاز (دسته + شهر + فیلترها) */
+/**
+ * اشتراک اعلان برای صفحهٔ مرور نیاز (دسته + شهر + فیلترها)
+ */
 model NeedBrowseAlert {
-  id            String   @id @default(cuid())
-  userId        String
-  label         String
-  browsePath    String
-  categorySlug  String?
-  citySlugs     String   @default("[]")
-  filtersJson   String   @default("{}")
-  searchQuery   String?
-  fingerprint   String
-  active        Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String   @id @default(cuid())
+  userId       String
+  label        String
+  browsePath   String
+  categorySlug String?
+  citySlugs    String   @default("[]")
+  filtersJson  String   @default("{}")
+  searchQuery  String?
+  fingerprint  String
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -1280,15 +1610,15 @@ model NeedBrowseAlert {
 }
 
 model Notification {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
   type      String
   title     String
   message   String
-  data      String   @default("{}")
-  isRead    Boolean  @default(false)
+  data      String    @default("{}")
+  isRead    Boolean   @default(false)
   readAt    DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -1314,7 +1644,7 @@ model AdminLog {
 }
 
 model Report {
-  id          String      @id @default(cuid())
+  id          String       @id @default(cuid())
   reporterId  String
   targetType  String
   targetId    String
@@ -1323,8 +1653,8 @@ model Report {
   status      ReportStatus @default(PENDING)
   resolvedBy  String?
   resolvedAt  DateTime?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
   @@index([reporterId])
   @@index([targetType])
@@ -1342,17 +1672,17 @@ enum ReportStatus {
 // ============ COUPONS & REFERRALS ============
 
 model Coupon {
-  id          String   @id @default(cuid())
-  code        String   @unique
-  type        CouponType @default(PERCENTAGE)
-  value       Int
-  minAmount   Int?
-  maxUses     Int?
-  usedCount   Int      @default(0)
-  expiresAt   DateTime?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String     @id @default(cuid())
+  code      String     @unique
+  type      CouponType @default(PERCENTAGE)
+  value     Int
+  minAmount Int?
+  maxUses   Int?
+  usedCount Int        @default(0)
+  expiresAt DateTime?
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   @@index([code])
   @@index([isActive])
@@ -1366,13 +1696,13 @@ enum CouponType {
 }
 
 model Referral {
-  id          String   @id @default(cuid())
-  referrerId  String
-  referredId  String   @unique
-  code        String
-  reward      Int      @default(0)
-  isClaimed   Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  referrerId String
+  referredId String   @unique
+  code       String
+  reward     Int      @default(0)
+  isClaimed  Boolean  @default(false)
+  createdAt  DateTime @default(now())
 
   @@index([referrerId])
   @@index([referredId])
@@ -1457,29 +1787,29 @@ model Follow {
 // ============ FIRST-PARTY ANALYTICS ============
 
 model AnalyticsSession {
-  id            String   @id @default(cuid())
-  sessionId     String   @unique
-  visitorId     String
-  userId        String?
-  firstSeen     DateTime @default(now())
-  lastSeen      DateTime @default(now())
-  device        String?
-  browser       String?
-  os            String?
-  country       String?  @default("IR")
-  province      String?
-  city          String?
-  ipHash        String?
-  landingPath   String?
-  referrer      String?
-  utmSource     String?
-  utmMedium     String?
-  utmCampaign   String?
-  utmContent    String?
-  utmTerm       String?
-  pageViewCount Int      @default(0)
-  eventCount    Int      @default(0)
-  totalDurationMs Int    @default(0)
+  id              String   @id @default(cuid())
+  sessionId       String   @unique
+  visitorId       String
+  userId          String?
+  firstSeen       DateTime @default(now())
+  lastSeen        DateTime @default(now())
+  device          String?
+  browser         String?
+  os              String?
+  country         String?  @default("IR")
+  province        String?
+  city            String?
+  ipHash          String?
+  landingPath     String?
+  referrer        String?
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
+  utmContent      String?
+  utmTerm         String?
+  pageViewCount   Int      @default(0)
+  eventCount      Int      @default(0)
+  totalDurationMs Int      @default(0)
 
   user   User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
   events AnalyticsEvent[]
@@ -1629,4 +1959,185 @@ model StaffAuditLog {
   @@index([action])
   @@index([entityType])
   @@index([createdAt])
+}
+
+enum CollaborationPropertyKind {
+  APARTMENT
+  VILLA
+  LAND
+  COMMERCIAL
+  OTHER
+}
+
+enum CollaborationAreaBand {
+  UNDER_80
+  BAND_80_120
+  BAND_120_180
+  OVER_180
+}
+
+enum CollaborationBudgetBand {
+  SALE_UNDER_3B
+  SALE_3_5B
+  SALE_5_8B
+  SALE_8_12B
+  SALE_OVER_12B
+  RENT_UNDER_10M
+  RENT_10_20M
+  RENT_20_40M
+  RENT_OVER_40M
+}
+
+enum CollaborationPostIntent {
+  CLIENT_REFERRAL
+  SEEK_PARTNER
+  CO_SHOWING
+}
+
+enum CollaborationPostScope {
+  REGIONAL
+  CROSS_REGIONAL
+}
+
+enum CollaborationSubjectKind {
+  CLIENT
+  PROPERTY
+  JOINT_VISIT
+}
+
+model RegionalCollaborationPost {
+  id                 String                  @id @default(cuid())
+  authorProfileId    String
+  intent             CollaborationPostIntent
+  headline           String
+  note               String?
+  scope              CollaborationPostScope  @default(REGIONAL)
+  city               String?
+  neighborhood       String?
+  neighborhoodId     String?
+  targetCity         String?
+  targetNeighborhood String?
+  subjectKind        CollaborationSubjectKind?
+  dealType           String?
+  propertyKind       CollaborationPropertyKind?
+  areaBand           CollaborationAreaBand?
+  budgetBand         CollaborationBudgetBand?
+  targetAreasJson    String                  @default("[]")
+  status             String                  @default("active")
+  createdAt          DateTime                @default(now())
+  expiresAt          DateTime?
+
+  author BusinessProfile @relation(fields: [authorProfileId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt(sort: Desc)])
+  @@index([city])
+  @@index([targetCity])
+  @@index([authorProfileId])
+}
+
+/** Central regional property filings — imported via super-admin for workspace feeds. */
+model RegionalFiling {
+  id             String   @id @default(cuid())
+  fileCode       String?
+  title          String
+  description    String?
+  dealType       String?
+  categorySlug   String?
+  propertyKind   String?
+  city           String
+  cityId         String?
+  district       String?
+  neighborhood   String?
+  neighborhoodId String?
+  location       String?
+  price          String?
+  deposit        String?
+  monthlyRent    String?
+  area           String?
+  rooms          Int?
+  floor          Int?
+  pricePerMeter  String?
+  postedAt       DateTime?
+  totalFloors    Int?
+  unitsCount     Int?
+  buildingAge    Int?
+  documentType   String?
+  cabinet        String?
+  flooring       String?
+  wallCover      String?
+  facade         String?
+  orientation    String?
+  heating        String?
+  cooling        String?
+  exchangeable   Boolean?
+  hasParking     Boolean?
+  hasStorage     Boolean?
+  hasElevator    Boolean?
+  hasSecurityDoor Boolean?
+  hasTerrace     Boolean?
+  hasBuiltInWardrobe Boolean?
+  detailUrl      String?
+  dataCompleteness Int?
+  enrichedAt     DateTime?
+  sourceMetaJson  String   @default("{}")
+  image          String?
+  imagesJson     String   @default("[]")
+  status         String   @default("active")
+  reviewIssuesJson String?
+  scrapedAt      DateTime?
+  createdById    String?
+  scraperId      String?
+  externalId     String?
+  sourceSite     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  scraper RegionalFilingScraper? @relation(fields: [scraperId], references: [id], onDelete: SetNull)
+
+  @@unique([scraperId, externalId])
+  @@index([status, createdAt(sort: Desc)])
+  @@index([city])
+  @@index([cityId])
+  @@index([neighborhoodId])
+  @@index([scraperId])
+  @@index([dealType])
+  @@index([propertyKind])
+  @@index([postedAt])
+  @@index([status, cityId, dealType, postedAt(sort: Desc)])
+  @@index([status, city, dealType, postedAt(sort: Desc)])
+  @@map("regional_filings")
+}
+
+/** Per-site filing feed bot — login + ScrapeGraph scrape on interval. */
+model RegionalFilingScraper {
+  id                    String    @id @default(cuid())
+  name                  String
+  siteKey               String    @unique
+  enabled               Boolean   @default(true)
+  loginUrl              String
+  listingsUrl           String
+  username              String    @default("")
+  passwordEnc           String?
+  siteConfigJson        String    @default("{}")
+  defaultCity           String
+  defaultCityId         String?
+  defaultNeighborhood   String?
+  defaultNeighborhoodId String?
+  intervalMinutes       Int       @default(10)
+  jitterMinutes         Int       @default(4)
+  status                String    @default("idle")
+  lastRunAt             DateTime?
+  lastSuccessAt         DateTime?
+  lastImportedCount     Int       @default(0)
+  lastError             String?
+  failureCount          Int       @default(0)
+  evalScore             Float?
+  lastEvalAt            DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  filings RegionalFiling[]
+
+  @@index([enabled, lastRunAt])
+  @@map("regional_filing_scrapers")
 }

@@ -230,7 +230,7 @@ export const Map = forwardRef<MapRef, MapProps>(function Map(
       setIsStyleLoaded(false);
       setMapInstance(null);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []);
 
   useEffect(() => {
@@ -402,7 +402,7 @@ export function MapClusterLayer<
         // ignore
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [isLoaded, map, sourceId]);
 
   useEffect(() => {
@@ -506,7 +506,7 @@ export function MapPopup({
     })
       .setMaxWidth('none')
       .setLngLat([longitude, latitude]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []);
 
   useEffect(() => {
@@ -519,7 +519,7 @@ export function MapPopup({
       popup.off('close', onCloseProp);
       if (popup.isOpen()) popup.remove();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [map]);
 
   return createPortal(

@@ -39,6 +39,8 @@ export type IntakeFieldBag = Record<IntakeFieldKey, FieldState>;
 
 export interface IntakeIntelligenceInput {
   text: string;
+  /** Draft revision participates in the shared analyzer cache key. */
+  draftRevision?: number;
   citySlug?: string | null;
   cityName?: string | null;
   formHints?: {
@@ -47,6 +49,11 @@ export interface IntakeIntelligenceInput {
     city?: string;
     neighborhood?: string;
     categoryLockedByUser?: boolean;
+    cityLockedByUser?: boolean;
+    neighborhoodLockedByUser?: boolean;
+    dealLockedByUser?: boolean;
+    /** Field keys the user confirmed — AI/rules must not overwrite. */
+    lockedFieldKeys?: string[];
   };
   forceAi?: boolean;
 }
@@ -94,6 +101,8 @@ export interface IntakeIntelligenceResult {
   /** Ambiguous category hypotheses from rules registry. */
   categoryCandidates?: CategoryCandidateOption[];
   suggestedFilters?: CriticalFilterSuggestion[];
+  /** Soft validation warnings from post-fill / compatibility checks. */
+  validationWarnings?: Array<{ code: string; messageFa: string; fieldKey?: string }>;
   meta: {
     engine:
       | 'intake-intelligence'
@@ -104,6 +113,8 @@ export interface IntakeIntelligenceResult {
     aiInvoked: boolean;
     latencyMs: number;
     truthVerifyCorrected?: string[];
+    /** Hash/signature of source text — clients discard stale proposals. */
+    textSignature?: string;
   };
 }
 

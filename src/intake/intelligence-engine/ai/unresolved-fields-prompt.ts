@@ -12,6 +12,9 @@ const FIELD_LABELS: Record<string, string> = {
   area: 'area in square meters',
   budgetMax: 'budget max (Toman)',
   budgetMin: 'budget min (Toman)',
+  rahnAmount: 'rahn / full deposit amount (Toman)',
+  monthlyRent: 'monthly rent (Toman)',
+  deposit: 'security deposit (Toman)',
   rooms: 'number of rooms',
   vertical: 'vertical/domain',
 };
@@ -60,6 +63,12 @@ export function buildUnresolvedFieldsPrompt(
     .map((f) => `- ${f}: ${FIELD_LABELS[f] ?? f}`)
     .join('\n');
 
+  const wantsBudget =
+    unresolvedFields.includes('budgetMax') || unresolvedFields.includes('budgetMin');
+  const wantsRahn = unresolvedFields.includes('rahnAmount');
+  const wantsRent = unresolvedFields.includes('monthlyRent');
+  const wantsDeposit = unresolvedFields.includes('deposit');
+
   const jsonFields = [
     unresolvedFields.some((f) => f.includes('category')) ? '"category": string | null' : null,
     unresolvedFields.some((f) => f.includes('city')) ? '"city": string | null' : null,
@@ -69,9 +78,12 @@ export function buildUnresolvedFieldsPrompt(
     unresolvedFields.some((f) => f.includes('transaction'))
       ? '"transactionType": string | null'
       : null,
-    unresolvedFields.includes('budgetMax') || unresolvedFields.includes('budgetMin')
-      ? '"budget": number | null'
-      : null,
+    wantsBudget ? '"budget": number | null' : null,
+    wantsBudget ? '"budgetMax": number | null' : null,
+    wantsBudget ? '"budgetMin": number | null' : null,
+    wantsRahn ? '"rahnAmount": number | null' : null,
+    wantsRent ? '"monthlyRent": number | null' : null,
+    wantsDeposit ? '"deposit": number | null' : null,
     unresolvedFields.includes('area') ? '"area": number | null' : null,
     unresolvedFields.includes('rooms') ? '"rooms": number | null' : null,
     '"confidence": number',
@@ -83,6 +95,12 @@ export function buildUnresolvedFieldsPrompt(
 
 Only fill these unresolved fields (rules engine could not resolve them confidently):
 ${fieldList}
+
+Money rules for Persian ads:
+- Convert میلیون / میلیارد to Toman integers (e.g. ۵۰۰ میلیون → 500000000).
+- For رهن و اجاره: put رهن in rahnAmount and اجاره ماهانه in monthlyRent.
+- For رهن کامل: put amount in rahnAmount (or deposit), monthlyRent = null.
+- Never invent amounts not present in the text.
 
 User Text:
 """

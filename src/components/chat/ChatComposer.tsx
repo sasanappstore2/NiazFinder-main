@@ -8,6 +8,7 @@ import {
   MapPin,
   Mic,
   Paperclip,
+  Plus,
   Phone,
   Pencil,
   Reply,
@@ -25,7 +26,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { useAutoResizeTextarea } from '@/hooks/use-auto-resize-textarea';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import {
   VoiceRecorder,
@@ -33,6 +41,7 @@ import {
   type VoiceRecorderPhase,
 } from '@/components/chat/VoiceRecorder';
 import { FileUploadPreview } from '@/components/chat/FileUploadPreview';
+import { ChatReplyTemplatePicker } from '@/components/chat/ChatReplyTemplatePicker';
 
 export type VoiceComposePhase = VoiceRecorderPhase;
 
@@ -92,6 +101,8 @@ export function ChatComposer({
   const [voicePhase, setVoicePhase] = useState<VoiceComposePhase>('idle');
   const [filePreviewOpen, setFilePreviewOpen] = useState(false);
   const voiceRecorderRef = useRef<VoiceRecorderHandle>(null);
+  const isMobile = useIsMobile();
+  const [attachSheetOpen, setAttachSheetOpen] = useState(false);
 
   const { textareaRef: internalTextareaRef, adjustHeight } = useAutoResizeTextarea({
     minHeight: 44,
@@ -207,17 +218,18 @@ export function ChatComposer({
         </div>
       )}
 
-      <div className="px-3 py-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] md:px-4 md:py-3">
+      <div className="chat-composer-row">
         {!voiceActive && (
           <div
             className={cn(
-              'flex items-end gap-1.5 rounded-[1.25rem] border border-border/70 bg-muted/30 p-1.5',
-              'shadow-sm transition-shadow focus-within:border-primary/35 focus-within:ring-2 focus-within:ring-primary/15',
+              'flex min-w-0 flex-1 items-end gap-1 rounded-full border border-border/70 bg-muted/40 p-1',
+              'transition-shadow focus-within:border-primary/35 focus-within:ring-2 focus-within:ring-primary/15',
+              'md:gap-1.5 md:rounded-[1.25rem] md:bg-muted/30 md:p-1.5 md:shadow-sm',
               busy && 'opacity-80'
             )}
           >
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+            {isMobile ? (
+              <>
                 <Button
                   type="button"
                   variant="ghost"
@@ -226,54 +238,152 @@ export function ChatComposer({
                   aria-label="پیوست — عکس، فایل، موقعیت یا تماس"
                   title="پیوست‌ها"
                   disabled={busy || editMode}
+                  onClick={() => {
+                    internalTextareaRef.current?.blur();
+                    setAttachSheetOpen(true);
+                  }}
                 >
                   {attachmentBusy ? (
                     <Loader2 className="size-5 animate-spin" />
                   ) : (
-                    <Paperclip className="size-5" />
+                    <Plus className="size-5" strokeWidth={2.25} />
                   )}
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" align="start" className="w-56 sm:w-60">
-                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-                  اشتراک با مخاطب
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer gap-2"
-                  onSelect={(ev) => {
-                    ev.preventDefault();
-                    onPickImage();
-                  }}
-                >
-                  <ImageIcon className="size-4 text-primary" />
-                  عکس
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer gap-2"
-                  onSelect={(ev) => {
-                    ev.preventDefault();
-                    if (onSendFiles) setFilePreviewOpen(true);
-                    else onPickFile();
-                  }}
-                >
-                  <FileText className="size-4 text-primary" />
-                  فایل (PDF یا تصویر)
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer gap-2" onSelect={() => onShareLocation()}>
-                  <MapPin className="size-4 text-primary" />
-                  موقعیت روی نقشه
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer gap-2"
-                  onSelect={() => void onShareContact()}
-                >
-                  <Phone className="size-4 text-primary" aria-hidden />
-                  اشتراک شمارهٔ تماس
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <Sheet open={attachSheetOpen} onOpenChange={setAttachSheetOpen}>
+                  <SheetContent
+                    side="bottom"
+                    showCloseButton={false}
+                    className="gap-0 rounded-t-2xl px-0 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2"
+                  >
+                    <div
+                      className="mx-auto mb-2 h-1 w-10 rounded-full bg-muted-foreground/30"
+                      aria-hidden
+                    />
+                    <SheetHeader className="border-b border-border/50 px-4 pb-3 text-start">
+                      <SheetTitle className="text-base">اشتراک با مخاطب</SheetTitle>
+                    </SheetHeader>
+                    <div className="flex flex-col gap-0.5 px-2 py-2">
+                      <button
+                        type="button"
+                        className="flex min-h-12 items-center gap-3 rounded-xl px-4 text-start text-base font-medium active:bg-muted"
+                        onClick={() => {
+                          setAttachSheetOpen(false);
+                          onPickImage();
+                        }}
+                      >
+                        <ImageIcon className="size-4 text-primary" />
+                        عکس
+                      </button>
+                      <button
+                        type="button"
+                        className="flex min-h-12 items-center gap-3 rounded-xl px-4 text-start text-base font-medium active:bg-muted"
+                        onClick={() => {
+                          setAttachSheetOpen(false);
+                          if (onSendFiles) setFilePreviewOpen(true);
+                          else onPickFile();
+                        }}
+                      >
+                        <FileText className="size-4 text-primary" />
+                        فایل (PDF یا تصویر)
+                      </button>
+                      <button
+                        type="button"
+                        className="flex min-h-12 items-center gap-3 rounded-xl px-4 text-start text-base font-medium active:bg-muted"
+                        onClick={() => {
+                          setAttachSheetOpen(false);
+                          onShareLocation();
+                        }}
+                      >
+                        <MapPin className="size-4 text-primary" />
+                        موقعیت روی نقشه
+                      </button>
+                      <button
+                        type="button"
+                        className="flex min-h-12 items-center gap-3 rounded-xl px-4 text-start text-base font-medium active:bg-muted"
+                        onClick={() => {
+                          setAttachSheetOpen(false);
+                          void onShareContact();
+                        }}
+                      >
+                        <Phone className="size-4 text-primary" />
+                        اشتراک شمارهٔ تماس
+                      </button>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="size-11 shrink-0 rounded-full text-muted-foreground hover:text-foreground"
+                    aria-label="پیوست — عکس، فایل، موقعیت یا تماس"
+                    title="پیوست‌ها"
+                    disabled={busy || editMode}
+                  >
+                    {attachmentBusy ? (
+                      <Loader2 className="size-5 animate-spin" />
+                    ) : (
+                      <Paperclip className="size-5" />
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="top" align="start" className="w-56 sm:w-60">
+                  <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+                    اشتراک با مخاطب
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-2"
+                    onSelect={(ev) => {
+                      ev.preventDefault();
+                      onPickImage();
+                    }}
+                  >
+                    <ImageIcon className="size-4 text-primary" />
+                    عکس
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-2"
+                    onSelect={(ev) => {
+                      ev.preventDefault();
+                      if (onSendFiles) setFilePreviewOpen(true);
+                      else onPickFile();
+                    }}
+                  >
+                    <FileText className="size-4 text-primary" />
+                    فایل (PDF یا تصویر)
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-2"
+                    onSelect={() => onShareLocation()}
+                  >
+                    <MapPin className="size-4 text-primary" />
+                    موقعیت روی نقشه
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-2"
+                    onSelect={() => void onShareContact()}
+                  >
+                    <Phone className="size-4 text-primary" aria-hidden />
+                    اشتراک شمارهٔ تماس
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+
+            {!editMode && !isMobile ? (
+              <ChatReplyTemplatePicker
+                onPick={(body) => {
+                  onMessageChange(body);
+                  queueMicrotask(() => adjustHeight());
+                }}
+              />
+            ) : null}
 
             <Textarea
               ref={internalTextareaRef}
@@ -284,10 +394,13 @@ export function ChatComposer({
                 adjustHeight();
               }}
               onKeyDown={handleKeyDown}
+              onFocus={() => {
+                window.scrollTo(0, 0);
+              }}
               rows={1}
               disabled={busy}
               aria-label="متن پیام"
-              className="min-h-[44px] max-h-32 flex-1 resize-none border-0 bg-transparent px-1 py-2.5 text-sm shadow-none focus-visible:ring-0"
+              className="min-h-[44px] max-h-32 flex-1 resize-none border-0 bg-transparent px-1 py-2.5 text-base md:text-sm shadow-none focus-visible:ring-0"
             />
 
             {hasText ? (

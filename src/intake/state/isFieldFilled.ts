@@ -41,7 +41,7 @@ export function isFieldFilled(
   if (field.storage === 'entity' && entities) {
     if (field.key === 'budget') return hasEntityValue(entities, 'budget');
     if (field.key === 'transactionType') return hasEntityValue(entities, 'transactionType');
-    if (field.key === 'area') return hasEntityValue(entities, 'area');
+    if (field.key === 'area' || field.key === 'areaMin') return hasEntityValue(entities, 'area');
     if (field.key === 'rooms') return hasEntityValue(entities, 'rooms');
     if (field.key === 'subcategory') {
       return Boolean(selectedSubcategory) || Boolean(entities?.subcategorySlug);

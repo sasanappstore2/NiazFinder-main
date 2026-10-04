@@ -6,6 +6,7 @@ import { dealLabelForCategory, LISTING_TITLE_MAX_LENGTH } from '@/lib/need-intak
 import { draftToLegacyPayload } from '@/intake/legacy/draftToLegacyPayload';
 import { realEstateFilterSummaryLines } from '@/lib/need-intake/filter-answer-lines';
 import { resolveDeterministicListingTitle } from '@/lib/need-intake/resolve-listing-title';
+import { formatWhenLabel } from '@/lib/need-intake/intake-timing-options';
 
 export interface ComposedListing {
   title: string;
@@ -95,7 +96,10 @@ function buildDescriptionLines(
       : parsed.budgetMax;
   if (budget) lines.push(`بودجه: تا ${formatMoneyToman(budget)}`);
 
-  if (answers.when) lines.push(`زمان: ${String(answers.when)}`);
+  if (answers.when) {
+    const whenLabel = formatWhenLabel(String(answers.when)) ?? String(answers.when);
+    lines.push(`زمان: ${whenLabel}`);
+  }
 
   lines.push(...buildIntelligenceLines(profile));
 

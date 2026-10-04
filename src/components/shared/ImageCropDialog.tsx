@@ -158,7 +158,7 @@ export function ImageCropDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg gap-0 overflow-hidden p-0 sm:max-w-xl">
-        <DialogHeader className="space-y-1 border-b border-border/60 px-4 py-3 sm:px-5">
+        <DialogHeader className="space-y-1 border-b border-border/60 px-4 py-3 pe-12 sm:px-5 sm:pe-12">
           <DialogTitle className="text-base">{title}</DialogTitle>
           {description ? (
             <DialogDescription className="text-xs">{description}</DialogDescription>

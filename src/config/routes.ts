@@ -96,6 +96,8 @@ export const ROUTES = {
 
   /** Business owner manage panel (onboarding + edit). */
   myBusiness:                    '/my-business',
+  /** Real-estate consultant Trello workspace. */
+  workspace:                     '/workspace',
 
   /** App. */
   dashboard:                     '/dashboard',
@@ -111,6 +113,7 @@ export const ROUTES = {
   adminUsers:                    '/admin/users',
   superAdmin:                    '/super-admin',
   profile:                       '/profile/[id]',
+  userByUsername:                '/u/[username]',
   editProfile:                   '/edit-profile',
   pricing:                       '/pricing',
   referral:                      '/referral',
@@ -119,6 +122,10 @@ export const ROUTES = {
   discover:                      '/discover',
   createPost:                    '/create-post',
   submitReview:                  '/submit-review',
+
+  /** Regional filing browse + detail (maskanyaban-style template). */
+  filingBrowse:                  '/f',
+  filingDetail:                  '/f/[id]',
 } as const;
 
 export type RouteKey = keyof typeof ROUTES;
@@ -329,6 +336,22 @@ export const routeBuilder = {
     return `/b/${encodeURIComponent(profileSlug)}/p/${encodeURIComponent(offerId)}`;
   },
 
+  /** /f — regional filing browse (maskanyaban-style grid). */
+  filingBrowse(query?: Record<string, string | undefined>): string {
+    if (!query) return ROUTES.filingBrowse;
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) {
+      if (value?.trim()) params.set(key, value.trim());
+    }
+    const qs = params.toString();
+    return qs ? `${ROUTES.filingBrowse}?${qs}` : ROUTES.filingBrowse;
+  },
+
+  /** /f/{id} — regional filing detail. */
+  filingDetail(id: string): string {
+    return fillParams(ROUTES.filingDetail, { id });
+  },
+
   /** @deprecated Use businessProfile(slug) — /pro kept for redirects. */
   pro(id: string): string {
     return `/pro/${encodeURIComponent(id)}`;
@@ -365,6 +388,8 @@ export const routeBuilder = {
 
   // ── App
   myBusiness:         () => ROUTES.myBusiness,
+  workspace:          (opts?: { adminPreview?: boolean }) =>
+    opts?.adminPreview ? `${ROUTES.workspace}?adminPreview=1` : ROUTES.workspace,
   dashboard:          () => ROUTES.dashboard,
   dashboardTab:       (tab: string) =>
     `${ROUTES.dashboard}?tab=${encodeURIComponent(tab)}`,
@@ -381,6 +406,9 @@ export const routeBuilder = {
   },
   chatConversation:   (conversationId: string) =>
     fillParams(ROUTES.chatConversation, { conversationId }),
+  /** /u/{username} — username deep-link to a user's public profile. */
+  userByUsername:     (username: string) =>
+    fillParams(ROUTES.userByUsername, { username: username.replace(/^@/, '') }),
   notifications:      () => ROUTES.notifications,
   bookmarks:          () => ROUTES.bookmarks,
   admin:              () => ROUTES.admin,
@@ -453,6 +481,11 @@ export function buildRoute(routeKey: RouteKey, params?: Record<string, string>):
   const template = ROUTES[routeKey];
   if (!params) return template;
   return fillParams(template, params);
+}
+
+/** Regional filing browse/detail (`/f`, `/f/{id}`) — uses filing chrome only. */
+export function isFilingPath(pathname: string): boolean {
+  return pathname === ROUTES.filingBrowse || pathname.startsWith(`${ROUTES.filingBrowse}/`);
 }
 
 /** `/b/{profileSlug}/p/{offerId}` — public product detail (immersive; no mobile bottom nav). */

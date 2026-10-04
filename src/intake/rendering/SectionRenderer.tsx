@@ -1,9 +1,8 @@
 'use client';
 
-import { Loader2, MapPinned } from 'lucide-react';
+import { ChevronDown, Loader2, MapPinned } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SuggestionChips } from '@/components/need-intake/SuggestionChips';
-import { IntakeNeighborhoodDisambiguationChips } from '@/components/need-intake/IntakeLocationAmbiguityPrompt';
 import type { IntakeFieldMeta, TemplateSection } from '@/intake/template/types';
 import { FieldRenderer } from '@/intake/rendering/FieldRenderer';
 import { CategorySuggestions } from '@/intake/rendering/fieldRegistry';
@@ -84,20 +83,7 @@ function LocationSectionLayout({
       <div className="grid grid-cols-1 items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         {cityField ? renderField(cityField) : null}
         {neighborhoodField ? (
-          <div className="space-y-2 min-w-0">
-            {renderField(neighborhoodField)}
-            {context.neighborhoodDisambiguationChips.length >= 2 ? (
-              <IntakeNeighborhoodDisambiguationChips
-                options={context.neighborhoodDisambiguationChips}
-                selectedValue={
-                  context.entities?.neighborhoodSlug?.trim()
-                    ? `neighborhood:${context.entities.neighborhoodSlug.trim()}`
-                    : undefined
-                }
-                onSelect={(value) => context.onLocationSuggestionSelect?.(value)}
-              />
-            ) : null}
-          </div>
+          <div className="space-y-2 min-w-0">{renderField(neighborhoodField)}</div>
         ) : null}
         <Button
           type="button"
@@ -114,7 +100,17 @@ function LocationSectionLayout({
           موقعیت من
         </Button>
       </div>
-      {mapPinField ? renderField(mapPinField) : null}
+      {mapPinField ? (
+        <details className="group rounded-lg border border-border/60 bg-muted/10">
+          <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between gap-2 px-3 text-sm [&::-webkit-details-marker]:hidden">
+            <span>تعیین دقیق موقعیت روی نقشه</span>
+            <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="border-t border-border/60 px-3 pb-3 pt-2">
+            {renderField(mapPinField)}
+          </div>
+        </details>
+      ) : null}
       {context.locationSuggestionChips && context.locationSuggestionChips.length > 0 ? (
         <div className="space-y-2">
           <p className="text-xs text-muted-foreground flex items-center gap-1">

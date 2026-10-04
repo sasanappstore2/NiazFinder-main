@@ -36,6 +36,15 @@ export interface CorrectionResult {
 }
 
 export interface CaptureTrainingInput {
+  /**
+   * Server-verified explicit opt-in. Never derive this from an unchecked client
+   * boolean; capture remains disabled when consent evidence is absent.
+   */
+  trainingConsent?: {
+    grantedAt: string;
+    policyVersion: string;
+    actorUserId: string;
+  };
   draft: {
     templateId: string;
     templateVersion?: number;

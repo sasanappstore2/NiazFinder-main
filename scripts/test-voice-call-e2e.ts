@@ -109,9 +109,53 @@ async function main() {
   }
   console.log('OK: cancel → ENDED, not in incoming poll');
 
-  // Cleanup test calls
+  // 5. CALL log row in thread (mirrors persistCallLogMessage)
+  const call4 = await db.voiceCall.create({
+    data: {
+      callerId,
+      calleeId,
+      conversationId: conv.id,
+      status: 'RINGING',
+      signalingOffer: JSON.stringify(mockOffer),
+    },
+  });
+  const ended = await db.voiceCall.update({
+    where: { id: call4.id },
+    data: {
+      status: 'ENDED',
+      startedAt: new Date(Date.now() - 45_000),
+      endedAt: new Date(),
+      durationSec: 45,
+      signalingOffer: null,
+      signalingAnswer: null,
+    },
+  });
+  const clientTempId = `call-log-${ended.id}`;
+  const callMsg = await db.message.create({
+    data: {
+      conversationId: conv.id,
+      senderId: callerId,
+      content: JSON.stringify({
+        callId: ended.id,
+        status: 'ENDED',
+        durationSec: 45,
+        callerId,
+        calleeId,
+      }),
+      type: 'CALL',
+      clientTempId,
+    },
+  });
+  const dup = await db.message.findFirst({
+    where: { conversationId: conv.id, clientTempId },
+  });
+  if (!dup || dup.id !== callMsg.id) throw new Error('CALL log message missing');
+  console.log('OK: CALL log message in thread', callMsg.id);
+
+  // Cleanup test calls + call log
+  await db.message.deleteMany({ where: { id: callMsg.id } });
   await db.voiceCall.deleteMany({
-    where: { id: { in: [call.id, call2.id, call3.id] } },
+    where: { id: { in: [call.id, call2.id, call3.id, call4.id] } },
   });
 
   console.log('ALL VOICE CALL E2E CHECKS PASSED');

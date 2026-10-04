@@ -1,0 +1,116 @@
+{
+  "POST /api/auth/verify": {
+    "summary": "Verify phone OTP code, issue session token",
+    "description": "Second step of phone login. Rate-limited per IP (30/min) and per phone (10/min). In non-production with ALLOW_TEST_OTP=true the fixed test code is accepted.",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "required": ["phone", "code"],
+            "properties": {
+              "phone": { "type": "string", "description": "Iran mobile number, Persian digits accepted" },
+              "code": { "type": "string", "description": "OTP code" },
+              "intent": { "type": "string", "enum": ["login", "register"], "default": "register" }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": { "description": "Verified. Returns user object and Bearer token." },
+      "400": { "description": "phone/code missing or malformed." },
+      "401": { "description": "Invalid or expired code." },
+      "429": { "description": "Rate limited." }
+    }
+  },
+  "POST /api/intake/analyze": {
+    "summary": "Rules-first need analysis (Intelligence Engine v1)",
+    "description": "Parses free-text need into structured representation. Queue-backed when enabled; rules-only unless forceAi with LLM enabled. Payload capped at 96KB, rate-limited (120/window).",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "required": ["text"],
+            "properties": {
+              "text": { "type": "string", "minLength": 3, "description": "Free-text need (Persian primarily)" },
+              "draftRevision": { "type": "integer", "minimum": 0 },
+              "citySlug": { "type": "string" },
+              "cityName": { "type": "string" },
+              "formHints": { "type": "object", "description": "User-locked category/city/neighborhood hints" },
+              "forceAi": { "type": "boolean", "default": false }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": { "description": "Structured intake result (category, entities, confidence, follow-ups)." },
+      "400": { "description": "Invalid request." },
+      "429": { "description": "Rate limited." }
+    }
+  },
+  "POST /api/post/natural-analyze": {
+    "summary": "Natural-language /post analysis (deterministic parser + optional Laya)",
+    "description": "Proxies to the private Laya Multilingual worker on loopback when enabled; deterministic parsing always runs. See src/lib/need-intake/laya/post-natural-contract.ts (schemaVersion 2).",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "required": ["sourceText"],
+            "properties": {
+              "sourceText": { "type": "string", "minLength": 3, "maxLength": 8000 },
+              "draftRevision": { "type": "integer", "minimum": 0 },
+              "cityName": { "type": "string" },
+              "citySlug": { "type": "string" },
+              "categorySlug": { "type": "string" },
+              "subcategorySlug": { "type": "string" },
+              "categoryLockedByUser": { "type": "boolean" },
+              "cityLockedByUser": { "type": "boolean" },
+              "neighborhoodLockedByUser": { "type": "boolean" },
+              "lockedFieldKeys": { "type": "array", "items": { "type": "string" } },
+              "existingFields": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": { "description": "schemaVersion, normalizedText, fields[], provisionalCategory. Laya auto-apply is off by default." },
+      "400": { "description": "Invalid request." }
+    }
+  },
+  "POST /api/need-intake/publish": {
+    "summary": "Publish a structured need (authenticated, idempotent)",
+    "description": "Requires Bearer auth. Validates draft hash and revision; idempotencyKey dedupes retries.",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "required": ["draft"],
+            "properties": {
+              "draft": { "type": "object", "description": "Validated need draft (see needDraftSchema)" },
+              "listingPreview": { "type": "object" },
+              "snapshot": { "type": "object" },
+              "idempotencyKey": { "type": "string", "minLength": 16, "maxLength": 160 },
+              "sessionId": { "type": "string" },
+              "linkToBusinessProfile": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": { "description": "Published need reference." },
+      "400": { "description": "Validation failed." },
+      "401": { "description": "Unauthenticated." }
+    }
+  }
+}

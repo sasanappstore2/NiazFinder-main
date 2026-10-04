@@ -5,6 +5,10 @@ import { join } from 'node:path';
 import { RULES_PACKS_DIR } from '@/intake/rules/config';
 import { buildLegacyIntakeRules } from '@/intake/rules/legacy-bridge';
 import {
+  hasStrongEstatePropertySignal,
+  isEstateLeafSlug,
+} from '@/intake/rules/estate/estate-collision-table';
+import {
   candidateToCategoryMatchResult,
   isCategoryAmbiguous,
   matchCategoryCandidatesFromRuleSet,
@@ -20,9 +24,12 @@ export interface MatchCategoryOptions {
   slugHints?: readonly string[];
 }
 
-let packRulesCache: IntakeRule[] | null = null;
-let negativeRulesCache: IntakeRule[] | null = null;
 let packsBySlug: Map<string, RulePack> | null = null;
+let legacyPositiveCache: IntakeRule[] | null = null;
+let legacyNegativeCache: IntakeRule[] | null = null;
+let matchPositiveCache: IntakeRule[] | null = null;
+let matchNegativeCache: IntakeRule[] | null = null;
+let ruleCountCache: number | null = null;
 
 function projectRoot(): string {
   return process.cwd();
@@ -37,15 +44,27 @@ function loadPackFile(path: string): RulePack | null {
   }
 }
 
-function loadAllPacks(): Map<string, RulePack> {
+function slugFromPackFilename(name: string): string {
+  return name.replace(/\.pack\.json$/i, '');
+}
+
+/**
+ * Load packs used for category matching.
+ * Estate leaf packs are skipped here — matching uses legacy + collision table instead
+ * (cartesian estate packs are large and slow without improving leaf disambiguation).
+ * getRulePack() still loads any slug on demand for required-fields metadata.
+ */
+function loadMatchPacks(): Map<string, RulePack> {
   if (packsBySlug) return packsBySlug;
 
   packsBySlug = new Map();
   const dir = join(projectRoot(), RULES_PACKS_DIR);
   if (!existsSync(dir)) return packsBySlug;
 
-  for (const name of readdirSync(dir)) {
+  for (const name of readdirSync(dir).sort()) {
     if (!name.endsWith('.pack.json')) continue;
+    const slug = slugFromPackFilename(name);
+    if (isEstateLeafSlug(slug)) continue;
     const pack = loadPackFile(join(dir, name));
     if (pack?.meta?.slug) {
       packsBySlug.set(pack.meta.slug, pack);
@@ -55,29 +74,49 @@ function loadAllPacks(): Map<string, RulePack> {
   return packsBySlug;
 }
 
-function allPackRules(): IntakeRule[] {
-  if (packRulesCache) return packRulesCache;
+function legacyPositiveRules(): IntakeRule[] {
+  if (legacyPositiveCache) return legacyPositiveCache;
+  legacyPositiveCache = buildLegacyIntakeRules().filter((r) => r.kind !== 'negative');
+  return legacyPositiveCache;
+}
 
-  const rules: IntakeRule[] = [...buildLegacyIntakeRules()];
-  for (const pack of loadAllPacks().values()) {
-    rules.push(...pack.rules);
+function legacyNegativeRules(): IntakeRule[] {
+  if (legacyNegativeCache) return legacyNegativeCache;
+  legacyNegativeCache = buildLegacyIntakeRules().filter((r) => r.kind === 'negative');
+  return legacyNegativeCache;
+}
+
+function matchPositiveRules(): IntakeRule[] {
+  if (matchPositiveCache) return matchPositiveCache;
+  const rules: IntakeRule[] = [...legacyPositiveRules()];
+  for (const pack of loadMatchPacks().values()) {
+    for (const rule of pack.rules) {
+      if (rule.kind !== 'negative') rules.push(rule);
+    }
   }
-  packRulesCache = rules;
+  matchPositiveCache = rules;
   return rules;
 }
 
-function allNegativeRules(): IntakeRule[] {
-  if (negativeRulesCache) return negativeRulesCache;
-  negativeRulesCache = allPackRules().filter((r) => r.kind === 'negative');
-  return negativeRulesCache;
-}
-
-function positiveRules(): IntakeRule[] {
-  return allPackRules().filter((r) => r.kind !== 'negative');
+function matchNegativeRules(): IntakeRule[] {
+  if (matchNegativeCache) return matchNegativeCache;
+  const rules: IntakeRule[] = [...legacyNegativeRules()];
+  for (const pack of loadMatchPacks().values()) {
+    for (const rule of pack.rules) {
+      if (rule.kind === 'negative') rules.push(rule);
+    }
+  }
+  matchNegativeCache = rules;
+  return rules;
 }
 
 export function getRulePack(slug: string): RulePack | null {
-  return loadAllPacks().get(slug) ?? null;
+  const cached = loadMatchPacks().get(slug);
+  if (cached) return cached;
+  // On-demand load (including estate packs) for metadata / required fields.
+  const path = join(projectRoot(), RULES_PACKS_DIR, `${slug}.pack.json`);
+  if (!existsSync(path)) return null;
+  return loadPackFile(path);
 }
 
 export function getPackRequiredFields(slug: string): string[] {
@@ -99,24 +138,35 @@ function filterPositiveRules(rules: IntakeRule[], opts?: MatchCategoryOptions): 
   });
 }
 
+function resolvePositiveRulesForText(text: string, opts?: MatchCategoryOptions): IntakeRule[] {
+  // Estate-framed text: legacy + collision table is enough (and ~100x cheaper than packs).
+  if (hasStrongEstatePropertySignal(text)) {
+    return filterPositiveRules(legacyPositiveRules(), opts);
+  }
+  return filterPositiveRules(matchPositiveRules(), opts);
+}
+
+function resolveNegativeRulesForText(text: string): IntakeRule[] {
+  if (hasStrongEstatePropertySignal(text)) {
+    return legacyNegativeRules();
+  }
+  return matchNegativeRules();
+}
+
 export function matchCategoryFromRules(
   text: string,
   opts?: MatchCategoryOptions
 ): CategoryMatchResult | null {
-  const positive = filterPositiveRules(positiveRules(), opts);
-  if (!positive.length) {
-    return matchCategoryFromRuleSet(text, positiveRules(), allNegativeRules());
-  }
-  return matchCategoryFromRuleSet(text, positive, allNegativeRules());
+  const positive = resolvePositiveRulesForText(text, opts);
+  return matchCategoryFromRuleSet(text, positive, resolveNegativeRulesForText(text));
 }
 
 export function matchCategoryCandidatesFromRules(
   text: string,
   opts?: MatchCategoryOptions & { limit?: number }
 ): CategoryMatchCandidate[] {
-  const positive = filterPositiveRules(positiveRules(), opts);
-  const rules = positive.length ? positive : positiveRules();
-  return matchCategoryCandidatesFromRuleSet(text, rules, allNegativeRules(), {
+  const positive = resolvePositiveRulesForText(text, opts);
+  return matchCategoryCandidatesFromRuleSet(text, positive, resolveNegativeRulesForText(text), {
     limit: opts?.limit,
   });
 }
@@ -127,22 +177,41 @@ export function pickClearCategoryFromRules(
   text: string,
   opts?: MatchCategoryOptions
 ): CategoryMatchResult | null {
-  const positive = filterPositiveRules(positiveRules(), opts);
-  const rules = positive.length ? positive : positiveRules();
-  const candidates = matchCategoryCandidatesFromRuleSet(text, rules, allNegativeRules());
-  return pickCategoryIfClear(text, candidates, rules);
+  const positive = resolvePositiveRulesForText(text, opts);
+  const candidates = matchCategoryCandidatesFromRuleSet(
+    text,
+    positive,
+    resolveNegativeRulesForText(text)
+  );
+  return pickCategoryIfClear(text, candidates, positive);
 }
 
 export function clearRulesRegistryCache(): void {
-  packRulesCache = null;
-  negativeRulesCache = null;
   packsBySlug = null;
+  legacyPositiveCache = null;
+  legacyNegativeCache = null;
+  matchPositiveCache = null;
+  matchNegativeCache = null;
+  ruleCountCache = null;
 }
 
 export function countLoadedRules(): number {
-  return allPackRules().length;
+  if (ruleCountCache != null) return ruleCountCache;
+  let n = buildLegacyIntakeRules().length;
+  const dir = join(projectRoot(), RULES_PACKS_DIR);
+  if (existsSync(dir)) {
+    for (const name of readdirSync(dir)) {
+      if (!name.endsWith('.pack.json')) continue;
+      const pack = loadPackFile(join(dir, name));
+      if (pack) n += pack.rules.length;
+    }
+  }
+  ruleCountCache = n;
+  return n;
 }
 
 export function countLoadedPacks(): number {
-  return loadAllPacks().size;
+  const dir = join(projectRoot(), RULES_PACKS_DIR);
+  if (!existsSync(dir)) return 0;
+  return readdirSync(dir).filter((n) => n.endsWith('.pack.json')).length;
 }

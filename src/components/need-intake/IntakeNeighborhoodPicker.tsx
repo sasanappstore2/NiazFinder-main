@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronDown, MapPin, Search } from 'lucide-react';
+import { ChevronDown, MapPin, Search, X } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -35,6 +35,29 @@ function matchesQuery(n: ManagedNeighborhood, q: string): boolean {
   return n.areas?.some((a) => a.toLowerCase().includes(norm)) ?? false;
 }
 
+function compactLabel(text: string): string {
+  return text.replace(/\u200c/g, '').replace(/\s+/g, '').trim().toLowerCase();
+}
+
+/** Prefer exact / prefix / token hits so «فردوسی» lists before «توس فردوسی». */
+function rankNeighborhoodQuery(n: ManagedNeighborhood, q: string): number {
+  if (!q.trim()) return 100;
+  const cq = compactLabel(q);
+  const cn = compactLabel(n.name);
+  if (cn === cq) return 0;
+  if (cn.startsWith(cq)) return 1;
+  const tokens = n.name
+    .replace(/\u200c/g, ' ')
+    .split(/[\s،,.]+/)
+    .map((t) => compactLabel(t))
+    .filter(Boolean);
+  if (tokens.includes(cq)) return 2;
+  if ((n.areas ?? []).some((a) => compactLabel(a) === cq)) return 3;
+  if (cn.includes(cq)) return 4;
+  if ((n.areas ?? []).some((a) => compactLabel(a).includes(cq))) return 5;
+  return 6;
+}
+
 export function IntakeNeighborhoodPicker({
   cityName,
   value,
@@ -58,10 +81,23 @@ export function IntakeNeighborhoodPicker({
     );
   }, [value, neighborhoods, cityName]);
 
-  const filtered = useMemo(
-    () => neighborhoods.filter((n) => matchesQuery(n, query)),
-    [neighborhoods, query]
-  );
+  const filtered = useMemo(() => {
+    const list = neighborhoods.filter((n) => matchesQuery(n, query));
+    if (!query.trim()) return list;
+    return [...list].sort((a, b) => {
+      const ra = rankNeighborhoodQuery(a, query);
+      const rb = rankNeighborhoodQuery(b, query);
+      if (ra !== rb) return ra - rb;
+      if (a.name.length !== b.name.length) return a.name.length - b.name.length;
+      return a.name.localeCompare(b.name, 'fa');
+    });
+  }, [neighborhoods, query]);
+
+  const similarHits = useMemo(() => {
+    const phrase = (query.trim() || value.trim()).trim();
+    if (phrase.length < 2 || !neighborhoods.length) return [];
+    return findManagedNeighborhoodAmbiguity(neighborhoods, phrase, cityName).slice(0, 6);
+  }, [query, value, neighborhoods, cityName]);
 
   const displayLabel = selected?.name || 'انتخاب محله';
 
@@ -108,29 +144,54 @@ export function IntakeNeighborhoodPicker({
 
   return (
     <>
-      <button
-        type="button"
-        disabled={!canOpenList}
-        onClick={() => setOpen(true)}
-        className={cn(
-          'flex h-11 w-full items-center justify-between gap-2 rounded-md border bg-background px-3 text-sm transition-colors',
-          'hover:bg-muted/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40',
-          (!canOpenList || disabled) && 'cursor-not-allowed opacity-60',
-          className
-        )}
-      >
-        <span className="flex min-w-0 items-center gap-2 truncate">
-          <MapPin className="size-4 shrink-0 text-muted-foreground" />
-          <span className={cn('truncate', !value.trim() && 'text-muted-foreground')}>
-            {isLoading
-              ? 'در حال بارگذاری محله‌ها...'
-              : !cityName.trim()
-                ? 'ابتدا شهر را انتخاب کنید'
-                : displayLabel}
+      <div className={cn('space-y-2 min-w-0', className)}>
+        <button
+          type="button"
+          disabled={!canOpenList}
+          onClick={() => setOpen(true)}
+          className={cn(
+            'flex h-11 w-full items-center justify-between gap-2 rounded-md border bg-background px-3 text-sm transition-colors',
+            'hover:bg-muted/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40',
+            (!canOpenList || disabled) && 'cursor-not-allowed opacity-60'
+          )}
+        >
+          <span className="flex min-w-0 items-center gap-2 truncate">
+            <MapPin className="size-4 shrink-0 text-muted-foreground" />
+            <span className={cn('truncate', !value.trim() && 'text-muted-foreground')}>
+              {isLoading
+                ? 'در حال بارگذاری محله‌ها...'
+                : !cityName.trim()
+                  ? 'ابتدا شهر را انتخاب کنید'
+                  : displayLabel}
+            </span>
           </span>
-        </span>
-        <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
-      </button>
+          <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+        </button>
+
+        {similarHits.length >= 2 && canOpenList ? (
+          <div className="flex flex-wrap gap-1.5">
+            {similarHits.map((h) => {
+              const active = selected?.id === h.neighborhood.id;
+              return (
+                <button
+                  key={h.neighborhood.id}
+                  type="button"
+                  onClick={() => handleSelect(h.neighborhood)}
+                  className={cn(
+                    'max-w-full truncate rounded-md border px-2.5 py-1 text-xs transition-colors',
+                    active
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border/80 bg-muted/30 text-foreground hover:border-primary/50 hover:bg-muted/50'
+                  )}
+                  title={h.neighborhood.name}
+                >
+                  {h.neighborhood.name}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
+      </div>
 
       {open && hasCatalog ? (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -138,11 +199,21 @@ export function IntakeNeighborhoodPicker({
             className="flex max-h-[92dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg"
             dir="rtl"
             aria-describedby={undefined}
+            showCloseButton={false}
           >
             <DialogHeader className="flex flex-row items-center justify-between border-b px-4 py-3 space-y-0">
               <DialogTitle className="text-base font-bold">
                 محله‌های {cityName}
               </DialogTitle>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="size-9 shrink-0 rounded-full"
+                onClick={() => setOpen(false)}
+              >
+                <X className="size-5" />
+              </Button>
             </DialogHeader>
 
             <div className="border-b px-4 py-3">
@@ -157,8 +228,32 @@ export function IntakeNeighborhoodPicker({
                 />
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
-                {neighborhoods.length} محله — همان فهرست فیلترهای سایت
+                {query.trim() && similarHits.length >= 2
+                  ? `${similarHits.length} محلهٔ مشابه — دقیق‌ترین را انتخاب کنید`
+                  : `${neighborhoods.length} محله — همان فهرست فیلترهای سایت`}
               </p>
+              {query.trim() && similarHits.length >= 2 ? (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {similarHits.map((h) => {
+                    const active = selected?.id === h.neighborhood.id;
+                    return (
+                      <button
+                        key={`dlg-${h.neighborhood.id}`}
+                        type="button"
+                        onClick={() => handleSelect(h.neighborhood)}
+                        className={cn(
+                          'max-w-full truncate rounded-md border px-2.5 py-1 text-xs transition-colors',
+                          active
+                            ? 'border-primary bg-primary/10 text-primary'
+                            : 'border-border/80 bg-background hover:border-primary/50'
+                        )}
+                      >
+                        {h.neighborhood.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
             </div>
 
             <ul className="min-h-0 flex-1 overflow-y-auto">

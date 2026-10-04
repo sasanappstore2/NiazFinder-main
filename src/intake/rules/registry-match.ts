@@ -1,4 +1,4 @@
-import { normalizeCategoryPair } from '@/config/categories';
+import { normalizeCategoryPair, getCategoryPath } from '@/config/categories';
 import { normalizeIntakeText } from '@/lib/need-intake/normalize-intake-text';
 import {
   RULES_DISAMBIG_MIN_CONFIDENCE,
@@ -16,6 +16,11 @@ import type {
   IntakeRule,
 } from '@/intake/rules/types';
 
+/** True when `maybeAncestor` is on the taxonomy path of `leaf` (parent/section). */
+function isCategoryAncestor(maybeAncestor: string, leaf: string): boolean {
+  if (!maybeAncestor || !leaf || maybeAncestor === leaf) return false;
+  return getCategoryPath(leaf).some((c) => c.slug === maybeAncestor);
+}
 export function candidateToCategoryMatchResult(
   text: string,
   candidate: CategoryMatchCandidate,
@@ -59,7 +64,13 @@ export function isCategoryAmbiguous(candidates: CategoryMatchCandidate[]): boole
   if (candidates.length < 2) return false;
 
   const top = candidates[0]!;
-  const second = candidates[1]!;
+  // Parent/section scores next to a clear leaf are not real collisions
+  // (e.g. apartment-sale @0.98 vs real-estate @0.89).
+  const rivals = candidates.filter(
+    (c) => c.slug !== top.slug && !isCategoryAncestor(c.slug, top.slug)
+  );
+  if (rivals.length === 0) return false;
+  const second = rivals[0]!;
 
   if (top.confidence >= RULES_DISAMBIG_MIN_CONFIDENCE) {
     const gap = top.confidence - second.confidence;
@@ -67,7 +78,9 @@ export function isCategoryAmbiguous(candidates: CategoryMatchCandidate[]): boole
   }
 
   const maxScore = Math.max(1, top.score);
-  const nearTop = candidates.filter((c) => c.score >= maxScore * RULES_DISAMBIG_NEAR_TOP_RATIO);
+  const nearTop = [top, ...rivals].filter(
+    (c) => c.score >= maxScore * RULES_DISAMBIG_NEAR_TOP_RATIO
+  );
   return nearTop.length >= 2;
 }
 

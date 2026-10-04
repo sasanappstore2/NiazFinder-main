@@ -49,7 +49,7 @@ export const CATEGORY_SYNONYMS: Record<string, readonly string[]> = {
   car: ['ماشین', 'خودرو', 'سواری'],
   'mobile-phone': ['گوشی', 'موبایل', 'تلفن همراه'],
   laptop: ['لپ تاپ', 'لپ‌تاپ', 'نوت بوک'],
-  'real-estate': ['ملک', 'املاک', 'مسکونی'],
+  'real-estate': ['ملک مسکونی', 'املاک', 'مسکونی'],
 };
 
 export function simplifiedCategoryKey(slug: string): string {

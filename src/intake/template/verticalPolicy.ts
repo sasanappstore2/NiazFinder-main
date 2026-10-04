@@ -23,7 +23,7 @@ const REAL_ESTATE_SECTIONS: TemplateSection[] = [
   {
     key: 'deal',
     label: 'نوع معامله',
-    fields: ['transactionType'],
+    fields: ['transactionType', 'dealType'],
   },
   {
     key: 'location',
@@ -34,14 +34,14 @@ const REAL_ESTATE_SECTIONS: TemplateSection[] = [
   {
     key: 'property-specs',
     label: 'مشخصات ملک',
-    fields: ['area', 'rooms'],
+    fields: ['area', 'rooms', 'buildingAge', 'amenities'],
   },
   {
     key: 'timing',
     label: 'فوریت و زمان‌بندی',
-    fields: ['when'],
+    fields: ['when', 'moveInWhen'],
   },
-  { key: 'budget', label: 'بودجه', fields: ['budget'] },
+  { key: 'budget', label: 'بودجه', fields: ['budget', 'rahnAmount', 'monthlyRent', 'deposit'] },
   { key: 'specs', label: 'فیلترهای پیشرفته', fields: [] },
 ];
 
@@ -50,7 +50,7 @@ const APARTMENT_RENT_POLICY: VerticalPolicy = {
   category: 'apartment',
   proposalMode: 'real-estate',
   requiredFields: ['transactionType', 'neighborhood'],
-  optionalFields: ['area', 'budget', 'rooms'],
+  optionalFields: ['area', 'budget', 'rooms', 'buildingAge', 'amenities', 'parkingCount'],
   mandatorySectionKeys: ['category', 'location', 'deal'],
   sections: REAL_ESTATE_SECTIONS,
 };

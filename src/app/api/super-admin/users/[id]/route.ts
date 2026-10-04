@@ -4,7 +4,7 @@ import { requirePermission } from '@/lib/rbac/authz';
 import { isAllowedSuperAdmin, isSuperAdminPhone } from '@/lib/super-admin';
 import { getAuthUser } from '@/lib/auth';
 import { logAdminAction } from '@/lib/audit/admin-audit';
-import { queueBusinessProfileTypesenseSyncByUserId } from '@/lib/search/typesense-sync';
+import { queueBusinessProfileSearchSyncByUserId } from '@/lib/rag/sync';
 
 export const runtime = 'nodejs';
 
@@ -164,7 +164,7 @@ export async function PATCH(
     });
 
     if (typeof updateData.isActive === 'boolean') {
-      queueBusinessProfileTypesenseSyncByUserId(targetId);
+      queueBusinessProfileSearchSyncByUserId(targetId);
     }
 
     return NextResponse.json({ user });

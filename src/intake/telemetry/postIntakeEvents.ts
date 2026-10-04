@@ -2,6 +2,7 @@ import type { FieldType } from '@/contracts/need-intake';
 
 /** Wizard steps instrumented on /post (excludes transient publishing overlay). */
 export type PostIntakeWizardStep =
+  | 'compose'
   | 'need'
   | 'details'
   | 'location'

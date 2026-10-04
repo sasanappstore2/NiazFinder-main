@@ -1,0 +1,3 @@
+# Default reviewer for everything. Reviews are advisory unless branch
+# protection requires them (recommended for `main`).
+* @sasanappstore2

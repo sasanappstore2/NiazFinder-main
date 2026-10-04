@@ -93,24 +93,29 @@ export function draftToLegacyPayload(draft: NeedDraft): LegacyNeedPayload {
       ...(legacyDeal ? { dealType: legacyDeal } : {}),
       ...(entities.area != null ? { areaMin: String(entities.area) } : {}),
       ...(entities.rooms != null ? { rooms: String(entities.rooms) } : {}),
-      ...(entities.neighborhood ? { area: entities.neighborhood } : {}),
+      ...(entities.neighborhood ? { neighborhood: entities.neighborhood } : {}),
     },
   });
 
+  // Once `answers.dealType` holds ANY value, the trailing `...draft.answers` spread below would
+  // silently re-apply that stale value forever — discarding the fresh `legacyDeal` this function
+  // just derived from the (possibly just-changed) category/entities, for every category, not one.
+  // `_userSetDealType` exists precisely to distinguish "user explicitly chose a deal type" (keep
+  // it) from "a deal type is merely sitting in answers from an earlier category" (let it track
+  // the category). Resolve that explicitly instead of letting the answer win unconditionally.
+  const userLockedDealType = draft.answers._userSetDealType === true;
+  const resolvedDealTypeAnswer = userLockedDealType
+    ? draft.answers.dealType
+    : (legacyDeal ?? draft.answers.dealType);
+
   const answers: NeedDraft['answers'] = {
     ...seedAnswersFromParsed(parsedIntent, draft.leadPhone),
-    ...(entities.neighborhood?.trim() && entities.city
-      ? { location: `${entities.neighborhood.trim()}، ${entities.city}` }
-      : entities.city
-        ? { location: entities.city }
-        : {}),
-    ...(legacyDeal && draft.answers.dealType == null ? { dealType: legacyDeal } : {}),
     ...(entities.rooms != null ? { rooms: entities.rooms } : {}),
     ...(entities.area != null && draft.answers.areaMin == null ? { areaMin: entities.area } : {}),
     ...(entities.budgetMax != null &&
     draft.answers.budget == null &&
-    legacyDeal !== 'rent_rahn_ejare' &&
-    legacyDeal !== 'rent_rahn_full'
+    resolvedDealTypeAnswer !== 'rent_rahn_ejare' &&
+    resolvedDealTypeAnswer !== 'rent_rahn_full'
       ? { budget: entities.budgetMax }
       : {}),
     ...(entities.neighborhoodSlug?.trim()
@@ -118,6 +123,20 @@ export function draftToLegacyPayload(draft: NeedDraft): LegacyNeedPayload {
       : {}),
     /* User chip/select answers (advanced filters) — must survive recompute */
     ...draft.answers,
+    // Location is a projection of canonical entities, never an independently
+    // writable mirror. A stale city-only answer must not hide a newly resolved
+    // neighborhood in the summary or publication path.
+    ...(entities.city
+      ? { location: entities.neighborhood?.trim()
+          ? `${entities.neighborhood.trim()}، ${entities.city}`
+          : entities.city }
+      : {}),
+    ...(entities.neighborhoodSlug?.trim()
+      ? { _neighborhoodSlug: entities.neighborhoodSlug.trim() }
+      : {}),
+    /* Reconciled last, deliberately after the spread above: dealType is the one answer that
+       must track category-driven changes unless the user explicitly locked it. */
+    ...(resolvedDealTypeAnswer != null ? { dealType: resolvedDealTypeAnswer } : {}),
   };
 
   return { parsedIntent, answers };

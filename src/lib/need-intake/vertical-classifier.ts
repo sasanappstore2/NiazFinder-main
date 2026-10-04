@@ -7,10 +7,16 @@ import {
   isVehicleRepairServiceIntent,
 } from '@/lib/need-intake/service-repair-intent';
 
+/** A city's own name is never a valid "area" (neighborhood/district) — never surface it as one. */
+function isCanonicalCityTitle(value: string): boolean {
+  const v = value.trim();
+  return CANONICAL_CITIES.some((city) => city.title === v);
+}
+
 function stripTrailingCityFromArea(area: string): string {
   const trimmed = area.trim();
   for (const city of CANONICAL_CITIES) {
-    if (trimmed === city.title) return trimmed;
+    if (trimmed === city.title) return '';
     const suffix = ` ${city.title}`;
     if (trimmed.endsWith(suffix)) {
       const base = trimmed.slice(0, -suffix.length).trim();
@@ -18,6 +24,18 @@ function stripTrailingCityFromArea(area: string): string {
     }
   }
   return trimmed;
+}
+
+// Some catalog labels are also ordinary words. A temporal phrase such as
+// «شروع کار از هفته آینده» must never turn the catalog entry «آینده» into a
+// neighborhood/area. Keep this guard at the classifier boundary because this
+// parser is also used by the legacy parsedIntent projection.
+const NON_LOCATION_AREA_RE =
+  /^(?:آینده|هفته\s+آینده|همین\s+ماه|اول\s+ماه(?:\s+بعد)?|تا\s+آخر\s+ماه)$/u;
+
+function isUsableArea(value: string): boolean {
+  const normalized = value.trim();
+  return normalized.length >= 2 && !NON_LOCATION_AREA_RE.test(normalized);
 }
 
 export type ClassifierVertical =
@@ -145,6 +163,14 @@ const PRODUCT_SIGNALS: { word: string; weight: number }[] = [
   { word: 'کت و شلوار', weight: 4 },
   { word: 'دوربین', weight: 4 },
   { word: 'تبلت', weight: 3 },
+  { word: 'دوچرخه', weight: 4 },
+  { word: 'اسکوتر', weight: 4 },
+  { word: 'اسکیت', weight: 4 },
+  { word: 'تردمیل', weight: 4 },
+  { word: 'دستگاه بدنسازی', weight: 5 },
+  { word: 'تجهیزات بدنسازی', weight: 5 },
+  { word: 'کیسه خواب', weight: 4 },
+  { word: 'لوازم کوهنوردی', weight: 5 },
   { word: 'پیانو', weight: 6 },
   { word: 'piano', weight: 6 },
   { word: 'گیتار', weight: 5 },
@@ -178,6 +204,8 @@ const SERVICE_SIGNALS: { word: string; weight: number }[] = [
   { word: 'نقاش', weight: 3 },
   { word: 'اسباب کشی', weight: 4 },
   { word: 'اسباب‌کشی', weight: 4 },
+  { word: 'پنچر', weight: 4 },
+  { word: 'پنچرگیری', weight: 4 },
   { word: 'باربری', weight: 3 },
   { word: 'کولر', weight: 3 },
   { word: 'پزشک', weight: 3 },
@@ -423,6 +451,23 @@ export function categorySlugForVertical(
       ) {
         return 'game-console';
       }
+      if (t.includes('دوچرخه')) return 'bicycle';
+      if (t.includes('اسکوتر') || t.includes('اسکیت')) return 'scooter';
+      if (
+        t.includes('تردمیل') ||
+        t.includes('دستگاه بدنسازی') ||
+        t.includes('تجهیزات بدنسازی')
+      ) {
+        return 'fitness-equipment';
+      }
+      if (
+        t.includes('کیسه خواب') ||
+        t.includes('لوازم کوهنوردی') ||
+        t.includes('لوازم کمپینگ') ||
+        t.includes('چادر مسافرتی')
+      ) {
+        return 'camping-outdoor';
+      }
       if (t.includes('لپ')) return 'laptop';
       if (t.includes('گوشی') || t.includes('آیفون') || t.includes('iphone')) {
         return 'mobile-phone';
@@ -485,24 +530,35 @@ export function parseAreaFromText(rawText: string, cityId?: string | null): stri
     /منطقه\s*[:：]?\s*([^،\n]+)/u,
     /محله\s*[:：]?\s*([^،\n]+)/u,
   ];
+  const extractedFragment = extractLocationFragment(text);
   for (const re of scopedPatterns) {
     const m = text.match(re);
     if (m?.[1]) {
-      const area = stripTrailingCityFromArea(m[1].trim());
-      if (area.length >= 2 && area.length <= 60) return area;
+      // A labeled phrase can run directly into a price when there is no
+      // comma: «محدوده فرامرزعباسی ۱ میلیارد رهن». Reuse the bounded
+      // location fragment only when it came from this labeled span.
+      const raw = m[1].trim();
+      const fragmentIsWithinLabel = extractedFragment &&
+        raw.replace(/\s+/gu, '').includes(extractedFragment.replace(/\s+/gu, ''));
+      const area = stripTrailingCityFromArea(fragmentIsWithinLabel ? extractedFragment : raw);
+      if (isUsableArea(area) && area.length <= 60) return area;
     }
   }
 
   const knownAreas = getKnownAreasForCity(cityId);
   const sorted = [...knownAreas].sort((a, b) => b.length - a.length);
   for (const area of sorted) {
-    if (area.length < 5) continue;
-    if (textContainsAreaName(text, area)) return area.replace(/\s+/g, ' ').trim();
+    if (area.length < 5 || isCanonicalCityTitle(area)) continue;
+    if (textContainsAreaName(text, area) && isUsableArea(area)) {
+      return area.replace(/\s+/g, ' ').trim();
+    }
   }
 
   for (const area of KNOWN_AREAS) {
-    if (area.length < 5) continue;
-    if (textContainsAreaName(text, area)) return area.replace(/\s+/g, ' ').trim();
+    if (area.length < 5 || isCanonicalCityTitle(area)) continue;
+    if (textContainsAreaName(text, area) && isUsableArea(area)) {
+      return area.replace(/\s+/g, ' ').trim();
+    }
   }
 
   const fromFragment = extractLocationFragment(text);
@@ -512,6 +568,7 @@ export function parseAreaFromText(rawText: string, cityId?: string | null): stri
     if (
       area.length >= 2 &&
       area.length <= 60 &&
+      isUsableArea(area) &&
       !rejectArea.has(lead) &&
       !drNonLocation.has(lead)
     ) {
@@ -531,7 +588,7 @@ export function parseAreaFromText(rawText: string, cityId?: string | null): stri
     if (m?.[1]) {
       const area = stripTrailingCityFromArea(m[1].trim());
       if (rejectArea.has(area)) continue;
-      if (area.length >= 2 && area.length <= 60) return area;
+      if (isUsableArea(area) && area.length <= 60) return area;
     }
   }
 
@@ -541,6 +598,7 @@ export function parseAreaFromText(rawText: string, cityId?: string | null): stri
     if (
       candidate.length >= 2 &&
       candidate.length <= 60 &&
+      isUsableArea(candidate) &&
       !rejectArea.has(candidate) &&
       !drNonLocation.has(candidate)
     ) {

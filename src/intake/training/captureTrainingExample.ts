@@ -51,6 +51,7 @@ function buildIntakeTrace(input: CaptureTrainingInput) {
     ...(typeof input.draft.intakeTrace === 'object' && input.draft.intakeTrace
       ? input.draft.intakeTrace
       : {}),
+    trainingConsent: input.trainingConsent ?? null,
     analysisSnapshot: snapshot ?? null,
     telemetryEventCount: input.telemetryEvents?.length ?? 0,
     sessionId: input.sessionId ?? null,
@@ -62,6 +63,16 @@ function buildIntakeTrace(input: CaptureTrainingInput) {
  * Returns created id or null on skip/error.
  */
 export async function captureTrainingExample(input: CaptureTrainingInput): Promise<string | null> {
+  const consent = input.trainingConsent;
+  if (
+    !consent ||
+    !consent.actorUserId.trim() ||
+    !consent.policyVersion.trim() ||
+    !Number.isFinite(Date.parse(consent.grantedAt))
+  ) {
+    return null;
+  }
+
   const rawText =
     String(input.draft.sourceText ?? '').trim() ||
     String(input.draft.analysisSnapshot?.sourceText ?? '').trim();
@@ -104,21 +115,38 @@ export async function captureTrainingExample(input: CaptureTrainingInput): Promi
     aiResult.intentGistProvider = input.draft.analysisSnapshot.intentGistProvider ?? null;
   }
 
+  // Training rows are an additional persistence boundary. Redact every nested
+  // projection, not only finalNeedDraft, so phone/email values in entity values,
+  // field evidence, or analysis traces cannot leak into the dataset.
+  const safeFinalEntities = sanitizeDraftForTraining(
+    finalEntities as Record<string, unknown>
+  );
+  const safeRuleResult = sanitizeDraftForTraining(ruleResult);
+  const safeAiResult = sanitizeDraftForTraining(aiResult);
+  const safeTrace = sanitizeDraftForTraining(
+    buildIntakeTrace({ ...input, telemetryEvents }) as Record<string, unknown>
+  );
+  const safeCorrectedEntities = sanitizeDraftForTraining(
+    correction.correctedEntities as Record<string, unknown>
+  );
+
   const row = await db.intakeTrainingExample.create({
     data: {
       sourceText,
       needType: input.draft.templateId,
-      ruleResult: Object.keys(ruleResult).length
-        ? (ruleResult as Prisma.InputJsonValue)
+      ruleResult: Object.keys(safeRuleResult).length
+        ? (safeRuleResult as Prisma.InputJsonValue)
         : undefined,
-      aiResult: Object.keys(aiResult).length ? (aiResult as Prisma.InputJsonValue) : undefined,
-      finalEntities: finalEntities as Prisma.InputJsonValue,
+      aiResult: Object.keys(safeAiResult).length
+        ? (safeAiResult as Prisma.InputJsonValue)
+        : undefined,
+      finalEntities: safeFinalEntities as Prisma.InputJsonValue,
       finalNeedDraft: sanitizeDraftForTraining(
         input.draft as Record<string, unknown>
       ) as Prisma.InputJsonValue,
-      intakeTrace: buildIntakeTrace({ ...input, telemetryEvents }) as Prisma.InputJsonValue,
+      intakeTrace: safeTrace as Prisma.InputJsonValue,
       serviceRequestId: input.serviceRequestId,
-      correctedEntities: correction.correctedEntities as Prisma.InputJsonValue,
+      correctedEntities: safeCorrectedEntities as Prisma.InputJsonValue,
       qualityFlags: correction.qualityFlags,
       sourceTextHash,
       sessionId: input.sessionId ?? null,

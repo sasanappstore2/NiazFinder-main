@@ -90,12 +90,36 @@ export async function PATCH(
       data,
     });
 
+    // Launch control: deactivating a node hides the whole descendant subtree.
+    // Descendants stay inactive until explicitly re-enabled (phased launch).
+    let cascadedChildren = 0;
+    if (body.isActive === false) {
+      const descendantIds: string[] = [];
+      let frontier = [id];
+      while (frontier.length > 0) {
+        const kids = await db.category.findMany({
+          where: { parentId: { in: frontier } },
+          select: { id: true },
+        });
+        frontier = kids.map((k) => k.id);
+        descendantIds.push(...frontier);
+      }
+      if (descendantIds.length > 0) {
+        const childResult = await db.category.updateMany({
+          where: { id: { in: descendantIds }, isActive: true },
+          data: { isActive: false },
+        });
+        cascadedChildren = childResult.count;
+      }
+    }
+
     await logAdminAction(request, authz.user.id, 'category.update', 'Category', category.id, {
       before: { id: existing.id, name: existing.name, slug: existing.slug, isActive: existing.isActive, parentId: existing.parentId },
       after: { id: category.id, name: category.name, slug: category.slug, isActive: category.isActive, parentId: category.parentId },
+      cascadedChildren,
     });
 
-    return NextResponse.json({ category });
+    return NextResponse.json({ category, cascadedChildren });
   } catch (error) {
     console.error('Super admin category PATCH error:', error);
     return NextResponse.json(

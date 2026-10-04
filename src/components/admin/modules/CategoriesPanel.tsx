@@ -9,6 +9,7 @@ import {
   GitBranch,
   Layers3,
   Plus,
+  Power,
   Save,
   Search,
   ShoppingBag,
@@ -24,13 +25,20 @@ import {
   AdminPageShell,
   AdminTableSkeleton,
 } from '@/components/admin/ui';
+import { CategoryLaunchControlDialog } from '@/components/admin/modules/LaunchControlDialog';
+import {
+  REAL_ESTATE_NEED_ROOT_SLUG,
+  computeRealEstateLaunchPlan,
+  flatItemsFromNeedCategories,
+  pickDeactivateTargetsForCascade,
+  sortForActivate,
+} from '@/lib/admin/launch-control';
 import type { AdminCategory, FlatCategory } from '@/components/admin/modules/shared/types';
 import { formatNumber } from '@/components/admin/modules/shared/formatters';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PersianDigitInput } from '@/components/ui/persian-digit-input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
@@ -70,6 +78,9 @@ export function CategoriesPanel() {
   const [flatCategories, setFlatCategories] = useState<FlatCategory[]>([]);
   const [form, setForm] = useState<CategoryFormState>(initialCategoryForm);
   const [search, setSearch] = useState('');
+  const [launchOpen, setLaunchOpen] = useState(false);
+  const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -91,18 +102,16 @@ export function CategoriesPanel() {
   }, [load]);
 
   useEffect(() => {
-    const handler = () => { void load(); };
+    const handler = () => {
+      void load();
+    };
     window.addEventListener('admin-refresh', handler);
     return () => window.removeEventListener('admin-refresh', handler);
   }, [load]);
 
   const rootCount = categories.length;
   const childCount = categories.reduce((sum, c) => sum + c.children.length, 0);
-  const inactiveCount = categories.reduce((sum, c) => {
-    let n = c.isActive ? 0 : 1;
-    n += c.children.filter((ch) => !ch.isActive).length;
-    return sum + n;
-  }, 0);
+  const inactiveCount = flatCategories.filter((c) => !c.isActive).length;
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -187,28 +196,190 @@ export function CategoriesPanel() {
     }
   };
 
+  const applyOptimisticActive = (id: string, nextActive: boolean) => {
+    setCategories((prev) =>
+      prev.map((root) => {
+        if (root.id === id) {
+          return {
+            ...root,
+            isActive: nextActive,
+            children: nextActive
+              ? root.children
+              : root.children.map((ch) => ({ ...ch, isActive: false })),
+          };
+        }
+        return {
+          ...root,
+          children: root.children.map((ch) =>
+            ch.id === id ? { ...ch, isActive: nextActive } : ch
+          ),
+        };
+      })
+    );
+
+    setFlatCategories((prev) => {
+      if (nextActive) {
+        return prev.map((c) => (c.id === id ? { ...c, isActive: true } : c));
+      }
+      const inactiveIds = new Set<string>([id]);
+      let grew = true;
+      while (grew) {
+        grew = false;
+        for (const c of prev) {
+          if (c.parentId && inactiveIds.has(c.parentId) && !inactiveIds.has(c.id)) {
+            inactiveIds.add(c.id);
+            grew = true;
+          }
+        }
+      }
+      return prev.map((c) => (inactiveIds.has(c.id) ? { ...c, isActive: false } : c));
+    });
+
+    if (form.id === id) setForm((f) => ({ ...f, isActive: nextActive }));
+  };
+
+  const toggleCategoryActive = async (
+    category: { id: string; name: string },
+    nextActive: boolean
+  ) => {
+    const id = category.id;
+    if (togglingIds.has(id) || bulkBusy) return;
+
+    setTogglingIds((prev) => new Set(prev).add(id));
+    applyOptimisticActive(id, nextActive);
+
+    try {
+      const result = await apiFetch<{ cascadedChildren?: number }>(
+        `/api/super-admin/categories/${id}`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify({ isActive: nextActive }),
+        }
+      );
+      const cascaded = result.cascadedChildren ?? 0;
+      if (nextActive) {
+        toast.success(`«${category.name}» فعال شد`);
+      } else if (cascaded > 0) {
+        toast.success(`«${category.name}» و ${formatNumber(cascaded)} زیردسته غیرفعال شد`);
+      } else {
+        toast.success(`«${category.name}» غیرفعال شد`);
+      }
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'خطا در تغییر وضعیت');
+      await load();
+    } finally {
+      setTogglingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
+  };
+
+  const bulkSetActive = async (
+    targets: { id: string; name: string }[],
+    nextActive: boolean
+  ) => {
+    if (bulkBusy || targets.length === 0) return;
+    setBulkBusy(true);
+    let ok = 0;
+    let failed = 0;
+    try {
+      for (const target of targets) {
+        applyOptimisticActive(target.id, nextActive);
+        try {
+          await apiFetch(`/api/super-admin/categories/${target.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ isActive: nextActive }),
+          });
+          ok += 1;
+        } catch {
+          failed += 1;
+        }
+      }
+      if (failed === 0) {
+        toast.success(
+          nextActive
+            ? `${formatNumber(ok)} دسته روشن شد`
+            : `${formatNumber(ok)} دسته خاموش شد`
+        );
+      } else {
+        toast.error(`${formatNumber(ok)} موفق · ${formatNumber(failed)} ناموفق`);
+      }
+      await load();
+    } finally {
+      setBulkBusy(false);
+    }
+  };
+
+  const applyRealEstatePreset = async () => {
+    const items = flatItemsFromNeedCategories(flatCategories);
+    const plan = computeRealEstateLaunchPlan(items, REAL_ESTATE_NEED_ROOT_SLUG);
+    const deactivateTargets = pickDeactivateTargetsForCascade(items, plan.toDeactivate);
+    const activateTargets = sortForActivate(plan.toActivate, items);
+    if (deactivateTargets.length === 0 && activateTargets.length === 0) {
+      toast.info('پریست از قبل اعمال شده است');
+      return;
+    }
+    setBulkBusy(true);
+    try {
+      for (const t of deactivateTargets) {
+        applyOptimisticActive(t.id, false);
+        await apiFetch(`/api/super-admin/categories/${t.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ isActive: false }),
+        });
+      }
+      for (const t of activateTargets) {
+        applyOptimisticActive(t.id, true);
+        await apiFetch(`/api/super-admin/categories/${t.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ isActive: true }),
+        });
+      }
+      toast.success('پریست لانچ فقط املاک (نیازها) اعمال شد');
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'خطا در اعمال پریست');
+      await load();
+    } finally {
+      setBulkBusy(false);
+    }
+  };
+
   return (
     <AdminPageShell
       section="categories"
       layout="form"
       description="taxonomy آگهی و درخواست — جدا از دسته‌بندی کسب‌وکار"
       actions={
-        <Button
-          className="admin-btn-primary h-9 gap-2"
-          onClick={() => {
-            setForm(initialCategoryForm);
-            document.getElementById('category-form-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }}
-        >
-          <Plus className="size-4" />
-          دسته جدید
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            className="admin-input h-9 gap-2"
+            onClick={() => setLaunchOpen(true)}
+          >
+            <Power className="size-4" />
+            کنترل لانچ
+          </Button>
+          <Button
+            className="admin-btn-primary h-9 gap-2"
+            onClick={() => {
+              setForm(initialCategoryForm);
+              document.getElementById('category-form-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+          >
+            <Plus className="size-4" />
+            دسته جدید
+          </Button>
+        </div>
       }
     >
       <div className="mb-4 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-950 dark:text-amber-100">
-        slug دسته‌ها باید با{' '}
-        <code className="rounded bg-amber-500/15 px-1">src/config/categories.ts</code> هماهنگ باشد.
-        پس از تغییر، <code className="rounded bg-amber-500/15 px-1">npm run categories:sync</code> را اجرا کنید.
+        برای فازبندی لانچ، از دکمه <strong>کنترل لانچ</strong> استفاده کنید — دسته‌های خاموش از منو و ثبت نیاز عمومی مخفی می‌مانند.
+        slugها باید با{' '}
+        <code className="rounded bg-amber-500/15 px-1">src/config/categories.ts</code> هماهنگ باشند.
       </div>
       <div className="mb-4 flex flex-col gap-2 rounded-lg border border-sky-500/30 bg-sky-500/5 p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sky-900 dark:text-sky-100">
@@ -246,7 +417,12 @@ export function CategoriesPanel() {
           <div className="grid gap-4 sm:grid-cols-3">
             <AdminKpiCard title="دسته اصلی" value={formatNumber(rootCount)} icon={<FolderTree className="size-5" />} />
             <AdminKpiCard title="زیردسته" value={formatNumber(childCount)} icon={<GitBranch className="size-5" />} accent="blue" />
-            <AdminKpiCard title="غیرفعال" value={formatNumber(inactiveCount)} icon={<Layers3 className="size-5" />} accent="amber" />
+            <AdminKpiCard
+              title="خاموش (لانچ)"
+              value={formatNumber(inactiveCount)}
+              icon={<Power className="size-5" />}
+              accent="amber"
+            />
           </div>
 
           <div className="mt-4 grid gap-5 xl:grid-cols-[minmax(280px,340px)_1fr]">
@@ -316,10 +492,6 @@ export function CategoriesPanel() {
                   <Label className="text-xs">توضیحات</Label>
                   <Textarea className="admin-input min-h-[72px] resize-none" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
                 </div>
-                <div className="flex items-center justify-between rounded-lg border border-(--color-mainBorder) bg-(--color-secondaryBg) px-3 py-2.5">
-                  <span className="text-sm">فعال باشد</span>
-                  <Switch checked={form.isActive} onCheckedChange={(v) => setForm({ ...form, isActive: v })} />
-                </div>
               </div>
 
               <div className="flex gap-2 pt-1">
@@ -338,6 +510,16 @@ export function CategoriesPanel() {
                 search={search}
                 onSearchChange={setSearch}
                 searchPlaceholder="جستجو در دسته‌ها..."
+                actions={
+                  <Button
+                    variant="outline"
+                    className="admin-input h-9 gap-2"
+                    onClick={() => setLaunchOpen(true)}
+                  >
+                    <Power className="size-4" />
+                    کنترل لانچ
+                  </Button>
+                }
               />
 
               <div className="max-h-[calc(100vh-18rem)] space-y-3 overflow-y-auto p-4">
@@ -351,7 +533,10 @@ export function CategoriesPanel() {
                   filtered.map((category) => (
                     <article
                       key={category.id}
-                      className="group rounded-xl border border-(--color-mainBorder) bg-(--color-secondaryBg)/40 transition-colors hover:border-(--color-coloredText)/30 hover:bg-(--color-navItemBgHover)"
+                      className={[
+                        'group rounded-xl border border-(--color-mainBorder) bg-(--color-secondaryBg)/40 transition-colors hover:border-(--color-coloredText)/30 hover:bg-(--color-navItemBgHover)',
+                        !category.isActive ? 'opacity-60' : '',
+                      ].join(' ')}
                     >
                       <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="min-w-0 flex-1">
@@ -361,7 +546,7 @@ export function CategoriesPanel() {
                             {category.isActive ? (
                               <AdminBadge variant="success">فعال</AdminBadge>
                             ) : (
-                              <AdminBadge variant="neutral">غیرفعال</AdminBadge>
+                              <AdminBadge variant="neutral">خاموش</AdminBadge>
                             )}
                           </div>
                           <p className="mt-1 font-mono text-xs text-(--color-secondaryText)" dir="ltr">
@@ -388,13 +573,21 @@ export function CategoriesPanel() {
                             {category.children.map((child) => (
                               <div
                                 key={child.id}
-                                className="flex items-center justify-between gap-2 rounded-lg border border-(--color-mainBorder) bg-(--color-primaryBg) px-3 py-2.5 transition-colors hover:border-(--color-coloredText)/25"
+                                className={[
+                                  'flex items-center justify-between gap-2 rounded-lg border border-(--color-mainBorder) bg-(--color-primaryBg) px-3 py-2.5 transition-colors hover:border-(--color-coloredText)/25',
+                                  !child.isActive ? 'opacity-55' : '',
+                                ].join(' ')}
                               >
                                 <div className="min-w-0">
                                   <div className="flex items-center gap-2">
+                                    <span
+                                      className={[
+                                        'size-1.5 shrink-0 rounded-full',
+                                        child.isActive ? 'bg-emerald-500' : 'bg-zinc-400',
+                                      ].join(' ')}
+                                    />
                                     <Layers3 className="size-3.5 shrink-0 text-(--color-secondaryText)" />
                                     <span className="truncate text-sm font-medium">{child.name}</span>
-                                    {!child.isActive && <AdminBadge variant="neutral">غیرفعال</AdminBadge>}
                                   </div>
                                   <p className="mt-0.5 truncate font-mono text-[10px] text-(--color-secondaryText)" dir="ltr">
                                     {child.slug}
@@ -421,6 +614,17 @@ export function CategoriesPanel() {
           </div>
         </>
       )}
+
+      <CategoryLaunchControlDialog
+        open={launchOpen}
+        onOpenChange={setLaunchOpen}
+        flatCategories={flatCategories}
+        togglingIds={togglingIds}
+        bulkBusy={bulkBusy}
+        onToggle={toggleCategoryActive}
+        onBulkSet={bulkSetActive}
+        onApplyRealEstatePreset={applyRealEstatePreset}
+      />
     </AdminPageShell>
   );
 }

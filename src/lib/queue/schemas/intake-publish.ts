@@ -3,7 +3,8 @@ import { z } from 'zod';
 /** Minimal draft shape for publish request validation at the API boundary. */
 const needDraftSchema = z.object({
   templateId: z.string().min(1),
-  templateVersion: z.string().optional(),
+  /** Matches NeedDraft.templateVersion (src/contracts/need-intake.ts) — a number, not a string. */
+  templateVersion: z.number().optional(),
   sourceText: z.string().optional(),
   entities: z.record(z.string(), z.unknown()),
   parsedIntent: z
@@ -27,15 +28,29 @@ const needDraftSchema = z.object({
   analysisSnapshot: z.unknown().optional(),
 }).passthrough();
 
+const listingPreviewSchema = z
+  .object({
+    title: z.string().optional(),
+    description: z.string().optional(),
+    titleSource: z.string().optional(),
+  })
+  .passthrough();
+
+export const intakePublishSnapshotSchema = z.object({
+  schemaVersion: z.literal(2),
+  draft: needDraftSchema,
+  listingPreview: listingPreviewSchema,
+  draftRevision: z.number().int().nonnegative(),
+  draftHash: z.string().regex(/^[a-f0-9]{64}$/i),
+  idempotencyKey: z.string().min(16).max(160),
+  createdAt: z.string().datetime(),
+});
+
 export const publishRequestSchema = z.object({
   draft: needDraftSchema,
-  listingPreview: z
-    .object({
-      title: z.string().optional(),
-      description: z.string().optional(),
-      titleSource: z.string().optional(),
-    })
-    .optional(),
+  listingPreview: listingPreviewSchema.optional(),
+  snapshot: intakePublishSnapshotSchema.optional(),
+  idempotencyKey: z.string().min(16).max(160).optional(),
   sessionId: z.string().optional(),
   linkToBusinessProfile: z.boolean().optional(),
 });

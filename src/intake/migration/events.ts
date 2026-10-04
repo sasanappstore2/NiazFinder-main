@@ -6,7 +6,8 @@ export type IntakeMigrationEventType =
   | 'NeedDraftUpdated'
   | 'LegacyWriteDetected'
   | 'CanonicalDiffDetected'
-  | 'ShadowPublishComparison';
+  | 'ShadowPublishComparison'
+  | 'CognitiveEngineShadowComparison';
 
 export async function recordIntakeMigrationEvent(
   type: IntakeMigrationEventType,
@@ -120,6 +121,61 @@ export async function getShadowPublishStats(since: Date): Promise<{
   try {
     const events = await db.intakeMigrationEvent.findMany({
       where: { type: 'ShadowPublishComparison', createdAt: { gte: since } },
+      select: { payload: true },
+    });
+
+    let equal = 0;
+    let diff = 0;
+    const fieldCounts = new Map<string, number>();
+
+    for (const event of events) {
+      let parsed: {
+        equal?: boolean;
+        diffs?: Array<{ field: string }>;
+      } = {};
+      try {
+        parsed = JSON.parse(event.payload) as typeof parsed;
+      } catch {
+        continue;
+      }
+      if (parsed.equal) {
+        equal += 1;
+      } else {
+        diff += 1;
+        for (const d of parsed.diffs ?? []) {
+          fieldCounts.set(d.field, (fieldCounts.get(d.field) ?? 0) + 1);
+        }
+      }
+    }
+
+    const total = events.length;
+    return {
+      total,
+      equal,
+      diff,
+      driftRate: total > 0 ? diff / total : 0,
+      topDiffFields: [...fieldCounts.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([field, count]) => ({ field, count })),
+    };
+  } catch {
+    return { total: 0, equal: 0, diff: 0, driftRate: 0, topDiffFields: [] };
+  }
+}
+
+/** Mirrors getShadowPublishStats exactly, for the RFC-002 cognitive-engine shadow comparison
+ *  recorded at publish time (see src/cognitive-engine/shadow/compare-with-legacy.ts). */
+export async function getCognitiveEngineShadowStats(since: Date): Promise<{
+  total: number;
+  equal: number;
+  diff: number;
+  driftRate: number;
+  topDiffFields: Array<{ field: string; count: number }>;
+}> {
+  try {
+    const events = await db.intakeMigrationEvent.findMany({
+      where: { type: 'CognitiveEngineShadowComparison', createdAt: { gte: since } },
       select: { payload: true },
     });
 

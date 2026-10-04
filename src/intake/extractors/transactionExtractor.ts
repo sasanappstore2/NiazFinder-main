@@ -6,10 +6,80 @@ import {
   textHasRahnSignal,
   textHasRentSignal,
 } from '@/lib/need-intake/deal-type-helpers';
+import {
+  findKeywordIndicesWithFuzzyRepair,
+  hasMoneyMentionNear,
+  moneyMentionsInText,
+} from '@/lib/need-intake/parse-persian-amount';
 
 interface TransactionHit {
   type: TransactionType;
   confidence: number;
+}
+
+const RAHN_KW = 'رهن';
+const VADIYEH_KW = 'ودیعه';
+const KAMEL_KW = 'کامل';
+const KHRID_KW = 'خرید';
+const FAGHAT_KW = 'فقط';
+
+/** Context that makes a fuzzy «خرید» typo trustworthy (property or price nearby). */
+const PROPERTY_OR_PRICE_CONTEXT =
+  /آپارتمان|خانه|خونه|ویلا|مغازه|دفتر|زمین|سوئیت|ملک|باغ|بالای|زیر|میلیون|میلیارد|تومان|اجاره/u;
+
+/**
+ * True when the exact رهن/ودیعه spellings are absent but a UNIQUE single-edit
+ * near-token exists. The global fuzzy corrector intentionally keeps short
+ * tokens untouched (3-letter words only take same-length fixes and ambiguous
+ * candidates are rejected), so «رنه/ره/رن/هن» reach rule matching as-is.
+ */
+function fuzzyDepositSignal(text: string): boolean {
+  return (
+    findKeywordIndicesWithFuzzyRepair(text, RAHN_KW).fuzzy ||
+    findKeywordIndicesWithFuzzyRepair(text, VADIYEH_KW).fuzzy
+  );
+}
+
+/**
+ * Single-typo repair for the full-deposit phrase («رهن کامل» / «فقط رهن»).
+ * Fires only when no exact spelling survives: one رهن-family token (exact or
+ * unique fuzzy) directly adjacent to a perfect-or-typo'd «کامل» («رهن کام»,
+ * «رهن کال», «رنه کامل»), or to «فقط», and anchored by a money mention nearby.
+ * Negations («رهن کامل نیست») stay excluded.
+ */
+function detectFuzzyFullDeposit(text: string): boolean {
+  if (/رهن\s*کامل|فقط\s*رهن/u.test(text)) return false; // exact RULES path owns these
+  if (/رهن\s*کامل\s*نیست/u.test(text)) return false;
+  const rahn = findKeywordIndicesWithFuzzyRepair(text, RAHN_KW);
+  if (rahn.indices.length === 0) return false;
+  const mentions = moneyMentionsInText(text);
+  if (mentions.length === 0) return false;
+
+  const maxPairGap = RAHN_KW.length + KAMEL_KW.length + 2;
+  const kamel = findKeywordIndicesWithFuzzyRepair(text, KAMEL_KW);
+  for (const ri of rahn.indices) {
+    const rEnd = ri + RAHN_KW.length;
+    for (const ki of kamel.indices) {
+      const start = Math.min(ri, ki);
+      const end = Math.max(rEnd, ki + KAMEL_KW.length);
+      if (end - start <= maxPairGap && hasMoneyMentionNear(mentions, start, end)) {
+        return true;
+      }
+    }
+  }
+  for (const m of text.matchAll(/(?<![\u0600-\u06FF])فقط(?![\u0600-\u06FF])/gu)) {
+    const fi = m.index ?? -1;
+    if (fi < 0) continue;
+    const fEnd = fi + FAGHAT_KW.length;
+    for (const ri of rahn.indices) {
+      const start = Math.min(fi, ri);
+      const end = Math.max(fEnd, ri + RAHN_KW.length);
+      if (end - start <= maxPairGap && hasMoneyMentionNear(mentions, start, end)) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 const RULES: Array<{ type: TransactionType; patterns: RegExp[]; confidence: number }> = [
@@ -25,7 +95,15 @@ const RULES: Array<{ type: TransactionType; patterns: RegExp[]; confidence: numb
   },
   {
     type: 'DAILY_RENT',
-    patterns: [/اجاره\s*روزانه/u, /روزانه/u, /کوتاه\s*مدت/u, /کوتاه‌مدت/u, /هر\s*شب/u],
+    patterns: [
+      /اجاره\s*روزانه/u,
+      /اجاره\s*کوتاه[\s‌]*مدت/u,
+      /کوتاه[\s‌]*مدت/u,
+      /هر\s*شب/u,
+      /تومان\s*شب/u,
+      /سوئیت\s*روزانه/u,
+      /اجاره\s*شبانه(?!\u200c?روزی)/u,
+    ],
     confidence: 0.92,
   },
   {
@@ -35,7 +113,8 @@ const RULES: Array<{ type: TransactionType; patterns: RegExp[]; confidence: numb
   },
   {
     type: 'RENT',
-    patterns: [/اجاره\s*ماهانه/u, /اجاره/u, /رنت/u, /مستاجر/u],
+    // Avoid «رنت» inside «اینترنت» (#617).
+    patterns: [/اجاره\s*ماهانه/u, /اجاره/u, /(?<![\u0600-\u06FFa-zA-Z])رنت(?![\u0600-\u06FFa-zA-Z])/u, /مستاجر/u],
     confidence: 0.85,
   },
   {
@@ -45,7 +124,8 @@ const RULES: Array<{ type: TransactionType; patterns: RegExp[]; confidence: numb
   },
   {
     type: 'SELL',
-    patterns: [/فروش/u, /می\s*فروشم/u, /میفروشم/u],
+    // Avoid «میوه‌فروشی» / «کتاب‌فروشی» shop nouns (#592).
+    patterns: [/فروش(?!ی)/u, /می\s*فروشم/u, /میفروشم/u],
     confidence: 0.88,
   },
 ];
@@ -54,26 +134,59 @@ const RULES: Array<{ type: TransactionType; patterns: RegExp[]; confidence: numb
  * Detect transaction intent. Does NOT infer BUY from vague «میخوام» alone.
  */
 export function extractTransactionType(normalizedText: string): TransactionHit | null {
-  if (isSeekerRahnEjareDeal(normalizedText)) {
-    return { type: 'DEPOSIT_AND_RENT', confidence: 0.93 };
-  }
-  if (hasExplicitRahnAndRentAmounts(normalizedText) && textHasRahnSignal(normalizedText) && textHasRentSignal(normalizedText)) {
-    return { type: 'DEPOSIT_AND_RENT', confidence: 0.92 };
-  }
-  if (
-    textHasRahnSignal(normalizedText) &&
-    textHasRentSignal(normalizedText) &&
-    /رهن\s*و\s*اجاره/u.test(normalizedText)
-  ) {
-    return { type: 'DEPOSIT_AND_RENT', confidence: 0.91 };
-  }
-
+  // Prefer short-term before rahn+ejare so «کد رهگیری» does not win over کوتاه‌مدت/هر شب.
   for (const rule of RULES) {
+    if (rule.type !== 'DAILY_RENT' && rule.type !== 'HOURLY_RENT') continue;
     for (const re of rule.patterns) {
       if (re.test(normalizedText)) {
         return { type: rule.type, confidence: rule.confidence };
       }
     }
+  }
+
+  if (isSeekerRahnEjareDeal(normalizedText)) {
+    return { type: 'DEPOSIT_AND_RENT', confidence: 0.93 };
+  }
+  const rahnSignal = textHasRahnSignal(normalizedText);
+  const fuzzyDeposit = rahnSignal ? false : fuzzyDepositSignal(normalizedText);
+  if (
+    (rahnSignal || fuzzyDeposit) &&
+    textHasRentSignal(normalizedText) &&
+    hasExplicitRahnAndRentAmounts(normalizedText)
+  ) {
+    return {
+      type: 'DEPOSIT_AND_RENT',
+      confidence: rahnSignal ? 0.92 : 0.88,
+    };
+  }
+  if (
+    rahnSignal &&
+    textHasRentSignal(normalizedText) &&
+    /رهن\s*و\s*اجاره/u.test(normalizedText)
+  ) {
+    return { type: 'DEPOSIT_AND_RENT', confidence: 0.91 };
+  }
+  // Single-typo repair: «رنه کامل ۶۵۰ میلیون» must not fall through to the
+  // BUY inference that budget magnitude triggers downstream.
+  if (detectFuzzyFullDeposit(normalizedText)) {
+    return { type: 'FULL_DEPOSIT', confidence: 0.9 };
+  }
+
+  for (const rule of RULES) {
+    if (rule.type === 'DAILY_RENT' || rule.type === 'HOURLY_RENT') continue;
+    for (const re of rule.patterns) {
+      if (re.test(normalizedText)) {
+        return { type: rule.type, confidence: rule.confidence };
+      }
+    }
+  }
+
+  // Last resort: «خری/خید» — a unique single-edit typo of «خرید» (the global
+  // corrector keeps such short tokens untouched), anchored by property/price
+  // context so a stray lookalike word cannot manufacture a BUY intent.
+  const khridHit = findKeywordIndicesWithFuzzyRepair(normalizedText, KHRID_KW);
+  if (khridHit.fuzzy && PROPERTY_OR_PRICE_CONTEXT.test(normalizedText)) {
+    return { type: 'BUY', confidence: 0.78 };
   }
   return null;
 }

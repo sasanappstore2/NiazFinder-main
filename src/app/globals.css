@@ -7,6 +7,8 @@
 @import "../styles/chat/bubble.css";
 @import "../styles/chat/composer.css";
 @import "../styles/intake-golden.css";
+@import "../styles/filing-golden.css";
+@import "../styles/filing-detail-layout.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -73,12 +75,12 @@
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.995 0.001 120);
-  --foreground: oklch(0.145 0.005 160);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0.005 160);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0.005 160);
+  --background: oklch(0.978 0.004 145);
+  --foreground: oklch(0.22 0.008 160);
+  --card: oklch(0.993 0.002 140);
+  --card-foreground: oklch(0.22 0.008 160);
+  --popover: oklch(0.993 0.002 140);
+  --popover-foreground: oklch(0.22 0.008 160);
   --primary: oklch(0.51 0.12 165);
   --primary-foreground: oklch(0.99 0.002 120);
   --secondary: oklch(0.965 0.005 155);
@@ -97,7 +99,7 @@
   --chart-4: oklch(0.55 0.18 255);
   --chart-5: oklch(0.7 0.15 55);
   --sidebar: oklch(0.985 0.003 155);
-  --sidebar-foreground: oklch(0.145 0.005 160);
+  --sidebar-foreground: oklch(0.22 0.008 160);
   --sidebar-primary: oklch(0.51 0.12 165);
   --sidebar-primary-foreground: oklch(0.99 0.002 120);
   --sidebar-accent: oklch(0.965 0.005 155);
@@ -198,6 +200,75 @@
   .font-mono {
     font-family: var(--font-sans);
   }
+}
+
+/* ── iOS zoom-on-focus guard ──
+   On iOS Safari/Chrome, focusing a form control whose font-size is < 16px
+   auto-zooms the page, after which the user can pan it sideways — the root of
+   the "keyboard opens and the screen drifts left/right" bug. Force ≥16px on
+   touch/phone viewports only (desktop keeps the designed dense sizes). The
+   !important is required to beat utility classes (text-sm / text-[15px]). */
+@media (max-width: 639px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Never let the document itself scroll sideways on phones — a stray wide child
+   should clip, not turn the whole page into a horizontal pan surface. `clip`
+   (unlike `hidden`) creates no scroll container, so it won't break sticky. */
+@media (max-width: 639px) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+}
+
+/* ── Native-app feel (safe on desktop too) ── */
+html {
+  /* Don't let iOS reflow text on rotation; no grey tap flash. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Horizontal scrollers (chip rows, tab strips, carousels, category rails) must
+   not chain their overscroll to the document: a sideways swipe past the end
+   would otherwise fire the browser's back/forward gesture and yank the whole
+   page sideways — exactly the "screen pans left/right on interaction" bug. */
+.overflow-x-auto,
+.overflow-x-scroll,
+.no-scrollbar {
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Vertical scroll regions (sheets, dialogs, chat panes, dropdown lists) keep
+   their bounce to themselves so the page behind them never moves. */
+[data-radix-scroll-area-viewport],
+[role='dialog'] [data-scrollable],
+.overscroll-contain {
+  overscroll-behavior: contain;
+}
+
+/* Interactive chrome behaves like native controls: no 300ms tap delay / no
+   double-tap zoom, no accidental text selection or iOS callout on long-press.
+   Scoped to controls — body text stays selectable. */
+button,
+a,
+label,
+summary,
+[role='button'],
+[role='tab'],
+[role='menuitem'],
+[role='option'],
+[role='switch'] {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* ── Layout (Fibonacci + golden — padding in responsive-golden.css) ── */
@@ -1225,6 +1296,13 @@
 .shell-root:has(.has-sticky-contact-bar) .back-to-top-progress {
   bottom: calc(var(--mobile-nav-offset) + var(--need-detail-scroll-pad));
 }
+
+/* Hide back-to-top while the cookie consent banner is open — the two floating
+   controls otherwise stack on the same corner and the buttons collide. */
+.shell-root:has(.cookie-consent-anchor[data-open]) .back-to-top-progress {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 .back-to-top-progress circle {
   transition: stroke-dashoffset 0.15s ease;
 }
@@ -1337,14 +1415,17 @@
    TASK 1C: Mobile Bottom Nav Glassmorphism
    ══════════════════════════════════════════════════════════════ */
 .mobile-nav-glass {
-  background: oklch(0.99 0.002 120 / 0.82);
+  /* Opaque enough that scrolling content never fights the labels — blur can be
+     unavailable (iOS Low Power Mode), so the base color must carry legibility. */
+  /* Plain rgba (not oklch) — paints identically in every renderer. */
+  background: rgba(252, 253, 252, 0.92);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid oklch(0.92 0.01 160 / 0.55);
+  border: 1px solid rgba(215, 226, 220, 0.55);
 }
 .dark .mobile-nav-glass {
-  background: oklch(0.16 0.008 160 / 0.88);
-  border-color: oklch(0.28 0.02 160 / 0.45);
+  background: rgba(28, 34, 31, 0.94);
+  border-color: rgba(62, 74, 68, 0.45);
 }
 
 .mobile-nav-gradient-top {
@@ -1377,6 +1458,14 @@
 
 .voice-call-float-wrap--above-mobile-nav {
   bottom: calc(var(--mobile-nav-offset) + 0.5rem);
+}
+
+/* Clear chat composer + safe-area while minimized call bar is shown on /chat */
+.voice-call-float-wrap--above-composer {
+  bottom: max(
+    4.5rem,
+    calc(env(safe-area-inset-bottom, 0px) + 4.25rem)
+  );
 }
 
 /* ══════════════════════════════════════════════════════════════

@@ -19,15 +19,15 @@ const postIntakeEventSchema = z.discriminatedUnion('type', [
   eventBaseSchema.extend({
     type: z.literal('step_change'),
     fromStep: z
-      .enum(['need', 'details', 'location', 'preview', 'publishing', 'done'])
+      .enum(['compose', 'need', 'details', 'location', 'preview', 'publishing', 'done'])
       .nullable(),
-    toStep: z.enum(['need', 'details', 'location', 'preview', 'publishing', 'done']),
+    toStep: z.enum(['compose', 'need', 'details', 'location', 'preview', 'publishing', 'done']),
     direction: z.enum(['forward', 'back', 'jump']),
     durationOnPreviousStepMs: z.number().nonnegative().optional(),
   }),
   eventBaseSchema.extend({
     type: z.literal('field_change'),
-    step: z.enum(['need', 'details', 'location', 'preview', 'publishing', 'done']),
+    step: z.enum(['compose', 'need', 'details', 'location', 'preview', 'publishing', 'done']),
     fieldKey: z.string().min(1).max(128),
     fieldType: z.string().min(1).max(64),
     changedFrom: z.unknown(),
@@ -36,7 +36,7 @@ const postIntakeEventSchema = z.discriminatedUnion('type', [
   }),
   eventBaseSchema.extend({
     type: z.literal('validation_error'),
-    step: z.enum(['need', 'details', 'location', 'preview', 'publishing', 'done']),
+    step: z.enum(['compose', 'need', 'details', 'location', 'preview', 'publishing', 'done']),
     field: z.string().min(1).max(128),
     message: z.string().min(1).max(500),
     source: z.enum(['publish_validator', 'preview_gate', 'wizard_gate']),
@@ -52,7 +52,7 @@ const postIntakeEventSchema = z.discriminatedUnion('type', [
   }),
   eventBaseSchema.extend({
     type: z.literal('dropoff'),
-    lastStep: z.enum(['need', 'details', 'location', 'preview', 'publishing', 'done']),
+    lastStep: z.enum(['compose', 'need', 'details', 'location', 'preview', 'publishing', 'done']),
     reason: z.enum(['page_unmount', 'navigation', 'session_reset']),
     durationOnLastStepMs: z.number().nonnegative(),
     completionScore: z.number().optional(),

@@ -252,7 +252,7 @@ export function FileUploadPreview({ onSend, onCancel }: FileUploadPreviewProps) 
           animate="visible"
           exit="exit"
           dir="rtl"
-          className="mx-auto w-full max-w-3xl rounded-xl border border-border/50 bg-card p-3 shadow-lg backdrop-blur-xs"
+          className="mx-auto w-full max-w-3xl rounded-xl border border-border/50 bg-card p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-lg backdrop-blur-xs"
         >
           {/* ─── Header: file count + total size + add more ─── */}
           <div className="mb-2 flex items-center justify-between">

@@ -30,7 +30,6 @@ import { IntakeIntelligenceModule } from './modules/intake-intelligence/intake-i
 import { InternalModule } from './modules/internal/internal.module';
 import { IntentParserModule } from './intent-parser/intent-parser.module';
 import { SmartMatchingModule } from './modules/smart-matching/smart-matching.module';
-import { AiAgentModule } from './modules/ai-agent/ai-agent.module';
 import { NotificationsGateway } from './gateways/notifications.gateway';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
@@ -137,7 +136,6 @@ const entities = [
     InternalModule,
     IntentParserModule,
     SmartMatchingModule,
-    AiAgentModule,
   ],
   providers: [
     // ─── WebSocket Gateways (ChatGateway is provided by ChatModule) ───

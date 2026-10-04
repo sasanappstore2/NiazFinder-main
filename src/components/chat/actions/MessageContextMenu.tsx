@@ -1,6 +1,6 @@
 'use client';
 
-import { MoreHorizontal, Pin, PinOff, Reply } from 'lucide-react';
+import { MoreHorizontal, Pin, PinOff, Reply, Star, Forward } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,12 +21,13 @@ export interface MessageContextMenuProps {
   onDeleteForEveryone: () => void;
   isPinned?: boolean;
   onPin?: () => void;
-  /** Controlled open (mobile long-press). */
+  isStarred?: boolean;
+  onToggleStar?: () => void;
+  onForward?: () => void;
+  onCopy?: () => void;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** Desktop hover rail — reply + ⋯ buttons. */
   showTriggers?: boolean;
-  /** Hidden anchor over bubble for mobile menu positioning. */
   anchorOnly?: boolean;
 }
 
@@ -40,6 +41,10 @@ function MessageContextMenuItems({
   canEdit,
   isPinned = false,
   onPin,
+  isStarred = false,
+  onToggleStar,
+  onForward,
+  onCopy,
   onClose,
 }: Pick<
   MessageContextMenuProps,
@@ -52,6 +57,10 @@ function MessageContextMenuItems({
   | 'canEdit'
   | 'isPinned'
   | 'onPin'
+  | 'isStarred'
+  | 'onToggleStar'
+  | 'onForward'
+  | 'onCopy'
 > & { onClose?: () => void }) {
   const close = () => onClose?.();
 
@@ -66,6 +75,30 @@ function MessageContextMenuItems({
       >
         پاسخ
       </DropdownMenuItem>
+      {onCopy ? (
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            onCopy();
+            close();
+          }}
+        >
+          کپی متن
+        </DropdownMenuItem>
+      ) : null}
+      {onForward ? (
+        <DropdownMenuItem
+          className="gap-2"
+          onSelect={(e) => {
+            e.preventDefault();
+            onForward();
+            close();
+          }}
+        >
+          <Forward className="size-4 opacity-70" />
+          هدایت
+        </DropdownMenuItem>
+      ) : null}
       <DropdownMenuItem
         onSelect={(e) => {
           e.preventDefault();
@@ -93,7 +126,20 @@ function MessageContextMenuItems({
       >
         ❤️ لاو
       </DropdownMenuItem>
-      {canEdit && onEdit && (
+      {onToggleStar ? (
+        <DropdownMenuItem
+          className="gap-2"
+          onSelect={(e) => {
+            e.preventDefault();
+            onToggleStar();
+            close();
+          }}
+        >
+          <Star className={cn('size-4', isStarred && 'fill-amber-400 text-amber-500')} />
+          {isStarred ? 'برداشتن ستاره' : 'ستاره‌دار کردن'}
+        </DropdownMenuItem>
+      ) : null}
+      {canEdit && onEdit ? (
         <DropdownMenuItem
           onSelect={(e) => {
             e.preventDefault();
@@ -103,8 +149,8 @@ function MessageContextMenuItems({
         >
           ویرایش پیام
         </DropdownMenuItem>
-      )}
-      {onPin && (
+      ) : null}
+      {onPin ? (
         <DropdownMenuItem
           className="gap-2"
           onSelect={(e) => {
@@ -125,7 +171,7 @@ function MessageContextMenuItems({
             </>
           )}
         </DropdownMenuItem>
-      )}
+      ) : null}
       <DropdownMenuSeparator />
       <DropdownMenuItem
         onSelect={(e) => {
@@ -136,7 +182,7 @@ function MessageContextMenuItems({
       >
         حذف یک‌طرفه
       </DropdownMenuItem>
-      {canDeleteForEveryone && (
+      {canDeleteForEveryone ? (
         <DropdownMenuItem
           className="text-destructive focus:text-destructive"
           onSelect={(e) => {
@@ -147,7 +193,7 @@ function MessageContextMenuItems({
         >
           حذف دوطرفه
         </DropdownMenuItem>
-      )}
+      ) : null}
     </>
   );
 }
@@ -163,11 +209,34 @@ export function MessageContextMenu({
   onDeleteForEveryone,
   isPinned = false,
   onPin,
+  isStarred = false,
+  onToggleStar,
+  onForward,
+  onCopy,
   open,
   onOpenChange,
   showTriggers = true,
   anchorOnly = false,
 }: MessageContextMenuProps) {
+  const items = (
+    <MessageContextMenuItems
+      onReply={onReply}
+      onReact={onReact}
+      onEdit={onEdit}
+      onDeleteForMe={onDeleteForMe}
+      onDeleteForEveryone={onDeleteForEveryone}
+      canDeleteForEveryone={canDeleteForEveryone}
+      canEdit={canEdit}
+      isPinned={isPinned}
+      onPin={onPin}
+      isStarred={isStarred}
+      onToggleStar={onToggleStar}
+      onForward={onForward}
+      onCopy={onCopy}
+      onClose={() => onOpenChange?.(false)}
+    />
+  );
+
   const menu = (
     <DropdownMenu open={open} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild>
@@ -192,29 +261,13 @@ export function MessageContextMenu({
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align={isMe ? 'end' : 'start'} side={anchorOnly ? 'top' : 'bottom'}>
-        <MessageContextMenuItems
-          onReply={onReply}
-          onReact={onReact}
-          onEdit={onEdit}
-          onDeleteForMe={onDeleteForMe}
-          onDeleteForEveryone={onDeleteForEveryone}
-          canDeleteForEveryone={canDeleteForEveryone}
-          canEdit={canEdit}
-          isPinned={isPinned}
-          onPin={onPin}
-          onClose={() => onOpenChange?.(false)}
-        />
+        {items}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 
-  if (anchorOnly) {
-    return menu;
-  }
-
-  if (!showTriggers) {
-    return null;
-  }
+  if (anchorOnly) return menu;
+  if (!showTriggers) return null;
 
   return (
     <>

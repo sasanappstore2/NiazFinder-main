@@ -1,20 +1,24 @@
 'use client';
 
-import { ImageIcon, LayoutList, Store, UserRound, Users } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { routeBuilder } from '@/config/routes';
 import { useBusinessHub } from './BusinessHubContext';
+import { getVisibleHubTasks } from './hub-tasks';
 import type { HubTaskId } from './types';
 
-const ITEMS: { id: HubTaskId; label: string; icon: typeof Store }[] = [
-  { id: 'storefront', label: 'ویترین', icon: LayoutList },
-  { id: 'profile', label: 'معرفی', icon: UserRound },
-  { id: 'brand', label: 'عکس', icon: Store },
-  { id: 'gallery', label: 'نمونه', icon: ImageIcon },
-  { id: 'contacts', label: 'تیم', icon: Users },
-];
-
 export function BusinessHubMobileNav() {
-  const { activeTask, setActiveTask } = useBusinessHub();
+  const router = useRouter();
+  const { activeTask, setActiveTask, profile } = useBusinessHub();
+  const items = getVisibleHubTasks(profile);
+
+  const selectTask = (id: HubTaskId) => {
+    if (id === 'filings') {
+      router.push(routeBuilder.workspace());
+      return;
+    }
+    setActiveTask(id);
+  };
 
   return (
     <nav
@@ -22,20 +26,20 @@ export function BusinessHubMobileNav() {
       aria-label="منوی کسب‌وکار"
     >
       <div className="mx-auto flex max-w-lg">
-        {ITEMS.map(({ id, label, icon: Icon }) => {
+        {items.map(({ id, shortLabel, icon: Icon }) => {
           const active = activeTask === id;
           return (
             <button
               key={id}
               type="button"
-              onClick={() => setActiveTask(id)}
+              onClick={() => selectTask(id)}
               className={cn(
-                'flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium touch-target-min',
+                'flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-medium touch-target-min',
                 active ? 'text-emerald-700 dark:text-emerald-400' : 'text-muted-foreground'
               )}
             >
               <Icon className={cn('size-5', active && 'text-emerald-600')} />
-              {label}
+              {shortLabel}
             </button>
           );
         })}

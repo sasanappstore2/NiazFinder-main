@@ -13,6 +13,7 @@ export type AdminSectionId =
   | 'proposals'
   | 'businesses'
   | 'outreach'
+  | 'filings'
   | 'need-alerts'
   | 'users'
   | 'reports'
@@ -41,6 +42,7 @@ export const ADMIN_SECTION_ROUTES: Record<AdminSectionId, string> = {
   proposals: '/super-admin/proposals',
   businesses: '/super-admin/businesses',
   outreach: '/super-admin/outreach',
+  filings: '/super-admin/filings',
   'need-alerts': '/super-admin/need-alerts',
   users: '/super-admin/users',
   reports: '/super-admin/reports',
@@ -70,6 +72,7 @@ export const ADMIN_ROUTE_TO_SECTION: Record<string, AdminSectionId> = {
   proposals: 'proposals',
   businesses: 'businesses',
   outreach: 'outreach',
+  filings: 'filings',
   'need-alerts': 'need-alerts',
   users: 'users',
   reports: 'reports',
@@ -99,6 +102,7 @@ export const ADMIN_SECTION_PERMISSIONS: Record<AdminSectionId, AdminPermissionId
   proposals: 'market:proposals:read',
   businesses: 'market:businesses:read',
   outreach: 'market:outreach:read',
+  filings: 'market:filings:read',
   'need-alerts': 'market:alerts:read',
   users: 'crm:users:read',
   reports: 'content:reports:read',

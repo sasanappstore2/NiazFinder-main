@@ -144,23 +144,6 @@ function MapPinPicker({ context }: FieldRendererProps) {
   if (!context.selectedCity.trim()) return null;
 
   const selectedSlug = context.entities?.neighborhoodSlug?.trim();
-  const disambiguation =
-    context.neighborhoodDisambiguationChips.length >= 2
-      ? {
-          options: context.neighborhoodDisambiguationChips,
-          selectedValue: selectedSlug ? `neighborhood:${selectedSlug}` : undefined,
-          onSelect: (value: string) => {
-            if (!value.startsWith('neighborhood:')) return;
-            const slug = value.slice('neighborhood:'.length);
-            const hood = context.neighborhoodOptions.find((n) => n.id === slug);
-            const hit = context.needDraft?.parsedIntent.neighborhoodCandidates?.find(
-              (n) => n.slug === slug
-            );
-            const label = (hood?.name ?? hit?.label ?? slug).trim();
-            if (label) context.onNeighborhoodChange(label, slug, { fromUser: true });
-          },
-        }
-      : undefined;
 
   return (
     <NeedMapPinPicker
@@ -169,7 +152,6 @@ function MapPinPicker({ context }: FieldRendererProps) {
       lat={context.entities?.lat ?? null}
       lng={context.entities?.lng ?? null}
       onChange={context.onMapPinChange}
-      neighborhoodDisambiguation={disambiguation}
       neighborhoodSlug={
         selectedSlug ||
         context.neighborhoodOptions.find((n) => n.name === context.selectedNeighborhood.trim())?.id ||

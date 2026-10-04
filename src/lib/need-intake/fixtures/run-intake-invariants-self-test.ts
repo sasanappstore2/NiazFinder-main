@@ -4,7 +4,10 @@
  */
 import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
 import { extractPropertySlotsFromText } from '@/lib/need-intake/extract-property-slots';
-import { parsePersianAmountPhrase } from '@/lib/need-intake/parse-persian-amount';
+import {
+  extractPropertyMoneyFromText,
+  parsePersianAmountPhrase,
+} from '@/lib/need-intake/parse-persian-amount';
 import { resolveTransactionType } from '@/lib/need-intake/resolve-transaction-type';
 import { findManagedNeighborhoodAmbiguity } from '@/lib/neighborhoods/find-managed-neighborhood-ambiguity';
 import { getNeighborhoodCatalogForCity } from '@/lib/need-intake/neighborhood-catalog.server';
@@ -96,6 +99,15 @@ assert(
   budgetFrag === '\u0637\u0627\u0644\u0642\u0627\u0646\u06CC',
   `budget should not bleed into hood fragment: ${budgetFrag}`
 );
+
+const cultureBudget = extractPropertyMoneyFromText(
+  'یک ملک اداری ۱۲۸ متری برای راه‌اندازی دفتر وکالت در فرهنگ شهر شیراز می‌خواهم؛ بودجه‌ام حدود ۵۷ میلیارد تومان است.'
+);
+assert(
+  cultureBudget.budgetMax === 57_000_000_000,
+  `فرهنگ شهر must not be treated as رهن: ${JSON.stringify(cultureBudget)}`
+);
+assert(cultureBudget.rahnAmount == null, 'فرهنگ شهر must not create rahnAmount');
 
 const TX_CASES: { text: string; category: string; expected: string }[] = [
   {

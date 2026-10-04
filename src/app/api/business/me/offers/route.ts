@@ -9,6 +9,7 @@ import {
   serializeOfferStorefrontFeatures,
 } from '@/lib/business/offer-storefront-meta';
 import { buildOfferFeaturesFromBody } from '@/lib/business/serialize-offer-payload';
+import { queueBusinessProfileSearchSync } from '@/lib/rag/sync';
 
 export const runtime = 'nodejs';
 
@@ -99,6 +100,8 @@ export async function POST(request: NextRequest) {
         order: count,
       },
     });
+
+    queueBusinessProfileSearchSync(profile.id);
 
     return NextResponse.json({ id: offer.id, message: 'ذخیره شد' }, { status: 201 });
   } catch (error) {

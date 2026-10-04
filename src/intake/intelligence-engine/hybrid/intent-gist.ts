@@ -1,5 +1,6 @@
 import { localChatCompletions } from '@/lib/need-intake/local-chat-client';
 import { getLocalModelConfig } from '@/lib/need-intake/local-model-config';
+import { isLocalLlmOnly } from '@/lib/local-llm/config';
 import { geminiChatCompletions } from '@/lib/gemini/chat-completions';
 import { getGeminiIntentGistModelId, isGeminiConfigured } from '@/lib/gemini/config';
 import { isIntakeAiGloballyDisabled } from '@/intake/rules/config';
@@ -88,7 +89,9 @@ async function callIntentGistLlm(
     { role: 'user' as const, content: buildIntentGistUserPrompt(text, hints) },
   ];
   const maxTokens = Number(process.env.NEED_INTAKE_INTENT_GIST_MAX_TOKENS ?? 512);
-  const preferGemini = process.env.NEED_INTAKE_INTENT_GIST_PROVIDER?.trim().toLowerCase() === 'gemini';
+  const gistProvider = process.env.NEED_INTAKE_INTENT_GIST_PROVIDER?.trim().toLowerCase();
+  const preferGemini =
+    !isLocalLlmOnly() && gistProvider === 'gemini';
   const localTimeoutMs = Number(process.env.NEED_INTAKE_INTENT_GIST_LOCAL_TIMEOUT_MS ?? 4000);
 
   const tryGemini = async (): Promise<{ gist: string; provider: string } | null> => {

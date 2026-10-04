@@ -15,13 +15,10 @@ import { BusinessStorefrontPanel } from './panels/BusinessStorefrontPanel';
 import { BusinessGalleryPanel } from './panels/BusinessGalleryPanel';
 import { BusinessContactsPanel } from './panels/BusinessContactsPanel';
 
-const PANEL_TITLES = {
-  storefront: 'ویترین و محصولات',
-  profile: 'معرفی و تماس',
-  brand: 'عکس و لینک‌ها',
-  gallery: 'نمونه کارها',
-  contacts: 'مخاطبین و تیم',
-} as const;
+import { BusinessFilingsPanel } from './panels/BusinessFilingsPanel';
+import { HUB_TASK_LABELS } from './hub-tasks';
+
+const PANELS_WITHOUT_HEADING = new Set(['storefront', 'filings']);
 
 function BusinessHubBody({
   onProfileSaved,
@@ -42,16 +39,22 @@ function BusinessHubBody({
             <Loader2 className="size-4 animate-spin text-muted-foreground" />
           </div>
         )}
-        {activeTask !== 'storefront' && (
-          <h2 className="mb-4 text-base font-semibold">{PANEL_TITLES[activeTask]}</h2>
+        {activeTask !== 'storefront' && !PANELS_WITHOUT_HEADING.has(activeTask) && (
+          <h2 className="mb-4 text-base font-semibold">{HUB_TASK_LABELS[activeTask]}</h2>
         )}
 
-        <div className={cn(refreshing && 'opacity-60 pointer-events-none', activeTask === 'storefront' && 'pt-0')}>
+        <div
+          className={cn(
+            refreshing && 'opacity-60 pointer-events-none',
+            activeTask === 'storefront' && 'pt-0'
+          )}
+        >
           {activeTask === 'storefront' && <BusinessStorefrontPanel />}
           {activeTask === 'profile' && <BusinessProfilePanel onSaved={onProfileSaved} />}
           {activeTask === 'brand' && <BusinessBrandPanel />}
           {activeTask === 'gallery' && <BusinessGalleryPanel />}
           {activeTask === 'contacts' && <BusinessContactsPanel />}
+          {activeTask === 'filings' && <BusinessFilingsPanel />}
         </div>
       </div>
 

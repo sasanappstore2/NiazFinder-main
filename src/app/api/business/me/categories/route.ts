@@ -7,7 +7,7 @@ import { parseJsonArray, parseJsonObject, toJson } from '@/lib/business/json-fie
 import { getBlueprintForOccupationSlug } from '@/config/business-profile-blueprints';
 import { isPickableProfileCategorySlug } from '@/lib/business/business-category';
 import type { ProfileLayoutConfig } from '@/contracts/business-profile';
-import { queueBusinessProfileTypesenseSync } from '@/lib/search/typesense-sync';
+import { queueBusinessProfileSearchSync } from '@/lib/rag/sync';
 
 export const runtime = 'nodejs';
 
@@ -93,7 +93,7 @@ export async function PATCH(request: NextRequest) {
       },
     });
 
-    queueBusinessProfileTypesenseSync(profile.id);
+    queueBusinessProfileSearchSync(profile.id);
 
     return NextResponse.json({
       message: 'حوزهٔ کاری ذخیره شد',

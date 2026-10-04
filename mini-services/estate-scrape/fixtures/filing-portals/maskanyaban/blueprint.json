@@ -1,0 +1,104 @@
+{
+  "version": 2,
+  "portalFamily": "maskanyaban",
+  "listPage": {
+    "fetchMode": "ajaxHtml",
+    "containerSelector": "a[id][href*=\"/home/\"]",
+    "dedupField": "fileCode",
+    "pagination": {
+      "mode": "ajaxPost",
+      "urlTemplate": "https://maskanyaban.ir/Melk/_SelectAll?page={page}",
+      "maxPages": 30
+    }
+  },
+  "listApi": {
+    "baseUrl": "https://maskanyaban.ir",
+    "endpoint": "/Melk/_SelectAll",
+    "method": "POST",
+    "pageParam": "page",
+    "pageSize": 20,
+    "contentType": "application/json",
+    "filters": {}
+  },
+  "detailPage": {
+    "enabled": true,
+    "linkFromList": true,
+    "maxConcurrent": 4
+  },
+  "fieldMap": {
+    "dealType": {
+      "scope": "item",
+      "selector": ".size .small, .sizeWithImg .small",
+      "attr": "textContent",
+      "transform": "trim"
+    },
+    "propertyKind": {
+      "scope": "item",
+      "selector": ".size .small, .sizeWithImg .small",
+      "attr": "textContent",
+      "transform": "trim"
+    },
+    "fileCode": {
+      "scope": "item",
+      "selector": ".file-code span",
+      "attr": "textContent",
+      "transform": "digits"
+    },
+    "area": {
+      "scope": "item",
+      "selector": ".size .large, .sizeWithImg .large",
+      "attr": "textContent",
+      "transform": "digits"
+    },
+    "location": {
+      "scope": "item",
+      "selector": "h2",
+      "attr": "textContent",
+      "transform": "trim"
+    },
+    "price": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "مبلغ\\s*کل\\s*[:：]?\\s*([\\d,]+)",
+      "regexGroup": 1,
+      "transform": "toman"
+    },
+    "deposit": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "مبلغ\\s*رهن\\s*[:：]?\\s*([\\d,]+)",
+      "regexGroup": 1,
+      "transform": "toman"
+    },
+    "monthlyRent": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "مبلغ\\s*اجاره\\s*[:：]?\\s*([\\d,]+)",
+      "regexGroup": 1,
+      "transform": "toman"
+    },
+    "floor": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "طبقه\\s*(\\d+)",
+      "regexGroup": 1,
+      "transform": "digits"
+    },
+    "rooms": {
+      "scope": "item",
+      "attr": "textContent",
+      "regex": "(\\d+)\\s*خواب",
+      "regexGroup": 1,
+      "transform": "digits"
+    }
+  },
+  "titleTemplate": "{dealType} {propertyKind} {area} متری",
+  "neighborhoodParse": {
+    "splitOn": "-",
+    "cityIndex": 0,
+    "neighborhoodIndex": 1
+  },
+  "llmFallback": {
+    "enabled": false
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "version": 3,
+  "defaultProvider": "firecrawl",
+  "providers": {
+    "firecrawl": {
+      "timeoutMs": 120000,
+      "pollIntervalMs": 2000
+    },
+    "playwright": {
+      "headless": true,
+      "timeoutMs": 60000,
+      "estateScrapeUrl": "http://127.0.0.1:8200"
+    },
+    "http": {
+      "timeoutMs": 30000
+    },
+    "api": {
+      "timeoutMs": 30000
+    },
+    "estate-scrape-legacy": {
+      "baseUrl": "http://127.0.0.1:8200"
+    }
+  },
+  "queue": {
+    "driver": "memory",
+    "queueName": "crawler-v3",
+    "concurrency": 3,
+    "maxRetries": 5,
+    "backoffBaseMs": 2000,
+    "backoffMaxMs": 120000,
+    "rateLimitPerMinute": 60
+  },
+  "scheduler": {
+    "enabled": true,
+    "tickIntervalMs": 60000,
+    "maxDuePerTick": 10
+  },
+  "discovery": {
+    "maxDepth": 3,
+    "maxUrls": 10000,
+    "respectRobotsTxt": true,
+    "visitedCacheTtlHours": 168
+  },
+  "pipeline": {
+    "aiEnrichment": false,
+    "deduplication": true,
+    "batchSize": 25,
+    "retainRawHtml": true,
+    "retainMarkdown": true,
+    "streaming": true
+  },
+  "storage": {
+    "driver": "memory",
+    "basePath": ".crawler-data/v3"
+  },
+  "monitoring": {
+    "prometheusEnabled": true,
+    "metricsPrefix": "niazfinder_crawler"
+  },
+  "featureFlags": {
+    "crawlerV3": false,
+    "crawlerV2": false,
+    "firecrawlPrimary": true,
+    "legacyEstateScrapeFallback": true
+  },
+  "sourcesPath": "crawler/v3/config/sources.example.json"
+}

@@ -257,7 +257,10 @@ export function CitySelectorPopup({
         dir="rtl"
       >
         {/* ─── Header ─── */}
-        <DialogHeader className="px-5 pt-5 pb-2 shrink-0">
+        {/* pe-12 keeps the title clear of the close button; pb reserves enough
+            vertical room below it so the close button (44px tap target on
+            mobile) never overlaps the search box that follows. */}
+        <DialogHeader className="px-5 pt-5 pb-2 max-lg:pb-5 pe-12 shrink-0">
           <DialogTitle className="text-base font-bold flex items-center gap-2">
             <MapPin className="size-[18px] text-emerald-600" />
             <span>انتخاب شهر</span>

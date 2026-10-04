@@ -13,10 +13,15 @@ import {
   Rocket,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/lib/store';
+import { apiFetch } from '@/lib/api-client';
 
 const ONBOARDING_STORAGE_KEY = 'needfinder-onboarding-seen';
+/** Optional name/username typed in the last onboarding step; applied to the
+ * profile right after registration (see store.registerWithPhonePassword). */
+export const ONBOARDING_PROFILE_STASH_KEY = 'nf_onboarding_profile';
 
 // ──────────────────────────────────────────────
 // Step 1 — Welcome
@@ -143,19 +148,33 @@ function StepHowItWorks() {
 function StepGetStarted({
   dontShowAgain,
   setDontShowAgain,
+  name,
+  setName,
+  username,
+  setUsername,
+  isAuthenticated,
+  saving,
+  saveError,
   onRegister,
   onLater,
 }: {
   dontShowAgain: boolean;
   setDontShowAgain: (v: boolean) => void;
+  name: string;
+  setName: (v: string) => void;
+  username: string;
+  setUsername: (v: string) => void;
+  isAuthenticated: boolean;
+  saving: boolean;
+  saveError: string | null;
   onRegister: () => void;
   onLater: () => void;
 }) {
   return (
-    <div className="space-y-6 text-center">
+    <div className="space-y-4 text-center">
       {/* Rocket icon */}
-      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25">
-        <Rocket className="size-10 text-white" />
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-linear-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25">
+        <Rocket className="size-7 text-white" />
       </div>
 
       {/* Title */}
@@ -163,19 +182,42 @@ function StepGetStarted({
         شروع کنید!
       </h2>
 
-      <p className="mx-auto max-w-xs text-sm leading-7 text-muted-foreground sm:text-base">
-        همین الان ثبت‌نام کنید و از خدمات هزاران کسب‌وکار بهره‌مند شوید.
+      <p className="mx-auto max-w-xs text-sm leading-6 text-muted-foreground">
+        {isAuthenticated
+          ? 'پروفایل خود را تکمیل کنید تا کسب‌وکارها بهتر بشناسندتان.'
+          : 'اگر دوست دارید، نام و نام کاربری‌تان را همین‌جا بنویسید تا بعد از ثبت‌نام خودکار روی پروفایل‌تان بنشیند.'}
       </p>
 
+      {/* Optional profile fields */}
+      <div className="mx-auto max-w-xs space-y-2.5 text-right">
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="نام شما (اختیاری)"
+          autoComplete="name"
+          className="h-11 rounded-xl"
+        />
+        <Input
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="نام کاربری، مثل sasan (اختیاری)"
+          autoComplete="username"
+          dir="ltr"
+          className="h-11 rounded-xl text-left placeholder:text-right"
+        />
+        {saveError && <p className="text-xs text-destructive">{saveError}</p>}
+      </div>
+
       {/* CTA Buttons */}
-      <div className="flex flex-col gap-3 pt-1 sm:flex-row sm:justify-center">
+      <div className="flex flex-col gap-2.5 pt-1 sm:flex-row sm:justify-center">
         <Button
           onClick={onRegister}
+          disabled={saving}
           className="w-full bg-emerald-600 text-white hover:bg-emerald-700 sm:w-auto"
           size="lg"
         >
-          <Sparkles className="ml-2 size-4" />
-          ثبت‌نام رایگان
+          <Sparkles className="me-2 size-4" />
+          {isAuthenticated ? (saving ? 'در حال ذخیره...' : 'ذخیره و شروع') : 'ثبت‌نام رایگان'}
         </Button>
         <Button variant="ghost" className="w-full sm:w-auto" size="lg" onClick={onLater}>
           بعداً
@@ -183,7 +225,7 @@ function StepGetStarted({
       </div>
 
       {/* Checkbox */}
-      <label className="flex cursor-pointer items-center justify-center gap-2 pt-1">
+      <label className="flex cursor-pointer items-center justify-center gap-2">
         <input
           type="checkbox"
           checked={dontShowAgain}
@@ -212,20 +254,15 @@ function DotsIndicator({ current, total, onDotClick }: { current: number; total:
           aria-selected={i === current}
           aria-label={`مرحله ${i + 1}`}
           className={cn(
-            'relative flex h-[10px] w-[10px] items-center justify-center rounded-full transition-all duration-150 ease-in-out',
+            // 24px hit area (a11y target-size) around a 10px visual dot.
+            'relative flex h-6 w-6 items-center justify-center rounded-full transition-all duration-150 ease-in-out',
             'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-1',
+            'before:absolute before:h-[10px] before:w-[10px] before:rounded-full before:transition-all before:duration-150',
             i === current
-              ? 'bg-emerald-500 scale-125'
-              : 'bg-muted-foreground/30 hover:bg-muted-foreground/50',
+              ? 'before:bg-emerald-500 before:scale-125'
+              : 'before:bg-muted-foreground/30 hover:before:bg-muted-foreground/50',
           )}
-        >
-          <span
-            className={cn(
-              'block h-2 w-2 rounded-full transition-colors duration-150',
-              i === current ? 'bg-transparent' : 'bg-muted-foreground/30',
-            )}
-          />
-        </button>
+        />
       ))}
     </div>
   );
@@ -239,10 +276,20 @@ export function OnboardingWelcome() {
   const [step, setStep] = useState(0);
   const [dontShowAgain, setDontShowAgain] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const prevStepRef = useRef(0);
   const modalRef = useRef<HTMLDivElement>(null);
+  // The modal reveals on the visitor's first pointerdown — the click event of
+  // that same interaction then lands on the freshly-mounted overlay and would
+  // close (and permanently dismiss) the modal instantly. Ignore overlay clicks
+  // for a short grace period after reveal.
+  const revealedAtRef = useRef(0);
   const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen);
   const setAuthModalTab = useAppStore((s) => s.setAuthModalTab);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
 
   const totalSteps = 3;
 
@@ -252,12 +299,34 @@ export function OnboardingWelcome() {
       if (seen === 'true') {
         return; // Already seen — do nothing
       }
-      const timer = setTimeout(() => setIsVisible(true), 800);
-      return () => clearTimeout(timer);
     } catch {
-      const timer = setTimeout(() => setIsVisible(true), 800);
-      return () => clearTimeout(timer);
+      /* private mode — still show below */
     }
+
+    // Don't interrupt the initial page load (a late full-screen paint also
+    // becomes the page's LCP): reveal on the first user interaction, with a
+    // long idle fallback for users who only read.
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const show = () => {
+      cleanup();
+      revealedAtRef.current = Date.now();
+      setIsVisible(true);
+    };
+    const events: Array<keyof WindowEventMap> = [
+      'pointerdown',
+      'keydown',
+      'wheel',
+      'touchstart',
+    ];
+    const cleanup = () => {
+      if (timer) clearTimeout(timer);
+      for (const ev of events) window.removeEventListener(ev, show);
+    };
+    for (const ev of events) {
+      window.addEventListener(ev, show, { once: true, passive: true });
+    }
+    timer = setTimeout(show, 20_000);
+    return cleanup;
   }, []);
 
   const handleClose = useCallback(() => {
@@ -271,8 +340,48 @@ export function OnboardingWelcome() {
     setIsVisible(false);
   }, [dontShowAgain]);
 
-  const handleRegister = useCallback(() => {
+  const handleRegister = useCallback(async () => {
+    const trimmedName = name.trim();
+    const trimmedUsername = username.trim();
+
+    if (isAuthenticated) {
+      // Already signed in: persist directly to the profile.
+      if (trimmedName || trimmedUsername) {
+        setSaving(true);
+        setSaveError(null);
+        try {
+          await apiFetch('/api/users/profile', {
+            method: 'PUT',
+            body: JSON.stringify({
+              ...(trimmedName ? { firstName: trimmedName } : {}),
+              ...(trimmedUsername ? { username: trimmedUsername } : {}),
+            }),
+          });
+        } catch (err) {
+          setSaving(false);
+          setSaveError(err instanceof Error ? err.message : 'خطا در ذخیرهٔ پروفایل');
+          return; // keep the modal open so the user can fix e.g. a taken username
+        }
+        setSaving(false);
+      }
+      try {
+        localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
+      } catch {
+        // Silently fail
+      }
+      setIsVisible(false);
+      return;
+    }
+
+    // Not signed in yet: stash the values; they are applied to the profile
+    // right after registration completes (store.registerWithPhonePassword).
     try {
+      if (trimmedName || trimmedUsername) {
+        localStorage.setItem(
+          ONBOARDING_PROFILE_STASH_KEY,
+          JSON.stringify({ name: trimmedName, username: trimmedUsername })
+        );
+      }
       localStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
     } catch {
       // Silently fail
@@ -280,7 +389,7 @@ export function OnboardingWelcome() {
     setIsVisible(false);
     setAuthModalTab('register');
     setAuthModalOpen(true);
-  }, [setAuthModalOpen, setAuthModalTab]);
+  }, [name, username, isAuthenticated, setAuthModalOpen, setAuthModalTab]);
 
   const goNext = useCallback(() => {
     if (step < totalSteps - 1 && !isTransitioning) {
@@ -365,14 +474,20 @@ export function OnboardingWelcome() {
       {/* Dark overlay + blur */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-xs"
-        onClick={handleClose}
+        onClick={() => {
+          // Swallow the click belonging to the pointerdown that revealed us.
+          if (Date.now() - revealedAtRef.current < 500) return;
+          handleClose();
+        }}
         aria-hidden="true"
       />
 
-      {/* Modal card */}
+      {/* Modal card — overflow-hidden clips the decorative blurs (they used to
+          live inside the scroll container and manufactured phantom scrollbars
+          in both axes); only the content area below actually scrolls. */}
       <div
         ref={modalRef}
-        className="gradient-mesh-card relative z-10 w-full max-w-[520px] max-h-[min(92dvh,calc(100dvh-2rem))] overflow-y-auto rounded-2xl border border-border/40 bg-background/80 shadow-[0_16px_70px_rgba(0,0,0,0.18)] backdrop-blur-xl"
+        className="gradient-mesh-card relative z-10 flex w-full max-w-[520px] max-h-[min(92dvh,calc(100dvh-2rem))] flex-col overflow-hidden rounded-2xl border border-border/40 bg-background/80 shadow-[0_16px_70px_rgba(0,0,0,0.18)] backdrop-blur-xl"
       >
         {/* Decorative gradient blurs */}
         <div className="pointer-events-none absolute -top-24 -left-24 size-48 rounded-full bg-emerald-500/8 blur-3xl" />
@@ -387,9 +502,9 @@ export function OnboardingWelcome() {
           <X className="size-4" />
         </button>
 
-        {/* Content area with CSS fade transition */}
+        {/* Content area with CSS fade transition — the only scrollable region */}
         <div
-          className="relative px-6 pb-4 pt-8 sm:px-8 sm:pt-10"
+          className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 pb-4 pt-8 sm:px-8 sm:pt-10"
           style={{
             opacity: isTransitioning ? 0 : 1,
             transition: 'opacity 100ms ease-in-out',
@@ -401,14 +516,21 @@ export function OnboardingWelcome() {
             <StepGetStarted
               dontShowAgain={dontShowAgain}
               setDontShowAgain={setDontShowAgain}
-              onRegister={handleRegister}
+              name={name}
+              setName={setName}
+              username={username}
+              setUsername={setUsername}
+              isAuthenticated={isAuthenticated}
+              saving={saving}
+              saveError={saveError}
+              onRegister={() => void handleRegister()}
               onLater={handleClose}
             />
           )}
         </div>
 
-        {/* Bottom navigation: prev / dots / next */}
-        <div className="flex items-center justify-between border-t border-border/30 px-6 py-4 sm:px-8">
+        {/* Bottom navigation: prev / dots / next — pinned below the scroll area */}
+        <div className="flex shrink-0 items-center justify-between border-t border-border/30 px-6 py-4 sm:px-8">
           {/* Prev button */}
           {step > 0 ? (
             <Button

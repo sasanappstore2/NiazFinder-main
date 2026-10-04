@@ -35,6 +35,8 @@ export function normalizePersian(text: string): string {
     out = out.split(ARABIC_DIGITS[i]!).join(String(i));
   }
 
+  out = out.replace(/\p{M}/gu, '');
+
   out = out
     .replace(/[^\p{L}\p{N}\s]/gu, ' ')
     .replace(/\s+/g, ' ')

@@ -1,47 +1,69 @@
 import { normalizeIntakeText } from '@/lib/need-intake/normalize-intake-text';
 
 const BUSINESS_WORDS = [
-  '\u0633\u0627\u0644\u0646',
-  '\u0622\u0631\u0627\u06CC\u0634\u06AF\u0627\u0647',
-  '\u0645\u0632\u0648\u0646',
-  '\u0628\u0648\u062A\u06CC\u06A9',
-  '\u06A9\u0627\u0641\u0647',
-  '\u0631\u0633\u062A\u0648\u0631\u0627\u0646',
-  '\u0641\u0633\u062A \u0641\u0648\u062F',
-  '\u0641\u0633\u062A\u200C\u0641\u0648\u062F',
-  '\u0646\u0627\u0646\u0648\u0627\u06CC\u06CC',
-  '\u0641\u0631\u0648\u0634\u06AF\u0627\u0647',
-  '\u067E\u0627\u0633\u0627\u0698',
-  '\u0634\u06CC\u0631\u06CC\u0646\u06CC',
-  '\u0642\u0646\u0627\u062F\u06CC',
-  '\u06AF\u0644 \u0641\u0631\u0648\u0634\u06CC',
+  'سالن',
+  'آرایشگاه',
+  'مزون',
+  'بوتیک',
+  'کافه',
+  'رستوران',
+  'فست فود',
+  'فست‌فود',
+  'نانوایی',
+  'فروشگاه',
+  'پاساژ',
+  'شیرینی',
+  'قنادی',
+  'گل فروشی',
+  // Generic business / commercial use (not residential living)
+  'کسب و کار',
+  'کسب‌وکار',
+  'کسب وکار',
+  'کسبوکار',
+  'بیزینس',
+  'بیزنس',
+  'تجاری',
+  'فعالیت تجاری',
+  'کار تجاری',
 ] as const;
 
 const OPEN_BUSINESS_PHRASES = [
-  '\u0645\u06CC\u062E\u0648\u0627\u0645 \u0628\u0632\u0646\u0645',
-  '\u0645\u06CC\u200C\u062E\u0648\u0627\u0645 \u0628\u0632\u0646\u0645',
-  '\u0645\u06CC\u062E\u0648\u0627\u0647\u0645 \u0628\u0632\u0646\u0645',
-  '\u0631\u0627\u0647 \u0628\u0646\u062F\u0627\u0632\u0645',
-  '\u0631\u0627\u0647\u200C\u0627\u0646\u062F\u0627\u0632\u06CC',
-  '\u0627\u062C\u0627\u0631\u0647 \u0645\u06CC\u062E\u0648\u0627\u0645',
-  '\u062C\u0627 \u0645\u06CC\u062E\u0648\u0627\u0645',
-  '\u0645\u062D\u0644 \u0645\u06CC\u062E\u0648\u0627\u0645',
+  'میخوام بزنم',
+  'می‌خوام بزنم',
+  'میخواهم بزنم',
+  'راه بندازم',
+  'راه‌اندازی',
+  'راه اندازی',
+  'اجاره میخوام',
+  'جا میخوام',
+  'محل میخوام',
+  'برای کسب',
+  'بخاطر کسب',
+  'به‌خاطر کسب',
+  'جهت کسب',
+  'برای کارم',
+  'برای شغلم',
+  'دفتر کار',
 ] as const;
 
 const PROPERTY_SIGNALS = [
-  '\u0627\u062C\u0627\u0631\u0647',
-  '\u0631\u0647\u0646',
-  '\u0648\u062F\u06CC\u0639\u0647',
-  '\u0645\u0644\u06A9',
-  '\u0645\u0648\u0631\u062F',
-  '\u0641\u0636\u0627',
-  '\u063A\u0631\u0641\u0647',
-  '\u0645\u063A\u0627\u0632\u0647',
-  '\u0645\u0639\u0631\u0641\u06CC \u06A9\u0646\u06CC\u062F',
-  '\u0645\u0646\u0637\u0642\u0647',
-  '\u0645\u062D\u0644\u0647',
-  '\u0645\u062A\u0631\u06CC',
-  '\u0645\u062A\u0631',
+  'اجاره',
+  'رهن',
+  'ودیعه',
+  'ملک',
+  'مورد',
+  'فضا',
+  'غرفه',
+  'مغازه',
+  'معرفی کنید',
+  'منطقه',
+  'محله',
+  'متری',
+  'متر',
+  'آپارتمان',
+  'واحد',
+  'سوئیت',
+  'پلاک',
 ] as const;
 
 const SHOP_EXPLICIT = [
@@ -63,6 +85,13 @@ const SHOP_BUSINESS = [
   '\u0634\u06CC\u0631\u06CC\u0646\u06CC',
   '\u0642\u0646\u0627\u062F\u06CC',
 ] as const;
+// These businesses describe a retail/customer-facing premises, not merely an
+// occupation that could equally operate from an office. A generic salon or
+// unspecified business space remains ambiguous between shop and office.
+const SHOP_PREMISES = [
+  'مزون', 'بوتیک', 'کافه', 'رستوران', 'فست فود', 'فست‌فود',
+  'نانوایی', 'شیرینی فروشی', 'قنادی', 'گل فروشی',
+] as const;
 const OFFICE_EXPLICIT = [
   '\u062F\u0641\u062A\u0631',
   '\u0627\u062F\u0627\u0631\u06CC',
@@ -71,8 +100,22 @@ const OFFICE_EXPLICIT = [
   '\u0627\u062A\u0627\u0642 \u0627\u062F\u0627\u0631\u06CC',
 ] as const;
 
+/** Business words that are common name substrings (e.g. «سالندان») need a
+ *  Persian word boundary so a place name never reads as the business noun. */
+const WORD_BOUNDED_TERMS = new Set(['سالن']);
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
+}
+
 function includesAny(text: string, words: readonly string[]): boolean {
-  return words.some((w) => text.includes(normalizeIntakeText(w)));
+  return words.some((w) => {
+    const normalized = normalizeIntakeText(w);
+    if (WORD_BOUNDED_TERMS.has(w)) {
+      return new RegExp(`(?:^|[\\s،,؛(])${escapeRegExp(normalized)}(?:ها(?:ی)?)?(?=$|[\\s،,؛.)])`, 'u').test(text);
+    }
+    return text.includes(normalized);
+  });
 }
 
 /** Beauty service without property cues ? keep beauty-health. */
@@ -110,7 +153,7 @@ function isSaleDeal(text: string): boolean {
     t.includes('\u0645\u06CC\u062E\u0631\u0645') ||
     t.includes('\u0645\u06CC\u200C\u062E\u0631\u0645');
   const hasSell =
-    t.includes('\u0641\u0631\u0648\u0634') ||
+    /فروش(?!گاه|ی)/u.test(t) ||
     t.includes('\u0645\u06CC\u0641\u0631\u0648\u0634\u0645') ||
     t.includes('\u0645\u06CC\u200C\u0641\u0631\u0648\u0634\u0645');
   return (hasBuy || hasSell) && !t.includes('\u0627\u062C\u0627\u0631\u0647');
@@ -131,29 +174,34 @@ export function getBusinessCommercialPropertyCandidates(text: string): string[] 
 
   const t = normalizeIntakeText(text);
   const sale = isSaleDeal(t);
-  const rent = isRentDeal(t) || !sale;
-
-  const shopSlug = rent ? 'shop-rent' : 'shop-sale';
-  const officeSlug = rent ? 'office-rent' : 'office-sale';
-  const industrialSlug = rent ? 'industrial-rent' : 'industrial-sale';
+  const rent = isRentDeal(t);
+  const dealSuffixes = sale ? ['sale'] : rent ? ['rent'] : ['rent', 'sale'];
+  const forKind = (kind: 'shop' | 'office' | 'industrial') =>
+    dealSuffixes.map((suffix) => `${kind}-${suffix}`);
 
   const hasShopExplicit = includesAny(t, SHOP_EXPLICIT);
+  const hasShopPremises = includesAny(t, SHOP_PREMISES);
   const hasShopBusiness = includesAny(t, SHOP_BUSINESS);
   const hasOfficeExplicit = includesAny(t, OFFICE_EXPLICIT);
+  // Word-bounded like «انبار»: «سوله» inside «ماسوله» (a city/hood name) or
+  // «صنعتی» inside a compound place name is not the user's property noun.
   const hasIndustrial =
-    t.includes('\u0633\u0648\u0644\u0647') ||
-    t.includes('\u0627\u0646\u0628\u0627\u0631') ||
-    t.includes('\u0635\u0646\u0639\u062A\u06CC');
+    /(?:^|[\s،,؛(])سوله(?:ها(?:ی)?)?(?=$|[\s،,؛.)])/u.test(t) ||
+    /(?:^|[\s،,؛(])انبار(?:ها(?:ی)?)?(?=$|[\s،,؛.)])/u.test(t) ||
+    /(?:^|[\s،,؛(])صنعتی(?:ها(?:ی)?)?(?=$|[\s،,؛.)])/u.test(t);
 
-  if (hasIndustrial) return [industrialSlug];
-  if (hasShopExplicit && !hasOfficeExplicit) return [shopSlug];
-  if (hasOfficeExplicit && !hasShopExplicit && !hasShopBusiness) return [officeSlug];
-  if (hasShopExplicit && hasOfficeExplicit) return [shopSlug, officeSlug];
+  // An explicit office/shop noun is what the user asked for even when the
+  // location name contains an industrial keyword (e.g. «دفتر … شهرک صنعتی»).
+  if (hasShopExplicit && hasOfficeExplicit) return [...forKind('shop'), ...forKind('office')];
+  if (hasOfficeExplicit && !hasShopExplicit && !hasShopBusiness) return forKind('office');
+  if (hasShopExplicit && !hasOfficeExplicit) return forKind('shop');
+  if (hasShopPremises && !hasOfficeExplicit) return forKind('shop');
+  if (hasIndustrial) return forKind('industrial');
   if (hasShopBusiness && !hasShopExplicit && !hasOfficeExplicit) {
-    return [shopSlug, officeSlug];
+    return [...forKind('shop'), ...forKind('office')];
   }
 
-  return [shopSlug, officeSlug];
+  return [...forKind('shop'), ...forKind('office')];
 }
 
 export function isAmbiguousCommercialSubtype(text: string): boolean {

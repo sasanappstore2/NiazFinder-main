@@ -25,10 +25,13 @@ export async function importRemoteImage(
   const validated = await validateImportUrl(trimmed);
   if (!validated.ok) return null;
 
+  const pinned = await validateImportUrl(validated.url);
+  if (!pinned.ok) return null;
+
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 25_000);
-    const res = await fetch(validated.url, {
+    const res = await fetch(pinned.url, {
       signal: controller.signal,
       headers: { 'User-Agent': 'NiazFinder-SiteImport/1.0' },
       redirect: 'follow',

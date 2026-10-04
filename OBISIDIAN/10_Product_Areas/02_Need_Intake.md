@@ -64,6 +64,41 @@ status: live
 - Canonical: `src/intake/`
 - MLX: `mini-services/intake-mlx/`
 
+## پیاده‌سازی فنی (فایل‌ها و مسیرها)
+
+*(merge شده از `01_Features/NeedIntake.md`)*
+
+| نوع | مسیر |
+|-----|------|
+| API (Next) | `POST /api/need-intake/{parse-intent, next-question, extract-slots, chat-turn, preview-listing, publish, typing-analyze}` |
+| Domain (rules engine) | `src/lib/need-intake/{internal-orchestrator,intent-parser,question-engine,listing-composer,intake-client}.ts` |
+| Contracts/Schemas | `src/contracts/need-intake.ts`, `src/config/need-schemas/` |
+| Nest (heavy jobs) | `src/lib/need-intake/enqueue-heavy.ts` → `POST {NEST}/api/intake-typing/heavy` (ماژول `intake-typing`) |
+| تست‌ها | `npm run test:intake-parser`, `npm run test:intake-flow` |
+
+### تحلیل لحظه‌ای تایپ (Realtime Typing Analysis)
+
+*(merge شده از `01_Features/TypingAnalysisRealtime.md`)* — تحلیل rules-only متن هنگام تایپ در `/post`، بدون LLM روی هر keystroke.
+
+```mermaid
+sequenceDiagram
+  participant UI as RealtimeNeedInput
+  participant Next as POST /api/need-intake/typing-analyze
+  participant Nest as intake-typing WS Gateway
+  UI->>Nest: typing.analyze (debounced)
+  Nest->>Next: internal analyze
+  Next-->>UI: hints / vertical
+```
+
+| نوع | مسیر |
+|-----|------|
+| WS config | `src/lib/typing-socket-config.ts` (`NEXT_PUBLIC_TYPING_WS_URL`) |
+| تحلیل قوانین | `src/lib/typing-analysis/analyze.ts` |
+| ادغام با intent | `src/lib/typing-analysis/merge-typing-seed.ts` |
+| UI | `src/components/need-intake/realtime/` (`RealtimeNeedInput`) |
+| API | `src/app/api/need-intake/typing-analyze/route.ts` — secret: `TYPING_INTERNAL_SECRET` |
+| تست | `npm run test:typing-analysis` |
+
 ## ارتباط با بخش‌ها
 
 - [[Browse_Needs]] — آگهی منتشرشده در `/n/*`

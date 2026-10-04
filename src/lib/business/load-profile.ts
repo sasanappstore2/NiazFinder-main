@@ -17,6 +17,12 @@ import {
 } from '@/lib/business/resolve-browse-category-filter';
 import { searchBusinessProfilesTypesense } from '@/lib/search/typesense-business-search';
 import type { Business } from '@/contracts/business-profile';
+import {
+  isPublicBusinessProfile,
+  type ProfileWithUserActive,
+} from '@/lib/business/public-profile';
+
+export { isPublicBusinessProfile } from '@/lib/business/public-profile';
 
 const profileInclude = {
   offers: { where: { isPublished: true }, orderBy: { order: 'asc' as const } },
@@ -35,15 +41,6 @@ const profileInclude = {
     },
   },
 };
-
-type ProfileWithUserActive = Pick<BusinessProfile, 'status'> & {
-  user: { isActive: boolean };
-};
-
-/** Public storefronts: browse, /b/{slug}, sitemap, lead outreach. */
-export function isPublicBusinessProfile(profile: ProfileWithUserActive): boolean {
-  return profile.status === 'ACTIVE' && profile.user.isActive;
-}
 
 async function hydrateAndMap(
   profileId: string,

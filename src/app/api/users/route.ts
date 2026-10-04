@@ -37,12 +37,8 @@ const USER_PUBLIC_SELECT = {
   bio: true,
   city: true,
   province: true,
-  role: true,
   isVerified: true,
-  isActive: true,
-  isBanned: true,
   online: true,
-  lastSeenAt: true,
   createdAt: true,
 } as const;
 

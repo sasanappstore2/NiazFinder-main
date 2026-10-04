@@ -100,13 +100,22 @@ export async function GET(request: NextRequest) {
           },
           select: { id: true },
         },
+        mutes: {
+          where: { userId: user.id },
+          select: { mutedUntil: true },
+          take: 1,
+        },
       },
     });
 
+    const now = new Date();
     const mappedConversations: ConversationListItem[] = conversations.map((conv) => {
       const isUser1 = conv.userId1 === user.id;
       const otherUser = isUser1 ? conv.user2 : conv.user1;
       const isPlatformBot = isPlatformAiUserId(otherUser.id, platformAiUserId);
+      const mute = conv.mutes[0];
+      const isMuted =
+        Boolean(mute) && (mute.mutedUntil == null || mute.mutedUntil > now);
 
       return {
         id: conv.id,
@@ -118,12 +127,13 @@ export async function GET(request: NextRequest) {
           : conv.lastMessage,
         lastMessageAt: conv.lastMessageAt,
         unreadCount: conv.messages.length,
+        isMuted,
         otherUser: {
           id: otherUser.id,
           firstName: otherUser.firstName,
           lastName: otherUser.lastName,
           avatar: otherUser.avatar,
-          online: otherUser.online,
+          online: isPlatformBot ? true : otherUser.online,
           lastSeenAt: otherUser.lastSeenAt?.toISOString() ?? null,
         },
         businessContext: conv.contactPoint

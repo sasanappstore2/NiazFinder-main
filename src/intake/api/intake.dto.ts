@@ -7,10 +7,15 @@ export const intakeFormHintsSchema = z.object({
   city: z.string().trim().optional(),
   neighborhood: z.string().trim().optional(),
   categoryLockedByUser: z.boolean().optional(),
+  cityLockedByUser: z.boolean().optional(),
+  neighborhoodLockedByUser: z.boolean().optional(),
+  dealLockedByUser: z.boolean().optional(),
+  lockedFieldKeys: z.array(z.string().trim().min(1)).max(64).optional(),
 });
 
 export const intakeAnalyzeRequestSchema = z.object({
   text: z.string().trim().min(3, 'متن باید حداقل ۳ کاراکتر باشد').max(4000),
+  draftRevision: z.number().int().nonnegative().optional(),
   /** Optional city hint from cookie/URL to boost neighborhood matching. */
   citySlug: z.string().trim().optional(),
   cityName: z.string().trim().optional(),
@@ -23,6 +28,26 @@ export const intakeAnalyzeRequestSchema = z.object({
 export type IntakeAnalyzeRequest = z.infer<typeof intakeAnalyzeRequestSchema>;
 
 export const intakeAnalyzeResponseSchema = z.object({
+  schemaVersion: z.literal(2),
+  requestId: z.string().min(1),
+  revision: z.number().int().nonnegative(),
+  draftPatch: z.record(z.string(), z.unknown()).optional(),
+  provisionalCategory: z
+    .object({
+      slug: z.string(),
+      confidence: z.number().min(0).max(1),
+      reason: z.string().optional(),
+    })
+    .optional(),
+  fields: z.array(
+    z.object({
+      key: z.string(),
+      value: z.unknown(),
+      confidence: z.number().min(0).max(1).optional(),
+      source: z.enum(['rules', 'llm', 'derived']),
+      requiresConfirmation: z.boolean(),
+    })
+  ),
   entities: z.object({
     vertical: z.string().nullable(),
     category: z.string().nullable(),
@@ -38,7 +63,7 @@ export const intakeAnalyzeResponseSchema = z.object({
     budgetMax: z.number().nullable(),
     rooms: z.number().nullable(),
     transactionType: z.string().nullable(),
-  }),
+  }).passthrough(),
   confidence: z.record(z.string(), z.number()),
   templateId: z.string(),
   templateVersion: z.number(),
@@ -84,17 +109,43 @@ export const intakeAnalyzeResponseSchema = z.object({
   latencyMs: z.number(),
   meta: z
     .object({
-      engine: z.enum(['intake-rules', 'intake-rules+ai', 'intake-qwen', 'intake-qwen+rules']),
+      engine: z.string(),
       indexStats: z.object({
         categories: z.number(),
         cities: z.number(),
         neighborhoods: z.number(),
-      }),
+      })
+      .passthrough(),
     })
+    .passthrough()
     .optional(),
-});
+  fieldMeta: z.record(z.string(), z.unknown()).optional(),
+  parseGaps: z.array(z.unknown()).optional(),
+  warnings: z.array(z.unknown()).optional(),
+  suggestedFilters: z.array(z.unknown()).optional(),
+  missingFieldKeys: z.array(z.string()).optional(),
+  categoryCandidates: z.array(z.unknown()).optional(),
+  cityCandidates: z.array(z.unknown()).optional(),
+  draft: z.unknown().optional(),
+  agent: z.unknown().optional(),
+  error: z
+    .object({ code: z.string(), retryable: z.boolean() })
+    .optional(),
+}).passthrough();
 
 export type IntakeAnalyzeResponse = IntakeAnalysisResult & {
+  schemaVersion: 2;
+  requestId: string;
+  revision: number;
+  draftPatch?: Record<string, unknown>;
+  provisionalCategory?: { slug: string; confidence: number; reason?: string };
+  fields: Array<{
+    key: string;
+    value: unknown;
+    confidence?: number;
+    source: 'rules' | 'llm' | 'derived';
+    requiresConfirmation: boolean;
+  }>;
   meta?: {
     engine: 'intake-rules' | 'intake-rules+ai' | 'intake-qwen' | 'intake-qwen+rules';
     indexStats: { categories: number; cities: number; neighborhoods: number };

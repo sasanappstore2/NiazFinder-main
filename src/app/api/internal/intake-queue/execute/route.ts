@@ -2,17 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { runIntakeIntelligence } from '@/intake/intelligence-engine';
 import { runIntakeListingCopyJob } from '@/lib/need-intake/intake-queue-sync-fallback';
 import type { IntakeListingCopyJobPayload } from '@/lib/need-intake/intake-queue-types';
+import { verifyInternalApiSecret } from '@/lib/security/internal-secret';
 
 export const runtime = 'nodejs';
 
 /** Internal executor for NestJS intake queue workers. */
 export async function POST(request: NextRequest) {
-  const secret = process.env.INTERNAL_API_SECRET?.trim();
-  if (!secret) {
+  const auth = verifyInternalApiSecret(request);
+  if (auth === 'unconfigured') {
     return NextResponse.json({ error: 'Service unavailable' }, { status: 503 });
   }
-  const header = request.headers.get('x-internal-secret');
-  if (header !== secret) {
+  if (auth === 'mismatch') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
@@ -28,8 +28,10 @@ export async function POST(request: NextRequest) {
 
     const result = await runIntakeIntelligence({
       text,
+      draftRevision: payload?.draftRevision as number | undefined,
       citySlug: payload?.citySlug as string | undefined,
       cityName: payload?.cityName as string | undefined,
+      forceAi: payload?.forceAi === true,
       formHints: payload?.formHints as
         | {
             categorySlug?: string;
@@ -37,6 +39,9 @@ export async function POST(request: NextRequest) {
             city?: string;
             neighborhood?: string;
             categoryLockedByUser?: boolean;
+            cityLockedByUser?: boolean;
+            neighborhoodLockedByUser?: boolean;
+            lockedFieldKeys?: string[];
           }
         | undefined,
     });

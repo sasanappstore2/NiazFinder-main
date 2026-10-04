@@ -1,4 +1,8 @@
-import type { NeedDraft, ListingPreview } from '@/contracts/need-intake';
+import {
+  getNeedDraftSchemaVersion,
+  type NeedDraft,
+  type ListingPreview,
+} from '@/contracts/need-intake';
 import { recomputeNeedDraft } from '@/intake/aggregate/needDraftAggregate';
 import type { ServiceRequestV2 } from '@/intake/projections/serviceRequestV2';
 import { resolveTemplateIdFromLegacyNeedType } from '@/intake/migration/legacy-need-type-map';
@@ -111,7 +115,7 @@ export function mapServiceRequestToNeedDraft(row: {
     id: row.id,
     templateId,
     templateVersion,
-    schemaVersion: v2?.schemaVersion ?? 1,
+    schemaVersion: v2?.schemaVersion ?? getNeedDraftSchemaVersion(),
     vertical: v2?.vertical ?? 'general',
     category: v2?.category ?? row.category?.slug ?? 'general',
     entities,

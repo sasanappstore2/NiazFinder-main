@@ -4,6 +4,31 @@
     border-top: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
     background: color-mix(in oklch, var(--background) 95%, transparent);
     backdrop-filter: blur(8px);
+    /* Flush to chat bottom; home-indicator only when keyboard closed */
+    padding-bottom: max(0.375rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Soft keyboard open — drop safe-area so composer sits flush on keyboard */
+  :root[data-vv-kb='1'] .chat-composer-bar {
+    padding-bottom: 0.25rem;
+  }
+
+  .chat-composer-bar .chat-composer-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.25rem;
+    padding: 0.375rem 0.5rem 0;
+  }
+
+  @media (min-width: 768px) {
+    .chat-composer-bar {
+      padding-bottom: 0;
+    }
+
+    .chat-composer-bar .chat-composer-row {
+      gap: 0.375rem;
+      padding: 0.75rem 1rem;
+    }
   }
 
   .chat-composer-reply {

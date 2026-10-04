@@ -137,6 +137,10 @@ export const CANONICAL_CATEGORIES: readonly CanonicalCategory[] = [
   { slug: 'tickets',             parentSlug: 'entertainment',      title: 'بلیط',                                              depth: 1 },
   { slug: 'tours',               parentSlug: 'entertainment',      title: 'تور',                                               depth: 1 },
   { slug: 'sports-fitness',      parentSlug: 'entertainment',      title: 'ورزش',                                              depth: 1 },
+  { slug: 'bicycle',             parentSlug: 'sports-fitness',     title: 'دوچرخه',         englishTitle: 'Bicycle',         depth: 2 },
+  { slug: 'scooter',             parentSlug: 'sports-fitness',     title: 'اسکوتر و اسکیت', englishTitle: 'Scooter & Skate', depth: 2 },
+  { slug: 'fitness-equipment',   parentSlug: 'sports-fitness',     title: 'تجهیزات بدنسازی', englishTitle: 'Fitness Equipment', depth: 2 },
+  { slug: 'camping-outdoor',     parentSlug: 'sports-fitness',     title: 'کوهنوردی و کمپینگ', englishTitle: 'Camping & Outdoor', depth: 2 },
   { slug: 'pets',                parentSlug: 'entertainment',      title: 'حیوانات',                                           depth: 1 },
   { slug: 'musical-instruments', parentSlug: 'entertainment',      title: 'موسیقی',                                            depth: 1 },
 
@@ -288,12 +292,17 @@ export function resolveCategoryLevels(
     };
   }
 
-  // depth 0 — prefer first active child as category when posting needs
-  const firstChild = getDirectChildren(leafSlug)[0];
-  if (firstChild) {
-    return resolveCategoryLevels(firstChild.slug);
+  // depth 0 is a scope hint, not a concrete posting category.  The old
+  // first-child fallback silently turned `services` into `repairs` and made
+  // every downstream template, validator and publish projection disagree
+  // with the user's text.  Keep the root intact until the user or the
+  // analyzer resolves a real child.
+  if (process.env.INTAKE_ROOT_CATEGORY_HINT === 'false') {
+    // Controlled rollback only: restore the pre-v2 first-child behavior if a
+    // deployment must temporarily disable the root-hint rollout flag.
+    const firstChild = CANONICAL_CATEGORIES.find((item) => item.parentSlug === leafSlug);
+    if (firstChild) return resolveCategoryLevels(firstChild.slug);
   }
-
   return {
     leafSlug,
     parentSlug: null,

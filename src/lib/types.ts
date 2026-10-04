@@ -166,7 +166,17 @@ export interface Message {
   isPinned?: boolean;
   pinnedBy?: string | null;
   pinnedAt?: string | null;
+  /** Whether the viewing user starred this message. */
+  isStarred?: boolean;
   sender?: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatar'>;
+  /** Client-only: live thinking text while platform agent streams. */
+  agentThinking?: string;
+  /** Client-only: stream phase for platform agent bubble. */
+  agentStatus?: 'thinking' | 'tool' | 'streaming' | 'done';
+  /** Client-only: tool name while agentStatus === 'tool'. */
+  agentToolName?: string;
+  /** Client-only: true while the agent reply is still streaming. */
+  agentStreaming?: boolean;
 }
 
 // ============ Conversation ============
@@ -181,6 +191,8 @@ export interface Conversation {
   lastMessage?: string;
   lastMessageAt?: string;
   unreadCount: number;
+  /** Viewer has muted this conversation. */
+  isMuted?: boolean;
   businessContext?: {
     businessName: string;
     contactLabel: string;

@@ -13,7 +13,13 @@ import {
 } from '@/lib/chat/prisma-message';
 import { mapDbMessageToClient, type DbMessageRow } from '@/lib/chat/message-map';
 import { getConversationDetailForUser } from '@/lib/chat/conversation-detail';
+import { deleteConversationForUser } from '@/lib/chat/conversation-delete';
+import { checkRateLimit, clientIp } from '@/lib/security/rate-limit';
 import type { Message } from '@/lib/types';
+
+const MAX_MESSAGE_LENGTH = 8000;
+const CHAT_POST_RATE_WINDOW_MS = 60_000;
+const CHAT_POST_RATE_MAX = 60;
 
 // ============ TYPES ============
 
@@ -90,6 +96,10 @@ export async function GET(
                 select: { id: true, firstName: true, lastName: true, avatar: true },
               },
             },
+          },
+          stars: {
+            where: { userId: user.id },
+            select: { userId: true },
           },
         },
       }),
@@ -172,6 +182,18 @@ export async function POST(
       );
     }
 
+    const rate = checkRateLimit(
+      `chat:post:${user.id}:${clientIp(request)}`,
+      CHAT_POST_RATE_MAX,
+      CHAT_POST_RATE_WINDOW_MS
+    );
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { error: 'تعداد درخواست‌ها بیش از حد مجاز است' },
+        { status: 429, headers: { 'Retry-After': String(rate.retryAfterSec ?? 60) } }
+      );
+    }
+
     const otherUserId =
       conversation.userId1 === user.id ? conversation.userId2 : conversation.userId1;
     if (await isBlockedEitherWay(user.id, otherUserId)) {
@@ -207,6 +229,11 @@ export async function POST(
     } else if (!content?.trim()) {
       return NextResponse.json(
         { error: 'محتوای پیام الزامی است' },
+        { status: 400 }
+      );
+    } else if (content.length > MAX_MESSAGE_LENGTH) {
+      return NextResponse.json(
+        { error: `حداکثر طول پیام ${MAX_MESSAGE_LENGTH} کاراکتر است` },
         { status: 400 }
       );
     }
@@ -304,19 +331,6 @@ export async function POST(
         },
       });
 
-      // Mark messages from other user as read
-      await tx.message.updateMany({
-        where: {
-          conversationId,
-          senderId: otherUserId,
-          isRead: false,
-        },
-        data: {
-          isRead: true,
-          readAt: new Date(),
-        },
-      });
-
       return { message, updatedConv };
     });
 
@@ -367,5 +381,33 @@ export async function POST(
       { error: 'خطای سرور رخ داده است' },
       { status: 500 }
     );
+  }
+}
+
+/** DELETE — hard-delete conversation for a participant (both parties lose the thread). */
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ conversationId: string }> }
+) {
+  try {
+    const user = await getAuthUser(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { conversationId } = await params;
+    if (!conversationId) {
+      return NextResponse.json({ error: 'شناسه گفتگو الزامی است' }, { status: 400 });
+    }
+
+    const result = await deleteConversationForUser(conversationId, user.id);
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: result.status });
+    }
+
+    return NextResponse.json({ ok: true, conversationId: result.conversationId });
+  } catch (error) {
+    console.error('Chat conversation DELETE error:', error);
+    return NextResponse.json({ error: 'خطای سرور رخ داده است' }, { status: 500 });
   }
 }

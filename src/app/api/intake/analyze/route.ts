@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { intakeAnalyzeRequestSchema } from '@/intake/api/intake.dto';
+import {
+  intakeAnalyzeRequestSchema,
+  intakeAnalyzeResponseSchema,
+} from '@/intake/api/intake.dto';
 import { runIntakeIntelligence } from '@/intake/intelligence-engine';
 import { formatIntakeAnalyzeResponse } from '@/lib/need-intake/intake-analyze-response';
-import { guardIntakePublicApi } from '@/lib/need-intake/intake-api-guard';
+import {
+  guardIntakePayloadSize,
+  guardIntakePublicApi,
+} from '@/lib/need-intake/intake-api-guard';
+import { resolveHybridRuntime } from '@/lib/need-intake/hybrid-runtime';
+import { isRulesOnlyIntakeMode } from '@/lib/intake/rules-only-mode';
 import { isIntakeQueueEnabled } from '@/lib/need-intake/intake-queue-policy';
 import {
   enqueueIntakeJobOrchestrated,
@@ -17,6 +25,8 @@ export const runtime = 'nodejs';
 export async function POST(request: NextRequest) {
   const rateLimited = guardIntakePublicApi(request, 'analyze', 120);
   if (rateLimited) return rateLimited;
+  const oversized = guardIntakePayloadSize(request, 96_000);
+  if (oversized) return oversized;
 
   try {
     const body = await request.json().catch(() => null);
@@ -28,17 +38,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { text, citySlug, cityName, formHints } = parsed.data;
+    const { text, draftRevision, citySlug, cityName, formHints } = parsed.data;
+    const forceAi = parsed.data.forceAi === true;
 
     let result: IntakeIntelligenceResult;
     const intelligenceInput = {
       text,
+      draftRevision,
       citySlug,
       cityName,
       formHints,
-      forceAi: parsed.data.forceAi,
+      forceAi,
     };
-    if (isIntakeQueueEnabled()) {
+    // Prefer warm cache from home typing prefetch. forceAi only bypasses the
+    // async queue — not a fresh memory/redis hit for the same text signature.
+    if (isIntakeQueueEnabled() && !forceAi) {
       const enqueued = await enqueueIntakeJobOrchestrated({
         jobName: INTAKE_JOB_ANALYZE,
         payload: intelligenceInput,
@@ -50,11 +64,34 @@ export async function POST(request: NextRequest) {
       }
     } else {
       result = await runIntakeIntelligence(intelligenceInput, {
-        skipCache: parsed.data.forceAi === true,
+        skipCache: false,
       });
     }
 
-    return NextResponse.json(formatIntakeAnalyzeResponse(result));
+    const response = formatIntakeAnalyzeResponse(result);
+    const hybridRuntime = resolveHybridRuntime({
+      llmHealthy: Boolean(
+        (result as { meta?: { llmHealthy?: boolean; aiInvoked?: boolean } }).meta?.llmHealthy ??
+          (result as { meta?: { aiInvoked?: boolean } }).meta?.aiInvoked ??
+          !isRulesOnlyIntakeMode()
+      ),
+      rulesOnlyForced: isRulesOnlyIntakeMode(),
+    });
+    const payload = {
+      ...response,
+      meta: {
+        ...(response.meta ?? {}),
+        hybridRuntime,
+      },
+      requestId: result.trace.traceId,
+      revision: result.draft.draftRevision ?? parsed.data.draftRevision ?? 0,
+    };
+    const contract = intakeAnalyzeResponseSchema.safeParse(payload);
+    if (!contract.success) {
+      console.error('[intake/analyze] response contract violation', contract.error.flatten());
+      return NextResponse.json({ error: 'Analyze response contract violation' }, { status: 500 });
+    }
+    return NextResponse.json(contract.data);
   } catch (err) {
     console.error('[intake/analyze]', err);
     return NextResponse.json({ error: 'Analyze failed' }, { status: 500 });

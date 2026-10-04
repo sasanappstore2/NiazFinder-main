@@ -29,12 +29,13 @@ const PII_FIELD_KEYS = new Set([
 ]);
 
 const STEP_ORDER: Record<PostIntakeWizardStep, number> = {
+  compose: 0,
   need: 0,
-  details: 1,
-  location: 2,
-  preview: 3,
-  publishing: 4,
-  done: 5,
+  details: 0,
+  location: 1,
+  preview: 2,
+  publishing: 3,
+  done: 4,
 };
 
 export type { PostIntakeWizardStep } from '@/intake/telemetry/postIntakeEvents';

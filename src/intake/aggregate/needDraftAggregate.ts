@@ -1,4 +1,8 @@
-import type { NeedDraft, ParsedIntent } from '@/contracts/need-intake';
+import {
+  getNeedDraftSchemaVersion,
+  type NeedDraft,
+  type ParsedIntent,
+} from '@/contracts/need-intake';
 import { getCategoryPath, normalizeCategoryPair } from '@/config/categories';
 import type { IntakeAnalysisResult, IntakeEntities, TransactionType } from '@/intake/types';
 import { buildNextQuestion } from '@/intake/wizard/wizardBuilder';
@@ -38,18 +42,26 @@ function mergeAnalysisLocationIntoParsed(
   sourceText: string
 ): ParsedIntent {
   const fragment = extractLocationFragment(sourceText);
-  const area =
+  const neighborhood =
     entities.neighborhood?.trim() ||
     (fragment && /[\u0600-\u06FF]{2,}/.test(fragment) ? fragment : undefined) ||
-    parsed.entities?.area;
+    parsed.entities?.neighborhood;
+
+  const nextEntities = { ...parsed.entities };
+  if (
+    typeof nextEntities.area === 'string' &&
+    !Number.isFinite(Number(nextEntities.area.replace(/,/g, '').trim()))
+  ) {
+    delete nextEntities.area;
+  }
 
   return {
     ...parsed,
     city: entities.city ?? parsed.city,
     neighborhoodSlug: entities.neighborhoodSlug ?? parsed.neighborhoodSlug,
     entities: {
-      ...parsed.entities,
-      ...(area ? { area } : {}),
+      ...nextEntities,
+      ...(neighborhood ? { neighborhood } : {}),
     },
   };
 }
@@ -89,6 +101,7 @@ export function recomputeNeedDraft(draft: NeedDraft): NeedDraft {
     missingFields,
     nextQuestion,
     updatedAt: new Date().toISOString(),
+    draftRevision: draft.draftRevision ?? 0,
     parsedIntent: draft.parsedIntent,
     answers: draft.answers,
   };
@@ -117,12 +130,22 @@ export function recomputeNeedDraft(draft: NeedDraft): NeedDraft {
         rejectLocationAutoConfirm: preservedParsed.rejectLocationAutoConfirm,
         entities: {
           ...legacyParsed.entities,
-          ...(preservedParsed.entities?.area ? { area: preservedParsed.entities.area } : {}),
+        ...(preservedParsed.entities?.neighborhood
+          ? { neighborhood: preservedParsed.entities.neighborhood }
+          : {}),
         },
       }
     : legacyParsed;
 
   const answers: NeedDraft['answers'] = { ...legacyAnswers, ...draft.answers };
+  // Legacy answers are read projections. Preserve user-entered filter answers,
+  // but do not let an older city-only location override canonical entities.
+  if (entities.city?.trim() && legacyAnswers.location != null) {
+    answers.location = legacyAnswers.location;
+  }
+  if (entities.neighborhoodSlug?.trim() && legacyAnswers._neighborhoodSlug != null) {
+    answers._neighborhoodSlug = legacyAnswers._neighborhoodSlug;
+  }
   if (draft.answers._userSetDealType !== true) {
     if (legacyAnswers.dealType != null) answers.dealType = legacyAnswers.dealType;
     if (legacyAnswers.rahnAmount != null) answers.rahnAmount = legacyAnswers.rahnAmount;
@@ -180,7 +203,7 @@ export function legacyNeedDraftFromParsed(
   return recomputeNeedDraft({
     templateId: 'general',
     templateVersion: 1,
-    schemaVersion: 1,
+    schemaVersion: getNeedDraftSchemaVersion(),
     vertical: 'general',
     category: 'general',
     entities: {},
@@ -223,7 +246,7 @@ export function createNeedDraftFromAnalysis(
       rejectLocationAutoConfirm: hints.rejectLocationAutoConfirm ?? parsedIntent.rejectLocationAutoConfirm,
       entities: {
         ...parsedIntent.entities,
-        ...(hints.areaLabel ? { area: hints.areaLabel } : {}),
+        ...(hints.areaLabel ? { neighborhood: hints.areaLabel } : {}),
       },
     };
   }
@@ -233,7 +256,7 @@ export function createNeedDraftFromAnalysis(
     entityRecord.neighborhoodSlug = parsedIntent.neighborhoodSlug.trim();
     const catalogName =
       entities.neighborhood?.trim() ||
-      parsedIntent.entities?.area?.trim() ||
+      parsedIntent.entities?.neighborhood?.trim() ||
       analysis.locationHints?.areaLabel?.trim();
     if (catalogName && /[^\d]/.test(catalogName)) {
       entityRecord.neighborhood = catalogName;
@@ -243,16 +266,16 @@ export function createNeedDraftFromAnalysis(
     }
   } else if (
     !entityRecord.neighborhood &&
-    parsedIntent.entities?.area?.trim() &&
-    /[^\d]/.test(parsedIntent.entities.area)
+    parsedIntent.entities?.neighborhood?.trim() &&
+    /[^\d]/.test(parsedIntent.entities.neighborhood)
   ) {
-    entityRecord.neighborhood = parsedIntent.entities.area.trim();
+    entityRecord.neighborhood = parsedIntent.entities.neighborhood.trim();
   }
 
   const base: NeedDraft = {
     templateId: analysis.templateId ?? template.id,
     templateVersion: analysis.templateVersion ?? template.schemaVersion,
-    schemaVersion: 1,
+    schemaVersion: getNeedDraftSchemaVersion(),
     vertical: analysis.detectedVertical ?? entities.vertical ?? template.vertical,
     category: analysis.detectedCategory ?? entities.category ?? template.category,
     entities: entityRecord,
@@ -264,6 +287,7 @@ export function createNeedDraftFromAnalysis(
     nextQuestion: analysis.nextQuestion,
     sourceText,
     updatedAt: new Date().toISOString(),
+    draftRevision: 0,
     parsedIntent,
     answers: {},
     leadPhone: opts?.leadPhone ?? opts?.existing?.leadPhone,
@@ -278,10 +302,21 @@ export function patchNeedDraftEntities(
   draft: NeedDraft,
   patch: Partial<Record<string, unknown>>
 ): NeedDraft {
+  // Entity patches are used by reconciliation effects as well as user input.
+  // Returning the same draft for a no-op patch prevents a revision bump and
+  // breaks render -> effect -> patch loops in the intake UI.
+  const patchKeys = Object.keys(patch);
+  if (
+    patchKeys.length === 0 ||
+    patchKeys.every((key) => Object.is(draft.entities[key], patch[key]))
+  ) {
+    return draft;
+  }
   const merged = { ...draft.entities, ...patch };
   return recomputeNeedDraft({
     ...draft,
     entities: merged,
+    draftRevision: (draft.draftRevision ?? 0) + 1,
   });
 }
 
@@ -388,6 +423,14 @@ export function buildParsedIntentFromForm(
     locationText: sourceText,
   });
 
+  const enrichedEntities = { ...enriched.entities };
+  if (
+    typeof enrichedEntities.area === 'string' &&
+    !Number.isFinite(Number(enrichedEntities.area.replace(/,/g, '').trim()))
+  ) {
+    delete enrichedEntities.area;
+  }
+
   return {
     ...enriched,
     intentType: intentTypeFromEntities(mergedEntities),
@@ -396,11 +439,11 @@ export function buildParsedIntentFromForm(
     city: city ?? enriched.city,
     neighborhoodSlug: neighborhoodSlug ?? enriched.neighborhoodSlug,
     entities: {
-      ...enriched.entities,
+      ...enrichedEntities,
       ...(mergedEntities.vertical ? { vertical: String(mergedEntities.vertical) } : {}),
       ...(mergedEntities.category ? { category: String(mergedEntities.category) } : {}),
       ...(city ? { city } : {}),
-      ...(neighborhood ? { area: neighborhood } : {}),
+      ...(neighborhood ? { neighborhood } : {}),
     },
   };
 }
@@ -442,7 +485,7 @@ export function syncNeedDraftFromForm(
     recomputeNeedDraft({
       templateId: 'general',
       templateVersion: 1,
-      schemaVersion: 1,
+      schemaVersion: getNeedDraftSchemaVersion(),
       vertical: 'general',
       category: 'general',
       entities: {},
@@ -473,6 +516,11 @@ export function syncNeedDraftFromForm(
     }),
     sourceText,
     parsedIntent,
+    draftRevision: (draft?.draftRevision ?? 0) + 1,
+    categoryLockedByUser: opts?.categoryLockedByUser ?? draft?.categoryLockedByUser,
+    cityLockedByUser: draft?.cityLockedByUser,
+    neighborhoodLockedByUser: draft?.neighborhoodLockedByUser,
+    lockedFieldKeys: draft?.lockedFieldKeys,
   });
 }
 
@@ -483,4 +531,177 @@ export function projectNeedDraftFromForm(
   opts?: SyncNeedDraftFormOpts
 ): NeedDraft {
   return syncNeedDraftFromForm(draft, form, opts);
+}
+
+export interface IntakeUserFieldLocks {
+  categoryLockedByUser?: boolean;
+  cityLockedByUser?: boolean;
+  neighborhoodLockedByUser?: boolean;
+  dealLockedByUser?: boolean;
+  lockedFieldKeys?: string[];
+}
+
+const ENTITY_LOCK_KEYS = new Set([
+  'categorySlug',
+  'subcategorySlug',
+  'category',
+  'vertical',
+  'city',
+  'citySlug',
+  'neighborhood',
+  'neighborhoodSlug',
+  'transactionType',
+  'dealType',
+]);
+
+/**
+ * Single merge path: analyzed draft → existing draft while honoring user locks.
+ * Prefer analyzed.answers / entities except for locked keys.
+ */
+export function mergeAnalyzeIntoDraft(
+  existing: NeedDraft | null,
+  analyzed: NeedDraft,
+  locks?: IntakeUserFieldLocks
+): NeedDraft {
+  const lockedKeys = new Set(locks?.lockedFieldKeys ?? []);
+  if (locks?.categoryLockedByUser) {
+    lockedKeys.add('categorySlug');
+    lockedKeys.add('subcategorySlug');
+    lockedKeys.add('category');
+    lockedKeys.add('vertical');
+  }
+  if (locks?.cityLockedByUser) {
+    lockedKeys.add('city');
+    lockedKeys.add('citySlug');
+  }
+  if (locks?.neighborhoodLockedByUser) {
+    lockedKeys.add('neighborhood');
+    lockedKeys.add('neighborhoodSlug');
+  }
+  if (locks?.dealLockedByUser) {
+    lockedKeys.add('transactionType');
+    lockedKeys.add('dealType');
+  }
+
+  if (!existing) {
+    return recomputeNeedDraft(analyzed);
+  }
+
+  const nextEntities: Record<string, unknown> = { ...existing.entities };
+  for (const [key, value] of Object.entries(analyzed.entities ?? {})) {
+    if (lockedKeys.has(key)) continue;
+    if (value == null || value === '') continue;
+    nextEntities[key] = value;
+  }
+
+  const nextAnswers: NeedDraft['answers'] = { ...existing.answers };
+  for (const [key, value] of Object.entries(analyzed.answers ?? {})) {
+    if (lockedKeys.has(key)) continue;
+    if (value == null || value === '') continue;
+    nextAnswers[key] = value as NeedDraft['answers'][string];
+  }
+
+  // Neighborhood-only correction: keep other answers/entities when only location changed.
+  const onlyLocationLocked =
+    locks?.neighborhoodLockedByUser &&
+    !locks?.categoryLockedByUser &&
+    lockedKeys.size <= 2;
+
+  let parsedIntent = analyzed.parsedIntent;
+  if (existing.parsedIntent) {
+    parsedIntent = {
+      ...analyzed.parsedIntent,
+      ...(locks?.cityLockedByUser
+        ? {
+            city: existing.parsedIntent.city,
+          }
+        : {}),
+      ...(locks?.neighborhoodLockedByUser
+        ? {
+            neighborhoodSlug: existing.parsedIntent.neighborhoodSlug,
+            entities: {
+              ...analyzed.parsedIntent.entities,
+              ...(existing.parsedIntent.entities?.neighborhood
+                ? { neighborhood: existing.parsedIntent.entities.neighborhood }
+                : {}),
+            },
+          }
+        : {}),
+      ...(locks?.categoryLockedByUser
+        ? {
+            categorySlug: existing.parsedIntent.categorySlug,
+            subcategorySlug: existing.parsedIntent.subcategorySlug,
+          }
+        : {}),
+      // Preserve LRE / ambiguity flags from existing when location is locked.
+      ...(locks?.cityLockedByUser || locks?.neighborhoodLockedByUser
+        ? {
+            locationAmbiguous: existing.parsedIntent.locationAmbiguous,
+            locationResolutionStatus: existing.parsedIntent.locationResolutionStatus,
+            rejectLocationAutoConfirm: existing.parsedIntent.rejectLocationAutoConfirm,
+            neighborhoodCandidates: existing.parsedIntent.neighborhoodCandidates,
+            cityCandidates: existing.parsedIntent.cityCandidates,
+          }
+        : {}),
+    };
+  }
+
+  if (onlyLocationLocked) {
+    // Keep non-location entity/answer values from existing when correcting neighborhood.
+    for (const [key, value] of Object.entries(existing.entities ?? {})) {
+      if (ENTITY_LOCK_KEYS.has(key)) continue;
+      if (value != null && value !== '') nextEntities[key] = value;
+    }
+  }
+
+  return recomputeNeedDraft({
+    ...analyzed,
+    ...existing,
+    templateId: analyzed.templateId || existing.templateId,
+    templateVersion: analyzed.templateVersion || existing.templateVersion,
+    vertical: lockedKeys.has('vertical')
+      ? existing.vertical
+      : analyzed.vertical || existing.vertical,
+    category: lockedKeys.has('category')
+      ? existing.category
+      : analyzed.category || existing.category,
+    entities: nextEntities,
+    answers: nextAnswers,
+    sourceText: analyzed.sourceText || existing.sourceText,
+    parsedIntent,
+    fieldMeta: analyzed.fieldMeta ?? existing.fieldMeta,
+    sections: analyzed.sections?.length ? analyzed.sections : existing.sections,
+    listingPreview: analyzed.listingPreview ?? existing.listingPreview,
+    intakeTrace: analyzed.intakeTrace ?? existing.intakeTrace,
+    leadPhone: existing.leadPhone,
+    draftRevision: Math.max(existing.draftRevision ?? 0, analyzed.draftRevision ?? 0),
+    categoryLockedByUser: locks?.categoryLockedByUser ?? existing.categoryLockedByUser,
+    cityLockedByUser: locks?.cityLockedByUser ?? existing.cityLockedByUser,
+    neighborhoodLockedByUser:
+      locks?.neighborhoodLockedByUser ?? existing.neighborhoodLockedByUser,
+    lockedFieldKeys: Array.from(
+      new Set([...(existing.lockedFieldKeys ?? []), ...(locks?.lockedFieldKeys ?? [])])
+    ),
+    fieldProvenance: {
+      ...(existing.fieldProvenance ?? {}),
+      ...Object.fromEntries(
+        Object.entries(analyzed.fieldMeta ?? {}).map(([key, meta]) => [
+          key,
+          {
+            source:
+              meta.source === 'ai'
+                ? 'llm'
+                : meta.source === 'user' || meta.source === 'form'
+                  ? 'user'
+                  : meta.source === 'rule' || meta.source === 'dictionary' || meta.source === 'resolver'
+                    ? 'rules'
+                    : 'derived',
+            confidence: meta.confidence,
+            accepted: !lockedKeys.has(key),
+            evidence: meta.evidence,
+          },
+        ])
+      ),
+    },
+  });
 }

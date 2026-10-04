@@ -3,7 +3,7 @@ import { SITE_URL } from '@/lib/constants';
 
 export default function EnHomePage() {
   return (
-    <main className="mx-auto max-w-2xl px-6 py-16">
+    <main dir="ltr" className="mx-auto max-w-2xl px-6 py-16">
       <h1 className="text-3xl font-bold tracking-tight">NeedFinder</h1>
       <p className="mt-4 text-lg text-muted-foreground">
         Connect needs with trusted businesses across Iran. Browse listings, post a need, or

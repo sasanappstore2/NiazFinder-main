@@ -1,8 +1,12 @@
 import { createHash } from 'crypto';
-import { getCategoryPath } from '@/config/categories';
+import {
+  getCategoryPath,
+  normalizeCategoryPair,
+} from '@/config/categories';
 import type { NeedDraft, ParsedIntent, IntentType } from '@/contracts/need-intake';
 import {
   recomputeNeedDraft,
+  patchNeedDraftEntities,
   syncNeedDraftFromForm,
 } from '@/intake/aggregate/needDraftAggregate';
 import { getIntentsForCategory } from '@/config/need-intents';
@@ -20,6 +24,7 @@ import type { MissingFieldItem, WizardQuestion } from '@/intake/types';
 import { buildNextQuestion } from '@/intake/wizard/wizardBuilder';
 import { recordToEntities } from '@/intake/entities/entityRecord';
 import { enrichParsedIntent } from '@/lib/need-intake/enrich-parsed-intent';
+import { simplifiedCategoryKey } from '@/intake/dictionaries/categoryIndex';
 
 export interface NeedBuilderLocationScope {
   citySlug?: string | null;
@@ -51,7 +56,7 @@ function fieldBagToAnswers(fields: IntakeFieldBag): Record<string, string | numb
   };
   set('dealType', fields.dealType?.value);
   set('propertyKind', fields.propertyKind?.value);
-  set('areaMin', fields.area?.value);
+  set('area', fields.area?.value);
   set('rahnAmount', fields.rahnAmount?.value);
   set('monthlyRent', fields.monthlyRent?.value);
   set('deposit', fields.deposit?.value);
@@ -157,7 +162,14 @@ export function buildNeedFromFields(input: NeedBuilderInput): NeedBuilderOutput 
     input;
   const parsedBase = parseIntentFromText(sourceText);
   const categoryLocked = formHints?.categoryLockedByUser ?? false;
-  const commercialAmbiguous = !categoryLocked && isAmbiguousCommercialSubtype(sourceText);
+  // A commercial phrase is ambiguous only while the analyzer has no concrete
+  // category. Do not erase a valid leaf that rules already resolved merely
+  // because the same text also contains generic commercial wording.
+  const commercialAmbiguous =
+    !categoryLocked &&
+    isAmbiguousCommercialSubtype(sourceText) &&
+    !fields.categorySlug?.value &&
+    !fields.subcategorySlug?.value;
 
   const categorySlug = commercialAmbiguous
     ? ''
@@ -183,7 +195,60 @@ export function buildNeedFromFields(input: NeedBuilderInput): NeedBuilderOutput 
     categoryLockedByUser: formHints?.categoryLockedByUser,
   });
 
+  const numericField = (key: keyof IntakeFieldBag): number | undefined => {
+    const value = fields[key]?.value;
+    const parsed = typeof value === 'number' ? value : Number(String(value ?? '').replace(/,/g, ''));
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
+  };
+
+  const fieldEntityPatch: Record<string, unknown> = {};
+  if (locationScope?.citySlug?.trim()) {
+    fieldEntityPatch.citySlug = locationScope.citySlug.trim();
+  }
+  for (const key of ['citySlug', 'province'] as const) {
+    const value = fields[key]?.value;
+    if (value != null && value !== '') fieldEntityPatch[key] = String(value);
+  }
+  const area = numericField('area');
+  const transactionValue = String(
+    fields.transactionType?.value ?? fields.dealType?.value ?? ''
+  ).toUpperCase();
+  const hasSeparateRentPayment =
+    fields.rahnAmount?.value != null ||
+    fields.monthlyRent?.value != null ||
+    fields.deposit?.value != null ||
+    transactionValue.includes('RENT');
+  const budgetMin = hasSeparateRentPayment ? undefined : numericField('budgetMin');
+  const budgetMax = hasSeparateRentPayment ? undefined : numericField('budgetMax');
+  if (area != null) fieldEntityPatch.area = area;
+  if (budgetMin != null) fieldEntityPatch.budgetMin = budgetMin;
+  if (budgetMax != null) fieldEntityPatch.budgetMax = budgetMax;
+  for (const key of ['rahnAmount', 'monthlyRent', 'deposit'] as const) {
+    const value = numericField(key);
+    if (value != null) fieldEntityPatch[key] = value;
+  }
+  if (Object.keys(fieldEntityPatch).length > 0) {
+    draft = patchNeedDraftEntities(draft, fieldEntityPatch);
+  }
+
   const answers = fieldBagToAnswers(fields);
+  const lockedKeys = new Set(formHints?.lockedFieldKeys ?? []);
+  if (formHints?.dealLockedByUser) {
+    lockedKeys.add('dealType');
+    lockedKeys.add('transactionType');
+  }
+  if (formHints?.cityLockedByUser) {
+    lockedKeys.add('city');
+    lockedKeys.add('citySlug');
+  }
+  if (formHints?.neighborhoodLockedByUser) {
+    lockedKeys.add('neighborhood');
+    lockedKeys.add('neighborhoodSlug');
+  }
+  const unlockedAnswers = Object.fromEntries(
+    Object.entries(answers).filter(([k]) => !lockedKeys.has(k))
+  );
+
   const intentType = categoryLocked
     ? resolveIntentForCategory(leafSlug, parsedBase, sourceText, categoryLocked)
     : parsedBase.intentType;
@@ -191,7 +256,7 @@ export function buildNeedFromFields(input: NeedBuilderInput): NeedBuilderOutput 
   draft = recomputeNeedDraft({
     ...draft,
     answers: filterAnswersToSchema(
-      { ...draft.answers, ...answers },
+      { ...draft.answers, ...unlockedAnswers },
       intentType,
       leafSlug,
       draft.parsedIntent
@@ -284,15 +349,35 @@ export function buildNeedFromFields(input: NeedBuilderInput): NeedBuilderOutput 
     ...(draft.entities as Record<string, unknown>),
     ...(enrichedParsed.entities ?? {}),
   };
+  // parsedIntent is a compatibility projection and may still carry a legacy
+  // category inferred directly from the raw text (for example «کم‌کارکرد» can
+  // make an old parser choose car for a TV). The field bag is the analyzer's
+  // canonical category authority, so project its validated pair back into the
+  // entity record before the API response is built.
+  if (leafSlug) {
+    const pair = normalizeCategoryPair(leafSlug);
+    const canonicalLeaf = pair.subcategorySlug ?? pair.categorySlug;
+    const path = getCategoryPath(canonicalLeaf);
+    if (path.length > 0) {
+      enrichedEntities.categorySlug = pair.categorySlug;
+      enrichedEntities.subcategorySlug = pair.subcategorySlug ?? canonicalLeaf;
+      enrichedEntities.vertical = path[0]?.slug ?? null;
+      enrichedEntities.category = simplifiedCategoryKey(canonicalLeaf);
+      if (path[0]?.slug === 'jobs' || path[0]?.slug === 'services') {
+        delete enrichedEntities.dealType;
+        delete enrichedEntities.transactionType;
+      }
+    }
+  }
   if (scopedCityName) {
     enrichedEntities.city = scopedCityName;
   }
   if (enrichedParsed.neighborhoodSlug) {
     enrichedEntities.neighborhoodSlug = enrichedParsed.neighborhoodSlug;
   }
-  const hoodArea = enrichedParsed.entities?.area?.trim();
-  if (hoodArea) {
-    enrichedEntities.neighborhood = hoodArea;
+  const hoodNeighborhood = enrichedParsed.entities?.neighborhood?.trim();
+  if (hoodNeighborhood) {
+    enrichedEntities.neighborhood = hoodNeighborhood;
   } else if (fields.neighborhood?.value) {
     enrichedEntities.neighborhood = String(fields.neighborhood.value);
   }

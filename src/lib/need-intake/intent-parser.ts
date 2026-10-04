@@ -43,9 +43,15 @@ import {
 } from '@/lib/need-intake/vertical-classifier';
 
 const WANT_KEYWORDS = ['میخوام', 'میخواهم', 'نیاز دارم', 'دنبال', 'جستجو', 'پیدا کن'];
-const BUY_KEYWORDS = ['می‌خرم', 'میخرم', 'بخرم', 'خرید', 'میخرم'];
+const BUY_KEYWORDS = ['می‌خرم', 'می خرم', 'میخرم', 'بخرم', 'خرید', 'میخرم'];
 const ALL_BUY_HINT_KEYWORDS = [...WANT_KEYWORDS, ...BUY_KEYWORDS];
 const SELL_KEYWORDS = ['می‌فروشم', 'میفروشم', 'فروش', 'آگهی', 'فروشنده'];
+
+function textHasSellKeyword(text: string): boolean {
+  // Bare «فروش» must not match «میوه‌فروشی» / «کتاب‌فروشی».
+  if (/فروش(?!ی)|می\s*فروشم|میفروشم|فروشنده|آگهی/u.test(text)) return true;
+  return false;
+}
 import {
   isLandlordOfferRent,
   isLandlordOfferRahn,
@@ -55,7 +61,13 @@ import {
 } from '@/lib/need-intake/deal-type-helpers';
 
 const NEED_SEEKER_OPENER = TENANT_SEEKER_OPENER;
-const RENT_KEYWORDS = ['اجاره', 'رنت', 'اجاره‌ای', 'مستاجر'];
+const RENT_KEYWORDS = ['اجاره', 'اجاره‌ای', 'مستاجر'];
+
+function textHasRentKeyword(text: string): boolean {
+  // Avoid «رنت» inside «اینترنت» (#617).
+  if (/اجاره|اجاره‌ای|مستاجر/u.test(text)) return true;
+  return /(?<![\u0600-\u06FFa-zA-Z])رنت(?![\u0600-\u06FFa-zA-Z])/u.test(text);
+}
 const REPAIR_KEYWORDS = ['تعمیر', 'تعمیرکار', 'نصب'];
 const URGENT_KEYWORDS = ['فوری', 'سریع', 'امروز', 'الان'];
 
@@ -64,12 +76,13 @@ const RAHN_EJARE_KEYWORDS = ['رهن و اجاره', 'ودیعه و اجاره',
 const RENT_MONTHLY_KEYWORDS = ['اجاره ماهانه', 'اجاره ماهیانه'];
 const RENT_SHORT_TERM_KEYWORDS = [
   'اجاره روزانه',
-  'روزانه',
+  'اجاره کوتاه',
   'کوتاه مدت',
   'کوتاه‌مدت',
   'هر شب',
   'تومان شب',
-  'سوئیت',
+  'سوئیت روزانه',
+  'اجاره شبانه',
 ];
 
 /** مشارکت در ساخت / زمین برای ساخت — not buy/sell listing. */
@@ -124,7 +137,10 @@ function hasPropertyContext(text: string): boolean {
   );
 }
 
-/** Category keyword hints → canonical slug (higher priority first). */
+/** Category keyword hints → canonical slug (higher priority first).
+ * Offline / legacy fallback only — live `/post` analyze uses
+ * `runCategoryIntentEngine` (registry shortlist + optional LLM).
+ */
 const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] = [
   { slug: 'lost-found', words: ['گم شده', 'گمشده', 'گم کردم'], priority: 11 },
   {
@@ -195,7 +211,7 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
   { slug: 'land-sale', words: ['زمین', 'کلنگی', 'زمین کلنگی'], priority: 10 },
   { slug: 'land-rent', words: ['اجاره زمین', 'رهن زمین', 'ودیعه زمین', 'رهن و اجاره زمین'], priority: 11 },
   { slug: 'villa-rent', words: ['اجاره ویلا', 'اجاره خانه', 'اجاره ویلایی'], priority: 10 },
-  { slug: 'shop-rent', words: ['اجاره مغازه', 'مغازه برای اجاره'], priority: 10 },
+  { slug: 'shop-rent', words: ['اجاره مغازه', 'مغازه برای اجاره', 'مغازه اجاره‌ای'], priority: 10 },
   { slug: 'office-sale', words: ['فروش دفتر', 'دفتر کار'], priority: 10 },
   { slug: 'industrial-sale', words: ['سوله', 'صنعتی', 'انبار صنعتی'], priority: 10 },
   {
@@ -205,7 +221,8 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
   },
   { slug: 'apartment-rent', words: ['اجاره آپارتمان', 'اجاره ماهانه', 'رهن', 'ودیعه', 'رهن و اجاره'], priority: 9 },
   { slug: 'apartment-sale', words: ['خرید آپارتمان', 'فروش آپارتمان'], priority: 8 },
-  { slug: 'real-estate', words: ['آپارتمان', 'اپارتمان', 'آپارت', 'سوئیت', 'ملک مسکونی', 'پنت', 'پنت‌هاوس', 'برج', 'واحد', 'ملک', 'جهیزیه', 'مستغل', 'سرمایه‌گذاری', 'سرمایه گذاری'], priority: 7 },
+  // Bare «ملک» omitted — matches neighborhood tokens like «ملک‌شهر» after ZWNJ→space normalize.
+  { slug: 'real-estate', words: ['آپارتمان', 'اپارتمان', 'آپارت', 'سوئیت', 'ملک مسکونی', 'پنت', 'پنت‌هاوس', 'برج', 'واحد', 'جهیزیه', 'مستغل', 'سرمایه‌گذاری', 'سرمایه گذاری'], priority: 7 },
   { slug: 'villa-sale', words: ['فروش ویلا', 'ویلا', 'خانه ویلایی'], priority: 8 },
   { slug: 'car', words: ['ماشین', 'خودرو', 'پژو', 'پراید', 'سمند', 'تیبا', 'دنا', 'هوندا', 'سمند'], priority: 8 },
   { slug: 'mobile-phone', words: ['گوشی', 'آیفون', 'iphone', 's24', 's23'], priority: 8 },
@@ -269,7 +286,7 @@ const CATEGORY_KEYWORDS: { slug: string; words: string[]; priority: number }[] =
   { slug: 'spare-parts', words: ['قطعه یدکی', 'یدکی'], priority: 8 },
   {
     slug: 'apartment-sale',
-    words: ['خونه', 'خانه', 'ملک', 'پارکینگ آپارتمان'],
+    words: ['خونه', 'خانه', 'پارکینگ آپارتمان'],
     priority: 7,
   },
 ];
@@ -318,7 +335,7 @@ function isDesireOnly(text: string): boolean {
 
 function parseBudget(text: string): { min?: number; max?: number } {
   const norm = withAsciiDigitRuns(text);
-  const hasRahn = /رهن|ودیعه/u.test(norm);
+  const hasRahn = /(?<![\u0600-\u06FF])رهن(?!گیری|گ)|ودیعه/u.test(norm);
   const hasRent = /اجاره/u.test(norm);
 
   if (hasRahn) {
@@ -337,13 +354,18 @@ function parseBudget(text: string): { min?: number; max?: number } {
     if (n > 0) return { max: n };
   }
 
-  const millionMatch = norm.match(/(\d+)\s*میلیون/u);
+  const millionMatch = norm.match(/(\d[\d,]*(?:\.\d+)?)\s*میلیون/u);
+  const billionMatch = norm.match(/(\d[\d,]*(?:\.\d+)?)\s*میلیارد/u);
   const tomanMatch = norm.match(/(\d[\d,]*)\s*تومان/u);
   const plainNum = norm.match(/تا\s*(\d[\d,]*)/);
 
+  if (billionMatch) {
+    const n = Number(billionMatch[1].replace(/,/g, ''));
+    if (n > 0) return { max: Math.round(n * 1_000_000_000) };
+  }
   if (millionMatch) {
-    const n = Number(millionMatch[1]) * 1_000_000;
-    return { max: n };
+    const n = Number(millionMatch[1].replace(/,/g, ''));
+    if (n > 0) return { max: Math.round(n * 1_000_000) };
   }
   if (tomanMatch) {
     const n = Number(tomanMatch[1].replace(/,/g, ''));
@@ -364,11 +386,40 @@ export function parseCity(text: string): string | undefined {
     const hit = CANONICAL_CITIES.find((c) => c.slug === slug || c.title === cityLine[1].trim());
     if (hit) return hit.title;
   }
-  for (const city of CANONICAL_CITIES) {
-    if (text.includes(city.title) || text.includes(city.slug)) {
-      return city.title;
+
+  // Explicit «شهر X» / «شهر X،» beats neighborhood→city inference (e.g. حکم‌آباد→تبریز
+  // when the user wrote «شهر الوند»). Skip «شهرک …» (no space after شهر).
+  // Do not capture Persian/ASCII commas — they sit in the \u0600–\u06FF range.
+  const labeledCity = text.match(
+    /(?:^|[\s،,])\s*شهر\s+([\u0600-\u06FF\u200c\-]+?)(?=[\s،,]|$)/u
+  );
+  if (labeledCity?.[1]) {
+    const name = labeledCity[1].trim().replace(/[،,]+$/u, '');
+    if (name.length >= 2 && name !== 'ک') {
+      const hit = CANONICAL_CITIES.find((c) => c.title === name || c.slug === name);
+      return hit?.title ?? name;
     }
   }
+
+  const letter = /[\u0600-\u06FFa-z0-9]/i;
+  const matches: { title: string; length: number }[] = [];
+
+  for (const city of CANONICAL_CITIES) {
+    for (const term of [city.title, city.slug]) {
+      const idx = text.indexOf(term);
+      if (idx < 0) continue;
+      const before = idx > 0 ? text[idx - 1]! : ' ';
+      const after = idx + term.length < text.length ? text[idx + term.length]! : ' ';
+      if (letter.test(before) || letter.test(after)) continue;
+      matches.push({ title: city.title, length: term.length });
+    }
+  }
+
+  if (matches.length > 0) {
+    matches.sort((a, b) => b.length - a.length);
+    return matches[0]!.title;
+  }
+
   if (text.includes('فرامرز')) return 'مشهد';
   if (text.includes('اندیشه') || text.includes('فرحزادی') || text.includes('شمال تهران')) {
     return 'تهران';
@@ -515,12 +566,16 @@ function detectCategorySlug(text: string, classification: VerticalClassification
 
 function isShortTermRentText(text: string): boolean {
   if (RENT_SHORT_TERM_KEYWORDS.some((w) => text.includes(w))) return true;
-  if (text.includes('شب') && (text.includes('اجاره') || text.includes('نفر'))) return true;
+  // Do not treat «شبانه‌روزی» / «نفرستید» as nightly rent (colloquial-0165).
+  if (/هر\s*شب|تومان\s*شب|(?:اجاره|سوئیت|ویلا)\s*شبانه(?!\u200c?روزی)/u.test(text)) {
+    return true;
+  }
+  if (/\d+\s*شب/u.test(text) && /اجاره|سوئیت|ویلا|اتاق/u.test(text)) return true;
   return false;
 }
 
 function parsePropertyDealType(text: string): string | undefined {
-  if (NEED_SEEKER_OPENER.test(text) && /فروش/u.test(text)) {
+  if (NEED_SEEKER_OPENER.test(text) && /فروش(?!ی)/u.test(text)) {
     const sellerExplicit =
       /می\s*فروش|میفروش|فروشنده|فروش\s*دم|اجاره\s*بدم|رهن\s*بدم|آگهی\s*فروش/u.test(text);
     if (!sellerExplicit) return 'buy';
@@ -528,6 +583,15 @@ function parsePropertyDealType(text: string): string | undefined {
   if (isLandlordOfferRent(text)) {
     return 'sell';
   }
+  // Explicit buy beats weak short-term false positives (e.g. داروخانه شبانه‌روزی).
+  if (
+    /(?:دنبال\s*)?خرید|قصد\s*خرید|(?<!ن)می\s*خوام[\s\p{L}\d]{0,40}?بخرم/u.test(text) &&
+    !isShortTermRentText(text)
+  ) {
+    return 'buy';
+  }
+  // Short-term beats rahn+ejare so «کد رهگیری» cannot flip اجاره کوتاه‌مدت.
+  if (isShortTermRentText(text)) return 'rent_short_term';
   if (isTenantSeekerRahnEjare(text) || isSeekerRahnEjareDeal(text)) {
     return 'rent_rahn_ejare';
   }
@@ -537,11 +601,10 @@ function parsePropertyDealType(text: string): string | undefined {
   if (text.includes('اجاره بدم') || text.includes('اجاره دادن') || text.includes('اجاره دادنی')) {
     return 'sell';
   }
-  if (text.includes('رهن بدم') || text.includes('رهن می‌دم') || text.includes('رهن میدم')) {
+  if (text.includes('رهن بدم') || text.includes('رهن می‌دم') || text.includes('رهن میدم') || text.includes('رهن می دم')) {
     return 'sell';
   }
-  if (isShortTermRentText(text)) return 'rent_short_term';
-  const hasRahn = text.includes('رهن') || text.includes('ودیعه');
+  const hasRahn = /(?<![\u0600-\u06FF])رهن(?!گیری|گ)|ودیعه/u.test(text);
   let hasRent =
     text.includes('اجاره') || RENT_MONTHLY_KEYWORDS.some((w) => text.includes(w));
   if (text.includes('نه اجاره')) hasRent = false;
@@ -551,10 +614,10 @@ function parsePropertyDealType(text: string): string | undefined {
   if (RAHN_FULL_KEYWORDS.some((w) => text.includes(w))) return 'rent_rahn_full';
   if (RAHN_EJARE_KEYWORDS.some((w) => text.includes(w))) return 'rent_rahn_ejare';
   if (RENT_MONTHLY_KEYWORDS.some((w) => text.includes(w))) return 'rent_monthly';
-  if (SELL_KEYWORDS.some((w) => text.includes(w))) return 'sell';
+  if (textHasSellKeyword(text)) return 'sell';
   if (hasRahn && text.includes('اجاره ندارم')) return 'rent_rahn_full';
   if (hasRahn && !text.includes('بدم')) return 'rent_rahn_ejare';
-  if (RENT_KEYWORDS.some((w) => text.includes(w)) || hasRent) return 'rent_monthly';
+  if (textHasRentKeyword(text) || hasRent) return 'rent_monthly';
   if (BUY_KEYWORDS.some((w) => text.includes(w))) return 'buy';
   if (NEED_SEEKER_OPENER.test(text) && hasPropertyContext(text)) return 'buy';
   if (text.includes('بگیرم') || text.includes('پول دارم')) return 'buy';
@@ -564,15 +627,15 @@ function parsePropertyDealType(text: string): string | undefined {
 function parseVehicleDealType(text: string): string | undefined {
   if (REPAIR_KEYWORDS.some((w) => text.includes(w))) return 'service';
   if (text.includes('یدکی') || text.includes('قطعه')) return 'parts';
-  if (SELL_KEYWORDS.some((w) => text.includes(w))) return 'sell';
-  if (RENT_KEYWORDS.some((w) => text.includes(w))) return 'rent';
+  if (textHasSellKeyword(text)) return 'sell';
+  if (textHasRentKeyword(text)) return 'rent';
   if (BUY_KEYWORDS.some((w) => text.includes(w))) return 'buy';
   if (WANT_KEYWORDS.some((w) => text.includes(w))) return 'buy';
   return undefined;
 }
 
 function parseProductDealType(text: string): string | undefined {
-  if (SELL_KEYWORDS.some((w) => text.includes(w))) return 'sell';
+  if (textHasSellKeyword(text)) return 'sell';
   if (BUY_KEYWORDS.some((w) => text.includes(w))) return 'buy';
   if (WANT_KEYWORDS.some((w) => text.includes(w))) return 'buy';
   return undefined;
@@ -640,7 +703,10 @@ function parsePropertyKind(text: string): string | undefined {
     if (norm.includes('دفتر') || norm.includes('مطب') || norm.includes('کلینیک')) {
       return 'office';
     }
-    if (norm.includes('سوله') || norm.includes('انبار')) return 'industrial';
+    if (
+      norm.includes('سوله') ||
+      /(?:^|[\s،,؛(])انبار(?:ها(?:ی)?)?(?=$|[\s،,؛).])/u.test(norm)
+    ) return 'industrial';
     if (isAmbiguousCommercialSubtype(norm)) return undefined;
     if (
       norm.includes('سالن') ||
@@ -666,7 +732,7 @@ function parsePropertyKind(text: string): string | undefined {
   if (norm.includes('دفتر') || norm.includes('اداری') || norm.includes('کلینیک')) return 'office';
   if (norm.includes('مغازه') || norm.includes('کیوسک')) return 'shop';
   if (norm.includes('خونه') || norm.includes('خانه')) return 'apartment';
-  if (norm.includes('واحد') || norm.includes('ملک')) return 'apartment';
+  if (norm.includes('واحد') || norm.includes('ملک مسکونی')) return 'apartment';
   if (/\d{1,5}\s*مت(?:ر|ری)/u.test(norm)) return 'apartment';
   if (/\d{1,5}\s*متر(?:\s|$|\/|،)/u.test(norm)) return 'apartment';
   return undefined;
@@ -704,7 +770,7 @@ function detectIntent(
     if (parseVehicleDealType(text) === 'service' && allowed.includes('vehicle_service')) {
       return 'vehicle_service';
     }
-    if (SELL_KEYWORDS.some((w) => text.includes(w)) && allowed.includes('vehicle_listing')) {
+    if (textHasSellKeyword(text) && allowed.includes('vehicle_listing')) {
       return 'vehicle_listing';
     }
     if (allowed.includes('vehicle_search')) return 'vehicle_search';
@@ -719,7 +785,7 @@ function detectIntent(
     if (allowed.includes('vehicle_service')) return 'vehicle_service';
   }
 
-  if (SELL_KEYWORDS.some((w) => text.includes(w))) {
+  if (textHasSellKeyword(text)) {
     if (allowed.includes('product_listing')) return 'product_listing';
     if (allowed.includes('vehicle_listing')) return 'vehicle_listing';
     if (allowed.includes('property_listing')) return 'property_listing';
@@ -759,7 +825,16 @@ function buildEntities(
   const root = path[0]?.slug ?? categorySlug;
 
   const area = parseAreaFromText(text);
-  if (area) entities.area = area;
+  if (area) {
+    const numericArea = Number(area.replace(/,/g, '').trim());
+    if (Number.isFinite(numericArea) && numericArea > 0) {
+      // Legacy projection name; canonical storage is entities.area.
+      entities.areaMin = String(numericArea);
+    } else {
+      // Location fragments are neighborhoods, never metric area.
+      entities.neighborhood = area;
+    }
+  }
 
   if (categorySlug === 'construction-partnership' || isConstructionPartnershipText(text)) {
     entities.serviceKind = 'partnership';
@@ -835,10 +910,12 @@ function buildTitle(
 }
 
 function buildDescription(rawText: string, entities: Record<string, string>, city?: string): string {
-  const area = entities.area;
+  const area = entities.areaMin;
+  const neighborhood = entities.neighborhood;
   const hints: string[] = [];
-  if (area && city) hints.push(`محدوده: ${area}، ${city}`);
-  else if (area) hints.push(`محدوده: ${area}`);
+  if (neighborhood && city) hints.push(`محدوده: ${neighborhood}، ${city}`);
+  else if (neighborhood) hints.push(`محدوده: ${neighborhood}`);
+  if (area) hints.push(`متراژ: ${area} متر`);
   else if (city) hints.push(`شهر: ${city}`);
   const base = rawText.trim();
   if (hints.length === 0) return base;
@@ -866,7 +943,7 @@ export function parseIntentFromText(rawText: string): ParsedIntent {
     if (slots.areaMax && !entities.areaMax) entities.areaMax = slots.areaMax;
     if (slots.rooms && !entities.rooms) entities.rooms = slots.rooms;
   }
-  const area = entities.area;
+  const area = entities.areaMin;
 
   let confidence = 0.5;
   if (categorySlug !== 'services') confidence += 0.1;
@@ -885,7 +962,7 @@ export function parseIntentFromText(rawText: string): ParsedIntent {
     intentType,
     categorySlug: commercialAmbiguous ? '' : pair.categorySlug,
     subcategorySlug: commercialAmbiguous ? undefined : pair.subcategorySlug,
-    title: buildTitle(intentType, entities, city, area),
+    title: buildTitle(intentType, entities, city, entities.neighborhood),
     description: buildDescription(rawText, entities, city),
     budgetMin: budget.min,
     budgetMax: budget.max,
@@ -912,7 +989,8 @@ export function getCategoryPathSlugs(slug: string): string[] {
 
 /**
  * Deterministic (non-AI) category suggestions from raw user text.
- * Returns top unique canonical slugs sorted by score.
+ * Offline / client fallback when the server did not return categoryCandidates.
+ * Live analyze uses the registry + category-intent-engine instead.
  */
 export function suggestNeedCategoriesFromText(
   rawText: string,

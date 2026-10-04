@@ -67,7 +67,8 @@ export function fieldsNeedingAi(
 
 export function applyAiPatchToFieldBag(
   bag: IntakeFieldBag,
-  patch: Record<string, unknown>
+  patch: Record<string, unknown>,
+  opts?: { fieldConfidence?: Record<string, number>; baseConfidence?: number }
 ): IntakeFieldBag {
   const map: Record<string, IntakeFieldKey> = {
     category: 'categorySlug',
@@ -80,8 +81,15 @@ export function applyAiPatchToFieldBag(
     area: 'area',
     budget: 'budgetMax',
     budgetMax: 'budgetMax',
+    budgetMin: 'budgetMin',
     rooms: 'rooms',
+    rahnAmount: 'rahnAmount',
+    monthlyRent: 'monthlyRent',
+    deposit: 'deposit',
   };
+
+  const base = opts?.baseConfidence ?? 0.72;
+  const perField = opts?.fieldConfidence ?? {};
 
   for (const [k, v] of Object.entries(patch)) {
     if (v == null || v === '') continue;
@@ -89,9 +97,16 @@ export function applyAiPatchToFieldBag(
     const prev = bag[fieldKey];
     if (prev?.lockedByUser) continue;
     if (prev?.value != null && (prev.confidence ?? 0) >= 0.85) continue;
+    const conf = clampConfidence(
+      typeof perField[k] === 'number'
+        ? perField[k]!
+        : typeof perField[fieldKey] === 'number'
+          ? perField[fieldKey]!
+          : base
+    );
     bag[fieldKey] = {
       value: v as never,
-      confidence: 0.72,
+      confidence: conf,
       source: 'ai',
       evidence: `ai:${k}`,
     };

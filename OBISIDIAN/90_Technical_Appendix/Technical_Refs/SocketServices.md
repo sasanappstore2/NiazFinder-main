@@ -41,6 +41,6 @@ Required for cache, BullMQ, WS scaling in staging/prod.
 
 ## Related
 
-- [[../01_Features/Chat|Chat]]
-- [[../01_Features/TypingAnalysisRealtime|TypingAnalysisRealtime]]
+- [[../../10_Product_Areas/07_Communication_Chat|Chat]]
+- [[../../10_Product_Areas/02_Need_Intake|TypingAnalysisRealtime]]
 - [[NestBackendModules]]

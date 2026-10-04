@@ -62,3 +62,12 @@ npm run dataset:merge-estate-training
 ```
 
 Uses `INTAKE_MLX_DATASET_PATH` for training after merge.
+
+## Vendored dependency: Scrapegraph-ai-main
+
+`/Scrapegraph-ai-main` is an intentionally vendored snapshot of
+[ScrapeGraphAI/Scrapegraph-ai](https://github.com/ScrapeGraphAI/Scrapegraph-ai)
+at `2.2.0b1` (a beta not published to PyPI, so it cannot be pip-installed).
+It is MIT-licensed (see its own `LICENSE`) and installed editable via
+`npm run setup:estate-scrape`. Do not upgrade it in place — re-vendor from
+upstream and re-run the estate self-tests instead.

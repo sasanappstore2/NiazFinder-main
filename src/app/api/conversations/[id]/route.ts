@@ -126,108 +126,25 @@ export async function GET(
   }
 }
 
-// ============ POST handler — send message ============
+// ============ POST — hard-deprecated (no fanout). Use /api/chat/[id] ═══════
 
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const user = await getAuthUser(request);
-    if (!user) {
-      return NextResponse.json(
-        { error: 'لطفاً ابتدا وارد حساب کاربری خود شوید' },
-        { status: 401 }
-      );
+  const { id } = await params;
+  return NextResponse.json(
+    {
+      error:
+        'این مسیر منسوخ شده است. برای ارسال پیام از POST /api/chat/[conversationId] استفاده کنید.',
+      successor: `/api/chat/${id}`,
+    },
+    {
+      status: 410,
+      headers: {
+        Deprecation: 'true',
+        Link: `</api/chat/${id}>; rel="successor-version"`,
+      },
     }
-
-    const { id } = await params;
-
-    // Verify conversation exists and user is participant
-    const conversation = await db.conversation.findUnique({
-      where: { id },
-    });
-
-    if (!conversation) {
-      return NextResponse.json(
-        { error: 'گفتگو مورد نظر یافت نشد' },
-        { status: 404 }
-      );
-    }
-
-    if (conversation.userId1 !== user.id && conversation.userId2 !== user.id) {
-      return NextResponse.json(
-        { error: 'شما دسترسی به این گفتگو ندارید' },
-        { status: 403 }
-      );
-    }
-
-    const body = await request.json();
-    const { content, type } = body;
-
-    if (!content?.trim()) {
-      return NextResponse.json(
-        { error: 'متن پیام الزامی است' },
-        { status: 400 }
-      );
-    }
-
-    const validTypes = ['TEXT', 'IMAGE', 'FILE', 'VOICE'];
-    const messageType = validTypes.includes(type) ? type : 'TEXT';
-
-    // Create message and update conversation in a transaction
-    const message = await db.$transaction(async (tx) => {
-      const newMessage = await tx.message.create({
-        data: {
-          conversationId: id,
-          senderId: user.id,
-          content: content.trim(),
-          type: messageType,
-        },
-        include: {
-          sender: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              avatar: true,
-            },
-          },
-        },
-      });
-
-      // Update conversation's lastMessage and lastMessageAt
-      await tx.conversation.update({
-        where: { id },
-        data: {
-          lastMessage: content.trim().substring(0, 200),
-          lastMessageAt: new Date(),
-        },
-      });
-
-      return newMessage;
-    });
-
-    const result = {
-      id: message.id,
-      senderId: message.senderId,
-      content: message.content,
-      type: message.type,
-      attachmentUrls: JSON.parse(message.attachmentUrls),
-      isRead: message.isRead,
-      createdAt: message.createdAt.toISOString(),
-      sender: message.sender,
-    };
-
-    return NextResponse.json(
-      { message: 'پیام با موفقیت ارسال شد', data: result },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error('Conversation detail POST error:', error);
-    return NextResponse.json(
-      { error: 'خطای سرور رخ داده است' },
-      { status: 500 }
-    );
-  }
+  );
 }

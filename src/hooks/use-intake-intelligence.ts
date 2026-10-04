@@ -7,17 +7,23 @@ import type { IntakeParseGap } from '@/lib/need-intake/intake-parse-schema';
 import type { CriticalFilterSuggestion } from '@/intake/intelligence-engine/suggestions/critical-filter-suggestions';
 import { criticalSuggestionsToChips } from '@/intake/intelligence-engine/suggestions/critical-filter-suggestions';
 import { analyzeIntakeTextApi } from '@/lib/intake/intake-analyze-client';
+import {
+  getIntakeAnalysisMode,
+  type IntakeAnalysisMode,
+} from '@/lib/intake/rules-only-mode';
 import type { FieldState, IntakeIntelligenceInput } from '@/intake/intelligence-engine/types';
+import type { IntakeAgentResult } from '@/intake/agent/types';
 import { draftWithAnalysisSnapshot } from '@/intake/training/buildAnalysisSnapshot';
 
 export interface UseIntakeIntelligenceOptions {
   text: string;
   enabled: boolean;
+  draftRevision?: number;
   citySlug?: string | null;
   cityName?: string | null;
   formHints?: IntakeIntelligenceInput['formHints'];
   debounceMs?: number;
-  /** When true, server runs AI extraction even if rules are confident (step 1). */
+  /** When true, server runs AI extraction even if rules are confident (compose step). */
   forceAi?: boolean;
   onDraft?: (draft: NeedDraft) => void;
 }
@@ -25,6 +31,7 @@ export interface UseIntakeIntelligenceOptions {
 export interface UseIntakeIntelligenceState {
   analyzing: boolean;
   aiInvoked: boolean;
+  analysisMode: IntakeAnalysisMode;
   analyzedText: string | null;
   fieldMeta: Record<string, FieldState> | null;
   gaps: IntakeParseGap[];
@@ -34,6 +41,8 @@ export interface UseIntakeIntelligenceState {
   error: string | null;
   /** AI one-sentence summary of user need (city, budget, subject). */
   intentGist: string | null;
+  /** Product agent projection (same schema for rules / LLM). */
+  agent: IntakeAgentResult | null;
   /** Flush debounce and run analyze immediately (returns in-flight or fresh result). */
   analyzeNow: () => Promise<IntakeAnalyzeResponse | null>;
   /** Wait for the current in-flight analyze, if any. */
@@ -49,6 +58,7 @@ function formHintsSignature(formHints?: IntakeIntelligenceInput['formHints'], fo
 export function useIntakeIntelligence({
   text,
   enabled,
+  draftRevision = 0,
   citySlug,
   cityName,
   formHints,
@@ -58,6 +68,11 @@ export function useIntakeIntelligence({
 }: UseIntakeIntelligenceOptions): UseIntakeIntelligenceState {
   const [analyzing, setAnalyzing] = useState(false);
   const [aiInvoked, setAiInvoked] = useState(false);
+  // Keep the first render identical on server and client. Runtime env values
+  // are not guaranteed to be exposed equally to both bundles; deriving this
+  // during render caused a hydration mismatch in the summary copy. The real
+  // configured mode is applied immediately after mount.
+  const [analysisMode, setAnalysisMode] = useState<IntakeAnalysisMode>('rules');
   const [analyzedText, setAnalyzedText] = useState<string | null>(null);
   const [fieldMeta, setFieldMeta] = useState<Record<string, FieldState> | null>(null);
   const [gaps, setGaps] = useState<IntakeParseGap[]>([]);
@@ -68,6 +83,7 @@ export function useIntakeIntelligence({
   const [latencyMs, setLatencyMs] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [intentGist, setIntentGist] = useState<string | null>(null);
+  const [agent, setAgent] = useState<IntakeAgentResult | null>(null);
 
   const reqId = useRef(0);
   const debounceTimerRef = useRef<number | null>(null);
@@ -76,12 +92,36 @@ export function useIntakeIntelligence({
   const lastAnalysisRef = useRef<IntakeAnalyzeResponse | null>(null);
   const analyzedTextRef = useRef<string | null>(null);
   const formHintsSigRef = useRef<string>('');
+  const draftRevisionRef = useRef(draftRevision);
   const forceAiRef = useRef(forceAi);
   const onDraftRef = useRef(onDraft);
 
   useEffect(() => {
+    setAnalysisMode(getIntakeAnalysisMode());
+  }, []);
+
+  const clearAnalysisState = useCallback(() => {
+    lastAnalysisRef.current = null;
+    analyzedTextRef.current = null;
+    formHintsSigRef.current = '';
+    setAnalyzedText(null);
+    setFieldMeta(null);
+    setGaps([]);
+    setSuggestedFilters([]);
+    setFilterSuggestionChips({});
+    setLatencyMs(null);
+    setAiInvoked(false);
+    setIntentGist(null);
+    setAgent(null);
+  }, []);
+
+  useEffect(() => {
     forceAiRef.current = forceAi;
   }, [forceAi]);
+
+  useEffect(() => {
+    draftRevisionRef.current = draftRevision;
+  }, [draftRevision]);
 
   const cancelInflight = useCallback(() => {
     abortRef.current?.abort();
@@ -94,25 +134,33 @@ export function useIntakeIntelligence({
   }, [onDraft]);
 
   const applyAnalysisResult = useCallback((res: IntakeAnalyzeResponse, trimmed: string, hintsSig: string) => {
-    const meta = (res as { fieldMeta?: Record<string, FieldState> }).fieldMeta ?? null;
+    const fieldMetaPayload = (res as { fieldMeta?: Record<string, FieldState> }).fieldMeta ?? null;
     const parseGaps = (res as { parseGaps?: IntakeParseGap[] }).parseGaps ?? [];
     const draft = (res as { draft?: NeedDraft }).draft;
     const filters =
       (res as { suggestedFilters?: CriticalFilterSuggestion[] }).suggestedFilters ?? [];
+    const responseMeta = res.meta as {
+      aiInvoked?: boolean;
+      analysisMode?: IntakeAnalysisMode;
+      intentGist?: string | null;
+    } | undefined;
 
     lastAnalysisRef.current = res;
     analyzedTextRef.current = trimmed;
     formHintsSigRef.current = hintsSig;
     setAnalyzedText(trimmed);
-    setFieldMeta(meta);
+    setFieldMeta(fieldMetaPayload);
     setGaps(parseGaps);
     setSuggestedFilters(filters);
     setFilterSuggestionChips(criticalSuggestionsToChips(filters));
     setLatencyMs(res.latencyMs ?? null);
-    setAiInvoked(Boolean((res.meta as { aiInvoked?: boolean })?.aiInvoked));
-    setIntentGist(
-      ((res.meta as { intentGist?: string | null })?.intentGist ?? null)?.trim() || null
-    );
+    setAiInvoked(Boolean(responseMeta?.aiInvoked));
+    if (responseMeta?.analysisMode === 'ai' || responseMeta?.analysisMode === 'rules') {
+      setAnalysisMode(responseMeta.analysisMode);
+    }
+    setIntentGist(responseMeta?.intentGist?.trim() || null);
+    const agentPayload = (res as { agent?: IntakeAgentResult }).agent ?? null;
+    setAgent(agentPayload);
 
     if (draft && onDraftRef.current) {
       onDraftRef.current(draftWithAnalysisSnapshot(draft, res, trimmed));
@@ -151,6 +199,7 @@ export function useIntakeIntelligence({
         const res = await analyzeIntakeTextApi(trimmed, {
           citySlug: citySlug ?? undefined,
           cityName: cityName ?? undefined,
+          draftRevision,
           formHints,
           forceAi: forceAiRef.current || undefined,
           signal: controller.signal,
@@ -177,7 +226,7 @@ export function useIntakeIntelligence({
 
     inflightRef.current = promise;
     return promise;
-  }, [text, citySlug, cityName, formHints, applyAnalysisResult, cancelInflight]);
+  }, [text, citySlug, cityName, draftRevision, formHints, applyAnalysisResult, cancelInflight]);
 
   const analyzeNow = useCallback(async (): Promise<IntakeAnalyzeResponse | null> => {
     if (debounceTimerRef.current != null) {
@@ -210,10 +259,11 @@ export function useIntakeIntelligence({
       return (
         analyzedTextRef.current === trimmed &&
         formHintsSigRef.current === formHintsSignature(formHints, forceAi) &&
+        draftRevisionRef.current === draftRevision &&
         lastAnalysisRef.current != null
       );
     },
-    [formHints]
+    [formHints, draftRevision]
   );
 
   useEffect(() => {
@@ -222,12 +272,20 @@ export function useIntakeIntelligence({
         window.clearTimeout(debounceTimerRef.current);
         debounceTimerRef.current = null;
       }
-      setIntentGist(null);
+      clearAnalysisState();
+      setError(null);
       return;
     }
 
     const trimmed = text.trim();
-    if (trimmed.length < 3) return;
+    if (trimmed.length < 3) {
+      clearAnalysisState();
+      return;
+    }
+
+    if (analyzedTextRef.current !== trimmed) {
+      clearAnalysisState();
+    }
 
     debounceTimerRef.current = window.setTimeout(() => {
       debounceTimerRef.current = null;
@@ -248,13 +306,14 @@ export function useIntakeIntelligence({
         debounceTimerRef.current = null;
       }
     };
-  }, [enabled, text, formHints, debounceMs, runAnalyze]);
+  }, [enabled, text, formHints, draftRevision, debounceMs, runAnalyze, clearAnalysisState]);
 
   useEffect(() => () => cancelInflight(), [cancelInflight]);
 
   return {
     analyzing,
     aiInvoked,
+    analysisMode,
     analyzedText,
     fieldMeta,
     gaps,
@@ -263,6 +322,7 @@ export function useIntakeIntelligence({
     latencyMs,
     error,
     intentGist,
+    agent,
     analyzeNow,
     waitForAnalysis,
     isFreshForText,

@@ -47,6 +47,28 @@ function parseThousandToman(text: string, pattern: RegExp): number | undefined {
   return n * 1_000;
 }
 
+const MIN_NIGHTLY_RENT_TOMAN = 10_000;
+
+/** Nightly price — ignore bare duration phrases like "2 شب" without a price amount. */
+function parseNightlyRentAmount(norm: string): number | undefined {
+  const pricePatterns = [
+    /(\d[\d,]*)\s*(?:تومان\s*)?(?:\/\s*)?شب/u,
+    /(\d[\d,]*)\s*تومان[^\n]{0,28}شب/u,
+    /شب\s*(\d[\d,]*)\s*تومان/u,
+    /روزانه\s*(\d[\d,]*)/u,
+    /قیمت\s*(?:از\s*)?(\d[\d,]*)\s*تومان[^\n]{0,20}(?:شب|روز)/u,
+  ];
+  for (const pattern of pricePatterns) {
+    const n = parseFirstNumber(norm, pattern);
+    if (n != null && n >= MIN_NIGHTLY_RENT_TOMAN) return n;
+  }
+  const thousand =
+    parseThousandToman(norm, /(\d{1,5})\s*هزار\s*توم(?:ان(?:ه)?|نه|ن)/) ??
+    parseThousandToman(norm, /قیمت[^\n]{0,24}(\d{1,5})\s*هزار\s*توم(?:ان(?:ه)?|نه|ن)/);
+  if (thousand != null && thousand >= MIN_NIGHTLY_RENT_TOMAN) return thousand;
+  return undefined;
+}
+
 const ROOM_WORDS: Record<string, string> = {
   '1': '1',
   '2': '2',
@@ -176,14 +198,7 @@ export function extractPropertySlotsFromText(rawText: string): PropertySlotsFrom
     if (deposit != null) slots.deposit = String(deposit);
   }
 
-  const nightly =
-    parseFirstNumber(norm, /(\d[\d,]*)\s*(?:تومان\s*)?(?:\/\s*)?شب/) ??
-    parseFirstNumber(norm, /(\d[\d,]*)\s*تومان[^\n]{0,28}شب/) ??
-    parseFirstNumber(norm, /شب\s*(\d[\d,]*)/) ??
-    parseFirstNumber(norm, /روزانه\s*(\d[\d,]*)/) ??
-    parseFirstNumber(norm, /قیمت\s*(?:از\s*)?(\d[\d,]*)\s*تومان[^\n]{0,20}(?:شب|روز)/) ??
-    parseThousandToman(norm, /(\d{1,5})\s*هزار\s*توم(?:ان(?:ه)?|نه|ن)/) ??
-    parseThousandToman(norm, /قیمت[^\n]{0,24}(\d{1,5})\s*هزار\s*توم(?:ان(?:ه)?|نه|ن)/);
+  const nightly = parseNightlyRentAmount(norm);
   if (nightly != null) slots.nightlyRent = String(nightly);
 
   const guestMatch =
@@ -195,7 +210,9 @@ export function extractPropertySlotsFromText(rawText: string): PropertySlotsFrom
   const roomMatch =
     norm.match(/(\d)\s*خواب/) ??
     norm.match(/(یک|دو|سه|چهار|تک)\s*خواب/) ??
-    norm.match(/(\d)\s*خوابه/);
+    norm.match(/(\d)\s*خوابه/) ??
+    norm.match(/(\d)\s*اتاق(?:ه)?/) ??
+    norm.match(/(یک|دو|سه|چهار|پنج)\s*اتاق(?:ه)?/);
   if (roomMatch?.[1]) {
     const mapped = ROOM_WORDS[roomMatch[1]] ?? roomMatch[1];
     if (mapped === '4' && (norm.includes('4+') || norm.includes('۴+'))) {

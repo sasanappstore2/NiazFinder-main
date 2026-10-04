@@ -67,6 +67,7 @@ flowchart TB
 | 14 | [[../10_Product_Areas/14_Notifications_Referral\|اعلان و دعوت]] | اطلاع‌رسانی و ریفرال |
 | 15 | [[../10_Product_Areas/15_Admin_SuperAdmin\|ادمین]] | moderation و RBAC |
 | 16 | [[../10_Product_Areas/16_SEO_Canonical_URLs\|SEO و URL]] | مسیرهای canonical |
+| 17 | [[../10_Product_Areas/17_Monetization_Backlog\|بک‌لاگ درآمدی]] | تبلیغات/جایگاه ویژه و گزارش بازار (آینده) |
 
 ## ابزارهای فکر کردن
 

@@ -1,7 +1,8 @@
 import { createHash } from 'crypto';
 import type { IntakeIntelligenceResult } from '@/intake/intelligence-engine/types';
 
-const INTAKE_PARSE_CACHE_VERSION = 'v2';
+const INTAKE_PARSE_CACHE_VERSION = 'v4';
+const INTAKE_ANALYZER_VERSION = 'canonical-analyzer-v2';
 
 interface CacheEntry {
   result: IntakeIntelligenceResult;
@@ -26,16 +27,22 @@ function serializeFormHints(
     city?: string;
     neighborhood?: string;
     categoryLockedByUser?: boolean;
+    cityLockedByUser?: boolean;
+    neighborhoodLockedByUser?: boolean;
+    lockedFieldKeys?: string[];
   } | null
 ): string {
   if (!formHints) return '';
-  return [
-    formHints.categorySlug ?? '',
-    formHints.subcategorySlug ?? '',
-    formHints.city ?? '',
-    formHints.neighborhood ?? '',
-    formHints.categoryLockedByUser ? '1' : '0',
-  ].join(':');
+  return JSON.stringify({
+    categorySlug: formHints.categorySlug ?? '',
+    subcategorySlug: formHints.subcategorySlug ?? '',
+    city: formHints.city ?? '',
+    neighborhood: formHints.neighborhood ?? '',
+    categoryLockedByUser: Boolean(formHints.categoryLockedByUser),
+    cityLockedByUser: Boolean(formHints.cityLockedByUser),
+    neighborhoodLockedByUser: Boolean(formHints.neighborhoodLockedByUser),
+    lockedFieldKeys: [...(formHints.lockedFieldKeys ?? [])].sort(),
+  });
 }
 
 export function buildParseCacheKey(
@@ -48,15 +55,26 @@ export function buildParseCacheKey(
     city?: string;
     neighborhood?: string;
     categoryLockedByUser?: boolean;
-  } | null
+    cityLockedByUser?: boolean;
+    neighborhoodLockedByUser?: boolean;
+    lockedFieldKeys?: string[];
+  } | null,
+  forceAi?: boolean,
+  draftRevision = 0,
+  analyzerVersion = INTAKE_ANALYZER_VERSION,
+  schemaVersion = 2
 ): string {
   const payload = [
     INTAKE_PARSE_CACHE_VERSION,
+    analyzerVersion,
+    schemaVersion,
+    draftRevision,
     String(process.env.NEED_INTAKE_PARSE_CACHE_VERSION_BUMP ?? '0'),
     text.trim().toLowerCase(),
     citySlug ?? '',
     cityName ?? '',
     serializeFormHints(formHints),
+    forceAi ? 'fa1' : 'fa0',
   ].join('|');
   return createHash('sha256').update(payload).digest('hex');
 }

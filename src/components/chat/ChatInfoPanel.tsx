@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { mv } from '@/lib/motion-variants';
 import {
@@ -31,6 +32,7 @@ import { toPersianDigits } from '@/lib/format/digits';
 import { toast } from 'sonner';
 import { peerPresenceLabel } from '@/lib/chat/presence-label';
 import { ChatPresenceDot } from '@/components/chat/ChatPresenceDot';
+import { routeBuilder } from '@/config/routes';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -44,6 +46,7 @@ interface ChatInfoPanelProps {
     content: string;
     type: string;
     isPinned?: boolean;
+    isStarred?: boolean;
     createdAt: string;
     senderId: string;
   }>;
@@ -133,7 +136,13 @@ const sectionVariants = {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
-  const { activeConversationId, conversations, authToken } = useAppStore();
+  const router = useRouter();
+  const {
+    activeConversationId,
+    conversations,
+    authToken,
+    setActiveConversationId,
+  } = useAppStore();
 
   const [isMuted, setIsMuted] = useState(false);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
@@ -166,14 +175,75 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
   );
 
   const starredMessages = useMemo(
-    () => messages.filter((m) => (m as Record<string, unknown>).isStarred === true),
+    () => messages.filter((m) => m.isStarred === true),
     [messages]
   );
 
+  // Prefer store; refresh from API when panel opens
+  useEffect(() => {
+    if (!open) return;
+    if (typeof activeConversation?.isMuted === 'boolean') {
+      setIsMuted(activeConversation.isMuted);
+    }
+  }, [open, activeConversation?.isMuted]);
+
+  useEffect(() => {
+    if (!open || !activeConversationId || !authToken) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch(`/api/chat/${activeConversationId}/mute`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        if (!res.ok || cancelled) return;
+        const body = (await res.json()) as { muted?: boolean };
+        if (!cancelled) {
+          const muted = Boolean(body.muted);
+          setIsMuted(muted);
+          useAppStore.setState((s) => ({
+            conversations: s.conversations.map((c) =>
+              c.id === activeConversationId ? { ...c, isMuted: muted } : c
+            ),
+          }));
+        }
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [open, activeConversationId, authToken]);
+
   // ─── Handlers ─────────────────────────────────────────────────────────
-  const handleToggleMute = () => {
-    setIsMuted((prev) => !prev);
-    toast.success(isMuted ? 'صدای اعلان‌ها فعال شد' : 'بی‌صدا شد');
+  const handleToggleMute = async () => {
+    if (!activeConversationId || !authToken) return;
+    const next = !isMuted;
+    setIsMuted(next);
+    try {
+      const res = await fetch(`/api/chat/${activeConversationId}/mute`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ muted: next }),
+      });
+      if (!res.ok) {
+        setIsMuted(!next);
+        toast.error('ذخیره وضعیت بی‌صدا ناموفق بود');
+        return;
+      }
+      useAppStore.setState((s) => ({
+        conversations: s.conversations.map((c) =>
+          c.id === activeConversationId ? { ...c, isMuted: next } : c
+        ),
+      }));
+      toast.success(next ? 'بی‌صدا شد' : 'صدای اعلان‌ها فعال شد');
+    } catch {
+      setIsMuted(!next);
+      toast.error('خطا در ارتباط با سرور');
+    }
   };
 
   const handleBlockUser = async () => {
@@ -203,13 +273,33 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
     }
   };
 
-  const handleDeleteConversation = () => {
+  const handleDeleteConversation = async () => {
+    if (!activeConversationId || isDeleting) return;
     setIsDeleting(true);
-    setTimeout(() => {
-      setIsDeleting(false);
+    try {
+      const res = await fetch(`/api/chat/${activeConversationId}`, {
+        method: 'DELETE',
+        headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+      });
+      const body = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        toast.error(body.error ?? 'حذف گفتگو ناموفق بود');
+        return;
+      }
+      const deletedId = activeConversationId;
+      useAppStore.setState((s) => ({
+        conversations: s.conversations.filter((c) => c.id !== deletedId),
+        messages: s.messages.filter((m) => m.conversationId !== deletedId),
+      }));
+      setActiveConversationId(null);
       toast.success('گفتگو حذف شد');
       onClose();
-    }, 600);
+      router.push(routeBuilder.chat());
+    } catch {
+      toast.error('خطا در ارتباط با سرور');
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const handleClose = () => {
@@ -242,7 +332,11 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed top-0 right-0 z-50 h-full w-80 bg-background border-l border-border shadow-2xl flex flex-col"
+            className={cn(
+              'fixed z-50 flex flex-col border-border bg-background shadow-2xl',
+              'inset-0 w-full pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]',
+              'md:inset-y-0 md:right-0 md:left-auto md:top-0 md:h-full md:w-80 md:border-l md:pt-0 md:pb-0'
+            )}
             dir="rtl"
           >
             {/* ─── Header ─────────────────────────────────────────── */}
@@ -251,7 +345,7 @@ export function ChatInfoPanel({ open, onClose, messages }: ChatInfoPanelProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-full hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                className="h-10 w-10 rounded-full hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors md:h-8 md:w-8"
                 onClick={handleClose}
               >
                 <X className="h-4 w-4" />

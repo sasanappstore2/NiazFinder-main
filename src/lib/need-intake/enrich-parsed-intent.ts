@@ -80,7 +80,7 @@ export function enrichParsedIntent(
           neighborhoodSlug: hit.slug,
           entities: {
             ...next.entities,
-            area: (hit.matchedArea ?? hit.name).trim(),
+            neighborhood: (hit.matchedArea ?? hit.name).trim(),
           },
         };
       }
@@ -99,7 +99,7 @@ export function enrichParsedIntent(
         next.intentType,
         next.entities,
         next.city,
-        next.entities.area
+        next.entities.areaMin ?? next.entities.area
       ),
     };
   }

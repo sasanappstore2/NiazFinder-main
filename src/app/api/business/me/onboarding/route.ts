@@ -11,7 +11,7 @@ import {
   buildBusinessSeoTitle,
   resolveBusinessDisplayName,
 } from '@/lib/business/suggest-display-name';
-import { queueBusinessProfileTypesenseSync } from '@/lib/search/typesense-sync';
+import { queueBusinessProfileSearchSync } from '@/lib/rag/sync';
 
 export const runtime = 'nodejs';
 
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
       select: { slug: true, name: true, status: true },
     });
 
-    queueBusinessProfileTypesenseSync(profile.id);
+    queueBusinessProfileSearchSync(profile.id);
 
     return NextResponse.json({
       message: 'پروفایل کسب‌وکار منتشر شد',
