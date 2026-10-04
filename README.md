@@ -1,6 +1,7 @@
 # NiazFinder
 
 [![CI](https://github.com/sasanappstore2/NiazFinder-main/actions/workflows/ci.yml/badge.svg?branch=sasan/open-source-readiness)](https://github.com/sasanappstore2/NiazFinder-main/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 NiazFinder (نیازفایندر) is a **needs-first marketplace**: instead of starting by browsing existing listings, users describe what they actually need in free text, the platform structures that need, and then matches it to relevant businesses.
 
@@ -219,6 +220,4 @@ Areas where automation helps most (and where maintainer tooling / AI-assisted re
 
 ## License
 
-> ⚠️ **No license file exists in this repository yet.** There is no `LICENSE`, and `package.json` declares no license. That means, by default, all rights are reserved and the project is not yet legally open for reuse — this is flagged for the maintainer to resolve.
-
-Recommended next step for the maintainer: choose an OSI-approved license matching the project's goals — **MIT** (maximum reuse, simplest for a Codex-style open-source program) or **Apache-2.0** (adds explicit patent grant). Add the `LICENSE` file and the corresponding `license` field in `package.json`.
+MIT — see [LICENSE](LICENSE).
