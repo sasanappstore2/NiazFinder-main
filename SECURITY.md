@@ -31,6 +31,20 @@ Tracked `.env`, `.env.local`, and `.env.backup` files were previously committed 
 2. Consider rewriting history (`git filter-repo`) or, if the repo is freshly published, publishing from a clean history.
 3. Verify no other secrets exist in history: `git log -p -- .env* | grep -E 'SECRET|KEY|PASSWORD|TOKEN'`.
 
+Rotation checklist (tick off as each is replaced in every environment):
+
+- [ ] `INTERNAL_API_SECRET` / `CHAT_INTERNAL_SECRET`
+- [ ] `JWT_SECRET`
+- [ ] `GEMINI_API_KEY`
+- [ ] `TYPESENSE_API_KEY`
+- [ ] `POSTGRES_PASSWORD` (+ `DATABASE_URL` credentials)
+- [ ] `RABBITMQ_USER` / `RABBITMQ_PASSWORD`
+- [ ] `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD`
+- [ ] `SMART_MATCHING_INTERNAL_SECRET`
+- [ ] `ZARINPAL_MERCHANT_ID` (if a real merchant id was ever committed)
+
+See also [`docs/PROD_CHECKLIST.md`](../docs/PROD_CHECKLIST.md) for the full pre-production review.
+
 ## Out of Scope (current posture, not guarantees)
 
 No formal security audit, penetration test, or SOC/ISO certification has been performed. Rate limits, CORS lockdown (`CHAT_CORS_ORIGINS`), and upload restrictions are configured per-environment — review them before any production deployment.

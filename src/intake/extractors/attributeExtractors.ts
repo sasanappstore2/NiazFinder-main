@@ -119,11 +119,29 @@ export function repairAttributeKeywords(text: string): string {
     if (!raw) continue;
     const core = coreOf(idx);
     if (!core || core.length < 2 || core.length > 9) continue;
-    if (/[\da-zA-Z\u200c]/u.test(core)) continue; // digits/Latin/ZWNJ — not a keyword typo
+    if (/[a-zA-Z\u200c]/u.test(core)) continue; // Latin / ZWNJ — not a keyword typo
     if (NEVER_REPAIR.has(core)) continue;
 
     const prevCore = wi > 0 ? coreOf(idx - 2) : null;
     const nextCore = wi < wordCount - 1 ? coreOf(idx + 2) : null;
+
+    // Glued-digit form «2خوااب» / «90تمر»: the digits stay in place and act as
+    // the anchor; only the letter run is matched against the families.
+    const glued = core.match(
+      /^([\d\u06F0-\u06F9\u0660-\u0669.,]*)([\u0600-\u06FF]+)([\d\u06F0-\u06F9\u0660-\u0669.,]*)$/u
+    );
+    if (!glued) continue; // digits inside the letter run — not a keyword typo
+    const lead = glued[1] ?? '';
+    const letters = glued[2]!;
+    const trail = glued[3] ?? '';
+    if (letters.length < 2 || letters.length > 9) continue;
+    if (NEVER_REPAIR.has(letters)) continue;
+
+    const anchorCount = (t: string): number => intDigitCount(t || null);
+    const gluedDigits = Math.max(anchorCount(lead), anchorCount(trail));
+    const prevOrNextDigits = Math.max(intDigitCount(prevCore), intDigitCount(nextCore));
+    const anchorDigits = Math.max(gluedDigits, prevOrNextDigits);
+    const prevIsWordNumber = isWordNumber(prevCore);
 
     // Upstream-corrector collision rescue: the fuzzy corrector folds «واب» (a
     // خواب typo with خ deleted) into the legit word «وام», because its
@@ -131,8 +149,8 @@ export function repairAttributeKeywords(text: string): string {
     // directly before «وام» («2 وام») only occurs in that typo — real loan
     // phrases put the amount AFTER the word («وام 200 میلیونی») — so repair
     // it back to the rooms keyword.
-    if (core === 'وام' && intDigitCount(prevCore) >= 1 && intDigitCount(prevCore) <= 2) {
-      parts[idx] = raw.replace(core, 'خواب');
+    if (letters === 'وام' && anchorDigits >= 1 && anchorDigits <= 2) {
+      parts[idx] = raw.replace(letters, 'خواب');
       changed = true;
       continue;
     }
@@ -145,8 +163,8 @@ export function repairAttributeKeywords(text: string): string {
       let famBest = 2;
       let famWord: string | null = null;
       for (const word of family.words) {
-        if (Math.abs(word.length - core.length) > 1) continue;
-        const d = osaDistanceBounded(core, word, 1);
+        if (Math.abs(word.length - letters.length) > 1) continue;
+        const d = osaDistanceBounded(letters, word, 1);
         if (d < famBest) {
           famBest = d;
           famWord = word;
@@ -167,9 +185,16 @@ export function repairAttributeKeywords(text: string): string {
 
     // bestD === 0 → exact keyword, untouched. Ambiguous across families → skip.
     if (!bestFamily || !bestWord || bestD !== 1 || tieAcrossFamilies) continue;
-    if (!anchorOk(bestFamily, prevCore, nextCore)) continue;
-    if (!raw.includes(core)) continue;
-    parts[idx] = raw.replace(core, bestWord);
+    // Anchor: a number glued to the token, a number neighbour, or (rooms only)
+    // a Persian word-number neighbour.
+    const anchored =
+      gluedDigits >= 1 ||
+      (bestFamily.name === 'rooms' && prevIsWordNumber)
+        ? true
+        : anchorOk(bestFamily, prevCore, nextCore);
+    if (!anchored) continue;
+    if (!raw.includes(letters)) continue;
+    parts[idx] = raw.replace(letters, bestWord);
     changed = true;
   }
 
