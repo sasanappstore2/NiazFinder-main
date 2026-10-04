@@ -61,7 +61,6 @@ data/GeoLite2-City.mmdb
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-local-*
 .claude
 .z-ai-config
 *.log
@@ -75,7 +74,21 @@ server.log
 /skills/
 
 # need-intake training exports + local MLX weights (never commit)
-data/
+# NOTE: bare `data/` is intentionally NOT ignored — small curated files under
+# src/data (geo overrides, derived map JSON, neighborhood catalogs) are tracked.
+/data/
+src/data/geo/raw/
+src/data/geo/provinces/
+src/data/geo/viewports/
+src/data/geo/*-boundaries.geojson
+src/data/neighborhoods/known-areas.json
+src/data/neighborhoods/geo/
+src/data/neighborhoods/.cache/
+src/data/iran-locations-tree.json
+# discovery caches
+.cache/
+# generated filing benchmark reports
+reports/filing-benchmark/
 exports/intake-finetune/need-intake-general-finetune.jsonl
 exports/intake-finetune/need-intake-general-finetune.json
 exports/intake-finetune/need-intake-clean-v1.jsonl

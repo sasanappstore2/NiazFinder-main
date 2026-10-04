@@ -5,8 +5,9 @@
 
 import { normalizePersian } from '@/intake/normalizer/normalizePersian';
 import { applyTypoAliases } from '@/intake/intelligence-engine/normalizer/typo-aliases';
-import { osaDistanceBounded } from '@/intake/intelligence-engine/normalizer/fuzzy-corrector';
 import { extractArea, extractBudget, extractRooms } from '@/intake/extractors/attributeExtractors';
+import { extractUrgencyTolerant } from '@/intake/smart-extractor/rules/urgency-tolerant';
+import { matchHoodInText, matchHoodPhrase } from '@/intake/smart-extractor/rules/hood-fuzzy';
 import { extractTransactionType } from '@/intake/extractors/transactionExtractor';
 import { applyAdvancedRules } from '@/intake/smart-extractor/rules/advanced-rules-engine';
 import type {
@@ -103,10 +104,46 @@ async function extractWithRules(
   result: SmartExtractionResult,
   options: SmartExtractionOptions
 ): Promise<void> {
+  // Trusted neighborhood list shared by exact mention, capture validation and
+  // fuzzy fallback below (hood-fuzzy takes it purely as an argument).
+  const MULTI_HOODS = [
+    'سجاد',
+    'احمدآباد',
+    'وکیل آباد',
+    'کوهسنگی',
+    'قاسم آباد',
+    'الهیه',
+    'نیاوران',
+    'ونک',
+    'جردن',
+    'زعفرانیه',
+    'پاسداران',
+    'فرمانیه',
+    'تجریش',
+    'سعادت آباد',
+    'شهرک غرب',
+    'فردوسی',
+    'بنفشه',
+    'خیام',
+    'امامت',
+    'امام رضا',
+    'ابن سینا',
+    'حرم',
+  ];
+
   // Advanced rules (Claude Step 2) — deposit/rent, full deposit, neighborhood, area, rooms, floor, amenities
   const advanced = applyAdvancedRules(normalizedText);
   const { patch } = advanced;
   result.trace!.rulesUsed.push(...advanced.rulesUsed);
+
+  // Validate/correct the neighborhood_with_context capture against the trusted
+  // hood list: exact → canonical spelling, unambiguous near-match → corrected
+  // (کوسهنگی → کوهسنگی); no match → keep the capture as-is (downstream
+  // disambiguation still validates it).
+  if (patch.neighborhood) {
+    const hoodCapture = matchHoodPhrase(patch.neighborhood, MULTI_HOODS);
+    if (hoodCapture) patch.neighborhood = hoodCapture.hood;
+  }
 
   if (patch.depositAmount != null) result.budget.depositAmount = patch.depositAmount;
   if (patch.rentAmount != null) result.budget.rentAmount = patch.rentAmount;
@@ -152,30 +189,6 @@ async function extractWithRules(
   if (patch.hasStorage) result.property.hasStorage = true;
 
   // Collect multiple mentioned neighborhoods (Batch2: فردوسی + امام رضا + ابن سینا)
-  const MULTI_HOODS = [
-    'سجاد',
-    'احمدآباد',
-    'وکیل آباد',
-    'کوهسنگی',
-    'قاسم آباد',
-    'الهیه',
-    'نیاوران',
-    'ونک',
-    'جردن',
-    'زعفرانیه',
-    'پاسداران',
-    'فرمانیه',
-    'تجریش',
-    'سعادت آباد',
-    'شهرک غرب',
-    'فردوسی',
-    'بنفشه',
-    'خیام',
-    'امامت',
-    'امام رضا',
-    'ابن سینا',
-    'حرم',
-  ];
   const mentioned = MULTI_HOODS.filter((h) => normalizedText.includes(h.replace(/\s+/g, ' ')));
   if (mentioned.length > 0) {
     if (!result.location.neighborhood) {
@@ -202,13 +215,17 @@ async function extractWithRules(
 
   // Fuzzy neighborhood fallback: when no exact mention matched, accept an
   // unambiguous near-match (OSA ≤1, ≤2 for long names) against the same
-  // trusted hood list. Downstream disambiguation still validates the result.
+  // trusted hood list — including two/three-part names (وکل آبااد → وکیل آباد).
+  // Fed the RAW text (originalText), not the typo-alias/fuzzy-corrector output:
+  // that pass can rewrite a corrupted hood token (سناد → سند) unrecoverably;
+  // hood-fuzzy normalizes internally. Downstream disambiguation still
+  // validates the result.
   if (mentioned.length === 0 && !result.location.neighborhood) {
-    const fuzzyHood = matchFuzzyNeighborhood(normalizedText, MULTI_HOODS);
+    const fuzzyHood = matchHoodInText(originalText, MULTI_HOODS);
     if (fuzzyHood) {
-      result.location.neighborhood = fuzzyHood;
-      result.location.neighborhoodSlug = fuzzyHood;
-      result.location.confidence = Math.max(result.location.confidence, 0.65);
+      result.location.neighborhood = fuzzyHood.hood;
+      result.location.neighborhoodSlug = fuzzyHood.hood;
+      result.location.confidence = Math.max(result.location.confidence, fuzzyHood.confidence);
       result.trace!.rulesUsed.push('fuzzy_neighborhood');
     }
   }
@@ -279,21 +296,12 @@ async function extractWithRules(
     result.trace!.rulesUsed.push('age');
   }
 
-  if (normalizedText.includes('فوری') || normalizedText.includes('عجله') || normalizedText.includes('فوریه')) {
-    result.metadata.urgency = 'immediate';
-    result.trace!.rulesUsed.push('urgency');
-  } else if (normalizedText.includes('این هفته')) {
-    result.metadata.urgency = 'this_week';
-  } else if (
-    normalizedText.includes('این ماه') ||
-    normalizedText.includes('ماه جاری') ||
-    /تا\s*آخر\s*تیر/u.test(normalizedText) ||
-    /تا\s*آخر\s*(?:فروردین|اردیبهشت|خرداد|مرداد|شهریور|مهر|آبان|آذر|دی|بهمن|اسفند)/u.test(
-      normalizedText
-    )
-  ) {
-    result.metadata.urgency = 'this_month';
-    result.trace!.rulesUsed.push('urgency_deadline_month');
+  // Urgency via typo-tolerant phrase matching (replaces the legacy
+  // includes/regex chain; rules carry legacy trace-tag parity).
+  const urgencyMatch = extractUrgencyTolerant(normalizedText);
+  if (urgencyMatch) {
+    result.metadata.urgency = urgencyMatch.urgency;
+    result.trace!.rulesUsed.push(...urgencyMatch.rules);
   }
 
   // Category hints — services before real-estate (آپارتمانم در متن سرویس نباید املاک شود)
@@ -367,8 +375,6 @@ async function extractWithRules(
       result.trace!.rulesUsed.push('city_from_text');
     }
   }
-
-  void originalText;
 }
 
 /**
@@ -781,44 +787,6 @@ function isPropertyCategory(category: string | null): boolean {
   if (!category) return false;
   const propertyCategories = ['apartment-sale', 'apartment-rent', 'villa', 'land', 'shop', 'office'];
   return propertyCategories.includes(category);
-}
-
-/**
- * Unambiguous near-match of a token against a trusted neighborhood list.
- * OSA ≤1 (≤2 for names ≥7 chars); a token matching two different hoods is
- * rejected. Multi-word hoods are skipped — too risky to fuzzy-match.
- */
-export function matchFuzzyNeighborhood(
-  normalizedText: string,
-  hoods: readonly string[]
-): string | null {
-  const tokens = normalizedText.split(/\s+/).filter((t) => t.length >= 3);
-  if (tokens.length === 0) return null;
-
-  let best: { hood: string; score: number } | null = null;
-  let bestCount = 0;
-
-  for (const hood of hoods) {
-    const parts = hood.split(/\s+/);
-    if (parts.length !== 1) continue;
-    const name = parts[0]!;
-    const maxD = name.length >= 7 ? 2 : 1;
-
-    for (const token of tokens) {
-      if (Math.abs(token.length - name.length) > maxD) continue;
-      const d = osaDistanceBounded(token, name, maxD);
-      if (d > maxD) continue;
-      const score = d === 1 ? 0.8 : 0.7;
-      if (!best || score > best.score) {
-        best = { hood, score };
-        bestCount = 1;
-      } else if (score === best.score) {
-        bestCount++;
-      }
-    }
-  }
-
-  return best && bestCount === 1 ? best.hood : null;
 }
 
 // Export for testing
