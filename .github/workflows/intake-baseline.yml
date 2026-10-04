@@ -33,7 +33,7 @@ jobs:
         run: npx --yes tsx scripts/ci/verify-intake-phase.ts --phase 5
       - name: Upload baseline report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: intake-baseline-report
           path: reports/intake-baseline.json
