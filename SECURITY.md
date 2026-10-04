@@ -34,3 +34,18 @@ Tracked `.env`, `.env.local`, and `.env.backup` files were previously committed 
 ## Out of Scope (current posture, not guarantees)
 
 No formal security audit, penetration test, or SOC/ISO certification has been performed. Rate limits, CORS lockdown (`CHAT_CORS_ORIGINS`), and upload restrictions are configured per-environment — review them before any production deployment.
+
+## Dependency Advisories (audited 2026-10-04, `npm audit --omit=dev`)
+
+Patched within the same major (see `package.json` + `overrides`): Next.js → 16.3.x,
+axios → 1.20.x, next-auth → 4.24.15 line, sharp → 0.35.x, Prisma → 6.19.x,
+tailwindcss / socket.io-client latest 4.x; transitive `ws`, `socket.io-parser`,
+`js-yaml`, `nanoid` pinned via npm `overrides`. The `dependency-audit` CI job
+is advisory (`continue-on-error`) until the items below are resolved.
+
+Known remaining, requiring upstream or major upgrades — do NOT blindly upgrade:
+
+| Package | Issue | Why not yet fixed |
+|---|---|---|
+| `maplibre-gl` 5.x | Critical XSS sanitizer bypass (GHSA-jrc7-96c5-q579) | Fix requires major upgrade to 6.x (breaking map API). Reachability checked 2026-10-04: no `setHTML`/Mapbox-popup or `dangerouslySetInnerHTML` usage in map components — popups render through React. Re-check on any map UI change. |
+| `@prisma/config` → `deepmerge-ts` | High stack-exhaustion on recursive merge graphs | Pinned by Prisma 6.19.x itself; fix must come from Prisma upstream. Not reachable from request handling in normal use. |

@@ -521,11 +521,14 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
   // corrected neighborhood token colliding with «رهن»), the same mention
   // resolves to both slots and must not flip a rent-only deal into
   // DEPOSIT_AND_RENT. Explicit «رهن و اجاره» compounds keep both slots.
+  // (mentions may hold the same digit mention twice — phrase + digit scans —
+  // so the count is over distinct mentions.)
+  const distinctMentions = new Set(mentions.map((m) => `${m.index}:${m.end}:${m.tomans}`));
   if (
     out.rahnAmount != null &&
     out.monthlyRent != null &&
     out.rahnAmount === out.monthlyRent &&
-    mentions.length === 1 &&
+    distinctMentions.size === 1 &&
     !/رهن\s*و\s*اجاره|ودیعه\s*و\s*اجاره/u.test(norm)
   ) {
     delete out.monthlyRent;

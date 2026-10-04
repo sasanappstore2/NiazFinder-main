@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main, master]
   push:
-    branches: [main, master]
+    branches: ['**']
 
 jobs:
   typecheck-lint-tests:
@@ -30,3 +30,17 @@ jobs:
         run: npm run test:intake-engine
       - name: Post pipeline self-test (rules-only, offline)
         run: npm run test:post-pipeline
+
+  dependency-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: npm audit (advisory — tracked in SECURITY.md)
+        run: npm audit --omit=dev --audit-level=high
+        continue-on-error: true

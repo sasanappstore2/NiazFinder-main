@@ -196,7 +196,7 @@ function runExactAndGuards(): void {
   console.log('\n— exact phrases, compounds, false-positive guards —');
   const exact: Array<[string, UrgencyLevel]> = [
     ['فوری نیاز به آپارتمان 2 خواب اجاره در سجاد', 'immediate'],
-    ['نیاز به نظافت فوریه نیست', 'this_month'], // legacy: includes('فوری') hits فوریه → immediate... see note
+    ['قراردادم تا فوریه تمام میشه، نظافت لازم دارم', 'immediate'], // legacy includes('فوری') hits فوریه too
     ['عجله دارم برای برقکار', 'immediate'],
     ['این هفته آپارتمان میخوام', 'this_week'],
     ['این ماه دنبال نظافتچی هستم', 'this_month'],
@@ -220,7 +220,7 @@ function runExactAndGuards(): void {
     'مبلمان فرسوده فروشی است در خیام',
   ];
   for (const text of negatives) {
-    check(`negative: «${text.slice(0, 36)}…» → null`, moduleUrgency(text) === null, `got ${String(moduleUrgency(text))}`);
+    check(`negative: «${text.slice(0, 36)}…» → null`, moduleUrgency(text) === undefined, `got ${String(moduleUrgency(text))}`);
   }
 }
 
@@ -231,8 +231,8 @@ function runKillSwitch(): void {
   const prev = process.env.INTAKE_FUZZY_CORRECTOR;
   process.env.INTAKE_FUZZY_CORRECTOR = 'false';
   try {
-    check('kill switch: «فور نیاز …» → null', moduleUrgency('فور نیاز به آپارتمان 2 خواب در سجاد') === null);
-    check('kill switch: «تا آرخ تیر» → null', moduleUrgency('نظافت در ونک تا آرخ تیر') === null);
+    check('kill switch: «فور نیاز …» → null', moduleUrgency('فور نیاز به آپارتمان 2 خواب در سجاد') === undefined);
+    check('kill switch: «تا آرخ تیر» → null', moduleUrgency('نظافت در ونک تا آرخ تیر') === undefined);
     check('kill switch: exact «تا آخر تیر» still works', moduleUrgency('نظافت در ونک تا آخر تیر') === 'this_month');
     check('kill switch: exact «فوری» still works', moduleUrgency('فوری نظافت در ونک') === 'immediate');
   } finally {

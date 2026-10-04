@@ -193,9 +193,21 @@ interface BestMatch {
   phrase: Phrase;
   phraseIdx: number;
   distance: number;
+  slots: number;
   tolerant: boolean;
   start: number;
   end: number;
+}
+
+function isBetterMatch(candidate: BestMatch, best: BestMatch): boolean {
+  if (candidate.distance !== best.distance) return candidate.distance < best.distance;
+  // Fuzzy ties: a longer phrase (more context slots) is the stronger reading —
+  // e.g. «ماه فاری» reads as a corrupted «ماه جاری» (2 slots), not «فوری» (1).
+  if (candidate.distance > 0 && candidate.slots !== best.slots) {
+    return candidate.slots > best.slots;
+  }
+  // Exact ties (and fuzzy ties at equal slot count): legacy evaluation order.
+  return candidate.phraseIdx < best.phraseIdx;
 }
 
 function findBestMatch(text: string, tokens: Token[]): BestMatch | null {
@@ -218,17 +230,16 @@ function findBestMatch(text: string, tokens: Token[]): BestMatch | null {
         if (d > 0) tolerant = true;
       }
       if (!ok) continue;
-      // Lower total wins; on ties the earlier phrase (higher legacy priority) wins.
-      if (!best || total < best.distance || (total === best.distance && p < best.phraseIdx)) {
-        best = {
-          phrase,
-          phraseIdx: p,
-          distance: total,
-          tolerant,
-          start: tokens[i]!.start,
-          end: tokens[i + phrase.slots.length - 1]!.end,
-        };
-      }
+      const candidate: BestMatch = {
+        phrase,
+        phraseIdx: p,
+        distance: total,
+        slots: phrase.slots.length,
+        tolerant,
+        start: tokens[i]!.start,
+        end: tokens[i + phrase.slots.length - 1]!.end,
+      };
+      if (!best || isBetterMatch(candidate, best)) best = candidate;
     }
   }
   return best;

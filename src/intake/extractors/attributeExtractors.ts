@@ -125,6 +125,18 @@ export function repairAttributeKeywords(text: string): string {
     const prevCore = wi > 0 ? coreOf(idx - 2) : null;
     const nextCore = wi < wordCount - 1 ? coreOf(idx + 2) : null;
 
+    // Upstream-corrector collision rescue: the fuzzy corrector folds «واب» (a
+    // خواب typo with خ deleted) into the legit word «وام», because its
+    // 3-letter band only allows same-length fixes. A 1-2 digit cardinal
+    // directly before «وام» («2 وام») only occurs in that typo — real loan
+    // phrases put the amount AFTER the word («وام 200 میلیونی») — so repair
+    // it back to the rooms keyword.
+    if (core === 'وام' && intDigitCount(prevCore) >= 1 && intDigitCount(prevCore) <= 2) {
+      parts[idx] = raw.replace(core, 'خواب');
+      changed = true;
+      continue;
+    }
+
     let bestD = 2;
     let bestFamily: KeywordFamily | null = null;
     let bestWord: string | null = null;

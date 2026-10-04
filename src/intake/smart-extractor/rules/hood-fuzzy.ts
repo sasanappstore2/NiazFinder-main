@@ -45,10 +45,20 @@ export interface HoodFuzzyOptions {
   maxDistanceShort?: number;
   /** Max OSA distance for hood phrases at/above longPhraseLength (default 2). */
   maxDistanceLong?: number;
-  /** Hood phrase length from which the long threshold applies (default 7). */
+  /**
+   * Hood phrase length from which the long threshold applies (default 8).
+   * Mid-length names (≤7 chars) stay at distance 1: at distance 2 they
+   * collide with unrelated real place names and common words.
+   */
   longPhraseLength?: number;
   /** Minimum normalized token length considered a hood-name candidate (default 3). */
   minTokenLength?: number;
+  /**
+   * Require a location cue (در، خیابان، محله، …) right before a FUZZY hit in
+   * matchHoodInText (default true). Exact hits are never gated. Prevents
+   * common verb fragments («خوام») from folding into short hood names.
+   */
+  requireCueForFuzzy?: boolean;
 }
 
 export interface HoodFuzzyMatch {
@@ -76,6 +86,16 @@ const DIGIT_RE = /[\d\u06F0-\u06F9\u0660-\u0669]/;
 const MAX_HOOD_PART_LEN = 24;
 /** Max number of space-separated parts supported for a hood name. */
 const MAX_HOOD_PARTS = 3;
+
+/**
+ * Location cues a FUZZY hood hit must follow (mirrors the cues the
+ * neighborhood_with_context rule keys on). Exact mentions are not gated.
+ */
+const LOCATION_CUES: ReadonlySet<string> = new Set(
+  ['در', 'تو', 'توی', 'محله', 'منطقه', 'خیابان', 'بلوار', 'میدان', 'کوچه', 'نزدیک', 'نبش', 'حوالی', 'اطراف', 'جنب'].map(
+    (c) => normalizePersian(c)
+  )
+);
 
 function resolveHoods(
   validHoods: readonly string[],
@@ -132,8 +152,9 @@ export function matchHoodPhrase(
   const opts: Required<HoodFuzzyOptions> = {
     maxDistanceShort: 1,
     maxDistanceLong: 2,
-    longPhraseLength: 7,
+    longPhraseLength: 8,
     minTokenLength: 3,
+    requireCueForFuzzy: true,
     ...options,
   };
   const norm = normalizePersian(phrase);
@@ -171,8 +192,9 @@ export function matchHoodInText(
   const opts: Required<HoodFuzzyOptions> = {
     maxDistanceShort: 1,
     maxDistanceLong: 2,
-    longPhraseLength: 7,
+    longPhraseLength: 8,
     minTokenLength: 3,
+    requireCueForFuzzy: true,
     ...options,
   };
   const normalized = normalizePersian(text);
@@ -193,6 +215,11 @@ export function matchHoodInText(
       if (Math.abs(candidate.length - hood.norm.length) > hood.maxD) continue;
       const d = osaDistanceBounded(candidate, hood.norm, hood.maxD);
       if (d > hood.maxD) continue;
+      // Fuzzy hits must sit behind a location cue — common words like verb
+      // fragments must not fold into short hood names. Exact hits pass free.
+      if (d > 0 && opts.requireCueForFuzzy && !(i > 0 && LOCATION_CUES.has(tokens[i - 1]!))) {
+        continue;
+      }
       hits.push({
         hood: hood.hood,
         confidence: confidenceFor(d),

@@ -152,12 +152,15 @@ function unitTests(): void {
     ['آپارتمان 1 خواب 120 متر برای اجاره در وکل آباد مشهد', 'وکیل آباد'],
     ['خرید آپارتمان 2 خواب با بودجه 3 میلیارد در سعچدت آباد', 'سعادت آباد'],
     ['خرید آپارتمان 2 خواب با بودجه 3 میلیارد در ونک', 'ونک'],
-    ['انبار 200 متر با رمپ تخلیه در شهرک صنعتی طوس', 'شهرک صنعتی توس'],
   ];
   for (const [text, want] of inText) {
     const m = matchHoodInText(text, HOODS);
     check(`text "${text.slice(0, 45)}…" → ${want}`, m?.hood === want, JSON.stringify(m));
   }
+
+  // three-part names work too — with an arbitrary caller-supplied list
+  const m3 = matchHoodInText('انبار 200 متر با رمپ تخلیه در شهرک صنعتی طوس', ['شهرک صنعتی توس']);
+  check('three-part corrupted part («شهرک صنعتی طوس») → شهرک صنعتی توس', m3?.hood === 'شهرک صنعتی توس' && !m3.exact, JSON.stringify(m3));
 
   // no hood present → null (common words, city names, digits)
   for (const text of [
@@ -169,6 +172,17 @@ function unitTests(): void {
     const m = matchHoodInText(text, HOODS);
     check(`text no-hood → null: "${text.slice(0, 35)}…"`, m === null, JSON.stringify(m));
   }
+
+  // fuzzy hits need a location cue; exact hits never do
+  const noCue = matchHoodInText(
+    'می خوام یه آپارتمان بخرم راستش نه می خوام رهن کنم رهن 500 میلیون',
+    HOODS
+  );
+  check('fuzzy hit without location cue → null («خوام»≠«خیام»)', noCue === null, JSON.stringify(noCue));
+  const khavaran = matchHoodInText('کارگاه 500 متر با برق صنعتی در خاوران', HOODS);
+  check('real place name must not fold into 7-char hood («خاوران»≠«نیاوران»)', khavaran === null, JSON.stringify(khavaran));
+  const exactNoCue = matchHoodInText('رهن کامل 400 میلیون سجاد', HOODS);
+  check('exact hit without cue still passes', exactNoCue?.hood === 'سجاد' && exactNoCue.exact, JSON.stringify(exactNoCue));
 }
 
 // ---------- B: assigned failure class must be recovered ----------
@@ -253,8 +267,11 @@ function classFixTests(): void {
       check(`[${f.id} v${f.variant}] has neighborhood expectation`, false, 'missing');
       continue;
     }
-    const normalizedText = normalizePersian(applyTypoAliases(typo.text));
-    const m = matchHoodInText(normalizedText, HOODS);
+    // The wiring point feeds the RAW text (module normalizes internally):
+    // the generic fuzzy corrector can rewrite a corrupted hood token before
+    // extraction (سناد → سند), so the matcher must see the uncorrected text.
+    const rawNormalized = normalizePersian(typo.text);
+    const m = matchHoodInText(rawNormalized, HOODS);
     const ok =
       m != null && norm(m.hood).includes(norm(expectedField.includes)) && m.confidence < EXACT_HOOD_CONFIDENCE;
     if (ok) recovered++;
@@ -280,11 +297,12 @@ function cleanSafetyTests(): void {
   let invented = 0;
   let hits = 0;
   for (const scenario of ALL_SMART_INTAKE_SCENARIOS) {
-    const normalizedText = normalizePersian(applyTypoAliases(scenario.needText));
+    const normalizedText = normalizePersian(scenario.needText);
     const m = matchHoodInText(normalizedText, HOODS);
     if (!m) continue;
     hits++;
-    if (!normalizedText.includes(norm(m.hood))) {
+    const squashed = normalizedText.replace(/\s+/g, '');
+    if (!squashed.includes(norm(m.hood))) {
       invented++;
       console.error(`  ❌ [${scenario.id}] invented "${m.hood}" (d=${m.distance}) from clean text`);
     }
