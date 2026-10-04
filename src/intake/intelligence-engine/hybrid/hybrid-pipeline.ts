@@ -3,7 +3,10 @@ import { extractEntities } from '@/intake/intelligence-engine/extractors/entity-
 import { resolveLocationViaLre } from '@/intake/intelligence-engine/resolvers/location-lre-bridge';
 import { resolveBudget } from '@/intake/intelligence-engine/resolvers/budget-resolver';
 import { resolveProperty } from '@/intake/intelligence-engine/resolvers/property-resolver';
-import { resolveDealTypeFields } from '@/intake/intelligence-engine/resolvers/deal-type-resolver';
+import {
+  clearNonAssetTransactionFields,
+  resolveDealTypeFields,
+} from '@/intake/intelligence-engine/resolvers/deal-type-resolver';
 import {
   mergeFieldBags,
   scoreFieldConfidence,
@@ -381,6 +384,7 @@ export async function runHybridIntakePipeline(
   t = performance.now();
   const postFill = validatePostFillFields(bag);
   bag = postFill.fields;
+  clearNonAssetTransactionFields(bag);
   scoreFieldConfidence(bag);
   steps.push(
     createStepTrace(

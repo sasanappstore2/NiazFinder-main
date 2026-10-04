@@ -1,0 +1,126 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# env (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# misc
+.DS_Store
+data/telemetry/post-intake/
+data/evolution/
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# MaxMind GeoLite2 (download separately)
+data/GeoLite2-City.mmdb
+*.mmdb
+
+
+# vercel
+.vercel
+
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+local-*
+.claude
+.z-ai-config
+*.log
+dev.log
+dev.out.log
+test
+prompt
+
+server.log
+# Skills directory
+/skills/
+
+# need-intake training exports + local MLX weights (never commit)
+data/
+exports/intake-finetune/need-intake-general-finetune.jsonl
+exports/intake-finetune/need-intake-general-finetune.json
+exports/intake-finetune/need-intake-clean-v1.jsonl
+exports/intake-finetune/need-intake-clean-v1.json
+exports/intake-finetune/need-intake-clean-v2.jsonl
+exports/intake-finetune/need-intake-clean-v2.json
+exports/intake-finetune/gemma4-intake-full.jsonl
+exports/intake-finetune/gemma4-intake-train-10k.jsonl
+exports/intake-finetune/gemma4-intake-holdout-500.jsonl
+exports/intake-finetune/gemma4-intake-full.json
+exports/intake-finetune/dataset-index-batches.jsonl
+models/
+mini-services/*/.venv/
+# Local chat uploads (do not commit)
+public/uploads/chat/
+
+mini-services/intake-mlx/__pycache__/
+mini-services/intake-mlx/.env
+*.adapter.*
+
+# build artifacts & generated reports
+mini-services/backend/dist/
+reports/*.json
+reports/*.csv
+reports/*.jsonl
+!reports/.gitkeep
+mobile/node_modules
+mobile/ios/App/App/public
+mobile/ios/DerivedData
+
+# ===== ↑ 以上同步自 .gitignore（「从 .gitignore 同步」只重写以上部分）=====
+.git/
+.hg/
+.svn/
+bower_components/
+jspm_packages/
+__pycache__/
+site-packages/
+venv/
+coverage/
+htmlcov/
+lcov-report/
+cmakefiles/
+cmake-build-*/
+bazel-*/
+pods/
+deriveddata/
+storybook-static/
+playwright-report/
+test-results/
+allure-results/
+allure-report/
+cdk.out/
+*.egg-info/
+*.dist-info/
+eggs/
+pip-wheel-metadata/
+wheels/
+# ----- ↑ 以上为 ZCode 默认排除规则（自定义规则请写在本行下方，不会被同步/恢复改动）-----
+# 自定义规则写在下方（本行提示可删除）

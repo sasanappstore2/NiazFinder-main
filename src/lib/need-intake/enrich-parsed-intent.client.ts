@@ -44,7 +44,7 @@ export function enrichParsedIntentClient(
       city: cityHint || next.city,
       entities: {
         ...next.entities,
-        ...(areaLabel ? { area: areaLabel } : {}),
+        ...(areaLabel ? { neighborhood: areaLabel } : {}),
       },
     };
   }
@@ -53,6 +53,7 @@ export function enrichParsedIntentClient(
     const city = next.city?.trim() || parseCity(raw);
     const area =
       parseAreaFromText(raw)?.trim() ||
+      next.entities?.areaMin?.trim() ||
       next.entities?.area?.trim() ||
       '';
     const brand =
@@ -81,7 +82,7 @@ export function enrichParsedIntentClient(
         next.intentType,
         next.entities,
         next.city,
-        next.entities.area
+        next.entities.areaMin ?? next.entities.area
       ),
     };
   }

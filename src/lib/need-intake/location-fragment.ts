@@ -4,7 +4,7 @@ import { parseCity } from '@/lib/need-intake/intent-parser';
 import { CANONICAL_PROVINCES } from '@/config/locations';
 
 const FRAGMENT_STOP_RE =
-  /(?:\s+لازم\s*دار(?:م|یم)|\s+نیاز\s*دار(?:م|یم)|\s+دنبال|\s+می[\s‌]?خو(?:ام|واه|اهم)|\s+میخو(?:ام|واه|اهم)|\s+برای|\s+بودجه|\s+اجاره|\s+رهن|\s+فروش|\s+خرید|\s+زندگی\s*می|\s+اگر\s+موردی|\s+پیام\s*بدید|\s+فوری)\s*$/i;
+  /(?:\s+لازم\s*دار(?:م|یم)|\s+نیاز\s*دار(?:م|یم)|\s+دنبال|\s+می[\s‌]?خو(?:ام|واه|اهم)|\s+میخو(?:ام|واه|اهم)|\s+برای|\s+بودجه|\s+اجاره|\s+رهن|\s+فروش|\s+خرید|\s+زندگی\s*می|\s+اگر\s+موردی|\s+پیام\s*بدید|\s+فوری|\s+یک\s+(?:متخصص|تعمیرکار|تیم|نفر|شرکت))\s*$/i;
 
 function cleanLocationFragment(frag: string): string {
   return frag
@@ -109,7 +109,7 @@ function stripTrailingMoneyFromFragment(frag: string): string {
 
 /** Phrases that survive city-stripping from «تو {city} دنبال دسترسی…» — never neighborhoods. */
 const HOOD_NOISE_RE =
-  /^(?:دنبال|دسترسی|نانوایی|میوه[\u200c\s]*فروشی|حمل[\u200c\s]*ونقل|امنیت|جایگزین|اولویت|برامون|خانواده)/u;
+  /^(?:دنبال|دسترسی|نانوایی|میوه[\u200c\s]*فروشی|حمل[\u200c\s]*ونقل|امنیت|جایگزین|اولویت|برامون|خانواده|آینده|هفته\s+آینده|همین\s+ماه|اول\s+ماه(?:\s+بعد)?|تا\s+آخر\s+ماه)/u;
 
 function isMeaningfulFragment(frag: string): boolean {
   if (frag.length < 2) return false;
@@ -128,11 +128,11 @@ export function extractLocationFragment(rawText: string): string | undefined {
 
   const normalized = normalizeDigits(text);
   const stopSuffix =
-    '(?:\\s+لازم\\s*دار(?:م|یم)|\\s+نیاز\\s*دار(?:م|یم)|\\s+دنبال|\\s+می[\\s‌]?خو(?:ام|واه|اهم)|\\s+میخو(?:ام|واه|اهم)|\\s+برای|\\s+بودجه|\\s+اجاره|\\s+رهن|\\s+فروش|\\s+خرید|\\s+زندگی\\s*می|\\s+اگر\\s+موردی|\\s+پیام\\s*بدید)';
+    '(?:\\s+لازم\\s*دار(?:م|یم)|\\s+نیاز\\s*دار(?:م|یم)|\\s+دنبال|\\s+می[\\s‌]?خو(?:ام|واه|اهم)|\\s+میخو(?:ام|واه|اهم)|\\s+برای|\\s+بودجه|\\s+اجاره|\\s+رهن|\\s+فروش|\\s+خرید|\\s+زندگی\\s*می|\\s+اگر\\s+موردی|\\s+پیام\\s*بدید|\\s+یک\\s+(?:متخصص|تعمیرکار|تیم|نفر|شرکت))';
 
   // Prefer explicit «محله/منطقه X» (not «امنیت محله») before bare «تو/در» city phrases.
   const labeledHood = normalized.match(
-    /(?<!امنیت\s)(?:محله|منطقه|محدوده)\s+([\u0600-\u06FF\u200c\-]+(?:\s+[\u0600-\u06FF\u200c\-]+){0,5}?)(?=\s+(?:اولویت|هستم|است|می‌|مي|محله|شهر|استان|متراژ|بودجه)|[،,]|$)/u
+    /(?<!امنیت\s)(?:محله|منطقه|محدوده)\s+([\u0600-\u06FF\u200c\-]+(?:\s+[\u0600-\u06FF\u200c\-]+){0,5}?)(?=\s+(?:\d|اولویت|هستم|است|می‌|مي|محله|شهر|استان|متراژ|بودجه|اجاره|رهن|ودیعه|خرید|فروش)|[،,]|$)/u
   );
   if (labeledHood?.[1]) {
     const frag = stripTrailingCityFromFragment(

@@ -101,9 +101,13 @@ export function NeedMapPinPicker({
     [city, selectedNeighborhood]
   );
 
+  const hasCoordinates =
+    lat != null && lng != null && Number.isFinite(lat) && Number.isFinite(lng);
   const areaSelection = useMemo(() => {
     const centroid = selectedNeighborhood?.centroid;
-    const center = centroid ?? { lat: cityCenter.lat, lng: cityCenter.lng };
+    const center = hasCoordinates
+      ? { lat: lat!, lng: lng! }
+      : centroid ?? { lat: cityCenter.lat, lng: cityCenter.lng };
     const bbox = selectedNeighborhood?.bbox ?? mapFrame.neighborhoodBounds;
     if (bbox) {
       return intakeAreaFromBbox(bbox, center);
@@ -116,6 +120,9 @@ export function NeedMapPinPicker({
   }, [
     cityCenter.lat,
     cityCenter.lng,
+    hasCoordinates,
+    lat,
+    lng,
     mapFrame.neighborhoodBounds,
     selectedNeighborhood?.bbox,
     selectedNeighborhood?.centroid,
@@ -124,25 +131,20 @@ export function NeedMapPinPicker({
   const mapFrameKey = `${city}-${selectedNeighborhood?.id ?? 'city'}`;
 
   const mapCenter = useMemo(() => {
-    if (selectedNeighborhood?.centroid) {
-      return { lat: areaSelection.lat, lng: areaSelection.lng };
-    }
-    if (lat != null && lng != null && Number.isFinite(lat) && Number.isFinite(lng)) {
-      return { lat, lng };
-    }
+    if (hasCoordinates) return { lat: lat!, lng: lng! };
+    if (selectedNeighborhood?.centroid) return selectedNeighborhood.centroid;
     return { lat: cityCenter.lat, lng: cityCenter.lng };
   }, [
-    areaSelection.lat,
-    areaSelection.lng,
     cityCenter.lat,
     cityCenter.lng,
+    hasCoordinates,
     lat,
     lng,
     selectedNeighborhood?.centroid,
   ]);
 
   const mapZoom = useMemo(() => {
-    if (selectedNeighborhood?.centroid) {
+    if (selectedNeighborhood?.centroid || hasCoordinates) {
       return intakeZoomForRadiusM(mapCenter.lat, areaSelection.radiusM, {
         width: 400,
         height: 300,
@@ -151,6 +153,7 @@ export function NeedMapPinPicker({
     return mapFrame.center.zoom;
   }, [
     areaSelection.radiusM,
+    hasCoordinates,
     mapCenter.lat,
     mapFrame.center.zoom,
     selectedNeighborhood?.centroid,
@@ -164,16 +167,6 @@ export function NeedMapPinPicker({
   const handleLocationChange = useCallback((coords: { lat: number; lng: number }) => {
     onChangeRef.current(coords);
   }, []);
-
-  useEffect(() => {
-    const centroid = selectedNeighborhood?.centroid;
-    if (!centroid || !Number.isFinite(centroid.lat) || !Number.isFinite(centroid.lng)) return;
-    onChangeRef.current({ lat: centroid.lat, lng: centroid.lng });
-  }, [
-    selectedNeighborhood?.id,
-    selectedNeighborhood?.centroid?.lat,
-    selectedNeighborhood?.centroid?.lng,
-  ]);
 
   if (!city.trim()) return null;
 
@@ -202,7 +195,6 @@ export function NeedMapPinPicker({
             center={{ lat: mapCenter.lat, lng: mapCenter.lng }}
             radiusM={areaSelection.radiusM}
             frameKey={mapFrameKey}
-            onFramed={handleLocationChange}
           />
           <NiazMapIntakeCenterSync onCenterChange={handleLocationChange} />
         </NiazMapCore>

@@ -111,12 +111,12 @@ function buildParsedLocationPatch(
 
   if (result.status === 'resolved' && result.neighborhoodSlug && !result.rejectAutoConfirm) {
     patch.neighborhoodSlug = result.neighborhoodSlug;
-    const area = result.neighborhoodLabel?.trim() || result.fragment?.trim();
-    if (area) {
-      patch.entities = { area };
+    const neighborhood = result.neighborhoodLabel?.trim() || result.fragment?.trim();
+    if (neighborhood) {
+      patch.entities = { neighborhood };
     }
   } else if (result.fragment?.trim()) {
-    patch.entities = { area: result.fragment.trim() };
+    patch.entities = { neighborhood: result.fragment.trim() };
   }
 
   return patch;
@@ -213,7 +213,11 @@ export async function resolveLocationViaLre(
 ): Promise<LocationLreBridgeResult> {
   const scopedCitySlugInput = input.citySlug?.trim() || null;
   const scopedCityName =
-    input.cityName?.trim() || input.formHints?.city?.trim() || null;
+    input.cityName?.trim() ||
+    input.formHints?.city?.trim() ||
+    (scopedCitySlugInput
+      ? CANONICAL_CITIES.find((c) => c.slug === scopedCitySlugInput)?.title ?? null
+      : null);
   const hasScope = Boolean(scopedCitySlugInput || scopedCityName);
 
   try {

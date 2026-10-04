@@ -19,7 +19,7 @@ function locationHintsFromParsed(parsed: ParsedIntent): IntakeLocationHints {
     })),
     locationResolutionStatus: parsed.locationResolutionStatus,
     rejectLocationAutoConfirm: parsed.rejectLocationAutoConfirm,
-    areaLabel: parsed.entities?.area,
+    areaLabel: parsed.entities?.neighborhood,
   };
 }
 
@@ -67,7 +67,7 @@ export function enrichIntakeAnalysisLocation(
     entities.city = parsed.city.trim();
   }
 
-  const areaLabel = parsed.entities?.area?.trim();
+  const areaLabel = parsed.entities?.neighborhood?.trim();
   const resolvedSlug = parsed.neighborhoodSlug?.trim();
   const locationAmbiguous = Boolean(
     parsed.locationAmbiguous || parsed.rejectLocationAutoConfirm || parsed.locationResolutionStatus === 'neighborhood_ambiguous'

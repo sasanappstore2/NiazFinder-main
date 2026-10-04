@@ -58,7 +58,7 @@ export function resolveFieldValue(
   if (field.key === 'transactionType' && entities.transactionType) {
     return entities.transactionType;
   }
-  if (field.key === 'area' && entities.area != null) {
+  if ((field.key === 'area' || field.key === 'areaMin') && entities.area != null) {
     return entities.area;
   }
   if (field.key === 'rooms' && entities.rooms != null) {

@@ -138,7 +138,13 @@ export function parsePersianAmountPhrase(raw: string): number | null {
 
 export function parseMillionTomanFromPhrase(phrase: string): number | undefined {
   const n = parsePersianAmountPhrase(phrase);
-  if (n == null || n <= 0 || n > 5_000) return undefined;
+  if (n == null || n <= 0) return undefined;
+  // Spelled words keep a sanity cap (a dropped unit explodes the scale), but a
+  // typed number is explicit writer intent: «با بودجه ۳۴۶۴۳ میلیون» is a real
+  // ۳۴.۶ میلیاردی sale budget and must not be discarded.
+  const ascii = toAsciiDigits(normalizeAmountToken(phrase)).replace(/,/g, '').trim();
+  const cap = /^\d+(?:\.\d+)?$/.test(ascii) ? 10_000_000 : 5_000;
+  if (n > cap) return undefined;
   return Math.round(n * 1_000_000);
 }
 
@@ -245,13 +251,16 @@ function pickTomansForKeyword(
   if (opts?.unit) pool = pool.filter((m) => m.unit === opts.unit);
   if (pool.length === 0) return undefined;
 
+  // Match semantic words, not substrings. In particular, «فرهنگ شهر» must
+  // never be read as «رهن» just because the letters happen to contain it.
+  // ZWNJ remains a valid separator for forms such as «رهن‌واجاره».
+  const keywordPattern = new RegExp(
+    `(?<![${PERSIAN_LETTER}])${escapeRegex(keyword)}(?![${PERSIAN_LETTER}])`,
+    'gu'
+  );
   const kwIndices: number[] = [];
-  let scan = 0;
-  while (scan <= norm.length) {
-    const kwIdx = norm.indexOf(keyword, scan);
-    if (kwIdx < 0) break;
-    kwIndices.push(kwIdx);
-    scan = kwIdx + Math.max(1, keyword.length);
+  for (const match of norm.matchAll(keywordPattern)) {
+    if (match.index != null) kwIndices.push(match.index);
   }
   if (kwIndices.length === 0) return undefined;
 
@@ -275,6 +284,13 @@ function pickTomansForKeyword(
   return best?.tomans;
 }
 
+function hasSemanticKeyword(norm: string, keyword: string): boolean {
+  return new RegExp(
+    `(?<![${PERSIAN_LETTER}])${escapeRegex(keyword)}(?![${PERSIAN_LETTER}])`,
+    'u'
+  ).test(norm);
+}
+
 export interface PropertyMoneyFromText {
   rahnAmount?: number;
   monthlyRent?: number;
@@ -296,7 +312,7 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
   const rahn =
     pickTomansForKeyword(norm, mentions, RAHN_WORD) ??
     pickTomansForKeyword(norm, mentions, '\u0648\u062F\u06CC\u0639\u0647') ??
-    (norm.includes(RAHN_WORD)
+    (hasSemanticKeyword(norm, RAHN_WORD)
       ? pickTomansForKeyword(norm, mentions, '\u0628\u0648\u062F\u062C\u0647')
       : undefined);
   if (rahn != null) out.rahnAmount = rahn;
@@ -363,8 +379,8 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
     out.budgetMax != null &&
     out.monthlyRent == null &&
     out.rahnAmount == null &&
-    norm.includes(EJARE_WORD) &&
-    !norm.includes(RAHN_WORD)
+    hasSemanticKeyword(norm, EJARE_WORD) &&
+    !hasSemanticKeyword(norm, RAHN_WORD)
   ) {
     out.monthlyRent = out.budgetMax;
     delete out.budgetMax;
@@ -376,8 +392,8 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
     out.rahnAmount == null &&
     out.monthlyRent == null &&
     mentions.length >= 2 &&
-    norm.includes(RAHN_WORD) &&
-    norm.includes(EJARE_WORD)
+    hasSemanticKeyword(norm, RAHN_WORD) &&
+    hasSemanticKeyword(norm, EJARE_WORD)
   ) {
     out.rahnAmount = mentions[0]!.tomans;
     out.monthlyRent = mentions[1]!.tomans;

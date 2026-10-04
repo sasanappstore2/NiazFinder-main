@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, readdirSync } from 'fs';
 import path from 'path';
 import { ALL_LOCATION_CITIES, locationCityIdToSlug } from '@/lib/search/city-slugs';
 import type { CatalogNeighborhood } from '@/lib/neighborhoods/catalog-types';
@@ -192,11 +192,16 @@ export function isAreaUnitSubstring(text: string, token: string): boolean {
 }
 
 /** Avoid matching «دی» inside «مجردی» — token must be its own word (or long substring). */
+const LOCATION_TOKEN_BOUNDARY_CLASS = '[\\s،,.\\-()«»"\'\'…:;!?/\\\\؟]';
+
 function tokenMatchesInText(normText: string, token: string, textTokens: Set<string>): boolean {
   if (textTokens.has(token)) return true;
   if (token.length < 4) return false;
   const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const re = new RegExp(`(^|[\\s،,.\\-])${escaped}($|[\\s،,.\\-])`, 'u');
+  const re = new RegExp(
+    `(^|${LOCATION_TOKEN_BOUNDARY_CLASS})${escaped}($|${LOCATION_TOKEN_BOUNDARY_CLASS})`,
+    'u'
+  );
   return re.test(normText);
 }
 
@@ -209,8 +214,9 @@ function boundedLocationTokenMatch(text: string, token: string): boolean {
   const normText = normalizeMatchText(text);
   const textTokens = new Set(tokenizeForMatch(text));
 
-  if (tok.length >= 4) return normText.includes(tok);
-  if (textTokens.has(tok)) return true;
+  // Boundary-aware for every length: a bare substring hit inside a longer
+  // token (e.g. «۳۰ متری» street inside a «۱۳۰ متری» area measurement) must
+  // never resolve as a place on its own.
   return tokenMatchesInText(normText, tok, textTokens);
 }
 
@@ -227,10 +233,12 @@ function scoreNeighborhoodAgainstText(
   if (isDealTypeLocationToken(normName, text)) return 0;
   if (isAreaUnitSubstring(text, normName)) return 0;
 
-  if (normName.length >= 4 && normText.includes(normName)) return normName.length + 10;
+  const textTokens = new Set(tokenizeForMatch(text));
+  if (normName.length >= 4 && tokenMatchesInText(normText, normName, textTokens)) {
+    return normName.length + 10;
+  }
 
   const nameTokens = tokenizeForMatch(entry.name).filter((t) => !['شهید', 'امام', 'سید'].includes(t));
-  const textTokens = new Set(tokenizeForMatch(text));
 
   let matched = 0;
   for (const t of nameTokens) {
@@ -247,7 +255,7 @@ function scoreNeighborhoodAgainstText(
       if (textTokens.has(na) && !isDealTypeLocationToken(na, text)) return na.length + 8;
       continue;
     }
-    if (tokenMatchesInText(normText, na, textTokens) || normText.includes(na)) {
+    if (tokenMatchesInText(normText, na, textTokens)) {
       return na.length + 8;
     }
   }
@@ -277,6 +285,12 @@ export function findNeighborhoodInAnyCity(
   const norm = text.trim();
   if (!norm || norm.length < 4) return null;
 
+  // Area measurements are not street names: score a copy with «۱۱۰ متری»
+  // patterns removed so «۱۳۰ متری» can never resolve to a «۳۰ متری» street
+  // in another city (genuinely ambiguous without city context ⇒ manual).
+  const scoringText =
+    norm.replace(/[\d۰-۹]+(?:[.,][\d۰-۹]+)?\s*مت(?:ر|ری|راژ)?/gu, ' ') || norm;
+
   const searchOrder = preferredCityId
     ? [
         preferredCityId,
@@ -293,7 +307,7 @@ export function findNeighborhoodInAnyCity(
     if (!catalog.length) continue;
 
     for (const entry of catalog) {
-      let score = scoreNeighborhoodAgainstText(norm, entry);
+      let score = scoreNeighborhoodAgainstText(scoringText, entry);
       if (score <= 0) continue;
       if (preferredCityId && cityId === preferredCityId) {
         score += 18;
@@ -532,22 +546,62 @@ export function rankNeighborhoodCandidates(
     return (entry?.areas ?? []).some((a) => compactMatchText(a) === compactFrag);
   });
 
+  // A unique exact neighborhood name outranks other neighborhoods that merely list
+  // the same string as one of their sub-areas (e.g. «کوهسنگی» in Mashhad), but keep
+  // similarly named neighborhoods ambiguous (e.g. «فردوسی» vs «طوس فردوسی»).
+  if (exactNameMatches.length === 1) {
+    const exact = exactNameMatches[0]!;
+    const exactPhrase = normalizeMatchText(frag).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const exactPhrasePattern = new RegExp(`(?:^|\\s)${exactPhrase}(?:$|\\s)`, 'u');
+    const relatedNames = scored.filter(
+      (candidate) =>
+        candidate.slug !== exact.slug &&
+        candidate.score >= top - 10 &&
+        exactPhrasePattern.test(normalizeMatchText(candidate.name))
+    );
+    return relatedNames.length
+      ? { candidates: [exact, ...relatedNames], ambiguous: true }
+      : { candidates: exactNameMatches, ambiguous: false };
+  }
+  if (exactNameMatches.length > 1) {
+    return { candidates: exactNameMatches, ambiguous: true };
+  }
+
   if (exactAreaMatches.length >= 2) {
     return { candidates: exactAreaMatches, ambiguous: true };
   }
 
-  // Exact hood name + other strong similar hits (compound names / shared sub-areas)
-  if (exactNameMatches.length >= 1) {
-    const strongSimilar = scored.filter((c) => c.score >= top - AMBIGUOUS_SCORE_GAP);
-    if (strongSimilar.length >= 2) {
-      return { candidates: scored, ambiguous: true };
-    }
-    return { candidates: scored, ambiguous: false };
+  // An exact city-scoped sub-area hit outranks weaker matches to longer labels
+  // (e.g. «جلال آل احمد» vs streets named «جلال آل احمد شصت‌وچهارم»).
+  if (exactAreaMatches.length === 1) {
+    return { candidates: exactAreaMatches, ambiguous: false };
   }
 
-  // Lone sub-area hit without a same-named hood — keep previous auto-resolve behavior
-  if (exactAreaMatches.length === 1 && top - second >= AMBIGUOUS_SCORE_GAP) {
-    return { candidates: scored, ambiguous: false };
+  // «زیرمحله + محله والد» pattern (e.g. «سباری نیاوران»): the fragment contains a
+  // sub-area that exactly one neighborhood in this city manages. That unique anchor
+  // outranks the co-mentioned parent/neighbor hood name, whose score comes from
+  // generic containment (the sub-area is the specific signal, the rest is context).
+  const areaUsage = new Map<string, number>();
+  for (const entry of catalog) {
+    for (const a of entry.areas ?? []) {
+      const ca = compactMatchText(a);
+      if (ca) areaUsage.set(ca, (areaUsage.get(ca) ?? 0) + 1);
+    }
+  }
+  const uniqueAreaAnchored = scored.filter((c) => {
+    if (c.score < 90) return false;
+    const entry = catalog.find((e) => e.slug === c.slug);
+    return (entry?.areas ?? []).some((a) => {
+      const ca = compactMatchText(a);
+      return ca && (compactFrag === ca || compactFrag.includes(ca)) && areaUsage.get(ca) === 1;
+    });
+  });
+  if (uniqueAreaAnchored.length === 1) {
+    const anchored = uniqueAreaAnchored[0]!;
+    return {
+      candidates: [anchored, ...scored.filter((c) => c.slug !== anchored.slug)],
+      ambiguous: false,
+    };
   }
 
   const ambiguousByCloseTop = top - second < AMBIGUOUS_SCORE_GAP;
@@ -600,4 +654,160 @@ export function resolveNeighborhoodSlug(
     if (partial) return { slug: partial.slug, name: partial.name };
   }
   return null;
+}
+
+// ---------------------------------------------------------------------------
+// Nationwide exact-name lookup: neighborhood phrase → candidate cities.
+// Used when the text names a neighborhood but no city at all: an exact
+// catalog-name match in exactly ONE city is deterministic evidence for that
+// city; matches in several cities stay a manual choice for the user.
+// Unlike the fuzzy whole-text scorer above, this only matches the cleaned
+// neighborhood phrase (never raw measurements like «۱۳۰ متری»).
+// ---------------------------------------------------------------------------
+
+export interface NationwideNeighborhoodEntry {
+  slug: string;
+  name: string;
+}
+
+export interface NationwideNeighborhoodGroup {
+  /** Persian city label from the catalog file. */
+  city: string;
+  /** Catalog file id (e.g. 'tehran-city'). */
+  cityId: string;
+  entries: NationwideNeighborhoodEntry[];
+}
+
+/** Single-token phrases too generic to name a city on their own. */
+const NATIONWIDE_SINGLE_TOKEN_STOP = new Set([
+  'باغ',
+  'مرکز',
+  'شهر',
+  'میدان',
+  'پارک',
+  'خیابان',
+  'بلوار',
+  'منطقه',
+  'محله',
+  'شهرک',
+  'کوی',
+  'بازار',
+  'مسجد',
+  'مدرسه',
+  'بیمارستان',
+  'دانشگاه',
+  'پل',
+  'جاده',
+  'شمال',
+  'جنوب',
+  'شرق',
+  'غرب',
+  'مرکزی',
+  'جدید',
+  'قدیم',
+  'قدیمی',
+  'بالا',
+  'پایین',
+  'اول',
+  'دوم',
+]);
+
+interface NationwideIndexHit {
+  city: string;
+  cityId: string;
+  slug: string;
+  name: string;
+}
+
+let nationwideExactNameIndex: Map<string, NationwideIndexHit[]> | null = null;
+
+function getNationwideExactNameIndex(): Map<string, NationwideIndexHit[]> {
+  if (nationwideExactNameIndex) return nationwideExactNameIndex;
+  const index = new Map<string, NationwideIndexHit[]>();
+  let files: string[] = [];
+  try {
+    files = readdirSync(CATALOG_DIR).filter((f) => f.endsWith('.json'));
+  } catch {
+    files = [];
+  }
+  for (const file of files) {
+    const cityId = file.slice(0, -'.json'.length);
+    let data: { cityName?: string; neighborhoods?: CatalogNeighborhood[] };
+    try {
+      data = JSON.parse(readFileSync(path.join(CATALOG_DIR, file), 'utf8')) as {
+        cityName?: string;
+        neighborhoods?: CatalogNeighborhood[];
+      };
+    } catch {
+      continue;
+    }
+    if (!data || !Array.isArray(data.neighborhoods)) continue;
+    const cityLabel = data.cityName?.trim() || cityId;
+    for (const n of data.neighborhoods) {
+      if (!n || typeof n.name !== 'string' || !n.name.trim()) continue;
+      const hit: NationwideIndexHit = {
+        city: cityLabel,
+        cityId,
+        slug: n.id,
+        name: n.name,
+      };
+      const nameKey = normalizeMatchText(n.name);
+      if (nameKey) {
+        const list = index.get(nameKey);
+        if (list) list.push(hit);
+        else index.set(nameKey, [hit]);
+      }
+      for (const a of n.areas ?? []) {
+        if (typeof a !== 'string') continue;
+        const areaKey = normalizeMatchText(a);
+        if (!areaKey || areaKey === nameKey) continue;
+        const list = index.get(areaKey);
+        if (list) list.push(hit);
+        else index.set(areaKey, [hit]);
+      }
+    }
+  }
+  nationwideExactNameIndex = index;
+  return index;
+}
+
+/**
+ * Exact nationwide lookup of a cleaned neighborhood phrase (names + areas).
+ * Returns city groups ranked by prominence (search-priority cities first);
+ * empty when the phrase is generic, too short, or not an exact catalog name.
+ */
+export function findNeighborhoodNameAcrossCities(
+  phrase: string
+): NationwideNeighborhoodGroup[] {
+  const key = normalizeMatchText(phrase ?? '');
+  if (!key || key.length < 3) return [];
+  if (/^[\d۰-۹]/.test(key)) return [];
+  if (LOCATION_STOPWORD_NAMES.has(key)) return [];
+  if (isDealTypeLocationToken(key, phrase)) return [];
+  if (isAreaUnitSubstring(phrase, key)) return [];
+  if (!key.includes(' ') && NATIONWIDE_SINGLE_TOKEN_STOP.has(key)) return [];
+
+  const hits = getNationwideExactNameIndex().get(key) ?? [];
+  if (!hits.length) return [];
+
+  const byCity = new Map<string, NationwideNeighborhoodGroup>();
+  for (const hit of hits) {
+    let group = byCity.get(hit.cityId);
+    if (!group) {
+      group = { city: hit.city, cityId: hit.cityId, entries: [] };
+      byCity.set(hit.cityId, group);
+    }
+    if (!group.entries.some((e) => e.slug === hit.slug)) {
+      group.entries.push({ slug: hit.slug, name: hit.name });
+    }
+  }
+  const priorityRank = new Map<string, number>(
+    NEIGHBORHOOD_SEARCH_PRIORITY.map((id, i) => [id as string, i])
+  );
+  return [...byCity.values()].sort((a, b) => {
+    const pa = priorityRank.get(a.cityId) ?? Number.MAX_SAFE_INTEGER;
+    const pb = priorityRank.get(b.cityId) ?? Number.MAX_SAFE_INTEGER;
+    if (pa !== pb) return pa - pb;
+    return a.city.localeCompare(b.city, 'fa');
+  });
 }

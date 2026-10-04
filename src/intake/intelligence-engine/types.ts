@@ -39,6 +39,8 @@ export type IntakeFieldBag = Record<IntakeFieldKey, FieldState>;
 
 export interface IntakeIntelligenceInput {
   text: string;
+  /** Draft revision participates in the shared analyzer cache key. */
+  draftRevision?: number;
   citySlug?: string | null;
   cityName?: string | null;
   formHints?: {

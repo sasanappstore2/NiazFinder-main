@@ -69,8 +69,11 @@ export async function publishNeedApi(
   token?: string | null,
   listingPreview?: ListingPreview,
   sessionId?: string | null,
-  options?: { linkToBusinessProfile?: boolean }
+  options?: { linkToBusinessProfile?: boolean; idempotencyKey?: string }
 ): Promise<PublishNeedResult> {
+  const snapshot = draft.publishSnapshot;
+  const idempotencyKey =
+    options?.idempotencyKey ?? snapshot?.idempotencyKey ?? globalThis.crypto.randomUUID();
   const res = await fetch('/api/need-intake/publish', {
     method: 'POST',
     headers: {
@@ -78,8 +81,10 @@ export async function publishNeedApi(
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify({
-      draft,
-      listingPreview,
+      draft: snapshot?.draft ?? draft,
+      listingPreview: snapshot?.listingPreview ?? listingPreview,
+      snapshot,
+      idempotencyKey,
       sessionId: sessionId ?? undefined,
       linkToBusinessProfile: options?.linkToBusinessProfile ?? false,
     }),

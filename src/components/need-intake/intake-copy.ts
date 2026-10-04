@@ -22,7 +22,7 @@ export const INTAKE_COPY = {
   rulesUnderstandingFootnote: 'این پیشنهادها از قوانین استخراج شده‌اند؛ در صورت نیاز اصلاح کنید.',
   aiUnderstandingEmpty: 'متن نیاز را بنویسید تا تحلیل شود.',
   stepComposeDescription:
-    'نیازتان را بنویسید؛ پیشنهادهای دسته، مکان و بودجه را همین‌جا ببینید و اصلاح کنید.',
+    'نیازتان را به زبان خودتان بنویسید؛ بعد فرم را بررسی و اصلاح کنید.',
   stepComposeTitle: 'نوشتن نیاز',
   stepFormTitle: 'تکمیل فرم',
   stepFormDescription: 'دسته، مکان، بودجه و مشخصات را تایید یا تکمیل کنید.',

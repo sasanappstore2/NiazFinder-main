@@ -128,15 +128,49 @@ const initialState = {
   typingSessionId: null,
 };
 
-function applyNeedDraft(set: (partial: Partial<NeedIntakeState>) => void, draft: NeedDraft | null) {
+function applyNeedDraft(
+  set: (partial: Partial<NeedIntakeState>) => void,
+  draft: NeedDraft | null,
+  currentDraft?: NeedDraft | null
+) {
+  const safeDraft = draft && draft.publishSnapshot && !sameDraftAsSnapshot(draft)
+    ? { ...draft, publishSnapshot: undefined }
+    : draft;
+
+  // Zustand notifies subscribers when the partial state object is new, even if
+  // all of its values are the same. Reconciliation effects frequently produce
+  // the exact same draft, so keep this write idempotent at the store boundary.
+  if (currentDraft === safeDraft) return;
+
   set({
-    needDraft: draft,
-    parsedIntent: draft?.parsedIntent ?? null,
-    answers: draft?.answers ?? {},
-    seedText: draft?.sourceText ?? '',
-    readinessScore: draft?.completionScore ?? 0,
-    readyToPreview: draft?.completionState === 'READY_TO_PUBLISH',
+    needDraft: safeDraft,
+    parsedIntent: safeDraft?.parsedIntent ?? null,
+    answers: safeDraft?.answers ?? {},
+    seedText: safeDraft?.sourceText ?? '',
+    readinessScore: safeDraft?.completionScore ?? 0,
+    readyToPreview: safeDraft?.completionState === 'READY_TO_PUBLISH',
   });
+}
+
+function stableJson(value: unknown): string {
+  return JSON.stringify(value, (_key, current) => {
+    if (current && typeof current === 'object' && !Array.isArray(current)) {
+      return Object.keys(current as Record<string, unknown>)
+        .sort()
+        .reduce<Record<string, unknown>>((out, key) => {
+          out[key] = (current as Record<string, unknown>)[key];
+          return out;
+        }, {});
+    }
+    return current;
+  });
+}
+
+function sameDraftAsSnapshot(draft: NeedDraft): boolean {
+  const snapshot = draft.publishSnapshot;
+  if (!snapshot || draft.draftRevision !== snapshot.draftRevision) return false;
+  const { publishSnapshot: _ignored, ...current } = draft;
+  return stableJson(current) === stableJson(snapshot.draft);
 }
 
 export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
@@ -162,9 +196,19 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
     set((s) => {
       const next =
         typeof listingPreview === 'function' ? listingPreview(s.listingPreview) : listingPreview;
+      const snapshotPreview = s.needDraft?.publishSnapshot?.listingPreview;
+      const sameAsSnapshot =
+        JSON.stringify(next ?? null) === JSON.stringify(snapshotPreview ?? null);
       return {
         listingPreview: next,
-        needDraft: s.needDraft ? { ...s.needDraft, listingPreview: next ?? undefined } : null,
+        needDraft: s.needDraft
+          ? {
+              ...s.needDraft,
+              listingPreview: next ?? undefined,
+              // Any manual preview edit invalidates the immutable snapshot.
+              publishSnapshot: sameAsSnapshot ? s.needDraft.publishSnapshot : undefined,
+            }
+          : null,
       };
     }),
   setReadiness: (readinessScore, readyToPreview) =>
@@ -181,7 +225,7 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
   setTypingPreloading: (typingPreloading) => set({ typingPreloading }),
   setTypingSessionId: (typingSessionId) => set({ typingSessionId }),
 
-  setNeedDraft: (draft) => applyNeedDraft(set, draft),
+  setNeedDraft: (draft) => applyNeedDraft(set, draft, get().needDraft),
 
   setNeedDraftFromAnalysis: (analysis, sourceText, intakeTrace, locks) => {
     const { leadPhone, listingPreview, needDraft } = get();
@@ -204,20 +248,20 @@ export const useNeedIntakeStore = create<NeedIntakeState>((set, get) => ({
       },
       locks
     );
-    applyNeedDraft(set, draft);
+    applyNeedDraft(set, draft, needDraft);
   },
 
   patchNeedDraftEntities: (patch) => {
     const current = get().needDraft;
     if (!current) return;
     const updated = patchDraftEntities(current, patch);
-    applyNeedDraft(set, updated);
+    applyNeedDraft(set, updated, current);
   },
 
   syncNeedDraftFromFormFields: (form, opts) => {
     const current = get().needDraft;
     const updated = syncNeedDraftFromForm(current, form, opts);
-    applyNeedDraft(set, updated);
+    applyNeedDraft(set, updated, current);
     return updated;
   },
 

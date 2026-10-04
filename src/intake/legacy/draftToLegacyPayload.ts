@@ -93,7 +93,7 @@ export function draftToLegacyPayload(draft: NeedDraft): LegacyNeedPayload {
       ...(legacyDeal ? { dealType: legacyDeal } : {}),
       ...(entities.area != null ? { areaMin: String(entities.area) } : {}),
       ...(entities.rooms != null ? { rooms: String(entities.rooms) } : {}),
-      ...(entities.neighborhood ? { area: entities.neighborhood } : {}),
+      ...(entities.neighborhood ? { neighborhood: entities.neighborhood } : {}),
     },
   });
 
@@ -110,11 +110,6 @@ export function draftToLegacyPayload(draft: NeedDraft): LegacyNeedPayload {
 
   const answers: NeedDraft['answers'] = {
     ...seedAnswersFromParsed(parsedIntent, draft.leadPhone),
-    ...(entities.neighborhood?.trim() && entities.city
-      ? { location: `${entities.neighborhood.trim()}، ${entities.city}` }
-      : entities.city
-        ? { location: entities.city }
-        : {}),
     ...(entities.rooms != null ? { rooms: entities.rooms } : {}),
     ...(entities.area != null && draft.answers.areaMin == null ? { areaMin: entities.area } : {}),
     ...(entities.budgetMax != null &&
@@ -128,6 +123,17 @@ export function draftToLegacyPayload(draft: NeedDraft): LegacyNeedPayload {
       : {}),
     /* User chip/select answers (advanced filters) — must survive recompute */
     ...draft.answers,
+    // Location is a projection of canonical entities, never an independently
+    // writable mirror. A stale city-only answer must not hide a newly resolved
+    // neighborhood in the summary or publication path.
+    ...(entities.city
+      ? { location: entities.neighborhood?.trim()
+          ? `${entities.neighborhood.trim()}، ${entities.city}`
+          : entities.city }
+      : {}),
+    ...(entities.neighborhoodSlug?.trim()
+      ? { _neighborhoodSlug: entities.neighborhoodSlug.trim() }
+      : {}),
     /* Reconciled last, deliberately after the spread above: dealType is the one answer that
        must track category-driven changes unless the user explicitly locked it. */
     ...(resolvedDealTypeAnswer != null ? { dealType: resolvedDealTypeAnswer } : {}),

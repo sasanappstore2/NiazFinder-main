@@ -4,7 +4,10 @@ import { resolveLocationViaLre } from '@/intake/intelligence-engine/resolvers/lo
 import { resolveCategory } from '@/intake/intelligence-engine/resolvers/category-resolver';
 import { resolveBudget } from '@/intake/intelligence-engine/resolvers/budget-resolver';
 import { resolveProperty } from '@/intake/intelligence-engine/resolvers/property-resolver';
-import { resolveDealTypeFields } from '@/intake/intelligence-engine/resolvers/deal-type-resolver';
+import {
+  clearNonAssetTransactionFields,
+  resolveDealTypeFields,
+} from '@/intake/intelligence-engine/resolvers/deal-type-resolver';
 import {
   mergeFieldBags,
   scoreFieldConfidence,
@@ -152,7 +155,8 @@ export async function runIntakeIntelligence(
     input.citySlug,
     input.cityName,
     input.formHints,
-    Boolean(input.forceAi)
+    Boolean(input.forceAi),
+    input.draftRevision ?? 0,
   );
   if (!opts?.skipCache) {
     const cached = await getIntelligenceCache(cacheKey);
@@ -293,6 +297,8 @@ export async function runIntakeIntelligence(
       steps.push(createStepTrace('ai-resolver', t, aiProvider ?? 'none', unresolved.join(',')));
     }
   }
+
+  clearNonAssetTransactionFields(bag);
 
   const categoryCandidatesUi = categoryResolved.candidates;
   const parsedLocationPatch = {

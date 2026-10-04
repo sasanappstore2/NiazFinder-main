@@ -87,7 +87,21 @@ export async function resolveLocation(
   }
 
   // Single weak hit or multiple hits: refuse to write a winner (ambiguity ⇒ no write).
+  // The city/province from the text is still trustworthy — write it so matching and the
+  // neighborhood picker stay scoped even when the neighborhood itself stays ambiguous.
   if (hoodHits.length >= 1) {
+    if (cityName || citySlug) {
+      setField(bag, 'city', {
+        value: cityName ?? null,
+        confidence: 0.85,
+        source: 'dictionary',
+        evidence: 'parseCity',
+      });
+      if (citySlug) {
+        setField(bag, 'citySlug', { value: citySlug, confidence: 0.8, source: 'resolver' });
+      }
+      setProvinceFromCity(bag, citySlug, cityName, null, 0.8);
+    }
     return { fields: bag, candidates, status: 'ambiguous' };
   }
 

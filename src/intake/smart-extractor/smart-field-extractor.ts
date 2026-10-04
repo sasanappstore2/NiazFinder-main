@@ -4,6 +4,8 @@
  */
 
 import { normalizePersian } from '@/intake/normalizer/normalizePersian';
+import { applyTypoAliases } from '@/intake/intelligence-engine/normalizer/typo-aliases';
+import { osaDistanceBounded } from '@/intake/intelligence-engine/normalizer/fuzzy-corrector';
 import { extractArea, extractBudget, extractRooms } from '@/intake/extractors/attributeExtractors';
 import { extractTransactionType } from '@/intake/extractors/transactionExtractor';
 import { applyAdvancedRules } from '@/intake/smart-extractor/rules/advanced-rules-engine';
@@ -30,7 +32,7 @@ export async function extractSmartFields(
 
   // ترکیب متن‌ها
   const fullText = composeFullText(needText, detailsText);
-  const normalizedText = normalizePersian(fullText);
+  const normalizedText = normalizePersian(applyTypoAliases(fullText));
 
   // نتیجه نهایی
   const result: SmartExtractionResult = {
@@ -196,6 +198,19 @@ async function extractWithRules(
       ];
     }
     result.trace!.rulesUsed.push('multi_neighborhood');
+  }
+
+  // Fuzzy neighborhood fallback: when no exact mention matched, accept an
+  // unambiguous near-match (OSA ≤1, ≤2 for long names) against the same
+  // trusted hood list. Downstream disambiguation still validates the result.
+  if (mentioned.length === 0 && !result.location.neighborhood) {
+    const fuzzyHood = matchFuzzyNeighborhood(normalizedText, MULTI_HOODS);
+    if (fuzzyHood) {
+      result.location.neighborhood = fuzzyHood;
+      result.location.neighborhoodSlug = fuzzyHood;
+      result.location.confidence = Math.max(result.location.confidence, 0.65);
+      result.trace!.rulesUsed.push('fuzzy_neighborhood');
+    }
   }
 
   if (options.preferredCity && !result.location.city) {
@@ -766,6 +781,44 @@ function isPropertyCategory(category: string | null): boolean {
   if (!category) return false;
   const propertyCategories = ['apartment-sale', 'apartment-rent', 'villa', 'land', 'shop', 'office'];
   return propertyCategories.includes(category);
+}
+
+/**
+ * Unambiguous near-match of a token against a trusted neighborhood list.
+ * OSA ≤1 (≤2 for names ≥7 chars); a token matching two different hoods is
+ * rejected. Multi-word hoods are skipped — too risky to fuzzy-match.
+ */
+export function matchFuzzyNeighborhood(
+  normalizedText: string,
+  hoods: readonly string[]
+): string | null {
+  const tokens = normalizedText.split(/\s+/).filter((t) => t.length >= 3);
+  if (tokens.length === 0) return null;
+
+  let best: { hood: string; score: number } | null = null;
+  let bestCount = 0;
+
+  for (const hood of hoods) {
+    const parts = hood.split(/\s+/);
+    if (parts.length !== 1) continue;
+    const name = parts[0]!;
+    const maxD = name.length >= 7 ? 2 : 1;
+
+    for (const token of tokens) {
+      if (Math.abs(token.length - name.length) > maxD) continue;
+      const d = osaDistanceBounded(token, name, maxD);
+      if (d > maxD) continue;
+      const score = d === 1 ? 0.8 : 0.7;
+      if (!best || score > best.score) {
+        best = { hood, score };
+        bestCount = 1;
+      } else if (score === best.score) {
+        bestCount++;
+      }
+    }
+  }
+
+  return best && bestCount === 1 ? best.hood : null;
 }
 
 // Export for testing

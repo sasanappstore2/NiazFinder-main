@@ -545,6 +545,24 @@ model NeedIntakeSession {
   @@index([status])
 }
 
+/** Durable publish idempotency ledger. A retry must never create a second need. */
+model NeedPublishIdempotency {
+  id                  String    @id @default(cuid())
+  scopeKey            String
+  idempotencyKey      String
+  requestHash         String
+  status              String    @default("pending")
+  serviceRequestId    String?
+  responsePayload     Json?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  expiresAt           DateTime
+
+  @@unique([scopeKey, idempotencyKey])
+  @@index([expiresAt])
+  @@index([serviceRequestId])
+}
+
 /**
  * Canonical migration observability — event log for intake domain migration control.
  */

@@ -124,9 +124,15 @@ const packSlugs = readdirSync(PACKS_DIR)
   .filter((f) => f.endsWith('.pack.json'))
   .map((f) => f.replace('.pack.json', ''));
 
+const canonicalPostingSlugs = new Set(
+  CANONICAL_CATEGORIES.filter((c) => c.depth >= 1).map((c) => c.slug)
+);
 const catalogSlugs = dedupe([
-  ...packSlugs,
-  ...CANONICAL_CATEGORIES.filter((c) => c.depth >= 1).map((c) => c.slug),
+  // Stress-only packs such as marathon-overrides are rule overlays, not
+  // posting categories and have no field registry. Keeping them here made
+  // the generated catalog claim they had critical fields when none existed.
+  ...packSlugs.filter((slug) => canonicalPostingSlugs.has(slug)),
+  ...canonicalPostingSlugs,
 ]);
 
 const CRITICAL_BY_SLUG: Record<string, CriticalIntakeProfile> = {};

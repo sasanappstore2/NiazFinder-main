@@ -2,6 +2,7 @@ import type { NeedDraft, PublishValidationError } from '@/contracts/need-intake'
 import { recordToEntities } from '@/intake/aggregate/needDraftAggregate';
 import { hasEntityValue } from '@/intake/entities/entityRegistry';
 import { resolveTemplateFromDraftEntities } from '@/intake/template/resolveTemplate';
+import { getCategoryBySlug } from '@/config/categories';
 
 export type { PublishValidationError };
 
@@ -58,12 +59,38 @@ export function validateNeedDraftForPublish(draft: NeedDraft): PublishValidation
     errors.push({ field: 'mapPin', message: FIELD_MESSAGES.mapPin });
   }
 
-  if (!entities.categorySlug) {
+  const effectiveCategorySlug = entities.subcategorySlug ?? entities.categorySlug;
+  if (!effectiveCategorySlug) {
     errors.push({ field: 'categorySlug', message: 'دسته‌بندی معتبر نیست' });
+  } else if ((getCategoryBySlug(effectiveCategorySlug)?.depth ?? 0) === 0) {
+    errors.push({ field: 'categorySlug', message: 'لطفاً زیرشاخهٔ دقیق نیاز را انتخاب کنید' });
   }
 
   if (!draft.sourceText?.trim()) {
     errors.push({ field: 'sourceText', message: 'متن نیاز الزامی است' });
+  }
+
+  for (const [field, value] of [
+    ['area', entities.area],
+    ['budgetMin', entities.budgetMin],
+    ['budgetMax', entities.budgetMax],
+    ['rooms', entities.rooms],
+    ['rahnAmount', (draft.entities as Record<string, unknown>).rahnAmount],
+    ['monthlyRent', (draft.entities as Record<string, unknown>).monthlyRent],
+  ] as const) {
+    if (value == null) continue;
+    const numeric = typeof value === 'number' ? value : Number(value);
+    if (!Number.isFinite(numeric) || numeric < 0) {
+      errors.push({ field, message: 'مقدار عددی معتبر نیست' });
+    }
+  }
+
+  if (
+    entities.budgetMin != null &&
+    entities.budgetMax != null &&
+    entities.budgetMin > entities.budgetMax
+  ) {
+    errors.push({ field: 'budget', message: 'حداقل بودجه نمی‌تواند از حداکثر بودجه بیشتر باشد' });
   }
 
   return {

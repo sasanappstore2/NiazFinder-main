@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 import { NextRequest, NextResponse, after } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
 import { getAuthUser, createSlug } from '@/lib/auth';
 import { mapDraftToCreateRequest } from '@/lib/need-intake/map-to-request';
@@ -7,7 +8,7 @@ import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
 import { resolveCategoryIds } from '@/lib/need-intake/resolve-category';
 import { normalizeCategoryPair } from '@/config/categories';
 import type { NeedDraft } from '@/contracts/need-intake';
-import { validateNeedDraftForPublish } from '@/intake/validation/publishValidator';
+import { validatePublishRequest } from '@/intake/validation/validatePublishRequest';
 import { recordToEntities } from '@/intake/aggregate/needDraftAggregate';
 import { toServiceRequestV2 } from '@/intake/projections/serviceRequestV2';
 import { compareLegacyAndCanonical } from '@/intake/legacy/compareLegacyAndCanonical';
@@ -45,6 +46,34 @@ import {
 import { publishRequestSchema } from '@/lib/queue/schemas/intake-publish';
 import { publishIntakeAiTask, rabbitMQEnabled } from '@/lib/queue/rabbitmq-client';
 import { captureTrainingExampleAsync } from '@/intake/training/captureTrainingExample';
+import {
+  guardIntakePayloadSize,
+  guardIntakePublicApi,
+} from '@/lib/need-intake/intake-api-guard';
+import { computeCanonicalHash } from '@/intake/legacy/canonical-hash';
+import { snapshotHashPayload } from '@/lib/need-intake/publish-snapshot';
+
+const PUBLISH_IDEMPOTENCY_TTL_MS = 24 * 60 * 60 * 1000;
+
+type StoredPublishResponse = {
+  payload: Record<string, unknown>;
+  httpStatus: number;
+};
+
+async function storePublishResponse(
+  ledgerId: string | null,
+  response: StoredPublishResponse
+): Promise<void> {
+  if (!ledgerId) return;
+  await db.needPublishIdempotency.update({
+    where: { id: ledgerId },
+    data: {
+      status: 'completed',
+      responsePayload: response as unknown as Prisma.InputJsonValue,
+      serviceRequestId: typeof response.payload.id === 'string' ? response.payload.id : null,
+    },
+  });
+}
 
 function enqueueTrainingCapture(
   draft: NeedDraft,
@@ -161,7 +190,14 @@ function scheduleCognitiveEngineShadowComparison(draft: NeedDraft, serviceReques
 }
 
 export async function POST(request: NextRequest) {
+  let publishLedgerId: string | null = null;
   try {
+    const flags = getIntakeMigrationFeatureFlags();
+    const rateLimited = guardIntakePublicApi(request, 'publish', 12);
+    if (rateLimited) return rateLimited;
+    const oversized = guardIntakePayloadSize(request, 512_000);
+    if (oversized) return oversized;
+
     const user = await getAuthUser(request);
     if (!user) {
       return NextResponse.json(
@@ -177,12 +213,31 @@ export async function POST(request: NextRequest) {
     }
 
     const body = parsed.data;
-    const draft = body.draft as unknown as NeedDraft;
-    const listingPreview = body.listingPreview ?? draft?.listingPreview;
+    const snapshot = body.snapshot;
+    const draft = (snapshot?.draft ?? body.draft) as unknown as NeedDraft;
+    const listingPreview = (snapshot?.listingPreview ?? body.listingPreview ?? draft?.listingPreview) as
+      | NeedDraft['listingPreview']
+      | undefined;
+
+    if (snapshot) {
+      const expectedHash = computeCanonicalHash(
+        snapshotHashPayload(
+          snapshot.draft as unknown as NeedDraft,
+          snapshot.listingPreview as unknown as NonNullable<NeedDraft['listingPreview']>,
+          snapshot.draftRevision
+        )
+      );
+      if (expectedHash !== snapshot.draftHash) {
+        return NextResponse.json(
+          { error: 'پیش‌نمایش منقضی شده است؛ دوباره پیش‌نمایش بگیرید', code: 'stale_snapshot' },
+          { status: 409 }
+        );
+      }
+    }
 
     await assertPublishDatabaseReady(() => db.$queryRaw`SELECT 1`);
 
-    const validation = validateNeedDraftForPublish(draft);
+    const validation = validatePublishRequest(draft, listingPreview);
     if (!validation.success) {
       return NextResponse.json(
         { success: false, errors: validation.errors },
@@ -223,6 +278,88 @@ export async function POST(request: NextRequest) {
       };
     }
 
+    if (flags.publishIdempotency) {
+      const requestHash = computeCanonicalHash({
+        draft,
+        listingPreview,
+        linkToBusinessProfile: body.linkToBusinessProfile === true,
+      });
+      const idempotencyKey = (
+        body.idempotencyKey?.trim() || snapshot?.idempotencyKey?.trim() || `legacy:${randomUUID()}`
+      ).slice(0, 160);
+      const scopeKey = `user:${user.id}`;
+      const existingLedger = await db.needPublishIdempotency.findUnique({
+        where: { scopeKey_idempotencyKey: { scopeKey, idempotencyKey } },
+      });
+      if (existingLedger) {
+        if (existingLedger.requestHash !== requestHash) {
+          return NextResponse.json(
+            { error: 'کلید idempotency با اطلاعات دیگری استفاده شده است', code: 'idempotency_conflict' },
+            { status: 409 }
+          );
+        }
+        if (existingLedger.status === 'completed' && existingLedger.responsePayload) {
+          const stored = existingLedger.responsePayload as unknown as StoredPublishResponse;
+          return NextResponse.json(stored.payload, {
+            status: stored.httpStatus,
+            headers:
+              stored.httpStatus === 202 && typeof stored.payload.id === 'string'
+                ? { Location: `/api/need-intake/publish/status/${stored.payload.id}` }
+                : undefined,
+          });
+        }
+        if (existingLedger.status === 'pending') {
+          return NextResponse.json(
+            { error: 'درخواست ثبت نیاز در حال پردازش است', code: 'publish_in_progress' },
+            { status: 409 }
+          );
+        }
+        const retried = await db.needPublishIdempotency.update({
+          where: { id: existingLedger.id },
+          data: {
+            status: 'pending',
+            responsePayload: Prisma.JsonNull,
+            serviceRequestId: null,
+            expiresAt: new Date(Date.now() + PUBLISH_IDEMPOTENCY_TTL_MS),
+          },
+        });
+        publishLedgerId = retried.id;
+      } else {
+        try {
+          const createdLedger = await db.needPublishIdempotency.create({
+            data: {
+              scopeKey,
+              idempotencyKey,
+              requestHash,
+              expiresAt: new Date(Date.now() + PUBLISH_IDEMPOTENCY_TTL_MS),
+            },
+          });
+          publishLedgerId = createdLedger.id;
+        } catch (error) {
+          if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== 'P2002') {
+            throw error;
+          }
+          const concurrent = await db.needPublishIdempotency.findUnique({
+            where: { scopeKey_idempotencyKey: { scopeKey, idempotencyKey } },
+          });
+          if (!concurrent || concurrent.requestHash !== requestHash) {
+            return NextResponse.json(
+              { error: 'کلید idempotency با اطلاعات دیگری استفاده شده است', code: 'idempotency_conflict' },
+              { status: 409 }
+            );
+          }
+          if (concurrent.status === 'completed' && concurrent.responsePayload) {
+            const stored = concurrent.responsePayload as unknown as StoredPublishResponse;
+            return NextResponse.json(stored.payload, { status: stored.httpStatus });
+          }
+          return NextResponse.json(
+            { error: 'درخواست ثبت نیاز در حال پردازش است', code: 'publish_in_progress' },
+            { status: 409 }
+          );
+        }
+      }
+    }
+
     const entities = recordToEntities(draft.entities);
     const serviceRequestV2 = toServiceRequestV2(draft);
     const legacyCompare = compareLegacyAndCanonical(draft);
@@ -244,7 +381,6 @@ export async function POST(request: NextRequest) {
     );
     const mapped = mapDraftToCreateRequest(draft, categoryId, subcategoryId);
 
-    const flags = getIntakeMigrationFeatureFlags();
     let shadowComparison: ReturnType<typeof runPublishShadowMode> | null = null;
     if (flags.shadowPublishEnabled) {
       shadowComparison = runPublishShadowMode(draft, categoryId, subcategoryId);
@@ -289,6 +425,11 @@ export async function POST(request: NextRequest) {
 
     const useAsyncQueue = rabbitMQEnabled();
     if (!useAsyncQueue && !isIntakeQueueSyncFallbackEnabled()) {
+      if (publishLedgerId) {
+        await db.needPublishIdempotency
+          .update({ where: { id: publishLedgerId }, data: { status: 'failed' } })
+          .catch(() => undefined);
+      }
       return NextResponse.json(
         { error: 'سرویس صف پیام در دسترس نیست', code: 'queue_unavailable' },
         { status: 503 }
@@ -360,7 +501,7 @@ export async function POST(request: NextRequest) {
 
       enqueueTrainingCapture(draft, serviceRequest.id, body.sessionId);
 
-      return NextResponse.json({
+      const syncResponse = {
         id: serviceRequest.id,
         slug: serviceRequest.slug,
         title: serviceRequest.title,
@@ -369,7 +510,9 @@ export async function POST(request: NextRequest) {
         autoApproved: autoApprove,
         syncFallback: true,
         message: syncPublishUserMessage(autoApprove),
-      });
+      };
+      await storePublishResponse(publishLedgerId, { payload: syncResponse, httpStatus: 200 });
+      return NextResponse.json(syncResponse);
     }
 
     const jobId = randomUUID();
@@ -411,7 +554,7 @@ export async function POST(request: NextRequest) {
           sessionId: body.sessionId,
         });
         enqueueTrainingCapture(draft, serviceRequest.id, body.sessionId);
-        return NextResponse.json({
+        const fallbackResponse = {
           id: updated.id,
           slug: updated.slug,
           title: updated.title,
@@ -420,9 +563,16 @@ export async function POST(request: NextRequest) {
           autoApproved: autoApprove,
           syncFallback: true,
           message: syncPublishUserMessage(autoApprove),
-        });
+        };
+        await storePublishResponse(publishLedgerId, { payload: fallbackResponse, httpStatus: 200 });
+        return NextResponse.json(fallbackResponse);
       }
       await db.serviceRequest.delete({ where: { id: serviceRequest.id } }).catch(() => undefined);
+      if (publishLedgerId) {
+        await db.needPublishIdempotency
+          .update({ where: { id: publishLedgerId }, data: { status: 'failed' } })
+          .catch(() => undefined);
+      }
       return NextResponse.json(
         { error: 'سرویس صف پیام در دسترس نیست', code: 'queue_publish_failed' },
         { status: 503 }
@@ -457,8 +607,7 @@ export async function POST(request: NextRequest) {
 
     enqueueTrainingCapture(draft, serviceRequest.id, body.sessionId);
 
-    return NextResponse.json(
-      {
+    const acceptedResponse = {
         accepted: true,
         jobId,
         id: serviceRequest.id,
@@ -468,15 +617,18 @@ export async function POST(request: NextRequest) {
         moderationStatus: serviceRequest.moderationStatus,
         autoApproved: autoApprove,
         message: 'آگهی در صف پردازش هوش مصنوعی قرار گرفت',
-      },
-      {
-        status: 202,
-        headers: {
-          Location: `/api/need-intake/publish/status/${serviceRequest.id}`,
-        },
-      }
-    );
+      };
+    await storePublishResponse(publishLedgerId, { payload: acceptedResponse, httpStatus: 202 });
+    return NextResponse.json(acceptedResponse, {
+      status: 202,
+      headers: { Location: `/api/need-intake/publish/status/${serviceRequest.id}` },
+    });
   } catch (error) {
+    if (publishLedgerId) {
+      await db.needPublishIdempotency
+        .update({ where: { id: publishLedgerId }, data: { status: 'failed' } })
+        .catch(() => undefined);
+    }
     console.error('need-intake publish error:', error);
     const formatted = formatNeedIntakePublishError(error);
     if (formatted.status === 422 && formatted.code?.startsWith('category')) {

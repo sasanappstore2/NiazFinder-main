@@ -16,6 +16,8 @@ export interface LocationIndexRecord {
   lat?: number | null;
   lng?: number | null;
   searchText: string;
+  /** Normalized sub-neighborhood names (زیرمحله) that must resolve to this record. */
+  areas?: string[];
 }
 
 export interface LocationFuseMatch {
@@ -28,6 +30,8 @@ export interface LocationFuseMatch {
 
 let cachedRecords: LocationIndexRecord[] | null = null;
 let cachedFuse: Fuse<LocationIndexRecord> | null = null;
+/** area key → neighborhood records managing that sub-neighborhood. */
+let cachedAreaLookup: Map<string, LocationIndexRecord[]> | null = null;
 /** After first Prisma failure (or env skip), use JSON catalog only ? no repeated DB noise. */
 let prismaLocationCatalogDisabled =
   process.env.NEED_INTAKE_LOC_SKIP_PRISMA === 'true' ||
@@ -112,6 +116,9 @@ export async function loadLocationIndexRecords(): Promise<LocationIndexRecord[]>
             lat: hood.lat,
             lng: hood.lng,
             searchText: normalizeLookupKey(base),
+            areas: (hood.areas ?? [])
+              .map((a) => normalizeLookupKey(a))
+              .filter((a) => a.length >= 2),
           });
           for (const alias of hood.aliases) {
             records.push({
@@ -139,10 +146,22 @@ export async function loadLocationIndexRecords(): Promise<LocationIndexRecord[]>
   }
 
   const manifest = await readManifest();
-  const cityIds = Object.keys(manifest.counts ?? {}).slice(0, 500);
-  for (const cityId of cityIds) {
-    try {
-      const cat = await loadCityCatalogFile(cityId);
+  // Full coverage: the manifest lists every catalog city (tehran-city sits far past the
+  // alphabetical halfway point, so any cap here silently drops the biggest city).
+  const cityIds = Object.keys(manifest.counts ?? {}).filter((id) => (manifest.counts?.[id] ?? 0) > 0);
+  const BATCH = 24;
+  for (let i = 0; i < cityIds.length; i += BATCH) {
+    const batch = cityIds.slice(i, i + BATCH);
+    const catalogs = await Promise.all(
+      batch.map(async (cityId) => {
+        try {
+          return { cityId, cat: await loadCityCatalogFile(cityId) };
+        } catch {
+          return { cityId, cat: null };
+        }
+      })
+    );
+    for (const { cityId, cat } of catalogs) {
       if (!cat) continue;
       const cityName = cat.cityName ?? cityId;
       records.push({
@@ -165,10 +184,11 @@ export async function loadLocationIndexRecords(): Promise<LocationIndexRecord[]>
           lat: n.centroid?.lat,
           lng: n.centroid?.lng,
           searchText: normalizeLookupKey([n.name, ...(n.areas ?? [])].join(' ')),
+          areas: (n.areas ?? [])
+            .map((a) => normalizeLookupKey(a))
+            .filter((a) => a.length >= 2),
         });
       }
-    } catch {
-      /* skip */
     }
   }
 
@@ -192,6 +212,22 @@ export async function getLocationFuseIndex(): Promise<Fuse<LocationIndexRecord>>
 export function clearLocationIndexCache(): void {
   cachedRecords = null;
   cachedFuse = null;
+  cachedAreaLookup = null;
+}
+
+function getAreaLookup(records: LocationIndexRecord[]): Map<string, LocationIndexRecord[]> {
+  if (cachedAreaLookup) return cachedAreaLookup;
+  const lookup = new Map<string, LocationIndexRecord[]>();
+  for (const r of records) {
+    if (r.type !== 'neighborhood' || !r.areas?.length) continue;
+    for (const area of r.areas) {
+      const list = lookup.get(area) ?? [];
+      if (!list.includes(r)) list.push(r);
+      lookup.set(area, list);
+    }
+  }
+  cachedAreaLookup = lookup;
+  return lookup;
 }
 
 export async function searchLocationIndex(
@@ -216,6 +252,58 @@ export async function searchLocationIndex(
     }
   }
   if (exact.length) return exact.slice(0, opts?.limit ?? 5);
+
+  // Sub-neighborhood (زیرمحله) tier: the fragment may name a small area managed under a
+  // parent neighborhood (e.g. «موحد دانش» → آجودانیه), optionally alongside the parent
+  // itself («سباری نیاوران»). Match area names against the query's word n-grams; when
+  // several parents share an area name, keep the one whose parent name the text mentions,
+  // otherwise surface all candidates and let the resolver refuse a single winner
+  // (RFC-0004 ambiguity rule).
+  if (q.length >= 3) {
+    const areaLookup = getAreaLookup(records);
+    const tokens = q.split(/\s+/).filter(Boolean);
+    const phrases = new Set<string>();
+    for (let w = Math.min(3, tokens.length); w >= 1; w -= 1) {
+      for (let i = 0; i + w <= tokens.length; i += 1) {
+        const phrase = tokens.slice(i, i + w).join(' ');
+        if (phrase.length >= 3) phrases.add(phrase);
+      }
+    }
+    const matched = new Map<LocationIndexRecord, number>();
+    for (const phrase of phrases) {
+      const recs = areaLookup.get(phrase);
+      if (!recs) continue;
+      const width = phrase.split(' ').length;
+      for (const r of recs) {
+        const prev = matched.get(r);
+        if (prev === undefined || width > prev) matched.set(r, width);
+      }
+    }
+    let areaRecords = Array.from(matched.keys());
+    if (opts?.citySlug) {
+      areaRecords = areaRecords.filter((r) => r.citySlug === opts.citySlug);
+    }
+    if (areaRecords.length > 1) {
+      const withParent = areaRecords.filter((r) => {
+        const parent = normalizeLookupKey(r.name);
+        return parent.length >= 3 && q.includes(parent);
+      });
+      if (withParent.length >= 1) areaRecords = withParent;
+    }
+    if (areaRecords.length) {
+      const areaHits = areaRecords
+        .sort((a, b) => (matched.get(b) ?? 0) - (matched.get(a) ?? 0))
+        .slice(0, opts?.limit ?? 5)
+        .map<LocationFuseMatch>((r) => ({
+          record: r,
+          tier: 'alias',
+          score: 0,
+          confidence: areaRecords.length === 1 ? 0.92 : 0.9,
+          evidence: `area-exact:${r.name}`,
+        }));
+      return areaHits;
+    }
+  }
 
   const fuse = await getLocationFuseIndex();
   const hits = fuse.search(q, { limit: (opts?.limit ?? 8) * 2 });

@@ -15,6 +15,7 @@ import type { City } from '@/lib/location-system';
 import { routeBuilder } from '@/config/routes';
 import { getBrowseUrl } from '@/lib/search/browse-entry-url';
 import { locationCityIdToSlug } from '@/lib/search/city-slugs';
+import { scopeCitySlugs, scopeFromCookie } from '@/lib/search/location-scope';
 import { getLeadPhone } from '@/lib/lead-draft';
 import { buildHomeToPostSearchParams } from '@/lib/need-intake/home-post-seamless';
 import { trackAnalyticsEvent } from '@/lib/analytics/track';
@@ -80,6 +81,7 @@ function HomeLeadLandingContent() {
     setIsOpen: setCityPickerOpen,
     selectedCities,
     selectedProvinceIds,
+    provinces,
     isInitialized,
     getLocationDisplayText,
     handleSelectionChange,
@@ -99,13 +101,24 @@ function HomeLeadLandingContent() {
   const primaryCity = selectedCities[0];
   const citySlug = primaryCity ? locationCityIdToSlug(primaryCity.id) : null;
   const cityName = primaryCity?.name ?? null;
+  const hasUniqueCity = selectedCities.length === 1 && selectedProvinceIds.length === 0;
+  const intakeCitySlug = hasUniqueCity ? citySlug : null;
+  const intakeCityName = hasUniqueCity ? cityName : null;
+  const homeLocationLabel = selectedProvinceIds.length > 0
+    ? selectedProvinceIds.length === 1
+      ? `استان ${provinces.find((province) => province.id === selectedProvinceIds[0])?.name ?? getLocationDisplayText()}`
+      : `${selectedProvinceIds.length} استان انتخاب شده`
+    : selectedCities.length > 1
+      ? `${selectedCities.length} شهر انتخاب شده`
+      : getLocationDisplayText();
 
   const { status: prefetchStatus, flushPrefetch } = useHomeLeadAnalyzePrefetch({
     text: needText,
-    citySlug,
-    cityName,
-    // Match /post cache key (city is required before submit).
-    enabled: hasCity && needText.trim().length >= 8,
+    citySlug: intakeCitySlug,
+    cityName: intakeCityName,
+    // Only a single city is valid context for a need; provinces and
+    // multi-city scopes must not be silently reduced to their first city.
+    enabled: Boolean(intakeCitySlug) && needText.trim().length >= 8,
   });
 
   const focusComposer = useCallback(() => {
@@ -113,15 +126,15 @@ function HomeLeadLandingContent() {
   }, []);
 
   const navigateToPostForm = useCallback(
-    (seed: string) => {
+    (seed: string, selectedCitySlug: string) => {
       const storedPhone = getLeadPhone();
       const params = buildHomeToPostSearchParams({
         seed,
-        citySlug,
+        citySlug: selectedCitySlug,
         phone: storedPhone || undefined,
       });
       trackAnalyticsEvent('intake_home_lead_submit', {
-        hasCity: Boolean(citySlug),
+        hasCity: true,
         hasCategory: params.has('category'),
         hasPhone: params.has('phone'),
         seedLength: seed.length,
@@ -130,7 +143,7 @@ function HomeLeadLandingContent() {
       setIsSubmitting(true);
       router.push(`${routeBuilder.needNew()}?${params.toString()}`);
     },
-    [router, citySlug, prefetchStatus]
+    [router, prefetchStatus]
   );
 
   const goToPost = useCallback(async () => {
@@ -140,8 +153,29 @@ function HomeLeadLandingContent() {
       focusComposer();
       return;
     }
-    if (!hasCity) {
-      toast.error('ابتدا شهر خود را انتخاب کنید');
+    const cookieScope = scopeFromCookie();
+    const cookieCitySlug =
+      selectedCities.length === 0 && selectedProvinceIds.length === 0 && cookieScope.mode === 'city'
+        ? scopeCitySlugs(cookieScope)[0] ?? null
+        : null;
+    const selectedCitySlug = intakeCitySlug ?? cookieCitySlug;
+    if (!selectedCitySlug) {
+      if (selectedProvinceIds.length > 0 || cookieScope.mode === 'provinces') {
+        const provinceLabel = selectedProvinceIds.length === 1
+          ? provinces.find((province) => province.id === selectedProvinceIds[0])?.name
+          : cookieScope.mode === 'provinces'
+            ? cookieScope.label
+            : undefined;
+        toast.error(
+          provinceLabel
+            ? `استان ${provinceLabel} انتخاب شده؛ برای ثبت نیاز یک شهر مشخص را انتخاب کنید`
+            : 'برای ثبت نیاز، یک شهر مشخص را انتخاب کنید'
+        );
+      } else if (selectedCities.length > 1 || cookieScope.mode === 'cities') {
+        toast.error('چند شهر انتخاب شده؛ برای ثبت نیاز فقط یک شهر را انتخاب کنید');
+      } else {
+        toast.error('ابتدا شهر خود را انتخاب کنید');
+      }
       setCityPickerOpen(true);
       return;
     }
@@ -152,10 +186,13 @@ function HomeLeadLandingContent() {
     } catch {
       /* navigate anyway */
     }
-    navigateToPostForm(seed);
+    navigateToPostForm(seed, selectedCitySlug);
   }, [
     needText,
-    hasCity,
+    intakeCitySlug,
+    selectedCities,
+    selectedProvinceIds,
+    provinces,
     setCityPickerOpen,
     focusComposer,
     navigateToPostForm,
@@ -281,7 +318,7 @@ function HomeLeadLandingContent() {
               phone=""
               onPhoneChange={() => {}}
               showPhoneField={false}
-              cityLabel={getLocationDisplayText()}
+              cityLabel={homeLocationLabel}
               hasCity={hasCity}
               isGeoDetecting={geo.isDetecting}
               onOpenCityPicker={() => setCityPickerOpen(true)}

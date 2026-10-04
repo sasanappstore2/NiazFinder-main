@@ -26,8 +26,10 @@ async function executeJob(jobName: IntakeQueueJobName, payload: unknown): Promis
     const p = payload as IntakeAnalyzeJobPayload;
     return runIntakeIntelligence({
       text: p.text,
+      draftRevision: p.draftRevision,
       citySlug: p.citySlug,
       cityName: p.cityName,
+      forceAi: p.forceAi,
       formHints: p.formHints,
     });
   }

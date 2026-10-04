@@ -292,12 +292,17 @@ export function resolveCategoryLevels(
     };
   }
 
-  // depth 0 — prefer first active child as category when posting needs
-  const firstChild = getDirectChildren(leafSlug)[0];
-  if (firstChild) {
-    return resolveCategoryLevels(firstChild.slug);
+  // depth 0 is a scope hint, not a concrete posting category.  The old
+  // first-child fallback silently turned `services` into `repairs` and made
+  // every downstream template, validator and publish projection disagree
+  // with the user's text.  Keep the root intact until the user or the
+  // analyzer resolves a real child.
+  if (process.env.INTAKE_ROOT_CATEGORY_HINT === 'false') {
+    // Controlled rollback only: restore the pre-v2 first-child behavior if a
+    // deployment must temporarily disable the root-hint rollout flag.
+    const firstChild = CANONICAL_CATEGORIES.find((item) => item.parentSlug === leafSlug);
+    if (firstChild) return resolveCategoryLevels(firstChild.slug);
   }
-
   return {
     leafSlug,
     parentSlug: null,

@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+jobs:
+  typecheck-lint-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEED_INTAKE_LLM_ENABLED: 'false'
+      NEED_INTAKE_LOC_SKIP_PRISMA: 'true'
+      AI_SEMANTIC_RESOLVER_ENABLED: 'false'
+      NEED_INTAKE_TRUTH_VERIFY_ENABLED: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Lint (errors fail, warnings pass)
+        run: npm run lint
+      - name: Intake engine self-test (rules-only, offline)
+        run: npm run test:intake-engine
+      - name: Post pipeline self-test (rules-only, offline)
+        run: npm run test:post-pipeline

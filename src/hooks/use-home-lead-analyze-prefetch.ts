@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { analyzeIntakeTextApi } from '@/lib/intake/intake-analyze-client';
-import { getIntakeAnalysisMode } from '@/lib/intake/rules-only-mode';
-import { apiFetch } from '@/lib/api-client';
 
 export type HomeLeadPrefetchStatus = 'idle' | 'pending' | 'ready' | 'error';
 
@@ -27,8 +25,10 @@ export interface UseHomeLeadAnalyzePrefetchResult {
 }
 
 /**
- * Background-warm `/api/intake/analyze` (+ smart-extract) while the user types
- * on the home lead box so `/post` hits a warm server cache.
+ * Background-warm the canonical `/api/intake/analyze` while the user types on
+ * the home lead box so `/post` hits the same server cache. The old parallel
+ * smart-extract request was removed because it created a second source of
+ * truth and doubled public API traffic.
  */
 export function useHomeLeadAnalyzePrefetch({
   text,
@@ -43,7 +43,7 @@ export function useHomeLeadAnalyzePrefetch({
   const timerRef = useRef<number | null>(null);
   const inflightRef = useRef<Promise<void> | null>(null);
   const lastReadySigRef = useRef<string>('');
-  const forceAi = getIntakeAnalysisMode() === 'ai';
+  const forceAi = false;
 
   const signature = (t: string) =>
     `${t.trim()}|${citySlug ?? ''}|${cityName ?? ''}|${forceAi ? 'ai' : 'rules'}`;
@@ -71,25 +71,7 @@ export function useHomeLeadAnalyzePrefetch({
             signal: controller.signal,
           });
 
-          // Warm smart-extract cache in parallel (best-effort; ignore failures).
-          const smartPromise = apiFetch('/api/intake/smart-extract', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            signal: controller.signal,
-            body: JSON.stringify({
-              needText: trimmed,
-              detailsText: '',
-              options: {
-                preferredCity: cityName ?? undefined,
-                preferredCitySlug: citySlug ?? undefined,
-                useAI: false,
-                realTime: true,
-                useRules: true,
-              },
-            }),
-          }).catch(() => null);
-
-          await Promise.all([analyzePromise, smartPromise]);
+          await analyzePromise;
           if (controller.signal.aborted) return;
           lastReadySigRef.current = sig;
           setStatus('ready');

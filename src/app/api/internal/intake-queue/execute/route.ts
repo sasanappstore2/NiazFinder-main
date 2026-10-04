@@ -28,8 +28,10 @@ export async function POST(request: NextRequest) {
 
     const result = await runIntakeIntelligence({
       text,
+      draftRevision: payload?.draftRevision as number | undefined,
       citySlug: payload?.citySlug as string | undefined,
       cityName: payload?.cityName as string | undefined,
+      forceAi: payload?.forceAi === true,
       formHints: payload?.formHints as
         | {
             categorySlug?: string;
@@ -37,6 +39,9 @@ export async function POST(request: NextRequest) {
             city?: string;
             neighborhood?: string;
             categoryLockedByUser?: boolean;
+            cityLockedByUser?: boolean;
+            neighborhoodLockedByUser?: boolean;
+            lockedFieldKeys?: string[];
           }
         | undefined,
     });

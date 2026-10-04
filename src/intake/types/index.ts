@@ -27,6 +27,13 @@ export interface IntakeEntities {
   budgetMax: number | null;
   rooms: number | null;
   transactionType: TransactionType | null;
+  /** Property/rent fields kept in canonical entity storage. */
+  propertyKind?: string | null;
+  deedType?: string | null;
+  rahnAmount?: number | null;
+  monthlyRent?: number | null;
+  deposit?: number | null;
+  [key: string]: unknown;
   /** Map pin from intake location picker. */
   lat?: number | null;
   lng?: number | null;

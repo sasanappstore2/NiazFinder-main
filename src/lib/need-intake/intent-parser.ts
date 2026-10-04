@@ -703,7 +703,10 @@ function parsePropertyKind(text: string): string | undefined {
     if (norm.includes('دفتر') || norm.includes('مطب') || norm.includes('کلینیک')) {
       return 'office';
     }
-    if (norm.includes('سوله') || norm.includes('انبار')) return 'industrial';
+    if (
+      norm.includes('سوله') ||
+      /(?:^|[\s،,؛(])انبار(?:ها(?:ی)?)?(?=$|[\s،,؛).])/u.test(norm)
+    ) return 'industrial';
     if (isAmbiguousCommercialSubtype(norm)) return undefined;
     if (
       norm.includes('سالن') ||
@@ -822,7 +825,16 @@ function buildEntities(
   const root = path[0]?.slug ?? categorySlug;
 
   const area = parseAreaFromText(text);
-  if (area) entities.area = area;
+  if (area) {
+    const numericArea = Number(area.replace(/,/g, '').trim());
+    if (Number.isFinite(numericArea) && numericArea > 0) {
+      // Legacy projection name; canonical storage is entities.area.
+      entities.areaMin = String(numericArea);
+    } else {
+      // Location fragments are neighborhoods, never metric area.
+      entities.neighborhood = area;
+    }
+  }
 
   if (categorySlug === 'construction-partnership' || isConstructionPartnershipText(text)) {
     entities.serviceKind = 'partnership';
@@ -898,10 +910,12 @@ function buildTitle(
 }
 
 function buildDescription(rawText: string, entities: Record<string, string>, city?: string): string {
-  const area = entities.area;
+  const area = entities.areaMin;
+  const neighborhood = entities.neighborhood;
   const hints: string[] = [];
-  if (area && city) hints.push(`محدوده: ${area}، ${city}`);
-  else if (area) hints.push(`محدوده: ${area}`);
+  if (neighborhood && city) hints.push(`محدوده: ${neighborhood}، ${city}`);
+  else if (neighborhood) hints.push(`محدوده: ${neighborhood}`);
+  if (area) hints.push(`متراژ: ${area} متر`);
   else if (city) hints.push(`شهر: ${city}`);
   const base = rawText.trim();
   if (hints.length === 0) return base;
@@ -929,7 +943,7 @@ export function parseIntentFromText(rawText: string): ParsedIntent {
     if (slots.areaMax && !entities.areaMax) entities.areaMax = slots.areaMax;
     if (slots.rooms && !entities.rooms) entities.rooms = slots.rooms;
   }
-  const area = entities.area;
+  const area = entities.areaMin;
 
   let confidence = 0.5;
   if (categorySlug !== 'services') confidence += 0.1;
@@ -948,7 +962,7 @@ export function parseIntentFromText(rawText: string): ParsedIntent {
     intentType,
     categorySlug: commercialAmbiguous ? '' : pair.categorySlug,
     subcategorySlug: commercialAmbiguous ? undefined : pair.subcategorySlug,
-    title: buildTitle(intentType, entities, city, area),
+    title: buildTitle(intentType, entities, city, entities.neighborhood),
     description: buildDescription(rawText, entities, city),
     budgetMin: budget.min,
     budgetMax: budget.max,

@@ -162,11 +162,33 @@ export interface ListingPreview {
   qualityScore?: number;
 }
 
+export interface IntakeFieldProvenance {
+  source: 'user' | 'rules' | 'llm' | 'derived' | 'form';
+  confidence?: number;
+  accepted: boolean;
+  evidence?: string;
+}
+
+export interface IntakePublishSnapshot {
+  schemaVersion: 2;
+  draft: Omit<NeedDraft, 'publishSnapshot'>;
+  listingPreview: ListingPreview;
+  draftRevision: number;
+  draftHash: string;
+  idempotencyKey: string;
+  createdAt: string;
+}
+
 /**
- * Canonical NeedDraft schema version (documented as v1.0).
- * Bump only with migration + golden tests — see docs/intake-schema-versions.md.
+ * Canonical NeedDraft schema version. Version 1 remains readable through the
+ * legacy mapper, while every newly-created canonical draft is version 2.
  */
-export const NEED_DRAFT_SCHEMA_VERSION = 1 as const;
+export const NEED_DRAFT_SCHEMA_VERSION = 2 as const;
+
+/** New-draft version switch used for an additive rollback to the v1 projection. */
+export function getNeedDraftSchemaVersion(): 1 | 2 {
+  return process.env.INTAKE_CANONICAL_DRAFT_V2 === 'false' ? 1 : NEED_DRAFT_SCHEMA_VERSION;
+}
 
 export type NeedDraftSchemaVersion = typeof NEED_DRAFT_SCHEMA_VERSION;
 
@@ -208,7 +230,25 @@ export interface NeedDraft {
   intelligenceProfile?: NeedIntelligenceProfile;
   /** Per-field confidence + source from Intelligence Engine v1. */
   fieldMeta?: Record<string, { value: unknown; confidence: number; source: string; evidence?: string }>;
+  /** Monotonic revision used to invalidate stale preview snapshots. */
+  draftRevision?: number;
+  /** URL/home category scope; never implies a user lock. */
+  categoryHintSlug?: string;
+  /** Analyzer proposal used for rendering before explicit confirmation. */
+  provisionalCategorySlug?: string;
+  /** Persisted lock state required by auth resume and publish. */
+  categoryLockedByUser?: boolean;
+  cityLockedByUser?: boolean;
+  neighborhoodLockedByUser?: boolean;
+  lockedFieldKeys?: string[];
+  fieldProvenance?: Record<string, IntakeFieldProvenance>;
+  publishSnapshot?: IntakePublishSnapshot;
 }
+
+/** Strict type for new canonical drafts; old persisted drafts remain readable. */
+export type NeedDraftV2 = Omit<NeedDraft, 'schemaVersion'> & {
+  schemaVersion: typeof NEED_DRAFT_SCHEMA_VERSION;
+};
 
 export interface PublishValidationError {
   field: string;

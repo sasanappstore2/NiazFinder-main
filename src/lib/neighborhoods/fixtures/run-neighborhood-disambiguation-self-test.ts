@@ -4,6 +4,7 @@ import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
 import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
 import { findManagedNeighborhoodAmbiguity } from '@/lib/neighborhoods/find-managed-neighborhood-ambiguity';
 import { formatAmbiguousNeighborhoodChipLabel } from '@/lib/neighborhoods/format-disambiguation-label';
+import { resolvePostNeighborhoodInCity } from '@/lib/need-intake/laya/post-neighborhood-resolver';
 
 function assert(cond: boolean, msg: string): void {
   if (!cond) throw new Error(msg);
@@ -29,7 +30,8 @@ assert(
   enriched.locationResolutionStatus === 'neighborhood_ambiguous',
   `LRE status: ${enriched.locationResolutionStatus}`
 );
-assert(enriched.entities?.area === BAN, `LRE area: ${enriched.entities?.area}`);
+assert(enriched.entities?.neighborhood === BAN, `LRE neighborhood: ${enriched.entities?.neighborhood}`);
+assert(enriched.entities?.area !== BAN, 'neighborhood fragment must not be stored as property area');
 
 const catalog = getNeighborhoodCatalogForCity(MASHHAD);
 const neighborhoods = catalog.map((n, i) => ({
@@ -160,5 +162,26 @@ assert(behramanScoped.city !== BEHRAMAN, 'behraman scoped must not pick behraman
 
 const ferdowsiHits = findManagedNeighborhoodAmbiguity(neighborhoods, BOULEVARD_FERDOWSI, '');
 assert(ferdowsiHits.length >= 1, `ferdowsi ambiguity hits: ${ferdowsiHits.length}`);
+
+const TEHRAN = '\u062A\u0647\u0631\u0627\u0646';
+const VANAK = '\u0648\u0646\u06A9';
+const tehranCatalog = getNeighborhoodCatalogForCity(TEHRAN);
+const tehranNeighborhoods = tehranCatalog.map((n, i) => ({
+  id: n.slug,
+  name: n.name,
+  areas: n.areas,
+  isActive: true,
+  order: i,
+}));
+const vanakAmbiguity = findManagedNeighborhoodAmbiguity(tehranNeighborhoods, VANAK, '');
+assert(vanakAmbiguity.length >= 2, `Vanak alias ambiguity: ${vanakAmbiguity.length}`);
+const vanakResolution = resolvePostNeighborhoodInCity(
+  tehranNeighborhoods,
+  VANAK,
+  TEHRAN,
+  `\u062F\u0631 ${VANAK}`
+);
+assert(vanakResolution.hit?.name === VANAK, `exact Vanak neighborhood: ${vanakResolution.hit?.name}`);
+assert(vanakResolution.candidates.length === 0, 'exact city-catalog match must beat alias candidates');
 
 console.log('neighborhood-disambiguation ferdowsi/behraman scenarios OK');

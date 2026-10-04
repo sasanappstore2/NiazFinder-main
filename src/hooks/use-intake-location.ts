@@ -36,12 +36,14 @@ import {
 import { findManagedNeighborhoodAmbiguity } from '@/lib/neighborhoods/find-managed-neighborhood-ambiguity';
 import { extractLocationFragment, normalizeHoodFragment } from '@/lib/need-intake/location-fragment';
 import { mayAutoApplyLocation } from '@/lib/need-intake/compose-auto-apply';
+import { resolvePostNeighborhoodInCity } from '@/lib/need-intake/laya/post-neighborhood-resolver';
 
 export interface UseIntakeLocationOptions {
   initialCity?: string | null;
   needDraft: NeedDraft | null;
   step: string;
   patchNeedDraftEntities: (patch: Record<string, unknown>) => void;
+  setNeedDraft: (draft: NeedDraft) => void;
 }
 
 export function useIntakeLocation({
@@ -49,20 +51,57 @@ export function useIntakeLocation({
   needDraft,
   step,
   patchNeedDraftEntities,
+  setNeedDraft,
 }: UseIntakeLocationOptions) {
   const searchParams = useSearchParams();
   const [selectedCity, setSelectedCity] = useState(initialCity ?? '');
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('');
   const [myLocationLoading, setMyLocationLoading] = useState(false);
   const [promptNeighborhoodPick, setPromptNeighborhoodPick] = useState(false);
+  // Catalog reconciliation can update the draft and immediately re-run its
+  // effect. Keep the latest select values outside the render closure so the
+  // callback does not write the same neighborhood on every render.
+  const selectedCityRef = useRef(selectedCity);
+  const selectedNeighborhoodRef = useRef(selectedNeighborhood);
+  const lastCatalogReconciliationRef = useRef('');
   const cityLockedByUserRef = useRef(false);
   const [cityLockedByUser, setCityLockedByUser] = useState(false);
   const neighborhoodLockedByUserRef = useRef(false);
+  const autoNeighborhoodRef = useRef<{
+    city: string;
+    sourceText: string;
+    id: string;
+    name: string;
+  } | null>(null);
+  const needDraftRef = useRef(needDraft);
+  useEffect(() => {
+    selectedCityRef.current = selectedCity;
+  }, [selectedCity]);
+  useEffect(() => {
+    selectedNeighborhoodRef.current = selectedNeighborhood;
+  }, [selectedNeighborhood]);
+  useEffect(() => {
+    needDraftRef.current = needDraft;
+  }, [needDraft]);
 
   const markCityLockedByUser = useCallback((locked: boolean) => {
     cityLockedByUserRef.current = locked;
-    setCityLockedByUser(locked);
-  }, []);
+    setCityLockedByUser((previous) => (previous === locked ? previous : locked));
+    const current = needDraftRef.current;
+    if (current && current.cityLockedByUser !== locked) {
+      setNeedDraft({ ...current, cityLockedByUser: locked });
+    }
+  }, [setNeedDraft]);
+
+  useEffect(() => {
+    if (needDraft?.cityLockedByUser) {
+      cityLockedByUserRef.current = true;
+      setCityLockedByUser(true);
+    }
+    if (needDraft?.neighborhoodLockedByUser) {
+      neighborhoodLockedByUserRef.current = true;
+    }
+  }, [needDraft?.cityLockedByUser, needDraft?.neighborhoodLockedByUser]);
 
   const { cities: managedCities } = useManagedLocations();
   const sortedCities = useMemo(
@@ -105,8 +144,19 @@ export function useIntakeLocation({
       markCityLockedByUser(true);
 
       if (!trimmed) {
+        selectedCityRef.current = '';
+        selectedNeighborhoodRef.current = '';
+        neighborhoodLockedByUserRef.current = false;
         setSelectedCity('');
         setSelectedNeighborhood('');
+        const currentDraft = needDraftRef.current;
+        if (currentDraft?.neighborhoodLockedByUser) {
+          setNeedDraft({
+            ...currentDraft,
+            cityLockedByUser: true,
+            neighborhoodLockedByUser: false,
+          });
+        }
         patchNeedDraftEntities({
           city: null,
           neighborhood: null,
@@ -117,12 +167,25 @@ export function useIntakeLocation({
         return;
       }
 
-      const sameCity = trimmed === selectedCity.trim();
+      const sameCity = trimmed === selectedCityRef.current.trim();
+      selectedCityRef.current = trimmed;
       setSelectedCity(trimmed);
       if (sameCity) return;
 
-      neighborhoodLockedByUserRef.current = true;
+      // A city change invalidates the old neighborhood, but it must not lock
+      // the newly empty field; the text analyzer still needs to resolve it in
+      // the new city's catalog.
+      neighborhoodLockedByUserRef.current = false;
+      selectedNeighborhoodRef.current = '';
       setSelectedNeighborhood('');
+      const currentDraft = needDraftRef.current;
+      if (currentDraft?.neighborhoodLockedByUser) {
+        setNeedDraft({
+          ...currentDraft,
+          cityLockedByUser: true,
+          neighborhoodLockedByUser: false,
+        });
+      }
       patchNeedDraftEntities({
         city: trimmed,
         neighborhood: null,
@@ -131,7 +194,7 @@ export function useIntakeLocation({
         lng: null,
       });
     },
-    [patchNeedDraftEntities, selectedCity, markCityLockedByUser]
+    [patchNeedDraftEntities, markCityLockedByUser, setNeedDraft]
   );
 
   const applyCityRecord = useCallback(
@@ -149,21 +212,23 @@ export function useIntakeLocation({
     (
       neighborhoodName: string,
       neighborhoodId?: string | null,
-      opts?: { fromUser?: boolean }
+      opts?: {
+        fromUser?: boolean;
+        coordinates?: { lat: number; lng: number } | null;
+      }
     ) => {
       const trimmed = neighborhoodName.trim();
       const hit =
         neighborhoods.find((n) => n.id === neighborhoodId) ??
         neighborhoods.find((n) => n.name === trimmed) ??
-        matchManagedNeighborhood(neighborhoods, trimmed, selectedCity);
+        matchManagedNeighborhood(neighborhoods, trimmed, selectedCityRef.current);
       const canonicalName = hit?.name ?? trimmed;
       const resolvedSlug = hit?.id ?? neighborhoodId ?? null;
       if (!canonicalName) return;
 
-      const draftEntities = needDraft ? recordToEntities(needDraft.entities) : null;
-      const slugMatches =
-        !resolvedSlug || draftEntities?.neighborhoodSlug?.trim() === resolvedSlug.trim();
-      const centroid = hit?.centroid;
+      const currentDraft = needDraftRef.current;
+      const draftEntities = currentDraft ? recordToEntities(currentDraft.entities) : null;
+      const centroid = hit?.centroid ?? opts?.coordinates;
       const coordsPatch =
         centroid &&
         Number.isFinite(centroid.lat) &&
@@ -171,26 +236,106 @@ export function useIntakeLocation({
           ? { lat: centroid.lat, lng: centroid.lng }
           : {};
 
-      if (canonicalName === selectedNeighborhood.trim() && slugMatches) {
-        if (Object.keys(coordsPatch).length > 0) {
-          const lat = draftEntities?.lat;
-          const lng = draftEntities?.lng;
-          if (lat == null || lng == null) {
-            patchNeedDraftEntities(coordsPatch);
-          }
+      if (opts?.fromUser) {
+        neighborhoodLockedByUserRef.current = true;
+        autoNeighborhoodRef.current = null;
+        if (currentDraft && currentDraft.neighborhoodLockedByUser !== true) {
+          setNeedDraft({ ...currentDraft, neighborhoodLockedByUser: true });
         }
-        return;
       }
 
-      if (opts?.fromUser) neighborhoodLockedByUserRef.current = true;
-      setSelectedNeighborhood(canonicalName);
-      patchNeedDraftEntities({
-        neighborhood: canonicalName || null,
-        neighborhoodSlug: resolvedSlug,
-        ...coordsPatch,
-      });
+      // This callback is also called by an effect that reconciles the draft
+      // with the managed-neighborhood catalog. Keep reconciliation idempotent:
+      // writing the same values back to the Zustand draft increments its
+      // revision, which would otherwise make that effect render forever.
+      if (canonicalName !== selectedNeighborhoodRef.current.trim()) {
+        selectedNeighborhoodRef.current = canonicalName;
+        setSelectedNeighborhood(canonicalName);
+      }
+
+      const patch: Record<string, unknown> = {};
+      if (draftEntities?.neighborhood !== canonicalName) {
+        patch.neighborhood = canonicalName;
+      }
+      if ((draftEntities?.neighborhoodSlug ?? null) !== resolvedSlug) {
+        patch.neighborhoodSlug = resolvedSlug;
+      }
+      if (Object.prototype.hasOwnProperty.call(coordsPatch, 'lat')) {
+        if (!Object.is(draftEntities?.lat, coordsPatch.lat)) patch.lat = coordsPatch.lat;
+        if (!Object.is(draftEntities?.lng, coordsPatch.lng)) patch.lng = coordsPatch.lng;
+      }
+      if (Object.keys(patch).length > 0) {
+        patchNeedDraftEntities(patch);
+      }
     },
-    [neighborhoods, needDraft, patchNeedDraftEntities, selectedCity, selectedNeighborhood]
+    [neighborhoods, patchNeedDraftEntities, setNeedDraft]
+  );
+
+  const applyDetectedLocation = useCallback(
+    (input: {
+      cityName?: string | null;
+      neighborhoodName?: string | null;
+      neighborhoodSlug?: string | null;
+      coordinates?: { lat: number; lng: number } | null;
+    }) => {
+      const requestedCity = input.cityName?.trim() ?? '';
+      const mayChangeCity =
+        !cityLockedByUserRef.current && !neighborhoodLockedByUserRef.current;
+      const currentCity = selectedCityRef.current.trim();
+      const nextCity = mayChangeCity && requestedCity ? requestedCity : currentCity;
+      const cityChanged = Boolean(nextCity && nextCity !== currentCity);
+
+      if (cityChanged) {
+        selectedCityRef.current = nextCity;
+        setSelectedCity(nextCity);
+        selectedNeighborhoodRef.current = '';
+        setSelectedNeighborhood('');
+        neighborhoodLockedByUserRef.current = false;
+      }
+
+      const requestedNeighborhood = input.neighborhoodName?.trim() ?? '';
+      const canApplyNeighborhood = !neighborhoodLockedByUserRef.current;
+      const catalog = cityChanged ? [] : neighborhoods;
+      const hit = requestedNeighborhood && canApplyNeighborhood
+        ? catalog.find((n) => n.id === input.neighborhoodSlug) ??
+          catalog.find((n) => n.name === requestedNeighborhood) ??
+          matchManagedNeighborhood(catalog, requestedNeighborhood, nextCity)
+        : null;
+      const neighborhoodName = hit?.name ?? requestedNeighborhood;
+      const neighborhoodSlug = hit?.id ?? input.neighborhoodSlug?.trim() ?? null;
+      const coordinates = hit?.centroid ?? input.coordinates ?? null;
+
+      if (canApplyNeighborhood && requestedNeighborhood) {
+        if (neighborhoodName !== selectedNeighborhoodRef.current.trim()) {
+          selectedNeighborhoodRef.current = neighborhoodName;
+          setSelectedNeighborhood(neighborhoodName);
+        }
+      } else if (cityChanged && canApplyNeighborhood) {
+        selectedNeighborhoodRef.current = '';
+      }
+
+      const patch: Record<string, unknown> = {};
+      if (mayChangeCity && nextCity) patch.city = nextCity;
+      if (canApplyNeighborhood && requestedNeighborhood) {
+        patch.neighborhood = neighborhoodName;
+        patch.neighborhoodSlug = neighborhoodSlug;
+        if (
+          coordinates &&
+          Number.isFinite(coordinates.lat) &&
+          Number.isFinite(coordinates.lng)
+        ) {
+          patch.lat = coordinates.lat;
+          patch.lng = coordinates.lng;
+        }
+      } else if (cityChanged && canApplyNeighborhood) {
+        patch.neighborhood = null;
+        patch.neighborhoodSlug = null;
+        patch.lat = null;
+        patch.lng = null;
+      }
+      if (Object.keys(patch).length > 0) patchNeedDraftEntities(patch);
+    },
+    [neighborhoods, patchNeedDraftEntities]
   );
 
   const applyLocationBundle = useCallback(
@@ -212,22 +357,49 @@ export function useIntakeLocation({
 
       const city = resolvedCity.trim();
       const neighborhood = neighborhoodName?.trim() ?? '';
+      const cityChanged = Boolean(city && city !== selectedCityRef.current.trim());
+      const preservedNeighborhood = cityChanged ? '' : selectedNeighborhoodRef.current.trim();
+      const nextNeighborhood = neighborhood || preservedNeighborhood;
+      selectedCityRef.current = city;
+      selectedNeighborhoodRef.current = nextNeighborhood;
       setSelectedCity(city);
-      setSelectedNeighborhood(neighborhood);
+      setSelectedNeighborhood(nextNeighborhood);
       patchNeedDraftEntities({
         city: city || null,
-        neighborhood: neighborhood || null,
-        neighborhoodSlug: neighborhoodSlug?.trim() || null,
+        ...(cityChanged || neighborhood
+          ? {
+              neighborhood: nextNeighborhood || null,
+              neighborhoodSlug: neighborhood
+                ? neighborhoodSlug?.trim() || null
+                : null,
+              ...(cityChanged && !neighborhood ? { lat: null, lng: null } : {}),
+            }
+          : {}),
       });
       if (options?.lockUserChoice) {
         markCityLockedByUser(true);
-        neighborhoodLockedByUserRef.current = true;
+        // A selected/saved city is useful context, but it is not evidence that
+        // the user selected a neighborhood. Keep text-based neighborhood
+        // resolution available until a real neighborhood is present.
+        const lockNeighborhood = Boolean(neighborhood || preservedNeighborhood);
+        neighborhoodLockedByUserRef.current = lockNeighborhood;
+        const currentDraft = needDraftRef.current;
+        if (
+          currentDraft &&
+          currentDraft.neighborhoodLockedByUser !== lockNeighborhood
+        ) {
+          setNeedDraft({
+            ...currentDraft,
+            cityLockedByUser: true,
+            neighborhoodLockedByUser: lockNeighborhood,
+          });
+        }
       }
       if (options?.promptNeighborhood && city && !neighborhood) {
         setPromptNeighborhoodPick(true);
       }
     },
-    [patchNeedDraftEntities, sortedCities, markCityLockedByUser]
+    [patchNeedDraftEntities, sortedCities, markCityLockedByUser, setNeedDraft]
   );
 
   const resolveNeighborhoodLabelFromSlug = useCallback(
@@ -619,8 +791,12 @@ export function useIntakeLocation({
     const slug = entities.neighborhoodSlug?.trim();
     if (slug) {
       const bySlug = neighborhoods.find((n) => n.id === slug || n.name === slug);
-      if (bySlug && selectedNeighborhood !== bySlug.name) {
-        applyNeighborhood(bySlug.name, bySlug.id);
+      if (bySlug && selectedNeighborhoodRef.current !== bySlug.name) {
+        const reconciliationKey = `${selectedCity}|${bySlug.id}|${bySlug.name}`;
+        if (lastCatalogReconciliationRef.current !== reconciliationKey) {
+          lastCatalogReconciliationRef.current = reconciliationKey;
+          applyNeighborhood(bySlug.name, bySlug.id);
+        }
         return;
       }
     }
@@ -642,7 +818,13 @@ export function useIntakeLocation({
     }
 
     const hit = matchManagedNeighborhood(neighborhoods, candidate, selectedCity);
-    if (hit) applyNeighborhood(hit.name, hit.id);
+    if (hit) {
+      const reconciliationKey = `${selectedCity}|${hit.id}|${hit.name}`;
+      if (lastCatalogReconciliationRef.current !== reconciliationKey) {
+        lastCatalogReconciliationRef.current = reconciliationKey;
+        applyNeighborhood(hit.name, hit.id);
+      }
+    }
   }, [
     needDraft,
     neighborhoods,
@@ -652,12 +834,78 @@ export function useIntakeLocation({
     applyNeighborhood,
   ]);
 
+  // Run after catalog reconciliation: the source text must win over a stale
+  // slug from the previous render when the user edits the need and returns.
+  useEffect(() => {
+    if (
+      step !== 'location' ||
+      !needDraft ||
+      !selectedCity.trim() ||
+      !neighborhoods.length ||
+      neighborhoodLockedByUserRef.current
+    ) return;
+
+    const sourceText = needDraft.sourceText?.trim() || needDraft.parsedIntent.rawText?.trim() || '';
+    if (!sourceText || textMentionsCityOtherThan(sourceText, selectedCity)) return;
+
+    const resolution = resolvePostNeighborhoodInCity(
+      neighborhoods,
+      extractLocationFragment(sourceText) ?? sourceText,
+      selectedCity,
+      sourceText
+    );
+    if (resolution.hit) {
+      applyNeighborhood(resolution.hit.name, resolution.hit.id, {
+        coordinates: resolution.hit.centroid,
+      });
+      autoNeighborhoodRef.current = {
+        city: selectedCity,
+        sourceText,
+        id: resolution.hit.id,
+        name: resolution.hit.name,
+      };
+    } else {
+      const previous = autoNeighborhoodRef.current;
+      if (
+        previous &&
+        previous.city === selectedCity &&
+        previous.sourceText !== sourceText &&
+        selectedNeighborhoodRef.current.trim() === previous.name
+      ) {
+        const oldCentroid = neighborhoods.find((n) => n.id === previous.id)?.centroid;
+        const entities = recordToEntities(needDraft.entities);
+        const clearAutoPin = oldCentroid &&
+          Object.is(entities.lat, oldCentroid.lat) &&
+          Object.is(entities.lng, oldCentroid.lng);
+        selectedNeighborhoodRef.current = '';
+        setSelectedNeighborhood('');
+        patchNeedDraftEntities({
+          neighborhood: null,
+          neighborhoodSlug: null,
+          ...(clearAutoPin ? { lat: null, lng: null } : {}),
+        });
+        autoNeighborhoodRef.current = null;
+      }
+    }
+  }, [
+    step,
+    needDraft,
+    selectedCity,
+    neighborhoods,
+    selectedNeighborhood,
+    applyNeighborhood,
+    patchNeedDraftEntities,
+  ]);
+
   useEffect(() => {
     if (selectedCity.trim()) return;
+    // Once the scoped city has been applied, do not re-enter this effect if a
+    // parent reset temporarily clears the select value during initialization.
+    if (cityLockedByUserRef.current) return;
     // RFC-0004: URL initialCity is analyze hint only — do not fill/lock the form.
     if (initialCity?.trim()) return;
     const scope = scopeFromCookie();
-    if (scope.mode === 'city' || scope.mode === 'cities') {
+    if (scope.mode === 'city') {
       const cityName = scope.cities[0]?.name?.trim();
       if (cityName) {
         setSelectedCity(cityName);
@@ -669,7 +917,11 @@ export function useIntakeLocation({
   const resetLocationLocks = useCallback(() => {
     markCityLockedByUser(false);
     neighborhoodLockedByUserRef.current = false;
-  }, [markCityLockedByUser]);
+    const current = needDraftRef.current;
+    if (current && current.neighborhoodLockedByUser !== false) {
+      setNeedDraft({ ...current, neighborhoodLockedByUser: false });
+    }
+  }, [markCityLockedByUser, setNeedDraft]);
 
   const lockCityByUser = useCallback(() => {
     markCityLockedByUser(true);
@@ -692,10 +944,12 @@ export function useIntakeLocation({
     applyCity,
     applyCityRecord,
     applyNeighborhood,
+    applyDetectedLocation,
     applyMyLocation,
     applyDetectedLocationFromDraft,
     handleLocationSuggestion,
     resetLocationLocks,
+    markCityLockedByUser,
     lockCityByUser,
     cityLockedByUser,
     cityLockedByUserRef,

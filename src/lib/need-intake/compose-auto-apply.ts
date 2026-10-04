@@ -104,6 +104,22 @@ export function sanitizeDraftForComposeAutoApply(draft: NeedDraft): NeedDraft {
     ? { ...draft.parsedIntent, entities: { ...(draft.parsedIntent.entities ?? {}) } }
     : draft.parsedIntent;
 
+  // The rules parser stores square meters as `entities.areaMin`, while the
+  // canonical intake entity is `area`. Keep the numeric value so the form and
+  // progress tracker do not mistake a location fragment for the area.
+  const parsedAreaMin = Number(parsedIntent?.entities?.areaMin);
+  const currentArea = Number(entities?.area);
+  if (Number.isFinite(parsedAreaMin) && parsedAreaMin > 0 &&
+      (!Number.isFinite(currentArea) || currentArea <= 0)) {
+    entities = { ...(entities ?? {}), area: parsedAreaMin };
+    if (parsedIntent?.entities) {
+      parsedIntent = {
+        ...parsedIntent,
+        entities: { ...parsedIntent.entities, areaMin: String(parsedAreaMin) },
+      };
+    }
+  }
+
   const hoodCandidates = draft.parsedIntent?.neighborhoodCandidates?.length ?? 0;
 
   for (const key of CATEGORY_KEYS) {
@@ -148,7 +164,7 @@ export function sanitizeDraftForComposeAutoApply(draft: NeedDraft): NeedDraft {
         }
         if (key === 'neighborhood' && parsedIntent.entities) {
           const ent = { ...parsedIntent.entities };
-          delete ent.area;
+          delete ent.neighborhood;
           parsedIntent = { ...parsedIntent, entities: ent };
         }
       }

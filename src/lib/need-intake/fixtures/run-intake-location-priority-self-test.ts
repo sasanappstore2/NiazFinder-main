@@ -10,6 +10,7 @@ import {
   mayAutoApplyLocation,
   sanitizeDraftForComposeAutoApply,
 } from '@/lib/need-intake/compose-auto-apply';
+import { parseAreaFromText } from '@/lib/need-intake/vertical-classifier';
 
 function testExtractCities() {
   const text = '\u0622\u067E\u0627\u0631\u062A\u0645\u0627\u0646 \u062F\u0648 \u062E\u0648\u0627\u0628\u0647 \u062F\u0631 \u0648\u0646\u06A9 \u062A\u0647\u0631\u0627\u0646';
@@ -73,7 +74,14 @@ function testRefuseAmbiguousLocationAutoApply() {
   assert.equal((cleaned.entities as Record<string, unknown>).neighborhood, undefined);
 }
 
+function testTemporalPhraseIsNotAnArea() {
+  const text =
+    'در تهران دنبال منشی مطب هستم؛ شروع کار از هفته آینده و همکاری تمام‌وقت.';
+  assert.notEqual(parseAreaFromText(text, 'tehran'), 'آینده');
+}
+
 testExtractCities();
 testManualSuggestionsRespectUserCity();
 testRefuseAmbiguousLocationAutoApply();
+testTemporalPhraseIsNotAnArea();
 console.log('test:intake-location-priority OK');

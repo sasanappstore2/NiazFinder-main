@@ -7,6 +7,7 @@ import {
   classifyVertical,
   isVerticalConfident,
 } from '@/lib/need-intake/vertical-classifier';
+import { getBusinessCommercialPropertyCandidates } from '@/lib/need-intake/business-commercial-property-intent';
 
 export type ResolvedIntakeCategorySource = 'text' | 'form' | 'fallback';
 
@@ -57,6 +58,21 @@ export function resolveIntakeCategory(input: ResolveIntakeCategoryInput): Resolv
       categorySlug: pair.categorySlug,
       subcategorySlug: pair.subcategorySlug,
       source: 'form',
+    };
+  }
+
+  const commercialCandidates = getBusinessCommercialPropertyCandidates(sourceText);
+  if (commercialCandidates.length > 1) {
+    const parents = [...new Set(
+      commercialCandidates.map((slug) => normalizeCategoryPair(slug).categorySlug)
+    )];
+    // The text establishes a commercial property request, but not a unique
+    // leaf (or perhaps not even a deal type). Keep the deepest common scope;
+    // never let a broad URL hint or the first ranked child decide for the user.
+    return {
+      categorySlug: parents.length === 1 ? parents[0]! : 'real-estate',
+      subcategorySlug: undefined,
+      source: 'text',
     };
   }
 

@@ -14,9 +14,10 @@ import {
   loadPendingIntakePublish,
   savePendingIntakePublish,
 } from '@/lib/need-intake/pending-intake-publish';
-import { validateNeedDraftForPublish } from '@/intake/validation/publishValidator';
+import { validatePublishRequest } from '@/intake/validation/validatePublishRequest';
 import { composeListingFromDraft } from '@/lib/need-intake/listing-composer';
 import { resolveDeterministicListingTitle } from '@/lib/need-intake/resolve-listing-title';
+import { createIntakePublishSnapshot } from '@/lib/need-intake/publish-snapshot';
 import {
   trackPublishAttempt,
   trackValidationError,
@@ -89,17 +90,19 @@ export function useIntakePublish({
   const canPublish = useMemo(() => {
     if (!listingPreview?.title.trim() || titleEnriching || descEnriching || isLoading) return false;
     if (!needDraft) return false;
-    return validateNeedDraftForPublish(needDraft).success;
+    return Boolean(needDraft.publishSnapshot) &&
+      validatePublishRequest(needDraft, needDraft.publishSnapshot?.listingPreview).success;
   }, [needDraft, listingPreview, titleEnriching, descEnriching, isLoading]);
 
   const publish = useCallback(async () => {
-    const draft =
-      syncNeedDraftFromFormFields(formFields) ?? getDraft();
-    if (!draft || !listingPreview) {
+    const draft = getDraft() ?? needDraft;
+    const snapshot = draft?.publishSnapshot;
+    const effectivePreview = snapshot?.listingPreview ?? listingPreview;
+    if (!draft || !effectivePreview || !snapshot) {
       toast.error('اطلاعات برای انتشار آماده نیست');
       return;
     }
-    const validation = validateNeedDraftForPublish(draft);
+    const validation = validatePublishRequest(draft, effectivePreview);
     if (!validation.success) {
       for (const err of validation.errors) {
         trackValidationError({
@@ -128,7 +131,7 @@ export function useIntakePublish({
         city: formFields.city,
         neighborhood: formFields.neighborhood,
         neighborhoodSlug: formFields.neighborhoodSlug,
-        listingPreview,
+        listingPreview: effectivePreview!,
         linkToBusinessProfile,
         needDraft: draft,
       });
@@ -142,8 +145,9 @@ export function useIntakePublish({
     setError(null);
     try {
       const token = getClientAuthToken();
-      const data = await publishNeedApi(draft, token, listingPreview, getSessionId(), {
+      const data = await publishNeedApi(draft, token, effectivePreview!, getSessionId(), {
         linkToBusinessProfile,
+        idempotencyKey: snapshot.idempotencyKey,
       });
       setStep('done');
       setPublishSuccessCopy({
@@ -175,9 +179,9 @@ export function useIntakePublish({
       setLoading(false);
     }
   }, [
-    syncNeedDraftFromFormFields,
     formFields,
     getDraft,
+    needDraft,
     listingPreview,
     isAuthenticated,
     linkToBusinessProfile,
@@ -195,17 +199,21 @@ export function useIntakePublish({
     try {
       const composed = composeListingFromDraft(draft);
       const deterministicTitle = resolveDeterministicListingTitle(draft).title;
-      setListingPreview({
+      const nextPreview = {
         ...listingPreview,
         title: deterministicTitle,
         description: composed.description,
         titleSource: 'template',
-      });
+      } as ListingPreview;
+      const draftForPreview = { ...draft, listingPreview: nextPreview };
+      const snapshot = await createIntakePublishSnapshot(draftForPreview, nextPreview);
+      setNeedDraft({ ...draftForPreview, publishSnapshot: snapshot });
+      setListingPreview(nextPreview);
       toast.success('پیش‌نمایش به‌روز شد');
     } finally {
       setIsRepublishing(false);
     }
-  }, [getDraft, listingPreview, setListingPreview]);
+  }, [getDraft, listingPreview, setListingPreview, setNeedDraft]);
 
   useEffect(() => {
     publishRef.current = publish;

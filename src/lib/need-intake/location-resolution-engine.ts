@@ -66,6 +66,14 @@ const GENERIC_STREET_FRAGMENTS = new Set([
 const RESOLVE_CONFIDENCE_MIN = 72;
 const CITY_AMBIGUOUS_GAP = 12;
 
+const NON_LOCATION_FRAGMENT_RE =
+  /^(?:آینده|هفته\s+آینده|همین\s+ماه|اول\s+ماه(?:\s+بعد)?|تا\s+آخر\s+ماه|یک\s+(?:متخصص|تعمیرکار|تیم|نفر|شرکت))/u;
+
+function isUsableLocationFragment(fragment?: string): fragment is string {
+  const value = fragment?.trim() ?? '';
+  return value.length >= 2 && !NON_LOCATION_FRAGMENT_RE.test(value);
+}
+
 /** Strong neighborhood→city hints (e.g. «سیدی» ≈ مشهد). */
 const NEIGHBORHOOD_CITY_HINTS: Record<string, string> = {
   سیدی: 'mashhad',
@@ -177,13 +185,20 @@ function resolveFragment(
   parsedArea?: string,
   preferredCityId?: string | null
 ): string | undefined {
-  return (
-    extractLocationFragment(rawText) ??
-    parsedArea?.trim() ??
-    (explicitCity ? deriveFragmentFromLeadingCity(rawText, explicitCity) : undefined) ??
-    (explicitCity ? deriveFragmentFromExplicitCity(rawText, explicitCity) : undefined) ??
-    parseAreaFromText(rawText, preferredCityId ?? undefined)
-  );
+  const extracted = extractLocationFragment(rawText);
+  if (isUsableLocationFragment(extracted)) return extracted;
+
+  const parsed = parsedArea?.trim();
+  if (isUsableLocationFragment(parsed)) return parsed;
+
+  const leading = explicitCity ? deriveFragmentFromLeadingCity(rawText, explicitCity) : undefined;
+  if (isUsableLocationFragment(leading)) return leading;
+
+  const trailing = explicitCity ? deriveFragmentFromExplicitCity(rawText, explicitCity) : undefined;
+  if (isUsableLocationFragment(trailing)) return trailing;
+
+  const parsedFromText = parseAreaFromText(rawText, preferredCityId ?? undefined);
+  return isUsableLocationFragment(parsedFromText) ? parsedFromText : undefined;
 }
 
 function isGenericStreetFragment(fragment: string, explicitCity: boolean): boolean {
@@ -344,13 +359,10 @@ function applyResolvedToParsed(
         pickStreetOrHoodDisplay(result.fragment, result.neighborhoodLabel) ||
         result.fragment?.trim();
       if (areaLabel) {
-        next.entities = {
-          ...next.entities,
-          area: areaLabel,
-        };
+        next.entities = { ...next.entities, neighborhood: areaLabel };
       }
     } else if (result.fragment) {
-      next.entities = { ...next.entities, area: result.fragment };
+      next.entities = { ...next.entities, neighborhood: result.fragment };
     }
     return next;
   }
@@ -365,7 +377,7 @@ function applyResolvedToParsed(
       city: c.city,
     }));
     if (result.fragment) {
-      next.entities = { ...next.entities, area: result.fragment };
+      next.entities = { ...next.entities, neighborhood: result.fragment };
     }
     return next;
   }
@@ -380,7 +392,7 @@ function applyResolvedToParsed(
       city: c.city,
     }));
     if (result.fragment) {
-      next.entities = { ...next.entities, area: result.fragment };
+      next.entities = { ...next.entities, neighborhood: result.fragment };
     }
     return next;
   }
@@ -389,7 +401,7 @@ function applyResolvedToParsed(
     next.city = result.city;
   }
   if (result.fragment) {
-    next.entities = { ...next.entities, area: result.fragment };
+    next.entities = { ...next.entities, neighborhood: result.fragment };
   }
   next.locationAmbiguous = result.status !== 'resolved';
   return next;

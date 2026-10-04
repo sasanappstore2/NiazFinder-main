@@ -18,6 +18,7 @@ import { draftWithAnalysisSnapshot } from '@/intake/training/buildAnalysisSnapsh
 export interface UseIntakeIntelligenceOptions {
   text: string;
   enabled: boolean;
+  draftRevision?: number;
   citySlug?: string | null;
   cityName?: string | null;
   formHints?: IntakeIntelligenceInput['formHints'];
@@ -57,6 +58,7 @@ function formHintsSignature(formHints?: IntakeIntelligenceInput['formHints'], fo
 export function useIntakeIntelligence({
   text,
   enabled,
+  draftRevision = 0,
   citySlug,
   cityName,
   formHints,
@@ -66,9 +68,11 @@ export function useIntakeIntelligence({
 }: UseIntakeIntelligenceOptions): UseIntakeIntelligenceState {
   const [analyzing, setAnalyzing] = useState(false);
   const [aiInvoked, setAiInvoked] = useState(false);
-  const [analysisMode, setAnalysisMode] = useState<IntakeAnalysisMode>(() =>
-    getIntakeAnalysisMode()
-  );
+  // Keep the first render identical on server and client. Runtime env values
+  // are not guaranteed to be exposed equally to both bundles; deriving this
+  // during render caused a hydration mismatch in the summary copy. The real
+  // configured mode is applied immediately after mount.
+  const [analysisMode, setAnalysisMode] = useState<IntakeAnalysisMode>('rules');
   const [analyzedText, setAnalyzedText] = useState<string | null>(null);
   const [fieldMeta, setFieldMeta] = useState<Record<string, FieldState> | null>(null);
   const [gaps, setGaps] = useState<IntakeParseGap[]>([]);
@@ -88,12 +92,36 @@ export function useIntakeIntelligence({
   const lastAnalysisRef = useRef<IntakeAnalyzeResponse | null>(null);
   const analyzedTextRef = useRef<string | null>(null);
   const formHintsSigRef = useRef<string>('');
+  const draftRevisionRef = useRef(draftRevision);
   const forceAiRef = useRef(forceAi);
   const onDraftRef = useRef(onDraft);
 
   useEffect(() => {
+    setAnalysisMode(getIntakeAnalysisMode());
+  }, []);
+
+  const clearAnalysisState = useCallback(() => {
+    lastAnalysisRef.current = null;
+    analyzedTextRef.current = null;
+    formHintsSigRef.current = '';
+    setAnalyzedText(null);
+    setFieldMeta(null);
+    setGaps([]);
+    setSuggestedFilters([]);
+    setFilterSuggestionChips({});
+    setLatencyMs(null);
+    setAiInvoked(false);
+    setIntentGist(null);
+    setAgent(null);
+  }, []);
+
+  useEffect(() => {
     forceAiRef.current = forceAi;
   }, [forceAi]);
+
+  useEffect(() => {
+    draftRevisionRef.current = draftRevision;
+  }, [draftRevision]);
 
   const cancelInflight = useCallback(() => {
     abortRef.current?.abort();
@@ -171,6 +199,7 @@ export function useIntakeIntelligence({
         const res = await analyzeIntakeTextApi(trimmed, {
           citySlug: citySlug ?? undefined,
           cityName: cityName ?? undefined,
+          draftRevision,
           formHints,
           forceAi: forceAiRef.current || undefined,
           signal: controller.signal,
@@ -197,7 +226,7 @@ export function useIntakeIntelligence({
 
     inflightRef.current = promise;
     return promise;
-  }, [text, citySlug, cityName, formHints, applyAnalysisResult, cancelInflight]);
+  }, [text, citySlug, cityName, draftRevision, formHints, applyAnalysisResult, cancelInflight]);
 
   const analyzeNow = useCallback(async (): Promise<IntakeAnalyzeResponse | null> => {
     if (debounceTimerRef.current != null) {
@@ -230,10 +259,11 @@ export function useIntakeIntelligence({
       return (
         analyzedTextRef.current === trimmed &&
         formHintsSigRef.current === formHintsSignature(formHints, forceAi) &&
+        draftRevisionRef.current === draftRevision &&
         lastAnalysisRef.current != null
       );
     },
-    [formHints]
+    [formHints, draftRevision]
   );
 
   useEffect(() => {
@@ -242,13 +272,20 @@ export function useIntakeIntelligence({
         window.clearTimeout(debounceTimerRef.current);
         debounceTimerRef.current = null;
       }
-      setIntentGist(null);
-      setAgent(null);
+      clearAnalysisState();
+      setError(null);
       return;
     }
 
     const trimmed = text.trim();
-    if (trimmed.length < 3) return;
+    if (trimmed.length < 3) {
+      clearAnalysisState();
+      return;
+    }
+
+    if (analyzedTextRef.current !== trimmed) {
+      clearAnalysisState();
+    }
 
     debounceTimerRef.current = window.setTimeout(() => {
       debounceTimerRef.current = null;
@@ -269,7 +306,7 @@ export function useIntakeIntelligence({
         debounceTimerRef.current = null;
       }
     };
-  }, [enabled, text, formHints, debounceMs, runAnalyze]);
+  }, [enabled, text, formHints, draftRevision, debounceMs, runAnalyze, clearAnalysisState]);
 
   useEffect(() => () => cancelInflight(), [cancelInflight]);
 

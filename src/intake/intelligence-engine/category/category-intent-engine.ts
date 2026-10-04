@@ -86,6 +86,15 @@ function intentTypeFromVertical(vertical: ClassifierVertical, text: string): Int
 /** Strong commercial leaf hints when registry keyword order misses (e.g. مغازه … اجاره‌ای). */
 function commercialSlugHints(text: string): string[] {
   const hints: string[] = [];
+  // Product nouns must outrank generic condition words such as «کم‌کارکرد».
+  // Without this guard, the large legacy vehicle rule pack can win for a TV
+  // purchase and the LLM may then confirm the wrong vehicle category.
+  if (
+    /تلویزیون|ال[‌\s-]*ای[‌\s-]*دی|صوتی\s*و\s*تصویری/u.test(text) &&
+    !/تعمیر|خرابی|نصب|عیب/u.test(text)
+  ) {
+    hints.push('audio-video');
+  }
   // Do not treat «رهگیری» / «فرهنگیان» as رهن, or «اینترنت» as رنت.
   const rentish =
     /اجاره|اجاره‌ای|(?<![\u0600-\u06FF])رهن(?!گیری|گ)|ودیعه|(?<![\u0600-\u06FFa-zA-Z])رنت(?![\u0600-\u06FFa-zA-Z])/u.test(
@@ -100,6 +109,11 @@ function commercialSlugHints(text: string): string[] {
       text
     );
   const strongBuy = /برای خرید|دنبال خرید|قصد خرید/u.test(text);
+  const budgetish = /بودجه|میلیارد\s*تومان|میلیون\s*تومان/u.test(text);
+  const hasPropertyContext =
+    /\d[\d۰-۹]*\s*متر|متراژ|بودجه|میلیارد|رهن|ودیعه|اجاره|ملک|آپارتمان|اپارتمان|ویلا|مغازه|دفتر|سوله|واحد|مسکونی/u.test(
+      text
+    );
   // Allow gap: «می‌خوام آپارتمان مسکونی بخرم»
   const buyPhrase =
     /برای خرید|دنبال خرید|قصد خرید|می[\u200c\s]*خرم|میخرم|می‌خرم|بخرم|می[\u200c\s]*خوام[\u0600-\u06FF\u200c\s،,]{0,48}بخرم|میخوام[\u0600-\u06FF\u200c\s،,]{0,48}بخرم/u.test(
@@ -147,17 +161,24 @@ function commercialSlugHints(text: string): string[] {
     hints.push('office-rent');
   }
 
-  if (/مغازه|غرفه/u.test(text) || (/ویترین/u.test(text) && !/آپارتمان|اپارتمان|ویلا|سوئیت/u.test(text))) {
+  if (
+    (/مغازه|غرفه|فروشگاه|مزون/u.test(text) && hasPropertyContext) ||
+    (/ویترین/u.test(text) && !/آپارتمان|اپارتمان|ویلا|سوئیت/u.test(text))
+  ) {
     if ((rentish && !buyPhrase && !saleish) || (strongRent && !strongBuy && !buyPhrase)) {
       hints.push('shop-rent');
-    } else if (saleish || buyPhrase || /بخرم|خرید/u.test(text)) {
+    } else if (saleish || buyPhrase || budgetish || /بخرم|خرید/u.test(text)) {
       hints.push('shop-sale');
     }
   }
-  if (/دفتر\s*کار|دفتر اداری|\bآفیس\b|office/iu.test(text)) {
+  if (
+    /دفتر\s*(?:کار|اداری|معماری|وکالت)|ملک\s*(?:اداری|تجاری)|\bآفیس\b|office/iu.test(
+      text
+    )
+  ) {
     if ((rentish && !buyPhrase && !saleish) || (strongRent && !strongBuy && !buyPhrase)) {
       hints.push('office-rent');
-    } else if (saleish || buyPhrase) {
+    } else if (saleish || buyPhrase || budgetish) {
       hints.push('office-sale');
     }
   }
@@ -214,7 +235,7 @@ function commercialSlugHints(text: string): string[] {
   if (hasVillaProperty) {
     if ((rentish && !saleish && !buyPhrase) || (strongRent && !strongBuy && !buyPhrase)) {
       hints.push('villa-rent');
-    } else if (saleish || buyPhrase) {
+    } else if (saleish || buyPhrase || budgetish) {
       hints.push('villa-sale');
     }
   } else if (
@@ -225,7 +246,7 @@ function commercialSlugHints(text: string): string[] {
       hints.push('apartment-rent');
     } else if (
       /آپارتمان|اپارتمان|خانه|خونه|واحد|مسکونی/u.test(text) &&
-      (saleish || buyPhrase)
+      (saleish || buyPhrase || budgetish)
     ) {
       hints.push('apartment-sale');
     }
@@ -421,6 +442,10 @@ export async function runCategoryIntentEngine(
         !clearLeaf.includes('admin') &&
         clearLeaf !== 'jobs' &&
         !clearLeaf.includes('office-jobs')) ||
+      (commercialForced === 'audio-video' &&
+        clearLeaf !== 'audio-video' &&
+        !clearLeaf.includes('audio')) ||
+      (commercialForced.includes('sale') && clearLeaf.includes('rent')) ||
       (commercialForced.includes('rent') && clearLeaf.includes('sale') && !clearLeaf.includes('rent')) ||
       (clearIsRepair && forcedIsEstate);
     if (conflicts) {

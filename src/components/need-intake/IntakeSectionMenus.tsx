@@ -19,7 +19,7 @@ interface IntakeSectionMenusProps {
   renderSectionFields: (section: IntakeSectionDef) => React.ReactNode;
   /** Sections that cannot be removed (category, location, …). */
   mandatoryKeys?: ReadonlySet<string>;
-  /** Sections with business-critical optional filters (auto-opened). */
+  /** Sections containing useful matching fields; these remain optional. */
   criticalKeys?: ReadonlySet<string>;
   className?: string;
 }
@@ -42,10 +42,15 @@ export function IntakeSectionMenus({
     [sections, enabledKeys, mandatory]
   );
 
+  const [openKeys, setOpenKeys] = useState<Set<string>>(
+    () => new Set([...enabledKeys].filter((key) => mandatory.has(key)))
+  );
+
   const enableSection = (key: string) => {
     const next = new Set(enabledKeys);
     next.add(key);
     onEnabledKeysChange(next);
+    setOpenKeys((prev) => new Set(prev).add(key));
   };
 
   const disableSection = (key: string) => {
@@ -60,30 +65,22 @@ export function IntakeSectionMenus({
     return [...mandatoryList, ...optionalList];
   }, [sections, enabledKeys, mandatory]);
 
-  const [openKeys, setOpenKeys] = useState<Set<string>>(() => new Set(enabledKeys));
-
   useEffect(() => {
     setOpenKeys((prev) => {
-      const next = new Set(prev);
-      for (const key of enabledKeys) {
-        next.add(key);
+      const next = new Set([...prev].filter((key) => enabledKeys.has(key)));
+      for (const key of mandatory) {
+        if (enabledKeys.has(key)) next.add(key);
       }
-      for (const key of next) {
-        if (!enabledKeys.has(key)) next.delete(key);
-      }
+      if (next.size === prev.size && [...next].every((key) => prev.has(key))) return prev;
       return next;
     });
-  }, [enabledKeys]);
+  }, [enabledKeys, mandatory]);
 
   return (
     <div className={cn('intake-section-menus flex flex-col gap-3', className)}>
       {enabledSections.length === 0 && availableToAdd.length > 0 ? (
         <p className="rounded-xl border border-dashed bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
           با زدن + می‌توانید فیلدهای اضافی نیاز را اضافه و تکمیل کنید.
-        </p>
-      ) : critical.size > 0 ? (
-        <p className="rounded-xl border border-amber-500/25 bg-amber-500/5 px-3 py-2 text-xs text-muted-foreground">
-          بخش‌های «مهم برای تطبیق» به کسب‌وکارها کمک می‌کند دقیق‌تر پاسخ دهند — پر کردنشان اختیاری است.
         </p>
       ) : null}
 

@@ -3,6 +3,16 @@
  * Toggle via env without DB rollback.
  */
 export const INTAKE_MIGRATION_FEATURE_FLAGS = {
+  /** Canonical NeedDraft v2 fields and projections. */
+  canonicalDraftV2: process.env.INTAKE_CANONICAL_DRAFT_V2 !== 'false',
+  /** All client/server extraction calls use /api/intake/analyze. */
+  singleAnalyzer: process.env.INTAKE_SINGLE_ANALYZER !== 'false',
+  /** Root category values remain hints until a leaf is selected. */
+  rootCategoryHint: process.env.INTAKE_ROOT_CATEGORY_HINT !== 'false',
+  /** Publish snapshot ledger and retry protection. */
+  publishIdempotency: process.env.INTAKE_PUBLISH_IDEMPOTENCY !== 'false',
+  /** Public intake rate limits and payload guards. */
+  securityGuards: process.env.INTAKE_SECURITY_GUARDS !== 'false',
   /** Read paths prefer NeedDraft.entities over stored legacy fields. */
   canonicalReadEnabled: process.env.INTAKE_CANONICAL_READ_ENABLED === 'true',
   /** Listing preview/composer uses canonical projection. */

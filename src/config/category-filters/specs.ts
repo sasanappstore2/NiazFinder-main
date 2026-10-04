@@ -202,6 +202,7 @@ const RENT_BUILT_SPEC: CategoryFilterSpec = [
   { key: 'dealType', label: 'نوع معامله', kind: 'chips', options: [...DEAL_TYPE_PROPERTY], required: true, ...C },
   { key: 'deposit', label: 'ودیعه (تومان)', kind: 'range', browse: true, intake: true },
   { key: 'monthlyRent', label: 'اجاره ماهانه (تومان)', kind: 'range', browse: true, intake: true },
+  { key: 'deedType', label: 'نوع سند', kind: 'chips', options: [...DEED_TYPE], browse: true, intake: true },
   {
     key: 'rahnAmount',
     label: 'مبلغ رهن (تومان)',

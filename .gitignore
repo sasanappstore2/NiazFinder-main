@@ -27,6 +27,9 @@ node_modules
 
 # misc
 .DS_Store
+# stale local snapshots (never track backups in git)
+*.backup.*
+src/intake.backup.*
 data/telemetry/post-intake/
 data/evolution/
 *.pem
@@ -84,11 +87,21 @@ mini-services/intake-mlx/__pycache__/
 mini-services/intake-mlx/.env
 *.adapter.*
 
-# build artifacts & generated reports
+# python bytecode (all services/scripts)
+__pycache__/
+*.py[cod]
+
+# obsidian workspace settings (docs themselves stay tracked)
+.obsidian/
+
+# build artifacts & generated reports (keep .gitkeep + human-readable summaries)
 mini-services/backend/dist/
 reports/*.json
 reports/*.csv
 reports/*.jsonl
+reports/**/*.json
+reports/**/*.csv
+reports/**/*.jsonl
 !reports/.gitkeep
 mobile/node_modules
 mobile/ios/App/App/public

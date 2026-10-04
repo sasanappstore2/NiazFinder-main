@@ -18,6 +18,8 @@ import { cascadeRunningShardsFromDraft, shardStatusFromNeedDraft } from '@/compo
 import { isAmbiguousCommercialSubtype } from '@/lib/need-intake/business-commercial-property-intent';
 
 export interface UseIntakeAnalyzeOptions {
+  /** Disable the legacy analyzer for flows that own their analysis pipeline. */
+  analysisEnabled?: boolean;
   needText: string;
   detailsText: string;
   step: IntakeStep;
@@ -89,14 +91,14 @@ function applyDraftToFormFields(
   opts: UseIntakeAnalyzeOptions,
   sourceText: string
 ): void {
-  // Proposal-first: only apply category/location that the user already locked
-  // (confirmed/edited). Never push raw analysis into the form.
-  const categoryLocked = opts.categoryLockedByUserRef.current;
-  const ambiguousCommercial = isAmbiguousCommercialSubtype(sourceText);
+  // This draft is the result of the same synchronous form projection used by
+  // the template and publish path. Reflect its category in the selector too;
+  // otherwise a URL hint can remain visible as `services` while the canonical
+  // draft has already resolved a property category.
   const entities = recordToEntities(draft.entities);
   const leaf = entities.subcategorySlug || entities.categorySlug;
 
-  if (leaf && categoryLocked && !ambiguousCommercial) {
+  if (leaf) {
     const normalized = normalizeCategoryPair(leaf);
     opts.setSelectedCategory(normalized.categorySlug);
     opts.setSelectedSubcategory(normalized.subcategorySlug ?? '');
@@ -206,10 +208,15 @@ export function useIntakeAnalyze(opts: UseIntakeAnalyzeOptions) {
 
     const instantDraft = fallbackGoToLocation(opts);
     opts.setAiShardStatus(
-      cascadeRunningShardsFromDraft(instantDraft, true, progressOpts(opts))
+      cascadeRunningShardsFromDraft(instantDraft, opts.analysisEnabled !== false, progressOpts(opts))
     );
-    opts.setAiEnriching(true);
+    opts.setAiEnriching(opts.analysisEnabled !== false);
     opts.setStep('location');
+
+    if (opts.analysisEnabled === false) {
+      opts.setAiEnriching(false);
+      return;
+    }
 
     void (async () => {
       try {
@@ -229,6 +236,7 @@ export function useIntakeAnalyze(opts: UseIntakeAnalyzeOptions) {
 
   const prefetchLocationAnalyze = useCallback(() => {
     if (!canProceedToIntakeLocation(opts.needText, opts.detailsText)) return;
+    if (opts.analysisEnabled === false) return;
     void opts.analyzeNow();
   }, [opts]);
 

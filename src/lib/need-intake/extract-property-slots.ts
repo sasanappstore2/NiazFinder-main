@@ -210,7 +210,9 @@ export function extractPropertySlotsFromText(rawText: string): PropertySlotsFrom
   const roomMatch =
     norm.match(/(\d)\s*خواب/) ??
     norm.match(/(یک|دو|سه|چهار|تک)\s*خواب/) ??
-    norm.match(/(\d)\s*خوابه/);
+    norm.match(/(\d)\s*خوابه/) ??
+    norm.match(/(\d)\s*اتاق(?:ه)?/) ??
+    norm.match(/(یک|دو|سه|چهار|پنج)\s*اتاق(?:ه)?/);
   if (roomMatch?.[1]) {
     const mapped = ROOM_WORDS[roomMatch[1]] ?? roomMatch[1];
     if (mapped === '4' && (norm.includes('4+') || norm.includes('۴+'))) {

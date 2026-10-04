@@ -7,6 +7,7 @@
 
 import { create } from 'zustand';
 import { apiFetch, ApiClientError } from '@/lib/api-client';
+import { getClientAuthToken } from '@/lib/auth/client-auth';
 import type {
   User,
   Notification,
@@ -777,6 +778,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   // Notifications (API)
   // ===========================
   fetchNotifications: async () => {
+    if (typeof window !== 'undefined' && !getClientAuthToken()) return;
     try {
       const res = await apiFetch<{
         data: any[];

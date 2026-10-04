@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader2, MapPinned } from 'lucide-react';
+import { ChevronDown, Loader2, MapPinned } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SuggestionChips } from '@/components/need-intake/SuggestionChips';
 import type { IntakeFieldMeta, TemplateSection } from '@/intake/template/types';
@@ -100,7 +100,17 @@ function LocationSectionLayout({
           موقعیت من
         </Button>
       </div>
-      {mapPinField ? renderField(mapPinField) : null}
+      {mapPinField ? (
+        <details className="group rounded-lg border border-border/60 bg-muted/10">
+          <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between gap-2 px-3 text-sm [&::-webkit-details-marker]:hidden">
+            <span>تعیین دقیق موقعیت روی نقشه</span>
+            <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="border-t border-border/60 px-3 pb-3 pt-2">
+            {renderField(mapPinField)}
+          </div>
+        </details>
+      ) : null}
       {context.locationSuggestionChips && context.locationSuggestionChips.length > 0 ? (
         <div className="space-y-2">
           <p className="text-xs text-muted-foreground flex items-center gap-1">
