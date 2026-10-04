@@ -137,11 +137,13 @@ export function repairAttributeKeywords(text: string): string {
     if (letters.length < 2 || letters.length > 9) continue;
     if (NEVER_REPAIR.has(letters)) continue;
 
-    const anchorCount = (t: string): number => intDigitCount(t || null);
-    const gluedDigits = Math.max(anchorCount(lead), anchorCount(trail));
-    const prevOrNextDigits = Math.max(intDigitCount(prevCore), intDigitCount(nextCore));
-    const anchorDigits = Math.max(gluedDigits, prevOrNextDigits);
-    const prevIsWordNumber = isWordNumber(prevCore);
+    const anchorDigits = Math.max(
+      intDigitCount(lead),
+      intDigitCount(trail),
+      intDigitCount(prevCore),
+      intDigitCount(nextCore)
+    );
+    const gluedDigits = Math.max(intDigitCount(lead), intDigitCount(trail));
 
     // Upstream-corrector collision rescue: the fuzzy corrector folds «واب» (a
     // خواب typo with خ deleted) into the legit word «وام», because its
@@ -185,13 +187,12 @@ export function repairAttributeKeywords(text: string): string {
 
     // bestD === 0 → exact keyword, untouched. Ambiguous across families → skip.
     if (!bestFamily || !bestWord || bestD !== 1 || tieAcrossFamilies) continue;
-    // Anchor: a number glued to the token, a number neighbour, or (rooms only)
-    // a Persian word-number neighbour.
+    // Anchor: a number glued to the token, a number/ordinal neighbour, or
+    // (rooms only) a Persian word-number neighbour.
     const anchored =
       gluedDigits >= 1 ||
-      (bestFamily.name === 'rooms' && prevIsWordNumber)
-        ? true
-        : anchorOk(bestFamily, prevCore, nextCore);
+      (bestFamily.name === 'rooms' && isWordNumber(prevCore)) ||
+      anchorOk(bestFamily, prevCore, nextCore);
     if (!anchored) continue;
     if (!raw.includes(letters)) continue;
     parts[idx] = raw.replace(letters, bestWord);

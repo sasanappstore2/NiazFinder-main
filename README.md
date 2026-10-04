@@ -1,6 +1,6 @@
 # NiazFinder
 
-[![CI](https://github.com/sasanappstore2/NiazFinder-main/actions/workflows/ci.yml/badge.svg?branch=sasan/open-source-readiness)](https://github.com/sasanappstore2/NiazFinder-main/actions/workflows/ci.yml)
+[![CI](https://github.com/sasanappstore2/NiazFinder-main/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sasanappstore2/NiazFinder-main/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 NiazFinder (نیازفایندر) is a **needs-first marketplace**: instead of starting by browsing existing listings, users describe what they actually need in free text, the platform structures that need, and then matches it to relevant businesses.
