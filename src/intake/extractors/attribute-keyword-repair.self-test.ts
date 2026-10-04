@@ -58,6 +58,10 @@ const REPAIR_CASES: Array<[string, string]> = [
   // floor family
   ['آپارتمان طبه 1 از 4 طبقه', 'آپارتمان طبقه 1 از 4 طبقه'],
   ['آپارتمان 4 طبق با نورگیر', 'آپارتمان 4 طبقه با نورگیر'],
+  // glued-digit forms («3خوااب» = scenario-31 class) — digits stay, letters repaired
+  ['اپارتمان 3خوااب دروکیل اباد مشهد', 'اپارتمان 3خواب دروکیل اباد مشهد'],
+  ['ویلا 300مت بنا در 500 متر زمین', 'ویلا 300متر بنا در 500 متر زمین'],
+  ['خونه 2خوابه میخوام اجاره', 'خونه 2خوابه میخوام اجاره'], // clean glued — untouched
 ];
 for (const [input, expected] of REPAIR_CASES) {
   const got = repairAttributeKeywords(input);

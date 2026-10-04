@@ -28,19 +28,6 @@ const PROPERTY_OR_PRICE_CONTEXT =
   /آپارتمان|خانه|خونه|ویلا|مغازه|دفتر|زمین|سوئیت|ملک|باغ|بالای|زیر|میلیون|میلیارد|تومان|اجاره/u;
 
 /**
- * True when the exact رهن/ودیعه spellings are absent but a UNIQUE single-edit
- * near-token exists. The global fuzzy corrector intentionally keeps short
- * tokens untouched (3-letter words only take same-length fixes and ambiguous
- * candidates are rejected), so «رنه/ره/رن/هن» reach rule matching as-is.
- */
-function fuzzyDepositSignal(text: string): boolean {
-  return (
-    findKeywordIndicesWithFuzzyRepair(text, RAHN_KW).fuzzy ||
-    findKeywordIndicesWithFuzzyRepair(text, VADIYEH_KW).fuzzy
-  );
-}
-
-/**
  * Single-typo repair for the full-deposit phrase («رهن کامل» / «فقط رهن»).
  * Fires only when no exact spelling survives: one رهن-family token (exact or
  * unique fuzzy) directly adjacent to a perfect-or-typo'd «کامل» («رهن کام»,
@@ -147,16 +134,28 @@ export function extractTransactionType(normalizedText: string): TransactionHit |
   if (isSeekerRahnEjareDeal(normalizedText)) {
     return { type: 'DEPOSIT_AND_RENT', confidence: 0.93 };
   }
+  // Deposit keyword family = exact رهن/ودیعه or a unique single-edit repair of
+  // either. textHasRahnSignal stays as the shared signal, but this module also
+  // checks ودیعه itself: the shared helper's VADIYEH constant is misspelled and
+  // never matches real «ودیعه» text, and 3-letter رهن typos are intentionally
+  // left uncorrected by the global fuzzy corrector.
   const rahnSignal = textHasRahnSignal(normalizedText);
-  const fuzzyDeposit = rahnSignal ? false : fuzzyDepositSignal(normalizedText);
+  const rahnKw = findKeywordIndicesWithFuzzyRepair(normalizedText, RAHN_KW);
+  const vadiyehKw = findKeywordIndicesWithFuzzyRepair(normalizedText, VADIYEH_KW);
+  const depositSignal =
+    rahnSignal || rahnKw.indices.length > 0 || vadiyehKw.indices.length > 0;
+  const depositRepaired =
+    !rahnSignal && !rahnKw.indices.length && !vadiyehKw.indices.length
+      ? false
+      : !rahnSignal && (rahnKw.fuzzy || vadiyehKw.fuzzy);
   if (
-    (rahnSignal || fuzzyDeposit) &&
+    depositSignal &&
     textHasRentSignal(normalizedText) &&
     hasExplicitRahnAndRentAmounts(normalizedText)
   ) {
     return {
       type: 'DEPOSIT_AND_RENT',
-      confidence: rahnSignal ? 0.92 : 0.88,
+      confidence: depositRepaired ? 0.88 : 0.92,
     };
   }
   if (
