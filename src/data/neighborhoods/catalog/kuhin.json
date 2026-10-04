@@ -1,0 +1,25 @@
+{
+  "cityId": "kuhin",
+  "cityName": "کوهین",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.330Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گردنه-کوهین",
+      "name": "گردنه کوهین",
+      "nameEn": "گردنه-کوهین",
+      "centroid": {
+        "lat": 36.43796342533238,
+        "lng": 49.758763312657386
+      },
+      "bbox": {
+        "south": 36.3314769,
+        "north": 36.544449950664756,
+        "west": 49.63503003600663,
+        "east": 49.88249658930814
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

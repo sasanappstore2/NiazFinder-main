@@ -1,0 +1,319 @@
+{
+  "cityId": "kharvana",
+  "cityName": "خاروانا",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:09:32.815Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "حاجیلارچای",
+      "name": "حاجیلارچای",
+      "nameEn": "حاجیلارچای",
+      "centroid": {
+        "lat": 38.62807451113906,
+        "lng": 46.32118305374921
+      },
+      "bbox": {
+        "south": 38.52158798580668,
+        "north": 38.73456103647144,
+        "west": 46.199381260322525,
+        "east": 46.4429848471759
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آتش-خسرو",
+      "name": "آتش خسرو",
+      "nameEn": "آتش-خسرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارزیل",
+      "name": "ارزیل",
+      "nameEn": "ارزیل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "استرقان",
+      "name": "استرقان",
+      "nameEn": "استرقان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "استلاق",
+      "name": "استلاق",
+      "nameEn": "استلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الف-آباد",
+      "name": "الف آباد",
+      "nameEn": "الف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اندریان",
+      "name": "اندریان",
+      "nameEn": "اندریان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیشک",
+      "name": "بیشک",
+      "nameEn": "بیشک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پهناور",
+      "name": "پهناور",
+      "nameEn": "پهناور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تیل-کری",
+      "name": "تیل کری",
+      "nameEn": "تیل-کری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جعفرآباد",
+      "name": "جعفرآباد",
+      "nameEn": "جعفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جوانان-گروه",
+      "name": "جوانان گروه",
+      "nameEn": "جوانان-گروه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چولاخیر",
+      "name": "چولاخیر",
+      "nameEn": "چولاخیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خاروانا",
+      "name": "خاروانا",
+      "nameEn": "خاروانا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دستجرد",
+      "name": "دستجرد",
+      "nameEn": "دستجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحیم-قشلاقی",
+      "name": "رحیم قشلاقی",
+      "nameEn": "رحیم-قشلاقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زگلیک-سفلی",
+      "name": "زگلیک سفلی",
+      "nameEn": "زگلیک-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنداخور",
+      "name": "سنداخور",
+      "nameEn": "سنداخور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهران",
+      "name": "سهران",
+      "nameEn": "سهران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاهسون",
+      "name": "شاهسون",
+      "nameEn": "شاهسون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-قیه",
+      "name": "قره قیه",
+      "nameEn": "قره-قیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق",
+      "name": "قشلاق",
+      "nameEn": "قشلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-خوراشای-بالا",
+      "name": "قشلاق خوراشای بالا",
+      "nameEn": "قشلاق-خوراشای-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-خوراشای-پایین",
+      "name": "قشلاق خوراشای پایین",
+      "nameEn": "قشلاق-خوراشای-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-کلار",
+      "name": "قشلاق کلار",
+      "nameEn": "قشلاق-کلار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-میکائیل",
+      "name": "قشلاق میکائیل",
+      "nameEn": "قشلاق-میکائیل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کبود-گنبد",
+      "name": "کبود گنبد",
+      "nameEn": "کبود-گنبد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلو",
+      "name": "کلو",
+      "nameEn": "کلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمار-بالا",
+      "name": "کمار بالا",
+      "nameEn": "کمار-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمار-پائین",
+      "name": "کمار پائین",
+      "nameEn": "کمار-پائین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوجان",
+      "name": "کوجان",
+      "nameEn": "کوجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوراکش",
+      "name": "کوراکش",
+      "nameEn": "کوراکش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوه-کمر",
+      "name": "کوه کمر",
+      "nameEn": "کوه-کمر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-آخور",
+      "name": "گل آخور",
+      "nameEn": "گل-آخور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلو",
+      "name": "گلو",
+      "nameEn": "گلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوراند",
+      "name": "گوراند",
+      "nameEn": "گوراند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوزی-حاجیلار",
+      "name": "گوزی حاجیلار",
+      "nameEn": "گوزی-حاجیلار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لیلاب",
+      "name": "لیلاب",
+      "nameEn": "لیلاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لیلاب-جدید",
+      "name": "لیلاب جدید",
+      "nameEn": "لیلاب-جدید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدخان-یرلری",
+      "name": "محمدخان یرلری",
+      "nameEn": "محمدخان-یرلری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرزآباد",
+      "name": "مرزآباد",
+      "nameEn": "مرزآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملک-قضات",
+      "name": "ملک قضات",
+      "nameEn": "ملک-قضات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میلق",
+      "name": "میلق",
+      "nameEn": "میلق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نچق",
+      "name": "نچق",
+      "nameEn": "نچق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نظر-کندی",
+      "name": "نظر کندی",
+      "nameEn": "نظر-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوجه-مهر",
+      "name": "نوجه مهر",
+      "nameEn": "نوجه-مهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوردوز",
+      "name": "نوردوز",
+      "nameEn": "نوردوز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ودیق",
+      "name": "ودیق",
+      "nameEn": "ودیق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورزقان",
+      "name": "ورزقان",
+      "nameEn": "ورزقان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "mianeh",
+      "name": "Mianeh",
+      "nameEn": "mianeh",
+      "geoSource": "osm"
+    }
+  ]
+}

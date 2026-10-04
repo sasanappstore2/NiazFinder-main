@@ -1,0 +1,25 @@
+{
+  "cityId": "bakhzar",
+  "cityName": "باخزر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.178Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "باخزر",
+      "name": "باخزر",
+      "nameEn": "bakhzar",
+      "centroid": {
+        "lat": 34.991541431297165,
+        "lng": 60.439523633003375
+      },
+      "bbox": {
+        "south": 34.885054905964786,
+        "north": 35.098027956629544,
+        "west": 60.323420328005845,
+        "east": 60.555626938000906
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

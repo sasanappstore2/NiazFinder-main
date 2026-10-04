@@ -1,0 +1,175 @@
+{
+  "cityId": "bandar-kangan",
+  "cityName": "بندر کنگان",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:32:36.286Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بندر-کنگان",
+      "name": "بندر کنگان",
+      "nameEn": "bandar-kangan",
+      "centroid": {
+        "lat": 27.811167039417896,
+        "lng": 52.16484887548947
+      },
+      "bbox": {
+        "south": 27.768572429284944,
+        "north": 27.853761649550847,
+        "west": 52.1218267045508,
+        "east": 52.207871046428146
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبگرمک",
+      "name": "آبگرمک",
+      "nameEn": "آبگرمک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احشام-احمد",
+      "name": "احشام احمد",
+      "nameEn": "احشام-احمد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اولی-جنوبی",
+      "name": "اولی جنوبی",
+      "nameEn": "اولی-جنوبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اولی-شمالی",
+      "name": "اولی شمالی",
+      "nameEn": "اولی-شمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بردستان",
+      "name": "بردستان",
+      "nameEn": "بردستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برکه-چوپان",
+      "name": "برکه چوپان",
+      "nameEn": "برکه-چوپان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنای-راشد",
+      "name": "بنای راشد",
+      "nameEn": "بنای-راشد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندر-دیر",
+      "name": "بندر دیر",
+      "nameEn": "بندر-دیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنک",
+      "name": "بنک",
+      "nameEn": "بنک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تل-رئیسی",
+      "name": "تل رئیسی",
+      "nameEn": "تل-رئیسی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنبک",
+      "name": "تنبک",
+      "nameEn": "تنبک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمال-آباد",
+      "name": "جمال آباد",
+      "nameEn": "جمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوراهک",
+      "name": "دوراهک",
+      "nameEn": "دوراهک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهر-خاص",
+      "name": "شهر خاص",
+      "nameEn": "شهر-خاص",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرخاص",
+      "name": "شهرخاص",
+      "nameEn": "شهرخاص",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوری-حیاتی",
+      "name": "کوری حیاتی",
+      "nameEn": "کوری-حیاتی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوهچهر",
+      "name": "کوهچهر",
+      "nameEn": "کوهچهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گندمزار",
+      "name": "گندمزار",
+      "nameEn": "گندمزار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوده",
+      "name": "گوده",
+      "nameEn": "گوده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لمبدان-بالایی",
+      "name": "لمبدان بالایی",
+      "nameEn": "لمبدان-بالایی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لمبدان-پایینی",
+      "name": "لمبدان پایینی",
+      "nameEn": "لمبدان-پایینی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لمبدان-حاجی-آباد",
+      "name": "لمبدان حاجی آباد",
+      "nameEn": "لمبدان-حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میانلو-شمالی",
+      "name": "میانلو شمالی",
+      "nameEn": "میانلو-شمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نخل-غانم",
+      "name": "نخل غانم",
+      "nameEn": "نخل-غانم",
+      "geoSource": "osm"
+    }
+  ]
+}

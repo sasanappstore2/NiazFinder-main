@@ -1,0 +1,25 @@
+{
+  "cityId": "negin-shahr",
+  "cityName": "نگین شهر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.911Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "نگین-شهر",
+      "name": "نگین شهر",
+      "nameEn": "negin-shahr",
+      "centroid": {
+        "lat": 37.155628745490475,
+        "lng": 55.249804644335825
+      },
+      "bbox": {
+        "south": 37.049142220158096,
+        "north": 37.262115270822854,
+        "west": 55.129008982812366,
+        "east": 55.370600305859284
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

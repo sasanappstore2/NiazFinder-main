@@ -1,0 +1,25 @@
+{
+  "cityId": "khav-va-mirabad",
+  "cityName": "خاو و میرآباد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.053Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خاو-و-میرآباد",
+      "name": "خاو و میرآباد",
+      "nameEn": "khav-va-mirabad",
+      "centroid": {
+        "lat": 35.61902632957241,
+        "lng": 46.18464340738335
+      },
+      "bbox": {
+        "south": 35.51253980424003,
+        "north": 35.725512854904785,
+        "west": 46.06206787862494,
+        "east": 46.307218936141766
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

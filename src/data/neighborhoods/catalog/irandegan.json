@@ -1,0 +1,127 @@
+{
+  "cityId": "irandegan",
+  "cityName": "ایرندگان",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:55:56.001Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ایرندگان",
+      "name": "ایرندگان",
+      "nameEn": "irandegan",
+      "centroid": {
+        "lat": 27.693301732231404,
+        "lng": 61.124345366409955
+      },
+      "bbox": {
+        "south": 27.58681520689903,
+        "north": 27.79978825756378,
+        "west": 61.012698634964835,
+        "east": 61.23599209785507
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اسپه",
+      "name": "اسپه",
+      "nameEn": "اسپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بک",
+      "name": "بک",
+      "nameEn": "بک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پالیزان",
+      "name": "پالیزان",
+      "nameEn": "پالیزان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پروم",
+      "name": "پروم",
+      "nameEn": "پروم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تمپ",
+      "name": "تمپ",
+      "nameEn": "تمپ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چگرد",
+      "name": "چگرد",
+      "nameEn": "چگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دادکان",
+      "name": "دادکان",
+      "nameEn": "دادکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-رئیس",
+      "name": "ده رئیس",
+      "nameEn": "ده-رئیس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحمان-آباد",
+      "name": "رحمان آباد",
+      "nameEn": "رحمان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرخ-دگار",
+      "name": "سرخ دگار",
+      "nameEn": "سرخ-دگار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سورگ",
+      "name": "سورگ",
+      "nameEn": "سورگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قنات-میرقلندر",
+      "name": "قنات میرقلندر",
+      "nameEn": "قنات-میرقلندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنز",
+      "name": "گنز",
+      "nameEn": "گنز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مارندگان",
+      "name": "مارندگان",
+      "nameEn": "مارندگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نابهری",
+      "name": "نابهری",
+      "nameEn": "نابهری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "واردان",
+      "name": "واردان",
+      "nameEn": "واردان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هشیک",
+      "name": "هشیک",
+      "nameEn": "هشیک",
+      "geoSource": "osm"
+    }
+  ]
+}

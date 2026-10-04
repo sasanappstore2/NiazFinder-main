@@ -1,0 +1,25 @@
+{
+  "cityId": "sarbuk",
+  "cityName": "ساربوک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.594Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ساربوک",
+      "name": "ساربوک",
+      "nameEn": "sarbuk",
+      "centroid": {
+        "lat": 26.030754235141934,
+        "lng": 60.63202645914641
+      },
+      "bbox": {
+        "south": 25.92426770980956,
+        "north": 26.13724076047431,
+        "west": 60.52562196178517,
+        "east": 60.73843095650765
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

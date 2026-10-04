@@ -1,0 +1,301 @@
+{
+  "cityId": "reyneh",
+  "cityName": "رینه",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:14:41.960Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "رینه",
+      "name": "رینه",
+      "nameEn": "reyneh",
+      "centroid": {
+        "lat": 35.888718250403166,
+        "lng": 52.241980542864894
+      },
+      "bbox": {
+        "south": 35.633988283604744,
+        "north": 36.14344821720159,
+        "west": 51.96545284298652,
+        "east": 52.51850824274326
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آب-اسک",
+      "name": "آب اسک",
+      "nameEn": "آب-اسک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اخا",
+      "name": "اخا",
+      "nameEn": "اخا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انهه",
+      "name": "انهه",
+      "nameEn": "انهه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایرا",
+      "name": "ایرا",
+      "nameEn": "ایرا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بائیجان",
+      "name": "بائیجان",
+      "nameEn": "بائیجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوالقلم",
+      "name": "بوالقلم",
+      "nameEn": "بوالقلم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پل-مرقی",
+      "name": "پل مرقی",
+      "nameEn": "پل-مرقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پلور",
+      "name": "پلور",
+      "nameEn": "پلور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ترا",
+      "name": "ترا",
+      "nameEn": "ترا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تینه",
+      "name": "تینه",
+      "nameEn": "تینه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-دلا",
+      "name": "حاجی دلا",
+      "nameEn": "حاجی-دلا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشت-مقدم",
+      "name": "دشت مقدم",
+      "nameEn": "دشت-مقدم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دینان",
+      "name": "دینان",
+      "nameEn": "دینان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رزان",
+      "name": "رزان",
+      "nameEn": "رزان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرمان",
+      "name": "زرمان",
+      "nameEn": "زرمان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیار",
+      "name": "زیار",
+      "nameEn": "زیار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاه-چال",
+      "name": "سیاه چال",
+      "nameEn": "سیاه-چال",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاهان-دشت",
+      "name": "شاهان دشت",
+      "nameEn": "شاهان-دشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاهاندشت",
+      "name": "شاهاندشت",
+      "nameEn": "شاهاندشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شمس-آباد",
+      "name": "شمس آباد",
+      "nameEn": "شمس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-منظریه",
+      "name": "شهرک منظریه",
+      "nameEn": "شهرک-منظریه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیره",
+      "name": "فیره",
+      "nameEn": "فیره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاضی-مزرعه",
+      "name": "قاضی مزرعه",
+      "nameEn": "قاضی-مزرعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-دختر",
+      "name": "قلعه دختر",
+      "nameEn": "قلعه-دختر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاردیچال",
+      "name": "کاردیچال",
+      "nameEn": "کاردیچال",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کتل-امام-زاده-هاشم",
+      "name": "کتل امام زاده هاشم",
+      "nameEn": "کتل-امام-زاده-هاشم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرف",
+      "name": "کرف",
+      "nameEn": "کرف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلومر",
+      "name": "کلومر",
+      "nameEn": "کلومر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنار-انجام",
+      "name": "کنار انجام",
+      "nameEn": "کنار-انجام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کندلو",
+      "name": "کندلو",
+      "nameEn": "کندلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرنا",
+      "name": "گرنا",
+      "nameEn": "گرنا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گزانه",
+      "name": "گزانه",
+      "nameEn": "گزانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گزنک",
+      "name": "گزنک",
+      "nameEn": "گزنک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گیلاس",
+      "name": "گیلاس",
+      "nameEn": "گیلاس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لاسم",
+      "name": "لاسم",
+      "nameEn": "لاسم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لوط",
+      "name": "لوط",
+      "nameEn": "لوط",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مَلار",
+      "name": "مَلار",
+      "nameEn": "مَلار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مون",
+      "name": "مون",
+      "nameEn": "مون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میان-ده",
+      "name": "میان ده",
+      "nameEn": "میان-ده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناندل",
+      "name": "ناندل",
+      "nameEn": "ناندل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوا",
+      "name": "نوا",
+      "nameEn": "نوا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نیاک",
+      "name": "نیاک",
+      "nameEn": "نیاک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وانه",
+      "name": "وانه",
+      "nameEn": "وانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وزنا",
+      "name": "وزنا",
+      "nameEn": "وزنا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هاره",
+      "name": "هاره",
+      "nameEn": "هاره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هفت-تن",
+      "name": "هفت تن",
+      "nameEn": "هفت-تن",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,470 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "mazandaran",
+        "name": "مازندران",
+        "nameEn": "Mazandaran"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.61028335805568,
+          36.398710937139164
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "north-khorasan",
+        "name": "خراسان شمالی",
+        "nameEn": "North Khorasan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          57.10395026275739,
+          37.49749225477992
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kerman",
+        "name": "کرمان",
+        "nameEn": "Kerman"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          57.41097879202981,
+          28.83833281341653
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ilam",
+        "name": "ایلام",
+        "nameEn": "Ilam"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          46.965041653798785,
+          33.21735101233603
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "lorestan",
+        "name": "لرستان",
+        "nameEn": "Lorestan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          48.551257719485875,
+          33.50086364699859
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "markazi",
+        "name": "مرکزی",
+        "nameEn": "Markazi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          49.786887929220484,
+          34.39679127385043
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "chaharmahal-bakhtiari",
+        "name": "چهارمحال و بختیاری",
+        "nameEn": "Chaharmahal and Bakhtiari"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          50.634252890392595,
+          31.96575785844601
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kermanshah",
+        "name": "کرمانشاه",
+        "nameEn": "Kermanshah"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          46.688130525130966,
+          34.464899408026774
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hamedan",
+        "name": "همدان",
+        "nameEn": "Hamedan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          48.635352557407145,
+          34.81349237991195
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qazvin",
+        "name": "قزوین",
+        "nameEn": "Qazvin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          49.703323169920424,
+          36.06519127591271
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gilan",
+        "name": "گیلان",
+        "nameEn": "Gilan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          49.29010136825727,
+          37.50997489467043
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "zanjan",
+        "name": "زنجان",
+        "nameEn": "Zanjan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          48.424451220908466,
+          36.33912380156095
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "semnan",
+        "name": "سمنان",
+        "nameEn": "Semnan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.77083262181852,
+          36.04441811903116
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "isfahan",
+        "name": "اصفهان",
+        "nameEn": "Isfahan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.65264500090481,
+          32.724886246167884
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kohgiluyeh-boyer-ahmad",
+        "name": "کهگیلویه و بویراحمد",
+        "nameEn": "Kohgiluyeh and Boyer-Ahmad"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          50.73738333429934,
+          30.77734600508826
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kurdistan",
+        "name": "کردستان",
+        "nameEn": "Kurdistan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          47.00720781613243,
+          35.66648351081738
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "west-azerbaijan",
+        "name": "آذربایجان غربی",
+        "nameEn": "West Azerbaijan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          45.264091284744616,
+          37.75178291596586
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "fars",
+        "name": "فارس",
+        "nameEn": "Fars"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.843576351480415,
+          29.488379234327155
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bushehr",
+        "name": "بوشهر",
+        "nameEn": "Bushehr"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.16301910057501,
+          28.77506352672782
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ardabil",
+        "name": "اردبیل",
+        "nameEn": "Ardabil"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          48.04307243954151,
+          38.42036035632619
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "golestan",
+        "name": "گلستان",
+        "nameEn": "Golestan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.99814762234994,
+          37.295577802483635
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "khorasan-razavi",
+        "name": "خراسان رضوی",
+        "nameEn": "Khorasan Razavi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          59.0016719224916,
+          35.742886617856755
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "south-khorasan",
+        "name": "خراسان جنوبی",
+        "nameEn": "South Khorasan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          58.5668755998953,
+          33.24845346879155
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sistan-baluchestan",
+        "name": "سیستان و بلوچستان",
+        "nameEn": "Sistan and Baluchestan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          60.812494726800246,
+          27.2100075005957
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "qom",
+        "name": "قم",
+        "nameEn": "Qom"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          50.822827355398196,
+          34.645057966618594
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "alborz",
+        "name": "البرز",
+        "nameEn": "Alborz"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          50.778545809557656,
+          35.90062151924195
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "east-azerbaijan",
+        "name": "آذربایجان شرقی",
+        "nameEn": "East Azerbaijan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          47.04971036199367,
+          38.01299779771022
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "yazd",
+        "name": "یزد",
+        "nameEn": "Yazd"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.48165818557684,
+          31.583035150765934
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hormozgan",
+        "name": "هرمزگان",
+        "nameEn": "Hormozgan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          56.18696605650606,
+          26.70497640853125
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "khuzestan",
+        "name": "خوزستان",
+        "nameEn": "Khuzestan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          49.02977675037515,
+          30.83138873346055
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tehran",
+        "name": "تهران",
+        "nameEn": "Tehran"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.69579055904427,
+          35.58043463459566
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,1067 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-16T23:21:06.514Z",
+  "summary": {
+    "total": 129,
+    "roots": 9,
+    "parents": 13,
+    "leaves": 107,
+    "missingEnglish": 57
+  },
+  "categories": [
+    {
+      "slug": "social",
+      "nameFa": "اجتماعی",
+      "nameEn": "social",
+      "depth": 0,
+      "childCount": 3,
+      "children": [
+        {
+          "slug": "volunteering",
+          "nameFa": "داوطلبانه",
+          "nameEn": "volunteering",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "social-events",
+          "nameFa": "رویدادها",
+          "nameEn": "social-events",
+          "depth": 1,
+          "childCount": 3,
+          "children": [
+            {
+              "slug": "cultural-artistic",
+              "nameFa": "فرهنگی",
+              "nameEn": "cultural-artistic",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "sporting",
+              "nameFa": "ورزشی",
+              "nameEn": "sporting",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "conference",
+              "nameFa": "همایش",
+              "nameEn": "conference",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "slug": "lost-found",
+          "nameFa": "گم‌شده‌ها",
+          "nameEn": "lost-found",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        }
+      ]
+    },
+    {
+      "slug": "jobs",
+      "nameFa": "استخدام",
+      "nameEn": "Jobs",
+      "depth": 0,
+      "childCount": 7,
+      "children": [
+        {
+          "slug": "admin-management",
+          "nameFa": "اداری",
+          "nameEn": "admin-management",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "marketing-sales",
+          "nameFa": "بازاریابی",
+          "nameEn": "marketing-sales",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "health-beauty",
+          "nameFa": "درمانی و زیبایی",
+          "nameEn": "health-beauty",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "it",
+          "nameFa": "فناوری اطلاعات",
+          "nameEn": "IT",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "engineering",
+          "nameFa": "فنی و مهندسی",
+          "nameEn": "engineering",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "finance-legal",
+          "nameFa": "مالی و حقوقی",
+          "nameEn": "finance-legal",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "art-media",
+          "nameFa": "هنر و رسانه",
+          "nameEn": "art-media",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        }
+      ]
+    },
+    {
+      "slug": "real-estate",
+      "nameFa": "املاک",
+      "nameEn": "Real Estate",
+      "depth": 0,
+      "childCount": 6,
+      "children": [
+        {
+          "slug": "commercial-rent",
+          "nameFa": "اجاره اداری و تجاری",
+          "nameEn": "commercial-rent",
+          "depth": 1,
+          "childCount": 3,
+          "children": [
+            {
+              "slug": "office-rent",
+              "nameFa": "دفتر کار",
+              "nameEn": "Office Rent",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "industrial-rent",
+              "nameFa": "صنعتی",
+              "nameEn": "Industrial Rent",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "shop-rent",
+              "nameFa": "مغازه و غرفه",
+              "nameEn": "Shop Rent",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "slug": "short-term-rent",
+          "nameFa": "اجاره کوتاه‌مدت",
+          "nameEn": "Short-term Rent",
+          "depth": 1,
+          "childCount": 3,
+          "children": [
+            {
+              "slug": "suite-apartment-rent",
+              "nameFa": "آپارتمان و سوئیت",
+              "nameEn": "Suite Apartment Rent",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "workspace-short-rent",
+              "nameFa": "دفتر و فضای آموزشی",
+              "nameEn": "Workspace Short Rent",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "villa-short-rent",
+              "nameFa": "ویلا و باغ",
+              "nameEn": "Villa Short Rent",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "slug": "residential-rent",
+          "nameFa": "اجاره مسکونی",
+          "nameEn": "Residential Rent",
+          "depth": 1,
+          "childCount": 3,
+          "children": [
+            {
+              "slug": "apartment-rent",
+              "nameFa": "آپارتمان",
+              "nameEn": "Apartment Rent",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "villa-rent",
+              "nameFa": "خانه و ویلا",
+              "nameEn": "Villa Rent",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "land-rent",
+              "nameFa": "زمین و کلنگی",
+              "nameEn": "Land Rent",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "slug": "real-estate-services",
+          "nameFa": "خدمات املاک",
+          "nameEn": "real-estate-services",
+          "depth": 1,
+          "childCount": 3,
+          "children": [
+            {
+              "slug": "agency-services",
+              "nameFa": "آژانس املاک",
+              "nameEn": "agency-services",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "pre-sale-services",
+              "nameFa": "پیش‌فروش",
+              "nameEn": "pre-sale-services",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "construction-partnership",
+              "nameFa": "مشارکت در ساخت",
+              "nameEn": "construction-partnership",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "slug": "commercial-sale",
+          "nameFa": "فروش اداری و تجاری",
+          "nameEn": "commercial-sale",
+          "depth": 1,
+          "childCount": 3,
+          "children": [
+            {
+              "slug": "office-sale",
+              "nameFa": "دفتر کار",
+              "nameEn": "Office Sale",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "industrial-sale",
+              "nameFa": "صنعتی",
+              "nameEn": "Industrial Sale",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "shop-sale",
+              "nameFa": "مغازه و غرفه",
+              "nameEn": "Shop Sale",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "slug": "residential-sale",
+          "nameFa": "فروش مسکونی",
+          "nameEn": "Residential Sale",
+          "depth": 1,
+          "childCount": 3,
+          "children": [
+            {
+              "slug": "apartment-sale",
+              "nameFa": "آپارتمان",
+              "nameEn": "Apartment Sale",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "villa-sale",
+              "nameFa": "خانه و ویلا",
+              "nameEn": "Villa Sale",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "land-sale",
+              "nameFa": "زمین و کلنگی",
+              "nameEn": "Land Sale",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "services",
+      "nameFa": "خدمات",
+      "nameEn": "Services",
+      "depth": 0,
+      "childCount": 13,
+      "children": [
+        {
+          "slug": "education",
+          "nameFa": "آموزش",
+          "nameEn": "Education",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "moving",
+          "nameFa": "اسباب‌کشی و باربری",
+          "nameEn": "Moving",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "electrical",
+          "nameFa": "برق‌کاری",
+          "nameEn": "Electrical",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "repairs",
+          "nameFa": "تعمیرات",
+          "nameEn": "Repairs",
+          "depth": 1,
+          "childCount": 29,
+          "children": [
+            {
+              "slug": "water-heater-boiler-repair",
+              "nameFa": "آبگرم‌کن، پکیج و شوفاژ",
+              "nameEn": "Water Heater & Boiler",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "elevator-repair",
+              "nameFa": "آسانسور",
+              "nameEn": "Elevator",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "musical-instrument-repair",
+              "nameFa": "آلات موسیقی",
+              "nameEn": "Musical Instruments",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "cooking-appliance-repair",
+              "nameFa": "اجاق، فر و مایکروویو",
+              "nameEn": "Cooking Appliances",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "printer-office-repair",
+              "nameFa": "پرینتر و ماشین‌های اداری",
+              "nameEn": "Printer & Office",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "water-pump-repair",
+              "nameFa": "پمپ آب و موتورآلات",
+              "nameEn": "Water Pump",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "medical-equipment-repair",
+              "nameFa": "تجهیزات پزشکی",
+              "nameEn": "Medical Equipment",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "fitness-equipment-repair",
+              "nameFa": "تجهیزات ورزشی",
+              "nameEn": "Fitness Equipment",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "general-handyman-repair",
+              "nameFa": "تعمیرات عمومی و چندمنظوره",
+              "nameEn": "General Handyman",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "tv-audio-repair",
+              "nameFa": "تلویزیون و صوتی",
+              "nameEn": "TV & Audio",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "small-appliance-repair",
+              "nameFa": "جاروبرقی و لوازم کوچک خانگی",
+              "nameEn": "Small Appliances",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "sewing-machine-repair",
+              "nameFa": "چرخ خیاطی",
+              "nameEn": "Sewing Machine",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "vehicle-repair",
+              "nameFa": "خودرو",
+              "nameEn": "Vehicle Repair",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "door-window-glass-repair",
+              "nameFa": "در، پنجره و شیشه",
+              "nameEn": "Door, Window & Glass",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "bicycle-repair",
+              "nameFa": "دوچرخه",
+              "nameEn": "Bicycle Repair",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "camera-cctv-repair",
+              "nameFa": "دوربین و دزدگیر",
+              "nameEn": "CCTV & Security",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "watch-jewelry-repair",
+              "nameFa": "ساعت و جواهرات",
+              "nameEn": "Watch & Jewelry",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "roofing-waterproofing-repair",
+              "nameFa": "سقف و ایزوگام",
+              "nameEn": "Roofing & Waterproofing",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "carpet-rug-repair",
+              "nameFa": "فرش و گلیم",
+              "nameEn": "Carpet & Rug",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "locksmith-repair",
+              "nameFa": "قفل‌سازی و کلید",
+              "nameEn": "Locksmith",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "computer-laptop-repair",
+              "nameFa": "کامپیوتر و لپ‌تاپ",
+              "nameEn": "Computer & Laptop",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "ac-repair",
+              "nameFa": "کولر گازی و اسپلیت",
+              "nameEn": "AC Repair",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "laundry-dishwasher-repair",
+              "nameFa": "ماشین لباسشویی و ظرفشویی",
+              "nameEn": "Laundry & Dishwasher",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "industrial-machinery-repair",
+              "nameFa": "ماشین‌آلات صنعتی",
+              "nameEn": "Industrial Machinery",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "furniture-wood-repair",
+              "nameFa": "مبلمان و چوب",
+              "nameEn": "Furniture & Wood",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "mobile-tablet-repair",
+              "nameFa": "موبایل و تابلت",
+              "nameEn": "Mobile & Tablet",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "generator-ups-repair",
+              "nameFa": "موتور برق و برق اضطراری",
+              "nameEn": "Generator & UPS",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "motorcycle-repair",
+              "nameFa": "موتورسیکلت",
+              "nameEn": "Motorcycle Repair",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "refrigerator-repair",
+              "nameFa": "یخچال و فریزر",
+              "nameEn": "Refrigerator Repair",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "slug": "transportation",
+          "nameFa": "حمل و نقل",
+          "nameEn": "transportation",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "medical-health",
+          "nameFa": "خدمات درمانی و پزشکی",
+          "nameEn": "Medical",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "it-services",
+          "nameFa": "خدمات فناوری",
+          "nameEn": "IT Services",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "beauty-health",
+          "nameFa": "زیبایی",
+          "nameEn": "beauty-health",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "plumbing",
+          "nameFa": "لوله‌کشی",
+          "nameEn": "Plumbing",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "events-catering",
+          "nameFa": "مراسم",
+          "nameEn": "events-catering",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "legal-services",
+          "nameFa": "مشاوره حقوقی",
+          "nameEn": "Legal",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "cleaning",
+          "nameFa": "نظافت",
+          "nameEn": "Cleaning",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "painting",
+          "nameFa": "نقاشی و کاغذدیواری",
+          "nameEn": "Painting",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        }
+      ]
+    },
+    {
+      "slug": "entertainment",
+      "nameFa": "سرگرمی",
+      "nameEn": "Entertainment",
+      "depth": 0,
+      "childCount": 6,
+      "children": [
+        {
+          "slug": "tickets",
+          "nameFa": "بلیط",
+          "nameEn": "tickets",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "tours",
+          "nameFa": "تور",
+          "nameEn": "tours",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "pets",
+          "nameFa": "حیوانات",
+          "nameEn": "pets",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "books",
+          "nameFa": "کتاب",
+          "nameEn": "books",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "musical-instruments",
+          "nameFa": "موسیقی",
+          "nameEn": "musical-instruments",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "sports-fitness",
+          "nameFa": "ورزش",
+          "nameEn": "sports-fitness",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        }
+      ]
+    },
+    {
+      "slug": "electronics",
+      "nameFa": "لوازم الکترونیکی",
+      "nameEn": "Electronics",
+      "depth": 0,
+      "childCount": 5,
+      "children": [
+        {
+          "slug": "camera",
+          "nameFa": "دوربین",
+          "nameEn": "Camera",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "computer",
+          "nameFa": "رایانه",
+          "nameEn": "Computer",
+          "depth": 1,
+          "childCount": 3,
+          "children": [
+            {
+              "slug": "desktop-computer",
+              "nameFa": "رومیزی",
+              "nameEn": "desktop-computer",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "computer-parts",
+              "nameFa": "قطعات",
+              "nameEn": "computer-parts",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "laptop",
+              "nameFa": "لپ‌تاپ",
+              "nameEn": "laptop",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "slug": "audio-video",
+          "nameFa": "صوتی و تصویری",
+          "nameEn": "audio-video",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "game-console",
+          "nameFa": "کنسول و بازی",
+          "nameEn": "game-console",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "mobile-tablet",
+          "nameFa": "موبایل و تبلت",
+          "nameEn": "mobile-tablet",
+          "depth": 1,
+          "childCount": 3,
+          "children": [
+            {
+              "slug": "tablet",
+              "nameFa": "تبلت",
+              "nameEn": "Tablet",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "mobile-phone",
+              "nameFa": "گوشی موبایل",
+              "nameEn": "Mobile Phone",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "mobile-accessories",
+              "nameFa": "لوازم جانبی",
+              "nameEn": "mobile-accessories",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "home-appliances",
+      "nameFa": "لوازم خانگی",
+      "nameEn": "Home Appliances",
+      "depth": 0,
+      "childCount": 4,
+      "children": [
+        {
+          "slug": "kitchen-appliances",
+          "nameFa": "آشپزخانه",
+          "nameEn": "kitchen-appliances",
+          "depth": 1,
+          "childCount": 4,
+          "children": [
+            {
+              "slug": "stove-microwave",
+              "nameFa": "اجاق و مایکروویو",
+              "nameEn": "stove-microwave",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "cooking-utensils",
+              "nameFa": "ظروف",
+              "nameEn": "cooking-utensils",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "washing-machine",
+              "nameFa": "ماشین شستشو",
+              "nameEn": "washing-machine",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "refrigerator",
+              "nameFa": "یخچال",
+              "nameEn": "refrigerator",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "slug": "building-industrial",
+          "nameFa": "ابزار ساختمانی",
+          "nameEn": "building-industrial",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "rugs",
+          "nameFa": "فرش و گلیم",
+          "nameEn": "rugs",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "furniture-decor",
+          "nameFa": "مبلمان و دکوراسیون",
+          "nameEn": "furniture-decor",
+          "depth": 1,
+          "childCount": 4,
+          "children": [
+            {
+              "slug": "decorative-art",
+              "nameFa": "تزیینی",
+              "nameEn": "decorative-art",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "lighting",
+              "nameFa": "روشنایی",
+              "nameEn": "lighting",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "sofa-chair",
+              "nameFa": "مبلمان",
+              "nameEn": "sofa-chair",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "table-closet",
+              "nameFa": "میز و کمد",
+              "nameEn": "table-closet",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "personal-items",
+      "nameFa": "وسایل شخصی",
+      "nameEn": "personal-items",
+      "depth": 0,
+      "childCount": 4,
+      "children": [
+        {
+          "slug": "cosmetics-health",
+          "nameFa": "آرایشی",
+          "nameEn": "cosmetics-health",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "clothing",
+          "nameFa": "پوشاک",
+          "nameEn": "Clothing",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "jewelry-watches",
+          "nameFa": "جواهرات",
+          "nameEn": "jewelry-watches",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "kids-baby",
+          "nameFa": "کودک",
+          "nameEn": "kids-baby",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        }
+      ]
+    },
+    {
+      "slug": "vehicles",
+      "nameFa": "وسایل نقلیه",
+      "nameEn": "Vehicles",
+      "depth": 0,
+      "childCount": 4,
+      "children": [
+        {
+          "slug": "car",
+          "nameFa": "خودرو",
+          "nameEn": "Car",
+          "depth": 1,
+          "childCount": 4,
+          "children": [
+            {
+              "slug": "car-rental",
+              "nameFa": "اجاره‌ای",
+              "nameEn": "car-rental",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "car-heavy",
+              "nameFa": "سنگین",
+              "nameEn": "car-heavy",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "car-ride",
+              "nameFa": "سواری",
+              "nameEn": "car-ride",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            },
+            {
+              "slug": "car-classic",
+              "nameFa": "کلاسیک",
+              "nameEn": "car-classic",
+              "depth": 2,
+              "childCount": 0,
+              "children": []
+            }
+          ]
+        },
+        {
+          "slug": "boat",
+          "nameFa": "قایق",
+          "nameEn": "boat",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "spare-parts",
+          "nameFa": "قطعات یدکی",
+          "nameEn": "spare-parts",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        },
+        {
+          "slug": "motorcycle",
+          "nameFa": "موتورسیکلت",
+          "nameEn": "Motorcycle",
+          "depth": 1,
+          "childCount": 0,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

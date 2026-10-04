@@ -1,0 +1,25 @@
+{
+  "cityId": "pasakuh",
+  "cityName": "پسکوه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.076Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "پسکوه",
+      "name": "پسکوه",
+      "nameEn": "pasakuh",
+      "centroid": {
+        "lat": 27.66646462321236,
+        "lng": 61.611098307871124
+      },
+      "bbox": {
+        "south": 27.559978097879984,
+        "north": 27.772951148544735,
+        "west": 61.503901392050956,
+        "east": 61.71829522369129
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

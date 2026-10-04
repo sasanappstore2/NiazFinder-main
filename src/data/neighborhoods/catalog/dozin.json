@@ -1,0 +1,25 @@
+{
+  "cityId": "dozin",
+  "cityName": "دوزین",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.859Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "دوزین",
+      "name": "دوزین",
+      "nameEn": "dozin",
+      "centroid": {
+        "lat": 37.15385149231046,
+        "lng": 55.650540247594705
+      },
+      "bbox": {
+        "south": 37.04736496697808,
+        "north": 37.26033801764284,
+        "west": 55.533640040179804,
+        "east": 55.76744045500961
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

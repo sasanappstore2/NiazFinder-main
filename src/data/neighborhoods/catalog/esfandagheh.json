@@ -1,0 +1,25 @@
+{
+  "cityId": "esfandagheh",
+  "cityName": "اسفندقه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.884Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "اسفندقه",
+      "name": "اسفندقه",
+      "nameEn": "esfandagheh",
+      "centroid": {
+        "lat": 28.690903176392382,
+        "lng": 57.31059544780685
+      },
+      "bbox": {
+        "south": 28.584416651060007,
+        "north": 28.797389701724757,
+        "west": 57.200803658400396,
+        "east": 57.420387237213305
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

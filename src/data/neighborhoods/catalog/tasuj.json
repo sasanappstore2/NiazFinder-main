@@ -1,0 +1,283 @@
+{
+  "cityId": "tasuj",
+  "cityName": "طسوج",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:13:27.419Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مسکن-مهر",
+      "name": "مسکن مهر",
+      "nameEn": "مسکن-مهر",
+      "centroid": {
+        "lat": 29.287183957959037,
+        "lng": 52.67729908702181
+      },
+      "bbox": {
+        "south": 29.180697432626662,
+        "north": 29.393670483291412,
+        "west": 52.56672120883105,
+        "east": 52.78787696521256
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اربابی-سفلی",
+      "name": "اربابی سفلی",
+      "nameEn": "اربابی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اربابی-علیا",
+      "name": "اربابی علیا",
+      "nameEn": "اربابی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسماعیل-آباد",
+      "name": "اسماعیل آباد",
+      "nameEn": "اسماعیل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اکبرآباد",
+      "name": "اکبرآباد",
+      "nameEn": "اکبرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انجیره",
+      "name": "انجیره",
+      "nameEn": "انجیره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغان",
+      "name": "باغان",
+      "nameEn": "باغان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بورکی",
+      "name": "بورکی",
+      "nameEn": "بورکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بید-زرد",
+      "name": "بید زرد",
+      "nameEn": "بید-زرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشت-پر",
+      "name": "پشت پر",
+      "nameEn": "پشت-پر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تفیهان",
+      "name": "تفیهان",
+      "nameEn": "تفیهان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تیون",
+      "name": "تیون",
+      "nameEn": "تیون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلال-آباد",
+      "name": "جلال آباد",
+      "nameEn": "جلال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره-عسلو",
+      "name": "دره عسلو",
+      "nameEn": "دره-عسلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشتک",
+      "name": "دشتک",
+      "nameEn": "دشتک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهداری",
+      "name": "دهداری",
+      "nameEn": "دهداری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-بیدزرد",
+      "name": "روستای بیدزرد",
+      "nameEn": "روستای-بیدزرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-فرود",
+      "name": "روستای فرود",
+      "nameEn": "روستای-فرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیجرد",
+      "name": "زیجرد",
+      "nameEn": "زیجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرود",
+      "name": "سرود",
+      "nameEn": "سرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاه-شهیدان",
+      "name": "شاه شهیدان",
+      "nameEn": "شاه-شهیدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طسوج",
+      "name": "طسوج",
+      "nameEn": "طسوج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فتح-آباد",
+      "name": "فتح آباد",
+      "nameEn": "فتح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرود",
+      "name": "فرود",
+      "nameEn": "فرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قصر-احمد",
+      "name": "قصر احمد",
+      "nameEn": "قصر-احمد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-کهنه-کوار",
+      "name": "قلعه کهنه کوار",
+      "nameEn": "قلعه-کهنه-کوار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-نو",
+      "name": "قلعه نو",
+      "nameEn": "قلعه-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-نو-ایزدی",
+      "name": "قلعه نو ایزدی",
+      "nameEn": "قلعه-نو-ایزدی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-نو-مظفری",
+      "name": "قلعه نو مظفری",
+      "nameEn": "قلعه-نو-مظفری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قنات",
+      "name": "قنات",
+      "nameEn": "قنات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوار",
+      "name": "کوار",
+      "nameEn": "کوار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لهکوه",
+      "name": "لهکوه",
+      "nameEn": "لهکوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد",
+      "name": "محمودآباد",
+      "nameEn": "محمودآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد-دو-دانگ",
+      "name": "محمودآباد دو دانگ",
+      "nameEn": "محمودآباد-دو-دانگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد-سه-دانگ",
+      "name": "محمودآباد سه دانگ",
+      "nameEn": "محمودآباد-سه-دانگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مظفری",
+      "name": "مظفری",
+      "nameEn": "مظفری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موردراز",
+      "name": "موردراز",
+      "nameEn": "موردراز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهارلو-کهنه",
+      "name": "مهارلو کهنه",
+      "nameEn": "مهارلو-کهنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهارلو-نو",
+      "name": "مهارلو نو",
+      "nameEn": "مهارلو-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوروزان",
+      "name": "نوروزان",
+      "nameEn": "نوروزان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ولیعصر",
+      "name": "ولیعصر",
+      "nameEn": "ولیعصر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هورباف",
+      "name": "هورباف",
+      "nameEn": "هورباف",
+      "geoSource": "osm"
+    }
+  ]
+}

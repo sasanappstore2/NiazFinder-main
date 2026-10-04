@@ -1,0 +1,67 @@
+{
+  "cityId": "negin-kavir",
+  "cityName": "نگین کویر",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:03:12.850Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "نگین-کویر",
+      "name": "نگین کویر",
+      "nameEn": "negin-kavir",
+      "centroid": {
+        "lat": 28.893513032626664,
+        "lng": 59.35365779917509
+      },
+      "bbox": {
+        "south": 28.78702650729429,
+        "north": 28.99999955795904,
+        "west": 59.24465222574415,
+        "east": 59.46266337260603
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "توکل-آباد",
+      "name": "توکل آباد",
+      "nameEn": "توکل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-اسماعیل",
+      "name": "ده اسماعیل",
+      "nameEn": "ده-اسماعیل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-شهدوست",
+      "name": "ده شهدوست",
+      "nameEn": "ده-شهدوست",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو-چاهدگان",
+      "name": "دهنو چاهدگان",
+      "nameEn": "دهنو-چاهدگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-چاهدگان",
+      "name": "علی آباد چاهدگان",
+      "nameEn": "علی-آباد-چاهدگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدآباد",
+      "name": "محمدآباد",
+      "nameEn": "محمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یوسف-آباد",
+      "name": "یوسف آباد",
+      "nameEn": "یوسف-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

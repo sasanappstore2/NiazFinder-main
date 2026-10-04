@@ -1,0 +1,103 @@
+{
+  "cityId": "sarvestan-city",
+  "cityName": "سروستان",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:08:52.560Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سروستان",
+      "name": "سروستان",
+      "nameEn": "sarvestan-city",
+      "centroid": {
+        "lat": 29.177402078512397,
+        "lng": 53.29400207341784
+      },
+      "bbox": {
+        "south": 29.070915553180022,
+        "north": 29.283888603844773,
+        "west": 53.18255947627715,
+        "east": 53.40544467055854
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-ولی-آباد-والی",
+      "name": "چشمه ولی آباد والی",
+      "nameEn": "چشمه-ولی-آباد-والی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رکن-آباد",
+      "name": "رکن آباد",
+      "nameEn": "رکن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سعادت-آباد",
+      "name": "سعادت آباد",
+      "nameEn": "سعادت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورجه",
+      "name": "شورجه",
+      "nameEn": "شورجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طالب-بیگی",
+      "name": "طالب بیگی",
+      "nameEn": "طالب-بیگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کته-گنبد",
+      "name": "کته گنبد",
+      "nameEn": "کته-گنبد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنو",
+      "name": "کنو",
+      "nameEn": "کنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مومن-آباد",
+      "name": "مومن آباد",
+      "nameEn": "مومن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآباد",
+      "name": "مهرآباد",
+      "nameEn": "مهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نظرآباد",
+      "name": "نظرآباد",
+      "nameEn": "نظرآباد",
+      "geoSource": "osm"
+    }
+  ]
+}

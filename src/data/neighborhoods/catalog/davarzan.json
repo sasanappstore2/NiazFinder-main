@@ -1,0 +1,109 @@
+{
+  "cityId": "davarzan",
+  "cityName": "داورزن",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:42:29.733Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-امام-علی",
+      "name": "شهرک امام علی",
+      "nameEn": "شهرک-امام-علی",
+      "centroid": {
+        "lat": 36.33675983262666,
+        "lng": 57.00212694344229
+      },
+      "bbox": {
+        "south": 36.23027330729428,
+        "north": 36.44324635795904,
+        "west": 56.87768103394181,
+        "east": 57.126572852942765
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبرود",
+      "name": "آبرود",
+      "nameEn": "آبرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهمن-آباد",
+      "name": "بهمن آباد",
+      "nameEn": "بهمن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیزه",
+      "name": "بیزه",
+      "nameEn": "بیزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داورزن",
+      "name": "داورزن",
+      "nameEn": "داورزن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-نو",
+      "name": "ده نو",
+      "nameEn": "ده-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سویز",
+      "name": "سویز",
+      "nameEn": "سویز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آبادبالا",
+      "name": "علی آبادبالا",
+      "nameEn": "علی-آبادبالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غنی-آباد",
+      "name": "غنی آباد",
+      "nameEn": "غنی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاهک",
+      "name": "کاهک",
+      "nameEn": "کاهک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-مزینان",
+      "name": "کلاته مزینان",
+      "nameEn": "کلاته-مزینان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمیز",
+      "name": "کمیز",
+      "nameEn": "کمیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزینان",
+      "name": "مزینان",
+      "nameEn": "مزینان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مور",
+      "name": "مور",
+      "nameEn": "مور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نهالدان",
+      "name": "نهالدان",
+      "nameEn": "نهالدان",
+      "geoSource": "osm"
+    }
+  ]
+}

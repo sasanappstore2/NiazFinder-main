@@ -1,0 +1,25 @@
+{
+  "cityId": "koraayim",
+  "cityName": "کوراییم",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.280Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوراییم",
+      "name": "کوراییم",
+      "nameEn": "koraayim",
+      "centroid": {
+        "lat": 37.957055706899034,
+        "lng": 48.22278694314811
+      },
+      "bbox": {
+        "south": 37.850569181566655,
+        "north": 38.06354223223141,
+        "west": 48.09931406454824,
+        "east": 48.34625982174797
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

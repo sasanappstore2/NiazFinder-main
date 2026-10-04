@@ -1,0 +1,25 @@
+{
+  "cityId": "jaluq",
+  "cityName": "جالق",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.625Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جالق",
+      "name": "جالق",
+      "nameEn": "jaluq",
+      "centroid": {
+        "lat": 27.822672812073304,
+        "lng": 62.55456212403608
+      },
+      "bbox": {
+        "south": 27.71618628674093,
+        "north": 27.92915933740568,
+        "west": 62.44357902590867,
+        "east": 62.66554522216349
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

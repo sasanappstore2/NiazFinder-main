@@ -1,0 +1,157 @@
+{
+  "cityId": "lotf-abad",
+  "cityName": "لطف آباد",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:55:25.662Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "لطف-آباد",
+      "name": "لطف آباد",
+      "nameEn": "lotf-abad",
+      "centroid": {
+        "lat": 37.24451051113906,
+        "lng": 59.3640340079382
+      },
+      "bbox": {
+        "south": 37.13802398580668,
+        "north": 37.35099703647144,
+        "west": 59.244885929013975,
+        "east": 59.483182086862435
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آرتئق",
+      "name": "آرتئق",
+      "nameEn": "آرتئق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "توقی",
+      "name": "توقی",
+      "nameEn": "توقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چقر",
+      "name": "چقر",
+      "nameEn": "چقر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حصار",
+      "name": "حصار",
+      "nameEn": "حصار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورکال",
+      "name": "شورکال",
+      "nameEn": "شورکال",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیلیگان",
+      "name": "شیلیگان",
+      "nameEn": "شیلیگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صفرقلعه",
+      "name": "صفرقلعه",
+      "nameEn": "صفرقلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غفارآباد",
+      "name": "غفارآباد",
+      "nameEn": "غفارآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قربان-آباد",
+      "name": "قربان آباد",
+      "nameEn": "قربان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزقان-دره",
+      "name": "قزقان دره",
+      "nameEn": "قزقان-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلخندان",
+      "name": "گلخندان",
+      "nameEn": "گلخندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرقلعه",
+      "name": "میرقلعه",
+      "nameEn": "میرقلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرت-آباد",
+      "name": "نصرت آباد",
+      "nameEn": "نصرت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یاقول",
+      "name": "یاقول",
+      "nameEn": "یاقول",
+      "geoSource": "osm"
+    },
+    {
+      "id": "artyk",
+      "name": "Artyk",
+      "nameEn": "artyk",
+      "geoSource": "osm"
+    },
+    {
+      "id": "bagtly-zamana",
+      "name": "Bagtly zamana",
+      "nameEn": "bagtly-zamana",
+      "geoSource": "osm"
+    },
+    {
+      "id": "gowut",
+      "name": "Gowşut",
+      "nameEn": "gowut",
+      "geoSource": "osm"
+    },
+    {
+      "id": "gowut-bekedi",
+      "name": "Gowşut bekedi",
+      "nameEn": "gowut-bekedi",
+      "geoSource": "osm"
+    },
+    {
+      "id": "gozgan",
+      "name": "Gozgan",
+      "nameEn": "gozgan",
+      "geoSource": "osm"
+    },
+    {
+      "id": "krengala",
+      "name": "Kürengala",
+      "nameEn": "krengala",
+      "geoSource": "osm"
+    },
+    {
+      "id": "mehinli",
+      "name": "Mehinli",
+      "nameEn": "mehinli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "soltandet",
+      "name": "Soltandeşt",
+      "nameEn": "soltandet",
+      "geoSource": "osm"
+    }
+  ]
+}

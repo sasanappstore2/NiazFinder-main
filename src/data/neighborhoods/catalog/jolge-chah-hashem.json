@@ -1,0 +1,25 @@
+{
+  "cityId": "jolge-chah-hashem",
+  "cityName": "جلگه چاه هاشم",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.718Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جلگه-چاه-هاشم",
+      "name": "جلگه چاه هاشم",
+      "nameEn": "jolge-chah-hashem",
+      "centroid": {
+        "lat": 27.12847628235717,
+        "lng": 59.33419534878486
+      },
+      "bbox": {
+        "south": 27.021989757024794,
+        "north": 27.234962807689545,
+        "west": 59.222108208321764,
+        "east": 59.44628248924795
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

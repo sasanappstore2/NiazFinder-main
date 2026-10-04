@@ -1,0 +1,559 @@
+{
+  "cityId": "biluvar",
+  "cityName": "بیلوار",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:53:31.855Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بیلوار",
+      "name": "بیلوار",
+      "nameEn": "biluvar",
+      "centroid": {
+        "lat": 34.68847950768954,
+        "lng": 47.102973022308774
+      },
+      "bbox": {
+        "south": 34.581992982357164,
+        "north": 34.79496603302192,
+        "west": 46.98206962564016,
+        "east": 47.22387641897738
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اسلام-آباد-بزه-رود",
+      "name": "اسلام آباد بزه رود",
+      "nameEn": "اسلام-آباد-بزه-رود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امیرآباد",
+      "name": "امیرآباد",
+      "nameEn": "امیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باش-گلان",
+      "name": "باش گلان",
+      "nameEn": "باش-گلان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باقرآباد-میان-رود",
+      "name": "باقرآباد میان رود",
+      "nameEn": "باقرآباد-میان-رود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بزه-رود",
+      "name": "بزه رود",
+      "nameEn": "بزه-رود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلشت",
+      "name": "بلشت",
+      "nameEn": "بلشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بولان",
+      "name": "بولان",
+      "nameEn": "بولان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهرام-آباد",
+      "name": "بهرام آباد",
+      "nameEn": "بهرام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پا-قلعه",
+      "name": "پا قلعه",
+      "nameEn": "پا-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پریان",
+      "name": "پریان",
+      "nameEn": "پریان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیرکاشان",
+      "name": "پیرکاشان",
+      "nameEn": "پیرکاشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ترازوبره",
+      "name": "ترازوبره",
+      "nameEn": "ترازوبره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تمل",
+      "name": "تمل",
+      "nameEn": "تمل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جبار-آباد-بالا",
+      "name": "جبار آباد بالا",
+      "nameEn": "جبار-آباد-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جبار-آباد-پائین",
+      "name": "جبار آباد پائین",
+      "nameEn": "جبار-آباد-پائین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جزر",
+      "name": "جزر",
+      "nameEn": "جزر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-کبود",
+      "name": "چشمه کبود",
+      "nameEn": "چشمه-کبود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چوب-تاشان",
+      "name": "چوب تاشان",
+      "nameEn": "چوب-تاشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حجت-آباد",
+      "name": "حجت آباد",
+      "nameEn": "حجت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حرتکه",
+      "name": "حرتکه",
+      "nameEn": "حرتکه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داراب",
+      "name": "داراب",
+      "nameEn": "داراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دارتوت",
+      "name": "دارتوت",
+      "nameEn": "دارتوت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دراب",
+      "name": "دراب",
+      "nameEn": "دراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-یار",
+      "name": "دولت یار",
+      "nameEn": "دولت-یار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-خران",
+      "name": "ده خران",
+      "nameEn": "ده-خران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیزگران",
+      "name": "دیزگران",
+      "nameEn": "دیزگران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رازیان",
+      "name": "رازیان",
+      "nameEn": "رازیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رزلانسر",
+      "name": "رزلانسر",
+      "nameEn": "رزلانسر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رزین",
+      "name": "رزین",
+      "nameEn": "رزین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روح-الله",
+      "name": "روح الله",
+      "nameEn": "روح-الله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زامله",
+      "name": "زامله",
+      "nameEn": "زامله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زین-الدین",
+      "name": "زین الدین",
+      "nameEn": "زین-الدین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساکنه",
+      "name": "ساکنه",
+      "nameEn": "ساکنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سالار-آباد",
+      "name": "سالار آباد",
+      "nameEn": "سالار-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراب-شاه-حسینی",
+      "name": "سراب شاه حسینی",
+      "nameEn": "سراب-شاه-حسینی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سربرزه",
+      "name": "سربرزه",
+      "nameEn": "سربرزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرتخت",
+      "name": "سرتخت",
+      "nameEn": "سرتخت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرزامله",
+      "name": "سرزامله",
+      "nameEn": "سرزامله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرنجگه",
+      "name": "سرنجگه",
+      "nameEn": "سرنجگه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرهفته",
+      "name": "سرهفته",
+      "nameEn": "سرهفته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلطانقلی",
+      "name": "سلطانقلی",
+      "nameEn": "سلطانقلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگ-سفید",
+      "name": "سنگ سفید",
+      "nameEn": "سنگ-سفید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سورنی-بالا",
+      "name": "سورنی بالا",
+      "nameEn": "سورنی-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سورنی-پائین",
+      "name": "سورنی پائین",
+      "nameEn": "سورنی-پائین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهاز",
+      "name": "سهاز",
+      "nameEn": "سهاز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاه-خانی",
+      "name": "سیاه خانی",
+      "nameEn": "سیاه-خانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدخانی",
+      "name": "سیدخانی",
+      "nameEn": "سیدخانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شریف-آباد",
+      "name": "شریف آباد",
+      "nameEn": "شریف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیروزآباد",
+      "name": "فیروزآباد",
+      "nameEn": "فیروزآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-حسن",
+      "name": "قره حسن",
+      "nameEn": "قره-حسن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزل",
+      "name": "قزل",
+      "nameEn": "قزل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزلدره",
+      "name": "قزلدره",
+      "nameEn": "قزلدره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق",
+      "name": "قشلاق",
+      "nameEn": "قشلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-بزه-رود",
+      "name": "قلعه بزه رود",
+      "nameEn": "قلعه-بزه-رود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-پیروز",
+      "name": "قلعه پیروز",
+      "nameEn": "قلعه-پیروز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-قشلاق",
+      "name": "قلعه قشلاق",
+      "nameEn": "قلعه-قشلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-لان",
+      "name": "قلعه لان",
+      "nameEn": "قلعه-لان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلوز-سفلی",
+      "name": "قلوز سفلی",
+      "nameEn": "قلوز-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلوز-علیا",
+      "name": "قلوز علیا",
+      "nameEn": "قلوز-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوروچ-ناک-سفلی",
+      "name": "قوروچ ناک سفلی",
+      "nameEn": "قوروچ-ناک-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کالیان-بالا",
+      "name": "کالیان بالا",
+      "nameEn": "کالیان-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کالیان-پائین",
+      "name": "کالیان پائین",
+      "nameEn": "کالیان-پائین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کالیان-وسط",
+      "name": "کالیان وسط",
+      "nameEn": "کالیان-وسط",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرم-بست",
+      "name": "کرم بست",
+      "nameEn": "کرم-بست",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کره-پویان",
+      "name": "کره پویان",
+      "nameEn": "کره-پویان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کم-شور",
+      "name": "کم شور",
+      "nameEn": "کم-شور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمال-آباد",
+      "name": "کمال آباد",
+      "nameEn": "کمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کندوله",
+      "name": "کندوله",
+      "nameEn": "کندوله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوره",
+      "name": "کوره",
+      "nameEn": "کوره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کولان",
+      "name": "کولان",
+      "nameEn": "کولان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهریز",
+      "name": "کهریز",
+      "nameEn": "کهریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گدار-آب",
+      "name": "گدار آب",
+      "nameEn": "گدار-آب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرماب",
+      "name": "گرماب",
+      "nameEn": "گرماب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گروران",
+      "name": "گروران",
+      "nameEn": "گروران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گند-آباد",
+      "name": "گند آباد",
+      "nameEn": "گند-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرزبانی",
+      "name": "مرزبانی",
+      "nameEn": "مرزبانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملخانه",
+      "name": "ملخانه",
+      "nameEn": "ملخانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مله-بید",
+      "name": "مله بید",
+      "nameEn": "مله-بید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مله-شیخ",
+      "name": "مله شیخ",
+      "nameEn": "مله-شیخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موچاخانی",
+      "name": "موچاخانی",
+      "nameEn": "موچاخانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میانرود",
+      "name": "میانرود",
+      "nameEn": "میانرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورمزان-سماق",
+      "name": "ورمزان سماق",
+      "nameEn": "ورمزان-سماق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وزمله",
+      "name": "وزمله",
+      "nameEn": "وزمله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وندرنی-علیا",
+      "name": "وندرنی علیا",
+      "nameEn": "وندرنی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هشلی",
+      "name": "هشلی",
+      "nameEn": "هشلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هنیاندر",
+      "name": "هنیاندر",
+      "nameEn": "هنیاندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هوکر",
+      "name": "هوکر",
+      "nameEn": "هوکر",
+      "geoSource": "osm"
+    }
+  ]
+}

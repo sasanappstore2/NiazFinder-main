@@ -1,0 +1,121 @@
+{
+  "cityId": "aras",
+  "cityName": "ارس",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.862Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-ارس",
+      "name": "شهرک ارس",
+      "nameEn": "شهرک-ارس",
+      "centroid": {
+        "lat": 39.066924781566655,
+        "lng": 45.2446699481235
+      },
+      "bbox": {
+        "south": 39.03142927312253,
+        "north": 39.102420290010784,
+        "west": 45.1989533510246,
+        "east": 45.290386545222404
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "مجتمع-اقامتی-آتا-محسن-رنجبری",
+      "name": "مجتمع اقامتی آتا محسن رنجبری",
+      "nameEn": "مجتمع-اقامتی-آتا-محسن-رنجبری",
+      "centroid": {
+        "lat": 39.091421499999996,
+        "lng": 45.3783926
+      },
+      "bbox": {
+        "south": 39.0885763,
+        "north": 39.0942667,
+        "west": 45.3747126,
+        "east": 45.3820726
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "bulqan",
+      "name": "Bulqan",
+      "nameEn": "bulqan",
+      "centroid": {
+        "lat": 39.18338275,
+        "lng": 45.3869756
+      },
+      "bbox": {
+        "south": 39.1797213,
+        "north": 39.1870442,
+        "west": 45.3785505,
+        "east": 45.3954007
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "cavidabad",
+      "name": "Cavidabad",
+      "nameEn": "cavidabad",
+      "centroid": {
+        "lat": 39.191063549999996,
+        "lng": 45.3761667
+      },
+      "bbox": {
+        "south": 39.1844152,
+        "north": 39.1977119,
+        "west": 45.3657781,
+        "east": 45.3865553
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "liabad",
+      "name": "Əliabad",
+      "nameEn": "liabad",
+      "centroid": {
+        "lat": 39.048373465778084,
+        "lng": 45.12734822027614
+      },
+      "bbox": {
+        "south": 39.012877957333956,
+        "north": 39.08386897422221,
+        "west": 45.08163162317724,
+        "east": 45.17306481737504
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "qaracuq",
+      "name": "Qaracuq",
+      "nameEn": "qaracuq",
+      "centroid": {
+        "lat": 39.192363900000004,
+        "lng": 45.389573799999994
+      },
+      "bbox": {
+        "south": 39.1873311,
+        "north": 39.1973967,
+        "west": 45.380987,
+        "east": 45.3981606
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "qaraxanbyli",
+      "name": "Qaraxanbəyli",
+      "nameEn": "qaraxanbyli",
+      "centroid": {
+        "lat": 39.1895047,
+        "lng": 45.3936629
+      },
+      "bbox": {
+        "south": 39.1853701,
+        "north": 39.1936393,
+        "west": 45.3869375,
+        "east": 45.4003883
+      },
+      "geoSource": "osm"
+    }
+  ]
+}

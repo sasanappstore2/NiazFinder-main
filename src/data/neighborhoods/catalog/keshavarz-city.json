@@ -1,0 +1,25 @@
+{
+  "cityId": "keshavarz-city",
+  "cityName": "کشاورز",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.968Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کشاورز",
+      "name": "کشاورز",
+      "nameEn": "keshavarz-city",
+      "centroid": {
+        "lat": 36.828963149730505,
+        "lng": 46.63664088761632
+      },
+      "bbox": {
+        "south": 36.722476624398126,
+        "north": 36.935449675062884,
+        "west": 46.51212906636038,
+        "east": 46.76115270887227
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

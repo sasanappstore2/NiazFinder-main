@@ -1,0 +1,145 @@
+{
+  "cityId": "ziaa-abad",
+  "cityName": "ضیاء آباد",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:49:49.956Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ضیاء-آباد",
+      "name": "ضیاء آباد",
+      "nameEn": "ziaa-abad",
+      "centroid": {
+        "lat": 35.944444218038086,
+        "lng": 49.453326676677236
+      },
+      "bbox": {
+        "south": 35.83795769270571,
+        "north": 36.050930743370465,
+        "west": 49.33870900508375,
+        "east": 49.56794434827073
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "توده-بینآرپاشال",
+      "name": "توده بین/آرپاشال",
+      "nameEn": "توده-بینآرپاشال",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جرندق",
+      "name": "جرندق",
+      "nameEn": "جرندق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حصارقاجار",
+      "name": "حصارقاجار",
+      "nameEn": "حصارقاجار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حیدریه",
+      "name": "حیدریه",
+      "nameEn": "حیدریه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرمدشت",
+      "name": "خرمدشت",
+      "nameEn": "خرمدشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خنداب",
+      "name": "خنداب",
+      "nameEn": "خنداب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داکان",
+      "name": "داکان",
+      "nameEn": "داکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رادکان",
+      "name": "رادکان",
+      "nameEn": "رادکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیف-آباد",
+      "name": "سیف آباد",
+      "nameEn": "سیف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شنین",
+      "name": "شنین",
+      "nameEn": "شنین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فارسجین",
+      "name": "فارسجین",
+      "nameEn": "فارسجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاسم-آباد",
+      "name": "قاسم آباد",
+      "nameEn": "قاسم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قروه",
+      "name": "قروه",
+      "nameEn": "قروه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-باغ",
+      "name": "قره باغ",
+      "nameEn": "قره-باغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-جوق",
+      "name": "قلعه جوق",
+      "nameEn": "قلعه-جوق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قمچ-آباد",
+      "name": "قمچ آباد",
+      "nameEn": "قمچ-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نودهک",
+      "name": "نودهک",
+      "nameEn": "نودهک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورسج-دودانگه",
+      "name": "ورسج دودانگه",
+      "nameEn": "ورسج-دودانگه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یام-چشمه",
+      "name": "یام چشمه",
+      "nameEn": "یام-چشمه",
+      "geoSource": "osm"
+    }
+  ]
+}

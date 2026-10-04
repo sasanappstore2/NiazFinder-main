@@ -1,0 +1,25 @@
+{
+  "cityId": "ramjerd",
+  "cityName": "رمژرد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.248Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "رمژرد",
+      "name": "رمژرد",
+      "nameEn": "ramjerd",
+      "centroid": {
+        "lat": 31.071067354331955,
+        "lng": 52.70977159508649
+      },
+      "bbox": {
+        "south": 30.96458082899958,
+        "north": 31.17755387966433,
+        "west": 52.60021634750863,
+        "east": 52.819326842664346
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

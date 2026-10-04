@@ -1,0 +1,229 @@
+{
+  "cityId": "fasarud",
+  "cityName": "فسارود",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:15:23.502Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فسارود",
+      "name": "فسارود",
+      "nameEn": "fasarud",
+      "centroid": {
+        "lat": 28.74322875623428,
+        "lng": 54.31875640622178
+      },
+      "bbox": {
+        "south": 28.636742230901906,
+        "north": 28.849715281566656,
+        "west": 54.2127492527568,
+        "east": 54.42476355968675
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اسماعیل-آباد",
+      "name": "اسماعیل آباد",
+      "nameEn": "اسماعیل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اعراب-چگینی",
+      "name": "اعراب چگینی",
+      "nameEn": "اعراب-چگینی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بریسکان",
+      "name": "بریسکان",
+      "nameEn": "بریسکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهادران",
+      "name": "بهادران",
+      "nameEn": "بهادران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پاسالاری",
+      "name": "پاسالاری",
+      "nameEn": "پاسالاری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پاسخن",
+      "name": "پاسخن",
+      "nameEn": "پاسخن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جونان",
+      "name": "جونان",
+      "nameEn": "جونان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-بید",
+      "name": "چاه بید",
+      "nameEn": "چاه-بید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داراکویه",
+      "name": "داراکویه",
+      "nameEn": "داراکویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشت-پیرغیب",
+      "name": "دشت پیرغیب",
+      "nameEn": "دشت-پیرغیب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رشیدآباد",
+      "name": "رشیدآباد",
+      "nameEn": "رشیدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زنگنه",
+      "name": "زنگنه",
+      "nameEn": "زنگنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساختمان-قنبری",
+      "name": "ساختمان قنبری",
+      "nameEn": "ساختمان-قنبری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سعادت-آباد",
+      "name": "سعادت آباد",
+      "nameEn": "سعادت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلطان-آباد",
+      "name": "سلطان آباد",
+      "nameEn": "سلطان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-فجر",
+      "name": "شهرک فجر",
+      "nameEn": "شهرک-فجر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صدرآباد",
+      "name": "صدرآباد",
+      "nameEn": "صدرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آبادبالا",
+      "name": "علی آبادبالا",
+      "nameEn": "علی-آبادبالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیض-آباد",
+      "name": "فیض آباد",
+      "nameEn": "فیض-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کریم-آباد",
+      "name": "کریم آباد",
+      "nameEn": "کریم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوهجرد",
+      "name": "کوهجرد",
+      "nameEn": "کوهجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گودشانه",
+      "name": "گودشانه",
+      "nameEn": "گودشانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گودشانه-اسمی-خان",
+      "name": "گودشانه اسمی خان",
+      "nameEn": "گودشانه-اسمی-خان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مادوان",
+      "name": "مادوان",
+      "nameEn": "مادوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مربوئیه",
+      "name": "مربوئیه",
+      "nameEn": "مربوئیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منصورآباد",
+      "name": "منصورآباد",
+      "nameEn": "منصورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منصوریه",
+      "name": "منصوریه",
+      "nameEn": "منصوریه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآبادمزیدی",
+      "name": "مهرآبادمزیدی",
+      "nameEn": "مهرآبادمزیدی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نظرآباد",
+      "name": "نظرآباد",
+      "nameEn": "نظرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هادی-آباد",
+      "name": "هادی آباد",
+      "nameEn": "هادی-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

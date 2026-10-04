@@ -1,0 +1,31 @@
+{
+  "cityId": "younesi",
+  "cityName": "یونسی",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:02:37.242Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "یونسی",
+      "name": "یونسی",
+      "nameEn": "younesi",
+      "centroid": {
+        "lat": 34.752761771613365,
+        "lng": 58.230950754088866
+      },
+      "bbox": {
+        "south": 34.646275246280986,
+        "north": 34.859248296945744,
+        "west": 58.114256039421825,
+        "east": 58.347645468755914
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرندیز",
+      "name": "مرندیز",
+      "nameEn": "مرندیز",
+      "geoSource": "osm"
+    }
+  ]
+}

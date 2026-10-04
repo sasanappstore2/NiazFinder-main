@@ -1,0 +1,25 @@
+{
+  "cityId": "sar-aasiab-yousefi",
+  "cityName": "سر آسیاب یوسفی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.554Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سر-آسیاب-یوسفی",
+      "name": "سر آسیاب یوسفی",
+      "nameEn": "sar-aasiab-yousefi",
+      "centroid": {
+        "lat": 31.053883696550482,
+        "lng": 50.27396014435764
+      },
+      "bbox": {
+        "south": 30.947397171218107,
+        "north": 31.160370221882857,
+        "west": 50.16093566455732,
+        "east": 50.386984624157954
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

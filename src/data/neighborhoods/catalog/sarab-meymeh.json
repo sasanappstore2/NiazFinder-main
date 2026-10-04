@@ -1,0 +1,103 @@
+{
+  "cityId": "sarab-meymeh",
+  "cityName": "سراب میمه",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:18:53.197Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سراب-میمه",
+      "name": "سراب میمه",
+      "nameEn": "sarab-meymeh",
+      "centroid": {
+        "lat": 33.19825724204097,
+        "lng": 47.04465199104927
+      },
+      "bbox": {
+        "south": 33.09177071670859,
+        "north": 33.304743767373346,
+        "west": 46.927598271984664,
+        "east": 47.16170571011388
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آب-چشمه",
+      "name": "آب چشمه",
+      "nameEn": "آب-چشمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابهر-پایین",
+      "name": "ابهر پایین",
+      "nameEn": "ابهر-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اگره-بید",
+      "name": "اگره بید",
+      "nameEn": "اگره-بید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بان-هلان-بالا",
+      "name": "بان هلان بالا",
+      "nameEn": "بان-هلان-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بدره",
+      "name": "بدره",
+      "nameEn": "بدره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تختان",
+      "name": "تختان",
+      "nameEn": "تختان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خربزان-بالا",
+      "name": "خربزان بالا",
+      "nameEn": "خربزان-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرآب",
+      "name": "زرآب",
+      "nameEn": "زرآب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گچ-کوبان",
+      "name": "گچ کوبان",
+      "nameEn": "گچ-کوبان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوراب-سفلی",
+      "name": "گوراب سفلی",
+      "nameEn": "گوراب-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوراب-علیا",
+      "name": "گوراب علیا",
+      "nameEn": "گوراب-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-خیبر",
+      "name": "مزرعه خیبر",
+      "nameEn": "مزرعه-خیبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میمه",
+      "name": "میمه",
+      "nameEn": "میمه",
+      "geoSource": "osm"
+    }
+  ]
+}

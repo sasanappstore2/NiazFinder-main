@@ -1,0 +1,191 @@
+{
+  "cityId": "ezhye",
+  "cityName": "اژیه",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:35:39.105Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "میدان-خلیج-فارس",
+      "name": "میدان خلیج فارس",
+      "nameEn": "میدان-خلیج-فارس",
+      "centroid": {
+        "lat": 32.487716829572406,
+        "lng": 52.21960433878649
+      },
+      "bbox": {
+        "south": 32.43447356690622,
+        "north": 32.54096009223859,
+        "west": 52.156481217201716,
+        "east": 52.28272746037126
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-کشاورز",
+      "name": "میدان کشاورز",
+      "nameEn": "میدان-کشاورز",
+      "centroid": {
+        "lat": 32.547120303967596,
+        "lng": 52.08887621314687
+      },
+      "bbox": {
+        "south": 32.49387704130141,
+        "north": 32.60036356663378,
+        "west": 52.025753091562095,
+        "east": 52.15199933473164
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابوالخیر",
+      "name": "ابوالخیر",
+      "nameEn": "ابوالخیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اژیه",
+      "name": "اژیه",
+      "nameEn": "اژیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امامزاده-عبدالعزیز",
+      "name": "امامزاده عبدالعزیز",
+      "nameEn": "امامزاده-عبدالعزیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بزم",
+      "name": "بزم",
+      "nameEn": "بزم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جندان",
+      "name": "جندان",
+      "nameEn": "جندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خورچان",
+      "name": "خورچان",
+      "nameEn": "خورچان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رنگیده",
+      "name": "رنگیده",
+      "nameEn": "رنگیده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سکان",
+      "name": "سکان",
+      "nameEn": "سکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهران",
+      "name": "سهران",
+      "nameEn": "سهران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیان",
+      "name": "سیان",
+      "nameEn": "سیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدان",
+      "name": "سیدان",
+      "nameEn": "سیدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شریف-آباد",
+      "name": "شریف آباد",
+      "nameEn": "شریف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طهمورثات",
+      "name": "طهمورثات",
+      "nameEn": "طهمورثات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فارفان",
+      "name": "فارفان",
+      "nameEn": "فارفان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیض-آباد",
+      "name": "فیض آباد",
+      "nameEn": "فیض-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-بالاسیان",
+      "name": "قلعه بالاسیان",
+      "nameEn": "قلعه-بالاسیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قمشان",
+      "name": "قمشان",
+      "nameEn": "قمشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قورتان",
+      "name": "قورتان",
+      "nameEn": "قورتان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کفران",
+      "name": "کفران",
+      "nameEn": "کفران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کفرود",
+      "name": "کفرود",
+      "nameEn": "کفرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گیشی",
+      "name": "گیشی",
+      "nameEn": "گیشی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-شورا",
+      "name": "میدان شورا",
+      "nameEn": "میدان-شورا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هاشم-آباد",
+      "name": "هاشم آباد",
+      "nameEn": "هاشم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هرند",
+      "name": "هرند",
+      "nameEn": "هرند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هلارته",
+      "name": "هلارته",
+      "nameEn": "هلارته",
+      "geoSource": "osm"
+    }
+  ]
+}

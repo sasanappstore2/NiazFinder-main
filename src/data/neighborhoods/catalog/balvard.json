@@ -1,0 +1,25 @@
+{
+  "cityId": "balvard",
+  "cityName": "بلورد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.197Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بلورد",
+      "name": "بلورد",
+      "nameEn": "balvard",
+      "centroid": {
+        "lat": 29.538241011534318,
+        "lng": 56.217327406952194
+      },
+      "bbox": {
+        "south": 29.431754486201942,
+        "north": 29.644727536866693,
+        "west": 56.10703940375764,
+        "east": 56.32761541014675
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

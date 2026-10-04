@@ -1,0 +1,25 @@
+{
+  "cityId": "kourin",
+  "cityName": "کورین",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.311Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کورین",
+      "name": "کورین",
+      "nameEn": "kourin",
+      "centroid": {
+        "lat": 28.931271894035213,
+        "lng": 60.16055571125431
+      },
+      "bbox": {
+        "south": 28.824785368702837,
+        "north": 29.037758419367588,
+        "west": 60.047536805056986,
+        "east": 60.27357461745164
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

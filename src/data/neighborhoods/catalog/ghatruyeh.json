@@ -1,0 +1,97 @@
+{
+  "cityId": "ghatruyeh",
+  "cityName": "قطرویه",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:17:15.666Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قطرویه",
+      "name": "قطرویه",
+      "nameEn": "ghatruyeh",
+      "centroid": {
+        "lat": 29.175818760079054,
+        "lng": 54.93814447122724
+      },
+      "bbox": {
+        "south": 29.06933223474668,
+        "north": 29.28230528541143,
+        "west": 54.831757681144296,
+        "east": 55.04453126131018
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "بادامو",
+      "name": "بادامو",
+      "nameEn": "بادامو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تهرانی",
+      "name": "تهرانی",
+      "nameEn": "تهرانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-خرجکی",
+      "name": "چاه خرجکی",
+      "nameEn": "چاه-خرجکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چنارویه",
+      "name": "چنارویه",
+      "nameEn": "چنارویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سبزویه",
+      "name": "سبزویه",
+      "nameEn": "سبزویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگ-زور",
+      "name": "سنگ زور",
+      "nameEn": "سنگ-زور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شط-بادام",
+      "name": "شط بادام",
+      "nameEn": "شط-بادام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورو",
+      "name": "شورو",
+      "nameEn": "شورو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-قطاربنه",
+      "name": "شهرک قطاربنه",
+      "nameEn": "شهرک-قطاربنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عربویه",
+      "name": "عربویه",
+      "nameEn": "عربویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلندر-کشته",
+      "name": "قلندر کشته",
+      "nameEn": "قلندر-کشته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نیلو",
+      "name": "نیلو",
+      "nameEn": "نیلو",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "sandarak",
+  "cityName": "سندرک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.535Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سندرک",
+      "name": "سندرک",
+      "nameEn": "sandarak",
+      "centroid": {
+        "lat": 26.769770592310454,
+        "lng": 57.58178125331948
+      },
+      "bbox": {
+        "south": 26.66328406697808,
+        "north": 26.87625711764283,
+        "west": 57.47216380431419,
+        "east": 57.691398702324754
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

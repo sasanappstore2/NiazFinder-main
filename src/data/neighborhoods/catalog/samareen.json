@@ -1,0 +1,25 @@
+{
+  "cityId": "samareen",
+  "cityName": "ثمرین",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.513Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "ثمرین",
+      "name": "ثمرین",
+      "nameEn": "samareen",
+      "centroid": {
+        "lat": 38.399815879841896,
+        "lng": 48.149410122585664
+      },
+      "bbox": {
+        "south": 38.29332935450952,
+        "north": 38.506302405174274,
+        "west": 48.02362991785732,
+        "east": 48.27519032731401
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

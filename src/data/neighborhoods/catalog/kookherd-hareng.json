@@ -1,0 +1,25 @@
+{
+  "cityId": "kookherd-hareng",
+  "cityName": "کوخرد هرنگ",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.273Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "کوخرد-هرنگ",
+      "name": "کوخرد هرنگ",
+      "nameEn": "kookherd-hareng",
+      "centroid": {
+        "lat": 27.062216146819978,
+        "lng": 54.618682866517915
+      },
+      "bbox": {
+        "south": 26.955729621487603,
+        "north": 27.168702672152353,
+        "west": 54.512646090404594,
+        "east": 54.72471964263124
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

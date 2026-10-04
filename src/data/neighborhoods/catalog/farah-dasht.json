@@ -1,0 +1,25 @@
+{
+  "cityId": "farah-dasht",
+  "cityName": "فرح دشت",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.958Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فرح-دشت",
+      "name": "فرح دشت",
+      "nameEn": "farah-dasht",
+      "centroid": {
+        "lat": 35.25990669137621,
+        "lng": 58.713351771119335
+      },
+      "bbox": {
+        "south": 35.15342016604383,
+        "north": 35.36639321670859,
+        "west": 58.59250969250789,
+        "east": 58.83419384973078
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

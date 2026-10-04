@@ -1,0 +1,25 @@
+{
+  "cityId": "shadeghan",
+  "cityName": "شادگان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.720Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شادگان",
+      "name": "شادگان",
+      "nameEn": "shadeghan",
+      "centroid": {
+        "lat": 30.653834438663313,
+        "lng": 48.67884477508395
+      },
+      "bbox": {
+        "south": 30.631117313259075,
+        "north": 30.67655156406755,
+        "west": 48.65432897145925,
+        "east": 48.703360578708654
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

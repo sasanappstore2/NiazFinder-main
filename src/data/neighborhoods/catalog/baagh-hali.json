@@ -1,0 +1,193 @@
+{
+  "cityId": "baagh-hali",
+  "cityName": "باغ حلی",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:33:44.234Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سه-راه-سلطانیه",
+      "name": "سه راه سلطانیه",
+      "nameEn": "سه-راه-سلطانیه",
+      "centroid": {
+        "lat": 36.54797464164571,
+        "lng": 48.881705222434086
+      },
+      "bbox": {
+        "south": 36.44148811631333,
+        "north": 36.65446116697809,
+        "west": 48.759382368032504,
+        "east": 49.00402807683567
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آقزوج",
+      "name": "آقزوج",
+      "nameEn": "آقزوج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسکند",
+      "name": "اسکند",
+      "nameEn": "اسکند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "المکی",
+      "name": "المکی",
+      "nameEn": "المکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امیرآباد",
+      "name": "امیرآباد",
+      "nameEn": "امیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برنقور",
+      "name": "برنقور",
+      "nameEn": "برنقور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوئین",
+      "name": "بوئین",
+      "nameEn": "بوئین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوجی",
+      "name": "بوجی",
+      "nameEn": "بوجی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جورین-ده",
+      "name": "جورین ده",
+      "nameEn": "جورین-ده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیرآباد",
+      "name": "خیرآباد",
+      "nameEn": "خیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوسنگان",
+      "name": "دوسنگان",
+      "nameEn": "دوسنگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرخه-دیزج",
+      "name": "سرخه دیزج",
+      "nameEn": "سرخه-دیزج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلطانیه",
+      "name": "سلطانیه",
+      "nameEn": "سلطانیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنبل-آباد",
+      "name": "سنبل آباد",
+      "nameEn": "سنبل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-شهدا",
+      "name": "شهرک شهدا",
+      "nameEn": "شهرک-شهدا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-آباد",
+      "name": "عباس آباد",
+      "nameEn": "عباس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-بلاغ",
+      "name": "قره بلاغ",
+      "nameEn": "قره-بلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق",
+      "name": "قشلاق",
+      "nameEn": "قشلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-سلطانیه",
+      "name": "قلعه سلطانیه",
+      "nameEn": "قلعه-سلطانیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاکا-آباد",
+      "name": "کاکا آباد",
+      "nameEn": "کاکا-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کردناب",
+      "name": "کردناب",
+      "nameEn": "کردناب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنگه",
+      "name": "کنگه",
+      "nameEn": "کنگه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلجه-امام",
+      "name": "گلجه امام",
+      "nameEn": "گلجه-امام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مروارید",
+      "name": "مروارید",
+      "nameEn": "مروارید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مشک-آباد",
+      "name": "مشک آباد",
+      "nameEn": "مشک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهمان-شهر",
+      "name": "مهمان شهر",
+      "nameEn": "مهمان-شهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ونونان",
+      "name": "ونونان",
+      "nameEn": "ونونان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یوسف-آباد",
+      "name": "یوسف آباد",
+      "nameEn": "یوسف-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

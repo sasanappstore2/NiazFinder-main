@@ -1,0 +1,25 @@
+{
+  "cityId": "golestan-baharestan",
+  "cityName": "گلستان (تهران)",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.328Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "گلستان-تهران",
+      "name": "گلستان (تهران)",
+      "nameEn": "golestan-baharestan",
+      "centroid": {
+        "lat": 35.517372971129,
+        "lng": 51.18982765993026
+      },
+      "bbox": {
+        "south": 35.49630283731656,
+        "north": 35.538443104941436,
+        "west": 51.16633576547775,
+        "east": 51.213319554382764
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

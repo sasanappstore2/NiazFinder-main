@@ -1,0 +1,37 @@
+{
+  "cityId": "golzar-city",
+  "cityName": "گلزار",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:58:55.067Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گلزار",
+      "name": "گلزار",
+      "nameEn": "golzar-city",
+      "centroid": {
+        "lat": 29.6213221094143,
+        "lng": 57.13918771544745
+      },
+      "bbox": {
+        "south": 29.514835584081926,
+        "north": 29.727808634746676,
+        "west": 57.02496072082596,
+        "east": 57.253414710068945
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غبیرا",
+      "name": "غبیرا",
+      "nameEn": "غبیرا",
+      "geoSource": "osm"
+    }
+  ]
+}

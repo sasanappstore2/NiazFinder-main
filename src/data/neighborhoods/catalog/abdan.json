@@ -1,0 +1,133 @@
+{
+  "cityId": "abdan",
+  "cityName": "آبدان",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:29:25.534Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "آبدان",
+      "name": "آبدان",
+      "nameEn": "abdan",
+      "centroid": {
+        "lat": 28.058440287926697,
+        "lng": 51.832106781606356
+      },
+      "bbox": {
+        "south": 27.95195376259432,
+        "north": 28.164926813259072,
+        "west": 51.72188686460495,
+        "east": 51.94232669860776
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "احشام-نو",
+      "name": "احشام نو",
+      "nameEn": "احشام-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغان",
+      "name": "باغان",
+      "nameEn": "باغان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بحردن",
+      "name": "بحردن",
+      "nameEn": "بحردن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تل-سنگ",
+      "name": "تل سنگ",
+      "nameEn": "تل-سنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جاشک",
+      "name": "جاشک",
+      "nameEn": "جاشک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرچشمه",
+      "name": "سرچشمه",
+      "nameEn": "سرچشمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرمستان",
+      "name": "سرمستان",
+      "nameEn": "سرمستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سورو",
+      "name": "سورو",
+      "nameEn": "سورو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهول",
+      "name": "سهول",
+      "nameEn": "سهول",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنارترشان",
+      "name": "کنارترشان",
+      "nameEn": "کنارترشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گشی",
+      "name": "گشی",
+      "nameEn": "گشی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گله-زنی",
+      "name": "گله زنی",
+      "nameEn": "گله-زنی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنوی",
+      "name": "گنوی",
+      "nameEn": "گنوی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لوهک",
+      "name": "لوهک",
+      "nameEn": "لوهک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملاسالمی",
+      "name": "ملاسالمی",
+      "nameEn": "ملاسالمی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مله-گاه",
+      "name": "مله گاه",
+      "nameEn": "مله-گاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوکن",
+      "name": "نوکن",
+      "nameEn": "نوکن",
+      "geoSource": "osm"
+    }
+  ]
+}

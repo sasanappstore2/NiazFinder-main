@@ -1,0 +1,25 @@
+{
+  "cityId": "nobaran",
+  "cityName": "نوبران",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.957Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "نوبران",
+      "name": "نوبران",
+      "nameEn": "nobaran",
+      "centroid": {
+        "lat": 35.17106139787998,
+        "lng": 49.70983089991188
+      },
+      "bbox": {
+        "south": 35.0645748725476,
+        "north": 35.27754792321236,
+        "west": 49.59124389114351,
+        "east": 49.828417908680244
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

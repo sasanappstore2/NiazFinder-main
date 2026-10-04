@@ -1,0 +1,25 @@
+{
+  "cityId": "ziviye",
+  "cityName": "زیویه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.443Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زیویه",
+      "name": "زیویه",
+      "nameEn": "ziviye",
+      "centroid": {
+        "lat": 36.290615249335254,
+        "lng": 46.69087540250305
+      },
+      "bbox": {
+        "south": 36.184128724002875,
+        "north": 36.39710177466763,
+        "west": 46.569142526384255,
+        "east": 46.812608278621845
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

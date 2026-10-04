@@ -1,0 +1,283 @@
+{
+  "cityId": "chenarood",
+  "cityName": "چنارود",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:38:51.222Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چنارود",
+      "name": "چنارود",
+      "nameEn": "chenarood",
+      "centroid": {
+        "lat": 32.63488919827524,
+        "lng": 50.42731935578724
+      },
+      "bbox": {
+        "south": 32.52840267294286,
+        "north": 32.74137572360762,
+        "west": 50.31342536468352,
+        "east": 50.54121334689096
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آزادگان",
+      "name": "آزادگان",
+      "nameEn": "آزادگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اصفهانک-ساکی",
+      "name": "اصفهانک ساکی",
+      "nameEn": "اصفهانک-ساکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اصفهانک-سفلی",
+      "name": "اصفهانک سفلی",
+      "nameEn": "اصفهانک-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اصفهانک-علیا",
+      "name": "اصفهانک علیا",
+      "nameEn": "اصفهانک-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اصفهانک-مشاعی",
+      "name": "اصفهانک مشاعی",
+      "nameEn": "اصفهانک-مشاعی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اگریجه",
+      "name": "اگریجه",
+      "nameEn": "اگریجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اورگان",
+      "name": "اورگان",
+      "nameEn": "اورگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرزگان-خراج",
+      "name": "پرزگان خراج",
+      "nameEn": "پرزگان-خراج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرزگان-سفلی",
+      "name": "پرزگان سفلی",
+      "nameEn": "پرزگان-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرمه-سفلی",
+      "name": "پرمه سفلی",
+      "nameEn": "پرمه-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرمه-علیا",
+      "name": "پرمه علیا",
+      "nameEn": "پرمه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تقی-آباد",
+      "name": "تقی آباد",
+      "nameEn": "تقی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تهلگی-سفلی",
+      "name": "تهلگی سفلی",
+      "nameEn": "تهلگی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلال-آباد",
+      "name": "جلال آباد",
+      "nameEn": "جلال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمندگان-سفلی",
+      "name": "چشمندگان سفلی",
+      "nameEn": "چشمندگان-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمندگان-علیا",
+      "name": "چشمندگان علیا",
+      "nameEn": "چشمندگان-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمندگان-مجید",
+      "name": "چشمندگان مجید",
+      "nameEn": "چشمندگان-مجید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهل-چشمه",
+      "name": "چهل چشمه",
+      "nameEn": "چهل-چشمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حرمانک",
+      "name": "حرمانک",
+      "nameEn": "حرمانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حیدرآباد",
+      "name": "حیدرآباد",
+      "nameEn": "حیدرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیرآباد",
+      "name": "خیرآباد",
+      "nameEn": "خیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درک-آباد",
+      "name": "درک آباد",
+      "nameEn": "درک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره-سیب",
+      "name": "دره سیب",
+      "nameEn": "دره-سیب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره-مهدی-قلی",
+      "name": "دره مهدی قلی",
+      "nameEn": "دره-مهدی-قلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-بادسفلی",
+      "name": "ده بادسفلی",
+      "nameEn": "ده-بادسفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-بادعلیا",
+      "name": "ده بادعلیا",
+      "nameEn": "ده-بادعلیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عادگان",
+      "name": "عادگان",
+      "nameEn": "عادگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فراموشجان",
+      "name": "فراموشجان",
+      "nameEn": "فراموشجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-زنبور-سفلی",
+      "name": "قلعه زنبور سفلی",
+      "nameEn": "قلعه-زنبور-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-زنبور-علیا",
+      "name": "قلعه زنبور علیا",
+      "nameEn": "قلعه-زنبور-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلیچه",
+      "name": "کلیچه",
+      "nameEn": "کلیچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمیتک",
+      "name": "کمیتک",
+      "nameEn": "کمیتک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-سفید-دولت-آباد",
+      "name": "گل سفید دولت آباد",
+      "nameEn": "گل-سفید-دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لگاله",
+      "name": "لگاله",
+      "nameEn": "لگاله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد",
+      "name": "محمودآباد",
+      "nameEn": "محمودآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورباد",
+      "name": "ورباد",
+      "nameEn": "ورباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورعبداله",
+      "name": "ورعبداله",
+      "nameEn": "ورعبداله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ونک-سفلی",
+      "name": "ونک سفلی",
+      "nameEn": "ونک-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ونک-علیا",
+      "name": "ونک علیا",
+      "nameEn": "ونک-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ali-abad",
+      "name": "Ali Abad",
+      "nameEn": "ali-abad",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "cityId": "roniz",
+  "cityName": "رونیز",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:05:45.894Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "رونیز",
+      "name": "رونیز",
+      "nameEn": "roniz",
+      "centroid": {
+        "lat": 29.24987023952569,
+        "lng": 53.882409472523705
+      },
+      "bbox": {
+        "south": 29.143383714193316,
+        "north": 29.356356764858067,
+        "west": 53.77575267075059,
+        "east": 53.98906627429682
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "بدیر",
+      "name": "بدیر",
+      "nameEn": "بدیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنوان",
+      "name": "بنوان",
+      "nameEn": "بنوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنگه-کرم",
+      "name": "تنگه کرم",
+      "nameEn": "تنگه-کرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دامنه",
+      "name": "دامنه",
+      "nameEn": "دامنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دربندان",
+      "name": "دربندان",
+      "nameEn": "دربندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دستجرد",
+      "name": "دستجرد",
+      "nameEn": "دستجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهویه",
+      "name": "دهویه",
+      "nameEn": "دهویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-تنگه-کرم",
+      "name": "روستای تنگه کرم",
+      "nameEn": "روستای-تنگه-کرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رونیز-سفلی",
+      "name": "رونیز سفلی",
+      "nameEn": "رونیز-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهل-آباد",
+      "name": "سهل آباد",
+      "nameEn": "سهل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شمس-آباد",
+      "name": "شمس آباد",
+      "nameEn": "شمس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرستان",
+      "name": "شهرستان",
+      "nameEn": "شهرستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-آباد",
+      "name": "عباس آباد",
+      "nameEn": "عباس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-سرخک",
+      "name": "علی آباد سرخک",
+      "nameEn": "علی-آباد-سرخک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-شمس",
+      "name": "علی آباد شمس",
+      "nameEn": "علی-آباد-شمس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کچویه",
+      "name": "کچویه",
+      "nameEn": "کچویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرده",
+      "name": "گرده",
+      "nameEn": "گرده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لای-خرمی",
+      "name": "لای خرمی",
+      "nameEn": "لای-خرمی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ماه-فرخان",
+      "name": "ماه فرخان",
+      "nameEn": "ماه-فرخان",
+      "geoSource": "osm"
+    }
+  ]
+}

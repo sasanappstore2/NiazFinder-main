@@ -1,0 +1,1027 @@
+{
+  "cityId": "aslandooz",
+  "cityName": "اصلاندوز",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:42:44.137Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "اصلاندوز",
+      "name": "اصلاندوز",
+      "nameEn": "aslandooz",
+      "centroid": {
+        "lat": 39.421567102120015,
+        "lng": 47.553077265437466
+      },
+      "bbox": {
+        "south": 39.315080576787636,
+        "north": 39.528053627452394,
+        "west": 47.42837360991304,
+        "east": 47.677780920961894
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آق-قباق-علیا",
+      "name": "آق قباق علیا",
+      "nameEn": "آق-قباق-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسد-قشلاقی-۱",
+      "name": "اسد قشلاقی ۱",
+      "nameEn": "اسد-قشلاقی-۱",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسد-قشلاقی-۲",
+      "name": "اسد قشلاقی ۲",
+      "nameEn": "اسد-قشلاقی-۲",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسد-قشلاقی-۳",
+      "name": "اسد قشلاقی ۳",
+      "nameEn": "اسد-قشلاقی-۳",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسدکندی",
+      "name": "اسدکندی",
+      "nameEn": "اسدکندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسم-علی-کندی-۱",
+      "name": "اسم علی کندی ۱",
+      "nameEn": "اسم-علی-کندی-۱",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسم-علی-کندی-۲",
+      "name": "اسم علی کندی ۲",
+      "nameEn": "اسم-علی-کندی-۲",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اق-قباق-سفلی",
+      "name": "اق قباق سفلی",
+      "nameEn": "اق-قباق-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الم-لو-تبریز",
+      "name": "الم لو تبریز",
+      "nameEn": "الم-لو-تبریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الم-لو-شاه-علی",
+      "name": "الم لو شاه علی",
+      "nameEn": "الم-لو-شاه-علی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوزن-تپه-سفلی",
+      "name": "اوزن تپه سفلی",
+      "nameEn": "اوزن-تپه-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوزن-تپه-علیا",
+      "name": "اوزن تپه علیا",
+      "nameEn": "اوزن-تپه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایدر-سفلی",
+      "name": "ایدر سفلی",
+      "nameEn": "ایدر-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایدیر-علیا",
+      "name": "ایدیر علیا",
+      "nameEn": "ایدیر-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایری-بوجاق",
+      "name": "ایری بوجاق",
+      "nameEn": "ایری-بوجاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغشلو-کندی",
+      "name": "باغشلو کندی",
+      "nameEn": "باغشلو-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باقراوغلی",
+      "name": "باقراوغلی",
+      "nameEn": "باقراوغلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بران-سلفی",
+      "name": "بران سلفی",
+      "nameEn": "بران-سلفی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بران-علیا",
+      "name": "بران علیا",
+      "nameEn": "بران-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوزچه-سفلی",
+      "name": "بوزچه سفلی",
+      "nameEn": "بوزچه-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوزچه-علیا",
+      "name": "بوزچه علیا",
+      "nameEn": "بوزچه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوزچه-وسطی",
+      "name": "بوزچه وسطی",
+      "nameEn": "بوزچه-وسطی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهرام-کندی",
+      "name": "بهرام کندی",
+      "nameEn": "بهرام-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پلنگلو",
+      "name": "پلنگلو",
+      "nameEn": "پلنگلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تربت-کندی",
+      "name": "تربت کندی",
+      "nameEn": "تربت-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تقی-کندی",
+      "name": "تقی کندی",
+      "nameEn": "تقی-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تیمور-کندی",
+      "name": "تیمور کندی",
+      "nameEn": "تیمور-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاج-امیر-کندی",
+      "name": "حاج امیر کندی",
+      "nameEn": "حاج-امیر-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاج-حسن-کندی",
+      "name": "حاج حسن کندی",
+      "nameEn": "حاج-حسن-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاج-حسین-قشلاق",
+      "name": "حاج حسین قشلاق",
+      "nameEn": "حاج-حسین-قشلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-قشلاقی-حاجی-خواجه-لو",
+      "name": "حسین قشلاقی حاجی خواجه لو",
+      "nameEn": "حسین-قشلاقی-حاجی-خواجه-لو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-قشلاقی-گورابازلو",
+      "name": "حسین قشلاقی گورابازلو",
+      "nameEn": "حسین-قشلاقی-گورابازلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانلار-قشلاقی-حاج-الم-قلی",
+      "name": "خانلار قشلاقی حاج الم قلی",
+      "nameEn": "خانلار-قشلاقی-حاج-الم-قلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانلر-قشلاقی-حاج-بالا-بیگ-لو",
+      "name": "خانلر قشلاقی حاج بالا بیگ لو",
+      "nameEn": "خانلر-قشلاقی-حاج-بالا-بیگ-لو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خلف-بیگلوی-سفلی",
+      "name": "خلف بیگلوی سفلی",
+      "nameEn": "خلف-بیگلوی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خلف-بیگلوی-علیا",
+      "name": "خلف بیگلوی علیا",
+      "nameEn": "خلف-بیگلوی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دلیک-یارقان",
+      "name": "دلیک یارقان",
+      "nameEn": "دلیک-یارقان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحیم-کندی",
+      "name": "رحیم کندی",
+      "nameEn": "رحیم-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرخای-بیگلو",
+      "name": "سرخای بیگلو",
+      "nameEn": "سرخای-بیگلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیف-خانلو",
+      "name": "سیف خانلو",
+      "nameEn": "سیف-خانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عمران-آباد",
+      "name": "عمران آباد",
+      "nameEn": "عمران-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عیوض-لو",
+      "name": "عیوض لو",
+      "nameEn": "عیوض-لو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قارشقا-تپه-سی-سفلی",
+      "name": "قارشقا تپه سی سفلی",
+      "nameEn": "قارشقا-تپه-سی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قارشقا-تپه-سی-علیا",
+      "name": "قارشقا تپه سی علیا",
+      "nameEn": "قارشقا-تپه-سی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قارلوجه",
+      "name": "قارلوجه",
+      "nameEn": "قارلوجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-قباق",
+      "name": "قره قباق",
+      "nameEn": "قره-قباق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-قباق-اژدربیگلو",
+      "name": "قره قباق اژدربیگلو",
+      "nameEn": "قره-قباق-اژدربیگلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-قباق-سفلی",
+      "name": "قره قباق سفلی",
+      "nameEn": "قره-قباق-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-اجاق-۲",
+      "name": "قشلاق اجاق ۲",
+      "nameEn": "قشلاق-اجاق-۲",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-احمدی",
+      "name": "قشلاق احمدی",
+      "nameEn": "قشلاق-احمدی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-الاپاپاخ",
+      "name": "قشلاق الاپاپاخ",
+      "nameEn": "قشلاق-الاپاپاخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-ایاق-ایری-حاج-محمدعلی",
+      "name": "قشلاق ایاق ایری حاج محمدعلی",
+      "nameEn": "قشلاق-ایاق-ایری-حاج-محمدعلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-ایری-دره-حاج-محبت",
+      "name": "قشلاق ایری دره حاج محبت",
+      "nameEn": "قشلاق-ایری-دره-حاج-محبت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-بوزچه-سفلی-۱",
+      "name": "قشلاق بوزچه سفلی ۱",
+      "nameEn": "قشلاق-بوزچه-سفلی-۱",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-بوزچه-علیا",
+      "name": "قشلاق بوزچه علیا",
+      "nameEn": "قشلاق-بوزچه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-تره-چی",
+      "name": "قشلاق تره چی",
+      "nameEn": "قشلاق-تره-چی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-تولکیلوتوماق-علی-گل-مراد",
+      "name": "قشلاق تولکیلوتوماق علی گل مراد",
+      "nameEn": "قشلاق-تولکیلوتوماق-علی-گل-مراد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-جلیل-لو",
+      "name": "قشلاق جلیل لو",
+      "nameEn": "قشلاق-جلیل-لو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاج-آقاقلی",
+      "name": "قشلاق حاج آقاقلی",
+      "nameEn": "قشلاق-حاج-آقاقلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاج-الماس-خان",
+      "name": "قشلاق حاج الماس خان",
+      "nameEn": "قشلاق-حاج-الماس-خان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاج-امیر-فرمان",
+      "name": "قشلاق حاج امیر فرمان",
+      "nameEn": "قشلاق-حاج-امیر-فرمان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاج-امیر-مشهدی-صفر",
+      "name": "قشلاق حاج امیر مشهدی صفر",
+      "nameEn": "قشلاق-حاج-امیر-مشهدی-صفر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاج-امیرافراسیاب",
+      "name": "قشلاق حاج امیرافراسیاب",
+      "nameEn": "قشلاق-حاج-امیرافراسیاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاج-طالب",
+      "name": "قشلاق حاج طالب",
+      "nameEn": "قشلاق-حاج-طالب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاج-علی-قلی-جعفر",
+      "name": "قشلاق حاج علی قلی جعفر",
+      "nameEn": "قشلاق-حاج-علی-قلی-جعفر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاج-علی-قلی-عبدل",
+      "name": "قشلاق حاج علی قلی عبدل",
+      "nameEn": "قشلاق-حاج-علی-قلی-عبدل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاج-فتحعلی",
+      "name": "قشلاق حاج فتحعلی",
+      "nameEn": "قشلاق-حاج-فتحعلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاج-فتحعلی-منصور",
+      "name": "قشلاق حاج فتحعلی منصور",
+      "nameEn": "قشلاق-حاج-فتحعلی-منصور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاج-لطفعلی",
+      "name": "قشلاق حاج لطفعلی",
+      "nameEn": "قشلاق-حاج-لطفعلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاج-محمود",
+      "name": "قشلاق حاج محمود",
+      "nameEn": "قشلاق-حاج-محمود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاجی-بایندر",
+      "name": "قشلاق حاجی بایندر",
+      "nameEn": "قشلاق-حاجی-بایندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاجی-پنجالو",
+      "name": "قشلاق حاجی پنجالو",
+      "nameEn": "قشلاق-حاجی-پنجالو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاجی-حسن",
+      "name": "قشلاق حاجی حسن",
+      "nameEn": "قشلاق-حاجی-حسن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاجی-دولت-بدر",
+      "name": "قشلاق حاجی دولت بدر",
+      "nameEn": "قشلاق-حاجی-دولت-بدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاجی-غلام",
+      "name": "قشلاق حاجی غلام",
+      "nameEn": "قشلاق-حاجی-غلام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حاجی-نصی",
+      "name": "قشلاق حاجی نصی",
+      "nameEn": "قشلاق-حاجی-نصی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-حسن-کنگرلو",
+      "name": "قشلاق حسن کنگرلو",
+      "nameEn": "قشلاق-حسن-کنگرلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-خلیللو-حیدر",
+      "name": "قشلاق خلیل‌لو حیدر",
+      "nameEn": "قشلاق-خلیللو-حیدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-خلیللو-عزیز",
+      "name": "قشلاق خلیل‌لو عزیز",
+      "nameEn": "قشلاق-خلیللو-عزیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-خلیللو-غلام",
+      "name": "قشلاق خلیل‌لو غلام",
+      "nameEn": "قشلاق-خلیللو-غلام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-داغلو",
+      "name": "قشلاق داغلو",
+      "nameEn": "قشلاق-داغلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-سیف-خانلو-۱",
+      "name": "قشلاق سیف خانلو ۱",
+      "nameEn": "قشلاق-سیف-خانلو-۱",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-سیف-خانلو-۲",
+      "name": "قشلاق سیف خانلو ۲",
+      "nameEn": "قشلاق-سیف-خانلو-۲",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-فرج-اله-حاج-سارخان",
+      "name": "قشلاق فرج اله حاج سارخان",
+      "nameEn": "قشلاق-فرج-اله-حاج-سارخان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-فرج-اله-حسن",
+      "name": "قشلاق فرج اله حسن",
+      "nameEn": "قشلاق-فرج-اله-حسن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-فرج-اله-قدیر",
+      "name": "قشلاق فرج اله قدیر",
+      "nameEn": "قشلاق-فرج-اله-قدیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-فرج-اله-نماز",
+      "name": "قشلاق فرج اله نماز",
+      "nameEn": "قشلاق-فرج-اله-نماز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-قره-تکانلو-امراله",
+      "name": "قشلاق قره تکانلو امراله",
+      "nameEn": "قشلاق-قره-تکانلو-امراله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-قنبرلوحاج-محمدحسن",
+      "name": "قشلاق قنبرلوحاج محمدحسن",
+      "nameEn": "قشلاق-قنبرلوحاج-محمدحسن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-قهرمانلو",
+      "name": "قشلاق قهرمانلو",
+      "nameEn": "قشلاق-قهرمانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-کورلار-۱",
+      "name": "قشلاق کورلار ‏۱",
+      "nameEn": "قشلاق-کورلار-۱",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-کورلار-۲",
+      "name": "قشلاق کورلار ۲",
+      "nameEn": "قشلاق-کورلار-۲",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-گبلو",
+      "name": "قشلاق گبلو",
+      "nameEn": "قشلاق-گبلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-گدایلو",
+      "name": "قشلاق گدایلو",
+      "nameEn": "قشلاق-گدایلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-مددلو",
+      "name": "قشلاق مددلو",
+      "nameEn": "قشلاق-مددلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-مقدم-شابنده",
+      "name": "قشلاق مقدم شابنده",
+      "nameEn": "قشلاق-مقدم-شابنده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-موزوهلر",
+      "name": "قشلاق موزوهلر",
+      "nameEn": "قشلاق-موزوهلر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلی-بیگلو-سفلی",
+      "name": "قلی بیگلو سفلی",
+      "nameEn": "قلی-بیگلو-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلی-بیگلو-علیا",
+      "name": "قلی بیگلو علیا",
+      "nameEn": "قلی-بیگلو-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلیچ-خان-کندی",
+      "name": "قلیچ خان کندی",
+      "nameEn": "قلیچ-خان-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کچی-قشلاقی-سفلی",
+      "name": "کچی قشلاقی سفلی",
+      "nameEn": "کچی-قشلاقی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کچی-قشلاقی-علیا",
+      "name": "کچی قشلاقی علیا",
+      "nameEn": "کچی-قشلاقی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کچی-قشلاقی-وسطی",
+      "name": "کچی قشلاقی وسطی",
+      "nameEn": "کچی-قشلاقی-وسطی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوزلی",
+      "name": "گوزلی",
+      "nameEn": "گوزلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گون-گورمز",
+      "name": "گون گورمز",
+      "nameEn": "گون-گورمز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محبوب-کندی",
+      "name": "محبوب کندی",
+      "nameEn": "محبوب-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد",
+      "name": "محمودآباد",
+      "nameEn": "محمودآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مدینه-قشلاقی",
+      "name": "مدینه قشلاقی",
+      "nameEn": "مدینه-قشلاقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مقصودلوی-سفلی",
+      "name": "مقصودلوی سفلی",
+      "nameEn": "مقصودلوی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مقصودلوی-علیا",
+      "name": "مقصودلوی علیا",
+      "nameEn": "مقصودلوی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مقصودلوی-وسطی",
+      "name": "مقصودلوی وسطی",
+      "nameEn": "مقصودلوی-وسطی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نورمحمد-کندی-سفلی",
+      "name": "نورمحمد کندی سفلی",
+      "nameEn": "نورمحمد-کندی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نورمحمد-کندی-علیا",
+      "name": "نورمحمد کندی علیا",
+      "nameEn": "نورمحمد-کندی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نورمحمد-کندی-وسطی",
+      "name": "نورمحمد کندی وسطی",
+      "nameEn": "نورمحمد-کندی-وسطی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هورادیز",
+      "name": "هورادیز",
+      "nameEn": "هورادیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "alxanl",
+      "name": "Alxanlı",
+      "nameEn": "alxanl",
+      "geoSource": "osm"
+    },
+    {
+      "id": "arayatl",
+      "name": "Arayatlı",
+      "nameEn": "arayatl",
+      "geoSource": "osm"
+    },
+    {
+      "id": "araz-dilaarda",
+      "name": "Araz Dilağarda",
+      "nameEn": "araz-dilaarda",
+      "geoSource": "osm"
+    },
+    {
+      "id": "aa-bdrrhmanl",
+      "name": "Aşağı Əbdürrəhmanlı",
+      "nameEn": "aa-bdrrhmanl",
+      "geoSource": "osm"
+    },
+    {
+      "id": "aa-kurdmahmudlu",
+      "name": "Aşağı Kurdmahmudlu",
+      "nameEn": "aa-kurdmahmudlu",
+      "geoSource": "osm"
+    },
+    {
+      "id": "aa-maralyan",
+      "name": "Aşağı Maralyan",
+      "nameEn": "aa-maralyan",
+      "geoSource": "osm"
+    },
+    {
+      "id": "aa-seyidhmdli",
+      "name": "Aşağı Seyidəhmədli",
+      "nameEn": "aa-seyidhmdli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "aa-yalvnd",
+      "name": "Aşağı Yağlıvənd",
+      "nameEn": "aa-yalvnd",
+      "geoSource": "osm"
+    },
+    {
+      "id": "bab",
+      "name": "Babı",
+      "nameEn": "bab",
+      "geoSource": "osm"
+    },
+    {
+      "id": "bala-bhmnli",
+      "name": "Bala Bəhmənli",
+      "nameEn": "bala-bhmnli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "beinci-zobucuq",
+      "name": "Beşinci Zobucuq",
+      "nameEn": "beinci-zobucuq",
+      "geoSource": "osm"
+    },
+    {
+      "id": "birinci-mahmudlu",
+      "name": "Birinci Mahmudlu",
+      "nameEn": "birinci-mahmudlu",
+      "geoSource": "osm"
+    },
+    {
+      "id": "birinci-zobucuq",
+      "name": "Birinci Zobucuq",
+      "nameEn": "birinci-zobucuq",
+      "geoSource": "osm"
+    },
+    {
+      "id": "byk-bhmnli",
+      "name": "Böyük Bəhmənli",
+      "nameEn": "byk-bhmnli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "byk-mrcanl",
+      "name": "Böyük Mərcanlı",
+      "nameEn": "byk-mrcanl",
+      "geoSource": "osm"
+    },
+    {
+      "id": "axrl",
+      "name": "Çaxırlı",
+      "nameEn": "axrl",
+      "geoSource": "osm"
+    },
+    {
+      "id": "cocuq-mrcanl",
+      "name": "Cocuq Mərcanlı",
+      "nameEn": "cocuq-mrcanl",
+      "geoSource": "osm"
+    },
+    {
+      "id": "drdinar",
+      "name": "Dördçinar",
+      "nameEn": "drdinar",
+      "geoSource": "osm"
+    },
+    {
+      "id": "drdnc-zobucuq",
+      "name": "Dördüncü Zobucuq",
+      "nameEn": "drdnc-zobucuq",
+      "geoSource": "osm"
+    },
+    {
+      "id": "hmdallar",
+      "name": "Əhmədalılar",
+      "nameEn": "hmdallar",
+      "geoSource": "osm"
+    },
+    {
+      "id": "hmdbyli",
+      "name": "Əhmədbəyli",
+      "nameEn": "hmdbyli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "hacl",
+      "name": "Hacılı",
+      "nameEn": "hacl",
+      "geoSource": "osm"
+    },
+    {
+      "id": "horadiz",
+      "name": "Horadiz",
+      "nameEn": "horadiz",
+      "geoSource": "osm"
+    },
+    {
+      "id": "hngtl",
+      "name": "Hüngütlü",
+      "nameEn": "hngtl",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ikinci-mahmudlu",
+      "name": "İkinci Mahmudlu",
+      "nameEn": "ikinci-mahmudlu",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ikinci-zobucuq",
+      "name": "İkinci Zobucuq",
+      "nameEn": "ikinci-zobucuq",
+      "geoSource": "osm"
+    },
+    {
+      "id": "karxulu",
+      "name": "Karxulu",
+      "nameEn": "karxulu",
+      "geoSource": "osm"
+    },
+    {
+      "id": "knd-horadiz",
+      "name": "Kənd Horadiz",
+      "nameEn": "knd-horadiz",
+      "geoSource": "osm"
+    },
+    {
+      "id": "krimbyli",
+      "name": "Kərimbəyli",
+      "nameEn": "krimbyli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "krdlr",
+      "name": "Kürdlər",
+      "nameEn": "krdlr",
+      "geoSource": "osm"
+    },
+    {
+      "id": "mandl",
+      "name": "Mandılı",
+      "nameEn": "mandl",
+      "geoSource": "osm"
+    },
+    {
+      "id": "mehdili",
+      "name": "Mehdili",
+      "nameEn": "mehdili",
+      "geoSource": "osm"
+    },
+    {
+      "id": "merdinli",
+      "name": "Merdinli",
+      "nameEn": "merdinli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "mirznal",
+      "name": "Mirzənağılı",
+      "nameEn": "mirznal",
+      "geoSource": "osm"
+    },
+    {
+      "id": "mollamhrrmli",
+      "name": "Mollaməhərrəmli",
+      "nameEn": "mollamhrrmli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "murtuzallar",
+      "name": "Murtuzalılar",
+      "nameEn": "murtuzallar",
+      "geoSource": "osm"
+    },
+    {
+      "id": "musabyli",
+      "name": "Musabəyli",
+      "nameEn": "musabyli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "nzgar",
+      "name": "Nüzgar",
+      "nameEn": "nzgar",
+      "geoSource": "osm"
+    },
+    {
+      "id": "pirhmdli",
+      "name": "Pirəhmədli",
+      "nameEn": "pirhmdli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "qaraba",
+      "name": "Qarabağ",
+      "nameEn": "qaraba",
+      "geoSource": "osm"
+    },
+    {
+      "id": "qaraxanbyli",
+      "name": "Qaraxanbəyli",
+      "nameEn": "qaraxanbyli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "qazaxlar",
+      "name": "Qazaxlar",
+      "nameEn": "qazaxlar",
+      "geoSource": "osm"
+    },
+    {
+      "id": "qorqan",
+      "name": "Qorqan",
+      "nameEn": "qorqan",
+      "geoSource": "osm"
+    },
+    {
+      "id": "quycaq",
+      "name": "Quycaq",
+      "nameEn": "quycaq",
+      "geoSource": "osm"
+    },
+    {
+      "id": "yby",
+      "name": "Şəybəy",
+      "nameEn": "yby",
+      "geoSource": "osm"
+    },
+    {
+      "id": "krbyli",
+      "name": "Şükürbəyli",
+      "nameEn": "krbyli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "nc-zobucuq",
+      "name": "Üçüncü Zobucuq",
+      "nameEn": "nc-zobucuq",
+      "geoSource": "osm"
+    },
+    {
+      "id": "yuxar-bdrhmanl",
+      "name": "Yuxarı Əbdürəhmanlı",
+      "nameEn": "yuxar-bdrhmanl",
+      "geoSource": "osm"
+    },
+    {
+      "id": "yuxar-kurdmahmudlu",
+      "name": "Yuxarı Kurdmahmudlu",
+      "nameEn": "yuxar-kurdmahmudlu",
+      "geoSource": "osm"
+    },
+    {
+      "id": "yuxar-maralyan",
+      "name": "Yuxarı Maralyan",
+      "nameEn": "yuxar-maralyan",
+      "geoSource": "osm"
+    },
+    {
+      "id": "yuxar-mrcanl",
+      "name": "Yuxarı Mərcanlı",
+      "nameEn": "yuxar-mrcanl",
+      "geoSource": "osm"
+    },
+    {
+      "id": "yuxar-seydhmdli",
+      "name": "Yuxarı Seydəhmədli",
+      "nameEn": "yuxar-seydhmdli",
+      "geoSource": "osm"
+    }
+  ]
+}

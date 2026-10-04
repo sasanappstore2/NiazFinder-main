@@ -1,0 +1,25 @@
+{
+  "cityId": "saberi",
+  "cityName": "صابری",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.426Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "صابری",
+      "name": "صابری",
+      "nameEn": "saberi",
+      "centroid": {
+        "lat": 30.96434633129716,
+        "lng": 60.806397757801946
+      },
+      "bbox": {
+        "south": 30.857859805964786,
+        "north": 31.070832856629536,
+        "west": 60.692923732539406,
+        "east": 60.91987178306449
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

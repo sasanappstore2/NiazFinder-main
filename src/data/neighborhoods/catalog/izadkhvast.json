@@ -1,0 +1,25 @@
+{
+  "cityId": "izadkhvast",
+  "cityName": "ایزدخواست",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.592Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ایزدخواست",
+      "name": "ایزدخواست",
+      "nameEn": "izadkhvast",
+      "centroid": {
+        "lat": 28.15190221325907,
+        "lng": 54.58628967579038
+      },
+      "bbox": {
+        "south": 28.045415687926695,
+        "north": 28.258388738591446,
+        "west": 54.47480970966781,
+        "east": 54.69776964191295
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "cityId": "kandovan",
+  "cityName": "کندوان",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:15:13.311Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کندوان",
+      "name": "کندوان",
+      "nameEn": "kandovan",
+      "centroid": {
+        "lat": 37.69554065702479,
+        "lng": 47.882076522463095
+      },
+      "bbox": {
+        "south": 37.589054131692414,
+        "north": 37.80202718235717,
+        "west": 47.75722886384305,
+        "east": 48.00692418108313
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آشستان",
+      "name": "آشستان",
+      "nameEn": "آشستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آغچه-کهل",
+      "name": "آغچه کهل",
+      "nameEn": "آغچه-کهل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آلمالو-داش",
+      "name": "آلمالو داش",
+      "nameEn": "آلمالو-داش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آمقان",
+      "name": "آمقان",
+      "nameEn": "آمقان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اتراق-عشایر-یورد-تپراقلو",
+      "name": "اتراق عشایر یورد تپراقلو",
+      "nameEn": "اتراق-عشایر-یورد-تپراقلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اربط",
+      "name": "اربط",
+      "nameEn": "اربط",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسفنجان",
+      "name": "اسفنجان",
+      "nameEn": "اسفنجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسکندان",
+      "name": "اسکندان",
+      "nameEn": "اسکندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسکو",
+      "name": "اسکو",
+      "nameEn": "اسکو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسنجان",
+      "name": "اسنجان",
+      "nameEn": "اسنجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انرجان",
+      "name": "انرجان",
+      "nameEn": "انرجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوچ-تپه",
+      "name": "اوچ تپه",
+      "nameEn": "اوچ-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چراغیل",
+      "name": "چراغیل",
+      "nameEn": "چراغیل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهاربرود",
+      "name": "چهاربرود",
+      "nameEn": "چهاربرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زینجناب",
+      "name": "زینجناب",
+      "nameEn": "زینجناب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سفیده-خوان",
+      "name": "سفیده خوان",
+      "nameEn": "سفیده-خوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صغایش",
+      "name": "صغایش",
+      "nameEn": "صغایش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عنصرود",
+      "name": "عنصرود",
+      "nameEn": "عنصرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فاز-۲",
+      "name": "فاز ۲",
+      "nameEn": "فاز-۲",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فاز-۳",
+      "name": "فاز ۳",
+      "nameEn": "فاز-۳",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فسقندیس",
+      "name": "فسقندیس",
+      "nameEn": "فسقندیس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قرمزی-گل",
+      "name": "قرمزی گل",
+      "nameEn": "قرمزی-گل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قندیلو",
+      "name": "قندیلو",
+      "nameEn": "قندیلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرد-آباد",
+      "name": "کرد آباد",
+      "nameEn": "کرد-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوهدل",
+      "name": "کوهدل",
+      "nameEn": "کوهدل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهنمو",
+      "name": "کهنمو",
+      "nameEn": "کهنمو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنبرف",
+      "name": "گنبرف",
+      "nameEn": "گنبرف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لیقوان",
+      "name": "لیقوان",
+      "nameEn": "لیقوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مجارشین",
+      "name": "مجارشین",
+      "nameEn": "مجارشین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هرگلان",
+      "name": "هرگلان",
+      "nameEn": "هرگلان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هزه-بوران",
+      "name": "هزه بوران",
+      "nameEn": "هزه-بوران",
+      "geoSource": "osm"
+    }
+  ]
+}

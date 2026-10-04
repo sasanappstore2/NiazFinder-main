@@ -1,0 +1,25 @@
+{
+  "cityId": "khavaran-city",
+  "cityName": "قیامدشت - خاورشهر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.057Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قیامدشت-خاورشهر",
+      "name": "قیامدشت - خاورشهر",
+      "nameEn": "khavaran-city",
+      "centroid": {
+        "lat": 35.57086962957241,
+        "lng": 51.65466150041484
+      },
+      "bbox": {
+        "south": 35.46438310424003,
+        "north": 35.677356154904786,
+        "west": 51.5322298362493,
+        "east": 51.77709316458038
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

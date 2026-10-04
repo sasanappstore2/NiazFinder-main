@@ -1,0 +1,201 @@
+{
+  "cityId": "garmadooz",
+  "cityName": "گرمادوز",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.140Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "aa-maralyan",
+      "name": "Aşağı Maralyan",
+      "nameEn": "aa-maralyan",
+      "centroid": {
+        "lat": 39.303087452389505,
+        "lng": 47.311537256882026
+      },
+      "bbox": {
+        "south": 39.27646582105641,
+        "north": 39.3297090837226,
+        "west": 47.2771346432626,
+        "east": 47.345939870501454
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "byk-mrcanl",
+      "name": "Böyük Mərcanlı",
+      "nameEn": "byk-mrcanl",
+      "centroid": {
+        "lat": 39.321685150583065,
+        "lng": 47.25641676792037
+      },
+      "bbox": {
+        "south": 39.29506351924997,
+        "north": 39.34830678191616,
+        "west": 47.22201415430094,
+        "east": 47.2908193815398
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "axrl",
+      "name": "Çaxırlı",
+      "nameEn": "axrl",
+      "centroid": {
+        "lat": 39.25475490181385,
+        "lng": 47.291828301397004
+      },
+      "bbox": {
+        "south": 39.228133270480754,
+        "north": 39.28137653314694,
+        "west": 47.25742568777758,
+        "east": 47.32623091501643
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "cfrabad",
+      "name": "Cəfərabad",
+      "nameEn": "cfrabad",
+      "centroid": {
+        "lat": 39.346319837813304,
+        "lng": 47.325265128476545
+      },
+      "bbox": {
+        "south": 39.31969820648021,
+        "north": 39.3729414691464,
+        "west": 47.29086251485712,
+        "east": 47.35966774209597
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "djl",
+      "name": "Dəjəl",
+      "nameEn": "djl",
+      "centroid": {
+        "lat": 39.29220239835552,
+        "lng": 47.2105044785238
+      },
+      "bbox": {
+        "south": 39.26558076702243,
+        "north": 39.318824029688614,
+        "west": 47.176101864904375,
+        "east": 47.24490709214323
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "karxulu",
+      "name": "Karxulu",
+      "nameEn": "karxulu",
+      "centroid": {
+        "lat": 39.269143779290026,
+        "lng": 47.359503785069506
+      },
+      "bbox": {
+        "south": 39.24252214795693,
+        "north": 39.29576541062312,
+        "west": 47.32510117145008,
+        "east": 47.393906398688934
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "mahmudlu",
+      "name": "Mahmudlu",
+      "nameEn": "mahmudlu",
+      "centroid": {
+        "lat": 39.36932051924712,
+        "lng": 47.265086736144205
+      },
+      "bbox": {
+        "south": 39.342698887914025,
+        "north": 39.39594215058021,
+        "west": 47.23068412252478,
+        "east": 47.29948934976363
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "mehdili",
+      "name": "Mehdili",
+      "nameEn": "mehdili",
+      "centroid": {
+        "lat": 39.230777005963105,
+        "lng": 47.24429450002108
+      },
+      "bbox": {
+        "south": 39.20415537463001,
+        "north": 39.2573986372962,
+        "west": 47.20989188640165,
+        "east": 47.278697113640504
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "nzgar",
+      "name": "Nüzgar",
+      "nameEn": "nzgar",
+      "centroid": {
+        "lat": 39.32938197004081,
+        "lng": 47.39010442572645
+      },
+      "bbox": {
+        "south": 39.302760338707714,
+        "north": 39.3560036013739,
+        "west": 47.35570181210702,
+        "east": 47.424507039345876
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "yby",
+      "name": "Şəybəy",
+      "nameEn": "yby",
+      "centroid": {
+        "lat": 39.33229697883713,
+        "lng": 47.19045797252638
+      },
+      "bbox": {
+        "south": 39.305675347504035,
+        "north": 39.35891861017022,
+        "west": 47.156055358906954,
+        "east": 47.22486058614581
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "yuxar-maralyan",
+      "name": "Yuxarı Maralyan",
+      "nameEn": "yuxar-maralyan",
+      "centroid": {
+        "lat": 39.21663053628607,
+        "lng": 47.328998071499605
+      },
+      "bbox": {
+        "south": 39.190008904952975,
+        "north": 39.24325216761916,
+        "west": 47.29459545788018,
+        "east": 47.36340068511903
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "yuxar-mrcanl",
+      "name": "Yuxarı Mərcanlı",
+      "nameEn": "yuxar-mrcanl",
+      "centroid": {
+        "lat": 39.390913024917324,
+        "lng": 47.325303595158644
+      },
+      "bbox": {
+        "south": 39.36429139358423,
+        "north": 39.41753465625042,
+        "west": 47.29090098153922,
+        "east": 47.35970620877807
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

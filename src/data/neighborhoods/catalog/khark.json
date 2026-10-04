@@ -1,0 +1,25 @@
+{
+  "cityId": "khark",
+  "cityName": "خارک",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:34:54.491Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خارک",
+      "name": "خارک",
+      "nameEn": "khark",
+      "centroid": {
+        "lat": 29.24346580729429,
+        "lng": 50.3781006946809
+      },
+      "bbox": {
+        "south": 29.136979281961914,
+        "north": 29.349952332626664,
+        "west": 50.27153500483743,
+        "east": 50.484666384524374
+      },
+      "geoSource": "osm"
+    }
+  ]
+}

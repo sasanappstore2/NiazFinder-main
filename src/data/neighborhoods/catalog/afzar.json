@@ -1,0 +1,199 @@
+{
+  "cityId": "afzar",
+  "cityName": "افزر",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:53:25.450Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "افزر",
+      "name": "افزر",
+      "nameEn": "afzar",
+      "centroid": {
+        "lat": 28.257635997879987,
+        "lng": 52.96002445289149
+      },
+      "bbox": {
+        "south": 28.151149472547612,
+        "north": 28.364122523212362,
+        "west": 52.84694914529358,
+        "east": 53.0730997604894
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبگرم",
+      "name": "آبگرم",
+      "nameEn": "آبگرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغنو",
+      "name": "باغنو",
+      "nameEn": "باغنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیرغیب",
+      "name": "پیرغیب",
+      "nameEn": "پیرغیب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنکویه-سفلی",
+      "name": "تنکویه سفلی",
+      "nameEn": "تنکویه-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنگکله",
+      "name": "تنگکله",
+      "nameEn": "تنگکله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنگویه-علیا",
+      "name": "تنگویه علیا",
+      "nameEn": "تنگویه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چم-کور",
+      "name": "چم کور",
+      "nameEn": "چم-کور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشتشور",
+      "name": "دشتشور",
+      "nameEn": "دشتشور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیمه-سرخ",
+      "name": "دیمه سرخ",
+      "nameEn": "دیمه-سرخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زاخرو-بالا",
+      "name": "زاخرو بالا",
+      "nameEn": "زاخرو-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زین-آباد-زاخرو",
+      "name": "زین آباد زاخرو",
+      "nameEn": "زین-آباد-زاخرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرچاه",
+      "name": "سرچاه",
+      "nameEn": "سرچاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سکه-روان",
+      "name": "سکه روان",
+      "nameEn": "سکه-روان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سمنگی",
+      "name": "سمنگی",
+      "nameEn": "سمنگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شارده",
+      "name": "شارده",
+      "nameEn": "شارده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-الهادی",
+      "name": "شهرک الهادی",
+      "nameEn": "شهرک-الهادی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قیر",
+      "name": "قیر",
+      "nameEn": "قیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کارزین",
+      "name": "کارزین",
+      "nameEn": "کارزین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کردشول",
+      "name": "کردشول",
+      "nameEn": "کردشول",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کردیل",
+      "name": "کردیل",
+      "nameEn": "کردیل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرکویه",
+      "name": "کرکویه",
+      "nameEn": "کرکویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کماسیج",
+      "name": "کماسیج",
+      "nameEn": "کماسیج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-پهن",
+      "name": "مزرعه پهن",
+      "nameEn": "مزرعه-پهن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مظفری",
+      "name": "مظفری",
+      "nameEn": "مظفری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نجف-آباد",
+      "name": "نجف آباد",
+      "nameEn": "نجف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نه-تن",
+      "name": "نه تن",
+      "nameEn": "نه-تن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نیمده",
+      "name": "نیمده",
+      "nameEn": "نیمده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هفت-آسیاب",
+      "name": "هفت آسیاب",
+      "nameEn": "هفت-آسیاب",
+      "geoSource": "osm"
+    }
+  ]
+}

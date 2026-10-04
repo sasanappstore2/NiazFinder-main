@@ -1,0 +1,25 @@
+{
+  "cityId": "salman-shahr",
+  "cityName": "سلمان‌شهر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.501Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "سلمانشهر",
+      "name": "سلمان‌شهر",
+      "nameEn": "salman-shahr",
+      "centroid": {
+        "lat": 36.667235104066116,
+        "lng": 51.19023526809141
+      },
+      "bbox": {
+        "south": 36.65596882968595,
+        "north": 36.67850137844628,
+        "west": 51.177634440457595,
+        "east": 51.202836095725225
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

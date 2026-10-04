@@ -1,0 +1,217 @@
+{
+  "cityId": "mehraban",
+  "cityName": "مهربان",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:15:59.506Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مهربان",
+      "name": "مهربان",
+      "nameEn": "mehraban",
+      "centroid": {
+        "lat": 38.02524372533238,
+        "lng": 47.284237470339946
+      },
+      "bbox": {
+        "south": 37.9187572,
+        "north": 38.13173025066476,
+        "west": 47.16499256074755,
+        "east": 47.403482379932335
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آلان",
+      "name": "آلان",
+      "nameEn": "آلان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اجیر-آباد",
+      "name": "اجیر آباد",
+      "nameEn": "اجیر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اردلان",
+      "name": "اردلان",
+      "nameEn": "اردلان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارزنق",
+      "name": "ارزنق",
+      "nameEn": "ارزنق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسنق",
+      "name": "اسنق",
+      "nameEn": "اسنق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اشتلق-سفلی",
+      "name": "اشتلق سفلی",
+      "nameEn": "اشتلق-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اشتلق-علیا",
+      "name": "اشتلق علیا",
+      "nameEn": "اشتلق-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اندیس",
+      "name": "اندیس",
+      "nameEn": "اندیس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باروق",
+      "name": "باروق",
+      "nameEn": "باروق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بخشایش",
+      "name": "بخشایش",
+      "nameEn": "بخشایش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برآغوش",
+      "name": "برآغوش",
+      "nameEn": "برآغوش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تازه-کند",
+      "name": "تازه کند",
+      "nameEn": "تازه-کند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمال-آباد",
+      "name": "جمال آباد",
+      "nameEn": "جمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خاکی",
+      "name": "خاکی",
+      "nameEn": "خاکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانقاه",
+      "name": "خانقاه",
+      "nameEn": "خانقاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوزدوزان",
+      "name": "دوزدوزان",
+      "nameEn": "دوزدوزان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیچان",
+      "name": "دیچان",
+      "nameEn": "دیچان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرنق",
+      "name": "زرنق",
+      "nameEn": "زرنق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صومعه",
+      "name": "صومعه",
+      "nameEn": "صومعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قارنجه",
+      "name": "قارنجه",
+      "nameEn": "قارنجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قرلجه-سادات",
+      "name": "قرلجه سادات",
+      "nameEn": "قرلجه-سادات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزلجه-زرین",
+      "name": "قزلجه زرین",
+      "nameEn": "قزلجه-زرین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قیصرق",
+      "name": "قیصرق",
+      "nameEn": "قیصرق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرمجوان",
+      "name": "کرمجوان",
+      "nameEn": "کرمجوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلوانق",
+      "name": "کلوانق",
+      "nameEn": "کلوانق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موسی-لو",
+      "name": "موسی لو",
+      "nameEn": "موسی-لو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرام-کندی",
+      "name": "مهرام کندی",
+      "nameEn": "مهرام-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوجه-ده",
+      "name": "نوجه ده",
+      "nameEn": "نوجه-ده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نهران",
+      "name": "نهران",
+      "nameEn": "نهران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هرزه-ورز",
+      "name": "هرزه ورز",
+      "nameEn": "هرزه-ورز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "kivaj",
+      "name": "kivaj",
+      "nameEn": "kivaj",
+      "geoSource": "osm"
+    }
+  ]
+}

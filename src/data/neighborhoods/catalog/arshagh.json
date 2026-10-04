@@ -1,0 +1,25 @@
+{
+  "cityId": "arshagh",
+  "cityName": "ارشق",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.921Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ارشق",
+      "name": "ارشق",
+      "nameEn": "arshagh",
+      "centroid": {
+        "lat": 38.639684750269495,
+        "lng": 48.15254464909876
+      },
+      "bbox": {
+        "south": 38.53319822493712,
+        "north": 38.746171275601874,
+        "west": 48.033360063849585,
+        "east": 48.27172923434794
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

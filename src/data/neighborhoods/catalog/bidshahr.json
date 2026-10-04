@@ -1,0 +1,55 @@
+{
+  "cityId": "bidshahr",
+  "cityName": "بیدشهر",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:57:03.750Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بیدشهر",
+      "name": "بیدشهر",
+      "nameEn": "bidshahr",
+      "centroid": {
+        "lat": 27.980151465648582,
+        "lng": 53.80668572933614
+      },
+      "bbox": {
+        "south": 27.873664940316207,
+        "north": 28.086637990980957,
+        "west": 53.69788344292877,
+        "east": 53.9154880157435
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلامآباد",
+      "name": "اسلام‌آباد",
+      "nameEn": "اسلامآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اکبرآباد",
+      "name": "اکبرآباد",
+      "nameEn": "اکبرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوره",
+      "name": "کوره",
+      "nameEn": "کوره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلار",
+      "name": "گلار",
+      "nameEn": "گلار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هود",
+      "name": "هود",
+      "nameEn": "هود",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "suvragh",
+  "cityName": "سوخراگ",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.034Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سوخراگ",
+      "name": "سوخراگ",
+      "nameEn": "suvragh",
+      "centroid": {
+        "lat": 37.87745768979711,
+        "lng": 57.68727409037818
+      },
+      "bbox": {
+        "south": 37.77097116446473,
+        "north": 37.98394421512949,
+        "west": 57.56672540479816,
+        "east": 57.80782277595821
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

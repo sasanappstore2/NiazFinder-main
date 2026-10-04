@@ -1,0 +1,25 @@
+{
+  "cityId": "baran",
+  "cityName": "بران",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.269Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بران",
+      "name": "بران",
+      "nameEn": "baran",
+      "centroid": {
+        "lat": 39.318849852389505,
+        "lng": 47.66170158567222
+      },
+      "bbox": {
+        "south": 39.212363327057126,
+        "north": 39.425336377721884,
+        "west": 47.541586883406225,
+        "east": 47.78181628793822
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

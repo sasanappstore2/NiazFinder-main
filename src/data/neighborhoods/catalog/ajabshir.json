@@ -1,0 +1,327 @@
+{
+  "cityId": "ajabshir",
+  "cityName": "عجب شیر",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:13:11.732Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-ولیعصر",
+      "name": "شهرک ولیعصر",
+      "nameEn": "شهرک-ولیعصر",
+      "centroid": {
+        "lat": 37.488004993100965,
+        "lng": 45.92482344472767
+      },
+      "bbox": {
+        "south": 37.43476173043478,
+        "north": 37.54124825576715,
+        "west": 45.85772078216132,
+        "east": 45.99192610729402
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-ساعت",
+      "name": "میدان ساعت",
+      "nameEn": "میدان-ساعت",
+      "centroid": {
+        "lat": 37.5391196995851,
+        "lng": 45.8017808733396
+      },
+      "bbox": {
+        "south": 37.485876436918915,
+        "north": 37.592362962251286,
+        "west": 45.734678210773254,
+        "east": 45.86888353590595
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "میلاد",
+      "name": "میلاد",
+      "nameEn": "میلاد",
+      "centroid": {
+        "lat": 37.40077155562195,
+        "lng": 45.88743538853152
+      },
+      "bbox": {
+        "south": 37.347528292955765,
+        "north": 37.45401481828814,
+        "west": 45.82033272596517,
+        "east": 45.95453805109787
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آخوند-قشلاق",
+      "name": "آخوند قشلاق",
+      "nameEn": "آخوند-قشلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آغاجری",
+      "name": "آغاجری",
+      "nameEn": "آغاجری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آقچه-اوبه",
+      "name": "آقچه اوبه",
+      "nameEn": "آقچه-اوبه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الوانق",
+      "name": "الوانق",
+      "nameEn": "الوانق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الینجق",
+      "name": "الینجق",
+      "nameEn": "الینجق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوکت",
+      "name": "بوکت",
+      "nameEn": "بوکت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بولالو",
+      "name": "بولالو",
+      "nameEn": "بولالو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پسیان",
+      "name": "پسیان",
+      "nameEn": "پسیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیرچوپان",
+      "name": "پیرچوپان",
+      "nameEn": "پیرچوپان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تپیک-دره",
+      "name": "تپیک دره",
+      "nameEn": "تپیک-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جوان-قلعه",
+      "name": "جوان قلعه",
+      "nameEn": "جوان-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چنار",
+      "name": "چنار",
+      "nameEn": "چنار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چوپان-کره",
+      "name": "چوپان کره",
+      "nameEn": "چوپان-کره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حوری",
+      "name": "حوری",
+      "nameEn": "حوری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانقاه",
+      "name": "خانقاه",
+      "nameEn": "خانقاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانیان",
+      "name": "خانیان",
+      "nameEn": "خانیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خضرلو",
+      "name": "خضرلو",
+      "nameEn": "خضرلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دانالو",
+      "name": "دانالو",
+      "nameEn": "دانالو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیزج-حسن-بیگ",
+      "name": "دیزج حسن‌ بیگ",
+      "nameEn": "دیزج-حسن-بیگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رازیان",
+      "name": "رازیان",
+      "nameEn": "رازیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحمانلو",
+      "name": "رحمانلو",
+      "nameEn": "رحمانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زاویه",
+      "name": "زاویه",
+      "nameEn": "زاویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیلاب",
+      "name": "سیلاب",
+      "nameEn": "سیلاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورگل",
+      "name": "شورگل",
+      "nameEn": "شورگل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیراز",
+      "name": "شیراز",
+      "nameEn": "شیراز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرامین",
+      "name": "شیرامین",
+      "nameEn": "شیرامین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیشوان",
+      "name": "شیشوان",
+      "nameEn": "شیشوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صومعه",
+      "name": "صومعه",
+      "nameEn": "صومعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عجب-شیر",
+      "name": "عجب‌ شیر",
+      "nameEn": "عجب-شیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قبادلو",
+      "name": "قبادلو",
+      "nameEn": "قبادلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-زکی",
+      "name": "قره زکی",
+      "nameEn": "قره-زکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قیماسخان",
+      "name": "قیماسخان",
+      "nameEn": "قیماسخان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-تپه",
+      "name": "گل تپه",
+      "nameEn": "گل-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنبد",
+      "name": "گنبد",
+      "nameEn": "گنبد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوروان",
+      "name": "گوروان",
+      "nameEn": "گوروان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مجتمع-گلریزان",
+      "name": "مجتمع گلریزان",
+      "nameEn": "مجتمع-گلریزان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد",
+      "name": "محمودآباد",
+      "nameEn": "محمودآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآباد",
+      "name": "مهرآباد",
+      "nameEn": "مهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهماندار",
+      "name": "مهماندار",
+      "nameEn": "مهماندار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-امام-علی-ع",
+      "name": "میدان امام علی (ع)",
+      "nameEn": "میدان-امام-علی-ع",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-فدک",
+      "name": "میدان فدک",
+      "nameEn": "میدان-فدک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نانسا",
+      "name": "نانسا",
+      "nameEn": "نانسا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نبرین",
+      "name": "نبرین",
+      "nameEn": "نبرین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ولینجق",
+      "name": "ولینجق",
+      "nameEn": "ولینجق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هروان",
+      "name": "هروان",
+      "nameEn": "هروان",
+      "geoSource": "osm"
+    }
+  ]
+}

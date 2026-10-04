@@ -1,0 +1,61 @@
+{
+  "cityId": "dehbakri",
+  "cityName": "دهبکری",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:48:26.734Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دهبکری",
+      "name": "دهبکری",
+      "nameEn": "dehbakri",
+      "centroid": {
+        "lat": 29.34400857678764,
+        "lng": 57.997004763264655
+      },
+      "bbox": {
+        "south": 29.237522051455265,
+        "north": 29.450495102120016,
+        "west": 57.88913206073682,
+        "east": 58.10487746579249
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "ابارق",
+      "name": "ابارق",
+      "nameEn": "ابارق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشت-قلعه",
+      "name": "پشت قلعه",
+      "nameEn": "پشت-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دارزین",
+      "name": "دارزین",
+      "nameEn": "دارزین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سروستان",
+      "name": "سروستان",
+      "nameEn": "سروستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-نو",
+      "name": "قلعه نو",
+      "nameEn": "قلعه-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد",
+      "name": "محمودآباد",
+      "nameEn": "محمودآباد",
+      "geoSource": "osm"
+    }
+  ]
+}

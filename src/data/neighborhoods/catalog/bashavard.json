@@ -1,0 +1,25 @@
+{
+  "cityId": "bashavard",
+  "cityName": "بشاورود",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.302Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بشاورود",
+      "name": "بشاورود",
+      "nameEn": "bashavard",
+      "centroid": {
+        "lat": 34.177782621974494,
+        "lng": 57.67720340907209
+      },
+      "bbox": {
+        "south": 34.071296096642115,
+        "north": 34.28426914730687,
+        "west": 57.56174836263533,
+        "east": 57.79265845550886
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

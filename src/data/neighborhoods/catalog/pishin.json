@@ -1,0 +1,25 @@
+{
+  "cityId": "pishin",
+  "cityName": "پیشین",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.119Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مرز-پیشین",
+      "name": "مرز پیشین",
+      "nameEn": "مرز-پیشین",
+      "centroid": {
+        "lat": 26.06415097678764,
+        "lng": 61.790466303656316
+      },
+      "bbox": {
+        "south": 25.957664451455265,
+        "north": 26.170637502120016,
+        "west": 61.67912119708642,
+        "east": 61.901811410226216
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

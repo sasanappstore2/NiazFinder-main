@@ -1,0 +1,121 @@
+{
+  "cityId": "kadkan",
+  "cityName": "کدکن",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:54:08.617Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کدکن",
+      "name": "کدکن",
+      "nameEn": "kadkan",
+      "centroid": {
+        "lat": 35.63464321246856,
+        "lng": 59.003447115655334
+      },
+      "bbox": {
+        "south": 35.52815668713618,
+        "north": 35.74112973780094,
+        "west": 58.88754492438394,
+        "east": 59.119349306926736
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسفیز",
+      "name": "اسفیز",
+      "nameEn": "اسفیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برس",
+      "name": "برس",
+      "nameEn": "برس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بزق",
+      "name": "بزق",
+      "nameEn": "بزق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پنگی",
+      "name": "پنگی",
+      "nameEn": "پنگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ترقی",
+      "name": "ترقی",
+      "nameEn": "ترقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تلخ-بخش",
+      "name": "تلخ بخش",
+      "nameEn": "تلخ-بخش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چولانک-سفلی",
+      "name": "چولانک سفلی",
+      "nameEn": "چولانک-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-بیگی",
+      "name": "حاجی بیگی",
+      "nameEn": "حاجی-بیگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانه-های-بنیاد",
+      "name": "خانه های بنیاد",
+      "nameEn": "خانه-های-بنیاد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دافی",
+      "name": "دافی",
+      "nameEn": "دافی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-منار",
+      "name": "ده منار",
+      "nameEn": "ده-منار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رقیچه",
+      "name": "رقیچه",
+      "nameEn": "رقیچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رود-معجن",
+      "name": "رود معجن",
+      "nameEn": "رود-معجن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رودخانه",
+      "name": "رودخانه",
+      "nameEn": "رودخانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عبدآباد",
+      "name": "عبدآباد",
+      "nameEn": "عبدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرت-آباد",
+      "name": "نصرت آباد",
+      "nameEn": "نصرت-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

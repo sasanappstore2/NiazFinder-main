@@ -1,0 +1,121 @@
+{
+  "cityId": "dasht-azadegan",
+  "cityName": "دشت آزادگان",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:37:24.542Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دشت-آزادگان",
+      "name": "دشت آزادگان",
+      "nameEn": "dasht-azadegan",
+      "centroid": {
+        "lat": 31.82993057121811,
+        "lng": 48.00241173337804
+      },
+      "bbox": {
+        "south": 31.723444045885735,
+        "north": 31.936417096550485,
+        "west": 47.887528883691964,
+        "east": 48.11729458306412
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "ام-دبس",
+      "name": "ام دبس",
+      "nameEn": "ام-دبس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بردیه-کوچک",
+      "name": "بردیه کوچک",
+      "nameEn": "بردیه-کوچک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بردیه-یک",
+      "name": "بردیه یک",
+      "nameEn": "بردیه-یک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بستانآباد",
+      "name": "بستان‌آباد",
+      "nameEn": "بستانآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دحیمی-دو",
+      "name": "دحیمی دو",
+      "nameEn": "دحیمی-دو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دحیمی-سه",
+      "name": "دحیمی سه",
+      "nameEn": "دحیمی-سه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهلاویه",
+      "name": "دهلاویه",
+      "nameEn": "دهلاویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رمله",
+      "name": "رمله",
+      "nameEn": "رمله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-سیدناصر",
+      "name": "روستای سیدناصر",
+      "nameEn": "روستای-سیدناصر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طگطاگه-آزادی",
+      "name": "طگطاگه (آزادی)",
+      "nameEn": "طگطاگه-آزادی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عبیات",
+      "name": "عبیات",
+      "nameEn": "عبیات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فنیخی",
+      "name": "فنیخی",
+      "nameEn": "فنیخی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیروزآباد-میهن-آباد",
+      "name": "فیروزآباد میهن آباد",
+      "nameEn": "فیروزآباد-میهن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قدرت-آباد-البو-حمادی",
+      "name": "قدرت آباد البو حمادی",
+      "nameEn": "قدرت-آباد-البو-حمادی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مچریه",
+      "name": "مچریه",
+      "nameEn": "مچریه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هور-المریس",
+      "name": "هور المریس",
+      "nameEn": "هور-المریس",
+      "geoSource": "osm"
+    }
+  ]
+}

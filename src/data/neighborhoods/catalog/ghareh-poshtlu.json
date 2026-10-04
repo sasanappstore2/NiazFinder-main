@@ -1,0 +1,235 @@
+{
+  "cityId": "ghareh-poshtlu",
+  "cityName": "قره پشتلو",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:39:21.214Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قره-پشتلو",
+      "name": "قره پشتلو",
+      "nameEn": "ghareh-poshtlu",
+      "centroid": {
+        "lat": 37.038011158749555,
+        "lng": 48.42139861271916
+      },
+      "bbox": {
+        "south": 36.931524633417176,
+        "north": 37.144497684081934,
+        "west": 48.301810233461545,
+        "east": 48.54098699197677
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آق-کند",
+      "name": "آق کند",
+      "nameEn": "آق-کند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارمغانخانه",
+      "name": "ارمغانخانه",
+      "nameEn": "ارمغانخانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوچ-بولاغ",
+      "name": "اوچ بولاغ",
+      "nameEn": "اوچ-بولاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوراچی",
+      "name": "اوراچی",
+      "nameEn": "اوراچی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اورتا-بلاغ",
+      "name": "اورتا بلاغ",
+      "nameEn": "اورتا-بلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ",
+      "name": "باغ",
+      "nameEn": "باغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهرام-بیکبایرام-بی",
+      "name": "بهرام بیک/بایرام بی",
+      "nameEn": "بهرام-بیکبایرام-بی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلیل-آباد",
+      "name": "جلیل آباد",
+      "nameEn": "جلیل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جوره-کندی",
+      "name": "جوره کندی",
+      "nameEn": "جوره-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داشتپه",
+      "name": "داش‌تپه",
+      "nameEn": "داشتپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دو-سران",
+      "name": "دو سران",
+      "nameEn": "دو-سران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رشت-آباد",
+      "name": "رشت آباد",
+      "nameEn": "رشت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرّیک",
+      "name": "زرّیک",
+      "nameEn": "زرّیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زنگی-کوه",
+      "name": "زنگی کوه",
+      "nameEn": "زنگی-کوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طاق-کندی",
+      "name": "طاق کندی",
+      "nameEn": "طاق-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قارلوق",
+      "name": "قارلوق",
+      "nameEn": "قارلوق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاشقا-تپه",
+      "name": "قاشقا تپه",
+      "nameEn": "قاشقا-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قبله-بلاغی",
+      "name": "قبله بلاغی",
+      "nameEn": "قبله-بلاغی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-تپه",
+      "name": "قره تپه",
+      "nameEn": "قره-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق",
+      "name": "قشلاق",
+      "nameEn": "قشلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قندر-قالو",
+      "name": "قندر قالو",
+      "nameEn": "قندر-قالو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرد-قشلاق",
+      "name": "کرد قشلاق",
+      "nameEn": "کرد-قشلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاسر",
+      "name": "کلاسر",
+      "nameEn": "کلاسر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلهین",
+      "name": "کلهین",
+      "nameEn": "کلهین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلجه",
+      "name": "گلجه",
+      "nameEn": "گلجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلچین",
+      "name": "گلچین",
+      "nameEn": "گلچین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لگاهی",
+      "name": "لگاهی",
+      "nameEn": "لگاهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لهرگین",
+      "name": "لهرگین",
+      "nameEn": "لهرگین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ماری",
+      "name": "ماری",
+      "nameEn": "ماری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد",
+      "name": "محمودآباد",
+      "nameEn": "محمودآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مشکین",
+      "name": "مشکین",
+      "nameEn": "مشکین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ولیاران",
+      "name": "ولیاران",
+      "nameEn": "ولیاران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وننق",
+      "name": "وننق",
+      "nameEn": "وننق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یله-قارشان",
+      "name": "یله قارشان",
+      "nameEn": "یله-قارشان",
+      "geoSource": "osm"
+    }
+  ]
+}

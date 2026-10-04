@@ -1,0 +1,205 @@
+{
+  "cityId": "vardasht",
+  "cityName": "وردشت",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:47:02.747Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "وردشت",
+      "name": "وردشت",
+      "nameEn": "vardasht",
+      "centroid": {
+        "lat": 31.63599156313331,
+        "lng": 51.589669844618044
+      },
+      "bbox": {
+        "south": 31.529505037800934,
+        "north": 31.742478088465685,
+        "west": 51.474518856350116,
+        "east": 51.70482083288598
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اسدآباد",
+      "name": "اسدآباد",
+      "nameEn": "اسدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد-قرخلو",
+      "name": "اسلام آباد قرخلو",
+      "nameEn": "اسلام-آباد-قرخلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اغداش",
+      "name": "اغداش",
+      "nameEn": "اغداش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امیرآباد",
+      "name": "امیرآباد",
+      "nameEn": "امیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بودگان",
+      "name": "بودگان",
+      "nameEn": "بودگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیراسفنه",
+      "name": "پیراسفنه",
+      "nameEn": "پیراسفنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-رحمان",
+      "name": "چشمه رحمان",
+      "nameEn": "چشمه-رحمان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-سرد",
+      "name": "چشمه سرد",
+      "nameEn": "چشمه-سرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حیدرآباد",
+      "name": "حیدرآباد",
+      "nameEn": "حیدرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-نساسفلی",
+      "name": "ده نساسفلی",
+      "nameEn": "ده-نساسفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-نساعلیا",
+      "name": "ده نساعلیا",
+      "nameEn": "ده-نساعلیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهکرد",
+      "name": "دهکرد",
+      "nameEn": "دهکرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیزجان",
+      "name": "دیزجان",
+      "nameEn": "دیزجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سبزآباد",
+      "name": "سبزآباد",
+      "nameEn": "سبزآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرچغا",
+      "name": "سرچغا",
+      "nameEn": "سرچغا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرچقاسفلی",
+      "name": "سرچقاسفلی",
+      "nameEn": "سرچقاسفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباددهکرد",
+      "name": "علی آباددهکرد",
+      "nameEn": "علی-آباددهکرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فتح-آباد",
+      "name": "فتح آباد",
+      "nameEn": "فتح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاسگان-سفلی",
+      "name": "کاسگان سفلی",
+      "nameEn": "کاسگان-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کزن",
+      "name": "کزن",
+      "nameEn": "کزن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موروک",
+      "name": "موروک",
+      "nameEn": "موروک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مولا-قلی",
+      "name": "مولا قلی",
+      "nameEn": "مولا-قلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآباد",
+      "name": "مهرآباد",
+      "nameEn": "مهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرگرد",
+      "name": "مهرگرد",
+      "nameEn": "مهرگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نجف-آباد",
+      "name": "نجف آباد",
+      "nameEn": "نجف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نرمه",
+      "name": "نرمه",
+      "nameEn": "نرمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نورآباد",
+      "name": "نورآباد",
+      "nameEn": "نورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورق",
+      "name": "ورق",
+      "nameEn": "ورق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هوک",
+      "name": "هوک",
+      "nameEn": "هوک",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "cityId": "farashband",
+  "cityName": "فراشبند",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:14:43.782Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فراشبند",
+      "name": "فراشبند",
+      "nameEn": "farashband",
+      "centroid": {
+        "lat": 28.914044788465684,
+        "lng": 52.15304272482402
+      },
+      "bbox": {
+        "south": 28.80755826313331,
+        "north": 29.02053131379806,
+        "west": 52.04045598456186,
+        "east": 52.26562946508618
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آویز",
+      "name": "آویز",
+      "nameEn": "آویز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باچون",
+      "name": "باچون",
+      "nameEn": "باچون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلوط-آباد",
+      "name": "بلوط آباد",
+      "nameEn": "بلوط-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جانی-آباد",
+      "name": "جانی آباد",
+      "nameEn": "جانی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-شولی",
+      "name": "چاه شولی",
+      "nameEn": "چاه-شولی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خوشاب",
+      "name": "خوشاب",
+      "nameEn": "خوشاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمپ-دالان",
+      "name": "کمپ دالان",
+      "nameEn": "کمپ-دالان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنارمالک",
+      "name": "کنارمالک",
+      "nameEn": "کنارمالک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-قنبرآباد",
+      "name": "مزرعه قنبرآباد",
+      "nameEn": "مزرعه-قنبرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نارک",
+      "name": "نارک",
+      "nameEn": "نارک",
+      "geoSource": "osm"
+    }
+  ]
+}

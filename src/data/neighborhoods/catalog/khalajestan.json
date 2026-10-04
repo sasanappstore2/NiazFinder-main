@@ -1,0 +1,241 @@
+{
+  "cityId": "khalajestan",
+  "cityName": "خلجستان",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:24:25.996Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خلجستان",
+      "name": "خلجستان",
+      "nameEn": "khalajestan",
+      "centroid": {
+        "lat": 34.56386965795903,
+        "lng": 50.33113580778428
+      },
+      "bbox": {
+        "south": 34.45738313262665,
+        "north": 34.67035618329141,
+        "west": 50.212081316434436,
+        "east": 50.45019029913413
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الگان",
+      "name": "الگان",
+      "nameEn": "الگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امره",
+      "name": "امره",
+      "nameEn": "امره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-یک",
+      "name": "باغ یک",
+      "nameEn": "باغ-یک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهارستان",
+      "name": "بهارستان",
+      "nameEn": "بهارستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جریک-اغاج",
+      "name": "جریک اغاج",
+      "nameEn": "جریک-اغاج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جوزه",
+      "name": "جوزه",
+      "nameEn": "جوزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چمانک",
+      "name": "چمانک",
+      "nameEn": "چمانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دستجرد",
+      "name": "دستجرد",
+      "nameEn": "دستجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رستگان",
+      "name": "رستگان",
+      "nameEn": "رستگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زواریان",
+      "name": "زواریان",
+      "nameEn": "زواریان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیزگان",
+      "name": "زیزگان",
+      "nameEn": "زیزگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرخده",
+      "name": "سرخده",
+      "nameEn": "سرخده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرهرود",
+      "name": "سرهرود",
+      "nameEn": "سرهرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سفت",
+      "name": "سفت",
+      "nameEn": "سفت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سناوند",
+      "name": "سناوند",
+      "nameEn": "سناوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنجگان",
+      "name": "سنجگان",
+      "nameEn": "سنجگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طینوج",
+      "name": "طینوج",
+      "nameEn": "طینوج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عیسی-آباد",
+      "name": "عیسی آباد",
+      "nameEn": "عیسی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فوجرد",
+      "name": "فوجرد",
+      "nameEn": "فوجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کندرود",
+      "name": "کندرود",
+      "nameEn": "کندرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوشکک",
+      "name": "کوشکک",
+      "nameEn": "کوشکک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهندان",
+      "name": "کهندان",
+      "nameEn": "کهندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گیو",
+      "name": "گیو",
+      "nameEn": "گیو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منصورآباد",
+      "name": "منصورآباد",
+      "nameEn": "منصورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موجان",
+      "name": "موجان",
+      "nameEn": "موجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موشکیه",
+      "name": "موشکیه",
+      "nameEn": "موشکیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نایه",
+      "name": "نایه",
+      "nameEn": "نایه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورزنه",
+      "name": "ورزنه",
+      "nameEn": "ورزنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورسان",
+      "name": "ورسان",
+      "nameEn": "ورسان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وسفونجرد",
+      "name": "وسفونجرد",
+      "nameEn": "وسفونجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وشاره",
+      "name": "وشاره",
+      "nameEn": "وشاره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ونان",
+      "name": "ونان",
+      "nameEn": "ونان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "همت-آباد",
+      "name": "همت آباد",
+      "nameEn": "همت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یکه-باغ",
+      "name": "یکه باغ",
+      "nameEn": "یکه-باغ",
+      "geoSource": "osm"
+    }
+  ]
+}

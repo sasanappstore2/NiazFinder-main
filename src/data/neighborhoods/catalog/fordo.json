@@ -1,0 +1,199 @@
+{
+  "cityId": "fordo",
+  "cityName": "فردو",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:24:47.343Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فردو",
+      "name": "فردو",
+      "nameEn": "fordo",
+      "centroid": {
+        "lat": 34.28243327506288,
+        "lng": 51.01345245258172
+      },
+      "bbox": {
+        "south": 34.1759467497305,
+        "north": 34.38891980039526,
+        "west": 50.89964852776609,
+        "east": 51.12725637739735
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابرجس",
+      "name": "ابرجس",
+      "nameEn": "ابرجس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امامزاده-ابراهیم",
+      "name": "امامزاده ابراهیم",
+      "nameEn": "امامزاده-ابراهیم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اول",
+      "name": "اول",
+      "nameEn": "اول",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بید-هند",
+      "name": "بید هند",
+      "nameEn": "بید-هند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تیره",
+      "name": "تیره",
+      "nameEn": "تیره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خاوه",
+      "name": "خاوه",
+      "nameEn": "خاوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درباغ",
+      "name": "درباغ",
+      "nameEn": "درباغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دستگرد",
+      "name": "دستگرد",
+      "nameEn": "دستگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-سیرو",
+      "name": "روستای سیرو",
+      "nameEn": "روستای-سیرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رهق",
+      "name": "رهق",
+      "nameEn": "رهق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زر",
+      "name": "زر",
+      "nameEn": "زر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیرو",
+      "name": "سیرو",
+      "nameEn": "سیرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاهزاده-اسماعیل",
+      "name": "شاهزاده اسماعیل",
+      "nameEn": "شاهزاده-اسماعیل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قبادبزن",
+      "name": "قبادبزن",
+      "nameEn": "قبادبزن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرمجگان",
+      "name": "کرمجگان",
+      "nameEn": "کرمجگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهک",
+      "name": "کهک",
+      "nameEn": "کهک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گروگان",
+      "name": "گروگان",
+      "nameEn": "گروگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مکان-برخورد-نیزک",
+      "name": "مکان برخورد نیزک",
+      "nameEn": "مکان-برخورد-نیزک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میم",
+      "name": "میم",
+      "nameEn": "میم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "واران",
+      "name": "واران",
+      "nameEn": "واران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وسف",
+      "name": "وسف",
+      "nameEn": "وسف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وشنوه",
+      "name": "وشنوه",
+      "nameEn": "وشنوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ون",
+      "name": "ون",
+      "nameEn": "ون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ویریج",
+      "name": "ویریج",
+      "nameEn": "ویریج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هرازجان",
+      "name": "هرازجان",
+      "nameEn": "هرازجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یحیی-آباد-بالا",
+      "name": "یحیی آباد بالا",
+      "nameEn": "یحیی-آباد-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یحیی-آباد-پایین",
+      "name": "یحیی آباد پایین",
+      "nameEn": "یحیی-آباد-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "the-place-of-impact-of-the-spear",
+      "name": "The place of impact of the spear",
+      "nameEn": "the-place-of-impact-of-the-spear",
+      "geoSource": "osm"
+    }
+  ]
+}

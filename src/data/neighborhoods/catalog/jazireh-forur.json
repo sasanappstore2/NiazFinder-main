@@ -1,0 +1,25 @@
+{
+  "cityId": "jazireh-forur",
+  "cityName": "فرور",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.668Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فرور",
+      "name": "فرور",
+      "nameEn": "jazireh-forur",
+      "centroid": {
+        "lat": 26.286714123607617,
+        "lng": 54.577333886035646
+      },
+      "bbox": {
+        "south": 26.18022759827524,
+        "north": 26.39320064893999,
+        "west": 54.47182272466481,
+        "east": 54.682845047406474
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

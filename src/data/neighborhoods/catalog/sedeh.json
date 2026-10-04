@@ -1,0 +1,25 @@
+{
+  "cityId": "sedeh",
+  "cityName": "سده (فارس)",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.672Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سده-فارس",
+      "name": "سده (فارس)",
+      "nameEn": "sedeh",
+      "centroid": {
+        "lat": 30.674340872942867,
+        "lng": 52.196496235359824
+      },
+      "bbox": {
+        "south": 30.567854347610492,
+        "north": 30.780827398275243,
+        "west": 52.08049124554797,
+        "east": 52.31250122517168
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

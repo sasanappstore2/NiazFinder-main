@@ -1,0 +1,25 @@
+{
+  "cityId": "ladiz",
+  "cityName": "لادیز",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.353Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "لادیز",
+      "name": "لادیز",
+      "nameEn": "ladiz",
+      "centroid": {
+        "lat": 28.858473167768597,
+        "lng": 61.12461936404512
+      },
+      "bbox": {
+        "south": 28.751986642436222,
+        "north": 28.964959693100973,
+        "west": 61.01106594786621,
+        "east": 61.238172780224026
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

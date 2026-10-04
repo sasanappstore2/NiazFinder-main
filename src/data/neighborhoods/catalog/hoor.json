@@ -1,0 +1,25 @@
+{
+  "cityId": "hoor",
+  "cityName": "حور",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.528Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "حور",
+      "name": "حور",
+      "nameEn": "hoor",
+      "centroid": {
+        "lat": 28.27213270251527,
+        "lng": 57.25267038982809
+      },
+      "bbox": {
+        "south": 28.165646177182897,
+        "north": 28.378619227847647,
+        "west": 57.14004910866394,
+        "east": 57.36529167099224
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,397 @@
+{
+  "cityId": "kakhak",
+  "cityName": "کاخک",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:53:30.191Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کاخک",
+      "name": "کاخک",
+      "nameEn": "kakhak",
+      "centroid": {
+        "lat": 34.211248979446644,
+        "lng": 58.68456864656578
+      },
+      "bbox": {
+        "south": 34.104762454114265,
+        "north": 34.31773550477902,
+        "west": 58.567994429212284,
+        "east": 58.801142863919274
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "استاد",
+      "name": "استاد",
+      "nameEn": "استاد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایدو",
+      "name": "ایدو",
+      "nameEn": "ایدو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باقرآباد",
+      "name": "باقرآباد",
+      "nameEn": "باقرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بخت-آباد-بالا",
+      "name": "بخت آباد بالا",
+      "nameEn": "بخت-آباد-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بخت-آباد-پایین",
+      "name": "بخت آباد پایین",
+      "nameEn": "بخت-آباد-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برجوک",
+      "name": "برجوک",
+      "nameEn": "برجوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بسک-آباد",
+      "name": "بسک آباد",
+      "nameEn": "بسک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیناباج",
+      "name": "بیناباج",
+      "nameEn": "بیناباج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پچک",
+      "name": "پچک",
+      "nameEn": "پچک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ترنج-پایین",
+      "name": "ترنج پایین",
+      "nameEn": "ترنج-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تک-بنستان",
+      "name": "تک بنستان",
+      "nameEn": "تک-بنستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تک-میدان",
+      "name": "تک میدان",
+      "nameEn": "تک-میدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تکزو",
+      "name": "تکزو",
+      "nameEn": "تکزو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ثقوری",
+      "name": "ثقوری",
+      "nameEn": "ثقوری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چرک-آباد",
+      "name": "چرک آباد",
+      "nameEn": "چرک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-سفید",
+      "name": "چشمه سفید",
+      "nameEn": "چشمه-سفید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانیک",
+      "name": "خانیک",
+      "nameEn": "خانیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خاور-بالا",
+      "name": "خاور بالا",
+      "nameEn": "خاور-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خاور-پایین",
+      "name": "خاور پایین",
+      "nameEn": "خاور-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خون-آباد",
+      "name": "خون آباد",
+      "nameEn": "خون-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوغ-آباد",
+      "name": "دوغ آباد",
+      "nameEn": "دوغ-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیسفان",
+      "name": "دیسفان",
+      "nameEn": "دیسفان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رزگ",
+      "name": "رزگ",
+      "nameEn": "رزگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رضو-سفلی",
+      "name": "رضو سفلی",
+      "nameEn": "رضو-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روچی",
+      "name": "روچی",
+      "nameEn": "روچی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زقیچ",
+      "name": "زقیچ",
+      "nameEn": "زقیچ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زو-صالح-آباد",
+      "name": "زو صالح آباد",
+      "nameEn": "زو-صالح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیروک",
+      "name": "زیروک",
+      "nameEn": "زیروک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سارنگ-سفلی",
+      "name": "سارنگ سفلی",
+      "nameEn": "سارنگ-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سقی",
+      "name": "سقی",
+      "nameEn": "سقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنجتک",
+      "name": "سنجتک",
+      "nameEn": "سنجتک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاهراه",
+      "name": "شاهراه",
+      "nameEn": "شاهراه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شمس-آباد",
+      "name": "شمس آباد",
+      "nameEn": "شمس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرازآباد",
+      "name": "شیرازآباد",
+      "nameEn": "شیرازآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فخ",
+      "name": "فخ",
+      "nameEn": "فخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیض-آباد",
+      "name": "فیض آباد",
+      "nameEn": "فیض-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-سفید-سفلی",
+      "name": "قلعه سفید سفلی",
+      "nameEn": "قلعه-سفید-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کارشک",
+      "name": "کارشک",
+      "nameEn": "کارشک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کج-آباد",
+      "name": "کج آباد",
+      "nameEn": "کج-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرشک",
+      "name": "کرشک",
+      "nameEn": "کرشک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کسک",
+      "name": "کسک",
+      "nameEn": "کسک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلات",
+      "name": "کلات",
+      "nameEn": "کلات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-شمس",
+      "name": "کلاته شمس",
+      "nameEn": "کلاته-شمس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-شیخی",
+      "name": "کلاته شیخی",
+      "nameEn": "کلاته-شیخی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-علی-آباد",
+      "name": "کلاته علی آباد",
+      "nameEn": "کلاته-علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-ملک-زاده",
+      "name": "کلاته ملک زاده",
+      "nameEn": "کلاته-ملک-زاده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-منصور",
+      "name": "کلاته منصور",
+      "nameEn": "کلاته-منصور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-نو",
+      "name": "کلاته نو",
+      "nameEn": "کلاته-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-ولی",
+      "name": "کلاته ولی",
+      "nameEn": "کلاته-ولی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کورشک",
+      "name": "کورشک",
+      "nameEn": "کورشک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدآباد-لب-رود",
+      "name": "محمدآباد لب رود",
+      "nameEn": "محمدآباد-لب-رود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرغداری-بسکابادی",
+      "name": "مرغداری بسکابادی",
+      "nameEn": "مرغداری-بسکابادی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرغش",
+      "name": "مرغش",
+      "nameEn": "مرغش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزدآباد",
+      "name": "مزدآباد",
+      "nameEn": "مزدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مغاث",
+      "name": "مغاث",
+      "nameEn": "مغاث",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهاباد-علیا",
+      "name": "مهاباد علیا",
+      "nameEn": "مهاباد-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهی-آباد-بالا",
+      "name": "مهی آباد بالا",
+      "nameEn": "مهی-آباد-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهی-آباد-پایین",
+      "name": "مهی آباد پایین",
+      "nameEn": "مهی-آباد-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میمند",
+      "name": "میمند",
+      "nameEn": "میمند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نجم-آباد",
+      "name": "نجم آباد",
+      "nameEn": "نجم-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

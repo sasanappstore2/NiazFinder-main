@@ -1,0 +1,25 @@
+{
+  "cityId": "poshtkuh-city",
+  "cityName": "پشتکوه (سیستان و بلوچستان)",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.143Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "پشتکوه-سیستان-و-بلوچستان",
+      "name": "پشتکوه (سیستان و بلوچستان)",
+      "nameEn": "poshtkuh-city",
+      "centroid": {
+        "lat": 28.188806818433346,
+        "lng": 62.20026876839334
+      },
+      "bbox": {
+        "south": 28.08232029310097,
+        "north": 28.29529334376572,
+        "west": 62.08983061057937,
+        "east": 62.310706926207324
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

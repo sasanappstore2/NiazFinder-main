@@ -1,0 +1,25 @@
+{
+  "cityId": "khouzankola",
+  "cityName": "خوزانکلا",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.181Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خوزانکلا",
+      "name": "خوزانکلا",
+      "nameEn": "khouzankola",
+      "centroid": {
+        "lat": 32.107064449103625,
+        "lng": 55.03230476732807
+      },
+      "bbox": {
+        "south": 32.000577923771246,
+        "north": 32.213550974436004,
+        "west": 54.916016935859005,
+        "east": 55.14859259879713
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

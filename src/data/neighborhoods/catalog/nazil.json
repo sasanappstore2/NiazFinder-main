@@ -1,0 +1,25 @@
+{
+  "cityId": "nazil",
+  "cityName": "نازیل",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.901Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "نازیل",
+      "name": "نازیل",
+      "nameEn": "nazil",
+      "centroid": {
+        "lat": 28.68224618674093,
+        "lng": 60.627693742302256
+      },
+      "bbox": {
+        "south": 28.575759661408554,
+        "north": 28.788732712073305,
+        "west": 60.5144245423757,
+        "east": 60.740962942228805
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

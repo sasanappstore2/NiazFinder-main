@@ -1,0 +1,25 @@
+{
+  "cityId": "bashagard",
+  "cityName": "بشاگرد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.298Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بشاگرد",
+      "name": "بشاگرد",
+      "nameEn": "bashagard",
+      "centroid": {
+        "lat": 26.356384409809557,
+        "lng": 57.896975249690215
+      },
+      "bbox": {
+        "south": 26.249897884477182,
+        "north": 26.462870935141932,
+        "west": 57.78757700817722,
+        "east": 58.0063734912032
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

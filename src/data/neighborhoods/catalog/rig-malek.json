@@ -1,0 +1,25 @@
+{
+  "cityId": "rig-malek",
+  "cityName": "ریگ ملک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.318Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ریگ-ملک",
+      "name": "ریگ ملک",
+      "nameEn": "rig-malek",
+      "centroid": {
+        "lat": 28.47665482321236,
+        "lng": 61.83033138716672
+      },
+      "bbox": {
+        "south": 28.370168297879985,
+        "north": 28.583141348544736,
+        "west": 61.721998586241384,
+        "east": 61.93866418809206
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

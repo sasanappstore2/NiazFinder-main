@@ -1,0 +1,25 @@
+{
+  "cityId": "kishkur",
+  "cityName": "کیشکور",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.222Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کیشکور",
+      "name": "کیشکور",
+      "nameEn": "kishkur",
+      "centroid": {
+        "lat": 26.45446834549048,
+        "lng": 61.08404040588967
+      },
+      "bbox": {
+        "south": 26.347981820158104,
+        "north": 26.560954870822854,
+        "west": 60.97606056198575,
+        "east": 61.19202024979359
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

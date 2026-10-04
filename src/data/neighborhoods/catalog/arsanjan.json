@@ -1,0 +1,217 @@
+{
+  "cityId": "arsanjan",
+  "cityName": "ارسنجان",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:51:15.677Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ارسنجان",
+      "name": "ارسنجان",
+      "nameEn": "arsanjan",
+      "centroid": {
+        "lat": 29.831265289256198,
+        "lng": 53.45321168729434
+      },
+      "bbox": {
+        "south": 29.724778763923823,
+        "north": 29.937751814588573,
+        "west": 53.34297698490938,
+        "east": 53.56344638967931
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امام-خمینی",
+      "name": "امام خمینی",
+      "nameEn": "امام-خمینی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انارک",
+      "name": "انارک",
+      "nameEn": "انارک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بکهدان",
+      "name": "بکهدان",
+      "nameEn": "بکهدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهرام-آباد",
+      "name": "بهرام آباد",
+      "nameEn": "بهرام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمال-آباد",
+      "name": "جمال آباد",
+      "nameEn": "جمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خبریز",
+      "name": "خبریز",
+      "nameEn": "خبریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-بید",
+      "name": "ده بید",
+      "nameEn": "ده-بید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحمت-آباد",
+      "name": "رحمت آباد",
+      "nameEn": "رحمت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رفیع-آباد",
+      "name": "رفیع آباد",
+      "nameEn": "رفیع-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رکن-آباد",
+      "name": "رکن آباد",
+      "nameEn": "رکن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیادآباد",
+      "name": "زیادآباد",
+      "nameEn": "زیادآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سعادت-آباد",
+      "name": "سعادت آباد",
+      "nameEn": "سعادت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگ-کر",
+      "name": "سنگ کر",
+      "nameEn": "سنگ-کر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شرق-آباد",
+      "name": "شرق آباد",
+      "nameEn": "شرق-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صالح-آباد",
+      "name": "صالح آباد",
+      "nameEn": "صالح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صفرآباد",
+      "name": "صفرآباد",
+      "nameEn": "صفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-ملک",
+      "name": "علی آباد ملک",
+      "nameEn": "علی-آباد-ملک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلات-خوار",
+      "name": "قلات خوار",
+      "nameEn": "قلات-خوار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کتوری",
+      "name": "کتوری",
+      "nameEn": "کتوری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کته-میان",
+      "name": "کته میان",
+      "nameEn": "کته-میان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمال-آباد",
+      "name": "کمال آباد",
+      "nameEn": "کمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مبارک-آباد",
+      "name": "مبارک آباد",
+      "nameEn": "مبارک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منصورآباد",
+      "name": "منصورآباد",
+      "nameEn": "منصورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآباد",
+      "name": "مهرآباد",
+      "nameEn": "مهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهریان",
+      "name": "مهریان",
+      "nameEn": "مهریان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میج",
+      "name": "میج",
+      "nameEn": "میج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نجم-آباد",
+      "name": "نجم آباد",
+      "nameEn": "نجم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نعمت-آباد",
+      "name": "نعمت آباد",
+      "nameEn": "نعمت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نعیم-آباد",
+      "name": "نعیم آباد",
+      "nameEn": "نعیم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ولی-آباد",
+      "name": "ولی آباد",
+      "nameEn": "ولی-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

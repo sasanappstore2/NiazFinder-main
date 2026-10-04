@@ -1,0 +1,25 @@
+{
+  "cityId": "zarrin-abad",
+  "cityName": "زرین آباد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.371Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زرین-آباد",
+      "name": "زرین آباد",
+      "nameEn": "zarrin-abad",
+      "centroid": {
+        "lat": 33.01191974854474,
+        "lng": 47.00048790085705
+      },
+      "bbox": {
+        "south": 32.90543322321236,
+        "north": 33.11840627387712,
+        "west": 46.882644452005714,
+        "east": 47.118331349708384
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

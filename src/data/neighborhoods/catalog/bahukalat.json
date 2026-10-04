@@ -1,0 +1,25 @@
+{
+  "cityId": "bahukalat",
+  "cityName": "باهوکلات",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.153Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "باهوکلات",
+      "name": "باهوکلات",
+      "nameEn": "bahukalat",
+      "centroid": {
+        "lat": 25.7002239,
+        "lng": 61.56432713631207
+      },
+      "bbox": {
+        "south": 25.593737374667626,
+        "north": 25.806710425332376,
+        "west": 61.458560331848375,
+        "east": 61.670093940775764
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

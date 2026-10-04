@@ -1,0 +1,175 @@
+{
+  "cityId": "bavanat",
+  "cityName": "بوانات",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:56:38.145Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بوانات",
+      "name": "بوانات",
+      "nameEn": "bavanat",
+      "centroid": {
+        "lat": 30.53800196604384,
+        "lng": 53.62147406044671
+      },
+      "bbox": {
+        "south": 30.431515440711465,
+        "north": 30.644488491376215,
+        "west": 53.508853358839865,
+        "east": 53.73409476205355
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "جشنیان",
+      "name": "جشنیان",
+      "nameEn": "جشنیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جعفرآباد-سفلی",
+      "name": "جعفرآباد سفلی",
+      "nameEn": "جعفرآباد-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جعفرآباد-علیا",
+      "name": "جعفرآباد علیا",
+      "nameEn": "جعفرآباد-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جوی-بزم",
+      "name": "جوی بزم",
+      "nameEn": "جوی-بزم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جوی-سفید",
+      "name": "جوی سفید",
+      "nameEn": "جوی-سفید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جیان",
+      "name": "جیان",
+      "nameEn": "جیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوراه",
+      "name": "دوراه",
+      "nameEn": "دوراه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیده-بانکی",
+      "name": "دیده بانکی",
+      "nameEn": "دیده-بانکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-دوراه",
+      "name": "روستای دوراه",
+      "nameEn": "روستای-دوراه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-سمادجان",
+      "name": "روستای سمادجان",
+      "nameEn": "روستای-سمادجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-فنجان",
+      "name": "روستای فنجان",
+      "nameEn": "روستای-فنجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سمادجان",
+      "name": "سمادجان",
+      "nameEn": "سمادجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگبر",
+      "name": "سنگبر",
+      "nameEn": "سنگبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سوریان",
+      "name": "سوریان",
+      "nameEn": "سوریان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیمکان",
+      "name": "سیمکان",
+      "nameEn": "سیمکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-ولی-عصر",
+      "name": "شهرک ولی عصر",
+      "nameEn": "شهرک-ولی-عصر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیدان",
+      "name": "شیدان",
+      "nameEn": "شیدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فخرآباد",
+      "name": "فخرآباد",
+      "nameEn": "فخرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فنجان",
+      "name": "فنجان",
+      "nameEn": "فنجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاضی-آباد",
+      "name": "قاضی آباد",
+      "nameEn": "قاضی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-سنگی",
+      "name": "قلعه سنگی",
+      "nameEn": "قلعه-سنگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-مسه",
+      "name": "قلعه مسه",
+      "nameEn": "قلعه-مسه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قنات-ملک",
+      "name": "قنات ملک",
+      "nameEn": "قنات-ملک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لقمان-چشمه",
+      "name": "لقمان چشمه",
+      "nameEn": "لقمان-چشمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهدی-آباد",
+      "name": "مهدی آباد",
+      "nameEn": "مهدی-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

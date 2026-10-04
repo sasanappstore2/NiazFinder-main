@@ -1,0 +1,91 @@
+{
+  "cityId": "kalat-city",
+  "cityName": "کلات (ایلام)",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:21:11.327Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کلات-ایلام",
+      "name": "کلات (ایلام)",
+      "nameEn": "kalat-city",
+      "centroid": {
+        "lat": 32.68623254721523,
+        "lng": 47.86092053732122
+      },
+      "bbox": {
+        "south": 32.579746021882855,
+        "north": 32.79271907254761,
+        "west": 47.74483835778523,
+        "east": 47.97700271685722
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آب-انار",
+      "name": "آب انار",
+      "nameEn": "آب-انار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تپه-حمام-سفلی",
+      "name": "تپه حمام سفلی",
+      "nameEn": "تپه-حمام-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تپه-حمام-علیا",
+      "name": "تپه حمام علیا",
+      "nameEn": "تپه-حمام-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تپه-حمام-وسطی",
+      "name": "تپه حمام وسطی",
+      "nameEn": "تپه-حمام-وسطی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-شیرین-رشنو",
+      "name": "چشمه شیرین رشنو",
+      "nameEn": "چشمه-شیرین-رشنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حونگه",
+      "name": "حونگه",
+      "nameEn": "حونگه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراب-نقل",
+      "name": "سراب نقل",
+      "nameEn": "سراب-نقل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاه-گل",
+      "name": "سیاه گل",
+      "nameEn": "سیاه-گل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لرغه",
+      "name": "لرغه",
+      "nameEn": "لرغه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مورموری",
+      "name": "مورموری",
+      "nameEn": "مورموری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مولاب-علیا",
+      "name": "مولاب علیا",
+      "nameEn": "مولاب-علیا",
+      "geoSource": "osm"
+    }
+  ]
+}

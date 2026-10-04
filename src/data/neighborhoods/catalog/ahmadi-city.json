@@ -1,0 +1,25 @@
+{
+  "cityId": "ahmadi-city",
+  "cityName": "احمدی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.695Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "احمدی",
+      "name": "احمدی",
+      "nameEn": "ahmadi-city",
+      "centroid": {
+        "lat": 28.037442355839023,
+        "lng": 56.81487341204297
+      },
+      "bbox": {
+        "south": 27.930955830506647,
+        "north": 28.143928881171398,
+        "west": 56.704595232418434,
+        "east": 56.9251515916675
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

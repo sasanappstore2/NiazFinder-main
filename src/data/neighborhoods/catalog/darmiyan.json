@@ -1,0 +1,181 @@
+{
+  "cityId": "darmiyan",
+  "cityName": "درمیان",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:38:31.669Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "درمیان",
+      "name": "درمیان",
+      "nameEn": "darmiyan",
+      "centroid": {
+        "lat": 32.95781234721523,
+        "lng": 60.025221909823614
+      },
+      "bbox": {
+        "south": 32.85132582188285,
+        "north": 33.06429887254761,
+        "west": 59.91037066438365,
+        "east": 60.14007315526358
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارّه-فورگ",
+      "name": "ارّه فورگ",
+      "nameEn": "ارّه-فورگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسدیه",
+      "name": "اسدیه",
+      "nameEn": "اسدیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسکندر",
+      "name": "اسکندر",
+      "nameEn": "اسکندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسکیونگ",
+      "name": "اسکیونگ",
+      "nameEn": "اسکیونگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغستان",
+      "name": "باغستان",
+      "nameEn": "باغستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنیاب",
+      "name": "بنیاب",
+      "nameEn": "بنیاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تاغان",
+      "name": "تاغان",
+      "nameEn": "تاغان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تخویج",
+      "name": "تخویج",
+      "nameEn": "تخویج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تشوند",
+      "name": "تشوند",
+      "nameEn": "تشوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تغندیک",
+      "name": "تغندیک",
+      "nameEn": "تغندیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جاجنگ",
+      "name": "جاجنگ",
+      "nameEn": "جاجنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چک",
+      "name": "چک",
+      "nameEn": "چک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خونیک-باز",
+      "name": "خونیک باز",
+      "nameEn": "خونیک-باز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دادران",
+      "name": "دادران",
+      "nameEn": "دادران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنه-چاه",
+      "name": "دهنه چاه",
+      "nameEn": "دهنه-چاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زولسک",
+      "name": "زولسک",
+      "nameEn": "زولسک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرو",
+      "name": "سرو",
+      "nameEn": "سرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرگ-اقا",
+      "name": "شیرگ اقا",
+      "nameEn": "شیرگ-اقا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فورگ",
+      "name": "فورگ",
+      "nameEn": "فورگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قیک-پایین",
+      "name": "قیک پایین",
+      "nameEn": "قیک-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنگان",
+      "name": "کنگان",
+      "nameEn": "کنگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-افشان",
+      "name": "گل افشان",
+      "nameEn": "گل-افشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدآباد-علیا",
+      "name": "محمدآباد علیا",
+      "nameEn": "محمدآباد-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد",
+      "name": "محمودآباد",
+      "nameEn": "محمودآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوزاد",
+      "name": "نوزاد",
+      "nameEn": "نوزاد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوغاب",
+      "name": "نوغاب",
+      "nameEn": "نوغاب",
+      "geoSource": "osm"
+    }
+  ]
+}

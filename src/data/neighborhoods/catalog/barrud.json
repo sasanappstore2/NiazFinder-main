@@ -1,0 +1,199 @@
+{
+  "cityId": "barrud",
+  "cityName": "بررود",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:35:19.063Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بررود",
+      "name": "بررود",
+      "nameEn": "barrud",
+      "centroid": {
+        "lat": 35.55541675411427,
+        "lng": 58.39357596769129
+      },
+      "bbox": {
+        "south": 35.44893022878189,
+        "north": 35.66190327944665,
+        "west": 58.27028712560298,
+        "east": 58.5168648097796
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-قلعه",
+      "name": "اسلام قلعه",
+      "nameEn": "اسلام-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امام-تقی",
+      "name": "امام تقی",
+      "nameEn": "امام-تقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امیرآباد",
+      "name": "امیرآباد",
+      "nameEn": "امیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بژگانی",
+      "name": "بژگانی",
+      "nameEn": "بژگانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلندپی-خاتون-آباد",
+      "name": "بلندپی خاتون آباد",
+      "nameEn": "بلندپی-خاتون-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمران",
+      "name": "جمران",
+      "nameEn": "جمران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چرم",
+      "name": "چرم",
+      "nameEn": "چرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حصار-سرخ",
+      "name": "حصار سرخ",
+      "nameEn": "حصار-سرخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داشخانه",
+      "name": "داشخانه",
+      "nameEn": "داشخانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دلبران",
+      "name": "دلبران",
+      "nameEn": "دلبران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-نو",
+      "name": "ده نو",
+      "nameEn": "ده-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرغایه",
+      "name": "سرغایه",
+      "nameEn": "سرغایه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرنیش",
+      "name": "سرنیش",
+      "nameEn": "سرنیش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیرزار",
+      "name": "سیرزار",
+      "nameEn": "سیرزار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوراب-بالا",
+      "name": "شوراب بالا",
+      "nameEn": "شوراب-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوراب-سفلی",
+      "name": "شوراب سفلی",
+      "nameEn": "شوراب-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرین-آباد",
+      "name": "شیرین آباد",
+      "nameEn": "شیرین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عبدالمجید",
+      "name": "عبدالمجید",
+      "nameEn": "عبدالمجید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرزنی",
+      "name": "فرزنی",
+      "nameEn": "فرزنی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاریزمه",
+      "name": "کاریزمه",
+      "nameEn": "کاریزمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کج-النگ",
+      "name": "کج النگ",
+      "nameEn": "کج-النگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گردنه-دلبران",
+      "name": "گردنه دلبران",
+      "nameEn": "گردنه-دلبران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلمی-پایین",
+      "name": "گلمی پایین",
+      "nameEn": "گلمی-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ماه-کاریز",
+      "name": "ماه کاریز",
+      "nameEn": "ماه-کاریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مراغه",
+      "name": "مراغه",
+      "nameEn": "مراغه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "معصوم-آباد",
+      "name": "معصوم آباد",
+      "nameEn": "معصوم-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

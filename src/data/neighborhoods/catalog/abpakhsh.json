@@ -1,0 +1,253 @@
+{
+  "cityId": "abpakhsh",
+  "cityName": "آبپخش",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:28:34.932Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "آبپخش",
+      "name": "آبپخش",
+      "nameEn": "abpakhsh",
+      "centroid": {
+        "lat": 29.365125232231403,
+        "lng": 51.00466859174392
+      },
+      "bbox": {
+        "south": 29.258638706899028,
+        "north": 29.471611757563778,
+        "west": 50.89442230077312,
+        "east": 51.11491488271473
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آب-پخش",
+      "name": "آب پخش",
+      "nameEn": "آب-پخش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آل-یوسفی-علیا",
+      "name": "آل یوسفی علیا",
+      "nameEn": "آل-یوسفی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احشام-حسن",
+      "name": "احشام حسن",
+      "nameEn": "احشام-حسن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بارگاهی",
+      "name": "بارگاهی",
+      "nameEn": "بارگاهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برمک",
+      "name": "برمک",
+      "nameEn": "برمک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بشیرآباد",
+      "name": "بشیرآباد",
+      "nameEn": "بشیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنار-آب-شیرین",
+      "name": "بنار آب شیرین",
+      "nameEn": "بنار-آب-شیرین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنار-آزادگان",
+      "name": "بنار آزادگان",
+      "nameEn": "بنار-آزادگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنار-سلیمانی",
+      "name": "بنار سلیمانی",
+      "nameEn": "بنار-سلیمانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بویری",
+      "name": "بویری",
+      "nameEn": "بویری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تل-سبز",
+      "name": "تل سبز",
+      "nameEn": "تل-سبز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تل-سرکوه",
+      "name": "تل سرکوه",
+      "nameEn": "تل-سرکوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جتوط",
+      "name": "جتوط",
+      "nameEn": "جتوط",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چم-درواهی",
+      "name": "چم درواهی",
+      "nameEn": "چم-درواهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهاربرج",
+      "name": "چهاربرج",
+      "nameEn": "چهاربرج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حیدری",
+      "name": "حیدری",
+      "nameEn": "حیدری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خوش-مکان",
+      "name": "خوش مکان",
+      "nameEn": "خوش-مکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خوشاب",
+      "name": "خوشاب",
+      "nameEn": "خوشاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درودگاه",
+      "name": "درودگاه",
+      "nameEn": "درودگاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشتی-اسماعیل-خانی",
+      "name": "دشتی اسماعیل خانی",
+      "nameEn": "دشتی-اسماعیل-خانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-نو",
+      "name": "ده نو",
+      "nameEn": "ده-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهقاید",
+      "name": "دهقاید",
+      "nameEn": "دهقاید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-درودگاه",
+      "name": "روستای درودگاه",
+      "nameEn": "روستای-درودگاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-دهقاید",
+      "name": "روستای دهقاید",
+      "nameEn": "روستای-دهقاید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیارت",
+      "name": "زیارت",
+      "nameEn": "زیارت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیرراه",
+      "name": "زیرراه",
+      "nameEn": "زیرراه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سعدآباد",
+      "name": "سعدآباد",
+      "nameEn": "سعدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صفی-آباد",
+      "name": "صفی آباد",
+      "nameEn": "صفی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلایی",
+      "name": "قلایی",
+      "nameEn": "قلایی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلل",
+      "name": "کلل",
+      "nameEn": "کلل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گزبلند",
+      "name": "گزبلند",
+      "nameEn": "گزبلند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدشاهی",
+      "name": "محمدشاهی",
+      "nameEn": "محمدشاهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میان-دشت-جنوبی",
+      "name": "میان دشت جنوبی",
+      "nameEn": "میان-دشت-جنوبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میان-دشت-شمالی",
+      "name": "میان دشت شمالی",
+      "nameEn": "میان-دشت-شمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-خلیج-فارس",
+      "name": "میدان خلیج فارس",
+      "nameEn": "میدان-خلیج-فارس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نظرآقا",
+      "name": "نظرآقا",
+      "nameEn": "نظرآقا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هفت-جوش",
+      "name": "هفت جوش",
+      "nameEn": "هفت-جوش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هلپهای",
+      "name": "هلپه‌ای",
+      "nameEn": "هلپهای",
+      "geoSource": "osm"
+    }
+  ]
+}

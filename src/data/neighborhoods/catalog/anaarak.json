@@ -1,0 +1,31 @@
+{
+  "cityId": "anaarak",
+  "cityName": "انارک",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:35:59.213Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "انارک",
+      "name": "انارک",
+      "nameEn": "anaarak",
+      "centroid": {
+        "lat": 33.534914005569526,
+        "lng": 53.90136354387386
+      },
+      "bbox": {
+        "south": 33.42842748023715,
+        "north": 33.641400530901905,
+        "west": 53.78321801000969,
+        "east": 54.019509077738036
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسماعیلان",
+      "name": "اسماعیلان",
+      "nameEn": "اسماعیلان",
+      "geoSource": "osm"
+    }
+  ]
+}

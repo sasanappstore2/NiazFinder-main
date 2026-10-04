@@ -1,0 +1,199 @@
+{
+  "cityId": "siyakh-darangoon",
+  "cityName": "سیاخ دارنگون",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:09:41.753Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سیاخ-دارنگون",
+      "name": "سیاخ دارنگون",
+      "nameEn": "siyakh-darangoon",
+      "centroid": {
+        "lat": 29.38083942188286,
+        "lng": 52.43052758951136
+      },
+      "bbox": {
+        "south": 29.274352896550486,
+        "north": 29.487325947215236,
+        "west": 52.321483117929645,
+        "east": 52.53957206109306
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلاملو-ایلی",
+      "name": "اسلاملو ایلی",
+      "nameEn": "اسلاملو-ایلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انبار",
+      "name": "انبار",
+      "nameEn": "انبار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایور",
+      "name": "ایور",
+      "nameEn": "ایور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بابا-ایور",
+      "name": "بابا ایور",
+      "nameEn": "بابا-ایور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چنارک",
+      "name": "چنارک",
+      "nameEn": "چنارک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خارکان",
+      "name": "خارکان",
+      "nameEn": "خارکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانه-خمیس-سفلی",
+      "name": "خانه خمیس سفلی",
+      "nameEn": "خانه-خمیس-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دارنگون",
+      "name": "دارنگون",
+      "nameEn": "دارنگون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره",
+      "name": "دره",
+      "nameEn": "دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهداری-شوراب",
+      "name": "دهداری شوراب",
+      "nameEn": "دهداری-شوراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-اسلاملو-ایلی",
+      "name": "روستای اسلاملو ایلی",
+      "nameEn": "روستای-اسلاملو-ایلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سعادت-آباد",
+      "name": "سعادت آباد",
+      "nameEn": "سعادت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شکرآباد",
+      "name": "شکرآباد",
+      "nameEn": "شکرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوراب",
+      "name": "شوراب",
+      "nameEn": "شوراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیب-جدول",
+      "name": "شیب جدول",
+      "nameEn": "شیب-جدول",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-چوبی",
+      "name": "قلعه چوبی",
+      "nameEn": "قلعه-چوبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-چوبی-سفلی",
+      "name": "قلعه چوبی سفلی",
+      "nameEn": "قلعه-چوبی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-چوبی-علیا",
+      "name": "قلعه چوبی علیا",
+      "nameEn": "قلعه-چوبی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کدنج",
+      "name": "کدنج",
+      "nameEn": "کدنج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کفری",
+      "name": "کفری",
+      "nameEn": "کفری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد",
+      "name": "محمودآباد",
+      "nameEn": "محمودآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-مراد-نجفی",
+      "name": "مزرعه مراد نجفی",
+      "nameEn": "مزرعه-مراد-نجفی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میشوان",
+      "name": "میشوان",
+      "nameEn": "میشوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوروزآباد",
+      "name": "نوروزآباد",
+      "nameEn": "نوروزآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "همدم-آباد",
+      "name": "همدم آباد",
+      "nameEn": "همدم-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

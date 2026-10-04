@@ -1,0 +1,259 @@
+{
+  "cityId": "dalbaran",
+  "cityName": "دلبران",
+  "source": "osm",
+  "importedAt": "2026-06-17T00:03:45.622Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دلبران",
+      "name": "دلبران",
+      "nameEn": "dalbaran",
+      "centroid": {
+        "lat": 35.26802341764284,
+        "lng": 48.08995372727808
+      },
+      "bbox": {
+        "south": 35.16153689231046,
+        "north": 35.374509942975216,
+        "west": 47.970737735278576,
+        "east": 48.20916971927758
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آجی-چای",
+      "name": "آجی چای",
+      "nameEn": "آجی-چای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الهیاری",
+      "name": "الهیاری",
+      "nameEn": "الهیاری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امین-آباد",
+      "name": "امین آباد",
+      "nameEn": "امین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بابا-شیدالله",
+      "name": "بابا شیدالله",
+      "nameEn": "بابا-شیدالله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بابا-گرگر",
+      "name": "بابا گرگر",
+      "nameEn": "بابا-گرگر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغلوجه",
+      "name": "باغلوجه",
+      "nameEn": "باغلوجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهارلو",
+      "name": "بهارلو",
+      "nameEn": "بهارلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تازه-آباد-کریم-آباد",
+      "name": "تازه آباد کریم آباد",
+      "nameEn": "تازه-آباد-کریم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جداقیه",
+      "name": "جداقیه",
+      "nameEn": "جداقیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خریله",
+      "name": "خریله",
+      "nameEn": "خریله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داش-کسن",
+      "name": "داش کسن",
+      "nameEn": "داش-کسن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دو-سر",
+      "name": "دو سر",
+      "nameEn": "دو-سر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیوزند",
+      "name": "دیوزند",
+      "nameEn": "دیوزند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرین-آباد",
+      "name": "زرین آباد",
+      "nameEn": "زرین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زنگ-آباد",
+      "name": "زنگ آباد",
+      "nameEn": "زنگ-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیوه",
+      "name": "زیوه",
+      "nameEn": "زیوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلیم-سرایی",
+      "name": "سلیم سرایی",
+      "nameEn": "سلیم-سرایی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شکوه-آباد",
+      "name": "شکوه آباد",
+      "nameEn": "شکوه-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-دانش",
+      "name": "شهرک دانش",
+      "nameEn": "شهرک-دانش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-صادقیه",
+      "name": "شهرک صادقیه",
+      "nameEn": "شهرک-صادقیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخ-جعفر",
+      "name": "شیخ جعفر",
+      "nameEn": "شیخ-جعفر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طوغان",
+      "name": "طوغان",
+      "nameEn": "طوغان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عسگر-آباد",
+      "name": "عسگر آباد",
+      "nameEn": "عسگر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاسم-آباد",
+      "name": "قاسم آباد",
+      "nameEn": "قاسم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قبان-تپه-کرد",
+      "name": "قبان تپه کرد",
+      "nameEn": "قبان-تپه-کرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-بلاغ-خان",
+      "name": "قره بلاغ خان",
+      "nameEn": "قره-بلاغ-خان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزلجه-کند",
+      "name": "قزلجه کند",
+      "nameEn": "قزلجه-کند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قصلان",
+      "name": "قصلان",
+      "nameEn": "قصلان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قطارقویی",
+      "name": "قطارقویی",
+      "nameEn": "قطارقویی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوجاق",
+      "name": "قوجاق",
+      "nameEn": "قوجاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمره",
+      "name": "کمره",
+      "nameEn": "کمره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوه-سیاه",
+      "name": "کوه سیاه",
+      "nameEn": "کوه-سیاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کیتو",
+      "name": "کیتو",
+      "nameEn": "کیتو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مالوجه",
+      "name": "مالوجه",
+      "nameEn": "مالوجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مجین",
+      "name": "مجین",
+      "nameEn": "مجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نارنجک",
+      "name": "نارنجک",
+      "nameEn": "نارنجک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناظم-آباد",
+      "name": "ناظم آباد",
+      "nameEn": "ناظم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نی-بند",
+      "name": "نی بند",
+      "nameEn": "نی-بند",
+      "geoSource": "osm"
+    }
+  ]
+}

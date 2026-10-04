@@ -1,0 +1,25 @@
+{
+  "cityId": "banaruyeh",
+  "cityName": "بنارویه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.213Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بنارویه",
+      "name": "بنارویه",
+      "nameEn": "banaruyeh",
+      "centroid": {
+        "lat": 28.060570073338123,
+        "lng": 54.039427708818636
+      },
+      "bbox": {
+        "south": 27.954083548005748,
+        "north": 28.1670565986705,
+        "west": 53.926770792993004,
+        "east": 54.15208462464426
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

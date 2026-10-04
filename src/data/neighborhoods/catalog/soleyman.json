@@ -1,0 +1,25 @@
+{
+  "cityId": "soleyman",
+  "cityName": "سلیمان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.964Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سلیمان",
+      "name": "سلیمان",
+      "nameEn": "soleyman",
+      "centroid": {
+        "lat": 35.25031822784765,
+        "lng": 59.962076010284875
+      },
+      "bbox": {
+        "south": 35.14383170251527,
+        "north": 35.35680475318003,
+        "west": 59.84313353516758,
+        "east": 60.08101848540217
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

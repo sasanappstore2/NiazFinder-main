@@ -1,0 +1,25 @@
+{
+  "cityId": "karftu",
+  "cityName": "کرفتو",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.891Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کرفتو",
+      "name": "کرفتو",
+      "nameEn": "karftu",
+      "centroid": {
+        "lat": 36.16221235928854,
+        "lng": 47.03742281435805
+      },
+      "bbox": {
+        "south": 36.05572583395616,
+        "north": 36.26869888462092,
+        "west": 46.91516737885387,
+        "east": 47.159678249862225
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

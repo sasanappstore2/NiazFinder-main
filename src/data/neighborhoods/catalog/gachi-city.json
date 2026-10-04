@@ -1,0 +1,103 @@
+{
+  "cityId": "gachi-city",
+  "cityName": "گچی",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:21:29.843Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گچی",
+      "name": "گچی",
+      "nameEn": "gachi-city",
+      "centroid": {
+        "lat": 33.39349298541142,
+        "lng": 46.54205709952538
+      },
+      "bbox": {
+        "south": 33.28700646007904,
+        "north": 33.4999795107438,
+        "west": 46.42640561525167,
+        "east": 46.6577085837991
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اما",
+      "name": "اما",
+      "nameEn": "اما",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انجیر",
+      "name": "انجیر",
+      "nameEn": "انجیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-باریک",
+      "name": "چشمه باریک",
+      "nameEn": "چشمه-باریک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چقا-گلان",
+      "name": "چقا گلان",
+      "nameEn": "چقا-گلان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراب-کلک",
+      "name": "سراب کلک",
+      "nameEn": "سراب-کلک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاهرگه",
+      "name": "سیاهرگه",
+      "nameEn": "سیاهرگه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قرجیلیگان",
+      "name": "قرجیلیگان",
+      "nameEn": "قرجیلیگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-جوق",
+      "name": "قلعه جوق",
+      "nameEn": "قلعه-جوق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلک-نقی",
+      "name": "کلک نقی",
+      "nameEn": "کلک-نقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-گل-سفلی",
+      "name": "گل گل سفلی",
+      "nameEn": "گل-گل-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-گل-علیا",
+      "name": "گل گل علیا",
+      "nameEn": "گل-گل-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهر",
+      "name": "مهر",
+      "nameEn": "مهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورئ-کلک",
+      "name": "ورئ کلک",
+      "nameEn": "ورئ-کلک",
+      "geoSource": "osm"
+    }
+  ]
+}

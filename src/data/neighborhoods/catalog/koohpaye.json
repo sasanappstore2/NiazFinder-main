@@ -1,0 +1,163 @@
+{
+  "cityId": "koohpaye",
+  "cityName": "کوهپایه",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:43:20.484Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوهپایه",
+      "name": "کوهپایه",
+      "nameEn": "koohpaye",
+      "centroid": {
+        "lat": 32.67904715662954,
+        "lng": 52.71846243840907
+      },
+      "bbox": {
+        "south": 32.57256063129716,
+        "north": 32.785533681961915,
+        "west": 52.606612050621926,
+        "east": 52.83031282619621
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اب-خارک",
+      "name": "اب خارک",
+      "nameEn": "اب-خارک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امامزاده-قاسم",
+      "name": "امامزاده قاسم",
+      "nameEn": "امامزاده-قاسم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تینجان",
+      "name": "تینجان",
+      "nameEn": "تینجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جزه",
+      "name": "جزه",
+      "nameEn": "جزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سسن-آباد",
+      "name": "سسن آباد",
+      "nameEn": "سسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سَهْر",
+      "name": "سَهْر",
+      "nameEn": "سَهْر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علون-آباد",
+      "name": "علون آباد",
+      "nameEn": "علون-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-ابراهیم",
+      "name": "علی ابراهیم",
+      "nameEn": "علی-ابراهیم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فشارک",
+      "name": "فشارک",
+      "nameEn": "فشارک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قهی",
+      "name": "قهی",
+      "nameEn": "قهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کردآباد",
+      "name": "کردآباد",
+      "nameEn": "کردآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمال-بیک",
+      "name": "کمال بیک",
+      "nameEn": "کمال-بیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوهران",
+      "name": "کوهران",
+      "nameEn": "کوهران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کیچی",
+      "name": "کیچی",
+      "nameEn": "کیچی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لوتری",
+      "name": "لوتری",
+      "nameEn": "لوتری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مشکنان",
+      "name": "مشکنان",
+      "nameEn": "مشکنان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-خلیج-فارس",
+      "name": "میدان خلیج فارس",
+      "nameEn": "میدان-خلیج-فارس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-شورا",
+      "name": "میدان شورا",
+      "nameEn": "میدان-شورا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-کشاورز",
+      "name": "میدان کشاورز",
+      "nameEn": "میدان-کشاورز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرجعفر",
+      "name": "میرجعفر",
+      "nameEn": "میرجعفر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هرند",
+      "name": "هرند",
+      "nameEn": "هرند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هریزه",
+      "name": "هریزه",
+      "nameEn": "هریزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هماگران",
+      "name": "هماگران",
+      "nameEn": "هماگران",
+      "geoSource": "osm"
+    }
+  ]
+}

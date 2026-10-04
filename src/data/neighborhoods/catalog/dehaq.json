@@ -1,0 +1,55 @@
+{
+  "cityId": "dehaq",
+  "cityName": "علویجه - دهق",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:41:37.819Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چهار-راه-مخابرات",
+      "name": "چهار راه مخابرات",
+      "nameEn": "چهار-راه-مخابرات",
+      "centroid": {
+        "lat": 33.084212197879985,
+        "lng": 51.01993321899609
+      },
+      "bbox": {
+        "south": 32.97772567254761,
+        "north": 33.190698723212364,
+        "west": 50.90832306406795,
+        "east": 51.131543373924224
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خونداب",
+      "name": "خونداب",
+      "nameEn": "خونداب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهق",
+      "name": "دهق",
+      "nameEn": "دهق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علویجه",
+      "name": "علویجه",
+      "nameEn": "علویجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هسنیجه",
+      "name": "هسنیجه",
+      "nameEn": "هسنیجه",
+      "geoSource": "osm"
+    }
+  ]
+}

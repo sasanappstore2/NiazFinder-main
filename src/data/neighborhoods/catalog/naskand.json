@@ -1,0 +1,25 @@
+{
+  "cityId": "naskand",
+  "cityName": "نسکند",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.878Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "نسکند",
+      "name": "نسکند",
+      "nameEn": "naskand",
+      "centroid": {
+        "lat": 26.74291571803809,
+        "lng": 61.5660705122619
+      },
+      "bbox": {
+        "south": 26.636429192705716,
+        "north": 26.849402243370466,
+        "west": 61.46207760971133,
+        "east": 61.67006341481248
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

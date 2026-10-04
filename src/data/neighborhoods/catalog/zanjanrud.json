@@ -1,0 +1,25 @@
+{
+  "cityId": "zanjanrud",
+  "cityName": "زنجانرود",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.339Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زنجانرود",
+      "name": "زنجانرود",
+      "nameEn": "zanjanrud",
+      "centroid": {
+        "lat": 36.93236674893999,
+        "lng": 47.98771060130271
+      },
+      "bbox": {
+        "south": 36.82588022360761,
+        "north": 37.03885327427237,
+        "west": 47.86874613673447,
+        "east": 48.10667506587094
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

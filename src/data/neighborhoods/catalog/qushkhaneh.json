@@ -1,0 +1,25 @@
+{
+  "cityId": "qushkhaneh",
+  "cityName": "قوشخانه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.205Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "قوشخانه",
+      "name": "قوشخانه",
+      "nameEn": "qushkhaneh",
+      "centroid": {
+        "lat": 37.77794044761049,
+        "lng": 57.807883396546075
+      },
+      "bbox": {
+        "south": 37.67145392227811,
+        "north": 37.88442697294287,
+        "west": 57.686339999292734,
+        "east": 57.929426793799415
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

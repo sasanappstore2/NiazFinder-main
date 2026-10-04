@@ -1,0 +1,25 @@
+{
+  "cityId": "rabt",
+  "cityName": "ربط",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.216Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مسکن-مهر-سردشت",
+      "name": "مسکن مهر سردشت",
+      "nameEn": "مسکن-مهر-سردشت",
+      "centroid": {
+        "lat": 36.1579395,
+        "lng": 45.45955135
+      },
+      "bbox": {
+        "south": 36.156233,
+        "north": 36.159646,
+        "west": 45.4564668,
+        "east": 45.4626359
+      },
+      "geoSource": "osm"
+    }
+  ]
+}

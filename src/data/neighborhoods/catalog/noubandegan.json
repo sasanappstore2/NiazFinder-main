@@ -1,0 +1,217 @@
+{
+  "cityId": "noubandegan",
+  "cityName": "نوبندگان",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:24:23.606Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "نوبندگان",
+      "name": "نوبندگان",
+      "nameEn": "noubandegan",
+      "centroid": {
+        "lat": 28.913416614588574,
+        "lng": 53.95436360104134
+      },
+      "bbox": {
+        "south": 28.8069300892562,
+        "north": 29.01990313992095,
+        "west": 53.84774760300784,
+        "east": 54.06097959907483
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابوذرآباد",
+      "name": "ابوذرآباد",
+      "nameEn": "ابوذرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امامزاده-محمد",
+      "name": "امامزاده محمد",
+      "nameEn": "امامزاده-محمد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جعفرآباد",
+      "name": "جعفرآباد",
+      "nameEn": "جعفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلیان",
+      "name": "جلیان",
+      "nameEn": "جلیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خورنگان",
+      "name": "خورنگان",
+      "nameEn": "خورنگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیرآباد",
+      "name": "خیرآباد",
+      "nameEn": "خیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دستجه",
+      "name": "دستجه",
+      "nameEn": "دستجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشت-احمد",
+      "name": "دشت احمد",
+      "nameEn": "دشت-احمد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-شیب-میرزاحسنی",
+      "name": "ده شیب میرزاحسنی",
+      "nameEn": "ده-شیب-میرزاحسنی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زاهدشهر",
+      "name": "زاهدشهر",
+      "nameEn": "زاهدشهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سده",
+      "name": "سده",
+      "nameEn": "سده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنان",
+      "name": "سنان",
+      "nameEn": "سنان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شصتگان",
+      "name": "شصتگان",
+      "nameEn": "شصتگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورآباد",
+      "name": "شورآباد",
+      "nameEn": "شورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیدانک",
+      "name": "شیدانک",
+      "nameEn": "شیدانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صادق-آباد",
+      "name": "صادق آباد",
+      "nameEn": "صادق-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صالح-آباد",
+      "name": "صالح آباد",
+      "nameEn": "صالح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صحرارود",
+      "name": "صحرارود",
+      "nameEn": "صحرارود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غیاث-آباد",
+      "name": "غیاث آباد",
+      "nameEn": "غیاث-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فدشکویه",
+      "name": "فدشکویه",
+      "nameEn": "فدشکویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قادرآباد",
+      "name": "قادرآباد",
+      "nameEn": "قادرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنکان",
+      "name": "کنکان",
+      "nameEn": "کنکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کورههای-آجرپزی",
+      "name": "کوره‌های آجرپزی",
+      "nameEn": "کورههای-آجرپزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوشک-قاضی",
+      "name": "کوشک قاضی",
+      "nameEn": "کوشک-قاضی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-دشتکی",
+      "name": "مزرعه دشتکی",
+      "nameEn": "مزرعه-دشتکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موردی",
+      "name": "موردی",
+      "nameEn": "موردی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهدی-آباد",
+      "name": "مهدی آباد",
+      "nameEn": "مهدی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میان-شهر",
+      "name": "میان شهر",
+      "nameEn": "میان-شهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نورآباد",
+      "name": "نورآباد",
+      "nameEn": "نورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "واصل-آباد",
+      "name": "واصل آباد",
+      "nameEn": "واصل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هارم",
+      "name": "هارم",
+      "nameEn": "هارم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هارون-و-سکز",
+      "name": "هارون و سکز",
+      "nameEn": "هارون-و-سکز",
+      "geoSource": "osm"
+    }
+  ]
+}

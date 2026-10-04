@@ -1,0 +1,25 @@
+{
+  "cityId": "darb-gonbad",
+  "cityName": "درب گنبد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.709Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "درب-گنبد",
+      "name": "درب گنبد",
+      "nameEn": "darb-gonbad",
+      "centroid": {
+        "lat": 33.62320325928854,
+        "lng": 47.34514090919885
+      },
+      "bbox": {
+        "south": 33.51671673395616,
+        "north": 33.729689784620916,
+        "west": 47.22927812504338,
+        "east": 47.461003693354314
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

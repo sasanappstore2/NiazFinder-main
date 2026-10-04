@@ -1,0 +1,25 @@
+{
+  "cityId": "sumay-baradust",
+  "cityName": "صومای برادوست",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.019Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "صومای-برادوست",
+      "name": "صومای برادوست",
+      "nameEn": "sumay-baradust",
+      "centroid": {
+        "lat": 37.84649594681998,
+        "lng": 44.767555346323064
+      },
+      "bbox": {
+        "south": 37.7400094214876,
+        "north": 37.95298247215236,
+        "west": 44.649710551441544,
+        "east": 44.885400141204585
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

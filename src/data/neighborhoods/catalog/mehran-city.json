@@ -1,0 +1,25 @@
+{
+  "cityId": "mehran-city",
+  "cityName": "مهران (هرمزگان)",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.659Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مهران-هرمزگان",
+      "name": "مهران (هرمزگان)",
+      "nameEn": "mehran-city",
+      "centroid": {
+        "lat": 26.95515995623428,
+        "lng": 55.1965463767884
+      },
+      "bbox": {
+        "south": 26.848673430901904,
+        "north": 27.061646481566655,
+        "west": 55.091078246235355,
+        "east": 55.30201450734144
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

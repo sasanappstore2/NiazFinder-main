@@ -1,0 +1,25 @@
+{
+  "cityId": "eshkevar",
+  "cityName": "اشکوار",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.895Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "اشکوار",
+      "name": "اشکوار",
+      "nameEn": "eshkevar",
+      "centroid": {
+        "lat": 36.124008033186236,
+        "lng": 52.01804863439749
+      },
+      "bbox": {
+        "south": 36.01752150785386,
+        "north": 36.230494558518615,
+        "west": 51.898313603418735,
+        "east": 52.13778366537624
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

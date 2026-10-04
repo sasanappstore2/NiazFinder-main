@@ -1,0 +1,25 @@
+{
+  "cityId": "pir-sohrab",
+  "cityName": "پیر سهراب",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.104Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "پیر-سهراب",
+      "name": "پیر سهراب",
+      "nameEn": "pir-sohrab",
+      "centroid": {
+        "lat": 25.667948004240028,
+        "lng": 60.933663359475254
+      },
+      "bbox": {
+        "south": 25.561461478907653,
+        "north": 25.774434529572403,
+        "west": 60.82602355921508,
+        "east": 61.04130315973543
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

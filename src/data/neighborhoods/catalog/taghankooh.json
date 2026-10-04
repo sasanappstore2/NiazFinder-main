@@ -1,0 +1,211 @@
+{
+  "cityId": "taghankooh",
+  "cityName": "طاغنکوه",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:52:10.263Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "طاغنکوه",
+      "name": "طاغنکوه",
+      "nameEn": "taghankooh",
+      "centroid": {
+        "lat": 36.3432079322314,
+        "lng": 58.40709401214238
+      },
+      "bbox": {
+        "south": 36.23672140689902,
+        "north": 36.44969445756378,
+        "west": 58.288755292729384,
+        "east": 58.52543273155538
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اردلان",
+      "name": "اردلان",
+      "nameEn": "اردلان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بتو",
+      "name": "بتو",
+      "nameEn": "بتو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلقان-آباد",
+      "name": "بلقان آباد",
+      "nameEn": "بلقان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنده",
+      "name": "بنده",
+      "nameEn": "بنده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تپه-جیک",
+      "name": "تپه جیک",
+      "nameEn": "تپه-جیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جازندر",
+      "name": "جازندر",
+      "nameEn": "جازندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمبرجوق",
+      "name": "جمبرجوق",
+      "nameEn": "جمبرجوق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چزگ",
+      "name": "چزگ",
+      "nameEn": "چزگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رباطی-بلوچ-ها",
+      "name": "رباطی بلوچ ها",
+      "nameEn": "رباطی-بلوچ-ها",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رباطی-شاهزاده",
+      "name": "رباطی شاهزاده",
+      "nameEn": "رباطی-شاهزاده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-بتو",
+      "name": "روستای بتو",
+      "nameEn": "روستای-بتو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلیمانی",
+      "name": "سلیمانی",
+      "nameEn": "سلیمانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوراب",
+      "name": "شوراب",
+      "nameEn": "شوراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صمان",
+      "name": "صمان",
+      "nameEn": "صمان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرخار",
+      "name": "فرخار",
+      "nameEn": "فرخار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فهنه",
+      "name": "فهنه",
+      "nameEn": "فهنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیض-آباد",
+      "name": "فیض آباد",
+      "nameEn": "فیض-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-باغ",
+      "name": "قره باغ",
+      "nameEn": "قره-باغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-حسن",
+      "name": "قلعه حسن",
+      "nameEn": "قلعه-حسن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-یزدان",
+      "name": "قلعه یزدان",
+      "nameEn": "قلعه-یزدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کارجی-معدن",
+      "name": "کارجی معدن",
+      "nameEn": "کارجی-معدن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کعدرن",
+      "name": "کعدرن",
+      "nameEn": "کعدرن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-زینل",
+      "name": "کلاته زینل",
+      "nameEn": "کلاته-زینل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرماب-شاهزاده",
+      "name": "گرماب شاهزاده",
+      "nameEn": "گرماب-شاهزاده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرزان",
+      "name": "مرزان",
+      "nameEn": "مرزان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "معدن-سفلی",
+      "name": "معدن سفلی",
+      "nameEn": "معدن-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "معدن-علیا",
+      "name": "معدن علیا",
+      "nameEn": "معدن-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناوشک",
+      "name": "ناوشک",
+      "nameEn": "ناوشک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نسک",
+      "name": "نسک",
+      "nameEn": "نسک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرآباد",
+      "name": "نصرآباد",
+      "nameEn": "نصرآباد",
+      "geoSource": "osm"
+    }
+  ]
+}

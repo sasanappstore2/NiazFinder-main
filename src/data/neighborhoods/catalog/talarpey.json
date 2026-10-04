@@ -1,0 +1,25 @@
+{
+  "cityId": "talarpey",
+  "cityName": "تالارپی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.096Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "تالارپی",
+      "name": "تالارپی",
+      "nameEn": "talarpey",
+      "centroid": {
+        "lat": 36.551916194430476,
+        "lng": 52.90036546014987
+      },
+      "bbox": {
+        "south": 36.4454296690981,
+        "north": 36.658402719762854,
+        "west": 52.78411932396192,
+        "east": 53.01661159633783
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

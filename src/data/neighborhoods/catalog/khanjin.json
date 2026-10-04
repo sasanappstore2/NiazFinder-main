@@ -1,0 +1,25 @@
+{
+  "cityId": "khanjin",
+  "cityName": "خنجین",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.013Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خنجین",
+      "name": "خنجین",
+      "nameEn": "khanjin",
+      "centroid": {
+        "lat": 34.74481853395616,
+        "lng": 49.6316025263678
+      },
+      "bbox": {
+        "south": 34.638332008623784,
+        "north": 34.85130505928854,
+        "west": 49.51513697133004,
+        "east": 49.74806808140556
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

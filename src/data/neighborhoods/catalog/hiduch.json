@@ -1,0 +1,25 @@
+{
+  "cityId": "hiduch",
+  "cityName": "هیدوچ",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.512Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "هیدوچ",
+      "name": "هیدوچ",
+      "nameEn": "hiduch",
+      "centroid": {
+        "lat": 26.939336357563782,
+        "lng": 62.23497726735
+      },
+      "bbox": {
+        "south": 26.832849832231407,
+        "north": 27.045822882896157,
+        "west": 62.12816127816423,
+        "east": 62.341793256535766
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

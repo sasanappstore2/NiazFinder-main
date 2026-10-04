@@ -1,0 +1,41 @@
+{
+  "cityId": "zahak",
+  "cityName": "زهک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.319Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ده-شیرین",
+      "name": "ده شیرین",
+      "nameEn": "ده-شیرین",
+      "centroid": {
+        "lat": 30.871218193323752,
+        "lng": 61.72211602819856
+      },
+      "bbox": {
+        "south": 30.862220081933167,
+        "north": 30.880216304714338,
+        "west": 61.711632628845734,
+        "east": 61.73259942755139
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "tahnah-ye-munsh",
+      "name": "Tahānah-ye Munshī",
+      "nameEn": "tahnah-ye-munsh",
+      "centroid": {
+        "lat": 30.881418061057087,
+        "lng": 61.69841303887171
+      },
+      "bbox": {
+        "south": 30.8724199496665,
+        "north": 30.890416172447672,
+        "west": 61.687929639518885,
+        "east": 61.70889643822454
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

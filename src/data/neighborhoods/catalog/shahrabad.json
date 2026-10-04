@@ -1,0 +1,25 @@
+{
+  "cityId": "shahrabad",
+  "cityName": "شهرآباد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.766Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرآباد",
+      "name": "شهرآباد",
+      "nameEn": "shahrabad",
+      "centroid": {
+        "lat": 35.01346520517428,
+        "lng": 57.952167846213
+      },
+      "bbox": {
+        "south": 34.9069786798419,
+        "north": 35.119951730506656,
+        "west": 57.837547550260155,
+        "east": 58.06678814216584
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,241 @@
+{
+  "cityId": "kheyrgoo",
+  "cityName": "خیرگو",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:02:41.113Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خیرگو",
+      "name": "خیرگو",
+      "nameEn": "kheyrgoo",
+      "centroid": {
+        "lat": 27.555631326661878,
+        "lng": 53.27893286686776
+      },
+      "bbox": {
+        "south": 27.449144801329503,
+        "north": 27.662117851994253,
+        "west": 53.170515537937966,
+        "east": 53.387350195797566
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "احشام",
+      "name": "احشام",
+      "nameEn": "احشام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اندر",
+      "name": "اندر",
+      "nameEn": "اندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پاتخته",
+      "name": "پاتخته",
+      "nameEn": "پاتخته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تاریخی-تمرویه",
+      "name": "تاریخی تمرویه",
+      "nameEn": "تاریخی-تمرویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تل-شیخ-نشینان",
+      "name": "تل شیخ نشینان",
+      "nameEn": "تل-شیخ-نشینان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-رمضان",
+      "name": "چاه رمضان",
+      "nameEn": "چاه-رمضان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-شرف",
+      "name": "چاه شرف",
+      "nameEn": "چاه-شرف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-شور-علیا",
+      "name": "چاه شور علیا",
+      "nameEn": "چاه-شور-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-شورسفلی",
+      "name": "چاه شورسفلی",
+      "nameEn": "چاه-شورسفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاهکور",
+      "name": "چاه‌کور",
+      "nameEn": "چاهکور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چخوها",
+      "name": "چخوها",
+      "nameEn": "چخوها",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهارطاق",
+      "name": "چهارطاق",
+      "nameEn": "چهارطاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خالده",
+      "name": "خالده",
+      "nameEn": "خالده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خلیفه-ها",
+      "name": "خلیفه ها",
+      "nameEn": "خلیفه-ها",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خلیلی",
+      "name": "خلیلی",
+      "nameEn": "خلیلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-کهنه",
+      "name": "ده کهنه",
+      "nameEn": "ده-کهنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روگیر-تاجامیری",
+      "name": "روگیر تاج‌امیری",
+      "nameEn": "روگیر-تاجامیری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روگیر-حسنی",
+      "name": "روگیر حسنی",
+      "nameEn": "روگیر-حسنی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روگیر-قلعهحاجی",
+      "name": "روگیر قلعه‌حاجی",
+      "nameEn": "روگیر-قلعهحاجی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روگیر-محمدتقی",
+      "name": "روگیر محمدتقی",
+      "nameEn": "روگیر-محمدتقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاوران",
+      "name": "شاوران",
+      "nameEn": "شاوران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخ-عامر",
+      "name": "شیخ عامر",
+      "nameEn": "شیخ-عامر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرینو",
+      "name": "شیرینو",
+      "nameEn": "شیرینو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-اوکشی",
+      "name": "علی آباد اوکشی",
+      "nameEn": "علی-آباد-اوکشی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فاضلی",
+      "name": "فاضلی",
+      "nameEn": "فاضلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-سهراب",
+      "name": "قلعه سهراب",
+      "nameEn": "قلعه-سهراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-فریدون",
+      "name": "قلعه فریدون",
+      "nameEn": "قلعه-فریدون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کتک",
+      "name": "کتک",
+      "nameEn": "کتک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمالی",
+      "name": "کمالی",
+      "nameEn": "کمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرازی",
+      "name": "گرازی",
+      "nameEn": "گرازی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدعباسی",
+      "name": "محمدعباسی",
+      "nameEn": "محمدعباسی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملایی",
+      "name": "ملایی",
+      "nameEn": "ملایی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میر-حسنی",
+      "name": "میر حسنی",
+      "nameEn": "میر-حسنی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرملکی",
+      "name": "میرملکی",
+      "nameEn": "میرملکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نعمه",
+      "name": "نعمه",
+      "nameEn": "نعمه",
+      "geoSource": "osm"
+    }
+  ]
+}

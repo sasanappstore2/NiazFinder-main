@@ -1,0 +1,25 @@
+{
+  "cityId": "kalatarezan",
+  "cityName": "کلاترزان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.820Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سەراه-سورەبان",
+      "name": "سەراه سورەبان",
+      "nameEn": "سەراه-سورەبان",
+      "centroid": {
+        "lat": 35.349058324002876,
+        "lng": 46.74171042587011
+      },
+      "bbox": {
+        "south": 35.2425717986705,
+        "north": 35.455544849335254,
+        "west": 46.62609813015671,
+        "east": 46.8573227215835
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

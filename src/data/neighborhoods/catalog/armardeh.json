@@ -1,0 +1,25 @@
+{
+  "cityId": "armardeh",
+  "cityName": "آرمرده",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.910Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "محله-مولوی",
+      "name": "محله مولوی",
+      "nameEn": "محله-مولوی",
+      "centroid": {
+        "lat": 35.91763666180381,
+        "lng": 45.86238132237975
+      },
+      "bbox": {
+        "south": 35.81115013647143,
+        "north": 36.02412318713619,
+        "west": 45.74014707823953,
+        "east": 45.98461556651997
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

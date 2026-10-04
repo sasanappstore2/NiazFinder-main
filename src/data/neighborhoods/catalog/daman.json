@@ -1,0 +1,25 @@
+{
+  "cityId": "daman",
+  "cityName": "دامن",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.686Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "دامن",
+      "name": "دامن",
+      "nameEn": "daman",
+      "centroid": {
+        "lat": 27.47277424761049,
+        "lng": 60.81158414820303
+      },
+      "bbox": {
+        "south": 27.366287722278116,
+        "north": 27.579260772942867,
+        "west": 60.699771407169266,
+        "east": 60.9233968892368
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

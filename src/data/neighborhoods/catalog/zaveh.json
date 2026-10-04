@@ -1,0 +1,217 @@
+{
+  "cityId": "zaveh",
+  "cityName": "زاوه",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:45:14.003Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زاوه",
+      "name": "زاوه",
+      "nameEn": "zaveh",
+      "centroid": {
+        "lat": 35.340692635141934,
+        "lng": 59.595677646214874
+      },
+      "bbox": {
+        "south": 35.234206109809556,
+        "north": 35.44717916047431,
+        "west": 59.47357154471604,
+        "east": 59.71778374771371
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارداب",
+      "name": "ارداب",
+      "nameEn": "ارداب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسماعیل-آباد",
+      "name": "اسماعیل آباد",
+      "nameEn": "اسماعیل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بقیع",
+      "name": "بقیع",
+      "nameEn": "بقیع",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حصار",
+      "name": "حصار",
+      "nameEn": "حصار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حفیظ-آباد",
+      "name": "حفیظ آباد",
+      "nameEn": "حفیظ-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دروک-پایین",
+      "name": "دروک پایین",
+      "nameEn": "دروک-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رضاییه",
+      "name": "رضاییه",
+      "nameEn": "رضاییه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهل-آباد",
+      "name": "سهل آباد",
+      "nameEn": "سهل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاه-سنگ",
+      "name": "سیاه سنگ",
+      "nameEn": "سیاه-سنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شستان-علیا",
+      "name": "شستان علیا",
+      "nameEn": "شستان-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهر-دولت-آباد",
+      "name": "شهر دولت آباد",
+      "nameEn": "شهر-دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهن-آباد",
+      "name": "شهن آباد",
+      "nameEn": "شهن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرخون",
+      "name": "شیرخون",
+      "nameEn": "شیرخون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صبی",
+      "name": "صبی",
+      "nameEn": "صبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-نی",
+      "name": "قلعه نی",
+      "nameEn": "قلعه-نی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاریز-بالا",
+      "name": "کاریز بالا",
+      "nameEn": "کاریز-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاریز-گلی",
+      "name": "کاریز گلی",
+      "nameEn": "کاریز-گلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاریزک-ناگهانی",
+      "name": "کاریزک ناگهانی",
+      "nameEn": "کاریزک-ناگهانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-زنگنه",
+      "name": "کلاته زنگنه",
+      "nameEn": "کلاته-زنگنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-سعید",
+      "name": "کلاته سعید",
+      "nameEn": "کلاته-سعید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنگ-زیتون",
+      "name": "کنگ زیتون",
+      "nameEn": "کنگ-زیتون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنگ-سفلی",
+      "name": "کنگ سفلی",
+      "nameEn": "کنگ-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنگ-علیا",
+      "name": "کنگ علیا",
+      "nameEn": "کنگ-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلسرا",
+      "name": "گلسرا",
+      "nameEn": "گلسرا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرآباد",
+      "name": "میرآباد",
+      "nameEn": "میرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرآباد",
+      "name": "نصرآباد",
+      "nameEn": "نصرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نورآباد",
+      "name": "نورآباد",
+      "nameEn": "نورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نیازآباد",
+      "name": "نیازآباد",
+      "nameEn": "نیازآباد",
+      "geoSource": "osm"
+    }
+  ]
+}

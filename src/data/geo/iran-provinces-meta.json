@@ -1,0 +1,345 @@
+{
+  "provinces": [
+    {
+      "id": "mazandaran",
+      "name": "مازندران",
+      "nameEn": "Mazandaran",
+      "bbox": {
+        "minLon": 50.35982359977936,
+        "minLat": 35.7633173997782,
+        "maxLon": 54.13000520007995,
+        "maxLat": 36.9658360000314
+      }
+    },
+    {
+      "id": "north-khorasan",
+      "name": "خراسان شمالی",
+      "nameEn": "North Khorasan",
+      "bbox": {
+        "minLon": 55.90842299982165,
+        "minLat": 36.58833320011712,
+        "maxLon": 58.42048539998126,
+        "maxLat": 38.284999999850186
+      }
+    },
+    {
+      "id": "kerman",
+      "name": "کرمان",
+      "nameEn": "Kerman",
+      "bbox": {
+        "minLon": 54.33668179982527,
+        "minLat": 26.48310649996506,
+        "maxLon": 59.5707959003106,
+        "maxLat": 31.960163100047055
+      }
+    },
+    {
+      "id": "ilam",
+      "name": "ایلام",
+      "nameEn": "Ilam",
+      "bbox": {
+        "minLon": 45.69251999999807,
+        "minLat": 32.04854200011329,
+        "maxLon": 48.035453899677805,
+        "maxLat": 34.037704099764426
+      }
+    },
+    {
+      "id": "lorestan",
+      "name": "لرستان",
+      "nameEn": "Lorestan",
+      "bbox": {
+        "minLon": 46.839391799492034,
+        "minLat": 32.6582799002972,
+        "maxLon": 50.019814799513426,
+        "maxLat": 34.3782713997054
+      }
+    },
+    {
+      "id": "markazi",
+      "name": "مرکزی",
+      "nameEn": "Markazi",
+      "bbox": {
+        "minLon": 48.9500427001106,
+        "minLat": 33.38741959963488,
+        "maxLon": 51.050454099776914,
+        "maxLat": 35.570808699761756
+      }
+    },
+    {
+      "id": "chaharmahal-bakhtiari",
+      "name": "چهارمحال و بختیاری",
+      "nameEn": "Chaharmahal and Bakhtiari",
+      "bbox": {
+        "minLon": 49.50007719970307,
+        "minLat": 31.150146500360734,
+        "maxLon": 51.429324999649054,
+        "maxLat": 32.80907310024344
+      }
+    },
+    {
+      "id": "kermanshah",
+      "name": "کرمانشاه",
+      "nameEn": "Kermanshah",
+      "bbox": {
+        "minLon": 45.40766100005516,
+        "minLat": 33.69091600037319,
+        "maxLon": 48.10500289996389,
+        "maxLat": 35.283279799723005
+      }
+    },
+    {
+      "id": "hamedan",
+      "name": "همدان",
+      "nameEn": "Hamedan",
+      "bbox": {
+        "minLon": 47.801651700165905,
+        "minLat": 34.001316299507664,
+        "maxLon": 49.46617389980571,
+        "maxLat": 35.73358240000783
+      }
+    },
+    {
+      "id": "qazvin",
+      "name": "قزوین",
+      "nameEn": "Qazvin",
+      "bbox": {
+        "minLon": 48.73280469967722,
+        "minLat": 35.40305789950253,
+        "maxLon": 50.85651539946616,
+        "maxLat": 36.815557799552835
+      }
+    },
+    {
+      "id": "gilan",
+      "name": "گیلان",
+      "nameEn": "Gilan",
+      "bbox": {
+        "minLon": 48.57084639944185,
+        "minLat": 36.55938290020072,
+        "maxLon": 50.59266989999594,
+        "maxLat": 38.46033830017245
+      }
+    },
+    {
+      "id": "zanjan",
+      "name": "زنجان",
+      "nameEn": "Zanjan",
+      "bbox": {
+        "minLon": 47.17411530028096,
+        "minLat": 35.55302579970095,
+        "maxLon": 49.43367190013811,
+        "maxLat": 37.25168260037174
+      }
+    },
+    {
+      "id": "semnan",
+      "name": "سمنان",
+      "nameEn": "Semnan",
+      "bbox": {
+        "minLon": 51.834619899488814,
+        "minLat": 34.243275099965956,
+        "maxLon": 57.0520871001396,
+        "maxLat": 37.33234049961442
+      }
+    },
+    {
+      "id": "isfahan",
+      "name": "اصفهان",
+      "nameEn": "Isfahan",
+      "bbox": {
+        "minLon": 49.63757719942828,
+        "minLat": 30.700973499827228,
+        "maxLon": 55.49784400020053,
+        "maxLat": 34.51098399971187
+      }
+    },
+    {
+      "id": "kohgiluyeh-boyer-ahmad",
+      "name": "کهگیلویه و بویراحمد",
+      "nameEn": "Kohgiluyeh and Boyer-Ahmad",
+      "bbox": {
+        "minLon": 49.886508799841295,
+        "minLat": 29.927058199776127,
+        "maxLon": 51.887126899886596,
+        "maxLat": 31.481570599903307
+      }
+    },
+    {
+      "id": "kurdistan",
+      "name": "کردستان",
+      "nameEn": "Kurdistan",
+      "bbox": {
+        "minLon": 45.553763199512105,
+        "minLat": 34.74299919955348,
+        "maxLon": 48.251670299944465,
+        "maxLat": 36.46331959991966
+      }
+    },
+    {
+      "id": "west-azerbaijan",
+      "name": "آذربایجان غربی",
+      "nameEn": "West Azerbaijan",
+      "bbox": {
+        "minLon": 44.032053199595566,
+        "minLat": 35.97857820022381,
+        "maxLon": 47.392185000037784,
+        "maxLat": 39.78165020029655
+      }
+    },
+    {
+      "id": "fars",
+      "name": "فارس",
+      "nameEn": "Fars",
+      "bbox": {
+        "minLon": 50.603183099720354,
+        "minLat": 27.04561700022441,
+        "maxLon": 55.578678500212675,
+        "maxLat": 31.669598899969287
+      }
+    },
+    {
+      "id": "bushehr",
+      "name": "بوشهر",
+      "nameEn": "Bushehr",
+      "bbox": {
+        "minLon": 50.103441899524114,
+        "minLat": 27.274306499945055,
+        "maxLon": 52.943843300128265,
+        "maxLat": 30.294962399695066
+      }
+    },
+    {
+      "id": "ardabil",
+      "name": "اردبیل",
+      "nameEn": "Ardabil",
+      "bbox": {
+        "minLon": 47.28717189856434,
+        "minLat": 37.103058700098984,
+        "maxLon": 48.92225489984378,
+        "maxLat": 39.70900029982403
+      }
+    },
+    {
+      "id": "golestan",
+      "name": "گلستان",
+      "nameEn": "Golestan",
+      "bbox": {
+        "minLon": 53.970649099876084,
+        "minLat": 36.491659100087475,
+        "maxLon": 56.31038939995091,
+        "maxLat": 38.12527799968001
+      }
+    },
+    {
+      "id": "khorasan-razavi",
+      "name": "خراسان رضوی",
+      "nameEn": "Khorasan Razavi",
+      "bbox": {
+        "minLon": 56.22797359950209,
+        "minLat": 33.85631199959914,
+        "maxLon": 61.282579200170005,
+        "maxLat": 37.705832999493396
+      }
+    },
+    {
+      "id": "south-khorasan",
+      "name": "خراسان جنوبی",
+      "nameEn": "South Khorasan",
+      "bbox": {
+        "minLon": 55.38645200025968,
+        "minLat": 30.51679460029061,
+        "maxLon": 60.945903499646874,
+        "maxLat": 35.096072099547825
+      }
+    },
+    {
+      "id": "sistan-baluchestan",
+      "name": "سیستان و بلوچستان",
+      "nameEn": "Sistan and Baluchestan",
+      "bbox": {
+        "minLon": 58.83103640010984,
+        "minLat": 25.059244399709314,
+        "maxLon": 63.33327039970925,
+        "maxLat": 31.486519199501515
+      }
+    },
+    {
+      "id": "qom",
+      "name": "قم",
+      "nameEn": "Qom",
+      "bbox": {
+        "minLon": 50.08648109942328,
+        "minLat": 34.151882599602345,
+        "maxLon": 51.96490459976752,
+        "maxLat": 35.17829669963305
+      }
+    },
+    {
+      "id": "alborz",
+      "name": "البرز",
+      "nameEn": "Alborz",
+      "bbox": {
+        "minLon": 50.16870799997429,
+        "minLat": 35.5413610001101,
+        "maxLon": 51.45929029960769,
+        "maxLat": 36.34221419972556
+      }
+    },
+    {
+      "id": "east-azerbaijan",
+      "name": "آذربایجان شرقی",
+      "nameEn": "East Azerbaijan",
+      "bbox": {
+        "minLon": 45.09651049995966,
+        "minLat": 36.745278100104315,
+        "maxLon": 48.333337799699734,
+        "maxLat": 39.42172560035624
+      }
+    },
+    {
+      "id": "yazd",
+      "name": "یزد",
+      "nameEn": "Yazd",
+      "bbox": {
+        "minLon": 52.80105659978233,
+        "minLat": 29.596223300065276,
+        "maxLon": 56.653450599965254,
+        "maxLat": 33.364363799949444
+      }
+    },
+    {
+      "id": "hormozgan",
+      "name": "هرمزگان",
+      "nameEn": "Hormozgan",
+      "bbox": {
+        "minLon": 52.73792139975285,
+        "minLat": 25.403595799506604,
+        "maxLon": 59.24273249980507,
+        "maxLat": 28.8803749996066
+      }
+    },
+    {
+      "id": "khuzestan",
+      "name": "خوزستان",
+      "nameEn": "Khuzestan",
+      "bbox": {
+        "minLon": 47.66411099982281,
+        "minLat": 29.888808399987738,
+        "maxLon": 50.54956620012007,
+        "maxLat": 32.99633380016479
+      }
+    },
+    {
+      "id": "tehran",
+      "name": "تهران",
+      "nameEn": "Tehran",
+      "bbox": {
+        "minLon": 50.353439299983734,
+        "minLat": 34.865238699706254,
+        "maxLon": 53.156069799681575,
+        "maxLat": 36.14010339955229
+      }
+    }
+  ]
+}

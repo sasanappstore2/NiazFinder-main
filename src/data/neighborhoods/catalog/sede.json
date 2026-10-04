@@ -1,0 +1,25 @@
+{
+  "cityId": "sede",
+  "cityName": "سده (خراسان جنوبی)",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.668Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "سده-خراسان-جنوبی",
+      "name": "سده (خراسان جنوبی)",
+      "nameEn": "sede",
+      "centroid": {
+        "lat": 33.43990536352857,
+        "lng": 59.080611993013314
+      },
+      "bbox": {
+        "south": 33.33341883819619,
+        "north": 33.546391888860946,
+        "west": 58.96845398194599,
+        "east": 59.192770004080636
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "cityId": "shara",
+  "cityName": "شراء",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:47:13.709Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شراء",
+      "name": "شراء",
+      "nameEn": "shara",
+      "centroid": {
+        "lat": 34.86112268501617,
+        "lng": 49.043211949430514
+      },
+      "bbox": {
+        "south": 34.75463615968379,
+        "north": 34.96760921034855,
+        "west": 48.92252544517781,
+        "east": 49.163898453683224
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آق-دره",
+      "name": "آق دره",
+      "nameEn": "آق-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برکت-آباد",
+      "name": "برکت آباد",
+      "nameEn": "برکت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بویاقچی",
+      "name": "بویاقچی",
+      "nameEn": "بویاقچی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جیهون-آباد",
+      "name": "جیهون آباد",
+      "nameEn": "جیهون-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حیران",
+      "name": "حیران",
+      "nameEn": "حیران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خماجین",
+      "name": "خماجین",
+      "nameEn": "خماجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیرآباد",
+      "name": "خیرآباد",
+      "nameEn": "خیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشته",
+      "name": "دشته",
+      "nameEn": "دشته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیزج",
+      "name": "دیزج",
+      "nameEn": "دیزج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحیم-آباد",
+      "name": "رحیم آباد",
+      "nameEn": "رحیم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رزج",
+      "name": "رزج",
+      "nameEn": "رزج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیجان",
+      "name": "سیجان",
+      "nameEn": "سیجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرین-آباد",
+      "name": "شیرین آباد",
+      "nameEn": "شیرین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-سفلی",
+      "name": "قشلاق سفلی",
+      "nameEn": "قشلاق-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-علیا",
+      "name": "قشلاق علیا",
+      "nameEn": "قشلاق-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوزلیجه",
+      "name": "قوزلیجه",
+      "nameEn": "قوزلیجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قهاوند",
+      "name": "قهاوند",
+      "nameEn": "قهاوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوزره",
+      "name": "کوزره",
+      "nameEn": "کوزره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنبدچای",
+      "name": "گنبدچای",
+      "nameEn": "گنبدچای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهاجرآباد",
+      "name": "مهاجرآباد",
+      "nameEn": "مهاجرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهبار",
+      "name": "مهبار",
+      "nameEn": "مهبار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ولیدآباد",
+      "name": "ولیدآباد",
+      "nameEn": "ولیدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هیزج",
+      "name": "هیزج",
+      "nameEn": "هیزج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یکله",
+      "name": "یکله",
+      "nameEn": "یکله",
+      "geoSource": "osm"
+    }
+  ]
+}

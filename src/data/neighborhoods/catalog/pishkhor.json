@@ -1,0 +1,193 @@
+{
+  "cityId": "pishkhor",
+  "cityName": "پیشخور",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:43:18.719Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "پیشخور",
+      "name": "پیشخور",
+      "nameEn": "pishkhor",
+      "centroid": {
+        "lat": 35.06550382784765,
+        "lng": 49.34231308649682
+      },
+      "bbox": {
+        "south": 34.95901730251527,
+        "north": 35.17199035318003,
+        "west": 49.22108492176056,
+        "east": 49.46354125123309
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آقچه-قلعه",
+      "name": "آقچه قلعه",
+      "nameEn": "آقچه-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ازناو",
+      "name": "ازناو",
+      "nameEn": "ازناو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اقاج",
+      "name": "اقاج",
+      "nameEn": "اقاج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باباحصاری",
+      "name": "باباحصاری",
+      "nameEn": "باباحصاری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بازران",
+      "name": "بازران",
+      "nameEn": "بازران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پاوان",
+      "name": "پاوان",
+      "nameEn": "پاوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تجرک",
+      "name": "تجرک",
+      "nameEn": "تجرک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تیمورقاش",
+      "name": "تیمورقاش",
+      "nameEn": "تیمورقاش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چیقلو",
+      "name": "چیقلو",
+      "nameEn": "چیقلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیمه-گاه",
+      "name": "خیمه گاه",
+      "nameEn": "خیمه-گاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دخان",
+      "name": "دخان",
+      "nameEn": "دخان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-قره-چای",
+      "name": "ده قره چای",
+      "nameEn": "ده-قره-چای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رضاباغی",
+      "name": "رضاباغی",
+      "nameEn": "رضاباغی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زاغلیجه",
+      "name": "زاغلیجه",
+      "nameEn": "زاغلیجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ستق",
+      "name": "ستق",
+      "nameEn": "ستق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صادق-لو",
+      "name": "صادق لو",
+      "nameEn": "صادق-لو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صیدآباد",
+      "name": "صیدآباد",
+      "nameEn": "صیدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عمرآباد",
+      "name": "عمرآباد",
+      "nameEn": "عمرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-دای",
+      "name": "قره دای",
+      "nameEn": "قره-دای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلقل-آباد",
+      "name": "قلقل آباد",
+      "nameEn": "قلقل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قمشانه",
+      "name": "قمشانه",
+      "nameEn": "قمشانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-خندان",
+      "name": "گل خندان",
+      "nameEn": "گل-خندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنیزان",
+      "name": "گنیزان",
+      "nameEn": "گنیزان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوجه-منار",
+      "name": "گوجه منار",
+      "nameEn": "گوجه-منار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مبارکین",
+      "name": "مبارکین",
+      "nameEn": "مبارکین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مچینک",
+      "name": "مچینک",
+      "nameEn": "مچینک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرک-خرابه",
+      "name": "مرک خرابه",
+      "nameEn": "مرک-خرابه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وزندان",
+      "name": "وزندان",
+      "nameEn": "وزندان",
+      "geoSource": "osm"
+    }
+  ]
+}

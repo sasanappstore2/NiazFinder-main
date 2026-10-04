@@ -1,0 +1,163 @@
+{
+  "cityId": "jolgeh-shoqan",
+  "cityName": "جلگه شوقان",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:33:35.937Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جلگه-شوقان",
+      "name": "جلگه شوقان",
+      "nameEn": "jolgeh-shoqan",
+      "centroid": {
+        "lat": 37.31378430039526,
+        "lng": 56.86263914474639
+      },
+      "bbox": {
+        "south": 37.207297775062884,
+        "north": 37.42027082572764,
+        "west": 56.73780902299067,
+        "east": 56.98746926650211
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "بام",
+      "name": "بام",
+      "nameEn": "بام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برزانلو",
+      "name": "برزانلو",
+      "nameEn": "برزانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشت-بام",
+      "name": "پشت بام",
+      "nameEn": "پشت-بام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیش-دره",
+      "name": "پیش دره",
+      "nameEn": "پیش-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جغدی",
+      "name": "جغدی",
+      "nameEn": "جغدی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-طبری",
+      "name": "چشمه طبری",
+      "nameEn": "چشمه-طبری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهاربید",
+      "name": "چهاربید",
+      "nameEn": "چهاربید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حصارعیسی",
+      "name": "حصارعیسی",
+      "nameEn": "حصارعیسی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دربند",
+      "name": "دربند",
+      "nameEn": "دربند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوبرجه",
+      "name": "دوبرجه",
+      "nameEn": "دوبرجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوقان",
+      "name": "شوقان",
+      "nameEn": "شوقان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طبر",
+      "name": "طبر",
+      "nameEn": "طبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عمارت",
+      "name": "عمارت",
+      "nameEn": "عمارت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قراجه-رباط",
+      "name": "قراجه رباط",
+      "nameEn": "قراجه-رباط",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرف",
+      "name": "کرف",
+      "nameEn": "کرف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-حاج-علی-اکبر",
+      "name": "کلاته حاج علی اکبر",
+      "nameEn": "کلاته-حاج-علی-اکبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-شقان",
+      "name": "کلاته شقان",
+      "nameEn": "کلاته-شقان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-موری",
+      "name": "کلاته موری",
+      "nameEn": "کلاته-موری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرمک",
+      "name": "گرمک",
+      "nameEn": "گرمک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدآبادطبر",
+      "name": "محمدآبادطبر",
+      "nameEn": "محمدآبادطبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملاویس",
+      "name": "ملاویس",
+      "nameEn": "ملاویس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناویار",
+      "name": "ناویار",
+      "nameEn": "ناویار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هاور",
+      "name": "هاور",
+      "nameEn": "هاور",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "cityId": "shibkuh",
+  "cityName": "شیبکوه (فارس)",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:12:12.349Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شیبکوه-فارس",
+      "name": "شیبکوه (فارس)",
+      "nameEn": "shibkuh",
+      "centroid": {
+        "lat": 28.68263581803809,
+        "lng": 53.9654748123414
+      },
+      "bbox": {
+        "south": 28.576149292705715,
+        "north": 28.789122343370465,
+        "west": 53.85159606952704,
+        "east": 54.079353555155755
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "ابوذرآباد",
+      "name": "ابوذرآباد",
+      "nameEn": "ابوذرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیدزرد",
+      "name": "بیدزرد",
+      "nameEn": "بیدزرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیشه-زرد",
+      "name": "بیشه زرد",
+      "nameEn": "بیشه-زرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خورنگان",
+      "name": "خورنگان",
+      "nameEn": "خورنگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد-سه-چاه",
+      "name": "دولت آباد سه چاه",
+      "nameEn": "دولت-آباد-سه-چاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحیم-آباد",
+      "name": "رحیم آباد",
+      "nameEn": "رحیم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زاهدشهر",
+      "name": "زاهدشهر",
+      "nameEn": "زاهدشهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سده",
+      "name": "سده",
+      "nameEn": "سده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گهراب",
+      "name": "گهراب",
+      "nameEn": "گهراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مادوان",
+      "name": "مادوان",
+      "nameEn": "مادوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میان-شهر",
+      "name": "میان شهر",
+      "nameEn": "میان-شهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصیرآباد",
+      "name": "نصیرآباد",
+      "nameEn": "نصیرآباد",
+      "geoSource": "osm"
+    }
+  ]
+}

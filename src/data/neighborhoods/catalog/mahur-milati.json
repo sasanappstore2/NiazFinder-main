@@ -1,0 +1,25 @@
+{
+  "cityId": "mahur-milati",
+  "cityName": "ماهورمیلاتی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.507Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ماهورمیلاتی",
+      "name": "ماهورمیلاتی",
+      "nameEn": "mahur-milati",
+      "centroid": {
+        "lat": 29.933290043370466,
+        "lng": 51.17438993650735
+      },
+      "bbox": {
+        "south": 29.82680351803809,
+        "north": 30.03977656870284,
+        "west": 51.065120074184556,
+        "east": 51.28365979883014
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

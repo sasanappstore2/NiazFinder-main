@@ -1,0 +1,25 @@
+{
+  "cityId": "barah-sar",
+  "cityName": "بره‌سر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.265Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "برهسر",
+      "name": "بره‌سر",
+      "nameEn": "barah-sar",
+      "centroid": {
+        "lat": 36.787951315857704,
+        "lng": 49.86697314529673
+      },
+      "bbox": {
+        "south": 36.526874752149475,
+        "north": 37.049027879565934,
+        "west": 49.563285591085645,
+        "east": 50.17066069950782
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

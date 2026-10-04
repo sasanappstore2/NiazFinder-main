@@ -1,0 +1,151 @@
+{
+  "cityId": "tasooj",
+  "cityName": "تسوج",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:08:00.035Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "تسوج",
+      "name": "تسوج",
+      "nameEn": "tasooj",
+      "centroid": {
+        "lat": 38.3154840811714,
+        "lng": 45.406774089753426
+      },
+      "bbox": {
+        "south": 38.20899755583902,
+        "north": 38.42197060650378,
+        "west": 45.28247768082155,
+        "east": 45.531070498685295
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "الماس",
+      "name": "الماس",
+      "nameEn": "الماس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امستجان",
+      "name": "امستجان",
+      "nameEn": "امستجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انگشتجان",
+      "name": "انگشتجان",
+      "nameEn": "انگشتجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغلار-ارلان",
+      "name": "باغلار ارلان",
+      "nameEn": "باغلار-ارلان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "توپچی",
+      "name": "توپچی",
+      "nameEn": "توپچی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تیل",
+      "name": "تیل",
+      "nameEn": "تیل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-کنان",
+      "name": "چشمه کنان",
+      "nameEn": "چشمه-کنان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهرگان",
+      "name": "چهرگان",
+      "nameEn": "چهرگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حیدر-آباد",
+      "name": "حیدر آباد",
+      "nameEn": "حیدر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیزج-شیخ-مرجان",
+      "name": "دیزج شیخ مرجان",
+      "nameEn": "دیزج-شیخ-مرجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زنجیره",
+      "name": "زنجیره",
+      "nameEn": "زنجیره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرخه",
+      "name": "سرخه",
+      "nameEn": "سرخه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخ-ولی",
+      "name": "شیخ ولی",
+      "nameEn": "شیخ-ولی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قرمزی-قشلاق",
+      "name": "قرمزی قشلاق",
+      "nameEn": "قرمزی-قشلاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-تپه-بالا",
+      "name": "قره تپه بالا",
+      "nameEn": "قره-تپه-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-تپه-پائین",
+      "name": "قره تپه پائین",
+      "nameEn": "قره-تپه-پائین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-مراغوش",
+      "name": "قلعه مراغوش",
+      "nameEn": "قلعه-مراغوش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گزافر",
+      "name": "گزافر",
+      "nameEn": "گزافر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هریس",
+      "name": "هریس",
+      "nameEn": "هریس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هفت-چشمه",
+      "name": "هفت چشمه",
+      "nameEn": "هفت-چشمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "qizilje",
+      "name": "Qizilje",
+      "nameEn": "qizilje",
+      "geoSource": "osm"
+    }
+  ]
+}

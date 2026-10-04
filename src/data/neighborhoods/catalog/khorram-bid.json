@@ -1,0 +1,25 @@
+{
+  "cityId": "khorram-bid",
+  "cityName": "خرم بید",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.137Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خرم-بید",
+      "name": "خرم بید",
+      "nameEn": "khorram-bid",
+      "centroid": {
+        "lat": 30.636455336471435,
+        "lng": 53.16187271945089
+      },
+      "bbox": {
+        "south": 30.52996881113906,
+        "north": 30.74294186180381,
+        "west": 53.053847906400456,
+        "east": 53.269897532501325
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

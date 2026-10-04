@@ -1,0 +1,25 @@
+{
+  "cityId": "biyarjamand",
+  "cityName": "بیارجمند",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.438Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بیارجمند",
+      "name": "بیارجمند",
+      "nameEn": "biyarjamand",
+      "centroid": {
+        "lat": 35.4923538905857,
+        "lng": 56.263337838754396
+      },
+      "bbox": {
+        "south": 35.38586736525332,
+        "north": 35.598840415918076,
+        "west": 56.14922984276099,
+        "east": 56.377445834747796
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

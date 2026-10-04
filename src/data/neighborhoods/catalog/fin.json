@@ -1,0 +1,25 @@
+{
+  "cityId": "fin",
+  "cityName": "فین",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.054Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "میدان-نخل",
+      "name": "میدان نخل",
+      "nameEn": "میدان-نخل",
+      "centroid": {
+        "lat": 27.6486578811714,
+        "lng": 55.94879553172421
+      },
+      "bbox": {
+        "south": 27.542171355839024,
+        "north": 27.755144406503774,
+        "west": 55.842948123865185,
+        "east": 56.05464293958323
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

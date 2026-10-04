@@ -1,0 +1,111 @@
+{
+  "cityId": "zarrin-dasht",
+  "cityName": "زرین دشت (فارس)",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:07:09.499Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-امام-علی",
+      "name": "شهرک امام علی",
+      "nameEn": "شهرک-امام-علی",
+      "centroid": {
+        "lat": 28.3589898,
+        "lng": 54.43695425
+      },
+      "bbox": {
+        "south": 28.3566117,
+        "north": 28.3613679,
+        "west": 54.4342571,
+        "east": 54.4396514
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-گلستان",
+      "name": "شهرک گلستان",
+      "nameEn": "شهرک-گلستان",
+      "centroid": {
+        "lat": 28.35182965,
+        "lng": 54.43395005
+      },
+      "bbox": {
+        "south": 28.3489263,
+        "north": 28.354733,
+        "west": 54.431068,
+        "east": 54.4368321
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "مسکن-مهر",
+      "name": "مسکن مهر",
+      "nameEn": "مسکن-مهر",
+      "centroid": {
+        "lat": 28.35784215,
+        "lng": 54.4450774
+      },
+      "bbox": {
+        "south": 28.354858,
+        "north": 28.3608263,
+        "west": 54.4419448,
+        "east": 54.44821
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-زبر",
+      "name": "چاه زبر",
+      "nameEn": "چاه-زبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-سبز",
+      "name": "چاه سبز",
+      "nameEn": "چاه-سبز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-طاهره",
+      "name": "حاجی طاهره",
+      "nameEn": "حاجی-طاهره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره-شور",
+      "name": "دره شور",
+      "nameEn": "دره-شور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهر-پیر",
+      "name": "شهر پیر",
+      "nameEn": "شهر-پیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلکویه",
+      "name": "گلکویه",
+      "nameEn": "گلکویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلوگاه",
+      "name": "گلوگاه",
+      "nameEn": "گلوگاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-پنج-چاه",
+      "name": "مزرعه پنج چاه",
+      "nameEn": "مزرعه-پنج-چاه",
+      "geoSource": "osm"
+    }
+  ]
+}

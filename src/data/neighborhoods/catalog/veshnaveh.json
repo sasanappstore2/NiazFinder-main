@@ -1,0 +1,25 @@
+{
+  "cityId": "veshnaveh",
+  "cityName": "وشنه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.267Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "وشنه",
+      "name": "وشنه",
+      "nameEn": "veshnaveh",
+      "centroid": {
+        "lat": 34.92929515249237,
+        "lng": 51.42677214437556
+      },
+      "bbox": {
+        "south": 34.82280862715999,
+        "north": 35.03578167782475,
+        "west": 51.30565339502491,
+        "east": 51.54789089372622
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

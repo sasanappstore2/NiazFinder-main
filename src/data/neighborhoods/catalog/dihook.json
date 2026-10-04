@@ -1,0 +1,25 @@
+{
+  "cityId": "dihook",
+  "cityName": "دیهوک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.824Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "دیهوک",
+      "name": "دیهوک",
+      "nameEn": "dihook",
+      "centroid": {
+        "lat": 32.54606050556953,
+        "lng": 57.41205807913207
+      },
+      "bbox": {
+        "south": 32.43957398023715,
+        "north": 32.65254703090191,
+        "west": 57.295073519567914,
+        "east": 57.52904263869623
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

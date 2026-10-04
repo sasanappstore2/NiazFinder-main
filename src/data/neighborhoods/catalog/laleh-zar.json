@@ -1,0 +1,169 @@
+{
+  "cityId": "laleh-zar",
+  "cityName": "لاله زار",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:00:43.554Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "تخت-عبدالبیگی",
+      "name": "تخت عبدالبیگی",
+      "nameEn": "تخت-عبدالبیگی",
+      "centroid": {
+        "lat": 29.55396346949335,
+        "lng": 56.830157882692305
+      },
+      "bbox": {
+        "south": 29.447476944160975,
+        "north": 29.660449994825726,
+        "west": 56.722979992038056,
+        "east": 56.937335773346554
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسکر",
+      "name": "اسکر",
+      "nameEn": "اسکر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-حسن",
+      "name": "باغ حسن",
+      "nameEn": "باغ-حسن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-فخروییه",
+      "name": "باغ فخروییه",
+      "nameEn": "باغ-فخروییه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برکنان-علیا",
+      "name": "برکنان علیا",
+      "nameEn": "برکنان-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنگان",
+      "name": "بنگان",
+      "nameEn": "بنگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیزنوئیه",
+      "name": "بیزنوئیه",
+      "nameEn": "بیزنوئیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تلخه-چار",
+      "name": "تلخه چار",
+      "nameEn": "تلخه-چار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جغدری",
+      "name": "جغدری",
+      "nameEn": "جغدری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-عروس",
+      "name": "چشمه عروس",
+      "nameEn": "چشمه-عروس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داس-آباد",
+      "name": "داس آباد",
+      "nameEn": "داس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-دیوان",
+      "name": "ده دیوان",
+      "nameEn": "ده-دیوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-نامی",
+      "name": "ده نامی",
+      "nameEn": "ده-نامی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیه-بنوییه",
+      "name": "سیه بنوییه",
+      "nameEn": "سیه-بنوییه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عشق-آباد",
+      "name": "عشق آباد",
+      "nameEn": "عشق-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کبیر",
+      "name": "کبیر",
+      "nameEn": "کبیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کل-مشک",
+      "name": "کل مشک",
+      "nameEn": "کل-مشک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوه-سفید",
+      "name": "کوه سفید",
+      "nameEn": "کوه-سفید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنجان",
+      "name": "گنجان",
+      "nameEn": "گنجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنوییه",
+      "name": "گنوییه",
+      "nameEn": "گنوییه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لاله-زار",
+      "name": "لاله زار",
+      "nameEn": "لاله-زار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ننوک",
+      "name": "ننوک",
+      "nameEn": "ننوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ننیز-علیا",
+      "name": "ننیز علیا",
+      "nameEn": "ننیز-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نینز-سفلی",
+      "name": "نینز سفلی",
+      "nameEn": "نینز-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هراران",
+      "name": "هراران",
+      "nameEn": "هراران",
+      "geoSource": "osm"
+    }
+  ]
+}

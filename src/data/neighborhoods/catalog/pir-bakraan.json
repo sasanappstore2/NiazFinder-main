@@ -1,0 +1,25 @@
+{
+  "cityId": "pir-bakraan",
+  "cityName": "پیر بکران",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.100Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "پیر-بکران",
+      "name": "پیر بکران",
+      "nameEn": "pir-bakraan",
+      "centroid": {
+        "lat": 32.48193321246856,
+        "lng": 51.64566131254075
+      },
+      "bbox": {
+        "south": 32.37544668713618,
+        "north": 32.58841973780094,
+        "west": 51.535299799428664,
+        "east": 51.756022825652835
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

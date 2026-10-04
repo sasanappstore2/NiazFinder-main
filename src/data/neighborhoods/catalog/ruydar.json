@@ -1,0 +1,25 @@
+{
+  "cityId": "ruydar",
+  "cityName": "رویدر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.408Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "رویدر",
+      "name": "رویدر",
+      "nameEn": "ruydar",
+      "centroid": {
+        "lat": 27.413514316313332,
+        "lng": 55.54682497158723
+      },
+      "bbox": {
+        "south": 27.307027790980957,
+        "north": 27.520000841645707,
+        "west": 55.44156485968828,
+        "east": 55.65208508348618
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

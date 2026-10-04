@@ -1,0 +1,91 @@
+{
+  "cityId": "zavin",
+  "cityName": "زاوین",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:46:08.520Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زاوین",
+      "name": "زاوین",
+      "nameEn": "zavin",
+      "centroid": {
+        "lat": 36.68145969310097,
+        "lng": 60.1592044768245
+      },
+      "bbox": {
+        "south": 36.57497316776859,
+        "north": 36.78794621843335,
+        "west": 60.03450732897154,
+        "east": 60.28390162467746
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "ارتکند",
+      "name": "ارتکند",
+      "nameEn": "ارتکند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چنار",
+      "name": "چنار",
+      "nameEn": "چنار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خور-سفلی",
+      "name": "خور سفلی",
+      "nameEn": "خور-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خور-علیا",
+      "name": "خور علیا",
+      "nameEn": "خور-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خور-وسطی",
+      "name": "خور وسطی",
+      "nameEn": "خور-وسطی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زو-علیا",
+      "name": "زو علیا",
+      "nameEn": "زو-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سررود",
+      "name": "سررود",
+      "nameEn": "سررود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "َشهرزو",
+      "name": "َشهرزو",
+      "nameEn": "َشهرزو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طرقتی",
+      "name": "طرقتی",
+      "nameEn": "طرقتی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-نو",
+      "name": "قلعه نو",
+      "nameEn": "قلعه-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدآباد-زاوین",
+      "name": "محمدآباد زاوین",
+      "nameEn": "محمدآباد-زاوین",
+      "geoSource": "osm"
+    }
+  ]
+}

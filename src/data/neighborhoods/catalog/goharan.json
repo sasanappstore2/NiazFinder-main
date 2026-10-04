@@ -1,0 +1,25 @@
+{
+  "cityId": "goharan",
+  "cityName": "گوهران",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.313Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گوهران",
+      "name": "گوهران",
+      "nameEn": "goharan",
+      "centroid": {
+        "lat": 26.740352559288535,
+        "lng": 58.03144780374039
+      },
+      "bbox": {
+        "south": 26.63386603395616,
+        "north": 26.84683908462091,
+        "west": 57.9241171657151,
+        "east": 58.13877844176568
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

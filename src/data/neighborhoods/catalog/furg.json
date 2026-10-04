@@ -1,0 +1,115 @@
+{
+  "cityId": "furg",
+  "cityName": "فورگ",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:15:58.864Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فورگ",
+      "name": "فورگ",
+      "nameEn": "furg",
+      "centroid": {
+        "lat": 28.224752345095222,
+        "lng": 55.22185134304287
+      },
+      "bbox": {
+        "south": 28.118265819762847,
+        "north": 28.331238870427597,
+        "west": 55.115544518432614,
+        "east": 55.32815816765312
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "بستان",
+      "name": "بستان",
+      "nameEn": "بستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بن-کویه",
+      "name": "بن کویه",
+      "nameEn": "بن-کویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوبرجی",
+      "name": "دوبرجی",
+      "nameEn": "دوبرجی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سده",
+      "name": "سده",
+      "nameEn": "سده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاه-ابوذکریا",
+      "name": "شاه ابوذکریا",
+      "nameEn": "شاه-ابوذکریا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاه-مرز",
+      "name": "شاه مرز",
+      "nameEn": "شاه-مرز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-ملک-آباد",
+      "name": "شهرک ملک آباد",
+      "nameEn": "شهرک-ملک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فدامی",
+      "name": "فدامی",
+      "nameEn": "فدامی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلاتویه",
+      "name": "قلاتویه",
+      "nameEn": "قلاتویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-نو",
+      "name": "قلعه نو",
+      "nameEn": "قلعه-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدآباد",
+      "name": "محمدآباد",
+      "nameEn": "محمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرز",
+      "name": "مرز",
+      "nameEn": "مرز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآباد",
+      "name": "مهرآباد",
+      "nameEn": "مهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرت-آباد",
+      "name": "نصرت آباد",
+      "nameEn": "نصرت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصیرآباد",
+      "name": "نصیرآباد",
+      "nameEn": "نصیرآباد",
+      "geoSource": "osm"
+    }
+  ]
+}

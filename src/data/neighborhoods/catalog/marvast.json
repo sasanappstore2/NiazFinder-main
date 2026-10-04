@@ -1,0 +1,31 @@
+{
+  "cityId": "marvast",
+  "cityName": "مروست",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:07:33.624Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مروست",
+      "name": "مروست",
+      "nameEn": "marvast",
+      "centroid": {
+        "lat": 30.65527557772188,
+        "lng": 54.280452907606474
+      },
+      "bbox": {
+        "south": 30.548789052389505,
+        "north": 30.761762103054256,
+        "west": 54.17002319536822,
+        "east": 54.39088261984472
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ترکان",
+      "name": "ترکان",
+      "nameEn": "ترکان",
+      "geoSource": "osm"
+    }
+  ]
+}

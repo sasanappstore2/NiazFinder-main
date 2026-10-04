@@ -1,0 +1,91 @@
+{
+  "cityId": "zazomahru",
+  "cityName": "ززوماهرو",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:09:01.675Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ززوماهرو",
+      "name": "ززوماهرو",
+      "nameEn": "zazomahru",
+      "centroid": {
+        "lat": 33.13268013050664,
+        "lng": 49.19964180275922
+      },
+      "bbox": {
+        "south": 33.026193605174264,
+        "north": 33.23916665583902,
+        "west": 49.08570004603817,
+        "east": 49.31358355948027
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "پیرامام",
+      "name": "پیرامام",
+      "nameEn": "پیرامام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درخت-چمن",
+      "name": "درخت چمن",
+      "nameEn": "درخت-چمن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره-تاریک",
+      "name": "دره تاریک",
+      "nameEn": "دره-تاریک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره-چاه-فولادوند",
+      "name": "دره چاه فولادوند",
+      "nameEn": "دره-چاه-فولادوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دستگرد",
+      "name": "دستگرد",
+      "nameEn": "دستگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-سیدکشت-ورزه",
+      "name": "ده سیدکشت ورزه",
+      "nameEn": "ده-سیدکشت-ورزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سربیشه",
+      "name": "سربیشه",
+      "nameEn": "سربیشه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاه-مکان-صفر",
+      "name": "شاه مکان صفر",
+      "nameEn": "شاه-مکان-صفر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شول-آباد",
+      "name": "شول آباد",
+      "nameEn": "شول-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کیرو",
+      "name": "کیرو",
+      "nameEn": "کیرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-سفید",
+      "name": "گل سفید",
+      "nameEn": "گل-سفید",
+      "geoSource": "osm"
+    }
+  ]
+}

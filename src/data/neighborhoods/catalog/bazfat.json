@@ -1,0 +1,25 @@
+{
+  "cityId": "bazfat",
+  "cityName": "بازفت",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.358Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "بازفت",
+      "name": "بازفت",
+      "nameEn": "bazfat",
+      "centroid": {
+        "lat": 32.38139086007905,
+        "lng": 49.97629456336503
+      },
+      "bbox": {
+        "south": 32.27490433474667,
+        "north": 32.48787738541143,
+        "west": 49.85907361659699,
+        "east": 50.093515510133074
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

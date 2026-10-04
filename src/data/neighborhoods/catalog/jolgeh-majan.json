@@ -1,0 +1,25 @@
+{
+  "cityId": "jolgeh-majan",
+  "cityName": "جلگه ماژان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.725Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جلگه-ماژان",
+      "name": "جلگه ماژان",
+      "nameEn": "jolgeh-majan",
+      "centroid": {
+        "lat": 32.04417048886094,
+        "lng": 58.816798529100865
+      },
+      "bbox": {
+        "south": 31.937683963528567,
+        "north": 32.15065701419332,
+        "west": 58.703019589637,
+        "east": 58.93057746856473
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

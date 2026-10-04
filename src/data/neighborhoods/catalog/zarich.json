@@ -1,0 +1,25 @@
+{
+  "cityId": "zarich",
+  "cityName": "زرچ",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.364Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زرچ",
+      "name": "زرچ",
+      "nameEn": "zarich",
+      "centroid": {
+        "lat": 32.872261711752145,
+        "lng": 54.44713922103687
+      },
+      "bbox": {
+        "south": 32.765775186419766,
+        "north": 32.978748237084524,
+        "west": 54.33404843380233,
+        "east": 54.56023000827141
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

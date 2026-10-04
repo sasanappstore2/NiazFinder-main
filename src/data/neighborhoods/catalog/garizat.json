@@ -1,0 +1,25 @@
+{
+  "cityId": "garizat",
+  "cityName": "گاریزات",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.136Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گاریزات",
+      "name": "گاریزات",
+      "nameEn": "garizat",
+      "centroid": {
+        "lat": 31.19382762745239,
+        "lng": 54.029461203060464
+      },
+      "bbox": {
+        "south": 31.087341102120014,
+        "north": 31.300314152784765,
+        "west": 53.91889304440707,
+        "east": 54.14002936171385
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

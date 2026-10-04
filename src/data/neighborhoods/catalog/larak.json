@@ -1,0 +1,175 @@
+{
+  "cityId": "larak",
+  "cityName": "لاک",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:42:11.329Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "لاک",
+      "name": "لاک",
+      "nameEn": "larak",
+      "centroid": {
+        "lat": 27.52709327470091,
+        "lng": 54.296802643477484
+      },
+      "bbox": {
+        "south": 27.420606749368535,
+        "north": 27.633579800033285,
+        "west": 54.18939925740542,
+        "east": 54.40420602954955
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "تل-گردو",
+      "name": "تل گردو",
+      "nameEn": "تل-گردو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "توتنگ",
+      "name": "توتنگ",
+      "nameEn": "توتنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانه-عبدالله-عامری",
+      "name": "خانه عبدالله عامری",
+      "nameEn": "خانه-عبدالله-عامری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درگز",
+      "name": "درگز",
+      "nameEn": "درگز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دم-دهنه-سغ",
+      "name": "دم دهنه سغ",
+      "nameEn": "دم-دهنه-سغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنه-ی-میمند",
+      "name": "دهنه ی میمند",
+      "nameEn": "دهنه-ی-میمند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زاکین",
+      "name": "زاکین",
+      "nameEn": "زاکین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زروکان",
+      "name": "زروکان",
+      "nameEn": "زروکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاهو",
+      "name": "سیاهو",
+      "nameEn": "سیاهو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طیفکان",
+      "name": "طیفکان",
+      "nameEn": "طیفکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فورخورج",
+      "name": "فورخورج",
+      "nameEn": "فورخورج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کپرگودبونگرد",
+      "name": "کپرگودبونگرد",
+      "nameEn": "کپرگودبونگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کروکان",
+      "name": "کروکان",
+      "nameEn": "کروکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوه-سفلی",
+      "name": "کوه سفلی",
+      "nameEn": "کوه-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوه-علیا",
+      "name": "کوه علیا",
+      "nameEn": "کوه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محله-اسلام-آباد",
+      "name": "محله اسلام آباد",
+      "nameEn": "محله-اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محله-فخر-آباد",
+      "name": "محله فخر آباد",
+      "nameEn": "محله-فخر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محله-کوژتمبی",
+      "name": "محله کوژتمبی",
+      "nameEn": "محله-کوژتمبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محله-مغباش",
+      "name": "محله مغباش",
+      "nameEn": "محله-مغباش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-چاه-مشتک",
+      "name": "مزرعه چاه مشتک",
+      "nameEn": "مزرعه-چاه-مشتک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مغ-بالا",
+      "name": "مغ بالا",
+      "nameEn": "مغ-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نارمند",
+      "name": "نارمند",
+      "nameEn": "نارمند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وایکان",
+      "name": "وایکان",
+      "nameEn": "وایکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هماگ-بالا",
+      "name": "هماگ بالا",
+      "nameEn": "هماگ-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هماگ-پائین",
+      "name": "هماگ پائین",
+      "nameEn": "هماگ-پائین",
+      "geoSource": "osm"
+    }
+  ]
+}

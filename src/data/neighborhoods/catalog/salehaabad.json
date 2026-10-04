@@ -1,0 +1,25 @@
+{
+  "cityId": "salehaabad",
+  "cityName": "صالح آباد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.497Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "صالح-آباد",
+      "name": "صالح آباد",
+      "nameEn": "salehaabad",
+      "centroid": {
+        "lat": 35.024127681566654,
+        "lng": 48.34643564911693
+      },
+      "bbox": {
+        "south": 34.917641156234275,
+        "north": 35.13061420689903,
+        "west": 48.22820108587282,
+        "east": 48.46467021236104
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "parud",
+  "cityName": "پارود",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.072Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "پارود",
+      "name": "پارود",
+      "nameEn": "parud",
+      "centroid": {
+        "lat": 26.401959923607617,
+        "lng": 61.80591259272428
+      },
+      "bbox": {
+        "south": 26.29547339827524,
+        "north": 26.508446448939992,
+        "west": 61.70180359926577,
+        "east": 61.9100215861828
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

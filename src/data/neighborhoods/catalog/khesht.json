@@ -1,0 +1,217 @@
+{
+  "cityId": "khesht",
+  "cityName": "خشت",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:02:18.697Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خشت",
+      "name": "خشت",
+      "nameEn": "khesht",
+      "centroid": {
+        "lat": 29.627916101329504,
+        "lng": 51.41409514336794
+      },
+      "bbox": {
+        "south": 29.52142957599713,
+        "north": 29.73440262666188,
+        "west": 51.299537419790525,
+        "east": 51.52865286694535
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امامزاده-علی",
+      "name": "امامزاده علی",
+      "nameEn": "امامزاده-علی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایجانی",
+      "name": "ایجانی",
+      "nameEn": "ایجانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برج-سید",
+      "name": "برج سید",
+      "nameEn": "برج-سید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بناف",
+      "name": "بناف",
+      "nameEn": "بناف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنه-سید-محمدرضا",
+      "name": "بنه سید محمدرضا",
+      "nameEn": "بنه-سید-محمدرضا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بورکی",
+      "name": "بورکی",
+      "nameEn": "بورکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بورکی-سفلی",
+      "name": "بورکی سفلی",
+      "nameEn": "بورکی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بورکی-علیا",
+      "name": "بورکی علیا",
+      "nameEn": "بورکی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جعفرجن",
+      "name": "جعفرجن",
+      "nameEn": "جعفرجن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چرون",
+      "name": "چرون",
+      "nameEn": "چرون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهاربرج",
+      "name": "چهاربرج",
+      "nameEn": "چهاربرج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چیتی",
+      "name": "چیتی",
+      "nameEn": "چیتی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خواجه-جمالی",
+      "name": "خواجه جمالی",
+      "nameEn": "خواجه-جمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دالکی",
+      "name": "دالکی",
+      "nameEn": "دالکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-کهنه-کمارج",
+      "name": "ده کهنه کمارج",
+      "nameEn": "ده-کهنه-کمارج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رودک",
+      "name": "رودک",
+      "nameEn": "رودک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-ده-کهنه-کمارج",
+      "name": "روستای ده کهنه کمارج",
+      "nameEn": "روستای-ده-کهنه-کمارج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-سبا-کان-سرخ",
+      "name": "روستای سبا (کان سرخ )",
+      "nameEn": "روستای-سبا-کان-سرخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرقنات",
+      "name": "سرقنات",
+      "nameEn": "سرقنات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهبازخانی",
+      "name": "شهبازخانی",
+      "nameEn": "شهبازخانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-سفید",
+      "name": "قلعه سفید",
+      "nameEn": "قلعه-سفید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کره-ای",
+      "name": "کره ای",
+      "nameEn": "کره-ای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمارج",
+      "name": "کمارج",
+      "nameEn": "کمارج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنارتخته",
+      "name": "کنارتخته",
+      "nameEn": "کنارتخته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مافی-آباد",
+      "name": "مافی آباد",
+      "nameEn": "مافی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محل-الدین",
+      "name": "محل الدین",
+      "nameEn": "محل-الدین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مشایخ",
+      "name": "مشایخ",
+      "nameEn": "مشایخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نظام-آباد",
+      "name": "نظام آباد",
+      "nameEn": "نظام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نعمت-آباد",
+      "name": "نعمت آباد",
+      "nameEn": "نعمت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوحی",
+      "name": "نوحی",
+      "nameEn": "نوحی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وحدتیه",
+      "name": "وحدتیه",
+      "nameEn": "وحدتیه",
+      "geoSource": "osm"
+    }
+  ]
+}

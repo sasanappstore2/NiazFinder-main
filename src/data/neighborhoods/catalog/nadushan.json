@@ -1,0 +1,25 @@
+{
+  "cityId": "nadushan",
+  "cityName": "ندوشن",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.827Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ندوشن",
+      "name": "ندوشن",
+      "nameEn": "nadushan",
+      "centroid": {
+        "lat": 31.94076554933525,
+        "lng": 53.45529009271591
+      },
+      "bbox": {
+        "south": 31.834279024002875,
+        "north": 32.047252074667625,
+        "west": 53.34141216152681,
+        "east": 53.56916802390501
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

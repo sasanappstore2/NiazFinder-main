@@ -1,0 +1,25 @@
+{
+  "cityId": "falard",
+  "cityName": "فلارد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.932Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فلارد",
+      "name": "فلارد",
+      "nameEn": "falard",
+      "centroid": {
+        "lat": 31.29274086140855,
+        "lng": 51.26873617552697
+      },
+      "bbox": {
+        "south": 31.186254336076175,
+        "north": 31.399227386740925,
+        "west": 51.15952445707155,
+        "east": 51.37794789398238
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

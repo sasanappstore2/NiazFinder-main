@@ -1,0 +1,25 @@
+{
+  "cityId": "angoot",
+  "cityName": "انگوت",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.830Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "انگوت",
+      "name": "انگوت",
+      "nameEn": "angoot",
+      "centroid": {
+        "lat": 39.00774486140855,
+        "lng": 47.79781437768392
+      },
+      "bbox": {
+        "south": 38.90125833607617,
+        "north": 39.114231386740926,
+        "west": 47.67350758270544,
+        "east": 47.9221211726624
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

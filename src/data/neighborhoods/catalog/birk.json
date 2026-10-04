@@ -1,0 +1,25 @@
+{
+  "cityId": "birk",
+  "cityName": "بیرک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.430Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بیرک",
+      "name": "بیرک",
+      "nameEn": "birk",
+      "centroid": {
+        "lat": 27.322330535141933,
+        "lng": 61.40365104134818
+      },
+      "bbox": {
+        "south": 27.215844009809558,
+        "north": 27.42881706047431,
+        "west": 61.29785364884192,
+        "east": 61.50944843385444
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

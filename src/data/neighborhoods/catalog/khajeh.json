@@ -1,0 +1,241 @@
+{
+  "cityId": "khajeh",
+  "cityName": "خواجه",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:10:30.984Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خواجه",
+      "name": "خواجه",
+      "nameEn": "khajeh",
+      "centroid": {
+        "lat": 38.23756201670859,
+        "lng": 46.741225107736
+      },
+      "bbox": {
+        "south": 38.13107549137621,
+        "north": 38.344048542040966,
+        "west": 46.621047720306876,
+        "east": 46.861402495165116
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آرپا-دره-سی",
+      "name": "آرپا دره سی",
+      "nameEn": "آرپا-دره-سی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "استیار",
+      "name": "استیار",
+      "nameEn": "استیار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسکندر",
+      "name": "اسکندر",
+      "nameEn": "اسکندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الپوت",
+      "name": "الپوت",
+      "nameEn": "الپوت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امندی",
+      "name": "امندی",
+      "nameEn": "امندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بشیر",
+      "name": "بشیر",
+      "nameEn": "بشیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پاکچین",
+      "name": "پاکچین",
+      "nameEn": "پاکچین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پاکچین-جدید",
+      "name": "پاکچین جدید",
+      "nameEn": "پاکچین-جدید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تازه-کند",
+      "name": "تازه کند",
+      "nameEn": "تازه-کند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تازه-کند-ترکه-داری",
+      "name": "تازه کند ترکه داری",
+      "nameEn": "تازه-کند-ترکه-داری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ترکه-داری",
+      "name": "ترکه داری",
+      "nameEn": "ترکه-داری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جغناب",
+      "name": "جغناب",
+      "nameEn": "جغناب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چنزق",
+      "name": "چنزق",
+      "nameEn": "چنزق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیزج-ور",
+      "name": "دیزج ور",
+      "nameEn": "دیزج-ور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساخسلو",
+      "name": "ساخسلو",
+      "nameEn": "ساخسلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرند",
+      "name": "سرند",
+      "nameEn": "سرند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سولوجه",
+      "name": "سولوجه",
+      "nameEn": "سولوجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شالی",
+      "name": "شالی",
+      "nameEn": "شالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاملو",
+      "name": "شاملو",
+      "nameEn": "شاملو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شریف-آباد",
+      "name": "شریف آباد",
+      "nameEn": "شریف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهر-جدید-شهریار",
+      "name": "شهر جدید شهریار",
+      "nameEn": "شهر-جدید-شهریار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-اکباتان",
+      "name": "شهرک اکباتان",
+      "nameEn": "شهرک-اکباتان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طویقون",
+      "name": "طویقون",
+      "nameEn": "طویقون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-آباد",
+      "name": "عباس آباد",
+      "nameEn": "عباس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-لر",
+      "name": "قلعه لر",
+      "nameEn": "قلعه-لر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قویجاق",
+      "name": "قویجاق",
+      "nameEn": "قویجاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلوکدرق",
+      "name": "کلوکدرق",
+      "nameEn": "کلوکدرق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهلیک-بلاغی",
+      "name": "کهلیک بلاغی",
+      "nameEn": "کهلیک-بلاغی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گمند",
+      "name": "گمند",
+      "nameEn": "گمند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوار",
+      "name": "گوار",
+      "nameEn": "گوار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گورچین",
+      "name": "گورچین",
+      "nameEn": "گورچین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد-گودلر",
+      "name": "محمودآباد گودلر",
+      "nameEn": "محمودآباد-گودلر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرنو",
+      "name": "مرنو",
+      "nameEn": "مرنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملک-کیان",
+      "name": "ملک کیان",
+      "nameEn": "ملک-کیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نهند",
+      "name": "نهند",
+      "nameEn": "نهند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ونیار",
+      "name": "ونیار",
+      "nameEn": "ونیار",
+      "geoSource": "osm"
+    }
+  ]
+}

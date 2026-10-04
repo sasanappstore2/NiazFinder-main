@@ -1,0 +1,25 @@
+{
+  "cityId": "ashtarinan",
+  "cityName": "اشترینان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.963Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "اشترینان",
+      "name": "اشترینان",
+      "nameEn": "ashtarinan",
+      "centroid": {
+        "lat": 33.995128918433345,
+        "lng": 48.71055254072555
+      },
+      "bbox": {
+        "south": 33.888642393100966,
+        "north": 34.10161544376572,
+        "west": 48.597480844566775,
+        "east": 48.82362423688433
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

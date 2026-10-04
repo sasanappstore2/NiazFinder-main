@@ -1,0 +1,25 @@
+{
+  "cityId": "minan",
+  "cityName": "مینان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.737Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مینان",
+      "name": "مینان",
+      "nameEn": "minan",
+      "centroid": {
+        "lat": 26.575110507689544,
+        "lng": 61.539265704487136
+      },
+      "bbox": {
+        "south": 26.46862398235717,
+        "north": 26.68159703302192,
+        "west": 61.435529215894114,
+        "east": 61.643002193080164
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

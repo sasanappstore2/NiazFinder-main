@@ -1,0 +1,25 @@
+{
+  "cityId": "shamkan",
+  "cityName": "شامکان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.801Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شامکان",
+      "name": "شامکان",
+      "nameEn": "shamkan",
+      "centroid": {
+        "lat": 35.81573522705713,
+        "lng": 58.13205474958652
+      },
+      "bbox": {
+        "south": 35.70924870172475,
+        "north": 35.92222175238951,
+        "west": 58.01286349086972,
+        "east": 58.251246008303326
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

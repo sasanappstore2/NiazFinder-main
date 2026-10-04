@@ -1,0 +1,109 @@
+{
+  "cityId": "rudab",
+  "cityName": "روداب",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:44:29.457Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "روداب",
+      "name": "روداب",
+      "nameEn": "rudab",
+      "centroid": {
+        "lat": 35.811993919367595,
+        "lng": 57.315473311057616
+      },
+      "bbox": {
+        "south": 35.705507394035216,
+        "north": 35.91848044469997,
+        "west": 57.20051155122812,
+        "east": 57.43043507088711
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "باشتین",
+      "name": "باشتین",
+      "nameEn": "باشتین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برآباد",
+      "name": "برآباد",
+      "nameEn": "برآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تاج-آباد",
+      "name": "تاج آباد",
+      "nameEn": "تاج-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تسبند",
+      "name": "تسبند",
+      "nameEn": "تسبند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد-گنجی",
+      "name": "حسین آباد گنجی",
+      "nameEn": "حسین-آباد-گنجی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دارین",
+      "name": "دارین",
+      "nameEn": "دارین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دامرود",
+      "name": "دامرود",
+      "nameEn": "دامرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دروک",
+      "name": "دروک",
+      "nameEn": "دروک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شمس-آباد",
+      "name": "شمس آباد",
+      "nameEn": "شمس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرایین",
+      "name": "شهرایین",
+      "nameEn": "شهرایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیلشور",
+      "name": "فیلشور",
+      "nameEn": "فیلشور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-میرعلی",
+      "name": "کلاته میرعلی",
+      "nameEn": "کلاته-میرعلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملوند",
+      "name": "ملوند",
+      "nameEn": "ملوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نامن",
+      "name": "نامن",
+      "nameEn": "نامن",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "ramand",
+  "cityName": "رامند",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.237Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مراد-بیگلو",
+      "name": "مراد بیگلو",
+      "nameEn": "مراد-بیگلو",
+      "centroid": {
+        "lat": 35.77756856180381,
+        "lng": 49.83179859733707
+      },
+      "bbox": {
+        "south": 35.67108203647143,
+        "north": 35.88405508713619,
+        "west": 49.7173506700169,
+        "east": 49.94624652465724
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

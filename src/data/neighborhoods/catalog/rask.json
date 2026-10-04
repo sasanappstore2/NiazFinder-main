@@ -1,0 +1,25 @@
+{
+  "cityId": "rask",
+  "cityName": "راسک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.271Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "راسک",
+      "name": "راسک",
+      "nameEn": "rask",
+      "centroid": {
+        "lat": 26.10294833050665,
+        "lng": 61.47507125216842
+      },
+      "bbox": {
+        "south": 25.996461805174274,
+        "north": 26.209434855839024,
+        "west": 61.36606497326762,
+        "east": 61.58407753106922
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

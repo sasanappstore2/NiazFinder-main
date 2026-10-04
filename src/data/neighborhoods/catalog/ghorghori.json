@@ -1,0 +1,25 @@
+{
+  "cityId": "ghorghori",
+  "cityName": "قرقری",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.290Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قرقری",
+      "name": "قرقری",
+      "nameEn": "ghorghori",
+      "centroid": {
+        "lat": 31.294784539525693,
+        "lng": 61.690091707913766
+      },
+      "bbox": {
+        "south": 31.188298014193318,
+        "north": 31.40127106485807,
+        "west": 61.57927583432342,
+        "east": 61.80090758150411
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

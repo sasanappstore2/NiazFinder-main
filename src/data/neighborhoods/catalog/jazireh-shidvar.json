@@ -1,0 +1,25 @@
+{
+  "cityId": "jazireh-shidvar",
+  "cityName": "شیدوار",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.675Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شیدوار",
+      "name": "شیدوار",
+      "nameEn": "jazireh-shidvar",
+      "centroid": {
+        "lat": 26.789978462199066,
+        "lng": 53.46796980041978
+      },
+      "bbox": {
+        "south": 26.68349193686669,
+        "north": 26.89646498753144,
+        "west": 53.35609202168873,
+        "east": 53.57984757915083
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

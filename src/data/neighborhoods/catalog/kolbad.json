@@ -1,0 +1,31 @@
+{
+  "cityId": "kolbad",
+  "cityName": "کلباد",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:18:54.671Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کلباد",
+      "name": "کلباد",
+      "nameEn": "kolbad",
+      "centroid": {
+        "lat": 36.72330089137621,
+        "lng": 53.76435114051525
+      },
+      "bbox": {
+        "south": 36.61681436604383,
+        "north": 36.82978741670859,
+        "west": 53.64081896530486,
+        "east": 53.887883315725645
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "امام-ده",
+      "name": "امام ده",
+      "nameEn": "امام-ده",
+      "geoSource": "osm"
+    }
+  ]
+}

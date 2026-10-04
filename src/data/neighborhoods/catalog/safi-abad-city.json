@@ -1,0 +1,25 @@
+{
+  "cityId": "safi-abad-city",
+  "cityName": "صفی آباد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.452Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "صفی-آباد",
+      "name": "صفی آباد",
+      "nameEn": "safi-abad-city",
+      "centroid": {
+        "lat": 36.795558871613366,
+        "lng": 57.96629466216315
+      },
+      "bbox": {
+        "south": 36.68907234628099,
+        "north": 36.902045396945745,
+        "west": 57.84791593946882,
+        "east": 58.084673384857474
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

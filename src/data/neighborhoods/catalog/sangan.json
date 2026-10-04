@@ -1,0 +1,85 @@
+{
+  "cityId": "sangan",
+  "cityName": "سنگان",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:48:55.966Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سنگان",
+      "name": "سنگان",
+      "nameEn": "sangan",
+      "centroid": {
+        "lat": 34.24874787639238,
+        "lng": 60.44776286044093
+      },
+      "bbox": {
+        "south": 34.14226135106,
+        "north": 34.35523440172476,
+        "west": 60.33451410650692,
+        "east": 60.56101161437495
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغچه",
+      "name": "باغچه",
+      "nameEn": "باغچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برآباد",
+      "name": "برآباد",
+      "nameEn": "برآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشت-آباد",
+      "name": "پشت آباد",
+      "nameEn": "پشت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تیزاب",
+      "name": "تیزاب",
+      "nameEn": "تیزاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-مزار",
+      "name": "چشمه مزار",
+      "nameEn": "چشمه-مزار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرکرد",
+      "name": "خرکرد",
+      "nameEn": "خرکرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشت",
+      "name": "دشت",
+      "nameEn": "دشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآباد",
+      "name": "مهرآباد",
+      "nameEn": "مهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نشتیفان",
+      "name": "نشتیفان",
+      "nameEn": "نشتیفان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هرشی",
+      "name": "هرشی",
+      "nameEn": "هرشی",
+      "geoSource": "osm"
+    }
+  ]
+}

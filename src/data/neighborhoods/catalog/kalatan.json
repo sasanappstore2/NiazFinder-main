@@ -1,0 +1,25 @@
+{
+  "cityId": "kalatan",
+  "cityName": "کلاتان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.816Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کلاتان",
+      "name": "کلاتان",
+      "nameEn": "kalatan",
+      "centroid": {
+        "lat": 27.220953476392385,
+        "lng": 60.25369845304816
+      },
+      "bbox": {
+        "south": 27.11446695106001,
+        "north": 27.32744000172476,
+        "west": 60.14265444543284,
+        "east": 60.36474246066348
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

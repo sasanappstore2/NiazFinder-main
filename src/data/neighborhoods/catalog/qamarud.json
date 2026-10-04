@@ -1,0 +1,157 @@
+{
+  "cityId": "qamarud",
+  "cityName": "قمرود",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:26:13.660Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قمرود",
+      "name": "قمرود",
+      "nameEn": "qamarud",
+      "centroid": {
+        "lat": 34.88459302745239,
+        "lng": 51.378153465280015
+      },
+      "bbox": {
+        "south": 34.77810650212001,
+        "north": 34.99107955278477,
+        "west": 51.25909674774603,
+        "east": 51.497210182814
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلامآباد",
+      "name": "اسلام‌آباد",
+      "nameEn": "اسلامآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "البرز",
+      "name": "البرز",
+      "nameEn": "البرز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد-آقا",
+      "name": "دولت آباد آقا",
+      "nameEn": "دولت-آباد-آقا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-مبارک-آباد",
+      "name": "روستای مبارک آباد",
+      "nameEn": "روستای-مبارک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراجه",
+      "name": "سراجه",
+      "nameEn": "سراجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شریف-آباد",
+      "name": "شریف آباد",
+      "nameEn": "شریف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صفرآباد",
+      "name": "صفرآباد",
+      "nameEn": "صفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرج-آباد",
+      "name": "فرج آباد",
+      "nameEn": "فرج-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-البرز",
+      "name": "قشلاق البرز",
+      "nameEn": "قشلاق-البرز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-ملک-قلعه",
+      "name": "قشلاق ملک قلعه",
+      "nameEn": "قشلاق-ملک-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-سلطان-باجی",
+      "name": "قلعه سلطان باجی",
+      "nameEn": "قلعه-سلطان-باجی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قنوات",
+      "name": "قنوات",
+      "nameEn": "قنوات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاج",
+      "name": "کاج",
+      "nameEn": "کاج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوه-سفید",
+      "name": "کوه سفید",
+      "nameEn": "کوه-سفید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمد-آباد",
+      "name": "محمد آباد",
+      "nameEn": "محمد-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرادآباد",
+      "name": "مرادآباد",
+      "nameEn": "مرادآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملک-آباد",
+      "name": "ملک آباد",
+      "nameEn": "ملک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منطقه-۱",
+      "name": "منطقه ۱",
+      "nameEn": "منطقه-۱",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منطقه-۳",
+      "name": "منطقه ۳",
+      "nameEn": "منطقه-۳",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مومن-آباد",
+      "name": "مومن آباد",
+      "nameEn": "مومن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرآباد",
+      "name": "میرآباد",
+      "nameEn": "میرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نواران",
+      "name": "نواران",
+      "nameEn": "نواران",
+      "geoSource": "osm"
+    }
+  ]
+}

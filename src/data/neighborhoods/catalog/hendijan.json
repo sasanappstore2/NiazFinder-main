@@ -1,0 +1,25 @@
+{
+  "cityId": "hendijan",
+  "cityName": "هندیجان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.489Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوی-فرهنگیان",
+      "name": "کوی فرهنگیان",
+      "nameEn": "کوی-فرهنگیان",
+      "centroid": {
+        "lat": 30.30667589356809,
+        "lng": 49.76067424695373
+      },
+      "bbox": {
+        "south": 30.265146148688462,
+        "north": 30.34820563844772,
+        "west": 49.715422745008354,
+        "east": 49.80592574889911
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "bandarkhamir",
+  "cityName": "بندرخمیر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.239Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بندرخمیر",
+      "name": "بندرخمیر",
+      "nameEn": "bandarkhamir",
+      "centroid": {
+        "lat": 27.625045490085874,
+        "lng": 56.18454534424453
+      },
+      "bbox": {
+        "south": 27.5185589647535,
+        "north": 27.73153201541825,
+        "west": 56.07832756536143,
+        "east": 56.29076312312764
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

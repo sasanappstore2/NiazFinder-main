@@ -1,0 +1,211 @@
+{
+  "cityId": "maraveh-tapeh",
+  "cityName": "مراوه",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:30:26.107Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مراوه",
+      "name": "مراوه",
+      "nameEn": "maraveh-tapeh",
+      "centroid": {
+        "lat": 37.93488728753144,
+        "lng": 55.98584176511952
+      },
+      "bbox": {
+        "south": 37.82840076219906,
+        "north": 38.04137381286382,
+        "west": 55.86027882918697,
+        "east": 56.11140470105206
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آلتی-آغاج-بزرگ",
+      "name": "آلتی آغاج بزرگ",
+      "nameEn": "آلتی-آغاج-بزرگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آلتی-آغاج-خانگه",
+      "name": "آلتی آغاج خانگه",
+      "nameEn": "آلتی-آغاج-خانگه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارکلی",
+      "name": "ارکلی",
+      "nameEn": "ارکلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اق-امام",
+      "name": "اق امام",
+      "nameEn": "اق-امام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوچران",
+      "name": "اوچران",
+      "nameEn": "اوچران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بالکور",
+      "name": "بالکور",
+      "nameEn": "بالکور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چایلی",
+      "name": "چایلی",
+      "nameEn": "چایلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-لی",
+      "name": "چشمه لی",
+      "nameEn": "چشمه-لی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چناران",
+      "name": "چناران",
+      "nameEn": "چناران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چنارلی",
+      "name": "چنارلی",
+      "nameEn": "چنارلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خوجه-گلدی",
+      "name": "خوجه گلدی",
+      "nameEn": "خوجه-گلدی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دکلی-داش",
+      "name": "دکلی داش",
+      "nameEn": "دکلی-داش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساری-قمیش",
+      "name": "ساری قمیش",
+      "nameEn": "ساری-قمیش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سوزش",
+      "name": "سوزش",
+      "nameEn": "سوزش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شارلق",
+      "name": "شارلق",
+      "nameEn": "شارلق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورجه-بالا",
+      "name": "شورجه بالا",
+      "nameEn": "شورجه-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورجه-پایین",
+      "name": "شورجه پایین",
+      "nameEn": "شورجه-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخ-لر",
+      "name": "شیخ لر",
+      "nameEn": "شیخ-لر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاپلانلی",
+      "name": "قاپلانلی",
+      "nameEn": "قاپلانلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قربان-پیکار",
+      "name": "قربان پیکار",
+      "nameEn": "قربان-پیکار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قرقجق",
+      "name": "قرقجق",
+      "nameEn": "قرقجق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قرناوه-سفلی",
+      "name": "قرناوه سفلی",
+      "nameEn": "قرناوه-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قرناوه-علیا",
+      "name": "قرناوه علیا",
+      "nameEn": "قرناوه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-آقاچلی",
+      "name": "قره آقاچلی",
+      "nameEn": "قره-آقاچلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-دام",
+      "name": "قره دام",
+      "nameEn": "قره-دام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-قول-تپه",
+      "name": "قره قول تپه",
+      "nameEn": "قره-قول-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کچک",
+      "name": "کچک",
+      "nameEn": "کچک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مراوه-تپه",
+      "name": "مراوه تپه",
+      "nameEn": "مراوه-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "همت-آباد",
+      "name": "همت آباد",
+      "nameEn": "همت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یازگلدی",
+      "name": "یازگلدی",
+      "nameEn": "یازگلدی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یکه-چنار",
+      "name": "یکه چنار",
+      "nameEn": "یکه-چنار",
+      "geoSource": "osm"
+    }
+  ]
+}

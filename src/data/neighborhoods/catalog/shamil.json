@@ -1,0 +1,25 @@
+{
+  "cityId": "shamil",
+  "cityName": "شمیل",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.797Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "شمیل",
+      "name": "شمیل",
+      "nameEn": "shamil",
+      "centroid": {
+        "lat": 27.54067366870284,
+        "lng": 56.90741562885448
+      },
+      "bbox": {
+        "south": 27.434187143370465,
+        "north": 27.647160194035216,
+        "west": 56.79470141157113,
+        "east": 57.02012984613782
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

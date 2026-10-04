@@ -1,0 +1,25 @@
+{
+  "cityId": "zayandeh-rud-city",
+  "cityName": "زاینده رود",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.401Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زاینده-رود",
+      "name": "زاینده رود",
+      "nameEn": "zayandeh-rud-city",
+      "centroid": {
+        "lat": 32.61700307944665,
+        "lng": 50.92951913074944
+      },
+      "bbox": {
+        "south": 32.51051655411427,
+        "north": 32.723489604779026,
+        "west": 50.8151781745854,
+        "east": 51.04386008691349
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "bent",
+  "cityName": "بنت",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.388Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بنت",
+      "name": "بنت",
+      "nameEn": "bent",
+      "centroid": {
+        "lat": 26.26564941803809,
+        "lng": 59.36577513433843
+      },
+      "bbox": {
+        "south": 26.159162892705716,
+        "north": 26.372135943370466,
+        "west": 59.261089453002164,
+        "east": 59.47046081567469
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

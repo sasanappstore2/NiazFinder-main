@@ -1,0 +1,115 @@
+{
+  "cityId": "inche-borun",
+  "cityName": "اینچه برون",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:28:21.755Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "اینچه-برون",
+      "name": "اینچه برون",
+      "nameEn": "inche-borun",
+      "centroid": {
+        "lat": 37.45217936776859,
+        "lng": 54.79118176601998
+      },
+      "bbox": {
+        "south": 37.345692842436215,
+        "north": 37.55866589310097,
+        "west": 54.66554524032889,
+        "east": 54.916818291711074
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آراقویی-بزرگ",
+      "name": "آراقویی بزرگ",
+      "nameEn": "آراقویی-بزرگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اراقوی",
+      "name": "اراقوی",
+      "nameEn": "اراقوی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ازبک-آباد",
+      "name": "ازبک آباد",
+      "nameEn": "ازبک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوخی-تپه",
+      "name": "اوخی تپه",
+      "nameEn": "اوخی-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیشک-تپه",
+      "name": "بیشک تپه",
+      "nameEn": "بیشک-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنگلی",
+      "name": "تنگلی",
+      "nameEn": "تنگلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دانشمند",
+      "name": "دانشمند",
+      "nameEn": "دانشمند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوزالوم-فدوی-جنوبی",
+      "name": "دوزالوم فدوی جنوبی",
+      "nameEn": "دوزالوم-فدوی-جنوبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوزالوم-فدوی-شمالی",
+      "name": "دوزالوم فدوی شمالی",
+      "nameEn": "دوزالوم-فدوی-شمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "akala",
+      "name": "Akýaýla",
+      "nameEn": "akala",
+      "geoSource": "osm"
+    },
+    {
+      "id": "etli",
+      "name": "Çetli",
+      "nameEn": "etli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "etli-obasy",
+      "name": "Çetli obasy",
+      "nameEn": "etli-obasy",
+      "geoSource": "osm"
+    },
+    {
+      "id": "gdrolum",
+      "name": "Güdürolum",
+      "nameEn": "gdrolum",
+      "geoSource": "osm"
+    },
+    {
+      "id": "gdrolum-obasy",
+      "name": "Güdürolum obasy",
+      "nameEn": "gdrolum-obasy",
+      "geoSource": "osm"
+    },
+    {
+      "id": "yarymtyk",
+      "name": "Yarymtyk",
+      "nameEn": "yarymtyk",
+      "geoSource": "osm"
+    }
+  ]
+}

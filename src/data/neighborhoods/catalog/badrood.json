@@ -1,0 +1,25 @@
+{
+  "cityId": "badrood",
+  "cityName": "بادرود",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.060Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-آزادگان",
+      "name": "شهرک آزادگان",
+      "nameEn": "شهرک-آزادگان",
+      "centroid": {
+        "lat": 33.75908683819619,
+        "lng": 52.13905150405188
+      },
+      "bbox": {
+        "south": 33.65260031286381,
+        "north": 33.86557336352857,
+        "west": 52.02288584504595,
+        "east": 52.2552171630578
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

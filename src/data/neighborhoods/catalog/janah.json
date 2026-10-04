@@ -1,0 +1,25 @@
+{
+  "cityId": "janah",
+  "cityName": "جناح",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.632Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جناح",
+      "name": "جناح",
+      "nameEn": "janah",
+      "centroid": {
+        "lat": 27.105798332231405,
+        "lng": 54.181739139681355
+      },
+      "bbox": {
+        "south": 26.99931180689903,
+        "north": 27.21228485756378,
+        "west": 54.07542635716292,
+        "east": 54.2880519221998
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "conark",
+  "cityName": "چنارک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.651Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوزرگ-قدیم",
+      "name": "کوزرگ قدیم",
+      "nameEn": "کوزرگ-قدیم",
+      "centroid": {
+        "lat": 29.303261405373103,
+        "lng": 60.600052794915044
+      },
+      "bbox": {
+        "south": 29.196774880040728,
+        "north": 29.40974793070548,
+        "west": 60.48516278048904,
+        "east": 60.714942809341046
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "cityId": "musian",
+  "cityName": "موسیان",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:22:51.769Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "موسیان",
+      "name": "موسیان",
+      "nameEn": "musian",
+      "centroid": {
+        "lat": 32.54513495450953,
+        "lng": 47.559947914350005
+      },
+      "bbox": {
+        "south": 32.43864842917715,
+        "north": 32.65162147984191,
+        "west": 47.446416928325796,
+        "east": 47.673478900374214
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "الحطابی",
+      "name": "الحطابی",
+      "nameEn": "الحطابی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "أبو-غراب",
+      "name": "أبو غراب",
+      "nameEn": "أبو-غراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بره-بیجه",
+      "name": "بره بیجه",
+      "nameEn": "بره-بیجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پتک-اعراب",
+      "name": "پتک اعراب",
+      "nameEn": "پتک-اعراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پتک-دیناروند",
+      "name": "پتک دیناروند",
+      "nameEn": "پتک-دیناروند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دالپری",
+      "name": "دالپری",
+      "nameEn": "دالپری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشت-اکبر",
+      "name": "دشت اکبر",
+      "nameEn": "دشت-اکبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرخ-آباد",
+      "name": "فرخ آباد",
+      "nameEn": "فرخ-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قرية-الزبيدات-مهجورة",
+      "name": "قرية الزبيدات (مهجورة)",
+      "nameEn": "قرية-الزبيدات-مهجورة",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نهرعنبر",
+      "name": "نهرعنبر",
+      "nameEn": "نهرعنبر",
+      "geoSource": "osm"
+    }
+  ]
+}

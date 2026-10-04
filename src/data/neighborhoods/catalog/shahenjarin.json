@@ -1,0 +1,313 @@
+{
+  "cityId": "shahenjarin",
+  "cityName": "شاهنجرین",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:46:17.484Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شاهنجرین",
+      "name": "شاهنجرین",
+      "nameEn": "shahenjarin",
+      "centroid": {
+        "lat": 35.34689779482573,
+        "lng": 49.3396318125004
+      },
+      "bbox": {
+        "south": 35.24041126949335,
+        "north": 35.45338432015811,
+        "west": 49.22320729801393,
+        "east": 49.456056326986875
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اکله",
+      "name": "اکله",
+      "nameEn": "اکله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهکندان",
+      "name": "بهکندان",
+      "nameEn": "بهکندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشتجین",
+      "name": "پشتجین",
+      "nameEn": "پشتجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پلیکان",
+      "name": "پلیکان",
+      "nameEn": "پلیکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیربگ",
+      "name": "پیربگ",
+      "nameEn": "پیربگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تکیه",
+      "name": "تکیه",
+      "nameEn": "تکیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تموزان",
+      "name": "تموزان",
+      "nameEn": "تموزان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جورسجین",
+      "name": "جورسجین",
+      "nameEn": "جورسجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چانگرین",
+      "name": "چانگرین",
+      "nameEn": "چانگرین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسام-آباد",
+      "name": "حسام آباد",
+      "nameEn": "حسام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درجزین",
+      "name": "درجزین",
+      "nameEn": "درجزین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولوجردین-بالا",
+      "name": "دولوجردین بالا",
+      "nameEn": "دولوجردین-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهلق",
+      "name": "دهلق",
+      "nameEn": "دهلق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رازین",
+      "name": "رازین",
+      "nameEn": "رازین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رکین",
+      "name": "رکین",
+      "nameEn": "رکین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سایان",
+      "name": "سایان",
+      "nameEn": "سایان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلیلک",
+      "name": "سلیلک",
+      "nameEn": "سلیلک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنقرآباد",
+      "name": "سنقرآباد",
+      "nameEn": "سنقرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سوزن",
+      "name": "سوزن",
+      "nameEn": "سوزن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیراب",
+      "name": "سیراب",
+      "nameEn": "سیراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شنجور",
+      "name": "شنجور",
+      "nameEn": "شنجور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوند",
+      "name": "شوند",
+      "nameEn": "شوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-زراعی-درجزین",
+      "name": "شهرک زراعی درجزین",
+      "nameEn": "شهرک-زراعی-درجزین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-فرهنگیان",
+      "name": "شهرک فرهنگیان",
+      "nameEn": "شهرک-فرهنگیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عمان",
+      "name": "عمان",
+      "nameEn": "عمان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عین-آباد",
+      "name": "عین آباد",
+      "nameEn": "عین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فارسجین",
+      "name": "فارسجین",
+      "nameEn": "فارسجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قروه-درجزین",
+      "name": "قروه درجزین",
+      "nameEn": "قروه-درجزین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قروه-درگزین",
+      "name": "قروه درگزین",
+      "nameEn": "قروه-درگزین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-قیه",
+      "name": "قره قیه",
+      "nameEn": "قره-قیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاج",
+      "name": "کاج",
+      "nameEn": "کاج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرفس",
+      "name": "کرفس",
+      "nameEn": "کرفس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کله-سر",
+      "name": "کله سر",
+      "nameEn": "کله-سر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمندان",
+      "name": "کمندان",
+      "nameEn": "کمندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-گیودره",
+      "name": "مزرعه گیودره",
+      "nameEn": "مزرعه-گیودره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مسکن-مهر-قروه-درجزین",
+      "name": "مسکن مهر قروه درجزین",
+      "nameEn": "مسکن-مهر-قروه-درجزین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مسینک",
+      "name": "مسینک",
+      "nameEn": "مسینک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منوچهر",
+      "name": "منوچهر",
+      "nameEn": "منوچهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناظم-آباد",
+      "name": "ناظم آباد",
+      "nameEn": "ناظم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناکین",
+      "name": "ناکین",
+      "nameEn": "ناکین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نظام-اباد",
+      "name": "نظام اباد",
+      "nameEn": "نظام-اباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوار",
+      "name": "نوار",
+      "nameEn": "نوار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوده",
+      "name": "نوده",
+      "nameEn": "نوده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نیر",
+      "name": "نیر",
+      "nameEn": "نیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ولاشجرد",
+      "name": "ولاشجرد",
+      "nameEn": "ولاشجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ینگی-قلعه",
+      "name": "ینگی قلعه",
+      "nameEn": "ینگی-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یوشانلو",
+      "name": "یوشانلو",
+      "nameEn": "یوشانلو",
+      "geoSource": "osm"
+    }
+  ]
+}

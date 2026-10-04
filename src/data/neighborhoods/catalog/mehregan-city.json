@@ -1,0 +1,61 @@
+{
+  "cityId": "mehregan-city",
+  "cityName": "مهرگان",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:04:05.623Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مهرگان",
+      "name": "مهرگان",
+      "nameEn": "mehregan-city",
+      "centroid": {
+        "lat": 27.078537224002876,
+        "lng": 63.02520870703731
+      },
+      "bbox": {
+        "south": 26.9720506986705,
+        "north": 27.18502374933525,
+        "west": 62.915414943603366,
+        "east": 63.13500247047124
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آزادکور",
+      "name": "آزادکور",
+      "nameEn": "آزادکور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسفندک",
+      "name": "اسفندک",
+      "nameEn": "اسفندک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دریدر",
+      "name": "دریدر",
+      "nameEn": "دریدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهان",
+      "name": "دهان",
+      "nameEn": "دهان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوران",
+      "name": "شوران",
+      "nameEn": "شوران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کناربست",
+      "name": "کناربست",
+      "nameEn": "کناربست",
+      "geoSource": "osm"
+    }
+  ]
+}

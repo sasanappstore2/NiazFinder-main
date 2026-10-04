@@ -1,0 +1,337 @@
+{
+  "cityId": "hamidiyeh",
+  "cityName": "حمیدیه",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:36:24.195Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "حمیدیه",
+      "name": "حمیدیه",
+      "nameEn": "hamidiyeh",
+      "centroid": {
+        "lat": 31.50057416302551,
+        "lng": 48.47158592046085
+      },
+      "bbox": {
+        "south": 31.459399373230326,
+        "north": 31.541748952820697,
+        "west": 48.42684821315011,
+        "east": 48.51632362777159
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "البوصیاد",
+      "name": "البوصیاد",
+      "nameEn": "البوصیاد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "البوعیدیک-نبی",
+      "name": "البوعیدیک نبی",
+      "nameEn": "البوعیدیک-نبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بریچیه-سفلی",
+      "name": "بریچیه سفلی",
+      "nameEn": "بریچیه-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جرگه-سیدعلی",
+      "name": "جرگه سیدعلی",
+      "nameEn": "جرگه-سیدعلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلالیه-شمالی",
+      "name": "جلالیه شمالی",
+      "nameEn": "جلالیه-شمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلیزی-حنظله",
+      "name": "جلیزی حنظله",
+      "nameEn": "جلیزی-حنظله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلیزی-عبدالرضا",
+      "name": "جلیزی عبدالرضا",
+      "nameEn": "جلیزی-عبدالرضا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چمیم",
+      "name": "چمیم",
+      "nameEn": "چمیم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حریجه",
+      "name": "حریجه",
+      "nameEn": "حریجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-حاجی",
+      "name": "حسن حاجی",
+      "nameEn": "حسن-حاجی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حلاف-2",
+      "name": "حلاف 2",
+      "nameEn": "حلاف-2",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حلاف-3",
+      "name": "حلاف 3",
+      "nameEn": "حلاف-3",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حلاف-یک",
+      "name": "حلاف یک",
+      "nameEn": "حلاف-یک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حماد",
+      "name": "حماد",
+      "nameEn": "حماد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حمدان-سلجه",
+      "name": "حمدان سلجه",
+      "nameEn": "حمدان-سلجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حمودی-سعدون",
+      "name": "حمودی سعدون",
+      "nameEn": "حمودی-سعدون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهکده",
+      "name": "دهکده",
+      "nameEn": "دهکده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهلیز",
+      "name": "دهلیز",
+      "nameEn": "دهلیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهلیز-دو",
+      "name": "دهلیز دو",
+      "nameEn": "دهلیز-دو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهلیز-یک",
+      "name": "دهلیز یک",
+      "nameEn": "دهلیز-یک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رامسه-دو",
+      "name": "رامسه دو",
+      "nameEn": "رامسه-دو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رامسه-یک",
+      "name": "رامسه یک",
+      "nameEn": "رامسه-یک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-گمبوعه-بزرگ",
+      "name": "روستای گمبوعه بزرگ",
+      "nameEn": "روستای-گمبوعه-بزرگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساچت",
+      "name": "ساچت",
+      "nameEn": "ساچت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سدره",
+      "name": "سدره",
+      "nameEn": "سدره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدحسین-موسوی",
+      "name": "سیدحسین موسوی",
+      "nameEn": "سیدحسین-موسوی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدشریف",
+      "name": "سیدشریف",
+      "nameEn": "سیدشریف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدعباس",
+      "name": "سیدعباس",
+      "nameEn": "سیدعباس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شبلیه",
+      "name": "شبلیه",
+      "nameEn": "شبلیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شبیشه",
+      "name": "شبیشه",
+      "nameEn": "شبیشه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شرطاق-دو",
+      "name": "شرطاق دو",
+      "nameEn": "شرطاق-دو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شرطاق-یک",
+      "name": "شرطاق یک",
+      "nameEn": "شرطاق-یک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-ازادی",
+      "name": "شهرک ازادی",
+      "nameEn": "شهرک-ازادی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیبانی",
+      "name": "شیبانی",
+      "nameEn": "شیبانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخ-زهراو",
+      "name": "شیخ زهراو",
+      "nameEn": "شیخ-زهراو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخ-صالح",
+      "name": "شیخ صالح",
+      "nameEn": "شیخ-صالح",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صدره-سیدیعقوب",
+      "name": "صدره سیدیعقوب",
+      "nameEn": "صدره-سیدیعقوب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صگور-حنظله",
+      "name": "صگور حنظله",
+      "nameEn": "صگور-حنظله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طراح-دو",
+      "name": "طراح دو",
+      "nameEn": "طراح-دو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طراح-یک",
+      "name": "طراح یک",
+      "nameEn": "طراح-یک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-یالس-دو",
+      "name": "عباس یالس دو",
+      "nameEn": "عباس-یالس-دو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علاونه",
+      "name": "علاونه",
+      "nameEn": "علاونه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علاونه-فای",
+      "name": "علاونه فای",
+      "nameEn": "علاونه-فای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غضبان",
+      "name": "غضبان",
+      "nameEn": "غضبان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غفیله",
+      "name": "غفیله",
+      "nameEn": "غفیله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرسیه",
+      "name": "فرسیه",
+      "nameEn": "فرسیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاسم-زامل",
+      "name": "قاسم زامل",
+      "nameEn": "قاسم-زامل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوت-سید-نعیم",
+      "name": "کوت سید نعیم",
+      "nameEn": "کوت-سید-نعیم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گمبوعه-بزرگ",
+      "name": "گمبوعه بزرگ",
+      "nameEn": "گمبوعه-بزرگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گمبوعه-کوچک",
+      "name": "گمبوعه کوچک",
+      "nameEn": "گمبوعه-کوچک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ماهور",
+      "name": "ماهور",
+      "nameEn": "ماهور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرعی",
+      "name": "مرعی",
+      "nameEn": "مرعی",
+      "geoSource": "osm"
+    }
+  ]
+}

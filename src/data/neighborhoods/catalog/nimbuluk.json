@@ -1,0 +1,25 @@
+{
+  "cityId": "nimbuluk",
+  "cityName": "نیمبلوک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.934Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "نیمبلوک",
+      "name": "نیمبلوک",
+      "nameEn": "nimbuluk",
+      "centroid": {
+        "lat": 33.97783579655049,
+        "lng": 58.97412001915262
+      },
+      "bbox": {
+        "south": 33.87134927121811,
+        "north": 34.084322321882865,
+        "west": 58.858847471402015,
+        "east": 59.08939256690322
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

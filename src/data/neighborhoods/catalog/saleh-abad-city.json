@@ -1,0 +1,107 @@
+{
+  "cityId": "saleh-abad-city",
+  "cityName": "صالح آباد (ایلام)",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:20:06.705Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چقا-گلان",
+      "name": "چقا گلان",
+      "nameEn": "چقا-گلان",
+      "centroid": {
+        "lat": 33.492405744160976,
+        "lng": 46.158280645410485
+      },
+      "bbox": {
+        "south": 33.43916248149479,
+        "north": 33.54564900682716,
+        "west": 46.09443461493423,
+        "east": 46.22212667588674
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "سه-راه-جنداله",
+      "name": "سه راه جنداله",
+      "nameEn": "سه-راه-جنداله",
+      "centroid": {
+        "lat": 33.548766746403814,
+        "lng": 46.0311174519743
+      },
+      "bbox": {
+        "south": 33.49552348373763,
+        "north": 33.60201000907,
+        "west": 45.96727142149805,
+        "east": 46.09496348245056
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "بان-ویزه",
+      "name": "بان ویزه",
+      "nameEn": "بان-ویزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بانروشان",
+      "name": "بانروشان",
+      "nameEn": "بانروشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوالحسن",
+      "name": "بوالحسن",
+      "nameEn": "بوالحسن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چماب",
+      "name": "چماب",
+      "nameEn": "چماب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چمسارد",
+      "name": "چمسارد",
+      "nameEn": "چمسارد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ریکا",
+      "name": "ریکا",
+      "nameEn": "ریکا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرنی",
+      "name": "سرنی",
+      "nameEn": "سرنی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاهرگه",
+      "name": "سیاهرگه",
+      "nameEn": "سیاهرگه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صالح-آباد",
+      "name": "صالح آباد",
+      "nameEn": "صالح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلان",
+      "name": "گلان",
+      "nameEn": "گلان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ماربره",
+      "name": "ماربره",
+      "nameEn": "ماربره",
+      "geoSource": "osm"
+    }
+  ]
+}

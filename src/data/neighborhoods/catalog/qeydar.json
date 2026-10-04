@@ -1,0 +1,353 @@
+{
+  "cityId": "qeydar",
+  "cityName": "قیدار",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:40:14.755Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فریک-بلاغی",
+      "name": "فریک بلاغی",
+      "nameEn": "فریک-بلاغی",
+      "centroid": {
+        "lat": 36.00970616108516,
+        "lng": 48.57335025711443
+      },
+      "bbox": {
+        "south": 35.999305977111035,
+        "north": 36.02010634505929,
+        "west": 48.56049337648229,
+        "east": 48.58620713774656
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "مسکن-مهر",
+      "name": "مسکن مهر",
+      "nameEn": "مسکن-مهر",
+      "centroid": {
+        "lat": 36.02067077130623,
+        "lng": 48.54687056441822
+      },
+      "bbox": {
+        "south": 36.0102705873321,
+        "north": 36.031070955280356,
+        "west": 48.534013683786085,
+        "east": 48.559727445050356
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبی-سفلی",
+      "name": "آبی سفلی",
+      "nameEn": "آبی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آهار-مشکین",
+      "name": "آهار مشکین",
+      "nameEn": "آهار-مشکین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارقین",
+      "name": "ارقین",
+      "nameEn": "ارقین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اینچه",
+      "name": "اینچه",
+      "nameEn": "اینچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلگه-شیر",
+      "name": "بلگه شیر",
+      "nameEn": "بلگه-شیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیجقین",
+      "name": "بیجقین",
+      "nameEn": "بیجقین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پسکوهان",
+      "name": "پسکوهان",
+      "nameEn": "پسکوهان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "توپ-قره",
+      "name": "توپ قره",
+      "nameEn": "توپ-قره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تورپاخلو",
+      "name": "تورپاخلو",
+      "nameEn": "تورپاخلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چراغ-حصاری",
+      "name": "چراغ حصاری",
+      "nameEn": "چراغ-حصاری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چنگور",
+      "name": "چنگور",
+      "nameEn": "چنگور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حصار",
+      "name": "حصار",
+      "nameEn": "حصار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خالق-آباد",
+      "name": "خالق آباد",
+      "nameEn": "خالق-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خان-تیمور-مهدی-آباد",
+      "name": "خان تیمور (مهدی آباد)",
+      "nameEn": "خان-تیمور-مهدی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحمت-آباد",
+      "name": "رحمت آباد",
+      "nameEn": "رحمت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرند",
+      "name": "زرند",
+      "nameEn": "زرند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرین-گل",
+      "name": "زرین گل",
+      "nameEn": "زرین-گل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زواجر",
+      "name": "زواجر",
+      "nameEn": "زواجر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زوینق",
+      "name": "زوینق",
+      "nameEn": "زوینق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سجاس",
+      "name": "سجاس",
+      "nameEn": "سجاس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهرورد",
+      "name": "سهرورد",
+      "nameEn": "سهرورد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیامان",
+      "name": "سیامان",
+      "nameEn": "سیامان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهر-قیدارشهرستان-خدابنده",
+      "name": "شهر قیدار(شهرستان خدابنده)",
+      "nameEn": "شهر-قیدارشهرستان-خدابنده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهید-چمنیملک-چمنی",
+      "name": "شهید چمنی/ملک چمنی",
+      "nameEn": "شهید-چمنیملک-چمنی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخلر",
+      "name": "شیخلر",
+      "nameEn": "شیخلر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخلو",
+      "name": "شیخلو",
+      "nameEn": "شیخلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عینجیک",
+      "name": "عینجیک",
+      "nameEn": "عینجیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-گل",
+      "name": "قره گل",
+      "nameEn": "قره-گل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-محمد",
+      "name": "قره محمد",
+      "nameEn": "قره-محمد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوشه-کند",
+      "name": "قوشه کند",
+      "nameEn": "قوشه-کند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قیدار",
+      "name": "قیدار",
+      "nameEn": "قیدار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قینرجه",
+      "name": "قینرجه",
+      "nameEn": "قینرجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرسف",
+      "name": "کرسف",
+      "nameEn": "کرسف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کره-شال",
+      "name": "کره شال",
+      "nameEn": "کره-شال",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهریز",
+      "name": "کهریز",
+      "nameEn": "کهریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گون-دره",
+      "name": "گون دره",
+      "nameEn": "گون-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گیل-متروکه",
+      "name": "گیل (متروکه)",
+      "nameEn": "گیل-متروکه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لاچوان",
+      "name": "لاچوان",
+      "nameEn": "لاچوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ماد-آباد",
+      "name": "ماد آباد",
+      "nameEn": "ماد-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مجید-آباد",
+      "name": "مجید آباد",
+      "nameEn": "مجید-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد",
+      "name": "محمودآباد",
+      "nameEn": "محمودآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزید-آباد",
+      "name": "مزید آباد",
+      "nameEn": "مزید-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ممقان",
+      "name": "ممقان",
+      "nameEn": "ممقان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرین",
+      "name": "مهرین",
+      "nameEn": "مهرین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نظر-قلی",
+      "name": "نظر قلی",
+      "nameEn": "نظر-قلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نعلبندان",
+      "name": "نعلبندان",
+      "nameEn": "نعلبندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نهروان",
+      "name": "نهروان",
+      "nameEn": "نهروان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورجوشان",
+      "name": "ورجوشان",
+      "nameEn": "ورجوشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ینگی-کند",
+      "name": "ینگی کند",
+      "nameEn": "ینگی-کند",
+      "geoSource": "osm"
+    }
+  ]
+}

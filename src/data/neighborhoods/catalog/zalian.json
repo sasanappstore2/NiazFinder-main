@@ -1,0 +1,25 @@
+{
+  "cityId": "zalian",
+  "cityName": "زالیان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.327Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زالیان",
+      "name": "زالیان",
+      "nameEn": "zalian",
+      "centroid": {
+        "lat": 34.02431956392382,
+        "lng": 49.2873648006172
+      },
+      "bbox": {
+        "south": 33.91783303859144,
+        "north": 34.1308060892562,
+        "west": 49.175194665931414,
+        "east": 49.399534935302974
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

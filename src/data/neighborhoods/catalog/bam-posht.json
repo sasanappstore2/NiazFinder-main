@@ -1,0 +1,25 @@
+{
+  "cityId": "bam-posht",
+  "cityName": "بم پشت",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.201Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بم-پشت",
+      "name": "بم پشت",
+      "nameEn": "bam-posht",
+      "centroid": {
+        "lat": 26.82439687506288,
+        "lng": 62.8106860276493
+      },
+      "bbox": {
+        "south": 26.717910349730506,
+        "north": 26.930883400395256,
+        "west": 62.69973246749438,
+        "east": 62.921639587804215
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

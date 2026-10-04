@@ -1,0 +1,25 @@
+{
+  "cityId": "farmahin",
+  "cityName": "فرمهین",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.987Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "فرمهین",
+      "name": "فرمهین",
+      "nameEn": "farmahin",
+      "centroid": {
+        "lat": 34.54452146909809,
+        "lng": 49.73690209962162
+      },
+      "bbox": {
+        "south": 34.438034943765715,
+        "north": 34.65100799443047,
+        "west": 49.62359883299692,
+        "east": 49.85020536624631
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

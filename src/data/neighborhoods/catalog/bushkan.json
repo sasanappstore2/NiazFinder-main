@@ -1,0 +1,61 @@
+{
+  "cityId": "bushkan",
+  "cityName": "بوشکان",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:33:32.980Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بوشکان",
+      "name": "بوشکان",
+      "nameEn": "bushkan",
+      "centroid": {
+        "lat": 28.858496787926697,
+        "lng": 51.75188997800609
+      },
+      "bbox": {
+        "south": 28.75201026259432,
+        "north": 28.964983313259072,
+        "west": 51.64361174973129,
+        "east": 51.86016820628088
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "امامزاده-بده",
+      "name": "امامزاده بده",
+      "nameEn": "امامزاده-بده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنگ-رود",
+      "name": "تنگ رود",
+      "nameEn": "تنگ-رود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درنگ",
+      "name": "درنگ",
+      "nameEn": "درنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاه-پسرمرد",
+      "name": "شاه پسرمرد",
+      "nameEn": "شاه-پسرمرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شلدان",
+      "name": "شلدان",
+      "nameEn": "شلدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طلحه",
+      "name": "طلحه",
+      "nameEn": "طلحه",
+      "geoSource": "osm"
+    }
+  ]
+}

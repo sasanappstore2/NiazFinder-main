@@ -1,0 +1,79 @@
+{
+  "cityId": "ferdos-city",
+  "cityName": "فردوس (کرمان)",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:54:16.536Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فردوس-کرمان",
+      "name": "فردوس (کرمان)",
+      "nameEn": "ferdos-city",
+      "centroid": {
+        "lat": 30.77553287678764,
+        "lng": 55.88525820956311
+      },
+      "bbox": {
+        "south": 30.669046351455265,
+        "north": 30.882019402120015,
+        "west": 55.77010388573968,
+        "east": 56.000412533386545
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "ابشور",
+      "name": "ابشور",
+      "nameEn": "ابشور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بغبغوئیه",
+      "name": "بغبغوئیه",
+      "nameEn": "بغبغوئیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جعفرآباد",
+      "name": "جعفرآباد",
+      "nameEn": "جعفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیارت-حضرت-عباس",
+      "name": "زیارت حضرت عباس",
+      "nameEn": "زیارت-حضرت-عباس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگوئیه",
+      "name": "سنگوئیه",
+      "nameEn": "سنگوئیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فتح-آباد",
+      "name": "فتح آباد",
+      "nameEn": "فتح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فردوس",
+      "name": "فردوس",
+      "nameEn": "فردوس",
+      "geoSource": "osm"
+    }
+  ]
+}

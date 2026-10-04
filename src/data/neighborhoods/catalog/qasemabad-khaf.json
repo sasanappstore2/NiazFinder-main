@@ -1,0 +1,25 @@
+{
+  "cityId": "qasemabad-khaf",
+  "cityName": "قاسم‌آباد (خواف)",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.161Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قاسمآباد-خواف",
+      "name": "قاسم‌آباد (خواف)",
+      "nameEn": "qasemabad-khaf",
+      "centroid": {
+        "lat": 34.35357999759972,
+        "lng": 59.99574698334941
+      },
+      "bbox": {
+        "south": 34.337110081681644,
+        "north": 34.37004991351779,
+        "west": 59.977575165368364,
+        "east": 60.01391880133046
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

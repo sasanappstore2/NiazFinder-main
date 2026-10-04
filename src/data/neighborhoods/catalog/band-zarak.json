@@ -1,0 +1,25 @@
+{
+  "cityId": "band-zarak",
+  "cityName": "بند زرک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.217Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بند-زرک",
+      "name": "بند زرک",
+      "nameEn": "band-zarak",
+      "centroid": {
+        "lat": 27.010769907689543,
+        "lng": 57.08997128608779
+      },
+      "bbox": {
+        "south": 26.904283382357168,
+        "north": 27.117256433021918,
+        "west": 56.98227122305462,
+        "east": 57.19767134912095
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

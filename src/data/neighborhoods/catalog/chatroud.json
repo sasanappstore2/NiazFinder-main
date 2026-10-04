@@ -1,0 +1,271 @@
+{
+  "cityId": "chatroud",
+  "cityName": "چترود",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:46:33.839Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چترود",
+      "name": "چترود",
+      "nameEn": "chatroud",
+      "centroid": {
+        "lat": 30.584605355839024,
+        "lng": 56.88393933024234
+      },
+      "bbox": {
+        "south": 30.47811883050665,
+        "north": 30.6910918811714,
+        "west": 56.77308256793392,
+        "east": 56.99479609255076
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "انادرو",
+      "name": "انادرو",
+      "nameEn": "انادرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باب-زیرین",
+      "name": "باب زیرین",
+      "nameEn": "باب-زیرین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باب-نیزو",
+      "name": "باب نیزو",
+      "nameEn": "باب-نیزو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلوچیه",
+      "name": "بلوچیه",
+      "nameEn": "بلوچیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بن-گو",
+      "name": "بن گو",
+      "nameEn": "بن-گو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندر",
+      "name": "بندر",
+      "nameEn": "بندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پاسیب",
+      "name": "پاسیب",
+      "nameEn": "پاسیب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تیکدر",
+      "name": "تیکدر",
+      "nameEn": "تیکدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چناروئیه",
+      "name": "چناروئیه",
+      "nameEn": "چناروئیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حمیدیه",
+      "name": "حمیدیه",
+      "nameEn": "حمیدیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانوک",
+      "name": "خانوک",
+      "nameEn": "خانوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دربید-خون",
+      "name": "دربید خون",
+      "nameEn": "دربید-خون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دستجرد",
+      "name": "دستجرد",
+      "nameEn": "دستجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-زیار",
+      "name": "ده زیار",
+      "nameEn": "ده-زیار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحیمآباد",
+      "name": "رحیم‌آباد",
+      "nameEn": "رحیمآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زارکوئیه",
+      "name": "زارکوئیه",
+      "nameEn": "زارکوئیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زنگی-آباد",
+      "name": "زنگی آباد",
+      "nameEn": "زنگی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراسیاب",
+      "name": "سراسیاب",
+      "nameEn": "سراسیاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سردر",
+      "name": "سردر",
+      "nameEn": "سردر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-دق",
+      "name": "علی آباد دق",
+      "nameEn": "علی-آباد-دق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرح-آباد",
+      "name": "فرح آباد",
+      "nameEn": "فرح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قنات-گرم",
+      "name": "قنات گرم",
+      "nameEn": "قنات-گرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوام-آباد",
+      "name": "قوام آباد",
+      "nameEn": "قوام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاظم-آباد",
+      "name": "کاظم آباد",
+      "nameEn": "کاظم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کریم-آباد",
+      "name": "کریم آباد",
+      "nameEn": "کریم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کریم-آبادگاوخانه",
+      "name": "کریم آبادگاوخانه",
+      "nameEn": "کریم-آبادگاوخانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کن-شیب-ده",
+      "name": "کن شیب ده",
+      "nameEn": "کن-شیب-ده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهنوج-مدیم",
+      "name": "کهنوج مدیم",
+      "nameEn": "کهنوج-مدیم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهنوج-معزآباد",
+      "name": "کهنوج معزآباد",
+      "nameEn": "کهنوج-معزآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گزستان",
+      "name": "گزستان",
+      "nameEn": "گزستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گساویه",
+      "name": "گساویه",
+      "nameEn": "گساویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنوئیه",
+      "name": "گنوئیه",
+      "nameEn": "گنوئیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنوییه",
+      "name": "گنوییه",
+      "nameEn": "گنوییه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گورچویه",
+      "name": "گورچویه",
+      "nameEn": "گورچویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "معزآباد",
+      "name": "معزآباد",
+      "nameEn": "معزآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نیمونگ",
+      "name": "نیمونگ",
+      "nameEn": "نیمونگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هجدک",
+      "name": "هجدک",
+      "nameEn": "هجدک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هروز-سفلی",
+      "name": "هروز سفلی",
+      "nameEn": "هروز-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هروز-علیا",
+      "name": "هروز علیا",
+      "nameEn": "هروز-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "همقاوند",
+      "name": "همقاوند",
+      "nameEn": "همقاوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هوتک",
+      "name": "هوتک",
+      "nameEn": "هوتک",
+      "geoSource": "osm"
+    }
+  ]
+}

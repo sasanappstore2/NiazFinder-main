@@ -1,0 +1,103 @@
+{
+  "cityId": "ghamsar",
+  "cityName": "قمصر",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:42:09.918Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قمصر",
+      "name": "قمصر",
+      "nameEn": "ghamsar",
+      "centroid": {
+        "lat": 33.65998904146605,
+        "lng": 51.34587981950799
+      },
+      "bbox": {
+        "south": 33.636916960977366,
+        "north": 33.68306112195473,
+        "west": 51.319814136100156,
+        "east": 51.37194550291583
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "جزه",
+      "name": "جزه",
+      "nameEn": "جزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جوینان",
+      "name": "جوینان",
+      "nameEn": "جوینان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جهق",
+      "name": "جهق",
+      "nameEn": "جهق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرمدشت",
+      "name": "خرمدشت",
+      "nameEn": "خرمدشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خنب",
+      "name": "خنب",
+      "nameEn": "خنب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره",
+      "name": "دره",
+      "nameEn": "دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زنجانبر",
+      "name": "زنجانبر",
+      "nameEn": "زنجانبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهسواران",
+      "name": "شهسواران",
+      "nameEn": "شهسواران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزاآن",
+      "name": "قزاآن",
+      "nameEn": "قزاآن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهرود",
+      "name": "کهرود",
+      "nameEn": "کهرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مسلم-آباد",
+      "name": "مسلم آباد",
+      "nameEn": "مسلم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرآباد",
+      "name": "نصرآباد",
+      "nameEn": "نصرآباد",
+      "geoSource": "osm"
+    }
+  ]
+}

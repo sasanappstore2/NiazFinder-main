@@ -1,0 +1,25 @@
+{
+  "cityId": "bashayaat",
+  "cityName": "بشاریات",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.305Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بشاریات",
+      "name": "بشاریات",
+      "nameEn": "bashayaat",
+      "centroid": {
+        "lat": 36.02153498117139,
+        "lng": 50.33785160702183
+      },
+      "bbox": {
+        "south": 35.91504845583901,
+        "north": 36.12802150650377,
+        "west": 50.22213837329452,
+        "east": 50.453564840749145
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

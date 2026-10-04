@@ -1,0 +1,25 @@
+{
+  "cityId": "khobushan",
+  "cityName": "تیتکانلو",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.084Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "تیتکانلو",
+      "name": "تیتکانلو",
+      "nameEn": "khobushan",
+      "centroid": {
+        "lat": 37.39334388674093,
+        "lng": 58.375030871258566
+      },
+      "bbox": {
+        "south": 37.28685736140855,
+        "north": 37.49983041207331,
+        "west": 58.25754376764763,
+        "east": 58.4925179748695
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

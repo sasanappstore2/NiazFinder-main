@@ -1,0 +1,199 @@
+{
+  "cityId": "asir",
+  "cityName": "اسیر",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:52:09.032Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "اسیر",
+      "name": "اسیر",
+      "nameEn": "asir",
+      "centroid": {
+        "lat": 27.822621837800934,
+        "lng": 52.627210939536454
+      },
+      "bbox": {
+        "south": 27.71613531246856,
+        "north": 27.92910836313331,
+        "west": 52.521236065847035,
+        "east": 52.733185813225866
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارودان",
+      "name": "ارودان",
+      "nameEn": "ارودان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلبلی",
+      "name": "بلبلی",
+      "nameEn": "بلبلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهرستان",
+      "name": "بهرستان",
+      "nameEn": "بهرستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-بیدو",
+      "name": "چاه بیدو",
+      "nameEn": "چاه-بیدو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-خالوها",
+      "name": "چاه خالوها",
+      "nameEn": "چاه-خالوها",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-دروا",
+      "name": "چاه دروا",
+      "nameEn": "چاه-دروا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-سرگاهی",
+      "name": "چاه سرگاهی",
+      "nameEn": "چاه-سرگاهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-کبکان",
+      "name": "چاه کبکان",
+      "nameEn": "چاه-کبکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-محمدحاجی",
+      "name": "چاه محمدحاجی",
+      "nameEn": "چاه-محمدحاجی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خواجه-مراد",
+      "name": "خواجه مراد",
+      "nameEn": "خواجه-مراد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-بالا",
+      "name": "ده بالا",
+      "nameEn": "ده-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-نو",
+      "name": "ده نو",
+      "nameEn": "ده-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-لاور-گل",
+      "name": "روستای لاور گل",
+      "nameEn": "روستای-لاور-گل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ززه",
+      "name": "ززه",
+      "nameEn": "ززه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیغان",
+      "name": "زیغان",
+      "nameEn": "زیغان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرگاه",
+      "name": "سرگاه",
+      "nameEn": "سرگاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سمنتوج",
+      "name": "سمنتوج",
+      "nameEn": "سمنتوج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-امام-خمینی",
+      "name": "شهرک امام خمینی",
+      "nameEn": "شهرک-امام-خمینی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ظالمی",
+      "name": "ظالمی",
+      "nameEn": "ظالمی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فال",
+      "name": "فال",
+      "nameEn": "فال",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قدمان",
+      "name": "قدمان",
+      "nameEn": "قدمان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کارون",
+      "name": "کارون",
+      "nameEn": "کارون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گله-دار",
+      "name": "گله دار",
+      "nameEn": "گله-دار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لاور-ده",
+      "name": "لاور ده",
+      "nameEn": "لاور-ده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزیجان",
+      "name": "مزیجان",
+      "nameEn": "مزیجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوآباد",
+      "name": "نوآباد",
+      "nameEn": "نوآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هرج",
+      "name": "هرج",
+      "nameEn": "هرج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هورمه",
+      "name": "هورمه",
+      "nameEn": "هورمه",
+      "geoSource": "osm"
+    }
+  ]
+}

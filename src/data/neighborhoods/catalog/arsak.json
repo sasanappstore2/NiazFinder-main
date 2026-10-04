@@ -1,0 +1,145 @@
+{
+  "cityId": "arsak",
+  "cityName": "ارسک",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:37:41.812Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ارسک",
+      "name": "ارسک",
+      "nameEn": "arsak",
+      "centroid": {
+        "lat": 33.66593082745239,
+        "lng": 57.50679715739099
+      },
+      "bbox": {
+        "south": 33.55944430212001,
+        "north": 33.77241735278477,
+        "west": 57.393520827046956,
+        "east": 57.62007348773503
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-دهک",
+      "name": "باغ دهک",
+      "nameEn": "باغ-دهک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمالی",
+      "name": "جمالی",
+      "nameEn": "جمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حجت-آباد",
+      "name": "حجت آباد",
+      "nameEn": "حجت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خداآفرید",
+      "name": "خداآفرید",
+      "nameEn": "خداآفرید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیرآباد",
+      "name": "خیرآباد",
+      "nameEn": "خیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رقه",
+      "name": "رقه",
+      "nameEn": "رقه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-شهید-قاسمپور",
+      "name": "روستای شهید قاسمپور",
+      "nameEn": "روستای-شهید-قاسمپور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیرک",
+      "name": "زیرک",
+      "nameEn": "زیرک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرند",
+      "name": "سرند",
+      "nameEn": "سرند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شرکت-خضر",
+      "name": "شرکت خضر",
+      "nameEn": "شرکت-خضر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-سجادیه",
+      "name": "شهرک سجادیه",
+      "nameEn": "شهرک-سجادیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فتح-آباد",
+      "name": "فتح آباد",
+      "nameEn": "فتح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مجد",
+      "name": "مجد",
+      "nameEn": "مجد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موتور-شهید-شهریاری-موتور-مجتبائیان",
+      "name": "موتور شهید شهریاری (موتور مجتبائیان)",
+      "nameEn": "موتور-شهید-شهریاری-موتور-مجتبائیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موردستان",
+      "name": "موردستان",
+      "nameEn": "موردستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوخانیک",
+      "name": "نوخانیک",
+      "nameEn": "نوخانیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نیگو",
+      "name": "نیگو",
+      "nameEn": "نیگو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هوگند",
+      "name": "هوگند",
+      "nameEn": "هوگند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یگی",
+      "name": "یگی",
+      "nameEn": "یگی",
+      "geoSource": "osm"
+    }
+  ]
+}

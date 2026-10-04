@@ -1,0 +1,25 @@
+{
+  "cityId": "ghatur",
+  "cityName": "قطور",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.269Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قطور",
+      "name": "قطور",
+      "nameEn": "ghatur",
+      "centroid": {
+        "lat": 38.47203491591807,
+        "lng": 44.5597607628823
+      },
+      "bbox": {
+        "south": 38.365548390585694,
+        "north": 38.57852144125045,
+        "west": 44.440730645804045,
+        "east": 44.67879087996055
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

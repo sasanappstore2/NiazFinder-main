@@ -1,0 +1,9 @@
+{
+  "comment": "Canonical province id overrides when admin-locations.json disagrees with geography",
+  "byCityId": {
+    "karaj": "alborz"
+  },
+  "bySlug": {
+    "karaj": "alborz"
+  }
+}

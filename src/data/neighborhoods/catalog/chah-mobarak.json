@@ -1,0 +1,193 @@
+{
+  "cityId": "chah-mobarak",
+  "cityName": "چاه مبارک",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:33:48.350Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-خلیج-فارس",
+      "name": "شهرک خلیج فارس",
+      "nameEn": "شهرک-خلیج-فارس",
+      "centroid": {
+        "lat": 27.36246127772188,
+        "lng": 52.832210951156675
+      },
+      "bbox": {
+        "south": 27.255974752389506,
+        "north": 27.468947803054256,
+        "west": 52.72359720796044,
+        "east": 52.94082469435291
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اخند",
+      "name": "اخند",
+      "nameEn": "اخند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اکبری",
+      "name": "اکبری",
+      "nameEn": "اکبری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برکه-دکان",
+      "name": "برکه دکان",
+      "nameEn": "برکه-دکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بزباز",
+      "name": "بزباز",
+      "nameEn": "بزباز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بساتین",
+      "name": "بساتین",
+      "nameEn": "بساتین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بستانو",
+      "name": "بستانو",
+      "nameEn": "بستانو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندر-تبن",
+      "name": "بندر تبن",
+      "nameEn": "بندر-تبن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندو",
+      "name": "بندو",
+      "nameEn": "بندو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنود",
+      "name": "بنود",
+      "nameEn": "بنود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیدخون",
+      "name": "بیدخون",
+      "nameEn": "بیدخون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنبوجنوبی",
+      "name": "تنبوجنوبی",
+      "nameEn": "تنبوجنوبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنبوشمالی",
+      "name": "تنبوشمالی",
+      "nameEn": "تنبوشمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-مبارک",
+      "name": "چاه مبارک",
+      "nameEn": "چاه-مبارک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خره",
+      "name": "خره",
+      "nameEn": "خره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیارو",
+      "name": "خیارو",
+      "nameEn": "خیارو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زبار",
+      "name": "زبار",
+      "nameEn": "زبار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سواحل",
+      "name": "سواحل",
+      "nameEn": "سواحل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سورباش",
+      "name": "سورباش",
+      "nameEn": "سورباش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهمو-جنوبی",
+      "name": "سهمو جنوبی",
+      "nameEn": "سهمو-جنوبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهمو-شمالی",
+      "name": "سهمو شمالی",
+      "nameEn": "سهمو-شمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صدف",
+      "name": "صدف",
+      "nameEn": "صدف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صفیه",
+      "name": "صفیه",
+      "nameEn": "صفیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عسکری",
+      "name": "عسکری",
+      "nameEn": "عسکری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فارسی",
+      "name": "فارسی",
+      "nameEn": "فارسی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنارخیمه",
+      "name": "کنارخیمه",
+      "nameEn": "کنارخیمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوشکنار",
+      "name": "کوشکنار",
+      "nameEn": "کوشکنار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هاله",
+      "name": "هاله",
+      "nameEn": "هاله",
+      "geoSource": "osm"
+    }
+  ]
+}

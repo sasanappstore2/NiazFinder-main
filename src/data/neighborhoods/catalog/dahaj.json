@@ -1,0 +1,31 @@
+{
+  "cityId": "dahaj",
+  "cityName": "دهج",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:49:25.700Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دهج",
+      "name": "دهج",
+      "nameEn": "dahaj",
+      "centroid": {
+        "lat": 30.67542508501617,
+        "lng": 54.92295068686691
+      },
+      "bbox": {
+        "south": 30.568938559683794,
+        "north": 30.781911610348544,
+        "west": 54.813647465685996,
+        "east": 55.03225390804783
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "چغوتو",
+      "name": "چغوتو",
+      "nameEn": "چغوتو",
+      "geoSource": "osm"
+    }
+  ]
+}

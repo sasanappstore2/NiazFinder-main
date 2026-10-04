@@ -1,0 +1,73 @@
+{
+  "cityId": "meymeh",
+  "cityName": "میمه",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:45:49.358Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "میمه",
+      "name": "میمه",
+      "nameEn": "meymeh",
+      "centroid": {
+        "lat": 33.45738892745239,
+        "lng": 51.02714440124911
+      },
+      "bbox": {
+        "south": 33.35090240212001,
+        "north": 33.56387545278477,
+        "west": 50.90693886571048,
+        "east": 51.14734993678774
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ازان",
+      "name": "ازان",
+      "nameEn": "ازان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جوشقان-قالی",
+      "name": "جوشقان قالی",
+      "nameEn": "جوشقان-قالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیادآباد",
+      "name": "زیادآباد",
+      "nameEn": "زیادآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-وحدت",
+      "name": "شهرک وحدت",
+      "nameEn": "شهرک-وحدت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاسم-آباد",
+      "name": "قاسم آباد",
+      "nameEn": "قاسم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محله-دردشت",
+      "name": "محله دردشت",
+      "nameEn": "محله-دردشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وزوان",
+      "name": "وزوان",
+      "nameEn": "وزوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ونداده",
+      "name": "ونداده",
+      "nameEn": "ونداده",
+      "geoSource": "osm"
+    }
+  ]
+}

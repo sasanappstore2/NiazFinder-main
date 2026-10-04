@@ -1,0 +1,157 @@
+{
+  "cityId": "dotappe",
+  "cityName": "دوتپه",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:36:15.075Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دوتپه",
+      "name": "دوتپه",
+      "nameEn": "dotappe",
+      "centroid": {
+        "lat": 36.131628272152355,
+        "lng": 48.89648905687508
+      },
+      "bbox": {
+        "south": 36.025141746819976,
+        "north": 36.238114797484734,
+        "west": 48.779530202721354,
+        "east": 49.013447911028805
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آقچه-قیا",
+      "name": "آقچه قیا",
+      "nameEn": "آقچه-قیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آهار-مشکین",
+      "name": "آهار مشکین",
+      "nameEn": "آهار-مشکین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلگه-شیر",
+      "name": "بلگه شیر",
+      "nameEn": "بلگه-شیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیجقین",
+      "name": "بیجقین",
+      "nameEn": "بیجقین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرچین",
+      "name": "پرچین",
+      "nameEn": "پرچین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "توپ-قره",
+      "name": "توپ قره",
+      "nameEn": "توپ-قره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چپقلو",
+      "name": "چپقلو",
+      "nameEn": "چپقلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داشلوجه",
+      "name": "داشلوجه",
+      "nameEn": "داشلوجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوتپه-علیا",
+      "name": "دوتپه علیا",
+      "nameEn": "دوتپه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهشیر",
+      "name": "دهشیر",
+      "nameEn": "دهشیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رباط",
+      "name": "رباط",
+      "nameEn": "رباط",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحمت-آباد",
+      "name": "رحمت آباد",
+      "nameEn": "رحمت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرستانک",
+      "name": "شهرستانک",
+      "nameEn": "شهرستانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخلو",
+      "name": "شیخلو",
+      "nameEn": "شیخلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-آباد-علیا",
+      "name": "عباس آباد علیا",
+      "nameEn": "عباس-آباد-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قانلو",
+      "name": "قانلو",
+      "nameEn": "قانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قطار-بلاغ",
+      "name": "قطار بلاغ",
+      "nameEn": "قطار-بلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قفس-آباد",
+      "name": "قفس آباد",
+      "nameEn": "قفس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوشه-کند",
+      "name": "قوشه کند",
+      "nameEn": "قوشه-کند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-مکان",
+      "name": "گل مکان",
+      "nameEn": "گل-مکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-خان-کندی",
+      "name": "مزرعه خان کندی",
+      "nameEn": "مزرعه-خان-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورجوشان",
+      "name": "ورجوشان",
+      "nameEn": "ورجوشان",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,199 @@
+{
+  "cityId": "ghahan",
+  "cityName": "قاهان",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:25:47.587Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قاهان",
+      "name": "قاهان",
+      "nameEn": "ghahan",
+      "centroid": {
+        "lat": 34.71393243568092,
+        "lng": 50.317427055881545
+      },
+      "bbox": {
+        "south": 34.60744591034854,
+        "north": 34.820418961013296,
+        "west": 50.196471834860134,
+        "east": 50.438382276902956
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آوه",
+      "name": "آوه",
+      "nameEn": "آوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابره-در",
+      "name": "ابره در",
+      "nameEn": "ابره-در",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسفید",
+      "name": "اسفید",
+      "nameEn": "اسفید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اشتریه",
+      "name": "اشتریه",
+      "nameEn": "اشتریه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اغلک",
+      "name": "اغلک",
+      "nameEn": "اغلک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الگان",
+      "name": "الگان",
+      "nameEn": "الگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انجیله",
+      "name": "انجیله",
+      "nameEn": "انجیله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اندیس",
+      "name": "اندیس",
+      "nameEn": "اندیس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنابر",
+      "name": "بنابر",
+      "nameEn": "بنابر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاهک",
+      "name": "چاهک",
+      "nameEn": "چاهک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چمانک",
+      "name": "چمانک",
+      "nameEn": "چمانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرآبادان",
+      "name": "سرآبادان",
+      "nameEn": "سرآبادان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سفت",
+      "name": "سفت",
+      "nameEn": "سفت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سناوند",
+      "name": "سناوند",
+      "nameEn": "سناوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صالح-آباد",
+      "name": "صالح آباد",
+      "nameEn": "صالح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صفی-آباد",
+      "name": "صفی آباد",
+      "nameEn": "صفی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاسوا",
+      "name": "کاسوا",
+      "nameEn": "کاسوا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "كلاغ-نشين",
+      "name": "كلاغ نشين",
+      "nameEn": "كلاغ-نشين",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کندرود",
+      "name": "کندرود",
+      "nameEn": "کندرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهندان",
+      "name": "کهندان",
+      "nameEn": "کهندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موشکیه",
+      "name": "موشکیه",
+      "nameEn": "موشکیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرزمین",
+      "name": "مهرزمین",
+      "nameEn": "مهرزمین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نایه",
+      "name": "نایه",
+      "nameEn": "نایه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نویس",
+      "name": "نویس",
+      "nameEn": "نویس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وسفونجرد",
+      "name": "وسفونجرد",
+      "nameEn": "وسفونجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ونان",
+      "name": "ونان",
+      "nameEn": "ونان",
+      "geoSource": "osm"
+    }
+  ]
+}

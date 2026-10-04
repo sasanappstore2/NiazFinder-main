@@ -1,0 +1,187 @@
+{
+  "cityId": "kharghan",
+  "cityName": "خرقان",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:51:51.467Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خرقان",
+      "name": "خرقان",
+      "nameEn": "kharghan",
+      "centroid": {
+        "lat": 35.40052094549048,
+        "lng": 49.99335026824338
+      },
+      "bbox": {
+        "south": 35.2940344201581,
+        "north": 35.507007470822856,
+        "west": 49.875170588447716,
+        "east": 50.11152994803905
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آدرماند",
+      "name": "آدرماند",
+      "nameEn": "آدرماند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اجان",
+      "name": "اجان",
+      "nameEn": "اجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ازبیزان",
+      "name": "ازبیزان",
+      "nameEn": "ازبیزان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الویر",
+      "name": "الویر",
+      "nameEn": "الویر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امیرآباد",
+      "name": "امیرآباد",
+      "nameEn": "امیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بادام-چالق",
+      "name": "بادام چالق",
+      "nameEn": "بادام-چالق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بره-موم",
+      "name": "بره موم",
+      "nameEn": "بره-موم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیجیگرد",
+      "name": "بیجیگرد",
+      "nameEn": "بیجیگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چلسبان",
+      "name": "چلسبان",
+      "nameEn": "چلسبان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چلمبر",
+      "name": "چلمبر",
+      "nameEn": "چلمبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چناقچی-سفلی",
+      "name": "چناقچی سفلی",
+      "nameEn": "چناقچی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چناقچی-علیا",
+      "name": "چناقچی علیا",
+      "nameEn": "چناقچی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حصار",
+      "name": "حصار",
+      "nameEn": "حصار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوزج",
+      "name": "دوزج",
+      "nameEn": "دوزج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-بالا",
+      "name": "ده بالا",
+      "nameEn": "ده-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رازقان",
+      "name": "رازقان",
+      "nameEn": "رازقان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگک",
+      "name": "سنگک",
+      "nameEn": "سنگک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-آباد",
+      "name": "عباس آباد",
+      "nameEn": "عباس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علیشار",
+      "name": "علیشار",
+      "nameEn": "علیشار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عین-آباد",
+      "name": "عین آباد",
+      "nameEn": "عین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کبودکمر",
+      "name": "کبودکمر",
+      "nameEn": "کبودکمر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لار",
+      "name": "لار",
+      "nameEn": "لار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مصرقان",
+      "name": "مصرقان",
+      "nameEn": "مصرقان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منجیقان",
+      "name": "منجیقان",
+      "nameEn": "منجیقان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میل",
+      "name": "میل",
+      "nameEn": "میل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورامه",
+      "name": "ورامه",
+      "nameEn": "ورامه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یاری-آباد",
+      "name": "یاری آباد",
+      "nameEn": "یاری-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "sabalan-city",
+  "cityName": "سبلان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.419Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "سبلان",
+      "name": "سبلان",
+      "nameEn": "sabalan-city",
+      "centroid": {
+        "lat": 38.227919062199064,
+        "lng": 48.07054127618086
+      },
+      "bbox": {
+        "south": 38.121432536866685,
+        "north": 38.33440558753144,
+        "west": 47.94461823244262,
+        "east": 48.19646431991911
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

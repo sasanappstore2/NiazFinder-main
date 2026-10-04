@@ -1,0 +1,25 @@
+{
+  "cityId": "hawraman",
+  "cityName": "هورامان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.480Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "لالش",
+      "name": "لالش",
+      "nameEn": "لالش",
+      "centroid": {
+        "lat": 35.238279179978754,
+        "lng": 46.88740370474268
+      },
+      "bbox": {
+        "south": 35.131792654646375,
+        "north": 35.34476570531113,
+        "west": 46.768245226701545,
+        "east": 47.006562182783824
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

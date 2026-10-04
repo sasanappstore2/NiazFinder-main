@@ -1,0 +1,253 @@
+{
+  "cityId": "nodeh-enghelab",
+  "cityName": "نوده انقلاب",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:01:13.216Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "نوده-انقلاب",
+      "name": "نوده انقلاب",
+      "nameEn": "nodeh-enghelab",
+      "centroid": {
+        "lat": 36.43446734071146,
+        "lng": 57.83594369806143
+      },
+      "bbox": {
+        "south": 36.32798081537908,
+        "north": 36.540953866043836,
+        "west": 57.71729079389025,
+        "east": 57.9545966022326
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابراهیم-آباد-بالاجوین",
+      "name": "ابراهیم آباد بالاجوین",
+      "nameEn": "ابراهیم-آباد-بالاجوین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "افچنگ",
+      "name": "افچنگ",
+      "nameEn": "افچنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بازقند",
+      "name": "بازقند",
+      "nameEn": "بازقند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بداغ-آباد",
+      "name": "بداغ آباد",
+      "nameEn": "بداغ-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برزو",
+      "name": "برزو",
+      "nameEn": "برزو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برغمد",
+      "name": "برغمد",
+      "nameEn": "برغمد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلاش-آباد",
+      "name": "بلاش آباد",
+      "nameEn": "بلاش-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بید",
+      "name": "بید",
+      "nameEn": "بید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلمبادان",
+      "name": "جلمبادان",
+      "nameEn": "جلمبادان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمال-آباد",
+      "name": "جمال آباد",
+      "nameEn": "جمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جنت-آباد",
+      "name": "جنت آباد",
+      "nameEn": "جنت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چرو",
+      "name": "چرو",
+      "nameEn": "چرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد-میرزا-مؤمن",
+      "name": "حسین آباد میرزا مؤمن",
+      "nameEn": "حسین-آباد-میرزا-مؤمن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درفک-سفلی",
+      "name": "درفک سفلی",
+      "nameEn": "درفک-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درفک-علیا",
+      "name": "درفک علیا",
+      "nameEn": "درفک-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دلک-آباد",
+      "name": "دلک آباد",
+      "nameEn": "دلک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیواندر",
+      "name": "دیواندر",
+      "nameEn": "دیواندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رازقند",
+      "name": "رازقند",
+      "nameEn": "رازقند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رامشین",
+      "name": "رامشین",
+      "nameEn": "رامشین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رودسراب",
+      "name": "رودسراب",
+      "nameEn": "رودسراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سدید",
+      "name": "سدید",
+      "nameEn": "سدید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگ-سفید",
+      "name": "سنگ سفید",
+      "nameEn": "سنگ-سفید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شم-آباد",
+      "name": "شم آباد",
+      "nameEn": "شم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شمس-آباد",
+      "name": "شمس آباد",
+      "nameEn": "شمس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرخان",
+      "name": "شیرخان",
+      "nameEn": "شیرخان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صبریق",
+      "name": "صبریق",
+      "nameEn": "صبریق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طبس",
+      "name": "طبس",
+      "nameEn": "طبس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قارزی",
+      "name": "قارزی",
+      "nameEn": "قارزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قز",
+      "name": "قز",
+      "nameEn": "قز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کراب",
+      "name": "کراب",
+      "nameEn": "کراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کریم-آباد",
+      "name": "کریم آباد",
+      "nameEn": "کریم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-عرب",
+      "name": "کلاته عرب",
+      "nameEn": "کلاته-عرب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآباد",
+      "name": "مهرآباد",
+      "nameEn": "مهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میان-آباد",
+      "name": "میان آباد",
+      "nameEn": "میان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرآباد",
+      "name": "نصرآباد",
+      "nameEn": "نصرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یحیی-آباد",
+      "name": "یحیی آباد",
+      "nameEn": "یحیی-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

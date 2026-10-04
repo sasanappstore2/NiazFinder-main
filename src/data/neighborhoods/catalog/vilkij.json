@@ -1,0 +1,25 @@
+{
+  "cityId": "vilkij",
+  "cityName": "ویلکیج",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.274Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ویلکیج",
+      "name": "ویلکیج",
+      "nameEn": "vilkij",
+      "centroid": {
+        "lat": 38.244411480237154,
+        "lng": 48.64451632971709
+      },
+      "bbox": {
+        "south": 38.137924954904776,
+        "north": 38.35089800556953,
+        "west": 48.518033368040236,
+        "east": 48.770999291393956
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

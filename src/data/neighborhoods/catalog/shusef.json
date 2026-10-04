@@ -1,0 +1,25 @@
+{
+  "cityId": "shusef",
+  "cityName": "شوسف",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.885Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شوسف",
+      "name": "شوسف",
+      "nameEn": "shusef",
+      "centroid": {
+        "lat": 31.907446772547612,
+        "lng": 60.37679494107545
+      },
+      "bbox": {
+        "south": 31.800960247215237,
+        "north": 32.01393329787999,
+        "west": 60.265156218836594,
+        "east": 60.48843366331431
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

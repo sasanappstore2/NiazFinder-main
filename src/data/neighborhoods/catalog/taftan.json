@@ -1,0 +1,25 @@
+{
+  "cityId": "taftan",
+  "cityName": "تفتان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.063Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "تفتان",
+      "name": "تفتان",
+      "nameEn": "taftan",
+      "centroid": {
+        "lat": 28.525319753180025,
+        "lng": 60.8994579963379
+      },
+      "bbox": {
+        "south": 28.41883322784765,
+        "north": 28.6318062785124,
+        "west": 60.78611415477027,
+        "east": 61.012801837905535
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

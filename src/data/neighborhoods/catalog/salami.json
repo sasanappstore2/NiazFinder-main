@@ -1,0 +1,157 @@
+{
+  "cityId": "salami",
+  "cityName": "سلامی",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:47:50.438Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سلامی",
+      "name": "سلامی",
+      "nameEn": "salami",
+      "centroid": {
+        "lat": 34.828420564858064,
+        "lng": 60.03290033090755
+      },
+      "bbox": {
+        "south": 34.721934039525685,
+        "north": 34.93490709019044,
+        "west": 59.91534383478619,
+        "east": 60.15045682702892
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-مشاع-ارزنه",
+      "name": "چاه مشاع ارزنه",
+      "nameEn": "چاه-مشاع-ارزنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهار-ده",
+      "name": "چهار ده",
+      "nameEn": "چهار-ده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خلیل-آباد",
+      "name": "خلیل آباد",
+      "nameEn": "خلیل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیرآباد",
+      "name": "خیرآباد",
+      "nameEn": "خیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رزدآب",
+      "name": "رزدآب",
+      "nameEn": "رزدآب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سده",
+      "name": "سده",
+      "nameEn": "سده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراب",
+      "name": "سراب",
+      "nameEn": "سراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلمان",
+      "name": "سلمان",
+      "nameEn": "سلمان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سناجرد-صناجرد",
+      "name": "سناجرد صناجرد",
+      "nameEn": "سناجرد-صناجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آبادجدید",
+      "name": "علی آبادجدید",
+      "nameEn": "علی-آبادجدید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فایندر",
+      "name": "فایندر",
+      "nameEn": "فایندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فدک",
+      "name": "فدک",
+      "nameEn": "فدک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرح-آباد",
+      "name": "فرح آباد",
+      "nameEn": "فرح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-نو",
+      "name": "قلعه نو",
+      "nameEn": "قلعه-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-شیخ",
+      "name": "مزرعه شیخ",
+      "nameEn": "مزرعه-شیخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مندیوان",
+      "name": "مندیوان",
+      "nameEn": "مندیوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میانرودی",
+      "name": "میانرودی",
+      "nameEn": "میانرودی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصر-آباد",
+      "name": "نصر آباد",
+      "nameEn": "نصر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هزارخوشه",
+      "name": "هزارخوشه",
+      "nameEn": "هزارخوشه",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "abrisham-isfahan",
+  "cityName": "ابریشم",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.634Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "ابریشم",
+      "name": "ابریشم",
+      "nameEn": "abrisham-isfahan",
+      "centroid": {
+        "lat": 32.557127849300755,
+        "lng": 51.592039332517146
+      },
+      "bbox": {
+        "south": 32.53399187689688,
+        "north": 32.580263821704634,
+        "west": 51.567379120794726,
+        "east": 51.616699544239566
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

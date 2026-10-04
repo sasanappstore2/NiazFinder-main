@@ -1,0 +1,25 @@
+{
+  "cityId": "ghare-ghavin",
+  "cityName": "قره قوین",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.240Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قره-قوین",
+      "name": "قره قوین",
+      "nameEn": "ghare-ghavin",
+      "centroid": {
+        "lat": 39.06864821764283,
+        "lng": 44.96103653066325
+      },
+      "bbox": {
+        "south": 38.96216169231045,
+        "north": 39.17513474297521,
+        "west": 44.83260721756237,
+        "east": 45.08946584376414
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

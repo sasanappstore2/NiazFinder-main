@@ -1,0 +1,25 @@
+{
+  "cityId": "jelin",
+  "cityName": "جلین",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.693Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "جلین",
+      "name": "جلین",
+      "nameEn": "jelin",
+      "centroid": {
+        "lat": 36.86772381286382,
+        "lng": 54.62143432302152
+      },
+      "bbox": {
+        "south": 36.76123728753144,
+        "north": 36.9742103381962,
+        "west": 54.50504018281741,
+        "east": 54.73782846322563
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

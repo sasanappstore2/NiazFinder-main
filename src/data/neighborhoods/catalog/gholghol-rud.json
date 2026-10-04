@@ -1,0 +1,307 @@
+{
+  "cityId": "gholghol-rud",
+  "cityName": "قلقل رود",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:48:40.741Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قلقل-رود",
+      "name": "قلقل رود",
+      "nameEn": "gholghol-rud",
+      "centroid": {
+        "lat": 34.47651726525333,
+        "lng": 48.328102839588354
+      },
+      "bbox": {
+        "south": 34.37003073992095,
+        "north": 34.58300379058571,
+        "west": 48.208942289761666,
+        "east": 48.44726338941504
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "ابرلاق-سفلی",
+      "name": "ابرلاق سفلی",
+      "nameEn": "ابرلاق-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابودردا",
+      "name": "ابودردا",
+      "nameEn": "ابودردا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اریکان",
+      "name": "اریکان",
+      "nameEn": "اریکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اشترمل",
+      "name": "اشترمل",
+      "nameEn": "اشترمل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اکبرآباد",
+      "name": "اکبرآباد",
+      "nameEn": "اکبرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امیرآباد",
+      "name": "امیرآباد",
+      "nameEn": "امیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باباکمال",
+      "name": "باباکمال",
+      "nameEn": "باباکمال",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برفیان",
+      "name": "برفیان",
+      "nameEn": "برفیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برگچه",
+      "name": "برگچه",
+      "nameEn": "برگچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوستاندر",
+      "name": "بوستاندر",
+      "nameEn": "بوستاندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جرا",
+      "name": "جرا",
+      "nameEn": "جرا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جریا",
+      "name": "جریا",
+      "nameEn": "جریا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاشت-خوره",
+      "name": "چاشت خوره",
+      "nameEn": "چاشت-خوره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-تو",
+      "name": "حاجی تو",
+      "nameEn": "حاجی-تو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حمیل-آباد",
+      "name": "حمیل آباد",
+      "nameEn": "حمیل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دارانی-سفلی",
+      "name": "دارانی سفلی",
+      "nameEn": "دارانی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دارانی-علیا",
+      "name": "دارانی علیا",
+      "nameEn": "دارانی-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درواز",
+      "name": "درواز",
+      "nameEn": "درواز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره-امیدعلی",
+      "name": "دره امیدعلی",
+      "nameEn": "دره-امیدعلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-سرخه",
+      "name": "ده سرخه",
+      "nameEn": "ده-سرخه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهلق",
+      "name": "دهلق",
+      "nameEn": "دهلق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-نقده",
+      "name": "روستای نقده",
+      "nameEn": "روستای-نقده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زاغه",
+      "name": "زاغه",
+      "nameEn": "زاغه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سادات-آباد",
+      "name": "سادات آباد",
+      "nameEn": "سادات-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاه-دره",
+      "name": "سیاه دره",
+      "nameEn": "سیاه-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شادمانه",
+      "name": "شادمانه",
+      "nameEn": "شادمانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-صنعتی-فرسفج",
+      "name": "شهرک صنعتی فرسفج",
+      "nameEn": "شهرک-صنعتی-فرسفج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طایمه",
+      "name": "طایمه",
+      "nameEn": "طایمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فتح-آباد",
+      "name": "فتح آباد",
+      "nameEn": "فتح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرسفج",
+      "name": "فرسفج",
+      "nameEn": "فرسفج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فریازان",
+      "name": "فریازان",
+      "nameEn": "فریازان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیروزآباد-طایمه",
+      "name": "فیروزآباد طایمه",
+      "nameEn": "فیروزآباد-طایمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاسم-آباد",
+      "name": "قاسم آباد",
+      "nameEn": "قاسم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-بختیار",
+      "name": "قلعه بختیار",
+      "nameEn": "قلعه-بختیار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-زرد",
+      "name": "گل زرد",
+      "nameEn": "گل-زرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلیان",
+      "name": "گلیان",
+      "nameEn": "گلیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لولوهر",
+      "name": "لولوهر",
+      "nameEn": "لولوهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مالیچه",
+      "name": "مالیچه",
+      "nameEn": "مالیچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد",
+      "name": "محمودآباد",
+      "nameEn": "محمودآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملوسان",
+      "name": "ملوسان",
+      "nameEn": "ملوسان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منجان",
+      "name": "منجان",
+      "nameEn": "منجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موداران",
+      "name": "موداران",
+      "nameEn": "موداران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میانده",
+      "name": "میانده",
+      "nameEn": "میانده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نقده",
+      "name": "نقده",
+      "nameEn": "نقده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هرهره",
+      "name": "هرهره",
+      "nameEn": "هرهره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یعقوب-آباد",
+      "name": "یعقوب آباد",
+      "nameEn": "یعقوب-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

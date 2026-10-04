@@ -1,0 +1,163 @@
+{
+  "cityId": "anzal",
+  "cityName": "انزل",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:22:34.722Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "راهدارخانه-قوشچی",
+      "name": "راهدارخانه قوشچی",
+      "nameEn": "راهدارخانه-قوشچی",
+      "centroid": {
+        "lat": 37.95384109787998,
+        "lng": 45.05560789767438
+      },
+      "bbox": {
+        "south": 37.8473545725476,
+        "north": 38.06032762321236,
+        "west": 44.9368422583989,
+        "east": 45.174373536949865
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبگرم",
+      "name": "آبگرم",
+      "nameEn": "آبگرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امام-کندی",
+      "name": "امام کندی",
+      "nameEn": "امام-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باری",
+      "name": "باری",
+      "nameEn": "باری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بولارغو",
+      "name": "بولارغو",
+      "nameEn": "بولارغو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهله",
+      "name": "بهله",
+      "nameEn": "بهله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تیز-خراب",
+      "name": "تیز خراب",
+      "nameEn": "تیز-خراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جبال-کندی",
+      "name": "جبال کندی",
+      "nameEn": "جبال-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمال-آباد",
+      "name": "جمال آباد",
+      "nameEn": "جمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حماملار",
+      "name": "حماملار",
+      "nameEn": "حماملار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلطان-آباد",
+      "name": "سلطان آباد",
+      "nameEn": "سلطان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سینجیلیک",
+      "name": "سینجیلیک",
+      "nameEn": "سینجیلیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شریف-آباد",
+      "name": "شریف آباد",
+      "nameEn": "شریف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-کان",
+      "name": "علی کان",
+      "nameEn": "علی-کان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قالقاچی",
+      "name": "قالقاچی",
+      "nameEn": "قالقاچی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوشچی",
+      "name": "قوشچی",
+      "nameEn": "قوشچی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قولنجی",
+      "name": "قولنجی",
+      "nameEn": "قولنجی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهریز",
+      "name": "کهریز",
+      "nameEn": "کهریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-تپه",
+      "name": "گل تپه",
+      "nameEn": "گل-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گورچین-قلعه",
+      "name": "گورچین قلعه",
+      "nameEn": "گورچین-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مقیطالو",
+      "name": "مقیطالو",
+      "nameEn": "مقیطالو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نجف-آباد-بویداش",
+      "name": "نجف آباد بویداش",
+      "nameEn": "نجف-آباد-بویداش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "gevlen",
+      "name": "Gevlen",
+      "nameEn": "gevlen",
+      "geoSource": "osm"
+    },
+    {
+      "id": "qarabag",
+      "name": "Qarabag",
+      "nameEn": "qarabag",
+      "geoSource": "osm"
+    }
+  ]
+}

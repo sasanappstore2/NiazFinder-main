@@ -1,0 +1,25 @@
+{
+  "cityId": "anbaran",
+  "cityName": "عنبران",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.812Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "عنبران",
+      "name": "عنبران",
+      "nameEn": "anbaran",
+      "centroid": {
+        "lat": 38.50762784125045,
+        "lng": 48.53652077202666
+      },
+      "bbox": {
+        "south": 38.40114131591807,
+        "north": 38.614114366582825,
+        "west": 48.41614506672382,
+        "east": 48.65689647732951
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

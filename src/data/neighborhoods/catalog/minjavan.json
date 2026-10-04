@@ -1,0 +1,105 @@
+{
+  "cityId": "minjavan",
+  "cityName": "منجوان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.744Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "baharl",
+      "name": "Baharlı",
+      "nameEn": "baharl",
+      "centroid": {
+        "lat": 38.9399657094143,
+        "lng": 46.79176441185139
+      },
+      "bbox": {
+        "south": 38.904470200970174,
+        "north": 38.97546121785843,
+        "west": 46.74612782143947,
+        "east": 46.837401002263306
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "bartaz",
+      "name": "Bartaz",
+      "nameEn": "bartaz",
+      "centroid": {
+        "lat": 38.97783007549762,
+        "lng": 46.697330363199654
+      },
+      "bbox": {
+        "south": 38.94233456705349,
+        "north": 39.01332558394175,
+        "west": 46.65169377278774,
+        "east": 46.74296695361157
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "dllkli",
+      "name": "Dəlləkli",
+      "nameEn": "dllkli",
+      "centroid": {
+        "lat": 38.881436216311755,
+        "lng": 46.75082122291402
+      },
+      "bbox": {
+        "south": 38.845940707867626,
+        "north": 38.916931724755884,
+        "west": 46.7051846325021,
+        "east": 46.79645781332594
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "qarqulu",
+      "name": "Qarqulu",
+      "nameEn": "qarqulu",
+      "centroid": {
+        "lat": 39.00235580523395,
+        "lng": 46.79880240016275
+      },
+      "bbox": {
+        "south": 38.96686029678982,
+        "north": 39.037851313678075,
+        "west": 46.75316580975083,
+        "east": 46.844438990574666
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "qoaknd",
+      "name": "Qoşakənd",
+      "nameEn": "qoaknd",
+      "centroid": {
+        "lat": 38.9256606448599,
+        "lng": 46.649441628961895
+      },
+      "bbox": {
+        "south": 38.890165136415774,
+        "north": 38.96115615330403,
+        "west": 46.60380503854998,
+        "east": 46.69507821937381
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "vliqulibyli",
+      "name": "Vəliqulibəyli",
+      "nameEn": "vliqulibyli",
+      "centroid": {
+        "lat": 38.889847665246435,
+        "lng": 46.85162346365641
+      },
+      "bbox": {
+        "south": 38.85435215680231,
+        "north": 38.925343173690564,
+        "west": 46.80598687324449,
+        "east": 46.897260054068326
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

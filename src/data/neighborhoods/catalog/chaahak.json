@@ -1,0 +1,25 @@
+{
+  "cityId": "chaahak",
+  "cityName": "چاهک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.518Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-صفایه-چاهک",
+      "name": "شهرک صفایه چاهک",
+      "nameEn": "شهرک-صفایه-چاهک",
+      "centroid": {
+        "lat": 29.75152108674093,
+        "lng": 54.39447258442717
+      },
+      "bbox": {
+        "south": 29.645034561408554,
+        "north": 29.858007612073305,
+        "west": 54.28095684700572,
+        "east": 54.50798832184862
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

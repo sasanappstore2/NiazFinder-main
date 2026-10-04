@@ -1,0 +1,25 @@
+{
+  "cityId": "firooz",
+  "cityName": "فیروز",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.057Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فیروز",
+      "name": "فیروز",
+      "nameEn": "firooz",
+      "centroid": {
+        "lat": 37.582834354904776,
+        "lng": 48.24113477294944
+      },
+      "bbox": {
+        "south": 37.4763478295724,
+        "north": 37.689320880237155,
+        "west": 48.11619111652936,
+        "east": 48.36607842936952
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

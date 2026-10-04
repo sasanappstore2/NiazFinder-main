@@ -1,0 +1,25 @@
+{
+  "cityId": "charavimaq",
+  "cityName": "چاراویماق",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.598Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-فرهنگیان",
+      "name": "شهرک فرهنگیان",
+      "nameEn": "شهرک-فرهنگیان",
+      "centroid": {
+        "lat": 37.09522322321236,
+        "lng": 47.01544466504198
+      },
+      "bbox": {
+        "south": 36.98873669787998,
+        "north": 37.20170974854474,
+        "west": 46.891101863572366,
+        "east": 47.13978746651159
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,307 @@
+{
+  "cityId": "abgarm",
+  "cityName": "آبگرم",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:48:23.839Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "آبگرم",
+      "name": "آبگرم",
+      "nameEn": "abgarm",
+      "centroid": {
+        "lat": 35.6564742570248,
+        "lng": 49.46005114202207
+      },
+      "bbox": {
+        "south": 35.54998773169242,
+        "north": 35.762960782357176,
+        "west": 49.33751031392134,
+        "east": 49.582591970122785
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آروچان",
+      "name": "آروچان",
+      "nameEn": "آروچان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آقچه-قلعه",
+      "name": "آقچه قلعه",
+      "nameEn": "آقچه-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارتش-آباد",
+      "name": "ارتش آباد",
+      "nameEn": "ارتش-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارقیه",
+      "name": "ارقیه",
+      "nameEn": "ارقیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارونقاش",
+      "name": "ارونقاش",
+      "nameEn": "ارونقاش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ازادده",
+      "name": "ازادده",
+      "nameEn": "ازادده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسیان",
+      "name": "اسیان",
+      "nameEn": "اسیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اک",
+      "name": "اک",
+      "nameEn": "اک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایلدرجین",
+      "name": "ایلدرجین",
+      "nameEn": "ایلدرجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بادغین",
+      "name": "بادغین",
+      "nameEn": "بادغین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهشتیان",
+      "name": "بهشتیان",
+      "nameEn": "بهشتیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بی-اب",
+      "name": "بی اب",
+      "nameEn": "بی-اب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیگلر",
+      "name": "بیگلر",
+      "nameEn": "بیگلر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چوزه",
+      "name": "چوزه",
+      "nameEn": "چوزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهل-چشمه",
+      "name": "چهل چشمه",
+      "nameEn": "چهل-چشمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد-سادات",
+      "name": "حسن آباد سادات",
+      "nameEn": "حسن-آباد-سادات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حصار",
+      "name": "حصار",
+      "nameEn": "حصار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داخرجین",
+      "name": "داخرجین",
+      "nameEn": "داخرجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داسکین",
+      "name": "داسکین",
+      "nameEn": "داسکین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-میاندره",
+      "name": "روستای میاندره",
+      "nameEn": "روستای-میاندره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساج",
+      "name": "ساج",
+      "nameEn": "ساج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساغران-سفلی",
+      "name": "ساغران سفلی",
+      "nameEn": "ساغران-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساغران-علیا",
+      "name": "ساغران علیا",
+      "nameEn": "ساغران-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سکزناب",
+      "name": "سکزناب",
+      "nameEn": "سکزناب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیراب",
+      "name": "سیراب",
+      "nameEn": "سیراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاکین",
+      "name": "شاکین",
+      "nameEn": "شاکین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوراب",
+      "name": "شوراب",
+      "nameEn": "شوراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیزر",
+      "name": "شیزر",
+      "nameEn": "شیزر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شینگل",
+      "name": "شینگل",
+      "nameEn": "شینگل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صادق-آباد",
+      "name": "صادق آباد",
+      "nameEn": "صادق-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-آباد",
+      "name": "عباس آباد",
+      "nameEn": "عباس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قرخ-بُلاغ",
+      "name": "قرخ بُلاغ",
+      "nameEn": "قرخ-بُلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قرمز-آباد",
+      "name": "قرمز آباد",
+      "nameEn": "قرمز-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-قورتان",
+      "name": "قره قورتان",
+      "nameEn": "قره-قورتان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-شهدا",
+      "name": "قلعه شهدا",
+      "nameEn": "قلعه-شهدا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قمیشلو",
+      "name": "قمیشلو",
+      "nameEn": "قمیشلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کیسه-جین",
+      "name": "کیسه جین",
+      "nameEn": "کیسه-جین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنبدک",
+      "name": "گنبدک",
+      "nameEn": "گنبدک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآباد",
+      "name": "مهرآباد",
+      "nameEn": "مهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میاندره",
+      "name": "میاندره",
+      "nameEn": "میاندره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نجف-آباد",
+      "name": "نجف آباد",
+      "nameEn": "نجف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نهب",
+      "name": "نهب",
+      "nameEn": "نهب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورکه-رود",
+      "name": "ورکه رود",
+      "nameEn": "ورکه-رود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هلدر",
+      "name": "هلدر",
+      "nameEn": "هلدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یاستی-بلاغ",
+      "name": "یاستی بلاغ",
+      "nameEn": "یاستی-بلاغ",
+      "geoSource": "osm"
+    }
+  ]
+}

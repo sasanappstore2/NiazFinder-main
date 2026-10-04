@@ -1,0 +1,25 @@
+{
+  "cityId": "aghdaa",
+  "cityName": "عقدا",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.676Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "عقدا",
+      "name": "عقدا",
+      "nameEn": "aghdaa",
+      "centroid": {
+        "lat": 32.43489825066475,
+        "lng": 53.48375653614712
+      },
+      "bbox": {
+        "south": 32.32841172533237,
+        "north": 32.54138477599713,
+        "west": 53.365544578521366,
+        "east": 53.60196849377287
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

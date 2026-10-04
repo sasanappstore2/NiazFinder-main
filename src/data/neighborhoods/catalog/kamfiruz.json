@@ -1,0 +1,283 @@
+{
+  "cityId": "kamfiruz",
+  "cityName": "کامفیروز",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:18:41.695Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کامفیروز",
+      "name": "کامفیروز",
+      "nameEn": "kamfiruz",
+      "centroid": {
+        "lat": 30.26241022745239,
+        "lng": 52.30317489816359
+      },
+      "bbox": {
+        "south": 30.155923702120013,
+        "north": 30.368896752784764,
+        "west": 52.1917987504764,
+        "east": 52.414551045850786
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آب-باد",
+      "name": "آب باد",
+      "nameEn": "آب-باد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الله-مرادخانی",
+      "name": "الله مرادخانی",
+      "nameEn": "الله-مرادخانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انگره",
+      "name": "انگره",
+      "nameEn": "انگره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بادمک",
+      "name": "بادمک",
+      "nameEn": "بادمک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بکیان",
+      "name": "بکیان",
+      "nameEn": "بکیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهشت-مکان",
+      "name": "بهشت مکان",
+      "nameEn": "بهشت-مکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پالنگری-کهنه",
+      "name": "پالنگری کهنه",
+      "nameEn": "پالنگری-کهنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پالنگری-نو",
+      "name": "پالنگری نو",
+      "nameEn": "پالنگری-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جورک",
+      "name": "جورک",
+      "nameEn": "جورک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جیدرزار",
+      "name": "جیدرزار",
+      "nameEn": "جیدرزار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چم-ریز",
+      "name": "چم ریز",
+      "nameEn": "چم-ریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرم-مکان",
+      "name": "خرم مکان",
+      "nameEn": "خرم-مکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خواجه-ای",
+      "name": "خواجه ای",
+      "nameEn": "خواجه-ای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دزد-کردک",
+      "name": "دزد کردک",
+      "nameEn": "دزد-کردک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دلخان",
+      "name": "دلخان",
+      "nameEn": "دلخان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-دامچه",
+      "name": "ده دامچه",
+      "nameEn": "ده-دامچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساران-بالا",
+      "name": "ساران بالا",
+      "nameEn": "ساران-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساران-پایین",
+      "name": "ساران پایین",
+      "nameEn": "ساران-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سربست",
+      "name": "سربست",
+      "nameEn": "سربست",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرتنگ",
+      "name": "سرتنگ",
+      "nameEn": "سرتنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شول-بزرگ",
+      "name": "شول بزرگ",
+      "nameEn": "شول-بزرگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شول-بزی",
+      "name": "شول بزی",
+      "nameEn": "شول-بزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شول-پلنگی",
+      "name": "شول پلنگی",
+      "nameEn": "شول-پلنگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-ایگدر",
+      "name": "شهرک ایگدر",
+      "nameEn": "شهرک-ایگدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرحسینی",
+      "name": "شیرحسینی",
+      "nameEn": "شیرحسینی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرمحمدی",
+      "name": "شیرمحمدی",
+      "nameEn": "شیرمحمدی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-آباد",
+      "name": "عباس آباد",
+      "nameEn": "عباس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-سفلی",
+      "name": "علی آباد سفلی",
+      "nameEn": "علی-آباد-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-علیا",
+      "name": "علی آباد علیا",
+      "nameEn": "علی-آباد-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-چغا",
+      "name": "قلعه چغا",
+      "nameEn": "قلعه-چغا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-عبدالله",
+      "name": "قلعه عبدالله",
+      "nameEn": "قلعه-عبدالله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-نو-پالنگری",
+      "name": "قلعه نو پالنگری",
+      "nameEn": "قلعه-نو-پالنگری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کل-گاه",
+      "name": "کل گاه",
+      "nameEn": "کل-گاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کودین",
+      "name": "کودین",
+      "nameEn": "کودین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهکران",
+      "name": "کهکران",
+      "nameEn": "کهکران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گردن-داسی",
+      "name": "گردن داسی",
+      "nameEn": "گردن-داسی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لیرمنجان",
+      "name": "لیرمنجان",
+      "nameEn": "لیرمنجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محجنآباد",
+      "name": "محجن‌آباد",
+      "nameEn": "محجنآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منصورآباد",
+      "name": "منصورآباد",
+      "nameEn": "منصورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منگون",
+      "name": "منگون",
+      "nameEn": "منگون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "khaniman",
+      "name": "Khaniman",
+      "nameEn": "khaniman",
+      "geoSource": "osm"
+    }
+  ]
+}

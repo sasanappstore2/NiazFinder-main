@@ -1,0 +1,25 @@
+{
+  "cityId": "talang",
+  "cityName": "تلنگ",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.091Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "تلنگ",
+      "name": "تلنگ",
+      "nameEn": "talang",
+      "centroid": {
+        "lat": 25.9193236892562,
+        "lng": 61.11150335755554
+      },
+      "bbox": {
+        "south": 25.812837163923824,
+        "north": 26.025810214588574,
+        "west": 61.005497695401885,
+        "east": 61.2175090197092
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

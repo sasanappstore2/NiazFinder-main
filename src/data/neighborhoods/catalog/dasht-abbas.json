@@ -1,0 +1,133 @@
+{
+  "cityId": "dasht-abbas",
+  "cityName": "دشت عباس",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:17:02.323Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دشت-عباس",
+      "name": "دشت عباس",
+      "nameEn": "dasht-abbas",
+      "centroid": {
+        "lat": 32.32163020689903,
+        "lng": 47.8335657592161
+      },
+      "bbox": {
+        "south": 32.21514368156665,
+        "north": 32.42811673223141,
+        "west": 47.71851796364129,
+        "east": 47.9486135547909
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابوغریب-روستای",
+      "name": "ابوغریب روستای",
+      "nameEn": "ابوغریب-روستای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بالاتا",
+      "name": "بالاتا",
+      "nameEn": "بالاتا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برم",
+      "name": "برم",
+      "nameEn": "برم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیت-قریه",
+      "name": "بیت قریه",
+      "nameEn": "بیت-قریه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ثارالله",
+      "name": "ثارالله",
+      "nameEn": "ثارالله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ذوالفقار",
+      "name": "ذوالفقار",
+      "nameEn": "ذوالفقار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-استقلال",
+      "name": "شهرک استقلال",
+      "nameEn": "شهرک-استقلال",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-بدر",
+      "name": "شهرک بدر",
+      "nameEn": "شهرک-بدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-حمزه",
+      "name": "شهرک حمزه",
+      "nameEn": "شهرک-حمزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-سادات",
+      "name": "شهرک سادات",
+      "nameEn": "شهرک-سادات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-فتح",
+      "name": "شهرک فتح",
+      "nameEn": "شهرک-فتح",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-فجر",
+      "name": "شهرک فجر",
+      "nameEn": "شهرک-فجر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-مطارفه",
+      "name": "شهرک مطارفه",
+      "nameEn": "شهرک-مطارفه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-نصر",
+      "name": "شهرک نصر",
+      "nameEn": "شهرک-نصر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-ولی-عصر",
+      "name": "شهرک ولی عصر",
+      "nameEn": "شهرک-ولی-عصر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عین-خوش",
+      "name": "عین خوش",
+      "nameEn": "عین-خوش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عین-صوله",
+      "name": "عین صوله",
+      "nameEn": "عین-صوله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مملح",
+      "name": "مملح",
+      "nameEn": "مملح",
+      "geoSource": "osm"
+    }
+  ]
+}

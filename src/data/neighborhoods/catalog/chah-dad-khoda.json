@@ -1,0 +1,25 @@
+{
+  "cityId": "chah-dad-khoda",
+  "cityName": "چاه داد خدا",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.537Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چاه-داد-خدا",
+      "name": "چاه داد خدا",
+      "nameEn": "chah-dad-khoda",
+      "centroid": {
+        "lat": 27.065191776392382,
+        "lng": 58.57442921008962
+      },
+      "bbox": {
+        "south": 26.958705251060007,
+        "north": 27.171678301724757,
+        "west": 58.467682530319095,
+        "east": 58.681175889860135
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

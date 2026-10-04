@@ -1,0 +1,25 @@
+{
+  "cityId": "zohan",
+  "cityName": "زهان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.450Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زهان",
+      "name": "زهان",
+      "nameEn": "zohan",
+      "centroid": {
+        "lat": 33.473943298275245,
+        "lng": 59.81156153882067
+      },
+      "bbox": {
+        "south": 33.367456772942866,
+        "north": 33.58042982360762,
+        "west": 59.69295224083624,
+        "east": 59.930170836805104
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

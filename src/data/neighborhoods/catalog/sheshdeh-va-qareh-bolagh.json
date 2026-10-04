@@ -1,0 +1,217 @@
+{
+  "cityId": "sheshdeh-va-qareh-bolagh",
+  "cityName": "ششده و قره بلاغ",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:11:23.610Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ششده-و-قره-بلاغ",
+      "name": "ششده و قره بلاغ",
+      "nameEn": "sheshdeh-va-qareh-bolagh",
+      "centroid": {
+        "lat": 28.90850121153432,
+        "lng": 54.156016606534784
+      },
+      "bbox": {
+        "south": 28.802014686201943,
+        "north": 29.014987736866694,
+        "west": 54.04766466351105,
+        "east": 54.26436854955852
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اکبرآباد",
+      "name": "اکبرآباد",
+      "nameEn": "اکبرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امیرحاجیلو",
+      "name": "امیرحاجیلو",
+      "nameEn": "امیرحاجیلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیک-اینالو",
+      "name": "بیک اینالو",
+      "nameEn": "بیک-اینالو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جرغه",
+      "name": "جرغه",
+      "nameEn": "جرغه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جعفرآباد",
+      "name": "جعفرآباد",
+      "nameEn": "جعفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلیان",
+      "name": "جلیان",
+      "nameEn": "جلیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوگان-علیا",
+      "name": "دوگان علیا",
+      "nameEn": "دوگان-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیندارلو",
+      "name": "دیندارلو",
+      "nameEn": "دیندارلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سروک",
+      "name": "سروک",
+      "nameEn": "سروک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ششده",
+      "name": "ششده",
+      "nameEn": "ششده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورآباد",
+      "name": "شورآباد",
+      "nameEn": "شورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیدانک",
+      "name": "شیدانک",
+      "nameEn": "شیدانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صادق-آباد",
+      "name": "صادق آباد",
+      "nameEn": "صادق-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صالح-آباد",
+      "name": "صالح آباد",
+      "nameEn": "صالح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-آباد-اسکندری",
+      "name": "عباس آباد اسکندری",
+      "nameEn": "عباس-آباد-اسکندری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قادرآباد",
+      "name": "قادرآباد",
+      "nameEn": "قادرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاسم-آباد-سفلی",
+      "name": "قاسم آباد سفلی",
+      "nameEn": "قاسم-آباد-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاسم-آباد-علیا",
+      "name": "قاسم آباد علیا",
+      "nameEn": "قاسم-آباد-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-بلاغ",
+      "name": "قره بلاغ",
+      "nameEn": "قره-بلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کبک-آباد",
+      "name": "کبک آباد",
+      "nameEn": "کبک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کریم-آباد-اسکندری",
+      "name": "کریم آباد اسکندری",
+      "nameEn": "کریم-آباد-اسکندری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کورههای-آجرپزی",
+      "name": "کوره‌های آجرپزی",
+      "nameEn": "کورههای-آجرپزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-دشتکی",
+      "name": "مزرعه دشتکی",
+      "nameEn": "مزرعه-دشتکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موردی",
+      "name": "موردی",
+      "nameEn": "موردی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهدی-آباد",
+      "name": "مهدی آباد",
+      "nameEn": "مهدی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نظام-آباد",
+      "name": "نظام آباد",
+      "nameEn": "نظام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "واصل-آباد",
+      "name": "واصل آباد",
+      "nameEn": "واصل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وکیل-آباد",
+      "name": "وکیل آباد",
+      "nameEn": "وکیل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هادی-آباد",
+      "name": "هادی آباد",
+      "nameEn": "هادی-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

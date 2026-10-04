@@ -1,0 +1,25 @@
+{
+  "cityId": "gahvareh",
+  "cityName": "گهواره",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.114Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گهواره",
+      "name": "گهواره",
+      "nameEn": "gahvareh",
+      "centroid": {
+        "lat": 34.460095747933885,
+        "lng": 46.33819483496449
+      },
+      "bbox": {
+        "south": 34.419275913223146,
+        "north": 34.50091558264462,
+        "west": 46.29321391895154,
+        "east": 46.38317575097744
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

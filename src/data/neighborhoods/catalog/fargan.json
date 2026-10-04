@@ -1,0 +1,25 @@
+{
+  "cityId": "fargan",
+  "cityName": "فارغان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.975Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فارغان",
+      "name": "فارغان",
+      "nameEn": "fargan",
+      "centroid": {
+        "lat": 28.04952079310097,
+        "lng": 56.21996076730156
+      },
+      "bbox": {
+        "south": 27.943034267768596,
+        "north": 28.156007318433346,
+        "west": 56.108027784695025,
+        "east": 56.3318937499081
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

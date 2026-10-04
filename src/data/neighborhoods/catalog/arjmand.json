@@ -1,0 +1,25 @@
+{
+  "cityId": "arjmand",
+  "cityName": "ارجمند",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.899Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ارجمند",
+      "name": "ارجمند",
+      "nameEn": "arjmand",
+      "centroid": {
+        "lat": 35.82282453444485,
+        "lng": 52.496829409808285
+      },
+      "bbox": {
+        "south": 35.81515750462092,
+        "north": 35.830491564268776,
+        "west": 52.48828392129801,
+        "east": 52.50537489831856
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

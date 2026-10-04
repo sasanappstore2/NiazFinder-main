@@ -1,0 +1,25 @@
+{
+  "cityId": "meshkinshahr",
+  "cityName": "مشن‌شهر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.687Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مشنشهر",
+      "name": "مشن‌شهر",
+      "nameEn": "meshkinshahr",
+      "centroid": {
+        "lat": 36.3013728908048,
+        "lng": 51.33588881133598
+      },
+      "bbox": {
+        "south": 36.19488636547242,
+        "north": 36.40785941613718,
+        "west": 51.21881175322808,
+        "east": 51.452965869443865
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

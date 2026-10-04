@@ -1,0 +1,25 @@
+{
+  "cityId": "kamarah",
+  "cityName": "کمره",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.843Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "کمره",
+      "name": "کمره",
+      "nameEn": "kamarah",
+      "centroid": {
+        "lat": 33.6739985201581,
+        "lng": 49.86825415064243
+      },
+      "bbox": {
+        "south": 33.56751199482572,
+        "north": 33.78048504549048,
+        "west": 49.747883943907006,
+        "east": 49.98862435737785
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

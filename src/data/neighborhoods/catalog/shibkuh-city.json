@@ -1,0 +1,25 @@
+{
+  "cityId": "shibkuh-city",
+  "cityName": "شیبکوه (هرمزگان)",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.850Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شیبکوه-هرمزگان",
+      "name": "شیبکوه (هرمزگان)",
+      "nameEn": "shibkuh-city",
+      "centroid": {
+        "lat": 26.850462749730507,
+        "lng": 53.97957377978773
+      },
+      "bbox": {
+        "south": 26.743976224398132,
+        "north": 26.956949275062883,
+        "west": 53.869403969057615,
+        "east": 54.089743590517834
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

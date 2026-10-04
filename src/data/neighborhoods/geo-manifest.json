@@ -1,0 +1,9663 @@
+{
+  "version": 1,
+  "updatedAt": "2026-06-12T20:39:31.458Z",
+  "cities": {
+    "aalasht": {
+      "cityId": "aalasht",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aashaar": {
+      "cityId": "aashaar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aasmenoon": {
+      "cityId": "aasmenoon",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abadan": {
+      "cityId": "abadan",
+      "featureCount": 94,
+      "osm": 0,
+      "divar": 94,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abadeh": {
+      "cityId": "abadeh",
+      "featureCount": 23,
+      "osm": 0,
+      "divar": 23,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abali": {
+      "cityId": "abali",
+      "featureCount": 32,
+      "osm": 0,
+      "divar": 32,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abarkooh": {
+      "cityId": "abarkooh",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abbasabad-mazandaran": {
+      "cityId": "abbasabad-mazandaran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abdan": {
+      "cityId": "abdan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abdanan": {
+      "cityId": "abdanan",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abesh-ahmad": {
+      "cityId": "abesh-ahmad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abgarm": {
+      "cityId": "abgarm",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abhar": {
+      "cityId": "abhar",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abkuh-city": {
+      "cityId": "abkuh-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abpakhsh": {
+      "cityId": "abpakhsh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abrisham-isfahan": {
+      "cityId": "abrisham-isfahan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "absard": {
+      "cityId": "absard",
+      "featureCount": 19,
+      "osm": 0,
+      "divar": 19,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abumusa": {
+      "cityId": "abumusa",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "abyek": {
+      "cityId": "abyek",
+      "featureCount": 24,
+      "osm": 0,
+      "divar": 24,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "afshar": {
+      "cityId": "afshar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aftab": {
+      "cityId": "aftab",
+      "featureCount": 466,
+      "osm": 1,
+      "divar": 465,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "afzar": {
+      "cityId": "afzar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aghajari": {
+      "cityId": "aghajari",
+      "featureCount": 25,
+      "osm": 0,
+      "divar": 25,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aghdaa": {
+      "cityId": "aghdaa",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ahar": {
+      "cityId": "ahar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aheram": {
+      "cityId": "aheram",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ahmadabadmostofi": {
+      "cityId": "ahmadabadmostofi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ahmadi-city": {
+      "cityId": "ahmadi-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ahmadsar-gourab": {
+      "cityId": "ahmadsar-gourab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ahuran": {
+      "cityId": "ahuran",
+      "featureCount": 18,
+      "osm": 0,
+      "divar": 18,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ahvaz": {
+      "cityId": "ahvaz",
+      "featureCount": 145,
+      "osm": 0,
+      "divar": 145,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ajabshir": {
+      "cityId": "ajabshir",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "akand": {
+      "cityId": "akand",
+      "featureCount": 40,
+      "osm": 5,
+      "divar": 35,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "alamarudash": {
+      "cityId": "alamarudash",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "alborz-karaj": {
+      "cityId": "alborz-karaj",
+      "featureCount": 163,
+      "osm": 2,
+      "divar": 161,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aleshtar": {
+      "cityId": "aleshtar",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aliabadkatul": {
+      "cityId": "aliabadkatul",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aligudarz": {
+      "cityId": "aligudarz",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "almot": {
+      "cityId": "almot",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "alvand": {
+      "cityId": "alvand",
+      "featureCount": 91,
+      "osm": 0,
+      "divar": 91,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aman": {
+      "cityId": "aman",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "amirabad-city": {
+      "cityId": "amirabad-city",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "amirkala": {
+      "cityId": "amirkala",
+      "featureCount": 89,
+      "osm": 1,
+      "divar": 88,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "amlash": {
+      "cityId": "amlash",
+      "featureCount": 15,
+      "osm": 0,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "amol": {
+      "cityId": "amol",
+      "featureCount": 40,
+      "osm": 0,
+      "divar": 40,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "anaarak": {
+      "cityId": "anaarak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "anabad": {
+      "cityId": "anabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "anar": {
+      "cityId": "anar",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "anbarabad": {
+      "cityId": "anbarabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "anbaralum": {
+      "cityId": "anbaralum",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "anbaran": {
+      "cityId": "anbaran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "andika": {
+      "cityId": "andika",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "andimeshk": {
+      "cityId": "andimeshk",
+      "featureCount": 60,
+      "osm": 0,
+      "divar": 60,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "andisheh-new-town": {
+      "cityId": "andisheh-new-town",
+      "featureCount": 11,
+      "osm": 0,
+      "divar": 11,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "angoot": {
+      "cityId": "angoot",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "anguran": {
+      "cityId": "anguran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "anzal": {
+      "cityId": "anzal",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aq-qala": {
+      "cityId": "aq-qala",
+      "featureCount": 22,
+      "osm": 0,
+      "divar": 22,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aradan": {
+      "cityId": "aradan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "arak": {
+      "cityId": "arak",
+      "featureCount": 94,
+      "osm": 0,
+      "divar": 94,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aran-va-bidgol": {
+      "cityId": "aran-va-bidgol",
+      "featureCount": 39,
+      "osm": 0,
+      "divar": 39,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aras": {
+      "cityId": "aras",
+      "featureCount": 7,
+      "osm": 5,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "arateh": {
+      "cityId": "arateh",
+      "featureCount": 92,
+      "osm": 6,
+      "divar": 86,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ard": {
+      "cityId": "ard",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ardabil-city": {
+      "cityId": "ardabil-city",
+      "featureCount": 160,
+      "osm": 0,
+      "divar": 160,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ardakan": {
+      "cityId": "ardakan",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ardehal": {
+      "cityId": "ardehal",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ardestan": {
+      "cityId": "ardestan",
+      "featureCount": 19,
+      "osm": 0,
+      "divar": 19,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "arezouyeh": {
+      "cityId": "arezouyeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "arjmand": {
+      "cityId": "arjmand",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "arkvaz": {
+      "cityId": "arkvaz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "armand": {
+      "cityId": "armand",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "armardeh": {
+      "cityId": "armardeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "arsak": {
+      "cityId": "arsak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "arsanjan": {
+      "cityId": "arsanjan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "arshagh": {
+      "cityId": "arshagh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "arzhan": {
+      "cityId": "arzhan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "asadabad": {
+      "cityId": "asadabad",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "asalem": {
+      "cityId": "asalem",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "asaluyeh": {
+      "cityId": "asaluyeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "asara": {
+      "cityId": "asara",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "asfich": {
+      "cityId": "asfich",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "asgaraan": {
+      "cityId": "asgaraan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ashkanan": {
+      "cityId": "ashkanan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ashkezar": {
+      "cityId": "ashkezar",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ashkhaneh": {
+      "cityId": "ashkhaneh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ashtarinan": {
+      "cityId": "ashtarinan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ashtian": {
+      "cityId": "ashtian",
+      "featureCount": 21,
+      "osm": 0,
+      "divar": 21,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "asir": {
+      "cityId": "asir",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "aslandooz": {
+      "cityId": "aslandooz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "astaneashrafiyeh": {
+      "cityId": "astaneashrafiyeh",
+      "featureCount": 95,
+      "osm": 0,
+      "divar": 95,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "astaneh-sara": {
+      "cityId": "astaneh-sara",
+      "featureCount": 29,
+      "osm": 9,
+      "divar": 20,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "astara": {
+      "cityId": "astara",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "atamalek": {
+      "cityId": "atamalek",
+      "featureCount": 26,
+      "osm": 0,
+      "divar": 26,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "avaj": {
+      "cityId": "avaj",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ayask": {
+      "cityId": "ayask",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "azadshahr": {
+      "cityId": "azadshahr",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "azarshahr": {
+      "cityId": "azarshahr",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "azgaleh": {
+      "cityId": "azgaleh",
+      "featureCount": 12,
+      "osm": 0,
+      "divar": 12,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "azna": {
+      "cityId": "azna",
+      "featureCount": 4,
+      "osm": 1,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "baagh-bahadoraan": {
+      "cityId": "baagh-bahadoraan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "baagh-hali": {
+      "cityId": "baagh-hali",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "baba-heydar": {
+      "cityId": "baba-heydar",
+      "featureCount": 171,
+      "osm": 0,
+      "divar": 171,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "babakan": {
+      "cityId": "babakan",
+      "featureCount": 13,
+      "osm": 1,
+      "divar": 12,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "babol": {
+      "cityId": "babol",
+      "featureCount": 112,
+      "osm": 5,
+      "divar": 107,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "babolsar": {
+      "cityId": "babolsar",
+      "featureCount": 27,
+      "osm": 0,
+      "divar": 27,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "badreh": {
+      "cityId": "badreh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "badrood": {
+      "cityId": "badrood",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bafq": {
+      "cityId": "bafq",
+      "featureCount": 23,
+      "osm": 0,
+      "divar": 23,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bafrooyeh": {
+      "cityId": "bafrooyeh",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "baft": {
+      "cityId": "baft",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bagh-safa": {
+      "cityId": "bagh-safa",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "baghershahr": {
+      "cityId": "baghershahr",
+      "featureCount": 172,
+      "osm": 0,
+      "divar": 172,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "baghestan-city": {
+      "cityId": "baghestan-city",
+      "featureCount": 165,
+      "osm": 7,
+      "divar": 158,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "baghmalek": {
+      "cityId": "baghmalek",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bahaabaad": {
+      "cityId": "bahaabaad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bahabad": {
+      "cityId": "bahabad",
+      "featureCount": 23,
+      "osm": 0,
+      "divar": 23,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bahar": {
+      "cityId": "bahar",
+      "featureCount": 86,
+      "osm": 0,
+      "divar": 86,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "baharestan": {
+      "cityId": "baharestan",
+      "featureCount": 450,
+      "osm": 0,
+      "divar": 450,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bahmai": {
+      "cityId": "bahmai",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bahman-city": {
+      "cityId": "bahman-city",
+      "featureCount": 154,
+      "osm": 0,
+      "divar": 154,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bahman-soghad": {
+      "cityId": "bahman-soghad",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bahnamir": {
+      "cityId": "bahnamir",
+      "featureCount": 36,
+      "osm": 5,
+      "divar": 31,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bahreman": {
+      "cityId": "bahreman",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bahukalat": {
+      "cityId": "bahukalat",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bajestan": {
+      "cityId": "bajestan",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bajgiran": {
+      "cityId": "bajgiran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bakhtagan": {
+      "cityId": "bakhtagan",
+      "featureCount": 20,
+      "osm": 0,
+      "divar": 20,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bakhtiyar": {
+      "cityId": "bakhtiyar",
+      "featureCount": 399,
+      "osm": 0,
+      "divar": 399,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bakhzar": {
+      "cityId": "bakhzar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bala-velayat": {
+      "cityId": "bala-velayat",
+      "featureCount": 338,
+      "osm": 0,
+      "divar": 338,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "baladeh": {
+      "cityId": "baladeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "balban-abad": {
+      "cityId": "balban-abad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "balvard": {
+      "cityId": "balvard",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bam-posht": {
+      "cityId": "bam-posht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bam": {
+      "cityId": "bam",
+      "featureCount": 41,
+      "osm": 0,
+      "divar": 41,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bampur": {
+      "cityId": "bampur",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "banaruyeh": {
+      "cityId": "banaruyeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "band-zarak": {
+      "cityId": "band-zarak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bandar-gaz": {
+      "cityId": "bandar-gaz",
+      "featureCount": 8,
+      "osm": 1,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bandar-kangan": {
+      "cityId": "bandar-kangan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bandarabbas": {
+      "cityId": "bandarabbas",
+      "featureCount": 130,
+      "osm": 1,
+      "divar": 129,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bandaranzali": {
+      "cityId": "bandaranzali",
+      "featureCount": 68,
+      "osm": 0,
+      "divar": 68,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bandarkhamir": {
+      "cityId": "bandarkhamir",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bandarlengeh": {
+      "cityId": "bandarlengeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bandartaheri": {
+      "cityId": "bandartaheri",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bandarturkman": {
+      "cityId": "bandarturkman",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "baneh": {
+      "cityId": "baneh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "banesh": {
+      "cityId": "banesh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bani-forur": {
+      "cityId": "bani-forur",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "barah-sar": {
+      "cityId": "barah-sar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "baran": {
+      "cityId": "baran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "barbarud": {
+      "cityId": "barbarud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bardaskan": {
+      "cityId": "bardaskan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bardkhun": {
+      "cityId": "bardkhun",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bardsir": {
+      "cityId": "bardsir",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "barrud": {
+      "cityId": "barrud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "baruq": {
+      "cityId": "baruq",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "barzak": {
+      "cityId": "barzak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bashagard": {
+      "cityId": "bashagard",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bashavard": {
+      "cityId": "bashavard",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bashayaat": {
+      "cityId": "bashayaat",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "basht": {
+      "cityId": "basht",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bashtin": {
+      "cityId": "bashtin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "basmenj": {
+      "cityId": "basmenj",
+      "featureCount": 82,
+      "osm": 5,
+      "divar": 77,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bastak": {
+      "cityId": "bastak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bastam": {
+      "cityId": "bastam",
+      "featureCount": 28,
+      "osm": 0,
+      "divar": 28,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bavaleh": {
+      "cityId": "bavaleh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bavanat": {
+      "cityId": "bavanat",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bavi": {
+      "cityId": "bavi",
+      "featureCount": 157,
+      "osm": 0,
+      "divar": 157,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bayat": {
+      "cityId": "bayat",
+      "featureCount": 15,
+      "osm": 0,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bayengan": {
+      "cityId": "bayengan",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bayk": {
+      "cityId": "bayk",
+      "featureCount": 77,
+      "osm": 0,
+      "divar": 77,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bazargan": {
+      "cityId": "bazargan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bazfat": {
+      "cityId": "bazfat",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bazineh-rud": {
+      "cityId": "bazineh-rud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bazman": {
+      "cityId": "bazman",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "behbahan": {
+      "cityId": "behbahan",
+      "featureCount": 15,
+      "osm": 0,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "behshahr": {
+      "cityId": "behshahr",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bektash": {
+      "cityId": "bektash",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bemani": {
+      "cityId": "bemani",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ben": {
+      "cityId": "ben",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bent": {
+      "cityId": "bent",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "beyram": {
+      "cityId": "beyram",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "beyranvand": {
+      "cityId": "beyranvand",
+      "featureCount": 93,
+      "osm": 0,
+      "divar": 93,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "beyza": {
+      "cityId": "beyza",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bidshahr": {
+      "cityId": "bidshahr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bijar": {
+      "cityId": "bijar",
+      "featureCount": 21,
+      "osm": 0,
+      "divar": 21,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bikah": {
+      "cityId": "bikah",
+      "featureCount": 10,
+      "osm": 0,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bilehsavar": {
+      "cityId": "bilehsavar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "biluvar": {
+      "cityId": "biluvar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "birjand": {
+      "cityId": "birjand",
+      "featureCount": 48,
+      "osm": 1,
+      "divar": 47,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "birk": {
+      "cityId": "birk",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bisotun": {
+      "cityId": "bisotun",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "biyarjamand": {
+      "cityId": "biyarjamand",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "boinnzahra": {
+      "cityId": "boinnzahra",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bojnurd": {
+      "cityId": "bojnurd",
+      "featureCount": 24,
+      "osm": 0,
+      "divar": 24,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "boldaji": {
+      "cityId": "boldaji",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "boluk": {
+      "cityId": "boluk",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bonab": {
+      "cityId": "bonab",
+      "featureCount": 37,
+      "osm": 0,
+      "divar": 37,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "booyin-va-miyaandasht": {
+      "cityId": "booyin-va-miyaandasht",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "borazjan": {
+      "cityId": "borazjan",
+      "featureCount": 15,
+      "osm": 0,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "borujen": {
+      "cityId": "borujen",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "borujerd": {
+      "cityId": "borujerd",
+      "featureCount": 75,
+      "osm": 0,
+      "divar": 75,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "boshruuye": {
+      "cityId": "boshruuye",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bostan": {
+      "cityId": "bostan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bostanabad": {
+      "cityId": "bostanabad",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bozhgan": {
+      "cityId": "bozhgan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bukan": {
+      "cityId": "bukan",
+      "featureCount": 12,
+      "osm": 0,
+      "divar": 12,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "buli": {
+      "cityId": "buli",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bumehen": {
+      "cityId": "bumehen",
+      "featureCount": 29,
+      "osm": 0,
+      "divar": 29,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bushehr-city": {
+      "cityId": "bushehr-city",
+      "featureCount": 58,
+      "osm": 0,
+      "divar": 58,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "bushkan": {
+      "cityId": "bushkan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chaadgaan": {
+      "cityId": "chaadgaan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chaahak": {
+      "cityId": "chaahak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chabahar": {
+      "cityId": "chabahar",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chaboksar": {
+      "cityId": "chaboksar",
+      "featureCount": 20,
+      "osm": 0,
+      "divar": 20,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chaf-chamkhale": {
+      "cityId": "chaf-chamkhale",
+      "featureCount": 12,
+      "osm": 0,
+      "divar": 12,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chaghadak": {
+      "cityId": "chaghadak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chah-dad-khoda": {
+      "cityId": "chah-dad-khoda",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chah-mobarak": {
+      "cityId": "chah-mobarak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chah-morid": {
+      "cityId": "chah-morid",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chah-varz": {
+      "cityId": "chah-varz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chahar-dangeh-city": {
+      "cityId": "chahar-dangeh-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chahar-dangeh": {
+      "cityId": "chahar-dangeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chaharborj-city": {
+      "cityId": "chaharborj-city",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chahardoli": {
+      "cityId": "chahardoli",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chaldoran": {
+      "cityId": "chaldoran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chalus": {
+      "cityId": "chalus",
+      "featureCount": 19,
+      "osm": 0,
+      "divar": 19,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chamestan": {
+      "cityId": "chamestan",
+      "featureCount": 12,
+      "osm": 0,
+      "divar": 12,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chamran-town": {
+      "cityId": "chamran-town",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chang-almasi": {
+      "cityId": "chang-almasi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chapalq": {
+      "cityId": "chapalq",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chapeshlu": {
+      "cityId": "chapeshlu",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "charam": {
+      "cityId": "charam",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "charavimaq": {
+      "cityId": "charavimaq",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "charbagh-alborz": {
+      "cityId": "charbagh-alborz",
+      "featureCount": 182,
+      "osm": 0,
+      "divar": 182,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chardavol": {
+      "cityId": "chardavol",
+      "featureCount": 7,
+      "osm": 6,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "charusa": {
+      "cityId": "charusa",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chashm": {
+      "cityId": "chashm",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chatroud": {
+      "cityId": "chatroud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chavar": {
+      "cityId": "chavar",
+      "featureCount": 19,
+      "osm": 1,
+      "divar": 18,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chegni": {
+      "cityId": "chegni",
+      "featureCount": 93,
+      "osm": 0,
+      "divar": 93,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chenaran": {
+      "cityId": "chenaran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chenarood": {
+      "cityId": "chenarood",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chitab": {
+      "cityId": "chitab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "chobar": {
+      "cityId": "chobar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "churzegh": {
+      "cityId": "churzegh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "conark": {
+      "cityId": "conark",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dabudasht": {
+      "cityId": "dabudasht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dahaj": {
+      "cityId": "dahaj",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dahram": {
+      "cityId": "dahram",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dalahu": {
+      "cityId": "dalahu",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "daland": {
+      "cityId": "daland",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dalbaran": {
+      "cityId": "dalbaran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dalgan": {
+      "cityId": "dalgan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dalvar": {
+      "cityId": "dalvar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "daman": {
+      "cityId": "daman",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "damavand": {
+      "cityId": "damavand",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "damghan": {
+      "cityId": "damghan",
+      "featureCount": 16,
+      "osm": 0,
+      "divar": 16,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "darab": {
+      "cityId": "darab",
+      "featureCount": 10,
+      "osm": 0,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "daran": {
+      "cityId": "daran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "darb-behesht": {
+      "cityId": "darb-behesht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "darb-gonbad": {
+      "cityId": "darb-gonbad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dargahan": {
+      "cityId": "dargahan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dargaz": {
+      "cityId": "dargaz",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dargazin": {
+      "cityId": "dargazin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "darh": {
+      "cityId": "darh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "darmian": {
+      "cityId": "darmian",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "darmiyan": {
+      "cityId": "darmiyan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "darreh-rud": {
+      "cityId": "darreh-rud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "darrehshahr": {
+      "cityId": "darrehshahr",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dasht-abbas": {
+      "cityId": "dasht-abbas",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dasht-azadegan": {
+      "cityId": "dasht-azadegan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dasht-zhahab": {
+      "cityId": "dasht-zhahab",
+      "featureCount": 5,
+      "osm": 1,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dashtabi": {
+      "cityId": "dashtabi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dashtak": {
+      "cityId": "dashtak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dashtyari": {
+      "cityId": "dashtyari",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dastgerdan": {
+      "cityId": "dastgerdan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "davarzan": {
+      "cityId": "davarzan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dayer": {
+      "cityId": "dayer",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dehaq": {
+      "cityId": "dehaq",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dehaqan": {
+      "cityId": "dehaqan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dehbakri": {
+      "cityId": "dehbakri",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dehdasht": {
+      "cityId": "dehdasht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dehgolan": {
+      "cityId": "dehgolan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dehloran": {
+      "cityId": "dehloran",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "delgan": {
+      "cityId": "delgan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "delijan": {
+      "cityId": "delijan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "deylam": {
+      "cityId": "deylam",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "deylaman": {
+      "cityId": "deylaman",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dezful": {
+      "cityId": "dezful",
+      "featureCount": 63,
+      "osm": 0,
+      "divar": 63,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dezpart": {
+      "cityId": "dezpart",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "difful": {
+      "cityId": "difful",
+      "featureCount": 52,
+      "osm": 0,
+      "divar": 52,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dihook": {
+      "cityId": "dihook",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dinvar": {
+      "cityId": "dinvar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dishmuk": {
+      "cityId": "dishmuk",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "diwandareh": {
+      "cityId": "diwandareh",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dogonbadan": {
+      "cityId": "dogonbadan",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "doroodzan": {
+      "cityId": "doroodzan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dorud": {
+      "cityId": "dorud",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "doshman-ziyari": {
+      "cityId": "doshman-ziyari",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dotappe": {
+      "cityId": "dotappe",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "dozin": {
+      "cityId": "dozin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "emam-hasan": {
+      "cityId": "emam-hasan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "emamshahr": {
+      "cityId": "emamshahr",
+      "featureCount": 163,
+      "osm": 0,
+      "divar": 163,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "eqbaliyeh": {
+      "cityId": "eqbaliyeh",
+      "featureCount": 93,
+      "osm": 0,
+      "divar": 93,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "eqlid": {
+      "cityId": "eqlid",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "es-haq-abad": {
+      "cityId": "es-haq-abad",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "esfandagheh": {
+      "cityId": "esfandagheh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "esfarayen": {
+      "cityId": "esfarayen",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "esfarvarin": {
+      "cityId": "esfarvarin",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "eshkevar": {
+      "cityId": "eshkevar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "eshtehard": {
+      "cityId": "eshtehard",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "eslamabad-city": {
+      "cityId": "eslamabad-city",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "eslamiye": {
+      "cityId": "eslamiye",
+      "featureCount": 35,
+      "osm": 0,
+      "divar": 35,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "esmaeili": {
+      "cityId": "esmaeili",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "estehban": {
+      "cityId": "estehban",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "evaz": {
+      "cityId": "evaz",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "eyvanaki": {
+      "cityId": "eyvanaki",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ezhye": {
+      "cityId": "ezhye",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fahraj": {
+      "cityId": "fahraj",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "falard": {
+      "cityId": "falard",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "falavarjan": {
+      "cityId": "falavarjan",
+      "featureCount": 178,
+      "osm": 0,
+      "divar": 178,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "famenin": {
+      "cityId": "famenin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fandoghlu": {
+      "cityId": "fandoghlu",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fanooj": {
+      "cityId": "fanooj",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "faragi": {
+      "cityId": "faragi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "farah-dasht": {
+      "cityId": "farah-dasht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "farahabad": {
+      "cityId": "farahabad",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "farashband": {
+      "cityId": "farashband",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fardis": {
+      "cityId": "fardis",
+      "featureCount": 253,
+      "osm": 7,
+      "divar": 246,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fargan": {
+      "cityId": "fargan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "farim": {
+      "cityId": "farim",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fariman": {
+      "cityId": "fariman",
+      "featureCount": 27,
+      "osm": 0,
+      "divar": 27,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "farmahin": {
+      "cityId": "farmahin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "farooj": {
+      "cityId": "farooj",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "farrokhshahr": {
+      "cityId": "farrokhshahr",
+      "featureCount": 15,
+      "osm": 0,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "farsan": {
+      "cityId": "farsan",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "farur": {
+      "cityId": "farur",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "faryab": {
+      "cityId": "faryab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fasa": {
+      "cityId": "fasa",
+      "featureCount": 12,
+      "osm": 0,
+      "divar": 12,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fasarud": {
+      "cityId": "fasarud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fashapuyeh": {
+      "cityId": "fashapuyeh",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fazel-abad": {
+      "cityId": "fazel-abad",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ferdos-city": {
+      "cityId": "ferdos-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ferdosiye": {
+      "cityId": "ferdosiye",
+      "featureCount": 109,
+      "osm": 0,
+      "divar": 109,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ferdows": {
+      "cityId": "ferdows",
+      "featureCount": 37,
+      "osm": 0,
+      "divar": 37,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fereydan": {
+      "cityId": "fereydan",
+      "featureCount": 390,
+      "osm": 0,
+      "divar": 390,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fereydunshahr": {
+      "cityId": "fereydunshahr",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "feridunkenar": {
+      "cityId": "feridunkenar",
+      "featureCount": 29,
+      "osm": 0,
+      "divar": 29,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fin": {
+      "cityId": "fin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "firooz": {
+      "cityId": "firooz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "firoozabad-city": {
+      "cityId": "firoozabad-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "firoozabad": {
+      "cityId": "firoozabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "firouzkouh": {
+      "cityId": "firouzkouh",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "firuragh": {
+      "cityId": "firuragh",
+      "featureCount": 28,
+      "osm": 0,
+      "divar": 28,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "firuzabad-city": {
+      "cityId": "firuzabad-city",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "firuzabad": {
+      "cityId": "firuzabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "firuzeh": {
+      "cityId": "firuzeh",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "foolad-shahr": {
+      "cityId": "foolad-shahr",
+      "featureCount": 31,
+      "osm": 0,
+      "divar": 31,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fordo": {
+      "cityId": "fordo",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "fouman": {
+      "cityId": "fouman",
+      "featureCount": 20,
+      "osm": 0,
+      "divar": 20,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "furg": {
+      "cityId": "furg",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gachi-city": {
+      "cityId": "gachi-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gachsaran": {
+      "cityId": "gachsaran",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gafar-va-parmun": {
+      "cityId": "gafar-va-parmun",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gahvareh": {
+      "cityId": "gahvareh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "galikash": {
+      "cityId": "galikash",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "galougah-babol": {
+      "cityId": "galougah-babol",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "galugah-babol": {
+      "cityId": "galugah-babol",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ganaveh": {
+      "cityId": "ganaveh",
+      "featureCount": 10,
+      "osm": 0,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gandoman": {
+      "cityId": "gandoman",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "garizat": {
+      "cityId": "garizat",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "garmadooz": {
+      "cityId": "garmadooz",
+      "featureCount": 12,
+      "osm": 0,
+      "divar": 12,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "garmdareh": {
+      "cityId": "garmdareh",
+      "featureCount": 229,
+      "osm": 0,
+      "divar": 229,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "garmeh": {
+      "cityId": "garmeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "garmkhan": {
+      "cityId": "garmkhan",
+      "featureCount": 13,
+      "osm": 0,
+      "divar": 13,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "garmsar": {
+      "cityId": "garmsar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gatab": {
+      "cityId": "gatab",
+      "featureCount": 56,
+      "osm": 6,
+      "divar": 50,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gatij": {
+      "cityId": "gatij",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gazanak": {
+      "cityId": "gazanak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gazik": {
+      "cityId": "gazik",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "geleh-dar": {
+      "cityId": "geleh-dar",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "genaveh": {
+      "cityId": "genaveh",
+      "featureCount": 10,
+      "osm": 0,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gerash": {
+      "cityId": "gerash",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "germi": {
+      "cityId": "germi",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghahan": {
+      "cityId": "ghahan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghahderijaan": {
+      "cityId": "ghahderijaan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghahestan": {
+      "cityId": "ghahestan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghalandar-abad": {
+      "cityId": "ghalandar-abad",
+      "featureCount": 27,
+      "osm": 0,
+      "divar": 27,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghaleganj": {
+      "cityId": "ghaleganj",
+      "featureCount": 11,
+      "osm": 0,
+      "divar": 11,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghaleh-chay": {
+      "cityId": "ghaleh-chay",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghaleh-ghazi": {
+      "cityId": "ghaleh-ghazi",
+      "featureCount": 13,
+      "osm": 0,
+      "divar": 13,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghaleh-mombi": {
+      "cityId": "ghaleh-mombi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghaleh-no": {
+      "cityId": "ghaleh-no",
+      "featureCount": 70,
+      "osm": 1,
+      "divar": 69,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghaleh-shahin": {
+      "cityId": "ghaleh-shahin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghamsar": {
+      "cityId": "ghamsar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghanavat": {
+      "cityId": "ghanavat",
+      "featureCount": 93,
+      "osm": 0,
+      "divar": 93,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghare-ghavin": {
+      "cityId": "ghare-ghavin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghare-ziyaoddin": {
+      "cityId": "ghare-ziyaoddin",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghareh-chay": {
+      "cityId": "ghareh-chay",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghareh-kahriz": {
+      "cityId": "ghareh-kahriz",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghareh-poshtlu": {
+      "cityId": "ghareh-poshtlu",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghasabeh": {
+      "cityId": "ghasabeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghatruyeh": {
+      "cityId": "ghatruyeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghatur": {
+      "cityId": "ghatur",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gheshlaq-dasht": {
+      "cityId": "gheshlaq-dasht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghirokarzi": {
+      "cityId": "ghirokarzi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gholaman": {
+      "cityId": "gholaman",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gholghol-rud": {
+      "cityId": "gholghol-rud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ghorghori": {
+      "cityId": "ghorghori",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gilangharb": {
+      "cityId": "gilangharb",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gilvan": {
+      "cityId": "gilvan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "giyan": {
+      "cityId": "giyan",
+      "featureCount": 28,
+      "osm": 0,
+      "divar": 28,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "goaavar": {
+      "cityId": "goaavar",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gogan": {
+      "cityId": "gogan",
+      "featureCount": 9,
+      "osm": 3,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "goharan": {
+      "cityId": "goharan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "goharkuh": {
+      "cityId": "goharkuh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gol-tappeh": {
+      "cityId": "gol-tappeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "golbaf": {
+      "cityId": "golbaf",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "golestan-baharestan": {
+      "cityId": "golestan-baharestan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "golestan-city": {
+      "cityId": "golestan-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "golmakan": {
+      "cityId": "golmakan",
+      "featureCount": 3,
+      "osm": 1,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "golpayegan": {
+      "cityId": "golpayegan",
+      "featureCount": 43,
+      "osm": 0,
+      "divar": 43,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "golzar-city": {
+      "cityId": "golzar-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gomishan": {
+      "cityId": "gomishan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gonabad": {
+      "cityId": "gonabad",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gonbadkavus": {
+      "cityId": "gonbadkavus",
+      "featureCount": 17,
+      "osm": 0,
+      "divar": 17,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gonbaki": {
+      "cityId": "gonbaki",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gorgan-mazandaran": {
+      "cityId": "gorgan-mazandaran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gorgan": {
+      "cityId": "gorgan",
+      "featureCount": 115,
+      "osm": 0,
+      "divar": 115,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gotvand": {
+      "cityId": "gotvand",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "gourab-zarmikh": {
+      "cityId": "gourab-zarmikh",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "greaterandsmallerfarur": {
+      "cityId": "greaterandsmallerfarur",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "greatertunb": {
+      "cityId": "greatertunb",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "habib-abaad": {
+      "cityId": "habib-abaad",
+      "featureCount": 62,
+      "osm": 0,
+      "divar": 62,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hachirud": {
+      "cityId": "hachirud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hadi-shahr": {
+      "cityId": "hadi-shahr",
+      "featureCount": 74,
+      "osm": 6,
+      "divar": 68,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hafdar": {
+      "cityId": "hafdar",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "haftgel": {
+      "cityId": "haftgel",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hajiabad": {
+      "cityId": "hajiabad",
+      "featureCount": 11,
+      "osm": 0,
+      "divar": 11,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hajilar": {
+      "cityId": "hajilar",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "halab": {
+      "cityId": "halab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "halilan": {
+      "cityId": "halilan",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hamedan-city": {
+      "cityId": "hamedan-city",
+      "featureCount": 134,
+      "osm": 0,
+      "divar": 134,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hamidia": {
+      "cityId": "hamidia",
+      "featureCount": 170,
+      "osm": 0,
+      "divar": 170,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hamidiyeh": {
+      "cityId": "hamidiyeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hamil": {
+      "cityId": "hamil",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hamun": {
+      "cityId": "hamun",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "handemini": {
+      "cityId": "handemini",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hanna": {
+      "cityId": "hanna",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "harand": {
+      "cityId": "harand",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "harris": {
+      "cityId": "harris",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "harsin": {
+      "cityId": "harsin",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hasanabad-city": {
+      "cityId": "hasanabad-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hashtgerd": {
+      "cityId": "hashtgerd",
+      "featureCount": 56,
+      "osm": 0,
+      "divar": 56,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hashtrood": {
+      "cityId": "hashtrood",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "haviq": {
+      "cityId": "haviq",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hawraman": {
+      "cityId": "hawraman",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "helali": {
+      "cityId": "helali",
+      "featureCount": 113,
+      "osm": 0,
+      "divar": 113,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hendijan": {
+      "cityId": "hendijan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hendurabi": {
+      "cityId": "hendurabi",
+      "featureCount": 15,
+      "osm": 0,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hengam": {
+      "cityId": "hengam",
+      "featureCount": 124,
+      "osm": 0,
+      "divar": 124,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "henza": {
+      "cityId": "henza",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hezar-masjed": {
+      "cityId": "hezar-masjed",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hezarjarib-city": {
+      "cityId": "hezarjarib-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hiduch": {
+      "cityId": "hiduch",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hir": {
+      "cityId": "hir",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hirmand": {
+      "cityId": "hirmand",
+      "featureCount": 18,
+      "osm": 0,
+      "divar": 18,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "homayjan": {
+      "cityId": "homayjan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hoor": {
+      "cityId": "hoor",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "horand": {
+      "cityId": "horand",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hormuz": {
+      "cityId": "hormuz",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hosein-abad-city": {
+      "cityId": "hosein-abad-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "hoveyzeh": {
+      "cityId": "hoveyzeh",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "idhaj": {
+      "cityId": "idhaj",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ilam-city": {
+      "cityId": "ilam-city",
+      "featureCount": 19,
+      "osm": 7,
+      "divar": 12,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ilkhchi": {
+      "cityId": "ilkhchi",
+      "featureCount": 29,
+      "osm": 0,
+      "divar": 29,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "inche-borun": {
+      "cityId": "inche-borun",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "irandegan": {
+      "cityId": "irandegan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "iranshahr": {
+      "cityId": "iranshahr",
+      "featureCount": 15,
+      "osm": 0,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "isfahan-city": {
+      "cityId": "isfahan-city",
+      "featureCount": 272,
+      "osm": 4,
+      "divar": 268,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "islamabad": {
+      "cityId": "islamabad",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "islamshahr": {
+      "cityId": "islamshahr",
+      "featureCount": 35,
+      "osm": 2,
+      "divar": 33,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ivan": {
+      "cityId": "ivan",
+      "featureCount": 14,
+      "osm": 0,
+      "divar": 14,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ivauqli": {
+      "cityId": "ivauqli",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "izadkhvast": {
+      "cityId": "izadkhvast",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "izadshahr": {
+      "cityId": "izadshahr",
+      "featureCount": 23,
+      "osm": 0,
+      "divar": 23,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "izeh": {
+      "cityId": "izeh",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jafarabad": {
+      "cityId": "jafarabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jahrom": {
+      "cityId": "jahrom",
+      "featureCount": 50,
+      "osm": 0,
+      "divar": 50,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jajarm": {
+      "cityId": "jajarm",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jajrud": {
+      "cityId": "jajrud",
+      "featureCount": 43,
+      "osm": 1,
+      "divar": 42,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jalil-abad": {
+      "cityId": "jalil-abad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jaluq": {
+      "cityId": "jaluq",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jam": {
+      "cityId": "jam",
+      "featureCount": 7,
+      "osm": 3,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "janah": {
+      "cityId": "janah",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "janat-abad": {
+      "cityId": "janat-abad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jangal": {
+      "cityId": "jangal",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jannat-city": {
+      "cityId": "jannat-city",
+      "featureCount": 270,
+      "osm": 0,
+      "divar": 270,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jare-va-baladeh": {
+      "cityId": "jare-va-baladeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jargalan": {
+      "cityId": "jargalan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jask": {
+      "cityId": "jask",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "javadabad": {
+      "cityId": "javadabad",
+      "featureCount": 41,
+      "osm": 0,
+      "divar": 41,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "javanrud": {
+      "cityId": "javanrud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jazireh-forur": {
+      "cityId": "jazireh-forur",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jazireh-larak": {
+      "cityId": "jazireh-larak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jazireh-shidvar": {
+      "cityId": "jazireh-shidvar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jazman": {
+      "cityId": "jazman",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jazmourian": {
+      "cityId": "jazmourian",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jaznik": {
+      "cityId": "jaznik",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jebalbarez": {
+      "cityId": "jebalbarez",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jelin": {
+      "cityId": "jelin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jirandeh": {
+      "cityId": "jirandeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jiroft": {
+      "cityId": "jiroft",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "joghatai": {
+      "cityId": "joghatai",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "joghin": {
+      "cityId": "joghin",
+      "featureCount": 10,
+      "osm": 0,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jolfa": {
+      "cityId": "jolfa",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jolge-chah-hashem": {
+      "cityId": "jolge-chah-hashem",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jolge-rokh": {
+      "cityId": "jolge-rokh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jolgeh-majan": {
+      "cityId": "jolgeh-majan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jolgeh-shoqan": {
+      "cityId": "jolgeh-shoqan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jolgeh-zoozan": {
+      "cityId": "jolgeh-zoozan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "joqin": {
+      "cityId": "joqin",
+      "featureCount": 68,
+      "osm": 2,
+      "divar": 66,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jouzar": {
+      "cityId": "jouzar",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jowayin": {
+      "cityId": "jowayin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "jowkar": {
+      "cityId": "jowkar",
+      "featureCount": 2,
+      "osm": 1,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "joybar": {
+      "cityId": "joybar",
+      "featureCount": 39,
+      "osm": 0,
+      "divar": 39,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "junqan": {
+      "cityId": "junqan",
+      "featureCount": 23,
+      "osm": 1,
+      "divar": 22,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "juyom": {
+      "cityId": "juyom",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kabudarahang": {
+      "cityId": "kabudarahang",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kadkan": {
+      "cityId": "kadkan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kaghazkenan": {
+      "cityId": "kaghazkenan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kahak": {
+      "cityId": "kahak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kahir": {
+      "cityId": "kahir",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kahnooj": {
+      "cityId": "kahnooj",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kahrizak": {
+      "cityId": "kahrizak",
+      "featureCount": 127,
+      "osm": 0,
+      "divar": 127,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kakavand": {
+      "cityId": "kakavand",
+      "featureCount": 93,
+      "osm": 0,
+      "divar": 93,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kakhak": {
+      "cityId": "kakhak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kaki": {
+      "cityId": "kaki",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kalaleh": {
+      "cityId": "kalaleh",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kalashi": {
+      "cityId": "kalashi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kalat-city": {
+      "cityId": "kalat-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kalat": {
+      "cityId": "kalat",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kalatan": {
+      "cityId": "kalatan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kalatarezan": {
+      "cityId": "kalatarezan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kalateh": {
+      "cityId": "kalateh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kaleh-gaan": {
+      "cityId": "kaleh-gaan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kaleybar": {
+      "cityId": "kaleybar",
+      "featureCount": 3,
+      "osm": 3,
+      "divar": 0,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kalpush": {
+      "cityId": "kalpush",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kamalshahr": {
+      "cityId": "kamalshahr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kamarah": {
+      "cityId": "kamarah",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kamfiruz": {
+      "cityId": "kamfiruz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kamyaran": {
+      "cityId": "kamyaran",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kan-city": {
+      "cityId": "kan-city",
+      "featureCount": 110,
+      "osm": 4,
+      "divar": 106,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kandovan": {
+      "cityId": "kandovan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kangan": {
+      "cityId": "kangan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kangavar": {
+      "cityId": "kangavar",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "karaj": {
+      "cityId": "karaj",
+      "featureCount": 37,
+      "osm": 3,
+      "divar": 34,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "karani": {
+      "cityId": "karani",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "karbal": {
+      "cityId": "karbal",
+      "featureCount": 2,
+      "osm": 1,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "karbask": {
+      "cityId": "karbask",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kardiyan": {
+      "cityId": "kardiyan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "karftu": {
+      "cityId": "karftu",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "karkheh": {
+      "cityId": "karkheh",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "karun": {
+      "cityId": "karun",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "karvan": {
+      "cityId": "karvan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "karzan": {
+      "cityId": "karzan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kashan": {
+      "cityId": "kashan",
+      "featureCount": 121,
+      "osm": 0,
+      "divar": 121,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kashksaray": {
+      "cityId": "kashksaray",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kashmar": {
+      "cityId": "kashmar",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "katalem-sadatshahr": {
+      "cityId": "katalem-sadatshahr",
+      "featureCount": 17,
+      "osm": 7,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kavar": {
+      "cityId": "kavar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kavirat": {
+      "cityId": "kavirat",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kazerun": {
+      "cityId": "kazerun",
+      "featureCount": 12,
+      "osm": 2,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kelachay": {
+      "cityId": "kelachay",
+      "featureCount": 13,
+      "osm": 0,
+      "divar": 13,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kelarabad": {
+      "cityId": "kelarabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kelardasht": {
+      "cityId": "kelardasht",
+      "featureCount": 44,
+      "osm": 25,
+      "divar": 19,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kenar-takhte-va-kamar": {
+      "cityId": "kenar-takhte-va-kamar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kerchambu": {
+      "cityId": "kerchambu",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kerman-city": {
+      "cityId": "kerman-city",
+      "featureCount": 57,
+      "osm": 1,
+      "divar": 56,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kermanshah-city": {
+      "cityId": "kermanshah-city",
+      "featureCount": 173,
+      "osm": 75,
+      "divar": 98,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "keshavarz-city": {
+      "cityId": "keshavarz-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khabar": {
+      "cityId": "khabar",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khaf": {
+      "cityId": "khaf",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khafr": {
+      "cityId": "khafr",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khajeh": {
+      "cityId": "khajeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khalajestan": {
+      "cityId": "khalajestan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khalifan": {
+      "cityId": "khalifan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khalil-abad-city": {
+      "cityId": "khalil-abad-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khalil-shahr": {
+      "cityId": "khalil-shahr",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khalkhal": {
+      "cityId": "khalkhal",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khamir": {
+      "cityId": "khamir",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khan-bin": {
+      "cityId": "khan-bin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khanjin": {
+      "cityId": "khanjin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khanmirza": {
+      "cityId": "khanmirza",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khansar": {
+      "cityId": "khansar",
+      "featureCount": 15,
+      "osm": 0,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kharanaq": {
+      "cityId": "kharanaq",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kharghan": {
+      "cityId": "kharghan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khark": {
+      "cityId": "khark",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kharku": {
+      "cityId": "kharku",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kharvana": {
+      "cityId": "kharvana",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khash": {
+      "cityId": "khash",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khatam": {
+      "cityId": "khatam",
+      "featureCount": 169,
+      "osm": 0,
+      "divar": 169,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khav-va-mirabad": {
+      "cityId": "khav-va-mirabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khavaran-city": {
+      "cityId": "khavaran-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khaveh": {
+      "cityId": "khaveh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kherameh": {
+      "cityId": "kherameh",
+      "featureCount": 9,
+      "osm": 6,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khesht": {
+      "cityId": "khesht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kheyrgoo": {
+      "cityId": "kheyrgoo",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khezel": {
+      "cityId": "khezel",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khezr-abaad": {
+      "cityId": "khezr-abaad",
+      "featureCount": 93,
+      "osm": 0,
+      "divar": 93,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khobushan": {
+      "cityId": "khobushan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khoda-afarin": {
+      "cityId": "khoda-afarin",
+      "featureCount": 38,
+      "osm": 0,
+      "divar": 38,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khodabandeh": {
+      "cityId": "khodabandeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khomak": {
+      "cityId": "khomak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khomam": {
+      "cityId": "khomam",
+      "featureCount": 109,
+      "osm": 0,
+      "divar": 109,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khomein": {
+      "cityId": "khomein",
+      "featureCount": 35,
+      "osm": 0,
+      "divar": 35,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khomeinishahr": {
+      "cityId": "khomeinishahr",
+      "featureCount": 325,
+      "osm": 1,
+      "divar": 324,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khondab": {
+      "cityId": "khondab",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khonj": {
+      "cityId": "khonj",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khoour": {
+      "cityId": "khoour",
+      "featureCount": 11,
+      "osm": 0,
+      "divar": 11,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khoramdareh": {
+      "cityId": "khoramdareh",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khormoj": {
+      "cityId": "khormoj",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khorram-bid": {
+      "cityId": "khorram-bid",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khorramabad": {
+      "cityId": "khorramabad",
+      "featureCount": 95,
+      "osm": 2,
+      "divar": 93,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khorramdasht-city": {
+      "cityId": "khorramdasht-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khorramshahr": {
+      "cityId": "khorramshahr",
+      "featureCount": 98,
+      "osm": 0,
+      "divar": 98,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khorsh-e-rostam": {
+      "cityId": "khorsh-e-rostam",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khosf": {
+      "cityId": "khosf",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khoshab": {
+      "cityId": "khoshab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khoshkbijar": {
+      "cityId": "khoshkbijar",
+      "featureCount": 23,
+      "osm": 0,
+      "divar": 23,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khoshroud-pey": {
+      "cityId": "khoshroud-pey",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khosrowshah": {
+      "cityId": "khosrowshah",
+      "featureCount": 32,
+      "osm": 7,
+      "divar": 25,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khour": {
+      "cityId": "khour",
+      "featureCount": 17,
+      "osm": 0,
+      "divar": 17,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khouzankola": {
+      "cityId": "khouzankola",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "khoy": {
+      "cityId": "khoy",
+      "featureCount": 28,
+      "osm": 0,
+      "divar": 28,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kiakola": {
+      "cityId": "kiakola",
+      "featureCount": 77,
+      "osm": 6,
+      "divar": 71,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kianshahr-city": {
+      "cityId": "kianshahr-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kiar": {
+      "cityId": "kiar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kiasar": {
+      "cityId": "kiasar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kiashahr": {
+      "cityId": "kiashahr",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kilan": {
+      "cityId": "kilan",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kish": {
+      "cityId": "kish",
+      "featureCount": 15,
+      "osm": 0,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kishkur": {
+      "cityId": "kishkur",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kliyai": {
+      "cityId": "kliyai",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kohan-abad": {
+      "cityId": "kohan-abad",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kohgiluyeh": {
+      "cityId": "kohgiluyeh",
+      "featureCount": 45,
+      "osm": 0,
+      "divar": 45,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kohnani": {
+      "cityId": "kohnani",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kojur": {
+      "cityId": "kojur",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kolbad": {
+      "cityId": "kolbad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "komijan": {
+      "cityId": "komijan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "koohbanan": {
+      "cityId": "koohbanan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "koohpaye": {
+      "cityId": "koohpaye",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "koohsar": {
+      "cityId": "koohsar",
+      "featureCount": 50,
+      "osm": 0,
+      "divar": 50,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "koohsaran": {
+      "cityId": "koohsaran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "koohsorkh": {
+      "cityId": "koohsorkh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kookherd-hareng": {
+      "cityId": "kookherd-hareng",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kor": {
+      "cityId": "kor",
+      "featureCount": 35,
+      "osm": 0,
+      "divar": 35,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "koraayim": {
+      "cityId": "koraayim",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kordkuy": {
+      "cityId": "kordkuy",
+      "featureCount": 12,
+      "osm": 0,
+      "divar": 12,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kosar": {
+      "cityId": "kosar",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "koshkouyeh": {
+      "cityId": "koshkouyeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kouchesfahan": {
+      "cityId": "kouchesfahan",
+      "featureCount": 63,
+      "osm": 1,
+      "divar": 62,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kouhi-kheyl": {
+      "cityId": "kouhi-kheyl",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kouhrang": {
+      "cityId": "kouhrang",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "koumeleh": {
+      "cityId": "koumeleh",
+      "featureCount": 26,
+      "osm": 0,
+      "divar": 26,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kourin": {
+      "cityId": "kourin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kuh-chenar": {
+      "cityId": "kuh-chenar",
+      "featureCount": 10,
+      "osm": 0,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kuhdasht": {
+      "cityId": "kuhdasht",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kuhenjan": {
+      "cityId": "kuhenjan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kuhestan-city": {
+      "cityId": "kuhestan-city",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kuhin": {
+      "cityId": "kuhin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kuhmarreh": {
+      "cityId": "kuhmarreh",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kuhsar-city": {
+      "cityId": "kuhsar-city",
+      "featureCount": 171,
+      "osm": 0,
+      "divar": 171,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kurdistan-other": {
+      "cityId": "kurdistan-other",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kushkenar": {
+      "cityId": "kushkenar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "kuzeran": {
+      "cityId": "kuzeran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ladiz": {
+      "cityId": "ladiz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lahijan": {
+      "cityId": "lahijan",
+      "featureCount": 36,
+      "osm": 0,
+      "divar": 36,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lajan": {
+      "cityId": "lajan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lalajin": {
+      "cityId": "lalajin",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "laleh-zar": {
+      "cityId": "laleh-zar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lali": {
+      "cityId": "lali",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lamerd": {
+      "cityId": "lamerd",
+      "featureCount": 7,
+      "osm": 2,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "landeh": {
+      "cityId": "landeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "langrud": {
+      "cityId": "langrud",
+      "featureCount": 92,
+      "osm": 0,
+      "divar": 92,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lar": {
+      "cityId": "lar",
+      "featureCount": 13,
+      "osm": 0,
+      "divar": 13,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "larak": {
+      "cityId": "larak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "laran": {
+      "cityId": "laran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "larestan": {
+      "cityId": "larestan",
+      "featureCount": 13,
+      "osm": 0,
+      "divar": 13,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lashar": {
+      "cityId": "lashar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lashtenesha": {
+      "cityId": "lashtenesha",
+      "featureCount": 10,
+      "osm": 0,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lavan": {
+      "cityId": "lavan",
+      "featureCount": 125,
+      "osm": 0,
+      "divar": 125,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lavandevil": {
+      "cityId": "lavandevil",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lenjan": {
+      "cityId": "lenjan",
+      "featureCount": 21,
+      "osm": 0,
+      "divar": 21,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lessertunb": {
+      "cityId": "lessertunb",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "leylan": {
+      "cityId": "leylan",
+      "featureCount": 10,
+      "osm": 0,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "likak": {
+      "cityId": "likak",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lirdaf": {
+      "cityId": "lirdaf",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lisar": {
+      "cityId": "lisar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lordegan": {
+      "cityId": "lordegan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "loshan": {
+      "cityId": "loshan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "lotf-abad": {
+      "cityId": "lotf-abad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "loulman": {
+      "cityId": "loulman",
+      "featureCount": 16,
+      "osm": 0,
+      "divar": 16,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ludab": {
+      "cityId": "ludab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahabad-city": {
+      "cityId": "mahabad-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahabad": {
+      "cityId": "mahabad",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahallat": {
+      "cityId": "mahallat",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahan": {
+      "cityId": "mahan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahani": {
+      "cityId": "mahani",
+      "featureCount": 415,
+      "osm": 0,
+      "divar": 415,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahdasht": {
+      "cityId": "mahdasht",
+      "featureCount": 88,
+      "osm": 4,
+      "divar": 84,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahidasht": {
+      "cityId": "mahidasht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahmaleh": {
+      "cityId": "mahmaleh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahmoudabad": {
+      "cityId": "mahmoudabad",
+      "featureCount": 26,
+      "osm": 0,
+      "divar": 26,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahneshan": {
+      "cityId": "mahneshan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahshahr": {
+      "cityId": "mahshahr",
+      "featureCount": 14,
+      "osm": 0,
+      "divar": 14,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahur-milati": {
+      "cityId": "mahur-milati",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mahvelat": {
+      "cityId": "mahvelat",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "makloan": {
+      "cityId": "makloan",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "maku": {
+      "cityId": "maku",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "malard": {
+      "cityId": "malard",
+      "featureCount": 155,
+      "osm": 4,
+      "divar": 151,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "malayer": {
+      "cityId": "malayer",
+      "featureCount": 51,
+      "osm": 0,
+      "divar": 51,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "malekan": {
+      "cityId": "malekan",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "malekshahi": {
+      "cityId": "malekshahi",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mamaqaan": {
+      "cityId": "mamaqaan",
+      "featureCount": 15,
+      "osm": 3,
+      "divar": 12,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mamasani": {
+      "cityId": "mamasani",
+      "featureCount": 24,
+      "osm": 0,
+      "divar": 24,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mamulan": {
+      "cityId": "mamulan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "maneh": {
+      "cityId": "maneh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "manehsaman": {
+      "cityId": "manehsaman",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "manjil": {
+      "cityId": "manjil",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "manujan": {
+      "cityId": "manujan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "maragheh": {
+      "cityId": "maragheh",
+      "featureCount": 146,
+      "osm": 73,
+      "divar": 73,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "marand": {
+      "cityId": "marand",
+      "featureCount": 11,
+      "osm": 0,
+      "divar": 11,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "maraveh-tapeh": {
+      "cityId": "maraveh-tapeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "margon": {
+      "cityId": "margon",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "marivan": {
+      "cityId": "marivan",
+      "featureCount": 20,
+      "osm": 0,
+      "divar": 20,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "marvast": {
+      "cityId": "marvast",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "marvdasht": {
+      "cityId": "marvdasht",
+      "featureCount": 35,
+      "osm": 0,
+      "divar": 35,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "marzan-abad": {
+      "cityId": "marzan-abad",
+      "featureCount": 41,
+      "osm": 38,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "marzdaran-city": {
+      "cityId": "marzdaran-city",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "marzikola": {
+      "cityId": "marzikola",
+      "featureCount": 19,
+      "osm": 1,
+      "divar": 18,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "masal": {
+      "cityId": "masal",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mashhad-marghab": {
+      "cityId": "mashhad-marghab",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "masjedsoleyman": {
+      "cityId": "masjedsoleyman",
+      "featureCount": 39,
+      "osm": 14,
+      "divar": 25,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "masouleh": {
+      "cityId": "masouleh",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "masoumieh": {
+      "cityId": "masoumieh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "maybod": {
+      "cityId": "maybod",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mazayjan": {
+      "cityId": "mazayjan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mazhin": {
+      "cityId": "mazhin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mehdishahr-khorasan": {
+      "cityId": "mehdishahr-khorasan",
+      "featureCount": 57,
+      "osm": 0,
+      "divar": 57,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mehdishahr": {
+      "cityId": "mehdishahr",
+      "featureCount": 57,
+      "osm": 0,
+      "divar": 57,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mehraban": {
+      "cityId": "mehraban",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mehran-city": {
+      "cityId": "mehran-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mehran": {
+      "cityId": "mehran",
+      "featureCount": 11,
+      "osm": 0,
+      "divar": 11,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mehregan-city": {
+      "cityId": "mehregan-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mehrestan": {
+      "cityId": "mehrestan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mehriz": {
+      "cityId": "mehriz",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "meshginshahr": {
+      "cityId": "meshginshahr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "meshkindasht-city": {
+      "cityId": "meshkindasht-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "meshkinshahr": {
+      "cityId": "meshkinshahr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "meymeh": {
+      "cityId": "meymeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "miami": {
+      "cityId": "miami",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mian-jolgeh": {
+      "cityId": "mian-jolgeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mian-velayat": {
+      "cityId": "mian-velayat",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "miandasht": {
+      "cityId": "miandasht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "miandoab": {
+      "cityId": "miandoab",
+      "featureCount": 14,
+      "osm": 0,
+      "divar": 14,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mianeh": {
+      "cityId": "mianeh",
+      "featureCount": 17,
+      "osm": 0,
+      "divar": 17,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "miankuh": {
+      "cityId": "miankuh",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "milajerd": {
+      "cityId": "milajerd",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mimand": {
+      "cityId": "mimand",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "minab": {
+      "cityId": "minab",
+      "featureCount": 78,
+      "osm": 0,
+      "divar": 78,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "minan": {
+      "cityId": "minan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "minj": {
+      "cityId": "minj",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "minjavan": {
+      "cityId": "minjavan",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "minudasht": {
+      "cityId": "minudasht",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mirjaveh": {
+      "cityId": "mirjaveh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mobarakeh": {
+      "cityId": "mobarakeh",
+      "featureCount": 58,
+      "osm": 0,
+      "divar": 58,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mogarmun": {
+      "cityId": "mogarmun",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mogouyi": {
+      "cityId": "mogouyi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mohajeran": {
+      "cityId": "mohajeran",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mohammad-shahr": {
+      "cityId": "mohammad-shahr",
+      "featureCount": 16,
+      "osm": 1,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mohammadabad": {
+      "cityId": "mohammadabad",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mohammadbar": {
+      "cityId": "mohammadbar",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mohammadiyeh": {
+      "cityId": "mohammadiyeh",
+      "featureCount": 16,
+      "osm": 0,
+      "divar": 16,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mohr": {
+      "cityId": "mohr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "molkabad": {
+      "cityId": "molkabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "moradlu": {
+      "cityId": "moradlu",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "moran": {
+      "cityId": "moran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "moshkan": {
+      "cityId": "moshkan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "muchesh": {
+      "cityId": "muchesh",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mud": {
+      "cityId": "mud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "musian": {
+      "cityId": "musian",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "naaeein": {
+      "cityId": "naaeein",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nadushan": {
+      "cityId": "nadushan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "naghan": {
+      "cityId": "naghan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nahavand": {
+      "cityId": "nahavand",
+      "featureCount": 28,
+      "osm": 0,
+      "divar": 28,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "najafabad": {
+      "cityId": "najafabad",
+      "featureCount": 66,
+      "osm": 0,
+      "divar": 66,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nakhtalu": {
+      "cityId": "nakhtalu",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nalus": {
+      "cityId": "nalus",
+      "featureCount": 5,
+      "osm": 4,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "namin": {
+      "cityId": "namin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "namshir": {
+      "cityId": "namshir",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nannur": {
+      "cityId": "nannur",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "naqadeh": {
+      "cityId": "naqadeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "narmashir": {
+      "cityId": "narmashir",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nashtarud": {
+      "cityId": "nashtarud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nasimshahr": {
+      "cityId": "nasimshahr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "naskand": {
+      "cityId": "naskand",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nasr-abad-city": {
+      "cityId": "nasr-abad-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "natanz": {
+      "cityId": "natanz",
+      "featureCount": 12,
+      "osm": 0,
+      "divar": 12,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "navsud": {
+      "cityId": "navsud",
+      "featureCount": 18,
+      "osm": 0,
+      "divar": 18,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nazar-kahrizi": {
+      "cityId": "nazar-kahrizi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nazarabad": {
+      "cityId": "nazarabad",
+      "featureCount": 17,
+      "osm": 0,
+      "divar": 17,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nazil": {
+      "cityId": "nazil",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "negar": {
+      "cityId": "negar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "negin-kavir": {
+      "cityId": "negin-kavir",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "negin-shahr": {
+      "cityId": "negin-shahr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nehbandan": {
+      "cityId": "nehbandan",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "neka": {
+      "cityId": "neka",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "neyriz": {
+      "cityId": "neyriz",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "niasar": {
+      "cityId": "niasar",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nikshahr": {
+      "cityId": "nikshahr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nimbuluk": {
+      "cityId": "nimbuluk",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nimrooz": {
+      "cityId": "nimrooz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nir": {
+      "cityId": "nir",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nirs": {
+      "cityId": "nirs",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nishabur": {
+      "cityId": "nishabur",
+      "featureCount": 80,
+      "osm": 2,
+      "divar": 78,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nishapur": {
+      "cityId": "nishapur",
+      "featureCount": 94,
+      "osm": 2,
+      "divar": 92,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nobaran": {
+      "cityId": "nobaran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nodeh-enghelab": {
+      "cityId": "nodeh-enghelab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nodeh-khandoz": {
+      "cityId": "nodeh-khandoz",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nokandeh": {
+      "cityId": "nokandeh",
+      "featureCount": 5,
+      "osm": 1,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nokhandan": {
+      "cityId": "nokhandan",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "noor": {
+      "cityId": "noor",
+      "featureCount": 18,
+      "osm": 0,
+      "divar": 18,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "norabad": {
+      "cityId": "norabad",
+      "featureCount": 19,
+      "osm": 0,
+      "divar": 19,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nosrat-abad": {
+      "cityId": "nosrat-abad",
+      "featureCount": 18,
+      "osm": 0,
+      "divar": 18,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "noubandegan": {
+      "cityId": "noubandegan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nourabad": {
+      "cityId": "nourabad",
+      "featureCount": 29,
+      "osm": 0,
+      "divar": 29,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nowshahr": {
+      "cityId": "nowshahr",
+      "featureCount": 19,
+      "osm": 10,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nozad": {
+      "cityId": "nozad",
+      "featureCount": 19,
+      "osm": 10,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "nushin-shahr": {
+      "cityId": "nushin-shahr",
+      "featureCount": 122,
+      "osm": 0,
+      "divar": 122,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "omam": {
+      "cityId": "omam",
+      "featureCount": 19,
+      "osm": 0,
+      "divar": 19,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "omidieh": {
+      "cityId": "omidieh",
+      "featureCount": 29,
+      "osm": 19,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "oram": {
+      "cityId": "oram",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "oshnavieh": {
+      "cityId": "oshnavieh",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "oskoo": {
+      "cityId": "oskoo",
+      "featureCount": 28,
+      "osm": 3,
+      "divar": 25,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "otaghvar": {
+      "cityId": "otaghvar",
+      "featureCount": 66,
+      "osm": 0,
+      "divar": 66,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "paadnaa-olyaa": {
+      "cityId": "paadnaa-olyaa",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "paeen-holar": {
+      "cityId": "paeen-holar",
+      "featureCount": 15,
+      "osm": 0,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "paeen-jam": {
+      "cityId": "paeen-jam",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pakdasht": {
+      "cityId": "pakdasht",
+      "featureCount": 39,
+      "osm": 0,
+      "divar": 39,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "palangabad": {
+      "cityId": "palangabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "papi": {
+      "cityId": "papi",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pareh-sar": {
+      "cityId": "pareh-sar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pariz": {
+      "cityId": "pariz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "parsabad": {
+      "cityId": "parsabad",
+      "featureCount": 39,
+      "osm": 0,
+      "divar": 39,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "parsian": {
+      "cityId": "parsian",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "parud": {
+      "cityId": "parud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pasakuh": {
+      "cityId": "pasakuh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pasargad": {
+      "cityId": "pasargad",
+      "featureCount": 254,
+      "osm": 0,
+      "divar": 254,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pataveh": {
+      "cityId": "pataveh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "paveh": {
+      "cityId": "paveh",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pelan": {
+      "cityId": "pelan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pip": {
+      "cityId": "pip",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pir-bakraan": {
+      "cityId": "pir-bakraan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pir-sohrab": {
+      "cityId": "pir-sohrab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pir-solayman": {
+      "cityId": "pir-solayman",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "piranshahr": {
+      "cityId": "piranshahr",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pirbazar": {
+      "cityId": "pirbazar",
+      "featureCount": 178,
+      "osm": 1,
+      "divar": 177,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pishin": {
+      "cityId": "pishin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pishkhor": {
+      "cityId": "pishkhor",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "pishva": {
+      "cityId": "pishva",
+      "featureCount": 50,
+      "osm": 0,
+      "divar": 50,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "poldasht": {
+      "cityId": "poldasht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "poldokhtar": {
+      "cityId": "poldokhtar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "polsefid": {
+      "cityId": "polsefid",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "poshtkuh-city": {
+      "cityId": "poshtkuh-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "poshtkuh": {
+      "cityId": "poshtkuh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qaemshahr": {
+      "cityId": "qaemshahr",
+      "featureCount": 38,
+      "osm": 0,
+      "divar": 38,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qaen": {
+      "cityId": "qaen",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qamarud": {
+      "cityId": "qamarud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qasemabad-khaf": {
+      "cityId": "qasemabad-khaf",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qasreqand": {
+      "cityId": "qasreqand",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qasrshirin": {
+      "cityId": "qasrshirin",
+      "featureCount": 25,
+      "osm": 0,
+      "divar": 25,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qazvin-city": {
+      "cityId": "qazvin-city",
+      "featureCount": 104,
+      "osm": 0,
+      "divar": 104,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qeshm": {
+      "cityId": "qeshm",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qeydar": {
+      "cityId": "qeydar",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qods": {
+      "cityId": "qods",
+      "featureCount": 215,
+      "osm": 6,
+      "divar": 209,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qom-city": {
+      "cityId": "qom-city",
+      "featureCount": 145,
+      "osm": 0,
+      "divar": 145,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qorveh": {
+      "cityId": "qorveh",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "quchan": {
+      "cityId": "quchan",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "qushkhaneh": {
+      "cityId": "qushkhaneh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "raamesheh": {
+      "cityId": "raamesheh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rabar": {
+      "cityId": "rabar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rabt": {
+      "cityId": "rabt",
+      "featureCount": 1,
+      "osm": 1,
+      "divar": 0,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "radkan": {
+      "cityId": "radkan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rafsanjan": {
+      "cityId": "rafsanjan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rahgan": {
+      "cityId": "rahgan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rahmatabad-city": {
+      "cityId": "rahmatabad-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ramand": {
+      "cityId": "ramand",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ramhormoz": {
+      "cityId": "ramhormoz",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ramian": {
+      "cityId": "ramian",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ramjerd": {
+      "cityId": "ramjerd",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ramjin": {
+      "cityId": "ramjin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ramsar": {
+      "cityId": "ramsar",
+      "featureCount": 15,
+      "osm": 0,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ramshir": {
+      "cityId": "ramshir",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rankouh": {
+      "cityId": "rankouh",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rasht": {
+      "cityId": "rasht",
+      "featureCount": 120,
+      "osm": 1,
+      "divar": 119,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rask": {
+      "cityId": "rask",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ravansar": {
+      "cityId": "ravansar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ravars": {
+      "cityId": "ravars",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rayen": {
+      "cityId": "rayen",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "raz-va-jargalan": {
+      "cityId": "raz-va-jargalan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "razan": {
+      "cityId": "razan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "razaviye-city": {
+      "cityId": "razaviye-city",
+      "featureCount": 73,
+      "osm": 0,
+      "divar": 73,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "reshtkhar": {
+      "cityId": "reshtkhar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rey": {
+      "cityId": "rey",
+      "featureCount": 430,
+      "osm": 1,
+      "divar": 429,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "reyneh": {
+      "cityId": "reyneh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rezvanshahr": {
+      "cityId": "rezvanshahr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rig-malek": {
+      "cityId": "rig-malek",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rig": {
+      "cityId": "rig",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rigan": {
+      "cityId": "rigan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "riz": {
+      "cityId": "riz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "robatskarim": {
+      "cityId": "robatskarim",
+      "featureCount": 29,
+      "osm": 0,
+      "divar": 29,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "roniz": {
+      "cityId": "roniz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "roodasht": {
+      "cityId": "roodasht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rostam-abad": {
+      "cityId": "rostam-abad",
+      "featureCount": 11,
+      "osm": 0,
+      "divar": 11,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rostam": {
+      "cityId": "rostam",
+      "featureCount": 32,
+      "osm": 0,
+      "divar": 32,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rostamkola": {
+      "cityId": "rostamkola",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rostaq": {
+      "cityId": "rostaq",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "roudbaneh": {
+      "cityId": "roudbaneh",
+      "featureCount": 90,
+      "osm": 0,
+      "divar": 90,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "roudhan": {
+      "cityId": "roudhan",
+      "featureCount": 16,
+      "osm": 0,
+      "divar": 16,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "royan": {
+      "cityId": "royan",
+      "featureCount": 19,
+      "osm": 2,
+      "divar": 17,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rudab": {
+      "cityId": "rudab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rudan": {
+      "cityId": "rudan",
+      "featureCount": 10,
+      "osm": 0,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rudasht": {
+      "cityId": "rudasht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rudbar-city": {
+      "cityId": "rudbar-city",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rudbar": {
+      "cityId": "rudbar",
+      "featureCount": 10,
+      "osm": 0,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rudbarjonub": {
+      "cityId": "rudbarjonub",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rudehen": {
+      "cityId": "rudehen",
+      "featureCount": 31,
+      "osm": 0,
+      "divar": 31,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rudkhaneh": {
+      "cityId": "rudkhaneh",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rudsar": {
+      "cityId": "rudsar",
+      "featureCount": 16,
+      "osm": 0,
+      "divar": 16,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "rumeshkan": {
+      "cityId": "rumeshkan",
+      "featureCount": 10,
+      "osm": 2,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ruydar": {
+      "cityId": "ruydar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "saadabad": {
+      "cityId": "saadabad",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "saaein-ghaleh": {
+      "cityId": "saaein-ghaleh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sabalan-city": {
+      "cityId": "sabalan-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sabashahr": {
+      "cityId": "sabashahr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "saberi": {
+      "cityId": "saberi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sabzevar": {
+      "cityId": "sabzevar",
+      "featureCount": 67,
+      "osm": 0,
+      "divar": 67,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sadoogh": {
+      "cityId": "sadoogh",
+      "featureCount": 24,
+      "osm": 0,
+      "divar": 24,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sadra": {
+      "cityId": "sadra",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "safaaiyeh": {
+      "cityId": "safaaiyeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "safadasht-industrial-city": {
+      "cityId": "safadasht-industrial-city",
+      "featureCount": 105,
+      "osm": 0,
+      "divar": 105,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "safi-abad-city": {
+      "cityId": "safi-abad-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "saghez": {
+      "cityId": "saghez",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sahand": {
+      "cityId": "sahand",
+      "featureCount": 35,
+      "osm": 3,
+      "divar": 32,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sahneh": {
+      "cityId": "sahneh",
+      "featureCount": 4,
+      "osm": 1,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sahraye-bagh": {
+      "cityId": "sahraye-bagh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sajas-rud": {
+      "cityId": "sajas-rud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "salafchegan": {
+      "cityId": "salafchegan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "salami": {
+      "cityId": "salami",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "salas-babajani": {
+      "cityId": "salas-babajani",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "salasebabajani": {
+      "cityId": "salasebabajani",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "saleh-abad-city": {
+      "cityId": "saleh-abad-city",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "saleh-abad": {
+      "cityId": "saleh-abad",
+      "featureCount": 26,
+      "osm": 0,
+      "divar": 26,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "salehaabad": {
+      "cityId": "salehaabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "salman-shahr": {
+      "cityId": "salman-shahr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "salmas": {
+      "cityId": "salmas",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "samalqan": {
+      "cityId": "samalqan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "samareen": {
+      "cityId": "samareen",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "samen-city": {
+      "cityId": "samen-city",
+      "featureCount": 31,
+      "osm": 0,
+      "divar": 31,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "samman": {
+      "cityId": "samman",
+      "featureCount": 22,
+      "osm": 12,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "samsami": {
+      "cityId": "samsami",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sanandaj": {
+      "cityId": "sanandaj",
+      "featureCount": 108,
+      "osm": 3,
+      "divar": 105,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sandarak": {
+      "cityId": "sandarak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sangan": {
+      "cityId": "sangan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sangar": {
+      "cityId": "sangar",
+      "featureCount": 108,
+      "osm": 0,
+      "divar": 108,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sangdovin": {
+      "cityId": "sangdovin",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sankhvast": {
+      "cityId": "sankhvast",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sar-aasiab-yousefi": {
+      "cityId": "sar-aasiab-yousefi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sar-faryab": {
+      "cityId": "sar-faryab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarab-bagh": {
+      "cityId": "sarab-bagh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarab-meymeh": {
+      "cityId": "sarab-meymeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarab": {
+      "cityId": "sarab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarakhs": {
+      "cityId": "sarakhs",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "saral": {
+      "cityId": "saral",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "saravan": {
+      "cityId": "saravan",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarband": {
+      "cityId": "sarband",
+      "featureCount": 59,
+      "osm": 0,
+      "divar": 59,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarbaz": {
+      "cityId": "sarbaz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarbisheh": {
+      "cityId": "sarbisheh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarbuk": {
+      "cityId": "sarbuk",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarchahan": {
+      "cityId": "sarchahan",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sardaran": {
+      "cityId": "sardaran",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sardasht": {
+      "cityId": "sardasht",
+      "featureCount": 13,
+      "osm": 0,
+      "divar": 13,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sardorud": {
+      "cityId": "sardorud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarein": {
+      "cityId": "sarein",
+      "featureCount": 96,
+      "osm": 0,
+      "divar": 96,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarhad": {
+      "cityId": "sarhad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sari": {
+      "cityId": "sari",
+      "featureCount": 96,
+      "osm": 6,
+      "divar": 90,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarisabz": {
+      "cityId": "sarisabz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarish-abad": {
+      "cityId": "sarish-abad",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarpol-zahab": {
+      "cityId": "sarpol-zahab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarshiu": {
+      "cityId": "sarshiu",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarugh": {
+      "cityId": "sarugh",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarvabad": {
+      "cityId": "sarvabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarvelayat": {
+      "cityId": "sarvelayat",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sarvestan-city": {
+      "cityId": "sarvestan-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "savadkuh": {
+      "cityId": "savadkuh",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "saveh": {
+      "cityId": "saveh",
+      "featureCount": 16,
+      "osm": 1,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "savojbolagh": {
+      "cityId": "savojbolagh",
+      "featureCount": 58,
+      "osm": 0,
+      "divar": 58,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sede": {
+      "cityId": "sede",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sedeh": {
+      "cityId": "sedeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "seestaan": {
+      "cityId": "seestaan",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "seh-ghaleh": {
+      "cityId": "seh-ghaleh",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "semirom": {
+      "cityId": "semirom",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "semnan-city": {
+      "cityId": "semnan-city",
+      "featureCount": 67,
+      "osm": 0,
+      "divar": 67,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sepidan": {
+      "cityId": "sepidan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sepidar-city": {
+      "cityId": "sepidar-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "serajoo": {
+      "cityId": "serajoo",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "seydan": {
+      "cityId": "seydan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "seyyedabad": {
+      "cityId": "seyyedabad",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shabab": {
+      "cityId": "shabab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shabankareh": {
+      "cityId": "shabankareh",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shabestar": {
+      "cityId": "shabestar",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shadeghan": {
+      "cityId": "shadeghan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shadian": {
+      "cityId": "shadian",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shadmehr": {
+      "cityId": "shadmehr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shaft": {
+      "cityId": "shaft",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahdad": {
+      "cityId": "shahdad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahedshahr": {
+      "cityId": "shahedshahr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahenjarin": {
+      "cityId": "shahenjarin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahindej": {
+      "cityId": "shahindej",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahinshahr": {
+      "cityId": "shahinshahr",
+      "featureCount": 54,
+      "osm": 0,
+      "divar": 54,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahivand": {
+      "cityId": "shahivand",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahmirzad": {
+      "cityId": "shahmirzad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shaho": {
+      "cityId": "shaho",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahrabad": {
+      "cityId": "shahrabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahrbabak": {
+      "cityId": "shahrbabak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahrekord": {
+      "cityId": "shahrekord",
+      "featureCount": 42,
+      "osm": 12,
+      "divar": 30,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahreza-city": {
+      "cityId": "shahreza-city",
+      "featureCount": 9,
+      "osm": 1,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahriar": {
+      "cityId": "shahriar",
+      "featureCount": 163,
+      "osm": 5,
+      "divar": 158,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shahrood": {
+      "cityId": "shahrood",
+      "featureCount": 29,
+      "osm": 0,
+      "divar": 29,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shakhnat": {
+      "cityId": "shakhnat",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shal": {
+      "cityId": "shal",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shamil": {
+      "cityId": "shamil",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shamkan": {
+      "cityId": "shamkan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shanbeh-va-tasuj": {
+      "cityId": "shanbeh-va-tasuj",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shanderman": {
+      "cityId": "shanderman",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shara": {
+      "cityId": "shara",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sharif-abad-city": {
+      "cityId": "sharif-abad-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shaskouh": {
+      "cityId": "shaskouh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shazand": {
+      "cityId": "shazand",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shelman": {
+      "cityId": "shelman",
+      "featureCount": 16,
+      "osm": 0,
+      "divar": 16,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shemshak": {
+      "cityId": "shemshak",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sheshdeh-va-qareh-bolagh": {
+      "cityId": "sheshdeh-va-qareh-bolagh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sheshtamad": {
+      "cityId": "sheshtamad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sheshtaraz": {
+      "cityId": "sheshtaraz",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sheyda": {
+      "cityId": "sheyda",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shibkuh-city": {
+      "cityId": "shibkuh-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shibkuh": {
+      "cityId": "shibkuh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shiraz": {
+      "cityId": "shiraz",
+      "featureCount": 271,
+      "osm": 0,
+      "divar": 271,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shirgah": {
+      "cityId": "shirgah",
+      "featureCount": 6,
+      "osm": 1,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shirin-su": {
+      "cityId": "shirin-su",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shirvan-city": {
+      "cityId": "shirvan-city",
+      "featureCount": 45,
+      "osm": 0,
+      "divar": 45,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shirvan": {
+      "cityId": "shirvan",
+      "featureCount": 11,
+      "osm": 0,
+      "divar": 11,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shusef": {
+      "cityId": "shusef",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shush": {
+      "cityId": "shush",
+      "featureCount": 14,
+      "osm": 0,
+      "divar": 14,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shushtar": {
+      "cityId": "shushtar",
+      "featureCount": 8,
+      "osm": 1,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "shut": {
+      "cityId": "shut",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "siah-rud": {
+      "cityId": "siah-rud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "siahkal": {
+      "cityId": "siahkal",
+      "featureCount": 74,
+      "osm": 0,
+      "divar": 74,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sib-va-sura": {
+      "cityId": "sib-va-sura",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "silakhur": {
+      "cityId": "silakhur",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "silvaneh": {
+      "cityId": "silvaneh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "simakan": {
+      "cityId": "simakan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "simin-shahr": {
+      "cityId": "simin-shahr",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "simineh": {
+      "cityId": "simineh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "siraf": {
+      "cityId": "siraf",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sirik": {
+      "cityId": "sirik",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sirjan": {
+      "cityId": "sirjan",
+      "featureCount": 44,
+      "osm": 0,
+      "divar": 44,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sirri": {
+      "cityId": "sirri",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sirvan-city": {
+      "cityId": "sirvan-city",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sirvan": {
+      "cityId": "sirvan",
+      "featureCount": 19,
+      "osm": 0,
+      "divar": 19,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sisakht": {
+      "cityId": "sisakht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sivan": {
+      "cityId": "sivan",
+      "featureCount": 19,
+      "osm": 0,
+      "divar": 19,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "siyakh-darangoon": {
+      "cityId": "siyakh-darangoon",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "soleyman": {
+      "cityId": "soleyman",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "soltaniyeh": {
+      "cityId": "soltaniyeh",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "somar": {
+      "cityId": "somar",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "somehsara": {
+      "cityId": "somehsara",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sonqor": {
+      "cityId": "sonqor",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "soofiyan": {
+      "cityId": "soofiyan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sorena": {
+      "cityId": "sorena",
+      "featureCount": 268,
+      "osm": 0,
+      "divar": 268,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sorkhan-kalateh": {
+      "cityId": "sorkhan-kalateh",
+      "featureCount": 81,
+      "osm": 0,
+      "divar": 81,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sorkhe-hesar-city": {
+      "cityId": "sorkhe-hesar-city",
+      "featureCount": 225,
+      "osm": 1,
+      "divar": 224,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sorkheh": {
+      "cityId": "sorkheh",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sorkhrood": {
+      "cityId": "sorkhrood",
+      "featureCount": 25,
+      "osm": 0,
+      "divar": 25,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sourek": {
+      "cityId": "sourek",
+      "featureCount": 53,
+      "osm": 6,
+      "divar": 47,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sowghan": {
+      "cityId": "sowghan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "sumay-baradust": {
+      "cityId": "sumay-baradust",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "suq": {
+      "cityId": "suq",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "suri": {
+      "cityId": "suri",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "susangerd": {
+      "cityId": "susangerd",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "suvragh": {
+      "cityId": "suvragh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tabaghdeh": {
+      "cityId": "tabaghdeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tabas": {
+      "cityId": "tabas",
+      "featureCount": 13,
+      "osm": 0,
+      "divar": 13,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tabriz": {
+      "cityId": "tabriz",
+      "featureCount": 323,
+      "osm": 49,
+      "divar": 274,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tafresh": {
+      "cityId": "tafresh",
+      "featureCount": 21,
+      "osm": 0,
+      "divar": 21,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "taft": {
+      "cityId": "taft",
+      "featureCount": 29,
+      "osm": 0,
+      "divar": 29,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "taftan": {
+      "cityId": "taftan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "taghankooh": {
+      "cityId": "taghankooh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tahergurab": {
+      "cityId": "tahergurab",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "takab": {
+      "cityId": "takab",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "takestan": {
+      "cityId": "takestan",
+      "featureCount": 23,
+      "osm": 0,
+      "divar": 23,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "takht-e-solayman": {
+      "cityId": "takht-e-solayman",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "takht": {
+      "cityId": "takht",
+      "featureCount": 13,
+      "osm": 0,
+      "divar": 13,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "talang": {
+      "cityId": "talang",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "talarpey": {
+      "cityId": "talarpey",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "taleghan": {
+      "cityId": "taleghan",
+      "featureCount": 1,
+      "osm": 1,
+      "divar": 0,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "talesh": {
+      "cityId": "talesh",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "talu": {
+      "cityId": "talu",
+      "featureCount": 121,
+      "osm": 0,
+      "divar": 121,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tankaman": {
+      "cityId": "tankaman",
+      "featureCount": 45,
+      "osm": 0,
+      "divar": 45,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tarem-city": {
+      "cityId": "tarem-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tarem": {
+      "cityId": "tarem",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tarhan": {
+      "cityId": "tarhan",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tarom-e-olfat": {
+      "cityId": "tarom-e-olfat",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tarom": {
+      "cityId": "tarom",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tasooj": {
+      "cityId": "tasooj",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tasuj": {
+      "cityId": "tasuj",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tatar-olya": {
+      "cityId": "tatar-olya",
+      "featureCount": 3,
+      "osm": 1,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tavak": {
+      "cityId": "tavak",
+      "featureCount": 162,
+      "osm": 0,
+      "divar": 162,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "taybad": {
+      "cityId": "taybad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tehran-city": {
+      "cityId": "tehran-city",
+      "featureCount": 421,
+      "osm": 2,
+      "divar": 419,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tikmeh-dash": {
+      "cityId": "tikmeh-dash",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "timur-abad": {
+      "cityId": "timur-abad",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tiraan": {
+      "cityId": "tiraan",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tiranchi": {
+      "cityId": "tiranchi",
+      "featureCount": 90,
+      "osm": 0,
+      "divar": 90,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tonkabon": {
+      "cityId": "tonkabon",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tookehur": {
+      "cityId": "tookehur",
+      "featureCount": 10,
+      "osm": 0,
+      "divar": 10,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "torbatheydariyeh": {
+      "cityId": "torbatheydariyeh",
+      "featureCount": 58,
+      "osm": 0,
+      "divar": 58,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "torbatjam": {
+      "cityId": "torbatjam",
+      "featureCount": 46,
+      "osm": 0,
+      "divar": 46,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "torkamanchay": {
+      "cityId": "torkamanchay",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "toutkabon": {
+      "cityId": "toutkabon",
+      "featureCount": 7,
+      "osm": 3,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tulam-shahr": {
+      "cityId": "tulam-shahr",
+      "featureCount": 8,
+      "osm": 0,
+      "divar": 8,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "tuyserkan": {
+      "cityId": "tuyserkan",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "uraman": {
+      "cityId": "uraman",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "urmia": {
+      "cityId": "urmia",
+      "featureCount": 172,
+      "osm": 1,
+      "divar": 171,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "vahdatiyeh": {
+      "cityId": "vahdatiyeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "vahidieh": {
+      "cityId": "vahidieh",
+      "featureCount": 118,
+      "osm": 0,
+      "divar": 118,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "vajargah": {
+      "cityId": "vajargah",
+      "featureCount": 14,
+      "osm": 0,
+      "divar": 14,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "varamin": {
+      "cityId": "varamin",
+      "featureCount": 11,
+      "osm": 0,
+      "divar": 11,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "varavi": {
+      "cityId": "varavi",
+      "featureCount": 1,
+      "osm": 1,
+      "divar": 0,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "vardasht": {
+      "cityId": "vardasht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "varzaneh": {
+      "cityId": "varzaneh",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "varzeghan": {
+      "cityId": "varzeghan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "vazine": {
+      "cityId": "vazine",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "veshnaveh": {
+      "cityId": "veshnaveh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "veysian": {
+      "cityId": "veysian",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "vilkij": {
+      "cityId": "vilkij",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "yamchi": {
+      "cityId": "yamchi",
+      "featureCount": 7,
+      "osm": 0,
+      "divar": 7,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "yaneh-sar": {
+      "cityId": "yaneh-sar",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "yasuj": {
+      "cityId": "yasuj",
+      "featureCount": 44,
+      "osm": 1,
+      "divar": 43,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "yazd-city": {
+      "cityId": "yazd-city",
+      "featureCount": 175,
+      "osm": 4,
+      "divar": 171,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "yazdan-shahr-city": {
+      "cityId": "yazdan-shahr-city",
+      "featureCount": 5,
+      "osm": 0,
+      "divar": 5,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "younesi": {
+      "cityId": "younesi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zabarkhan": {
+      "cityId": "zabarkhan",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zabol": {
+      "cityId": "zabol",
+      "featureCount": 9,
+      "osm": 0,
+      "divar": 9,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zaghah": {
+      "cityId": "zaghah",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zagros": {
+      "cityId": "zagros",
+      "featureCount": 19,
+      "osm": 0,
+      "divar": 19,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zahak": {
+      "cityId": "zahak",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zahedan": {
+      "cityId": "zahedan",
+      "featureCount": 18,
+      "osm": 0,
+      "divar": 18,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zalian": {
+      "cityId": "zalian",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zamkan": {
+      "cityId": "zamkan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zanjan-city": {
+      "cityId": "zanjan-city",
+      "featureCount": 122,
+      "osm": 6,
+      "divar": 116,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zanjanrud": {
+      "cityId": "zanjanrud",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zarabad": {
+      "cityId": "zarabad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zarand": {
+      "cityId": "zarand",
+      "featureCount": 60,
+      "osm": 19,
+      "divar": 41,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zarandiyeh": {
+      "cityId": "zarandiyeh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zarch": {
+      "cityId": "zarch",
+      "featureCount": 38,
+      "osm": 0,
+      "divar": 38,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zarghan": {
+      "cityId": "zarghan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zarich": {
+      "cityId": "zarich",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zarneh": {
+      "cityId": "zarneh",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zarrin-abad": {
+      "cityId": "zarrin-abad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zarrin-dasht-city": {
+      "cityId": "zarrin-dasht-city",
+      "featureCount": 26,
+      "osm": 0,
+      "divar": 26,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zarrin-dasht": {
+      "cityId": "zarrin-dasht",
+      "featureCount": 3,
+      "osm": 3,
+      "divar": 0,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zarrindasht": {
+      "cityId": "zarrindasht",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zavaareh": {
+      "cityId": "zavaareh",
+      "featureCount": 15,
+      "osm": 0,
+      "divar": 15,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zaveh": {
+      "cityId": "zaveh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zavieh": {
+      "cityId": "zavieh",
+      "featureCount": 4,
+      "osm": 0,
+      "divar": 4,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zavin": {
+      "cityId": "zavin",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zayandeh-rud-city": {
+      "cityId": "zayandeh-rud-city",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zazomahru": {
+      "cityId": "zazomahru",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zend": {
+      "cityId": "zend",
+      "featureCount": 130,
+      "osm": 0,
+      "divar": 130,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zendeh-rood": {
+      "cityId": "zendeh-rood",
+      "featureCount": 57,
+      "osm": 0,
+      "divar": 57,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zeyd-abad": {
+      "cityId": "zeyd-abad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ziaa-abad": {
+      "cityId": "ziaa-abad",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zibaashahr": {
+      "cityId": "zibaashahr",
+      "featureCount": 45,
+      "osm": 0,
+      "divar": 45,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zibakenar": {
+      "cityId": "zibakenar",
+      "featureCount": 3,
+      "osm": 0,
+      "divar": 3,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zilayi": {
+      "cityId": "zilayi",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ziraab": {
+      "cityId": "ziraab",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zirkouh": {
+      "cityId": "zirkouh",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ziviye": {
+      "cityId": "ziviye",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "ziyabar": {
+      "cityId": "ziyabar",
+      "featureCount": 6,
+      "osm": 0,
+      "divar": 6,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zohan": {
+      "cityId": "zohan",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "zolqi": {
+      "cityId": "zolqi",
+      "featureCount": 2,
+      "osm": 0,
+      "divar": 2,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "شاهرود-اردبیل": {
+      "cityId": "شاهرود-اردبیل",
+      "featureCount": 1,
+      "osm": 0,
+      "divar": 1,
+      "synthetic": 0,
+      "manual": 0
+    },
+    "mashhad": {
+      "cityId": "mashhad",
+      "featureCount": 263,
+      "osm": 0,
+      "divar": 263,
+      "synthetic": 0,
+      "manual": 0
+    }
+  },
+  "totalFeatures": 23393
+}

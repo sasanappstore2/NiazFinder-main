@@ -1,0 +1,259 @@
+{
+  "cityId": "mehrestan",
+  "cityName": "مهرستان",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:03:31.155Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مهرستان",
+      "name": "مهرستان",
+      "nameEn": "mehrestan",
+      "centroid": {
+        "lat": 27.08311785450952,
+        "lng": 61.64565761255015
+      },
+      "bbox": {
+        "south": 26.976631329177145,
+        "north": 27.189604379841896,
+        "west": 61.537612747228295,
+        "east": 61.75370247787201
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "افضل-آبادبالا",
+      "name": "افضل آبادبالا",
+      "nameEn": "افضل-آبادبالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برزنیدن",
+      "name": "برزنیدن",
+      "nameEn": "برزنیدن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهر-آباد",
+      "name": "بهر آباد",
+      "nameEn": "بهر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرکن",
+      "name": "پرکن",
+      "nameEn": "پرکن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیرآباد",
+      "name": "پیرآباد",
+      "nameEn": "پیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تل",
+      "name": "تل",
+      "nameEn": "تل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جان-آباد",
+      "name": "جان آباد",
+      "nameEn": "جان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-رستم",
+      "name": "چشمه رستم",
+      "nameEn": "چشمه-رستم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چگرد",
+      "name": "چگرد",
+      "nameEn": "چگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درمشوگه",
+      "name": "درمشوگه",
+      "nameEn": "درمشوگه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوکی",
+      "name": "دوکی",
+      "nameEn": "دوکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سردر",
+      "name": "سردر",
+      "nameEn": "سردر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سکوک",
+      "name": "سکوک",
+      "nameEn": "سکوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگلک",
+      "name": "سنگلک",
+      "nameEn": "سنگلک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدآباد",
+      "name": "سیدآباد",
+      "nameEn": "سیدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهردراز",
+      "name": "شهردراز",
+      "nameEn": "شهردراز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرآباد",
+      "name": "شیرآباد",
+      "nameEn": "شیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قادرآباد",
+      "name": "قادرآباد",
+      "nameEn": "قادرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کریم-آباد",
+      "name": "کریم آباد",
+      "nameEn": "کریم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاتوک",
+      "name": "کلاتوک",
+      "nameEn": "کلاتوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوران",
+      "name": "کوران",
+      "nameEn": "کوران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهن-حسین-پایین",
+      "name": "کهن حسین پایین",
+      "nameEn": "کهن-حسین-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهن-رسول-بخش",
+      "name": "کهن رسول بخش",
+      "nameEn": "کهن-رسول-بخش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهن-شاه-سلیم",
+      "name": "کهن شاه سلیم",
+      "nameEn": "کهن-شاه-سلیم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهن-کهور",
+      "name": "کهن کهور",
+      "nameEn": "کهن-کهور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهن-مگار",
+      "name": "کهن مگار",
+      "nameEn": "کهن-مگار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهن-ملا",
+      "name": "کهن ملا",
+      "nameEn": "کهن-ملا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گدامدر",
+      "name": "گدامدر",
+      "nameEn": "گدامدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گربک",
+      "name": "گربک",
+      "nameEn": "گربک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گورابک",
+      "name": "گورابک",
+      "nameEn": "گورابک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوری",
+      "name": "گوری",
+      "nameEn": "گوری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میانی",
+      "name": "میانی",
+      "nameEn": "میانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرزاآباد",
+      "name": "میرزاآباد",
+      "nameEn": "میرزاآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوکجو",
+      "name": "نوکجو",
+      "nameEn": "نوکجو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هان",
+      "name": "هان",
+      "nameEn": "هان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هوت-عمر",
+      "name": "هوت عمر",
+      "nameEn": "هوت-عمر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هیزآباد-بالا",
+      "name": "هیزآباد بالا",
+      "nameEn": "هیزآباد-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هیزآبادپایین",
+      "name": "هیزآبادپایین",
+      "nameEn": "هیزآبادپایین",
+      "geoSource": "osm"
+    }
+  ]
+}

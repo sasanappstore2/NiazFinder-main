@@ -1,0 +1,25 @@
+{
+  "cityId": "rayen",
+  "cityName": "راین",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.282Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "راین",
+      "name": "راین",
+      "nameEn": "rayen",
+      "centroid": {
+        "lat": 29.55854069310097,
+        "lng": 57.553243335734635
+      },
+      "bbox": {
+        "south": 29.452054167768594,
+        "north": 29.665027218433345,
+        "west": 57.43869359901306,
+        "east": 57.66779307245621
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

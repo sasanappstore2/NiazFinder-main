@@ -1,0 +1,25 @@
+{
+  "cityId": "samsami",
+  "cityName": "صمصامی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.525Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "صمصامی",
+      "name": "صمصامی",
+      "nameEn": "samsami",
+      "centroid": {
+        "lat": 32.22254425106001,
+        "lng": 50.344126546174714
+      },
+      "bbox": {
+        "south": 32.11605772572763,
+        "north": 32.329030776392386,
+        "west": 50.230009996072106,
+        "east": 50.45824309627732
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "boshruuye",
+  "cityName": "بشروئیه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.480Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بشروئیه",
+      "name": "بشروئیه",
+      "nameEn": "boshruuye",
+      "centroid": {
+        "lat": 34.161574903844766,
+        "lng": 57.494359328627496
+      },
+      "bbox": {
+        "south": 34.05508837851239,
+        "north": 34.268061429177145,
+        "west": 57.37984750757167,
+        "east": 57.608871149683324
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

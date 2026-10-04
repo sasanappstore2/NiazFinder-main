@@ -1,0 +1,199 @@
+{
+  "cityId": "sheshtaraz",
+  "cityName": "ششطراز",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:51:05.745Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ششطراز",
+      "name": "ششطراز",
+      "nameEn": "sheshtaraz",
+      "centroid": {
+        "lat": 35.14269795874955,
+        "lng": 58.225751192789055
+      },
+      "bbox": {
+        "south": 35.03621143341717,
+        "north": 35.24918448408193,
+        "west": 58.10617559464979,
+        "east": 58.34532679092832
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "ابراهیم-آباد",
+      "name": "ابراهیم آباد",
+      "nameEn": "ابراهیم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارغا",
+      "name": "ارغا",
+      "nameEn": "ارغا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بزنجرد",
+      "name": "بزنجرد",
+      "nameEn": "بزنجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تکمار",
+      "name": "تکمار",
+      "nameEn": "تکمار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جابوز",
+      "name": "جابوز",
+      "nameEn": "جابوز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جعفرآباد",
+      "name": "جعفرآباد",
+      "nameEn": "جعفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رکن-آباد",
+      "name": "رکن آباد",
+      "nameEn": "رکن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-جعفرآباد",
+      "name": "روستای جعفرآباد",
+      "nameEn": "روستای-جعفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-عظیم-آباد",
+      "name": "روستای عظیم آباد",
+      "nameEn": "روستای-عظیم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سعدالدین",
+      "name": "سعدالدین",
+      "nameEn": "سعدالدین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنبل",
+      "name": "سنبل",
+      "nameEn": "سنبل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوراب",
+      "name": "شوراب",
+      "nameEn": "شوراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ظاهرآباد",
+      "name": "ظاهرآباد",
+      "nameEn": "ظاهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عظیم-آباد",
+      "name": "عظیم آباد",
+      "nameEn": "عظیم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آبادک",
+      "name": "علی آبادک",
+      "nameEn": "علی-آبادک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علیآباد-شور",
+      "name": "علی‌آباد شور",
+      "nameEn": "علیآباد-شور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوژدآباد",
+      "name": "قوژدآباد",
+      "nameEn": "قوژدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قهندیز",
+      "name": "قهندیز",
+      "nameEn": "قهندیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاهه",
+      "name": "کاهه",
+      "nameEn": "کاهه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-رحیم",
+      "name": "کلاته رحیم",
+      "nameEn": "کلاته-رحیم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-شور",
+      "name": "کلاته شور",
+      "nameEn": "کلاته-شور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کندر",
+      "name": "کندر",
+      "nameEn": "کندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلگیر",
+      "name": "گل‌گیر",
+      "nameEn": "گلگیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهدی-آباد",
+      "name": "مهدی آباد",
+      "nameEn": "مهدی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرآباد",
+      "name": "میرآباد",
+      "nameEn": "میرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرآباد",
+      "name": "نصرآباد",
+      "nameEn": "نصرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نقاب",
+      "name": "نقاب",
+      "nameEn": "نقاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هفت-خانه",
+      "name": "هفت خانه",
+      "nameEn": "هفت-خانه",
+      "geoSource": "osm"
+    }
+  ]
+}

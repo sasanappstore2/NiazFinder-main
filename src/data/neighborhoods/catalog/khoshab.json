@@ -1,0 +1,145 @@
+{
+  "cityId": "khoshab",
+  "cityName": "خوشاب",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:41:57.638Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خوشاب",
+      "name": "خوشاب",
+      "nameEn": "khoshab",
+      "centroid": {
+        "lat": 36.401886177721885,
+        "lng": 58.08725232066179
+      },
+      "bbox": {
+        "south": 36.295399652389506,
+        "north": 36.50837270305426,
+        "west": 57.963035990019584,
+        "east": 58.211468651303996
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبنو",
+      "name": "آبنو",
+      "nameEn": "آبنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اهوبم",
+      "name": "اهوبم",
+      "nameEn": "اهوبم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندقرا",
+      "name": "بندقرا",
+      "nameEn": "بندقرا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیجورد",
+      "name": "بیجورد",
+      "nameEn": "بیجورد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تجرود",
+      "name": "تجرود",
+      "nameEn": "تجرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چنار",
+      "name": "چنار",
+      "nameEn": "چنار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانقاه",
+      "name": "خانقاه",
+      "nameEn": "خانقاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرو",
+      "name": "خرو",
+      "nameEn": "خرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خور",
+      "name": "خور",
+      "nameEn": "خور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیروقت",
+      "name": "زیروقت",
+      "nameEn": "زیروقت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگ-پیر",
+      "name": "سنگ پیر",
+      "nameEn": "سنگ-پیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیر",
+      "name": "سیر",
+      "nameEn": "سیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شمس-آباد",
+      "name": "شمس آباد",
+      "nameEn": "شمس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علیآباد",
+      "name": "علی‌آباد",
+      "nameEn": "علیآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علیآباد-کشمر",
+      "name": "علی‌آباد کشمر",
+      "nameEn": "علیآباد-کشمر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاریزک",
+      "name": "کاریزک",
+      "nameEn": "کاریزک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کریز",
+      "name": "کریز",
+      "nameEn": "کریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-پایین-دره",
+      "name": "کلاته پایین دره",
+      "nameEn": "کلاته-پایین-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-تیمور",
+      "name": "کلاته تیمور",
+      "nameEn": "کلاته-تیمور",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "bajgiran",
+  "cityName": "باجگیران",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.161Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "باجگیران",
+      "name": "باجگیران",
+      "nameEn": "bajgiran",
+      "centroid": {
+        "lat": 37.3986777309019,
+        "lng": 58.579779088537094
+      },
+      "bbox": {
+        "south": 37.29219120556952,
+        "north": 37.50516425623428,
+        "west": 58.45787504868203,
+        "east": 58.701683128392155
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

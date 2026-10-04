@@ -1,0 +1,25 @@
+{
+  "cityId": "tarom-e-olfat",
+  "cityName": "طالارالعلفا",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.126Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "طالارالعلفا",
+      "name": "طالارالعلفا",
+      "nameEn": "tarom-e-olfat",
+      "centroid": {
+        "lat": 35.45647739245028,
+        "lng": 50.32604347892807
+      },
+      "bbox": {
+        "south": 35.3499908671179,
+        "north": 35.56296391778266,
+        "west": 50.20492926806005,
+        "east": 50.44715768979609
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

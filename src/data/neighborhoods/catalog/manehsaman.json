@@ -1,0 +1,265 @@
+{
+  "cityId": "manehsaman",
+  "cityName": "مانه و سملقان",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:32:20.432Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مانه-و-سملقان",
+      "name": "مانه و سملقان",
+      "nameEn": "manehsaman",
+      "centroid": {
+        "lat": 37.31462926643856,
+        "lng": 57.20646381296724
+      },
+      "bbox": {
+        "south": 37.20814274110618,
+        "north": 37.42111579177094,
+        "west": 57.08383007397105,
+        "east": 57.329097551963436
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آشخانه",
+      "name": "آشخانه",
+      "nameEn": "آشخانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اترآباد-سفلی",
+      "name": "اترآباد سفلی",
+      "nameEn": "اترآباد-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اترآباد-علیا",
+      "name": "اترآباد علیا",
+      "nameEn": "اترآباد-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ازادگان",
+      "name": "ازادگان",
+      "nameEn": "ازادگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد-کرد",
+      "name": "اسلام آباد کرد",
+      "nameEn": "اسلام-آباد-کرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انصار",
+      "name": "انصار",
+      "nameEn": "انصار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بدرانلو",
+      "name": "بدرانلو",
+      "nameEn": "بدرانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برج-زنگانلو",
+      "name": "برج زنگانلو",
+      "nameEn": "برج-زنگانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیارکرد",
+      "name": "بیارکرد",
+      "nameEn": "بیارکرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیش-قلعه",
+      "name": "پیش قلعه",
+      "nameEn": "پیش-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چخماقلو",
+      "name": "چخماقلو",
+      "nameEn": "چخماقلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-گاه",
+      "name": "چشمه گاه",
+      "nameEn": "چشمه-گاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-سو",
+      "name": "حسن سو",
+      "nameEn": "حسن-سو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-مست",
+      "name": "حسن مست",
+      "nameEn": "حسن-مست",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حیدرآباد",
+      "name": "حیدرآباد",
+      "nameEn": "حیدرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دربند",
+      "name": "دربند",
+      "nameEn": "دربند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهگاه",
+      "name": "دهگاه",
+      "nameEn": "دهگاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-نجف",
+      "name": "روستای نجف",
+      "nameEn": "روستای-نجف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زوعلیا",
+      "name": "زوعلیا",
+      "nameEn": "زوعلیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سریوان-تپه",
+      "name": "سریوان تپه",
+      "nameEn": "سریوان-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سریوان-عاشقان-بزو",
+      "name": "سریوان عاشقان بزو",
+      "nameEn": "سریوان-عاشقان-بزو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورک",
+      "name": "شورک",
+      "nameEn": "شورک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرآباد",
+      "name": "شیرآباد",
+      "nameEn": "شیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عزیزآباد",
+      "name": "عزیزآباد",
+      "nameEn": "عزیزآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-مصلی",
+      "name": "قره مصلی",
+      "nameEn": "قره-مصلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-خان",
+      "name": "قلعه خان",
+      "nameEn": "قلعه-خان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلندرتپه",
+      "name": "قلندرتپه",
+      "nameEn": "قلندرتپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کریک",
+      "name": "کریک",
+      "nameEn": "کریک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کشانک",
+      "name": "کشانک",
+      "nameEn": "کشانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلانتر",
+      "name": "کلانتر",
+      "nameEn": "کلانتر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کیکانلو",
+      "name": "کیکانلو",
+      "nameEn": "کیکانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرمک",
+      "name": "گرمک",
+      "nameEn": "گرمک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لنگر",
+      "name": "لنگر",
+      "nameEn": "لنگر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-قره-میدان-کوچک",
+      "name": "مزرعه قره میدان کوچک",
+      "nameEn": "مزرعه-قره-میدان-کوچک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملاحسن",
+      "name": "ملاحسن",
+      "nameEn": "ملاحسن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهمانک",
+      "name": "مهمانک",
+      "nameEn": "مهمانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نادرآباد",
+      "name": "نادرآباد",
+      "nameEn": "نادرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نجف",
+      "name": "نجف",
+      "nameEn": "نجف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نرگسلو-سفلی",
+      "name": "نرگسلو سفلی",
+      "nameEn": "نرگسلو-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نرگسلو-علیا",
+      "name": "نرگسلو علیا",
+      "nameEn": "نرگسلو-علیا",
+      "geoSource": "osm"
+    }
+  ]
+}

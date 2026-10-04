@@ -1,0 +1,25 @@
+{
+  "cityId": "sirik",
+  "cityName": "سیریک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.933Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سیریک",
+      "name": "سیریک",
+      "nameEn": "sirik",
+      "centroid": {
+        "lat": 26.402874981171397,
+        "lng": 57.32226974852345
+      },
+      "bbox": {
+        "south": 26.296388455839022,
+        "north": 26.509361506503772,
+        "west": 57.21531814958263,
+        "east": 57.429221347464285
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

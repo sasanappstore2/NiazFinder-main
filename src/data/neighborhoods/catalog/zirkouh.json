@@ -1,0 +1,25 @@
+{
+  "cityId": "zirkouh",
+  "cityName": "زیرکوه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.440Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زیرکوه",
+      "name": "زیرکوه",
+      "nameEn": "zirkouh",
+      "centroid": {
+        "lat": 33.50414764164571,
+        "lng": 60.444253730438945
+      },
+      "bbox": {
+        "south": 33.39766111631333,
+        "north": 33.61063416697809,
+        "west": 60.3307587512756,
+        "east": 60.55774870960228
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

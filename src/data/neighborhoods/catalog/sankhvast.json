@@ -1,0 +1,25 @@
+{
+  "cityId": "sankhvast",
+  "cityName": "سنخواست",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.550Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "سنخواست",
+      "name": "سنخواست",
+      "nameEn": "sankhvast",
+      "centroid": {
+        "lat": 37.03853599137621,
+        "lng": 56.84018110368118
+      },
+      "bbox": {
+        "south": 36.93204946604383,
+        "north": 37.145022516708586,
+        "west": 56.723832634312245,
+        "east": 56.95652957305012
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

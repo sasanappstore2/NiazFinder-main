@@ -1,0 +1,25 @@
+{
+  "cityId": "kaleh-gaan",
+  "cityName": "کله گان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.828Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کله-گان",
+      "name": "کله گان",
+      "nameEn": "kaleh-gaan",
+      "centroid": {
+        "lat": 27.38575102612289,
+        "lng": 62.76641384204738
+      },
+      "bbox": {
+        "south": 27.279264500790514,
+        "north": 27.492237551455265,
+        "west": 62.66025565026941,
+        "east": 62.87257203382534
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "cityId": "barzak",
+  "cityName": "برزک",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:37:32.495Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "برزک",
+      "name": "برزک",
+      "nameEn": "barzak",
+      "centroid": {
+        "lat": 33.772276193100964,
+        "lng": 51.215079197486745
+      },
+      "bbox": {
+        "south": 33.665789667768586,
+        "north": 33.87876271843334,
+        "west": 51.09756626258176,
+        "east": 51.332592132391724
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارنجن",
+      "name": "ارنجن",
+      "nameEn": "ارنجن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ازران",
+      "name": "ازران",
+      "nameEn": "ازران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ازوار",
+      "name": "ازوار",
+      "nameEn": "ازوار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جزه",
+      "name": "جزه",
+      "nameEn": "جزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خنب",
+      "name": "خنب",
+      "nameEn": "خنب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره",
+      "name": "دره",
+      "nameEn": "دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قمصر",
+      "name": "قمصر",
+      "nameEn": "قمصر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کامو",
+      "name": "کامو",
+      "nameEn": "کامو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرق",
+      "name": "مرق",
+      "nameEn": "مرق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نابر",
+      "name": "نابر",
+      "nameEn": "نابر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ویدوج",
+      "name": "ویدوج",
+      "nameEn": "ویدوج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ویدوجا",
+      "name": "ویدوجا",
+      "nameEn": "ویدوجا",
+      "geoSource": "osm"
+    }
+  ]
+}

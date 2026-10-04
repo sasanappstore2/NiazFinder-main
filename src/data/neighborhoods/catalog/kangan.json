@@ -1,0 +1,79 @@
+{
+  "cityId": "kangan",
+  "cityName": "نگان",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:25:31.706Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قلعه-حسن-علی",
+      "name": "قلعه حسن علی",
+      "nameEn": "قلعه-حسن-علی",
+      "centroid": {
+        "lat": 29.327363708325546,
+        "lng": 50.84936282231783
+      },
+      "bbox": {
+        "south": 29.22087718299317,
+        "north": 29.43385023365792,
+        "west": 50.740483940211355,
+        "east": 50.958241704424296
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "پی-گل",
+      "name": "پی گل",
+      "nameEn": "پی-گل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-سالار",
+      "name": "چاه سالار",
+      "nameEn": "چاه-سالار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-کان",
+      "name": "چاه کان",
+      "nameEn": "چاه-کان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حبیب-آباد",
+      "name": "حبیب آباد",
+      "nameEn": "حبیب-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحمان-آباد",
+      "name": "رحمان آباد",
+      "nameEn": "رحمان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شریف-آباد",
+      "name": "شریف آباد",
+      "nameEn": "شریف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرآباد",
+      "name": "شیرآباد",
+      "nameEn": "شیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرزاآباد",
+      "name": "میرزاآباد",
+      "nameEn": "میرزاآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یوسف-آباد",
+      "name": "یوسف آباد",
+      "nameEn": "یوسف-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

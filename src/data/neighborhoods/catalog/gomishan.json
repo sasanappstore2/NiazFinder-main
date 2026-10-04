@@ -1,0 +1,25 @@
+{
+  "cityId": "gomishan",
+  "cityName": "گمیشان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.347Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-امام-خمینی",
+      "name": "شهرک امام خمینی",
+      "nameEn": "شهرک-امام-خمینی",
+      "centroid": {
+        "lat": 37.17230728005749,
+        "lng": 54.1583897768798
+      },
+      "bbox": {
+        "south": 37.16307844786202,
+        "north": 37.18153611225296,
+        "west": 54.147719988407424,
+        "east": 54.16905956535217
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

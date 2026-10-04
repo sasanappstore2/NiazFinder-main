@@ -1,0 +1,25 @@
+{
+  "cityId": "sabashahr",
+  "cityName": "صباشهر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.422Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "صباشهر",
+      "name": "صباشهر",
+      "nameEn": "sabashahr",
+      "centroid": {
+        "lat": 35.584351543298595,
+        "lng": 51.14898031131836
+      },
+      "bbox": {
+        "south": 35.54903351239669,
+        "north": 35.6196695742005,
+        "west": 51.10961706108777,
+        "east": 51.188343561548955
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

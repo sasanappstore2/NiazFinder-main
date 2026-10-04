@@ -1,0 +1,109 @@
+{
+  "cityId": "mahabad-city",
+  "cityName": "مهاباد (اصفهان)",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:45:00.362Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مهاباد-اصفهان",
+      "name": "مهاباد (اصفهان)",
+      "nameEn": "mahabad-city",
+      "centroid": {
+        "lat": 33.5780423798419,
+        "lng": 52.35147247326309
+      },
+      "bbox": {
+        "south": 33.47155585450952,
+        "north": 33.684528905174275,
+        "west": 52.23678477876673,
+        "east": 52.46616016775943
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جعفرآباد",
+      "name": "جعفرآباد",
+      "nameEn": "جعفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حیدرآباد",
+      "name": "حیدرآباد",
+      "nameEn": "حیدرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خشک-آباد",
+      "name": "خشک آباد",
+      "nameEn": "خشک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحمت-آباد",
+      "name": "رحمت آباد",
+      "nameEn": "رحمت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-انقلاب",
+      "name": "شهرک انقلاب",
+      "nameEn": "شهرک-انقلاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کسوج",
+      "name": "کسوج",
+      "nameEn": "کسوج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلزارمحمد",
+      "name": "گلزارمحمد",
+      "nameEn": "گلزارمحمد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلستان-مهدی",
+      "name": "گلستان مهدی",
+      "nameEn": "گلستان-مهدی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موغار",
+      "name": "موغار",
+      "nameEn": "موغار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهاباد",
+      "name": "مهاباد",
+      "nameEn": "مهاباد",
+      "geoSource": "osm"
+    }
+  ]
+}

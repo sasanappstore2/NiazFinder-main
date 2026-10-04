@@ -1,0 +1,199 @@
+{
+  "cityId": "anabad",
+  "cityName": "انابد",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:32:44.480Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "انابد",
+      "name": "انابد",
+      "nameEn": "anabad",
+      "centroid": {
+        "lat": 35.18074810862379,
+        "lng": 57.27801165601342
+      },
+      "bbox": {
+        "south": 35.07426158329141,
+        "north": 35.28723463395617,
+        "west": 57.164506691926334,
+        "east": 57.3915166201005
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابراهیم-آباد",
+      "name": "ابراهیم آباد",
+      "nameEn": "ابراهیم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باب-الحکم",
+      "name": "باب الحکم",
+      "nameEn": "باب-الحکم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برجک",
+      "name": "برجک",
+      "nameEn": "برجک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بردسکن",
+      "name": "بردسکن",
+      "nameEn": "بردسکن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برنآباد",
+      "name": "برنآباد",
+      "nameEn": "برنآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلال-آباد",
+      "name": "جلال آباد",
+      "nameEn": "جلال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-حاجی-سلیمان",
+      "name": "چشمه حاجی سلیمان",
+      "nameEn": "چشمه-حاجی-سلیمان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حطیطه",
+      "name": "حطیطه",
+      "nameEn": "حطیطه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرم-آباد",
+      "name": "خرم آباد",
+      "nameEn": "خرم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خمی",
+      "name": "خمی",
+      "nameEn": "خمی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زمان-آباد",
+      "name": "زمان آباد",
+      "nameEn": "زمان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زنگینه",
+      "name": "زنگینه",
+      "nameEn": "زنگینه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیرک-آباد",
+      "name": "زیرک آباد",
+      "nameEn": "زیرک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیف-آباد",
+      "name": "سیف آباد",
+      "nameEn": "سیف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شریعت-آباد",
+      "name": "شریعت آباد",
+      "nameEn": "شریعت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شریف-آباد",
+      "name": "شریف آباد",
+      "nameEn": "شریف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرآباد",
+      "name": "شهرآباد",
+      "nameEn": "شهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عشرت-آباد",
+      "name": "عشرت آباد",
+      "nameEn": "عشرت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-بیک",
+      "name": "علی بیک",
+      "nameEn": "علی-بیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاظم-آباد",
+      "name": "کاظم آباد",
+      "nameEn": "کاظم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-جمعه",
+      "name": "کلاته جمعه",
+      "nameEn": "کلاته-جمعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-نو",
+      "name": "کلاته نو",
+      "nameEn": "کلاته-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مارندیز",
+      "name": "مارندیز",
+      "nameEn": "مارندیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدآباد",
+      "name": "محمدآباد",
+      "nameEn": "محمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مظفر-آباد",
+      "name": "مظفر آباد",
+      "nameEn": "مظفر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مظفرآباد",
+      "name": "مظفرآباد",
+      "nameEn": "مظفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملک-بابو",
+      "name": "ملک بابو",
+      "nameEn": "ملک-بابو",
+      "geoSource": "osm"
+    }
+  ]
+}

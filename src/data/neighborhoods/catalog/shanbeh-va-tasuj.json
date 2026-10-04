@@ -1,0 +1,115 @@
+{
+  "cityId": "shanbeh-va-tasuj",
+  "cityName": "شنبه و طسوج",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:38:33.309Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شنبه-و-طسوج",
+      "name": "شنبه و طسوج",
+      "nameEn": "shanbeh-va-tasuj",
+      "centroid": {
+        "lat": 28.409540235141932,
+        "lng": 51.92490768821564
+      },
+      "bbox": {
+        "south": 28.303053709809557,
+        "north": 28.516026760474308,
+        "west": 51.81570842926147,
+        "east": 52.03410694716981
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اژدر-خوش",
+      "name": "اژدر خوش",
+      "nameEn": "اژدر-خوش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-گاه",
+      "name": "چاه گاه",
+      "nameEn": "چاه-گاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حنا-شور",
+      "name": "حنا شور",
+      "nameEn": "حنا-شور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درگو-جنوبی",
+      "name": "درگو جنوبی",
+      "nameEn": "درگو-جنوبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درگو-شمالی",
+      "name": "درگو شمالی",
+      "nameEn": "درگو-شمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درویشی",
+      "name": "درویشی",
+      "nameEn": "درویشی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهوک",
+      "name": "دهوک",
+      "nameEn": "دهوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رزم-آباد",
+      "name": "رزم آباد",
+      "nameEn": "رزم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرمک",
+      "name": "سرمک",
+      "nameEn": "سرمک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنا",
+      "name": "سنا",
+      "nameEn": "سنا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شنبه",
+      "name": "شنبه",
+      "nameEn": "شنبه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کردلان",
+      "name": "کردلان",
+      "nameEn": "کردلان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنار-بندک",
+      "name": "کنار بندک",
+      "nameEn": "کنار-بندک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ممریز",
+      "name": "ممریز",
+      "nameEn": "ممریز",
+      "geoSource": "osm"
+    }
+  ]
+}

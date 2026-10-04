@@ -1,0 +1,199 @@
+{
+  "cityId": "alamarudash",
+  "cityName": "علامرودشت",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:14:04.172Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "علامرودشت",
+      "name": "علامرودشت",
+      "nameEn": "alamarudash",
+      "centroid": {
+        "lat": 27.70799558235717,
+        "lng": 52.97910426448522
+      },
+      "bbox": {
+        "south": 27.601509057024796,
+        "north": 27.814482107689546,
+        "west": 52.86679252640229,
+        "east": 53.09141600256815
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابوحنا",
+      "name": "ابوحنا",
+      "nameEn": "ابوحنا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انجیربند",
+      "name": "انجیربند",
+      "nameEn": "انجیربند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اندر",
+      "name": "اندر",
+      "nameEn": "اندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برد-کویه",
+      "name": "برد کویه",
+      "nameEn": "برد-کویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برکه-سفید",
+      "name": "برکه سفید",
+      "nameEn": "برکه-سفید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرزی",
+      "name": "پرزی",
+      "nameEn": "پرزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پلنگی",
+      "name": "پلنگی",
+      "nameEn": "پلنگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاهکور",
+      "name": "چاه‌کور",
+      "nameEn": "چاهکور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاهگزی",
+      "name": "چاه‌گزی",
+      "nameEn": "چاهگزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاهو",
+      "name": "چاهو",
+      "nameEn": "چاهو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسینآباد",
+      "name": "حسین‌آباد",
+      "nameEn": "حسینآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خشتی",
+      "name": "خشتی",
+      "nameEn": "خشتی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روگیر-تاجامیری",
+      "name": "روگیر تاج‌امیری",
+      "nameEn": "روگیر-تاجامیری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روگیر-محمدتقی",
+      "name": "روگیر محمدتقی",
+      "nameEn": "روگیر-محمدتقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدهاشمی",
+      "name": "سیدهاشمی",
+      "nameEn": "سیدهاشمی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صادره",
+      "name": "صادره",
+      "nameEn": "صادره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غیب-الهی",
+      "name": "غیب الهی",
+      "nameEn": "غیب-الهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فاریاب",
+      "name": "فاریاب",
+      "nameEn": "فاریاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمالی",
+      "name": "کمالی",
+      "nameEn": "کمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمپ-ایثار",
+      "name": "کمپ ایثار",
+      "nameEn": "کمپ-ایثار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمپ-مسکونی-نخلستان",
+      "name": "کمپ مسکونی نخلستان",
+      "nameEn": "کمپ-مسکونی-نخلستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهنویه",
+      "name": "کهنویه",
+      "nameEn": "کهنویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلدشت",
+      "name": "گلدشت",
+      "nameEn": "گلدشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گهلویه",
+      "name": "گهلویه",
+      "nameEn": "گهلویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهر",
+      "name": "مهر",
+      "nameEn": "مهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نرمان",
+      "name": "نرمان",
+      "nameEn": "نرمان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وردوان",
+      "name": "وردوان",
+      "nameEn": "وردوان",
+      "geoSource": "osm"
+    }
+  ]
+}

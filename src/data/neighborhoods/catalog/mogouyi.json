@@ -1,0 +1,241 @@
+{
+  "cityId": "mogouyi",
+  "cityName": "موگوئی",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:44:30.009Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "موگوئی",
+      "name": "موگوئی",
+      "nameEn": "mogouyi",
+      "centroid": {
+        "lat": 32.88097727294287,
+        "lng": 49.902566907683884
+      },
+      "bbox": {
+        "south": 32.77449074761049,
+        "north": 32.98746379827525,
+        "west": 49.78631901370813,
+        "east": 50.01881480165964
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اسلام-آباد-موگوئی",
+      "name": "اسلام آباد موگوئی",
+      "nameEn": "اسلام-آباد-موگوئی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آبادمکدین",
+      "name": "اسلام آبادمکدین",
+      "nameEn": "اسلام-آبادمکدین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایوج",
+      "name": "ایوج",
+      "nameEn": "ایوج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بابا-خسرو",
+      "name": "بابا خسرو",
+      "nameEn": "بابا-خسرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغشاه",
+      "name": "باغشاه",
+      "nameEn": "باغشاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهرام-آباد",
+      "name": "بهرام آباد",
+      "nameEn": "بهرام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تزره",
+      "name": "تزره",
+      "nameEn": "تزره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چال-چرانه",
+      "name": "چال چرانه",
+      "nameEn": "چال-چرانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاله-قو",
+      "name": "چاله قو",
+      "nameEn": "چاله-قو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حبیبک",
+      "name": "حبیبک",
+      "nameEn": "حبیبک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خسرو-آباد",
+      "name": "خسرو آباد",
+      "nameEn": "خسرو-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره-بادام-علیا",
+      "name": "دره بادام علیا",
+      "nameEn": "دره-بادام-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دستگرد",
+      "name": "دستگرد",
+      "nameEn": "دستگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-نو",
+      "name": "ده نو",
+      "nameEn": "ده-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "راچه",
+      "name": "راچه",
+      "nameEn": "راچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رمه-چر",
+      "name": "رمه چر",
+      "nameEn": "رمه-چر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستا-خوشمیوه",
+      "name": "روستا خوشمیوه",
+      "nameEn": "روستا-خوشمیوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زردفهره",
+      "name": "زردفهره",
+      "nameEn": "زردفهره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سخی-آباد",
+      "name": "سخی آباد",
+      "nameEn": "سخی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سکان",
+      "name": "سکان",
+      "nameEn": "سکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طرزه",
+      "name": "طرزه",
+      "nameEn": "طرزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-آباد",
+      "name": "عباس آباد",
+      "nameEn": "عباس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عنایشت",
+      "name": "عنایشت",
+      "nameEn": "عنایشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرسش",
+      "name": "فرسش",
+      "nameEn": "فرسش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فهره",
+      "name": "فهره",
+      "nameEn": "فهره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-خان",
+      "name": "قره خان",
+      "nameEn": "قره-خان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوراب",
+      "name": "گوراب",
+      "nameEn": "گوراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوهردره",
+      "name": "گوهردره",
+      "nameEn": "گوهردره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزراکیماس",
+      "name": "مزراکیماس",
+      "nameEn": "مزراکیماس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-سیب",
+      "name": "مزرعه سیب",
+      "nameEn": "مزرعه-سیب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-میر",
+      "name": "مزرعه میر",
+      "nameEn": "مزرعه-میر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مکدین-سفلی",
+      "name": "مکدین سفلی",
+      "nameEn": "مکدین-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مکدین-علیا",
+      "name": "مکدین علیا",
+      "nameEn": "مکدین-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وهرگان",
+      "name": "وهرگان",
+      "nameEn": "وهرگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هما",
+      "name": "هما",
+      "nameEn": "هما",
+      "geoSource": "osm"
+    }
+  ]
+}

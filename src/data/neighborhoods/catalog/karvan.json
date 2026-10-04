@@ -1,0 +1,25 @@
+{
+  "cityId": "karvan",
+  "cityName": "کاروان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.902Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کاروان",
+      "name": "کاروان",
+      "nameEn": "karvan",
+      "centroid": {
+        "lat": 25.798858516708588,
+        "lng": 59.41161128768502
+      },
+      "bbox": {
+        "south": 25.692371991376213,
+        "north": 25.905345042040963,
+        "west": 59.30649422661679,
+        "east": 59.516728348753254
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "gafar-va-parmun",
+  "cityName": "گافر و پارمون",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.110Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گافر-و-پارمون",
+      "name": "گافر و پارمون",
+      "nameEn": "gafar-va-parmun",
+      "centroid": {
+        "lat": 26.371112874667624,
+        "lng": 58.54360975006827
+      },
+      "bbox": {
+        "south": 26.26462634933525,
+        "north": 26.4775994,
+        "west": 58.43795724691459,
+        "east": 58.64926225322194
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

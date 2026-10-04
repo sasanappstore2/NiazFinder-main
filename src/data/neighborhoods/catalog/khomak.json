@@ -1,0 +1,25 @@
+{
+  "cityId": "khomak",
+  "cityName": "خمک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.095Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خمک",
+      "name": "خمک",
+      "nameEn": "khomak",
+      "centroid": {
+        "lat": 30.923199448544736,
+        "lng": 61.662884377732034
+      },
+      "bbox": {
+        "south": 30.81671292321236,
+        "north": 31.02968597387711,
+        "west": 61.55476263299713,
+        "east": 61.771006122466936
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

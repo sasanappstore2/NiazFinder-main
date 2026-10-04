@@ -1,0 +1,241 @@
+{
+  "cityId": "sarvelayat",
+  "cityName": "سرولایت",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:47:24.182Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سه-راهی-سبزوار-نیشابور",
+      "name": "سه راهی سبزوار نیشابور",
+      "nameEn": "سه-راهی-سبزوار-نیشابور",
+      "centroid": {
+        "lat": 36.74622073050664,
+        "lng": 58.448715417279594
+      },
+      "bbox": {
+        "south": 36.639734205174264,
+        "north": 36.85270725583902,
+        "west": 58.327835285668286,
+        "east": 58.5695955488909
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اینچگان",
+      "name": "اینچگان",
+      "nameEn": "اینچگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برزنون",
+      "name": "برزنون",
+      "nameEn": "برزنون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برگشاهی",
+      "name": "برگشاهی",
+      "nameEn": "برگشاهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بشکن",
+      "name": "بشکن",
+      "nameEn": "بشکن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیدخان",
+      "name": "بیدخان",
+      "nameEn": "بیدخان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چکنه",
+      "name": "چکنه",
+      "nameEn": "چکنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چکنه-علیا",
+      "name": "چکنه علیا",
+      "nameEn": "چکنه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهارگوشلی",
+      "name": "چهارگوشلی",
+      "nameEn": "چهارگوشلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خواجه-آباد",
+      "name": "خواجه آباد",
+      "nameEn": "خواجه-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دزق",
+      "name": "دزق",
+      "nameEn": "دزق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهکده-چاه-آب",
+      "name": "دهکده چاه آب",
+      "nameEn": "دهکده-چاه-آب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیوانگاه",
+      "name": "دیوانگاه",
+      "nameEn": "دیوانگاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زهان",
+      "name": "زهان",
+      "nameEn": "زهان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیگ",
+      "name": "زیگ",
+      "nameEn": "زیگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساق-بیگ",
+      "name": "ساق بیگ",
+      "nameEn": "ساق-بیگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلطان-میدان",
+      "name": "سلطان میدان",
+      "nameEn": "سلطان-میدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شترسنگ",
+      "name": "شترسنگ",
+      "nameEn": "شترسنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخ-مصطفی",
+      "name": "شیخ مصطفی",
+      "nameEn": "شیخ-مصطفی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طالبی",
+      "name": "طالبی",
+      "nameEn": "طالبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-آباد",
+      "name": "عباس آباد",
+      "nameEn": "عباس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عبدالله-گیو",
+      "name": "عبدالله گیو",
+      "nameEn": "عبدالله-گیو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عشق-آباد",
+      "name": "عشق آباد",
+      "nameEn": "عشق-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فاضل-آباد",
+      "name": "فاضل آباد",
+      "nameEn": "فاضل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-گل",
+      "name": "قره گل",
+      "nameEn": "قره-گل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزل-قلعه",
+      "name": "قزل قلعه",
+      "nameEn": "قزل-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-ابوذر-شاهین",
+      "name": "کلاته ابوذر شاهین",
+      "nameEn": "کلاته-ابوذر-شاهین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-احمد",
+      "name": "کلاته احمد",
+      "nameEn": "کلاته-احمد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-حاجی",
+      "name": "کلاته حاجی",
+      "nameEn": "کلاته-حاجی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-فشای",
+      "name": "کلاته فشای",
+      "nameEn": "کلاته-فشای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-میدان",
+      "name": "کلاته میدان",
+      "nameEn": "کلاته-میدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلیدر",
+      "name": "کلیدر",
+      "nameEn": "کلیدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گاوکش",
+      "name": "گاوکش",
+      "nameEn": "گاوکش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلبین",
+      "name": "گلبین",
+      "nameEn": "گلبین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ینگجه",
+      "name": "ینگجه",
+      "nameEn": "ینگجه",
+      "geoSource": "osm"
+    }
+  ]
+}

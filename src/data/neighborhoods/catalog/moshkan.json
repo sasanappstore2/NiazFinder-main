@@ -1,0 +1,187 @@
+{
+  "cityId": "moshkan",
+  "cityName": "مشکان",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:56:43.184Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مشکان",
+      "name": "مشکان",
+      "nameEn": "moshkan",
+      "centroid": {
+        "lat": 36.65741621764283,
+        "lng": 58.22154729845457
+      },
+      "bbox": {
+        "south": 36.550929692310454,
+        "north": 36.76390274297521,
+        "west": 58.10433956643782,
+        "east": 58.33875503047132
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبروان",
+      "name": "آبروان",
+      "nameEn": "آبروان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برزنون",
+      "name": "برزنون",
+      "nameEn": "برزنون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلقان-آباد",
+      "name": "بلقان آباد",
+      "nameEn": "بلقان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تیران",
+      "name": "تیران",
+      "nameEn": "تیران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جازندر",
+      "name": "جازندر",
+      "nameEn": "جازندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمبرجوق",
+      "name": "جمبرجوق",
+      "nameEn": "جمبرجوق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیرآباد",
+      "name": "خیرآباد",
+      "nameEn": "خیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنه-شور",
+      "name": "دهنه شور",
+      "nameEn": "دهنه-شور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنه-شیرین",
+      "name": "دهنه شیرین",
+      "nameEn": "دهنه-شیرین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رباط-جز",
+      "name": "رباط جز",
+      "nameEn": "رباط-جز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رباطی-شاهزاده",
+      "name": "رباطی شاهزاده",
+      "nameEn": "رباطی-شاهزاده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زهان",
+      "name": "زهان",
+      "nameEn": "زهان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرخ",
+      "name": "سرخ",
+      "nameEn": "سرخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلطان-آباد",
+      "name": "سلطان آباد",
+      "nameEn": "سلطان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سید-آباد",
+      "name": "سید آباد",
+      "nameEn": "سید-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عادل-آباد",
+      "name": "عادل آباد",
+      "nameEn": "عادل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فهنه",
+      "name": "فهنه",
+      "nameEn": "فهنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کعدرن",
+      "name": "کعدرن",
+      "nameEn": "کعدرن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرماب-شاهزاده",
+      "name": "گرماب شاهزاده",
+      "nameEn": "گرماب-شاهزاده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-گنبد",
+      "name": "گل گنبد",
+      "nameEn": "گل-گنبد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرزان",
+      "name": "مرزان",
+      "nameEn": "مرزان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "معدن-گوین-کوه",
+      "name": "معدن گوین کوه",
+      "nameEn": "معدن-گوین-کوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مقصودآباد",
+      "name": "مقصودآباد",
+      "nameEn": "مقصودآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نسک",
+      "name": "نسک",
+      "nameEn": "نسک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یام",
+      "name": "یام",
+      "nameEn": "یام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ینگ",
+      "name": "ینگ",
+      "nameEn": "ینگ",
+      "geoSource": "osm"
+    }
+  ]
+}

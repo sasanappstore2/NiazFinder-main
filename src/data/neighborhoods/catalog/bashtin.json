@@ -1,0 +1,91 @@
+{
+  "cityId": "bashtin",
+  "cityName": "باشتین",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:33:57.757Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "باشتین",
+      "name": "باشتین",
+      "nameEn": "bashtin",
+      "centroid": {
+        "lat": 36.23532598235717,
+        "lng": 57.307246665904
+      },
+      "bbox": {
+        "south": 36.12883945702479,
+        "north": 36.341812507689546,
+        "west": 57.18675272447367,
+        "east": 57.42774060733433
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغدشت",
+      "name": "باغدشت",
+      "nameEn": "باغدشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برآباد",
+      "name": "برآباد",
+      "nameEn": "برآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تاج-آباد",
+      "name": "تاج آباد",
+      "nameEn": "تاج-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ریوند",
+      "name": "ریوند",
+      "nameEn": "ریوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شمس-آباد",
+      "name": "شمس آباد",
+      "nameEn": "شمس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرایین",
+      "name": "شهرایین",
+      "nameEn": "شهرایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیض-آباد",
+      "name": "فیض آباد",
+      "nameEn": "فیض-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مسکن",
+      "name": "مسکن",
+      "nameEn": "مسکن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآباد",
+      "name": "مهرآباد",
+      "nameEn": "مهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نامن",
+      "name": "نامن",
+      "nameEn": "نامن",
+      "geoSource": "osm"
+    }
+  ]
+}

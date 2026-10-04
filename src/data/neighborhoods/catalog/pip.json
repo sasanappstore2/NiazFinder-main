@@ -1,0 +1,25 @@
+{
+  "cityId": "pip",
+  "cityName": "پیپ",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.096Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "پیپ",
+      "name": "پیپ",
+      "nameEn": "pip",
+      "centroid": {
+        "lat": 26.605534940316204,
+        "lng": 60.13873975864021
+      },
+      "bbox": {
+        "south": 26.49904841498383,
+        "north": 26.71202146564858,
+        "west": 60.032487847191284,
+        "east": 60.24499167008914
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

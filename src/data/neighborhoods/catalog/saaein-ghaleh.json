@@ -1,0 +1,163 @@
+{
+  "cityId": "saaein-ghaleh",
+  "cityName": "صائین قلعه",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:37:55.983Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "صائین-قلعه",
+      "name": "صائین قلعه",
+      "nameEn": "saaein-ghaleh",
+      "centroid": {
+        "lat": 36.35619536485807,
+        "lng": 49.10292456727346
+      },
+      "bbox": {
+        "south": 36.24970883952569,
+        "north": 36.462681890190446,
+        "west": 48.98168643206796,
+        "east": 49.22416270247897
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اردجین",
+      "name": "اردجین",
+      "nameEn": "اردجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارهان",
+      "name": "ارهان",
+      "nameEn": "ارهان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الگزیر",
+      "name": "الگزیر",
+      "nameEn": "الگزیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الوند",
+      "name": "الوند",
+      "nameEn": "الوند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-دره",
+      "name": "باغ دره",
+      "nameEn": "باغ-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پلاس",
+      "name": "پلاس",
+      "nameEn": "پلاس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیرسقا",
+      "name": "پیرسقا",
+      "nameEn": "پیرسقا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چرگر",
+      "name": "چرگر",
+      "nameEn": "چرگر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خراسانلو",
+      "name": "خراسانلو",
+      "nameEn": "خراسانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خلیفه-لو",
+      "name": "خلیفه لو",
+      "nameEn": "خلیفه-لو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داشبلاغ",
+      "name": "داشبلاغ",
+      "nameEn": "داشبلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سروجهان",
+      "name": "سروجهان",
+      "nameEn": "سروجهان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سوکهریز",
+      "name": "سوکهریز",
+      "nameEn": "سوکهریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شویر",
+      "name": "شویر",
+      "nameEn": "شویر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صایین-قلعه",
+      "name": "صایین قلعه",
+      "nameEn": "صایین-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عمید-آباد",
+      "name": "عمید آباد",
+      "nameEn": "عمید-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فلج",
+      "name": "فلج",
+      "nameEn": "فلج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-حسینیه",
+      "name": "قلعه حسینیه",
+      "nameEn": "قلعه-حسینیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کبودچشمه",
+      "name": "کبودچشمه",
+      "nameEn": "کبودچشمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوه-زین",
+      "name": "کوه زین",
+      "nameEn": "کوه-زین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهستان",
+      "name": "مهستان",
+      "nameEn": "مهستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصیر-آباد",
+      "name": "نصیر آباد",
+      "nameEn": "نصیر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هیدج",
+      "name": "هیدج",
+      "nameEn": "هیدج",
+      "geoSource": "osm"
+    }
+  ]
+}

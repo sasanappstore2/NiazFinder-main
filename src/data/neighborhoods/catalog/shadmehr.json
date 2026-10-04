@@ -1,0 +1,211 @@
+{
+  "cityId": "shadmehr",
+  "cityName": "شادمهر",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:49:16.084Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سهراهی-شادمهر",
+      "name": "سهراهی شادمهر",
+      "nameEn": "سهراهی-شادمهر",
+      "centroid": {
+        "lat": 35.144819027847646,
+        "lng": 58.99099941809408
+      },
+      "bbox": {
+        "south": 35.03833250251527,
+        "north": 35.251305553180025,
+        "west": 58.871629948650806,
+        "east": 59.11036888753734
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسکندرآباد",
+      "name": "اسکندرآباد",
+      "nameEn": "اسکندرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "الی",
+      "name": "الی",
+      "nameEn": "الی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امیرآباد",
+      "name": "امیرآباد",
+      "nameEn": "امیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اومی",
+      "name": "اومی",
+      "nameEn": "اومی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوری-آباد",
+      "name": "بوری آباد",
+      "nameEn": "بوری-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تجرود",
+      "name": "تجرود",
+      "nameEn": "تجرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جعفرآباد",
+      "name": "جعفرآباد",
+      "nameEn": "جعفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چنار",
+      "name": "چنار",
+      "nameEn": "چنار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حوض-سرخ",
+      "name": "حوض سرخ",
+      "nameEn": "حوض-سرخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خورش-بر",
+      "name": "خورش بر",
+      "nameEn": "خورش-بر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خورق",
+      "name": "خورق",
+      "nameEn": "خورق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خوشدره",
+      "name": "خوشدره",
+      "nameEn": "خوشدره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-جعفرآباد",
+      "name": "روستای جعفرآباد",
+      "nameEn": "روستای-جعفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-حوض-سرخ",
+      "name": "روستای حوض سرخ",
+      "nameEn": "روستای-حوض-سرخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرمهر",
+      "name": "زرمهر",
+      "nameEn": "زرمهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرنوخ",
+      "name": "زرنوخ",
+      "nameEn": "زرنوخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زمان-آباد",
+      "name": "زمان آباد",
+      "nameEn": "زمان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرخ-آباد",
+      "name": "سرخ آباد",
+      "nameEn": "سرخ-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلطان-آباد",
+      "name": "سلطان آباد",
+      "nameEn": "سلطان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگل-آباد",
+      "name": "سنگل آباد",
+      "nameEn": "سنگل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شادمهر",
+      "name": "شادمهر",
+      "nameEn": "شادمهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخ-ابوالقاسم",
+      "name": "شیخ ابوالقاسم",
+      "nameEn": "شیخ-ابوالقاسم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ظهیرآباد-پایین",
+      "name": "ظهیرآباد پایین",
+      "nameEn": "ظهیرآباد-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-سفلی",
+      "name": "علی آباد سفلی",
+      "nameEn": "علی-آباد-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-علیا",
+      "name": "علی آباد علیا",
+      "nameEn": "علی-آباد-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-وسطی",
+      "name": "علی آباد وسطی",
+      "nameEn": "علی-آباد-وسطی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-جوق",
+      "name": "قلعه جوق",
+      "nameEn": "قلعه-جوق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-نو",
+      "name": "قلعه نو",
+      "nameEn": "قلعه-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوزان",
+      "name": "قوزان",
+      "nameEn": "قوزان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاج-درخت",
+      "name": "کاج درخت",
+      "nameEn": "کاج-درخت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گشن",
+      "name": "گشن",
+      "nameEn": "گشن",
+      "geoSource": "osm"
+    }
+  ]
+}

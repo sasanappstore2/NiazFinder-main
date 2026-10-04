@@ -1,0 +1,103 @@
+{
+  "cityId": "siraf",
+  "cityName": "سیراف",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:38:14.578Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سیراف",
+      "name": "سیراف",
+      "nameEn": "siraf",
+      "centroid": {
+        "lat": 27.670200727057132,
+        "lng": 52.48289228438086
+      },
+      "bbox": {
+        "south": 27.563714201724757,
+        "north": 27.776687252389507,
+        "west": 52.372770600154574,
+        "east": 52.593013968607146
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیدخوار",
+      "name": "بیدخوار",
+      "nameEn": "بیدخوار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرک",
+      "name": "پرک",
+      "nameEn": "پرک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پلنگی",
+      "name": "پلنگی",
+      "nameEn": "پلنگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاهه",
+      "name": "چاهه",
+      "nameEn": "چاهه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-پردیس-جم",
+      "name": "شهرک پردیس جم",
+      "nameEn": "شهرک-پردیس-جم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرینو",
+      "name": "شیرینو",
+      "nameEn": "شیرینو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمال-آباد",
+      "name": "کمال آباد",
+      "nameEn": "کمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآباد",
+      "name": "مهرآباد",
+      "nameEn": "مهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناحیه-۲",
+      "name": "ناحیه ۲",
+      "nameEn": "ناحیه-۲",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناحیه-۹",
+      "name": "ناحیه ۹",
+      "nameEn": "ناحیه-۹",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناحیه-یک",
+      "name": "ناحیه یک",
+      "nameEn": "ناحیه-یک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ولیعصر",
+      "name": "ولیعصر",
+      "nameEn": "ولیعصر",
+      "geoSource": "osm"
+    }
+  ]
+}

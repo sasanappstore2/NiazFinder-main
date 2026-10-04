@@ -1,0 +1,25 @@
+{
+  "cityId": "milajerd",
+  "cityName": "میلاجرد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.724Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "میلاجرد",
+      "name": "میلاجرد",
+      "nameEn": "milajerd",
+      "centroid": {
+        "lat": 34.6812221502695,
+        "lng": 49.280434352421274
+      },
+      "bbox": {
+        "south": 34.57473562493712,
+        "north": 34.78770867560188,
+        "west": 49.16535356572475,
+        "east": 49.3955151391178
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

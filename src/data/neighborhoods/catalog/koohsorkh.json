@@ -1,0 +1,157 @@
+{
+  "cityId": "koohsorkh",
+  "cityName": "کوهسرخ",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:54:52.123Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوهسرخ",
+      "name": "کوهسرخ",
+      "nameEn": "koohsorkh",
+      "centroid": {
+        "lat": 35.487726185806686,
+        "lng": 58.67628129713003
+      },
+      "bbox": {
+        "south": 35.38123966047431,
+        "north": 35.594212711139065,
+        "west": 58.56100708796351,
+        "east": 58.79155550629656
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اکبرآباد",
+      "name": "اکبرآباد",
+      "nameEn": "اکبرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوندر",
+      "name": "اوندر",
+      "nameEn": "اوندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بختیار",
+      "name": "بختیار",
+      "nameEn": "بختیار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشت-پنجه",
+      "name": "پشت پنجه",
+      "nameEn": "پشت-پنجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تجرود",
+      "name": "تجرود",
+      "nameEn": "تجرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تولا",
+      "name": "تولا",
+      "nameEn": "تولا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "توندر",
+      "name": "توندر",
+      "nameEn": "توندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چلپو",
+      "name": "چلپو",
+      "nameEn": "چلپو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرو",
+      "name": "خرو",
+      "nameEn": "خرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خضرآباد",
+      "name": "خضرآباد",
+      "nameEn": "خضرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خضربیگ",
+      "name": "خضربیگ",
+      "nameEn": "خضربیگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-میان",
+      "name": "ده میان",
+      "nameEn": "ده-میان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ریوش",
+      "name": "ریوش",
+      "nameEn": "ریوش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طرق",
+      "name": "طرق",
+      "nameEn": "طرق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عطائیه",
+      "name": "عطائیه",
+      "nameEn": "عطائیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قراچه",
+      "name": "قراچه",
+      "nameEn": "قراچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قصون",
+      "name": "قصون",
+      "nameEn": "قصون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-پایین-دره",
+      "name": "کلاته پایین دره",
+      "nameEn": "کلاته-پایین-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-نگاری",
+      "name": "کلاته نگاری",
+      "nameEn": "کلاته-نگاری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مکی",
+      "name": "مکی",
+      "nameEn": "مکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موشک",
+      "name": "موشک",
+      "nameEn": "موشک",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "kahir",
+  "cityName": "کهیر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.777Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کهیر",
+      "name": "کهیر",
+      "nameEn": "kahir",
+      "centroid": {
+        "lat": 25.618390632231403,
+        "lng": 60.011725895499865
+      },
+      "bbox": {
+        "south": 25.511904106899028,
+        "north": 25.72487715756378,
+        "west": 59.90293400189123,
+        "east": 60.120517789108504
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

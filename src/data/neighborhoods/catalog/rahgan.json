@@ -1,0 +1,25 @@
+{
+  "cityId": "rahgan",
+  "cityName": "راهگان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.227Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "راهگان",
+      "name": "راهگان",
+      "nameEn": "rahgan",
+      "centroid": {
+        "lat": 28.845167180237155,
+        "lng": 53.33194307721493
+      },
+      "bbox": {
+        "south": 28.73868065490478,
+        "north": 28.95165370556953,
+        "west": 53.225721690436885,
+        "east": 53.43816446399298
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "sarbisheh",
+  "cityName": "سربیشه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.591Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مسکن-مهر",
+      "name": "مسکن مهر",
+      "nameEn": "مسکن-مهر",
+      "centroid": {
+        "lat": 32.474844579446646,
+        "lng": 60.035789758429814
+      },
+      "bbox": {
+        "south": 32.36835805411427,
+        "north": 32.581331104779025,
+        "west": 59.92579947701918,
+        "east": 60.145780039840446
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

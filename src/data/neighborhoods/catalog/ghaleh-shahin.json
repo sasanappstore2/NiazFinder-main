@@ -1,0 +1,25 @@
+{
+  "cityId": "ghaleh-shahin",
+  "cityName": "قلعه شاهین",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.228Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قلعه-شاهین",
+      "name": "قلعه شاهین",
+      "nameEn": "ghaleh-shahin",
+      "centroid": {
+        "lat": 34.315164436471434,
+        "lng": 46.05614538384818
+      },
+      "bbox": {
+        "south": 34.208677911139056,
+        "north": 34.42165096180381,
+        "west": 45.93781061268485,
+        "east": 46.174480155011516
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

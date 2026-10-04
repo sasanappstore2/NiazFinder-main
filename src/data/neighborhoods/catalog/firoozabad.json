@@ -1,0 +1,25 @@
+{
+  "cityId": "firoozabad",
+  "cityName": "فیروزآباد (لرستان)",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.065Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فیروزآباد-لرستان",
+      "name": "فیروزآباد (لرستان)",
+      "nameEn": "firoozabad",
+      "centroid": {
+        "lat": 33.81547018196191,
+        "lng": 48.04448303560348
+      },
+      "bbox": {
+        "south": 33.708983656629535,
+        "north": 33.92195670729429,
+        "west": 47.92686668703777,
+        "east": 48.16209938416918
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

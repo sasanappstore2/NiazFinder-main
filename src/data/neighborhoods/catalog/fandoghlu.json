@@ -1,0 +1,223 @@
+{
+  "cityId": "fandoghlu",
+  "cityName": "فندقلو",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:13:31.226Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فندقلو",
+      "name": "فندقلو",
+      "nameEn": "fandoghlu",
+      "centroid": {
+        "lat": 38.454924001724756,
+        "lng": 47.371955662401426
+      },
+      "bbox": {
+        "south": 38.34843747639238,
+        "north": 38.561410527057134,
+        "west": 47.24697728765081,
+        "east": 47.496934037152045
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آرموداق",
+      "name": "آرموداق",
+      "nameEn": "آرموداق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "افضل",
+      "name": "افضل",
+      "nameEn": "افضل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوین-مسجدلو",
+      "name": "اوین مسجدلو",
+      "nameEn": "اوین-مسجدلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایدی-گوز-سفیدخانی",
+      "name": "ایدی گوز سفیدخانی",
+      "nameEn": "ایدی-گوز-سفیدخانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برزق",
+      "name": "برزق",
+      "nameEn": "برزق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بناروان",
+      "name": "بناروان",
+      "nameEn": "بناروان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تازه-کندپروچ",
+      "name": "تازه کندپروچ",
+      "nameEn": "تازه-کندپروچ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تجرق",
+      "name": "تجرق",
+      "nameEn": "تجرق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ترناب",
+      "name": "ترناب",
+      "nameEn": "ترناب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "توشمانلو",
+      "name": "توشمانلو",
+      "nameEn": "توشمانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-کش-ساری-قمیش",
+      "name": "چشمه کش ساری قمیش",
+      "nameEn": "چشمه-کش-ساری-قمیش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاج-همتلو",
+      "name": "حاج همتلو",
+      "nameEn": "حاج-همتلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حصار-میدان-داغی",
+      "name": "حصار میدان داغی",
+      "nameEn": "حصار-میدان-داغی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانقاه",
+      "name": "خانقاه",
+      "nameEn": "خانقاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دلی-قیز",
+      "name": "دلی قیز",
+      "nameEn": "دلی-قیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیزج",
+      "name": "دیزج",
+      "nameEn": "دیزج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رج",
+      "name": "رج",
+      "nameEn": "رج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرنکش",
+      "name": "زرنکش",
+      "nameEn": "زرنکش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلطان-آباد",
+      "name": "سلطان آباد",
+      "nameEn": "سلطان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنقرآباد",
+      "name": "سنقرآباد",
+      "nameEn": "سنقرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سوتی",
+      "name": "سوتی",
+      "nameEn": "سوتی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سوین",
+      "name": "سوین",
+      "nameEn": "سوین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدلر",
+      "name": "سیدلر",
+      "nameEn": "سیدلر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدمنصور",
+      "name": "سیدمنصور",
+      "nameEn": "سیدمنصور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخ-سرجین",
+      "name": "شیخ سرجین",
+      "nameEn": "شیخ-سرجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طارون",
+      "name": "طارون",
+      "nameEn": "طارون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-حاجی-سفلی",
+      "name": "قره حاجی سفلی",
+      "nameEn": "قره-حاجی-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قشلاق-سیف-الدین",
+      "name": "قشلاق سیف الدین",
+      "nameEn": "قشلاق-سیف-الدین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لیوانلو",
+      "name": "لیوانلو",
+      "nameEn": "لیوانلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملک",
+      "name": "ملک",
+      "nameEn": "ملک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناراب",
+      "name": "ناراب",
+      "nameEn": "ناراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نی-باغی",
+      "name": "نی باغی",
+      "nameEn": "نی-باغی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وانق-بالا",
+      "name": "وانق بالا",
+      "nameEn": "وانق-بالا",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "ashkhaneh",
+  "cityName": "آشخانه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.959Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "آشخانه",
+      "name": "آشخانه",
+      "nameEn": "ashkhaneh",
+      "centroid": {
+        "lat": 37.6505639918577,
+        "lng": 56.45338064348761
+      },
+      "bbox": {
+        "south": 37.638637501020476,
+        "north": 37.66249048269493,
+        "west": 56.43971884911244,
+        "east": 56.46704243786279
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "cityId": "esmaeili",
+  "cityName": "اسماعیلی",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:41:40.587Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دهکده-پزشکان",
+      "name": "دهکده پزشکان",
+      "nameEn": "دهکده-پزشکان",
+      "centroid": {
+        "lat": 28.364517493100973,
+        "lng": 57.73891951746903
+      },
+      "bbox": {
+        "south": 28.258030967768597,
+        "north": 28.471004018433348,
+        "west": 57.6283199506253,
+        "east": 57.84951908431277
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "قناتغستان",
+      "name": "قناتغستان",
+      "nameEn": "قناتغستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهنوج",
+      "name": "کهنوج",
+      "nameEn": "کهنوج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لنگر",
+      "name": "لنگر",
+      "nameEn": "لنگر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ماهان",
+      "name": "ماهان",
+      "nameEn": "ماهان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محی-آباد",
+      "name": "محی آباد",
+      "nameEn": "محی-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

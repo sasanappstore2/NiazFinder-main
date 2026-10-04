@@ -1,0 +1,25 @@
+{
+  "cityId": "kushkenar",
+  "cityName": "کوشکنار",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.345Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوشکنار",
+      "name": "کوشکنار",
+      "nameEn": "kushkenar",
+      "centroid": {
+        "lat": 27.215453255839023,
+        "lng": 53.02026063402647
+      },
+      "bbox": {
+        "south": 27.108966730506648,
+        "north": 27.321939781171398,
+        "west": 52.91183364690375,
+        "east": 53.1286876211492
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "gatij",
+  "cityName": "گتیج",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.166Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گتیج",
+      "name": "گتیج",
+      "nameEn": "گتیج",
+      "centroid": {
+        "lat": 26.70137369827524,
+        "lng": 59.270844510869445
+      },
+      "bbox": {
+        "south": 26.594887172942865,
+        "north": 26.807860223607616,
+        "west": 59.160034516213635,
+        "east": 59.381654505525255
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

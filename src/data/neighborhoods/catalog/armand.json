@@ -1,0 +1,25 @@
+{
+  "cityId": "armand",
+  "cityName": "ارمند",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.906Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ارمند",
+      "name": "ارمند",
+      "nameEn": "armand",
+      "centroid": {
+        "lat": 31.646069458354294,
+        "lng": 50.884921974543474
+      },
+      "bbox": {
+        "south": 31.53958293302192,
+        "north": 31.75255598368667,
+        "west": 50.767408689255696,
+        "east": 51.002435259831245
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

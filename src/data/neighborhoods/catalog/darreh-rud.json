@@ -1,0 +1,25 @@
+{
+  "cityId": "darreh-rud",
+  "cityName": "دره رود",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.735Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دره-رود",
+      "name": "دره رود",
+      "nameEn": "darreh-rud",
+      "centroid": {
+        "lat": 39.124646172547614,
+        "lng": 47.68786224324518
+      },
+      "bbox": {
+        "south": 39.018159647215235,
+        "north": 39.23113269787999,
+        "west": 47.56663177928775,
+        "east": 47.809092707202595
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "cityId": "jolgeh-zoozan",
+  "cityName": "جلگه زوزن",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:38:29.074Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جلگه-زوزن",
+      "name": "جلگه زوزن",
+      "nameEn": "jolgeh-zoozan",
+      "centroid": {
+        "lat": 34.359091112863815,
+        "lng": 59.787740587862615
+      },
+      "bbox": {
+        "south": 34.25260458753144,
+        "north": 34.465577638196194,
+        "west": 59.66660246920462,
+        "east": 59.9088787065206
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "ابراهیمی",
+      "name": "ابراهیمی",
+      "nameEn": "ابراهیمی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسدآباد",
+      "name": "اسدآباد",
+      "nameEn": "اسدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جهان-آباد",
+      "name": "جهان آباد",
+      "nameEn": "جهان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زوزن",
+      "name": "زوزن",
+      "nameEn": "زوزن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاسم-آباد",
+      "name": "قاسم آباد",
+      "nameEn": "قاسم-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

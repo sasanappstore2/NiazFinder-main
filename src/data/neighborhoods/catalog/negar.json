@@ -1,0 +1,121 @@
+{
+  "cityId": "negar",
+  "cityName": "نگار",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:02:44.415Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "نگار",
+      "name": "نگار",
+      "nameEn": "negar",
+      "centroid": {
+        "lat": 29.878577975997125,
+        "lng": 56.90281027086307
+      },
+      "bbox": {
+        "south": 29.77209145066475,
+        "north": 29.9850645013295,
+        "west": 56.790157984753755,
+        "east": 57.01546255697238
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسماعیل-آباد",
+      "name": "اسماعیل آباد",
+      "nameEn": "اسماعیل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهرامجرد",
+      "name": "بهرامجرد",
+      "nameEn": "بهرامجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تلمبه-حجت-آباد",
+      "name": "تلمبه حجت آباد",
+      "nameEn": "تلمبه-حجت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حیدرآباد",
+      "name": "حیدرآباد",
+      "nameEn": "حیدرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشتکار",
+      "name": "دشتکار",
+      "nameEn": "دشتکار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-کبری",
+      "name": "ده کبری",
+      "nameEn": "ده-کبری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سامانجرد",
+      "name": "سامانجرد",
+      "nameEn": "سامانجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرخ-کان",
+      "name": "سرخ کان",
+      "nameEn": "سرخ-کان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غبیرا",
+      "name": "غبیرا",
+      "nameEn": "غبیرا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قنات-سیر",
+      "name": "قنات سیر",
+      "nameEn": "قنات-سیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهنک",
+      "name": "کهنک",
+      "nameEn": "کهنک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مبارکه",
+      "name": "مبارکه",
+      "nameEn": "مبارکه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد",
+      "name": "محمودآباد",
+      "nameEn": "محمودآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نارپ",
+      "name": "نارپ",
+      "nameEn": "نارپ",
+      "geoSource": "osm"
+    }
+  ]
+}

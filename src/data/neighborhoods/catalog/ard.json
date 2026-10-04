@@ -1,0 +1,91 @@
+{
+  "cityId": "ard",
+  "cityName": "ارد",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:49:58.838Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ارد",
+      "name": "ارد",
+      "nameEn": "ard",
+      "centroid": {
+        "lat": 27.700384324002876,
+        "lng": 53.79540342614328
+      },
+      "bbox": {
+        "south": 27.5938977986705,
+        "north": 27.80687084933525,
+        "west": 53.683852167657136,
+        "east": 53.90695468462942
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آغصه",
+      "name": "آغصه",
+      "nameEn": "آغصه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اکبرآباد",
+      "name": "اکبرآباد",
+      "nameEn": "اکبرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیغرد",
+      "name": "بیغرد",
+      "nameEn": "بیغرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دانشگاه-آزاد-اسلامی-خنج",
+      "name": "دانشگاه آزاد اسلامی خنج",
+      "nameEn": "دانشگاه-آزاد-اسلامی-خنج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زینل-آباد",
+      "name": "زینل آباد",
+      "nameEn": "زینل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فداغ",
+      "name": "فداغ",
+      "nameEn": "فداغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیشور",
+      "name": "فیشور",
+      "nameEn": "فیشور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنگ-ریشه",
+      "name": "گنگ ریشه",
+      "nameEn": "گنگ-ریشه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مز",
+      "name": "مز",
+      "nameEn": "مز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهلچه",
+      "name": "مهلچه",
+      "nameEn": "مهلچه",
+      "geoSource": "osm"
+    }
+  ]
+}

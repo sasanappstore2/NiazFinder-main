@@ -1,0 +1,49 @@
+{
+  "cityId": "rigan",
+  "cityName": "ریگان",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:51:16.877Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ریگان",
+      "name": "ریگان",
+      "nameEn": "rigan",
+      "centroid": {
+        "lat": 28.464037545490477,
+        "lng": 59.122477089967234
+      },
+      "bbox": {
+        "south": 28.357551020158102,
+        "north": 28.570524070822852,
+        "west": 59.011083237610194,
+        "east": 59.23387094232428
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "ابگرم",
+      "name": "ابگرم",
+      "nameEn": "ابگرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-قنبر",
+      "name": "چاه قنبر",
+      "nameEn": "چاه-قنبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرزه",
+      "name": "سرزه",
+      "nameEn": "سرزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کچ-کهور",
+      "name": "کچ کهور",
+      "nameEn": "کچ-کهور",
+      "geoSource": "osm"
+    }
+  ]
+}

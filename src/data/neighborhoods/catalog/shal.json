@@ -1,0 +1,25 @@
+{
+  "cityId": "shal",
+  "cityName": "شال",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.794Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شال",
+      "name": "شال",
+      "nameEn": "shal",
+      "centroid": {
+        "lat": 35.91728221501976,
+        "lng": 49.87689588531572
+      },
+      "bbox": {
+        "south": 35.876817335393454,
+        "north": 35.957747094646066,
+        "west": 49.83324917041713,
+        "east": 49.920542600214304
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

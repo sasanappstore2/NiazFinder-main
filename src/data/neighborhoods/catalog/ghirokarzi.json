@@ -1,0 +1,127 @@
+{
+  "cityId": "ghirokarzi",
+  "cityName": "قیروکارزین",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:17:57.561Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "قیروکارزین",
+      "name": "قیروکارزین",
+      "nameEn": "ghirokarzi",
+      "centroid": {
+        "lat": 28.40500151764283,
+        "lng": 53.298046126788726
+      },
+      "bbox": {
+        "south": 28.298514992310455,
+        "north": 28.511488042975206,
+        "west": 53.18596098993524,
+        "east": 53.410131263642214
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آب-شیرین",
+      "name": "آب شیرین",
+      "nameEn": "آب-شیرین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امام-شهر",
+      "name": "امام شهر",
+      "nameEn": "امام-شهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندبست-پایین",
+      "name": "بندبست پایین",
+      "nameEn": "بندبست-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیشه-زرد",
+      "name": "بیشه زرد",
+      "nameEn": "بیشه-زرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنگرویین",
+      "name": "تنگرویین",
+      "nameEn": "تنگرویین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چم-سبز",
+      "name": "چم سبز",
+      "nameEn": "چم-سبز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-به",
+      "name": "ده به",
+      "nameEn": "ده-به",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیستان-سفلی",
+      "name": "سیستان سفلی",
+      "nameEn": "سیستان-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیستان-علیا",
+      "name": "سیستان علیا",
+      "nameEn": "سیستان-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-قلات",
+      "name": "شهرک قلات",
+      "nameEn": "شهرک-قلات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیر-حبیب",
+      "name": "شیر حبیب",
+      "nameEn": "شیر-حبیب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کارزین",
+      "name": "کارزین",
+      "nameEn": "کارزین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مبارک-آباد",
+      "name": "مبارک آباد",
+      "nameEn": "مبارک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منصورآباد",
+      "name": "منصورآباد",
+      "nameEn": "منصورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نجف-آباد",
+      "name": "نجف آباد",
+      "nameEn": "نجف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نهویه",
+      "name": "نهویه",
+      "nameEn": "نهویه",
+      "geoSource": "osm"
+    }
+  ]
+}

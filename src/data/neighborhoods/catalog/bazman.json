@@ -1,0 +1,25 @@
+{
+  "cityId": "bazman",
+  "cityName": "بزمان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.366Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بزمان",
+      "name": "بزمان",
+      "nameEn": "bazman",
+      "centroid": {
+        "lat": 28.034893565253324,
+        "lng": 59.940992157763006
+      },
+      "bbox": {
+        "south": 27.92840703992095,
+        "north": 28.1413800905857,
+        "west": 59.83362315446601,
+        "east": 60.04836116106001
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

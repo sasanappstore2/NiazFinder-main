@@ -1,0 +1,25 @@
+{
+  "cityId": "goharkuh",
+  "cityName": "گوهرکوه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.317Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گوهرکوه",
+      "name": "گوهرکوه",
+      "nameEn": "goharkuh",
+      "centroid": {
+        "lat": 28.292694734351418,
+        "lng": 60.5595219495079
+      },
+      "bbox": {
+        "south": 28.186208209019043,
+        "north": 28.399181259683793,
+        "west": 60.44943212452155,
+        "east": 60.66961177449424
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

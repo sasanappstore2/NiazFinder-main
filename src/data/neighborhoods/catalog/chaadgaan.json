@@ -1,0 +1,25 @@
+{
+  "cityId": "chaadgaan",
+  "cityName": "چادگان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.514Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چادگان",
+      "name": "چادگان",
+      "nameEn": "chaadgaan",
+      "centroid": {
+        "lat": 32.79644721498383,
+        "lng": 50.67910928864583
+      },
+      "bbox": {
+        "south": 32.68996068965145,
+        "north": 32.90293374031621,
+        "west": 50.565391037519674,
+        "east": 50.792827539771984
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

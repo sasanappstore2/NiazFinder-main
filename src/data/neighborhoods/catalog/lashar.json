@@ -1,0 +1,169 @@
+{
+  "cityId": "lashar",
+  "cityName": "لاشار",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:03:08.927Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "لاشار",
+      "name": "لاشار",
+      "nameEn": "lashar",
+      "centroid": {
+        "lat": 26.860075069098095,
+        "lng": 60.2569426541387
+      },
+      "bbox": {
+        "south": 26.75358854376572,
+        "north": 26.96656159443047,
+        "west": 60.14621255021854,
+        "east": 60.36767275805886
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اپودم",
+      "name": "اپودم",
+      "nameEn": "اپودم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسپکه",
+      "name": "اسپکه",
+      "nameEn": "اسپکه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اله-آباد",
+      "name": "اله آباد",
+      "nameEn": "اله-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بغدان",
+      "name": "بغدان",
+      "nameEn": "بغدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوستان",
+      "name": "بوستان",
+      "nameEn": "بوستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پامونت",
+      "name": "پامونت",
+      "nameEn": "پامونت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پتک",
+      "name": "پتک",
+      "nameEn": "پتک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشت-تمب",
+      "name": "پشت تمب",
+      "nameEn": "پشت-تمب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیپ",
+      "name": "پیپ",
+      "nameEn": "پیپ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جاکس",
+      "name": "جاکس",
+      "nameEn": "جاکس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیارت",
+      "name": "زیارت",
+      "nameEn": "زیارت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیربانداد",
+      "name": "زیربانداد",
+      "nameEn": "زیربانداد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سول",
+      "name": "سول",
+      "nameEn": "سول",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیف-آباد-جاوشیری",
+      "name": "سیف آباد جاوشیری",
+      "nameEn": "سیف-آباد-جاوشیری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرآباد",
+      "name": "شیرآباد",
+      "nameEn": "شیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-چگردک",
+      "name": "علی آباد چگردک",
+      "nameEn": "علی-آباد-چگردک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوپچ",
+      "name": "کوپچ",
+      "nameEn": "کوپچ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گردهان",
+      "name": "گردهان",
+      "nameEn": "گردهان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گشان",
+      "name": "گشان",
+      "nameEn": "گشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوک-آباد",
+      "name": "نوک آباد",
+      "nameEn": "نوک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورکات",
+      "name": "ورکات",
+      "nameEn": "ورکات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هریدوک",
+      "name": "هریدوک",
+      "nameEn": "هریدوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هیدویچ",
+      "name": "هیدویچ",
+      "nameEn": "هیدویچ",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "baagh-bahadoraan",
+  "cityName": "باغ بهادران",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.023Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "باغ-بهادران",
+      "name": "باغ بهادران",
+      "nameEn": "baagh-bahadoraan",
+      "centroid": {
+        "lat": 32.39298322321236,
+        "lng": 51.19598402787577
+      },
+      "bbox": {
+        "south": 32.28649669787998,
+        "north": 32.49946974854474,
+        "west": 51.08557477788809,
+        "east": 51.30639327786344
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

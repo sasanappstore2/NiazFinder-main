@@ -1,0 +1,49 @@
+{
+  "cityId": "golbaf",
+  "cityName": "گلباف",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:58:10.153Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گلباف",
+      "name": "گلباف",
+      "nameEn": "golbaf",
+      "centroid": {
+        "lat": 29.830790650269492,
+        "lng": 58.0391791408539
+      },
+      "bbox": {
+        "south": 29.724304124937117,
+        "north": 29.937277175601867,
+        "west": 57.92811673402188,
+        "east": 58.15024154768592
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "زمان-آباد",
+      "name": "زمان آباد",
+      "nameEn": "زمان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-باهنر",
+      "name": "شهرک باهنر",
+      "nameEn": "شهرک-باهنر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فندقاع",
+      "name": "فندقاع",
+      "nameEn": "فندقاع",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نسک",
+      "name": "نسک",
+      "nameEn": "نسک",
+      "geoSource": "osm"
+    }
+  ]
+}

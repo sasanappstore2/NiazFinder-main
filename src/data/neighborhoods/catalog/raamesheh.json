@@ -1,0 +1,55 @@
+{
+  "cityId": "raamesheh",
+  "cityName": "رامشه",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:40:02.740Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "رامشه",
+      "name": "رامشه",
+      "nameEn": "raamesheh",
+      "centroid": {
+        "lat": 31.84007448580668,
+        "lng": 52.747373758116154
+      },
+      "bbox": {
+        "south": 31.733587960474306,
+        "north": 31.946561011139057,
+        "west": 52.63646236580054,
+        "east": 52.858285150431776
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسفنداران",
+      "name": "اسفنداران",
+      "nameEn": "اسفنداران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حارث-آباد",
+      "name": "حارث آباد",
+      "nameEn": "حارث-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیض-آباد",
+      "name": "فیض آباد",
+      "nameEn": "فیض-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مبارکه",
+      "name": "مبارکه",
+      "nameEn": "مبارکه",
+      "geoSource": "osm"
+    }
+  ]
+}

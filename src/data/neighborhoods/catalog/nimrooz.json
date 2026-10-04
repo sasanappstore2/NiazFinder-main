@@ -1,0 +1,25 @@
+{
+  "cityId": "nimrooz",
+  "cityName": "نیمروز",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.937Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "نیمروز",
+      "name": "نیمروز",
+      "nameEn": "nimrooz",
+      "centroid": {
+        "lat": 31.236406081566653,
+        "lng": 61.49014064688126
+      },
+      "bbox": {
+        "south": 31.129919556234277,
+        "north": 31.342892606899028,
+        "west": 61.379280725445575,
+        "east": 61.60100056831694
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

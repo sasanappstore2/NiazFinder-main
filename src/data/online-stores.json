@@ -1,0 +1,842 @@
+{
+  "categories": [
+    {
+      "slug": "online-fashion",
+      "parentSlug": null,
+      "title": "مد و پوشاک",
+      "englishTitle": "Fashion",
+      "depth": 0,
+      "sortOrder": 100,
+      "isActive": false
+    },
+    {
+      "slug": "online-clothing-apparel",
+      "parentSlug": "online-fashion",
+      "title": "پوشاک و لباس",
+      "englishTitle": "Clothing",
+      "depth": 1,
+      "sortOrder": 101,
+      "isActive": false
+    },
+    {
+      "slug": "online-footwear",
+      "parentSlug": "online-fashion",
+      "title": "کفش",
+      "englishTitle": "Footwear",
+      "depth": 1,
+      "sortOrder": 102,
+      "isActive": false
+    },
+    {
+      "slug": "online-traditional-clothing",
+      "parentSlug": "online-fashion",
+      "title": "لباس محلی و مجلسی",
+      "englishTitle": "Traditional Clothing",
+      "depth": 1,
+      "sortOrder": 103,
+      "isActive": false
+    },
+    {
+      "slug": "online-hijab-modest-fashion",
+      "parentSlug": "online-fashion",
+      "title": "حجاب و پوشش اسلامی",
+      "englishTitle": "Modest Fashion",
+      "depth": 1,
+      "sortOrder": 104,
+      "isActive": false
+    },
+    {
+      "slug": "online-bags-leather",
+      "parentSlug": "online-fashion",
+      "title": "کیف و چرم",
+      "englishTitle": "Bags & Leather",
+      "depth": 1,
+      "sortOrder": 105,
+      "isActive": false
+    },
+    {
+      "slug": "online-fashion-accessories",
+      "parentSlug": "online-fashion",
+      "title": "اکسسوری مد",
+      "englishTitle": "Fashion Accessories",
+      "depth": 1,
+      "sortOrder": 106,
+      "isActive": false
+    },
+    {
+      "slug": "online-jewelry-watches",
+      "parentSlug": null,
+      "title": "زیورآلات و ساعت",
+      "englishTitle": "Jewelry & Watches",
+      "depth": 0,
+      "sortOrder": 200,
+      "isActive": false
+    },
+    {
+      "slug": "online-costume-jewelry",
+      "parentSlug": "online-jewelry-watches",
+      "title": "بدلیجات و اکسسوری",
+      "englishTitle": "Costume Jewelry",
+      "depth": 1,
+      "sortOrder": 201,
+      "isActive": false
+    },
+    {
+      "slug": "online-gold-silver-jewelry",
+      "parentSlug": "online-jewelry-watches",
+      "title": "طلا و نقره",
+      "englishTitle": "Gold & Silver",
+      "depth": 1,
+      "sortOrder": 202,
+      "isActive": false
+    },
+    {
+      "slug": "online-watches",
+      "parentSlug": "online-jewelry-watches",
+      "title": "ساعت",
+      "englishTitle": "Watches",
+      "depth": 1,
+      "sortOrder": 203,
+      "isActive": false
+    },
+    {
+      "slug": "online-gems-stones",
+      "parentSlug": "online-jewelry-watches",
+      "title": "سنگ قیمتی و عقیق",
+      "englishTitle": "Gems",
+      "depth": 1,
+      "sortOrder": 204,
+      "isActive": false
+    },
+    {
+      "slug": "online-digital",
+      "parentSlug": null,
+      "title": "کالای دیجیتال",
+      "englishTitle": "Digital",
+      "depth": 0,
+      "sortOrder": 300,
+      "isActive": false
+    },
+    {
+      "slug": "online-mobile-tablet",
+      "parentSlug": "online-digital",
+      "title": "موبایل و تبلت",
+      "englishTitle": "Mobile & Tablet",
+      "depth": 1,
+      "sortOrder": 301,
+      "isActive": false
+    },
+    {
+      "slug": "online-laptop-computer",
+      "parentSlug": "online-digital",
+      "title": "لپ‌تاپ و رایانه",
+      "englishTitle": "Laptop & PC",
+      "depth": 1,
+      "sortOrder": 302,
+      "isActive": false
+    },
+    {
+      "slug": "online-computer-parts",
+      "parentSlug": "online-digital",
+      "title": "قطعات و لوازم جانبی کامپیوتر",
+      "englishTitle": "PC Parts",
+      "depth": 1,
+      "sortOrder": 303,
+      "isActive": false
+    },
+    {
+      "slug": "online-gaming-console",
+      "parentSlug": "online-digital",
+      "title": "کنسول و بازی",
+      "englishTitle": "Gaming",
+      "depth": 1,
+      "sortOrder": 304,
+      "isActive": false
+    },
+    {
+      "slug": "online-audio-video",
+      "parentSlug": "online-digital",
+      "title": "صوتی و تصویری",
+      "englishTitle": "Audio Video",
+      "depth": 1,
+      "sortOrder": 305,
+      "isActive": false
+    },
+    {
+      "slug": "online-camera-photography",
+      "parentSlug": "online-digital",
+      "title": "دوربین و عکاسی",
+      "englishTitle": "Camera",
+      "depth": 1,
+      "sortOrder": 306,
+      "isActive": false
+    },
+    {
+      "slug": "online-digital-accessories",
+      "parentSlug": "online-digital",
+      "title": "لوازم جانبی دیجیتال",
+      "englishTitle": "Digital Accessories",
+      "depth": 1,
+      "sortOrder": 307,
+      "isActive": false
+    },
+    {
+      "slug": "online-smart-home-iot",
+      "parentSlug": "online-digital",
+      "title": "خانه هوشمند و IoT",
+      "englishTitle": "Smart Home",
+      "depth": 1,
+      "sortOrder": 308,
+      "isActive": false
+    },
+    {
+      "slug": "online-home-kitchen",
+      "parentSlug": null,
+      "title": "خانه و آشپزخانه",
+      "englishTitle": "Home & Kitchen",
+      "depth": 0,
+      "sortOrder": 400,
+      "isActive": false
+    },
+    {
+      "slug": "online-home-appliances",
+      "parentSlug": "online-home-kitchen",
+      "title": "لوازم خانگی برقی",
+      "englishTitle": "Home Appliances",
+      "depth": 1,
+      "sortOrder": 401,
+      "isActive": false
+    },
+    {
+      "slug": "online-small-kitchen-appliances",
+      "parentSlug": "online-home-kitchen",
+      "title": "لوازم کوچک آشپزخانه",
+      "englishTitle": "Small Appliances",
+      "depth": 1,
+      "sortOrder": 402,
+      "isActive": false
+    },
+    {
+      "slug": "online-cookware-tableware",
+      "parentSlug": "online-home-kitchen",
+      "title": "ظروف و سرویس آشپزخانه",
+      "englishTitle": "Cookware",
+      "depth": 1,
+      "sortOrder": 403,
+      "isActive": false
+    },
+    {
+      "slug": "online-home-decor",
+      "parentSlug": "online-home-kitchen",
+      "title": "دکوراسیون منزل",
+      "englishTitle": "Home Decor",
+      "depth": 1,
+      "sortOrder": 404,
+      "isActive": false
+    },
+    {
+      "slug": "online-furniture",
+      "parentSlug": "online-home-kitchen",
+      "title": "مبلمان",
+      "englishTitle": "Furniture",
+      "depth": 1,
+      "sortOrder": 405,
+      "isActive": false
+    },
+    {
+      "slug": "online-bedding-mattress",
+      "parentSlug": "online-home-kitchen",
+      "title": "روتختی و تشک",
+      "englishTitle": "Bedding",
+      "depth": 1,
+      "sortOrder": 406,
+      "isActive": false
+    },
+    {
+      "slug": "online-carpet-rug",
+      "parentSlug": "online-home-kitchen",
+      "title": "فرش و گلیم",
+      "englishTitle": "Carpet & Rug",
+      "depth": 1,
+      "sortOrder": 407,
+      "isActive": false
+    },
+    {
+      "slug": "online-lighting",
+      "parentSlug": "online-home-kitchen",
+      "title": "روشنایی",
+      "englishTitle": "Lighting",
+      "depth": 1,
+      "sortOrder": 408,
+      "isActive": false
+    },
+    {
+      "slug": "online-curtains-textiles",
+      "parentSlug": "online-home-kitchen",
+      "title": "پرده و منسوجات",
+      "englishTitle": "Textiles",
+      "depth": 1,
+      "sortOrder": 409,
+      "isActive": false
+    },
+    {
+      "slug": "online-beauty-health",
+      "parentSlug": null,
+      "title": "زیبایی و سلامت",
+      "englishTitle": "Beauty & Health",
+      "depth": 0,
+      "sortOrder": 500,
+      "isActive": false
+    },
+    {
+      "slug": "online-cosmetics-skincare",
+      "parentSlug": "online-beauty-health",
+      "title": "آرایشی و مراقبت پوست",
+      "englishTitle": "Cosmetics",
+      "depth": 1,
+      "sortOrder": 501,
+      "isActive": false
+    },
+    {
+      "slug": "online-perfume-fragrance",
+      "parentSlug": "online-beauty-health",
+      "title": "عطر و ادکلن",
+      "englishTitle": "Perfume",
+      "depth": 1,
+      "sortOrder": 502,
+      "isActive": false
+    },
+    {
+      "slug": "online-haircare-salon-supplies",
+      "parentSlug": "online-beauty-health",
+      "title": "مراقبت و لوازم مو",
+      "englishTitle": "Haircare",
+      "depth": 1,
+      "sortOrder": 503,
+      "isActive": false
+    },
+    {
+      "slug": "online-personal-hygiene",
+      "parentSlug": "online-beauty-health",
+      "title": "بهداشت شخصی",
+      "englishTitle": "Hygiene",
+      "depth": 1,
+      "sortOrder": 504,
+      "isActive": false
+    },
+    {
+      "slug": "online-health-supplements",
+      "parentSlug": "online-beauty-health",
+      "title": "مکمل و تغذیه سلامت",
+      "englishTitle": "Supplements",
+      "depth": 1,
+      "sortOrder": 505,
+      "isActive": false
+    },
+    {
+      "slug": "online-medical-equipment-consumer",
+      "parentSlug": "online-beauty-health",
+      "title": "تجهیزات پزشکی مصرفی",
+      "englishTitle": "Medical Supplies",
+      "depth": 1,
+      "sortOrder": 506,
+      "isActive": false
+    },
+    {
+      "slug": "online-herbal-traditional",
+      "parentSlug": "online-beauty-health",
+      "title": "عطاری و گیاهی",
+      "englishTitle": "Herbal",
+      "depth": 1,
+      "sortOrder": 507,
+      "isActive": false
+    },
+    {
+      "slug": "online-food-grocery",
+      "parentSlug": null,
+      "title": "خوراکی و سوپرمارکت",
+      "englishTitle": "Food & Grocery",
+      "depth": 0,
+      "sortOrder": 600,
+      "isActive": false
+    },
+    {
+      "slug": "online-supermarket-grocery",
+      "parentSlug": "online-food-grocery",
+      "title": "سوپرمارکت آنلاین",
+      "englishTitle": "Supermarket",
+      "depth": 1,
+      "sortOrder": 601,
+      "isActive": false
+    },
+    {
+      "slug": "online-fresh-produce",
+      "parentSlug": "online-food-grocery",
+      "title": "میوه و سبزی تازه",
+      "englishTitle": "Fresh Produce",
+      "depth": 1,
+      "sortOrder": 602,
+      "isActive": false
+    },
+    {
+      "slug": "online-dried-nuts-saffron",
+      "parentSlug": "online-food-grocery",
+      "title": "خشکبار، آجیل و زعفران",
+      "englishTitle": "Nuts & Saffron",
+      "depth": 1,
+      "sortOrder": 603,
+      "isActive": false
+    },
+    {
+      "slug": "online-dairy-bakery",
+      "parentSlug": "online-food-grocery",
+      "title": "لبنیات و شیرینی",
+      "englishTitle": "Dairy & Bakery",
+      "depth": 1,
+      "sortOrder": 604,
+      "isActive": false
+    },
+    {
+      "slug": "online-organic-health-food",
+      "parentSlug": "online-food-grocery",
+      "title": "ارگانیک و سلامت‌محور",
+      "englishTitle": "Organic Food",
+      "depth": 1,
+      "sortOrder": 605,
+      "isActive": false
+    },
+    {
+      "slug": "online-beverages",
+      "parentSlug": "online-food-grocery",
+      "title": "نوشیدنی",
+      "englishTitle": "Beverages",
+      "depth": 1,
+      "sortOrder": 606,
+      "isActive": false
+    },
+    {
+      "slug": "online-kids-baby",
+      "parentSlug": null,
+      "title": "کودک و نوزاد",
+      "englishTitle": "Kids & Baby",
+      "depth": 0,
+      "sortOrder": 700,
+      "isActive": false
+    },
+    {
+      "slug": "online-baby-gear",
+      "parentSlug": "online-kids-baby",
+      "title": "سیسمونی و تجهیزات نوزاد",
+      "englishTitle": "Baby Gear",
+      "depth": 1,
+      "sortOrder": 701,
+      "isActive": false
+    },
+    {
+      "slug": "online-toys",
+      "parentSlug": "online-kids-baby",
+      "title": "اسباب‌بازی",
+      "englishTitle": "Toys",
+      "depth": 1,
+      "sortOrder": 702,
+      "isActive": false
+    },
+    {
+      "slug": "online-kids-clothing",
+      "parentSlug": "online-kids-baby",
+      "title": "پوشاک کودک",
+      "englishTitle": "Kids Clothing",
+      "depth": 1,
+      "sortOrder": 703,
+      "isActive": false
+    },
+    {
+      "slug": "online-maternity",
+      "parentSlug": "online-kids-baby",
+      "title": "بارداری و مادر",
+      "englishTitle": "Maternity",
+      "depth": 1,
+      "sortOrder": 704,
+      "isActive": false
+    },
+    {
+      "slug": "online-sports-travel",
+      "parentSlug": null,
+      "title": "ورزش و سفر",
+      "englishTitle": "Sports & Travel",
+      "depth": 0,
+      "sortOrder": 800,
+      "isActive": false
+    },
+    {
+      "slug": "online-sporting-goods",
+      "parentSlug": "online-sports-travel",
+      "title": "لوازم ورزشی",
+      "englishTitle": "Sporting Goods",
+      "depth": 1,
+      "sortOrder": 801,
+      "isActive": false
+    },
+    {
+      "slug": "online-outdoor-camping",
+      "parentSlug": "online-sports-travel",
+      "title": "کمپینگ و طبیعت",
+      "englishTitle": "Outdoor",
+      "depth": 1,
+      "sortOrder": 802,
+      "isActive": false
+    },
+    {
+      "slug": "online-travel-luggage",
+      "parentSlug": "online-sports-travel",
+      "title": "چمدان و لوازم سفر",
+      "englishTitle": "Luggage",
+      "depth": 1,
+      "sortOrder": 803,
+      "isActive": false
+    },
+    {
+      "slug": "online-bicycle-scooter",
+      "parentSlug": "online-sports-travel",
+      "title": "دوچرخه و اسکوتر",
+      "englishTitle": "Bicycle",
+      "depth": 1,
+      "sortOrder": 804,
+      "isActive": false
+    },
+    {
+      "slug": "online-auto-motor",
+      "parentSlug": null,
+      "title": "خودرو و موتور",
+      "englishTitle": "Auto & Motor",
+      "depth": 0,
+      "sortOrder": 900,
+      "isActive": false
+    },
+    {
+      "slug": "online-auto-parts",
+      "parentSlug": "online-auto-motor",
+      "title": "قطعات خودرو",
+      "englishTitle": "Auto Parts",
+      "depth": 1,
+      "sortOrder": 901,
+      "isActive": false
+    },
+    {
+      "slug": "online-motorcycle-parts",
+      "parentSlug": "online-auto-motor",
+      "title": "قطعات موتورسیکلت",
+      "englishTitle": "Motorcycle Parts",
+      "depth": 1,
+      "sortOrder": 902,
+      "isActive": false
+    },
+    {
+      "slug": "online-car-accessories",
+      "parentSlug": "online-auto-motor",
+      "title": "لوازم جانبی خودرو",
+      "englishTitle": "Car Accessories",
+      "depth": 1,
+      "sortOrder": 903,
+      "isActive": false
+    },
+    {
+      "slug": "online-tires",
+      "parentSlug": "online-auto-motor",
+      "title": "لاستیک و رینگ",
+      "englishTitle": "Tires",
+      "depth": 1,
+      "sortOrder": 904,
+      "isActive": false
+    },
+    {
+      "slug": "online-books-culture",
+      "parentSlug": null,
+      "title": "کتاب و فرهنگ",
+      "englishTitle": "Books & Culture",
+      "depth": 0,
+      "sortOrder": 1000,
+      "isActive": false
+    },
+    {
+      "slug": "online-books",
+      "parentSlug": "online-books-culture",
+      "title": "کتاب",
+      "englishTitle": "Books",
+      "depth": 1,
+      "sortOrder": 1001,
+      "isActive": false
+    },
+    {
+      "slug": "online-stationery",
+      "parentSlug": "online-books-culture",
+      "title": "لوازم‌التحریر",
+      "englishTitle": "Stationery",
+      "depth": 1,
+      "sortOrder": 1002,
+      "isActive": false
+    },
+    {
+      "slug": "online-music-instruments",
+      "parentSlug": "online-books-culture",
+      "title": "آلات موسیقی",
+      "englishTitle": "Music Instruments",
+      "depth": 1,
+      "sortOrder": 1003,
+      "isActive": false
+    },
+    {
+      "slug": "online-art-supplies",
+      "parentSlug": "online-books-culture",
+      "title": "لوازم هنری",
+      "englishTitle": "Art Supplies",
+      "depth": 1,
+      "sortOrder": 1004,
+      "isActive": false
+    },
+    {
+      "slug": "online-pets-plants",
+      "parentSlug": null,
+      "title": "حیوانات و گیاه",
+      "englishTitle": "Pets & Plants",
+      "depth": 0,
+      "sortOrder": 1100,
+      "isActive": false
+    },
+    {
+      "slug": "online-pet-supplies",
+      "parentSlug": "online-pets-plants",
+      "title": "لوازم حیوانات خانگی",
+      "englishTitle": "Pet Supplies",
+      "depth": 1,
+      "sortOrder": 1101,
+      "isActive": false
+    },
+    {
+      "slug": "online-plants-seeds",
+      "parentSlug": "online-pets-plants",
+      "title": "گل و گیاه و بذر",
+      "englishTitle": "Plants",
+      "depth": 1,
+      "sortOrder": 1102,
+      "isActive": false
+    },
+    {
+      "slug": "online-garden-tools",
+      "parentSlug": "online-pets-plants",
+      "title": "ابزار باغبانی",
+      "englishTitle": "Garden Tools",
+      "depth": 1,
+      "sortOrder": 1103,
+      "isActive": false
+    },
+    {
+      "slug": "online-gifts-crafts",
+      "parentSlug": null,
+      "title": "هدایا و صنایع دستی",
+      "englishTitle": "Gifts & Crafts",
+      "depth": 0,
+      "sortOrder": 1200,
+      "isActive": false
+    },
+    {
+      "slug": "online-handicrafts-traditional",
+      "parentSlug": "online-gifts-crafts",
+      "title": "صنایع دستی و سنتی",
+      "englishTitle": "Handicrafts",
+      "depth": 1,
+      "sortOrder": 1201,
+      "isActive": false
+    },
+    {
+      "slug": "online-art-collectibles",
+      "parentSlug": "online-gifts-crafts",
+      "title": "هنری و کلکسیونی",
+      "englishTitle": "Collectibles",
+      "depth": 1,
+      "sortOrder": 1202,
+      "isActive": false
+    },
+    {
+      "slug": "online-flowers-gifts",
+      "parentSlug": "online-gifts-crafts",
+      "title": "گل و هدیه",
+      "englishTitle": "Flowers & Gifts",
+      "depth": 1,
+      "sortOrder": 1203,
+      "isActive": false
+    },
+    {
+      "slug": "online-religious-cultural",
+      "parentSlug": "online-gifts-crafts",
+      "title": "مذهبی و فرهنگی",
+      "englishTitle": "Religious",
+      "depth": 1,
+      "sortOrder": 1204,
+      "isActive": false
+    },
+    {
+      "slug": "online-party-supplies",
+      "parentSlug": "online-gifts-crafts",
+      "title": "جشن و مهمانی",
+      "englishTitle": "Party Supplies",
+      "depth": 1,
+      "sortOrder": 1205,
+      "isActive": false
+    },
+    {
+      "slug": "online-office-b2b",
+      "parentSlug": null,
+      "title": "اداری و B2B",
+      "englishTitle": "Office & B2B",
+      "depth": 0,
+      "sortOrder": 1300,
+      "isActive": false
+    },
+    {
+      "slug": "online-office-supplies",
+      "parentSlug": "online-office-b2b",
+      "title": "لوازم اداری",
+      "englishTitle": "Office Supplies",
+      "depth": 1,
+      "sortOrder": 1301,
+      "isActive": false
+    },
+    {
+      "slug": "online-industrial-tools",
+      "parentSlug": "online-office-b2b",
+      "title": "ابزار صنعتی",
+      "englishTitle": "Industrial Tools",
+      "depth": 1,
+      "sortOrder": 1302,
+      "isActive": false
+    },
+    {
+      "slug": "online-building-materials",
+      "parentSlug": "online-office-b2b",
+      "title": "مصالح ساختمانی",
+      "englishTitle": "Building Materials",
+      "depth": 1,
+      "sortOrder": 1303,
+      "isActive": false
+    },
+    {
+      "slug": "online-packaging-printing",
+      "parentSlug": "online-office-b2b",
+      "title": "بسته‌بندی و چاپ",
+      "englishTitle": "Packaging",
+      "depth": 1,
+      "sortOrder": 1304,
+      "isActive": false
+    },
+    {
+      "slug": "online-specialty",
+      "parentSlug": null,
+      "title": "تخصصی",
+      "englishTitle": "Specialty",
+      "depth": 0,
+      "sortOrder": 1400,
+      "isActive": false
+    },
+    {
+      "slug": "online-eyewear-optical",
+      "parentSlug": "online-specialty",
+      "title": "عینک و اپتیک",
+      "englishTitle": "Eyewear",
+      "depth": 1,
+      "sortOrder": 1401,
+      "isActive": false
+    },
+    {
+      "slug": "online-security-cctv",
+      "parentSlug": "online-specialty",
+      "title": "دوربین مداربسته و امنیت",
+      "englishTitle": "Security",
+      "depth": 1,
+      "sortOrder": 1402,
+      "isActive": false
+    },
+    {
+      "slug": "online-solar-energy-products",
+      "parentSlug": "online-specialty",
+      "title": "پنل و تجهیزات خورشیدی",
+      "englishTitle": "Solar",
+      "depth": 1,
+      "sortOrder": 1403,
+      "isActive": false
+    },
+    {
+      "slug": "online-sewing-fabric",
+      "parentSlug": "online-specialty",
+      "title": "پارچه و خرازی",
+      "englishTitle": "Fabric",
+      "depth": 1,
+      "sortOrder": 1404,
+      "isActive": false
+    },
+    {
+      "slug": "online-tailoring-supplies",
+      "parentSlug": "online-specialty",
+      "title": "لوازم خیاطی",
+      "englishTitle": "Tailoring Supplies",
+      "depth": 1,
+      "sortOrder": 1405,
+      "isActive": false
+    },
+    {
+      "slug": "online-platform",
+      "parentSlug": null,
+      "title": "مدل فروش آنلاین",
+      "englishTitle": "Sales Model",
+      "depth": 0,
+      "sortOrder": 1500,
+      "isActive": false
+    },
+    {
+      "slug": "online-multi-category-marketplace",
+      "parentSlug": "online-platform",
+      "title": "فروشنده چنددسته‌ای (مارکت‌پلیس)",
+      "englishTitle": "Marketplace Seller",
+      "depth": 1,
+      "sortOrder": 1501,
+      "isActive": false
+    },
+    {
+      "slug": "online-single-brand-store",
+      "parentSlug": "online-platform",
+      "title": "فروشگاه تک‌برند",
+      "englishTitle": "Single Brand",
+      "depth": 1,
+      "sortOrder": 1502,
+      "isActive": false
+    },
+    {
+      "slug": "online-dropshipping",
+      "parentSlug": "online-platform",
+      "title": "دراپ‌شیپینگ",
+      "englishTitle": "Dropshipping",
+      "depth": 1,
+      "sortOrder": 1503,
+      "isActive": false
+    },
+    {
+      "slug": "online-social-commerce",
+      "parentSlug": "online-platform",
+      "title": "فروش اینستاگرام و تلگرام",
+      "englishTitle": "Social Commerce",
+      "depth": 1,
+      "sortOrder": 1504,
+      "isActive": false
+    },
+    {
+      "slug": "online-b2b-wholesale",
+      "parentSlug": "online-platform",
+      "title": "عمده‌فروشی B2B",
+      "englishTitle": "B2B Wholesale",
+      "depth": 1,
+      "sortOrder": 1505,
+      "isActive": false
+    }
+  ],
+  "updatedAt": "2026-07-12T22:58:44.645Z"
+}

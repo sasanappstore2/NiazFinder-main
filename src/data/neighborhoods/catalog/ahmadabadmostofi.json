@@ -1,0 +1,25 @@
+{
+  "cityId": "ahmadabadmostofi",
+  "cityName": "احمدآبادمستوفی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.691Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "احمدآبادمستوفی",
+      "name": "احمدآبادمستوفی",
+      "nameEn": "ahmadabadmostofi",
+      "centroid": {
+        "lat": 35.61541906737334,
+        "lng": 51.27141478351271
+      },
+      "bbox": {
+        "south": 35.50893254204096,
+        "north": 35.72190559270572,
+        "west": 51.14933908363629,
+        "east": 51.39349048338912
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

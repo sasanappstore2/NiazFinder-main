@@ -1,0 +1,211 @@
+{
+  "cityId": "hasanabad-city",
+  "cityName": "حسن آباد",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:00:46.387Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "hasanabad-city",
+      "centroid": {
+        "lat": 30.421967205964787,
+        "lng": 52.61116639629401
+      },
+      "bbox": {
+        "south": 30.31548068063241,
+        "north": 30.528453731297162,
+        "west": 52.49601204800126,
+        "east": 52.726320744586765
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آسپاس",
+      "name": "آسپاس",
+      "nameEn": "آسپاس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اردلی",
+      "name": "اردلی",
+      "nameEn": "اردلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسپهری",
+      "name": "اسپهری",
+      "nameEn": "اسپهری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اله-آباد",
+      "name": "اله آباد",
+      "nameEn": "اله-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انگکبان",
+      "name": "انگکبان",
+      "nameEn": "انگکبان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بابایی",
+      "name": "بابایی",
+      "nameEn": "بابایی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بکان",
+      "name": "بکان",
+      "nameEn": "بکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پهلوانی",
+      "name": "پهلوانی",
+      "nameEn": "پهلوانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جعفرآباد",
+      "name": "جعفرآباد",
+      "nameEn": "جعفرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-خیر",
+      "name": "ده خیر",
+      "nameEn": "ده-خیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "راسته",
+      "name": "راسته",
+      "nameEn": "راسته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحمت-آباد",
+      "name": "رحمت آباد",
+      "nameEn": "رحمت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زین-الدین",
+      "name": "زین الدین",
+      "nameEn": "زین-الدین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سه-قلات",
+      "name": "سه قلات",
+      "nameEn": "سه-قلات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شولان",
+      "name": "شولان",
+      "nameEn": "شولان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرآشوب",
+      "name": "شهرآشوب",
+      "nameEn": "شهرآشوب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-آردکپان",
+      "name": "شهرک آردکپان",
+      "nameEn": "شهرک-آردکپان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-ادلی",
+      "name": "شهرک ادلی",
+      "nameEn": "شهرک-ادلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-امام-خمینی",
+      "name": "شهرک امام خمینی",
+      "nameEn": "شهرک-امام-خمینی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-ایگدر",
+      "name": "شهرک ایگدر",
+      "nameEn": "شهرک-ایگدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-رحمت-آباد",
+      "name": "شهرک رحمت آباد",
+      "nameEn": "شهرک-رحمت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-زین-الدین",
+      "name": "شهرک زین الدین",
+      "nameEn": "شهرک-زین-الدین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-شهید-باهنر-جدول-نو",
+      "name": "شهرک شهید باهنر جدول نو",
+      "nameEn": "شهرک-شهید-باهنر-جدول-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-شهید-مطهری",
+      "name": "شهرک شهید مطهری",
+      "nameEn": "شهرک-شهید-مطهری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-میانرود",
+      "name": "شهرک میانرود",
+      "nameEn": "شهرک-میانرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قدم-آباد",
+      "name": "قدم آباد",
+      "nameEn": "قدم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کناس",
+      "name": "کناس",
+      "nameEn": "کناس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لاله-گون",
+      "name": "لاله گون",
+      "nameEn": "لاله-گون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهگان",
+      "name": "مهگان",
+      "nameEn": "مهگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میانرود",
+      "name": "میانرود",
+      "nameEn": "میانرود",
+      "geoSource": "osm"
+    }
+  ]
+}

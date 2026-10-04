@@ -1,0 +1,121 @@
+{
+  "cityId": "bardkhun",
+  "cityName": "بردخون",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:32:08.155Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بردخون",
+      "name": "بردخون",
+      "nameEn": "bardkhun",
+      "centroid": {
+        "lat": 28.01855309310097,
+        "lng": 51.57596459261643
+      },
+      "bbox": {
+        "south": 27.912066567768594,
+        "north": 28.125039618433345,
+        "west": 51.467273346690234,
+        "east": 51.68465583854262
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابکش",
+      "name": "ابکش",
+      "nameEn": "ابکش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسماعیل-محمودی",
+      "name": "اسماعیل محمودی",
+      "nameEn": "اسماعیل-محمودی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بردخون-کهنه",
+      "name": "بردخون کهنه",
+      "nameEn": "بردخون-کهنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیارت",
+      "name": "زیارت",
+      "nameEn": "زیارت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیدون",
+      "name": "زیدون",
+      "nameEn": "زیدون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سجادیه",
+      "name": "سجادیه",
+      "nameEn": "سجادیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهنیا",
+      "name": "شهنیا",
+      "nameEn": "شهنیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیبرم",
+      "name": "شیبرم",
+      "nameEn": "شیبرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کردوان-سفلی",
+      "name": "کردوان سفلی",
+      "nameEn": "کردوان-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کردوان-علیا",
+      "name": "کردوان علیا",
+      "nameEn": "کردوان-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کناری",
+      "name": "کناری",
+      "nameEn": "کناری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گزخون",
+      "name": "گزخون",
+      "nameEn": "گزخون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مخدان",
+      "name": "مخدان",
+      "nameEn": "مخدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مله-سوخته",
+      "name": "مله سوخته",
+      "nameEn": "مله-سوخته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میته",
+      "name": "میته",
+      "nameEn": "میته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وحدت-آباد",
+      "name": "وحدت آباد",
+      "nameEn": "وحدت-آباد",
+      "geoSource": "osm"
+    }
+  ]
+}

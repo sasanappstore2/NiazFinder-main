@@ -1,0 +1,265 @@
+{
+  "cityId": "shemshak",
+  "cityName": "شمشک",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:31:27.898Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سپیدستون",
+      "name": "سپیدستون",
+      "nameEn": "سپیدستون",
+      "centroid": {
+        "lat": 36.05184860836938,
+        "lng": 51.53038369294069
+      },
+      "bbox": {
+        "south": 36.02140056122602,
+        "north": 36.08229665551275,
+        "west": 51.49693348557581,
+        "east": 51.563833900305575
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبنیک",
+      "name": "آبنیک",
+      "nameEn": "آبنیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آهار",
+      "name": "آهار",
+      "nameEn": "آهار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسپی-خاک",
+      "name": "اسپی خاک",
+      "nameEn": "اسپی-خاک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اشترک",
+      "name": "اشترک",
+      "nameEn": "اشترک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امامه-بالا",
+      "name": "امامه بالا",
+      "nameEn": "امامه-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امامه-پایین",
+      "name": "امامه پایین",
+      "nameEn": "امامه-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوشان",
+      "name": "اوشان",
+      "nameEn": "اوشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایگل",
+      "name": "ایگل",
+      "nameEn": "ایگل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-گل",
+      "name": "باغ گل",
+      "nameEn": "باغ-گل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بالاسر-نسا",
+      "name": "بالاسر نسا",
+      "nameEn": "بالاسر-نسا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنگه-گسیل",
+      "name": "تنگه گسیل",
+      "nameEn": "تنگه-گسیل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جیرود",
+      "name": "جیرود",
+      "nameEn": "جیرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسنکدر",
+      "name": "حسنکدر",
+      "nameEn": "حسنکدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دربندسر",
+      "name": "دربندسر",
+      "nameEn": "دربندسر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درود",
+      "name": "درود",
+      "nameEn": "درود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دو-آب",
+      "name": "دو آب",
+      "nameEn": "دو-آب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-تنگه",
+      "name": "ده تنگه",
+      "nameEn": "ده-تنگه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیزین",
+      "name": "دیزین",
+      "nameEn": "دیزین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "راحت-آباد",
+      "name": "راحت آباد",
+      "nameEn": "راحت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روته",
+      "name": "روته",
+      "nameEn": "روته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زایگان",
+      "name": "زایگان",
+      "nameEn": "زایگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرخدر",
+      "name": "سرخدر",
+      "nameEn": "سرخدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرک",
+      "name": "سرک",
+      "nameEn": "سرک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شکرآب",
+      "name": "شکرآب",
+      "nameEn": "شکرآب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شلنک",
+      "name": "شلنک",
+      "nameEn": "شلنک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شمشک",
+      "name": "شمشک",
+      "nameEn": "شمشک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرستانک",
+      "name": "شهرستانک",
+      "nameEn": "شهرستانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فشم",
+      "name": "فشم",
+      "nameEn": "فشم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کسیل",
+      "name": "کسیل",
+      "nameEn": "کسیل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلوگان",
+      "name": "کلوگان",
+      "nameEn": "کلوگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گاجره",
+      "name": "گاجره",
+      "nameEn": "گاجره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گدار",
+      "name": "گدار",
+      "nameEn": "گدار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرماب",
+      "name": "گرماب",
+      "nameEn": "گرماب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرمابدر",
+      "name": "گرمابدر",
+      "nameEn": "گرمابدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لالان",
+      "name": "لالان",
+      "nameEn": "لالان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملک-فالیز",
+      "name": "ملک فالیز",
+      "nameEn": "ملک-فالیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدانک",
+      "name": "میدانک",
+      "nameEn": "میدانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نسا",
+      "name": "نسا",
+      "nameEn": "نسا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وارنگه-رود",
+      "name": "وارنگه رود",
+      "nameEn": "وارنگه-رود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ولایت-رود",
+      "name": "ولایت رود",
+      "nameEn": "ولایت-رود",
+      "geoSource": "osm"
+    }
+  ]
+}

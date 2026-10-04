@@ -1,0 +1,409 @@
+{
+  "cityId": "poldasht",
+  "cityName": "پلدشت",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:25:08.887Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "پلدشت",
+      "name": "پلدشت",
+      "nameEn": "poldasht",
+      "centroid": {
+        "lat": 39.333764121882865,
+        "lng": 45.03922963314804
+      },
+      "bbox": {
+        "south": 39.227277596550486,
+        "north": 39.440250647215244,
+        "west": 44.91377533369489,
+        "east": 45.16468393260118
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آغ-اوتلوق",
+      "name": "آغ اوتلوق",
+      "nameEn": "آغ-اوتلوق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آقامیر-کندی",
+      "name": "آقامیر کندی",
+      "nameEn": "آقامیر-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اروج-محمد-کندی",
+      "name": "اروج محمد کندی",
+      "nameEn": "اروج-محمد-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهلول-آباد",
+      "name": "بهلول آباد",
+      "nameEn": "بهلول-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهلول-کندی",
+      "name": "بهلول کندی",
+      "nameEn": "بهلول-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پازیکپزیک",
+      "name": "پازیک;پزیک",
+      "nameEn": "پازیکپزیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پزیک",
+      "name": "پزیک",
+      "nameEn": "پزیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پناه-کندی",
+      "name": "پناه کندی",
+      "nameEn": "پناه-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پورناک",
+      "name": "پورناک",
+      "nameEn": "پورناک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیله-سوار",
+      "name": "پیله سوار",
+      "nameEn": "پیله-سوار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تپه-باشی-پورناک",
+      "name": "تپه باشی پورناک",
+      "nameEn": "تپه-باشی-پورناک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمال-آباد",
+      "name": "جمال آباد",
+      "nameEn": "جمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-صوفی",
+      "name": "حاجی صوفی",
+      "nameEn": "حاجی-صوفی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسینعلی-کندی-عجم",
+      "name": "حسینعلی کندی عجم",
+      "nameEn": "حسینعلی-کندی-عجم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دایلان-کندی",
+      "name": "دایلان کندی",
+      "nameEn": "دایلان-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ذکرلو",
+      "name": "ذکرلو",
+      "nameEn": "ذکرلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساختمان",
+      "name": "ساختمان",
+      "nameEn": "ساختمان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساری-سو",
+      "name": "ساری سو",
+      "nameEn": "ساری-سو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوربولاق-سفلی",
+      "name": "شوربولاق سفلی",
+      "nameEn": "شوربولاق-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوربولاق-علیا",
+      "name": "شوربولاق علیا",
+      "nameEn": "شوربولاق-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عشق-آباد",
+      "name": "عشق آباد",
+      "nameEn": "عشق-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-نظر",
+      "name": "علی نظر",
+      "nameEn": "علی-نظر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فتاح-کندی",
+      "name": "فتاح کندی",
+      "nameEn": "فتاح-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قارقولوق-سفلی",
+      "name": "قارقولوق سفلی",
+      "nameEn": "قارقولوق-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قارقولوق-علیا",
+      "name": "قارقولوق علیا",
+      "nameEn": "قارقولوق-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-خوجالو",
+      "name": "قره خوجالو",
+      "nameEn": "قره-خوجالو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلنج-لنمیشقلش-لانمش",
+      "name": "قلنج لنمیش;قلش لانمش",
+      "nameEn": "قلنج-لنمیشقلش-لانمش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قیرکندی",
+      "name": "قیرکندی",
+      "nameEn": "قیرکندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قیقاج",
+      "name": "قیقاج",
+      "nameEn": "قیقاج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قیوراق",
+      "name": "قیوراق",
+      "nameEn": "قیوراق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوتانقوطان",
+      "name": "کوتان;قوطان",
+      "nameEn": "کوتانقوطان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کورد-اولدرن-عجم",
+      "name": "کورد اولدرن عجم",
+      "nameEn": "کورد-اولدرن-عجم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کورد-اولدرن-کرد",
+      "name": "کورد اولدرن کرد",
+      "nameEn": "کورد-اولدرن-کرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کولوس",
+      "name": "کولوس",
+      "nameEn": "کولوس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گیراه-کندی",
+      "name": "گیراه کندی",
+      "nameEn": "گیراه-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرادلو-سفلی",
+      "name": "مرادلو سفلی",
+      "nameEn": "مرادلو-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرادلو-علیا",
+      "name": "مرادلو علیا",
+      "nameEn": "مرادلو-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرادلو-وسطی",
+      "name": "مرادلو وسطی",
+      "nameEn": "مرادلو-وسطی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مشهدی-میرزا-کندی",
+      "name": "مشهدی میرزا کندی",
+      "nameEn": "مشهدی-میرزا-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملا-کندی",
+      "name": "ملا کندی",
+      "nameEn": "ملا-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نظرخان",
+      "name": "نظرخان",
+      "nameEn": "نظرخان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "bykdz",
+      "name": "Böyükdüz",
+      "nameEn": "bykdz",
+      "geoSource": "osm"
+    },
+    {
+      "id": "mnli",
+      "name": "Çəmənli",
+      "nameEn": "mnli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "danyeri",
+      "name": "Danyeri",
+      "nameEn": "danyeri",
+      "geoSource": "osm"
+    },
+    {
+      "id": "diyadin",
+      "name": "Diyadin",
+      "nameEn": "diyadin",
+      "geoSource": "osm"
+    },
+    {
+      "id": "lkli",
+      "name": "Ələkli",
+      "nameEn": "lkli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "rbyengic",
+      "name": "Ərəbyengicə",
+      "nameEn": "rbyengic",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ibadulla",
+      "name": "İbadulla",
+      "nameEn": "ibadulla",
+      "geoSource": "osm"
+    },
+    {
+      "id": "psyan",
+      "name": "Püsyan",
+      "nameEn": "psyan",
+      "geoSource": "osm"
+    },
+    {
+      "id": "qabll",
+      "name": "Qabıllı",
+      "nameEn": "qabll",
+      "geoSource": "osm"
+    },
+    {
+      "id": "qarabalar",
+      "name": "Qarabağlar",
+      "nameEn": "qarabalar",
+      "geoSource": "osm"
+    },
+    {
+      "id": "qarahsnli",
+      "name": "Qarahəsənli",
+      "nameEn": "qarahsnli",
+      "geoSource": "osm"
+    },
+    {
+      "id": "qlaqabbas",
+      "name": "Qışlaqabbas",
+      "nameEn": "qlaqabbas",
+      "geoSource": "osm"
+    },
+    {
+      "id": "qvraq",
+      "name": "Qıvraq",
+      "nameEn": "qvraq",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ahtaxt",
+      "name": "Şahtaxtı",
+      "nameEn": "ahtaxt",
+      "geoSource": "osm"
+    },
+    {
+      "id": "tzknd",
+      "name": "Təzəkənd",
+      "nameEn": "tzknd",
+      "geoSource": "osm"
+    },
+    {
+      "id": "tumasl",
+      "name": "Tumaslı",
+      "nameEn": "tumasl",
+      "geoSource": "osm"
+    },
+    {
+      "id": "vayxr",
+      "name": "Vayxır",
+      "nameEn": "vayxr",
+      "geoSource": "osm"
+    },
+    {
+      "id": "vrmziyar",
+      "name": "Vərməziyar",
+      "nameEn": "vrmziyar",
+      "geoSource": "osm"
+    },
+    {
+      "id": "xanlqlar",
+      "name": "Xanlıqlar",
+      "nameEn": "xanlqlar",
+      "geoSource": "osm"
+    },
+    {
+      "id": "xok",
+      "name": "Xok",
+      "nameEn": "xok",
+      "geoSource": "osm"
+    },
+    {
+      "id": "yeni-havu",
+      "name": "Yeni Havuş",
+      "nameEn": "yeni-havu",
+      "geoSource": "osm"
+    },
+    {
+      "id": "yeni-krki",
+      "name": "Yeni Kərki",
+      "nameEn": "yeni-krki",
+      "geoSource": "osm"
+    },
+    {
+      "id": "yurdu",
+      "name": "Yurdçu",
+      "nameEn": "yurdu",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "lajan",
+  "cityName": "لاجان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.361Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "لاجان",
+      "name": "لاجان",
+      "nameEn": "lajan",
+      "centroid": {
+        "lat": 36.73582333992095,
+        "lng": 45.49359234068088
+      },
+      "bbox": {
+        "south": 36.62933681458857,
+        "north": 36.84230986525333,
+        "west": 45.37414954376402,
+        "east": 45.61303513759774
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "cityId": "laran",
+  "cityName": "لاران",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:12:33.383Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "لاران",
+      "name": "لاران",
+      "nameEn": "laran",
+      "centroid": {
+        "lat": 32.39956698753144,
+        "lng": 50.62263247277117
+      },
+      "bbox": {
+        "south": 32.293080462199065,
+        "north": 32.50605351286382,
+        "west": 50.509327984690984,
+        "east": 50.73593696085137
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آقبلاغ",
+      "name": "آقبلاغ",
+      "nameEn": "آقبلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارجنک",
+      "name": "ارجنک",
+      "nameEn": "ارجنک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسد-آباد",
+      "name": "اسد آباد",
+      "nameEn": "اسد-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اقبال-آباد",
+      "name": "اقبال آباد",
+      "nameEn": "اقبال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امید-آباد",
+      "name": "امید آباد",
+      "nameEn": "امید-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امید-آباد-سراب",
+      "name": "امید آباد سراب",
+      "nameEn": "امید-آباد-سراب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امیر-آباد-بیدکان",
+      "name": "امیر آباد بیدکان",
+      "nameEn": "امیر-آباد-بیدکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اوج-بغاز",
+      "name": "اوج بغاز",
+      "nameEn": "اوج-بغاز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باباحیدر",
+      "name": "باباحیدر",
+      "nameEn": "باباحیدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چوبین",
+      "name": "چوبین",
+      "nameEn": "چوبین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهارموران",
+      "name": "چهارموران",
+      "nameEn": "چهارموران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خوی",
+      "name": "خوی",
+      "nameEn": "خوی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره-بید",
+      "name": "دره بید",
+      "nameEn": "دره-بید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سپیدانه",
+      "name": "سپیدانه",
+      "nameEn": "سپیدانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شریف-آباد",
+      "name": "شریف آباد",
+      "nameEn": "شریف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عیسی-آباد",
+      "name": "عیسی آباد",
+      "nameEn": "عیسی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیل-آباد",
+      "name": "فیل آباد",
+      "nameEn": "فیل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-جان-قلی",
+      "name": "قلعه جان قلی",
+      "nameEn": "قلعه-جان-قلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کتک",
+      "name": "کتک",
+      "nameEn": "کتک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوانک",
+      "name": "کوانک",
+      "nameEn": "کوانک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرغملک",
+      "name": "مرغملک",
+      "nameEn": "مرغملک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصیر-آباد",
+      "name": "نصیر آباد",
+      "nameEn": "نصیر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وانان",
+      "name": "وانان",
+      "nameEn": "وانان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ویس-آباد",
+      "name": "ویس آباد",
+      "nameEn": "ویس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هارونی",
+      "name": "هارونی",
+      "nameEn": "هارونی",
+      "geoSource": "osm"
+    }
+  ]
+}

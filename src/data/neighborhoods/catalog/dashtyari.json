@@ -1,0 +1,25 @@
+{
+  "cityId": "dashtyari",
+  "cityName": "دشتیاری",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.760Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دشتیاری",
+      "name": "دشتیاری",
+      "nameEn": "dashtyari",
+      "centroid": {
+        "lat": 25.32991049748473,
+        "lng": 61.37477435144223
+      },
+      "bbox": {
+        "south": 25.223423972152354,
+        "north": 25.436397022817104,
+        "west": 61.268936824423726,
+        "east": 61.480611878460735
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

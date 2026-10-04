@@ -1,0 +1,25 @@
+{
+  "cityId": "nasr-abad-city",
+  "cityName": "نصر آباد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.881Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "نصر-آباد",
+      "name": "نصر آباد",
+      "nameEn": "nasr-abad-city",
+      "centroid": {
+        "lat": 35.469671573338125,
+        "lng": 60.33080708896453
+      },
+      "bbox": {
+        "south": 35.36318504800575,
+        "north": 35.576158098670504,
+        "west": 60.21088694255467,
+        "east": 60.45072723537438
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

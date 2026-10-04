@@ -1,0 +1,25 @@
+{
+  "cityId": "faragi",
+  "cityName": "فراغی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.954Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "فراغی",
+      "name": "فراغی",
+      "nameEn": "faragi",
+      "centroid": {
+        "lat": 37.56968570901904,
+        "lng": 55.79516280652703
+      },
+      "bbox": {
+        "south": 37.46319918368666,
+        "north": 37.67617223435142,
+        "west": 55.672044344335255,
+        "east": 55.9182812687188
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

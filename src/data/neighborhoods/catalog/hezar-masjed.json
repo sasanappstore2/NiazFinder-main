@@ -1,0 +1,55 @@
+{
+  "cityId": "hezar-masjed",
+  "cityName": "هزار مسجد",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:02:07.080Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "هزار-مسجد",
+      "name": "هزار مسجد",
+      "nameEn": "hezar-masjed",
+      "centroid": {
+        "lat": 37.1211140107438,
+        "lng": 59.51395344989966
+      },
+      "bbox": {
+        "south": 37.014627485411424,
+        "north": 37.22760053607618,
+        "west": 59.392785325925615,
+        "east": 59.6351215738737
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "انجشش",
+      "name": "انجشش",
+      "nameEn": "انجشش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بابا-رمضان",
+      "name": "بابا رمضان",
+      "nameEn": "بابا-رمضان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهارراه",
+      "name": "چهارراه",
+      "nameEn": "چهارراه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گاش",
+      "name": "گاش",
+      "nameEn": "گاش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لائین-کهنه",
+      "name": "لائین کهنه",
+      "nameEn": "لائین-کهنه",
+      "geoSource": "osm"
+    }
+  ]
+}

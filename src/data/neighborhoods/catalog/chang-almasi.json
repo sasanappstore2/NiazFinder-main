@@ -1,0 +1,25 @@
+{
+  "cityId": "chang-almasi",
+  "cityName": "چنگ الماسی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.583Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چنگ-الماسی",
+      "name": "چنگ الماسی",
+      "nameEn": "chang-almasi",
+      "centroid": {
+        "lat": 35.67826629575997,
+        "lng": 47.87997344613058
+      },
+      "bbox": {
+        "south": 35.57177977042759,
+        "north": 35.78475282109235,
+        "west": 47.75895438843761,
+        "east": 48.00099250382354
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

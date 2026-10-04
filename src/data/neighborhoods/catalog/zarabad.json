@@ -1,0 +1,25 @@
+{
+  "cityId": "zarabad",
+  "cityName": "زرآباد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.343Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "زرآباد",
+      "name": "زرآباد",
+      "nameEn": "zarabad",
+      "centroid": {
+        "lat": 25.635284362199066,
+        "lng": 59.62752027951908
+      },
+      "bbox": {
+        "south": 25.52879783686669,
+        "north": 25.74177088753144,
+        "west": 59.516557394143256,
+        "east": 59.73848316489491
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

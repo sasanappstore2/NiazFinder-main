@@ -1,0 +1,25 @@
+{
+  "cityId": "shakhnat",
+  "cityName": "شاخنات",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.790Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شاخنات",
+      "name": "شاخنات",
+      "nameEn": "shakhnat",
+      "centroid": {
+        "lat": 33.33567612533238,
+        "lng": 59.56652958700687
+      },
+      "bbox": {
+        "south": 33.2291896,
+        "north": 33.442162650664756,
+        "west": 59.4552116263392,
+        "east": 59.677847547674546
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

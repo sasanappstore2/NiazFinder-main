@@ -1,0 +1,25 @@
+{
+  "cityId": "bahaabaad",
+  "cityName": "بهاباد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.095Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بهاباد",
+      "name": "بهاباد",
+      "nameEn": "bahaabaad",
+      "centroid": {
+        "lat": 32.128437277721886,
+        "lng": 56.03962513489215
+      },
+      "bbox": {
+        "south": 32.02195075238951,
+        "north": 32.234923803054265,
+        "west": 55.92212773892212,
+        "east": 56.157122530862175
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

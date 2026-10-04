@@ -1,0 +1,145 @@
+{
+  "cityId": "roodasht",
+  "cityName": "رودشت (اصفهان)",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:40:27.156Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "رودشت-اصفهان",
+      "name": "رودشت (اصفهان)",
+      "nameEn": "roodasht",
+      "centroid": {
+        "lat": 32.361674128781885,
+        "lng": 52.536986884775395
+      },
+      "bbox": {
+        "south": 32.25518760344951,
+        "north": 32.468160654114264,
+        "west": 52.420244397701936,
+        "east": 52.653729371848854
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "ابوالخیر",
+      "name": "ابوالخیر",
+      "nameEn": "ابوالخیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اژیه",
+      "name": "اژیه",
+      "nameEn": "اژیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امامزاده-عبدالعزیز",
+      "name": "امامزاده عبدالعزیز",
+      "nameEn": "امامزاده-عبدالعزیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جندان",
+      "name": "جندان",
+      "nameEn": "جندان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رنگیده",
+      "name": "رنگیده",
+      "nameEn": "رنگیده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیان",
+      "name": "سیان",
+      "nameEn": "سیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدان",
+      "name": "سیدان",
+      "nameEn": "سیدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شریف-آباد",
+      "name": "شریف آباد",
+      "nameEn": "شریف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طهمورثات",
+      "name": "طهمورثات",
+      "nameEn": "طهمورثات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فارفان",
+      "name": "فارفان",
+      "nameEn": "فارفان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیض-آباد",
+      "name": "فیض آباد",
+      "nameEn": "فیض-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-بالاسیان",
+      "name": "قلعه بالاسیان",
+      "nameEn": "قلعه-بالاسیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قمشان",
+      "name": "قمشان",
+      "nameEn": "قمشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کفران",
+      "name": "کفران",
+      "nameEn": "کفران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گیشی",
+      "name": "گیشی",
+      "nameEn": "گیشی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-خلیج-فارس",
+      "name": "میدان خلیج فارس",
+      "nameEn": "میدان-خلیج-فارس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-شورا",
+      "name": "میدان شورا",
+      "nameEn": "میدان-شورا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-کشاورز",
+      "name": "میدان کشاورز",
+      "nameEn": "میدان-کشاورز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هاشم-آباد",
+      "name": "هاشم آباد",
+      "nameEn": "هاشم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هرند",
+      "name": "هرند",
+      "nameEn": "هرند",
+      "geoSource": "osm"
+    }
+  ]
+}

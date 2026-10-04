@@ -1,0 +1,25 @@
+{
+  "cityId": "meshkindasht-city",
+  "cityName": "مشکین‌دشت",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.684Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مشکیندشت",
+      "name": "مشکین‌دشت",
+      "nameEn": "meshkindasht-city",
+      "centroid": {
+        "lat": 35.74360378235717,
+        "lng": 51.01250277859457
+      },
+      "bbox": {
+        "south": 35.63711725702479,
+        "north": 35.85009030768955,
+        "west": 50.893858790286934,
+        "east": 51.13114676690221
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

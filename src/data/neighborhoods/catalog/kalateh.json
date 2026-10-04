@@ -1,0 +1,73 @@
+{
+  "cityId": "kalateh",
+  "cityName": "کلاته",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:55:11.801Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوه-انبان-کوه",
+      "name": "کوه انبان کوه",
+      "nameEn": "کوه-انبان-کوه",
+      "centroid": {
+        "lat": 34.55381696871269,
+        "lng": 53.46251126539458
+      },
+      "bbox": {
+        "south": 34.44733044338031,
+        "north": 34.66030349404507,
+        "west": 53.3419249219056,
+        "east": 53.583097608883556
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آستانه",
+      "name": "آستانه",
+      "nameEn": "آستانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آهوانو",
+      "name": "آهوانو",
+      "nameEn": "آهوانو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بادله-کوه",
+      "name": "بادله کوه",
+      "nameEn": "بادله-کوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تویه-رودبار",
+      "name": "تویه رودبار",
+      "nameEn": "تویه-رودبار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-علی",
+      "name": "چشمه علی",
+      "nameEn": "چشمه-علی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیباج",
+      "name": "دیباج",
+      "nameEn": "دیباج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته",
+      "name": "کلاته",
+      "nameEn": "کلاته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نمکه-رودبار",
+      "name": "نمکه رودبار",
+      "nameEn": "نمکه-رودبار",
+      "geoSource": "osm"
+    }
+  ]
+}

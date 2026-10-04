@@ -1,0 +1,25 @@
+{
+  "cityId": "sarhad",
+  "cityName": "سرحد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.618Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سرحد",
+      "name": "سرحد",
+      "nameEn": "sarhad",
+      "centroid": {
+        "lat": 37.65150821113906,
+        "lng": 57.96952155311874
+      },
+      "bbox": {
+        "south": 37.54502168580668,
+        "north": 37.75799473647144,
+        "west": 57.85229334704463,
+        "east": 58.086749759192855
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

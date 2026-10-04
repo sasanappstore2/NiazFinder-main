@@ -1,0 +1,25 @@
+{
+  "cityId": "karani",
+  "cityName": "کرانی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.876Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کرانی",
+      "name": "کرانی",
+      "nameEn": "karani",
+      "centroid": {
+        "lat": 36.27061694243622,
+        "lng": 47.752771773421784
+      },
+      "bbox": {
+        "south": 36.16413041710384,
+        "north": 36.3771034677686,
+        "west": 47.63090189539033,
+        "east": 47.874641651453246
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

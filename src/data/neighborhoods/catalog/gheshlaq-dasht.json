@@ -1,0 +1,25 @@
+{
+  "cityId": "gheshlaq-dasht",
+  "cityName": "قشلاق دشت",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.275Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مسکن-مهر-جعفرآباد",
+      "name": "مسکن مهر جعفرآباد",
+      "nameEn": "مسکن-مهر-جعفرآباد",
+      "centroid": {
+        "lat": 39.35716273819619,
+        "lng": 47.98043236789855
+      },
+      "bbox": {
+        "south": 39.25067621286381,
+        "north": 39.463649263528566,
+        "west": 47.85188701006696,
+        "east": 48.10897772573014
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

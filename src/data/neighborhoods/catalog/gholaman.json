@@ -1,0 +1,133 @@
+{
+  "cityId": "gholaman",
+  "cityName": "غلامان",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:34:59.843Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "میدان-فردوسی",
+      "name": "میدان فردوسی",
+      "nameEn": "میدان-فردوسی",
+      "centroid": {
+        "lat": 38.101760295220984,
+        "lng": 57.25465338161071
+      },
+      "bbox": {
+        "south": 37.995273769888605,
+        "north": 38.20824682055336,
+        "west": 57.13165195456076,
+        "east": 57.377654808660665
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ادینه-قلی",
+      "name": "ادینه قلی",
+      "nameEn": "ادینه-قلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسفروج",
+      "name": "اسفروج",
+      "nameEn": "اسفروج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انابای",
+      "name": "انابای",
+      "nameEn": "انابای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغلق",
+      "name": "باغلق",
+      "nameEn": "باغلق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بشدره",
+      "name": "بشدره",
+      "nameEn": "بشدره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرسه-سو-سفلی",
+      "name": "پرسه سو سفلی",
+      "nameEn": "پرسه-سو-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرسه-سو-علیا",
+      "name": "پرسه سو علیا",
+      "nameEn": "پرسه-سو-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تازه-قلعه",
+      "name": "تازه قلعه",
+      "nameEn": "تازه-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلفدره",
+      "name": "جلفدره",
+      "nameEn": "جلفدره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داشلی-قلعه",
+      "name": "داشلی قلعه",
+      "nameEn": "داشلی-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "راز",
+      "name": "راز",
+      "nameEn": "راز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "راستقان",
+      "name": "راستقان",
+      "nameEn": "راستقان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیوخسو-مرادخان",
+      "name": "سیوخسو مرادخان",
+      "nameEn": "سیوخسو-مرادخان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیوخسو-هاشم",
+      "name": "سیوخسو هاشم",
+      "nameEn": "سیوخسو-هاشم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غلامان",
+      "name": "غلامان",
+      "nameEn": "غلامان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوش-تپه",
+      "name": "قوش تپه",
+      "nameEn": "قوش-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-حسنقلی",
+      "name": "کلاته حسنقلی",
+      "nameEn": "کلاته-حسنقلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوی-نیک",
+      "name": "گوی نیک",
+      "nameEn": "گوی-نیک",
+      "geoSource": "osm"
+    }
+  ]
+}

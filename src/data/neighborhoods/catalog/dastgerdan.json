@@ -1,0 +1,25 @@
+{
+  "cityId": "dastgerdan",
+  "cityName": "دستگردان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.763Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دستگردان",
+      "name": "دستگردان",
+      "nameEn": "dastgerdan",
+      "centroid": {
+        "lat": 34.554730978512396,
+        "lng": 56.98568308291643
+      },
+      "bbox": {
+        "south": 34.44824445318002,
+        "north": 34.661217503844775,
+        "west": 56.870100848540645,
+        "east": 57.10126531729222
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

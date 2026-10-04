@@ -1,0 +1,25 @@
+{
+  "cityId": "arezouyeh",
+  "cityName": "ارزوئیه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.895Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ارزوئیه",
+      "name": "ارزوئیه",
+      "nameEn": "arezouyeh",
+      "centroid": {
+        "lat": 28.440981703449516,
+        "lng": 56.50885540933187
+      },
+      "bbox": {
+        "south": 28.33449517811714,
+        "north": 28.54746822878189,
+        "west": 56.398114218281016,
+        "east": 56.61959660038272
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

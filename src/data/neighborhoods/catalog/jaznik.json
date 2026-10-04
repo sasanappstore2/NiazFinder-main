@@ -1,0 +1,25 @@
+{
+  "cityId": "jaznik",
+  "cityName": "جزنیک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.686Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جزنیک",
+      "name": "جزنیک",
+      "nameEn": "jaznik",
+      "centroid": {
+        "lat": 30.887769829572402,
+        "lng": 61.634258356720096
+      },
+      "bbox": {
+        "south": 30.781283304240027,
+        "north": 30.994256354904778,
+        "west": 61.521716604460124,
+        "east": 61.746800108980075
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

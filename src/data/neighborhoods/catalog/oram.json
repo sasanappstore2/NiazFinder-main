@@ -1,0 +1,85 @@
+{
+  "cityId": "oram",
+  "cityName": "ارم",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:29:48.378Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ارم",
+      "name": "ارم",
+      "nameEn": "oram",
+      "centroid": {
+        "lat": 29.195887512073302,
+        "lng": 51.64177169577884
+      },
+      "bbox": {
+        "south": 29.089400986740927,
+        "north": 29.302374037405677,
+        "west": 51.53447505000289,
+        "east": 51.74906834155479
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آبگرمو",
+      "name": "آب‌گرمو",
+      "nameEn": "آبگرمو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بزپر",
+      "name": "بزپر",
+      "nameEn": "بزپر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرجونک",
+      "name": "پرجونک",
+      "nameEn": "پرجونک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنگ-ارم",
+      "name": "تنگ ارم",
+      "nameEn": "تنگ-ارم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنگ-فاریاب",
+      "name": "تنگ فاریاب",
+      "nameEn": "تنگ-فاریاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهرود-علیا",
+      "name": "دهرود علیا",
+      "nameEn": "دهرود-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رودفاریاب",
+      "name": "رودفاریاب",
+      "nameEn": "رودفاریاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سوک",
+      "name": "سوک",
+      "nameEn": "سوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کم-زرد",
+      "name": "کم زرد",
+      "nameEn": "کم-زرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرده-خیر",
+      "name": "مرده خیر",
+      "nameEn": "مرده-خیر",
+      "geoSource": "osm"
+    }
+  ]
+}

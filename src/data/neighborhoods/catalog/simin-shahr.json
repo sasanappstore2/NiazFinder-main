@@ -1,0 +1,25 @@
+{
+  "cityId": "simin-shahr",
+  "cityName": "سیمین شهر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.922Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "سیمین-شهر",
+      "name": "سیمین شهر",
+      "nameEn": "simin-shahr",
+      "centroid": {
+        "lat": 37.01500131419332,
+        "lng": 54.32128321486162
+      },
+      "bbox": {
+        "south": 36.90851478886094,
+        "north": 37.1214878395257,
+        "west": 54.1991906153783,
+        "east": 54.443375814344954
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

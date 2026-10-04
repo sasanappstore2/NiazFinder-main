@@ -1,0 +1,223 @@
+{
+  "cityId": "aheram",
+  "cityName": "اهرم",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:31:15.974Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "اهرم",
+      "name": "اهرم",
+      "nameEn": "aheram",
+      "centroid": {
+        "lat": 28.893816783686667,
+        "lng": 51.37287019534193
+      },
+      "bbox": {
+        "south": 28.78733025835429,
+        "north": 29.000303309019042,
+        "west": 51.26377658773028,
+        "east": 51.48196380295359
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آباد",
+      "name": "آباد",
+      "nameEn": "آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احشام-محمدحیدر",
+      "name": "احشام محمدحیدر",
+      "nameEn": "احشام-محمدحیدر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اشکالی-محمدحاجی",
+      "name": "اشکالی محمدحاجی",
+      "nameEn": "اشکالی-محمدحاجی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انبارک",
+      "name": "انبارک",
+      "nameEn": "انبارک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اَهرَم",
+      "name": "اَهرَم",
+      "nameEn": "اَهرَم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بازوئی",
+      "name": "بازوئی",
+      "nameEn": "بازوئی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-خلیفه",
+      "name": "باغ خلیفه",
+      "nameEn": "باغ-خلیفه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغچه-جنوبی",
+      "name": "باغچه جنوبی",
+      "nameEn": "باغچه-جنوبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغچه-شمالی",
+      "name": "باغچه شمالی",
+      "nameEn": "باغچه-شمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنه-گز",
+      "name": "بنه گز",
+      "nameEn": "بنه-گز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمالی-زایرحسین",
+      "name": "جمالی زایرحسین",
+      "nameEn": "جمالی-زایرحسین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جوی",
+      "name": "جوی",
+      "nameEn": "جوی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-پیر",
+      "name": "چاه پیر",
+      "nameEn": "چاه-پیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حیدری",
+      "name": "حیدری",
+      "nameEn": "حیدری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیاری",
+      "name": "خیاری",
+      "nameEn": "خیاری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دمروباه-دان",
+      "name": "دمروباه دان",
+      "nameEn": "دمروباه-دان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-کهنه",
+      "name": "ده کهنه",
+      "nameEn": "ده-کهنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شمشیری",
+      "name": "شمشیری",
+      "nameEn": "شمشیری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورکی",
+      "name": "شورکی",
+      "nameEn": "شورکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عالی-حسینی",
+      "name": "عالی حسینی",
+      "nameEn": "عالی-حسینی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عالی-شمس-الدین",
+      "name": "عالی شمس الدین",
+      "nameEn": "عالی-شمس-الدین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قباکلکی",
+      "name": "قباکلکی",
+      "nameEn": "قباکلکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاکلی",
+      "name": "کاکلی",
+      "nameEn": "کاکلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلل",
+      "name": "کلل",
+      "nameEn": "کلل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنارنرو",
+      "name": "کنارنرو",
+      "nameEn": "کنارنرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کناری",
+      "name": "کناری",
+      "nameEn": "کناری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گادوئی",
+      "name": "گادوئی",
+      "nameEn": "گادوئی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلکی",
+      "name": "گلکی",
+      "nameEn": "گلکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمد-طاهری",
+      "name": "محمد طاهری",
+      "nameEn": "محمد-طاهری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مل-باریک",
+      "name": "مل باریک",
+      "nameEn": "مل-باریک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منصوری-جنوبی",
+      "name": "منصوری جنوبی",
+      "nameEn": "منصوری-جنوبی",
+      "geoSource": "osm"
+    }
+  ]
+}

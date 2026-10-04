@@ -1,0 +1,25 @@
+{
+  "cityId": "rahmatabad-city",
+  "cityName": "رحمت‌آباد",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.233Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "رحمتآباد",
+      "name": "رحمت‌آباد",
+      "nameEn": "rahmatabad-city",
+      "centroid": {
+        "lat": 29.67749814681998,
+        "lng": 53.06777989932449
+      },
+      "bbox": {
+        "south": 29.571011621487603,
+        "north": 29.783984672152354,
+        "west": 52.96067236113009,
+        "east": 53.1748874375189
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

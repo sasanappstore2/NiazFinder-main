@@ -1,0 +1,217 @@
+{
+  "cityId": "sajas-rud",
+  "cityName": "سجاس رود",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:37:33.378Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "امامزاده-عبدالغفار",
+      "name": "امامزاده عبدالغفار",
+      "nameEn": "امامزاده-عبدالغفار",
+      "centroid": {
+        "lat": 36.26121090384477,
+        "lng": 48.618201934139705
+      },
+      "bbox": {
+        "south": 36.15472437851239,
+        "north": 36.36769742917715,
+        "west": 48.49866125920121,
+        "east": 48.73774260907821
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آب-باریک",
+      "name": "آب باریک",
+      "nameEn": "آب-باریک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آقا-جری",
+      "name": "آقا جری",
+      "nameEn": "آقا-جری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "آلنجه",
+      "name": "آلنجه",
+      "nameEn": "آلنجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسپرین",
+      "name": "اسپرین",
+      "nameEn": "اسپرین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باریک-آب",
+      "name": "باریک آب",
+      "nameEn": "باریک-آب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چراغ-حصاری",
+      "name": "چراغ حصاری",
+      "nameEn": "چراغ-حصاری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چراغ-مزرعه",
+      "name": "چراغ مزرعه",
+      "nameEn": "چراغ-مزرعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چنگور",
+      "name": "چنگور",
+      "nameEn": "چنگور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چوزک",
+      "name": "چوزک",
+      "nameEn": "چوزک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خان-تیمور-مهدی-آباد",
+      "name": "خان تیمور (مهدی آباد)",
+      "nameEn": "خان-تیمور-مهدی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خنداب",
+      "name": "خنداب",
+      "nameEn": "خنداب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خوش",
+      "name": "خوش",
+      "nameEn": "خوش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولجین",
+      "name": "دولجین",
+      "nameEn": "دولجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرزر",
+      "name": "زرزر",
+      "nameEn": "زرزر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زوینق",
+      "name": "زوینق",
+      "nameEn": "زوینق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سجاس",
+      "name": "سجاس",
+      "nameEn": "سجاس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرین-دره",
+      "name": "سرین دره",
+      "nameEn": "سرین-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سها",
+      "name": "سها",
+      "nameEn": "سها",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخ-موسی",
+      "name": "شیخ موسی",
+      "nameEn": "شیخ-موسی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شین",
+      "name": "شین",
+      "nameEn": "شین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیوه",
+      "name": "شیوه",
+      "nameEn": "شیوه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-داغ",
+      "name": "قره داغ",
+      "nameEn": "قره-داغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-گل",
+      "name": "قره گل",
+      "nameEn": "قره-گل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلابر",
+      "name": "گلابر",
+      "nameEn": "گلابر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوران",
+      "name": "گوران",
+      "nameEn": "گوران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ممقان",
+      "name": "ممقان",
+      "nameEn": "ممقان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرت-آباد",
+      "name": "نصرت آباد",
+      "nameEn": "نصرت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نهاویس",
+      "name": "نهاویس",
+      "nameEn": "نهاویس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هلیل-آباد",
+      "name": "هلیل آباد",
+      "nameEn": "هلیل-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ینکی-کندمیرزاالماسی",
+      "name": "ینکی کندمیرزاالماسی",
+      "nameEn": "ینکی-کندمیرزاالماسی",
+      "geoSource": "osm"
+    }
+  ]
+}

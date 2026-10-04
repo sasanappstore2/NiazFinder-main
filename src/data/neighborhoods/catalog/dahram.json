@@ -1,0 +1,25 @@
+{
+  "cityId": "dahram",
+  "cityName": "دهرم",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.663Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "دهرم",
+      "name": "دهرم",
+      "nameEn": "dahram",
+      "centroid": {
+        "lat": 28.417539212468558,
+        "lng": 52.35610621273638
+      },
+      "bbox": {
+        "south": 28.311052687136183,
+        "north": 28.524025737800933,
+        "west": 52.24465485071985,
+        "east": 52.46755757475291
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

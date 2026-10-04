@@ -1,0 +1,25 @@
+{
+  "cityId": "kliyai",
+  "cityName": "کلیائی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.227Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "کلیائی",
+      "name": "کلیائی",
+      "nameEn": "kliyai",
+      "centroid": {
+        "lat": 34.87537394933525,
+        "lng": 47.409772939116074
+      },
+      "bbox": {
+        "south": 34.76888742400287,
+        "north": 34.98186047466763,
+        "west": 47.2906363647367,
+        "east": 47.52890951349545
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

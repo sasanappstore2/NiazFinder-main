@@ -1,0 +1,289 @@
+{
+  "cityId": "khalil-abad-city",
+  "cityName": "خلیل آباد",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:41:04.884Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خلیل-آباد",
+      "name": "خلیل آباد",
+      "nameEn": "khalil-abad-city",
+      "centroid": {
+        "lat": 35.250451290980955,
+        "lng": 58.37665576971379
+      },
+      "bbox": {
+        "south": 35.143964765648576,
+        "north": 35.356937816313334,
+        "west": 58.26020851965216,
+        "east": 58.49310301977543
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبنو",
+      "name": "آبنو",
+      "nameEn": "آبنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابراهیم-آباد",
+      "name": "ابراهیم آباد",
+      "nameEn": "ابراهیم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارغا",
+      "name": "ارغا",
+      "nameEn": "ارغا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسحاقآباد",
+      "name": "اسحاق‌آباد",
+      "nameEn": "اسحاقآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ایرجآباد",
+      "name": "ایرج‌آباد",
+      "nameEn": "ایرجآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بزنجرد",
+      "name": "بزنجرد",
+      "nameEn": "بزنجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تکمار",
+      "name": "تکمار",
+      "nameEn": "تکمار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تلآباد",
+      "name": "تل‌آباد",
+      "nameEn": "تلآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جابوز",
+      "name": "جابوز",
+      "nameEn": "جابوز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجیآباد",
+      "name": "حاجی‌آباد",
+      "nameEn": "حاجیآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-ممرآباد",
+      "name": "روستای ممرآباد",
+      "nameEn": "روستای-ممرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زندهجان",
+      "name": "زنده‌جان",
+      "nameEn": "زندهجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرحوضک",
+      "name": "سرحوضک",
+      "nameEn": "سرحوضک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرمزده",
+      "name": "سرمزده",
+      "nameEn": "سرمزده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنبل",
+      "name": "سنبل",
+      "nameEn": "سنبل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوکتیه",
+      "name": "شوکتیه",
+      "nameEn": "شوکتیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عشرتآباد",
+      "name": "عشرت‌آباد",
+      "nameEn": "عشرتآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علیآباد",
+      "name": "علی‌آباد",
+      "nameEn": "علیآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علیآباد-شور",
+      "name": "علی‌آباد شور",
+      "nameEn": "علیآباد-شور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علیآباد-کشمر",
+      "name": "علی‌آباد کشمر",
+      "nameEn": "علیآباد-کشمر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوژد",
+      "name": "قوژد",
+      "nameEn": "قوژد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قهندیز",
+      "name": "قهندیز",
+      "nameEn": "قهندیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاریزک",
+      "name": "کاریزک",
+      "nameEn": "کاریزک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاشمر",
+      "name": "کاشمر",
+      "nameEn": "کاشمر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاهه",
+      "name": "کاهه",
+      "nameEn": "کاهه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کسرینه",
+      "name": "کسرینه",
+      "nameEn": "کسرینه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-تیمور",
+      "name": "کلاته تیمور",
+      "nameEn": "کلاته-تیمور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-رحیم",
+      "name": "کلاته رحیم",
+      "nameEn": "کلاته-رحیم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-شادی",
+      "name": "کلاته شادی",
+      "nameEn": "کلاته-شادی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-شور",
+      "name": "کلاته شور",
+      "nameEn": "کلاته-شور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کندر",
+      "name": "کندر",
+      "nameEn": "کندر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلگیر",
+      "name": "گل‌گیر",
+      "nameEn": "گلگیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدآباد",
+      "name": "محمدآباد",
+      "nameEn": "محمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدیه",
+      "name": "محمدیه",
+      "nameEn": "محمدیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزده",
+      "name": "مزده",
+      "nameEn": "مزده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مغان",
+      "name": "مغان",
+      "nameEn": "مغان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ممرآباد",
+      "name": "ممرآباد",
+      "nameEn": "ممرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرآباد",
+      "name": "میرآباد",
+      "nameEn": "میرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرآباد",
+      "name": "نصرآباد",
+      "nameEn": "نصرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نقاب",
+      "name": "نقاب",
+      "nameEn": "نقاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هفت-خانه",
+      "name": "هفت خانه",
+      "nameEn": "هفت-خانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هندآباد",
+      "name": "هندآباد",
+      "nameEn": "هندآباد",
+      "geoSource": "osm"
+    }
+  ]
+}

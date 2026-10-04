@@ -1,0 +1,25 @@
+{
+  "cityId": "boldaji",
+  "cityName": "بلداجی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.450Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بلداجی",
+      "name": "بلداجی",
+      "nameEn": "boldaji",
+      "centroid": {
+        "lat": 31.820908819367588,
+        "lng": 51.061328252565815
+      },
+      "bbox": {
+        "south": 31.714422294035213,
+        "north": 31.927395344699963,
+        "west": 50.9442697644815,
+        "east": 51.17838674065013
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

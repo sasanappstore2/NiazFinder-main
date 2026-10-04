@@ -1,0 +1,163 @@
+{
+  "cityId": "sarab-bagh",
+  "cityName": "سراب باغ",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:18:32.605Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-هزارانی",
+      "name": "شهرک هزارانی",
+      "nameEn": "شهرک-هزارانی",
+      "centroid": {
+        "lat": 32.84361016007905,
+        "lng": 47.642109552420436
+      },
+      "bbox": {
+        "south": 32.73712363474667,
+        "north": 32.95009668541143,
+        "west": 47.5232634645866,
+        "east": 47.76095564025428
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبدانان",
+      "name": "آبدانان",
+      "nameEn": "آبدانان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بان-زرکه",
+      "name": "بان زرکه",
+      "nameEn": "بان-زرکه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشت-قلعه",
+      "name": "پشت قلعه",
+      "nameEn": "پشت-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جابر-انصار",
+      "name": "جابر انصار",
+      "nameEn": "جابر-انصار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاله",
+      "name": "چاله",
+      "nameEn": "چاله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چم-کبود",
+      "name": "چم کبود",
+      "nameEn": "چم-کبود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ژیور",
+      "name": "ژیور",
+      "nameEn": "ژیور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراب-باغ",
+      "name": "سراب باغ",
+      "nameEn": "سراب-باغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراب-نقل",
+      "name": "سراب نقل",
+      "nameEn": "سراب-نقل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرپله",
+      "name": "سرپله",
+      "nameEn": "سرپله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاه-گاو",
+      "name": "سیاه گاو",
+      "nameEn": "سیاه-گاو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شمشیر-آباد",
+      "name": "شمشیر آباد",
+      "nameEn": "شمشیر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طلور",
+      "name": "طلور",
+      "nameEn": "طلور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوی-فرهنگیان",
+      "name": "کوی فرهنگیان",
+      "nameEn": "کوی-فرهنگیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرز-لنگر",
+      "name": "گرز لنگر",
+      "nameEn": "گرز-لنگر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-گل-سفلی",
+      "name": "گل گل سفلی",
+      "nameEn": "گل-گل-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-گل-علیا",
+      "name": "گل گل علیا",
+      "nameEn": "گل-گل-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ماهوته",
+      "name": "ماهوته",
+      "nameEn": "ماهوته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مرادآباد",
+      "name": "مرادآباد",
+      "nameEn": "مرادآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهتابی",
+      "name": "مهتابی",
+      "nameEn": "مهتابی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وچکاب",
+      "name": "وچکاب",
+      "nameEn": "وچکاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وچکبود-سفلی",
+      "name": "وچکبود سفلی",
+      "nameEn": "وچکبود-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هفت-چشمه",
+      "name": "هفت چشمه",
+      "nameEn": "هفت-چشمه",
+      "geoSource": "osm"
+    }
+  ]
+}

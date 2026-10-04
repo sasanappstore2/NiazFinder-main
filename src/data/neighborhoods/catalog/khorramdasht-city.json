@@ -1,0 +1,25 @@
+{
+  "cityId": "khorramdasht-city",
+  "cityName": "خرمدشت",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.146Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "صادق-آباد",
+      "name": "صادق آباد",
+      "nameEn": "صادق-آباد",
+      "centroid": {
+        "lat": 35.83320989137621,
+        "lng": 49.62389650553979
+      },
+      "bbox": {
+        "south": 35.72672336604383,
+        "north": 35.939696416708586,
+        "west": 49.50352424961458,
+        "east": 49.744268761464994
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

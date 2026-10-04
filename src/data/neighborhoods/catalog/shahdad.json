@@ -1,0 +1,205 @@
+{
+  "cityId": "shahdad",
+  "cityName": "شهداد",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:53:02.308Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهداد",
+      "name": "شهداد",
+      "nameEn": "shahdad",
+      "centroid": {
+        "lat": 30.61024827294287,
+        "lng": 58.4894168868895
+      },
+      "bbox": {
+        "south": 30.503761747610493,
+        "north": 30.716734798275244,
+        "west": 58.37532259368823,
+        "east": 58.60351118009076
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابراهیم-آباد",
+      "name": "ابراهیم آباد",
+      "nameEn": "ابراهیم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "استحکام",
+      "name": "استحکام",
+      "nameEn": "استحکام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امیرآباد",
+      "name": "امیرآباد",
+      "nameEn": "امیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اندوهجرد",
+      "name": "اندوهجرد",
+      "nameEn": "اندوهجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-هوتک",
+      "name": "باغ هوتک",
+      "nameEn": "باغ-هوتک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حجتآباد",
+      "name": "حجتآباد",
+      "nameEn": "حجتآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-خان",
+      "name": "ده خان",
+      "nameEn": "ده-خان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-سیف",
+      "name": "ده سیف",
+      "nameEn": "ده-سیف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-نو-سالار",
+      "name": "ده نو سالار",
+      "nameEn": "ده-نو-سالار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رشیدآباد",
+      "name": "رشیدآباد",
+      "nameEn": "رشیدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیارتگاه",
+      "name": "زیارتگاه",
+      "nameEn": "زیارتگاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سالارآباد",
+      "name": "سالارآباد",
+      "nameEn": "سالارآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شجاع-آباد-شمالی",
+      "name": "شجاع آباد شمالی",
+      "nameEn": "شجاع-آباد-شمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شفیع-آباد",
+      "name": "شفیع آباد",
+      "nameEn": "شفیع-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورآباد",
+      "name": "شورآباد",
+      "nameEn": "شورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرین-آباد",
+      "name": "شیرین آباد",
+      "nameEn": "شیرین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-پایین",
+      "name": "علی آباد پایین",
+      "nameEn": "علی-آباد-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فیض-آباد",
+      "name": "فیض آباد",
+      "nameEn": "فیض-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاظم-آباد",
+      "name": "کاظم آباد",
+      "nameEn": "کاظم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کشتوئیه",
+      "name": "کشتوئیه",
+      "nameEn": "کشتوئیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گودیز",
+      "name": "گودیز",
+      "nameEn": "گودیز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملک-آباد",
+      "name": "ملک آباد",
+      "nameEn": "ملک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهدی-آباد",
+      "name": "مهدی آباد",
+      "nameEn": "مهدی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناصرآباد",
+      "name": "ناصرآباد",
+      "nameEn": "ناصرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ولی-آباد",
+      "name": "ولی آباد",
+      "nameEn": "ولی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "همت-آبادسفلی",
+      "name": "همت آبادسفلی",
+      "nameEn": "همت-آبادسفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "همت-آبادعلیا",
+      "name": "همت آبادعلیا",
+      "nameEn": "همت-آبادعلیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هنزا",
+      "name": "هنزا",
+      "nameEn": "هنزا",
+      "geoSource": "osm"
+    }
+  ]
+}

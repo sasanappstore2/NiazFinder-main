@@ -1,0 +1,97 @@
+{
+  "cityId": "mahmaleh",
+  "cityName": "محمله",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:21:26.598Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کمپ-ایثار",
+      "name": "کمپ ایثار",
+      "nameEn": "کمپ-ایثار",
+      "centroid": {
+        "lat": 27.93931272321236,
+        "lng": 52.976776601957525
+      },
+      "bbox": {
+        "south": 27.832826197879985,
+        "north": 28.045799248544736,
+        "west": 52.86687800685981,
+        "east": 53.08667519705524
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابوحنا",
+      "name": "ابوحنا",
+      "nameEn": "ابوحنا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغان",
+      "name": "باغان",
+      "nameEn": "باغان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برکه-سفید",
+      "name": "برکه سفید",
+      "nameEn": "برکه-سفید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرزی",
+      "name": "پرزی",
+      "nameEn": "پرزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پلنگی",
+      "name": "پلنگی",
+      "nameEn": "پلنگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاهگزی",
+      "name": "چاه‌گزی",
+      "nameEn": "چاهگزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خشتی",
+      "name": "خشتی",
+      "nameEn": "خشتی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زنگویه",
+      "name": "زنگویه",
+      "nameEn": "زنگویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدهاشمی",
+      "name": "سیدهاشمی",
+      "nameEn": "سیدهاشمی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهنویه",
+      "name": "کهنویه",
+      "nameEn": "کهنویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گهلویه",
+      "name": "گهلویه",
+      "nameEn": "گهلویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمله",
+      "name": "محمله",
+      "nameEn": "محمله",
+      "geoSource": "osm"
+    }
+  ]
+}

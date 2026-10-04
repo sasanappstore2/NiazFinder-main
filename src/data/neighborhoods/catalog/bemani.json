@@ -1,0 +1,25 @@
+{
+  "cityId": "bemani",
+  "cityName": "بمانی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.381Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بمانی",
+      "name": "بمانی",
+      "nameEn": "bemani",
+      "centroid": {
+        "lat": 26.801333228781893,
+        "lng": 57.18012629565999
+      },
+      "bbox": {
+        "south": 26.694846703449517,
+        "north": 26.907819754114268,
+        "west": 57.06888003108383,
+        "east": 57.291372560236155
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

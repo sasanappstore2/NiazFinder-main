@@ -1,0 +1,25 @@
+{
+  "cityId": "mazayjan",
+  "cityName": "مزایجان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.639Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مزایجان",
+      "name": "مزایجان",
+      "nameEn": "mazayjan",
+      "centroid": {
+        "lat": 30.377155047610493,
+        "lng": 53.8863518031238
+      },
+      "bbox": {
+        "south": 30.270668522278118,
+        "north": 30.48364157294287,
+        "west": 53.77775369359212,
+        "east": 53.994949912655485
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

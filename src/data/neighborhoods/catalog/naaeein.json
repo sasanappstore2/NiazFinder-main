@@ -1,0 +1,193 @@
+{
+  "cityId": "naaeein",
+  "cityName": "نائین",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:46:07.963Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "نائین",
+      "name": "نائین",
+      "nameEn": "naaeein",
+      "centroid": {
+        "lat": 32.89642296431908,
+        "lng": 53.19471397863387
+      },
+      "bbox": {
+        "south": 32.7899364389867,
+        "north": 33.00290948965146,
+        "west": 53.079076707853375,
+        "east": 53.31035124941437
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "باب-المسجد",
+      "name": "باب المسجد",
+      "nameEn": "باب-المسجد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغستان",
+      "name": "باغستان",
+      "nameEn": "باغستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بافران",
+      "name": "بافران",
+      "nameEn": "بافران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنوید-سفلی",
+      "name": "بنوید سفلی",
+      "nameEn": "بنوید-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنوید-علیا",
+      "name": "بنوید علیا",
+      "nameEn": "بنوید-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پنجاهه",
+      "name": "پنجاهه",
+      "nameEn": "پنجاهه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جهان-آباد",
+      "name": "جهان آباد",
+      "nameEn": "جهان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهل-دختران",
+      "name": "چهل دختران",
+      "nameEn": "چهل-دختران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خارزن",
+      "name": "خارزن",
+      "nameEn": "خارزن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-خارزن",
+      "name": "روستای خارزن",
+      "nameEn": "روستای-خارزن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زندوان",
+      "name": "زندوان",
+      "nameEn": "زندوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرای-نو",
+      "name": "سرای نو",
+      "nameEn": "سرای-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سهراه-غَرِض",
+      "name": "سه‌راه غَرِض",
+      "nameEn": "سهراه-غَرِض",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیف-آباد",
+      "name": "سیف آباد",
+      "nameEn": "سیف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کدنوئیه",
+      "name": "کدنوئیه",
+      "nameEn": "کدنوئیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کدونوئیه",
+      "name": "کدونوئیه",
+      "nameEn": "کدونوئیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلوان",
+      "name": "کلوان",
+      "nameEn": "کلوان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوره-ها",
+      "name": "کوره ها",
+      "nameEn": "کوره-ها",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مروارید",
+      "name": "مروارید",
+      "nameEn": "مروارید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "معصوم-اباد",
+      "name": "معصوم اباد",
+      "nameEn": "معصوم-اباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نایین",
+      "name": "نایین",
+      "nameEn": "نایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نو-آباد",
+      "name": "نو آباد",
+      "nameEn": "نو-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هماآباد-علیا",
+      "name": "هماآباد علیا",
+      "nameEn": "هماآباد-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هماباد-علیا",
+      "name": "هماباد علیا",
+      "nameEn": "هماباد-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "همابادسفلی",
+      "name": "همابادسفلی",
+      "nameEn": "همابادسفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هندچوب",
+      "name": "هندچوب",
+      "nameEn": "هندچوب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هندوچوب",
+      "name": "هندوچوب",
+      "nameEn": "هندوچوب",
+      "geoSource": "osm"
+    }
+  ]
+}

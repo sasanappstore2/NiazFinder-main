@@ -1,0 +1,25 @@
+{
+  "cityId": "koohsaran",
+  "cityName": "کوهساران",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.265Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوهساران",
+      "name": "کوهساران",
+      "nameEn": "koohsaran",
+      "centroid": {
+        "lat": 30.998287457959037,
+        "lng": 57.415663051742044
+      },
+      "bbox": {
+        "south": 30.891800932626662,
+        "north": 31.104773983291413,
+        "west": 57.30299547251557,
+        "east": 57.528330630968526
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

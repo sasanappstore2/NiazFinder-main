@@ -1,0 +1,25 @@
+{
+  "cityId": "shaskouh",
+  "cityName": "شاسکوه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.819Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شاسکوه",
+      "name": "شاسکوه",
+      "nameEn": "shaskouh",
+      "centroid": {
+        "lat": 33.83192595874955,
+        "lng": 60.019853608011616
+      },
+      "bbox": {
+        "south": 33.72543943341717,
+        "north": 33.93841248408193,
+        "west": 59.899601802194944,
+        "east": 60.14010541382828
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

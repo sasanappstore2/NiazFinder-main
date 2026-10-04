@@ -1,0 +1,25 @@
+{
+  "cityId": "chashm",
+  "cityName": "چشمه‌علی",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.615Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "چشمهعلی",
+      "name": "چشمه‌علی",
+      "nameEn": "chashm",
+      "centroid": {
+        "lat": 37.208397574609435,
+        "lng": 53.36390466666966
+      },
+      "bbox": {
+        "south": 37.10191104927706,
+        "north": 37.314884099941814,
+        "west": 53.24280940018294,
+        "east": 53.48499993315638
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

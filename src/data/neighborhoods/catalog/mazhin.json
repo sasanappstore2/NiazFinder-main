@@ -1,0 +1,229 @@
+{
+  "cityId": "mazhin",
+  "cityName": "ماژین",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:22:31.034Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ماژین",
+      "name": "ماژین",
+      "nameEn": "mazhin",
+      "centroid": {
+        "lat": 32.9339854201581,
+        "lng": 47.814079060565575
+      },
+      "bbox": {
+        "south": 32.82749889482572,
+        "north": 33.04047194549048,
+        "west": 47.70279171238196,
+        "east": 47.92536640874919
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "بان-زرکه",
+      "name": "بان زرکه",
+      "nameEn": "بان-زرکه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برج-کبود",
+      "name": "برج کبود",
+      "nameEn": "برج-کبود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشته-ماژین",
+      "name": "پشته ماژین",
+      "nameEn": "پشته-ماژین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تخت-نرم",
+      "name": "تخت نرم",
+      "nameEn": "تخت-نرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جلوگیر",
+      "name": "جلوگیر",
+      "nameEn": "جلوگیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جوادآباد",
+      "name": "جوادآباد",
+      "nameEn": "جوادآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چم-گرداب",
+      "name": "چم گرداب",
+      "nameEn": "چم-گرداب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چم-گز",
+      "name": "چم گز",
+      "nameEn": "چم-گز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حیدرآباد",
+      "name": "حیدرآباد",
+      "nameEn": "حیدرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دمرود",
+      "name": "دمرود",
+      "nameEn": "دمرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دواب",
+      "name": "دواب",
+      "nameEn": "دواب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رنگین-بان",
+      "name": "رنگین بان",
+      "nameEn": "رنگین-بان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراب-رجب",
+      "name": "سراب رجب",
+      "nameEn": "سراب-رجب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سراب-نقل",
+      "name": "سراب نقل",
+      "nameEn": "سراب-نقل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرگرفته",
+      "name": "سرگرفته",
+      "nameEn": "سرگرفته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاه-گاو",
+      "name": "سیاه گاو",
+      "nameEn": "سیاه-گاو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوره",
+      "name": "شوره",
+      "nameEn": "شوره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهید-باهنر",
+      "name": "شهید باهنر",
+      "nameEn": "شهید-باهنر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غلام-آباد",
+      "name": "غلام آباد",
+      "nameEn": "غلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کناربلوط",
+      "name": "کناربلوط",
+      "nameEn": "کناربلوط",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرز-لنگر",
+      "name": "گرز لنگر",
+      "nameEn": "گرز-لنگر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرم-آباد",
+      "name": "گرم آباد",
+      "nameEn": "گرم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گری-باباخان",
+      "name": "گری باباخان",
+      "nameEn": "گری-باباخان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گری-بلمک",
+      "name": "گری بلمک",
+      "nameEn": "گری-بلمک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-گل-سفلی",
+      "name": "گل گل سفلی",
+      "nameEn": "گل-گل-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مه-واز",
+      "name": "مه واز",
+      "nameEn": "مه-واز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میدان-خلف",
+      "name": "میدان خلف",
+      "nameEn": "میدان-خلف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرآباد",
+      "name": "میرآباد",
+      "nameEn": "میرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میرزا-حسین-آباد",
+      "name": "میرزا حسین آباد",
+      "nameEn": "میرزا-حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرالله-آباد-شهید-بهشتی",
+      "name": "نصرالله آباد شهید بهشتی",
+      "nameEn": "نصرالله-آباد-شهید-بهشتی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ورکمره",
+      "name": "ورکمره",
+      "nameEn": "ورکمره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "همگام",
+      "name": "همگام",
+      "nameEn": "همگام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هوادول",
+      "name": "هوادول",
+      "nameEn": "هوادول",
+      "geoSource": "osm"
+    }
+  ]
+}

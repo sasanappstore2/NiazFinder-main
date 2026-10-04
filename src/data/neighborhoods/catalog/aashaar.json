@@ -1,0 +1,283 @@
+{
+  "cityId": "aashaar",
+  "cityName": "آشار",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:54:56.577Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "آشار",
+      "name": "آشار",
+      "nameEn": "aashaar",
+      "centroid": {
+        "lat": 26.664497216708586,
+        "lng": 62.01464734046136
+      },
+      "bbox": {
+        "south": 26.55801069137621,
+        "north": 26.77098374204096,
+        "west": 61.90542524094498,
+        "east": 62.12386943997774
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسپی-بن",
+      "name": "اسپی بن",
+      "nameEn": "اسپی-بن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اشکستک",
+      "name": "اشکستک",
+      "nameEn": "اشکستک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "افشان",
+      "name": "افشان",
+      "nameEn": "افشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انجرک",
+      "name": "انجرک",
+      "nameEn": "انجرک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بشانه",
+      "name": "بشانه",
+      "nameEn": "بشانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بگن",
+      "name": "بگن",
+      "nameEn": "بگن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهرام-آباد",
+      "name": "بهرام آباد",
+      "nameEn": "بهرام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیدک",
+      "name": "بیدک",
+      "nameEn": "بیدک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پتکان",
+      "name": "پتکان",
+      "nameEn": "پتکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پتن-ناگ",
+      "name": "پتن ناگ",
+      "nameEn": "پتن-ناگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پنیک",
+      "name": "پنیک",
+      "nameEn": "پنیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ترند",
+      "name": "ترند",
+      "nameEn": "ترند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تلاسر",
+      "name": "تلاسر",
+      "nameEn": "تلاسر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چارپان-شیب",
+      "name": "چارپان شیب",
+      "nameEn": "چارپان-شیب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاهیگان",
+      "name": "چاهیگان",
+      "nameEn": "چاهیگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-بلند",
+      "name": "چشمه بلند",
+      "nameEn": "چشمه-بلند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حبیبه-ای",
+      "name": "حبیبه ای",
+      "nameEn": "حبیبه-ای",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سوخته-گز",
+      "name": "سوخته گز",
+      "nameEn": "سوخته-گز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صالح-آباد",
+      "name": "صالح آباد",
+      "nameEn": "صالح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عالیکنر",
+      "name": "عالیکنر",
+      "nameEn": "عالیکنر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غریب-آباد",
+      "name": "غریب آباد",
+      "nameEn": "غریب-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کافه-بلوچی",
+      "name": "کافه بلوچی",
+      "nameEn": "کافه-بلوچی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کزور",
+      "name": "کزور",
+      "nameEn": "کزور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلگی-کش",
+      "name": "کلگی کش",
+      "nameEn": "کلگی-کش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کله-گوک",
+      "name": "کله گوک",
+      "nameEn": "کله-گوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کله-گوک-بالا",
+      "name": "کله گوک بالا",
+      "nameEn": "کله-گوک-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کله-گوک-پایین",
+      "name": "کله گوک پایین",
+      "nameEn": "کله-گوک-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوه-کنار-بالا",
+      "name": "کوه کنار بالا",
+      "nameEn": "کوه-کنار-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوه-کنار-پایین",
+      "name": "کوه کنار پایین",
+      "nameEn": "کوه-کنار-پایین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کیکی",
+      "name": "کیکی",
+      "nameEn": "کیکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرکی-کندک",
+      "name": "گرکی کندک",
+      "nameEn": "گرکی-کندک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گورناگان",
+      "name": "گورناگان",
+      "nameEn": "گورناگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لد",
+      "name": "لد",
+      "nameEn": "لد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملک-آباد",
+      "name": "ملک آباد",
+      "nameEn": "ملک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهربی",
+      "name": "مهربی",
+      "nameEn": "مهربی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناوکان",
+      "name": "ناوکان",
+      "nameEn": "ناوکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوکان",
+      "name": "نوکان",
+      "nameEn": "نوکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوکبند",
+      "name": "نوکبند",
+      "nameEn": "نوکبند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوکی-در",
+      "name": "نوکی در",
+      "nameEn": "نوکی-در",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ودگر",
+      "name": "ودگر",
+      "nameEn": "ودگر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وشکان-چان",
+      "name": "وشکان چان",
+      "nameEn": "وشکان-چان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وشنا",
+      "name": "وشنا",
+      "nameEn": "وشنا",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "lirdaf",
+  "cityName": "لیردف",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.434Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "لیردف",
+      "name": "لیردف",
+      "nameEn": "lirdaf",
+      "centroid": {
+        "lat": 25.81795134376572,
+        "lng": 58.95068330363942
+      },
+      "bbox": {
+        "south": 25.711464818433345,
+        "north": 25.924437869098096,
+        "west": 58.84331115620259,
+        "east": 59.058055451076264
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

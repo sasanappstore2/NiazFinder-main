@@ -1,0 +1,101 @@
+{
+  "cityId": "ashkanan",
+  "cityName": "اشکنان",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:52:35.316Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-بعثت",
+      "name": "شهرک بعثت",
+      "nameEn": "شهرک-بعثت",
+      "centroid": {
+        "lat": 27.21596324509522,
+        "lng": 53.749358177846695
+      },
+      "bbox": {
+        "south": 27.162719982429035,
+        "north": 27.269206507761407,
+        "west": 53.68948747802224,
+        "east": 53.80922887767115
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-شاهد",
+      "name": "شهرک شاهد",
+      "nameEn": "شهرک-شاهد",
+      "centroid": {
+        "lat": 27.27175378380949,
+        "lng": 53.62613559106995
+      },
+      "bbox": {
+        "south": 27.218510521143305,
+        "north": 27.324997046475676,
+        "west": 53.566264891245496,
+        "east": 53.68600629089441
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اشکنان",
+      "name": "اشکنان",
+      "nameEn": "اشکنان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اهل",
+      "name": "اهل",
+      "nameEn": "اهل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بریو",
+      "name": "بریو",
+      "nameEn": "بریو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پاقلات",
+      "name": "پاقلات",
+      "nameEn": "پاقلات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تلو",
+      "name": "تلو",
+      "nameEn": "تلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خشت",
+      "name": "خشت",
+      "nameEn": "خشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رکن-آباد",
+      "name": "رکن آباد",
+      "nameEn": "رکن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کشکو",
+      "name": "کشکو",
+      "nameEn": "کشکو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کودیان",
+      "name": "کودیان",
+      "nameEn": "کودیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هشنیز",
+      "name": "هشنیز",
+      "nameEn": "هشنیز",
+      "geoSource": "osm"
+    }
+  ]
+}

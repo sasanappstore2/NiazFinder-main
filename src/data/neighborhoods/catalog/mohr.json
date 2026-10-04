@@ -1,0 +1,163 @@
+{
+  "cityId": "mohr",
+  "cityName": "مهر",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:22:59.068Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کمپ-مسکونی-نخلستان",
+      "name": "کمپ مسکونی نخلستان",
+      "nameEn": "کمپ-مسکونی-نخلستان",
+      "centroid": {
+        "lat": 27.55494196669062,
+        "lng": 52.842777438689964
+      },
+      "bbox": {
+        "south": 27.541808628566294,
+        "north": 27.568075304814947,
+        "west": 52.82984743156061,
+        "east": 52.85570744581932
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارودان",
+      "name": "ارودان",
+      "nameEn": "ارودان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "برد-کویه",
+      "name": "برد کویه",
+      "nameEn": "برد-کویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-خالوها",
+      "name": "چاه خالوها",
+      "nameEn": "چاه-خالوها",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-سرگاهی",
+      "name": "چاه سرگاهی",
+      "nameEn": "چاه-سرگاهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاهگزی",
+      "name": "چاه‌گزی",
+      "nameEn": "چاهگزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاهو",
+      "name": "چاهو",
+      "nameEn": "چاهو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسینآباد",
+      "name": "حسین‌آباد",
+      "nameEn": "حسینآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خواجه-مراد",
+      "name": "خواجه مراد",
+      "nameEn": "خواجه-مراد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خوزی",
+      "name": "خوزی",
+      "nameEn": "خوزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زیغان",
+      "name": "زیغان",
+      "nameEn": "زیغان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیدهاشمی",
+      "name": "سیدهاشمی",
+      "nameEn": "سیدهاشمی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شول",
+      "name": "شول",
+      "nameEn": "شول",
+      "geoSource": "osm"
+    },
+    {
+      "id": "صادره",
+      "name": "صادره",
+      "nameEn": "صادره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علامرودشت",
+      "name": "علامرودشت",
+      "nameEn": "علامرودشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غیب-الهی",
+      "name": "غیب الهی",
+      "nameEn": "غیب-الهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فاریاب",
+      "name": "فاریاب",
+      "nameEn": "فاریاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قعله-محمد-علی",
+      "name": "قعله محمد علی",
+      "nameEn": "قعله-محمد-علی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهنویه",
+      "name": "کهنویه",
+      "nameEn": "کهنویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلدشت",
+      "name": "گلدشت",
+      "nameEn": "گلدشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهر",
+      "name": "مهر",
+      "nameEn": "مهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نرمان",
+      "name": "نرمان",
+      "nameEn": "نرمان",
+      "geoSource": "osm"
+    }
+  ]
+}

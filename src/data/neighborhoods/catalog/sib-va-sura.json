@@ -1,0 +1,25 @@
+{
+  "cityId": "sib-va-sura",
+  "cityName": "سیب و سوران",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.908Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سیب-و-سوران",
+      "name": "سیب و سوران",
+      "nameEn": "sib-va-sura",
+      "centroid": {
+        "lat": 27.334800808623786,
+        "lng": 62.03069612833149
+      },
+      "bbox": {
+        "south": 27.22831428329141,
+        "north": 27.44128733395616,
+        "west": 61.92461393995311,
+        "east": 62.13677831670987
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

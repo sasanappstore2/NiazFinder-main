@@ -1,0 +1,25 @@
+{
+  "cityId": "vazine",
+  "cityName": "وزینه",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:31.262Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "وزینه",
+      "name": "وزینه",
+      "nameEn": "vazine",
+      "centroid": {
+        "lat": 36.35040249270571,
+        "lng": 45.46198863340507
+      },
+      "bbox": {
+        "south": 36.24391596737333,
+        "north": 36.45688901803809,
+        "west": 45.340518684306325,
+        "east": 45.583458582503816
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

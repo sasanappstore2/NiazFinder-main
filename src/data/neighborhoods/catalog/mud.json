@@ -1,0 +1,307 @@
+{
+  "cityId": "mud",
+  "cityName": "مود",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:40:56.323Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مود",
+      "name": "مود",
+      "nameEn": "mud",
+      "centroid": {
+        "lat": 32.575700071218115,
+        "lng": 59.57147099401858
+      },
+      "bbox": {
+        "south": 32.46921354588574,
+        "north": 32.682186596550494,
+        "west": 59.45616144661427,
+        "east": 59.68678054142289
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابراهیم-آباد",
+      "name": "ابراهیم آباد",
+      "nameEn": "ابراهیم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "استانست",
+      "name": "استانست",
+      "nameEn": "استانست",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسفیج",
+      "name": "اسفیج",
+      "nameEn": "اسفیج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اکبرآباد",
+      "name": "اکبرآباد",
+      "nameEn": "اکبرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهالگرد",
+      "name": "بهالگرد",
+      "nameEn": "بهالگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بهدان",
+      "name": "بهدان",
+      "nameEn": "بهدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پخت",
+      "name": "پخت",
+      "nameEn": "پخت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پدران-سفلی",
+      "name": "پدران سفلی",
+      "nameEn": "پدران-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پدران-علیا",
+      "name": "پدران علیا",
+      "nameEn": "پدران-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیوند-سفلی",
+      "name": "پیوند سفلی",
+      "nameEn": "پیوند-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیوند-علیا",
+      "name": "پیوند علیا",
+      "nameEn": "پیوند-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تکتی-تی",
+      "name": "تکتی تی",
+      "nameEn": "تکتی-تی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاج",
+      "name": "چاج",
+      "nameEn": "چاج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-زین-العابدین",
+      "name": "چاه زین العابدین",
+      "nameEn": "چاه-زین-العابدین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-رج",
+      "name": "چشمه رج",
+      "nameEn": "چشمه-رج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چنشت",
+      "name": "چنشت",
+      "nameEn": "چنشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهکندمود",
+      "name": "چهکندمود",
+      "nameEn": "چهکندمود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهکندوک",
+      "name": "چهکندوک",
+      "nameEn": "چهکندوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آبادمیان",
+      "name": "حسن آبادمیان",
+      "nameEn": "حسن-آبادمیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خراشاد",
+      "name": "خراشاد",
+      "nameEn": "خراشاد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خونیک",
+      "name": "خونیک",
+      "nameEn": "خونیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دستجرد",
+      "name": "دستجرد",
+      "nameEn": "دستجرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهشیب",
+      "name": "دهشیب",
+      "nameEn": "دهشیب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رزق",
+      "name": "رزق",
+      "nameEn": "رزق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-بیجار",
+      "name": "روستای بیجار",
+      "nameEn": "روستای-بیجار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرزه",
+      "name": "سرزه",
+      "nameEn": "سرزه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سورگ",
+      "name": "سورگ",
+      "nameEn": "سورگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیاه-دره",
+      "name": "سیاه دره",
+      "nameEn": "سیاه-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شواکند",
+      "name": "شواکند",
+      "nameEn": "شواکند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-داورآباد",
+      "name": "علی آباد داورآباد",
+      "nameEn": "علی-آباد-داورآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فریزمرغ",
+      "name": "فریزمرغ",
+      "nameEn": "فریزمرغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فنود",
+      "name": "فنود",
+      "nameEn": "فنود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاهی",
+      "name": "کاهی",
+      "nameEn": "کاهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کریم-آباد",
+      "name": "کریم آباد",
+      "nameEn": "کریم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-بشگزی-کلاته-شگزی",
+      "name": "کلاته بشگزی کلاته شگزی",
+      "nameEn": "کلاته-بشگزی-کلاته-شگزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-داود",
+      "name": "کلاته داود",
+      "nameEn": "کلاته-داود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-فتح-اللهی",
+      "name": "کلاته فتح اللهی",
+      "nameEn": "کلاته-فتح-اللهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوچ",
+      "name": "کوچ",
+      "nameEn": "کوچ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملک-آباد",
+      "name": "ملک آباد",
+      "nameEn": "ملک-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهدی-آباد",
+      "name": "مهدی آباد",
+      "nameEn": "مهدی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصرآباد",
+      "name": "نصرآباد",
+      "nameEn": "نصرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوفرست",
+      "name": "نوفرست",
+      "nameEn": "نوفرست",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوک",
+      "name": "نوک",
+      "nameEn": "نوک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوکند",
+      "name": "نوکند",
+      "nameEn": "نوکند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هریوند",
+      "name": "هریوند",
+      "nameEn": "هریوند",
+      "geoSource": "osm"
+    }
+  ]
+}

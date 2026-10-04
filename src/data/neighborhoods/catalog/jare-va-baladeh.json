@@ -1,0 +1,25 @@
+{
+  "cityId": "jare-va-baladeh",
+  "cityName": "جره و بالاده",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.649Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جره-و-بالاده",
+      "name": "جره و بالاده",
+      "nameEn": "jare-va-baladeh",
+      "centroid": {
+        "lat": 29.322170512863817,
+        "lng": 51.929490289752394
+      },
+      "bbox": {
+        "south": 29.215683987531442,
+        "north": 29.428657038196192,
+        "west": 51.82048637626822,
+        "east": 52.038494203236574
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

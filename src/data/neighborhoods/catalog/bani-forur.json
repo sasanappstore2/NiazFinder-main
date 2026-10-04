@@ -1,0 +1,25 @@
+{
+  "cityId": "bani-forur",
+  "cityName": "بنی‌فارور",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.262Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بنیفارور",
+      "name": "بنی‌فارور",
+      "nameEn": "bani-forur",
+      "centroid": {
+        "lat": 28.567312747989984,
+        "lng": 53.64515790109945
+      },
+      "bbox": {
+        "south": 28.46082622265761,
+        "north": 28.67379927332236,
+        "west": 53.53493237850197,
+        "east": 53.75538342369693
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "jargalan",
+  "cityName": "جرگلان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.652Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "جرگلان",
+      "name": "جرگلان",
+      "nameEn": "jargalan",
+      "centroid": {
+        "lat": 38.16920775702479,
+        "lng": 56.68841681063921
+      },
+      "bbox": {
+        "south": 38.062721231692414,
+        "north": 38.27569428235717,
+        "west": 56.564721253701165,
+        "east": 56.812112367577264
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

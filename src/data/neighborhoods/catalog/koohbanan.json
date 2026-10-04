@@ -1,0 +1,109 @@
+{
+  "cityId": "koohbanan",
+  "cityName": "کوهبنان",
+  "source": "osm",
+  "importedAt": "2026-06-16T20:56:10.517Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوهبنان",
+      "name": "کوهبنان",
+      "nameEn": "koohbanan",
+      "centroid": {
+        "lat": 31.439077618433345,
+        "lng": 56.33426798203335
+      },
+      "bbox": {
+        "south": 31.33259109310097,
+        "north": 31.54556414376572,
+        "west": 56.225082617160396,
+        "east": 56.4434533469063
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آبکریک",
+      "name": "آبکریک",
+      "nameEn": "آبکریک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسدآباد",
+      "name": "اسدآباد",
+      "nameEn": "اسدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "افزاد",
+      "name": "افزاد",
+      "nameEn": "افزاد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تيتوپائين",
+      "name": "تيتوپائين",
+      "nameEn": "تيتوپائين",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جور",
+      "name": "جور",
+      "nameEn": "جور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خالق-آباد",
+      "name": "خالق آباد",
+      "nameEn": "خالق-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-خواجه",
+      "name": "ده خواجه",
+      "nameEn": "ده-خواجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-آب-دره",
+      "name": "روستای آب دره",
+      "nameEn": "روستای-آب-دره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-زعفرانیه",
+      "name": "روستای زعفرانیه",
+      "nameEn": "روستای-زعفرانیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شکرآباد",
+      "name": "شکرآباد",
+      "nameEn": "شکرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاروانگاه",
+      "name": "کاروانگاه",
+      "nameEn": "کاروانگاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گردوکج",
+      "name": "گردوکج",
+      "nameEn": "گردوکج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گود-بید-سوخته",
+      "name": "گود بید سوخته",
+      "nameEn": "گود-بید-سوخته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-ده-غلامرضا-مولی",
+      "name": "مزرعه ده غلامرضا مولی",
+      "nameEn": "مزرعه-ده-غلامرضا-مولی",
+      "geoSource": "osm"
+    }
+  ]
+}

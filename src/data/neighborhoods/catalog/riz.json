@@ -1,0 +1,139 @@
+{
+  "cityId": "riz",
+  "cityName": "ریز",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:37:05.216Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "ریز",
+      "name": "ریز",
+      "nameEn": "riz",
+      "centroid": {
+        "lat": 28.041633530901905,
+        "lng": 52.192162812958216
+      },
+      "bbox": {
+        "south": 27.93514700556953,
+        "north": 28.14812005623428,
+        "west": 52.08211452141046,
+        "east": 52.302211104505965
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انارستان",
+      "name": "انارستان",
+      "nameEn": "انارستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشتو",
+      "name": "پشتو",
+      "nameEn": "پشتو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تشان",
+      "name": "تشان",
+      "nameEn": "تشان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تنگ-خوش",
+      "name": "تنگ خوش",
+      "nameEn": "تنگ-خوش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمال-آباد",
+      "name": "جمال آباد",
+      "nameEn": "جمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حرمیک",
+      "name": "حرمیک",
+      "nameEn": "حرمیک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دره-بان",
+      "name": "دره بان",
+      "nameEn": "دره-بان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوراهک",
+      "name": "دوراهک",
+      "nameEn": "دوراهک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهر-خاص",
+      "name": "شهر خاص",
+      "nameEn": "شهر-خاص",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرخاص",
+      "name": "شهرخاص",
+      "nameEn": "شهرخاص",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-کهنه",
+      "name": "قلعه کهنه",
+      "nameEn": "قلعه-کهنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوهچهر",
+      "name": "کوهچهر",
+      "nameEn": "کوهچهر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلستان",
+      "name": "گلستان",
+      "nameEn": "گلستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گندمزار",
+      "name": "گندمزار",
+      "nameEn": "گندمزار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنوی",
+      "name": "گنوی",
+      "nameEn": "گنوی",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,199 @@
+{
+  "cityId": "abkuh-city",
+  "cityName": "آبکوه",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:31:23.110Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "آبکوه",
+      "name": "آبکوه",
+      "nameEn": "abkuh-city",
+      "centroid": {
+        "lat": 36.87047712917715,
+        "lng": 58.72574133252205
+      },
+      "bbox": {
+        "south": 36.76399060384477,
+        "north": 36.976963654509525,
+        "west": 58.60233136033177,
+        "east": 58.84915130471233
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "احمدآباد",
+      "name": "احمدآباد",
+      "nameEn": "احمدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اقبالیه",
+      "name": "اقبالیه",
+      "nameEn": "اقبالیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بژگانی",
+      "name": "بژگانی",
+      "nameEn": "بژگانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جمران",
+      "name": "جمران",
+      "nameEn": "جمران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چرم",
+      "name": "چرم",
+      "nameEn": "چرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه",
+      "name": "چشمه",
+      "nameEn": "چشمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چشمه-گلک-علیا",
+      "name": "چشمه گلک علیا",
+      "nameEn": "چشمه-گلک-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهاربست-باغ",
+      "name": "چهاربست باغ",
+      "nameEn": "چهاربست-باغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حصار-سرخ",
+      "name": "حصار سرخ",
+      "nameEn": "حصار-سرخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-نو",
+      "name": "ده نو",
+      "nameEn": "ده-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرغایه",
+      "name": "سرغایه",
+      "nameEn": "سرغایه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرنیش",
+      "name": "سرنیش",
+      "nameEn": "سرنیش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگ-اتش",
+      "name": "سنگ اتش",
+      "nameEn": "سنگ-اتش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شریف-آباد",
+      "name": "شریف آباد",
+      "nameEn": "شریف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوراب-بالا",
+      "name": "شوراب بالا",
+      "nameEn": "شوراب-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوراب-سفلی",
+      "name": "شوراب سفلی",
+      "nameEn": "شوراب-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرین-آباد",
+      "name": "شیرین آباد",
+      "nameEn": "شیرین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرهادگرد",
+      "name": "فرهادگرد",
+      "nameEn": "فرهادگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاسم-آباد",
+      "name": "قاسم آباد",
+      "nameEn": "قاسم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-نو-فرهادگرد",
+      "name": "قلعه نو فرهادگرد",
+      "nameEn": "قلعه-نو-فرهادگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-خوش",
+      "name": "کلاته خوش",
+      "nameEn": "کلاته-خوش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-سبز",
+      "name": "کلاته سبز",
+      "nameEn": "کلاته-سبز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرمه",
+      "name": "گرمه",
+      "nameEn": "گرمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنده-چشمه",
+      "name": "گنده چشمه",
+      "nameEn": "گنده-چشمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ماه-کاریز",
+      "name": "ماه کاریز",
+      "nameEn": "ماه-کاریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مراغه",
+      "name": "مراغه",
+      "nameEn": "مراغه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نرگ",
+      "name": "نرگ",
+      "nameEn": "نرگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نعمان",
+      "name": "نعمان",
+      "nameEn": "نعمان",
+      "geoSource": "osm"
+    }
+  ]
+}

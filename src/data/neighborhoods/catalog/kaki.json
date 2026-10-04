@@ -1,0 +1,157 @@
+{
+  "cityId": "kaki",
+  "cityName": "کاکی",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:38:48.114Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کاکی",
+      "name": "کاکی",
+      "nameEn": "kaki",
+      "centroid": {
+        "lat": 28.2994537,
+        "lng": 51.540426576136866
+      },
+      "bbox": {
+        "south": 28.192967174667626,
+        "north": 28.405940225332376,
+        "west": 51.431343739419326,
+        "east": 51.64950941285441
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "امام-آباد",
+      "name": "امام آباد",
+      "nameEn": "امام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بادوله",
+      "name": "بادوله",
+      "nameEn": "بادوله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-شلی",
+      "name": "باغ شلی",
+      "nameEn": "باغ-شلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغ-شور",
+      "name": "باغ شور",
+      "nameEn": "باغ-شور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بامنیر",
+      "name": "بامنیر",
+      "nameEn": "بامنیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بنیاد",
+      "name": "بنیاد",
+      "nameEn": "بنیاد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تلخو",
+      "name": "تلخو",
+      "nameEn": "تلخو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-زایری",
+      "name": "حسین زایری",
+      "nameEn": "حسین-زایری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درگو-جنوبی",
+      "name": "درگو جنوبی",
+      "nameEn": "درگو-جنوبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "درگو-شمالی",
+      "name": "درگو شمالی",
+      "nameEn": "درگو-شمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رزم-آباد",
+      "name": "رزم آباد",
+      "nameEn": "رزم-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ریگدان",
+      "name": "ریگدان",
+      "nameEn": "ریگدان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنا",
+      "name": "سنا",
+      "nameEn": "سنا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخیان-سلنجی",
+      "name": "شیخیان سلنجی",
+      "nameEn": "شیخیان-سلنجی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیخیان-ماری",
+      "name": "شیخیان ماری",
+      "nameEn": "شیخیان-ماری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمال-آباد",
+      "name": "کمال آباد",
+      "nameEn": "کمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کناری",
+      "name": "کناری",
+      "nameEn": "کناری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنخک-رئیسی",
+      "name": "گنخک رئیسی",
+      "nameEn": "گنخک-رئیسی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنخک-شیخی",
+      "name": "گنخک شیخی",
+      "nameEn": "گنخک-شیخی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گنخک-کورا",
+      "name": "گنخک کورا",
+      "nameEn": "گنخک-کورا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناصری",
+      "name": "ناصری",
+      "nameEn": "ناصری",
+      "geoSource": "osm"
+    }
+  ]
+}

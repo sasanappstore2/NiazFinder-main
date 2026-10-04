@@ -1,0 +1,259 @@
+{
+  "cityId": "mian-velayat",
+  "cityName": "میان ولایت",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:59:23.454Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "میان-ولایت",
+      "name": "میان ولایت",
+      "nameEn": "mian-velayat",
+      "centroid": {
+        "lat": 34.806770667768596,
+        "lng": 60.59321672085747
+      },
+      "bbox": {
+        "south": 34.70028414243622,
+        "north": 34.913257193100975,
+        "west": 60.47403852372301,
+        "east": 60.71239491799192
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "احمدآباد-شیخ",
+      "name": "احمدآباد شیخ",
+      "nameEn": "احمدآباد-شیخ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسگرد",
+      "name": "اسگرد",
+      "nameEn": "اسگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اکبرآباد",
+      "name": "اکبرآباد",
+      "nameEn": "اکبرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بکاول",
+      "name": "بکاول",
+      "nameEn": "بکاول",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیدستان",
+      "name": "بیدستان",
+      "nameEn": "بیدستان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پاده",
+      "name": "پاده",
+      "nameEn": "پاده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پاگدار-بادور",
+      "name": "پاگدار بادور",
+      "nameEn": "پاگدار-بادور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پاگداربادور",
+      "name": "پاگداربادور",
+      "nameEn": "پاگداربادور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیش-آخور",
+      "name": "پیش آخور",
+      "nameEn": "پیش-آخور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "توروسک",
+      "name": "توروسک",
+      "nameEn": "توروسک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جوادیه",
+      "name": "جوادیه",
+      "nameEn": "جوادیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهارتخته-گوگ",
+      "name": "چهارتخته گوگ",
+      "nameEn": "چهارتخته-گوگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-بیگی",
+      "name": "حاجی بیگی",
+      "nameEn": "حاجی-بیگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حشمت-آباد",
+      "name": "حشمت آباد",
+      "nameEn": "حشمت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرم",
+      "name": "خرم",
+      "nameEn": "خرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ده-منار",
+      "name": "ده منار",
+      "nameEn": "ده-منار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رباط-سنگ",
+      "name": "رباط سنگ",
+      "nameEn": "رباط-سنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رباط-میاندشت",
+      "name": "رباط میاندشت",
+      "nameEn": "رباط-میاندشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رقیچه",
+      "name": "رقیچه",
+      "nameEn": "رقیچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رودخانه",
+      "name": "رودخانه",
+      "nameEn": "رودخانه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سربالا",
+      "name": "سربالا",
+      "nameEn": "سربالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرهنگ",
+      "name": "سرهنگ",
+      "nameEn": "سرهنگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سریشا",
+      "name": "سریشا",
+      "nameEn": "سریشا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سلطان-آباد",
+      "name": "سلطان آباد",
+      "nameEn": "سلطان-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شور-حصار",
+      "name": "شور حصار",
+      "nameEn": "شور-حصار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شوربیگ",
+      "name": "شوربیگ",
+      "nameEn": "شوربیگ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرآباد",
+      "name": "شیرآباد",
+      "nameEn": "شیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عبدآباد",
+      "name": "عبدآباد",
+      "nameEn": "عبدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عمادیه",
+      "name": "عمادیه",
+      "nameEn": "عمادیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غنچی",
+      "name": "غنچی",
+      "nameEn": "غنچی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فتح-آباد",
+      "name": "فتح آباد",
+      "nameEn": "فتح-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فخرآباد",
+      "name": "فخرآباد",
+      "nameEn": "فخرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قجاق",
+      "name": "قجاق",
+      "nameEn": "قجاق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کامه-سفلی",
+      "name": "کامه سفلی",
+      "nameEn": "کامه-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کامه-علیا",
+      "name": "کامه علیا",
+      "nameEn": "کامه-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کسگک",
+      "name": "کسگک",
+      "nameEn": "کسگک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نظامیه",
+      "name": "نظامیه",
+      "nameEn": "نظامیه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوری",
+      "name": "نوری",
+      "nameEn": "نوری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "واسط",
+      "name": "واسط",
+      "nameEn": "واسط",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "bampur",
+  "cityName": "بمپور",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.210Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بمپور",
+      "name": "بمپور",
+      "nameEn": "bampur",
+      "centroid": {
+        "lat": 27.315458865253323,
+        "lng": 60.589037326623576
+      },
+      "bbox": {
+        "south": 27.208972339920948,
+        "north": 27.421945390585698,
+        "west": 60.48442760834929,
+        "east": 60.69364704489786
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

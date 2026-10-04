@@ -1,0 +1,25 @@
+{
+  "cityId": "almot",
+  "cityName": "الموت",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:26.752Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "الموت",
+      "name": "الموت",
+      "nameEn": "almot",
+      "centroid": {
+        "lat": 36.49214886313331,
+        "lng": 50.44062625601634
+      },
+      "bbox": {
+        "south": 36.38566233780093,
+        "north": 36.59863538846569,
+        "west": 50.31811055932412,
+        "east": 50.563141952708555
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

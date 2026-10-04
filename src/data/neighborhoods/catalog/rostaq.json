@@ -1,0 +1,85 @@
+{
+  "cityId": "rostaq",
+  "cityName": "رستاق",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:05:20.804Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "رستاق",
+      "name": "رستاق",
+      "nameEn": "rostaq",
+      "centroid": {
+        "lat": 28.53320553129716,
+        "lng": 55.238846990394144
+      },
+      "bbox": {
+        "south": 28.426719005964785,
+        "north": 28.639692056629535,
+        "west": 55.13043004725026,
+        "east": 55.34726393353803
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "بادامه",
+      "name": "بادامه",
+      "nameEn": "بادامه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بکر",
+      "name": "بکر",
+      "nameEn": "بکر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیشه-سرخون",
+      "name": "بیشه سرخون",
+      "nameEn": "بیشه-سرخون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-ماهی",
+      "name": "چاه ماهی",
+      "nameEn": "چاه-ماهی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهارده",
+      "name": "چهارده",
+      "nameEn": "چهارده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهابی",
+      "name": "شهابی",
+      "nameEn": "شهابی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-لایزنگان",
+      "name": "شهرک لایزنگان",
+      "nameEn": "شهرک-لایزنگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه-آب",
+      "name": "مزرعه آب",
+      "nameEn": "مزرعه-آب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نظام-آباد",
+      "name": "نظام آباد",
+      "nameEn": "نظام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "همت",
+      "name": "همت",
+      "nameEn": "همت",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "khanmirza",
+  "cityName": "خانمیرزا",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.017Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خانمیرزا",
+      "name": "خانمیرزا",
+      "nameEn": "khanmirza",
+      "centroid": {
+        "lat": 31.520536727057134,
+        "lng": 51.1706843098697
+      },
+      "bbox": {
+        "south": 31.41405020172476,
+        "north": 31.62702325238951,
+        "west": 51.05884149433981,
+        "east": 51.2825271253996
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

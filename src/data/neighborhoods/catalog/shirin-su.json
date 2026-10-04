@@ -1,0 +1,97 @@
+{
+  "cityId": "shirin-su",
+  "cityName": "شیرین‌سو",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:47:36.246Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شیرینسو",
+      "name": "شیرین‌سو",
+      "nameEn": "shirin-su",
+      "centroid": {
+        "lat": 35.536433942040965,
+        "lng": 48.43812075857122
+      },
+      "bbox": {
+        "south": 35.429947416708586,
+        "north": 35.642920467373344,
+        "west": 48.320113609138765,
+        "east": 48.55612790800368
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "حمزک",
+      "name": "حمزک",
+      "nameEn": "حمزک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرتوت",
+      "name": "خرتوت",
+      "nameEn": "خرتوت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاتوت",
+      "name": "شاتوت",
+      "nameEn": "شاتوت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورسو",
+      "name": "شورسو",
+      "nameEn": "شورسو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزل-قلعه-بالا",
+      "name": "قزل قلعه بالا",
+      "nameEn": "قزل-قلعه-بالا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزل-قلعه-پائین",
+      "name": "قزل قلعه پائین",
+      "nameEn": "قزل-قلعه-پائین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاریز",
+      "name": "کاریز",
+      "nameEn": "کاریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-الله-قلی",
+      "name": "کلاته الله قلی",
+      "nameEn": "کلاته-الله-قلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلاته-محمدوارض",
+      "name": "کلاته محمدوارض",
+      "nameEn": "کلاته-محمدوارض",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوه-قلعه",
+      "name": "کوه قلعه",
+      "nameEn": "کوه-قلعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کهنه-جلگه",
+      "name": "کهنه جلگه",
+      "nameEn": "کهنه-جلگه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "یموق",
+      "name": "یموق",
+      "nameEn": "یموق",
+      "geoSource": "osm"
+    }
+  ]
+}

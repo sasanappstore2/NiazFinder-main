@@ -1,0 +1,25 @@
+{
+  "cityId": "jazireh-larak",
+  "cityName": "لارک",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.672Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "لارک",
+      "name": "لارک",
+      "nameEn": "jazireh-larak",
+      "centroid": {
+        "lat": 26.85652889270571,
+        "lng": 56.42147596717186
+      },
+      "bbox": {
+        "south": 26.750042367373336,
+        "north": 26.963015418038086,
+        "west": 56.31256120589028,
+        "east": 56.530390728453426
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

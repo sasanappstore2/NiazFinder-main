@@ -1,0 +1,25 @@
+{
+  "cityId": "moran",
+  "cityName": "موران",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.805Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "موران",
+      "name": "موران",
+      "nameEn": "moran",
+      "centroid": {
+        "lat": 39.0584936879267,
+        "lng": 48.31559047410893
+      },
+      "bbox": {
+        "south": 38.95200716259432,
+        "north": 39.16498021325908,
+        "west": 48.18804978119415,
+        "east": 48.4431311670237
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

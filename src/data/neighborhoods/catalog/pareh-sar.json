@@ -1,0 +1,25 @@
+{
+  "cityId": "pareh-sar",
+  "cityName": "پره‌سر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.057Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "پرهسر",
+      "name": "پره‌سر",
+      "nameEn": "pareh-sar",
+      "centroid": {
+        "lat": 37.53363587278333,
+        "lng": 49.065611532439775
+      },
+      "bbox": {
+        "south": 37.26668835197844,
+        "north": 37.80058339358822,
+        "west": 48.76232496577298,
+        "east": 49.36889809910657
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "cityId": "khorsh-e-rostam",
+  "cityName": "خورش رستم",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:43:30.642Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گهراز",
+      "name": "گهراز",
+      "nameEn": "گهراز",
+      "centroid": {
+        "lat": 37.3255092502695,
+        "lng": 48.50621454612678
+      },
+      "bbox": {
+        "south": 37.21902272493712,
+        "north": 37.43199577560188,
+        "west": 48.38529554925309,
+        "east": 48.62713354300047
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "استانجین",
+      "name": "استانجین",
+      "nameEn": "استانجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ئوستلو",
+      "name": "ئوستلو",
+      "nameEn": "ئوستلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بورگهیم",
+      "name": "بورگهیم",
+      "nameEn": "بورگهیم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیرتقی",
+      "name": "پیرتقی",
+      "nameEn": "پیرتقی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چنار",
+      "name": "چنار",
+      "nameEn": "چنار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خط-پرست",
+      "name": "خط پرست",
+      "nameEn": "خط-پرست",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خوشنما",
+      "name": "خوشنما",
+      "nameEn": "خوشنما",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دایوکندی",
+      "name": "دایوکندی",
+      "nameEn": "دایوکندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دمدل",
+      "name": "دمدل",
+      "nameEn": "دمدل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوستلو",
+      "name": "دوستلو",
+      "nameEn": "دوستلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-دویچ",
+      "name": "روستای دویچ",
+      "nameEn": "روستای-دویچ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساربانان",
+      "name": "ساربانان",
+      "nameEn": "ساربانان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ساقیزچی",
+      "name": "ساقیزچی",
+      "nameEn": "ساقیزچی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سوران",
+      "name": "سوران",
+      "nameEn": "سوران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شمس-آباد",
+      "name": "شمس آباد",
+      "nameEn": "شمس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طوین",
+      "name": "طوین",
+      "nameEn": "طوین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-تیکان",
+      "name": "قره تیکان",
+      "nameEn": "قره-تیکان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوسجين",
+      "name": "قوسجين",
+      "nameEn": "قوسجين",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کجل",
+      "name": "کجل",
+      "nameEn": "کجل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کرکزلو",
+      "name": "کرکزلو",
+      "nameEn": "کرکزلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کزج",
+      "name": "کزج",
+      "nameEn": "کزج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمر",
+      "name": "کمر",
+      "nameEn": "کمر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کیوی",
+      "name": "کیوی",
+      "nameEn": "کیوی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کیوی-زاویه",
+      "name": "کیوی زاویه",
+      "nameEn": "کیوی-زاویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گاو",
+      "name": "گاو",
+      "nameEn": "گاو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلگلاب",
+      "name": "گلگلاب",
+      "nameEn": "گلگلاب",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گهراز-قدیم",
+      "name": "گهراز قدیم",
+      "nameEn": "گهراز-قدیم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمودآباد",
+      "name": "محمودآباد",
+      "nameEn": "محمودآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مزرعه",
+      "name": "مزرعه",
+      "nameEn": "مزرعه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منامین",
+      "name": "منامین",
+      "nameEn": "منامین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مندیجان",
+      "name": "مندیجان",
+      "nameEn": "مندیجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نوده",
+      "name": "نوده",
+      "nameEn": "نوده",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ونن",
+      "name": "ونن",
+      "nameEn": "ونن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ویو",
+      "name": "ویو",
+      "nameEn": "ویو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ویی",
+      "name": "ویی",
+      "nameEn": "ویی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هشجین",
+      "name": "هشجین",
+      "nameEn": "هشجین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هشی",
+      "name": "هشی",
+      "nameEn": "هشی",
+      "geoSource": "osm"
+    }
+  ]
+}

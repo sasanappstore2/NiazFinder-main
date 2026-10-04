@@ -1,0 +1,133 @@
+{
+  "cityId": "juyom",
+  "cityName": "جویم",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:59:27.956Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شهرک-جهادآباد",
+      "name": "شهرک جهادآباد",
+      "nameEn": "شهرک-جهادآباد",
+      "centroid": {
+        "lat": 28.22206431936759,
+        "lng": 53.76638506939747
+      },
+      "bbox": {
+        "south": 28.115577794035215,
+        "north": 28.328550844699965,
+        "west": 53.65423410185292,
+        "east": 53.87853603694202
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "اشکم-شور",
+      "name": "اشکم شور",
+      "nameEn": "اشکم-شور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جویم",
+      "name": "جویم",
+      "nameEn": "جویم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-داربس",
+      "name": "چاه داربس",
+      "nameEn": "چاه-داربس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-گزی",
+      "name": "چاه گزی",
+      "nameEn": "چاه-گزی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسن-آباد",
+      "name": "حسن آباد",
+      "nameEn": "حسن-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسنخانی",
+      "name": "حسن‌خانی",
+      "nameEn": "حسنخانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دامچه",
+      "name": "دامچه",
+      "nameEn": "دامچه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رحمت-آباد",
+      "name": "رحمت آباد",
+      "nameEn": "رحمت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رزک",
+      "name": "رزک",
+      "nameEn": "رزک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاه-علمدار",
+      "name": "شاه علمدار",
+      "nameEn": "شاه-علمدار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عطاآباد",
+      "name": "عطاآباد",
+      "nameEn": "عطاآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرشته-جان",
+      "name": "فرشته جان",
+      "nameEn": "فرشته-جان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلو-براق",
+      "name": "گلو براق",
+      "nameEn": "گلو-براق",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مخ-سوخته",
+      "name": "مخ سوخته",
+      "nameEn": "مخ-سوخته",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ملک-علی",
+      "name": "ملک علی",
+      "nameEn": "ملک-علی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "منصور-آباد",
+      "name": "منصور آباد",
+      "nameEn": "منصور-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "موزار",
+      "name": "موزار",
+      "nameEn": "موزار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصیر-خانی",
+      "name": "نصیر خانی",
+      "nameEn": "نصیر-خانی",
+      "geoSource": "osm"
+    }
+  ]
+}

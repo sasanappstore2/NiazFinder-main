@@ -1,0 +1,157 @@
+{
+  "cityId": "kuhenjan",
+  "cityName": "کوهنجان",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:20:23.770Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کوهنجان",
+      "name": "کوهنجان",
+      "nameEn": "kuhenjan",
+      "centroid": {
+        "lat": 29.320172218828603,
+        "lng": 52.99952403214858
+      },
+      "bbox": {
+        "south": 29.213685693496227,
+        "north": 29.426658744160978,
+        "west": 52.89204606996458,
+        "east": 53.10700199433258
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آباده-آبگرم",
+      "name": "آباده آبگرم",
+      "nameEn": "آباده-آبگرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اکبرآباد",
+      "name": "اکبرآباد",
+      "nameEn": "اکبرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بکت",
+      "name": "بکت",
+      "nameEn": "بکت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پشت-پر",
+      "name": "پشت پر",
+      "nameEn": "پشت-پر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-انجیر",
+      "name": "چاه انجیر",
+      "nameEn": "چاه-انجیر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیرآباد",
+      "name": "خیرآباد",
+      "nameEn": "خیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دولت-آباد",
+      "name": "دولت آباد",
+      "nameEn": "دولت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ذرات",
+      "name": "ذرات",
+      "nameEn": "ذرات",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرود",
+      "name": "سرود",
+      "nameEn": "سرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سعادت-آباد",
+      "name": "سعادت آباد",
+      "nameEn": "سعادت-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیف-آباد",
+      "name": "سیف آباد",
+      "nameEn": "سیف-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورجه",
+      "name": "شورجه",
+      "nameEn": "شورجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "طالب-بیگی",
+      "name": "طالب بیگی",
+      "nameEn": "طالب-بیگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قصیرا",
+      "name": "قصیرا",
+      "nameEn": "قصیرا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-نو-مظفری",
+      "name": "قلعه نو مظفری",
+      "nameEn": "قلعه-نو-مظفری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قنبری",
+      "name": "قنبری",
+      "nameEn": "قنبری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمال-آباد",
+      "name": "کمال آباد",
+      "nameEn": "کمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنو",
+      "name": "کنو",
+      "nameEn": "کنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مظفری",
+      "name": "مظفری",
+      "nameEn": "مظفری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "میریسه",
+      "name": "میریسه",
+      "nameEn": "میریسه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هزاردره",
+      "name": "هزاردره",
+      "nameEn": "هزاردره",
+      "geoSource": "osm"
+    }
+  ]
+}

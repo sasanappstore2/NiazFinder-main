@@ -1,0 +1,25 @@
+{
+  "cityId": "raz-va-jargalan",
+  "cityName": "راز وجرگلان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.286Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "راز-وجرگلان",
+      "name": "راز وجرگلان",
+      "nameEn": "raz-va-jargalan",
+      "centroid": {
+        "lat": 38.01820291631333,
+        "lng": 56.99143132225172
+      },
+      "bbox": {
+        "south": 37.91171639098095,
+        "north": 38.12468944164571,
+        "west": 56.87214897687384,
+        "east": 57.110713667629604
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

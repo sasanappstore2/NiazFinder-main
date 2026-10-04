@@ -1,0 +1,109 @@
+{
+  "cityId": "bandartaheri",
+  "cityName": "بندر طاهری",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:28:04.316Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بندر-طاهری",
+      "name": "بندر طاهری",
+      "nameEn": "bandartaheri",
+      "centroid": {
+        "lat": 29.415435314890452,
+        "lng": 51.67525398380518
+      },
+      "bbox": {
+        "south": 29.308948789558077,
+        "north": 29.521921840222827,
+        "west": 51.56839568562397,
+        "east": 51.78211228198638
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "اسلام-آباد",
+      "name": "اسلام آباد",
+      "nameEn": "اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیدخوار",
+      "name": "بیدخوار",
+      "nameEn": "بیدخوار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پرک",
+      "name": "پرک",
+      "nameEn": "پرک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پلنگی",
+      "name": "پلنگی",
+      "nameEn": "پلنگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاهه",
+      "name": "چاهه",
+      "nameEn": "چاهه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سیراف",
+      "name": "سیراف",
+      "nameEn": "سیراف",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-پردیس-جم",
+      "name": "شهرک پردیس جم",
+      "nameEn": "شهرک-پردیس-جم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شیرینو",
+      "name": "شیرینو",
+      "nameEn": "شیرینو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کمال-آباد",
+      "name": "کمال آباد",
+      "nameEn": "کمال-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مهرآباد",
+      "name": "مهرآباد",
+      "nameEn": "مهرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناحیه-۲",
+      "name": "ناحیه ۲",
+      "nameEn": "ناحیه-۲",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناحیه-۹",
+      "name": "ناحیه ۹",
+      "nameEn": "ناحیه-۹",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ناحیه-یک",
+      "name": "ناحیه یک",
+      "nameEn": "ناحیه-یک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ولیعصر",
+      "name": "ولیعصر",
+      "nameEn": "ولیعصر",
+      "geoSource": "osm"
+    }
+  ]
+}

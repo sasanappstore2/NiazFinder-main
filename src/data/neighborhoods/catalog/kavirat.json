@@ -1,0 +1,91 @@
+{
+  "cityId": "kavirat",
+  "cityName": "کویرات",
+  "source": "osm",
+  "importedAt": "2026-06-16T18:43:46.640Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کویرات",
+      "name": "کویرات",
+      "nameEn": "kavirat",
+      "centroid": {
+        "lat": 34.09104522227811,
+        "lng": 52.118964218231
+      },
+      "bbox": {
+        "south": 33.98455869694573,
+        "north": 34.19753174761049,
+        "west": 52.005740122515576,
+        "east": 52.23218831394642
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "ابوزید-آباد",
+      "name": "ابوزید آباد",
+      "nameEn": "ابوزید-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اسدآباد",
+      "name": "اسدآباد",
+      "nameEn": "اسدآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امینآباد",
+      "name": "امین‌آباد",
+      "nameEn": "امینآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرمدشت",
+      "name": "خرمدشت",
+      "nameEn": "خرمدشت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ریجن",
+      "name": "ریجن",
+      "nameEn": "ریجن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شادیان",
+      "name": "شادیان",
+      "nameEn": "شادیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شاطرآباد",
+      "name": "شاطرآباد",
+      "nameEn": "شاطرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فخره",
+      "name": "فخره",
+      "nameEn": "فخره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کاغذی",
+      "name": "کاغذی",
+      "nameEn": "کاغذی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدآباد",
+      "name": "محمدآباد",
+      "nameEn": "محمدآباد",
+      "geoSource": "osm"
+    }
+  ]
+}

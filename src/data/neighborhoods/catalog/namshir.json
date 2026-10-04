@@ -1,0 +1,25 @@
+{
+  "cityId": "namshir",
+  "cityName": "نمشیر",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.857Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "نمشیر",
+      "name": "نمشیر",
+      "nameEn": "namshir",
+      "centroid": {
+        "lat": 36.08900462957241,
+        "lng": 45.79041473804131
+      },
+      "bbox": {
+        "south": 35.98251810424003,
+        "north": 36.195491154904786,
+        "west": 45.67115784311924,
+        "east": 45.90967163296338
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,217 @@
+{
+  "cityId": "bazineh-rud",
+  "cityName": "بزینه رود",
+  "source": "osm",
+  "importedAt": "2026-06-16T21:34:32.987Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "بزینه-رود",
+      "name": "بزینه رود",
+      "nameEn": "bazineh-rud",
+      "centroid": {
+        "lat": 35.74374583395616,
+        "lng": 48.59558692826995
+      },
+      "bbox": {
+        "south": 35.63725930862378,
+        "north": 35.85023235928854,
+        "west": 48.4731095039706,
+        "east": 48.7180643525693
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "آغوزلو",
+      "name": "آغوزلو",
+      "nameEn": "آغوزلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "اردهین",
+      "name": "اردهین",
+      "nameEn": "اردهین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "ارقین-بلاغ",
+      "name": "ارقین بلاغ",
+      "nameEn": "ارقین-بلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "استرود",
+      "name": "استرود",
+      "nameEn": "استرود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امیرلو",
+      "name": "امیرلو",
+      "nameEn": "امیرلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بصرک",
+      "name": "بصرک",
+      "nameEn": "بصرک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پنبه-زبان",
+      "name": "پنبه زبان",
+      "nameEn": "پنبه-زبان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پیر-مرزبان",
+      "name": "پیر مرزبان",
+      "nameEn": "پیر-مرزبان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "توزلو",
+      "name": "توزلو",
+      "nameEn": "توزلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جهانشاه-کهریز",
+      "name": "جهانشاه کهریز",
+      "nameEn": "جهانشاه-کهریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسام-آباد",
+      "name": "حسام آباد",
+      "nameEn": "حسام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خانلار",
+      "name": "خانلار",
+      "nameEn": "خانلار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "داش-بلاغ",
+      "name": "داش بلاغ",
+      "nameEn": "داش-بلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دربند",
+      "name": "دربند",
+      "nameEn": "دربند",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوراخلو",
+      "name": "دوراخلو",
+      "nameEn": "دوراخلو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زاغج",
+      "name": "زاغج",
+      "nameEn": "زاغج",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زاغه-لو",
+      "name": "زاغه لو",
+      "nameEn": "زاغه-لو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرین-رود",
+      "name": "زرین رود",
+      "nameEn": "زرین-رود",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرشبار",
+      "name": "سرشبار",
+      "nameEn": "سرشبار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سرین",
+      "name": "سرین",
+      "nameEn": "سرین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شرور",
+      "name": "شرور",
+      "nameEn": "شرور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عموکندی",
+      "name": "عموکندی",
+      "nameEn": "عموکندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "غلام-ویس",
+      "name": "غلام ویس",
+      "nameEn": "غلام-ویس",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قاشقجه",
+      "name": "قاشقجه",
+      "nameEn": "قاشقجه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قجور",
+      "name": "قجور",
+      "nameEn": "قجور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-کهریز",
+      "name": "قره کهریز",
+      "nameEn": "قره-کهریز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قره-محمد",
+      "name": "قره محمد",
+      "nameEn": "قره-محمد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قزل-بلاغ",
+      "name": "قزل بلاغ",
+      "nameEn": "قزل-بلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قوطی-آباد",
+      "name": "قوطی آباد",
+      "nameEn": "قوطی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قیاس-کندی",
+      "name": "قیاس کندی",
+      "nameEn": "قیاس-کندی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گل-تپه",
+      "name": "گل تپه",
+      "nameEn": "گل-تپه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمد-خلج",
+      "name": "محمد خلج",
+      "nameEn": "محمد-خلج",
+      "geoSource": "osm"
+    }
+  ]
+}

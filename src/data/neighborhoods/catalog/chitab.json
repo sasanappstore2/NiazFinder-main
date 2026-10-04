@@ -1,0 +1,25 @@
+{
+  "cityId": "chitab",
+  "cityName": "چیتاب",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.639Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "چیتاب",
+      "name": "چیتاب",
+      "nameEn": "chitab",
+      "centroid": {
+        "lat": 30.825354007294287,
+        "lng": 51.30922464113125
+      },
+      "bbox": {
+        "south": 30.71886748196191,
+        "north": 30.931840532626662,
+        "west": 51.194876762335305,
+        "east": 51.42357251992719
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "cityId": "sheyda",
+  "cityName": "شیدا",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.846Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "شیدا",
+      "name": "شیدا",
+      "nameEn": "sheyda",
+      "centroid": {
+        "lat": 32.66290462533238,
+        "lng": 50.703282791573514
+      },
+      "bbox": {
+        "south": 32.5564181,
+        "north": 32.76939115066476,
+        "west": 50.585627669721795,
+        "east": 50.820937913425226
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

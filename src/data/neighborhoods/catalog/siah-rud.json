@@ -1,0 +1,25 @@
+{
+  "cityId": "siah-rud",
+  "cityName": "سیه رود",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.900Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سیه-رود",
+      "name": "سیه رود",
+      "nameEn": "siah-rud",
+      "centroid": {
+        "lat": 38.81253312878189,
+        "lng": 46.24365890420887
+      },
+      "bbox": {
+        "south": 38.70604660344951,
+        "north": 38.919019654114265,
+        "west": 46.12096151950354,
+        "east": 46.36635628891421
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

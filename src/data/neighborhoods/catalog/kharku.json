@@ -1,0 +1,31 @@
+{
+  "cityId": "kharku",
+  "cityName": "خارکو",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:35:50.532Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "خارکو",
+      "name": "خارکو",
+      "nameEn": "kharku",
+      "centroid": {
+        "lat": 29.324218495759972,
+        "lng": 50.40465146038932
+      },
+      "bbox": {
+        "south": 29.217731970427597,
+        "north": 29.430705021092347,
+        "west": 50.29091688929246,
+        "east": 50.51838603148618
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "خارک",
+      "name": "خارک",
+      "nameEn": "خارک",
+      "geoSource": "osm"
+    }
+  ]
+}

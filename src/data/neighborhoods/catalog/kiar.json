@@ -1,0 +1,25 @@
+{
+  "cityId": "kiar",
+  "cityName": "کیار",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:29.197Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کیار",
+      "name": "کیار",
+      "nameEn": "kiar",
+      "centroid": {
+        "lat": 32.058726743370464,
+        "lng": 50.923526037699915
+      },
+      "bbox": {
+        "south": 31.95224021803809,
+        "north": 32.16521326870284,
+        "west": 50.80625155540288,
+        "east": 51.04080051999695
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

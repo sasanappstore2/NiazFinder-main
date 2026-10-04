@@ -1,0 +1,25 @@
+{
+  "cityId": "kalpush",
+  "cityName": "کالپوش",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.836Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کالپوش",
+      "name": "کالپوش",
+      "nameEn": "kalpush",
+      "centroid": {
+        "lat": 37.06139371976285,
+        "lng": 55.87589174256976
+      },
+      "bbox": {
+        "south": 36.95490719443047,
+        "north": 37.167880245095226,
+        "west": 55.75057814741528,
+        "east": 56.001205337724244
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

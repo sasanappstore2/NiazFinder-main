@@ -1,0 +1,235 @@
+{
+  "cityId": "dalvar",
+  "cityName": "دلوار",
+  "source": "osm",
+  "importedAt": "2026-06-16T22:36:21.013Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دلوار",
+      "name": "دلوار",
+      "nameEn": "dalvar",
+      "centroid": {
+        "lat": 28.599976463923824,
+        "lng": 51.187258093607255
+      },
+      "bbox": {
+        "south": 28.49348993859145,
+        "north": 28.7064629892562,
+        "west": 51.07710518366951,
+        "east": 51.297411003545
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "احشام-سرتل",
+      "name": "احشام سرتل",
+      "nameEn": "احشام-سرتل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "انبارک",
+      "name": "انبارک",
+      "nameEn": "انبارک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باشی",
+      "name": "باشی",
+      "nameEn": "باشی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغچه-جنوبی",
+      "name": "باغچه جنوبی",
+      "nameEn": "باغچه-جنوبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "باغچه-شمالی",
+      "name": "باغچه شمالی",
+      "nameEn": "باغچه-شمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بربو",
+      "name": "بربو",
+      "nameEn": "بربو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بندرگاه",
+      "name": "بندرگاه",
+      "nameEn": "بندرگاه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بوجیکدون",
+      "name": "بوجیکدون",
+      "nameEn": "بوجیکدون",
+      "geoSource": "osm"
+    },
+    {
+      "id": "پهلوان-کشی",
+      "name": "پهلوان کشی",
+      "nameEn": "پهلوان-کشی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جائنک",
+      "name": "جائنک",
+      "nameEn": "جائنک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-تلخ-جنوبی",
+      "name": "چاه تلخ جنوبی",
+      "nameEn": "چاه-تلخ-جنوبی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-تلخ-شمالی",
+      "name": "چاه تلخ شمالی",
+      "nameEn": "چاه-تلخ-شمالی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهله",
+      "name": "چهله",
+      "nameEn": "چهله",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-آباد",
+      "name": "حاجی آباد",
+      "nameEn": "حاجی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیاری",
+      "name": "خیاری",
+      "nameEn": "خیاری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دلآرام",
+      "name": "دل‌آرام",
+      "nameEn": "دلآرام",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهنو",
+      "name": "دهنو",
+      "nameEn": "دهنو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "رستمی",
+      "name": "رستمی",
+      "nameEn": "رستمی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شورکی",
+      "name": "شورکی",
+      "nameEn": "شورکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عالی-حسینی",
+      "name": "عالی حسینی",
+      "nameEn": "عالی-حسینی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد",
+      "name": "علی آباد",
+      "nameEn": "علی-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فاز-دو",
+      "name": "فاز دو",
+      "nameEn": "فاز-دو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فاز-سه",
+      "name": "فاز سه",
+      "nameEn": "فاز-سه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قباکلکی",
+      "name": "قباکلکی",
+      "nameEn": "قباکلکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کلل",
+      "name": "کلل",
+      "nameEn": "کلل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنارنرو",
+      "name": "کنارنرو",
+      "nameEn": "کنارنرو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گرگور",
+      "name": "گرگور",
+      "nameEn": "گرگور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گلکی",
+      "name": "گلکی",
+      "nameEn": "گلکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گورک-جمال",
+      "name": "گورک جمال",
+      "nameEn": "گورک-جمال",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گورک-سلیمانی",
+      "name": "گورک سلیمانی",
+      "nameEn": "گورک-سلیمانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گورک-مزارحسینی",
+      "name": "گورک مزارحسینی",
+      "nameEn": "گورک-مزارحسینی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لیلک",
+      "name": "لیلک",
+      "nameEn": "لیلک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمد-طاهری",
+      "name": "محمد طاهری",
+      "nameEn": "محمد-طاهری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محمدعامری",
+      "name": "محمدعامری",
+      "nameEn": "محمدعامری",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مل-گپ",
+      "name": "مل گپ",
+      "nameEn": "مل-گپ",
+      "geoSource": "osm"
+    }
+  ]
+}

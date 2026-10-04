@@ -1,0 +1,25 @@
+{
+  "cityId": "darmian",
+  "cityName": "دمیان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:27.727Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "دمیان",
+      "name": "دمیان",
+      "nameEn": "darmian",
+      "centroid": {
+        "lat": 31.615288767485676,
+        "lng": 57.231205557386225
+      },
+      "bbox": {
+        "south": 31.5088022421533,
+        "north": 31.72177529281805,
+        "west": 57.11971595258445,
+        "east": 57.342695162188
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

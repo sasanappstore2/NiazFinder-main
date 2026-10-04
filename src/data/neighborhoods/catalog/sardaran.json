@@ -1,0 +1,25 @@
+{
+  "cityId": "sardaran",
+  "cityName": "سرداران",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.601Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "سرداران",
+      "name": "سرداران",
+      "nameEn": "sardaran",
+      "centroid": {
+        "lat": 32.12562050039526,
+        "lng": 59.709420407627576
+      },
+      "bbox": {
+        "south": 32.01913397506288,
+        "north": 32.232107025727636,
+        "west": 59.59497454676018,
+        "east": 59.82386626849497
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

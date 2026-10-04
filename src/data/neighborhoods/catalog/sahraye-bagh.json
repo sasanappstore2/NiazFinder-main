@@ -1,0 +1,73 @@
+{
+  "cityId": "sahraye-bagh",
+  "cityName": "صحرای باغ",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:12:48.186Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "صحرای-باغ",
+      "name": "صحرای باغ",
+      "nameEn": "sahraye-bagh",
+      "centroid": {
+        "lat": 27.48824254893999,
+        "lng": 54.09392012899072
+      },
+      "bbox": {
+        "south": 27.381756023607615,
+        "north": 27.594729074272365,
+        "west": 53.98243727462789,
+        "east": 54.20540298335354
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "باغ",
+      "name": "باغ",
+      "nameEn": "باغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "تل-کشی",
+      "name": "تل کشی",
+      "nameEn": "تل-کشی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آبادبرکه-پوز",
+      "name": "حسین آبادبرکه پوز",
+      "nameEn": "حسین-آبادبرکه-پوز",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خلور",
+      "name": "خلور",
+      "nameEn": "خلور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دشتی",
+      "name": "دشتی",
+      "nameEn": "دشتی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دهمیان",
+      "name": "دهمیان",
+      "nameEn": "دهمیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زروان",
+      "name": "زروان",
+      "nameEn": "زروان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کارگاه",
+      "name": "کارگاه",
+      "nameEn": "کارگاه",
+      "geoSource": "osm"
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "cityId": "simakan",
+  "cityName": "سیمکان",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:10:55.687Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سیمکان",
+      "name": "سیمکان",
+      "nameEn": "simakan",
+      "centroid": {
+        "lat": 28.721485064858065,
+        "lng": 53.08395180618335
+      },
+      "bbox": {
+        "south": 28.61499853952569,
+        "north": 28.82797159019044,
+        "west": 52.97135602613477,
+        "east": 53.19654758623194
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "ابوتربه",
+      "name": "ابوتربه",
+      "nameEn": "ابوتربه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جشنیان",
+      "name": "جشنیان",
+      "nameEn": "جشنیان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جولانی",
+      "name": "جولانی",
+      "nameEn": "جولانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جوی-سفید",
+      "name": "جوی سفید",
+      "nameEn": "جوی-سفید",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خورجان",
+      "name": "خورجان",
+      "nameEn": "خورجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خورکش",
+      "name": "خورکش",
+      "nameEn": "خورکش",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خیرآباد",
+      "name": "خیرآباد",
+      "nameEn": "خیرآباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دوراه",
+      "name": "دوراه",
+      "nameEn": "دوراه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "دیده-بانکی",
+      "name": "دیده بانکی",
+      "nameEn": "دیده-بانکی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-دوراه",
+      "name": "روستای دوراه",
+      "nameEn": "روستای-دوراه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-سمادجان",
+      "name": "روستای سمادجان",
+      "nameEn": "روستای-سمادجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-فنجان",
+      "name": "روستای فنجان",
+      "nameEn": "روستای-فنجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سمادجان",
+      "name": "سمادجان",
+      "nameEn": "سمادجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سنگبر",
+      "name": "سنگبر",
+      "nameEn": "سنگبر",
+      "geoSource": "osm"
+    },
+    {
+      "id": "عباس-آباد",
+      "name": "عباس آباد",
+      "nameEn": "عباس-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "علی-آباد-بجویه",
+      "name": "علی آباد بجویه",
+      "nameEn": "علی-آباد-بجویه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فنجان",
+      "name": "فنجان",
+      "nameEn": "فنجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-سنگی",
+      "name": "قلعه سنگی",
+      "nameEn": "قلعه-سنگی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قلعه-مسه",
+      "name": "قلعه مسه",
+      "nameEn": "قلعه-مسه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قنات-ملک",
+      "name": "قنات ملک",
+      "nameEn": "قنات-ملک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "قنات-نو",
+      "name": "قنات نو",
+      "nameEn": "قنات-نو",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گله-دار",
+      "name": "گله دار",
+      "nameEn": "گله-دار",
+      "geoSource": "osm"
+    },
+    {
+      "id": "لقمان-چشمه",
+      "name": "لقمان چشمه",
+      "nameEn": "لقمان-چشمه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مظفر-آباد",
+      "name": "مظفر آباد",
+      "nameEn": "مظفر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "هونزا",
+      "name": "هونزا",
+      "nameEn": "هونزا",
+      "geoSource": "osm"
+    }
+  ]
+}

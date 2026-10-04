@@ -1,0 +1,25 @@
+{
+  "cityId": "kenar-takhte-va-kamar",
+  "cityName": "کنار تخته و کمار",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:28.949Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "کنار-تخته-و-کمار",
+      "name": "کنار تخته و کمار",
+      "nameEn": "kenar-takhte-va-kamar",
+      "centroid": {
+        "lat": 29.538316024937117,
+        "lng": 51.564434673336564
+      },
+      "bbox": {
+        "south": 29.431829499604742,
+        "north": 29.644802550269493,
+        "west": 51.452776281681054,
+        "east": 51.67609306499208
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

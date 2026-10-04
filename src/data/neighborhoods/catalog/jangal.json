@@ -1,0 +1,67 @@
+{
+  "cityId": "jangal",
+  "cityName": "جنگل",
+  "source": "osm",
+  "importedAt": "2026-06-16T19:39:51.128Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "میدان-جانباز",
+      "name": "میدان جانباز",
+      "nameEn": "میدان-جانباز",
+      "centroid": {
+        "lat": 34.72187343607618,
+        "lng": 59.3463207500954
+      },
+      "bbox": {
+        "south": 34.6153869107438,
+        "north": 34.82835996140856,
+        "west": 59.22474934971558,
+        "east": 59.46789215047522
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آهنگران",
+      "name": "آهنگران",
+      "nameEn": "آهنگران",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بند-ازبک",
+      "name": "بند ازبک",
+      "nameEn": "بند-ازبک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جنت-آباد-جنگل",
+      "name": "جنت آباد جنگل",
+      "nameEn": "جنت-آباد-جنگل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "جنگل",
+      "name": "جنگل",
+      "nameEn": "جنگل",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چاه-شور",
+      "name": "چاه شور",
+      "nameEn": "چاه-شور",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حوض-کرم",
+      "name": "حوض کرم",
+      "nameEn": "حوض-کرم",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کوده",
+      "name": "کوده",
+      "nameEn": "کوده",
+      "geoSource": "osm"
+    }
+  ]
+}

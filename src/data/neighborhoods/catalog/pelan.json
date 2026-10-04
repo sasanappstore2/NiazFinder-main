@@ -1,0 +1,25 @@
+{
+  "cityId": "pelan",
+  "cityName": "پلان",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.093Z",
+  "emptyOnDivar": true,
+  "neighborhoods": [
+    {
+      "id": "پلان",
+      "name": "پلان",
+      "nameEn": "pelan",
+      "centroid": {
+        "lat": 25.617989036866692,
+        "lng": 61.211956617195796
+      },
+      "bbox": {
+        "south": 25.511502511534317,
+        "north": 25.724475562199068,
+        "west": 61.1088543031776,
+        "east": 61.315058931214
+      },
+      "geoSource": "divar"
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "cityId": "gandoman",
+  "cityName": "گندمان",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:12:16.340Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "گندمان",
+      "name": "گندمان",
+      "nameEn": "gandoman",
+      "centroid": {
+        "lat": 31.72650307294287,
+        "lng": 51.28327127064495
+      },
+      "bbox": {
+        "south": 31.620016547610494,
+        "north": 31.832989598275244,
+        "west": 51.17010475041822,
+        "east": 51.39643779087169
+      },
+      "geoSource": "osm"
+    },
+    {
+      "id": "آق-بلاغ",
+      "name": "آق بلاغ",
+      "nameEn": "آق-بلاغ",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بروجن",
+      "name": "بروجن",
+      "nameEn": "بروجن",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بلداجی",
+      "name": "بلداجی",
+      "nameEn": "بلداجی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "بیژگرد",
+      "name": "بیژگرد",
+      "nameEn": "بیژگرد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "چهارراه-رازی",
+      "name": "چهارراه رازی",
+      "nameEn": "چهارراه-رازی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حسین-آباد",
+      "name": "حسین آباد",
+      "nameEn": "حسین-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "سناجان",
+      "name": "سناجان",
+      "nameEn": "سناجان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرادنبه",
+      "name": "فرادنبه",
+      "nameEn": "فرادنبه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کتک",
+      "name": "کتک",
+      "nameEn": "کتک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کردشامی",
+      "name": "کردشامی",
+      "nameEn": "کردشامی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنرک-سفلی",
+      "name": "کنرک سفلی",
+      "nameEn": "کنرک-سفلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "کنرک-علیا",
+      "name": "کنرک علیا",
+      "nameEn": "کنرک-علیا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "محله-صادقیه-اسلام-آباد",
+      "name": "محله صادقیه - اسلام آباد",
+      "nameEn": "محله-صادقیه-اسلام-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "معموره",
+      "name": "معموره",
+      "nameEn": "معموره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "مورچگان",
+      "name": "مورچگان",
+      "nameEn": "مورچگان",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نصیر-آباد",
+      "name": "نصیر آباد",
+      "nameEn": "نصیر-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "نقنه",
+      "name": "نقنه",
+      "nameEn": "نقنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "وستگان",
+      "name": "وستگان",
+      "nameEn": "وستگان",
+      "geoSource": "osm"
+    }
+  ]
+}

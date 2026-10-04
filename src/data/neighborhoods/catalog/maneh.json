@@ -1,0 +1,85 @@
+{
+  "cityId": "maneh",
+  "cityName": "مانه",
+  "source": "osm",
+  "importedAt": "2026-06-16T23:35:44.874Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "مانه",
+      "name": "مانه",
+      "nameEn": "maneh",
+      "centroid": {
+        "lat": 37.83534797599713,
+        "lng": 56.8504831930011
+      },
+      "bbox": {
+        "south": 37.72886145066475,
+        "north": 37.94183450132951,
+        "west": 56.73248694357824,
+        "east": 56.96847944242395
+      },
+      "geoSource": "divar"
+    },
+    {
+      "id": "امامدره",
+      "name": "امامدره",
+      "nameEn": "امامدره",
+      "geoSource": "osm"
+    },
+    {
+      "id": "امانلی",
+      "name": "امانلی",
+      "nameEn": "امانلی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حاجی-غلامرضا",
+      "name": "حاجی غلامرضا",
+      "nameEn": "حاجی-غلامرضا",
+      "geoSource": "osm"
+    },
+    {
+      "id": "حمزک",
+      "name": "حمزک",
+      "nameEn": "حمزک",
+      "geoSource": "osm"
+    },
+    {
+      "id": "خرتوت",
+      "name": "خرتوت",
+      "nameEn": "خرتوت",
+      "geoSource": "osm"
+    },
+    {
+      "id": "روستای-عبدالله-آباد",
+      "name": "روستای عبدالله آباد",
+      "nameEn": "روستای-عبدالله-آباد",
+      "geoSource": "osm"
+    },
+    {
+      "id": "زرنه",
+      "name": "زرنه",
+      "nameEn": "زرنه",
+      "geoSource": "osm"
+    },
+    {
+      "id": "شهرک-کال-ایمانی",
+      "name": "شهرک کال ایمانی",
+      "nameEn": "شهرک-کال-ایمانی",
+      "geoSource": "osm"
+    },
+    {
+      "id": "فرح-دین",
+      "name": "فرح دین",
+      "nameEn": "فرح-دین",
+      "geoSource": "osm"
+    },
+    {
+      "id": "گوگول",
+      "name": "گوگول",
+      "nameEn": "گوگول",
+      "geoSource": "osm"
+    }
+  ]
+}

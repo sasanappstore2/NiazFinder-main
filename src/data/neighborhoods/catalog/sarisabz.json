@@ -1,0 +1,25 @@
+{
+  "cityId": "sarisabz",
+  "cityName": "سریسبز",
+  "source": "osm",
+  "importedAt": "2026-06-12T20:39:30.627Z",
+  "emptyOnDivar": false,
+  "neighborhoods": [
+    {
+      "id": "سریسبز",
+      "name": "سریسبز",
+      "nameEn": "sarisabz",
+      "centroid": {
+        "lat": 32.39616188917938,
+        "lng": 58.95348454782231
+      },
+      "bbox": {
+        "south": 32.289675363847,
+        "north": 32.50264841451176,
+        "west": 58.83933262955905,
+        "east": 59.067636466085574
+      },
+      "geoSource": "divar"
+    }
+  ]
+}
