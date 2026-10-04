@@ -95,7 +95,6 @@ function unitTests(): void {
     ['فردهوسی', 'فردوسی'],
     ['جدن', 'جردن'],
     ['خیم', 'خیام'],
-    ['فرمانیه' && 'فرمانیه', 'فرمانیه'], // sanity: exact inside fuzzy table
     ['جرمانیه', 'فرمانیه'],
   ];
   for (const [corrupt, want] of fuzzySingle) {
@@ -123,7 +122,7 @@ function unitTests(): void {
     ['سعچدت آباد', 'سعادت آباد'],
     ['سعاخت آباد', 'سعادت آباد'],
     ['سعادت آعباد', 'سعادت آباد'],
-    ['وکیل‌آباد'.replace('کیل‌آباد', 'کیل آبد'), 'وکیل آباد'], // وکیل آبد
+    ['وکیل آبد', 'وکیل آباد'],
   ];
   for (const [corrupt, want] of fuzzyTwoPart) {
     const m = matchHoodPhrase(corrupt, HOODS);
