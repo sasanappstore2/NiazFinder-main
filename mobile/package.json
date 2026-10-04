@@ -1,14 +1,15 @@
 {
-  "name": "mobile",
+  "name": "niazfinder-mobile",
   "version": "1.0.0",
-  "description": "",
+  "private": true,
+  "description": "NiazFinder Capacitor iOS shell (in progress — wraps the Next.js web app).",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "dependencies": {
     "@capacitor/cli": "^8.4.2",
     "@capacitor/core": "^8.4.2",

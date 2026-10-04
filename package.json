@@ -3,6 +3,18 @@
   "version": "0.2.0",
   "private": true,
   "description": "NiazFinder — needs-first (reverse) marketplace. Persian-language need intake, structured matching, chat and proposals.",
+  "homepage": "https://github.com/sasanappstore2/NiazFinder-main",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sasanappstore2/NiazFinder-main.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sasanappstore2/NiazFinder-main/issues"
+  },
+  "engines": {
+    "node": ">=20.9.0",
+    "npm": ">=10"
+  },
   "scripts": {
     "predev": "npm run ensure:typesense",
     "ensure:typesense": "bash scripts/ensure-typesense.sh",

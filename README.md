@@ -1,5 +1,7 @@
 # NiazFinder
 
+[![CI](https://github.com/sasanappstore2/NiazFinder-main/actions/workflows/ci.yml/badge.svg?branch=sasan/open-source-readiness)](https://github.com/sasanappstore2/NiazFinder-main/actions/workflows/ci.yml)
+
 NiazFinder (نیازفایندر) is a **needs-first marketplace**: instead of starting by browsing existing listings, users describe what they actually need in free text, the platform structures that need, and then matches it to relevant businesses.
 
 > **Status:** active open-source project under development. APIs, schemas, and UI copy (Persian, RTL) are still evolving. See [Roadmap](#roadmap).
