@@ -418,7 +418,7 @@
     "uuid": "^11.1.0",
     "vaul": "^1.1.2",
     "zod": "^4.0.2",
-    "zustand": "^5.0.6"
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.0",
