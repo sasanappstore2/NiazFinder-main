@@ -11,6 +11,8 @@ Thanks for your interest in contributing. This project is primarily Persian-lang
 ## Workflow
 
 1. Fork the repository and create a feature branch from `main`.
+2. Use **npm** (`package-lock.json` is the single lockfile). Bun is only the
+   runtime for `mini-services/chat-service`, which keeps its own lockfile.
 2. Keep changes focused; do not reformat unrelated code.
 3. Verify before opening a PR:
    - `npx tsc --noEmit`

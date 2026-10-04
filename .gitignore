@@ -2,6 +2,8 @@
 
 # dependencies
 node_modules
+# root uses npm only (chat-service keeps its own bun.lock)
+/bun.lock
 /.pnp
 .pnp.*
 .yarn/*
