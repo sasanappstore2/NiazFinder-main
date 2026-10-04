@@ -112,6 +112,11 @@ check(
   extractRooms('خونه 1 خواابه میخوام اجاره نیاوران').value === 1,
   extractRooms('خونه 1 خواابه میخوام اجاره نیاوران')
 );
+check(
+  'extractRooms: glued «3خوااب» → 3',
+  extractRooms('اپارتمان 3خوااب دروکیل اباد مشهد برای اجاره').value === 3,
+  extractRooms('اپارتمان 3خوااب دروکیل اباد مشهد برای اجاره')
+);
 {
   const floor = applyAdvancedRules('آپارتمان طبه 1 از 4 طبقه برای اجاره در فرمانیه');
   check(

@@ -22,6 +22,8 @@ jobs:
           node-version: '20'
           cache: npm
       - run: npm ci
+      - name: Generate known-areas data (git-ignored build artifact)
+        run: npm run neighborhoods:generate-known-areas
       - name: Typecheck
         run: npx tsc --noEmit
       - name: Lint (errors fail, warnings pass)

@@ -144,10 +144,7 @@ export function extractTransactionType(normalizedText: string): TransactionHit |
   const vadiyehKw = findKeywordIndicesWithFuzzyRepair(normalizedText, VADIYEH_KW);
   const depositSignal =
     rahnSignal || rahnKw.indices.length > 0 || vadiyehKw.indices.length > 0;
-  const depositRepaired =
-    !rahnSignal && !rahnKw.indices.length && !vadiyehKw.indices.length
-      ? false
-      : !rahnSignal && (rahnKw.fuzzy || vadiyehKw.fuzzy);
+  const depositRepaired = !rahnSignal && (rahnKw.fuzzy || vadiyehKw.fuzzy);
   if (
     depositSignal &&
     textHasRentSignal(normalizedText) &&

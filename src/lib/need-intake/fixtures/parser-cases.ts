@@ -27,8 +27,10 @@ export const PARSER_FIXTURES: ParserFixture[] = [
     text: 'آپارتمان در احمدآباد مشهد',
     expectIntentPrefix: 'property',
     expectCity: 'مشهد',
-    expectLocationAmbiguous: true,
-    expectMinNeighborhoodCandidates: 2,
+    // Resolver now disambiguates deterministically: with an explicit city,
+    // Ahmadabad resolves to Mashhad's district (status resolved, no candidates).
+    // Keep the historical id; the ambiguity expectation no longer holds.
+    expectLocationAmbiguous: false,
   },
   {
     id: 'rolex-daytona-buy',

@@ -27,6 +27,8 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - name: Generate known-areas data (git-ignored build artifact)
+        run: npm run neighborhoods:generate-known-areas
       - name: Run intake baseline (rules-only)
         run: npm run test:intake-baseline
       - name: Verify phase 5 criteria

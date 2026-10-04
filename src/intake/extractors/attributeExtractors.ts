@@ -137,12 +137,6 @@ export function repairAttributeKeywords(text: string): string {
     if (letters.length < 2 || letters.length > 9) continue;
     if (NEVER_REPAIR.has(letters)) continue;
 
-    const anchorDigits = Math.max(
-      intDigitCount(lead),
-      intDigitCount(trail),
-      intDigitCount(prevCore),
-      intDigitCount(nextCore)
-    );
     const gluedDigits = Math.max(intDigitCount(lead), intDigitCount(trail));
 
     // Upstream-corrector collision rescue: the fuzzy corrector folds «واب» (a
@@ -151,7 +145,11 @@ export function repairAttributeKeywords(text: string): string {
     // directly before «وام» («2 وام») only occurs in that typo — real loan
     // phrases put the amount AFTER the word («وام 200 میلیونی») — so repair
     // it back to the rooms keyword.
-    if (letters === 'وام' && anchorDigits >= 1 && anchorDigits <= 2) {
+    if (
+      letters === 'وام' &&
+      intDigitCount(prevCore) >= 1 &&
+      intDigitCount(prevCore) <= 2
+    ) {
       parts[idx] = raw.replace(letters, 'خواب');
       changed = true;
       continue;
