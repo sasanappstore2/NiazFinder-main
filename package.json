@@ -23,6 +23,7 @@
     "nanoid": "^3.3.18"
   },
   "scripts": {
+    "docs:openapi": "npx --yes tsx scripts/openapi/generate-openapi.ts",
     "predev": "npm run ensure:typesense",
     "ensure:typesense": "bash scripts/ensure-typesense.sh",
     "dev": "prisma generate && next dev -H 0.0.0.0 -p 3000 2>&1 | tee dev.log",

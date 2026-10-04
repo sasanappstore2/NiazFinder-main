@@ -21,8 +21,12 @@
  *
  * Intended wiring points in smart-field-extractor.ts (owner: wiring step):
  *  1. Fallback scan when no exact hood mention matched:
- *       matchHoodInText(normalizedText, MULTI_HOODS)
- *     replaces matchFuzzyNeighborhood (which skipped two-part hoods).
+ *       matchHoodInText(originalText /* fullText *\/, MULTI_HOODS)
+ *     replaces matchFuzzyNeighborhood (which skipped two-part hoods). Feed the
+ *     RAW text, not the typo-alias/fuzzy-corrector output: that pass can
+ *     rewrite a corrupted hood token first (سناد → سند) and the correction is
+ *     unrecoverable downstream. This module normalizes internally (ZWNJ,
+ *     Arabic variants, digits).
  *  2. Validation of the advanced-rules `neighborhood_with_context` capture:
  *       const m = matchHoodPhrase(patch.neighborhood, MULTI_HOODS);
  *       if (m) patch.neighborhood = m.hood;   // exact → unchanged; fuzzy → corrected

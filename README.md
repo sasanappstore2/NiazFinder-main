@@ -174,6 +174,8 @@ npm run check:all         # full local gate: validate + typecheck + lint + build
 
 CI (`.github/workflows/`): `intake-baseline.yml` (rules-only intake gate on `src/**` changes) and `site-health-gate.yml` (offline gate on PRs, smoke gate on schedule). See also `CONTRIBUTING.md`.
 
+API contract: [`docs/API.md`](docs/API.md) + [`docs/openapi.json`](docs/openapi.json) (regenerate: `npm run docs:openapi`).
+
 ## Security
 
 Concise summary — details and reporting policy in [SECURITY.md](SECURITY.md):
