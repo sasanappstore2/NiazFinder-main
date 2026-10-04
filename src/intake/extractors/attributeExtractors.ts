@@ -1,3 +1,5 @@
+import { osaDistanceBounded } from '@/intake/intelligence-engine/normalizer/fuzzy-corrector';
+
 const PERSIAN_WORD_NUMBERS: Record<string, number> = {
   یک: 1,
   دو: 2,
@@ -11,37 +13,192 @@ const PERSIAN_WORD_NUMBERS: Record<string, number> = {
   ده: 10,
 };
 
+// ---------- context-anchored keyword repair ----------
+//
+// The upstream fuzzy corrector (fuzzy-corrector.ts) rejects corrections for
+// tokens shorter than 3 chars, only allows same-length fixes for 3-letter
+// tokens, and does not know the colloquial «خوابه» — so a single-edit typo
+// inside «متر / خواب / خوابه / طبقه» (مت، تمر، خاب، عخوابه، طبه …) reaches the
+// attribute extractors uncorrected and the rooms/area/floor rule misses it.
+//
+// repairAttributeKeywords() is a generic repair rule: a token that is an
+// UNAMBIGUOUS OSA-distance-1 variant of one keyword family (rooms/area/floor)
+// AND sits next to a number (or ordinal, for floor) is rewritten to the family
+// keyword. Exact family words, calendar words (مهر) and anything ambiguous are
+// never touched, so clean text passes through unchanged.
+
+interface KeywordFamily {
+  name: 'rooms' | 'area' | 'floor';
+  words: string[];
+}
+
+const KEYWORD_FAMILIES: readonly KeywordFamily[] = [
+  { name: 'rooms', words: ['خوابه', 'خواب'] },
+  { name: 'area', words: ['مترمربع', 'متراژ', 'متری', 'متر'] },
+  { name: 'floor', words: ['طبقه'] },
+];
+
+/** Words within distance 1 of a keyword that are real words — never repair. */
+const NEVER_REPAIR = new Set([
+  // calendar months (مهر ↔ متر, دی ↔ …) — dates like «تا 13 مهر» must survive
+  'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+  'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند',
+]);
+
+/** Floor context anchors — digits or ordinal/همکف neighbours. */
+const FLOOR_CONTEXT_WORDS = new Set([
+  'از', 'همکف',
+  'اول', 'دوم', 'سوم', 'چهارم', 'پنجم', 'ششم', 'هفتم', 'هشتم', 'نهم', 'دهم',
+]);
+
+const PUNCT_EDGES = /^[،,؛:;.!؟?«»()\-]+|[،,؛:;.!؟?«»()\-]+$/gu;
+
+function toAsciiDigits(s: string): string {
+  return s.replace(/[\u06F0-\u06F9\u0660-\u0669]/gu, (d) => {
+    const code = d.codePointAt(0)!;
+    return String(code >= 0x06f0 ? code - 0x06f0 : code - 0x0660);
+  });
+}
+
+function intDigitCount(token: string | null): number {
+  if (!token) return 0;
+  const ascii = toAsciiDigits(token);
+  if (!/^[0-9]{1,4}(?:[.,][0-9]{1,3})*$/.test(ascii)) return 0;
+  return ascii.split(/[.,]/)[0]!.length;
+}
+
+function isWordNumber(token: string | null): boolean {
+  return !!token && Object.prototype.hasOwnProperty.call(PERSIAN_WORD_NUMBERS, token);
+}
+
+/** Context gate per family: keyword typos are only repaired next to a number. */
+function anchorOk(family: KeywordFamily, prev: string | null, next: string | null): boolean {
+  switch (family.name) {
+    case 'rooms':
+      // «2 خاب» / «دو خواو» — 1-2 digit or word-number neighbour
+      return (
+        (intDigitCount(prev) >= 1 && intDigitCount(prev) <= 2) ||
+        (intDigitCount(next) >= 1 && intDigitCount(next) <= 2) ||
+        isWordNumber(prev) ||
+        isWordNumber(next)
+      );
+    case 'area':
+      // «300 مت» / «90 تمر» / «مترا 120» — 2-4 digit neighbour
+      return (
+        (intDigitCount(prev) >= 2 && intDigitCount(prev) <= 4) ||
+        (intDigitCount(next) >= 2 && intDigitCount(next) <= 4)
+      );
+    case 'floor':
+      // «طبه 1 از 4» / «4 طبق» / «طبقه دوم»
+      return (
+        intDigitCount(prev) >= 1 ||
+        intDigitCount(next) >= 1 ||
+        FLOOR_CONTEXT_WORDS.has(prev ?? '') ||
+        FLOOR_CONTEXT_WORDS.has(next ?? '')
+      );
+  }
+}
+
+/**
+ * Repair single-edit typos of the attribute keywords (خواب/خوابه، متر family،
+ * طبقه) when the token is an unambiguous distance-1 match of exactly one
+ * family and the digit/ordinal anchor holds. Clean text is returned untouched.
+ */
+export function repairAttributeKeywords(text: string): string {
+  if (!text || !/[\u0600-\u06FF]/u.test(text)) return text;
+
+  const parts = text.split(/(\s+)/);
+  const wordCount = Math.ceil(parts.length / 2);
+  const coreOf = (i: number): string =>
+    (parts[i] ?? '').replace(PUNCT_EDGES, '');
+
+  let changed = false;
+  for (let wi = 0; wi < wordCount; wi++) {
+    const idx = wi * 2;
+    const raw = parts[idx]!;
+    if (!raw) continue;
+    const core = coreOf(idx);
+    if (!core || core.length < 2 || core.length > 9) continue;
+    if (/[\da-zA-Z\u200c]/u.test(core)) continue; // digits/Latin/ZWNJ — not a keyword typo
+    if (NEVER_REPAIR.has(core)) continue;
+
+    const prevCore = wi > 0 ? coreOf(idx - 2) : null;
+    const nextCore = wi < wordCount - 1 ? coreOf(idx + 2) : null;
+
+    let bestD = 2;
+    let bestFamily: KeywordFamily | null = null;
+    let bestWord: string | null = null;
+    let tieAcrossFamilies = false;
+    for (const family of KEYWORD_FAMILIES) {
+      let famBest = 2;
+      let famWord: string | null = null;
+      for (const word of family.words) {
+        if (Math.abs(word.length - core.length) > 1) continue;
+        const d = osaDistanceBounded(core, word, 1);
+        if (d < famBest) {
+          famBest = d;
+          famWord = word;
+        } else if (d === famBest && famWord && word.length > famWord.length) {
+          famWord = word; // prefer the longest family form on ties (متراژ over متر)
+        }
+      }
+      if (famBest > 1 || !famWord) continue;
+      if (famBest < bestD) {
+        bestD = famBest;
+        bestFamily = family;
+        bestWord = famWord;
+        tieAcrossFamilies = false;
+      } else if (famBest === bestD && family !== bestFamily) {
+        tieAcrossFamilies = true;
+      }
+    }
+
+    // bestD === 0 → exact keyword, untouched. Ambiguous across families → skip.
+    if (!bestFamily || !bestWord || bestD !== 1 || tieAcrossFamilies) continue;
+    if (!anchorOk(bestFamily, prevCore, nextCore)) continue;
+    if (!raw.includes(core)) continue;
+    parts[idx] = raw.replace(core, bestWord);
+    changed = true;
+  }
+
+  return changed ? parts.join('') : text;
+}
+
 /** Detect area in square meters from normalized text. */
 export function extractArea(normalizedText: string): { value: number | null; confidence: number } {
+  const text = repairAttributeKeywords(normalizedText);
   const patterns = [
     /(\d{2,4})\s*(?:متر|متری|m2|m²)/u,
-    /(?:متراژ|مساحت)\s*(\d{2,4})/u,
+    /(?:متراژ|مساحت|زیربنا)\s*[:：]?\s*(\d{2,4})/u,
     // Bare "م" shorthand for متر — require whitespace; must not swallow میلیون/میلیارد.
     /(\d{2,4})\s+م(?!ی)/u,
   ];
 
+  // Earliest mention wins, regardless of which pattern caught it:
+  // «ویلا 300 متر بنا در 500 متر زمین» → 300 (the building), not 500.
+  let best: { index: number; value: number } | null = null;
   for (const re of patterns) {
-    const m = normalizedText.match(re);
-    if (m?.[1]) {
-      const value = Number.parseInt(m[1], 10);
-      if (value >= 20 && value <= 10000) {
-        return { value, confidence: 1 };
-      }
-    }
+    const m = text.match(re);
+    if (!m?.[1] || m.index === undefined) continue;
+    const value = Number.parseInt(m[1], 10);
+    if (!Number.isFinite(value) || value < 20 || value > 10000) continue;
+    if (!best || m.index < best.index) best = { index: m.index, value };
   }
+  if (best) return { value: best.value, confidence: 1 };
   return { value: null, confidence: 0 };
 }
 
 /** Detect bedroom count. */
 export function extractRooms(normalizedText: string): { value: number | null; confidence: number } {
-  const digitMatch = normalizedText.match(/(\d)\s*خواب/u);
+  const text = repairAttributeKeywords(normalizedText);
+  const digitMatch = text.match(/(\d)\s*خواب/u);
   if (digitMatch?.[1]) {
     const n = Number.parseInt(digitMatch[1], 10);
     if (n >= 1 && n <= 10) return { value: n, confidence: 0.95 };
   }
 
   for (const [word, num] of Object.entries(PERSIAN_WORD_NUMBERS)) {
-    if (normalizedText.includes(`${word} خواب`) || normalizedText.includes(`${word}خواب`)) {
+    if (text.includes(`${word} خواب`) || text.includes(`${word}خواب`)) {
       return { value: num, confidence: 0.9 };
     }
   }

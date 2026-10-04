@@ -3,6 +3,7 @@
  * Word-boundary aware so "sad" (100) does not match inside "pon-sad" (500).
  */
 import { toAsciiDigits } from '@/lib/format/digits';
+import { osaDistanceBounded } from '@/intake/intelligence-engine/normalizer/fuzzy-corrector';
 
 const ONES: Record<string, number> = {
   '\u06CC\u06A9': 1,
@@ -183,6 +184,7 @@ export interface MoneyMention {
 const MILLION_WORD = '\u0645\u06CC\u0644\u06CC\u0648\u0646';
 const BILLION_WORD = '\u0645\u06CC\u0644\u06CC\u0627\u0631\u062F';
 const RAHN_WORD = '\u0631\u0647\u0646';
+const VADIYEH_WORD = '\u0648\u062F\u06CC\u0639\u0647';
 const EJARE_WORD = '\u0627\u062C\u0627\u0631\u0647';
 const VA_WORD = '\u0648';
 const METER_WORD = '\u0645\u062A\u0631';
@@ -241,33 +243,22 @@ function collectMoneyMentions(norm: string): MoneyMention[] {
 
 const KEYWORD_PROXIMITY = 48;
 
-function pickTomansForKeyword(
+function pickTomansForIndices(
   norm: string,
   mentions: MoneyMention[],
-  keyword: string,
+  kwIndices: number[],
+  keywordLength: number,
   opts?: { unit?: MoneyMention['unit'] }
 ): number | undefined {
+  if (kwIndices.length === 0) return undefined;
   let pool = mentions;
   if (opts?.unit) pool = pool.filter((m) => m.unit === opts.unit);
   if (pool.length === 0) return undefined;
 
-  // Match semantic words, not substrings. In particular, «فرهنگ شهر» must
-  // never be read as «رهن» just because the letters happen to contain it.
-  // ZWNJ remains a valid separator for forms such as «رهن‌واجاره».
-  const keywordPattern = new RegExp(
-    `(?<![${PERSIAN_LETTER}])${escapeRegex(keyword)}(?![${PERSIAN_LETTER}])`,
-    'gu'
-  );
-  const kwIndices: number[] = [];
-  for (const match of norm.matchAll(keywordPattern)) {
-    if (match.index != null) kwIndices.push(match.index);
-  }
-  if (kwIndices.length === 0) return undefined;
-
   let best: { dist: number; tomans: number } | undefined;
   for (const m of pool) {
     for (const kwIdx of kwIndices) {
-      const kwEnd = kwIdx + keyword.length;
+      const kwEnd = kwIdx + keywordLength;
       const gapBefore = kwIdx - m.end;
       const gapAfter = m.index - kwEnd;
       const near =
@@ -284,11 +275,116 @@ function pickTomansForKeyword(
   return best?.tomans;
 }
 
+function pickTomansForKeyword(
+  norm: string,
+  mentions: MoneyMention[],
+  keyword: string,
+  opts?: { unit?: MoneyMention['unit'] }
+): number | undefined {
+  // Match semantic words, not substrings. In particular, «فرهنگ شهر» must
+  // never be read as «رهن» just because the letters happen to contain it.
+  // ZWNJ remains a valid separator for forms such as «رهن‌واجاره».
+  const keywordPattern = new RegExp(
+    `(?<![${PERSIAN_LETTER}])${escapeRegex(keyword)}(?![${PERSIAN_LETTER}])`,
+    'gu'
+  );
+  const kwIndices: number[] = [];
+  for (const match of norm.matchAll(keywordPattern)) {
+    if (match.index != null) kwIndices.push(match.index);
+  }
+  return pickTomansForIndices(norm, mentions, kwIndices, keyword.length, opts);
+}
+
 function hasSemanticKeyword(norm: string, keyword: string): boolean {
   return new RegExp(
     `(?<![${PERSIAN_LETTER}])${escapeRegex(keyword)}(?![${PERSIAN_LETTER}])`,
     'u'
   ).test(norm);
+}
+
+// ---------- fuzzy keyword repair (single-edit typos of money keywords) ----------
+
+export interface KeywordHit {
+  /** Character indices where the keyword occurs (exact, or repaired). */
+  indices: number[];
+  /** True when the indices come from a repaired single-edit typo, not exact spelling. */
+  fuzzy: boolean;
+  /** The corrupted token that was repaired (null for exact matches). */
+  token: string | null;
+}
+
+const KEYWORD_TOKEN_RE = new RegExp(`[${PERSIAN_LETTER}]+`, 'gu');
+
+/**
+ * Word occurrences of `keyword`, plus — only when NO exact occurrence exists —
+ * a UNIQUE single-edit (OSA ≤ maxDist, default 1) near-token occurrence.
+ *
+ * This recovers money keywords («رهن» → «رنه/ره/رن/هن», «ودیعه» → «ودیع»)
+ * that the global fuzzy corrector deliberately leaves alone: 3-letter tokens
+ * only take same-length corrections there and ambiguous candidates are
+ * rejected, so «رنه» survives into rule matching. Here the surrounding money
+ * context provides the disambiguation the corrector lacks, and ambiguity is
+ * handled the same way it is there: two DIFFERENT near-tokens in one text
+ * reject the repair entirely. Exact spellings always win.
+ */
+export function findKeywordIndicesWithFuzzyRepair(
+  text: string,
+  keyword: string,
+  opts?: { maxDist?: number }
+): KeywordHit {
+  const maxDist = opts?.maxDist ?? 1;
+  const exactRe = new RegExp(
+    `(?<![${PERSIAN_LETTER}])${escapeRegex(keyword)}(?![${PERSIAN_LETTER}])`,
+    'gu'
+  );
+  const exactIndices: number[] = [];
+  for (const m of text.matchAll(exactRe)) {
+    if (m.index != null) exactIndices.push(m.index);
+  }
+  if (exactIndices.length > 0) return { indices: exactIndices, fuzzy: false, token: null };
+
+  const kwLen = keyword.length;
+  const minLen = Math.max(2, kwLen - 1);
+  const byToken = new Map<string, number[]>();
+  for (const m of text.matchAll(KEYWORD_TOKEN_RE)) {
+    const tok = m[0]!;
+    if (tok === keyword) continue;
+    if (tok.length < minLen || tok.length > kwLen + maxDist) continue;
+    if (osaDistanceBounded(tok, keyword, maxDist) > maxDist) continue;
+    const list = byToken.get(tok);
+    if (list) list.push(m.index ?? 0);
+    else byToken.set(tok, [m.index ?? 0]);
+  }
+  if (byToken.size === 1) {
+    const [token, indices] = [...byToken.entries()][0]!;
+    return { indices, fuzzy: true, token };
+  }
+  return { indices: [], fuzzy: false, token: null };
+}
+
+/** Normalized money-mention scan for callers outside this module. */
+export function moneyMentionsInText(rawText: string): MoneyMention[] {
+  let norm = normalizeColloquialAmountWords(rawText);
+  norm = norm.replace(/[\u0660-\u0669\u06F0-\u06F9\u0030-\u0039]+/g, (run) => toAsciiDigits(run));
+  return collectMoneyMentions(norm);
+}
+
+/** True when any money mention sits within `proximity` chars of [start, end). */
+export function hasMoneyMentionNear(
+  mentions: MoneyMention[],
+  start: number,
+  end: number,
+  proximity: number = KEYWORD_PROXIMITY
+): boolean {
+  for (const m of mentions) {
+    const gapBefore = start - m.end;
+    const gapAfter = m.index - end;
+    if (gapBefore >= 0 && gapBefore <= proximity) return true;
+    if (gapAfter >= 0 && gapAfter <= proximity) return true;
+    // Mention strictly inside / overlapping the span counts as adjacent.
+    if (m.index <= end && m.end >= start) return true;
+  }
+  return false;
 }
 
 export interface PropertyMoneyFromText {
@@ -309,10 +405,15 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
   const mentions = collectMoneyMentions(norm);
   const out: PropertyMoneyFromText = {};
 
+  // Deposit keywords recover from single-edit typos (رهن→رنه/ره/رن، ودیعه→ودیع)
+  // when the exact spelling is absent and the repair is unambiguous.
+  const rahnHit = findKeywordIndicesWithFuzzyRepair(norm, RAHN_WORD);
+  const vadiyehHit = findKeywordIndicesWithFuzzyRepair(norm, VADIYEH_WORD);
+
   const rahn =
-    pickTomansForKeyword(norm, mentions, RAHN_WORD) ??
-    pickTomansForKeyword(norm, mentions, '\u0648\u062F\u06CC\u0639\u0647') ??
-    (hasSemanticKeyword(norm, RAHN_WORD)
+    pickTomansForIndices(norm, mentions, rahnHit.indices, RAHN_WORD.length) ??
+    pickTomansForIndices(norm, mentions, vadiyehHit.indices, VADIYEH_WORD.length) ??
+    (rahnHit.indices.length > 0
       ? pickTomansForKeyword(norm, mentions, '\u0628\u0648\u062F\u062C\u0647')
       : undefined);
   if (rahn != null) out.rahnAmount = rahn;
@@ -324,7 +425,12 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
     pickTomansForKeyword(norm, mentions, EJARE_WORD, { unit: 'million' });
   if (rent != null) out.monthlyRent = rent;
 
-  const deposit = pickTomansForKeyword(norm, mentions, '\u0648\u062F\u06CC\u0639\u0647');
+  const deposit = pickTomansForIndices(
+    norm,
+    mentions,
+    vadiyehHit.indices,
+    VADIYEH_WORD.length
+  );
   if (deposit != null && out.rahnAmount == null) out.deposit = deposit;
 
   const budget = pickTomansForKeyword(norm, mentions, '\u0628\u0648\u062F\u062C\u0647');
@@ -380,7 +486,7 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
     out.monthlyRent == null &&
     out.rahnAmount == null &&
     hasSemanticKeyword(norm, EJARE_WORD) &&
-    !hasSemanticKeyword(norm, RAHN_WORD)
+    rahnHit.indices.length === 0
   ) {
     out.monthlyRent = out.budgetMax;
     delete out.budgetMax;
@@ -392,7 +498,7 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
     out.rahnAmount == null &&
     out.monthlyRent == null &&
     mentions.length >= 2 &&
-    hasSemanticKeyword(norm, RAHN_WORD) &&
+    rahnHit.indices.length > 0 &&
     hasSemanticKeyword(norm, EJARE_WORD)
   ) {
     out.rahnAmount = mentions[0]!.tomans;
@@ -408,6 +514,21 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
     const distinct = [...new Set(mentions.map((m) => m.tomans))];
     const alt = distinct.find((t) => t !== out.rahnAmount);
     if (alt != null) out.monthlyRent = alt;
+  }
+
+  // One money mention cannot be both deposit and rent. When a lone price is
+  // bracketed by a رهن-like token before and «اجاره» after (e.g. a fuzzy-
+  // corrected neighborhood token colliding with «رهن»), the same mention
+  // resolves to both slots and must not flip a rent-only deal into
+  // DEPOSIT_AND_RENT. Explicit «رهن و اجاره» compounds keep both slots.
+  if (
+    out.rahnAmount != null &&
+    out.monthlyRent != null &&
+    out.rahnAmount === out.monthlyRent &&
+    mentions.length === 1 &&
+    !/رهن\s*و\s*اجاره|ودیعه\s*و\s*اجاره/u.test(norm)
+  ) {
+    delete out.monthlyRent;
   }
 
   return out;

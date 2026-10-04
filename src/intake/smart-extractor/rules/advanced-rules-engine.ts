@@ -4,6 +4,7 @@
  */
 
 import type { AdvancedRulePatch, SmartTransactionType } from '../types';
+import { repairAttributeKeywords } from '../../extractors/attributeExtractors';
 
 interface ExtractionRule {
   id: string;
@@ -235,6 +236,10 @@ export interface AdvancedRulesResult {
  * Apply advanced extraction rules (highest priority wins per field key).
  */
 export function applyAdvancedRules(normalizedText: string): AdvancedRulesResult {
+  // Context-anchored repair of attribute-keyword typos (خواب/خوابه، متر family،
+  // طبقه) so the rooms/area/floor patterns survive single-edit typos the
+  // upstream fuzzy corrector cannot fix (short tokens, colloquial خوابه).
+  const text = repairAttributeKeywords(normalizedText);
   const sorted = [...EXTRACTION_RULES].sort((a, b) => b.priority - a.priority);
   const patch: AdvancedRulePatch = {};
   const rulesUsed: string[] = [];
@@ -243,9 +248,9 @@ export function applyAdvancedRules(normalizedText: string): AdvancedRulesResult 
 
   for (const rule of sorted) {
     for (const pattern of rule.patterns) {
-      const match = normalizedText.match(pattern);
+      const match = text.match(pattern);
       if (!match) continue;
-      const extracted = rule.extractor(match, normalizedText);
+      const extracted = rule.extractor(match, text);
       if (!extracted) continue;
 
       let applied = false;
@@ -268,7 +273,7 @@ export function applyAdvancedRules(normalizedText: string): AdvancedRulesResult 
   }
 
   // Last-mentioned correction wins when both buy & rent override cues appear (Batch 11).
-  const lastTx = lastCorrectionTransactionType(normalizedText);
+  const lastTx = lastCorrectionTransactionType(text);
   if (lastTx === 'BUY') {
     if (patch.transactionType !== 'BUY') {
       patch.transactionType = 'BUY';
@@ -277,13 +282,13 @@ export function applyAdvancedRules(normalizedText: string): AdvancedRulesResult 
   } else if (lastTx === 'RENT') {
     const isBuy = patch.transactionType === 'BUY' || patch.transactionType === 'SELL';
     if (isBuy || !patch.transactionType) {
-      patch.transactionType = inferRentFamilyFromText(normalizedText);
+      patch.transactionType = inferRentFamilyFromText(text);
       rulesUsed.push('last_intent_wins');
     }
   }
 
   // Deposit/rent ranges: «رهن ۲۰۰ تا ۳۰۰ میلیون، اجاره ۵ تا ۷» (Batch 11).
-  const depositRange = normalizedText.match(
+  const depositRange = text.match(
     /رهن\s*(?:حدود|تقریبا|از|بین)?\s*(\d+(?:\.\d+)?)\s*(?:تا|-)\s*(\d+(?:\.\d+)?)\s*میلیون/u
   );
   if (depositRange?.[1] && depositRange[2]) {
@@ -294,7 +299,7 @@ export function applyAdvancedRules(normalizedText: string): AdvancedRulesResult 
     if (patch.depositAmount == null) patch.depositAmount = depositMax;
     rulesUsed.push('deposit_range');
   }
-  const rentRange = normalizedText.match(
+  const rentRange = text.match(
     /اجاره\s*(?:ماهی|ماهانه|ماه)?\s*(?:حدود|تقریبا|از|بین)?\s*(\d+(?:\.\d+)?)\s*(?:تا|-)\s*(\d+(?:\.\d+)?)\s*میلیون/u
   );
   if (rentRange?.[1] && rentRange[2]) {
