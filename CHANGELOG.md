@@ -11,7 +11,7 @@ This project does not yet use semantic versioning for releases (`0.2.x`, unrelea
 - Public-repository readiness: README, SECURITY.md, CODE_OF_CONDUCT.md,
   CONTRIBUTING.md, issue/PR templates, minimal CI (typecheck, lint,
   offline intake self-tests).
-- Private Laya Multilingual worker (`mini-services/laya-post`) behind
+- Private Si Multilingual worker (`mini-services/si-post`) behind
   `/api/post/natural-analyze` (loopback-only, confidence-gated, auto-apply off).
 - Go chat service (`mini-services/chat-go`) in development.
 - Wallet + Zarinpal top-up, lead pricing tiers, one-time subscription deductions.

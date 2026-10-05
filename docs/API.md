@@ -27,7 +27,7 @@ auth requirements statically; hand-verified shapes live in
 
 - `POST /api/auth/verify` — `{phone, code, intent?}` → user + Bearer token. Rate-limited per IP and per phone.
 - `POST /api/intake/analyze` — `{text, draftRevision?, citySlug?, cityName?, formHints?, forceAi?}` → structured intake result. 96KB cap.
-- `POST /api/post/natural-analyze` — `{sourceText, …locks/hints}` → fields + provisional category (contract v2). Laya auto-apply off by default.
+- `POST /api/post/natural-analyze` — `{sourceText, …locks/hints}` → fields + provisional category (contract v2). Si auto-apply off by default.
 - `POST /api/need-intake/publish` — authenticated, `{draft, listingPreview?, idempotencyKey?}` → published need.
 
 All other paths in `openapi.json` carry only detected methods/auth plus a

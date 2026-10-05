@@ -431,6 +431,12 @@ export function buildParsedIntentFromForm(
     delete enrichedEntities.area;
   }
 
+  const lreActive =
+    existing != null &&
+    (existing.locationResolutionStatus != null ||
+      existing.rejectLocationAutoConfirm === true ||
+      existing.locationAmbiguous === true);
+
   return {
     ...enriched,
     intentType: intentTypeFromEntities(mergedEntities),
@@ -445,6 +451,18 @@ export function buildParsedIntentFromForm(
       ...(city ? { city } : {}),
       ...(neighborhood ? { neighborhood } : {}),
     },
+    // Keep LRE ambiguity state across form syncs — recomputeNeedDraft only
+    // preserves candidates while one of these flags is set, so dropping them
+    // here silently erased «پیشنهادهای مکان» between steps.
+    ...(lreActive
+      ? {
+          locationAmbiguous: existing.locationAmbiguous,
+          locationResolutionStatus: existing.locationResolutionStatus,
+          rejectLocationAutoConfirm: existing.rejectLocationAutoConfirm,
+          neighborhoodCandidates: existing.neighborhoodCandidates,
+          cityCandidates: existing.cityCandidates,
+        }
+      : {}),
   };
 }
 

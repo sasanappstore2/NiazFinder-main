@@ -3,9 +3,9 @@
  * hand-authored Persian benchmark.
  *
  * Exercises the full production path on each case: catalog city/neighborhood
- * resolution, rules-first deterministic extraction, and the local Laya worker
+ * resolution, rules-first deterministic extraction, and the local Si worker
  * (base or adapter) for the decisions the rules leave open. Expects the Next.js
- * dev server on :3000 and the Laya worker on :8101.
+ * dev server on :3000 and the Si worker on :8101.
  *
  * Run:
  *   npx tsx scripts/health/run-post-natural-e2e.ts --label adapter
@@ -47,7 +47,7 @@ type AnalyzeResponse = {
   provisionalCategory?: { slug: string; confidence: number; requiresConfirmation: boolean };
   categoryCandidates?: Array<{ slug: string; label: string }>;
   draftPatch?: { entities?: Record<string, unknown> };
-  laya?: { status?: string; latencyMs?: number };
+  si?: { status?: string; latencyMs?: number };
 };
 
 function sleep(ms: number): Promise<void> {
@@ -111,7 +111,7 @@ async function postAnalyze(text: string): Promise<AnalyzeResponse> {
 type Observation = {
   id: string;
   text: string;
-  layaStatus: string | null;
+  siStatus: string | null;
   city: { expected: string; observed: string | null; source: string | null; match: boolean };
   neighborhood: {
     expected: string | null;
@@ -168,7 +168,7 @@ function tally(rows: Observation[]): Record<string, { checked: number; correct: 
 async function main(): Promise<void> {
   const label = argValue('--label') ?? 'default';
   const benchmarkPath = resolve(
-    argValue('--benchmark') ?? 'data/laya-experiments/laya-fa-handmade-benchmark-v1.json'
+    argValue('--benchmark') ?? 'data/si-experiments/si-fa-handmade-benchmark-v1.json'
   );
   const rows = JSON.parse(readFileSync(benchmarkPath, 'utf8')) as BenchmarkRow[];
   if (!Array.isArray(rows) || rows.length === 0) {
@@ -187,7 +187,7 @@ async function main(): Promise<void> {
 
   const observations: Observation[] = [];
   const failures: Array<Record<string, unknown>> = [];
-  const layaStatuses: Record<string, number> = {};
+  const siStatuses: Record<string, number> = {};
   let waveCount = 0;
 
   for (const [index, row] of rows.entries()) {
@@ -197,8 +197,8 @@ async function main(): Promise<void> {
       await sleep(WAVE_PAUSE_MS);
     }
     const response = await postAnalyze(row.text);
-    const layaStatus = response.laya?.status ?? null;
-    if (layaStatus) layaStatuses[layaStatus] = (layaStatuses[layaStatus] ?? 0) + 1;
+    const siStatus = response.si?.status ?? null;
+    if (siStatus) siStatuses[siStatus] = (siStatuses[siStatus] ?? 0) + 1;
 
     const cityField = findField(response, 'city');
     const observedCity =
@@ -236,7 +236,7 @@ async function main(): Promise<void> {
     const observation: Observation = {
       id: row.id,
       text: row.text,
-      layaStatus,
+      siStatus,
       city: {
         expected: row.expectedCity,
         observed: observedCity,
@@ -256,7 +256,7 @@ async function main(): Promise<void> {
         expected: row.expected.category_candidate,
         observed: observedCategory,
         match: observedCategory === row.expected.category_candidate,
-        asked: layaStatus === 'ready',
+        asked: siStatus === 'ready',
         confidence: response.provisionalCategory?.confidence ?? null,
         candidateCount,
       },
@@ -300,19 +300,19 @@ async function main(): Promise<void> {
     benchmark: benchmarkPath,
     baseUrl: BASE,
     cases: rows.length,
-    layaStatuses,
+    siStatuses,
     summary: rates,
     failures,
     observations,
   };
   const outPath = resolve(
     argValue('--out') ??
-      `data/laya-experiments/post-natural-e2e-${label}-${Date.now()}.json`
+      `data/si-experiments/post-natural-e2e-${label}-${Date.now()}.json`
   );
   writeFileSync(outPath, JSON.stringify(report, null, 2) + '\n', 'utf8');
 
   console.log(`\n=== post/natural-analyze e2e (${label}) — ${rows.length} cases ===`);
-  console.log('laya status:', JSON.stringify(layaStatuses));
+  console.log('si status:', JSON.stringify(siStatuses));
   for (const [key, value] of Object.entries(rates)) {
     const pct = value.accuracy === null ? 'n/a' : `${(value.accuracy * 100).toFixed(1)}%`;
     console.log(`  ${key.padEnd(14)} ${value.correct}/${value.checked}  ${pct}`);

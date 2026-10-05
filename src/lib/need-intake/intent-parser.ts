@@ -72,7 +72,9 @@ const REPAIR_KEYWORDS = ['تعمیر', 'تعمیرکار', 'نصب'];
 const URGENT_KEYWORDS = ['فوری', 'سریع', 'امروز', 'الان'];
 
 const RAHN_FULL_KEYWORDS = ['رهن کامل', 'فقط رهن'];
-const RAHN_EJARE_KEYWORDS = ['رهن و اجاره', 'ودیعه و اجاره', 'ودیعه'];
+// Standalone «ودیعه» is a synonym of رهن (a deposit-only budget = full-deposit
+// need), NOT a deposit+rent cue; only the explicit «ودیعه و اجاره» compound is.
+const RAHN_EJARE_KEYWORDS = ['رهن و اجاره', 'ودیعه و اجاره'];
 const RENT_MONTHLY_KEYWORDS = ['اجاره ماهانه', 'اجاره ماهیانه'];
 const RENT_SHORT_TERM_KEYWORDS = [
   'اجاره روزانه',
@@ -616,7 +618,10 @@ function parsePropertyDealType(text: string): string | undefined {
   if (RENT_MONTHLY_KEYWORDS.some((w) => text.includes(w))) return 'rent_monthly';
   if (textHasSellKeyword(text)) return 'sell';
   if (hasRahn && text.includes('اجاره ندارم')) return 'rent_rahn_full';
-  if (hasRahn && !text.includes('بدم')) return 'rent_rahn_ejare';
+  // Rahn-only seeker (no rent signal anywhere, no landlord phrase): the user
+  // quoted a deposit budget only — that is a full-deposit (رهن کامل) need,
+  // not deposit+rent.
+  if (hasRahn && !text.includes('بدم')) return 'rent_rahn_full';
   if (textHasRentKeyword(text) || hasRent) return 'rent_monthly';
   if (BUY_KEYWORDS.some((w) => text.includes(w))) return 'buy';
   if (NEED_SEEKER_OPENER.test(text) && hasPropertyContext(text)) return 'buy';

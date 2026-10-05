@@ -1,6 +1,6 @@
 import {
   buildDivarHypotheticalNeed,
-  buildLayaDerivedHypotheticalNeed,
+  buildSiDerivedHypotheticalNeed,
   divarAppCityCatalog,
   divarAppCityPersianName,
   DIVAR_HYPOTHETICAL_NEED_TASK,
@@ -144,43 +144,43 @@ const shopOffer = {
 };
 const deterministicShopProposal = buildDivarHypotheticalNeed(shopOffer);
 assert(deterministicShopProposal !== null, 'a mapped shop offer should produce a deterministic reference');
-const layaShopProposal = buildLayaDerivedHypotheticalNeed(shopOffer, deterministicShopProposal, {
+const siShopProposal = buildSiDerivedHypotheticalNeed(shopOffer, deterministicShopProposal, {
   category_candidate: { choice: 'shop-rent', answer_confidence: 0.73 },
   property_kind: { choice: 'shop' },
   transaction_type: { choice: 'rent_rahn_ejare' },
 });
-assert(layaShopProposal.state?.includes('مغازه') && layaShopProposal.state.includes('فرامرزعباسی'), 'compatible Laya decisions should render separately using exact mapped place facts');
-assert(layaShopProposal.state?.includes('۷۵ متر') && layaShopProposal.state.includes('رهن و اجاره'), 'deterministic numeric facts and Laya transaction decision should be combined in the generated proposal');
-assert(layaShopProposal.decisions.category_candidate.confidence === 0.73, 'valid model confidence metadata should be retained without thresholding');
-assert(layaShopProposal.decisions.category_candidate.accepted === false && layaShopProposal.accepted === false, 'Laya suggestions must remain unaccepted');
-assert(layaShopProposal.synthetic && !layaShopProposal.realNeedGroundTruth && !layaShopProposal.trainingEligible, 'Laya-derived output must remain synthetic and training-ineligible');
-assert(layaShopProposal.conversionStatus === 'rendered_from_compatible_laya_choices', 'compatible decisions must report a rendered conversion status');
+assert(siShopProposal.state?.includes('مغازه') && siShopProposal.state.includes('فرامرزعباسی'), 'compatible Si decisions should render separately using exact mapped place facts');
+assert(siShopProposal.state?.includes('۷۵ متر') && siShopProposal.state.includes('رهن و اجاره'), 'deterministic numeric facts and Si transaction decision should be combined in the generated proposal');
+assert(siShopProposal.decisions.category_candidate.confidence === 0.73, 'valid model confidence metadata should be retained without thresholding');
+assert(siShopProposal.decisions.category_candidate.accepted === false && siShopProposal.accepted === false, 'Si suggestions must remain unaccepted');
+assert(siShopProposal.synthetic && !siShopProposal.realNeedGroundTruth && !siShopProposal.trainingEligible, 'Si-derived output must remain synthetic and training-ineligible');
+assert(siShopProposal.conversionStatus === 'rendered_from_compatible_si_choices', 'compatible decisions must report a rendered conversion status');
 
-const wrongTransaction = buildLayaDerivedHypotheticalNeed(sourceRow, proposal, {
+const wrongTransaction = buildSiDerivedHypotheticalNeed(sourceRow, proposal, {
   category_candidate: { choice: 'apartment-sale' },
   property_kind: { choice: 'apartment' },
   transaction_type: { choice: 'sell' },
 });
 assert(wrongTransaction.state === null && wrongTransaction.conversionStatus === 'source_transaction_disagreement', 'seller-side sell must not be rewritten into a seeker request');
-const wrongCategory = buildLayaDerivedHypotheticalNeed(shopOffer, deterministicShopProposal!, {
+const wrongCategory = buildSiDerivedHypotheticalNeed(shopOffer, deterministicShopProposal!, {
   category_candidate: { choice: 'apartment-sale' },
   property_kind: { choice: 'apartment' },
   transaction_type: { choice: 'buy' },
 });
-assert(wrongCategory.state === null && wrongCategory.conversionStatus === 'source_category_disagreement', 'a Laya category conflicting with the structured offer must not produce text');
-const wrongPropertyKind = buildLayaDerivedHypotheticalNeed(shopOffer, deterministicShopProposal!, {
+assert(wrongCategory.state === null && wrongCategory.conversionStatus === 'source_category_disagreement', 'a Si category conflicting with the structured offer must not produce text');
+const wrongPropertyKind = buildSiDerivedHypotheticalNeed(shopOffer, deterministicShopProposal!, {
   category_candidate: { choice: 'shop-rent' },
   property_kind: { choice: 'apartment' },
   transaction_type: { choice: 'rent_rahn_ejare' },
 });
 assert(wrongPropertyKind.state === null && wrongPropertyKind.conversionStatus === 'source_property_kind_disagreement', 'contradictory category and property kind must not produce request text');
-const unsupportedAnswer = buildLayaDerivedHypotheticalNeed(shopOffer, deterministicShopProposal!, {
+const unsupportedAnswer = buildSiDerivedHypotheticalNeed(shopOffer, deterministicShopProposal!, {
   category_candidate: { choice: 'not-a-real-category' },
   property_kind: { choice: 'unknown' },
   transaction_type: { choice: 'rent_rahn_ejare' },
 });
-assert(unsupportedAnswer.state === null && unsupportedAnswer.decisions.category_candidate.value === 'unknown', 'unsupported Laya choices must fail closed');
-const invalidConfidence = buildLayaDerivedHypotheticalNeed(shopOffer, deterministicShopProposal!, {
+assert(unsupportedAnswer.state === null && unsupportedAnswer.decisions.category_candidate.value === 'unknown', 'unsupported Si choices must fail closed');
+const invalidConfidence = buildSiDerivedHypotheticalNeed(shopOffer, deterministicShopProposal!, {
   category_candidate: { choice: 'shop-rent', answer_confidence: 1.4 },
   property_kind: { choice: 'shop' },
   transaction_type: { choice: 'rent_rahn_ejare' },
@@ -198,4 +198,4 @@ assert(buildDivarHypotheticalNeed({ ...sourceRow, synthetic: true }) === null, '
 assert(buildDivarHypotheticalNeed({ ...sourceRow, isNeedGroundTruth: true }) === null, 'contradictory source semantics must fail closed');
 assert(buildDivarHypotheticalNeed({ ...sourceRow, taskType: 'other-task' }) === null, 'other task types must fail closed');
 
-console.log('Divar hypothetical need transformation: deterministic and Laya-derived proposal checks passed');
+console.log('Divar hypothetical need transformation: deterministic and Si-derived proposal checks passed');

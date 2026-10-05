@@ -18,11 +18,11 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[3]
-PLAN_RELATIVE = Path("data/laya-experiments/divar-v10-laya-pseudo-distillation-after-v9-2026-09-29.json")
+PLAN_RELATIVE = Path("data/si-experiments/divar-v10-si-pseudo-distillation-after-v9-2026-09-29.json")
 POLL_SECONDS = 60
 READY_STATUS = "research_audit_complete"
 FAILURE_STATUSES = {"failed", "upstream_failed", "pilot_failed", "preflight_failed", "full_failed"}
-MODEL_ID = "convaiinnovations/laya-multilingual"
+MODEL_ID = "convaiinnovations/si-multilingual"
 MODEL_REVISION = "e4e9ddf21a7b1903b7acffd8814ad4307bf63a67"
 MODEL_WEIGHTS_SHA256 = "9d628fd971b700382ac6f65920a86f149777b2e748e0c955fb3b19695aa8f204"
 TERMINAL = {"research_pseudo_distillation_complete", "failed", "upstream_failed", "preflight_failed", "training_failed"}
@@ -78,7 +78,7 @@ def validate_plan(plan: dict[str, Any]) -> tuple[Path, Path, Path, Path, Path, P
         raise ValueError(f"v10 queue is not startable (status={plan.get('status')!r}).")
     model = plan.get("model", {})
     if (
-        plan.get("taskType") != "divar-laya-pseudo-distillation/v1"
+        plan.get("taskType") != "divar-si-pseudo-distillation/v1"
         or plan.get("upstreamRequiredStatus") != READY_STATUS
         or model.get("id") != MODEL_ID
         or model.get("revision") != MODEL_REVISION
@@ -92,10 +92,10 @@ def validate_plan(plan: dict[str, Any]) -> tuple[Path, Path, Path, Path, Path, P
     try:
         python_lexical_path.relative_to(ROOT)
     except ValueError as exc:
-        raise ValueError("The Laya Python executable must be referenced from the repository environment.") from exc
+        raise ValueError("The Si Python executable must be referenced from the repository environment.") from exc
     python_path = python_lexical_path.resolve(strict=True)
     if python_path != Path(sys.executable).resolve():
-        raise ValueError("Run v10 with the pinned mini-services/laya-post Python environment.")
+        raise ValueError("Run v10 with the pinned mini-services/si-post Python environment.")
     upstream_path = repo_path(plan["upstreamPlanPath"])
     v8_plan_path = repo_path(plan["v8PlanPath"])
     builder_path = repo_path(plan["builderScript"])
@@ -117,7 +117,7 @@ def validate_plan(plan: dict[str, Any]) -> tuple[Path, Path, Path, Path, Path, P
         raise ValueError("v10 input and outputs must all be separate artifacts.")
     model_dir = Path(model["localDirectory"]).expanduser().resolve(strict=True)
     if not (model_dir / "model.safetensors").is_file():
-        raise FileNotFoundError("Pinned local Laya checkpoint weights are missing.")
+        raise FileNotFoundError("Pinned local Si checkpoint weights are missing.")
     return upstream_path, v8_plan_path, input_path, input_manifest_path, output_path, output_manifest_path, quarantine_path
 
 
@@ -136,7 +136,7 @@ def validate_v9_result(upstream_plan: dict[str, Any], root_plan: dict[str, Any])
     if (
         result.get("manifestSha256") != sha256_file(manifest_path)
         or manifest.get("status") != "complete"
-        or manifest.get("taskType") != "divar-counterfactual-post-need-laya-proposal/v5"
+        or manifest.get("taskType") != "divar-counterfactual-post-need-si-proposal/v5"
         or manifest.get("model") != MODEL_ID
         or manifest.get("synthetic") is not True
         or manifest.get("derivedFromSupplyListing") is not True
@@ -166,8 +166,8 @@ def validate_v10_dataset(path: Path, manifest_path: Path, plan: dict[str, Any]) 
         or manifest.get("synthetic") is not True
         or manifest.get("realNeedGroundTruth") is not False
         or manifest.get("trainingEligible") is not False
-        or manifest.get("targetOrigin") != "laya_pseudo_labels_not_gold"
-        or manifest.get("layaPredictionsUsedAsLabels") is not True
+        or manifest.get("targetOrigin") != "si_pseudo_labels_not_gold"
+        or manifest.get("siPredictionsUsedAsLabels") is not True
         or manifest.get("outputBytes") != path.stat().st_size
         or manifest.get("outputSha256") != sha256_file(path)
         or manifest.get("outputRows", 0) < int(plan["dataset"]["minimumRows"])
@@ -231,7 +231,7 @@ def main() -> int:
         print(json.dumps({"status": plan["status"], "result": plan.get("result", {})}, ensure_ascii=False))
         return 0 if plan["status"] == "research_pseudo_distillation_complete" else 2
 
-    queue_lock_path = Path("/private/tmp/niazfinder-laya-v10-pseudo-distillation.lock")
+    queue_lock_path = Path("/private/tmp/niazfinder-si-v10-pseudo-distillation.lock")
     try:
         queue_lock = acquire_lock(queue_lock_path)
     except BlockingIOError as exc:
@@ -256,7 +256,7 @@ def main() -> int:
         trainer = repo_path(plan["trainerScript"])
         python = str((ROOT / plan["python"]).resolve(strict=True))
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        log_path = ROOT / "data/laya-experiments/divar-v10-laya-pseudo-distillation-after-v9-2026-09-29/queue.log"
+        log_path = ROOT / "data/si-experiments/divar-v10-si-pseudo-distillation-after-v9-2026-09-29/queue.log"
         log_path.parent.mkdir(parents=True, exist_ok=True)
         if plan["status"] == "queued_waiting_for_v9":
             if output_path.exists() or output_manifest_path.exists() or quarantine_path.exists():
@@ -298,7 +298,7 @@ def main() -> int:
         common = [
             python, str(trainer), "--input", str(output_path), "--manifest", str(output_manifest_path),
             "--model-dir", str(model_dir), "--experiment-dir", str(experiment_dir),
-            "--allow-synthetic-experiment", "--allow-laya-pseudo-label-distillation",
+            "--allow-synthetic-experiment", "--allow-si-pseudo-label-distillation",
             "--device", "mps", "--train-row-limit", "0",
             "--eval-row-limit", str(training["evaluationRowsPerSplit"]),
             "--epochs", str(training["epochs"]), "--batch-size", str(training["batchSize"]),
@@ -329,7 +329,7 @@ def main() -> int:
         }
 
         lock_paths = [Path(path) for path in plan["mpsLocks"]]
-        own_mps_path = Path("/private/tmp/niazfinder-laya-v10-mps.lock")
+        own_mps_path = Path("/private/tmp/niazfinder-si-v10-mps.lock")
         lock_paths.append(own_mps_path)
         while True:
             busy_path: Path | None = None
@@ -345,11 +345,11 @@ def main() -> int:
                 fcntl.flock(descriptor, fcntl.LOCK_UN)
                 os.close(descriptor)
             mps_locks.clear()
-            update_plan(plan_path, plan, "waiting_for_mps_locks", f"Waiting for an earlier Laya MPS stage to release {busy_path.name}; no training has started.")
+            update_plan(plan_path, plan, "waiting_for_mps_locks", f"Waiting for an earlier Si MPS stage to release {busy_path.name}; no training has started.")
             print(f"Waiting for prior MPS lock: {busy_path.name}", flush=True)
             time.sleep(POLL_SECONDS)
 
-        update_plan(plan_path, plan, "training_mps", "All tracked prior Laya queue locks are free; starting one local MPS pseudo-distillation experiment.")
+        update_plan(plan_path, plan, "training_mps", "All tracked prior Si queue locks are free; starting one local MPS pseudo-distillation experiment.")
         command = common
         caffeinate = shutil.which("caffeinate")
         if caffeinate:
@@ -367,7 +367,7 @@ def main() -> int:
         evaluation = read_json(evaluation_path)
         if (
             result_manifest.get("status") != "research_pseudo_distillation_complete"
-            or result_manifest.get("layaPredictionsUsedAsLabels") is not True
+            or result_manifest.get("siPredictionsUsedAsLabels") is not True
             or result_manifest.get("productionLoadAllowed") is not False
             or evaluation.get("notRealNeedAccuracy") is not True
             or result_manifest.get("teacherWeightsSha256") != MODEL_WEIGHTS_SHA256

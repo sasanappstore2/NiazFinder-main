@@ -128,3 +128,6 @@ reports/**/*.jsonl
 mobile/node_modules
 mobile/ios/App/App/public
 mobile/ios/DerivedData
+
+# private inference runtime deps (not part of the public repo)
+mini-services/si-post/requirements.local.txt

@@ -24,6 +24,7 @@ import { INTAKE_COPY } from './intake-copy';
 import { cn } from '@/lib/utils';
 import type { IntakeWizardGuardContext } from '@/lib/need-intake/intake-wizard-guards';
 import { isIntakeComposeStep } from '@/lib/need-intake/intake-wizard-steps';
+import { resolveHomeSeedLandingStep } from '@/lib/need-intake/home-post-seamless';
 import { useNeedIntakeStore } from '@/stores/need-intake-store';
 import { getLeadPhone, setLeadPhone as persistLeadPhone } from '@/lib/lead-draft';
 import { buildSummary } from '@/lib/need-intake/question-engine';
@@ -41,6 +42,7 @@ import {
   composeIntakeSourceText,
 } from '@/lib/need-intake/compose-source-text';
 import { buildParsedIntentFromForm, recordToEntities } from '@/intake/aggregate/needDraftAggregate';
+import { mapDealTypeToTransaction } from '@/lib/need-intake/deal-type-transaction';
 import { resolveRequiredFields } from '@/intake/template/required-field-resolver';
 import { resolveIntakeCategory } from '@/lib/need-intake/resolve-intake-category';
 import {
@@ -63,7 +65,7 @@ import { usePostNaturalAnalysis } from '@/hooks/use-post-natural-analysis';
 import type {
   PostNaturalAnalyzeResponse,
   PostNaturalField,
-} from '@/lib/need-intake/laya/post-natural-contract';
+} from '@/lib/need-intake/si/post-natural-contract';
 import { createIntakePublishSnapshot } from '@/lib/need-intake/publish-snapshot';
 import { usePostIntakeTelemetry } from '@/hooks/use-post-intake-telemetry';
 import { trackValidationError } from '@/intake/telemetry/postIntakeTelemetry';
@@ -377,7 +379,24 @@ export function NeedIntakePanel({
     [needText, detailsText]
   );
 
-  // This page's only inference path is the explicit local-Laya action below.
+  // A text edit invalidates manual overrides of text-extracted fields: the
+  // deal the user confirmed belonged to the previous sentence. Without this,
+  // stale locks keep an old deal (رهن کامل) alive while the fresh analysis
+  // contradicts it (رهن و اجاره) — tearing the card, summary and form apart.
+  // `_userSetDealType` (answers mirror of a manual deal pick) is cleared too.
+  useEffect(() => {
+    userOverriddenFieldsRef.current.delete('transactionType');
+    userOverriddenFieldsRef.current.delete('transaction_type');
+    userOverriddenFieldsRef.current.delete('dealType');
+    userOverriddenFieldsRef.current.delete('propertyKind');
+    const draft = getDraft();
+    if (draft?.answers?._userSetDealType === true) {
+      const { _userSetDealType: _drop, ...restAnswers } = draft.answers;
+      setNeedDraft({ ...draft, answers: restAnswers });
+    }
+  }, [composedSourceText, getDraft, setNeedDraft]);
+
+  // This page's only inference path is the explicit local-Si action below.
   // Keep the legacy listing helpers on an empty input for deterministic copy.
   const smartResult: SmartExtractionResult | null = null;
 
@@ -414,7 +433,6 @@ export function NeedIntakePanel({
     composedSourceText,
     draft.categoryLockedByUserRef,
     intakeAnalyzeCityHint.cityName,
-    intakeAnalyzeCityHint.citySlug,
     location.selectedCity,
     initialCategory,
     needDraft?.answers,
@@ -451,6 +469,14 @@ export function NeedIntakePanel({
           }
           return;
         }
+        if (field.key === 'dealType' || field.key === 'transactionType') {
+          // Write the canonical entity directly: routing through the answers
+          // field sets `_userSetDealType`, which permanently locks the deal
+          // against every later analysis (the card/summary/form tear-apart).
+          const tx = mapDealTypeToTransaction(String(field.value ?? ''));
+          if (tx) patchNeedDraftEntities({ transactionType: tx });
+          return;
+        }
         if (['area', 'rooms', 'budgetMin', 'budgetMax', 'rahnAmount', 'monthlyRent', 'deposit'].includes(field.key)) {
           patchNeedDraftEntities({ [field.key]: field.value });
           return;
@@ -471,6 +497,25 @@ export function NeedIntakePanel({
 
   const applyPostNaturalResult = useCallback(
     (result: PostNaturalAnalyzeResponse) => {
+      // The store's entity patch no-ops without a draft, and a fresh hand-off
+      // (home → form step) lands with none — materialize the form projection
+      // first so patches and location candidates have a carrier.
+      const hadDraftAtEntry = Boolean(getDraft());
+      if (!hadDraftAtEntry) {
+        const fresh = projectNeedDraftFromFormFields(
+          {
+            needText,
+            detailsText,
+            categorySlug: draft.categoryLockedByUserRef.current ? selectedCategory : '',
+            subcategorySlug: draft.categoryLockedByUserRef.current ? selectedSubcategory : '',
+            city: location.selectedCity,
+            neighborhood: location.selectedNeighborhood,
+            neighborhoodSlug: null,
+          },
+          { categoryLockedByUser: draft.categoryLockedByUserRef.current }
+        );
+        if (fresh) setNeedDraft(fresh);
+      }
       softFillActiveRef.current = true;
       try {
         const provisional = result.provisionalCategory;
@@ -565,11 +610,100 @@ export function NeedIntakePanel({
             });
           }
         }
+
+        // Ambiguous neighborhood inside one city (e.g. «بنفشه» matching
+        // several hoods): persist the ranked candidates so the location step
+        // surfaces «پیشنهادهای مکان» chips. The fresh response REPLACES the
+        // previous set — merging leaked stale candidates from an earlier
+        // text/city into the new session (Mashhad chips on a Shiraz need).
+        // Candidates scoped to other cities are dropped, and a fresh analysis
+        // with no ambiguity clears the stale set.
+        const current = getDraft();
+        if (current) {
+          const parsed = current.parsedIntent;
+          const hoodCandidates = (result.locationCandidates ?? []).filter(
+            (candidate) => candidate.slug?.trim() && candidate.label?.trim()
+          );
+          // When the city is user-locked the route omits it from the patch,
+          // so detectedCity can be empty — the selected city is the truth.
+          // Normalize slug-shaped values («shiraz») to Persian names: the
+          // route echoes the request's city form back onto the candidates.
+          const referenceCityRaw = detectedCity.trim() || location.selectedCity.trim();
+          const referenceCity = citySlugToPersianName(referenceCityRaw) ?? referenceCityRaw;
+          const normalizeCityLabel = (value: string): string =>
+            citySlugToPersianName(value) ?? value;
+          const scopedHoodCandidates = hoodCandidates.filter((candidate) => {
+            const candidateCityRaw = candidate.city?.trim() ?? '';
+            if (!candidateCityRaw) return true;
+            return normalizeCityLabel(candidateCityRaw) === referenceCity;
+          });
+          const parsedPatch: Partial<NeedDraft['parsedIntent']> = {};
+          if (scopedHoodCandidates.length >= 2 && !detectedNeighborhood) {
+            parsedPatch.neighborhoodCandidates = scopedHoodCandidates
+              .slice(0, 6)
+              .map((candidate) => {
+                const candidateCityRaw = candidate.city?.trim() ?? '';
+                return {
+                  slug: String(candidate.slug),
+                  label: String(candidate.label),
+                  city: candidateCityRaw
+                    ? normalizeCityLabel(candidateCityRaw)
+                    : referenceCity || undefined,
+                };
+              });
+            parsedPatch.locationResolutionStatus = 'neighborhood_ambiguous';
+            parsedPatch.rejectLocationAutoConfirm = true;
+
+            // Auto-fill the محله field with SI's top pick — the ranked chips
+            // stay as one-tap alternatives for a different choice. Never
+            // overrides a neighborhood the user already picked.
+            if (!location.neighborhoodLockedByUserRef.current) {
+              const siPick = result.fields.find(
+                (field) =>
+                  field.key === 'neighborhood' &&
+                  field.source === 'si' &&
+                  typeof field.value === 'string' &&
+                  scopedHoodCandidates.some((candidate) => candidate.label === field.value)
+              );
+              const topPick = siPick
+                ? scopedHoodCandidates.find((candidate) => candidate.label === siPick.value)
+                : scopedHoodCandidates[0];
+              if (topPick) {
+                location.applyNeighborhood(String(topPick.label), String(topPick.slug), {
+                  fromUser: false,
+                });
+              }
+            }
+          } else if ((parsed.neighborhoodCandidates?.length ?? 0) > 0) {
+            parsedPatch.neighborhoodCandidates = [];
+          }
+          if (referenceCity && (parsed.cityCandidates?.length ?? 0) > 0) {
+            parsedPatch.cityCandidates = [];
+          }
+          if (Object.keys(parsedPatch).length > 0) {
+            setNeedDraft({
+              ...current,
+              parsedIntent: { ...parsed, ...parsedPatch },
+            });
+          }
+        }
       } finally {
         softFillActiveRef.current = false;
       }
     },
-    [applyPostNaturalField, draft, getDraft, location, patchNeedDraftEntities, setNeedDraft]
+    [
+      applyPostNaturalField,
+      draft,
+      getDraft,
+      location,
+      needText,
+      detailsText,
+      selectedCategory,
+      selectedSubcategory,
+      projectNeedDraftFromFormFields,
+      patchNeedDraftEntities,
+      setNeedDraft,
+    ],
   );
 
   const confirmPostNaturalField = useCallback(
@@ -614,6 +748,38 @@ export function NeedIntakePanel({
     const result = await postNatural.analyzeNow();
     if (result) applyPostNaturalResult(result);
   }, [applyPostNaturalResult, postNatural.analyzeNow]);
+
+  // Si live analysis: ~1s after the composed text settles, run the same
+  // pipeline as the manual «تکمیل هوشمند فرم» button so the user no longer
+  // needs to click it. The ref keeps an unchanged text from re-analyzing
+  // when unrelated re-renders recreate the callback.
+  const lastAutoAnalyzedTextRef = useRef('');
+  const homeFormAnalysisSeedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (step !== 'compose') return;
+    const text = composedSourceText.trim();
+    if (text.length < 3 || text === lastAutoAnalyzedTextRef.current) return;
+    const timer = window.setTimeout(() => {
+      lastAutoAnalyzedTextRef.current = text;
+      void analyzeAndApplyPostNatural();
+    }, 1000);
+    return () => window.clearTimeout(timer);
+  }, [composedSourceText, step, analyzeAndApplyPostNatural]);
+
+  // Seeded home hand-off lands directly on the form step — run the Si
+  // pipeline once so fields and location chips populate (same as the
+  // compose step's live analysis would).
+  useEffect(() => {
+    const pendingSeed = homeFormAnalysisSeedRef.current;
+    if (step !== 'location' || !pendingSeed) return;
+    homeFormAnalysisSeedRef.current = null;
+    if (!lastAutoAnalyzedTextRef.current) {
+      lastAutoAnalyzedTextRef.current = pendingSeed;
+    }
+    if (!postNatural.result && !postNatural.analyzing) {
+      void analyzeAndApplyPostNatural();
+    }
+  }, [step, postNatural.result, postNatural.analyzing, analyzeAndApplyPostNatural]);
 
   const intakeFormContext = useMemo(
     () => {
@@ -720,7 +886,13 @@ export function NeedIntakePanel({
       setSeedText(seed);
       setShowMoreDetails(false);
     }
-    setStep('compose');
+    // Home hand-off: a strong seeded need skips the compose step the user
+    // already completed on the home page (A/B kill-switch:
+    // NEXT_PUBLIC_INTAKE_SKIP_NEED_STEP=false restores compose-first).
+    // Plain entries (navbar, mega menu) carry no seed and start at compose.
+    const landingStep = resolveHomeSeedLandingStep(seed);
+    homeFormAnalysisSeedRef.current = landingStep === 'location' ? seed : null;
+    setStep(landingStep);
   }, [
     initialSeed,
     initialCity,
@@ -925,7 +1097,7 @@ export function NeedIntakePanel({
       return;
     }
     setSeedText(needText.trim());
-    // Auto-run the explicit local-Laya analysis when entering the location
+    // Auto-run the explicit local-Si analysis when entering the location
     // step so city/neighborhood resolve without requiring the manual button
     // (unique-city auto-fill; multi-city chips). Guarded: never double-fire
     // when a result is already showing or being computed.

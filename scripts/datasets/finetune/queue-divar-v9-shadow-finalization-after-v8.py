@@ -18,12 +18,12 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[3]
-PLAN_RELATIVE = Path("data/laya-experiments/divar-v9-shadow-finalization-after-v8-2026-09-29.json")
+PLAN_RELATIVE = Path("data/si-experiments/divar-v9-shadow-finalization-after-v8-2026-09-29.json")
 POLL_SECONDS = 60
 READY_STATUS = "research_shadow_complete"
 FAILURE_STATUSES = {"failed", "upstream_failed", "pilot_failed", "preflight_failed", "full_failed"}
-SOURCE_TASK = "divar-counterfactual-post-need-laya-proposal/v5"
-MODEL_ID = "convaiinnovations/laya-multilingual"
+SOURCE_TASK = "divar-counterfactual-post-need-si-proposal/v5"
+MODEL_ID = "convaiinnovations/si-multilingual"
 
 
 def utc_now() -> str:
@@ -148,7 +148,7 @@ def validate_upstream_artifacts(
         or manifest.get("rowsProcessed") != expected_rows
         or manifest.get("devicesUsed") != ["mps"]
         or manifest.get("outputBytes") != source_path.stat().st_size
-        or not isinstance(manifest.get("layaDerivedProposalStatuses"), dict)
+        or not isinstance(manifest.get("siDerivedProposalStatuses"), dict)
     ):
         raise ValueError("The v8 sidecar failed task/model/device/provenance/row integrity checks.")
     if verify_hash and sha256_file(source_path) != expected_hash:
@@ -197,7 +197,7 @@ def update_plan(path: Path, plan: dict[str, Any], status: str, note: str) -> Non
 
 
 def acquire_lock() -> int:
-    lock_path = Path("/private/tmp/niazfinder-laya-v9-finalization.lock")
+    lock_path = Path("/private/tmp/niazfinder-si-v9-finalization.lock")
     descriptor = os.open(lock_path, os.O_CREAT | os.O_RDWR, 0o600)
     try:
         fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)

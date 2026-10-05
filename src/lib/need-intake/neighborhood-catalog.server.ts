@@ -801,6 +801,16 @@ export function findNeighborhoodNameAcrossCities(
       group.entries.push({ slug: hit.slug, name: hit.name });
     }
   }
+  // Within one city, the neighborhood whose own name matches the query is the
+  // precise hit; entries reached only through an area label follow. The route
+  // chip takes entries[0] per city, so a same-named neighborhood (e.g.
+  // «معالی‌آباد» in Shiraz) must not hide behind an earlier area-only match.
+  for (const group of byCity.values()) {
+    group.entries.sort(
+      (a, b) =>
+        Number(normalizeMatchText(a.name) !== key) - Number(normalizeMatchText(b.name) !== key)
+    );
+  }
   const priorityRank = new Map<string, number>(
     NEIGHBORHOOD_SEARCH_PRIORITY.map((id, i) => [id as string, i])
   );

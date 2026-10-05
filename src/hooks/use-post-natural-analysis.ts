@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   analyzePostNaturalText,
-} from '@/lib/need-intake/laya/post-natural-client';
+} from '@/lib/need-intake/si/post-natural-client';
 import type {
   PostNaturalAnalyzeRequest,
   PostNaturalAnalyzeResponse,
-} from '@/lib/need-intake/laya/post-natural-contract';
+} from '@/lib/need-intake/si/post-natural-contract';
 
 export interface UsePostNaturalAnalysisOptions {
   buildRequest: () => PostNaturalAnalyzeRequest;

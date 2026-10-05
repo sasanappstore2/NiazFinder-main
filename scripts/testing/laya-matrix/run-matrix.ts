@@ -2,7 +2,7 @@
  * Run generated cases against the live /api/post/natural-analyze endpoint and
  * grade extraction quality with a tolerant comparator.
  *
- * Run: npx --yes tsx scripts/testing/laya-matrix/run-matrix.ts --cases out/laya-matrix/cases.jsonl --out out/laya-matrix/run-tag --concurrency 16 [--limit N]
+ * Run: npx --yes tsx scripts/testing/si-matrix/run-matrix.ts --cases out/si-matrix/cases.jsonl --out out/si-matrix/run-tag --concurrency 16 [--limit N]
  */
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -73,7 +73,7 @@ interface AnalyzeResponse {
   provisionalCategory?: { slug: string };
   categoryCandidates?: Array<{ slug: string }>;
   locationCandidates?: Array<{ slug: string; label: string }>;
-  laya?: { status: string };
+  si?: { status: string };
   latencyMs?: number;
 }
 
@@ -220,8 +220,8 @@ async function main() {
     if (idx >= 0 && argv[idx + 1] != null) return argv[idx + 1]!;
     return fallback;
   };
-  const casesPath = arg('cases', 'out/laya-matrix/cases.jsonl');
-  const outDir = arg('out', 'out/laya-matrix/run');
+  const casesPath = arg('cases', 'out/si-matrix/cases.jsonl');
+  const outDir = arg('out', 'out/si-matrix/run');
   const concurrency = Number(arg('concurrency', '16'));
   const limit = Number(arg('limit', '0'));
 
@@ -292,7 +292,7 @@ async function main() {
   }
   await fd.close();
 
-  const layaReady = results.filter((x) => x.r?.laya?.status === 'ready').length;
+  const siReady = results.filter((x) => x.r?.si?.status === 'ready').length;
   const summary = {
     total: results.length,
     pass,
@@ -304,7 +304,7 @@ async function main() {
     byField,
     byGroup,
     byMode,
-    layaReady,
+    siReady,
     httpErrors: results.filter((x) => x.error).length,
   };
   await fs.writeFile(path.join(outDir, 'summary.json'), JSON.stringify(summary, null, 2), 'utf8');

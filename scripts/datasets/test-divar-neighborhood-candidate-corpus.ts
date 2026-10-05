@@ -29,7 +29,7 @@ const unique = buildNeighborhoodCandidateDecision(
   'مشهد',
   'sajad',
 );
-assert(unique === null, 'unique deterministic text match must not be sent to Laya');
+assert(unique === null, 'unique deterministic text match must not be sent to Si');
 
 const unmentioned = buildNeighborhoodCandidateDecision(
   neighborhoods,

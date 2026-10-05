@@ -54,7 +54,7 @@
 «رج» با cue صریح را پوشش می‌دهند. فرمان‌های زیر پاس شدند:
 
 ```text
-bun src/lib/need-intake/laya/fixtures/run-post-natural-self-test.ts
+bun src/lib/need-intake/si/fixtures/run-post-natural-self-test.ts
 bun src/lib/need-intake/fixtures/run-intake-location-priority-self-test.ts
 bun src/lib/neighborhoods/fixtures/run-neighborhood-disambiguation-self-test.ts
 eslint (فایل‌های resolver، تست و audit)
@@ -67,5 +67,5 @@ git diff --check
 صفر شدن false auto-hit روی این آزمون کاتالوگی ثابت نمی‌کند که تشخیص روی
 درخواست‌های طبیعی کاربران ۹۸٫۶۴٪ دقیق است. برای ادعای آن، مجموعه‌ی آزمون
 جداگانه با متن‌های واقعیِ مجاز و برچسب انسانی لازم است؛ نام‌های استخراج‌شده
-توسط خود Laya نباید gold label شوند. ۶۵۲ مورد unresolved نیز باید با خطاهای
+توسط خود Si نباید gold label شوند. ۶۵۲ مورد unresolved نیز باید با خطاهای
 استخراج و شهرهای هم‌نام جداگانه بررسی شوند، نه با حدس یا first-match.

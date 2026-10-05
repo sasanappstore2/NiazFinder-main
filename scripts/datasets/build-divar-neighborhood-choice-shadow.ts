@@ -578,7 +578,7 @@ async function main(): Promise<void> {
       realNeedGroundTruth: false,
       humanReviewed: false,
       trainingEligible: false,
-      layaPredictionsUsedAsLabels: false,
+      siPredictionsUsedAsLabels: false,
       cloudTransferAllowed: false,
       rightsReview: 'required before redistribution; local research use only',
     },

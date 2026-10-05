@@ -145,29 +145,6 @@ export function IntakeNeighborhoodPicker({
   return (
     <>
       <div className={cn('space-y-2 min-w-0', className)}>
-        <button
-          type="button"
-          disabled={!canOpenList}
-          onClick={() => setOpen(true)}
-          className={cn(
-            'flex h-11 w-full items-center justify-between gap-2 rounded-md border bg-background px-3 text-sm transition-colors',
-            'hover:bg-muted/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40',
-            (!canOpenList || disabled) && 'cursor-not-allowed opacity-60'
-          )}
-        >
-          <span className="flex min-w-0 items-center gap-2 truncate">
-            <MapPin className="size-4 shrink-0 text-muted-foreground" />
-            <span className={cn('truncate', !value.trim() && 'text-muted-foreground')}>
-              {isLoading
-                ? 'در حال بارگذاری محله‌ها...'
-                : !cityName.trim()
-                  ? 'ابتدا شهر را انتخاب کنید'
-                  : displayLabel}
-            </span>
-          </span>
-          <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
-        </button>
-
         {similarHits.length >= 2 && canOpenList ? (
           <div className="flex flex-wrap gap-1.5">
             {similarHits.map((h) => {
@@ -191,6 +168,29 @@ export function IntakeNeighborhoodPicker({
             })}
           </div>
         ) : null}
+
+        <button
+          type="button"
+          disabled={!canOpenList}
+          onClick={() => setOpen(true)}
+          className={cn(
+            'flex h-11 w-full items-center justify-between gap-2 rounded-md border bg-background px-3 text-sm transition-colors',
+            'hover:bg-muted/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary/40',
+            (!canOpenList || disabled) && 'cursor-not-allowed opacity-60'
+          )}
+        >
+          <span className="flex min-w-0 items-center gap-2 truncate">
+            <MapPin className="size-4 shrink-0 text-muted-foreground" />
+            <span className={cn('truncate', !value.trim() && 'text-muted-foreground')}>
+              {isLoading
+                ? 'در حال بارگذاری محله‌ها...'
+                : !cityName.trim()
+                  ? 'ابتدا شهر را انتخاب کنید'
+                  : displayLabel}
+            </span>
+          </span>
+          <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+        </button>
       </div>
 
       {open && hasCatalog ? (

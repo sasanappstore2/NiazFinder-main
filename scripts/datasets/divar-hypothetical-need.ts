@@ -1,5 +1,5 @@
 import { citySlugToPersianName, locationCityIdToSlug } from '@/lib/search/city-slugs';
-import { extractPostNaturalFields } from '@/lib/need-intake/laya/post-natural-extractor';
+import { extractPostNaturalFields } from '@/lib/need-intake/si/post-natural-extractor';
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -139,7 +139,7 @@ function needTransactionForCategory(categorySlug: string): string {
 
 /**
  * Build a clearly counterfactual seeker utterance from an offer's catalog facts.
- * This is template transformation, not Laya text generation and not user-need
+ * This is template transformation, not Si text generation and not user-need
  * ground truth. Listing prices, rents, deposits, and negative amenities are
  * deliberately never recast as seeker preferences.
  */
@@ -348,14 +348,14 @@ export function buildDivarHypotheticalNeed(row: JsonRecord): DivarHypotheticalNe
   };
 }
 
-type LayaOfferAnswer = {
+type SiOfferAnswer = {
   choice?: unknown;
   answer_confidence?: unknown;
   confidence?: unknown;
 };
 
-const LAYA_PROPERTY_KINDS = new Set(['apartment', 'villa', 'land', 'office', 'shop', 'industrial', 'unknown']);
-const LAYA_TRANSACTION_ACTIONS: Record<string, string> = {
+const SI_PROPERTY_KINDS = new Set(['apartment', 'villa', 'land', 'office', 'shop', 'industrial', 'unknown']);
+const SI_TRANSACTION_ACTIONS: Record<string, string> = {
   buy: 'برای خرید',
   rent_monthly: 'برای اجارهٔ ماهانه',
   rent_rahn_full: 'برای رهن کامل',
@@ -390,8 +390,8 @@ function transactionCompatible(categorySlug: string, transactionType: string): b
   return false;
 }
 
-function layaDecision(answers: JsonRecord, key: string, allowed: Set<string>) {
-  const answer = answers[key] as LayaOfferAnswer | undefined;
+function siDecision(answers: JsonRecord, key: string, allowed: Set<string>) {
+  const answer = answers[key] as SiOfferAnswer | undefined;
   const raw = typeof answer?.choice === 'string' ? answer.choice.trim() : '';
   const value = allowed.has(raw) ? raw : 'unknown';
   const rawConfidence = Number(answer?.answer_confidence ?? answer?.confidence);
@@ -400,46 +400,46 @@ function layaDecision(answers: JsonRecord, key: string, allowed: Set<string>) {
     : undefined;
   return {
     value,
-    source: 'laya_offer_inspection' as const,
+    source: 'si_offer_inspection' as const,
     confidence,
     accepted: false as const,
   };
 }
 
 /**
- * Convert Laya's typed reading of the original seller-side offer into a
+ * Convert Si's typed reading of the original seller-side offer into a
  * separately marked hypothetical request proposal. Render text only when the
- * Laya choices agree with the structured offer facts; numeric/location facts
+ * Si choices agree with the structured offer facts; numeric/location facts
  * remain deterministic and source-attributed. This output is never training-
  * eligible.
  */
-export function buildLayaDerivedHypotheticalNeed(
+export function buildSiDerivedHypotheticalNeed(
   row: JsonRecord,
   deterministicProposal: Pick<DivarHypotheticalNeed, 'targetDecisions' | 'sourceOfferLocation'>,
   answers: JsonRecord,
 ) {
-  const category = layaDecision(answers, 'category_candidate', new Set(Object.keys(CATEGORY_COPY)));
-  const propertyKind = layaDecision(answers, 'property_kind', LAYA_PROPERTY_KINDS);
-  const transactionType = layaDecision(
+  const category = siDecision(answers, 'category_candidate', new Set(Object.keys(CATEGORY_COPY)));
+  const propertyKind = siDecision(answers, 'property_kind', SI_PROPERTY_KINDS);
+  const transactionType = siDecision(
     answers,
     'transaction_type',
-    new Set([...Object.keys(LAYA_TRANSACTION_ACTIONS), 'sell', 'unknown']),
+    new Set([...Object.keys(SI_TRANSACTION_ACTIONS), 'sell', 'unknown']),
   );
   const sourceCategory = text(row.typedDecisions?.offer_category?.value) ?? 'unknown';
   const sourcePropertyKind = text(row.typedDecisions?.offer_property_kind?.value) ?? 'unknown';
   const sourceOfferTransaction = text(row.typedDecisions?.offer_transaction_type?.value) ?? 'unknown';
-  const expectedCounterfactualTransaction = LAYA_TRANSACTION_ACTIONS[sourceOfferTransaction]
+  const expectedCounterfactualTransaction = SI_TRANSACTION_ACTIONS[sourceOfferTransaction]
     ? sourceOfferTransaction
     : needTransactionForCategory(sourceCategory);
   const disagreements = [
     ...(category.value !== 'unknown' && sourceCategory !== 'unknown' && category.value !== sourceCategory
-      ? [{ field: 'category_candidate', laya: category.value, source: sourceCategory }]
+      ? [{ field: 'category_candidate', si: category.value, source: sourceCategory }]
       : []),
     ...(propertyKind.value !== 'unknown' && sourcePropertyKind !== 'unknown' && propertyKind.value !== sourcePropertyKind
-      ? [{ field: 'property_kind', laya: propertyKind.value, source: sourcePropertyKind }]
+      ? [{ field: 'property_kind', si: propertyKind.value, source: sourcePropertyKind }]
       : []),
     ...(transactionType.value !== 'unknown' && expectedCounterfactualTransaction !== 'unknown' && transactionType.value !== expectedCounterfactualTransaction
-      ? [{ field: 'transaction_type', laya: transactionType.value, source: expectedCounterfactualTransaction }]
+      ? [{ field: 'transaction_type', si: transactionType.value, source: expectedCounterfactualTransaction }]
       : []),
   ];
 
@@ -456,7 +456,7 @@ export function buildLayaDerivedHypotheticalNeed(
     propertyKindMatchesSource && transactionMatchesSource,
   );
   const conversionStatus = canRenderText
-    ? 'rendered_from_compatible_laya_choices'
+    ? 'rendered_from_compatible_si_choices'
     : !hasCategory
       ? 'unknown_or_unsupported_category'
       : !categoryMatchesSource
@@ -507,27 +507,27 @@ export function buildLayaDerivedHypotheticalNeed(
       : deterministicProposal.sourceOfferLocation.appCityName
         ? `در ${deterministicProposal.sourceOfferLocation.appCityName}`
         : '';
-    const layaBasedCopy = { ...copy, action: LAYA_TRANSACTION_ACTIONS[transactionType.value] };
+    const siBasedCopy = { ...copy, action: SI_TRANSACTION_ACTIONS[transactionType.value] };
     state = naturalNeedSentence(
-      layaBasedCopy,
+      siBasedCopy,
       attributes,
       location,
-      `${row.source.normalizedTextGroupSha256}:laya-derived-v1`,
+      `${row.source.normalizedTextGroupSha256}:si-derived-v1`,
     );
   }
 
   return {
-    taskType: 'divar-laya-derived-hypothetical-need/v1',
+    taskType: 'divar-si-derived-hypothetical-need/v1',
     schemaVersion: 1,
-    exampleId: `${row.exampleId}:laya-counterfactual-v1`,
+    exampleId: `${row.exampleId}:si-counterfactual-v1`,
     state,
     synthetic: true,
     realNeedGroundTruth: false,
     trainingEligible: false,
     shadowOnly: true,
     accepted: false,
-    source: 'laya_typed_decisions_plus_deterministic_catalog_facts',
-    model: 'convaiinnovations/laya-multilingual',
+    source: 'si_typed_decisions_plus_deterministic_catalog_facts',
+    model: 'convaiinnovations/si-multilingual',
     conversionStatus,
     decisions: targetDecisions,
     decisionAgreementWithSource: {
@@ -543,6 +543,6 @@ export function buildLayaDerivedHypotheticalNeed(
     },
     deterministicFacts: deterministicProposal.targetDecisions,
     sourceOfferLocation: deterministicProposal.sourceOfferLocation,
-    disclaimer: 'پیشنهاد فرضی مشتق‌شده از آگهی عرضه؛ خروجی Laya بازبینی‌نشده است، نیاز واقعی یا برچسب طلایی نیست و برای آموزش تأیید نشده است.',
+    disclaimer: 'پیشنهاد فرضی مشتق‌شده از آگهی عرضه؛ خروجی Si بازبینی‌نشده است، نیاز واقعی یا برچسب طلایی نیست و برای آموزش تأیید نشده است.',
   };
 }

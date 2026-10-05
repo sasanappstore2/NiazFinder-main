@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the prepared v6 Laya experiment only after the v3 MPS run completes cleanly."""
+"""Run the prepared v6 Si experiment only after the v3 MPS run completes cleanly."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[3]
 PLAN_RELATIVE = Path(
-    "data/laya-experiments/"
+    "data/si-experiments/"
     "divar-v6-explicit-rent-mode-mps-full-2026-09-28.launch-plan.json"
 )
 STALE_PROGRESS_SECONDS = 3 * 60 * 60
@@ -67,7 +67,7 @@ def validate_plan(plan: dict[str, Any], root: Path) -> tuple[Path, Path, Path]:
         raise ValueError("The plan must forbid concurrent MPS jobs.")
     training = plan.get("training", {})
     if (
-        training.get("method") != "official_laya_rlcd_full_parameter_v1"
+        training.get("method") != "official_si_rlcd_full_parameter_v1"
         or training.get("device") != "mps"
         or training.get("effectiveBatchSize") != (
             training.get("microBatchSize", 0) * training.get("gradientAccumulation", 0)
@@ -78,7 +78,7 @@ def validate_plan(plan: dict[str, Any], root: Path) -> tuple[Path, Path, Path]:
     if (
         not isinstance(launch_argv, list)
         or len(launch_argv) < 2
-        or launch_argv[1] != "scripts/datasets/finetune/train-divar-laya-rlcd.py"
+        or launch_argv[1] != "scripts/datasets/finetune/train-divar-si-rlcd.py"
         or "--micro-batch-size" not in launch_argv
         or "--grad-accumulation" not in launch_argv
         or "--device" not in launch_argv
@@ -137,7 +137,7 @@ def validate_plan(plan: dict[str, Any], root: Path) -> tuple[Path, Path, Path]:
         if not path.is_file():
             raise FileNotFoundError(f"Required queued-run artifact is missing: {path.relative_to(root)}")
     if not Path(plan["model"]["localDirectory"]).is_dir():
-        raise FileNotFoundError("The pinned local Laya checkpoint is unavailable.")
+        raise FileNotFoundError("The pinned local Si checkpoint is unavailable.")
     if plan["launchArgv"][0] != sys.executable and not Path(plan["launchArgv"][0]).is_file():
         raise FileNotFoundError("The pinned Python runtime for the training command is unavailable.")
     output_dirs = []
@@ -292,7 +292,7 @@ def validate_pilot_result(plan: dict[str, Any], experiment_dir: Path) -> None:
         or manifest.get("trainingMethod") != plan["training"]["method"]
         or manifest.get("productionLoadAllowed") is not False
         or manifest.get("syntheticTargetsAreRealNeedGroundTruth") is not False
-        or manifest.get("layaPredictionsUsedAsLabels") is not False
+        or manifest.get("siPredictionsUsedAsLabels") is not False
         or progress.get("step") != progress.get("totalSteps")
         or not (experiment_dir / "model.safetensors").is_file()
         or not (experiment_dir / "evaluation.json").is_file()
@@ -317,7 +317,7 @@ def validate_evaluation_report(plan: dict[str, Any], report: dict[str, Any]) -> 
 
 
 def acquire_lock() -> int:
-    lock_path = Path("/private/tmp/niazfinder-laya-v6-queue.lock")
+    lock_path = Path("/private/tmp/niazfinder-si-v6-queue.lock")
     descriptor = os.open(lock_path, os.O_CREAT | os.O_RDWR, 0o600)
     try:
         fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)

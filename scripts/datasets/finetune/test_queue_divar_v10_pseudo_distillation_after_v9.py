@@ -26,26 +26,26 @@ def test_dataset_requires_exact_hash_and_explicit_pseudo_label_provenance() -> N
         root = Path(temporary)
         dataset = root / "pseudo.jsonl"
         manifest_path = root / "pseudo.jsonl.manifest.json"
-        payload = b'{"taskType":"divar-laya-pseudo-distillation/v1"}\n'
+        payload = b'{"taskType":"divar-si-pseudo-distillation/v1"}\n'
         dataset.write_bytes(payload)
         manifest = {
             "status": "complete",
-            "taskType": "divar-laya-pseudo-distillation/v1",
+            "taskType": "divar-si-pseudo-distillation/v1",
             "model": QUEUE.MODEL_ID,
             "modelRevision": QUEUE.MODEL_REVISION,
             "teacherWeightsSha256": QUEUE.MODEL_WEIGHTS_SHA256,
             "synthetic": True,
             "realNeedGroundTruth": False,
             "trainingEligible": False,
-            "targetOrigin": "laya_pseudo_labels_not_gold",
-            "layaPredictionsUsedAsLabels": True,
+            "targetOrigin": "si_pseudo_labels_not_gold",
+            "siPredictionsUsedAsLabels": True,
             "outputBytes": len(payload),
             "outputSha256": QUEUE.sha256_file(dataset),
             "outputRows": 100,
         }
         manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
         plan = {
-            "taskType": "divar-laya-pseudo-distillation/v1",
+            "taskType": "divar-si-pseudo-distillation/v1",
             "dataset": {"minimumRows": 100},
         }
 
@@ -55,7 +55,7 @@ def test_dataset_requires_exact_hash_and_explicit_pseudo_label_provenance() -> N
         for changed in (
             {**manifest, "trainingEligible": True},
             {**manifest, "realNeedGroundTruth": True},
-            {**manifest, "layaPredictionsUsedAsLabels": False},
+            {**manifest, "siPredictionsUsedAsLabels": False},
             {**manifest, "outputSha256": "0" * 64},
             {**manifest, "outputRows": 99},
         ):

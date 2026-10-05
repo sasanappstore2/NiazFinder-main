@@ -23,7 +23,10 @@ export function buildShowIfContext(
 ): Record<string, unknown> {
   return {
     ...answers,
-    dealType: String(answers.dealType ?? transactionType ?? ''),
+    // The canonical deal lives on entities (the deal select writes it); a
+    // stale answers.dealType mirror (e.g. from an earlier SI soft-fill) must
+    // never override it for showIf evaluation.
+    dealType: String(transactionType || answers.dealType || ''),
   };
 }
 
@@ -78,7 +81,7 @@ export function resolveFieldValue(
     if (typeof desc === 'string') return desc;
   }
   if (field.key === 'rahnAmount') {
-    const rahn = answers.rahnAmount ?? answers.deposit;
+    const rahn = answers.rahnAmount ?? entities.rahnAmount ?? answers.deposit;
     if (rahn != null && rahn !== '') return rahn as string | number;
     const tx = String(entities.transactionType ?? answers.dealType ?? '');
     const isRentDeal =
@@ -95,8 +98,9 @@ export function resolveFieldValue(
       return entities.budgetMax;
     }
   }
-  if (field.key === 'monthlyRent' && answers.monthlyRent != null && answers.monthlyRent !== '') {
-    return answers.monthlyRent as string | number;
+  if (field.key === 'monthlyRent') {
+    const rent = answers.monthlyRent ?? entities.monthlyRent;
+    if (rent != null && rent !== '') return rent as string | number;
   }
   if (field.key === 'deposit') {
     const deposit = answers.deposit ?? answers.rahnAmount;

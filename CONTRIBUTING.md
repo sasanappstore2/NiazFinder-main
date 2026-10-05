@@ -6,7 +6,7 @@ Thanks for your interest in contributing. This project is primarily Persian-lang
 
 1. Read `README.md` (architecture + setup) and `AGENTS.md` (repo conventions).
 2. Copy `.env.example` → `.env.local` and start infra: `docker compose up -d`.
-3. Run the app: `npm run dev` (also see `npm run dev:chat`, `npm run dev:laya-post` for optional services).
+3. Run the app: `npm run dev` (also see `npm run dev:chat`, `npm run dev:si-post` for optional services).
 
 ## Workflow
 
@@ -31,7 +31,7 @@ Thanks for your interest in contributing. This project is primarily Persian-lang
 
 ## AI/ML Components (preserve, do not replace)
 
-The Laya Multilingual worker (`mini-services/laya-post`, `src/lib/need-intake/laya/`) and the Gemma 4 / embedding sidecars are intentional parts of the architecture. Do not remove them, swap models, or bypass the loopback-only proxying and research-adapter gates without maintainer approval. If an AI integration looks broken, document it and ask — don't delete it.
+The Si Multilingual worker (`mini-services/si-post`, `src/lib/need-intake/si/`) and the Gemma 4 / embedding sidecars are intentional parts of the architecture. Do not remove them, swap models, or bypass the loopback-only proxying and research-adapter gates without maintainer approval. If an AI integration looks broken, document it and ask — don't delete it.
 
 ## Reporting Issues
 

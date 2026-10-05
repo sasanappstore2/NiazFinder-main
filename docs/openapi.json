@@ -4047,8 +4047,8 @@
         "tags": [
           "post"
         ],
-        "summary": "Natural-language /post analysis (deterministic parser + optional Laya)",
-        "description": "Proxies to the private Laya Multilingual worker on loopback when enabled; deterministic parsing always runs. See src/lib/need-intake/laya/post-natural-contract.ts (schemaVersion 2).\n\nNo server-side auth call detected statically — verify before treating as public.",
+        "summary": "Natural-language /post analysis (deterministic parser + optional Si)",
+        "description": "Proxies to the private Si Multilingual worker on loopback when enabled; deterministic parsing always runs. See src/lib/need-intake/si/post-natural-contract.ts (schemaVersion 2).\n\nNo server-side auth call detected statically — verify before treating as public.",
         "requestBody": {
           "required": true,
           "content": {
@@ -4105,7 +4105,7 @@
         },
         "responses": {
           "200": {
-            "description": "schemaVersion, normalizedText, fields[], provisionalCategory. Laya auto-apply is off by default."
+            "description": "schemaVersion, normalizedText, fields[], provisionalCategory. Si auto-apply is off by default."
           },
           "400": {
             "description": "Invalid request."

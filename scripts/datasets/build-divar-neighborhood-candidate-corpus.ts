@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Build a local-only, weakly supervised Laya neighborhood-choice shadow corpus.
+ * Build a local-only, weakly supervised Si neighborhood-choice shadow corpus.
  *
  * The source is seller/agent supply text, not seeker demand. A row is eligible
  * only when the existing city-scoped resolver finds multiple explicit catalog

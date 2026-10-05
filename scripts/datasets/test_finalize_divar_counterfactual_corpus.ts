@@ -4,8 +4,8 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 
-const MODEL = 'convaiinnovations/laya-multilingual';
-const OUTPUT_TASK = 'divar-counterfactual-post-need-laya-proposal/v5';
+const MODEL = 'convaiinnovations/si-multilingual';
+const OUTPUT_TASK = 'divar-counterfactual-post-need-si-proposal/v5';
 const HYPOTHETICAL_TASK = 'divar-counterfactual-post-need-proposal/v5';
 const needQuestionHash = createHash('sha256').update('{}').digest('hex');
 
@@ -62,14 +62,14 @@ function row(id: string, state: string, area: number) {
         deposit: target('unknown'),
       },
     },
-    laya: {
+    si: {
       model: MODEL,
       answers: {},
       inputStateKind: 'original_divar_offer_text',
       inputStateSha256: 'a'.repeat(64),
       source: 'unreviewed_offer_extraction_proposal_not_gold',
     },
-    layaDerivedHypotheticalNeed: {
+    siDerivedHypotheticalNeed: {
       state: 'برای اجارهٔ مغازه در مشهد دنبال فضای کاری هستم.',
       trainingEligible: false,
       realNeedGroundTruth: false,
@@ -82,7 +82,7 @@ function row(id: string, state: string, area: number) {
   };
 }
 
-const temp = mkdtempSync(join(tmpdir(), 'laya-corpus-finalize-test-'));
+const temp = mkdtempSync(join(tmpdir(), 'si-corpus-finalize-test-'));
 try {
   const input = join(temp, 'input.jsonl');
   const runManifestPath = `${input}.manifest.json`;
@@ -138,8 +138,8 @@ try {
   const kept = readFileSync(output, 'utf8').trim().split('\n').map((line) => JSON.parse(line));
   const quarantined = readFileSync(quarantine, 'utf8').trim().split('\n').map((line) => JSON.parse(line));
   assert(kept.length === 1 && kept[0].trainingEligible === false, 'kept proposal must remain explicitly ineligible');
-  assert(kept[0].hypotheticalNeed.targetDecisions.category_candidate.value === 'apartment-rent', 'finalized labels must come from the deterministic source-fact reference, never the separate Laya proposal');
-  assert(kept[0].layaDerivedHypotheticalNeed.decisions.category_candidate.value === 'shop-rent', 'the Laya-derived proposal must remain independently inspectable');
+  assert(kept[0].hypotheticalNeed.targetDecisions.category_candidate.value === 'apartment-rent', 'finalized labels must come from the deterministic source-fact reference, never the separate Si proposal');
+  assert(kept[0].siDerivedHypotheticalNeed.decisions.category_candidate.value === 'shop-rent', 'the Si-derived proposal must remain independently inspectable');
   assert(quarantined.length === 2 && quarantined.every((item) => item.corpusAudit.status === 'quarantined'), 'conflicts must remain inspectable in quarantine');
 
   const incompleteInput = join(temp, 'running.jsonl');

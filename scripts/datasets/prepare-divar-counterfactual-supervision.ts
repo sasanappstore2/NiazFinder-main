@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Build a separately marked, source-derived supervision candidate for an
- * offline synthetic-only Laya experiment. Laya predictions are never labels.
+ * offline synthetic-only Si experiment. Si predictions are never labels.
  */
 import {
   closeSync,
@@ -18,8 +18,8 @@ import { basename, dirname, resolve } from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 import { createInterface } from 'node:readline';
 
-const MODEL = 'convaiinnovations/laya-multilingual';
-const INPUT_TASK = 'divar-counterfactual-post-need-laya-proposal/v5';
+const MODEL = 'convaiinnovations/si-multilingual';
+const INPUT_TASK = 'divar-counterfactual-post-need-si-proposal/v5';
 const SOURCE_DATASET = 'divarofficial/real_estate_ads';
 const OUTPUT_TASK = 'divar-counterfactual-typed-supervision-candidate/v5';
 const TARGET_KEYS = [
@@ -81,7 +81,7 @@ function validateRunManifest(manifest: Json): Json {
     typeof manifest.questionFactoryBaseSha256 !== 'string' ||
     sha256Text(JSON.stringify(contract)) !== manifest.questionFactoryBaseSha256
   ) {
-    throw new Error('Input must be a complete, byte-matched full local Laya run with the fixed hypothetical question contract.');
+    throw new Error('Input must be a complete, byte-matched full local Si run with the fixed hypothetical question contract.');
   }
   return questions;
 }
@@ -94,12 +94,12 @@ function buildSupervisionCandidate(row: Json, questions: Json, questionSchemaSha
     row.taskType !== INPUT_TASK || row.schemaVersion !== 5 || row.synthetic !== true || row.realNeedGroundTruth !== false ||
     row.isNeedGroundTruth !== false || row.trainingEligible !== false || row.shadowOnly !== true ||
     typeof row.exampleId !== 'string' || !row.exampleId.trim() ||
-    row.laya?.model !== MODEL ||
-    row.laya?.inputStateKind !== 'original_divar_offer_text' ||
-    typeof row.laya?.inputStateSha256 !== 'string' ||
-    !/^[a-f0-9]{64}$/u.test(row.laya.inputStateSha256) ||
-    typeof row.laya?.questionSchemaSha256 !== 'string' ||
-    !/^[a-f0-9]{64}$/u.test(row.laya.questionSchemaSha256) ||
+    row.si?.model !== MODEL ||
+    row.si?.inputStateKind !== 'original_divar_offer_text' ||
+    typeof row.si?.inputStateSha256 !== 'string' ||
+    !/^[a-f0-9]{64}$/u.test(row.si.inputStateSha256) ||
+    typeof row.si?.questionSchemaSha256 !== 'string' ||
+    !/^[a-f0-9]{64}$/u.test(row.si.questionSchemaSha256) ||
     hypothetical?.realNeedGroundTruth !== false || hypothetical?.trainingEligible !== false ||
     hypothetical?.generation?.method !== 'deterministic-counterfactual-template' ||
     hypothetical?.generation?.version !== 5 ||
@@ -112,7 +112,7 @@ function buildSupervisionCandidate(row: Json, questions: Json, questionSchemaSha
     typeof hypothetical?.originalSplit !== 'string' || !hypothetical.originalSplit.trim() ||
     !targets || typeof targets !== 'object' || Array.isArray(targets)
   ) {
-    throw new Error('Proposal row does not match the explicitly synthetic Divar/Laya contract.');
+    throw new Error('Proposal row does not match the explicitly synthetic Divar/Si contract.');
   }
 
   const decisions: Json = {};
@@ -128,7 +128,7 @@ function buildSupervisionCandidate(row: Json, questions: Json, questionSchemaSha
       typeof target.value !== 'string' ||
       !Object.hasOwn(options, target.value)
     ) {
-      throw new Error(`Source-derived target for ${key} is missing or outside the exact Laya choice vocabulary.`);
+      throw new Error(`Source-derived target for ${key} is missing or outside the exact Si choice vocabulary.`);
     }
     const probabilities = Object.fromEntries(Object.keys(options).map((option) => [option, option === target.value ? 1 : 0]));
     decisions[key] = {
@@ -153,7 +153,7 @@ function buildSupervisionCandidate(row: Json, questions: Json, questionSchemaSha
       sourceRowOrdinal: source.sourceRowOrdinal,
       sourceExampleId: source.sourceExampleId,
       sourceType: source.sourceType,
-      targetOrigin: 'deterministic_source_facts_not_laya_output',
+      targetOrigin: 'deterministic_source_facts_not_si_output',
     },
     synthetic: true,
     realNeedGroundTruth: false,
@@ -250,7 +250,7 @@ async function main(): Promise<void> {
       uniqueSourceGroups: seenGroups.size,
       questionSchemaSha256,
       questionKeys: TARGET_KEYS,
-      targetOrigin: 'deterministic_source_facts_not_laya_output',
+      targetOrigin: 'deterministic_source_facts_not_si_output',
       modelForFutureExperiment: MODEL,
       synthetic: true,
       realNeedGroundTruth: false,
@@ -258,7 +258,7 @@ async function main(): Promise<void> {
       auxiliaryResearchCandidate: true,
       trainingEligible: false,
       rightsAndPrivacyReview: 'pending; local-only; no redistribution or cloud transfer authorized',
-      layaPredictionsUsedAsTargets: false,
+      siPredictionsUsedAsTargets: false,
       outputBytes: statSync(outputTemp).size,
       outputSha256: await new Promise<string>((resolveHash, reject) => {
         const hash = createHash('sha256');

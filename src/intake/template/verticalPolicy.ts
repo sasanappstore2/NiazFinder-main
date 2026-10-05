@@ -41,7 +41,13 @@ const REAL_ESTATE_SECTIONS: TemplateSection[] = [
     label: 'فوریت و زمان‌بندی',
     fields: ['when', 'moveInWhen'],
   },
-  { key: 'budget', label: 'بودجه', fields: ['budget', 'rahnAmount', 'monthlyRent', 'deposit'] },
+  {
+    key: 'budget',
+    label: 'بودجه',
+    // Deal-aware: generic ceiling for BUY/SELL, dedicated rahn / monthly-rent
+    // inputs for rent deals (visibility set per-field via showIfIn).
+    fields: ['budget', 'rahnAmount', 'monthlyRent'],
+  },
   { key: 'specs', label: 'فیلترهای پیشرفته', fields: [] },
 ];
 

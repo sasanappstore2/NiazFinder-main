@@ -20,8 +20,8 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[2]
-BUILDER_PATH = ROOT / "scripts/datasets/divar_laya_corpus.py"
-SPEC = importlib.util.spec_from_file_location("divar_laya_corpus_audit", BUILDER_PATH)
+BUILDER_PATH = ROOT / "scripts/datasets/divar_si_corpus.py"
+SPEC = importlib.util.spec_from_file_location("divar_si_corpus_audit", BUILDER_PATH)
 if SPEC is None or SPEC.loader is None:
     raise RuntimeError("Could not load the pinned Divar corpus rules.")
 CORPUS = importlib.util.module_from_spec(SPEC)

@@ -3,10 +3,13 @@
 import { Check, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { getCategoryBySlug, normalizeCategoryPair } from '@/config/categories';
+import { toPersianDigits } from '@/lib/format/digits';
+import { formatTomanAmount } from '@/lib/format/money';
 import type {
   PostNaturalAnalyzeResponse,
   PostNaturalField,
-} from '@/lib/need-intake/laya/post-natural-contract';
+} from '@/lib/need-intake/si/post-natural-contract';
 
 const FIELD_LABELS: Record<string, string> = {
   categorySlug: 'دسته‌بندی',
@@ -29,10 +32,82 @@ const FIELD_LABELS: Record<string, string> = {
   usageType: 'کاربری',
 };
 
-function displayValue(value: unknown): string {
-  if (Array.isArray(value)) return value.join('، ');
+const MONEY_KEYS = new Set(['rahnAmount', 'deposit', 'monthlyRent', 'budgetMin', 'budgetMax']);
+const COUNT_KEYS = new Set(['area', 'rooms', 'areaRange']);
+const BOOLEAN_KEYS = new Set(['parking', 'elevator', 'storage']);
+
+const PROPERTY_KIND_FA: Record<string, string> = {
+  apartment: 'آپارتمان',
+  villa: 'ویلا',
+  suite: 'سوئیت',
+  shop: 'مغازه',
+  office: 'دفتر',
+  land: 'زمین',
+  commercial: 'تجاری',
+  industrial: 'صنعتی',
+  building: 'ساختمان',
+};
+
+const DEAL_FA: Record<string, string> = {
+  buy: 'خرید',
+  purchase: 'خرید',
+  BUY: 'خرید',
+  sale: 'فروش',
+  sell: 'فروش',
+  SELL: 'فروش',
+  rent: 'اجاره',
+  monthly_rent: 'اجاره',
+  rent_monthly: 'اجاره',
+  RENT: 'اجاره',
+  full_deposit: 'رهن کامل',
+  mortgage: 'رهن کامل',
+  rent_rahn_full: 'رهن کامل',
+  FULL_DEPOSIT: 'رهن کامل',
+  deposit_and_rent: 'رهن و اجاره',
+  rent_rahn_ejare: 'رهن و اجاره',
+  DEPOSIT_AND_RENT: 'رهن و اجاره',
+  daily_rent: 'اجاره روزانه',
+  nightly: 'اجاره روزانه',
+  rent_short_term: 'اجاره روزانه',
+  DAILY_RENT: 'اجاره روزانه',
+  hourly_rent: 'اجاره ساعتی',
+  HOURLY_RENT: 'اجاره ساعتی',
+};
+
+function categoryFaLabel(slug: string): string {
+  const pair = normalizeCategoryPair(slug);
+  const leaf = getCategoryBySlug(pair.subcategorySlug ?? pair.categorySlug);
+  const parent = getCategoryBySlug(pair.categorySlug);
+  if (leaf && parent && leaf.slug !== parent.slug) return `${parent.title} ← ${leaf.title}`;
+  return leaf?.title ?? slug;
+}
+
+/** Persian rendering for field values — no raw English enums in the UI. */
+function displayValue(value: unknown, key?: string): string {
+  if (Array.isArray(value)) return value.map((item) => displayValue(item, key)).join('، ');
   if (value && typeof value === 'object') return JSON.stringify(value);
-  return String(value ?? '');
+  const raw = String(value ?? '').trim();
+  if (!raw) return '';
+  if (key === 'categorySlug') return categoryFaLabel(raw);
+  if (key === 'dealType' || key === 'transactionType') {
+    return DEAL_FA[raw] ?? DEAL_FA[raw.toLowerCase()] ?? raw;
+  }
+  if (key === 'propertyKind') {
+    return PROPERTY_KIND_FA[raw.toLowerCase()] ?? raw;
+  }
+  if (BOOLEAN_KEYS.has(key ?? '') && /^(yes|no|true|false)$/i.test(raw)) {
+    return /^(yes|true)$/i.test(raw) ? 'دارد' : 'ندارد';
+  }
+  if (MONEY_KEYS.has(key ?? '')) {
+    const n = Number(raw.replace(/[٬,]/g, ''));
+    return Number.isFinite(n) ? formatTomanAmount(n) : raw;
+  }
+  if (COUNT_KEYS.has(key ?? '')) {
+    const n = Number(raw);
+    if (Number.isFinite(n) && key === 'area') return `${toPersianDigits(String(n))} متر`;
+    return toPersianDigits(raw);
+  }
+  return raw;
 }
 
 export interface PostNaturalAnalysisCardProps {
@@ -61,10 +136,10 @@ export function PostNaturalAnalysisCard({
         !(field.key === 'neighborhood' && result.locationCandidates.length > 0) &&
         !(field.key === 'categorySlug' && result.provisionalCategory?.requiresConfirmation)
     ) ?? [];
-  const layaNeighborhoodProposal = result?.fields.find(
+  const siNeighborhoodProposal = result?.fields.find(
     (field) =>
       field.key === 'neighborhood' &&
-      field.source === 'laya' &&
+      field.source === 'si' &&
       field.requiresConfirmation &&
       result.locationCandidates.some((candidate) => candidate.label === field.value)
   );
@@ -91,7 +166,7 @@ export function PostNaturalAnalysisCard({
         </div>
         {result ? (
           <span className="text-[11px] text-muted-foreground">
-            {result.laya.status === 'ready' ? 'تصمیم‌گیری محلی Laya' : 'حالت دستی / قوانین'}
+            {result.si.status === 'ready' ? 'تصمیم‌گیری محلی SI' : 'حالت دستی / قوانین'}
           </span>
         ) : null}
       </div>
@@ -108,11 +183,11 @@ export function PostNaturalAnalysisCard({
             <div className="mt-3 flex flex-wrap gap-1.5">
               {applied.map((field, index) => (
                 <span
-                  key={`${field.key}-${index}-${displayValue(field.value)}`}
+                  key={`${field.key}-${index}-${displayValue(field.value, field.key)}`}
                   className="inline-flex items-center gap-1 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2 py-1 text-xs text-emerald-100"
                 >
                   <Check className="size-3" />
-                  {FIELD_LABELS[field.key] ?? field.key}: {displayValue(field.value)}
+                  {FIELD_LABELS[field.key] ?? field.key}: {displayValue(field.value, field.key)}
                 </span>
               ))}
             </div>
@@ -128,7 +203,7 @@ export function PostNaturalAnalysisCard({
                 className="mt-2"
                 onClick={() => onConfirmCategory(result.provisionalCategory!.slug)}
               >
-                تأیید دسته‌بندی {result.provisionalCategory.slug}
+                تأیید دسته‌بندی {categoryFaLabel(result.provisionalCategory.slug)}
               </Button>
             </div>
           ) : null}
@@ -138,11 +213,11 @@ export function PostNaturalAnalysisCard({
               <p className="text-xs text-muted-foreground">این موارد نیاز به تأیید شما دارند:</p>
               {proposals.map((field, index) => (
                 <div
-                  key={`${field.key}-${index}-${displayValue(field.value)}-proposal`}
+                  key={`${field.key}-${index}-${displayValue(field.value, field.key)}-proposal`}
                   className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/70 bg-background/30 px-2.5 py-2"
                 >
                   <span className="text-xs">
-                    {FIELD_LABELS[field.key] ?? field.key}: {displayValue(field.value)}
+                    {FIELD_LABELS[field.key] ?? field.key}: {displayValue(field.value, field.key)}
                   </span>
                   <Button type="button" size="sm" variant="outline" onClick={() => onConfirmField(field)}>
                     تأیید
@@ -182,11 +257,11 @@ export function PostNaturalAnalysisCard({
                     key={`${candidate.city ?? ''}:${candidate.slug}`}
                     type="button"
                     size="sm"
-                    variant={layaNeighborhoodProposal?.value === candidate.label ? 'default' : 'outline'}
+                    variant={siNeighborhoodProposal?.value === candidate.label ? 'default' : 'outline'}
                     className="gap-1.5"
                     onClick={() => onConfirmField(
-                      layaNeighborhoodProposal?.value === candidate.label
-                        ? layaNeighborhoodProposal
+                      siNeighborhoodProposal?.value === candidate.label
+                        ? siNeighborhoodProposal
                         : {
                             key: 'neighborhood',
                             value: candidate.label,
@@ -200,8 +275,8 @@ export function PostNaturalAnalysisCard({
                   >
                     {candidate.label}
                     {multiCityCandidates && candidate.city ? ` (${candidate.city})` : null}
-                    {layaNeighborhoodProposal?.value === candidate.label ? (
-                      <span className="text-[10px] opacity-80">پیشنهاد Laya</span>
+                    {siNeighborhoodProposal?.value === candidate.label ? (
+                      <span className="text-[10px] opacity-80">پیشنهاد SI</span>
                     ) : null}
                   </Button>
                 ))}

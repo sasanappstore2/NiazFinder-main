@@ -178,7 +178,9 @@ export default function RootLayout({
           }}
         />
       </head>
+      {/* suppressHydrationWarning: browser extensions inject attributes (e.g. inmaintabuse) on <body> before React hydrates */}
       <body
+        suppressHydrationWarning
         className={`${vazirmatn.variable} ${vazirmatn.className} font-sans antialiased bg-background text-foreground persian-nums`}
       >
         {/* Skip to main content link for accessibility */}

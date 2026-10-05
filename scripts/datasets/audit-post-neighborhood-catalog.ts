@@ -3,8 +3,8 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import type { ManagedNeighborhood } from '@/lib/neighborhoods/types';
-import { extractPostNaturalFields } from '@/lib/need-intake/laya/post-natural-extractor';
-import { resolvePostNeighborhoodInCity } from '@/lib/need-intake/laya/post-neighborhood-resolver';
+import { extractPostNaturalFields } from '@/lib/need-intake/si/post-natural-extractor';
+import { resolvePostNeighborhoodInCity } from '@/lib/need-intake/si/post-neighborhood-resolver';
 
 type Catalog = {
   cityId: string;

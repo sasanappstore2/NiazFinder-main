@@ -19,29 +19,28 @@ import {
   findNeighborhoodNameAcrossCities,
   type NationwideNeighborhoodGroup,
 } from '@/lib/need-intake/neighborhood-catalog.server';
-import { resolvePostNeighborhoodInCity } from '@/lib/need-intake/laya/post-neighborhood-resolver';
+import { resolvePostNeighborhoodInCity } from '@/lib/need-intake/si/post-neighborhood-resolver';
 import {
   buildPostDecisionQuestions,
   type PostDecisionQuestion,
-} from '@/lib/need-intake/laya/post-decision-questions';
+} from '@/lib/need-intake/si/post-decision-questions';
 import {
-  POST_LAYA_MODEL,
   postNaturalAnalyzeRequestSchema,
   postNaturalAnalyzeResponseSchema,
   type PostNaturalAnalyzeRequest,
   type PostNaturalField,
-} from '@/lib/need-intake/laya/post-natural-contract';
+} from '@/lib/need-intake/si/post-natural-contract';
 import {
   extractPostNaturalFields,
   hasPostDecisionTextEvidence,
-} from '@/lib/need-intake/laya/post-natural-extractor';
-import { normalizePostNaturalText } from '@/lib/need-intake/laya/post-natural-normalization';
+} from '@/lib/need-intake/si/post-natural-extractor';
+import { normalizePostNaturalText } from '@/lib/need-intake/si/post-natural-normalization';
 
 export const runtime = 'nodejs';
 
-const MAX_LAYA_TIMEOUT_MS = 15_000;
+const MAX_SI_TIMEOUT_MS = 15_000;
 
-type LayaAnswer = {
+type SiAnswer = {
   type?: string;
   choice?: string;
   noul?: number;
@@ -49,8 +48,8 @@ type LayaAnswer = {
   answer_confidence?: number;
 };
 
-type LayaResponse = {
-  answers?: Record<string, LayaAnswer>;
+type SiResponse = {
+  answers?: Record<string, SiAnswer>;
   usage?: Record<string, number>;
 };
 
@@ -92,13 +91,25 @@ function filterLockedPatch(
   answers: Record<string, unknown>,
   warnings: string[]
 ) {
+  // One user lock is one user-facing message: dealType/transactionType are a
+  // single lock group (cf. isLocked), and the analysis card renders warnings
+  // verbatim, so they carry a Persian label like SI_CANONICAL_KEY_FA.
+  const warnedGroups = new Set<string>();
+  const pushManualKeepWarning = (key: string) => {
+    const group = ['dealType', 'transactionType', 'transaction_type', 'deal_type'].includes(key)
+      ? 'dealType'
+      : key;
+    if (warnedGroups.has(group)) return;
+    warnedGroups.add(group);
+    warnings.push(`مقدار دستی ${SI_CANONICAL_KEY_FA[group] ?? group} حفظ شد.`);
+  };
   const nextEntities: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(entities)) {
     if (isLocked(request, key)) {
       // Preserving an explicitly selected location is normal context, not a
       // conflict worth surfacing in the user's analysis card.
       if (!['city', 'citySlug', 'neighborhood', 'neighborhoodSlug'].includes(key)) {
-        warnings.push(`مقدار دستی ${key} حفظ شد.`);
+        pushManualKeepWarning(key);
       }
       continue;
     }
@@ -108,7 +119,7 @@ function filterLockedPatch(
   for (const [key, value] of Object.entries(answers)) {
     if (isLocked(request, key)) {
       if (!['city', 'citySlug', 'neighborhood', 'neighborhoodSlug'].includes(key)) {
-        warnings.push(`مقدار دستی ${key} حفظ شد.`);
+        pushManualKeepWarning(key);
       }
       continue;
     }
@@ -117,31 +128,31 @@ function filterLockedPatch(
   return { entities: nextEntities, answers: nextAnswers };
 }
 
-function layaGate(answer: LayaAnswer): { confidence: number; accepted: boolean } {
+function siGate(answer: SiAnswer): { confidence: number; accepted: boolean } {
   const confidence = Number(answer.answer_confidence ?? answer.confidence ?? 0);
-  const minConfidence = finiteEnv('LAYA_POST_MIN_CONFIDENCE', 0.82);
-  const autoApply = process.env.LAYA_POST_AUTO_APPLY === 'true';
+  const minConfidence = finiteEnv('SI_POST_MIN_CONFIDENCE', 0.82);
+  const autoApply = process.env.SI_POST_AUTO_APPLY === 'true';
   return {
     confidence: Number.isFinite(confidence) ? confidence : 0,
     // Model-backed categorical decisions stay proposals by default. Enabling
-    // auto-apply is an explicit, calibrated rollout decision. Laya's current
+    // auto-apply is an explicit, calibrated rollout decision. Si's current
     // action probability is not a correctness/reliability signal.
     accepted: autoApply && confidence >= minConfidence,
   };
 }
 
-function decisionValue(answer: LayaAnswer | undefined): string | undefined {
+function decisionValue(answer: SiAnswer | undefined): string | undefined {
   const value = answer?.choice?.trim();
   return value && value !== 'unknown' ? value : undefined;
 }
 
-async function callLocalLaya(
+async function callLocalSi(
   sourceText: string,
   normalizedText: string,
   questions: Record<string, PostDecisionQuestion>,
   context: Record<string, unknown>
-): Promise<{ status: 'ready' | 'unavailable'; result?: LayaResponse; latencyMs: number }> {
-  const configuredUrl = process.env.LAYA_POST_URL?.trim() || 'http://127.0.0.1:8101/predict';
+): Promise<{ status: 'ready' | 'unavailable'; result?: SiResponse; latencyMs: number }> {
+  const configuredUrl = process.env.SI_POST_URL?.trim() || 'http://127.0.0.1:8101/predict';
   let url: string;
   try {
     const parsedUrl = new URL(configuredUrl);
@@ -156,7 +167,7 @@ async function callLocalLaya(
     return { status: 'unavailable', latencyMs: 0 };
   }
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), MAX_LAYA_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), MAX_SI_TIMEOUT_MS);
   const started = Date.now();
   try {
     const response = await fetch(url, {
@@ -177,7 +188,7 @@ async function callLocalLaya(
     if (!response.ok) {
       return { status: 'unavailable', latencyMs: Date.now() - started };
     }
-    const data = (await response.json()) as LayaResponse;
+    const data = (await response.json()) as SiResponse;
     return { status: 'ready', result: data, latencyMs: Date.now() - started };
   } catch {
     return { status: 'unavailable', latencyMs: Date.now() - started };
@@ -253,11 +264,11 @@ async function resolveNeighborhood(
   return { candidates: [] as Array<{ slug: string; label: string; city?: string }> };
 }
 
-function addLayaField(
+function addSiField(
   fields: PostNaturalField[],
   key: string,
   value: unknown,
-  answer: LayaAnswer,
+  answer: SiAnswer,
   requiresConfirmation: boolean,
   evidence: string
 ) {
@@ -265,13 +276,24 @@ function addLayaField(
     key,
     value,
     confidence: Number(answer.answer_confidence ?? answer.confidence ?? 0),
-    source: 'laya',
+    source: 'si',
     requiresConfirmation,
     evidence,
   });
 }
 
-function canonicalKeyForLayaQuestion(key: string): string | undefined {
+/** Persian labels for canonical keys surfaced in user-facing warnings. */
+const SI_CANONICAL_KEY_FA: Record<string, string> = {
+  dealType: 'نوع معامله',
+  propertyKind: 'نوع ملک',
+  deedType: 'نوع سند',
+  usageType: 'کاربری',
+  parking: 'پارکینگ',
+  elevator: 'آسانسور',
+  storage: 'انباری',
+};
+
+function canonicalKeyForSiQuestion(key: string): string | undefined {
   if (key === 'transaction_type') return 'dealType';
   if (key === 'property_kind') return 'propertyKind';
   if (key === 'deed_type') return 'deedType';
@@ -280,9 +302,9 @@ function canonicalKeyForLayaQuestion(key: string): string | undefined {
   return undefined;
 }
 
-function applyLayaAnswer(
+function applySiAnswer(
   key: string,
-  answer: LayaAnswer | undefined,
+  answer: SiAnswer | undefined,
   fields: PostNaturalField[],
   entities: Record<string, unknown>,
   answers: Record<string, unknown>,
@@ -292,14 +314,14 @@ function applyLayaAnswer(
 ): { provisionalCategory?: { slug: string; confidence: number; reason?: string; requiresConfirmation: boolean } } {
   const value = decisionValue(answer);
   if (!answer || !value) return {};
-  const gate = layaGate(answer);
+  const gate = siGate(answer);
   const accepted = gate.accepted && !isLocked(request, key);
   const requiresConfirmation = !accepted;
 
   // Exact deterministic extraction has priority over a model suggestion. This
-  // prevents a Laya guess from duplicating or overwriting a value already
+  // prevents a Si guess from duplicating or overwriting a value already
   // proved by the parser. A disagreement is visible as a warning.
-  const canonicalKey = canonicalKeyForLayaQuestion(key);
+  const canonicalKey = canonicalKeyForSiQuestion(key);
   const deterministicField = canonicalKey
     ? fields.find(
         (field) =>
@@ -309,7 +331,7 @@ function applyLayaAnswer(
     : undefined;
   if (deterministicField) {
     if (String(deterministicField.value) !== value) {
-      warnings.push(`پیشنهاد Laya برای ${canonicalKey} با استخراج قطعی متن اختلاف داشت؛ مقدار قطعی حفظ شد.`);
+      warnings.push(`پیشنهاد SI برای ${SI_CANONICAL_KEY_FA[canonicalKey ?? ''] ?? canonicalKey} با استخراج قطعی متن اختلاف داشت؛ مقدار قطعی حفظ شد.`);
     }
     return {};
   }
@@ -317,7 +339,7 @@ function applyLayaAnswer(
   if (key === 'category_candidate') {
     const candidate = categoryCandidates.find((item) => item.slug === value);
     if (!candidate) return {};
-    addLayaField(fields, 'categorySlug', value, answer, requiresConfirmation, candidate.label);
+    addSiField(fields, 'categorySlug', value, answer, requiresConfirmation, candidate.label);
     if (accepted && !request.categoryLockedByUser) {
       const pair = normalizeCategoryPair(value);
       entities.categorySlug = pair.categorySlug;
@@ -326,7 +348,7 @@ function applyLayaAnswer(
         provisionalCategory: {
           slug: value,
           confidence: gate.confidence,
-          reason: `Laya مسیر ${candidate.label} را بین گزینه‌های محدودشده پیشنهاد کرد.`,
+          reason: `Si مسیر ${candidate.label} را بین گزینه‌های محدودشده پیشنهاد کرد.`,
           requiresConfirmation: false,
         },
       };
@@ -335,7 +357,7 @@ function applyLayaAnswer(
       provisionalCategory: {
         slug: value,
         confidence: gate.confidence,
-        reason: `پیشنهاد Laya برای ${candidate.label}.`,
+        reason: `پیشنهاد Si برای ${candidate.label}.`,
         requiresConfirmation: true,
       },
     };
@@ -344,7 +366,7 @@ function applyLayaAnswer(
   if (key === 'transaction_type') {
     const transaction = mapDealTypeToTransaction(value);
     if (!transaction) return {};
-    addLayaField(fields, 'dealType', value, answer, requiresConfirmation, 'نوع معامله از متن');
+    addSiField(fields, 'dealType', value, answer, requiresConfirmation, 'نوع معامله از متن');
     if (accepted) {
       entities.transactionType = transaction;
       answers.dealType = value;
@@ -353,7 +375,7 @@ function applyLayaAnswer(
   }
 
   if (key === 'property_kind') {
-    addLayaField(fields, 'propertyKind', value, answer, requiresConfirmation, 'نوع ملک از متن');
+    addSiField(fields, 'propertyKind', value, answer, requiresConfirmation, 'نوع ملک از متن');
     if (accepted) {
       entities.propertyKind = value;
       answers.propertyKind = value;
@@ -362,7 +384,7 @@ function applyLayaAnswer(
   }
 
   if (key === 'deed_type') {
-    addLayaField(fields, 'deedType', value, answer, requiresConfirmation, 'نوع سند از متن');
+    addSiField(fields, 'deedType', value, answer, requiresConfirmation, 'نوع سند از متن');
     if (accepted) {
       entities.deedType = value;
       answers.deedType = value;
@@ -371,13 +393,13 @@ function applyLayaAnswer(
   }
 
   if (key === 'usage') {
-    addLayaField(fields, 'usageType', value, answer, requiresConfirmation, 'کاربری از متن');
+    addSiField(fields, 'usageType', value, answer, requiresConfirmation, 'کاربری از متن');
     if (accepted) answers.usageType = value;
     return {};
   }
 
   if (['parking', 'elevator', 'storage'].includes(key)) {
-    addLayaField(fields, key, value, answer, requiresConfirmation, `${key} از متن`);
+    addSiField(fields, key, value, answer, requiresConfirmation, `${key} از متن`);
     if (accepted && value === 'yes') {
       const previous = Array.isArray(answers.amenities) ? answers.amenities : [];
       answers.amenities = [...new Set([...previous, key])];
@@ -535,7 +557,13 @@ export async function POST(request: NextRequest) {
     const contextualCityName = input.cityName?.trim();
     const textCityAuthoritative = Boolean(resolvedTextCity) && !textCityEchoed;
     let cityName = input.cityLockedByUser
-      ? contextualCityName || deterministic.cityCandidate
+      ? contextualCityName ||
+        // With a slug-only lock, the selected city's own Persian name — not the
+        // city named in the text — scopes the neighborhood search. A text city
+        // must never hijack the scope of a locked selection (rule: a locked
+        // city wins; the mismatch surfaces as the «شهر حفظ شد» warning).
+        (input.citySlug?.trim() ? citySlugToPersianName(input.citySlug.trim()) ?? undefined : undefined) ||
+        deterministic.cityCandidate
       : (textCityAuthoritative ? resolvedTextCity!.cityName : undefined) ||
         (ambiguousCityMention && !resolvedTextCity
           ? contextualCityName
@@ -592,8 +620,10 @@ export async function POST(request: NextRequest) {
     }
 
     if (textCityEchoed && textCityMention.trim()) {
+      const requestCityRaw = input.cityName?.trim() ?? '';
+      const requestCityFa = citySlugToPersianName(requestCityRaw) ?? requestCityRaw;
       warnings.push(
-        `نام «${textCityMention}» هم شهر است و هم محله‌ای در شهر انتخابی شما («${input.cityName?.trim()}»)؛ شهر انتخابی حفظ شد.`
+        `نام «${textCityMention}» هم شهر است و هم محله‌ای در شهر انتخابی شما («${requestCityFa}»)؛ شهر انتخابی حفظ شد.`
       );
       fields.push({
         key: 'city',
@@ -611,7 +641,7 @@ export async function POST(request: NextRequest) {
       cityName &&
       resolvedTextCity.cityName !== cityName
     ) {
-      warnings.push(`شهر نوشته‌شده در متن «${resolvedTextCity.cityName}» است؛ شهر انتخاب‌شدهٔ شما «${cityName}» حفظ شد.`);
+      warnings.push(`شهر نوشته‌شده در متن «${resolvedTextCity.cityName}» است؛ شهر انتخاب‌شدهٔ شما («${citySlugToPersianName(citySlug ?? '') ?? cityName}») حفظ شد.`);
     }
 
     const location = await resolveNeighborhood(input, deterministic.neighborhoodPhrase, cityName);
@@ -638,7 +668,15 @@ export async function POST(request: NextRequest) {
     if ('cityAmbiguous' in location && location.cityAmbiguous) {
       warnings.push('نام شهر با چند کاتالوگ مکانی تطبیق دارد؛ محله خودکار انتخاب نشد.');
     }
-    if (location.hit && !input.neighborhoodLockedByUser) {
+    // A city catalog can contain rows that belong to a different, independent
+    // city (nationwide imports). An exact area-label hit on such a row
+    // («نزدیک سعدی» in Shiraz → the «مرودشت» row) must never silently apply
+    // another city's location to the draft.
+    const hitIsOtherCityRow =
+      location.hit != null &&
+      location.hit.label !== cityName?.trim() &&
+      ALL_LOCATION_CITIES.some((city) => city.name === location.hit!.label);
+    if (location.hit && !input.neighborhoodLockedByUser && !hitIsOtherCityRow) {
       const missingNeighborhood = gaps.indexOf('neighborhood');
       if (missingNeighborhood >= 0) gaps.splice(missingNeighborhood, 1);
       entities.neighborhood = location.hit.label;
@@ -661,6 +699,21 @@ export async function POST(request: NextRequest) {
         crossCityCandidates.length > 0 && deterministic.neighborhoodPhrase
           ? `نام «${deterministic.neighborhoodPhrase}» در چند شهر وجود دارد؛ برای انتخاب سریع، شهر را از گزینه‌ها انتخاب کنید.`
           : 'یک یا چند محلهٔ نزدیک پیدا شد؛ انتخاب نهایی با شماست.'
+      );
+    } else if (
+      deterministic.includePropertyFields &&
+      deterministic.neighborhoodPhrase &&
+      !input.neighborhoodLockedByUser
+    ) {
+      // An extracted locality that resolved to nothing (and produced no
+      // candidates) must never disappear silently: the wizard asks its
+      // neighborhood question from missingFieldKeys, mirroring the candidate
+      // branch above.
+      gaps.push('neighborhood');
+      warnings.push(
+        hitIsOtherCityRow
+          ? `نام «${location.hit?.label}» به نقطه‌ای خارج از شهر انتخابی شما تعلق دارد؛ محله را دستی انتخاب کنید.`
+          : `محلهٔ «${deterministic.neighborhoodPhrase}» در کاتالوگ شهر پیدا نشد؛ محله را دستی انتخاب کنید.`
       );
     }
 
@@ -698,8 +751,10 @@ export async function POST(request: NextRequest) {
     }
 
     // A resolved city is never still missing (previously even an explicit
-    // «فولادشهر» text left 'city' in gaps/missingFieldKeys).
-    if (entities.city) {
+    // «فولادشهر» text left 'city' in gaps/missingFieldKeys). A user-locked
+    // city is resolved from the request context even when the text never
+    // names it, so it is never reported missing either.
+    if (entities.city || (input.cityLockedByUser && cityName?.trim())) {
       const missingCity = gaps.indexOf('city');
       if (missingCity >= 0) gaps.splice(missingCity, 1);
     }
@@ -719,7 +774,7 @@ export async function POST(request: NextRequest) {
     const questions = buildPostDecisionQuestions({
       categoryCandidates: categoryQuestionCandidates,
       // A neighborhood question needs a selected city to scope candidates;
-      // city-less multi-city matches stay a manual chip choice, never a Laya pick.
+      // city-less multi-city matches stay a manual chip choice, never a Si pick.
       neighborhoodCandidates: cityName
         ? locationCandidates.map((candidate) => ({
             slug: candidate.slug,
@@ -728,22 +783,22 @@ export async function POST(request: NextRequest) {
         : [],
       includePropertyFields: deterministic.includePropertyFields,
     });
-    const layaStateContext = {
+    const siStateContext = {
       city: cityName,
       city_locked_by_user: Boolean(input.cityLockedByUser),
       category: input.categorySlug || input.subcategorySlug || null,
       category_locked_by_user: Boolean(input.categoryLockedByUser),
       neighborhood_candidates: locationCandidates.map((candidate) => candidate.label),
     };
-    const laya = Object.keys(questions).length
-      ? await callLocalLaya(input.sourceText, deterministic.normalizedText, questions, layaStateContext)
+    const si = Object.keys(questions).length
+      ? await callLocalSi(input.sourceText, deterministic.normalizedText, questions, siStateContext)
       : { status: 'unavailable' as const, latencyMs: 0 };
 
     let provisionalCategory:
       | { slug: string; confidence: number; reason?: string; requiresConfirmation: boolean }
       | undefined;
-    if (laya.status === 'ready') {
-      for (const [key, answer] of Object.entries(laya.result?.answers ?? {})) {
+    if (si.status === 'ready') {
+      for (const [key, answer] of Object.entries(si.result?.answers ?? {})) {
         if (!answer || typeof answer !== 'object') continue;
         if (key === 'neighborhood_candidate') {
           const selectedSlug = decisionValue(answer);
@@ -761,14 +816,14 @@ export async function POST(request: NextRequest) {
             key: 'neighborhood',
             value: candidate.label,
             confidence,
-            source: 'laya',
+            source: 'si',
             requiresConfirmation: true,
-            evidence: `پیشنهاد Laya از میان گزینه‌های شهر ${candidate.city ?? cityName ?? 'انتخاب‌شده'}؛ نیازمند تأیید شما`,
+            evidence: `پیشنهاد Si از میان گزینه‌های شهر ${candidate.city ?? cityName ?? 'انتخاب‌شده'}؛ نیازمند تأیید شما`,
           });
           continue;
         }
         if (!hasPostDecisionTextEvidence(key, input.sourceText)) continue;
-        const result = applyLayaAnswer(
+        const result = applySiAnswer(
           key,
           answer,
           fields,
@@ -781,7 +836,7 @@ export async function POST(request: NextRequest) {
         if (result.provisionalCategory) provisionalCategory = result.provisionalCategory;
       }
     } else if (Object.keys(questions).length) {
-      warnings.push('Laya در دسترس نیست؛ فیلدهای قطعی حفظ شدند و ادامهٔ کار دستی است.');
+      warnings.push('Si در دسترس نیست؛ فیلدهای قطعی حفظ شدند و ادامهٔ کار دستی است.');
     }
 
     if (provisionalCategory && !provisionalCategory.requiresConfirmation) {
@@ -827,11 +882,11 @@ export async function POST(request: NextRequest) {
       gaps: [...new Set(gaps)],
       warnings: [...new Set(warnings)],
       missingFieldKeys: [...new Set(gaps)],
-      laya: {
-        status: laya.status,
-        model: POST_LAYA_MODEL,
-        latencyMs: laya.latencyMs,
-        ...(laya.result?.usage ? { usage: laya.result.usage } : {}),
+      si: {
+        status: si.status,
+        model: 'si',
+        latencyMs: si.latencyMs,
+        ...(si.result?.usage ? { usage: si.result.usage } : {}),
       },
       latencyMs: Date.now() - started,
     };

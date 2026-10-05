@@ -17,7 +17,7 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[3]
-PLAN_RELATIVE = Path("data/laya-experiments/divar-v7-neighborhood-benchmark-after-v6-2026-09-28.json")
+PLAN_RELATIVE = Path("data/si-experiments/divar-v7-neighborhood-benchmark-after-v6-2026-09-28.json")
 POLL_SECONDS = 60
 COMPLETE_STATUS = "research_evaluation_complete"
 FAILURE_STATUSES = {"failed", "upstream_failed", "pilot_failed", "preflight_failed", "evaluation_failed"}
@@ -76,7 +76,7 @@ def validate_plan(plan: dict[str, Any], root: Path) -> tuple[Path, Path, Path, P
     python_spec = Path(plan["python"])
     expected_python = (python_spec if python_spec.is_absolute() else root / python_spec).resolve(strict=True)
     if Path(sys.executable).resolve() != expected_python:
-        raise ValueError("The queue must run in the reviewed Laya virtual environment.")
+        raise ValueError("The queue must run in the reviewed Si virtual environment.")
     dataset = plan["dataset"]
     input_path = repo_path(root, dataset["path"])
     manifest_path = repo_path(root, dataset["manifestPath"])
@@ -134,7 +134,7 @@ def validate_v6_completion(plan: dict[str, Any], upstream: dict[str, Any], root:
         or model_manifest.get("experimentOnly") is not True
         or model_manifest.get("device") != "mps"
         or model_manifest.get("syntheticTargetsAreRealNeedGroundTruth") is not False
-        or model_manifest.get("layaPredictionsUsedAsLabels") is not False
+        or model_manifest.get("siPredictionsUsedAsLabels") is not False
         or not (experiment_dir / "model.safetensors").is_file()
         or evaluation.get("status") != "research_evaluation_only"
         or evaluation.get("productionLoadAllowed") is not False
@@ -156,7 +156,7 @@ def update_plan(plan_path: Path, plan: dict[str, Any], status: str, note: str) -
 
 
 def acquire_lock() -> int:
-    lock_path = Path("/private/tmp/niazfinder-laya-v7-benchmark-queue.lock")
+    lock_path = Path("/private/tmp/niazfinder-si-v7-benchmark-queue.lock")
     descriptor = os.open(lock_path, os.O_CREAT | os.O_RDWR, 0o600)
     try:
         fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -199,7 +199,7 @@ def main() -> int:
 
         input_path, manifest_path, _, output_path = validate_plan(plan, ROOT)
         model_dir = validate_v6_completion(plan, upstream, ROOT)
-        update_plan(plan_path, plan, "running", "v6 is complete; starting the local held-out neighborhood Laya benchmark on MPS.")
+        update_plan(plan_path, plan, "running", "v6 is complete; starting the local held-out neighborhood Si benchmark on MPS.")
         argv = [
             sys.executable,
             str((ROOT / plan["benchmarkScript"]).resolve()),

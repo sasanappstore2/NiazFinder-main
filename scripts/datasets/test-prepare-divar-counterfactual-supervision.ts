@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
 import { createHash } from 'node:crypto';
 import {
-  buildDivarLayaBatchQuestions,
+  buildDivarSiBatchQuestions,
   buildDivarOfferInspectionQuestions,
-} from './divar-laya-question-factory';
+} from './divar-si-question-factory';
 import { buildSupervisionCandidate } from './prepare-divar-counterfactual-supervision';
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -20,14 +20,14 @@ function rejects(action: () => unknown, message: string): void {
   assert(rejected, message);
 }
 
-const model = 'convaiinnovations/laya-multilingual';
-const questions = buildDivarLayaBatchQuestions();
+const model = 'convaiinnovations/si-multilingual';
+const questions = buildDivarSiBatchQuestions();
 const questionHash = createHash('sha256').update(JSON.stringify(questions)).digest('hex');
 const offerQuestionHash = createHash('sha256').update(JSON.stringify(buildDivarOfferInspectionQuestions())).digest('hex');
 const target = (value: string, source: string) => ({ value, source, humanReviewed: false });
 const row = {
   schemaVersion: 5,
-  taskType: 'divar-counterfactual-post-need-laya-proposal/v5',
+  taskType: 'divar-counterfactual-post-need-si-proposal/v5',
   exampleId: 'offer-1:counterfactual-v5',
   synthetic: true,
   isNeedGroundTruth: false,
@@ -63,7 +63,7 @@ const row = {
     },
     questionSchemaSha256: questionHash,
   },
-  laya: {
+  si: {
     model,
     inputStateKind: 'original_divar_offer_text',
     inputStateSha256: 'a'.repeat(64),
@@ -76,8 +76,8 @@ const candidate = buildSupervisionCandidate(row, questions, questionHash);
 assert(candidate.trainingEligible === false, 'synthetic candidate must never become production-eligible');
 assert(candidate.realNeedGroundTruth === false && candidate.humanReviewed === false, 'counterfactual and unreviewed provenance must survive');
 assert(candidate.auxiliaryResearchCandidate === true, 'candidate must be explicitly scoped to auxiliary research');
-assert(candidate.source.targetOrigin === 'deterministic_source_facts_not_laya_output', 'targets must identify non-Laya provenance');
-assert(candidate.decisions.transaction_type.target === 'buy', 'Laya prediction must not replace the source-derived target');
+assert(candidate.source.targetOrigin === 'deterministic_source_facts_not_si_output', 'targets must identify non-Si provenance');
+assert(candidate.decisions.transaction_type.target === 'buy', 'Si prediction must not replace the source-derived target');
 assert(candidate.decisions.usage.probabilities.unknown === 1, 'unmentioned usage must remain unknown');
 assert(candidate.decisions.parking.probabilities.yes === 1, 'positive stated feature must become a one-hot typed target');
 assert(candidate.questionsSchemaSha256 === questionHash, 'candidate must pin the exact question schema');
@@ -90,4 +90,4 @@ const wrongQuestionHash = structuredClone(row);
 wrongQuestionHash.hypotheticalNeed.questionSchemaSha256 = 'stale-schema';
 rejects(() => buildSupervisionCandidate(wrongQuestionHash, questions, questionHash), 'stale question schema must fail closed');
 
-console.log('Divar counterfactual supervision adapter: 10 checks passed; Laya predictions never used as targets');
+console.log('Divar counterfactual supervision adapter: 10 checks passed; Si predictions never used as targets');

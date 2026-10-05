@@ -56,6 +56,34 @@ export const WIZARD_SLOT_SCHEMAS: Record<string, FieldSchema> = {
     label: 'بودجه (تومان)',
     placeholder: 'سقف بودجه',
     required: false,
+    // Rent-family deals replace the generic ceiling with dedicated rahn /
+    // monthly-rent fields; BUY/SELL (or no deal yet) keep the generic budget.
+    showIfIn: {
+      field: 'dealType',
+      values: ['', 'BUY', 'SELL', 'buy', 'sell'],
+    },
+  },
+  rahnAmount: {
+    key: 'rahnAmount',
+    type: 'price',
+    label: 'مبلغ رهن (تومان)',
+    placeholder: 'مثلاً ۲ میلیارد',
+    required: false,
+    showIfIn: {
+      field: 'dealType',
+      values: ['FULL_DEPOSIT', 'DEPOSIT_AND_RENT', 'rent_rahn_full', 'rent_rahn_ejare'],
+    },
+  },
+  monthlyRent: {
+    key: 'monthlyRent',
+    type: 'price',
+    label: 'اجاره ماهانه (تومان)',
+    placeholder: 'مثلاً ۳۰ میلیون',
+    required: false,
+    showIfIn: {
+      field: 'dealType',
+      values: ['RENT', 'DEPOSIT_AND_RENT', 'rent_monthly', 'rent_rahn_ejare'],
+    },
   },
   area: {
     key: 'area',
@@ -101,6 +129,8 @@ const ENTITY_KEYS = new Set([
   'mapPin',
   'transactionType',
   'budget',
+  'rahnAmount',
+  'monthlyRent',
   'area',
   'rooms',
   'category',

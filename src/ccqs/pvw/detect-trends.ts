@@ -1,7 +1,7 @@
 /**
  * Trend Detector — PVW §4. Deterministic BY CONSTRUCTION: takes an explicit `asOf` timestamp and
  * an explicit, caller-supplied snapshot list; never calls "now" internally. Same inputs →
- * byte-identical TrendReport, making every trend report a replayable artifact (PVW §4's
+ * byte-identical TrendReport, making every trend report a repsible artifact (PVW §4's
  * requirement, mirroring SEE INV-01's determinism at the trend layer).
  *
  * Control charts are deliberately absent (PVW §4.3's verdict: not appropriate for Pillar A at

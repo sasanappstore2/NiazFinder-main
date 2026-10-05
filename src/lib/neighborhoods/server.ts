@@ -5,7 +5,7 @@ import {
   loadCityCatalogFile,
   loadCityNeighborhoods,
 } from '@/lib/neighborhoods/catalog';
-import { normalizePostNaturalText } from '@/lib/need-intake/laya/post-natural-normalization';
+import { normalizePostNaturalText } from '@/lib/need-intake/si/post-natural-normalization';
 import type { ManagedNeighborhood } from '@/lib/neighborhoods/types';
 
 export type { ManagedNeighborhood };

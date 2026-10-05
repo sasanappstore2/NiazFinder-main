@@ -1,9 +1,9 @@
 /**
- * Deterministic realistic-estate ad generator for the Laya /post matrix.
+ * Deterministic realistic-estate ad generator for the Si /post matrix.
  * Produces N ad texts with the expected extraction targets derived from the
  * same catalog data the engine resolves against.
  *
- * Run: npx --yes tsx scripts/testing/laya-matrix/generate-cases.ts --count 10000 --seed 20261001 --out out/laya-matrix/cases-10k.jsonl
+ * Run: npx --yes tsx scripts/testing/si-matrix/generate-cases.ts --count 10000 --seed 20261001 --out out/si-matrix/cases-10k.jsonl
  */
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -421,7 +421,7 @@ async function main() {
   };
   const count = Number(arg('count', '10000'));
   const seed = Number(arg('seed', '20261001'));
-  const outPath = arg('out', 'out/laya-matrix/cases.jsonl');
+  const outPath = arg('out', 'out/si-matrix/cases.jsonl');
 
   const canonicalTitles = await loadCanonicalTitles();
   const cities = await loadCities(canonicalTitles);

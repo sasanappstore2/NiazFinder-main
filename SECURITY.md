@@ -20,7 +20,7 @@ The maintainer will acknowledge receipt, investigate, and coordinate a fix and d
 
 - **Auth:** phone-OTP + sessions; server-side tokens with expiry (`AuthToken`). Test OTP (`ALLOW_TEST_OTP`) is hard-gated to non-production — it must never be enabled in production.
 - **Internal routes** (`/api/internal/*`, chat `/internal/fanout`): guarded by `INTERNAL_API_SECRET` with constant-time comparison; fail closed (`503` unconfigured, `403` mismatch).
-- **AI sidecars** (laya-post, gemma4-intake, embed-intake): loopback-only, proxied through Next.js server routes, never directly browser-reachable. Research adapters require explicit manifest + checksum gates and are experiment-only.
+- **AI sidecars** (si-post, gemma4-intake, embed-intake): loopback-only, proxied through Next.js server routes, never directly browser-reachable. Research adapters require explicit manifest + checksum gates and are experiment-only.
 - **Secrets:** environment variables only. `.env.example` holds placeholders; real values must never be committed.
 
 ## Known Exposure (action required by maintainer)

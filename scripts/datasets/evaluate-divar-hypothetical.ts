@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
-/** Aggregate-only evaluation of proposal-only Divar/Laya artifacts. */
+/** Aggregate-only evaluation of proposal-only Divar/Si artifacts. */
 import { createReadStream } from 'node:fs';
 import { resolve } from 'node:path';
 import { createInterface } from 'node:readline';
-import { extractPostNaturalFields } from '@/lib/need-intake/laya/post-natural-extractor';
-import { resolvePostNeighborhoodInCity } from '@/lib/need-intake/laya/post-neighborhood-resolver';
+import { extractPostNaturalFields } from '@/lib/need-intake/si/post-natural-extractor';
+import { resolvePostNeighborhoodInCity } from '@/lib/need-intake/si/post-neighborhood-resolver';
 import { resolveCatalogCityMention } from '@/lib/neighborhoods/server';
 import { divarAppCityCatalog, divarAppCityPersianName } from './divar-hypothetical-need';
 
@@ -21,7 +21,7 @@ type FieldMetric = {
   falseUnknownWhenKnown: number;
 };
 
-const LAYA_FIELDS = [
+const SI_FIELDS = [
   'category_candidate', 'property_kind', 'transaction_type', 'deed_type',
   'usage', 'parking', 'elevator', 'storage',
 ] as const;
@@ -29,7 +29,7 @@ const DETERMINISTIC_FIELDS = [
   'category_candidate', 'property_kind', 'transaction_type', 'area', 'rooms',
   'deed_type', 'parking', 'elevator', 'storage',
 ] as const;
-const model = 'convaiinnovations/laya-multilingual';
+const model = 'convaiinnovations/si-multilingual';
 
 function normalize(value: unknown): string {
   return String(value ?? '')
@@ -61,14 +61,14 @@ function newMetric(): FieldMetric {
   };
 }
 
-const SOURCE_OFFER_LABEL_FIELDS: Partial<Record<(typeof LAYA_FIELDS)[number], string>> = {
+const SOURCE_OFFER_LABEL_FIELDS: Partial<Record<(typeof SI_FIELDS)[number], string>> = {
   category_candidate: 'offer_category',
   property_kind: 'offer_property_kind',
   transaction_type: 'offer_transaction_type',
 };
 
-function layaExpectedValue(
-  key: (typeof LAYA_FIELDS)[number],
+function siExpectedValue(
+  key: (typeof SI_FIELDS)[number],
   row: Json,
   outputSchemaVersion: number,
   needTargets: Json,
@@ -132,13 +132,13 @@ async function main(): Promise<void> {
   ) {
     throw new Error('Usage: bun scripts/datasets/evaluate-divar-hypothetical.ts <proposal.jsonl> [--max-rows <positive integer>]');
   }
-  const metrics = Object.fromEntries(LAYA_FIELDS.map((key) => [key, newMetric()])) as Record<string, FieldMetric>;
+  const metrics = Object.fromEntries(SI_FIELDS.map((key) => [key, newMetric()])) as Record<string, FieldMetric>;
   const deterministicMetrics = Object.fromEntries(
     DETERMINISTIC_FIELDS.map((key) => [key, newMetric()]),
   ) as Record<(typeof DETERMINISTIC_FIELDS)[number], FieldMetric>;
   const fieldConfusions = Object.fromEntries(
-    LAYA_FIELDS.map((key) => [key, new Map<string, number>()]),
-  ) as Record<(typeof LAYA_FIELDS)[number], Map<string, number>>;
+    SI_FIELDS.map((key) => [key, new Map<string, number>()]),
+  ) as Record<(typeof SI_FIELDS)[number], Map<string, number>>;
   const deterministicConfusions = Object.fromEntries(
     DETERMINISTIC_FIELDS.map((key) => [key, new Map<string, number>()]),
   ) as Record<(typeof DETERMINISTIC_FIELDS)[number], Map<string, number>>;
@@ -176,47 +176,47 @@ async function main(): Promise<void> {
   const catalogCityFailures: Json[] = [];
   const neighborhoodFailures: Json[] = [];
   let rows = 0;
-  let layaInputStateKind: string | undefined;
+  let siInputStateKind: string | undefined;
 
   const lines = createInterface({ input: createReadStream(resolve(path), { encoding: 'utf8' }), crlfDelay: Infinity });
   for await (const line of lines) {
     if (!line.trim()) continue;
     if (maxRows !== null && rows >= maxRows) break;
     const row = JSON.parse(line) as Json;
-    const outputSchemaVersion = row.taskType === 'divar-counterfactual-post-need-laya-proposal/v4'
+    const outputSchemaVersion = row.taskType === 'divar-counterfactual-post-need-si-proposal/v4'
       ? 4
-      : row.taskType === 'divar-counterfactual-post-need-laya-proposal/v5'
+      : row.taskType === 'divar-counterfactual-post-need-si-proposal/v5'
         ? 5
-      : row.taskType === 'divar-counterfactual-post-need-laya-proposal/v3'
+      : row.taskType === 'divar-counterfactual-post-need-si-proposal/v3'
         ? 3
-        : row.taskType === 'divar-counterfactual-post-need-laya-proposal/v2'
+        : row.taskType === 'divar-counterfactual-post-need-si-proposal/v2'
           ? 2
-          : row.taskType === 'divar-counterfactual-post-need-laya-proposal/v1' ? 1 : null;
+          : row.taskType === 'divar-counterfactual-post-need-si-proposal/v1' ? 1 : null;
     const expectedGenerationVersion = row.hypotheticalNeed?.generation?.version;
     if (
       outputSchemaVersion === null || row.schemaVersion !== outputSchemaVersion ||
       ![1, 2, 3, 4, 5].includes(expectedGenerationVersion) ||
-      row.laya?.model !== model || row.synthetic !== true || row.realNeedGroundTruth !== false ||
+      row.si?.model !== model || row.synthetic !== true || row.realNeedGroundTruth !== false ||
       row.trainingEligible !== false || row.hypotheticalNeed?.realNeedGroundTruth !== false ||
       row.hypotheticalNeed?.trainingEligible !== false ||
       row.hypotheticalNeed?.generation?.method !== 'deterministic-counterfactual-template' ||
       row.hypotheticalNeed?.generation?.version !== expectedGenerationVersion ||
       row.hypotheticalNeed?.taskType !== `divar-counterfactual-post-need-proposal/v${expectedGenerationVersion}` ||
       ((outputSchemaVersion === 4 || outputSchemaVersion === 5) && (
-        row.laya?.inputStateKind !== 'original_divar_offer_text' ||
-        !/^[a-f0-9]{64}$/u.test(String(row.laya?.inputStateSha256 ?? ''))
+        row.si?.inputStateKind !== 'original_divar_offer_text' ||
+        !/^[a-f0-9]{64}$/u.test(String(row.si?.inputStateSha256 ?? ''))
       ))
-    ) throw new Error('Input contains a row outside the approved proposal-only Laya contract.');
+    ) throw new Error('Input contains a row outside the approved proposal-only Si contract.');
 
-    const currentInputKind = String(row.laya?.inputStateKind ?? 'hypothetical_need_text');
-    if (layaInputStateKind && layaInputStateKind !== currentInputKind) {
-      throw new Error('Input mixes Laya source-text semantics across rows.');
+    const currentInputKind = String(row.si?.inputStateKind ?? 'hypothetical_need_text');
+    if (siInputStateKind && siInputStateKind !== currentInputKind) {
+      throw new Error('Input mixes Si source-text semantics across rows.');
     }
-    layaInputStateKind = currentInputKind;
+    siInputStateKind = currentInputKind;
 
     rows += 1;
     const target = row.hypotheticalNeed.targetDecisions as Json;
-    const answers = row.laya.answers as Json;
+    const answers = row.si.answers as Json;
     const citySlug = String(row.hypotheticalNeed.sourceOfferLocation?.appCitySlug ?? '');
     // Re-run today's extractor so a regression/fix is measured against the
     // same generated utterances instead of trusting stale parse snapshots.
@@ -242,7 +242,7 @@ async function main(): Promise<void> {
       }
     }
     const needCategory = String(target.category_candidate?.value ?? '');
-    const category = layaExpectedValue('category_candidate', row, outputSchemaVersion, target).value;
+    const category = siExpectedValue('category_candidate', row, outputSchemaVersion, target).value;
     const categoryAnswer = String(
       answers.category_candidate?.choice ?? answers.category_candidate?.noul ?? answers.category_candidate?.value ?? 'unknown',
     );
@@ -293,8 +293,8 @@ async function main(): Promise<void> {
     }
     if (citySlug) cities.add(citySlug);
 
-    for (const key of LAYA_FIELDS) {
-      const expectedTarget = layaExpectedValue(key, row, outputSchemaVersion, target);
+    for (const key of SI_FIELDS) {
+      const expectedTarget = siExpectedValue(key, row, outputSchemaVersion, target);
       if (!expectedTarget.available) {
         metrics[key]!.unscoredNoSourceLabel += 1;
         continue;
@@ -439,16 +439,16 @@ async function main(): Promise<void> {
       : { type: 'committed-prefix', maxRows },
     model,
     rows,
-    labelStatus: layaInputStateKind === 'original_divar_offer_text'
-      ? 'category, property-kind, and deal labels are compared with Divar structured offer-derived fields; other Laya fields lack persisted source labels; not independent seeker-intent or real-user accuracy'
+    labelStatus: siInputStateKind === 'original_divar_offer_text'
+      ? 'category, property-kind, and deal labels are compared with Divar structured offer-derived fields; other Si fields lack persisted source labels; not independent seeker-intent or real-user accuracy'
       : 'synthetic counterfactual agreement only; not independent real-user accuracy',
     trainingEligibleRows: 0,
     categoryCount: categories.size,
     cityCount: cities.size,
-    [layaInputStateKind === 'original_divar_offer_text'
-      ? 'layaCategorySourceOfferAgreement'
-      : 'layaCategoryCounterfactualAgreement']: {
-      comparisonBasis: layaInputStateKind === 'original_divar_offer_text'
+    [siInputStateKind === 'original_divar_offer_text'
+      ? 'siCategorySourceOfferAgreement'
+      : 'siCategoryCounterfactualAgreement']: {
+      comparisonBasis: siInputStateKind === 'original_divar_offer_text'
         ? 'Divar structured offer category; never the generated hypothetical-need target'
         : 'synthetic hypothetical-need target',
       decisionCoverage: {
@@ -497,7 +497,7 @@ async function main(): Promise<void> {
         .sort((a, b) => b.count - a.count || a.expected.localeCompare(b.expected) || a.predicted.localeCompare(b.predicted))
         .slice(0, 20),
       firstFailures: runtimeCategoryFailures,
-      caveat: 'Combines single deterministic catalog candidates with Laya only when the rules leave multiple candidates; still synthetic offer-derived agreement, not real-user accuracy.',
+      caveat: 'Combines single deterministic catalog candidates with Si only when the rules leave multiple candidates; still synthetic offer-derived agreement, not real-user accuracy.',
     },
     deterministicExtractionCounterfactualAgreement: {
       fields: Object.fromEntries(Object.entries(deterministicMetrics).map(([key, metric]) => [key, {
@@ -519,13 +519,13 @@ async function main(): Promise<void> {
       }])) ,
       caveat: 'Compares deterministic extraction against attributes embedded from the seller offer into the synthetic sentence; this is parser consistency, not user-intent accuracy.',
     },
-    [layaInputStateKind === 'original_divar_offer_text' ? 'layaSourceOfferFieldAgreement' : 'laya']: {
-      comparisonBasis: layaInputStateKind === 'original_divar_offer_text'
+    [siInputStateKind === 'original_divar_offer_text' ? 'siSourceOfferFieldAgreement' : 'si']: {
+      comparisonBasis: siInputStateKind === 'original_divar_offer_text'
         ? 'Divar source offer labels where present; generated need targets are not used to score offer-text predictions'
         : 'synthetic hypothetical-need targets',
       fields: Object.fromEntries(Object.entries(metrics).map(([key, metric]) => [key, {
         ...metric,
-        topConfusions: [...fieldConfusions[key as (typeof LAYA_FIELDS)[number]]!.entries()]
+        topConfusions: [...fieldConfusions[key as (typeof SI_FIELDS)[number]]!.entries()]
           .map(([confusionKey, count]) => {
             const [expected, predicted] = confusionKey.split('\u0000');
             return { expected, predicted, count };
@@ -540,7 +540,7 @@ async function main(): Promise<void> {
           metric.expectedKnown,
         ),
       }])) ,
-      caveat: layaInputStateKind === 'original_divar_offer_text'
+      caveat: siInputStateKind === 'original_divar_offer_text'
         ? 'Only category, property kind, and deal type have persisted structured targets. Deed, usage, and amenities are explicitly unscored until source labels are preserved and reviewed.'
         : 'Compares predictions with generated need targets, not independent real-user labels.',
     },

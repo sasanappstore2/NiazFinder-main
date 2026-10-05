@@ -36,7 +36,7 @@ import {
 import { findManagedNeighborhoodAmbiguity } from '@/lib/neighborhoods/find-managed-neighborhood-ambiguity';
 import { extractLocationFragment, normalizeHoodFragment } from '@/lib/need-intake/location-fragment';
 import { mayAutoApplyLocation } from '@/lib/need-intake/compose-auto-apply';
-import { resolvePostNeighborhoodInCity } from '@/lib/need-intake/laya/post-neighborhood-resolver';
+import { resolvePostNeighborhoodInCity } from '@/lib/need-intake/si/post-neighborhood-resolver';
 
 export interface UseIntakeLocationOptions {
   initialCity?: string | null;
@@ -693,7 +693,9 @@ export function useIntakeLocation({
     : [];
 
   const locationSuggestionChips = useMemo(() => {
-    const hasNeighborhoodDisambiguation = neighborhoodDisambiguationChips.length >= 2;
+    // The standalone disambiguation prompt is no longer rendered, so the
+    // location section is the single place these chips surface — keep every
+    // candidate except the currently selected neighborhood.
     return manualSuggestionChips.filter((chip) => {
       if (
         !chip.value.startsWith('city:') &&
@@ -705,23 +707,23 @@ export function useIntakeLocation({
       if (chip.value.startsWith('city:')) {
         return chip.value.slice('city:'.length).trim() !== selectedCity.trim();
       }
-      if (chip.value.startsWith('neighborhood:')) {
-        // Neighborhood picker already surfaces similar-name chips; avoid a third copy.
-        if (hasNeighborhoodDisambiguation) return false;
-        const slug = chip.value.slice('neighborhood:'.length);
-        const hit = needDraft?.parsedIntent.neighborhoodCandidates?.find((n) => n.slug === slug);
-        const hoodName =
-          lookupManagedNeighborhoodBySlug(neighborhoods, slug)?.name ??
-          hit?.label?.trim() ??
-          '';
-        return hoodName !== selectedNeighborhood.trim();
+      const slug = chip.value.slice('neighborhood:'.length);
+      const hit = needDraft?.parsedIntent.neighborhoodCandidates?.find((n) => n.slug === slug);
+      // Drop stale foreign-city candidates («اقبال (مشهد)» on a Shiraz need):
+      // a chip survives only when its hood exists in the current city catalog
+      // or its city label matches the selected city (slug/name agnostic).
+      const catalogHood = lookupManagedNeighborhoodBySlug(neighborhoods, slug);
+      const candidateCity = hit?.city?.trim() ?? '';
+      if (!catalogHood && candidateCity && candidateCity !== selectedCity.trim()) {
+        return false;
       }
-      return true;
+      const hoodName =
+        catalogHood?.name ?? hit?.label?.trim() ?? '';
+      return hoodName !== selectedNeighborhood.trim();
     });
   }, [
     manualSuggestionChips,
     needDraft,
-    neighborhoodDisambiguationChips.length,
     neighborhoods,
     selectedCity,
     selectedNeighborhood,

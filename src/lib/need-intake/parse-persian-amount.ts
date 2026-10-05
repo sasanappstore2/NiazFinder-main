@@ -75,6 +75,9 @@ const PHRASE_LOOKUP: Record<string, number> = {
   '\u0635\u062F \u0648 \u067E\u0646\u062C\u0627\u0647': 150,
   '\u06CC\u06A9 \u0648 \u0646\u06CC\u0645': 1.5,
   '\u06CC\u0647 \u0648 \u0646\u06CC\u0645': 1.5,
+  // «نیم» stands alone in colloquial budgets («رهن نیم میلیارد») exactly like
+  // «یک و نیم»; without it the whole money mention disappears silently.
+  '\u0646\u06CC\u0645': 0.5,
 };
 
 const PERSIAN_LETTER = '\\u0600-\\u06FF';
@@ -101,7 +104,14 @@ function lookupWord(token: string): number | undefined {
   const t = normalizeAmountToken(token);
   if (!t) return undefined;
   if (PHRASE_LOOKUP[t] != null) return PHRASE_LOOKUP[t];
-  const ascii = toAsciiDigits(t);
+  // Decimal amounts must survive: toAsciiDigits drops separators, which read
+  // «1.5»/«۱٫۵» as «15» and inflated every decimal amount ×10. Split on the
+  // decimal point so only whole-number runs go through the digit mapper.
+  const ascii = t
+    .replace(/\u066B/g, '.')
+    .split('.')
+    .map((part) => toAsciiDigits(part))
+    .join('.');
   const n = Number(ascii.replace(/,/g, ''));
   if (Number.isFinite(n) && n > 0) return n;
   return undefined;
@@ -410,10 +420,27 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
   const rahnHit = findKeywordIndicesWithFuzzyRepair(norm, RAHN_WORD);
   const vadiyehHit = findKeywordIndicesWithFuzzyRepair(norm, VADIYEH_WORD);
 
+  // «بدون رهن» / «رهن ندارم» / «نه ودیعه» deny the deposit slot: the keyword
+  // must not pair with a money mention, otherwise a rent-only deal grows a
+  // phantom deposit equal to the rent (invariant below).
+  const isNegatedKeywordIndex = (index: number, keywordLength: number): boolean =>
+    /(?:^|\s)(?:\u0646\u0647|\u0628\u062F\u0648\u0646|\u0641\u0627\u0642\u062F)\s*$/u.test(
+      norm.slice(Math.max(0, index - 12), index)
+    ) ||
+    /^\s*(?:\u0646\u062F\u0627\u0631\u0645|\u0646\u062F\u0627\u0631\u0647|\u0646\u062F\u0627\u0631\u06CC\u0645|\u0646\u0645\u06CC)/u.test(
+      norm.slice(index + keywordLength, index + keywordLength + 12)
+    );
+  const rahnIndices = rahnHit.indices.filter(
+    (index) => !isNegatedKeywordIndex(index, RAHN_WORD.length)
+  );
+  const vadiyehIndices = vadiyehHit.indices.filter(
+    (index) => !isNegatedKeywordIndex(index, VADIYEH_WORD.length)
+  );
+
   const rahn =
-    pickTomansForIndices(norm, mentions, rahnHit.indices, RAHN_WORD.length) ??
-    pickTomansForIndices(norm, mentions, vadiyehHit.indices, VADIYEH_WORD.length) ??
-    (rahnHit.indices.length > 0
+    pickTomansForIndices(norm, mentions, rahnIndices, RAHN_WORD.length) ??
+    pickTomansForIndices(norm, mentions, vadiyehIndices, VADIYEH_WORD.length) ??
+    (rahnIndices.length > 0
       ? pickTomansForKeyword(norm, mentions, '\u0628\u0648\u062F\u062C\u0647')
       : undefined);
   if (rahn != null) out.rahnAmount = rahn;
@@ -428,7 +455,7 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
   const deposit = pickTomansForIndices(
     norm,
     mentions,
-    vadiyehHit.indices,
+    vadiyehIndices,
     VADIYEH_WORD.length
   );
   if (deposit != null && out.rahnAmount == null) out.deposit = deposit;
@@ -437,7 +464,10 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
   if (budget != null) out.budgetMax = budget;
 
   const rahnEjareShort = new RegExp(
-    `${RAHN_WORD}\\s*(\\d+(?:\\.\\d+)?)\\s*(?:${VA_WORD}\\s*)?${EJARE_WORD}\\s*(\\d+(?:\\.\\d+)?)`,
+    // «رهن ۳۰۰ و اجاره ماهی ۲۵ میلیون» — the monthly qualifier (ماهی/ماهانه/
+    // ماهیانه) may sit between اجاره and the rent number; without it the bare
+    // deposit number goes unclaimed and its slot fills with the rent amount.
+    `${RAHN_WORD}\\s*(\\d+(?:\\.\\d+)?)\\s*(?:${VA_WORD}\\s*)?${EJARE_WORD}\\s*(?:\u0645\u0627\u0647\u06CC\u0627\u0646\u0647|\u0645\u0627\u0647\u0627\u0646\u0647|\u0645\u0627\u0647\u06CC)?\\s*(\\d+(?:\\.\\d+)?)`,
     'u'
   );
   const rahnEjareMatch = norm.match(rahnEjareShort);
@@ -486,7 +516,7 @@ export function extractPropertyMoneyFromText(rawText: string): PropertyMoneyFrom
     out.monthlyRent == null &&
     out.rahnAmount == null &&
     hasSemanticKeyword(norm, EJARE_WORD) &&
-    rahnHit.indices.length === 0
+    rahnIndices.length === 0
   ) {
     out.monthlyRent = out.budgetMax;
     delete out.budgetMax;

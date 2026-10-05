@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Validate, deduplicate and quarantine the completed local Divar/Laya
+ * Validate, deduplicate and quarantine the completed local Divar/Si
  * counterfactual corpus. This never promotes the data to real need ground truth
  * or training-eligible examples.
  */
@@ -20,15 +20,15 @@ import { basename, dirname, resolve } from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
 import { createInterface } from 'node:readline';
 import {
-  containsLayaCorpusPiiPattern,
-  layaAuditTargetFingerprint,
-  normalizeLayaCorpusText,
-  readLayaCorpusAuditShape,
-} from './laya-corpus-audit-shape';
-import { LayaCorpusDedupIndex } from './laya-corpus-dedup';
+  containsSiCorpusPiiPattern,
+  siAuditTargetFingerprint,
+  normalizeSiCorpusText,
+  readSiCorpusAuditShape,
+} from './si-corpus-audit-shape';
+import { SiCorpusDedupIndex } from './si-corpus-dedup';
 
-const MODEL = 'convaiinnovations/laya-multilingual';
-const OUTPUT_TASK = 'divar-counterfactual-post-need-laya-proposal/v5';
+const MODEL = 'convaiinnovations/si-multilingual';
+const OUTPUT_TASK = 'divar-counterfactual-post-need-si-proposal/v5';
 const HYPOTHETICAL_TASK = 'divar-counterfactual-post-need-proposal/v5';
 const SOURCE_DATASET = 'divarofficial/real_estate_ads';
 const SOURCE_TYPE = 'seller_or_agent_property_offer';
@@ -100,11 +100,11 @@ function validateRow(row: JsonObject, lineNumber: number, expectedNeedQuestionHa
   neighborhood?: string;
 } {
   const source = asObject(row.source);
-  const laya = asObject(row.laya);
+  const si = asObject(row.si);
   const hypothetical = asObject(row.hypotheticalNeed);
   const generation = asObject(hypothetical?.generation);
   const targets = asObject(hypothetical?.targetDecisions);
-  const shape = readLayaCorpusAuditShape(row);
+  const shape = readSiCorpusAuditShape(row);
   const invalid = () => new Error(`Counterfactual row contract failed at input line ${lineNumber}.`);
 
   if (
@@ -117,11 +117,11 @@ function validateRow(row: JsonObject, lineNumber: number, expectedNeedQuestionHa
     source?.dataset !== SOURCE_DATASET || source.sourceType !== SOURCE_TYPE ||
     typeof source.sourceExampleId !== 'string' || !source.sourceExampleId.trim() ||
     typeof source.normalizedTextGroupSha256 !== 'string' ||
-    laya?.model !== MODEL || !shape.text || shape.text.length > 8_000 ||
-    laya.inputStateKind !== 'original_divar_offer_text' ||
-    typeof laya.inputStateSha256 !== 'string' || !/^[a-f0-9]{64}$/u.test(laya.inputStateSha256) ||
+    si?.model !== MODEL || !shape.text || shape.text.length > 8_000 ||
+    si.inputStateKind !== 'original_divar_offer_text' ||
+    typeof si.inputStateSha256 !== 'string' || !/^[a-f0-9]{64}$/u.test(si.inputStateSha256) ||
     hypothetical.questionSchemaSha256 !== expectedNeedQuestionHash ||
-    containsLayaCorpusPiiPattern(shape.text) || row.stateTruncated === true || !targets
+    containsSiCorpusPiiPattern(shape.text) || row.stateTruncated === true || !targets
   ) throw invalid();
 
   for (const key of REQUIRED_TARGETS) {
@@ -129,10 +129,10 @@ function validateRow(row: JsonObject, lineNumber: number, expectedNeedQuestionHa
     if (!decision || !Object.hasOwn(decision, 'value') || typeof decision.source !== 'string') throw invalid();
   }
   const category = shape.category;
-  const targetFingerprint = layaAuditTargetFingerprint(targets);
+  const targetFingerprint = siAuditTargetFingerprint(targets);
   if (!category || !targetFingerprint) throw invalid();
 
-  const normalized = normalizeLayaCorpusText(shape.text);
+  const normalized = normalizeSiCorpusText(shape.text);
   if (!normalized) throw invalid();
   return {
     textDigest: createHash('sha256').update(normalized).digest('hex'),
@@ -219,7 +219,7 @@ async function main(): Promise<void> {
     throw new Error('Completed run manifest byte count does not match the source corpus file.');
   }
 
-  const index = new LayaCorpusDedupIndex();
+  const index = new SiCorpusDedupIndex();
   const categories = new Set<string>();
   const cities = new Set<string>();
   const neighborhoods = new Set<string>();

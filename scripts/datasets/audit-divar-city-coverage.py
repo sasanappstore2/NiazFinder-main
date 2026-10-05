@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import TextIO
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from divar_laya_corpus import _source_city_map
+from divar_si_corpus import _source_city_map
 
 
 ROOT = Path(__file__).resolve().parents[2]

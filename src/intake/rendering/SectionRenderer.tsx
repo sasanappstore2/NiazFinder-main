@@ -80,6 +80,20 @@ function LocationSectionLayout({
 
   return (
     <div className="intake-location-row flex flex-col gap-2">
+      {context.locationSuggestionChips && context.locationSuggestionChips.length > 0 ? (
+        <div className="space-y-2">
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
+            پیشنهادهای مکان
+          </p>
+          <SuggestionChips
+            options={context.locationSuggestionChips}
+            onSelect={(v) => {
+              const value = typeof v === 'string' ? v : (v[0] ?? '');
+              if (value) context.onLocationSuggestionSelect?.(value);
+            }}
+          />
+        </div>
+      ) : null}
       <div className="grid grid-cols-1 items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         {cityField ? renderField(cityField) : null}
         {neighborhoodField ? (
@@ -110,20 +124,6 @@ function LocationSectionLayout({
             {renderField(mapPinField)}
           </div>
         </details>
-      ) : null}
-      {context.locationSuggestionChips && context.locationSuggestionChips.length > 0 ? (
-        <div className="space-y-2">
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            پیشنهادهای مکان
-          </p>
-          <SuggestionChips
-            options={context.locationSuggestionChips}
-            onSelect={(v) => {
-              const value = typeof v === 'string' ? v : (v[0] ?? '');
-              if (value) context.onLocationSuggestionSelect?.(value);
-            }}
-          />
-        </div>
       ) : null}
       {otherFields.length > 0 ? (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

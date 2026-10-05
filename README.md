@@ -19,6 +19,17 @@ NiazFinder explores the reverse direction:
 
 The technical thesis is that a well-validated, deterministic parsing layer — with optional, strictly-gated local AI assistance — produces better marketplace matching than search-over-listings alone.
 
+## NIAZ SI — Needs Intelligence
+
+**NIAZ SI** is NiazFinder's proprietary needs-intelligence engine. It combines a deterministic Persian parsing layer with an in-house decision worker that is trained, deployed, and governed entirely by NiazFinder:
+
+- **Rules-first by design** — deterministic extraction always wins over model suggestions; conflicts surface as user-visible warnings, never silent overrides.
+- **Private decision worker** — integrity-pinned checkpoints (SHA-256), loopback-only binding, and a typed decision contract; the model identity is deployment-local by design.
+- **In-house training pipeline** — supervised corpora built from NiazFinder's own crawl, pseudo-distillation, head/adapter training and preference tuning, all under `scripts/datasets`.
+- **User-final arbitration** — ambiguity (same-name neighborhoods, multi-city mentions) becomes one-tap suggestion chips; the user always has the last word.
+
+See [docs/SI_ENGINE.md](docs/SI_ENGINE.md) for the architecture and training pipeline.
+
 ## How It Works
 
 ```text
@@ -32,7 +43,7 @@ User describes a need (/post)
 What actually exists today:
 
 - **Need intake (`/post`)** — wizard + composer UI backed by `src/intake/` (tokenizer, normalizer, extractors, matchers, scoring, validation, telemetry) and `src/lib/need-intake/`. Runs **rules-only by default** (`NEED_INTAKE_LLM_ENABLED=false`).
-- **Optional AI assistance (opt-in, local)** — a private Laya Multilingual worker (`mini-services/laya-post`, model `convaiinnovations/laya-multilingual`) reachable only on loopback via `/api/post/natural-analyze`; a Gemma 4 sidecar (`mini-services/gemma4-intake`, `ai` compose profile); an embedding sidecar (`mini-services/embed-intake`, multilingual-e5). All AI paths are disabled unless explicitly enabled, and Laya auto-apply is off by default behind a confidence threshold (`LAYA_POST_AUTO_APPLY=false`, `LAYA_POST_MIN_CONFIDENCE`).
+- **Optional AI assistance (opt-in, local)** — a private Si Multilingual worker (`mini-services/si-post`, model `convaiinnovations/si-multilingual`) reachable only on loopback via `/api/post/natural-analyze`; a Gemma 4 sidecar (`mini-services/gemma4-intake`, `ai` compose profile); an embedding sidecar (`mini-services/embed-intake`, multilingual-e5). All AI paths are disabled unless explicitly enabled, and Si auto-apply is off by default behind a confidence threshold (`SI_POST_AUTO_APPLY=false`, `SI_POST_MIN_CONFIDENCE`).
 - **Marketplace browse** — location-scoped need/business/service browsing (`/n/…`, `/b/…`, `/s/…`) with canonical-URL middleware and locally served Iran map tiles (`/api/map/*`).
 - **Smart matching & leads** — `src/lib/smart-matching/` (VIP lead broadcast, trust scoring, need visibility, chat-session caps).
 - **Chat** — realtime messaging via `mini-services/chat-service` (Bun + Socket.io, Redis fan-out); a Go-based chat service (`mini-services/chat-go`) is in development as a higher-concurrency replacement.
@@ -51,7 +62,7 @@ flowchart TB
     Next --> ChatREST["Chat REST + fan-out"]
     Next --> DB[("PostgreSQL 15 + pgvector<br/>(Prisma 6)")]
 
-    Intake -.->|"opt-in, loopback only"| Laya["laya-post :8101<br/>Laya Multilingual"]
+    Intake -.->|"opt-in, loopback only"| Si["si-post :8101<br/>Si Multilingual"]
     Intake -.->|"opt-in (ai profile)"| Gemma["gemma4-intake :8100<br/>Gemma 4"]
     Intake -.->|"opt-in (ai profile)"| Embed["embed-intake<br/>multilingual-e5"]
 
@@ -83,7 +94,7 @@ Only technologies actually present in this repository:
 | UI | Tailwind CSS v4, shadcn/ui (Radix), Zustand, TanStack Query, React Hook Form + Zod, MapLibre / Mapbox GL, next-intl |
 | Database | PostgreSQL 15 + pgvector, Prisma 6 (81 models, 35 enums) |
 | Infra (docker compose) | postgres, redis, minio, typesense, rabbitmq, worker-go (Go), chat-service |
-| AI sidecars (opt-in) | laya-post (Laya Multilingual, FastAPI), gemma4-intake (GGUF via llama.cpp, `ai` profile), embed-intake (multilingual-e5, `ai` profile); optional Gemini fallback / LM Studio gateway |
+| AI sidecars (opt-in) | si-post (Si Multilingual, FastAPI), gemma4-intake (GGUF via llama.cpp, `ai` profile), embed-intake (multilingual-e5, `ai` profile); optional Gemini fallback / LM Studio gateway |
 | Auth | Phone OTP (Iran numbers), NextAuth sessions, token table |
 | Mobile | Capacitor iOS shell (`mobile/`, in progress) |
 
@@ -101,7 +112,7 @@ src/
   middleware.ts               # canonical / legacy marketplace URL handling
 prisma/schema.prisma          # database schema
 mini-services/
-  laya-post/                  # private Laya Multilingual worker (/post intake)
+  si-post/                  # private Si Multilingual worker (/post intake)
   gemma4-intake/              # local Gemma 4 sidecar (ai profile)
   embed-intake/               # local embedding sidecar (ai profile)
   worker-go/                  # Go queue consumer (intake AI, analytics, matching)
@@ -136,8 +147,8 @@ npm run dev
 # Realtime chat (separate process):
 npm run dev:chat
 
-# Private Laya worker for /post natural-language intake (optional, loopback only):
-npm run dev:laya-post
+# Private Si worker for /post natural-language intake (optional, loopback only):
+npm run dev:si-post
 ```
 
 Useful references: `docs/ENV_MAP.md` (environment map), `docs/DEV_TROUBLESHOOTING.md`, `docs/CHAT_DEV_RUNBOOK.md`, `AGENTS.md` (repo conventions).
@@ -149,7 +160,7 @@ Copy `.env.example` → `.env.local`. All secrets stay in local env files, never
 | Group | Variables | Notes |
 |---|---|---|
 | Intake (rules-first default) | `NEED_INTAKE_RULES_ONLY`, `NEED_INTAKE_LLM_ENABLED=false`, `AI_SEMANTIC_RESOLVER_ENABLED` | AI off unless explicitly enabled |
-| Laya `/post` worker | `LAYA_POST_URL`, `LAYA_MODEL_NAME`, `LAYA_POST_MIN_CONFIDENCE`, `LAYA_POST_AUTO_APPLY=false` | Loopback-only; auto-apply off by default |
+| Si `/post` worker | `SI_POST_URL`, `SI_MODEL_NAME`, `SI_POST_MIN_CONFIDENCE`, `SI_POST_AUTO_APPLY=false` | Loopback-only; auto-apply off by default |
 | Local LLM gateway | `NEED_INTAKE_LLM_URL`, `NEED_INTAKE_LLM_MODEL`, `LOCAL_LLM_ONLY`, `GEMINI_API_KEY` (optional fallback) | LM Studio OpenAI-compatible `:1234` |
 | Queues | `RABBITMQ_URL`, `RABBITMQ_USER/PASSWORD`, `INTAKE_QUEUE_SYNC_FALLBACK` | Async intake AI + analytics |
 | Search | `TYPESENSE_*` | Business search |
@@ -183,7 +194,7 @@ Concise summary — details and reporting policy in [SECURITY.md](SECURITY.md):
 - **Authentication** — phone-OTP login for Iran numbers plus password/NextAuth sessions; tokens stored server-side (`AuthToken`) with expiry. A fixed test OTP (`1234`) exists but is hard-gated to non-production (`NODE_ENV` check) — never enable `ALLOW_TEST_OTP` in production.
 - **Authorization** — role-based (`CLIENT`, `SPECIALIST`, `ADMIN`, `SUPER_ADMIN`) plus staff roles; admin/super-admin routes require elevated roles.
 - **Internal/worker routes** (`/api/internal/*`, chat fan-out) require `INTERNAL_API_SECRET` compared in constant time and **fail closed** (`503` when unconfigured, `403` on mismatch).
-- **User-provided data** — intake and publish paths validate with Zod schemas; the Laya worker allow-lists question IDs/types and caps state size, batch size, and request bytes.
+- **User-provided data** — intake and publish paths validate with Zod schemas; the Si worker allow-lists question IDs/types and caps state size, batch size, and request bytes.
 - **Secrets** — env-only (`.env.local`, never committed); `.env.example` documents placeholders. Historical `.env` files were once tracked — those values must be treated as exposed (see SECURITY.md).
 - **Database access** — Prisma exclusively; pgvector extension for similarity search.
 - **AI input/output** — AI sidecars are loopback-only, never browser-reachable directly; adapters are research-gated (explicit manifest + checksum verification, experiment-only, never production-loaded).
@@ -203,7 +214,7 @@ Honest snapshot based on the current tree — **Current** (working), **In progre
 
 **In progress**
 
-- Laya Multilingual `/post` worker (implemented, confidence-gated, auto-apply off; needs calibration on a human-labeled holdout before auto-apply)
+- Si Multilingual `/post` worker (implemented, confidence-gated, auto-apply off; needs calibration on a human-labeled holdout before auto-apply)
 - Go chat service (`chat-go`) as higher-concurrency replacement for the Bun chat service
 - Capacitor iOS shell (`mobile/`)
 - Estate/business site-import scrapers; OSM/Divar neighborhood coverage tooling
@@ -211,7 +222,7 @@ Honest snapshot based on the current tree — **Current** (working), **In progre
 **Planned**
 
 - Subscription auto-renew billing (today: one-time wallet deductions only)
-- Broader multilingual intake beyond Persian/English where the rules engine and Laya coverage genuinely support it
+- Broader multilingual intake beyond Persian/English where the rules engine and Si coverage genuinely support it
 - Production hardening: secret rotation runbook, rate-limit tuning, backup/restore docs
 
 ## Contributing

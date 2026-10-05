@@ -68,7 +68,7 @@ def test_v8_artifact_hash_and_provenance_are_verified() -> None:
             "rowsProcessed": 7,
             "devicesUsed": ["mps"],
             "outputBytes": source.stat().st_size,
-            "layaDerivedProposalStatuses": {"source_facts_agree": 7},
+            "siDerivedProposalStatuses": {"source_facts_agree": 7},
             "containsSyntheticData": True,
             "trainingEligible": False,
             "realNeedGroundTruth": False,

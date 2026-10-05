@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 1,
+  "kind": "sources",
+  "items": [
+    {
+      "id": "divar-location-coverage-v4",
+      "title": "پوشش شهر و محله در snapshot تازهٔ دیوار",
+      "queries": [
+        {
+          "id": "exact-city-and-neighborhood-crosswalk-audit",
+          "source": {
+            "label": "دادهٔ محلی Divar real_estate_ads و کاتالوگ NiazFinder",
+            "files": [
+              { "label": "data/divar/divar-property-offer-facts-v4-exact-current-city-map-2026-09-28.jsonl.manifest.json" },
+              { "label": "data/divar/divar-neighborhood-text-evidence-v4-exact-city-legacy-aliases-audit-2026-09-28.json" },
+              { "label": "scripts/datasets/audit-divar-city-coverage.py" },
+              { "label": "scripts/datasets/audit-divar-neighborhood-text-evidence.py" },
+              { "label": "scripts/datasets/test_audit_divar_neighborhood_text_evidence.py" },
+              { "label": "scripts/datasets/build-divar-neighborhood-candidate-corpus.ts" },
+              { "label": "scripts/datasets/test-divar-neighborhood-candidate-corpus.ts" },
+              { "label": "docs/si-neighborhood-stage-v7-readiness-2026-09-28.md" }
+            ],
+            "links": [
+              { "href": "https://huggingface.co/datasets/divarofficial/real_estate_ads", "label": "Divar real_estate_ads dataset" }
+            ],
+            "metricDefinitions": [
+              "پوشش شهر: تعداد city_slugهای متمایز دیوار که با شناسه و نام یکتای کاتالوگ موجود برنامه نگاشت شده‌اند؛ پوشش ردیف، سهم ردیف‌هایی است که city_slug آن‌ها نگاشت شده است.",
+              "نرخ ذکر نام دقیق: ردیف‌های دارای نام محلهٔ رسمیِ شهر-محدود در متن، پس از نرمال‌سازی فارسی و بررسی مرز واژه، تقسیم بر ردیف‌های دارای همان نوع نگاشت.",
+              "legacy_suffix_alias: نام رسمی دیوار پس از حذف فقط پسوند نهایی «قدیمی» به یک محلهٔ یکتا در کاتالوگ همان شهر رسیده است؛ این گروه با نگاشت exact ادغام نشده است."
+            ],
+            "caveats": [
+              "این نمونه‌ها آگهی عرضهٔ فروشنده یا مشاورند، نه نیاز واقعی جویندگان ملک و نه برچسب طلایی برای قصد کاربر.",
+              "وجود نام محله در متن صحت geotag آگهی را ثابت نمی‌کند؛ بازبینی انسانی انجام نشده است.",
+              "۲۴ شهر منبع دیوار کاتالوگ یکتای موجود در برنامه ندارند و عمداً به شهر مجاور یا مشابه وصل نشده‌اند.",
+              "مجوز ODbL و حقوق محتوای تک‌تک آگهی‌ها و بررسی حریم خصوصی هنوز نیازمند بازبینی است؛ snapshot برای این کار محلی نگه داشته شده و بازتوزیع تأیید نشده است."
+            ],
+            "evidenceFlow": [
+              {
+                "title": "تطبیق نسخهٔ منبع",
+                "kind": "validation",
+                "detail": "snapshot دیوار با SHA-256 برابر e5760fe1325a195e6682c371457bfecd51d255c518756e3cbea234b8163a801f ممیزی شد؛ ۱٬۰۰۰٬۰۰۰ ردیف خام به ۹۹۹٬۴۱۶ ردیف facts با حذف ۵۸۳ تعارض و یک دستهٔ نامعتبر رسید."
+              },
+              {
+                "title": "پوشش شهر",
+                "kind": "calculation",
+                "detail": "نگاشت دقیق ۳۹۷ از ۴۲۱ city_slug منبع به کاتالوگ برنامه؛ ۹۶۷٬۱۲۷ از ۱٬۰۰۰٬۰۰۰ ردیف دارای شهر نگاشت‌شده است."
+              },
+              {
+                "title": "تفکیک کیفیت نگاشت محله",
+                "kind": "validation",
+                "detail": "از ۴۳۰٬۲۶۸ ردیف دارای محله، ۴۲۰٬۹۸۹ exact_official_crosswalk و ۹٬۲۷۹ legacy_suffix_alias هستند؛ این دو منشأ جدا حفظ شدند."
+              },
+              {
+                "title": "شاهد ذکر نام در متن",
+                "kind": "calculation",
+                "detail": "نام exact در ۱۱۹٬۹۵۶ از ۴۲۰٬۹۸۹ ردیف (۲۸٫۴۹٪) و نام legacy در ۲٬۳۲۷ از ۹٬۲۷۹ ردیف (۲۵٫۰۸٪) دیده شد؛ مجموع ۱۲۲٬۲۸۳ از ۴۳۰٬۲۶۸ (۲۸٫۴۲٪). گروه‌های متنی یکتا ۱۲۱٬۸۷۵، تعارض مکانی ۱ و تعارض split صفر بود؛ تست‌های ممیزی گذشتند."
+              },
+              {
+                "title": "آماده‌سازی انتخاب محلهٔ مبهم",
+                "kind": "validation",
+                "detail": "ساخت کامل شد: ۹٬۵۸۰ ردیف shadow در ۹ شهر؛ ۷٬۵۸۵ train، ۹۸۳ calibration و ۱٬۰۱۲ test، با ۲ تا ۸ گزینه. SHA-256 برابر 6c25840d700d824adf7376e3a9c82d4c51103e0febb764d23dc9cbe4abd0b525 با manifest تطبیق دارد. تمام ردیف‌ها trainingEligible=false و realNeedGroundTruth=false ماندند؛ این corpus benchmark مدل نیست."
+              }
+            ],
+            "capturedAt": "2026-09-28T15:04:19Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "si-training-sequence-v3-v6",
+      "title": "وضعیت آموزش جاری و مرحلهٔ بعدِ صف‌شده",
+      "queries": [
+        {
+          "id": "live-training-checkpoint-and-v6-queue",
+          "source": {
+            "label": "آرتیفکت‌های محلی آزمایش Si",
+            "files": [
+              { "label": "data/si-experiments/divar-hypothetical-needs-v3-mps-full-2026-09-28/training-progress.json" },
+              { "label": "data/si-experiments/divar-hypothetical-needs-v3-mps-full-2026-09-28/manifest.json" },
+              { "label": "data/si-experiments/divar-v6-explicit-rent-mode-mps-full-2026-09-28.launch-plan.json" },
+              { "label": "scripts/datasets/finetune/queue-divar-v6-after-v3.py" },
+              { "label": "scripts/datasets/finetune/benchmark-divar-neighborhood-si.py" },
+              { "label": "scripts/datasets/finetune/test_benchmark_divar_neighborhood_si.py" },
+              { "label": "scripts/datasets/finetune/queue-divar-v7-neighborhood-benchmark-after-v6.py" },
+              { "label": "scripts/datasets/finetune/test_queue_divar_v7_neighborhood_benchmark.py" },
+              { "label": "data/si-experiments/divar-v7-neighborhood-benchmark-after-v6-2026-09-28.json" },
+              { "label": "docs/si-neighborhood-stage-v7-readiness-2026-09-28.md" }
+            ],
+            "links": [
+              { "href": "https://huggingface.co/convaiinnovations/si-multilingual", "label": "Si Multilingual checkpoint" },
+              { "href": "https://github.com/NandhaKishorM/si", "label": "Official Si repository" },
+              { "href": "https://raw.githubusercontent.com/NandhaKishorM/si/main/notebooks/si_finetune_typed_decisions_2xT4_kaggle.ipynb", "label": "Official Si typed-decision fine-tuning recipe" }
+            ],
+            "metricDefinitions": [
+              "گام و mean loss آخرین checkpoint ذخیره‌شدهٔ v3؛ این مقادیر لزوماً وضعیت درون‌حافظه‌ای همان لحظه نیستند.",
+              "آخرین گام و loss فقط checkpoint ذخیره‌شده را توصیف می‌کند. بررسی read-only با PID دقیق، پردازش v3 و صف v6 را زنده تأیید کرد؛ این اثبات دقت یا همگرایی مدل نیست."
+            ],
+            "caveats": [
+              "v3 روی متن‌های فرضیِ مشتق از آگهی عرضه آموزش می‌بیند؛ loss به‌تنهایی بهبود دقت یا دقت روی نیاز واقعی کاربر را ثابت نمی‌کند.",
+              "متن فرضی v3/v6 با قالب قطعی ساخته شده و manifest صریحاً siPredictionsUsedAsLabels=false دارد؛ این اجرا تبدیل متن آگهی توسط خود Si یا یادگیری زبان واقعی متقاضی را ثابت نمی‌کند.",
+              "v6 فقط category_candidate، property_kind و transaction_type را آموزش می‌دهد؛ شهر و محله جزو فیلدهای trainable این مرحله نیستند.",
+              "هر دو مرحله آزمایش research-only هستند؛ داده‌ها نیاز واقعیِ gold، بازبینی انسانی یا مجوز آموزش تولیدی ندارند."
+            ],
+            "evidenceFlow": [
+              {
+                "title": "checkpoint v3",
+                "kind": "validation",
+                "detail": "در snapshot ساعت 16:58 UTC، پردازش trainer با PID 56641 و wrapper با PID 56642 زنده بودند؛ manifest برابر running بود. آخرین checkpoint ذخیره‌شده ۲۱٬۰۰۰ از ۵۴٬۲۵۸ گام با mean loss برابر ‎−۰٫۱۸۵۳۱ و mtime ساعت 16:34 UTC (حدود ۲۵ دقیقه پیش) بود؛ CPU لحظه‌ای ۵٫۰٪ بود و این MPS utilization را نشان نمی‌دهد. این آمار checkpoint است، نه وضعیت درون‌حافظه‌ای، دقت یا همگرایی."
+              },
+              {
+                "title": "دروازهٔ ترتیبی v6",
+                "kind": "validation",
+                "detail": "dry-run صف وضعیت waiting را داد: v6 فقط پس از پایان موفق، ارزیابی نهایی و خروج فرایند v3 شروع می‌شود؛ maxConcurrentMpsJobs برابر ۱ است."
+              },
+              {
+                "title": "آمادگی مکانی v7",
+                "kind": "validation",
+                "detail": "صف v6 با PID 87995 زنده و queued_waiting_for_v3 است؛ watcher موجود حفظ شد و workload موازی دیگری شروع نشد. v6 فقط category_candidate/property_kind/transaction_type را با MPS آموزش می‌دهد و نیازمند پایان و ارزیابی کامل v3 است. ناظر v7 پس از ارزیابی کامل v6، benchmark مکانی را فقط روی ۱٬۰۱۲ ردیف test اجرا می‌کند و آموزش مکانی خودکار ندارد. تست‌های queue v6/v7 بدون inference گذشتند. corpus همچنان weak-label، ۹‌شهری و غیرقابل‌آموزش تولیدی است."
+              }
+            ],
+            "capturedAt": "2026-09-28T16:58:58Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "divar-app-coverage-and-counterfactual-audit",
+      "title": "ممیزی پوشش کاتالوگ و کیفیت ردیف‌های مشتق‌شده",
+      "queries": [
+        {
+          "id": "v4-catalog-coverage-and-manual-batch-audit",
+          "source": {
+            "label": "فقط aggregateهای manifest، کاتالوگ محلهٔ /post و manifest پنج batch دستی",
+            "files": [
+              { "label": "data/divar/divar-property-offer-facts-v4-exact-current-city-map-2026-09-28.jsonl.manifest.json" },
+              { "label": "data/divar/official-neighborhood-app-crosswalk-2026-09-28-legacy-aliases.json" },
+              { "label": "src/config/categories.ts" },
+              { "label": "src/data/neighborhoods/catalog/*.json (1,207 city catalogs)" },
+              { "label": "data/divar/manual-derived-need-batch-02.manifest.json through batch-06.manifest.json" },
+              { "label": "scripts/datasets/audit-divar-app-coverage.ts" },
+              { "label": "scripts/datasets/test-audit-divar-app-coverage.ts" },
+              { "label": "scripts/datasets/audit_divar_facts_row_quality.py" },
+              { "label": "scripts/datasets/test_audit_divar_facts_row_quality.py" },
+              { "label": "data/divar/divar-property-offer-facts-v4-row-quality-audit-2026-09-28-r2.json" },
+              { "label": "data/divar/divar-property-offer-facts-v4-row-quality-audit-2026-09-28.json (superseded preliminary join)" },
+              { "label": "data/divar/si-divar-readiness-audit-2026-09-28.ipynb" },
+              { "label": "docs/si-neighborhood-stage-v7-readiness-2026-09-28.md" }
+            ],
+            "links": [
+              { "href": "https://huggingface.co/datasets/divarofficial/real_estate_ads", "label": "Divar real_estate_ads source" }
+            ],
+            "metricDefinitions": [
+              "ردیف‌های retained از manifest با crosswalk خام یکی نیستند؛ جمع exact+alias crosswalk با manifest مقایسه می‌شود و هیچ تطبیق ردیفیِ علت حذف ادعا نمی‌شود.",
+              "پوشش شهر هم نسبت به شهرهای منبع و هم نسبت به تمام city catalogهای برنامه گزارش می‌شود؛ این دو denominator متفاوت‌اند."
+            ],
+            "caveats": [
+              "گزارش r2 کل ۹۹۹٬۴۱۶ ردیف retained را به‌صورت streaming بررسی می‌کند و فقط aggregate می‌نویسد؛ اولین گزارش به علت join مستقیم slug به نام فایل superseded شد. ممیزی ساختاری، صحت واقعی geotag، حقوق تک‌تک آگهی‌ها یا نیاز کاربران را اثبات نمی‌کند.",
+              "۲۴ شهر منبع نگاشت یکتای catalog ندارند؛ source فقط ۱۶ مورد از ۱۸ برگ ملکی برنامه را پوشش می‌دهد.",
+              "۶۸ نمونهٔ batchهای دستی counterfactual و مصنوعی‌اند، human-reviewed نیستند و برای آموزش نیاز واقعی یا تولید واجد شرایط نیستند.",
+              "cloudTransferAllowed=false و بازبینی حریم خصوصی/حقوق/ODbL پیش از هر بازتوزیع لازم است.",
+              "Notebook JSON و سلول‌ها با runner درون‌حافظه‌ای اعتبارسنجی شدند؛ Jupyter برای render بصری نصب نبود."
+            ],
+            "evidenceFlow": [
+              {
+                "title": "ممیزی سازگاری محلهٔ crosswalk و manifest",
+                "kind": "validation",
+                "detail": "۱٬۰۰۰٬۰۰۰ ردیف خام؛ ۹۹۹٬۴۱۶ retained؛ ۵۸۴ حذف‌شده (۵۸۳ تعارض و ۱ دستهٔ نگاشت‌نشده). جمع crosswalk با ۴۳۰٬۳۸۸ ردیف mapped neighborhood در برابر ۴۳۰٬۲۶۸ manifest قرار دارد؛ اختلاف ۱۲۰ در سقف ۵۸۴ حذف است، اما علت ردیفی قابل انتساب نیست."
+              },
+              {
+                "title": "پوشش دسته و شهر برنامه",
+                "kind": "calculation",
+                "detail": "برنامه ۱۸ برگ ملکی و ۱٬۲۰۷ city catalog دارد؛ دیوار ۱۶ برگ، ۴۲۱ شهر منبع، ۳۹۷ شهر منطبق و ۹۶۷٬۱۲۷ ردیف با شهر منطبق دارد. ۳۹۷/۴۲۱=۹۴٫۳۰٪ شهرهای منبع، اما فقط ۳۲٫۸۹٪ catalogهای برنامه؛ ۲ مورد دسته‌ٔ جاافتاده agency-services و land-rent است."
+              },
+              {
+                "title": "پوشش و ممیزی neighborhood",
+                "kind": "calculation",
+                "detail": "از ۱٬۱۸۸ جفت شهر-محله، ۱٬۱۲۰ exact و ۳۲ alias resolve شده‌اند (۹۶٫۹۷٪ با هم). ۴۳۰٬۲۶۸/۹۹۹٬۴۱۶ ردیف retained محلهٔ قابل‌نگاشت دارند (۴۳٫۰۵٪)."
+              },
+              {
+                "title": "ممیزی ردیفی کامل با resolver واقعی برنامه",
+                "kind": "validation",
+                "detail": "۹۹۹٬۴۱۶ ردیف خوانده و parse شد؛ JSON خراب، ID تکراری، ordinal تکراری و leakage گروه متن بین splitها صفر بود. ۳٬۳۴۱ گروه متن نرمال‌شده تکراری (۳٬۵۴۱ ردیف اضافه) همگی درون split ماندند. resolver برنامه ۹۶۷٬۱۲۷ ردیف شهر (۹۶٫۷۷٪) و ۴۳۰٬۲۶۸ ردیف محله (۴۳٫۰۵٪) را نگاشت؛ ID نامعتبر یا اختلاف نام catalog صفر بود. اسکریپت ۴ تست regression گذراند."
+              },
+              {
+                "title": "batchهای دستی 02 تا 06",
+                "kind": "validation",
+                "detail": "۶۸ ردیف یکتا در ۲۲ شهر، ۳۳ جفت exact شهر-محله و ۱۶ دسته؛ تماماً synthetic/counterfactual، بدون بازبینی مستقل و با realNeedGroundTruth=false و trainingEligible=false."
+              },
+              {
+                "title": "تست و دفترچهٔ بازتولیدپذیر",
+                "kind": "validation",
+                "detail": "۱۰ assertion ممیزی coverage، ۴ تست row-audit و تست‌های queue v6/v7 موفق شدند. JSON notebook اعتبارسنجی و هر ۴ سلول کد آن بدون نوشتن فایل اجرا شدند؛ Jupyter renderer محلی در دسترس نیست، پس بررسی تصویری ادعا نمی‌شود."
+              }
+            ],
+            "capturedAt": "2026-09-28T16:58:58Z"
+          }
+        }
+      ]
+    },
+    {
+      "id": "post-neighborhood-si-choice-integration",
+      "title": "پیشنهاد محدود و نیازمند تأیید برای محله در /post",
+      "queries": [
+        {
+          "id": "bounded-city-scoped-choice-and-regressions",
+          "source": {
+            "label": "پیاده‌سازی محلی /post و تست‌های قرارداد/API",
+            "files": [
+              { "label": "src/app/api/post/natural-analyze/route.ts" },
+              { "label": "src/lib/need-intake/si/post-decision-questions.ts" },
+              { "label": "src/components/need-intake/PostNaturalAnalysisCard.tsx" },
+              { "label": "src/lib/need-intake/si/fixtures/run-post-natural-route-self-test.ts" },
+              { "label": "scripts/datasets/test-divar-si-question-factory.ts" },
+              { "label": "mini-services/si-post/app.py" },
+              { "label": "mini-services/si-post/test_batch.py" },
+              { "label": "docs/si-neighborhood-stage-v7-readiness-2026-09-28.md" }
+            ],
+            "links": [
+              { "href": "https://huggingface.co/convaiinnovations/si-multilingual", "label": "Si Multilingual checkpoint" },
+              { "href": "https://github.com/NandhaKishorM/si", "label": "Official Si repository" }
+            ],
+            "metricDefinitions": [
+              "تست route پاسخ Si را stub می‌کند و فقط قرارداد، محدودبودن candidateها و تأیید اجباری را می‌سنجد؛ معیار دقت مدل نیست.",
+              "benchmark قواعد فارسی روی ۵۶ مثال ثابت است؛ این مجموعه کوچک دقت تعمیم به کاربران واقعی را نمی‌سنجد."
+            ],
+            "caveats": [
+              "اگر resolver برای شهر انتخاب‌شده چند گزینه بدهد، Si حداکثر ۸ نام همان کاتالوگ و گزینهٔ unknown را می‌بیند.",
+              "پیشنهاد Si خودکار به entities یا مختصات نقشه اعمال نمی‌شود؛ کاربر باید آن را تأیید کند.",
+              "worker واقعی Si در این اجرای تست راه‌اندازی نشد؛ دقت و latency inference واقعی اندازه‌گیری نشده است."
+            ],
+            "evidenceFlow": [
+              {
+                "title": "تست route و سرویس",
+                "kind": "validation",
+                "detail": "تست‌های post-natural، factory و candidate-corpus، ۱۷ تست mini-service در virtualenv، TypeScript و ESLint فایل‌های تغییرکرده موفق شدند؛ route test انتخاب Si را mock می‌کند."
+              },
+              {
+                "title": "benchmark قواعد فارسی",
+                "kind": "calculation",
+                "detail": "از ۵۶ مثال: متراژ ۵۰/۵۰، نوع معامله ۵۶/۵۶، نوع ملک ۵۱/۵۱، شهر ۵۳/۵۴ و محله ۲۲/۲۳ مطابق انتظار بود؛ benchmark rules-only است و Si را ارزیابی نکرده است."
+              },
+              {
+                "title": "تأیید و مختصات نقشه",
+                "kind": "validation",
+                "detail": "پیشنهاد یا گزینهٔ دستی از applyNeighborhood عادی عبور می‌کند تا نام canonical، slug و pin از کاتالوگ شهر همگام شوند؛ مختصات از مدل پذیرفته نمی‌شود."
+              }
+            ],
+              "capturedAt": "2026-09-28T15:04:19Z"
+          }
+        }
+      ]
+    }
+  ]
+}

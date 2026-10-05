@@ -23,7 +23,7 @@ pre-configured — production values must be set explicitly.
 ## Intake / AI
 
 - [ ] `NEED_INTAKE_LLM_ENABLED` — conscious choice (default off = rules-only)
-- [ ] `LAYA_POST_AUTO_APPLY` stays `false` until calibrated on a human-labeled holdout
+- [ ] `SI_POST_AUTO_APPLY` stays `false` until calibrated on a human-labeled holdout
 - [ ] `INTAKE_PUBLISH_RATE_LIMIT_PER_HOUR` reviewed for launch traffic
 
 ## Data & ops

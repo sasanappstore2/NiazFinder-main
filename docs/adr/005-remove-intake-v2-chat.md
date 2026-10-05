@@ -51,7 +51,7 @@ Product direction: **form-oriented need intake** at `/post` — free-text seed +
 ### Negative
 
 - V2-specific coerce/playbook/synonym logic removed; port to `/post` rules only if needed
-- Archived golden conversations are not replayable in CI
+- Archived golden conversations are not repsible in CI
 
 ---
 

@@ -46,6 +46,15 @@ const OPEN_BUSINESS_PHRASES = [
   'دفتر کار',
 ] as const;
 
+/** Seek phrases that on their own do not imply a business premises —
+ *  «آپارتمان … برای اجاره میخوام» is a home seeker, not a shop hunter. */
+const GENERIC_SEEK_PHRASES: readonly string[] = ['اجاره میخوام', 'جا میخوام', 'محل میخوام'];
+
+/** Explicit residential dwelling nouns. When one is present and no explicit
+ *  commercial noun/phrase co-occurs, generic seek phrases must not flip the
+ *  intent to commercial property. */
+const RESIDENTIAL_NOUNS = ['آپارت', 'خونه', 'منزل', 'سوئیت', 'ویلا'] as const;
+
 const PROPERTY_SIGNALS = [
   'اجاره',
   'رهن',
@@ -141,8 +150,27 @@ export function isBusinessCommercialPropertyIntent(text: string): boolean {
       (t.includes('\u0622\u0631\u0627\u06CC\u0634') || t.includes('\u0639\u0631\u0648\u0633\u06CC')));
 
   const hasProperty = includesAny(t, PROPERTY_SIGNALS);
+  if (!hasBusiness || !hasProperty) return false;
 
-  return hasBusiness && hasProperty;
+  // An explicit residential dwelling noun («آپارتمان», «خونه», …) keeps the
+  // need residential unless a business noun/phrase beyond the generic seek
+  // phrases («اجاره میخوام», «جا/محل میخوام») also appears — «کافه اجاره
+  // میخوام» stays commercial, «آپارتمان برای اجاره میخوام» stays a home.
+  if (includesAny(t, RESIDENTIAL_NOUNS)) {
+    const explicitBusinessPhrases = OPEN_BUSINESS_PHRASES.filter(
+      (phrase) => !GENERIC_SEEK_PHRASES.includes(phrase)
+    );
+    const hasExplicitBusiness =
+      includesAny(t, BUSINESS_WORDS) ||
+      includesAny(t, explicitBusinessPhrases) ||
+      includesAny(t, SHOP_EXPLICIT) ||
+      includesAny(t, OFFICE_EXPLICIT) ||
+      (t.includes('\u0633\u0627\u0644\u0646') &&
+        (t.includes('\u0622\u0631\u0627\u06CC\u0634') || t.includes('\u0639\u0631\u0648\u0633\u06CC')));
+    if (!hasExplicitBusiness) return false;
+  }
+
+  return true;
 }
 
 function isSaleDeal(text: string): boolean {

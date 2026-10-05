@@ -4,7 +4,7 @@ import { parseIntentFromText } from '@/lib/need-intake/intent-parser';
 import { extractLocationFragment } from '@/lib/need-intake/location-fragment';
 import { findManagedNeighborhoodAmbiguity } from '@/lib/neighborhoods/find-managed-neighborhood-ambiguity';
 import { formatAmbiguousNeighborhoodChipLabel } from '@/lib/neighborhoods/format-disambiguation-label';
-import { resolvePostNeighborhoodInCity } from '@/lib/need-intake/laya/post-neighborhood-resolver';
+import { resolvePostNeighborhoodInCity } from '@/lib/need-intake/si/post-neighborhood-resolver';
 
 function assert(cond: boolean, msg: string): void {
   if (!cond) throw new Error(msg);

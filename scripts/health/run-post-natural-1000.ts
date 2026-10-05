@@ -10,7 +10,7 @@
  *  - measurement traps, no location cue (50)  -> expects no city (anti «۳۰ متری» regression)
  *
  * Exercises the full production path per case: deterministic extraction,
- * nationwide inference, gaps/warnings, and the local Laya worker.
+ * nationwide inference, gaps/warnings, and the local Si worker.
  * Each case uses a unique loopback IP (simulates 1000 distinct users, and
  * stays under the 24 req/min/IP route limit).
  *
@@ -297,7 +297,7 @@ interface Resp {
   locationCandidates?: Array<{ slug: string; label: string; city?: string; citySlug?: string }>;
   categoryCandidates?: Array<{ slug: string; label: string }>;
   provisionalCategory?: { slug: string; confidence?: number; requiresConfirmation?: boolean };
-  laya?: { status?: string; latencyMs?: number };
+  si?: { status?: string; latencyMs?: number };
   latencyMs?: number;
   error?: unknown;
   clientMs?: number;
@@ -386,7 +386,7 @@ async function main(): Promise<void> {
   };
   const fails: Array<Record<string, unknown>> = [];
   const lat: number[] = [];
-  const layaCount: Record<string, number> = {};
+  const siCount: Record<string, number> = {};
   const candRanks: number[] = [];
   let candRecall = 0; let candTotal = 0;
 
@@ -394,7 +394,7 @@ async function main(): Promise<void> {
     const c = runCases[i]!;
     const r = out[i]!.resp;
     if (typeof r.clientMs === 'number') lat.push(r.clientMs);
-    if (r.laya?.status) layaCount[r.laya.status] = (layaCount[r.laya.status] ?? 0) + 1;
+    if (r.si?.status) siCount[r.si.status] = (siCount[r.si.status] ?? 0) + 1;
     if (r.status !== 200) {
       fails.push({ id: c.id, stratum: c.stratum, field: 'http', status: r.status, error: r.error ?? null, text: c.text.slice(0, 80) });
       continue;
@@ -453,14 +453,14 @@ async function main(): Promise<void> {
     meta: { seed: SEED, base: BASE, concurrency: CONC, total: runCases.length, elapsedSec: Math.round((Date.now() - started) / 1000) },
     accuracy: Object.fromEntries(Object.entries(stats).map(([k, v]) => [k, { ...v, rate: v.checked ? v.correct / v.checked : null }])),
     multi: { recall: candTotal ? candRecall / candTotal : null, checked: candTotal, mrr: candRanks.length ? candRanks.reduce((a, r) => a + 1 / r, 0) / candTotal : null, meanRank: candRanks.length ? candRanks.reduce((a, r) => a + r, 0) / candRanks.length : null },
-    laya: layaCount,
+    si: siCount,
     latencyMs: { p50: pct(50), p95: pct(95), max: lat[lat.length - 1] ?? -1 },
     failures: fails,
     cases: out,
   };
-  const path = resolve(`data/laya-experiments/post-natural-1000-${Date.now()}.json`);
+  const path = resolve(`data/si-experiments/post-natural-1000-${Date.now()}.json`);
   writeFileSync(path, JSON.stringify(report));
-  console.log(JSON.stringify({ accuracy: report.accuracy, multi: { recall: report.multi.recall, mrr: report.multi.mrr }, laya: report.laya, latencyMs: report.latencyMs, failures: fails.length }, null, 1));
+  console.log(JSON.stringify({ accuracy: report.accuracy, multi: { recall: report.multi.recall, mrr: report.multi.mrr }, si: report.si, latencyMs: report.latencyMs, failures: fails.length }, null, 1));
   console.log(`report: ${path}`);
 }
 

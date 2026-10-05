@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { readLines } from './run-divar-laya-shadow';
+import { readLines } from './run-divar-si-shadow';
 
 async function main(): Promise<void> {
   const directory = mkdtempSync(join(tmpdir(), 'niaz-divar-shadow-read-lines-'));

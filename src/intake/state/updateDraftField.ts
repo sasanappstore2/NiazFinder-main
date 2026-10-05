@@ -13,7 +13,19 @@ export function entityPatchForField(
     return { budgetMax: amount, budgetMin: amount };
   }
   if (field.key === 'transactionType') {
-    return { transactionType: (value || null) as TransactionType | null };
+    const tx = String(value || '');
+    const patch: DraftPatch = { transactionType: (value || null) as TransactionType | null };
+    // Deal switch: money fields that no longer belong to the new deal are
+    // cleared so stale rahn/rent amounts never leak across deal types.
+    if (tx === 'BUY' || tx === 'SELL') {
+      patch.rahnAmount = null;
+      patch.monthlyRent = null;
+    } else if (tx === 'FULL_DEPOSIT') {
+      patch.monthlyRent = null;
+    } else if (tx === 'RENT') {
+      patch.rahnAmount = null;
+    }
+    return patch;
   }
   if (field.key === 'area' || field.key === 'rooms') {
     const n = value === '' || value == null ? null : Number(value);
